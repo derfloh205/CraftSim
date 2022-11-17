@@ -1,0 +1,10 @@
+## Interface: 100002
+## DefaultState: enabled
+
+## Title: CraftSim
+## Notes: Data export for the CraftSim Spreadsheet
+## Author: genju
+## Version: 1.0
+
+CraftSim.lua
+CraftSim.xml

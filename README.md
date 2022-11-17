@@ -1,0 +1,1 @@
+Used to extract profession and recipe data as input for my craftSim spreadsheet
