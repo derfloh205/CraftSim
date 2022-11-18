@@ -14,10 +14,6 @@ function CraftSimPRICEDATA:GetPriceData(recipeData)
     local resultItemID1 = recipeData.resultItemID1
     local reagentList = {} -- TODO: get list of used reagentIDs by quality to retrieve
 
-<<<<<<< HEAD
-    local minBuyOut = CraftSimPriceAPI:GetMinBuyOutByItemID(resultItemID1)
-    print("minbuyout for item id: " .. tostring(minBuyOut))
-=======
     local minBuyout = CraftSimPriceAPI:GetMinBuyoutByItemID(resultItemID1)
     print("minbuyout for item id: " .. tostring(minBuyout))
 
@@ -26,7 +22,6 @@ function CraftSimPRICEDATA:GetPriceData(recipeData)
         local currentMinbuyout, error = CraftSimPriceAPI:GetMinBuyoutByItemID(recipeData["resultItemID" .. i])
         table.insert(minBuyoutPerQuality, currentMinbuyout)
     end
->>>>>>> b795e62 (adapted for tsm price source)
 
     return {
         minBuyoutPerQuality = minBuyoutPerQuality, -- {40, 50, 60, 70, 80}
@@ -34,11 +29,6 @@ function CraftSimPRICEDATA:GetPriceData(recipeData)
     }
 end
 
-<<<<<<< HEAD
-function CraftSimTSM:GetMinBuyOutByItemID(itemID)
-    local tsmItemString = TSM_API.Item:ToItemString(itemID)
-    print("tsm itemstring")
-=======
 function CraftSimTSM:GetMinBuyoutByItemID(itemID)
     local _, itemLink = GetItemInfo(itemID) 
     local tsmItemString = TSM_API.ToItemString(itemLink)
@@ -50,5 +40,4 @@ function CraftSimTSM:GetMinBuyoutByItemID(itemID)
     print("error: " .. tostring(error))
 
     return minBuyout
->>>>>>> b795e62 (adapted for tsm price source)
 end
