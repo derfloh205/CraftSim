@@ -55,14 +55,9 @@ end
 function addon:ADDON_LOADED(addon_name)
 	if addon_name == 'CraftSim' then
 		addon:InitStatWeightFrame()
-<<<<<<< HEAD
-	addon:HookToRecipeFrame()
-	elseif addon_name == 'TradeSkillMaster' then
-=======
 		addon:HookToRecipeFrame()
 	end
 	if addon_name == "TradeSkillMaster" then
->>>>>>> b795e62 (adapted for tsm price source)
 		CraftSimPRICEDATA:InitAvailablePriceAPI()
 	end
 end
