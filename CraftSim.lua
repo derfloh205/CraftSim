@@ -1,5 +1,5 @@
 -- TODO: Localization Differences?
--- TODO: parse from inscription description the skill bonus that is applied upon proc OR calculate with specs in mind
+-- TODO: let statweight not work on bind at pickup items!
 
 local addon = CreateFrame("Frame", "CraftSimAddon")
 addon:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
@@ -55,8 +55,14 @@ end
 function addon:ADDON_LOADED(addon_name)
 	if addon_name == 'CraftSim' then
 		addon:InitStatWeightFrame()
+<<<<<<< HEAD
 	addon:HookToRecipeFrame()
 	elseif addon_name == 'TradeSkillMaster' then
+=======
+		addon:HookToRecipeFrame()
+	end
+	if addon_name == "TradeSkillMaster" then
+>>>>>>> b795e62 (adapted for tsm price source)
 		CraftSimPRICEDATA:InitAvailablePriceAPI()
 	end
 end
