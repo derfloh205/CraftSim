@@ -19,10 +19,11 @@ function addon:HookToRecipeFrame()
 		--print("Refresh schematic form frame")
 		CraftSimDetailsFrame:Show()
 		local statWeights = CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
-		if statWeights == nil then
+		if statWeights == CraftSimCONST.ERROR.NO_PRICE_DATA or statWeights == CraftSimCONST.ERROR.NO_RECIPE_DATA then
 			CraftSimDetailsFrame:Hide()
+		else
+			CraftSimUTIL:UpdateStatWeightFrameText(statWeights)
 		end
-		CraftSimUTIL:UpdateStatWeightFrameText(statWeights)
 	end)
 end
 
@@ -77,31 +78,11 @@ function addon:PLAYER_LOGIN()
 		command = command and command:lower()
 		rest = (rest and rest ~= "") and rest:trim() or nil
 
-		if command == "" then
+		if command == "export" then
 			if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
 				print("CRAFTSIM: Export Data")
 				CraftSimUTIL:KethoEditBox_Show(CraftSimDATAEXPORT:getExportString())
 				KethoEditBoxEditBox:HighlightText()
-			else
-				print("CRAFTSIM ERROR: No Recipe Opened")
-			end
-		elseif command == "w" then
-			if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
-				local weights = CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
-
-				if weights == nil then
-					return
-				end
-
-				if weights.inspiration then
-					print("InspirationWeight: " .. CraftSimUTIL:round(weights.inspiration, 3))
-				end
-				if weights.multicraft then
-					print("MulticraftWeight: " .. CraftSimUTIL:round(weights.multicraft, 3))
-				end
-				if weights.resourcefulness then
-					print("ResourcefulnessWeight: " .. CraftSimUTIL:round(weights.resourcefulness, 3))
-				end
 			else
 				print("CRAFTSIM ERROR: No Recipe Opened")
 			end

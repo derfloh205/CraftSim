@@ -68,10 +68,10 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
     local totalCraftingCosts = priceData.craftingCostPerCraft * numCrafts
     local totalWorth = 0
     if recipeData.expectedQuality == recipeData.maxQuality then
-        totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerItem[recipeData.expectedQuality]
+        totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]
     else
-        totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerItem[recipeData.expectedQuality] + 
-            craftedItems.nextQuality * priceData.minBuyoutPerItem[recipeData.expectedQuality + 1]
+        totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality] + 
+            craftedItems.nextQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1]
     end
     local meanProfit = (totalWorth - totalCraftingCosts) / numCrafts
     return meanProfit
@@ -130,6 +130,11 @@ function CraftSimSTATS:CalculateStatWeights(recipeData)
 
     --print("Calculate Profession Statweights.. " .. tostring(recipeData))
     local priceData = CraftSimPRICEDATA:GetPriceData(recipeData)
+
+    if priceData == nil then
+        return CraftSimCONST.ERROR.NO_PRICE_DATA
+    end
+
     local baseMeanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
 
     local inspirationWeight = CraftSimSTATS:getInspirationWeight(recipeData, priceData, baseMeanProfit)
@@ -149,11 +154,15 @@ function CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
 	local recipeData = CraftSimDATAEXPORT:exportRecipeData()
 
 	if recipeData == nil then
-        print("recipe data nil")
-		return nil
+        --print("recipe data nil")
+		return CraftSimCONST.ERROR.NO_RECIPE_DATA
 	end
 
 	local statweights = CraftSimSTATS:CalculateStatWeights(recipeData)
+
+    if statWeights == CraftSimCONST.ERROR.NO_PRICE_DATA then
+        return CraftSimCONST.ERROR.NO_PRICE_DATA
+    end
 
 	return statweights
 end
