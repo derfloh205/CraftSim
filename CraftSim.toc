@@ -2,9 +2,13 @@
 ## DefaultState: enabled
 
 ## Title: CraftSim
-## Notes: Data export for the CraftSim Spreadsheet
+## Notes: Calculates profession statweights and displays them per recipe
 ## Author: genju
 ## Version: 1.0
 
+DataExport.lua
+PriceData.lua
+Util.lua
+StatweightCalculation.lua
 CraftSim.lua
 CraftSim.xml
