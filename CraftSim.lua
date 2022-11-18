@@ -45,19 +45,20 @@ function addon:InitStatWeightFrame()
 	frame.title:SetText("CraftSim Statweights")
 
 	frame.statText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.statText:SetPoint("LEFT", frame, "LEFT", 20, -5)
+	frame.statText:SetPoint("LEFT", frame, "LEFT", 30, -5)
 
 	frame.valueText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.valueText:SetPoint("RIGHT", frame, "RIGHT", -50, -5)
+	frame.valueText:SetPoint("CENTER", frame, "CENTER", 25, -5)
 	frame:Show()
 end
 
 function addon:ADDON_LOADED(addon_name)
-	if addon_name ~= 'CraftSim' then
-		return
-	end
-	addon:InitStatWeightFrame()
+	if addon_name == 'CraftSim' then
+		addon:InitStatWeightFrame()
 	addon:HookToRecipeFrame()
+	elseif addon_name == 'TradeSkillMaster' then
+		CraftSimPRICEDATA:InitAvailablePriceAPI()
+	end
 end
 
 function addon:PLAYER_LOGIN()
