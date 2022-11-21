@@ -43,7 +43,7 @@ function CraftSimUTIL:CloneTable(t)
     local target = {}
     for k, v in pairs(t) do
         if type(v) == "table" then
-            target[k] = clone(v)
+            target[k] = CraftSimUTIL:CloneTable(v)
         else
             target[k] = v
         end
@@ -163,4 +163,8 @@ end
 
 function CraftSimUTIL:isRecipeNotProducingItem(recipeData)
     return recipeData.baseItemAmount == nil and recipeData.resultItemID1 == nil
+end
+
+function CraftSimUTIL:isRecipeProducingGear(recipeData)
+    return recipeData.hasSingleItemOutput and recipeData.qualityIlvlBonuses ~= nil
 end

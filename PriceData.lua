@@ -13,20 +13,26 @@ function CraftSimPRICEDATA:InitAvailablePriceAPI()
 end
 
 function CraftSimPRICEDATA:GetReagentMinbuyouts(recipeData) 
-    
+    -- TODO: get list of used reagentIDs by quality to 
 end
 
 function CraftSimPRICEDATA:GetPriceData(recipeData)
     local resultItemID1 = recipeData.resultItemID1
-    local reagentList = {} -- TODO: get list of used reagentIDs by quality to retrieve
-
-    local minBuyout = CraftSimPriceAPI:GetMinBuyoutByItemID(resultItemID1)
+    local reagentList = CraftSimPRICEDATA:GetReagentMinbuyouts(recipeData)  
     --print("minbuyout for item id: " .. tostring(minBuyout))
 
     local minBuyoutPerQuality = {}
-    for i = 1, recipeData.maxQuality, 1 do
-        local currentMinbuyout, error = CraftSimPriceAPI:GetMinBuyoutByItemID(recipeData["resultItemID" .. i])
-        table.insert(minBuyoutPerQuality, currentMinbuyout)
+    if recipeData.result.isGear then
+        for _, itemLvL in pairs(recipeData.result.itemLvLs) do
+            -- TODO get minbuyout by itemid and ilvl ? TEMP: always same itemid
+            local currentMinbuyout, error = CraftSimPriceAPI:GetMinBuyoutByItemID(recipeData.result.itemID)
+            table.insert(minBuyoutPerQuality, currentMinbuyout)
+        end
+    else
+        for _, itemID in pairs(recipeData.result.itemIDs) do
+            local currentMinbuyout, error = CraftSimPriceAPI:GetMinBuyoutByItemID(itemID)
+            table.insert(minBuyoutPerQuality, currentMinbuyout)
+        end
     end
 
     if error and not DEBUG then

@@ -87,8 +87,8 @@ function addon:PLAYER_LOGIN()
 		if command == "export" then
 			if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
 				print("CRAFTSIM: Export Data")
-				CraftSimUTIL:KethoEditBox_Show(CraftSimDATAEXPORT:getExportString())
-				KethoEditBoxEditBox:HighlightText()
+				--CraftSimUTIL:KethoEditBox_Show(CraftSimDATAEXPORT:getExportString())
+				--KethoEditBoxEditBox:HighlightText()
 			else
 				print("CRAFTSIM ERROR: No Recipe Opened")
 			end

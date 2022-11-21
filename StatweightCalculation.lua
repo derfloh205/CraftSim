@@ -14,7 +14,7 @@ function CraftSimSTATS:GetQualityThresholds(maxQuality, recipeDifficulty)
 end
 
 function CraftSimSTATS:getMeanProfit(recipeData, priceData)
-    local inspirationStatByPercent = CraftSimUTIL:GetInspirationStatByPercent(recipeData.InspirationPercent)
+    local inspirationStatByPercent = CraftSimUTIL:GetInspirationStatByPercent(recipeData.stats.inspiration.percent)
 
     local totalItemsCrafted = numCrafts * recipeData.baseItemAmount
     local craftedItems = {
@@ -26,17 +26,17 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
         nextQuality = 0
     }
     local inspirationCanUpgrade = false
-    if recipeData.expectedQuality ~= recipeData.maxQuality and recipeData.InspirationPercent ~= nil then
+    if recipeData.expectedQuality ~= recipeData.maxQuality and recipeData.stats.inspiration ~= nil then
         local qualityThresholds = CraftSimSTATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
         local qualityUpgradeThreshold = qualityThresholds[recipeData.expectedQuality]
         --print("upgrade threshold: " .. qualityUpgradeThreshold)
         --print("thresholds: " .. unpack(qualityThresholds))
-        inspirationCanUpgrade = (recipeData.playerSkill + recipeData.InspirationSkillBonus) >= qualityUpgradeThreshold
+        inspirationCanUpgrade = (recipeData.stats.skill + recipeData.stats.inspiration.bonusskill) >= qualityUpgradeThreshold
     end
     --print("inspiration can upgrade recipe: " .. tostring(inspirationCanUpgrade))
     if inspirationCanUpgrade then
         -- Recipe considers inspiration and inspiration upgrades are possible
-        local inspirationProcs = numCrafts*(recipeData.InspirationPercent / 100)
+        local inspirationProcs = numCrafts*(recipeData.stats.inspiration.percent / 100)
 
         crafts.baseQuality = numCrafts - inspirationProcs
         crafts.nextQuality = inspirationProcs
@@ -48,7 +48,7 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
         crafts.baseQuality = numCrafts
     end
 
-    if recipeData.MulticraftPercent ~= nil then
+    if recipeData.stats.multicraft ~= nil then
         -- Recipe considers multicraft
         -- TODO implement multicraft additional item chance/amount based on multicraft tracker data
         -- For now just use a random value of 1-2.5y additional items
@@ -57,8 +57,8 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
         -- Since multicraft and inspiration can proc together add expected multicraft gain to both qualities
         local craftNumBase = craftedItems.baseQuality / recipeData.baseItemAmount
         local craftNumNext = craftedItems.nextQuality / recipeData.baseItemAmount
-        local multicraftProcsBase = crafts.baseQuality*(recipeData.MulticraftPercent / 100)
-        local multicraftProcsNext = crafts.nextQuality*(recipeData.MulticraftPercent / 100)
+        local multicraftProcsBase = crafts.baseQuality*(recipeData.stats.multicraft.percent / 100)
+        local multicraftProcsNext = crafts.nextQuality*(recipeData.stats.multicraft.percent / 100)
         local expectedExtraItemsBase = multicraftProcsBase * expectedAdditionalItems
         local expectedExtraItemsNext = multicraftProcsNext * expectedAdditionalItems
         craftedItems.baseQuality = craftedItems.baseQuality + expectedExtraItemsBase
@@ -78,34 +78,34 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
 end
 
 function CraftSimSTATS:getInspirationWeight(recipeData, priceData, baseMeanProfit)
-    if recipeData.InspirationValue == nil then
+    if recipeData.stats.inspiration == nil then
         --print("recipe cannot proc inspiration")
         return 0
     end
     local modifiedData = CraftSimUTIL:CloneTable(recipeData)
-    modifiedData.InspirationPercent = modifiedData.InspirationPercent + CraftSimUTIL:GetInspirationPercentByStat(statIncreaseFactor)
+    modifiedData.stats.inspiration.percent = modifiedData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statIncreaseFactor)
     
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
 end
 
 function CraftSimSTATS:getMulticraftWeight(recipeData, priceData, baseMeanProfit)
-    if recipeData.MulticraftValue == nil then
+    if recipeData.stats.multicraft == nil then
         --print("recipe cannot proc multicraft")
         return 0
     end
     local modifiedData = CraftSimUTIL:CloneTable(recipeData)
-    modifiedData.MulticraftPercent = modifiedData.MulticraftPercent + CraftSimUTIL:GetMulticraftPercentByStat(statIncreaseFactor)
+    modifiedData.stats.multicraft.percent = modifiedData.stats.multicraft.percent + CraftSimUTIL:GetMulticraftPercentByStat(statIncreaseFactor)
     
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
 end
 
 function CraftSimSTATS:getResourcefulnessWeight(recipeData, priceData, baseMeanProfit)
-    if recipeData.ResourcefulnessValue == nil then
+    if recipeData.stats.resourcefulness == nil then
         --print("recipe cannot proc resourcefulness")
         return 0
     end
     local modifiedData = CraftSimUTIL:CloneTable(recipeData)
-    modifiedData.ResourcefulnessPercent = modifiedData.ResourcefulnessPercent + CraftSimUTIL:GetResourcefulnessPercentByStat(statIncreaseFactor)
+    modifiedData.stats.resourcefulness.percent = modifiedData.stats.resourcefulness.percent + CraftSimUTIL:GetResourcefulnessPercentByStat(statIncreaseFactor)
     
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
 end
