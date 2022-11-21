@@ -120,6 +120,10 @@ function CraftSimDATAEXPORT:exportRecipeData()
 			baseIlvl + recipeInfo.qualityIlvlBonuses[4],
 			baseIlvl + recipeInfo.qualityIlvlBonuses[5]
 		}
+	elseif not recipeInfo.supportsQualities then
+		-- Probably something like transmuting air reagent that creates non equip stuff without qualities
+		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)
+		recipeData.result.isNoQuality = true
 	end
 	
 	return recipeData

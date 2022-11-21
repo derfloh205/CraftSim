@@ -162,9 +162,21 @@ function CraftSimUTIL:UpdateStatWeightFrameText(statWeights)
 end
 
 function CraftSimUTIL:isRecipeNotProducingItem(recipeData)
-    return recipeData.baseItemAmount == nil and recipeData.resultItemID1 == nil
+    local hasNoItemID = recipeData.result.itemID == nil and recipeData.result.itemIDs == nil
+    return recipeData.baseItemAmount == nil and hasNoItemID
 end
 
 function CraftSimUTIL:isRecipeProducingGear(recipeData)
     return recipeData.hasSingleItemOutput and recipeData.qualityIlvlBonuses ~= nil
+end
+
+function CraftSimUTIL:isRecipeProducingSoulbound(recipeData)
+    local itemID = nil
+    if recipeData.result.isGear or recipeData.result.isNoQuality then
+        itemID = recipeData.result.itemID
+    else
+        itemID = recipeData.result.itemIDs[1]
+    end
+    local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID) 
+    return bindType == CraftSimCONST.BINDTYPES.SOULBOUND
 end

@@ -14,8 +14,6 @@ function CraftSimSTATS:GetQualityThresholds(maxQuality, recipeDifficulty)
 end
 
 function CraftSimSTATS:getMeanProfit(recipeData, priceData)
-    local inspirationStatByPercent = CraftSimUTIL:GetInspirationStatByPercent(recipeData.stats.inspiration.percent)
-
     local totalItemsCrafted = numCrafts * recipeData.baseItemAmount
     local craftedItems = {
         baseQuality = 0,
@@ -80,7 +78,7 @@ end
 function CraftSimSTATS:getInspirationWeight(recipeData, priceData, baseMeanProfit)
     if recipeData.stats.inspiration == nil then
         --print("recipe cannot proc inspiration")
-        return 0
+        return nil
     end
     local modifiedData = CraftSimUTIL:CloneTable(recipeData)
     modifiedData.stats.inspiration.percent = modifiedData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statIncreaseFactor)
@@ -91,7 +89,7 @@ end
 function CraftSimSTATS:getMulticraftWeight(recipeData, priceData, baseMeanProfit)
     if recipeData.stats.multicraft == nil then
         --print("recipe cannot proc multicraft")
-        return 0
+        return nil
     end
     local modifiedData = CraftSimUTIL:CloneTable(recipeData)
     modifiedData.stats.multicraft.percent = modifiedData.stats.multicraft.percent + CraftSimUTIL:GetMulticraftPercentByStat(statIncreaseFactor)
@@ -102,7 +100,7 @@ end
 function CraftSimSTATS:getResourcefulnessWeight(recipeData, priceData, baseMeanProfit)
     if recipeData.stats.resourcefulness == nil then
         --print("recipe cannot proc resourcefulness")
-        return 0
+        return nil
     end
     local modifiedData = CraftSimUTIL:CloneTable(recipeData)
     modifiedData.stats.resourcefulness.percent = modifiedData.stats.resourcefulness.percent + CraftSimUTIL:GetResourcefulnessPercentByStat(statIncreaseFactor)
@@ -120,42 +118,44 @@ end
 
 function CraftSimSTATS:CalculateStatWeights(recipeData)
     if CraftSimUTIL:isRecipeNotProducingItem(recipeData) then
-        --print("Recipe does not produce item")
+        print("Recipe does not produce item")
         CraftSimDetailsFrame:Hide()
         return
     end
+
+    if CraftSimUTIL:isRecipeProducingSoulbound(recipeData) then
+        print("Recipe produces soulbound")
+        CraftSimDetailsFrame:Hide()
+        return
+    end
+
     if recipeData.baseItemAmount == nil then
         -- when only one item is produced the baseItemAmount will be nil as this comes form the number of items produced shown in the ui
         recipeData.baseItemAmount = 1
     end
 
-    --print("Calculate Profession Statweights.. " .. tostring(recipeData))
+    print("Calculate Profession Statweights.. ")
     local priceData = CraftSimPRICEDATA:GetPriceData(recipeData)
 
     if priceData == nil then
         return CraftSimCONST.ERROR.NO_PRICE_DATA
     end
+    local calculationResult = {}
+    calculationResult.meanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
 
-    local baseMeanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
+    calculationResult.inspiration = CraftSimSTATS:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
+    calculationResult.multicraft = CraftSimSTATS:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)
+    calculationResult.resourcefulness = CraftSimSTATS:getResourcefulnessWeight(recipeData, priceData, calculationResult.meanProfit)
 
-    local inspirationWeight = CraftSimSTATS:getInspirationWeight(recipeData, priceData, baseMeanProfit)
-    local multicraftWeight = CraftSimSTATS:getMulticraftWeight(recipeData, priceData, baseMeanProfit)
-    local resourcefulnessWeight = CraftSimSTATS:getResourcefulnessWeight(recipeData, priceData, baseMeanProfit)
-
-    --print("BaseMeanProfit: " .. CraftSimUTIL:round(baseMeanProfit, 2))
-    return {
-        meanProfit = baseMeanProfit,
-        inspiration = inspirationWeight,
-        multicraft = multicraftWeight,
-        resourcefulness = resourcefulnessWeight
-    }
+    --print("BaseMeanProfit: " .. CraftSimUTIL:round(calculationResult.meanProfit, 2))
+    return calculationResult
 end
 
 function CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
 	local recipeData = CraftSimDATAEXPORT:exportRecipeData()
 
 	if recipeData == nil then
-        --print("recipe data nil")
+        print("recipe data nil")
 		return CraftSimCONST.ERROR.NO_RECIPE_DATA
 	end
 

@@ -12,17 +12,15 @@ addon:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end
 addon:RegisterEvent("ADDON_LOADED")
 addon:RegisterEvent("PLAYER_LOGIN")
 
-local hookedToRecipeFrame = false
+local hookedEvent = false
 
-function addon:HookToRecipeFrame()
-	if hookedToRecipeFrame then
+function addon:HookToEvent()
+	if hookedEvent then
 		return
 	end
-	hookedToRecipeFrame = true
-	local craftingPage = ProfessionsFrame.CraftingPage
-	local schematicForm = craftingPage.SchematicForm
-	hooksecurefunc(schematicForm, "postInit", function(self) 
-		--print("Refresh schematic form frame")
+	hookedEvent = true
+
+	EventRegistry:RegisterCallback("ProfessionsRecipeListMixin.Event.OnRecipeSelected", function(self) 
 		CraftSimDetailsFrame:Show()
 		local statWeights = CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
 		if statWeights == CraftSimCONST.ERROR.NO_PRICE_DATA or statWeights == CraftSimCONST.ERROR.NO_RECIPE_DATA then
@@ -30,7 +28,7 @@ function addon:HookToRecipeFrame()
 		else
 			CraftSimUTIL:UpdateStatWeightFrameText(statWeights)
 		end
-	end)
+	end, self)
 end
 
 
@@ -62,7 +60,7 @@ end
 function addon:ADDON_LOADED(addon_name)
 	if addon_name == 'CraftSim' then
 		addon:InitStatWeightFrame()
-		addon:HookToRecipeFrame()
+		addon:HookToEvent()
 	end
 	if addon_name == "TradeSkillMaster" then
 		CraftSimPRICEDATA:InitAvailablePriceAPI()
