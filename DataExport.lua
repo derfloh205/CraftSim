@@ -36,7 +36,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	local recipeInfo = schematicForm:GetRecipeInfo()
 
 	if recipeInfo.isRecraft then
-        print("is recraft")
+        --print("is recraft")
 		return nil
 	end
 
@@ -44,7 +44,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	local operationInfo = details.operationInfo
 
     if operationInfo == nil then
-        print("no operation info")
+        --print("no operation info")
         return nil
     end
 

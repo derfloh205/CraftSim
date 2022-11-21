@@ -21,14 +21,35 @@ function addon:HookToEvent()
 	hookedEvent = true
 
 	EventRegistry:RegisterCallback("ProfessionsRecipeListMixin.Event.OnRecipeSelected", function(self) 
-		CraftSimDetailsFrame:Show()
-		local statWeights = CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
-		if statWeights == CraftSimCONST.ERROR.NO_PRICE_DATA or statWeights == CraftSimCONST.ERROR.NO_RECIPE_DATA then
-			CraftSimDetailsFrame:Hide()
-		else
-			CraftSimUTIL:UpdateStatWeightFrameText(statWeights)
-		end
+		addon:UpdateStatWeights()
 	end, self)
+	-- -- Case: Player changes and accepts the number of the qualities used for reagents
+	-- ProfessionsFrame.CraftingPage.SchematicForm.QualityDialog.AcceptButton:HookScript("OnClick", function(self) 
+	-- 	addon:UpdateStatWeights()
+	-- end)
+	-- -- Case: Player checks the "use best quality" checkbox
+	-- ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox:HookScript("OnClick", function(self) 
+	-- 	addon:UpdateStatWeights()
+	-- end)
+
+	-- Case: Player adds or removes a stat changing reagent
+	EventRegistry:RegisterCallback("Professions.AllocationUpdated", function(self) 
+		-- TODO: check if too much and if this needs to be limited
+		addon:UpdateStatWeights()
+	end, self)
+	-- hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm.transaction, "OnChanged", function(self)
+	-- 	print("schematic form hook")
+	-- end)
+end
+
+function addon:UpdateStatWeights()
+	CraftSimDetailsFrame:Show()
+	local statWeights = CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
+	if statWeights == CraftSimCONST.ERROR.NO_PRICE_DATA or statWeights == CraftSimCONST.ERROR.NO_RECIPE_DATA then
+		CraftSimDetailsFrame:Hide()
+	else
+		CraftSimUTIL:UpdateStatWeightFrameText(statWeights)
+	end
 end
 
 
