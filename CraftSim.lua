@@ -20,26 +20,16 @@ function addon:HookToEvent()
 	end
 	hookedEvent = true
 
-	EventRegistry:RegisterCallback("ProfessionsRecipeListMixin.Event.OnRecipeSelected", function(self) 
+	-- hook to the "SetStats" function of the Details panel
+	-- this makes the most sense cause we only really need to calculate again when the stats of the recipe are changed
+	-- and all reagents change some stats (like difficulty or quality at least)
+	-- it is also fired when a recipe is opened or changed
+	-- it is also fired multi times when a reagent is changed but like 5 or 6 times at most, this should not be a performance problem
+	-- TODO: check if there are any reagents that impact profit and do not change a stat??
+	hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm.Details, "SetStats", function(self)
+		--print("Details: SetStats")
 		addon:UpdateStatWeights()
-	end, self)
-	-- -- Case: Player changes and accepts the number of the qualities used for reagents
-	-- ProfessionsFrame.CraftingPage.SchematicForm.QualityDialog.AcceptButton:HookScript("OnClick", function(self) 
-	-- 	addon:UpdateStatWeights()
-	-- end)
-	-- -- Case: Player checks the "use best quality" checkbox
-	-- ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox:HookScript("OnClick", function(self) 
-	-- 	addon:UpdateStatWeights()
-	-- end)
-
-	-- Case: Player adds or removes a stat changing reagent
-	EventRegistry:RegisterCallback("Professions.AllocationUpdated", function(self) 
-		-- TODO: check if too much and if this needs to be limited
-		addon:UpdateStatWeights()
-	end, self)
-	-- hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm.transaction, "OnChanged", function(self)
-	-- 	print("schematic form hook")
-	-- end)
+	end)
 end
 
 function addon:UpdateStatWeights()
