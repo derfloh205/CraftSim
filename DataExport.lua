@@ -50,8 +50,11 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	local bonusStats = operationInfo.bonusStats
 
+	local currentTransaction = schematicForm:GetTransaction()
+	
+
 	recipeData.reagents = {}
-	for reagentIndex, currentSlot in pairs(C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false).reagentSlotSchematics) do
+	for slotIndex, currentSlot in pairs(C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false).reagentSlotSchematics) do
 		local reagents = currentSlot.reagents
 		local reagentType = currentSlot.reagentType
 		-- for now only consider the required reagents
@@ -59,20 +62,36 @@ function CraftSimDATAEXPORT:exportRecipeData()
 			break
 		end
 		local hasMoreThanOneQuality = currentSlot.reagents[2] ~= nil
-		recipeData.reagents[reagentIndex] = {
+		recipeData.reagents[slotIndex] = {
 			requiredQuantity = currentSlot.quantityRequired,
 			differentQualities = reagentType == REAGENT_TYPE.REQUIRED and hasMoreThanOneQuality,
 			reagentType = currentSlot.reagentType
 		}
-
-		if reagentType == REAGENT_TYPE.REQUIRED then
-			recipeData.reagents[reagentIndex].itemsInfo = {}
+		local slotAllocations = currentTransaction:GetAllocations(slotIndex)
+		local currentSelected = slotAllocations:Accumulate()
+		--print("current selected: " .. currentSelected .. " required: " .. currentSlot.quantityRequired)
+		--print("type: " .. reagentType)
+		if reagentType == REAGENT_TYPE.REQUIRED and currentSelected == currentSlot.quantityRequired then
+			recipeData.reagents[slotIndex].itemsInfo = {}
 			for i, reagent in pairs(reagents) do
-				table.insert(recipeData.reagents[reagentIndex].itemsInfo, {
-					itemID = reagent.itemID
-					-- TODO: add current assigned quantity by player here
-				})
+				local reagentAllocation = slotAllocations:FindAllocationByReagent(reagent)
+				local allocated = 0
+				if reagentAllocation ~= nil then
+					allocated = reagentAllocation:GetQuantity()
+				end
+				local itemInfo = {
+					itemID = reagent.itemID,
+					allocated = allocated
+				}
+				table.insert(recipeData.reagents[slotIndex].itemsInfo, itemInfo)
 			end
+		else
+			-- full quantity not allocated -> assume quality 1
+			recipeData.reagents[slotIndex].itemsInfo = {}
+			table.insert(recipeData.reagents[slotIndex].itemsInfo, {
+				itemID = reagents[1].itemID,
+				allocated = currentSlot.requiredQuantity
+			})
 		end
 		
 	end
