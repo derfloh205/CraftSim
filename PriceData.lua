@@ -12,6 +12,10 @@ function CraftSimPRICEDATA:InitAvailablePriceAPI()
     end
 end
 
+function CraftSimPRICEDATA:GetReagentMinbuyouts(recipeData) 
+    
+end
+
 function CraftSimPRICEDATA:GetPriceData(recipeData)
     local resultItemID1 = recipeData.resultItemID1
     local reagentList = {} -- TODO: get list of used reagentIDs by quality to retrieve

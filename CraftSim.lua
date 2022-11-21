@@ -1,5 +1,11 @@
 -- TODO: Localization Differences?
 -- TODO: let statweight not work on bind at pickup items!
+-- TODO: error message when no price source is available! Like show the window but with error message
+-- TODO: error message when no full price data is available
+-- TODO: more error handling
+-- TODO: FEATURE(?): when not full price data is available, assume/extrapolate prices based on basePrice and quality ? but inform user, maybe even on demand with button
+-- TODO: FEATURE: suggest or even auto equip most profitable profession gear combo for recipe (maybe on button click?)
+-- TODO: FEATURE: integrate knapsack problem to solve best reagent configuration
 
 local addon = CreateFrame("Frame", "CraftSimAddon")
 addon:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)

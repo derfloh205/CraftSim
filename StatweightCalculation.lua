@@ -119,12 +119,13 @@ function CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData
 end
 
 function CraftSimSTATS:CalculateStatWeights(recipeData)
-    if recipeData.baseItemAmount == nil and recipeData.resultItemID1 == nil then
+    if CraftSimUTIL:isRecipeNotProducingItem(recipeData) then
         --print("Recipe does not produce item")
         CraftSimDetailsFrame:Hide()
         return
     end
     if recipeData.baseItemAmount == nil then
+        -- when only one item is produced the baseItemAmount will be nil as this comes form the number of items produced shown in the ui
         recipeData.baseItemAmount = 1
     end
 

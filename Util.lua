@@ -160,3 +160,7 @@ function CraftSimUTIL:UpdateStatWeightFrameText(statWeights)
         CraftSimDetailsFrame.valueText:SetText(valueText)
     end
 end
+
+function CraftSimUTIL:isRecipeNotProducingItem(recipeData)
+    return recipeData.baseItemAmount == nil and recipeData.resultItemID1 == nil
+end
