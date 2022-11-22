@@ -170,14 +170,14 @@ function CraftSimDATAEXPORT:GetEquippedProfessionGear()
 	local professionGear = {}
 	
 	for _, slotName in pairs(CraftSimCONST.PROFESSION_INV_SLOTS) do
-		print("checking slot: " .. slotName)
+		--print("checking slot: " .. slotName)
 		local slotID = GetInventorySlotInfo(slotName)
 		local itemLink = GetInventoryItemLink("player", slotID)
 		if itemLink ~= nil then
 			local _, _, _, _, _, _, itemSubType, _, equipSlot = GetItemInfo(itemLink) 
 			if itemSubType == currentProfession then
 				local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
-				print("e ->: " .. itemLink)
+				--print("e ->: " .. itemLink)
 				table.insert(professionGear, {
 					itemLink = itemLink,
 					itemStats = itemStats,
@@ -199,7 +199,7 @@ function CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 			if itemLink ~= nil then
 				local _, _, _, _, _, _, itemSubType, _, equipSlot = GetItemInfo(itemLink) 
 				if itemSubType == currentProfession then
-					print("i -> " .. tostring(itemLink))
+					--print("i -> " .. tostring(itemLink))
 					local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 					table.insert(professionGear, {
 						itemLink = itemLink,

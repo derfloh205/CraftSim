@@ -198,3 +198,10 @@ function CraftSimUTIL:isItemSoulbound(itemID)
     local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID) 
     return bindType == CraftSimCONST.BINDTYPES.SOULBOUND
 end
+
+-- for debug purposes
+function CraftSimUTIL:PrintTable(t)
+    for k, v in pairs(t) do
+        print(tostring(k) .. ": " .. tostring(v))
+    end
+end
