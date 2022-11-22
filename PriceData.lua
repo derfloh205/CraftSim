@@ -1,18 +1,8 @@
 CraftSimPRICEDATA = {}
-CraftSimTSM = {}
-CraftSimPriceAPI = {}
 
 local DEBUG = true
 
 local reagentMinBuyoutPerQualityDebugData = {5, 6, 7, 8, 9}
-
-function CraftSimPRICEDATA:InitAvailablePriceAPI()
-    local loaded, finished = IsAddOnLoaded("TradeSkillMaster")
-    if finished then
-        --print("Load TSM API")
-        CraftSimPriceAPI = CraftSimTSM
-    end
-end
 
 function CraftSimPRICEDATA:GetReagentCosts(recipeData) 
     local reagentCosts = {}
@@ -68,31 +58,23 @@ end
 
 function CraftSimPRICEDATA:GetPriceData(recipeData)
     local craftingCostPerCraft = CraftSimPRICEDATA:GetTotalCraftingCost(recipeData) 
-    local priceError = nil
     local minBuyoutPerQuality = {}
     if recipeData.result.isGear then
         for _, itemLvL in pairs(recipeData.result.itemLvLs) do
             -- TODO get minbuyout by itemid and ilvl ?
-            local currentMinbuyout, _priceError = CraftSimTSM:GetMinBuyoutByItemLink(recipeData.result.hyperlink)
-            priceError = _priceError
+            local currentMinbuyout = CraftSimPriceAPI:GetMinBuyoutByItemLink(recipeData.result.hyperlink)
             table.insert(minBuyoutPerQuality, currentMinbuyout)
         end
     elseif recipeData.result.isNoQuality then
-        local currentMinbuyout, _priceError = CraftSimPriceAPI:GetMinBuyoutByItemID(recipeData.result.itemID)
-        priceError = _priceError
+        local currentMinbuyout = CraftSimPriceAPI:GetMinBuyoutByItemID(recipeData.result.itemID)
         table.insert(minBuyoutPerQuality, currentMinbuyout)
     else
         for _, itemID in pairs(recipeData.result.itemIDs) do
-            local currentMinbuyout, _priceError = CraftSimPriceAPI:GetMinBuyoutByItemID(itemID)
-            priceError = _priceError
+            local currentMinbuyout = CraftSimPriceAPI:GetMinBuyoutByItemID(itemID)
             table.insert(minBuyoutPerQuality, currentMinbuyout)
         end
     end
 
-    if priceError and not DEBUG then
-        -- TODO: gather all items with price errors and display some kind of error msg?
-        return nil
-    end
     if DEBUG then
         minBuyoutPerQuality = {40, 50, 60, 70, 80} -- some debug data
     end
@@ -101,48 +83,4 @@ function CraftSimPRICEDATA:GetPriceData(recipeData)
         minBuyoutPerQuality = minBuyoutPerQuality,
         craftingCostPerCraft = craftingCostPerCraft,
     }
-end
-
-function CraftSimTSM:GetMinBuyoutByItemID(itemID)
-    if itemID == nil then
-        --print("itemID nil")
-        return
-    end
-    local _, itemLink = GetItemInfo(itemID) 
-    --print("itemLink: " .. tostring(itemLink))
-    local tsmItemString = ""
-    if itemLink == nil then
-        --print("item link was nil..")
-        tsmItemString = "i:" .. itemID -- manually, if the link was not generated
-    else
-        tsmItemString = TSM_API.ToItemString(itemLink)
-    end
-    
-    local minBuyoutPriceSourceKey = "DBMinBuyout"
-    --print("tsm itemstring: " .. tsmItemString)
-    local minBuyout, error = TSM_API.GetCustomPriceValue(minBuyoutPriceSourceKey, tsmItemString)
-
-    --print("minbuyout: " .. tostring(minBuyout))
-    --print("error: " .. tostring(error))
-
-    return minBuyout
-end
-
-function CraftSimTSM:GetMinBuyoutByItemLink(itemLink)
-    if itemLink == nil then
-        --print("itemID nil")
-        return
-    end
-    --print("by itemLink" .. itemLink)
-    local tsmItemString = TSM_API.ToItemString(itemLink)
-    --local tsmitemString = string.gsub(itemString, "item", "i")
-    --print("tsm itemstring: " .. tsmItemString)
-    -- NOTE: the bonusID 3524 which is often used for df crafted gear is not included in the tsm bonus id map yet
-    local minBuyoutPriceSourceKey = "DBMinBuyout"
-    local minBuyout, error = TSM_API.GetCustomPriceValue(minBuyoutPriceSourceKey, tsmItemString)
-
-    --print("minbuyout: " .. tostring(minBuyout))
-    --print("error: " .. tostring(error))
-
-    return minBuyout
 end

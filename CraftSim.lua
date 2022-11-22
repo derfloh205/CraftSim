@@ -68,13 +68,17 @@ function addon:InitStatWeightFrame()
 	frame:Show()
 end
 
+local priceApiLoaded = false
 function addon:ADDON_LOADED(addon_name)
 	if addon_name == 'CraftSim' then
 		addon:InitStatWeightFrame()
 		addon:HookToEvent()
 	end
-	if addon_name == "TradeSkillMaster" then
-		CraftSimPRICEDATA:InitAvailablePriceAPI()
+	if not priceApiLoaded then
+		if CraftSimPriceAPIs:IsPriceApiAddonLoaded() or CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name) then
+			CraftSimPriceAPIs:InitAvailablePriceAPI()
+			priceApiLoaded = true
+		end
 	end
 end
 

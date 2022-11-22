@@ -6,6 +6,7 @@
 ## Author: genju
 ## Version: 1.0
 
+PriceAPIs.lua
 Const.lua
 DataExport.lua
 PriceData.lua
