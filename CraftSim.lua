@@ -73,9 +73,11 @@ function addon:ADDON_LOADED(addon_name)
 	if addon_name == 'CraftSim' then
 		addon:InitStatWeightFrame()
 		addon:HookToEvent()
+		print("load craftsim")
 	end
 	if not priceApiLoaded then
 		if CraftSimPriceAPIs:IsPriceApiAddonLoaded() or CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name) then
+			print("load price api")
 			CraftSimPriceAPIs:InitAvailablePriceAPI()
 			priceApiLoaded = true
 		end

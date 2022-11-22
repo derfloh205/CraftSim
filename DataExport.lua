@@ -44,7 +44,6 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	local operationInfo = details.operationInfo
 
     if operationInfo == nil then
-        --print("no operation info")
         return nil
     end
 

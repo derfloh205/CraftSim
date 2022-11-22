@@ -9,17 +9,21 @@ local PriceAPIAddonList = {"TradeSkillMaster", "Auctionator"}
 function CraftSimPriceAPIs:IsPriceApiAddonLoaded()
     local loaded = false
     for _, name in pairs(PriceAPIAddonList) do
-        loaded = IsAddOnLoaded(name)
+        if IsAddOnLoaded(name) then
+            return true
+        end
     end
-    return loaded
+    return false
 end
 
 function CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name)
     local loading = false
     for _, name in pairs(PriceAPIAddonList) do
-        loading = addon_name == name
+        if addon_name == name then
+            return true
+        end
     end
-    return loading
+    return false
 end
 
 function CraftSimPriceAPIs:InitAvailablePriceAPI()
