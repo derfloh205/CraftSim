@@ -109,10 +109,10 @@ function CraftSimTSM:GetMinBuyoutByItemID(itemID)
         return
     end
     local _, itemLink = GetItemInfo(itemID) 
-    print("itemLink: " .. tostring(itemLink))
+    --print("itemLink: " .. tostring(itemLink))
     local tsmItemString = ""
     if itemLink == nil then
-        print("item link was nil..")
+        --print("item link was nil..")
         tsmItemString = "i:" .. itemID -- manually, if the link was not generated
     else
         tsmItemString = TSM_API.ToItemString(itemLink)
@@ -133,10 +133,12 @@ function CraftSimTSM:GetMinBuyoutByItemLink(itemLink)
         --print("itemID nil")
         return
     end
-    print("by itemLink" .. itemLink)
+    --print("by itemLink" .. itemLink)
     local tsmItemString = TSM_API.ToItemString(itemLink)
+    --local tsmitemString = string.gsub(itemString, "item", "i")
+    --print("tsm itemstring: " .. tsmItemString)
+    -- NOTE: the bonusID 3524 which is often used for df crafted gear is not included in the tsm bonus id map yet
     local minBuyoutPriceSourceKey = "DBMinBuyout"
-    print("tsm itemstring: " .. tsmItemString)
     local minBuyout, error = TSM_API.GetCustomPriceValue(minBuyoutPriceSourceKey, tsmItemString)
 
     --print("minbuyout: " .. tostring(minBuyout))

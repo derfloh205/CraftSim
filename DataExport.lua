@@ -125,7 +125,8 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)
 		recipeData.result.isGear = true
 		local allocationItemGUID = currentTransaction:GetAllocationItemGUID()
-		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, schematicForm.Reagents, allocationItemGUID)
+		local craftingReagentInfoTbl = currentTransaction:CreateCraftingReagentInfoTbl()
+		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 		recipeData.result.hyperlink = outputItemData.hyperlink
 		local baseIlvl = recipeInfo.itemLevel
 		-- recipeData.result.itemLvLs = {
