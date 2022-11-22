@@ -107,6 +107,14 @@ function addon:PLAYER_LOGIN()
 			else
 				print("CRAFTSIM ERROR: No Recipe Opened")
 			end
+		elseif command == "gear" then
+			if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
+				print("CRAFTSIM: AutoEquip")
+				CraftSimGEARSIM:EquipBestProfessionGearCombination()
+			else
+				print("CRAFTSIM ERROR: No Recipe Opened")
+			end
+			
 		end
 	end
 end

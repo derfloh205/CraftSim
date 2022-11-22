@@ -150,3 +150,65 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	
 	return recipeData
 end
+
+function CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
+	-- TODO: how to get skill increase?
+	local extractedStats = GetItemStats(itemLink)
+	local stats = {}
+
+	for statKey, value in pairs(extractedStats) do
+		if CraftSimCONST.STAT_MAP[statKey] ~= nil then
+			stats[CraftSimCONST.STAT_MAP[statKey]] = value
+		end
+	end
+
+	return stats
+end
+
+function CraftSimDATAEXPORT:GetEquippedProfessionGear()
+	local currentProfession = ProfessionsFrame.professionInfo.parentProfessionName
+	local professionGear = {}
+	
+	for _, slotName in pairs(CraftSimCONST.PROFESSION_INV_SLOTS) do
+		print("checking slot: " .. slotName)
+		local slotID = GetInventorySlotInfo(slotName)
+		local itemLink = GetInventoryItemLink("player", slotID)
+		if itemLink ~= nil then
+			local _, _, _, _, _, _, itemSubType, _, equipSlot = GetItemInfo(itemLink) 
+			if itemSubType == currentProfession then
+				local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
+				print("e ->: " .. itemLink)
+				table.insert(professionGear, {
+					itemLink = itemLink,
+					itemStats = itemStats,
+					equipSlot = equipSlot
+				})
+			end
+		end
+	end
+	return professionGear
+end
+
+function CraftSimDATAEXPORT:GetProfessionGearFromInventory()
+	local currentProfession = ProfessionsFrame.professionInfo.parentProfessionName
+	local professionGear = {}
+
+	for bag=BANK_CONTAINER, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
+		for slot=1,C_Container.GetContainerNumSlots(bag) do
+			local itemLink = C_Container.GetContainerItemLink(bag, slot)
+			if itemLink ~= nil then
+				local _, _, _, _, _, _, itemSubType, _, equipSlot = GetItemInfo(itemLink) 
+				if itemSubType == currentProfession then
+					print("i -> " .. tostring(itemLink))
+					local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
+					table.insert(professionGear, {
+						itemLink = itemLink,
+						itemStats = itemStats,
+						equipSlot = equipSlot
+					})
+				end
+			end
+		end
+	end
+	return professionGear
+end

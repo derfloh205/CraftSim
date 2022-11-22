@@ -60,6 +60,20 @@ function CraftSimUTIL:GetItemIDByLink(hyperlink)
     return foundID
 end
 
+function CraftSimUTIL:EquipItemByLink(link)
+	for bag=BANK_CONTAINER, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
+		for slot=1,GetContainerNumSlots(bag) do
+			local item = GetContainerItemLink(bag, slot)
+			if item and item == link then
+				if CursorHasItem() or CursorHasMoney() or CursorHasSpell() then ClearCursor() end
+				PickupContainerItem(bag, slot)
+				AutoEquipCursorItem()
+				return true
+			end
+		end
+	end
+end
+
 -- thx ketho forum guy
 function CraftSimUTIL:KethoEditBox_Show(text)
     if not KethoEditBox then

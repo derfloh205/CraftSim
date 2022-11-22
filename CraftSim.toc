@@ -6,6 +6,7 @@
 ## Author: genju
 ## Version: 1.0
 
+GearSim.lua
 PriceAPIs.lua
 Const.lua
 DataExport.lua
