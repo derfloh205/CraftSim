@@ -71,27 +71,20 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		local currentSelected = slotAllocations:Accumulate()
 		--print("current selected: " .. currentSelected .. " required: " .. currentSlot.quantityRequired)
 		--print("type: " .. reagentType)
-		if reagentType == REAGENT_TYPE.REQUIRED and currentSelected == currentSlot.quantityRequired then
+		if reagentType == REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
 			recipeData.reagents[slotIndex].itemsInfo = {}
 			for i, reagent in pairs(reagents) do
 				local reagentAllocation = slotAllocations:FindAllocationByReagent(reagent)
-				local allocated = 0
+				local allocations = 0
 				if reagentAllocation ~= nil then
-					allocated = reagentAllocation:GetQuantity()
+					allocations = reagentAllocation:GetQuantity()
 				end
 				local itemInfo = {
 					itemID = reagent.itemID,
-					allocated = allocated
+					allocations = allocations
 				}
 				table.insert(recipeData.reagents[slotIndex].itemsInfo, itemInfo)
 			end
-		else
-			-- full quantity not allocated -> assume quality 1
-			recipeData.reagents[slotIndex].itemsInfo = {}
-			table.insert(recipeData.reagents[slotIndex].itemsInfo, {
-				itemID = reagents[1].itemID,
-				allocated = currentSlot.requiredQuantity
-			})
 		end
 		
 	end
@@ -131,14 +124,24 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	elseif CraftSimUTIL:isRecipeProducingGear(recipeInfo) then
 		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)
 		recipeData.result.isGear = true
+		local allocationItemGUID = currentTransaction:GetAllocationItemGUID()
+		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, schematicForm.Reagents, allocationItemGUID)
+		recipeData.result.hyperlink = outputItemData.hyperlink
 		local baseIlvl = recipeInfo.itemLevel
+		-- recipeData.result.itemLvLs = {
+		-- 	baseIlvl,
+		-- 	baseIlvl + recipeInfo.qualityIlvlBonuses[2],
+		-- 	baseIlvl + recipeInfo.qualityIlvlBonuses[3],
+		-- 	baseIlvl + recipeInfo.qualityIlvlBonuses[4],
+		-- 	baseIlvl + recipeInfo.qualityIlvlBonuses[5]
+		-- }
 		recipeData.result.itemLvLs = {
-			baseIlvl,
-			baseIlvl + recipeInfo.qualityIlvlBonuses[2],
-			baseIlvl + recipeInfo.qualityIlvlBonuses[3],
-			baseIlvl + recipeInfo.qualityIlvlBonuses[4],
-			baseIlvl + recipeInfo.qualityIlvlBonuses[5]
+			recipeInfo.qualityIlvlBonuses[2],
+			recipeInfo.qualityIlvlBonuses[3],
+			recipeInfo.qualityIlvlBonuses[4],
+			recipeInfo.qualityIlvlBonuses[5]
 		}
+		recipeData.result.baseILvL = baseIlvl
 	elseif not recipeInfo.supportsQualities then
 		-- Probably something like transmuting air reagent that creates non equip stuff without qualities
 		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)

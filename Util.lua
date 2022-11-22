@@ -177,6 +177,10 @@ function CraftSimUTIL:isRecipeProducingSoulbound(recipeData)
     else
         itemID = recipeData.result.itemIDs[1]
     end
+    return CraftSimUTIL:isItemSoulbound(itemID)
+end
+
+function CraftSimUTIL:isItemSoulbound(itemID)
     local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID) 
     return bindType == CraftSimCONST.BINDTYPES.SOULBOUND
 end
