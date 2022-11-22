@@ -181,7 +181,8 @@ function CraftSimDATAEXPORT:GetEquippedProfessionGear()
 				table.insert(professionGear, {
 					itemLink = itemLink,
 					itemStats = itemStats,
-					equipSlot = equipSlot
+					equipSlot = equipSlot,
+					isEmptySlot = false
 				})
 			end
 		end
@@ -204,7 +205,8 @@ function CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 					table.insert(professionGear, {
 						itemLink = itemLink,
 						itemStats = itemStats,
-						equipSlot = equipSlot
+						equipSlot = equipSlot,
+						isEmptySlot = false
 					})
 				end
 			end
