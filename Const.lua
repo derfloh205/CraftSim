@@ -30,3 +30,5 @@ CraftSimCONST.STAT_MAP = {
     ITEM_MOD_MULTICRAFT_SHORT = "multicraft",
     ITEM_MOD_CRAFTING_SPEED_SHORT = "craftingspeed"
 }
+
+CraftSimCONST.EMPTY_SLOT_LINK = "empty"

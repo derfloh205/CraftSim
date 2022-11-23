@@ -37,6 +37,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	if recipeInfo.isRecraft then
         --print("is recraft")
+		CraftSimDetailsFrame:Hide()
 		return nil
 	end
 

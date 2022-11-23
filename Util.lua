@@ -57,7 +57,7 @@ end
 
 function CraftSimUTIL:GetItemIDByLink(hyperlink)
     local _, _, foundID = string.find(hyperlink, "item:(%d+)")
-    return foundID
+    return tonumber(foundID)
 end
 
 function CraftSimUTIL:EquipItemByLink(link)
