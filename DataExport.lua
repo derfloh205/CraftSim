@@ -37,7 +37,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	if recipeInfo.isRecraft then
         --print("is recraft")
-		CraftSimDetailsFrame:Hide()
+		CraftSimFRAME:ToggleFrames(false)
 		return nil
 	end
 
@@ -180,6 +180,7 @@ function CraftSimDATAEXPORT:GetEquippedProfessionGear()
 				local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 				--print("e ->: " .. itemLink)
 				table.insert(professionGear, {
+					itemID = CraftSimUTIL:GetItemIDByLink(itemLink),
 					itemLink = itemLink,
 					itemStats = itemStats,
 					equipSlot = equipSlot,
@@ -204,6 +205,7 @@ function CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 					--print("i -> " .. tostring(itemLink))
 					local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 					table.insert(professionGear, {
+						itemID = CraftSimUTIL:GetItemIDByLink(itemLink),
 						itemLink = itemLink,
 						itemStats = itemStats,
 						equipSlot = equipSlot,

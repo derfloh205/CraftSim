@@ -1,5 +1,4 @@
 -- TODO: Localization Differences?
--- TODO: let statweight not work on bind at pickup items!
 -- TODO: error message when no price source is available! Like show the window but with error message
 -- TODO: error message when no full price data is available
 -- TODO: more error handling
@@ -30,48 +29,24 @@ function addon:HookToEvent()
 		--print("Details: SetStats")
 		addon:UpdateStatWeights()
 	end)
+	-- TODO: this is not fired when a recipe is opened like recrafting (without details frame) :(
 end
 
 function addon:UpdateStatWeights()
-	CraftSimDetailsFrame:Show()
+	CraftSimFRAME:ToggleFrames(true)
 	local statWeights = CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
 	if statWeights == CraftSimCONST.ERROR.NO_PRICE_DATA or statWeights == CraftSimCONST.ERROR.NO_RECIPE_DATA then
-		CraftSimDetailsFrame:Hide()
+		CraftSimFRAME:ToggleFrames(false)
 	else
-		CraftSimUTIL:UpdateStatWeightFrameText(statWeights)
+		CraftSimFRAME:UpdateStatWeightFrameText(statWeights)
 	end
-end
-
-
-
-function addon:InitStatWeightFrame()
-	local frame = CreateFrame("frame", "CraftSimDetailsFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
-	frame:SetPoint("BOTTOM",  ProfessionsFrame.CraftingPage.SchematicForm.Details, 0, -80)
-	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-	frame:SetBackdrop({
-		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-		edgeSize = 16,
-		insets = { left = 8, right = 6, top = 8, bottom = 8 },
-	})
-	frame:SetSize(270, 100)
-
-	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.title:SetPoint("CENTER", frame, "CENTER", 0, 27)
-	frame.title:SetText("CraftSim Statweights")
-
-	frame.statText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.statText:SetPoint("LEFT", frame, "LEFT", 30, -5)
-
-	frame.valueText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.valueText:SetPoint("CENTER", frame, "CENTER", 25, -5)
-	frame:Show()
 end
 
 local priceApiLoaded = false
 function addon:ADDON_LOADED(addon_name)
 	if addon_name == 'CraftSim' then
-		addon:InitStatWeightFrame()
+		CraftSimFRAME:InitStatWeightFrame()
+		CraftSimFRAME:InitGearSimFrame()
 		addon:HookToEvent()
 		print("load craftsim")
 	end

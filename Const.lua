@@ -32,3 +32,4 @@ CraftSimCONST.STAT_MAP = {
 }
 
 CraftSimCONST.EMPTY_SLOT_LINK = "empty"
+CraftSimCONST.EMPTY_SLOT_TEXTURE = "Interface\\containerframe\\bagsitemslot2x"

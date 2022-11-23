@@ -146,35 +146,6 @@ function CraftSimUTIL:KethoEditBox_Show(text)
     KethoEditBox:Show()
 end
 
-function CraftSimUTIL:UpdateStatWeightFrameText(statWeights)
-    if statWeights == nil then
-        CraftSimDetailsFrame.statText:SetText("")
-        CraftSimDetailsFrame.valueText:SetText("")
-    else
-        local statText = ""
-        local valueText = ""
-
-        if statWeights.meanProfit then
-            statText = statText .. "Mean Profit:" .. "\n"
-            valueText = valueText .. CraftSimUTIL:round(statWeights.meanProfit, 2) .. "\n"
-        end
-        if statWeights.inspiration then
-            statText = statText .. "Inspiration:" .. "\n"
-            valueText = valueText .. CraftSimUTIL:round(statWeights.inspiration, 3) .. "\n"
-        end
-        if statWeights.multicraft then
-            statText = statText .. "Multicraft:" .. "\n"
-            valueText = valueText .. CraftSimUTIL:round(statWeights.multicraft, 3) .. "\n"
-        end
-        if statWeights.resourcefulness then
-            statText = statText .. "Resourcefulness:"
-            valueText = valueText .. CraftSimUTIL:round(statWeights.resourcefulness, 3)
-        end
-        CraftSimDetailsFrame.statText:SetText(statText)
-        CraftSimDetailsFrame.valueText:SetText(valueText)
-    end
-end
-
 function CraftSimUTIL:isRecipeNotProducingItem(recipeData)
     local hasNoItemID = recipeData.result.itemID == nil and recipeData.result.itemIDs == nil
     return recipeData.baseItemAmount == nil and hasNoItemID

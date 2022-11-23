@@ -119,13 +119,13 @@ end
 function CraftSimSTATS:CalculateStatWeights(recipeData)
     if CraftSimUTIL:isRecipeNotProducingItem(recipeData) then
         --print("Recipe does not produce item")
-        CraftSimDetailsFrame:Hide()
+        CraftSimFRAME:ToggleFrames(false)
         return
     end
 
     if CraftSimUTIL:isRecipeProducingSoulbound(recipeData) then
         --print("Recipe produces soulbound")
-        CraftSimDetailsFrame:Hide()
+        CraftSimFRAME:ToggleFrames(false)
         return
     end
 

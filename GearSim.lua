@@ -50,8 +50,8 @@ function CraftSimGEARSIM:GetValidCombosFromUniqueCombos(uniqueCombos)
         if combo[2].isEmptySlot or combo[3].isEmptySlot then
             table.insert(validCombos, {combo[1], combo[2], combo[3]})
         else
-            local id2 = CraftSimUTIL:GetItemIDByLink(combo[2].itemLink)
-            local id3 = CraftSimUTIL:GetItemIDByLink(combo[3].itemLink)
+            local id2 = combo[2].itemID
+            local id3 = combo[3].itemID
 
             local _, limitName2, limitCount2 = C_Item.GetItemUniquenessByID(id2)
             local _, limitName3, limitCount3 = C_Item.GetItemUniquenessByID(id3)
@@ -235,6 +235,7 @@ function CraftSimGEARSIM:EquipBestProfessionGearCombination()
     end
 
     if bestSimulation ~= nil then
+        CraftSimFRAME:ShowComboItemIcons(bestSimulation.combo)
         print("Best Profit Combination: " .. bestSimulation.meanProfit)
         print("Tool: " .. tostring(bestSimulation.combo[1].itemLink))
         print("Accessory 1: " .. tostring(bestSimulation.combo[2].itemLink))
