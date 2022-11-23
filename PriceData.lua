@@ -2,7 +2,7 @@ CraftSimPRICEDATA = {}
 
 local DEBUG = true
 
-local reagentMinBuyoutPerQualityDebugData = {5, 6, 7, 8, 9}
+local reagentMinBuyoutPerQualityDebugData = {1, 5, 10, 20, 40}
 
 function CraftSimPRICEDATA:GetReagentCosts(recipeData) 
     local reagentCosts = {}
@@ -76,7 +76,7 @@ function CraftSimPRICEDATA:GetPriceData(recipeData)
     end
 
     if DEBUG then
-        minBuyoutPerQuality = {40, 50, 60, 70, 80} -- some debug data
+        minBuyoutPerQuality = {4000000, 5000000, 6000000, 7000000, 8000000} -- some debug data
     end
 
     return {

@@ -134,7 +134,7 @@ function CraftSimSTATS:CalculateStatWeights(recipeData)
         recipeData.baseItemAmount = 1
     end
 
-    print("Calculate Profession Statweights.. ")
+    --print("Calculate Profession Statweights.. ")
     local priceData = CraftSimPRICEDATA:GetPriceData(recipeData)
 
     if priceData == nil then

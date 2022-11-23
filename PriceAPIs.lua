@@ -3,12 +3,10 @@ CraftSimPriceAPIs = {}
 
 CraftSimTSM = {}
 CraftSimAUCTIONATOR = {}
-local AUCTIONATOR_CALLER_ID = "CraftSim"
-local PriceAPIAddonList = {"TradeSkillMaster", "Auctionator"}
 
 function CraftSimPriceAPIs:IsPriceApiAddonLoaded()
     local loaded = false
-    for _, name in pairs(PriceAPIAddonList) do
+    for _, name in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do
         if IsAddOnLoaded(name) then
             return true
         end
@@ -18,7 +16,7 @@ end
 
 function CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name)
     local loading = false
-    for _, name in pairs(PriceAPIAddonList) do
+    for _, name in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do
         if addon_name == name then
             return true
         end
@@ -29,13 +27,19 @@ end
 function CraftSimPriceAPIs:InitAvailablePriceAPI()
     local _, tsmLoaded = IsAddOnLoaded("TradeSkillMaster")
     local _, auctionatorLoaded = IsAddOnLoaded("Auctionator")
-    -- TODO: currently tsm will be prioritized as the price source api.. maybe create an optionspanel with dropdown to let the player choose?
+    -- TODO: currently tsm will be prioritized as the price source api if multiple are loaded.. maybe create an optionspanel with dropdown to let the player choose?
     if tsmLoaded then
-        print("Load TSM API")
+        --print("Load TSM API")
         CraftSimPriceAPI = CraftSimTSM
     elseif auctionatorLoaded then
-        print("Load Auctionator API")
+        --print("Load Auctionator API")
         CraftSimPriceAPI = CraftSimAUCTIONATOR
+    else
+        print("CraftSim: No supported price source found")
+        print("Supported addons are: ")
+        for _, name in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do
+            print(name)
+        end
     end
 end
 
@@ -68,9 +72,9 @@ function CraftSimTSM:GetMinBuyoutByItemLink(itemLink)
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)
-    return Auctionator.API.v1.GetAuctionPriceByItemID(AUCTIONATOR_CALLER_ID, itemID)
+    return Auctionator.API.v1.GetAuctionPriceByItemID(CraftSimCONST.AUCTIONATOR_CALLER_ID , itemID)
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemLink(itemLink)
-    return Auctionator.API.v1.GetAuctionPriceByItemLink(AUCTIONATOR_CALLER_ID, itemLink)
+    return Auctionator.API.v1.GetAuctionPriceByItemLink(CraftSimCONST.AUCTIONATOR_CALLER_ID , itemLink)
 end

@@ -62,11 +62,11 @@ end
 
 function CraftSimUTIL:EquipItemByLink(link)
 	for bag=BANK_CONTAINER, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
-		for slot=1,GetContainerNumSlots(bag) do
-			local item = GetContainerItemLink(bag, slot)
+		for slot=1,C_Container.GetContainerNumSlots(bag) do
+			local item = C_Container.GetContainerItemLink(bag, slot)
 			if item and item == link then
 				if CursorHasItem() or CursorHasMoney() or CursorHasSpell() then ClearCursor() end
-				PickupContainerItem(bag, slot)
+				C_Container.PickupContainerItem(bag, slot)
 				AutoEquipCursorItem()
 				return true
 			end
@@ -175,4 +175,15 @@ function CraftSimUTIL:PrintTable(t)
     for k, v in pairs(t) do
         print(tostring(k) .. ": " .. tostring(v))
     end
+end
+
+function CraftSimUTIL:FormatMoney(copperValue)
+    local absValue = abs(copperValue)
+    local minusText = ""
+
+    if copperValue < 0 then
+        minusText = "-"
+    end
+
+    return minusText .. GetCoinTextureString(absValue)
 end

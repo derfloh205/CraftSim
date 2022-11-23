@@ -11,8 +11,19 @@ addon:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end
 addon:RegisterEvent("ADDON_LOADED")
 addon:RegisterEvent("PLAYER_LOGIN")
 
-local hookedEvent = false
+local hookedToDetailsFrame = false
+-- this should cover the case of switching to a frame that does not show the details like recrafting, from a frame that does
+function addon:HookToDetailsHide()
+	if hookedToDetailsFrame then
+		return
+	end
+	hookedToDetailsFrame = true
+	ProfessionsFrame.CraftingPage.SchematicForm.Details:HookScript("OnHide", function(self)
+		CraftSimFRAME:ToggleFrames(false)
+	end)
+end
 
+local hookedEvent = false
 function addon:HookToEvent()
 	if hookedEvent then
 		return
@@ -28,8 +39,8 @@ function addon:HookToEvent()
 	hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm.Details, "SetStats", function(self)
 		--print("Details: SetStats")
 		addon:UpdateStatWeights()
+		CraftSimGEARSIM:SimulateBestProfessionGearCombination()
 	end)
-	-- TODO: this is not fired when a recipe is opened like recrafting (without details frame) :(
 end
 
 function addon:UpdateStatWeights()
@@ -48,11 +59,12 @@ function addon:ADDON_LOADED(addon_name)
 		CraftSimFRAME:InitStatWeightFrame()
 		CraftSimFRAME:InitGearSimFrame()
 		addon:HookToEvent()
-		print("load craftsim")
+		addon:HookToDetailsHide()
+		--print("load craftsim")
 	end
 	if not priceApiLoaded then
 		if CraftSimPriceAPIs:IsPriceApiAddonLoaded() or CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name) then
-			print("load price api")
+			--print("load price api")
 			CraftSimPriceAPIs:InitAvailablePriceAPI()
 			priceApiLoaded = true
 		end
@@ -79,17 +91,10 @@ function addon:PLAYER_LOGIN()
 				print("CRAFTSIM: Export Data")
 				--CraftSimUTIL:KethoEditBox_Show(CraftSimDATAEXPORT:getExportString())
 				--KethoEditBoxEditBox:HighlightText()
+				-- TODO: refactor to work with new recipeData format
 			else
 				print("CRAFTSIM ERROR: No Recipe Opened")
 			end
-		elseif command == "gear" then
-			if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
-				print("CRAFTSIM: AutoEquip")
-				CraftSimGEARSIM:EquipBestProfessionGearCombination()
-			else
-				print("CRAFTSIM ERROR: No Recipe Opened")
-			end
-			
 		end
 	end
 end

@@ -180,7 +180,7 @@ function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChan
     return modifedRecipeData
 end
 
-function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, priceData)
+function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, priceData, baseProfit)
     local results = {}
 
     for _, gearCombination in pairs(gearCombos) do
@@ -188,9 +188,10 @@ function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeDa
         local modifedRecipeData = CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChanges)
 
         local meanProfit = CraftSimSTATS:getMeanProfit(modifedRecipeData, priceData)
-
+        local profitDiff = meanProfit - baseProfit
         table.insert(results, {
             meanProfit = meanProfit,
+            profitDiff = profitDiff,
             combo = gearCombination
         })
     end
@@ -198,8 +199,7 @@ function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeDa
     return results
 end
 
-function CraftSimGEARSIM:EquipBestProfessionGearCombination()
-    print("start equip sim..")
+function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
     -- unequip all professiontools and just get from inventory for easier equipping/listing?
     local recipeData = CraftSimDATAEXPORT:exportRecipeData()
 
@@ -224,23 +224,51 @@ function CraftSimGEARSIM:EquipBestProfessionGearCombination()
     local priceData = CraftSimPRICEDATA:GetPriceData(recipeData)
     local gearCombos = CraftSimGEARSIM:GetProfessionGearCombinations()
 
-    local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, priceData)
+    local baseProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
+    local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, priceData, baseProfit)
+
+    -- TODO: filter out everything with a profitDiff of zero or less (does not make sense to display as top gear)
+    local validSimulationResults = {}
+    for _, simResult in pairs(simulationResults) do
+        if simResult.profitDiff > 0 then
+            table.insert(validSimulationResults, simResult)
+        end
+    end
 
     local bestSimulation = nil
-    for index, simResult in pairs(simulationResults) do
-        print("Gearcombo " .. index .. " meanProfit: " .. simResult.meanProfit)
-        if bestSimulation == nil or simResult.meanProfit > bestSimulation.meanProfit then
+    for index, simResult in pairs(validSimulationResults) do
+        --print("Gearcombo " .. index .. " meanProfit: " .. simResult.meanProfit)
+        if bestSimulation == nil or simResult.profitDiff > bestSimulation.profitDiff then
             bestSimulation = simResult
         end
     end
 
     if bestSimulation ~= nil then
-        CraftSimFRAME:ShowComboItemIcons(bestSimulation.combo)
-        print("Best Profit Combination: " .. bestSimulation.meanProfit)
-        print("Tool: " .. tostring(bestSimulation.combo[1].itemLink))
-        print("Accessory 1: " .. tostring(bestSimulation.combo[2].itemLink))
-        print("Accessory 1: " .. tostring(bestSimulation.combo[3].itemLink))
+        CraftSimFRAME:FillSimResultData(bestSimulation)
+        --print("Best Profit Combination: " .. bestSimulation.meanProfit)
+        --print("Tool: " .. tostring(bestSimulation.combo[1].itemLink))
+        --print("Accessory 1: " .. tostring(bestSimulation.combo[2].itemLink))
+        --print("Accessory 1: " .. tostring(bestSimulation.combo[3].itemLink))
+    else
+        --print("no best simulation found")
+        CraftSimFRAME:ClearResultData()
     end
 
-    -- TODO: equip the p gear combi of the best simulation
+    -- TODO: equip the p gear combi of the best simulation ?
+end
+
+function CraftSimGEARSIM:EquipBestCombo()
+    local combo = CraftSimSimFrame.currentCombo
+    if combo == nil then
+        --print("no combo yet")
+        return
+    end
+
+    for _, item in pairs(combo) do
+        if not item.isEmptySlot then
+            --print("eqipping: " .. item.itemLink)
+            CraftSimUTIL:EquipItemByLink(item.itemLink)
+            EquipPendingItem(0)
+        end
+    end
 end
