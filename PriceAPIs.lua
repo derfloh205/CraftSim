@@ -7,6 +7,8 @@ CraftSimDEBUG_PRICE_API = {}
 
 CraftSimPriceAPIs.DEBUG = true
 
+CraftSimDebugData = CraftSimDebugData or {}
+
 function CraftSimPriceAPIs:IsPriceApiAddonLoaded()
     local loaded = false
     for _, name in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do
@@ -83,22 +85,29 @@ function CraftSimAUCTIONATOR:GetMinBuyoutByItemLink(itemLink)
 end
 
 function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
-    local minBuyout = CraftSimDEBUG_DATA.ITEMID_PRICE_DATA[itemID]
-    if minBuyout == nil then
-        local _, itemLink = GetItemInfo(itemID)
-        print("PriceData not in ItemID Debugdata for: " .. itemLink)
-        return 1
+    local debugItem = CraftSimDebugData[itemID]
+    if debugItem == nil then
+        local itemName = GetItemInfo(itemID)
+        print("PriceData not in ItemID Debugdata for: " .. itemName .. " .. creating")
+        CraftSimDebugData[itemID] = {
+            itemName = itemName,
+            minBuyout = 1
+        }
     end
-    return CraftSimDEBUG_DATA.ITEMID_PRICE_DATA[itemID]
+    return CraftSimDebugData[itemID].minBuyout
 end
 
 function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemLink(itemLink)
     local itemString = select(3, strfind(itemLink, "|H(.+)%["))
-    print("itemString: " .. itemString)
-    local minBuyout = CraftSimDEBUG_DATA.ITEMSTRING_PRICE_DATA[itemString]
-    if minBuyout == nil then
-        print("PriceData not in ItemString Debugdata for: " .. itemLink)
-        return 1
+    --print("itemString: " .. itemString)
+    local debugItem = CraftSimDebugData[itemString]
+    if debugItem == nil then
+        local itemName = GetItemInfo(itemLink)
+        print("PriceData not in ItemString Debugdata for: " .. itemName .. " .. creating")
+        CraftSimDebugData[itemString] = {
+            itemName = itemName,
+            minBuyout = 1
+        }
     end
-    return CraftSimDEBUG_DATA.ITEMSTRING_PRICE_DATA[itemString]
+    return CraftSimDebugData[itemString].minBuyout
 end

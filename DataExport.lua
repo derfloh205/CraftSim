@@ -15,19 +15,14 @@ end
 
 function CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
 	-- TODO: is this consistent enough?
-	print("get different quality links..")
 	local linksByQuality = {}
 	local itemString = select(3, strfind(itemLink, "|H(.+)%["))
-	print("current link: " .. itemLink)
-	print("itemstring: " .. itemString)
 	for qualityID = 4, 8, 1 do
 		local parts = { string.split(":", itemString) }
 		
 		parts[#parts-5] = qualityID
-		print("last part: " .. parts[#parts-1])
 		local newString = table.concat(parts, ":")
 		local _, link = GetItemInfo(newString)
-		print("generated link " .. link)
 		table.insert(linksByQuality, link)
 	 end
 	 return linksByQuality
