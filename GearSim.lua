@@ -1,7 +1,7 @@
 CraftSimGEARSIM = {}
 
 -- TODO: get professionNr from somewhere to know which slots to access - check
--- TODO: consider items in profession slots for simulation
+-- TODO: consider items in profession slots for simulation -- check
 -- TODO: when equipping the top gear, first unequip all other profession gear - check
 -- TODO: remove statgain from equipped profession items before simulation top gear, the base sim should be without items
 -- ......this prevents the stats from the gear combos to be added on top of already equipped gear..
@@ -234,6 +234,32 @@ function CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
     end
 end
 
+-- DEBUG
+function CraftSimGEARSIM:DeductCurrentItemStats(recipeData)
+    local itemStats = CraftSimDATAEXPORT:GetCurrentProfessionItemStats()
+    local noItemRecipeData = CopyTable(recipeData)
+
+    if noItemRecipeData.stats.inspiration ~= nil ~= nil then
+        noItemRecipeData.stats.inspiration.value = noItemRecipeData.stats.inspiration.value - itemStats.inspiration
+        noItemRecipeData.stats.inspiration.percent = noItemRecipeData.stats.inspiration.percent - CraftSimUTIL:GetInspirationPercentByStat(itemStats.inspiration)*100
+    end
+    if noItemRecipeData.stats.multicraft ~= nil then
+        noItemRecipeData.stats.multicraft.value = noItemRecipeData.stats.multicraft.value - CraftSimUTIL:GetMulticraftPercentByStat(itemStats.multicraft)*100
+    end
+    if noItemRecipeData.stats.resourcefulness ~= nil then
+        noItemRecipeData.stats.resourcefulness.value = noItemRecipeData.stats.resourcefulness.value - CraftSimUTIL:GetResourcefulnessPercentByStat(itemStats.resourcefulness)*100
+    end
+    if noItemRecipeData.stats.craftingspeed ~= nil then
+        -- TODO: get modifier!!!
+        noItemRecipeData.stats.craftingspeed.value = noItemRecipeData.stats.craftingspeed.value --- CraftSimUTIL:GetInspirationPercentByStat(itemStats.craftingspeed)*100
+    end
+    if noItemRecipeData.stats.skill ~= nil then
+        noItemRecipeData.stats.skill = noItemRecipeData.stats.skill - itemStats.skill
+    end
+
+    return noItemRecipeData
+end
+
 function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
     -- unequip all professiontools and just get from inventory for easier equipping/listing?
     local recipeData = CraftSimDATAEXPORT:exportRecipeData()
@@ -258,9 +284,12 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
 
     local priceData = CraftSimPRICEDATA:GetPriceData(recipeData)
     local gearCombos = CraftSimGEARSIM:GetProfessionGearCombinations()
+    local noItemsRecipeData = CraftSimGEARSIM:DeductCurrentItemStats(recipeData)
 
-    local baseProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
-    local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, priceData, baseProfit)
+    local currentComboMeanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
+    local noItemMeanProfit = CraftSimSTATS:getMeanProfit(noItemsRecipeData, priceData)
+    print("noitemmeanprofit: " .. noItemMeanProfit / 10000)
+    local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, priceData, currentComboMeanProfit)
 
     -- TODO: filter out everything with a profitDiff of zero or less (does not make sense to display as top gear)
     local validSimulationResults = {}

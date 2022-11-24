@@ -160,11 +160,48 @@ function CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 		end
 	end
 
+	stats.skill = 0 -- TODO
+
+	return stats
+end
+
+function CraftSimDATAEXPORT:GetCurrentProfessionItemStats()
+	local stats = {
+		inspiration = 0,
+		multicraft = 0,
+		resourcefulness = 0,
+		craftingspeed = 0,
+		skill = 0
+	}
+	local currentProfessionSlots = CraftSimFRAME:GetProfessionEquipSlots()
+
+	for _, slotName in pairs(currentProfessionSlots) do
+		local slotID = GetInventorySlotInfo(slotName)
+		local itemLink = GetInventoryItemLink("player", slotID)
+		if itemLink ~= nil then
+			local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
+			if itemStats.inspiration then
+				stats.inspiration = stats.inspiration + itemStats.inspiration
+			end
+			if itemStats.multicraft then
+				stats.multicraft = stats.multicraft + itemStats.multicraft
+			end
+			if itemStats.resourcefulness then
+				stats.resourcefulness = stats.resourcefulness + itemStats.resourcefulness
+			end
+			if itemStats.craftingspeed then
+				stats.craftingspeed = stats.craftingspeed + itemStats.craftingspeed
+			end
+			if itemStats.skill then
+				stats.skill = stats.skill + itemStats.skill
+			end
+		end
+	end
+
 	return stats
 end
 
 function CraftSimDATAEXPORT:GetEquippedProfessionGear()
-	local currentProfession = ProfessionsFrame.professionInfo.parentProfessionName
 	local professionGear = {}
 	local currentProfessionSlots = CraftSimFRAME:GetProfessionEquipSlots()
 	
@@ -173,7 +210,6 @@ function CraftSimDATAEXPORT:GetEquippedProfessionGear()
 		local slotID = GetInventorySlotInfo(slotName)
 		local itemLink = GetInventoryItemLink("player", slotID)
 		if itemLink ~= nil then
-			local _, _, _, _, _, _, itemSubType, _, equipSlot = GetItemInfo(itemLink) 
 			local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 			--print("e ->: " .. itemLink)
 			table.insert(professionGear, {
