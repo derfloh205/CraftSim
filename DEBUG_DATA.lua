@@ -2,7 +2,7 @@ CraftSimDEBUG_DATA = {}
 
 -- itemID -> minBuyout
 CraftSimDEBUG_DATA.ITEMID_PRICE_DATA = {
-    -- REAGENTS --
+    --- REAGENTS ---
     -- Draconic Vial
     [191474] = 10000, -- 1g Vendor
     [191475] = 20000,
@@ -22,7 +22,8 @@ CraftSimDEBUG_DATA.ITEMID_PRICE_DATA = {
     -- Rousing Frost
     [190328] = 100000,
 
-    -- FINISHED ITEMS --
+    --- FINISHED ITEMS ---
+    -- Alchemy
     -- Refreshing Healing Potion
     [191378] = 50000,
     [191379] = 60000,
@@ -34,6 +35,12 @@ CraftSimDEBUG_DATA.ITEMID_PRICE_DATA = {
 }
 
 -- ?? -> minBuyout
-CraftSimDEBUG_DATA.ITEMSTRING_PRICE_DATA = {
-    somestring = 100
-}
+CraftSimDEBUG_DATA.ITEMSTRING_PRICE_DATA = {}
+--- FINISHED ITEMS ---
+-- Blacksmithing
+-- Draconium Defender (Blue Shield)
+CraftSimDEBUG_DATA.ITEMSTRING_PRICE_DATA["item:201322::::::::70:72::13:1:3524:2:40:825:38:4:::::"] = 5000000
+CraftSimDEBUG_DATA.ITEMSTRING_PRICE_DATA["item:201322::::::::70:72::13:1:3524:2:40:825:38:5:::::"] = 6000000
+CraftSimDEBUG_DATA.ITEMSTRING_PRICE_DATA["item:201322::::::::70:72::13:1:3524:2:40:825:38:6:::::"] = 7000000
+CraftSimDEBUG_DATA.ITEMSTRING_PRICE_DATA["item:201322::::::::70:72::13:1:3524:2:40:825:38:7:::::"] = 8000000
+CraftSimDEBUG_DATA.ITEMSTRING_PRICE_DATA["item:201322::::::::70:72::13:1:3524:2:40:825:38:8:::::"] = 9000000

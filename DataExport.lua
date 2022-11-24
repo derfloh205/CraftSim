@@ -13,6 +13,26 @@ function CraftSimDATAEXPORT:getExportString()
 	return exportString
 end
 
+function CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
+	-- TODO: is this consistent enough?
+	print("get different quality links..")
+	local linksByQuality = {}
+	local itemString = select(3, strfind(itemLink, "|H(.+)%["))
+	print("current link: " .. itemLink)
+	print("itemstring: " .. itemString)
+	for qualityID = 4, 8, 1 do
+		local parts = { string.split(":", itemString) }
+		
+		parts[#parts-5] = qualityID
+		print("last part: " .. parts[#parts-1])
+		local newString = table.concat(parts, ":")
+		local _, link = GetItemInfo(newString)
+		print("generated link " .. link)
+		table.insert(linksByQuality, link)
+	 end
+	 return linksByQuality
+end
+
 function CraftSimDATAEXPORT:exportRecipeData()
 	local recipeData = {}
 
@@ -102,8 +122,8 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	recipeData.expectedQuality = details.craftingQuality
 	recipeData.maxQuality = recipeInfo.maxQuality
 	recipeData.baseItemAmount = schematicForm.OutputIcon.Count:GetText()
-	recipeData.recipeDifficulty = operationInfo.baseDifficulty -- TODO: is .bonusDifficulty needed here for anything? maybe this is for reagents?
-	recipeData.stats.skill = operationInfo.baseSkill -- TODO: is .bonusSkill needed here for anything? maybe this is for reagents?
+	recipeData.recipeDifficulty = operationInfo.baseDifficulty + operationInfo.bonusDifficulty
+	recipeData.stats.skill = operationInfo.baseSkill + operationInfo.bonusSkill-- TODO: is .bonusSkill needed here for anything? maybe this is for reagents?
 	recipeData.result = {}
 
 	if recipeInfo.qualityItemIDs then
@@ -123,19 +143,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 		recipeData.result.hyperlink = outputItemData.hyperlink
 		local baseIlvl = recipeInfo.itemLevel
-		-- recipeData.result.itemLvLs = {
-		-- 	baseIlvl,
-		-- 	baseIlvl + recipeInfo.qualityIlvlBonuses[2],
-		-- 	baseIlvl + recipeInfo.qualityIlvlBonuses[3],
-		-- 	baseIlvl + recipeInfo.qualityIlvlBonuses[4],
-		-- 	baseIlvl + recipeInfo.qualityIlvlBonuses[5]
-		-- }
-		recipeData.result.itemLvLs = {
-			recipeInfo.qualityIlvlBonuses[2],
-			recipeInfo.qualityIlvlBonuses[3],
-			recipeInfo.qualityIlvlBonuses[4],
-			recipeInfo.qualityIlvlBonuses[5]
-		}
+		recipeData.result.itemQualityLinks = CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(outputItemData.hyperlink)
 		recipeData.result.baseILvL = baseIlvl
 	elseif not recipeInfo.supportsQualities then
 		-- Probably something like transmuting air reagent that creates non equip stuff without qualities
@@ -163,24 +171,23 @@ end
 function CraftSimDATAEXPORT:GetEquippedProfessionGear()
 	local currentProfession = ProfessionsFrame.professionInfo.parentProfessionName
 	local professionGear = {}
+	local currentProfessionSlots = CraftSimFRAME:GetProfessionEquipSlots()
 	
-	for _, slotName in pairs(CraftSimCONST.PROFESSION_INV_SLOTS) do
+	for _, slotName in pairs(currentProfessionSlots) do
 		--print("checking slot: " .. slotName)
 		local slotID = GetInventorySlotInfo(slotName)
 		local itemLink = GetInventoryItemLink("player", slotID)
 		if itemLink ~= nil then
 			local _, _, _, _, _, _, itemSubType, _, equipSlot = GetItemInfo(itemLink) 
-			if itemSubType == currentProfession then
-				local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
-				--print("e ->: " .. itemLink)
-				table.insert(professionGear, {
-					itemID = CraftSimUTIL:GetItemIDByLink(itemLink),
-					itemLink = itemLink,
-					itemStats = itemStats,
-					equipSlot = equipSlot,
-					isEmptySlot = false
-				})
-			end
+			local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
+			--print("e ->: " .. itemLink)
+			table.insert(professionGear, {
+				itemID = CraftSimUTIL:GetItemIDByLink(itemLink),
+				itemLink = itemLink,
+				itemStats = itemStats,
+				equipSlot = equipSlot,
+				isEmptySlot = false
+			})
 		end
 	end
 	return professionGear

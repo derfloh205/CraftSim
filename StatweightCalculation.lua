@@ -169,7 +169,6 @@ function CraftSimSTATS:CalculateStatWeights(recipeData)
     end
     local calculationResult = {}
     calculationResult.meanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
-    print("calculated mean profit for base sim in stat weights: " .. calculationResult.meanProfit)
 
     calculationResult.inspiration = CraftSimSTATS:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
     calculationResult.multicraft = CraftSimSTATS:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)

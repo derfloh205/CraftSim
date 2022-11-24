@@ -1,5 +1,7 @@
 CraftSimPRICEDATA = {}
 
+-- TODO: how to get possible different itemLinks / strings of different ItemUpgrade with different ilvl?
+
 function CraftSimPRICEDATA:GetReagentCosts(recipeData) 
     local reagentCosts = {}
     local priceError = nil
@@ -65,8 +67,9 @@ function CraftSimPRICEDATA:GetPriceData(recipeData)
     local reagentsPriceByQuality = CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
     local minBuyoutPerQuality = {}
     if recipeData.result.isGear then
-        for _, itemLvL in pairs(recipeData.result.itemLvLs) do
-            local currentMinbuyout = CraftSimPriceAPI:GetMinBuyoutByItemLink(recipeData.result.hyperlink)
+        for _, itemLink in pairs(recipeData.result.itemQualityLinks) do
+            --print("get price data for result")
+            local currentMinbuyout = CraftSimPriceAPI:GetMinBuyoutByItemLink(itemLink)
             table.insert(minBuyoutPerQuality, currentMinbuyout)
         end
     elseif recipeData.result.isNoQuality then

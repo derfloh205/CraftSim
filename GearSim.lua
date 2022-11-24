@@ -1,5 +1,18 @@
 CraftSimGEARSIM = {}
 
+-- TODO: get professionNr from somewhere to know which slots to access - check
+-- TODO: consider items in profession slots for simulation
+-- TODO: when equipping the top gear, first unequip all other profession gear - check
+-- TODO: remove statgain from equipped profession items before simulation top gear, the base sim should be without items
+-- ......this prevents the stats from the gear combos to be added on top of already equipped gear..
+-- TODO: but keep simulation with equipped items for comparison reasons
+-- ......essentially, the current equipped items are one of the combos
+-- ......so the goal is to have the baseSim.. the current Combo.. and the other combos
+-- ......and when the equipped items are considered in the sim, after the sim, if the best combo is also the current combo this can be displayed!
+-- TODO: the profit diff then can be shown between current combo and top combo
+-- TODO: show statDiff to current combo.. this works when the modifiedRecipeData of the bestSim is based on the baseSim without gear
+-- ...... then I got the plain stats of the bestSim and the plain stats of the current Sim to compare
+
 function CraftSimGEARSIM:GetUniqueCombosFromAllPermutations(totalCombos)
     local uniqueCombos = {}
     local combinationList = {}
@@ -68,25 +81,30 @@ function CraftSimGEARSIM:GetValidCombosFromUniqueCombos(uniqueCombos)
 end
 
 function CraftSimGEARSIM:GetProfessionGearCombinations()
-    -- local equippedGear = CraftSimDATAEXPORT:GetEquippedProfessionGear()
-    -- APPROACH: consider inventory only for now
+    local equippedGear = CraftSimDATAEXPORT:GetEquippedProfessionGear()
     local inventoryGear =  CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 
+    local allGear = inventoryGear
+
+    for _, gear in pairs(equippedGear) do
+        table.insert(allGear, gear)
+    end
+
     -- remove duplicated items (with same stats, this means the link should be the same..)
-    local setInventoryGear = {}
-    for _, gear in pairs(inventoryGear) do
-        if setInventoryGear[gear.itemLink] == nil then
-            setInventoryGear[gear.itemLink] = gear
+    local uniqueGear = {}
+    for _, gear in pairs(allGear) do
+        if uniqueGear[gear.itemLink] == nil then
+            uniqueGear[gear.itemLink] = gear
         end
     end
-    inventoryGear = setInventoryGear
+    allGear = uniqueGear
 
     -- an empty slot needs to be included to factor in the possibility of an empty slot needed if all combos are not valid
     -- e.g. the cases of the player not having enough items to fully equip
     local gearSlotItems = {{isEmptySlot = true, itemLink = CraftSimCONST.EMPTY_SLOT_LINK}}
     local toolSlotItems = {{isEmptySlot = true,  itemLink = CraftSimCONST.EMPTY_SLOT_LINK}}
 
-    for _, gear in pairs(inventoryGear) do
+    for _, gear in pairs(allGear) do
         if gear.equipSlot == CraftSimCONST.PROFESSIONTOOL_INV_TYPES.GEAR then
             table.insert(gearSlotItems, gear)
         elseif gear.equipSlot == CraftSimCONST.PROFESSIONTOOL_INV_TYPES.TOOL then
@@ -185,19 +203,35 @@ function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeDa
 
     for _, gearCombination in pairs(gearCombos) do
         local statChanges = CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
-        local modifedRecipeData = CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChanges)
+        local modifiedRecipeData = CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChanges)
 
-        local meanProfit = CraftSimSTATS:getMeanProfit(modifedRecipeData, priceData)
+        local meanProfit = CraftSimSTATS:getMeanProfit(modifiedRecipeData, priceData)
         local profitDiff = meanProfit - baseProfit
         table.insert(results, {
             meanProfit = meanProfit,
             profitDiff = profitDiff,
             combo = gearCombination,
-            statChanges = statChanges
+            modifiedRecipeData = modifiedRecipeData
         })
     end
 
     return results
+end
+
+function CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
+    bestSimulation.statDiff = {}
+    if bestSimulation.modifiedRecipeData.stats.inspiration ~= nil then
+        bestSimulation.statDiff.inspiration = bestSimulation.modifiedRecipeData.stats.inspiration.percent - recipeData.stats.inspiration.percent
+    end
+    if bestSimulation.modifiedRecipeData.stats.resourcefulness ~= nil then
+        bestSimulation.statDiff.resourcefulness = bestSimulation.modifiedRecipeData.stats.resourcefulness.percent - recipeData.stats.resourcefulness.percent
+    end
+    if bestSimulation.modifiedRecipeData.stats.resourcefulness ~= nil then
+        bestSimulation.statDiff.resourcefulness = bestSimulation.modifiedRecipeData.stats.resourcefulness.percent - recipeData.stats.resourcefulness.percent
+    end
+    if bestSimulation.modifiedRecipeData.stats.skill ~= nil then
+        bestSimulation.statDiff.skill = bestSimulation.modifiedRecipeData.stats.skill - recipeData.stats.skill
+    end
 end
 
 function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
@@ -244,12 +278,18 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
         end
     end
 
+    
+
     if bestSimulation ~= nil then
+        CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
         CraftSimFRAME:FillSimResultData(bestSimulation)
-        print("Best Profit Combination: " .. bestSimulation.meanProfit)
-        print("Tool: " .. tostring(bestSimulation.combo[1].itemLink))
-        print("Accessory 1: " .. tostring(bestSimulation.combo[2].itemLink))
-        print("Accessory 1: " .. tostring(bestSimulation.combo[3].itemLink))
+        -- print("Best Profit Combination: " .. bestSimulation.meanProfit)
+        -- print("Tool: " .. tostring(bestSimulation.combo[1].itemLink))
+        -- print("Accessory 1: " .. tostring(bestSimulation.combo[2].itemLink))
+        -- print("Accessory 1: " .. tostring(bestSimulation.combo[3].itemLink))
+        -- CraftSimUTIL:PrintTable(bestSimulation.modifiedRecipeData.stats.resourcefulness)
+        -- print("-- base:")
+        -- CraftSimUTIL:PrintTable(recipeData.stats.resourcefulness)
     else
         --print("no best simulation found")
         CraftSimFRAME:ClearResultData()
@@ -258,12 +298,30 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
     -- TODO: equip the p gear combi of the best simulation ?
 end
 
-function CraftSimGEARSIM:EquipBestCombo()
+function CraftSimGEARSIM:UnequipProfessionItems()
+    local professionSlots = CraftSimFRAME:GetProfessionEquipSlots()
+    -- TODO: factor in remaining inventory space?
+
+    for _, currentSlot in pairs(professionSlots) do
+        PickupInventoryItem(GetInventorySlotInfo(currentSlot))
+        PutItemInBackpack();
+    end
+end
+
+function CraftSimGEARSIM:EquipTopGear()
     local combo = CraftSimSimFrame.currentCombo
     if combo == nil then
         --print("no combo yet")
         return
     end
+    -- first unequip everything
+    CraftSimGEARSIM:UnequipProfessionItems()
+    -- then wait a bit to let it unequip
+    C_Timer.After(1, CraftSimGEARSIM.EquipBestCombo)
+end
+
+function CraftSimGEARSIM:EquipBestCombo()
+    local combo = CraftSimSimFrame.currentCombo
 
     for _, item in pairs(combo) do
         if not item.isEmptySlot then

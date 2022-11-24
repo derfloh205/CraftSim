@@ -88,7 +88,7 @@ function CraftSimFRAME:InitGearSimFrame()
 	frame.equipButton:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 40)	
 	frame.equipButton:SetText("Equip")
     frame.equipButton:SetScript("OnClick", function(self) 
-        CraftSimGEARSIM:EquipBestCombo()
+        CraftSimGEARSIM:EquipTopGear()
     end)
 
     frame.profitText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -143,17 +143,41 @@ function CraftSimFRAME:ShowComboItemIcons(professionGearCombo)
     end
 end
 
+function CraftSimFRAME:GetProfessionEquipSlots()
+    if ProfessionsFrame.CraftingPage.Prof0Gear0Slot:IsVisible() then
+        return CraftSimCONST.PROFESSION_INV_SLOTS[1]
+    elseif ProfessionsFrame.CraftingPage.Prof1Gear0Slot:IsVisible() then
+        return CraftSimCONST.PROFESSION_INV_SLOTS[2]
+    else
+        print("no profession tool slot visible.. what is going on?")
+    end
+end
+
+function CraftSimFRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
+    if statDiff == nil then
+        statDiff = 0
+    end
+    local sign = "+"
+    if statDiff < 0 then
+        sign = ""
+    end
+    if suffix == nil then
+        suffix = ""
+    end
+    return sign .. CraftSimUTIL:round(statDiff, roundTo) .. suffix
+end
+
 function CraftSimFRAME:FillSimResultData(bestSimulation)
     CraftSimFRAME:ShowComboItemIcons(bestSimulation.combo)
     CraftSimSimFrame.currentCombo = bestSimulation.combo
     -- TODO: maybe show in red or smth if negative
-    CraftSimSimFrame.profitText:SetText("Profit Difference\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff))
+    CraftSimSimFrame.profitText:SetText("Profit Difference / Craft\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff))
     CraftSimTopGearEquipButton:SetEnabled(true)
 
-    CraftSimSimFrame.statDiff.inspiration:SetText("Inspiration: +" .. CraftSimUTIL:GetInspirationPercentByStat(bestSimulation.statChanges.inspiration)*100 .. "%")
-    CraftSimSimFrame.statDiff.multicraft:SetText("Multicraft: +" .. CraftSimUTIL:GetMulticraftPercentByStat(bestSimulation.statChanges.multicraft)*100 .. "%")
-    CraftSimSimFrame.statDiff.resourcefulness:SetText("Resourcefulness: +" .. CraftSimUTIL:GetResourcefulnessPercentByStat(bestSimulation.statChanges.resourcefulness)*100 .. "%")
-    CraftSimSimFrame.statDiff.skill:SetText("Skill: +" .. bestSimulation.statChanges.skill)
+    CraftSimSimFrame.statDiff.inspiration:SetText("Inspiration: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.inspiration, 2, "%"))
+    CraftSimSimFrame.statDiff.multicraft:SetText("Multicraft: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.multicraft, 2, "%"))
+    CraftSimSimFrame.statDiff.resourcefulness:SetText("Resourcefulness: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.resourcefulness, 2, "%"))
+    CraftSimSimFrame.statDiff.skill:SetText("Skill: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.skill, 0))
 end
 
 function CraftSimFRAME:ClearResultData()
