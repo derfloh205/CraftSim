@@ -1,8 +1,8 @@
 CraftSimUTIL = {}
 
-local inspirationFactor = 0.01
-local multicraftFactor = 0.009
-local resourcefulnessFactor = 0.0111
+local inspirationFactor = 0.001
+local multicraftFactor = 0.0009
+local resourcefulnessFactor = 0.00111
 
 function CraftSimUTIL:GetInspirationStatByPercent(percent) 
     if percent == nil then 

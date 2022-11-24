@@ -159,16 +159,16 @@ function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChan
     local modifedRecipeData = CopyTable(recipeData)
     if modifedRecipeData.stats.inspiration ~= nil then
         modifedRecipeData.stats.inspiration.value = modifedRecipeData.stats.inspiration.value + statChanges.inspiration
-        modifedRecipeData.stats.inspiration.percent = modifedRecipeData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statChanges.inspiration) 
+        modifedRecipeData.stats.inspiration.percent = modifedRecipeData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statChanges.inspiration)*100 
     end
     if modifedRecipeData.stats.multicraft ~= nil then
         modifedRecipeData.stats.multicraft.value = modifedRecipeData.stats.multicraft.value + statChanges.multicraft
-        modifedRecipeData.stats.multicraft.percent = modifedRecipeData.stats.multicraft.percent + CraftSimUTIL:GetMulticraftPercentByStat(statChanges.multicraft) 
+        modifedRecipeData.stats.multicraft.percent = modifedRecipeData.stats.multicraft.percent + CraftSimUTIL:GetMulticraftPercentByStat(statChanges.multicraft)*100 
     end
     if modifedRecipeData.stats.resourcefulness ~= nil then
         modifedRecipeData.stats.resourcefulness.value = modifedRecipeData.stats.resourcefulness.value + statChanges.resourcefulness
         modifedRecipeData.stats.resourcefulness.percent = modifedRecipeData.stats.resourcefulness.percent + 
-            CraftSimUTIL:GetResourcefulnessPercentByStat(statChanges.resourcefulness) 
+            CraftSimUTIL:GetResourcefulnessPercentByStat(statChanges.resourcefulness)*100 
     end
     -- TODO: check if this is already included in stat table ?
     -- TODO: to make changes of this have impact, need to evaluate the expectedQuality by player skill and quality thresholds..
@@ -192,7 +192,8 @@ function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeDa
         table.insert(results, {
             meanProfit = meanProfit,
             profitDiff = profitDiff,
-            combo = gearCombination
+            combo = gearCombination,
+            statChanges = statChanges
         })
     end
 
@@ -245,10 +246,10 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
 
     if bestSimulation ~= nil then
         CraftSimFRAME:FillSimResultData(bestSimulation)
-        --print("Best Profit Combination: " .. bestSimulation.meanProfit)
-        --print("Tool: " .. tostring(bestSimulation.combo[1].itemLink))
-        --print("Accessory 1: " .. tostring(bestSimulation.combo[2].itemLink))
-        --print("Accessory 1: " .. tostring(bestSimulation.combo[3].itemLink))
+        print("Best Profit Combination: " .. bestSimulation.meanProfit)
+        print("Tool: " .. tostring(bestSimulation.combo[1].itemLink))
+        print("Accessory 1: " .. tostring(bestSimulation.combo[2].itemLink))
+        print("Accessory 1: " .. tostring(bestSimulation.combo[3].itemLink))
     else
         --print("no best simulation found")
         CraftSimFRAME:ClearResultData()

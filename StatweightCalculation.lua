@@ -108,7 +108,7 @@ function CraftSimSTATS:getInspirationWeight(recipeData, priceData, baseMeanProfi
         return nil
     end
     local modifiedData = CopyTable(recipeData)
-    modifiedData.stats.inspiration.percent = modifiedData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statIncreaseFactor)
+    modifiedData.stats.inspiration.percent = modifiedData.stats.inspiration.percent + (CraftSimUTIL:GetInspirationPercentByStat(statIncreaseFactor) * 100)
     
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
 end
@@ -119,7 +119,7 @@ function CraftSimSTATS:getMulticraftWeight(recipeData, priceData, baseMeanProfit
         return nil
     end
     local modifiedData = CopyTable(recipeData)
-    modifiedData.stats.multicraft.percent = modifiedData.stats.multicraft.percent + CraftSimUTIL:GetMulticraftPercentByStat(statIncreaseFactor)
+    modifiedData.stats.multicraft.percent = modifiedData.stats.multicraft.percent + (CraftSimUTIL:GetMulticraftPercentByStat(statIncreaseFactor) * 100)
     
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
 end
@@ -130,7 +130,7 @@ function CraftSimSTATS:getResourcefulnessWeight(recipeData, priceData, baseMeanP
         return nil
     end
     local modifiedData = CopyTable(recipeData)
-    modifiedData.stats.resourcefulness.percent = modifiedData.stats.resourcefulness.percent + CraftSimUTIL:GetResourcefulnessPercentByStat(statIncreaseFactor)
+    modifiedData.stats.resourcefulness.percent = modifiedData.stats.resourcefulness.percent + (CraftSimUTIL:GetResourcefulnessPercentByStat(statIncreaseFactor) * 100)
     
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
 end
@@ -169,6 +169,7 @@ function CraftSimSTATS:CalculateStatWeights(recipeData)
     end
     local calculationResult = {}
     calculationResult.meanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
+    print("calculated mean profit for base sim in stat weights: " .. calculationResult.meanProfit)
 
     calculationResult.inspiration = CraftSimSTATS:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
     calculationResult.multicraft = CraftSimSTATS:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)
