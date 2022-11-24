@@ -36,6 +36,7 @@ function addon:HookToEvent()
 	-- it is also fired when a recipe is opened or changed
 	-- it is also fired multi times when a reagent is changed but like 5 or 6 times at most, this should not be a performance problem
 	-- TODO: check if there are any reagents that impact profit and do not change a stat??
+	-- Note: OnShow also 'works', it triggers but there is no recipe info yet, so we need something that also triggers and comes after OnShow..
 	hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm.Details, "SetStats", function(self)
 		--print("Details: SetStats")
 		addon:UpdateStatWeights()

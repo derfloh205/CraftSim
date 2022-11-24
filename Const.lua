@@ -37,3 +37,9 @@ CraftSimCONST.EMPTY_SLOT_TEXTURE = "Interface\\containerframe\\bagsitemslot2x"
 CraftSimCONST.SUPPORTED_PRICE_API_ADDONS = {"TradeSkillMaster", "Auctionator"}
 
 CraftSimCONST.AUCTIONATOR_CALLER_ID = "CraftSim"
+
+CraftSimCONST.REAGENT_TYPE = {
+	OPTIONAL = 0,
+	REQUIRED = 1,
+	FINISHING_REAGENT = 2
+}

@@ -56,8 +56,25 @@ function CraftSimPRICEDATA:GetTotalCraftingCost(recipeData)
     return totalCraftingCost
 end
 
+function CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
+    local reagentQualityPrices = {}
+
+    for reagentIndex, reagent in pairs(recipeData.reagents) do
+        if reagent.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
+            local reagentPriceData = CopyTable(reagent.itemsInfo)
+            for _, itemInfo in pairs(reagentPriceData) do
+                itemInfo.minBuyout = 1 -- CraftSimPriceAPI:GetMinBuyoutByItemID(itemInfo.itemID)
+            end
+            reagentQualityPrices[reagentIndex] = reagentPriceData
+        end
+    end
+
+    return reagentQualityPrices
+end
+
 function CraftSimPRICEDATA:GetPriceData(recipeData)
     local craftingCostPerCraft = CraftSimPRICEDATA:GetTotalCraftingCost(recipeData) 
+    local reagentsPriceByQuality = CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
     local minBuyoutPerQuality = {}
     if recipeData.result.isGear then
         for _, itemLvL in pairs(recipeData.result.itemLvLs) do
@@ -82,5 +99,6 @@ function CraftSimPRICEDATA:GetPriceData(recipeData)
     return {
         minBuyoutPerQuality = minBuyoutPerQuality,
         craftingCostPerCraft = craftingCostPerCraft,
+        reagentsPriceByQuality = reagentsPriceByQuality
     }
 end

@@ -49,7 +49,7 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
     if recipeData.stats.multicraft ~= nil then
         -- Recipe considers multicraft
         -- TODO implement multicraft additional item chance/amount based on multicraft tracker data
-        -- For now just use a random value of 1-2.5y additional items
+        -- For now just use a random value of 1-2.5y additional items at mean
         local expectedAdditionalItems = (1 + (2.5*recipeData.baseItemAmount)) / 2 
 
         -- Since multicraft and inspiration can proc together add expected multicraft gain to both qualities
@@ -63,7 +63,34 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
         craftedItems.nextQuality = craftedItems.nextQuality + expectedExtraItemsNext
     end
 
-    local totalCraftingCosts = priceData.craftingCostPerCraft * numCrafts
+    local totalSavedCosts = 0
+    if recipeData.stats.resourcefulness ~= nil then
+        -- Recipe considers resourcefulness
+        -- For each craft save a resource by X% Chance
+        -- -> This means I need to calculate the total amount of allocated reagents (per quality..?) used for all crafts then take X% of it to be saved
+        -- -> Then for all saved resources, sum up the minbuyouts and remove that from the totalCraftingCosts for it to be considered in the meanProfit
+        -- TODO: research how resourcefulness behaves with different allocated qualities
+
+        local totalReagentAllocationsByQuality = {}
+        for reagentIndex, reagentData in pairs(recipeData.reagents) do
+            if reagentData.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
+                    totalReagentAllocationsByQuality[reagentIndex] = CopyTable(reagentData.itemsInfo)
+                    for _, itemInfo in pairs(totalReagentAllocationsByQuality[reagentIndex]) do
+                        itemInfo.allocations = itemInfo.allocations * numCrafts
+                    end
+            end
+        end
+
+        for reagentIndex, itemsInfo in pairs(totalReagentAllocationsByQuality) do
+            for qualityIndex, itemInfo in pairs(itemsInfo) do
+                local savedItems = itemInfo.allocations * (recipeData.stats.resourcefulness.percent / 100)
+                totalSavedCosts = totalSavedCosts + priceData.reagentsPriceByQuality[reagentIndex][qualityIndex].minBuyout * savedItems
+            end
+        end
+        --print("total saved costs: " .. totalSavedCosts)
+    end
+
+    local totalCraftingCosts = (priceData.craftingCostPerCraft * numCrafts) - totalSavedCosts
     local totalWorth = 0
     if recipeData.expectedQuality == recipeData.maxQuality then
         totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]
@@ -80,7 +107,7 @@ function CraftSimSTATS:getInspirationWeight(recipeData, priceData, baseMeanProfi
         --print("recipe cannot proc inspiration")
         return nil
     end
-    local modifiedData = CraftSimUTIL:CloneTable(recipeData)
+    local modifiedData = CopyTable(recipeData)
     modifiedData.stats.inspiration.percent = modifiedData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statIncreaseFactor)
     
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
@@ -91,7 +118,7 @@ function CraftSimSTATS:getMulticraftWeight(recipeData, priceData, baseMeanProfit
         --print("recipe cannot proc multicraft")
         return nil
     end
-    local modifiedData = CraftSimUTIL:CloneTable(recipeData)
+    local modifiedData = CopyTable(recipeData)
     modifiedData.stats.multicraft.percent = modifiedData.stats.multicraft.percent + CraftSimUTIL:GetMulticraftPercentByStat(statIncreaseFactor)
     
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
@@ -102,7 +129,7 @@ function CraftSimSTATS:getResourcefulnessWeight(recipeData, priceData, baseMeanP
         --print("recipe cannot proc resourcefulness")
         return nil
     end
-    local modifiedData = CraftSimUTIL:CloneTable(recipeData)
+    local modifiedData = CopyTable(recipeData)
     modifiedData.stats.resourcefulness.percent = modifiedData.stats.resourcefulness.percent + CraftSimUTIL:GetResourcefulnessPercentByStat(statIncreaseFactor)
     
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)

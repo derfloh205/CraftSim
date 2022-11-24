@@ -37,20 +37,6 @@ function CraftSimUTIL:GetResourcefulnessPercentByStat(stat)
     return stat * resourcefulnessFactor
 end
 
-function CraftSimUTIL:CloneTable(t)
-    -- deep-copy a table
-    if type(t) ~= "table" then return t end
-    local target = {}
-    for k, v in pairs(t) do
-        if type(v) == "table" then
-            target[k] = CraftSimUTIL:CloneTable(v)
-        else
-            target[k] = v
-        end
-    end
-    return target
-end
-
 function CraftSimUTIL:round(number, decimals)
     return (("%%.%df"):format(decimals)):format(number)
 end

@@ -1,11 +1,5 @@
 CraftSimDATAEXPORT = {}
 
-local REAGENT_TYPE = {
-	OPTIONAL = 0,
-	REQUIRED = 1,
-	FINISHING_REAGENT = 2
-}
-
 function CraftSimDATAEXPORT:getExportString()
 	local exportData = CraftSimDATAEXPORT:exportRecipeData()
 	-- now digest into an export string
@@ -58,20 +52,20 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		local reagents = currentSlot.reagents
 		local reagentType = currentSlot.reagentType
 		-- for now only consider the required reagents
-		if reagentType ~= REAGENT_TYPE.REQUIRED then
+		if reagentType ~= CraftSimCONST.REAGENT_TYPE.REQUIRED then
 			break
 		end
 		local hasMoreThanOneQuality = currentSlot.reagents[2] ~= nil
 		recipeData.reagents[slotIndex] = {
 			requiredQuantity = currentSlot.quantityRequired,
-			differentQualities = reagentType == REAGENT_TYPE.REQUIRED and hasMoreThanOneQuality,
+			differentQualities = reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED and hasMoreThanOneQuality,
 			reagentType = currentSlot.reagentType
 		}
 		local slotAllocations = currentTransaction:GetAllocations(slotIndex)
 		local currentSelected = slotAllocations:Accumulate()
 		--print("current selected: " .. currentSelected .. " required: " .. currentSlot.quantityRequired)
 		--print("type: " .. reagentType)
-		if reagentType == REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
+		if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
 			recipeData.reagents[slotIndex].itemsInfo = {}
 			for i, reagent in pairs(reagents) do
 				local reagentAllocation = slotAllocations:FindAllocationByReagent(reagent)

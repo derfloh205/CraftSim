@@ -156,7 +156,7 @@ function CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
 end
 
 function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChanges)
-    local modifedRecipeData = CraftSimUTIL:CloneTable(recipeData)
+    local modifedRecipeData = CopyTable(recipeData)
     if modifedRecipeData.stats.inspiration ~= nil then
         modifedRecipeData.stats.inspiration.value = modifedRecipeData.stats.inspiration.value + statChanges.inspiration
         modifedRecipeData.stats.inspiration.percent = modifedRecipeData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statChanges.inspiration) 

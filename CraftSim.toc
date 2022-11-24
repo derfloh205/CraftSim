@@ -6,6 +6,7 @@
 ## Author: genju
 ## Version: 1.0
 
+DEBUG_DATA.lua
 Frames.lua
 GearSim.lua
 PriceAPIs.lua
