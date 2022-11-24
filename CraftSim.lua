@@ -64,7 +64,11 @@ function addon:ADDON_LOADED(addon_name)
 		--print("load craftsim")
 	end
 	if not priceApiLoaded then
-		if CraftSimPriceAPIs:IsPriceApiAddonLoaded() or CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name) then
+		if CraftSimPriceAPIs.DEBUG then
+			CraftSimPriceAPI = CraftSimDEBUG_PRICE_API
+			priceApiLoaded = true
+			print("load debug prices")
+		elseif CraftSimPriceAPIs:IsPriceApiAddonLoaded() or CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name) then
 			--print("load price api")
 			CraftSimPriceAPIs:InitAvailablePriceAPI()
 			priceApiLoaded = true
