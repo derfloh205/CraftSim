@@ -60,6 +60,7 @@ function addon:ADDON_LOADED(addon_name)
 	if addon_name == 'CraftSim' then
 		CraftSimFRAME:InitStatWeightFrame()
 		CraftSimFRAME:InitGearSimFrame()
+		CraftSimFRAME:InitPriceDataWarningFrame()
 		addon:HookToEvent()
 		addon:HookToDetailsHide()
 		--print("load craftsim")

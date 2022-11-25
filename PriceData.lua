@@ -87,6 +87,9 @@ function CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID)
     local minbuyout = CraftSimPriceAPI:GetMinBuyoutByItemID(itemID)
     if minbuyout == nil then
         local _, link = GetItemInfo(itemID)
+        if link == nil then
+            link = itemID
+        end
         if CraftSimPRICEDATA.noPriceDataLinks[link] == nil then
             -- not beautiful but hey, easy map
             CraftSimPRICEDATA.noPriceDataLinks[link] = link

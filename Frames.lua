@@ -63,6 +63,12 @@ function CraftSimFRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, size
     return newIcon
 end
 
+function CraftSimFRAME:InitPriceDataWarningFrame()	
+    
+	-- TODO: price data warning frame.. utilize something similar to the ketho editbox...
+    
+end
+
 function CraftSimFRAME:InitGearSimFrame()
     local frame = CreateFrame("frame", "CraftSimSimFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
 	frame:SetPoint("TOPRIGHT",  ProfessionsFrame.CraftingPage.SchematicForm.Details, 230, -5)
