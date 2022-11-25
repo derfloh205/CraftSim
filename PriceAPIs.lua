@@ -88,7 +88,11 @@ function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
     local debugItem = CraftSimDebugData[itemID]
     if debugItem == nil then
         local itemName = GetItemInfo(itemID)
-        print("PriceData not in ItemID Debugdata for: " .. itemName .. " .. creating")
+        if itemName == nil then
+            print("itemData not loaded yet, add to debugData next time..")
+            return 1
+        end
+        print("PriceData not in ItemID Debugdata for: " .. tostring(itemName) .. " .. creating")
         CraftSimDebugData[itemID] = {
             itemName = itemName,
             minBuyout = 1
@@ -103,6 +107,10 @@ function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemLink(itemLink)
     local debugItem = CraftSimDebugData[itemString]
     if debugItem == nil then
         local itemName = GetItemInfo(itemLink)
+        if itemName == nil then
+            print("itemData not loaded yet, add to debugData next time..")
+            return 1
+        end
         print("PriceData not in ItemString Debugdata for: " .. itemName .. " .. creating")
         CraftSimDebugData[itemString] = {
             itemName = itemName,
