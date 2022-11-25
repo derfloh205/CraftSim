@@ -16,7 +16,8 @@ end
 function CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
 	-- TODO: is this consistent enough?
 	local linksByQuality = {}
-	local itemString = select(3, strfind(itemLink, "|H(.+)%["))
+	local itemString = select(3, strfind(itemLink, "|H(.+)|h%["))
+	--print("itemstring: " .. itemString)
 	for qualityID = 4, 8, 1 do
 		local parts = { string.split(":", itemString) }
 		
@@ -46,6 +47,12 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	if recipeInfo.isRecraft then
         --print("is recraft")
+		CraftSimFRAME:ToggleFrames(false)
+		return nil
+	end
+
+	if recipeInfo.isGatheringRecipe then
+		--print("is gathering recipe")
 		CraftSimFRAME:ToggleFrames(false)
 		return nil
 	end
