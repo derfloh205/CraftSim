@@ -5,7 +5,7 @@ CraftSimTSM = {}
 CraftSimAUCTIONATOR = {}
 CraftSimDEBUG_PRICE_API = {}
 
-CraftSimPriceAPIs.DEBUG = true
+CraftSimPriceAPIs.DEBUG = false
 
 CraftSimDebugData = CraftSimDebugData or {}
 
@@ -90,12 +90,12 @@ function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
         local itemName = GetItemInfo(itemID)
         if itemName == nil then
             print("itemData not loaded yet, add to debugData next time..")
-            return 1
+            return 0
         end
         print("PriceData not in ItemID Debugdata for: " .. tostring(itemName) .. " .. creating")
         CraftSimDebugData[itemID] = {
             itemName = itemName,
-            minBuyout = 1
+            minBuyout = 0
         }
     end
     return CraftSimDebugData[itemID].minBuyout
@@ -109,12 +109,12 @@ function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemLink(itemLink)
         local itemName = GetItemInfo(itemLink)
         if itemName == nil then
             print("itemData not loaded yet, add to debugData next time..")
-            return 1
+            return 0
         end
         print("PriceData not in ItemString Debugdata for: " .. itemName .. " .. creating")
         CraftSimDebugData[itemString] = {
             itemName = itemName,
-            minBuyout = 1
+            minBuyout = 0
         }
     end
     return CraftSimDebugData[itemString].minBuyout
