@@ -169,7 +169,9 @@ end
 
 function CraftSimFRAME:FillSimResultData(bestSimulation)
     CraftSimFRAME:ShowComboItemIcons(bestSimulation.combo)
-    CraftSimSimFrame.currentCombo = bestSimulation.combo
+    if not CraftSimGEARSIM.IsEquipping then
+        CraftSimSimFrame.currentCombo = bestSimulation.combo
+    end
     -- TODO: maybe show in red or smth if negative
     CraftSimSimFrame.profitText:SetText("Profit Difference / Craft\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff))
     CraftSimTopGearEquipButton:SetEnabled(true)
@@ -185,10 +187,10 @@ function CraftSimFRAME:ClearResultData()
     CraftSimTopGearEquipButton:SetEnabled(false)
     CraftSimSimFrame.profitText:SetText("Top Gear equipped")
 
-    CraftSimSimFrame.statDiff.inspiration:SetText("Inspiration:")
-    CraftSimSimFrame.statDiff.multicraft:SetText("Multicraft:")
-    CraftSimSimFrame.statDiff.resourcefulness:SetText("Resourcefulness:")
-    CraftSimSimFrame.statDiff.skill:SetText("Skill:")
+    CraftSimSimFrame.statDiff.inspiration:SetText("")
+    CraftSimSimFrame.statDiff.multicraft:SetText("")
+    CraftSimSimFrame.statDiff.resourcefulness:SetText("")
+    CraftSimSimFrame.statDiff.skill:SetText("")
 end
 
 function CraftSimFRAME:ToggleFrames(visible)

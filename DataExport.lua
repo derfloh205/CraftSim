@@ -210,6 +210,7 @@ function CraftSimDATAEXPORT:GetEquippedProfessionGear()
 		local slotID = GetInventorySlotInfo(slotName)
 		local itemLink = GetInventoryItemLink("player", slotID)
 		if itemLink ~= nil then
+			local _, _, _, _, _, _, _, _, equipSlot = GetItemInfo(itemLink) 
 			local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 			--print("e ->: " .. itemLink)
 			table.insert(professionGear, {

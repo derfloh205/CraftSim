@@ -92,7 +92,7 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
 
     local totalCraftingCosts = (priceData.craftingCostPerCraft * numCrafts) - totalSavedCosts
     local totalWorth = 0
-    if recipeData.expectedQuality == recipeData.maxQuality then
+    if recipeData.expectedQuality == recipeData.maxQuality or recipeData.result.isNoQuality then
         totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]
     else
         totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality] + 
