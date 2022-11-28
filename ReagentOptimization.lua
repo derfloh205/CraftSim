@@ -146,6 +146,11 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
 
     -- Optimize Knapsack
     local results = CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP)
+
+    -- lets assume first, the highest quality reached is also the most profitable?
+    -- TODO: consider minvalue, the crafting costs and the profit..
+
+    CraftSimFRAME:ShowBestReagentAllocation(results[#results])
 end
 
 function CraftSimREAGENT_OPTIMIZATION:GetSkillThresholdPercentagesByMaxQuality(maxQuality)
@@ -266,11 +271,16 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
     end
 
     local outArr = {}
+    local outResult = {}
     local target = 0
     local h = 0
 
     for h = translateLuaIndex(0), #BPs, 1 do
-        
+        local outAllocation = {
+            qualityReached = nil,
+            minValue = nil,
+            allocations = {}
+        }
         if BPs[h] < 0 then --cannot reach this BP
             outArr[2 * h] = "None"
             outArr[2 * h + 1] = ""
@@ -300,14 +310,48 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
                     ifstring = ", "
                 end
                 matString = matString .. ks[i].crumb[k].mixDebug .. " " .. ks[i].name .. ifstring
+        
+                --print("current matstring: " .. tostring(matString))
+                --print("name: " .. ks[i].name)
+                local matAllocations = {}
+                for qualityIndex, qualityAllocations in pairs(ks[i].crumb[k].mix) do
+                    --print("qualityIndex: " .. qualityIndex)
+                    --print("allocations: " .. qualityAllocations)
+                    table.insert(matAllocations, {
+                        quality = qualityIndex,
+                        itemID = ks[i].itemsInfo[qualityIndex].itemID,
+                        allocations = qualityAllocations
+                    })
+                end
                 j = j - ks[i].crumb[k].weight
+
+                table.insert(outAllocation.allocations, {
+                    itemName = ks[i].name,
+                    allocations = matAllocations
+                })
             end
         
             outArr[2 * h] = minValue
             outArr[2 * h + 1] = matString
+            outAllocation.qualityReached = h
+            outAllocation.minValue = minValue
+            table.insert(outResult, outAllocation)
         end
     end
 
-    print("outArr: ")
-    CraftSimUTIL:PrintTable(outArr)
+    print("results: ")
+    for _, itemAllocation in pairs(outResult) do
+        print("Reachable quality: " .. itemAllocation.qualityReached)
+
+        for _, matAllocation in pairs(itemAllocation.allocations) do
+            print("- name: " .. matAllocation.itemName)
+
+            for qualityIndex, allocation in pairs(matAllocation.allocations) do
+                print("- - q" .. qualityIndex .. ": " .. allocation.allocations)
+                --print("- - itemID" .. allocation.itemID)
+            end
+        end
+    end
+
+    return outResult
 end

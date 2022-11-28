@@ -53,9 +53,15 @@ function CraftSimFRAME:UpdateStatWeightFrameText(statWeights)
     end
 end
 
-function CraftSimFRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, sizeY)
+function CraftSimFRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, sizeY, anchorA, anchorB)
+    if anchorA == nil then
+        anchorA = "CENTER"
+    end
+    if anchorB == nil then
+        anchorB = "CENTER"
+    end
     local newIcon = CreateFrame("Button", nil, parent, "GameMenuButtonTemplate")
-    newIcon:SetPoint("CENTER", parent, "CENTER", offsetX, offsetY)
+    newIcon:SetPoint(anchorA, parent, anchorB, offsetX, offsetY)
 	newIcon:SetSize(sizeX, sizeY)
 	newIcon:SetNormalFontObject("GameFontNormalLarge")
 	newIcon:SetHighlightFontObject("GameFontHighlightLarge")
@@ -67,6 +73,130 @@ function CraftSimFRAME:InitPriceDataWarningFrame()
     
 	-- TODO: price data warning frame.. utilize something similar to the ketho editbox...
     
+end
+
+function CraftSimFRAME:InitBestAllocationsFrame()
+    local frame = CreateFrame("frame", "CraftSimReagentHintFrame", ProfessionsFrame.CraftingPage.SchematicForm.Reagents, "BackdropTemplate")
+	frame:SetPoint("TOPLEFT",  ProfessionsFrame.CraftingPage.SchematicForm.Reagents, "BOTTOMLEFT", 0, 0)
+	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+	frame:SetBackdrop({
+		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+		edgeSize = 16,
+		insets = { left = 8, right = 6, top = 8, bottom = 8 },
+	})
+	frame:SetSize(250, 150)
+    local contentOffsetY = -60
+	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.title:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 117)
+	frame.title:SetText("CraftSim Highest Quality Allocation")
+
+    frame.calculateButton = CreateFrame("Button", "CraftSimReagentHintButton", frame, "UIPanelButtonTemplate")
+	frame.calculateButton:SetSize(70, 25)
+	frame.calculateButton:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 20)	
+	frame.calculateButton:SetText("Calculate")
+    frame.calculateButton:SetScript("OnClick", function(self) 
+        CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
+    end)
+
+    local iconsOffsetY = 5
+    local iconsOffsetX = -40
+    local iconsSpacingY = 25
+
+    frame.reagentFrames = {}
+    frame.reagentFrames.rows = {}
+    frame.reagentFrames.numReagents = 0
+    local baseX = -20
+    local iconSize = 30
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY), iconSize)
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY), iconSize)
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*2), iconSize)
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*3), iconSize)
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*4), iconSize)
+
+	frame:Show()
+end
+
+function CraftSimFRAME:CreateReagentFrame(parent, y, iconSize)
+    local reagentFrame = CreateFrame("frame", nil, parent)
+    reagentFrame:SetSize(parent:GetWidth(), iconSize)
+    reagentFrame:SetPoint("CENTER", parent, "CENTER", 0, y)
+    
+    local qualityIconSize = iconSize
+    local qualityIconX = 0
+
+    local qualityAmountTextX = 5
+    local qualityAmountTextSpacingX = 40
+
+    local reagentRowOffsetX = -30
+    local reagentIconsOffsetX = 70
+
+    reagentFrame.q1Icon = reagentFrame:CreateTexture()
+    reagentFrame.q1Icon:SetSize(25, 25)
+    reagentFrame.q1Icon:SetPoint("CENTER", reagentFrame, "CENTER", reagentRowOffsetX, 0)
+
+    reagentFrame.q2Icon = reagentFrame:CreateTexture()
+    reagentFrame.q2Icon:SetSize(25, 25)
+    reagentFrame.q2Icon:SetPoint("CENTER", reagentFrame, "CENTER", reagentRowOffsetX + reagentIconsOffsetX, 0)
+
+    reagentFrame.q3Icon = reagentFrame:CreateTexture()
+    reagentFrame.q3Icon:SetSize(25, 25)
+    reagentFrame.q3Icon:SetPoint("CENTER", reagentFrame, "CENTER", reagentRowOffsetX + reagentIconsOffsetX*2, 0)
+    
+    reagentFrame.q1qualityIcon = reagentFrame:CreateTexture()
+    reagentFrame.q1qualityIcon:SetSize(qualityIconSize, qualityIconSize)
+    reagentFrame.q1qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+    reagentFrame.q1qualityIcon:SetAtlas("Professions-Icon-Quality-Tier1")
+    reagentFrame.q1qualityIcon:SetPoint("TOPLEFT", reagentFrame.q1Icon, "TOPLEFT", qualityIconX, 0)
+
+    reagentFrame.q2qualityIcon = reagentFrame:CreateTexture()
+    reagentFrame.q2qualityIcon:SetSize(qualityIconSize, qualityIconSize)
+    reagentFrame.q2qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+    reagentFrame.q2qualityIcon:SetAtlas("Professions-Icon-Quality-Tier2")
+    reagentFrame.q2qualityIcon:SetPoint("TOPLEFT", reagentFrame.q2Icon, "TOPLEFT", qualityIconX, 0)
+
+    reagentFrame.q3qualityIcon = reagentFrame:CreateTexture()
+    reagentFrame.q3qualityIcon:SetSize(qualityIconSize, qualityIconSize)
+    reagentFrame.q3qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+    reagentFrame.q3qualityIcon:SetAtlas("Professions-Icon-Quality-Tier3")
+    reagentFrame.q3qualityIcon:SetPoint("TOPLEFT", reagentFrame.q3Icon, "TOPLEFT", qualityIconX, 0)
+
+    reagentFrame.q1text = reagentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    reagentFrame.q1text:SetPoint("LEFT", reagentFrame.q1Icon, "RIGHT", qualityAmountTextX, 0)
+    reagentFrame.q1text:SetText("x ?")
+
+    reagentFrame.q2text = reagentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    reagentFrame.q2text:SetPoint("LEFT", reagentFrame.q2Icon, "RIGHT", qualityAmountTextX, 0)
+    reagentFrame.q2text:SetText("x ?")
+
+    reagentFrame.q3text = reagentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    reagentFrame.q3text:SetPoint("LEFT", reagentFrame.q3Icon, "RIGHT", qualityAmountTextX, 0)
+    reagentFrame.q3text:SetText("x ?")
+
+    reagentFrame:Hide()
+    return reagentFrame
+end
+
+-- DEBUG
+function CraftSimFRAME:ShowBestReagentAllocation(bestAllocation)
+    for frameIndex = 1, 5, 1 do
+        local allocation = bestAllocation.allocations[frameIndex]
+        if allocation ~= nil then
+            local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(allocation.allocations[1].itemID) 
+            print(tostring(CraftSimReagentHintFrame.reagentFrames.rows[frameIndex]))
+            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
+            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
+            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
+            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q1text:SetText(allocation.allocations[1].allocations)
+            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q2text:SetText(allocation.allocations[2].allocations)
+            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q3text:SetText(allocation.allocations[3].allocations)
+
+            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex]:Show()
+        else
+            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex]:Hide()
+        end
+        
+    end
 end
 
 function CraftSimFRAME:InitGearSimFrame()
