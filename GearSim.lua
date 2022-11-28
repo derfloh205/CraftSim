@@ -1,17 +1,7 @@
 CraftSimGEARSIM = {}
 
--- TODO: get professionNr from somewhere to know which slots to access - check
--- TODO: consider items in profession slots for simulation -- check
--- TODO: when equipping the top gear, first unequip all other profession gear - check
--- TODO: remove statgain from equipped profession items before simulation top gear, the base sim should be without items
--- ......this prevents the stats from the gear combos to be added on top of already equipped gear..
--- TODO: but keep simulation with equipped items for comparison reasons
--- ......essentially, the current equipped items are one of the combos
--- ......so the goal is to have the baseSim.. the current Combo.. and the other combos
--- ......and when the equipped items are considered in the sim, after the sim, if the best combo is also the current combo this can be displayed!
--- TODO: the profit diff then can be shown between current combo and top combo
--- TODO: show statDiff to current combo.. this works when the modifiedRecipeData of the bestSim is based on the baseSim without gear
--- ...... then I got the plain stats of the bestSim and the plain stats of the current Sim to compare
+    -- TODO: export skill stat from profession items
+    -- TODO: recalculate by thresholds the expected quality based on the new skill stat of the items (cause they can change the base q of an item)
 
 CraftSimGEARSIM.IsEquipping = false
 

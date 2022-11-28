@@ -173,3 +173,31 @@ function CraftSimUTIL:FormatMoney(copperValue)
 
     return minusText .. GetCoinTextureString(absValue)
 end
+
+function CraftSimUTIL:FilterTable(t, filterFunc)
+    local filtered = {}
+    for k, v in pairs(t) do
+        if filterFunc(v) then
+            table.insert(filtered, v)
+        end
+    end
+    return filtered
+end
+
+function CraftSimUTIL:FoldTable(t, foldFunction)
+    local foldedValue = nil
+
+    if #t < 2 then
+        return nil
+    end
+
+    for k, v in pairs(t) do
+        if foldedValue == nil then
+            foldedValue = foldFunction(t[1], t[2])
+        elseif k < #t then
+            foldedValue = foldFunction(foldedValue, t[k+1])
+        end
+    end
+
+    return foldedValue
+end

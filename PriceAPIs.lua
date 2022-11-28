@@ -5,7 +5,7 @@ CraftSimTSM = {}
 CraftSimAUCTIONATOR = {}
 CraftSimDEBUG_PRICE_API = {}
 
-CraftSimPriceAPIs.DEBUG = false
+CraftSimPriceAPIs.DEBUG = true
 
 CraftSimDebugData = CraftSimDebugData or {}
 

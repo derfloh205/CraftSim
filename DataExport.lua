@@ -78,7 +78,9 @@ function CraftSimDATAEXPORT:exportRecipeData()
 			break
 		end
 		local hasMoreThanOneQuality = currentSlot.reagents[2] ~= nil
+		local reagentName = GetItemInfo(reagents[1].itemID)
 		recipeData.reagents[slotIndex] = {
+			name = reagentName,
 			requiredQuantity = currentSlot.quantityRequired,
 			differentQualities = reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED and hasMoreThanOneQuality,
 			reagentType = currentSlot.reagentType

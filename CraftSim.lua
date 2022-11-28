@@ -103,6 +103,15 @@ function addon:PLAYER_LOGIN()
 				print("CRAFTSIM ERROR: No Recipe Opened")
 			end
 		end
+
+		if command == "ks" then
+			if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
+				print("CRAFTSIM: Knapsack...")
+				CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
+			else
+				print("CRAFTSIM ERROR: No Recipe Opened")
+			end
+		end
 	end
 end
 
