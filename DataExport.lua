@@ -127,7 +127,9 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	recipeData.maxQuality = recipeInfo.maxQuality
 	recipeData.baseItemAmount = schematicForm.OutputIcon.Count:GetText()
 	recipeData.recipeDifficulty = operationInfo.baseDifficulty + operationInfo.bonusDifficulty
-	recipeData.stats.skill = operationInfo.baseSkill + operationInfo.bonusSkill-- TODO: is .bonusSkill needed here for anything? maybe this is for reagents?
+	 -- baseSkill is like the base of the players skill and bonusSkill is what is added through reagents
+	recipeData.stats.skill = operationInfo.baseSkill + operationInfo.bonusSkill
+	recipeData.stats.baseSkill = operationInfo.baseSkill -- Needed for reagent optimization
 	recipeData.result = {}
 
 	if recipeInfo.qualityItemIDs then

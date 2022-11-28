@@ -98,7 +98,7 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
         totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality] + 
             craftedItems.nextQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1]
     end
-    local meanProfit = (totalWorth - totalCraftingCosts) / numCrafts
+    local meanProfit = ((totalWorth*CraftSimCONST.AUCTION_HOUSE_CUT) - totalCraftingCosts) / numCrafts
     return meanProfit
 end
 
