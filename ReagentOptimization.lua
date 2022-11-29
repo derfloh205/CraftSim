@@ -123,6 +123,17 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
     local reagentSkillContribution = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
     local skillWithoutReagentIncrease = totalSkill - reagentSkillContribution
 
+    local expectedQualityWithoutReagents = 1
+    local thresholds = CraftSimSTATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
+
+    for _, threshold in pairs(thresholds) do
+        if skillWithoutReagentIncrease > threshold then
+            expectedQualityWithoutReagents = expectedQualityWithoutReagents + 1
+        end
+    end
+
+    print("expected quality without reagent skill increase: " .. expectedQualityWithoutReagents)
+    print("expected quality with current reagent skill increase: " .. recipeData.expectedQuality)
     
     print("totalSkill: " .. totalSkill)
     print("reagentSkillContribution: " ..  reagentSkillContribution)
@@ -165,18 +176,13 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
     -- Optimize Knapsack
     local results = CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP)  
 
-    -- lets assume first, the highest quality reached is also the most profitable?
-    -- TODO: consider minvalue, the crafting costs and the profit..
+    -- remove any result that maps to the expected quality without reagent increase
+    local results = CraftSimUTIL:FilterTable(results, function(result) 
+        return result.qualityReached > expectedQualityWithoutReagents
+    end)
+    
 
     CraftSimFRAME:ShowBestReagentAllocation(results[#results])
-end
-
-function CraftSimREAGENT_OPTIMIZATION:GetSkillThresholdPercentagesByMaxQuality(maxQuality)
-    if maxQuality == 3 then
-        return {0, 5, 10}
-    elseif maxQuality == 5 then
-        return {0, 2, 5, 8, 10}
-    end
 end
 
 function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
@@ -372,29 +378,29 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
         
             outArr[2 * h] = minValue
             outArr[2 * h + 1] = matString
-            outAllocation.qualityReached = h
+            outAllocation.qualityReached = abs(h - (#BPs + 1))
             outAllocation.minValue = minValue
             table.insert(outResult, outAllocation)
         end
     end
 
-    print("outArr:")
-    CraftSimUTIL:PrintTable(outArr)
+    --print("outArr:")
+    --CraftSimUTIL:PrintTable(outArr)
 
-    -- print("results: ")
-    -- for _, itemAllocation in pairs(outResult) do
-    --     print("Reachable quality: " .. itemAllocation.qualityReached)
+    print("results: ")
+    for _, itemAllocation in pairs(outResult) do
+        print("Reachable quality: " .. itemAllocation.qualityReached)
 
-    --     for _, matAllocation in pairs(itemAllocation.allocations) do
-    --         print("- name: " .. matAllocation.itemName)
+        for _, matAllocation in pairs(itemAllocation.allocations) do
+            print("- name: " .. matAllocation.itemName)
 
-    --         local qText = "--"
-    --         for qualityIndex, allocation in pairs(matAllocation.allocations) do
-    --             qText = qText .. "q" .. qualityIndex .. ": " .. allocation.allocations .. " | "
-    --         end
-    --         print(qText)
-    --     end
-    -- end
+            local qText = "--"
+            for qualityIndex, allocation in pairs(matAllocation.allocations) do
+                qText = qText .. "q" .. qualityIndex .. ": " .. allocation.allocations .. " | "
+            end
+            print(qText)
+        end
+    end
 
     return outResult
 end

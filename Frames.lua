@@ -91,15 +91,30 @@ function CraftSimFRAME:InitBestAllocationsFrame()
 	frame.title:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 117)
 	frame.title:SetText("CraftSim Highest Quality Allocation")
 
-    frame.calculateButton = CreateFrame("Button", "CraftSimReagentHintButton", frame, "UIPanelButtonTemplate")
-	frame.calculateButton:SetSize(70, 25)
-	frame.calculateButton:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 20)	
-	frame.calculateButton:SetText("Calculate")
-    frame.calculateButton:SetScript("OnClick", function(self) 
-        CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
-    end)
+    -- frame.calculateButton = CreateFrame("Button", "CraftSimReagentHintButton", frame, "UIPanelButtonTemplate")
+	-- frame.calculateButton:SetSize(70, 25)
+	-- frame.calculateButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, contentOffsetY + 30)	
+	-- frame.calculateButton:SetText("Calculate")
+    -- frame.calculateButton:SetScript("OnClick", function(self) 
+    --     CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
+    -- end)
 
-    local iconsOffsetY = 60
+    frame.qualityText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.qualityText:SetPoint("TOP", frame, "TOP", 0, -35)
+	frame.qualityText:SetText("Highest Quality: ")
+
+    frame.qualityIcon = frame:CreateTexture(nil, "OVERLAY")
+    frame.qualityIcon:SetSize(25, 25)
+    frame.qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+    frame.qualityIcon:SetAtlas("Professions-Icon-Quality-Tier1")
+    frame.qualityIcon:SetPoint("LEFT", frame.qualityText, "RIGHT", 3, 0)
+
+    frame.qualityIcon.SetQuality = function(qualityID) 
+        frame.qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+        frame.qualityIcon:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
+    end
+
+    local iconsOffsetY = 40
     local iconsOffsetX = -40
     local iconsSpacingY = 25
 
@@ -114,7 +129,7 @@ function CraftSimFRAME:InitBestAllocationsFrame()
     table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*3, iconSize))
     table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*4, iconSize))
 
-	frame:Show()
+    frame:Hide()
 end
 
 function CraftSimFRAME:CreateReagentFrame(parent, y, iconSize)
@@ -180,6 +195,7 @@ end
 
 -- DEBUG
 function CraftSimFRAME:ShowBestReagentAllocation(bestAllocation)
+    CraftSimReagentHintFrame.qualityIcon.SetQuality(bestAllocation.qualityReached)
     for frameIndex = 1, 5, 1 do
         local allocation = bestAllocation.allocations[frameIndex]
         if allocation ~= nil then
@@ -335,10 +351,12 @@ function CraftSimFRAME:ToggleFrames(visible)
         --print("show frames")
         CraftSimSimFrame:Show()
         CraftSimDetailsFrame:Show()
+        CraftSimReagentHintFrame:Show()
     else
         --print("hide frames")
         CraftSimSimFrame:Hide()
         CraftSimDetailsFrame:Hide()
+        CraftSimReagentHintFrame:Hide()
     end
 end
 

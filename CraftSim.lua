@@ -42,6 +42,7 @@ function addon:HookToEvent()
 		--print("Details: SetStats")
 		addon:UpdateStatWeights()
 		CraftSimGEARSIM:SimulateBestProfessionGearCombination()
+		CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
 	end)
 end
 
