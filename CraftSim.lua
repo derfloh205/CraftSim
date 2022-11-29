@@ -12,6 +12,10 @@ addon:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end
 addon:RegisterEvent("ADDON_LOADED")
 addon:RegisterEvent("PLAYER_LOGIN")
 
+CraftSimOptions = CraftSimOptions or {
+	priceDebug = false
+}
+
 local hookedToDetailsFrame = false
 -- this should cover the case of switching to a frame that does not show the details like recrafting, from a frame that does
 function addon:HookToDetailsHide()
@@ -68,7 +72,7 @@ function addon:ADDON_LOADED(addon_name)
 		--print("load craftsim")
 	end
 	if not priceApiLoaded then
-		if CraftSimPriceAPIs.DEBUG then
+		if CraftSimOptions.priceDebug then
 			CraftSimPriceAPI = CraftSimDEBUG_PRICE_API
 			priceApiLoaded = true
 			print("load debug prices")
@@ -106,13 +110,9 @@ function addon:PLAYER_LOGIN()
 			end
 		end
 
-		if command == "ks" then
-			if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
-				print("CRAFTSIM: Knapsack...")
-				CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
-			else
-				print("CRAFTSIM ERROR: No Recipe Opened")
-			end
+		if command == "pricedebug" then
+			CraftSimOptions.priceDebug = not CraftSimOptions.priceDebug
+			print("Craftsim: Toggled price debug mode: " .. tostring(CraftSimOptions.priceDebug))
 		end
 	end
 end

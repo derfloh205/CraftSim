@@ -5,8 +5,6 @@ CraftSimTSM = {}
 CraftSimAUCTIONATOR = {}
 CraftSimDEBUG_PRICE_API = {}
 
-CraftSimPriceAPIs.DEBUG = true
-
 CraftSimDebugData = CraftSimDebugData or {}
 
 function CraftSimPriceAPIs:IsPriceApiAddonLoaded()
