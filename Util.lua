@@ -184,18 +184,28 @@ function CraftSimUTIL:FilterTable(t, filterFunc)
     return filtered
 end
 
-function CraftSimUTIL:FoldTable(t, foldFunction)
+function CraftSimUTIL:FoldTable(t, foldFunction, startAtZero)
     local foldedValue = nil
-
-    if #t < 2 then
+    print("folding table.. items in t:" .. #t)
+    if #t < 2 and not startAtZero then
+        return nil
+    elseif #t < 1 and startAtZero then
         return nil
     end
 
-    for k, v in pairs(t) do
+    local startIndex = 1
+    local indexSub = 0
+    if startAtZero then
+        startIndex = 0
+        indexSub = 1
+    end
+    
+    for index = startIndex, #t - indexSub, 1 do
+        --print("folding.. current Value: " .. foldedValue)
         if foldedValue == nil then
-            foldedValue = foldFunction(t[1], t[2])
-        elseif k < #t then
-            foldedValue = foldFunction(foldedValue, t[k+1])
+            foldedValue = foldFunction(t[startIndex], t[startIndex + 1])
+        elseif index < #t - indexSub then
+            foldedValue = foldFunction(foldedValue, t[index+1])
         end
     end
 

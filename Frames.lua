@@ -99,7 +99,7 @@ function CraftSimFRAME:InitBestAllocationsFrame()
         CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
     end)
 
-    local iconsOffsetY = 5
+    local iconsOffsetY = 60
     local iconsOffsetX = -40
     local iconsSpacingY = 25
 
@@ -108,11 +108,11 @@ function CraftSimFRAME:InitBestAllocationsFrame()
     frame.reagentFrames.numReagents = 0
     local baseX = -20
     local iconSize = 30
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY), iconSize)
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY), iconSize)
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*2), iconSize)
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*3), iconSize)
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*4), iconSize)
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY, iconSize))
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY, iconSize))
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*2, iconSize))
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*3, iconSize))
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*4, iconSize))
 
 	frame:Show()
 end
@@ -122,44 +122,45 @@ function CraftSimFRAME:CreateReagentFrame(parent, y, iconSize)
     reagentFrame:SetSize(parent:GetWidth(), iconSize)
     reagentFrame:SetPoint("CENTER", parent, "CENTER", 0, y)
     
-    local qualityIconSize = iconSize
-    local qualityIconX = 0
+    local qualityIconSize = 20
+    local qualityIconX = 3
+    local qualityIconY = -3
 
     local qualityAmountTextX = 5
     local qualityAmountTextSpacingX = 40
 
-    local reagentRowOffsetX = -30
+    local reagentRowOffsetX = 40
     local reagentIconsOffsetX = 70
 
     reagentFrame.q1Icon = reagentFrame:CreateTexture()
     reagentFrame.q1Icon:SetSize(25, 25)
-    reagentFrame.q1Icon:SetPoint("CENTER", reagentFrame, "CENTER", reagentRowOffsetX, 0)
+    reagentFrame.q1Icon:SetPoint("LEFT", reagentFrame, "LEFT", reagentRowOffsetX, 0)
 
     reagentFrame.q2Icon = reagentFrame:CreateTexture()
     reagentFrame.q2Icon:SetSize(25, 25)
-    reagentFrame.q2Icon:SetPoint("CENTER", reagentFrame, "CENTER", reagentRowOffsetX + reagentIconsOffsetX, 0)
+    reagentFrame.q2Icon:SetPoint("LEFT", reagentFrame, "LEFT", reagentRowOffsetX + reagentIconsOffsetX, 0)
 
     reagentFrame.q3Icon = reagentFrame:CreateTexture()
     reagentFrame.q3Icon:SetSize(25, 25)
-    reagentFrame.q3Icon:SetPoint("CENTER", reagentFrame, "CENTER", reagentRowOffsetX + reagentIconsOffsetX*2, 0)
+    reagentFrame.q3Icon:SetPoint("LEFT", reagentFrame, "LEFT", reagentRowOffsetX + reagentIconsOffsetX*2, 0)
     
-    reagentFrame.q1qualityIcon = reagentFrame:CreateTexture()
+    reagentFrame.q1qualityIcon = reagentFrame:CreateTexture(nil, "OVERLAY")
     reagentFrame.q1qualityIcon:SetSize(qualityIconSize, qualityIconSize)
     reagentFrame.q1qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
     reagentFrame.q1qualityIcon:SetAtlas("Professions-Icon-Quality-Tier1")
-    reagentFrame.q1qualityIcon:SetPoint("TOPLEFT", reagentFrame.q1Icon, "TOPLEFT", qualityIconX, 0)
+    reagentFrame.q1qualityIcon:SetPoint("CENTER", reagentFrame.q1Icon, "TOPLEFT", qualityIconX, qualityIconY)
 
-    reagentFrame.q2qualityIcon = reagentFrame:CreateTexture()
+    reagentFrame.q2qualityIcon = reagentFrame:CreateTexture(nil, "OVERLAY")
     reagentFrame.q2qualityIcon:SetSize(qualityIconSize, qualityIconSize)
     reagentFrame.q2qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
     reagentFrame.q2qualityIcon:SetAtlas("Professions-Icon-Quality-Tier2")
-    reagentFrame.q2qualityIcon:SetPoint("TOPLEFT", reagentFrame.q2Icon, "TOPLEFT", qualityIconX, 0)
+    reagentFrame.q2qualityIcon:SetPoint("CENTER", reagentFrame.q2Icon, "TOPLEFT", qualityIconX, qualityIconY)
 
-    reagentFrame.q3qualityIcon = reagentFrame:CreateTexture()
+    reagentFrame.q3qualityIcon = reagentFrame:CreateTexture(nil, "OVERLAY")
     reagentFrame.q3qualityIcon:SetSize(qualityIconSize, qualityIconSize)
     reagentFrame.q3qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
     reagentFrame.q3qualityIcon:SetAtlas("Professions-Icon-Quality-Tier3")
-    reagentFrame.q3qualityIcon:SetPoint("TOPLEFT", reagentFrame.q3Icon, "TOPLEFT", qualityIconX, 0)
+    reagentFrame.q3qualityIcon:SetPoint("CENTER", reagentFrame.q3Icon, "TOPLEFT", qualityIconX, qualityIconY)
 
     reagentFrame.q1text = reagentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     reagentFrame.q1text:SetPoint("LEFT", reagentFrame.q1Icon, "RIGHT", qualityAmountTextX, 0)
