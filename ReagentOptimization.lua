@@ -169,12 +169,12 @@ function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
 
     n = ksItem.n
 
-    for j = 0, 2 * n, 1 do -- inclusive 2*n or exclusive?
+    for j = translateLuaIndex(0), 2 * n, 1 do -- inclusive 2*n or exclusive?
         ksItem.crumb[j] = {}
         ksItem.crumb[j].value = inf
     end
 
-    for k = 0, n, 1 do -- again.. inclusive or exclusive?
+    for k = translateLuaIndex(0), n, 1 do -- again.. inclusive or exclusive?
         for j = k, n, 1 do
             a = k
             b = j - k
