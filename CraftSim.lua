@@ -113,6 +113,12 @@ function addon:PLAYER_LOGIN()
 		if command == "pricedebug" then
 			CraftSimOptions.priceDebug = not CraftSimOptions.priceDebug
 			print("Craftsim: Toggled price debug mode: " .. tostring(CraftSimOptions.priceDebug))
+
+			if CraftSimOptions.priceDebug then
+				CraftSimPriceAPI = CraftSimDEBUG_PRICE_API
+			else
+				CraftSimPriceAPIs:InitAvailablePriceAPI()
+			end
 		end
 	end
 end
