@@ -194,3 +194,14 @@ function CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
 
 	return statweights
 end
+
+function CraftSimSTATS:GetExpectedQualityBySkill(recipeData, skill)
+    local expectedQuality = 1
+    local thresholds = CraftSimSTATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
+
+    for _, threshold in pairs(thresholds) do
+        if skill > threshold then
+            expectedQuality = expectedQuality + 1
+        end
+    end
+end

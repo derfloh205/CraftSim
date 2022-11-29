@@ -125,6 +125,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
 
     local expectedQualityWithoutReagents = 1
     local thresholds = CraftSimSTATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
+    local expectedQualityWithoutReagents = CraftSimSTATS:GetExpectedQualityBySkill(recipeData, skillWithoutReagentIncrease)
 
     for _, threshold in pairs(thresholds) do
         if skillWithoutReagentIncrease > threshold then

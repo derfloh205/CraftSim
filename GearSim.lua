@@ -182,11 +182,16 @@ function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChan
         modifedRecipeData.stats.resourcefulness.percent = modifedRecipeData.stats.resourcefulness.percent + 
             CraftSimUTIL:GetResourcefulnessPercentByStat(statChanges.resourcefulness)*100 
     end
-    -- TODO: check if this is already included in stat table ?
     -- TODO: to make changes of this have impact, need to evaluate the expectedQuality by player skill and quality thresholds..
     -- TODO: also, need to extract skill changes from profession gear anyway
     if modifedRecipeData.stats.skill ~= nil then
         modifedRecipeData.stats.skill = modifedRecipeData.stats.skill + statChanges.skill
+        local expectedQualityWithItems = CraftSimSTATS:GetExpectedQualityBySkill(modifedRecipeData, modifedRecipeData.stats.skill)
+        local oldexpected = modifedRecipeData.expectedQuality
+        modifedRecipeData.expectedQuality = expectedQualityWithItems
+        if oldexpected < expectedQualityWithItems then
+            print("Combination with increased quality level found!")
+        end
     end
 
     return modifedRecipeData
