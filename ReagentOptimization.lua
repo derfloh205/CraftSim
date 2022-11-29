@@ -55,7 +55,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
     -- init
     for i = 0, #requiredReagents - 1, 1 do
         local reagent = requiredReagents[translateLuaIndex(i)]
-        local itemID = reagent.itemsInfo[1].itemID -- all qualities have the same weight
+        local itemID = reagent.itemsInfo[1].itemID
         mWeight[i] = CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) * reagent.requiredQuantity
     end
 
@@ -119,19 +119,23 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
     --               0 means no skill bonus required to reach this BP
     --               > 0 means the indicated skill bonus is required to reach this BP
     -- At least one entry will be >= 0
-    print("working with skill: " ..  recipeData.stats.skill)
     local totalSkill = recipeData.stats.skill
+    local reagentSkillContribution = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
+    local skillWithoutReagentIncrease = totalSkill - reagentSkillContribution
 
-    local skillWithoutReagentIncrease = totalSkill - CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
+    
+    print("totalSkill: " .. totalSkill)
+    print("reagentSkillContribution: " ..  reagentSkillContribution)
+    print("skillWithoutReagentIncrease: " ..  skillWithoutReagentIncrease)
 
     for i = 0, numBP - 1, 1 do
-        print("checking BP: " .. tostring(craftingDifficultyBP[i]))
+        --print("checking BP: " .. tostring(craftingDifficultyBP[i]))
         local skillBreakpoint = craftingDifficultyBP[i] * recipeData.recipeDifficulty
-        print("skill BP: " .. skillBreakpoint)
+        --print("skill BP: " .. skillBreakpoint)
         -- EXPERIMENT: try to adjust skillbp by 1 to workaround blizz rounding errors
         skillBreakpoint = skillBreakpoint + 1
         arrayBP[i] = skillBreakpoint - skillWithoutReagentIncrease
-        print("skill needed for this breakpoint:" .. arrayBP[i])
+        --print("skill needed for this breakpoint:" .. arrayBP[i])
         -- If skill already meets or exceeds this BP...
         if arrayBP[i] <= 0 then  -- ...then no skill bonus is needed to reach this breakpoint
             arrayBP[i] = 0
@@ -154,12 +158,12 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
         end
     end
 
-    print("arrayBP: ")
-    CraftSimUTIL:PrintTable(arrayBP)
+    --print("arrayBP: ")
+    --CraftSimUTIL:PrintTable(arrayBP)
 
 
     -- Optimize Knapsack
-    local results = CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP)
+    local results = CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP)  
 
     -- lets assume first, the highest quality reached is also the most profitable?
     -- TODO: consider minvalue, the crafting costs and the profit..
@@ -198,6 +202,7 @@ function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
             b = j - k
             c = n - j
             w = 2 * a + b -- plus one to make up for lua indexing?
+
             goldCost = a * ksItem.itemsInfo[3].minBuyout + b * ksItem.itemsInfo[2].minBuyout + c * ksItem.itemsInfo[1].minBuyout
             --print("current iteration ".. j .." goldCost: " .. tostring(goldCost))
             --print("w: " .. tostring(w))
@@ -205,15 +210,23 @@ function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
                 --print("gold Cost smaller than value: " .. ksItem.crumb[w].value)
                 --print("saving weight " .. ksItem.mWeight * w .. " into index " .. w)
                 ksItem.crumb[w].weight = w * ksItem.mWeight
-                ksItem.crumb[w].mix = {a, b, c}
-                ksItem.crumb[w].mixDebug = tostring(a) .. "," .. tostring(b) .. "," .. tostring(c)
+                ksItem.crumb[w].mix = {c, b, a}
+                ksItem.crumb[w].mixDebug = tostring(c) .. "," .. tostring(b) .. "," .. tostring(a)
+                ksItem.crumb[w].goldCostDebug = c * ksItem.itemsInfo[1].minBuyout .. "," .. b * ksItem.itemsInfo[2].minBuyout .. "," .. a * ksItem.itemsInfo[3].minBuyout
                 ksItem.crumb[w].value = goldCost
             end
         end
     end
 
-    --print("crumbs created for " .. ksItem.name)
-    --CraftSimUTIL:PrintTable(ksItem.crumb)
+    print("crumbs created for " .. ksItem.name)
+    -- debug crumbs
+    if ksItem.name == "Draconium Ore" then
+        for index, crumb in pairs(ksItem.crumb) do
+            print(index .. " cost: " .. crumb.value .. " (" .. crumb.mixDebug .. ")")
+            print("goldCost: " .. crumb.goldCostDebug)
+        end
+    end
+    --
 end
 
 function CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) 
@@ -365,19 +378,23 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
         end
     end
 
-    print("results: ")
-    for _, itemAllocation in pairs(outResult) do
-        print("Reachable quality: " .. itemAllocation.qualityReached)
+    print("outArr:")
+    CraftSimUTIL:PrintTable(outArr)
 
-        for _, matAllocation in pairs(itemAllocation.allocations) do
-            print("- name: " .. matAllocation.itemName)
+    -- print("results: ")
+    -- for _, itemAllocation in pairs(outResult) do
+    --     print("Reachable quality: " .. itemAllocation.qualityReached)
 
-            for qualityIndex, allocation in pairs(matAllocation.allocations) do
-                print("- - q" .. qualityIndex .. ": " .. allocation.allocations)
-                --print("- - itemID" .. allocation.itemID)
-            end
-        end
-    end
+    --     for _, matAllocation in pairs(itemAllocation.allocations) do
+    --         print("- name: " .. matAllocation.itemName)
+
+    --         local qText = "--"
+    --         for qualityIndex, allocation in pairs(matAllocation.allocations) do
+    --             qText = qText .. "q" .. qualityIndex .. ": " .. allocation.allocations .. " | "
+    --         end
+    --         print(qText)
+    --     end
+    -- end
 
     return outResult
 end
@@ -385,7 +402,28 @@ end
 function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
 
     -- TODO: iterate current reagent allocation and calculate the total skill increase by their weights?
-    local skillIncrease = 0
-    
-    return skillIncrease
+    local matBonus = {}
+    local totalWeight = 0
+
+    for index, reagent in pairs(recipeData.reagents) do
+        if reagent.differentQualities then
+            local n3 = reagent.itemsInfo[3].allocations
+            local n2 = reagent.itemsInfo[2].allocations
+            local n1 = reagent.itemsInfo[1].allocations
+            local matQuantity = n1 + n2 + n3
+            local matWeight = CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(reagent.itemsInfo[1].itemID)
+            local relativeBonus = (n2 + 2 * n3) / 2 * matWeight
+            table.insert(matBonus, relativeBonus)
+
+            totalWeight = totalWeight + matQuantity * matWeight
+        end
+    end
+    local matSkillBonus = 0
+    local recipeMaxSkillBonus = 0.25 * recipeData.recipeDifficulty
+    for _, bonus in pairs(matBonus) do
+        matSkillBonus = matSkillBonus + bonus / totalWeight * recipeMaxSkillBonus
+    end
+
+    print("reagent skill contribution: " .. matSkillBonus)
+    return matSkillBonus
 end

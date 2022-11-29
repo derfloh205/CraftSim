@@ -87,8 +87,6 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		}
 		local slotAllocations = currentTransaction:GetAllocations(slotIndex)
 		local currentSelected = slotAllocations:Accumulate()
-		--print("current selected: " .. currentSelected .. " required: " .. currentSlot.quantityRequired)
-		--print("type: " .. reagentType)
 		if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
 			recipeData.reagents[slotIndex].itemsInfo = {}
 			for i, reagent in pairs(reagents) do

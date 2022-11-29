@@ -186,7 +186,6 @@ end
 
 function CraftSimUTIL:FoldTable(t, foldFunction, startAtZero)
     local foldedValue = nil
-    print("folding table.. items in t:" .. #t)
     if #t < 2 and not startAtZero then
         return nil
     elseif #t < 1 and startAtZero then
