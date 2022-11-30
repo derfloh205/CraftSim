@@ -259,3 +259,119 @@ function CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 	end
 	return professionGear
 end
+
+function CraftSimDATAEXPORT:ConvertData()
+	-- -> CSTempDB
+	local dataTable = {}
+	local lines = string.split(CraftSimDATAEXPORT.CSV, "\n")
+	print("lines: " .. #lines)
+	for line in lines do
+		local values = mysplit(line, ",")
+		print(values[1] .. ": " .. values[2])
+		local _, itemLink= GetItemInfo(values[1]) 
+		local itemID = nil
+		local cycles = 0
+		while itemID == nil do
+			print("polling for itemid of " .. values[1])
+			local _, itemLink= GetItemInfo(values[1]) 
+			local itemID = CraftSimUTIL:GetItemIDByLink(itemLink)
+			cycles = cycles + 1
+
+			if cycles > 100000 then
+				print("max cycles reached.. breaking")
+				break
+			end
+		end
+		if itemID ~= nil then
+			print("id found..")
+			dataTable[itemID] = {
+				name = values[1],
+				weight = values[2]
+			}
+		else
+			print("item id not found")
+		end
+	end
+
+	CSTempDB = dataTable
+end
+
+CraftSimDATAEXPORT.CSV = 
+[[Draconic Vial,11
+Hochenblume,3
+Saxifrage,6
+Bubble Poppy,6
+Omnium Draconis,12
+Elemental Potion of Power,22
+Potion of Frozen Focus,21
+Primal Convergent,39
+Writhebark,6
+Draconium Ore,10
+Phial of Tepid Versatility,32
+Phial of Elemental Chaos,35
+Obsidian Seared Alloy,78
+Primal Molten Alloy,48
+Frostfire Alloy,48
+Infurious Alloy,33
+Serevite Ore,3
+Khaz'gorite Ore,14
+Glossy Stone,21
+Silken Gemdust,20
+Runed Writhebark,46
+Shock-Spring Coil,9
+Greased-Up Gears,26
+Handful of Serevite Bolts,7
+Frameless Lens,26
+Arclight Capacitor,51
+Reinforced Machine Chassis,75
+Everburning Blasting Powder,13
+Mireslush Hide,45
+Eternity Amber,15
+Stonecrust Hide,45
+Elemental Harmony,291
+Lustrous Scaled Hide,31
+Primal Deconstruction Charge,22
+Resilient Leather,2
+Gravitational Displacer,20
+Assorted Safety Fuses,19
+Potion of Gusts,20
+Neltharite,108
+Adamant Scales,2
+Vibrant Wildercloth Bolt,54
+Refreshing Healing Potion,11
+Sundered Onyx,25
+Dense Hide,31
+Mystic Sapphire,25
+Frostbite Scales,45
+Malygite,108
+Vibrant Emerald,25
+Queen's Ruby,25
+Potion of the Hushed Zephyr,21
+Serene Ink,14
+Burnished Ink,24
+Shimmering Pigment,6
+Blazing Pigment,16
+Blazing Ink,14
+Flourishing Ink,14
+Chilled Rune,34
+Cosmic Ink,42
+Flourishing Pigment,16
+Serene Pigment,16
+Ysemerald,108
+Illimited Diamond,254
+Shimmering Clasp,20
+Alexstraszite,108
+Projection Prism,31
+Nozdorite,88
+Earthshine Scales,45
+Infurious Scales,42
+Infurious Hide,42
+Wildercloth Bolt,9
+Temporal Spellthread,218
+Chronocloth Bolt,117
+Frozen Spellthread,218
+Azureweave Bolt,117
+Spool of Wilderthread,4
+Infurious Wildercloth Bolt,29
+Vibrant Spellthread,123
+]]

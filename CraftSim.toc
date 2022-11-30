@@ -5,7 +5,7 @@
 ## Notes: Calculates profession statweights and displays them per recipe
 ## Author: genju
 ## Version: 1.0
-## SavedVariables: CraftSimDebugData, CraftSimOptions
+## SavedVariables: CraftSimDebugData, CraftSimOptions, CSTempDB
 
 ReagentOptimization.lua
 Frames.lua

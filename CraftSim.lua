@@ -120,6 +120,10 @@ function addon:PLAYER_LOGIN()
 				CraftSimPriceAPIs:InitAvailablePriceAPI()
 			end
 		end
+
+		if command == "convert" then
+			CraftSimDATAEXPORT:ConvertData()
+		end
 	end
 end
 
