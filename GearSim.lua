@@ -1,7 +1,7 @@
 CraftSimGEARSIM = {}
 
     -- TODO: export skill stat from profession items
-    -- TODO: recalculate by thresholds the expected quality based on the new skill stat of the items (cause they can change the base q of an item)
+    -- TODO: If the player has 2, 3 or more of an item, do not consider empty slots in the combinations
 
 CraftSimGEARSIM.IsEquipping = false
 
@@ -12,7 +12,7 @@ function CraftSimGEARSIM:GetUniqueCombosFromAllPermutations(totalCombos)
     local function checkIfCombinationExists(combinationToTest)
         for _, combination in pairs(combinationList) do
             local exists1 = false
-            local exists2 = false
+            local exists2 = false   
             local exists3 = false
             for _, itemLink in pairs(combination) do 
                 if combinationToTest[1] == itemLink then
