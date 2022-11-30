@@ -204,4 +204,6 @@ function CraftSimSTATS:GetExpectedQualityBySkill(recipeData, skill)
             expectedQuality = expectedQuality + 1
         end
     end
+
+    return expectedQuality
 end

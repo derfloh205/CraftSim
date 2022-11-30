@@ -89,7 +89,7 @@ function CraftSimFRAME:InitBestAllocationsFrame()
     local contentOffsetY = -60
 	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.title:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 117)
-	frame.title:SetText("CraftSim Highest Quality Allocation")
+	frame.title:SetText("CS: Highest Quality Allocation (WIP)")
 
     -- frame.calculateButton = CreateFrame("Button", "CraftSimReagentHintButton", frame, "UIPanelButtonTemplate")
 	-- frame.calculateButton:SetSize(70, 25)
@@ -113,6 +113,10 @@ function CraftSimFRAME:InitBestAllocationsFrame()
         frame.qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
         frame.qualityIcon:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
     end
+
+    frame.notFoundText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.notFoundText:SetPoint("CENTER", frame, "CENTER", 0, 0)
+	frame.notFoundText:SetText("No combination found \nto increase quality")
 
     local iconsOffsetY = 40
     local iconsOffsetX = -40
@@ -195,12 +199,26 @@ end
 
 -- DEBUG
 function CraftSimFRAME:ShowBestReagentAllocation(bestAllocation)
+    if bestAllocation == nil then
+        CraftSimReagentHintFrame.notFoundText:Show()
+        CraftSimReagentHintFrame.qualityIcon:Hide()
+        CraftSimReagentHintFrame.qualityText:Hide()
+
+        for i = 1, 5, 1 do
+            CraftSimReagentHintFrame.reagentFrames.rows[i]:Hide()
+        end
+
+        return
+    else
+        CraftSimReagentHintFrame.notFoundText:Hide()
+        CraftSimReagentHintFrame.qualityIcon:Show()
+        CraftSimReagentHintFrame.qualityText:Show()
+    end
     CraftSimReagentHintFrame.qualityIcon.SetQuality(bestAllocation.qualityReached)
     for frameIndex = 1, 5, 1 do
         local allocation = bestAllocation.allocations[frameIndex]
         if allocation ~= nil then
             local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(allocation.allocations[1].itemID) 
-            print(tostring(CraftSimReagentHintFrame.reagentFrames.rows[frameIndex]))
             CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
             CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
             CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
@@ -302,7 +320,8 @@ function CraftSimFRAME:GetProfessionEquipSlots()
     elseif ProfessionsFrame.CraftingPage.Prof1Gear0Slot:IsVisible() then
         return CraftSimCONST.PROFESSION_INV_SLOTS[2]
     else
-        print("no profession tool slot visible.. what is going on?")
+        --print("no profession tool slot visible.. what is going on?")
+        return {}
     end
 end
 

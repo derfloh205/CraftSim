@@ -110,7 +110,6 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
     --print("numBP: " .. numBP)
 
     local recipeMaxSkillBonus = 0.25 * recipeData.recipeDifficulty
-    print("max skill bonus: " .. recipeMaxSkillBonus)
     
     -- Calculate the material bonus needed to meet each breakpoint based on the player's
     --   existing skill and the recipe difficulty (as a fraction of the recipeMaxSkillBonus
@@ -123,22 +122,14 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
     local reagentSkillContribution = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
     local skillWithoutReagentIncrease = totalSkill - reagentSkillContribution
 
-    local expectedQualityWithoutReagents = 1
-    local thresholds = CraftSimSTATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
     local expectedQualityWithoutReagents = CraftSimSTATS:GetExpectedQualityBySkill(recipeData, skillWithoutReagentIncrease)
 
-    for _, threshold in pairs(thresholds) do
-        if skillWithoutReagentIncrease > threshold then
-            expectedQualityWithoutReagents = expectedQualityWithoutReagents + 1
-        end
-    end
-
-    print("expected quality without reagent skill increase: " .. expectedQualityWithoutReagents)
-    print("expected quality with current reagent skill increase: " .. recipeData.expectedQuality)
+    --print("expected quality without reagent skill increase: " .. expectedQualityWithoutReagents)
+    --print("expected quality with current reagent skill increase: " .. recipeData.expectedQuality)
     
-    print("totalSkill: " .. totalSkill)
-    print("reagentSkillContribution: " ..  reagentSkillContribution)
-    print("skillWithoutReagentIncrease: " ..  skillWithoutReagentIncrease)
+    --print("totalSkill: " .. totalSkill)
+    --print("reagentSkillContribution: " ..  reagentSkillContribution)
+    --print("skillWithoutReagentIncrease: " ..  skillWithoutReagentIncrease)
 
     for i = 0, numBP - 1, 1 do
         --print("checking BP: " .. tostring(craftingDifficultyBP[i]))
@@ -182,7 +173,6 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
         return result.qualityReached > expectedQualityWithoutReagents
     end)
     
-
     CraftSimFRAME:ShowBestReagentAllocation(results[#results])
 end
 
@@ -225,12 +215,12 @@ function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
         end
     end
 
-    print("crumbs created for " .. ksItem.name)
+    --print("crumbs created for " .. ksItem.name)
     -- debug crumbs
     if ksItem.name == "Draconium Ore" then
         for index, crumb in pairs(ksItem.crumb) do
-            print(index .. " cost: " .. crumb.value .. " (" .. crumb.mixDebug .. ")")
-            print("goldCost: " .. crumb.goldCostDebug)
+            --print(index .. " cost: " .. crumb.value .. " (" .. crumb.mixDebug .. ")")
+            --print("goldCost: " .. crumb.goldCostDebug)
         end
     end
     --
@@ -251,7 +241,7 @@ function CraftSimREAGENT_OPTIMIZATION:GetGCD(a, b)
 end
 
 function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
-    print("Starting optimization...")
+    --print("Starting optimization...")
     local numMaterials, i, j, k, maxWeight
 
     numMaterials = #ks or 1 -- should be ks -1 or 1 and behave like UBound(ks, 1)
@@ -388,18 +378,18 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
     --print("outArr:")
     --CraftSimUTIL:PrintTable(outArr)
 
-    print("results: ")
+    --print("results: ")
     for _, itemAllocation in pairs(outResult) do
-        print("Reachable quality: " .. itemAllocation.qualityReached)
+        --print("Reachable quality: " .. itemAllocation.qualityReached)
 
         for _, matAllocation in pairs(itemAllocation.allocations) do
-            print("- name: " .. matAllocation.itemName)
+            --print("- name: " .. matAllocation.itemName)
 
             local qText = "--"
             for qualityIndex, allocation in pairs(matAllocation.allocations) do
                 qText = qText .. "q" .. qualityIndex .. ": " .. allocation.allocations .. " | "
             end
-            print(qText)
+            --print(qText)
         end
     end
 
@@ -431,6 +421,6 @@ function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(r
         matSkillBonus = matSkillBonus + bonus / totalWeight * recipeMaxSkillBonus
     end
 
-    print("reagent skill contribution: " .. matSkillBonus)
+    --print("reagent skill contribution: " .. matSkillBonus)
     return matSkillBonus
 end

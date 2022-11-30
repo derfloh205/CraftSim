@@ -184,6 +184,7 @@ function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChan
     end
     -- TODO: to make changes of this have impact, need to evaluate the expectedQuality by player skill and quality thresholds..
     -- TODO: also, need to extract skill changes from profession gear anyway
+    print("expectedQ with Items: " .. tostring(expectedQualityWithItems))
     if modifedRecipeData.stats.skill ~= nil then
         modifedRecipeData.stats.skill = modifedRecipeData.stats.skill + statChanges.skill
         local expectedQualityWithItems = CraftSimSTATS:GetExpectedQualityBySkill(modifedRecipeData, modifedRecipeData.stats.skill)
