@@ -4,22 +4,6 @@ local function translateLuaIndex(index)
     return index + 1
 end
 
--- wow.tools -> ModifiedCraftingCategory -- TODO: export?
-DEBUG_REAGENT_WEIGHTS = {
-    --Draconium Ore
-    [189143] = 10,
-    [188658] = 10,
-    [190311] = 10,
-
-    -- Severite Ore
-    [190395] = 3,
-    [190396] = 3,
-    [190394] = 3,
-
-    -- Primal Flux
-    [190452] = 0 -- no entry.. maybe cause no quality?
-}
-
 -- By Liqorice's knapsack solution
 function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
     local recipeData = CraftSimDATAEXPORT:exportRecipeData()
@@ -227,12 +211,12 @@ function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
 end
 
 function CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) 
-    local weight = DEBUG_REAGENT_WEIGHTS[itemID]
-    if weight == nil then
+    local weightEntry = CraftSimREAGENTWEIGHTS[itemID]
+    if weightEntry == nil then
         print("no weight in debug data for: " .. itemID)
         return 0
     end
-    return DEBUG_REAGENT_WEIGHTS[itemID]
+    return weightEntry.weight
 end
 
 

@@ -260,59 +260,6 @@ function CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 	return professionGear
 end
 
-function CraftSimDATAEXPORT:ConvertData()
-	-- -> CSTempDB
-	local dataTable = CSTempDB
-	local lines = { string.split(";", CraftSimDATAEXPORT.CSV) }
-	print("lines: " .. #lines)
-	for _, line in pairs(lines) do
-		local values = { string.split(",", line) }
-		local name = string.gsub(values[1], "\n", "")
-		print(name .. ": " .. values[2])
-		print("name: \"" .. name .. "\"")
-
-		local alreadySaved = false
-		for _, item in pairs(CSTempDB) do
-			if item.name == name then
-				alreadySaved = true
-				break
-			end
-		end
-
-		if not alreadySaved then
-			local _, itemLink= GetItemInfo(name) 
-			local itemID = nil
-			local cycles = 0
-			while itemID == nil do
-				--print("polling for itemid of " .. name)
-				local _, itemLink= GetItemInfo(name) 
-				if itemLink ~= nil then
-					local itemID = CraftSimUTIL:GetItemIDByLink(itemLink)
-				else
-					cycles = cycles + 1
-					if cycles > 100 then
-						--print("max cycles reached.. breaking")
-						break
-					end
-				end
-			end
-			if itemID ~= nil then
-				print("id found: " .. name)
-				dataTable[itemID] = {
-					name = name,
-					weight = values[2]
-				}
-			else
-				print("item id not found: " .. name)
-			end
-		else
-			print("item already in db: " .. name)
-		end
-	end
-
-	CSTempDB = CopyTable(dataTable)
-end
-
 CraftSimDATAEXPORT.CSV = 
 [[Draconic Vial,11;
 Hochenblume,3;
