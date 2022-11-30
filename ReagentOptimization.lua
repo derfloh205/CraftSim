@@ -213,7 +213,7 @@ end
 function CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) 
     local weightEntry = CraftSimREAGENTWEIGHTS[itemID]
     if weightEntry == nil then
-        print("no weight in debug data for: " .. itemID)
+        print("no weight in data for: " .. itemID)
         return 0
     end
     return weightEntry.weight
@@ -382,7 +382,6 @@ end
 
 function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
 
-    -- TODO: iterate current reagent allocation and calculate the total skill increase by their weights?
     local matBonus = {}
     local totalWeight = 0
 
