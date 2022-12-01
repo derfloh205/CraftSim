@@ -169,7 +169,22 @@ function CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 		end
 	end
 
-	stats.skill = 0 -- TODO
+	stats.skill = 0
+	local parsedSkill = nil
+	local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
+	for lineNum, line in pairs(tooltipData.lines) do
+		for argNum, arg in pairs(line.args) do
+			if arg.stringVal and string.find(arg.stringVal, "Equip:") then -- TODO: Localization differences? 
+				-- here the stringVal looks like "Equip: +6 Blacksmithing Skill"
+				parsedSkill = tonumber(string.match(arg.stringVal, "%+(%d+)"))
+				break
+			end
+		end
+	end
+
+	if parsedSkill ~= nil then
+		stats.skill = parsedSkill
+	end
 
 	return stats
 end

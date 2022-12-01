@@ -157,9 +157,15 @@ function CraftSimUTIL:isItemSoulbound(itemID)
 end
 
 -- for debug purposes
-function CraftSimUTIL:PrintTable(t)
+function CraftSimUTIL:PrintTable(t, recursive)
     for k, v in pairs(t) do
-        print(tostring(k) .. ": " .. tostring(v))
+        if not recursive or type(v) ~= "table" then
+            print(tostring(k) .. ": " .. tostring(v))
+        elseif type(v) == "table" then
+            print(tostring(k) .. ": ")
+            CraftSimUTIL:PrintTable(v, recursive)
+        end
+
     end
 end
 
