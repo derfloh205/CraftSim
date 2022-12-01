@@ -299,10 +299,23 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
         end
     end
 
+    local function countEmptySlots(combo)
+        local numEmpty = 0
+        for _, slot in pairs(combo) do
+            if slot.isEmptySlot then
+                numEmpty = numEmpty + 1
+            end
+        end
+        return numEmpty
+    end
+
     local bestSimulation = nil
     for index, simResult in pairs(validSimulationResults) do
         --print("Gearcombo " .. index .. " meanProfit: " .. simResult.meanProfit)
         if bestSimulation == nil or simResult.profitDiff > bestSimulation.profitDiff then
+            bestSimulation = simResult
+        -- if the profit diff is the same, prefer the sim result with more items set
+        elseif simResult.profitDiff == bestSimulation.profitDiff and countEmptySlots(bestSimulation) > countEmptySlots(simResult) then
             bestSimulation = simResult
         end
     end
