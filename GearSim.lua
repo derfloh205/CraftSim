@@ -1,8 +1,5 @@
 CraftSimGEARSIM = {}
 
-    -- TODO: export skill stat from profession items
-    -- TODO: If the player has 2, 3 or more of an item, do not consider empty slots in the combinations
-
 CraftSimGEARSIM.IsEquipping = false
 
 function CraftSimGEARSIM:GetUniqueCombosFromAllPermutations(totalCombos)

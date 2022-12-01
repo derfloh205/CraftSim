@@ -7,8 +7,6 @@ CraftSimDEBUG_PRICE_API = {}
 
 CraftSimDebugData = CraftSimDebugData or {}
 
--- TODO: Factor in vendor buy prices for reagents to get cheapest price
-
 function CraftSimPriceAPIs:IsPriceApiAddonLoaded()
     local loaded = false
     for _, name in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do

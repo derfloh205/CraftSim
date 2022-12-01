@@ -1,5 +1,7 @@
 CraftSimREAGENT_OPTIMIZATION = {}
 
+-- TODO: check why the calculation is off
+
 local function translateLuaIndex(index)
     return index + 1
 end
