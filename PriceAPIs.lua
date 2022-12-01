@@ -7,6 +7,8 @@ CraftSimDEBUG_PRICE_API = {}
 
 CraftSimDebugData = CraftSimDebugData or {}
 
+-- TODO: Factor in vendor buy prices for reagents to get cheapest price
+
 function CraftSimPriceAPIs:IsPriceApiAddonLoaded()
     local loaded = false
     for _, name in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do
@@ -59,8 +61,17 @@ function CraftSimTSM:GetMinBuyoutByItemID(itemID)
     end
     
     local minBuyoutPriceSourceKey = "DBMinBuyout"
-    local minBuyout, error = TSM_API.GetCustomPriceValue(minBuyoutPriceSourceKey, tsmItemString)
-    return minBuyout
+    local vendorBuy = "VendorBuy"
+    local vendorBuyPrice, error = TSM_API.GetCustomPriceValue(vendorBuy, tsmItemString)
+
+    if vendorBuyPrice == nil then
+        --print("found no vendor buy price for: " .. itemLink)
+        local minBuyout, error = TSM_API.GetCustomPriceValue(minBuyoutPriceSourceKey, tsmItemString)
+        return minBuyout
+    else
+        --print("found vendor buy price for: " .. itemLink)
+        return vendorBuyPrice
+    end
 end
 
 function CraftSimTSM:GetMinBuyoutByItemLink(itemLink)

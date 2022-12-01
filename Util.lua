@@ -193,9 +193,9 @@ end
 function CraftSimUTIL:FoldTable(t, foldFunction, startAtZero)
     local foldedValue = nil
     if #t < 2 and not startAtZero then
-        return nil
+        return t[1]
     elseif #t < 1 and startAtZero then
-        return nil
+        return t[0]
     end
 
     local startIndex = 1
