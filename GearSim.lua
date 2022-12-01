@@ -291,13 +291,13 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
     local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, noItemsRecipeData, priceData, currentComboMeanProfit)
 
     -- TODO: filter out everything with a profitDiff of zero or less (does not make sense to display as top gear)
-    local validSimulationResults = {}
-    for index, simResult in pairs(simulationResults) do
-        --print("Sim Result " .. index .. " meanProfit: " .. simResult.meanProfit)
-        if simResult.profitDiff > 0 then
-            table.insert(validSimulationResults, simResult)
-        end
-    end
+    local validSimulationResults = simulationResults
+    -- for index, simResult in pairs(simulationResults) do
+    --     --print("Sim Result " .. index .. " meanProfit: " .. simResult.meanProfit)
+    --     if simResult.profitDiff > 0 then
+    --         table.insert(validSimulationResults, simResult)
+    --     end
+    -- end
 
     local function countEmptySlots(combo)
         local numEmpty = 0
@@ -309,20 +309,26 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
         return numEmpty
     end
 
-    local bestSimulation = nil
+    -- set the initial best combo as the current equipped combo!
+    -- this leads to only better combos or combos with more items slotted being displayed
+    local equippedSimResult = CraftSimGEARSIM:GetEquippedSimResult(validSimulationResults)
+    local bestSimulation = equippedSimResult
+    local foundBetter = false
     for index, simResult in pairs(validSimulationResults) do
         --print("Gearcombo " .. index .. " meanProfit: " .. simResult.meanProfit)
-        if bestSimulation == nil or simResult.profitDiff > bestSimulation.profitDiff then
+        if simResult.profitDiff > bestSimulation.profitDiff then
             bestSimulation = simResult
+            foundBetter = true
         -- if the profit diff is the same, prefer the sim result with more items set
-        elseif simResult.profitDiff == bestSimulation.profitDiff and countEmptySlots(bestSimulation) > countEmptySlots(simResult) then
+        elseif simResult.profitDiff == bestSimulation.profitDiff and countEmptySlots(bestSimulation.combo) > countEmptySlots(simResult.combo) then
+            --print("sim result has less empty slots.. prefering..")
+            foundBetter = true
             bestSimulation = simResult
         end
+        -- else just keep the current set best set
     end
 
-    
-
-    if bestSimulation ~= nil then
+    if foundBetter then
         CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
         CraftSimFRAME:FillSimResultData(bestSimulation)
         -- print("Best Profit Combination: " .. bestSimulation.meanProfit)
@@ -338,6 +344,51 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
     end
 
     -- TODO: equip the p gear combi of the best simulation ?
+end
+
+function CraftSimGEARSIM:GetEquippedSimResult(simulationResults)
+    local equippedCombo = CraftSimGEARSIM:GetEquippedCombo()
+
+    for _, result in pairs(simulationResults) do
+        local foundSlot1 = false
+        local foundSlot2 = false
+        local foundSlot3 = false
+
+        for _, slot in pairs(result.combo) do
+            if slot.itemLink == equippedCombo[1].itemLink then
+                foundSlot1 = true
+            end
+            if slot.itemLink == equippedCombo[2].itemLink then
+                foundSlot2 = true
+            end
+            if slot.itemLink == equippedCombo[3].itemLink then
+                foundSlot3 = true
+            end
+        end
+
+        if foundSlot1 and foundSlot2 and foundSlot3 then
+            --print("found currently equipped simulation result!")
+            return result
+        end
+    end
+
+    error("Could not find currently equipped simulation result.. should not happen please contact addon dev")
+end
+
+function CraftSimGEARSIM:GetEquippedCombo()
+    -- set the initial best combo as the current equipped combo!
+    local equippedGear = CraftSimDATAEXPORT:GetEquippedProfessionGear()
+    local equippedCombo = {}
+    local emptySlots = 3 - #equippedGear
+    for i = 1, emptySlots, 1 do
+        table.insert(equippedCombo, {isEmptySlot = true, itemLink = CraftSimCONST.EMPTY_SLOT_LINK})
+    end
+
+    for _, gear in pairs(equippedGear) do
+        table.insert(equippedCombo, {itemLink = gear.itemLink})
+    end
+
+    return equippedCombo
 end
 
 function CraftSimGEARSIM:UnequipProfessionItems()

@@ -58,6 +58,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
         local reagent = requiredReagents[translateLuaIndex(index)]
         local costs ={}
         -- get costs for reagent quality
+        --print("creating ks item for " .. tostring(reagent.name) .. "(" .. tostring(reagent.itemsInfo[1]) .. ")")
         local ksItem = {
             name = reagent.name,
             itemsInfo = reagent.itemsInfo, -- this contains the ids of all qualities and costs
