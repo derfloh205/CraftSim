@@ -60,6 +60,10 @@ function CraftSimTSM:GetMinBuyoutByItemID(itemID)
         tsmItemString = TSM_API.ToItemString(itemLink)
     end
     
+    return CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString)
+end
+
+function CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString)
     local minBuyoutPriceSourceKey = "DBMinBuyout"
     local vendorBuy = "VendorBuy"
     local vendorBuyPrice, error = TSM_API.GetCustomPriceValue(vendorBuy, tsmItemString)
@@ -80,17 +84,25 @@ function CraftSimTSM:GetMinBuyoutByItemLink(itemLink)
     end
     local tsmItemString = TSM_API.ToItemString(itemLink)
     -- NOTE: the bonusID 3524 which is often used for df crafted gear is not included in the tsm bonus id map yet
-    local minBuyoutPriceSourceKey = "DBMinBuyout"
-    local minBuyout, error = TSM_API.GetCustomPriceValue(minBuyoutPriceSourceKey, tsmItemString)
-    return minBuyout
+    return CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString)
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)
-    return Auctionator.API.v1.GetAuctionPriceByItemID(CraftSimCONST.AUCTIONATOR_CALLER_ID , itemID)
+    local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemID(CraftSimCONST.AUCTIONATOR_CALLER_ID, itemID)
+    if vendorPrice then
+        return vendorPrice
+    else
+        return Auctionator.API.v1.GetAuctionPriceByItemID(CraftSimCONST.AUCTIONATOR_CALLER_ID , itemID)
+    end
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemLink(itemLink)
-    return Auctionator.API.v1.GetAuctionPriceByItemLink(CraftSimCONST.AUCTIONATOR_CALLER_ID , itemLink)
+    local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemLink(CraftSimCONST.AUCTIONATOR_CALLER_ID, itemLink)
+    if vendorPrice then
+        return vendorPrice
+    else
+        return Auctionator.API.v1.GetAuctionPriceByItemLink(CraftSimCONST.AUCTIONATOR_CALLER_ID , itemLink)
+    end
 end
 
 function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
