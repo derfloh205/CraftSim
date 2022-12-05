@@ -149,6 +149,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		local baseIlvl = recipeInfo.itemLevel
 		recipeData.result.itemQualityLinks = CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(outputItemData.hyperlink)
 		recipeData.result.baseILvL = baseIlvl
+		recipeData.baseItemAmount = 1
 	elseif not recipeInfo.supportsQualities then
 		-- Probably something like transmuting air reagent that creates non equip stuff without qualities
 		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)

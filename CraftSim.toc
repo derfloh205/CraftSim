@@ -7,6 +7,7 @@
 ## Version: 1.0
 ## SavedVariables: CraftSimDebugData, CraftSimOptions, CSTempDB
 
+CostOverview.lua
 ReagentWeightData.lua
 ReagentOptimization.lua
 Frames.lua

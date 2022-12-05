@@ -234,9 +234,87 @@ function CraftSimFRAME:ShowBestReagentAllocation(bestAllocation)
     end
 end
 
+function CraftSimFRAME:InitCostOverviewFrame()
+    local frame = CreateFrame("frame", "CraftSimCostOverviewFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
+	frame:SetPoint("TOP",  CraftSimSimFrame, "BOTTOM", 0, 10)
+	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+	frame:SetBackdrop({
+		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+		edgeSize = 16,
+		insets = { left = 8, right = 6, top = 8, bottom = 8 },
+	})
+	frame:SetSize(200, 250)
+    local contentOffsetY = -20
+    local textSpacingY = -20
+	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.title:SetPoint("TOP", frame, "TOP", 0, contentOffsetY)
+	frame.title:SetText("CraftSim Cost Overview")
+
+    frame.craftingCostsTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.craftingCostsTitle:SetPoint("TOP", frame.title, "TOP", 0, textSpacingY)
+    frame.craftingCostsTitle:SetText("Crafting Costs")
+
+    frame.craftingCosts = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.craftingCosts:SetPoint("TOP", frame.craftingCostsTitle, "TOP", 0, textSpacingY)
+    frame.craftingCosts:SetText("???")
+
+    frame.resultProfitsTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.resultProfitsTitle:SetPoint("TOP", frame.craftingCosts, "TOP", 0, textSpacingY - 20)
+    frame.resultProfitsTitle:SetText("Profit By Quality")
+
+    local function createProfitFrame(offsetY, parent)
+        local profitFrame = CreateFrame("frame", nil, parent)
+        profitFrame:SetSize(parent:GetWidth(), 25)
+        profitFrame:SetPoint("TOP", parent, "TOP", 0, offsetY)
+        profitFrame.icon = profitFrame:CreateTexture(nil, "OVERLAY")
+        profitFrame.icon:SetSize(20, 20)
+        profitFrame.icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+        profitFrame.icon:SetAtlas("Professions-Icon-Quality-Tier1")
+        profitFrame.icon:SetPoint("CENTER", profitFrame, "CENTER", -60, 0)
+        profitFrame.icon.SetQuality = function(qualityID) 
+            profitFrame.icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+            profitFrame.icon:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
+        end
+
+        profitFrame.text = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        profitFrame.text:SetPoint("LEFT", profitFrame.icon, "LEFT", 30, 0)
+        profitFrame.text:SetText("???")
+
+        profitFrame:Hide()
+        return profitFrame
+    end
+
+    local baseY = contentOffsetY - 100
+    local profitFramesSpacingY = -20
+    frame.profitFrames = {}
+    table.insert(frame.profitFrames, createProfitFrame(baseY, frame))
+    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame))
+    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*2, frame))
+    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*3, frame))
+    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame))
+    
+
+	frame:Hide()
+end
+
+function CraftSimFRAME:FillCostOverview(craftingCosts, profitPerQuality, currentQuality)
+    CraftSimCostOverviewFrame.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
+
+    for index, profitFrame in pairs(CraftSimCostOverviewFrame.profitFrames) do
+        if profitPerQuality[index] ~= nil then
+            profitFrame.icon.SetQuality(currentQuality + index - 1)
+            profitFrame.text:SetText(CraftSimUTIL:FormatMoney(profitPerQuality[index]))
+            profitFrame:Show()
+        else
+            profitFrame:Hide()
+        end
+    end
+end
+
 function CraftSimFRAME:InitGearSimFrame()
     local frame = CreateFrame("frame", "CraftSimSimFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
-	frame:SetPoint("TOPRIGHT",  ProfessionsFrame.CraftingPage.SchematicForm.Details, 230, -5)
+	frame:SetPoint("TOPRIGHT",  ProfessionsFrame.CloseButton, 195, 3)
 	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 	frame:SetBackdrop({
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -286,7 +364,7 @@ function CraftSimFRAME:InitGearSimFrame()
     frame.statDiff.skill:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*4)
     frame.statDiff.skill:SetText("Skill: ")
 
-	frame:Show()
+	frame:Hide()
 end
 
 function CraftSimFRAME:ShowComboItemIcons(professionGearCombo)
@@ -371,11 +449,13 @@ function CraftSimFRAME:ToggleFrames(visible)
         CraftSimSimFrame:Show()
         CraftSimDetailsFrame:Show()
         CraftSimReagentHintFrame:Show()
+        CraftSimCostOverviewFrame:Show()
     else
         --print("hide frames")
         CraftSimSimFrame:Hide()
         CraftSimDetailsFrame:Hide()
         CraftSimReagentHintFrame:Hide()
+        CraftSimCostOverviewFrame:Hide()
     end
 end
 

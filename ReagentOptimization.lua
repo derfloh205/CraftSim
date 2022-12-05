@@ -108,6 +108,8 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
     local totalSkill = recipeData.stats.skill
     local reagentSkillContribution = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
     local skillWithoutReagentIncrease = totalSkill - reagentSkillContribution
+    --print("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
+    --print("reagentSkillContribution: " .. tostring(reagentSkillContribution))
 
     local expectedQualityWithoutReagents = CraftSimSTATS:GetExpectedQualityBySkill(recipeData, skillWithoutReagentIncrease)
 
