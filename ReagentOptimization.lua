@@ -326,10 +326,10 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
             -- now minValue is set and j points to the correct column
             
             -- create the list of materials that represent optimization for target BP
-            for i = 0, numMaterials, 1 do
+            for i = numMaterials, 0, -1 do
                 k = c[i][j] -- the index into V and W for minValue > target
                 local ifstring = ""
-                if i < numMaterials then -- TODO + 1 ?
+                if i > 0 then -- TODO + 1 ?
                     ifstring = ", "
                 end
                 matString = matString .. ks[i].crumb[k].mixDebug .. " " .. ks[i].name .. ifstring
