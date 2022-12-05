@@ -123,7 +123,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
         local skillBreakpoint = craftingDifficultyBP[i] * recipeData.recipeDifficulty
         --print("skill BP: " .. skillBreakpoint)
         -- EXPERIMENT: try to adjust skillbp by 1 to workaround blizz rounding errors
-        skillBreakpoint = skillBreakpoint + 1
+        --skillBreakpoint = skillBreakpoint + 1
         arrayBP[i] = skillBreakpoint - skillWithoutReagentIncrease
         --print("skill needed for this breakpoint:" .. arrayBP[i])
         -- If skill already meets or exceeds this BP...
