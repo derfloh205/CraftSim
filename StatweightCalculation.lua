@@ -184,7 +184,7 @@ function CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
 	local recipeData = CraftSimDATAEXPORT:exportRecipeData()
 
 	if recipeData == nil then
-        print("recipe data nil")
+        --print("recipe data nil")
 		return CraftSimCONST.ERROR.NO_RECIPE_DATA
 	end
 
