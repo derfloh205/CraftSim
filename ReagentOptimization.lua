@@ -308,7 +308,7 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
             outArr[2 * h] = "None"
             outArr[2 * h + 1] = ""
         else
-            target = CraftSimUTIL:round(BPs[h] * maxWeight, 0)  -- breakpoints are a % of maxSkillBonus
+            target = math.floor((BPs[h] * maxWeight)  +0.5)  -- breakpoints are a % of maxSkillBonus -- floor of +0.5 rounds it up!
             -- walk the last row of the matrix backwards to find the best value (gold cost) for minimum target weight (j = skill bonus)
             i = numMaterials
             j = target - 1 -- start one short of the target because we increment j in the first step
