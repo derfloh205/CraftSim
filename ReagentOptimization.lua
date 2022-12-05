@@ -42,7 +42,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
     for i = 0, #requiredReagents - 1, 1 do
         local reagent = requiredReagents[translateLuaIndex(i)]
         local itemID = reagent.itemsInfo[1].itemID
-        mWeight[i] = CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) * reagent.requiredQuantity
+        mWeight[i] = CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) --  * reagent.requiredQuantity fixed double counting of quantity
     end
 
     local weightGCD = CraftSimUTIL:FoldTable(mWeight, function(a, b) 
