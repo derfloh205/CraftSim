@@ -15,6 +15,7 @@ end
 
 function CraftSimSTATS:getMeanProfit(recipeData, priceData)
     local totalItemsCrafted = numCrafts * recipeData.baseItemAmount
+
     local craftedItems = {
         baseQuality = 0,
         nextQuality = 0
@@ -42,7 +43,7 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
         craftedItems.baseQuality = totalItemsCrafted - (inspirationProcs * recipeData.baseItemAmount)
         craftedItems.nextQuality = inspirationProcs * recipeData.baseItemAmount
     else
-        craftedItems.baseQuality = totalItemsCrafted * recipeData.baseItemAmount
+        craftedItems.baseQuality = totalItemsCrafted
         crafts.baseQuality = numCrafts
     end
 
@@ -93,14 +94,15 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
     local totalCraftingCosts = (priceData.craftingCostPerCraft * numCrafts) - totalSavedCosts
     local totalWorth = 0
     if recipeData.expectedQuality == recipeData.maxQuality or recipeData.result.isNoQuality then
-        --print("craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]")
-        --print(craftedItems.baseQuality .. " * " .. priceData.minBuyoutPerQuality[recipeData.expectedQuality])
         totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]
     else
+        print("crafts: " .. crafts.baseQuality)
+        print("baseQ: " .. craftedItems.baseQuality .. " * " .. "buyout: " .. tostring(priceData.minBuyoutPerQuality[recipeData.expectedQuality]))
         totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality] + 
             craftedItems.nextQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1]
     end
     local meanProfit = ((totalWorth*CraftSimCONST.AUCTION_HOUSE_CUT) - totalCraftingCosts) / numCrafts
+    --print("total worth / numCrafts: " .. tostring(totalWorth / numCrafts))
     return meanProfit
 end
 
