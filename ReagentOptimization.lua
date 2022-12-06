@@ -195,22 +195,11 @@ function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
             end
         end
     end
-
-    --print("crumbs created for " .. ksItem.name)
-    -- debug crumbs
-    if ksItem.name == "Draconium Ore" then
-        for index, crumb in pairs(ksItem.crumb) do
-            --print(index .. " cost: " .. crumb.value .. " (" .. crumb.mixDebug .. ")")
-            --print("goldCost: " .. crumb.goldCostDebug)
-        end
-    end
-    --
 end
 
 function CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) 
     local weightEntry = CraftSimREAGENTWEIGHTS[itemID]
     if weightEntry == nil then
-        print("no weight in data for: " .. itemID)
         return 0
     end
     return weightEntry.weight
@@ -276,6 +265,11 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
                     -- we know it is reachable
                     -- so look at the spot where adding the new weight would put us
                     -- if its current value is > than what we get by adding the new weight...
+                    if b[i][j + ks[i].crumb[k].weight] == nil then
+                        -- NOTE: this is to fix calculated floats as weights (like potion of frozen focus which results in weight 10.5)
+                        -- Cause the init of it just inits integer j indices
+                        b[i][j + ks[i].crumb[k].weight] = inf 
+                    end
                     if b[i][j + ks[i].crumb[k].weight] > b[i - 1][j] + ks[i].crumb[k].value then
                         -- our new weight is better so use its value instead
                         b[i][j + ks[i].crumb[k].weight] = b[i - 1][j] + ks[i].crumb[k].value

@@ -162,7 +162,7 @@ function addon:TriggerModulesByRecipeType()
 			showCostOverview = true
 			showCostOverviewCraftingCostsOnly = true
 			showStatweights = true
-		elseif recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
+		elseif recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.NO_ITEM then
 			-- show crafting costs and highest material allocation
 			showCostOverview = true
 			showCostOverviewCraftingCostsOnly = true
@@ -180,7 +180,7 @@ function addon:TriggerModulesByRecipeType()
 		end
 	end
 
-    
+	showMaterialAllocation = showMaterialAllocation and recipeData.hasReagentsWithQuality
     CraftSimFRAME:ToggleFrame(CraftSimReagentHintFrame, showMaterialAllocation)
     if showMaterialAllocation then
         CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)

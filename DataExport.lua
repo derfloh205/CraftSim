@@ -59,6 +59,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	
 
 	recipeData.reagents = {}
+	local hasReagentsWithQuality = false
 	local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
 	--print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
 	for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
@@ -69,12 +70,18 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		-- for now only consider the required reagents
 		if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
 			local hasMoreThanOneQuality = currentSlot.reagents[2] ~= nil
+
+			if hasMoreThanOneQuality then
+				hasReagentsWithQuality = true
+			end
+
 			recipeData.reagents[slotIndex] = {
 				name = reagentName,
 				requiredQuantity = currentSlot.quantityRequired,
-				differentQualities = reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED and hasMoreThanOneQuality,
+				differentQualities = hasMoreThanOneQuality,
 				reagentType = currentSlot.reagentType
 			}
+			
 			local slotAllocations = currentTransaction:GetAllocations(slotIndex)
 			local currentSelected = slotAllocations:Accumulate()
 			--print("trying to insert reagent: " .. tostring(reagentName))
@@ -97,7 +104,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 			-- TODO: export optional reagents
 		end
 	end
-
+	recipeData.hasReagentsWithQuality = hasReagentsWithQuality
 	recipeData.stats = {}
 	for _, statInfo in pairs(bonusStats) do
 		local statName = string.lower(statInfo.bonusStatName)
@@ -127,7 +134,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	recipeData.stats.baseSkill = operationInfo.baseSkill -- Needed for reagent optimization
 	recipeData.result = {}
 
-	if recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE then
+	if recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
 		-- recipe is anything that results in 1-5 different itemids with quality
 		recipeData.result.itemIDs = {
 			recipeInfo.qualityItemIDs[1],
@@ -135,9 +142,6 @@ function CraftSimDATAEXPORT:exportRecipeData()
 			recipeInfo.qualityItemIDs[3],
 			recipeInfo.qualityItemIDs[4],
 			recipeInfo.qualityItemIDs[5]}
-	elseif recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
-		-- single item with quality which is not gear
-		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)
 	elseif recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
 		recipeData.result.itemID = schematicInfo.outputItemID
 		local allocationItemGUID = currentTransaction:GetAllocationItemGUID()
@@ -154,6 +158,8 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
 		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)
 		recipeData.result.isNoQuality = true	
+	elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_ITEM then
+		-- nothing cause there is no result
 	else
 		print("recipeType not covered in export: " .. tostring(recipeType))
 	end
