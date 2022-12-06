@@ -128,7 +128,7 @@ function addon:TriggerModulesByRecipeType()
 	end
 
     local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
-    print("trigger by recipeType.. " .. tostring(recipeType))
+    --print("trigger by recipeType.. " .. tostring(recipeType))
 
 	local recipeData = CraftSimDATAEXPORT:exportRecipeData()
 

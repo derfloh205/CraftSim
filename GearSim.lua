@@ -168,7 +168,7 @@ function CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
     return stats
 end
 
-function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChanges)
+function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeType, statChanges)
     local modifedRecipeData = CopyTable(recipeData)
     if modifedRecipeData.stats.inspiration ~= nil then
         modifedRecipeData.stats.inspiration.value = modifedRecipeData.stats.inspiration.value + statChanges.inspiration
@@ -185,7 +185,7 @@ function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChan
     end
     -- TODO: to make changes of this have impact, need to evaluate the expectedQuality by player skill and quality thresholds..
     -- TODO: also, need to extract skill changes from profession gear anyway
-    if modifedRecipeData.stats.skill ~= nil then
+    if modifedRecipeData.stats.skill ~= nil and recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE and recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
         modifedRecipeData.stats.skill = modifedRecipeData.stats.skill + statChanges.skill
         local expectedQualityWithItems = CraftSimSTATS:GetExpectedQualityBySkill(modifedRecipeData, modifedRecipeData.stats.skill)
         --print("expectedQ with Items: " .. tostring(expectedQualityWithItems))
@@ -199,12 +199,12 @@ function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChan
     return modifedRecipeData
 end
 
-function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, priceData, baseProfit)
+function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, recipeType, priceData, baseProfit)
     local results = {}
 
     for _, gearCombination in pairs(gearCombos) do
         local statChanges = CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
-        local modifiedRecipeData = CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, statChanges)
+        local modifiedRecipeData = CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeType, statChanges)
 
         local meanProfit = CraftSimSTATS:getMeanProfit(modifiedRecipeData, priceData)
         local profitDiff = meanProfit - baseProfit
@@ -273,7 +273,7 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
 
     local currentComboMeanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
     local noItemMeanProfit = CraftSimSTATS:getMeanProfit(noItemsRecipeData, priceData)
-    local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, noItemsRecipeData, priceData, currentComboMeanProfit)
+    local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, noItemsRecipeData, recipeType, priceData, currentComboMeanProfit)
 
     local validSimulationResults = simulationResults
 
