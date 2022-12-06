@@ -185,7 +185,7 @@ function addon:TriggerModulesByRecipeType()
     if showMaterialAllocation then
         CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)
     end
-    
+
     CraftSimFRAME:ToggleFrame(CraftSimDetailsFrame, showStatweights)
     if showStatweights then
         local statWeights = CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
@@ -193,7 +193,7 @@ function addon:TriggerModulesByRecipeType()
             CraftSimFRAME:UpdateStatWeightFrameText(statWeights)
         end
     end
-    
+
     CraftSimFRAME:ToggleFrame(CraftSimSimFrame, showTopGear)
     if showTopGear then
         CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)

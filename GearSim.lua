@@ -192,7 +192,7 @@ function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeTy
         local oldexpected = modifedRecipeData.expectedQuality
         modifedRecipeData.expectedQuality = expectedQualityWithItems
         if oldexpected < expectedQualityWithItems then
-            print("Combination with increased quality level found!")
+            --print("Combination with increased quality level found!")
         end
     end
 
@@ -202,10 +202,14 @@ end
 function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, recipeType, priceData, baseProfit)
     local results = {}
 
+    --print("base expected q: " .. recipeData.expectedQuality)
+    --print("base skill: " .. recipeData.stats.skill)
     for _, gearCombination in pairs(gearCombos) do
         local statChanges = CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
         local modifiedRecipeData = CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeType, statChanges)
 
+        --print("found combination with stat changes: ")
+        --CraftSimUTIL:PrintTable(statChanges)
         local meanProfit = CraftSimSTATS:getMeanProfit(modifiedRecipeData, priceData)
         local profitDiff = meanProfit - baseProfit
         table.insert(results, {
@@ -257,6 +261,16 @@ function CraftSimGEARSIM:DeductCurrentItemStats(recipeData)
     end
     if noItemRecipeData.stats.skill ~= nil then
         noItemRecipeData.stats.skill = noItemRecipeData.stats.skill - itemStats.skill
+
+        -- recalculate expected quality in case it decreases..
+        local expectedQualityWithoutItems = CraftSimSTATS:GetExpectedQualityBySkill(noItemRecipeData, noItemRecipeData.stats.skill)
+        --print("expectedQ with Items: " .. tostring(expectedQualityWithItems))
+        local oldexpected = noItemRecipeData.expectedQuality
+        noItemRecipeData.expectedQuality = expectedQualityWithoutItems
+        if oldexpected > expectedQualityWithoutItems then
+            --print("no items would decrease quality level!")
+        end
+
     end
     return noItemRecipeData
 end
@@ -272,6 +286,7 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
     local noItemsRecipeData = CraftSimGEARSIM:DeductCurrentItemStats(recipeData)
 
     local currentComboMeanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
+
     local noItemMeanProfit = CraftSimSTATS:getMeanProfit(noItemsRecipeData, priceData)
     local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, noItemsRecipeData, recipeType, priceData, currentComboMeanProfit)
 
