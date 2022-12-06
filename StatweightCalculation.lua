@@ -96,8 +96,6 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
     if recipeData.expectedQuality == recipeData.maxQuality or recipeData.result.isNoQuality then
         totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]
     else
-        print("crafts: " .. crafts.baseQuality)
-        print("baseQ: " .. craftedItems.baseQuality .. " * " .. "buyout: " .. tostring(priceData.minBuyoutPerQuality[recipeData.expectedQuality]))
         totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality] + 
             craftedItems.nextQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1]
     end

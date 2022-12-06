@@ -65,11 +65,11 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
 		local reagents = currentSlot.reagents
 		local reagentType = currentSlot.reagentType
-		local reagentName = GetItemInfo(reagents[1].itemID)
+		local reagentName, link = GetItemInfo(reagents[1].itemID)
 		--print("checking slot index: " .. slotIndex)
 		-- for now only consider the required reagents
 		if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
-			local hasMoreThanOneQuality = currentSlot.reagents[2] ~= nil
+			local hasMoreThanOneQuality = reagents[2] ~= nil
 
 			if hasMoreThanOneQuality then
 				hasReagentsWithQuality = true
@@ -84,9 +84,8 @@ function CraftSimDATAEXPORT:exportRecipeData()
 			
 			local slotAllocations = currentTransaction:GetAllocations(slotIndex)
 			local currentSelected = slotAllocations:Accumulate()
-			--print("trying to insert reagent: " .. tostring(reagentName))
 			recipeData.reagents[slotIndex].itemsInfo = {}
-			--print("export: insert reagent: " .. tostring(reagentName))
+
 			for i, reagent in pairs(reagents) do
 				local reagentAllocation = slotAllocations:FindAllocationByReagent(reagent)
 				local allocations = 0
@@ -134,18 +133,27 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	recipeData.stats.baseSkill = operationInfo.baseSkill -- Needed for reagent optimization
 	recipeData.result = {}
 
+	local allocationItemGUID = currentTransaction:GetAllocationItemGUID()
+	local craftingReagentInfoTbl = currentTransaction:CreateCraftingReagentInfoTbl()
+	local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
+
 	if recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
 		-- recipe is anything that results in 1-5 different itemids with quality
+		local qualityItemIDs = CopyTable(recipeInfo.qualityItemIDs)
+		if qualityItemIDs[1] > qualityItemIDs[3] then
+			--print("itemIDs for qualities not in expected order, reordering..: " .. outputItemData.hyperlink)
+			table.sort(qualityItemIDs)
+			--print(unpack(qualityItemIDs))
+		end
 		recipeData.result.itemIDs = {
-			recipeInfo.qualityItemIDs[1],
-			recipeInfo.qualityItemIDs[2],
-			recipeInfo.qualityItemIDs[3],
-			recipeInfo.qualityItemIDs[4],
-			recipeInfo.qualityItemIDs[5]}
+			qualityItemIDs[1],
+			qualityItemIDs[2],
+			qualityItemIDs[3],
+			qualityItemIDs[4],
+			qualityItemIDs[5]}
 	elseif recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
 		recipeData.result.itemID = schematicInfo.outputItemID
-		local allocationItemGUID = currentTransaction:GetAllocationItemGUID()
-		local craftingReagentInfoTbl = currentTransaction:CreateCraftingReagentInfoTbl()
+		
 		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 		recipeData.result.hyperlink = outputItemData.hyperlink
 		local baseIlvl = recipeInfo.itemLevel
