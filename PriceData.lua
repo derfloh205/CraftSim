@@ -68,6 +68,9 @@ function CraftSimPRICEDATA:GetPriceData(recipeData)
     elseif recipeData.result.isNoQuality then
         local currentMinbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(recipeData.result.itemID)
         table.insert(minBuyoutPerQuality, currentMinbuyout)
+    elseif recipeData.hasSingleItemOutput then
+        local currentMinbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(recipeData.result.itemID)
+        table.insert(minBuyoutPerQuality, currentMinbuyout)
     else
         for _, itemID in pairs(recipeData.result.itemIDs) do
             local currentMinbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID)

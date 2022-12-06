@@ -137,10 +137,6 @@ function CraftSimUTIL:isRecipeNotProducingItem(recipeData)
     return recipeData.baseItemAmount == nil and hasNoItemID
 end
 
-function CraftSimUTIL:isRecipeProducingGear(recipeData)
-    return recipeData.hasSingleItemOutput and recipeData.qualityIlvlBonuses ~= nil
-end
-
 function CraftSimUTIL:isRecipeProducingSoulbound(recipeData)
     local itemID = nil
     if recipeData.result.isGear or recipeData.result.isNoQuality then
@@ -154,6 +150,46 @@ end
 function CraftSimUTIL:isItemSoulbound(itemID)
     local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID) 
     return bindType == CraftSimCONST.BINDTYPES.SOULBOUND
+end
+
+function CraftSimUTIL:GetRecipeType(recipeInfo) -- the raw info
+    local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
+    if recipeInfo.isRecraft then
+        return CraftSimCONST.RECIPE_TYPES.RECRAFT
+    elseif schematicInfo.hasGatheringOperationInfo then
+        return CraftSimCONST.RECIPE_TYPES.GATHERING
+    elseif recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil then -- its gear
+        local itemID = schematicInfo.outputItemID
+		if CraftSimUTIL:isItemSoulbound(itemID) then
+            return CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR
+        else
+            return CraftSimCONST.RECIPE_TYPES.GEAR
+        end
+	elseif recipeInfo.supportsQualities then
+        if not recipeInfo.qualityItemIDs and not recipeInfo.qualityIlvlBonuses then
+            return CraftSimCONST.RECIPE_TYPES.NO_ITEM
+        elseif schematicInfo.quantityMin > 1 or schematicInfo.quantityMax > 1 then
+            return CraftSimCONST.RECIPE_TYPES.MULTIPLE
+        elseif schematicInfo.quantityMin == 1 and schematicInfo.quantityMax == 1 then
+            return CraftSimCONST.RECIPE_TYPES.SINGLE
+        end
+    elseif not recipeInfo.supportsQualities then
+        if schematicInfo.quantityMin > 1 or schematicInfo.quantityMax > 1 then
+            return CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE
+        elseif schematicInfo.quantityMin == 1 and schematicInfo.quantityMax == 1 then
+            return CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE
+        end
+    end
+end
+
+function CraftSimUTIL:TriggerModulesByRecipeType()
+    local professionInfo = ProfessionsFrame.professionInfo
+	local professionFullName = professionInfo.professionName
+	local craftingPage = ProfessionsFrame.CraftingPage
+	local schematicForm = craftingPage.SchematicForm
+    local recipeInfo = schematicForm:GetRecipeInfo()
+    local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
+    print("trigger by recipeType.. " .. tostring(recipeType))
 end
 
 -- for debug purposes

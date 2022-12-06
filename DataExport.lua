@@ -45,6 +45,10 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	recipeData.profession = professionInfo.parentProfessionName
 	local recipeInfo = schematicForm:GetRecipeInfo()
 
+	local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
+
+	print("recipeType: " .. tostring(recipeType))
+
 	if recipeInfo.isRecraft then
         --print("is recraft")
 		CraftSimFRAME:ToggleFrames(false)
@@ -70,7 +74,8 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	
 
 	recipeData.reagents = {}
-	for slotIndex, currentSlot in pairs(C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false).reagentSlotSchematics) do
+	local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
+	for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
 		local reagents = currentSlot.reagents
 		local reagentType = currentSlot.reagentType
 		-- for now only consider the required reagents
@@ -123,24 +128,30 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	recipeData.expectedQuality = details.craftingQuality
 	recipeData.maxQuality = recipeInfo.maxQuality
-	recipeData.baseItemAmount = schematicForm.OutputIcon.Count:GetText()
+
+	recipeData.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
+	recipeData.hasSingleItemOutput = recipeInfo.hasSingleItemOutput
+
 	recipeData.recipeDifficulty = operationInfo.baseDifficulty + operationInfo.bonusDifficulty
 	 -- baseSkill is like the base of the players skill and bonusSkill is what is added through reagents
 	recipeData.stats.skill = operationInfo.baseSkill + operationInfo.bonusSkill
 	recipeData.stats.baseSkill = operationInfo.baseSkill -- Needed for reagent optimization
 	recipeData.result = {}
 
-	if recipeInfo.qualityItemIDs then
-		-- recipe is anything that results in 1-5 different itemids
+	if recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE then
+		-- recipe is anything that results in 1-5 different itemids with quality
 		recipeData.result.itemIDs = {
 			recipeInfo.qualityItemIDs[1],
 			recipeInfo.qualityItemIDs[2],
 			recipeInfo.qualityItemIDs[3],
 			recipeInfo.qualityItemIDs[4],
 			recipeInfo.qualityItemIDs[5]}
-
-	elseif CraftSimUTIL:isRecipeProducingGear(recipeInfo) then
+	elseif recipeType == CraftSimCONST.SINGLE then
+		-- single item with quality which is not gear
+		print("link: " .. recipeInfo.hyperlink)
 		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)
+	elseif recipeType == CraftSimCONST.RECIPE_TYPES.GEAR then
+		recipeData.result.itemID = schematicInfo.outputItemID
 		recipeData.result.isGear = true
 		local allocationItemGUID = currentTransaction:GetAllocationItemGUID()
 		local craftingReagentInfoTbl = currentTransaction:CreateCraftingReagentInfoTbl()
@@ -149,11 +160,15 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		local baseIlvl = recipeInfo.itemLevel
 		recipeData.result.itemQualityLinks = CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(outputItemData.hyperlink)
 		recipeData.result.baseILvL = baseIlvl
-		recipeData.baseItemAmount = 1
-	elseif not recipeInfo.supportsQualities then
+	elseif recipeType == CraftSimCONST.NO_QUALITY_MULTIPLE then
 		-- Probably something like transmuting air reagent that creates non equip stuff without qualities
 		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)
-		recipeData.result.isNoQuality = true
+		recipeData.result.isNoQuality = true		
+	elseif recipeType == CraftSimCONST.NO_QUALITY_SINGLE then
+		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)
+		recipeData.result.isNoQuality = true	
+	else
+		print("recipeType not covered in export: " .. tostring(recipeType))
 	end
 	
 	return recipeData

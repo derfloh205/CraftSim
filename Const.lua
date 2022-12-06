@@ -48,3 +48,16 @@ CraftSimCONST.REAGENT_TYPE = {
 }
 
 CraftSimCONST.AUCTION_HOUSE_CUT = 0.95
+
+CraftSimCONST.RECIPE_TYPES = {
+    GEAR = 0, -- like blue gear
+    SOULBOUND_GEAR = 1, -- like purple gear
+    NO_QUALITY_MULTIPLE = 2, -- like transmuted air
+    NO_QUALITY_SINGLE = 3, -- like repair hammer
+    MULTIPLE = 4, -- like potions..
+    SINGLE = 5, -- like omnium draconis
+    NO_CRAFT_OPERATION = 6, -- like reclaim from alchemy
+    RECRAFT = 7, -- like well.. recraft
+    GATHERING = 8,
+    NO_ITEM = 9, -- like phial experimentation
+}

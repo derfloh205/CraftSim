@@ -44,10 +44,11 @@ function addon:HookToEvent()
 	-- Note: OnShow also 'works', it triggers but there is no recipe info yet, so we need something that also triggers and comes after OnShow..
 	hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm.Details, "SetStats", function(self)
 		--print("Details: SetStats")
-		addon:UpdateStatWeights()
-		CraftSimGEARSIM:SimulateBestProfessionGearCombination()
-		CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
-		CraftSimCOSTS:CalculateCostsAndProfits()
+		CraftSimUTIL:TriggerModulesByRecipeType() -- do everything by recipetype..
+		--addon:UpdateStatWeights()
+		--CraftSimGEARSIM:SimulateBestProfessionGearCombination()
+		--CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
+		--CraftSimCOSTS:CalculateCostsAndProfits()
 	end)
 end
 

@@ -73,6 +73,10 @@ function CraftSimGEARSIM:GetProfessionGearCombinations()
     local equippedGear = CraftSimDATAEXPORT:GetEquippedProfessionGear()
     local inventoryGear =  CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 
+    if #equippedGear == 0 and #inventoryGear == 0 then
+        return nil
+    end
+
     local allGear = inventoryGear
     for _, gear in pairs(equippedGear) do
         table.insert(allGear, gear)
@@ -281,6 +285,12 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
 
     local priceData = CraftSimPRICEDATA:GetPriceData(recipeData)
     local gearCombos = CraftSimGEARSIM:GetProfessionGearCombinations()
+
+    if not gearCombos then
+        CraftSimFRAME:ClearResultData()
+        return 
+    end
+
     local noItemsRecipeData = CraftSimGEARSIM:DeductCurrentItemStats(recipeData)
 
     local currentComboMeanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
