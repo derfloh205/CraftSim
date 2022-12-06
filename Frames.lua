@@ -21,7 +21,7 @@ function CraftSimFRAME:InitStatWeightFrame()
 
 	frame.valueText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.valueText:SetPoint("CENTER", frame, "CENTER", 40, -8)
-	frame:Show()
+	frame:Hide()
 end
 
 function CraftSimFRAME:UpdateStatWeightFrameText(statWeights)
@@ -301,13 +301,15 @@ end
 function CraftSimFRAME:FillCostOverview(craftingCosts, profitPerQuality, currentQuality)
     CraftSimCostOverviewFrame.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
 
-    for index, profitFrame in pairs(CraftSimCostOverviewFrame.profitFrames) do
-        if profitPerQuality[index] ~= nil then
-            profitFrame.icon.SetQuality(currentQuality + index - 1)
-            profitFrame.text:SetText(CraftSimUTIL:FormatMoney(profitPerQuality[index]))
-            profitFrame:Show()
-        else
-            profitFrame:Hide()
+    if #profitPerQuality > 0 then
+        for index, profitFrame in pairs(CraftSimCostOverviewFrame.profitFrames) do
+            if profitPerQuality[index] ~= nil then
+                profitFrame.icon.SetQuality(currentQuality + index - 1)
+                profitFrame.text:SetText(CraftSimUTIL:FormatMoney(profitPerQuality[index]))
+                profitFrame:Show()
+            else
+                profitFrame:Hide()
+            end
         end
     end
 end
@@ -443,19 +445,11 @@ function CraftSimFRAME:ClearResultData()
     CraftSimSimFrame.statDiff.skill:SetText("")
 end
 
-function CraftSimFRAME:ToggleFrames(visible)
+function CraftSimFRAME:ToggleFrame(frame, visible)
     if visible then
-        --print("show frames")
-        CraftSimSimFrame:Show()
-        CraftSimDetailsFrame:Show()
-        CraftSimReagentHintFrame:Show()
-        CraftSimCostOverviewFrame:Show()
+        frame:Show()
     else
-        --print("hide frames")
-        CraftSimSimFrame:Hide()
-        CraftSimDetailsFrame:Hide()
-        CraftSimReagentHintFrame:Hide()
-        CraftSimCostOverviewFrame:Hide()
+        frame:Hide()
     end
 end
 

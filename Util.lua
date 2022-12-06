@@ -182,15 +182,7 @@ function CraftSimUTIL:GetRecipeType(recipeInfo) -- the raw info
     end
 end
 
-function CraftSimUTIL:TriggerModulesByRecipeType()
-    local professionInfo = ProfessionsFrame.professionInfo
-	local professionFullName = professionInfo.professionName
-	local craftingPage = ProfessionsFrame.CraftingPage
-	local schematicForm = craftingPage.SchematicForm
-    local recipeInfo = schematicForm:GetRecipeInfo()
-    local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
-    print("trigger by recipeType.. " .. tostring(recipeType))
-end
+
 
 -- for debug purposes
 function CraftSimUTIL:PrintTable(t, recursive)

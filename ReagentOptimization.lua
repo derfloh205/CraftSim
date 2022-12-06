@@ -7,15 +7,7 @@ local function translateLuaIndex(index)
 end
 
 -- By Liqorice's knapsack solution
-function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
-    local recipeData = CraftSimDATAEXPORT:exportRecipeData()
-    local priceData = CraftSimPRICEDATA:GetPriceData(recipeData)
-
-    if recipeData == nil then
-        print("recipe data nil")
-        return nil
-    end
-
+function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceDatga)
     -- insert costs
     local reagentCostsByQuality = CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
 

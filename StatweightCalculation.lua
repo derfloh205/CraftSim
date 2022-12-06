@@ -145,30 +145,8 @@ function CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData
     return statWeight
 end
 
-function CraftSimSTATS:CalculateStatWeights(recipeData)
-    if CraftSimUTIL:isRecipeNotProducingItem(recipeData) then
-        --print("Recipe does not produce item")
-        CraftSimFRAME:ToggleFrames(false)
-        return
-    end
+function CraftSimSTATS:CalculateStatWeights(recipeData, recipeType, priceData)
 
-    if CraftSimUTIL:isRecipeProducingSoulbound(recipeData) then
-        --print("Recipe produces soulbound")
-        CraftSimFRAME:ToggleFrames(false)
-        return
-    end
-
-    if recipeData.baseItemAmount == nil then
-        -- when only one item is produced the baseItemAmount will be nil as this comes form the number of items produced shown in the ui
-        recipeData.baseItemAmount = 1
-    end
-
-    --print("Calculate Profession Statweights.. ")
-    local priceData = CraftSimPRICEDATA:GetPriceData(recipeData)
-
-    if priceData == nil then
-        return CraftSimCONST.ERROR.NO_PRICE_DATA
-    end
     local calculationResult = {}
     calculationResult.meanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
 
@@ -180,15 +158,8 @@ function CraftSimSTATS:CalculateStatWeights(recipeData)
     return calculationResult
 end
 
-function CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe()
-	local recipeData = CraftSimDATAEXPORT:exportRecipeData()
-
-	if recipeData == nil then
-        --print("recipe data nil")
-		return CraftSimCONST.ERROR.NO_RECIPE_DATA
-	end
-
-	local statweights = CraftSimSTATS:CalculateStatWeights(recipeData)
+function CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
+	local statweights = CraftSimSTATS:CalculateStatWeights(recipeData, priceData)
 
     if statWeights == CraftSimCONST.ERROR.NO_PRICE_DATA then
         return CraftSimCONST.ERROR.NO_PRICE_DATA

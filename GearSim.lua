@@ -261,34 +261,12 @@ function CraftSimGEARSIM:DeductCurrentItemStats(recipeData)
     return noItemRecipeData
 end
 
-function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
-    -- unequip all professiontools and just get from inventory for easier equipping/listing?
-    local recipeData = CraftSimDATAEXPORT:exportRecipeData()
-
-    if recipeData == nil then
-        return
-    end
-
-    if CraftSimUTIL:isRecipeNotProducingItem(recipeData) then
-        return
-    end
-
-    if CraftSimUTIL:isRecipeProducingSoulbound(recipeData) then
-        return
-    end
-
-    if recipeData.baseItemAmount == nil then
-        -- when only one item is produced the baseItemAmount will be nil as this comes form the number of items produced shown in the ui
-        recipeData.baseItemAmount = 1
-    end
-
-
-    local priceData = CraftSimPRICEDATA:GetPriceData(recipeData)
+function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
     local gearCombos = CraftSimGEARSIM:GetProfessionGearCombinations()
 
     if not gearCombos then
         CraftSimFRAME:ClearResultData()
-        return 
+        return
     end
 
     local noItemsRecipeData = CraftSimGEARSIM:DeductCurrentItemStats(recipeData)
@@ -297,14 +275,7 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination()
     local noItemMeanProfit = CraftSimSTATS:getMeanProfit(noItemsRecipeData, priceData)
     local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, noItemsRecipeData, priceData, currentComboMeanProfit)
 
-    -- TODO: filter out everything with a profitDiff of zero or less (does not make sense to display as top gear)
     local validSimulationResults = simulationResults
-    -- for index, simResult in pairs(simulationResults) do
-    --     --print("Sim Result " .. index .. " meanProfit: " .. simResult.meanProfit)
-    --     if simResult.profitDiff > 0 then
-    --         table.insert(validSimulationResults, simResult)
-    --     end
-    -- end
 
     local function countEmptySlots(combo)
         local numEmpty = 0

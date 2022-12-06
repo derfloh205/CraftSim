@@ -55,7 +55,7 @@ function CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
     return reagentQualityPrices
 end
 
-function CraftSimPRICEDATA:GetPriceData(recipeData)
+function CraftSimPRICEDATA:GetPriceData(recipeData, recipeType)
     local craftingCostPerCraft = CraftSimPRICEDATA:GetTotalCraftingCost(recipeData) 
     local reagentsPriceByQuality = CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
     local minBuyoutPerQuality = {}

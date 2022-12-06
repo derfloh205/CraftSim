@@ -41,25 +41,10 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		return nil
 	end
 
-
 	recipeData.profession = professionInfo.parentProfessionName
 	local recipeInfo = schematicForm:GetRecipeInfo()
 
 	local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
-
-	print("recipeType: " .. tostring(recipeType))
-
-	if recipeInfo.isRecraft then
-        --print("is recraft")
-		CraftSimFRAME:ToggleFrames(false)
-		return nil
-	end
-
-	if recipeInfo.isGatheringRecipe then
-		--print("is gathering recipe")
-		CraftSimFRAME:ToggleFrames(false)
-		return nil
-	end
 
 	local details = schematicForm.Details
 	local operationInfo = details.operationInfo
