@@ -56,26 +56,32 @@ function CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
 end
 
 function CraftSimPRICEDATA:GetPriceData(recipeData, recipeType)
+
+    if not recipeData then
+        return nil
+    end
+
     local craftingCostPerCraft = CraftSimPRICEDATA:GetTotalCraftingCost(recipeData) 
     local reagentsPriceByQuality = CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
     local minBuyoutPerQuality = {}
-    if recipeData.result.isGear then
+
+    if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR then
         for _, itemLink in pairs(recipeData.result.itemQualityLinks) do
-            --print("get price data for result")
             local currentMinbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemLink(itemLink)
             table.insert(minBuyoutPerQuality, currentMinbuyout)
         end
-    elseif recipeData.result.isNoQuality then
+    elseif recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
+        -- nothing.. we only want the reagentspriceby quality and the crafting costs
+    elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE or recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE then
         local currentMinbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(recipeData.result.itemID)
         table.insert(minBuyoutPerQuality, currentMinbuyout)
-    elseif recipeData.hasSingleItemOutput then
-        local currentMinbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(recipeData.result.itemID)
-        table.insert(minBuyoutPerQuality, currentMinbuyout)
-    else
+    elseif recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE then
         for _, itemID in pairs(recipeData.result.itemIDs) do
             local currentMinbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID)
             table.insert(minBuyoutPerQuality, currentMinbuyout)
         end
+    else
+        print("CraftSimError: Unhandled recipeType in priceData: " .. tostring(recipeType))
     end
 
     return {

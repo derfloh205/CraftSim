@@ -132,21 +132,6 @@ function CraftSimUTIL:KethoEditBox_Show(text)
     KethoEditBox:Show()
 end
 
-function CraftSimUTIL:isRecipeNotProducingItem(recipeData)
-    local hasNoItemID = recipeData.result.itemID == nil and recipeData.result.itemIDs == nil
-    return recipeData.baseItemAmount == nil and hasNoItemID
-end
-
-function CraftSimUTIL:isRecipeProducingSoulbound(recipeData)
-    local itemID = nil
-    if recipeData.result.isGear or recipeData.result.isNoQuality then
-        itemID = recipeData.result.itemID
-    else
-        itemID = recipeData.result.itemIDs[1]
-    end
-    return CraftSimUTIL:isItemSoulbound(itemID)
-end
-
 function CraftSimUTIL:isItemSoulbound(itemID)
     local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID) 
     return bindType == CraftSimCONST.BINDTYPES.SOULBOUND

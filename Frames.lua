@@ -301,15 +301,15 @@ end
 function CraftSimFRAME:FillCostOverview(craftingCosts, profitPerQuality, currentQuality)
     CraftSimCostOverviewFrame.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
 
-    if #profitPerQuality > 0 then
-        for index, profitFrame in pairs(CraftSimCostOverviewFrame.profitFrames) do
-            if profitPerQuality[index] ~= nil then
-                profitFrame.icon.SetQuality(currentQuality + index - 1)
-                profitFrame.text:SetText(CraftSimUTIL:FormatMoney(profitPerQuality[index]))
-                profitFrame:Show()
-            else
-                profitFrame:Hide()
-            end
+    CraftSimFRAME:ToggleFrame(CraftSimCostOverviewFrame.resultProfitsTitle, #profitPerQuality > 0)
+
+    for index, profitFrame in pairs(CraftSimCostOverviewFrame.profitFrames) do
+        if profitPerQuality[index] ~= nil then
+            profitFrame.icon.SetQuality(currentQuality + index - 1)
+            profitFrame.text:SetText(CraftSimUTIL:FormatMoney(profitPerQuality[index]))
+            profitFrame:Show()
+        else
+            profitFrame:Hide()
         end
     end
 end

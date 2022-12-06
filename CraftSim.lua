@@ -24,7 +24,7 @@ function addon:HookToDetailsHide()
 	end
 	hookedToDetailsFrame = true
 	ProfessionsFrame.CraftingPage.SchematicForm.Details:HookScript("OnHide", function(self)
-		CraftSimFRAME:ToggleFrames(false)
+		addon:TriggerModulesByRecipeType()
 	end)
 end
 
@@ -131,10 +131,8 @@ function addon:TriggerModulesByRecipeType()
     print("trigger by recipeType.. " .. tostring(recipeType))
 
 	local recipeData = CraftSimDATAEXPORT:exportRecipeData()
+
 	local priceData = CraftSimPRICEDATA:GetPriceData(recipeData, recipeType)
-
-	-- TODO: HANDLE recipeData / priceData errors
-
     -- when to see what?
     -- top gear: everything that is sellable!
     -- stat weights: everything that is sellable!
@@ -151,46 +149,45 @@ function addon:TriggerModulesByRecipeType()
 
     -- TODO: in specific situations, show some modules but hide the others..
     -- TODO: maybe use a switch here?
-    if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
-        -- show everything
-        print("show everything")
-        showMaterialAllocation = true
-        showTopGear = true
-        showCostOverview = true
-        showStatweights = true
-    elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
-        -- show everything except material allocation and total cost overview
-        showTopGear = true
-        showCostOverview = true
-        showCostOverviewCraftingCostsOnly = true
-        showStatweights = true
-    elseif recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
-        -- show crafting costs and highest material allocation
-        showCostOverview = true
-        showCostOverviewCraftingCostsOnly = true
-        --showMaterialAllocation = true
-    elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
-        -- show nothing
-    elseif recipeType == CraftSimCONST.RECIPE_TYPES.RECRAFT then
-        -- show nothing? Depends..
-    elseif recipeType == CraftSimCONST.RECIPE_TYPES.GATHERING then
-        -- show nothing maybe later some top gear for gathering
-    elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_ITEM then
-        -- show crafting costs
-        showCostOverview = true
-        showCostOverviewCraftingCostsOnly = true
-    end
+	if recipeData and priceData then
+		if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
+			-- show everything
+			showMaterialAllocation = true
+			showTopGear = true
+			showCostOverview = true
+			showStatweights = true
+		elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
+			-- show everything except material allocation and total cost overview
+			showTopGear = true
+			showCostOverview = true
+			showCostOverviewCraftingCostsOnly = true
+			showStatweights = true
+		elseif recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
+			-- show crafting costs and highest material allocation
+			showCostOverview = true
+			showCostOverviewCraftingCostsOnly = true
+			showMaterialAllocation = true
+		elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
+			-- show nothing
+		elseif recipeType == CraftSimCONST.RECIPE_TYPES.RECRAFT then
+			-- show nothing? Depends..
+		elseif recipeType == CraftSimCONST.RECIPE_TYPES.GATHERING then
+			-- show nothing maybe later some top gear for gathering
+		elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_ITEM then
+			-- show crafting costs
+			showCostOverview = true
+			showCostOverviewCraftingCostsOnly = true
+		end
+	end
 
     
     CraftSimFRAME:ToggleFrame(CraftSimReagentHintFrame, showMaterialAllocation)
     if showMaterialAllocation then
-        print("show reagent hint")
         CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)
     end
     
     CraftSimFRAME:ToggleFrame(CraftSimDetailsFrame, showStatweights)
     if showStatweights then
-        print("show stat weights")
         local statWeights = CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
         if statWeights ~= CraftSimCONST.ERROR.NO_PRICE_DATA then
             CraftSimFRAME:UpdateStatWeightFrameText(statWeights)
@@ -199,13 +196,11 @@ function addon:TriggerModulesByRecipeType()
     
     CraftSimFRAME:ToggleFrame(CraftSimSimFrame, showTopGear)
     if showTopGear then
-        print("show top gear")
         CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
     end
 
     CraftSimFRAME:ToggleFrame(CraftSimCostOverviewFrame, showCostOverview)
     if showCostOverview then
-        print("show cost overview")
-        CraftSimCOSTS:CalculateCostOverview(recipeData, recipeType, priceData, showCostOverviewCraftingCosts)
+        CraftSimCOSTS:CalculateCostOverview(recipeData, recipeType, priceData, showCostOverviewCraftingCostsOnly)
     end
 end

@@ -145,7 +145,7 @@ function CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData
     return statWeight
 end
 
-function CraftSimSTATS:CalculateStatWeights(recipeData, recipeType, priceData)
+function CraftSimSTATS:CalculateStatWeights(recipeData, priceData)
 
     local calculationResult = {}
     calculationResult.meanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
