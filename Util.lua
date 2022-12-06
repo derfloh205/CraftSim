@@ -212,17 +212,14 @@ function CraftSimUTIL:FoldTable(t, foldFunction, startAtZero)
     end
 
     local startIndex = 1
-    local indexSub = 0
     if startAtZero then
         startIndex = 0
-        indexSub = 1
     end
-    
-    for index = startIndex, #t - indexSub, 1 do
+    for index = startIndex, #t, 1 do
         --print("folding.. current Value: " .. foldedValue)
         if foldedValue == nil then
             foldedValue = foldFunction(t[startIndex], t[startIndex + 1])
-        elseif index < #t - indexSub then
+        elseif index < #t then
             foldedValue = foldFunction(foldedValue, t[index+1])
         end
     end

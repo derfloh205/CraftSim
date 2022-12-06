@@ -183,9 +183,10 @@ function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeTy
         modifedRecipeData.stats.resourcefulness.percent = modifedRecipeData.stats.resourcefulness.percent + 
             CraftSimUTIL:GetResourcefulnessPercentByStat(statChanges.resourcefulness)*100 
     end
-    -- TODO: to make changes of this have impact, need to evaluate the expectedQuality by player skill and quality thresholds..
-    -- TODO: also, need to extract skill changes from profession gear anyway
-    if modifedRecipeData.stats.skill ~= nil and recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE and recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
+
+    if modifedRecipeData.stats.skill ~= nil and 
+        recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE and 
+        recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
         modifedRecipeData.stats.skill = modifedRecipeData.stats.skill + statChanges.skill
         local expectedQualityWithItems = CraftSimSTATS:GetExpectedQualityBySkill(modifedRecipeData, modifedRecipeData.stats.skill)
         --print("expectedQ with Items: " .. tostring(expectedQualityWithItems))
@@ -239,7 +240,7 @@ function CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
     end
 end
 
-function CraftSimGEARSIM:DeductCurrentItemStats(recipeData)
+function CraftSimGEARSIM:DeductCurrentItemStats(recipeData, recipeType)
     local itemStats = CraftSimDATAEXPORT:GetCurrentProfessionItemStats()
     local noItemRecipeData = CopyTable(recipeData)
 
@@ -259,7 +260,9 @@ function CraftSimGEARSIM:DeductCurrentItemStats(recipeData)
         -- TODO: get modifier!!!
         noItemRecipeData.stats.craftingspeed.value = noItemRecipeData.stats.craftingspeed.value --- CraftSimUTIL:GetInspirationPercentByStat(itemStats.craftingspeed)*100
     end
-    if noItemRecipeData.stats.skill ~= nil then
+    if noItemRecipeData.stats.skill ~= nil and 
+        recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE and 
+        recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE then
         noItemRecipeData.stats.skill = noItemRecipeData.stats.skill - itemStats.skill
 
         -- recalculate expected quality in case it decreases..
@@ -283,7 +286,7 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
         return
     end
 
-    local noItemsRecipeData = CraftSimGEARSIM:DeductCurrentItemStats(recipeData)
+    local noItemsRecipeData = CraftSimGEARSIM:DeductCurrentItemStats(recipeData, recipeType)
 
     local currentComboMeanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
 

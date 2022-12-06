@@ -34,13 +34,17 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     for i = 0, #requiredReagents - 1, 1 do
         local reagent = requiredReagents[translateLuaIndex(i)]
         local itemID = reagent.itemsInfo[1].itemID
+        --print("mWeight array init: " .. i .. " to " .. CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) )
         mWeight[i] = CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) --  * reagent.requiredQuantity fixed double counting of quantity
     end
 
+    --print(" calculating gcd of " .. unpack(mWeight))
     local weightGCD = CraftSimUTIL:FoldTable(mWeight, function(a, b) 
+        --print("fold " .. a .. " and " .. b)
         return CraftSimREAGENT_OPTIMIZATION:GetGCD(a, b)
     end, true)
 
+    --print("gcd: " .. tostring(weightGCD))
     -- create the ks items
     local ksItems = {}
     -- init all arrays to force 0 -> n-1 indexing
@@ -60,6 +64,9 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
             mWeight = mWeight[index] / weightGCD,
             crumb = {}
         }        
+
+        --print("mWeight of " .. reagent.name .. " is " .. ksItem.mWeight)
+        --print("mWeight[index] / weightGCD -> " .. mWeight[index] .. " / " .. weightGCD .. " = " .. mWeight[index] / weightGCD)
 
         -- fill crumbs
         CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
@@ -145,6 +152,12 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     --print("arrayBP: ")
     --CraftSimUTIL:PrintTable(arrayBP)
 
+    -- print("ksItems: ")
+    -- for k, v in pairs(ksItems) do
+    --     print(v.name .. ": ")
+    --     print("weight: " .. tostring(v.mWeight))
+    -- end
+
 
     -- Optimize Knapsack
     local results = CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP)  
@@ -179,7 +192,7 @@ function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
             a = k
             b = j - k
             c = n - j
-            w = 2 * a + b -- plus one to make up for lua indexing?
+            w = 2 * a + b
 
             goldCost = a * ksItem.itemsInfo[3].minBuyout + b * ksItem.itemsInfo[2].minBuyout + c * ksItem.itemsInfo[1].minBuyout
             --print("current iteration ".. j .." goldCost: " .. tostring(goldCost))
@@ -207,7 +220,12 @@ end
 
 
 function CraftSimREAGENT_OPTIMIZATION:GetGCD(a, b)
-        return b==0 and a or CraftSimREAGENT_OPTIMIZATION:GetGCD(b,a%b)
+        --print("get gcd between " .. a .. " and " .. b)
+        if b ~= 0 then
+            return CraftSimREAGENT_OPTIMIZATION:GetGCD(b, a % b)
+        else
+            return abs(a)
+        end
 end
 
 function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
@@ -265,11 +283,11 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
                     -- we know it is reachable
                     -- so look at the spot where adding the new weight would put us
                     -- if its current value is > than what we get by adding the new weight...
-                    if b[i][j + ks[i].crumb[k].weight] == nil then
-                        -- NOTE: this is to fix calculated floats as weights (like potion of frozen focus which results in weight 10.5)
-                        -- Cause the init of it just inits integer j indices
-                        b[i][j + ks[i].crumb[k].weight] = inf 
-                    end
+                    -- if b[i][j + ks[i].crumb[k].weight] == nil then
+                    --     -- NOTE: this is to fix calculated floats as weights (like potion of frozen focus which results in weight 10.5)
+                    --     -- Cause the init of it just inits integer j indices
+                    --     b[i][j + ks[i].crumb[k].weight] = inf 
+                    -- end
                     if b[i][j + ks[i].crumb[k].weight] > b[i - 1][j] + ks[i].crumb[k].value then
                         -- our new weight is better so use its value instead
                         b[i][j + ks[i].crumb[k].weight] = b[i - 1][j] + ks[i].crumb[k].value
