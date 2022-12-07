@@ -23,7 +23,9 @@ function CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
 		
 		parts[#parts-5] = qualityID
 		local newString = table.concat(parts, ":")
+		print("item string q" .. qualityID .. " " .. tostring(newString))
 		local _, link = GetItemInfo(newString)
+		print("link: " .. link)
 		table.insert(linksByQuality, link)
 	 end
 	 return linksByQuality
@@ -65,7 +67,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
 		local reagents = currentSlot.reagents
 		local reagentType = currentSlot.reagentType
-		local reagentName, link = GetItemInfo(reagents[1].itemID)
+		local reagentName = CraftSimDATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
 		--print("checking slot index: " .. slotIndex)
 		-- for now only consider the required reagents
 		if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
@@ -289,4 +291,22 @@ function CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 		end
 	end
 	return professionGear
+end
+
+function CraftSimDATAEXPORT:GetReagentNameFromReagentData(itemID)
+	local reagentData = CraftSimREAGENTWEIGHTS[itemID]
+
+	if reagentData then
+		return reagentData.name
+	else
+		local name = GetItemInfo(itemID)
+
+		if name then
+			return name
+		else
+			print("Could not find name for reagent itemID: " .. tostring(itemID))
+			return "Unknown"
+		end
+	end
+
 end
