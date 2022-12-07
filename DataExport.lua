@@ -187,22 +187,24 @@ function CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 		end
 	end
 
-	stats.skill = 0
-	local parsedSkill = nil
+	local parsedSkill = 0
+	local parsedInspirationSkillBonusPercent = 0
 	local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
 	for lineNum, line in pairs(tooltipData.lines) do
 		for argNum, arg in pairs(line.args) do
 			if arg.stringVal and string.find(arg.stringVal, "Equip:") then -- TODO: Localization differences? 
 				-- here the stringVal looks like "Equip: +6 Blacksmithing Skill"
 				parsedSkill = tonumber(string.match(arg.stringVal, "%+(%d+)"))
-				break
+			end
+			if arg.stringVal and string.find(arg.stringVal, "increases the Skill provided when inspired by") then -- TODO: Localization?
+				--
+				parsedInspirationSkillBonusPercent = tonumber(string.match(arg.stringVal, "by (%d+)%%"))
 			end
 		end
 	end
 
-	if parsedSkill ~= nil then
-		stats.skill = parsedSkill
-	end
+	stats.skill = parsedSkill
+	stats.inspirationBonusSkillPercent = parsedInspirationSkillBonusPercent
 
 	return stats
 end
@@ -210,6 +212,7 @@ end
 function CraftSimDATAEXPORT:GetCurrentProfessionItemStats()
 	local stats = {
 		inspiration = 0,
+		inspirationBonusSkillPercent = 0,
 		multicraft = 0,
 		resourcefulness = 0,
 		craftingspeed = 0,
@@ -236,6 +239,11 @@ function CraftSimDATAEXPORT:GetCurrentProfessionItemStats()
 			end
 			if itemStats.skill then
 				stats.skill = stats.skill + itemStats.skill
+			end
+
+			if itemStats.inspirationBonusSkillPercent then
+				-- "additive or multiplicative? or dont care cause multiple items cannot have this bonus?"
+				stats.inspirationBonusSkillPercent = stats.inspirationBonusSkillPercent + itemStats.inspirationBonusSkillPercent 
 			end
 		end
 	end

@@ -138,6 +138,7 @@ end
 function CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
     local stats = {
         inspiration = 0,
+        inspirationBonusSkillPercent = 0,
         multicraft = 0,
         resourcefulness = 0,
         craftingspeed = 0,
@@ -156,13 +157,16 @@ function CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
                 stats.resourcefulness = stats.resourcefulness + gearItem.itemStats.resourcefulness
             end
 
-            -- below not yet meaningful implemented
             if gearItem.itemStats.craftingspeed ~= nil then
                 stats.craftingspeed = stats.craftingspeed + gearItem.itemStats.craftingspeed
             end
             if gearItem.itemStats.skill ~= nil then
                 stats.skill = stats.skill + gearItem.itemStats.skill
             end
+            if gearItem.itemStats.inspirationBonusSkillPercent then
+				-- additive or multiplicative? or dont care cause multiple items cannot have this bonus?
+				stats.inspirationBonusSkillPercent = stats.inspirationBonusSkillPercent + gearItem.itemStats.inspirationBonusSkillPercent 
+			end
         end
     end
     return stats
@@ -172,7 +176,8 @@ function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeTy
     local modifedRecipeData = CopyTable(recipeData)
     if modifedRecipeData.stats.inspiration ~= nil then
         modifedRecipeData.stats.inspiration.value = modifedRecipeData.stats.inspiration.value + statChanges.inspiration
-        modifedRecipeData.stats.inspiration.percent = modifedRecipeData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statChanges.inspiration)*100 
+        modifedRecipeData.stats.inspiration.percent = modifedRecipeData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statChanges.inspiration)*100
+        modifedRecipeData.stats.inspiration.bonusskill = modifedRecipeData.stats.inspiration.bonusskill * (1 + statChanges.inspirationBonusSkillPercent / 100)
     end
     if modifedRecipeData.stats.multicraft ~= nil then
         modifedRecipeData.stats.multicraft.value = modifedRecipeData.stats.multicraft.value + statChanges.multicraft
@@ -203,14 +208,9 @@ end
 function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, recipeType, priceData, baseProfit)
     local results = {}
 
-    --print("base expected q: " .. recipeData.expectedQuality)
-    --print("base skill: " .. recipeData.stats.skill)
     for _, gearCombination in pairs(gearCombos) do
         local statChanges = CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
         local modifiedRecipeData = CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeType, statChanges)
-
-        --print("found combination with stat changes: ")
-        --CraftSimUTIL:PrintTable(statChanges)
         local meanProfit = CraftSimSTATS:getMeanProfit(modifiedRecipeData, priceData)
         local profitDiff = meanProfit - baseProfit
         table.insert(results, {
@@ -247,6 +247,7 @@ function CraftSimGEARSIM:DeductCurrentItemStats(recipeData, recipeType)
     if noItemRecipeData.stats.inspiration ~= nil then
         noItemRecipeData.stats.inspiration.value = noItemRecipeData.stats.inspiration.value - itemStats.inspiration
         noItemRecipeData.stats.inspiration.percent = noItemRecipeData.stats.inspiration.percent - CraftSimUTIL:GetInspirationPercentByStat(itemStats.inspiration)*100
+        noItemRecipeData.stats.inspiration.bonusskill = noItemRecipeData.stats.inspiration.bonusskill / (1 + itemStats.inspirationBonusSkillPercent / 100)
     end
     if noItemRecipeData.stats.multicraft ~= nil then
         noItemRecipeData.stats.multicraft.value = noItemRecipeData.stats.multicraft.value - itemStats.multicraft
@@ -275,6 +276,7 @@ function CraftSimGEARSIM:DeductCurrentItemStats(recipeData, recipeType)
         end
 
     end
+
     return noItemRecipeData
 end
 
