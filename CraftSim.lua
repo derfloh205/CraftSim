@@ -13,7 +13,9 @@ addon:RegisterEvent("ADDON_LOADED")
 addon:RegisterEvent("PLAYER_LOGIN")
 
 CraftSimOptions = CraftSimOptions or {
-	priceDebug = false
+	priceDebug = false,
+	priceSource = nil,
+	tsmPriceKey = "DBMinbuyout"
 }
 
 local hookedToDetailsFrame = false
@@ -59,17 +61,17 @@ function addon:ADDON_LOADED(addon_name)
 		addon:HookToDetailsHide()
 		--print("load craftsim")
 	end
-	if not priceApiLoaded then
-		if CraftSimOptions.priceDebug then
-			CraftSimPriceAPI = CraftSimDEBUG_PRICE_API
-			priceApiLoaded = true
-			print("load debug prices")
-		elseif CraftSimPriceAPIs:IsPriceApiAddonLoaded() or CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name) then
-			--print("load price api")
-			CraftSimPriceAPIs:InitAvailablePriceAPI()
-			priceApiLoaded = true
-		end
-	end
+	-- if not priceApiLoaded then
+	-- 	if CraftSimOptions.priceDebug then
+	-- 		CraftSimPriceAPI = CraftSimDEBUG_PRICE_API
+	-- 		priceApiLoaded = true
+	-- 		print("load debug prices")
+	-- 	elseif CraftSimPriceAPIs:IsPriceApiAddonLoaded() or CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name) then
+	-- 		--print("load price api")
+	-- 		CraftSimPriceAPIs:InitAvailablePriceAPI()
+	-- 		priceApiLoaded = true
+	-- 	end
+	-- end
 end
 
 function addon:PLAYER_LOGIN()
@@ -113,6 +115,9 @@ function addon:PLAYER_LOGIN()
 			CraftSimDATAEXPORT:ConvertData()
 		end
 	end
+
+	CraftSimPriceAPI:InitPriceSource()
+	CraftSimOPTIONS:InitOptionsFrame()
 end
 
 function addon:TriggerModulesByRecipeType()

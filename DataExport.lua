@@ -23,9 +23,9 @@ function CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
 		
 		parts[#parts-5] = qualityID
 		local newString = table.concat(parts, ":")
-		print("item string q" .. qualityID .. " " .. tostring(newString))
+		--print("item string q" .. qualityID .. " " .. tostring(newString))
 		local _, link = GetItemInfo(newString)
-		print("link: " .. link)
+		--print("link: " .. link)
 		table.insert(linksByQuality, link)
 	 end
 	 return linksByQuality
@@ -304,7 +304,6 @@ function CraftSimDATAEXPORT:GetReagentNameFromReagentData(itemID)
 		if name then
 			return name
 		else
-			print("Could not find name for reagent itemID: " .. tostring(itemID))
 			return "Unknown"
 		end
 	end

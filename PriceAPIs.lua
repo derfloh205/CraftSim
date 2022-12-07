@@ -1,11 +1,48 @@
 CraftSimPriceAPI = {}
 CraftSimPriceAPIs = {}
 
-CraftSimTSM = {}
-CraftSimAUCTIONATOR = {}
-CraftSimDEBUG_PRICE_API = {}
+CraftSimTSM = {name = "TradeSkillMaster"}
+CraftSimAUCTIONATOR = {name = "Auctionator"}
+CraftSimDEBUG_PRICE_API = {name = "Debug"}
 
 CraftSimDebugData = CraftSimDebugData or {}
+
+function CraftSimPriceAPI:InitPriceSource()
+    local loadedSources = CraftSimPriceAPIs:GetAvailablePriceSourceAddons()
+
+    if #loadedSources == 0 then
+        print("CraftSim: No Supported Price Source Available!")
+        -- TODO ?
+        return
+    end
+
+    local savedSource = CraftSimOptions.priceSource
+
+    if tContains(loadedSources, savedSource) then
+        CraftSimPriceAPIs:SwitchAPIByAddonName(savedSource)
+    else
+        CraftSimPriceAPIs:SwitchAPIByAddonName(loadedSources[1])
+        CraftSimOptions.priceSource = loadedSources[1]
+    end
+end
+
+function CraftSimPriceAPIs:SwitchAPIByAddonName(addonName)
+    if addonName == "TradeSkillMaster" then
+        CraftSimPriceAPI = CraftSimTSM
+    elseif addonName == "Auctionator" then
+        CraftSimPriceAPI = CraftSimAUCTIONATOR
+    end
+end
+
+function CraftSimPriceAPIs:GetAvailablePriceSourceAddons()
+    local loadedAddons = {}
+    for _, addonName in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do
+        if IsAddOnLoaded(addonName) then
+            table.insert(loadedAddons, addonName)
+        end
+    end
+    return loadedAddons
+end
 
 function CraftSimPriceAPIs:IsPriceApiAddonLoaded()
     local loaded = false
@@ -62,7 +99,7 @@ function CraftSimTSM:GetMinBuyoutByItemID(itemID)
 end
 
 function CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString)
-    local minBuyoutPriceSourceKey = "DBMinBuyout"
+    local minBuyoutPriceSourceKey = CraftSimOptions.tsmPriceKey
     local vendorBuy = "VendorBuy"
     local vendorBuyPrice, error = TSM_API.GetCustomPriceValue(vendorBuy, tsmItemString)
 
