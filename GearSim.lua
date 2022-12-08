@@ -291,6 +291,10 @@ end
 function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
 
     -- update top gear mode dropdown
+    if UIDROPDOWNMENU_OPEN_MENU and UIDROPDOWNMENU_OPEN_MENU.isSimModeDropdown then
+        -- do not sim cause dropdown is open
+        return
+    end
     local availableModes = CraftSimGEARSIM:GetAvailableTopGearModesByRecipeDataAndType(recipeData, recipeType)
     if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
         CraftSimOptions.topGearMode = availableModes[1]

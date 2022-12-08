@@ -15,10 +15,12 @@ function CraftSimPRICEDATA:GetReagentCosts(recipeData)
             for _qualityIndex, itemInfo in pairs(reagentInfo.itemsInfo) do
                 local minbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemInfo.itemID)
                     totalBuyout = totalBuyout +  (minbuyout * itemInfo.allocations)
+                    itemInfo.minBuyout = minbuyout -- used by lowestcostbyqualityID
             end
             if totalBuyout == 0 then
-                -- Assuming that the player has 0 of an required item, set the buyout to q1 of that item * required
-                local minbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(reagentInfo.itemsInfo[1].itemID)
+                -- Assuming that the player has 0 of an required item, set the buyout to lowest qID of that item * required
+                local qualityID = CraftSimPRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentInfo.itemsInfo)
+                local minbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(reagentInfo.itemsInfo[qualityID].itemID)
                 totalBuyout = minbuyout * reagentInfo.requiredQuantity
             end
             table.insert(reagentCosts, totalBuyout)
@@ -122,4 +124,17 @@ function CraftSimPRICEDATA:GetMinBuyoutByItemLink(itemLink)
         minbuyout = 0
     end
     return minbuyout
+end
+
+function CraftSimPRICEDATA:GetLowestCostQualityIDByItemsInfo(itemsInfo)
+    local lowestQualityID = 1
+    local lowestMinBuyout = itemsInfo[1].minBuyout
+    for qualityID, itemInfo in pairs(itemsInfo) do
+        if itemInfo.minBuyout < lowestMinBuyout then
+            lowestQualityID = qualityID
+            lowestMinBuyout = itemInfo.minBuyout
+        end
+    end
+
+    return lowestQualityID
 end

@@ -318,7 +318,7 @@ function CraftSimFRAME:InitGearSimFrame()
         CraftSimOptions.topGearMode = arg1
         CraftSimGEARSIM:SimulateBestProfessionGearCombination(CraftSimTopGearSimMode.recipeData, CraftSimTopGearSimMode.recipeType, CraftSimTopGearSimMode.priceData)
     end, "Placeholder")
-
+    frame.simModeDropdown.isSimModeDropdown = true
     frame.profitText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.profitText:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 10)
 

@@ -76,8 +76,17 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
         for reagentIndex, reagentData in pairs(recipeData.reagents) do
             if reagentData.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
                     totalReagentAllocationsByQuality[reagentIndex] = CopyTable(reagentData.itemsInfo)
+                    local totalAllocations = 0
                     for _, itemInfo in pairs(totalReagentAllocationsByQuality[reagentIndex]) do
+                        totalAllocations = totalAllocations + itemInfo.allocations
                         itemInfo.allocations = itemInfo.allocations * numCrafts
+                    end
+
+                    if totalAllocations == 0 then
+                        -- not enough items, assume maxquantity with lowest price quality
+                        -- TODO: maybe show a warning or smth?
+                        local lowestCostQualityID = CraftSimPRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentData.itemsInfo)
+                        totalReagentAllocationsByQuality[reagentIndex][lowestCostQualityID].allocations = reagentData.requiredQuantity * numCrafts
                     end
             end
         end
@@ -88,6 +97,7 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
                 totalSavedCosts = totalSavedCosts + priceData.reagentsPriceByQuality[reagentIndex][qualityIndex].minBuyout * savedItems
             end
         end
+
         --print("total saved costs: " .. totalSavedCosts)
     end
 
