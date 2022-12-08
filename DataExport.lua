@@ -63,6 +63,18 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	
 
 	recipeData.reagents = {}
+
+	local salvageAllocation = currentTransaction:GetSalvageAllocation()
+
+	if salvageAllocation then
+		recipeData.salvageReagent = {
+			name = salvageAllocation:GetItemName(),
+			itemLink = salvageAllocation:GetItemLink(),
+			itemID = salvageAllocation:GetItemID(),
+			requiredQuantity = schematicForm.salvageSlot.quantityRequired
+		}
+	end
+
 	local hasReagentsWithQuality = false
 	local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
 	--print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
@@ -70,7 +82,6 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		local reagents = currentSlot.reagents
 		local reagentType = currentSlot.reagentType
 		local reagentName = CraftSimDATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
-		--print("checking slot index: " .. slotIndex)
 		-- for now only consider the required reagents
 		if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
 			local hasMoreThanOneQuality = reagents[2] ~= nil

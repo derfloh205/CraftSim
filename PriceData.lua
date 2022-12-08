@@ -29,14 +29,18 @@ function CraftSimPRICEDATA:GetReagentCosts(recipeData)
 end
 
 function CraftSimPRICEDATA:GetTotalCraftingCost(recipeData)
-    local reagentCosts = CraftSimPRICEDATA:GetReagentCosts(recipeData)  
-    local totalCraftingCost = 0
+    if not recipeData.salvageReagent then
+        local reagentCosts = CraftSimPRICEDATA:GetReagentCosts(recipeData)  
+        local totalCraftingCost = 0
 
-    for _, cost in pairs(reagentCosts) do
-        totalCraftingCost = totalCraftingCost + cost
-    end
+        for _, cost in pairs(reagentCosts) do
+            totalCraftingCost = totalCraftingCost + cost
+        end
 
-    return totalCraftingCost
+        return totalCraftingCost
+    else
+        return CraftSimPRICEDATA:GetMinBuyoutByItemLink(recipeData.salvageReagent.itemLink) * recipeData.salvageReagent.requiredQuantity
+    end 
 end
 
 function CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
