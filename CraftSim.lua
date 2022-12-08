@@ -18,6 +18,12 @@ CraftSimOptions = CraftSimOptions or {
 	tsmPriceKey = "DBMinbuyout"
 }
 
+function addon:handleCraftSimOptionsUpdates()
+	if CraftSimOptions then
+		CraftSimOptions.tsmPriceKey = CraftSimOptions.tsmPriceKey or "DBMinbuyout"
+	end
+end
+
 local hookedToDetailsFrame = false
 -- this should cover the case of switching to a frame that does not show the details like recrafting, from a frame that does
 function addon:HookToDetailsHide()
@@ -59,6 +65,8 @@ function addon:ADDON_LOADED(addon_name)
 		CraftSimFRAME:InitCostOverviewFrame()
 		addon:HookToEvent()
 		addon:HookToDetailsHide()
+		addon:handleCraftSimOptionsUpdates()
+		
 		--print("load craftsim")
 	end
 	-- if not priceApiLoaded then
