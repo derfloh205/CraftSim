@@ -348,7 +348,7 @@ function CraftSimFRAME:InitGearSimFrame()
     frame.statDiff.skill:SetText("Skill: ")
 
     frame.statDiff.quality = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.statDiff.quality:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*6)
+    frame.statDiff.quality:SetPoint("TOP", frame.statDiff, "TOP", -5, statTxtSpacingY*6)
     frame.statDiff.quality:SetText("Quality: ")
 
     frame.statDiff.qualityIcon = CraftSimFRAME:CreateQualityIcon(frame, 20, 20, frame.statDiff.quality, "LEFT", "RIGHT", 3, 0)
