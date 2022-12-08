@@ -3,12 +3,20 @@ CraftSimUTIL = {}
 local inspirationFactor = 0.001
 local multicraftFactor = 0.0009
 local resourcefulnessFactor = 0.00111
+local craftingspeedFactor = 0.002
 
 function CraftSimUTIL:GetInspirationStatByPercent(percent) 
     if percent == nil then 
         return 0 
     end
     return percent / inspirationFactor
+end
+
+function CraftSimUTIL:GetCraftingSpeedStatByPercent(percent) 
+    if percent == nil then 
+        return 0 
+    end
+    return percent / craftingspeedFactor
 end
 
 function CraftSimUTIL:GetMulticraftStatByPercent(percent) 
@@ -27,6 +35,10 @@ end
 
 function CraftSimUTIL:GetInspirationPercentByStat(stat) 
     return stat * inspirationFactor
+end
+
+function CraftSimUTIL:GetCraftingSpeedPercentByStat(stat)
+    return stat * craftingspeedFactor
 end
 
 function CraftSimUTIL:GetMulticraftPercentByStat(stat) 

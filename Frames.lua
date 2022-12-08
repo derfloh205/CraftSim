@@ -108,16 +108,7 @@ function CraftSimFRAME:InitBestAllocationsFrame()
 	frame.qualityText:SetPoint("TOP", frame, "TOP", 0, -35)
 	frame.qualityText:SetText("Highest Quality: ")
 
-    frame.qualityIcon = frame:CreateTexture(nil, "OVERLAY")
-    frame.qualityIcon:SetSize(25, 25)
-    frame.qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
-    frame.qualityIcon:SetAtlas("Professions-Icon-Quality-Tier1")
-    frame.qualityIcon:SetPoint("LEFT", frame.qualityText, "RIGHT", 3, 0)
-
-    frame.qualityIcon.SetQuality = function(qualityID) 
-        frame.qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
-        frame.qualityIcon:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
-    end
+    frame.qualityIcon = CraftSimFRAME:CreateQualityIcon(frame, 25, 25, frame.qualityText, "LEFT", "RIGHT", 3, 0)
 
     frame.notFoundText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.notFoundText:SetPoint("CENTER", frame, "CENTER", 0, 0)
@@ -168,23 +159,9 @@ function CraftSimFRAME:CreateReagentFrame(parent, y, iconSize)
     reagentFrame.q3Icon:SetSize(25, 25)
     reagentFrame.q3Icon:SetPoint("LEFT", reagentFrame, "LEFT", reagentRowOffsetX + reagentIconsOffsetX*2, 0)
     
-    reagentFrame.q1qualityIcon = reagentFrame:CreateTexture(nil, "OVERLAY")
-    reagentFrame.q1qualityIcon:SetSize(qualityIconSize, qualityIconSize)
-    reagentFrame.q1qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
-    reagentFrame.q1qualityIcon:SetAtlas("Professions-Icon-Quality-Tier1")
-    reagentFrame.q1qualityIcon:SetPoint("CENTER", reagentFrame.q1Icon, "TOPLEFT", qualityIconX, qualityIconY)
-
-    reagentFrame.q2qualityIcon = reagentFrame:CreateTexture(nil, "OVERLAY")
-    reagentFrame.q2qualityIcon:SetSize(qualityIconSize, qualityIconSize)
-    reagentFrame.q2qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
-    reagentFrame.q2qualityIcon:SetAtlas("Professions-Icon-Quality-Tier2")
-    reagentFrame.q2qualityIcon:SetPoint("CENTER", reagentFrame.q2Icon, "TOPLEFT", qualityIconX, qualityIconY)
-
-    reagentFrame.q3qualityIcon = reagentFrame:CreateTexture(nil, "OVERLAY")
-    reagentFrame.q3qualityIcon:SetSize(qualityIconSize, qualityIconSize)
-    reagentFrame.q3qualityIcon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
-    reagentFrame.q3qualityIcon:SetAtlas("Professions-Icon-Quality-Tier3")
-    reagentFrame.q3qualityIcon:SetPoint("CENTER", reagentFrame.q3Icon, "TOPLEFT", qualityIconX, qualityIconY)
+    reagentFrame.q1qualityIcon = CraftSimFRAME:CreateQualityIcon(reagentFrame, qualityIconSize, qualityIconSize, reagentFrame.q1Icon, "CENTER", "TOPLEFT", qualityIconX, qualityIconY, 1)
+    reagentFrame.q2qualityIcon = CraftSimFRAME:CreateQualityIcon(reagentFrame, qualityIconSize, qualityIconSize, reagentFrame.q2Icon, "CENTER", "TOPLEFT", qualityIconX, qualityIconY, 2)
+    reagentFrame.q3qualityIcon = CraftSimFRAME:CreateQualityIcon(reagentFrame, qualityIconSize, qualityIconSize, reagentFrame.q3Icon, "CENTER", "TOPLEFT", qualityIconX, qualityIconY, 3)
 
     reagentFrame.q1text = reagentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     reagentFrame.q1text:SetPoint("LEFT", reagentFrame.q1Icon, "RIGHT", qualityAmountTextX, 0)
@@ -272,15 +249,7 @@ function CraftSimFRAME:InitCostOverviewFrame()
         local profitFrame = CreateFrame("frame", nil, parent)
         profitFrame:SetSize(parent:GetWidth(), 25)
         profitFrame:SetPoint("TOP", parent, "TOP", 0, offsetY)
-        profitFrame.icon = profitFrame:CreateTexture(nil, "OVERLAY")
-        profitFrame.icon:SetSize(20, 20)
-        profitFrame.icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
-        profitFrame.icon:SetAtlas("Professions-Icon-Quality-Tier1")
-        profitFrame.icon:SetPoint("CENTER", profitFrame, "CENTER", -60, 0)
-        profitFrame.icon.SetQuality = function(qualityID) 
-            profitFrame.icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
-            profitFrame.icon:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
-        end
+        profitFrame.icon = CraftSimFRAME:CreateQualityIcon(profitFrame, 20, 20, profitFrame, "CENTER", "CENTER", -60, 0)
 
         profitFrame.text = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         profitFrame.text:SetPoint("LEFT", profitFrame.icon, "LEFT", 30, 0)
@@ -329,11 +298,8 @@ function CraftSimFRAME:InitGearSimFrame()
 		edgeSize = 16,
 		insets = { left = 8, right = 6, top = 8, bottom = 8 },
 	})
-	frame:SetSize(200, 250)
+	frame:SetSize(200, 300)
     local contentOffsetY = -20
-	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.title:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 117)
-	frame.title:SetText("CraftSim Top Gear")
     local iconsOffsetY = 80
     frame.gear1Icon = CraftSimFRAME:CreateIcon(frame, -45, contentOffsetY + iconsOffsetY, CraftSimCONST.EMPTY_SLOT_TEXTURE, 40, 40)
     frame.gear2Icon = CraftSimFRAME:CreateIcon(frame,  -0, contentOffsetY + iconsOffsetY, CraftSimCONST.EMPTY_SLOT_TEXTURE, 40, 40)
@@ -346,6 +312,12 @@ function CraftSimFRAME:InitGearSimFrame()
     frame.equipButton:SetScript("OnClick", function(self) 
         CraftSimGEARSIM:EquipTopGear()
     end)
+
+    frame.simModeDropdown = 
+    CraftSimFRAME:initDropdownMenu("CraftSimTopGearSimMode", frame, "CraftSim Top Gear", 0, contentOffsetY - 10, 120, {"Placeholder"}, function(arg1) 
+        CraftSimOptions.topGearMode = arg1
+        CraftSimGEARSIM:SimulateBestProfessionGearCombination(CraftSimTopGearSimMode.recipeData, CraftSimTopGearSimMode.recipeType, CraftSimTopGearSimMode.priceData)
+    end, "Placeholder")
 
     frame.profitText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.profitText:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 10)
@@ -360,16 +332,26 @@ function CraftSimFRAME:InitGearSimFrame()
     frame.statDiff.inspiration:SetText("Inspiration: ")
 
     frame.statDiff.multicraft = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.statDiff.multicraft:SetPoint("TOP", frame.statDiff, "TOP", -0, statTxtSpacingY*2)
+    frame.statDiff.multicraft:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*2)
     frame.statDiff.multicraft:SetText("Multicraft: ")
 
     frame.statDiff.resourcefulness = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.statDiff.resourcefulness:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*3)
     frame.statDiff.resourcefulness:SetText("Resourcefulness: ")
 
+    frame.statDiff.craftingspeed = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.statDiff.craftingspeed:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*4)
+    frame.statDiff.craftingspeed:SetText("Crafting Speed: ")
+
     frame.statDiff.skill = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.statDiff.skill:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*4)
+    frame.statDiff.skill:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*5)
     frame.statDiff.skill:SetText("Skill: ")
+
+    frame.statDiff.quality = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.statDiff.quality:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*6)
+    frame.statDiff.quality:SetText("Quality: ")
+
+    frame.statDiff.qualityIcon = CraftSimFRAME:CreateQualityIcon(frame, 20, 20, frame.statDiff.quality, "LEFT", "RIGHT", 3, 0)
 
 	frame:Hide()
 end
@@ -424,19 +406,44 @@ function CraftSimFRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
     return sign .. CraftSimUTIL:round(statDiff, roundTo) .. suffix
 end
 
-function CraftSimFRAME:FillSimResultData(bestSimulation)
+function CraftSimFRAME:FillSimResultData(bestSimulation, topGearMode)
     CraftSimFRAME:ShowComboItemIcons(bestSimulation.combo)
     if not CraftSimGEARSIM.IsEquipping then
         CraftSimSimFrame.currentCombo = bestSimulation.combo
     end
     -- TODO: maybe show in red or smth if negative
-    CraftSimSimFrame.profitText:SetText("Profit Difference / Craft\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff))
+    if topGearMode == CraftSimCONST.GEAR_SIM_MODES.PROFIT then
+        CraftSimSimFrame.profitText:SetText("Profit Difference / Craft\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff))
+    elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.MULTICRAFT then
+        CraftSimSimFrame.profitText:SetText("New Multicraft\n".. CraftSimUTIL:round(bestSimulation.multicraftPercent, 2) .. "%")
+    elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.CRAFTING_SPEED then
+        CraftSimSimFrame.profitText:SetText("New Crafting Speed\n".. CraftSimUTIL:round(bestSimulation.craftingspeedPercent, 2) .. "%")
+    elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.RESOURCEFULNESS then
+        CraftSimSimFrame.profitText:SetText("New Resourcefulness\n".. CraftSimUTIL:round(bestSimulation.resourcefulnessPercent, 2) .. "%")
+    elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.INSPIRATION then
+        CraftSimSimFrame.profitText:SetText("New Inspiration\n".. CraftSimUTIL:round(bestSimulation.inspirationPercent, 2) .. "%")
+    elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.SKILL then
+        CraftSimSimFrame.profitText:SetText("New Skill\n".. bestSimulation.skill)
+    else
+        CraftSimSimFrame.profitText:SetText("Unhandled Sim Mode")
+    end
     CraftSimTopGearEquipButton:SetEnabled(true)
 
     CraftSimSimFrame.statDiff.inspiration:SetText("Inspiration: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.inspiration, 2, "%"))
     CraftSimSimFrame.statDiff.multicraft:SetText("Multicraft: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.multicraft, 2, "%"))
     CraftSimSimFrame.statDiff.resourcefulness:SetText("Resourcefulness: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.resourcefulness, 2, "%"))
+    CraftSimSimFrame.statDiff.craftingspeed:SetText("Crafting Speed: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.craftingspeed, 2, "%"))
     CraftSimSimFrame.statDiff.skill:SetText("Skill: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.skill, 0))
+
+    if CraftSimTopGearSimMode.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE and CraftSimTopGearSimMode.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
+        CraftSimSimFrame.statDiff.qualityIcon.SetQuality(bestSimulation.modifiedRecipeData.expectedQuality)
+        CraftSimSimFrame.statDiff.quality:Show()
+        CraftSimSimFrame.statDiff.qualityIcon:Show()
+    else
+        CraftSimSimFrame.statDiff.quality:Hide()
+        CraftSimSimFrame.statDiff.qualityIcon:Hide()
+    end
+
 end
 
 function CraftSimFRAME:ClearResultData()
@@ -447,7 +454,10 @@ function CraftSimFRAME:ClearResultData()
     CraftSimSimFrame.statDiff.inspiration:SetText("")
     CraftSimSimFrame.statDiff.multicraft:SetText("")
     CraftSimSimFrame.statDiff.resourcefulness:SetText("")
+    CraftSimSimFrame.statDiff.craftingspeed:SetText("")
     CraftSimSimFrame.statDiff.skill:SetText("")
+    CraftSimSimFrame.statDiff.quality:Hide()
+    CraftSimSimFrame.statDiff.qualityIcon:Hide()
 end
 
 function CraftSimFRAME:ToggleFrame(frame, visible)
@@ -458,3 +468,51 @@ function CraftSimFRAME:ToggleFrame(frame, visible)
     end
 end
 
+function CraftSimFRAME:initDropdownMenu(frameName, parent, label, offsetX, offsetY, width, list, clickCallback, defaultValue)
+	local dropDown = CreateFrame("Frame", frameName, parent, "UIDropDownMenuTemplate")
+    dropDown.clickCallback = clickCallback
+	dropDown:SetPoint("TOP", parent, offsetX, offsetY)
+	UIDropDownMenu_SetWidth(dropDown, width)
+	
+	CraftSimFRAME:initializeDropdown(dropDown, list, defaultValue)
+
+	local dd_title = dropDown:CreateFontString('dd_title', 'OVERLAY', 'GameFontNormal')
+    dd_title:SetPoint("TOP", 0, 10)
+	dd_title:SetText(label)
+    return dropDown
+end
+
+function CraftSimFRAME:initializeDropdown(dropDown, list, defaultValue)
+	UIDropDownMenu_Initialize(dropDown, function(self) 
+		for k, v in pairs(list) do
+			name = v
+			local info = UIDropDownMenu_CreateInfo()
+			info.func = function(self, arg1, arg2, checked) 
+                UIDropDownMenu_SetText(dropDown, arg1)
+                dropDown.clickCallback(arg1)
+            end
+
+			info.text = name
+			info.arg1 = info.text
+			UIDropDownMenu_AddButton(info)
+		end
+	end)
+
+	UIDropDownMenu_SetText(dropDown, defaultValue)
+end
+
+function CraftSimFRAME:CreateQualityIcon(frame, x, y, anchorFrame, anchorSelf, anchorParent, offsetX, offsetY, initialQuality)
+    initialQuality = initialQuality or 1
+    local icon = frame:CreateTexture(nil, "OVERLAY")
+    icon:SetSize(x, y)
+    icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+    icon:SetAtlas("Professions-Icon-Quality-Tier" .. initialQuality)
+    icon:SetPoint(anchorSelf, anchorFrame, anchorParent, offsetX, offsetY)
+
+    icon.SetQuality = function(qualityID) 
+        icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+        icon:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
+    end
+
+    return icon
+end

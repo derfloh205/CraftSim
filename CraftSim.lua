@@ -15,12 +15,14 @@ addon:RegisterEvent("PLAYER_LOGIN")
 CraftSimOptions = CraftSimOptions or {
 	priceDebug = false,
 	priceSource = nil,
-	tsmPriceKey = "DBMinbuyout"
+	tsmPriceKey = "DBMinbuyout",
+	topGearMode = "Top Profit"
 }
 
 function addon:handleCraftSimOptionsUpdates()
 	if CraftSimOptions then
 		CraftSimOptions.tsmPriceKey = CraftSimOptions.tsmPriceKey or "DBMinbuyout"
+		CraftSimOptions.topGearMode = CraftSimOptions.topGearMode or "Top Profit"
 	end
 end
 
@@ -180,6 +182,8 @@ function addon:TriggerModulesByRecipeType()
 			showCostOverview = true
 			showCostOverviewCraftingCostsOnly = true
 			showMaterialAllocation = true
+			-- also show top gear cause we have different modes now
+			showTopGear = true
 		elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
 			-- show nothing
 		elseif recipeType == CraftSimCONST.RECIPE_TYPES.RECRAFT then

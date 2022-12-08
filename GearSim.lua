@@ -173,36 +173,41 @@ function CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
 end
 
 function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeType, statChanges)
-    local modifedRecipeData = CopyTable(recipeData)
-    if modifedRecipeData.stats.inspiration ~= nil then
-        modifedRecipeData.stats.inspiration.value = modifedRecipeData.stats.inspiration.value + statChanges.inspiration
-        modifedRecipeData.stats.inspiration.percent = modifedRecipeData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statChanges.inspiration)*100
-        modifedRecipeData.stats.inspiration.bonusskill = modifedRecipeData.stats.inspiration.bonusskill * (1 + statChanges.inspirationBonusSkillPercent / 100)
+    local modifiedRecipeData = CopyTable(recipeData)
+    if modifiedRecipeData.stats.inspiration ~= nil then
+        modifiedRecipeData.stats.inspiration.value = modifiedRecipeData.stats.inspiration.value + statChanges.inspiration
+        modifiedRecipeData.stats.inspiration.percent = modifiedRecipeData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statChanges.inspiration)*100
+        modifiedRecipeData.stats.inspiration.bonusskill = modifiedRecipeData.stats.inspiration.bonusskill * (1 + statChanges.inspirationBonusSkillPercent / 100)
     end
-    if modifedRecipeData.stats.multicraft ~= nil then
-        modifedRecipeData.stats.multicraft.value = modifedRecipeData.stats.multicraft.value + statChanges.multicraft
-        modifedRecipeData.stats.multicraft.percent = modifedRecipeData.stats.multicraft.percent + CraftSimUTIL:GetMulticraftPercentByStat(statChanges.multicraft)*100 
+    if modifiedRecipeData.stats.multicraft ~= nil then
+        modifiedRecipeData.stats.multicraft.value = modifiedRecipeData.stats.multicraft.value + statChanges.multicraft
+        modifiedRecipeData.stats.multicraft.percent = modifiedRecipeData.stats.multicraft.percent + CraftSimUTIL:GetMulticraftPercentByStat(statChanges.multicraft)*100 
     end
-    if modifedRecipeData.stats.resourcefulness ~= nil then
-        modifedRecipeData.stats.resourcefulness.value = modifedRecipeData.stats.resourcefulness.value + statChanges.resourcefulness
-        modifedRecipeData.stats.resourcefulness.percent = modifedRecipeData.stats.resourcefulness.percent + 
+    if modifiedRecipeData.stats.resourcefulness ~= nil then
+        modifiedRecipeData.stats.resourcefulness.value = modifiedRecipeData.stats.resourcefulness.value + statChanges.resourcefulness
+        modifiedRecipeData.stats.resourcefulness.percent = modifiedRecipeData.stats.resourcefulness.percent + 
             CraftSimUTIL:GetResourcefulnessPercentByStat(statChanges.resourcefulness)*100 
     end
+    if modifiedRecipeData.stats.craftingspeed ~= nil then
+        modifiedRecipeData.stats.craftingspeed.value = modifiedRecipeData.stats.craftingspeed.value + statChanges.craftingspeed
+        modifiedRecipeData.stats.craftingspeed.percent = modifiedRecipeData.stats.craftingspeed.percent + 
+            CraftSimUTIL:GetCraftingSpeedPercentByStat(statChanges.craftingspeed)*100 
+    end
 
-    if modifedRecipeData.stats.skill ~= nil and 
+    if modifiedRecipeData.stats.skill ~= nil and 
         recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE and 
         recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
-        modifedRecipeData.stats.skill = modifedRecipeData.stats.skill + statChanges.skill
-        local expectedQualityWithItems = CraftSimSTATS:GetExpectedQualityBySkill(modifedRecipeData, modifedRecipeData.stats.skill)
+        modifiedRecipeData.stats.skill = modifiedRecipeData.stats.skill + statChanges.skill
+        local expectedQualityWithItems = CraftSimSTATS:GetExpectedQualityBySkill(modifiedRecipeData, modifiedRecipeData.stats.skill)
         --print("expectedQ with Items: " .. tostring(expectedQualityWithItems))
-        local oldexpected = modifedRecipeData.expectedQuality
-        modifedRecipeData.expectedQuality = expectedQualityWithItems
+        local oldexpected = modifiedRecipeData.expectedQuality
+        modifiedRecipeData.expectedQuality = expectedQualityWithItems
         if oldexpected < expectedQualityWithItems then
             --print("Combination with increased quality level found!")
         end
     end
 
-    return modifedRecipeData
+    return modifiedRecipeData
 end
 
 function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeData, recipeType, priceData, baseProfit)
@@ -238,6 +243,9 @@ function CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
     if bestSimulation.modifiedRecipeData.stats.skill ~= nil then
         bestSimulation.statDiff.skill = bestSimulation.modifiedRecipeData.stats.skill - recipeData.stats.skill
     end
+    if bestSimulation.modifiedRecipeData.stats.craftingspeed ~= nil then
+        bestSimulation.statDiff.craftingspeed = bestSimulation.modifiedRecipeData.stats.craftingspeed.percent - recipeData.stats.craftingspeed.percent
+    end
 end
 
 function CraftSimGEARSIM:DeductCurrentItemStats(recipeData, recipeType)
@@ -258,8 +266,8 @@ function CraftSimGEARSIM:DeductCurrentItemStats(recipeData, recipeType)
         noItemRecipeData.stats.resourcefulness.percent = noItemRecipeData.stats.resourcefulness.percent - CraftSimUTIL:GetResourcefulnessPercentByStat(itemStats.resourcefulness)*100
     end
     if noItemRecipeData.stats.craftingspeed ~= nil then
-        -- TODO: get modifier!!!
-        noItemRecipeData.stats.craftingspeed.value = noItemRecipeData.stats.craftingspeed.value --- CraftSimUTIL:GetInspirationPercentByStat(itemStats.craftingspeed)*100
+        noItemRecipeData.stats.craftingspeed.value = noItemRecipeData.stats.craftingspeed.value - itemStats.craftingspeed
+        noItemRecipeData.stats.craftingspeed.percent = noItemRecipeData.stats.craftingspeed.percent - CraftSimUTIL:GetCraftingSpeedPercentByStat(itemStats.craftingspeed)*100
     end
     if noItemRecipeData.stats.skill ~= nil and 
         recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE and 
@@ -281,6 +289,20 @@ function CraftSimGEARSIM:DeductCurrentItemStats(recipeData, recipeType)
 end
 
 function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
+
+    -- update top gear mode dropdown
+    local availableModes = CraftSimGEARSIM:GetAvailableTopGearModesByRecipeDataAndType(recipeData, recipeType)
+    if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
+        CraftSimOptions.topGearMode = availableModes[1]
+    end
+    CraftSimFRAME:initializeDropdown(CraftSimSimFrame.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
+
+    -- cache it
+    CraftSimTopGearSimMode.recipeData = recipeData
+    CraftSimTopGearSimMode.recipeType = recipeType
+    CraftSimTopGearSimMode.priceData = priceData
+
+
     local gearCombos = CraftSimGEARSIM:GetProfessionGearCombinations()
 
     if not gearCombos then
@@ -290,58 +312,118 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
 
     local noItemsRecipeData = CraftSimGEARSIM:DeductCurrentItemStats(recipeData, recipeType)
 
-    local currentComboMeanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
+    if CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.PROFIT then
+        local currentComboMeanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
+        local noItemMeanProfit = CraftSimSTATS:getMeanProfit(noItemsRecipeData, priceData)
+        local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, noItemsRecipeData, recipeType, priceData, currentComboMeanProfit)
 
-    local noItemMeanProfit = CraftSimSTATS:getMeanProfit(noItemsRecipeData, priceData)
-    local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, noItemsRecipeData, recipeType, priceData, currentComboMeanProfit)
+        local validSimulationResults = simulationResults
 
-    local validSimulationResults = simulationResults
+        -- set the initial best combo as the current equipped combo!
+        -- this leads to only better combos or combos with more items slotted being displayed
+        local equippedSimResult = CraftSimGEARSIM:GetEquippedSimResult(validSimulationResults)
+        local bestSimulation = equippedSimResult
+        local foundBetter = false
+        for index, simResult in pairs(validSimulationResults) do
+            --print("Gearcombo " .. index .. " meanProfit: " .. simResult.meanProfit)
+            if simResult.profitDiff > bestSimulation.profitDiff or
+                simResult.profitDiff == bestSimulation.profitDiff and CraftSimGEARSIM:hasMoreSlotsThan(simResult.combo, bestSimulation.combo) then
+                bestSimulation = simResult
+                foundBetter = true
+            end
+            -- else just keep the current set best set
+        end
 
-    local function countEmptySlots(combo)
-        local numEmpty = 0
-        for _, slot in pairs(combo) do
-            if slot.isEmptySlot then
-                numEmpty = numEmpty + 1
+        if foundBetter then
+            CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
+            CraftSimFRAME:FillSimResultData(bestSimulation, CraftSimOptions.topGearMode)
+        else
+            CraftSimFRAME:ClearResultData()
+        end
+    elseif CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.SKILL then
+        local equippedCombo = CraftSimGEARSIM:GetEquippedCombo()
+        local bestSimulation =  {
+            combo = equippedCombo,
+            modifiedRecipeData = recipeData
+        }
+        local foundBetter = false
+        for _, combo in pairs(gearCombos) do
+            local statChanges = CraftSimGEARSIM:GetStatChangesFromGearCombination(combo)
+            local modifiedRecipeData = CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(noItemsRecipeData, recipeType, statChanges)
+
+            if modifiedRecipeData.stats.skill > bestSimulation.modifiedRecipeData.stats.skill
+                or modifiedRecipeData.stats.skill == bestSimulation.modifiedRecipeData.stats.skill 
+                and CraftSimGEARSIM:hasMoreSlotsThan(combo, bestSimulation.combo) then
+                bestSimulation = {
+                    combo = combo,
+                    modifiedRecipeData = modifiedRecipeData,
+                    skill = modifiedRecipeData.stats.skill
+                }
+                foundBetter = true
             end
         end
-        return numEmpty
-    end
 
-    -- set the initial best combo as the current equipped combo!
-    -- this leads to only better combos or combos with more items slotted being displayed
-    local equippedSimResult = CraftSimGEARSIM:GetEquippedSimResult(validSimulationResults)
-    local bestSimulation = equippedSimResult
-    local foundBetter = false
-    for index, simResult in pairs(validSimulationResults) do
-        --print("Gearcombo " .. index .. " meanProfit: " .. simResult.meanProfit)
-        if simResult.profitDiff > bestSimulation.profitDiff then
-            bestSimulation = simResult
-            foundBetter = true
-        -- if the profit diff is the same, prefer the sim result with more items set
-        elseif simResult.profitDiff == bestSimulation.profitDiff and countEmptySlots(bestSimulation.combo) > countEmptySlots(simResult.combo) then
-            --print("sim result has less empty slots.. prefering..")
-            foundBetter = true
-            bestSimulation = simResult
+        if foundBetter then
+            CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
+            CraftSimFRAME:FillSimResultData(bestSimulation, CraftSimOptions.topGearMode)
+        else
+            CraftSimFRAME:ClearResultData()
         end
-        -- else just keep the current set best set
-    end
+    elseif 
+        CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.INSPIRATION or 
+        CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.MULTICRAFT or 
+        CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.CRAFTING_SPEED or 
+        CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.RESOURCEFULNESS or 
+        CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.SKILL
+     then
+        local statName = CraftSimGEARSIM:GetRelevantStatNameByTopGearMode(CraftSimOptions.topGearMode)
+        local equippedCombo = CraftSimGEARSIM:GetEquippedCombo()
+        local bestSimulation =  {
+            combo = equippedCombo,
+            modifiedRecipeData = recipeData
+        }
+        local foundBetter = false
+        for _, combo in pairs(gearCombos) do
+            local statChanges = CraftSimGEARSIM:GetStatChangesFromGearCombination(combo)
+            local modifiedRecipeData = CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(noItemsRecipeData, recipeType, statChanges)
 
-    if foundBetter then
-        CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
-        CraftSimFRAME:FillSimResultData(bestSimulation)
-        -- print("Best Profit Combination: " .. bestSimulation.meanProfit)
-        -- print("Tool: " .. tostring(bestSimulation.combo[1].itemLink))
-        -- print("Accessory 1: " .. tostring(bestSimulation.combo[2].itemLink))
-        -- print("Accessory 1: " .. tostring(bestSimulation.combo[3].itemLink))
-        -- CraftSimUTIL:PrintTable(bestSimulation.modifiedRecipeData.stats.resourcefulness)
-        -- print("-- base:")
-        -- CraftSimUTIL:PrintTable(recipeData.stats.resourcefulness)
-    else
-        --print("no best simulation found")
-        CraftSimFRAME:ClearResultData()
-    end
+            if modifiedRecipeData.stats[statName].value > bestSimulation.modifiedRecipeData.stats[statName].value
+                or modifiedRecipeData.stats[statName].value == bestSimulation.modifiedRecipeData.stats[statName].value 
+                and CraftSimGEARSIM:hasMoreSlotsThan(combo, bestSimulation.combo) then
+                bestSimulation = {
+                    combo = combo,
+                    modifiedRecipeData = modifiedRecipeData,
+                }
+                bestSimulation[statName] = modifiedRecipeData.stats[statName].value
+                if statName ~= "skill" then
+                    bestSimulation[statName .. "Percent"] = modifiedRecipeData.stats[statName].percent
+                end
+                foundBetter = true
+            end
+        end
 
-    -- TODO: equip the p gear combi of the best simulation ?
+        if foundBetter then
+            CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
+            CraftSimFRAME:FillSimResultData(bestSimulation, CraftSimOptions.topGearMode)
+        else
+            CraftSimFRAME:ClearResultData()
+        end
+    end
+    
+end
+
+function CraftSimGEARSIM:hasMoreSlotsThan(comboOne, comboTwo)
+    return CraftSimGEARSIM:countEmptySlots(comboOne) < CraftSimGEARSIM:countEmptySlots(comboTwo)
+end
+
+function CraftSimGEARSIM:countEmptySlots(combo)
+    local numEmpty = 0
+    for _, slot in pairs(combo) do
+        if slot.isEmptySlot then
+            numEmpty = numEmpty + 1
+        end
+    end
+    return numEmpty
 end
 
 function CraftSimGEARSIM:GetEquippedSimResult(simulationResults)
@@ -424,4 +506,64 @@ function CraftSimGEARSIM:EquipBestCombo()
     end
 
     CraftSimGEARSIM.IsEquipping = false
+end
+
+function CraftSimGEARSIM:GetRelevantStatNameByTopGearMode(mode)
+    if mode == CraftSimCONST.GEAR_SIM_MODES.SKILL then
+        return "skill"
+    elseif mode == CraftSimCONST.GEAR_SIM_MODES.INSPIRATION then
+        return "inspiration"
+    elseif mode == CraftSimCONST.GEAR_SIM_MODES.MULTICRAFT then
+        return "multicraft"
+    elseif mode == CraftSimCONST.GEAR_SIM_MODES.CRAFTING_SPEED then
+        return "craftingspeed"
+    elseif mode == CraftSimCONST.GEAR_SIM_MODES.RESOURCEFULNESS then
+        return "resourcefulness"
+    end
+end
+
+function CraftSimGEARSIM:GetAvailableTopGearModesByRecipeDataAndType(recipeData, recipeType)
+    local availableModes = {}
+    if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
+        availableModes = {
+            CraftSimCONST.GEAR_SIM_MODES.PROFIT,
+            CraftSimCONST.GEAR_SIM_MODES.SKILL
+        }
+    elseif recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
+        availableModes = {
+            CraftSimCONST.GEAR_SIM_MODES.SKILL
+        }
+    elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
+        availableModes = {
+            CraftSimCONST.GEAR_SIM_MODES.PROFIT,
+        }
+    elseif recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
+        availableModes = {
+            CraftSimCONST.GEAR_SIM_MODES.PROFIT,
+            CraftSimCONST.GEAR_SIM_MODES.SKILL
+        }
+    elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_ITEM then
+        availableModes = {
+            CraftSimCONST.GEAR_SIM_MODES.SKILL
+        }
+    else
+        availableModes = {}
+    end
+
+    if recipeData.stats.inspiration then
+        table.insert(availableModes, CraftSimCONST.GEAR_SIM_MODES.INSPIRATION)
+    end
+
+    if recipeData.stats.multicraft then
+        table.insert(availableModes, CraftSimCONST.GEAR_SIM_MODES.MULTICRAFT)
+    end
+
+    if recipeData.stats.resourcefulness then
+        table.insert(availableModes, CraftSimCONST.GEAR_SIM_MODES.RESOURCEFULNESS)
+    end
+
+    -- crafting speed should always be able to sim cause it is always available even if not shown in details
+    table.insert(availableModes, CraftSimCONST.GEAR_SIM_MODES.CRAFTING_SPEED)
+
+    return availableModes
 end

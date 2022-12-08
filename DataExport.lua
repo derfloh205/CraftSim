@@ -48,6 +48,8 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
 
+	recipeData.recipeID = recipeInfo.recipeID
+
 	local details = schematicForm.Details
 	local operationInfo = details.operationInfo
 
@@ -109,6 +111,9 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	recipeData.stats = {}
 	for _, statInfo in pairs(bonusStats) do
 		local statName = string.lower(statInfo.bonusStatName)
+		if statName == "crafting speed" then
+			statName = "craftingspeed"
+		end
 		if recipeData.stats[statName] == nil then
 			recipeData.stats[statName] = {}
 		end
@@ -121,6 +126,15 @@ function CraftSimDATAEXPORT:exportRecipeData()
 			recipeData.stats[statName].bonusskill = bonusSkill
 			--print("inspirationbonusskill: " .. tostring(bonusSkill))
 		end
+	end
+
+	-- crafting speed is always relevant but it is not shown in details when it is zero
+	if not recipeData.stats.craftingspeed then
+		recipeData.stats.craftingspeed = {
+			value = 0,
+			percent = 0,
+			description = ""
+		}
 	end
 
 	recipeData.expectedQuality = details.craftingQuality

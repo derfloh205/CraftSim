@@ -61,3 +61,12 @@ CraftSimCONST.RECIPE_TYPES = {
     GATHERING = 8,
     NO_ITEM = 9, -- like phial experimentation
 }
+
+CraftSimCONST.GEAR_SIM_MODES = {
+    PROFIT = "Top Profit",
+    SKILL = "Top Skill",
+    INSPIRATION = "Top Inspiration",
+    MULTICRAFT = "Top Multicraft",
+    RESOURCEFULNESS = "Top Resourcefulness",
+    CRAFTING_SPEED = "Top Crafting Speed",
+}
