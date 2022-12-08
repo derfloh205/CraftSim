@@ -34,7 +34,7 @@ function CraftSimFRAME:UpdateStatWeightFrameText(statWeights)
 
         if statWeights.meanProfit then
             statText = statText .. "Mean Profit:" .. "\n"
-            valueText = valueText .. CraftSimUTIL:FormatMoney(statWeights.meanProfit) .. "\n"
+            valueText = valueText .. CraftSimUTIL:FormatMoney(statWeights.meanProfit, true) .. "\n"
         end
         if statWeights.inspiration then
             statText = statText .. "Inspiration:" .. "\n"
@@ -280,7 +280,7 @@ function CraftSimFRAME:FillCostOverview(craftingCosts, profitPerQuality, current
     for index, profitFrame in pairs(CraftSimCostOverviewFrame.profitFrames) do
         if profitPerQuality[index] ~= nil then
             profitFrame.icon.SetQuality(currentQuality + index - 1)
-            profitFrame.text:SetText(CraftSimUTIL:FormatMoney(profitPerQuality[index]))
+            profitFrame.text:SetText(CraftSimUTIL:FormatMoney(profitPerQuality[index], true))
             profitFrame:Show()
         else
             profitFrame:Hide()
@@ -413,7 +413,7 @@ function CraftSimFRAME:FillSimResultData(bestSimulation, topGearMode)
     end
     -- TODO: maybe show in red or smth if negative
     if topGearMode == CraftSimCONST.GEAR_SIM_MODES.PROFIT then
-        CraftSimSimFrame.profitText:SetText("Profit Difference / Craft\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff))
+        CraftSimSimFrame.profitText:SetText("Profit Difference / Craft\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff, true))
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.MULTICRAFT then
         CraftSimSimFrame.profitText:SetText("New Multicraft\n".. CraftSimUTIL:round(bestSimulation.multicraftPercent, 2) .. "%")
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.CRAFTING_SPEED then

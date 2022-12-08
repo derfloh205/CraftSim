@@ -194,15 +194,25 @@ function CraftSimUTIL:PrintTable(t, recursive)
     end
 end
 
-function CraftSimUTIL:FormatMoney(copperValue)
+function CraftSimUTIL:FormatMoney(copperValue, useColor)
     local absValue = abs(copperValue)
     local minusText = ""
+    local startLine = "\124"
+    local endLine = "\124r"
+    local redColor = "cffFF0000"
+    local greenColor = "cff00FF00"
+    local color = greenColor
 
     if copperValue < 0 then
         minusText = "-"
+        color = redColor
     end
 
-    return minusText .. GetCoinTextureString(absValue)
+    if useColor then
+        return startLine .. color .. minusText .. GetCoinTextureString(absValue) .. endLine
+    else
+        return minusText .. GetCoinTextureString(absValue)
+    end
 end
 
 function CraftSimUTIL:FilterTable(t, filterFunc)
