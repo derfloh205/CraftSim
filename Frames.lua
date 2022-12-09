@@ -87,7 +87,7 @@ function CraftSimFRAME:InitBestAllocationsFrame()
 		insets = { left = 8, right = 6, top = 8, bottom = 8 },
 	})
 	frame:SetSize(270, 200)
-    local contentOffsetY = -10
+    local contentOffsetY = -15
 	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.title:SetPoint("TOP", frame, "TOP", 0, contentOffsetY)
 	frame.title:SetText("Minimum cost to reach quality")

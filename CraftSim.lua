@@ -16,13 +16,15 @@ CraftSimOptions = CraftSimOptions or {
 	priceDebug = false,
 	priceSource = nil,
 	tsmPriceKey = "DBMinbuyout",
-	topGearMode = "Top Profit"
+	topGearMode = "Top Profit",
+	breakPointOffset = false
 }
 
 function addon:handleCraftSimOptionsUpdates()
 	if CraftSimOptions then
 		CraftSimOptions.tsmPriceKey = CraftSimOptions.tsmPriceKey or "DBMinbuyout"
 		CraftSimOptions.topGearMode = CraftSimOptions.topGearMode or "Top Profit"
+		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
 	end
 end
 

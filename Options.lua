@@ -47,6 +47,17 @@ function CraftSimOPTIONS:InitOptionsFrame()
         end
     end
 
+    local checkButton = CreateFrame("CheckButton", nil, CraftSimOPTIONS.optionsPanel, "ChatConfigCheckButtonTemplate")
+	checkButton:SetPoint("TOP", CraftSimTSMPriceSourceDropdown, -90, -40)
+	checkButton.Text:SetText(" Offset Skill Breakpoints by 1")
+    checkButton.tooltip = "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required"
+	-- there already is an existing OnClick script that plays a sound, hook it
+    checkButton:SetChecked(CraftSimOptions.breakPointOffset)
+	checkButton:HookScript("OnClick", function(_, btn, down)
+		local checked = checkButton:GetChecked()
+		CraftSimOptions.breakPointOffset = checked
+	end)
+
     local supportedPriceSources = CraftSimOPTIONS.optionsPanel:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -200)
     supportedPriceSources:SetText("Supported Price Sources:\n\n" .. table.concat(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS, "\n"))

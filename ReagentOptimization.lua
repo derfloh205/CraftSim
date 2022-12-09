@@ -121,7 +121,11 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
 
     for i = 0, numBP - 1, 1 do
         --print("checking BP: " .. tostring(craftingDifficultyBP[i]))
-        local skillBreakpoint = craftingDifficultyBP[i] * recipeData.recipeDifficulty
+        local extraSkillPoint = 0
+        if CraftSimOptions.breakPointOffset then
+            extraSkillPoint = 1
+        end
+        local skillBreakpoint = craftingDifficultyBP[i] * recipeData.recipeDifficulty + extraSkillPoint
         --print("skill BP: " .. skillBreakpoint)
         -- EXPERIMENT: try to adjust skillbp by 1 to workaround blizz rounding errors
         --skillBreakpoint = skillBreakpoint + 1
@@ -174,7 +178,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     local bestAllocation = results[#results]
     local isSameAllocation = CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
 
-    if not isSameAllocation then
+    if bestAllocation and not isSameAllocation then
         for _, matAllocation in pairs(bestAllocation.allocations) do
             for qualityIndex, allocation in pairs(matAllocation.allocations) do
                 local hasItemCount = GetItemCount(allocation.itemID, true, true, true)
@@ -506,6 +510,9 @@ function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeTyp
 end
 
 function CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
+    if not bestAllocation then
+        return false
+    end
     for _, reagent in pairs(recipeData.reagents) do
         for _, itemInfo in pairs(reagent.itemsInfo) do
             for _, allocation in pairs(bestAllocation.allocations) do
