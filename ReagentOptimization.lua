@@ -162,10 +162,15 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     -- Optimize Knapsack
     local results = CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP)  
 
+    print("results: ")
+    CraftSimUTIL:PrintTable(results, true)
+
     -- remove any result that maps to the expected quality without reagent increase
     local results = CraftSimUTIL:FilterTable(results, function(result) 
         return result.qualityReached > expectedQualityWithoutReagents
     end)
+
+    -- TODO: remove results that are the same allocation as the current one?
     
     CraftSimFRAME:ShowBestReagentAllocation(results[#results])
 end

@@ -90,7 +90,7 @@ function CraftSimFRAME:InitBestAllocationsFrame()
     local contentOffsetY = -60
 	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.title:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 117)
-	frame.title:SetText("CS: Highest Quality Allocation (WIP)")
+	frame.title:SetText("Minimum cost to reach quality (WIP)")
 
     -- frame.calculateButton = CreateFrame("Button", "CraftSimReagentHintButton", frame, "UIPanelButtonTemplate")
 	-- frame.calculateButton:SetSize(70, 25)
