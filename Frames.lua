@@ -86,7 +86,7 @@ function CraftSimFRAME:InitBestAllocationsFrame()
 		edgeSize = 16,
 		insets = { left = 8, right = 6, top = 8, bottom = 8 },
 	})
-	frame:SetSize(250, 150)
+	frame:SetSize(270, 200)
     local contentOffsetY = -60
 	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.title:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 117)

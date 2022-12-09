@@ -105,19 +105,19 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     --               > 0 means the indicated skill bonus is required to reach this BP
     -- At least one entry will be >= 0
     local totalSkill = recipeData.stats.skill
-    local reagentSkillContribution = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
+    local reagentSkillContribution = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData) or 0
     local skillWithoutReagentIncrease = totalSkill - reagentSkillContribution
     --print("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
     --print("reagentSkillContribution: " .. tostring(reagentSkillContribution))
 
     local expectedQualityWithoutReagents = CraftSimSTATS:GetExpectedQualityBySkill(recipeData, skillWithoutReagentIncrease)
 
-    --print("expected quality without reagent skill increase: " .. expectedQualityWithoutReagents)
-    --print("expected quality with current reagent skill increase: " .. recipeData.expectedQuality)
+    -- print("expected quality without reagent skill increase: " .. expectedQualityWithoutReagents)
+    -- print("expected quality with current reagent skill increase: " .. recipeData.expectedQuality)
     
-    --print("totalSkill: " .. totalSkill)
-    --print("reagentSkillContribution: " ..  reagentSkillContribution)
-    --print("skillWithoutReagentIncrease: " ..  skillWithoutReagentIncrease)
+    -- print("totalSkill: " .. totalSkill)
+    -- print("reagentSkillContribution: " ..  reagentSkillContribution)
+    -- print("skillWithoutReagentIncrease: " ..  skillWithoutReagentIncrease)
 
     for i = 0, numBP - 1, 1 do
         --print("checking BP: " .. tostring(craftingDifficultyBP[i]))
@@ -161,9 +161,6 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
 
     -- Optimize Knapsack
     local results = CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP)  
-
-    print("results: ")
-    CraftSimUTIL:PrintTable(results, true)
 
     -- remove any result that maps to the expected quality without reagent increase
     local results = CraftSimUTIL:FilterTable(results, function(result) 
@@ -304,12 +301,28 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
         end
     end
 
+    local minValue = 0
     local outArr = {}
     local outResult = {}
     local target = 0
     local h = 0
+    local tStart = 0
+    local tEnd = 0
+    local lowestj = 0 -- target start BP value, end search element for that BP, lowest index for the min value
+    local matString = ""
+        
+    -- Breakpoints are sorted highest to lowest
+    -- Array value = -1 means this breakpoint is unreachable
+    --               0 means no skill bonus required to reach this BP
+    --               0 means the indicated skill bonus is required to reach this BP
+    -- At least one entry will be >= 0
+        
+    -- we will search for lowest cost between tStart and tEnd (we will move both for each breakpoint)
+
+    tEnd = maxWeight
 
     for h = 0, #BPs, 1 do -- #BPs gives 1 less than how many are in there so here it fits!
+
         local outAllocation = {
             qualityReached = nil,
             minValue = nil,
@@ -319,22 +332,22 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
             outArr[2 * h] = "None"
             outArr[2 * h + 1] = ""
         else
-            target = math.floor((BPs[h] * maxWeight)  +0.5)  -- breakpoints are a % of maxSkillBonus -- floor of +0.5 rounds it up!
+            tStart = math.floor(BPs[h] * maxWeight)
+            i = numMaterials -- i was initialized above
             -- walk the last row of the matrix backwards to find the best value (gold cost) for minimum target weight (j = skill bonus)
             i = numMaterials
-            j = target - 1 -- start one short of the target because we increment j in the first step
-            --j = translateLuaIndex(j) -- I guess this is necessary?
             matString = ""
             minValue = inf
-        
-            -- its ok to throw an error if we don't find minValue before j > maxWeight because it should never happen
-            --    otherwise to capture the error we would Do Until (minValue < inf) Or (j > maxWeight)
-            -- CraftSim: maybe in basic this is true 1 time?
-            repeat
-                j = j + 1
-                minValue = b[i][j]
-            until minValue < inf
-            -- now minValue is set and j points to the correct column
+
+            -- search the space from target to the end weight (for this breakpoint) to get the lowest cost
+            for j = tStart, tEnd, 1 do
+                if b[i][j] < minValue then -- found a new low cost
+                    minValue = b[i][j]
+                    lowestj = j
+                end
+            end
+            -- now minValue is set and lowestj points to the correct column
+            j = lowestj
             
             -- create the list of materials that represent optimization for target BP
             for i = numMaterials, 0, -1 do
@@ -370,6 +383,10 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
             outAllocation.qualityReached = abs(h - (#BPs + 1))
             outAllocation.minValue = minValue
             table.insert(outResult, outAllocation)
+
+            -- now set our new target endpoint to the column before the current target start so that
+            -- next time through this loop we don't search past this breakpoint
+            tEnd = tStart - 1
         end
     end
 
@@ -408,16 +425,26 @@ function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(r
             local matWeight = CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(reagent.itemsInfo[1].itemID)
             local relativeBonus = (n2 + 2 * n3) / 2 * matWeight
             table.insert(matBonus, relativeBonus)
-
+            
             totalWeight = totalWeight + matQuantity * matWeight
         end
     end
+
+    -- if total weight is 0 we have no allocations, thus weight is also 0
+    if totalWeight == 0 then 
+        return 0 
+    end
+
     local matSkillBonus = 0
     local recipeMaxSkillBonus = 0.25 * recipeData.recipeDifficulty
     for _, bonus in pairs(matBonus) do
+        --print("adding to mat skill bonus: ")
+        --print("matSkillBonus + bonus / totalWeight * recipeMaxSkillBonus")
+        --print(tostring(matSkillBonus) .. " + " .. tostring(bonus) .. "/" .. tostring(totalWeight) .. "*" .. tostring(recipeMaxSkillBonus))
         matSkillBonus = matSkillBonus + bonus / totalWeight * recipeMaxSkillBonus
     end
 
     --print("reagent skill contribution: " .. matSkillBonus)
-    return matSkillBonus
+    -- Try rounding it..
+    return CraftSimUTIL:round(matSkillBonus)
 end
