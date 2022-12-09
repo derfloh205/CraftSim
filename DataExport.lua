@@ -179,6 +179,11 @@ function CraftSimDATAEXPORT:exportRecipeData()
 			qualityItemIDs[3],
 			qualityItemIDs[4],
 			qualityItemIDs[5]}
+	elseif recipeType == CraftSimCONST.RECIPE_TYPES.ENCHANT then
+		recipeData.result.itemIDs = {
+			CraftSimENCHANT_DATA[recipeData.recipeID].q1,
+			CraftSimENCHANT_DATA[recipeData.recipeID].q2,
+			CraftSimENCHANT_DATA[recipeData.recipeID].q3}
 	elseif recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
 		recipeData.result.itemID = schematicInfo.outputItemID
 		

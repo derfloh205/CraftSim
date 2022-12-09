@@ -151,7 +151,9 @@ end
 
 function CraftSimUTIL:GetRecipeType(recipeInfo) -- the raw info
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
-    if recipeInfo.isRecraft then
+    if recipeInfo.isEnchantingRecipe then
+        return CraftSimCONST.RECIPE_TYPES.ENCHANT
+    elseif recipeInfo.isRecraft then
         return CraftSimCONST.RECIPE_TYPES.RECRAFT
     elseif schematicInfo.hasGatheringOperationInfo then
         return CraftSimCONST.RECIPE_TYPES.GATHERING

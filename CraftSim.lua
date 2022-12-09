@@ -178,6 +178,10 @@ function addon:TriggerModulesByRecipeType()
 			showTopGear = true
 			showCostOverview = true
 			showStatweights = true
+		elseif recipeType == CraftSimCONST.RECIPE_TYPES.ENCHANT then
+			showTopGear = true
+			showCostOverview = true
+			showStatweights = true
 		elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
 			-- show everything except material allocation and total cost overview
 			showTopGear = true

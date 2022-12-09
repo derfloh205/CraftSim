@@ -60,6 +60,7 @@ CraftSimCONST.RECIPE_TYPES = {
     RECRAFT = 7, -- like well.. recraft
     GATHERING = 8,
     NO_ITEM = 9, -- like phial experimentation
+    ENCHANT = 10,
 }
 
 CraftSimCONST.GEAR_SIM_MODES = {
