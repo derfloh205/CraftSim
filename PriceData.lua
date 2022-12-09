@@ -3,7 +3,7 @@ CraftSimPRICEDATA = {}
 -- TODO: how to get possible different itemLinks / strings of different ItemUpgrade with different ilvl?
 CraftSimPRICEDATA.noPriceDataLinks = {}
 
-function CraftSimPRICEDATA:GetReagentCosts(recipeData) 
+function CraftSimPRICEDATA:GetReagentCosts(recipeData, getMinimum) 
     local reagentCosts = {}
     for reagentIndex, reagentInfo in pairs(recipeData.reagents) do
         -- check if soulbound reagent
@@ -17,8 +17,9 @@ function CraftSimPRICEDATA:GetReagentCosts(recipeData)
                     totalBuyout = totalBuyout +  (minbuyout * itemInfo.allocations)
                     itemInfo.minBuyout = minbuyout -- used by lowestcostbyqualityID
             end
-            if totalBuyout == 0 then
+            if totalBuyout == 0 or getMinimum then
                 -- Assuming that the player has 0 of an required item, set the buyout to lowest qID of that item * required
+                -- Or if getMinimum is set override
                 local qualityID = CraftSimPRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentInfo.itemsInfo)
                 local minbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(reagentInfo.itemsInfo[qualityID].itemID)
                 totalBuyout = minbuyout * reagentInfo.requiredQuantity
@@ -30,9 +31,9 @@ function CraftSimPRICEDATA:GetReagentCosts(recipeData)
     return reagentCosts
 end
 
-function CraftSimPRICEDATA:GetTotalCraftingCost(recipeData)
+function CraftSimPRICEDATA:GetTotalCraftingCost(recipeData, getMinimum)
     if not recipeData.salvageReagent then
-        local reagentCosts = CraftSimPRICEDATA:GetReagentCosts(recipeData)  
+        local reagentCosts = CraftSimPRICEDATA:GetReagentCosts(recipeData, getMinimum)  
         local totalCraftingCost = 0
 
         for _, cost in pairs(reagentCosts) do
@@ -68,6 +69,7 @@ function CraftSimPRICEDATA:GetPriceData(recipeData, recipeType)
     end
 
     local craftingCostPerCraft = CraftSimPRICEDATA:GetTotalCraftingCost(recipeData) 
+    local minimumCostPerCraft = CraftSimPRICEDATA:GetTotalCraftingCost(recipeData, true) 
     local reagentsPriceByQuality = CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
     local minBuyoutPerQuality = {}
 
@@ -93,6 +95,7 @@ function CraftSimPRICEDATA:GetPriceData(recipeData, recipeType)
     return {
         minBuyoutPerQuality = minBuyoutPerQuality,
         craftingCostPerCraft = craftingCostPerCraft,
+        minimumCostPerCraft = minimumCostPerCraft,
         reagentsPriceByQuality = reagentsPriceByQuality
     }
 end

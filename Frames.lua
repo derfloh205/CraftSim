@@ -222,29 +222,41 @@ function CraftSimFRAME:InitCostOverviewFrame()
 		edgeSize = 16,
 		insets = { left = 8, right = 6, top = 8, bottom = 8 },
 	})
-	frame:SetSize(200, 250)
+	frame:SetSize(200, 270)
     local contentOffsetY = -20
     local textSpacingY = -20
 	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.title:SetPoint("TOP", frame, "TOP", 0, contentOffsetY)
 	frame.title:SetText("CraftSim Cost Overview")
 
+    frame.minCraftingCostsTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.minCraftingCostsTitle:SetPoint("TOP", frame.title, "TOP", 0, textSpacingY)
+    frame.minCraftingCostsTitle:SetText("Min Crafting Costs")
+
+    frame.minCraftingCosts = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.minCraftingCosts:SetPoint("TOP", frame.minCraftingCostsTitle, "TOP", 0, textSpacingY)
+    frame.minCraftingCosts:SetText("???")
+
     frame.craftingCostsTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.craftingCostsTitle:SetPoint("TOP", frame.title, "TOP", 0, textSpacingY)
-    frame.craftingCostsTitle:SetText("Crafting Costs")
+	frame.craftingCostsTitle:SetPoint("TOP", frame.minCraftingCosts, "TOP", 0, textSpacingY)
+    frame.craftingCostsTitle:SetText("Current Crafting Costs")
+    frame.craftingCostsTitle.SwitchAnchor = function(newAnchor) 
+        frame.craftingCostsTitle:SetPoint("TOP", newAnchor, "TOP", 0, textSpacingY)
+    end
 
     frame.craftingCosts = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.craftingCosts:SetPoint("TOP", frame.craftingCostsTitle, "TOP", 0, textSpacingY)
     frame.craftingCosts:SetText("???")
+    
 
     frame.resultProfitsTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.resultProfitsTitle:SetPoint("TOP", frame.craftingCosts, "TOP", 0, textSpacingY - 20)
+	frame.resultProfitsTitle:SetPoint("TOP", frame.craftingCosts, "TOP", 0, textSpacingY - 10)
     frame.resultProfitsTitle:SetText("Profit By Quality")
 
-    local function createProfitFrame(offsetY, parent)
+    local function createProfitFrame(offsetY, parent, hookFrame)
         local profitFrame = CreateFrame("frame", nil, parent)
         profitFrame:SetSize(parent:GetWidth(), 25)
-        profitFrame:SetPoint("TOP", parent, "TOP", 0, offsetY)
+        profitFrame:SetPoint("TOP", hookFrame, "TOP", 0, offsetY)
         profitFrame.icon = CraftSimFRAME:CreateQualityIcon(profitFrame, 20, 20, profitFrame, "CENTER", "CENTER", -60, 0)
 
         profitFrame.text = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -255,21 +267,33 @@ function CraftSimFRAME:InitCostOverviewFrame()
         return profitFrame
     end
 
-    local baseY = contentOffsetY - 100
+    local baseY = -20
     local profitFramesSpacingY = -20
     frame.profitFrames = {}
-    table.insert(frame.profitFrames, createProfitFrame(baseY, frame))
-    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame))
-    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*2, frame))
-    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*3, frame))
-    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame))
+    table.insert(frame.profitFrames, createProfitFrame(baseY, frame, frame.resultProfitsTitle))
+    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame, frame.resultProfitsTitle))
+    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*2, frame, frame.resultProfitsTitle))
+    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*3, frame, frame.resultProfitsTitle))
+    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame, frame.resultProfitsTitle))
     
 
 	frame:Hide()
 end
 
-function CraftSimFRAME:FillCostOverview(craftingCosts, profitPerQuality, currentQuality)
-    CraftSimCostOverviewFrame.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
+function CraftSimFRAME:FillCostOverview(craftingCosts, minCraftingCosts, profitPerQuality, currentQuality)
+
+    if craftingCosts == minCraftingCosts then
+        CraftSimCostOverviewFrame.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
+        CraftSimCostOverviewFrame.craftingCostsTitle.SwitchAnchor(CraftSimCostOverviewFrame.title)
+        CraftSimCostOverviewFrame.minCraftingCosts:Hide()
+        CraftSimCostOverviewFrame.minCraftingCostsTitle:Hide()
+    else
+        CraftSimCostOverviewFrame.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
+        CraftSimCostOverviewFrame.minCraftingCosts:SetText(CraftSimUTIL:FormatMoney(minCraftingCosts))
+        CraftSimCostOverviewFrame.craftingCostsTitle.SwitchAnchor(CraftSimCostOverviewFrame.minCraftingCosts)
+        CraftSimCostOverviewFrame.minCraftingCosts:Show()
+        CraftSimCostOverviewFrame.minCraftingCostsTitle:Show()
+    end
 
     CraftSimFRAME:ToggleFrame(CraftSimCostOverviewFrame.resultProfitsTitle, #profitPerQuality > 0)
 
