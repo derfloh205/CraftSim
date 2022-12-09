@@ -77,12 +77,8 @@ end
 
 function CraftSimFRAME:InitBestAllocationsFrame()
     local frame = CreateFrame("frame", "CraftSimReagentHintFrame", ProfessionsFrame.CraftingPage.SchematicForm.Reagents, "BackdropTemplate")
-    local frameOffsetY = 0
-    if IsAddOnLoaded("Auctionator") then
-        frameOffsetY = -30
-        -- move a bit down to make space for auctionator info frame
-    end
-    frame:SetPoint("TOPLEFT",  ProfessionsFrame.CraftingPage.SchematicForm.Reagents, "BOTTOMLEFT", 0, frameOffsetY)
+
+    frame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "BOTTOM", 0, 0)
 	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 	frame:SetBackdrop({
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
