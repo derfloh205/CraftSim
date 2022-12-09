@@ -7,7 +7,7 @@ local function translateLuaIndex(index)
 end
 
 -- By Liqorice's knapsack solution
-function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceDatga)
+function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)
     -- insert costs
     local reagentCostsByQuality = CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
 
@@ -167,9 +167,25 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
         return result.qualityReached > expectedQualityWithoutReagents
     end)
 
-    -- TODO: remove results that are the same allocation as the current one?
+    -- TODO: remove results that are the same allocation as the current one? and disable button?
+
     
-    CraftSimFRAME:ShowBestReagentAllocation(results[#results])
+    local hasItems = true
+    local bestAllocation = results[#results]
+    local isSameAllocation = CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
+
+    if not isSameAllocation then
+        for _, matAllocation in pairs(bestAllocation.allocations) do
+            for qualityIndex, allocation in pairs(matAllocation.allocations) do
+                local hasItemCount = GetItemCount(allocation.itemID, true, true, true)
+                if hasItemCount < allocation.allocations then
+                    hasItems = false
+                end
+            end
+        end
+    end
+    
+    CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation)
 end
 
 function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
@@ -447,4 +463,63 @@ function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(r
     --print("reagent skill contribution: " .. matSkillBonus)
     -- Try rounding it..
     return CraftSimUTIL:round(matSkillBonus)
+end
+
+function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeType, priceData, bestAllocation)
+    local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeData.recipeID, false)
+	--print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
+	for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
+		local reagents = currentSlot.reagents
+		local reagentType = currentSlot.reagentType
+		local reagentName = CraftSimDATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
+        local allocations = recipeData.currentTransaction:GetAllocations(slotIndex)
+        allocations:Clear(); -- set all to zero
+		if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
+			local hasMoreThanOneQuality = reagents[2] ~= nil
+
+			if hasMoreThanOneQuality then
+                for reagentIndex, reagent in pairs(reagents) do
+                    local allocationForQuality = nil
+                    -- check if bestAllocations has a allocation set for this reagent
+                    for _, allocation in pairs(bestAllocation.allocations) do
+                        for _, qAllocation in pairs(allocation.allocations) do
+                            if qAllocation.itemID == reagent.itemID then
+                                --print("found qAllocation..")
+                                allocationForQuality = qAllocation.allocations
+                            end
+                        end
+                    end
+                    if allocationForQuality then
+                        --print("Allocate: " .. reagent.itemID .. ": " .. allocationForQuality)
+                        allocations:Allocate(reagent, allocationForQuality);
+                    end
+                end
+            
+			end
+		end
+	end
+
+    -- update frontend with fresh data
+    local freshRecipeData = CraftSimDATAEXPORT:exportRecipeData()
+    local freshPriceData = CraftSimPRICEDATA:GetPriceData(freshRecipeData, freshRecipeData.recipeType)
+    CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(freshRecipeData, freshRecipeData.recipeType, freshPriceData)
+end
+
+function CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
+    for _, reagent in pairs(recipeData.reagents) do
+        for _, itemInfo in pairs(reagent.itemsInfo) do
+            for _, allocation in pairs(bestAllocation.allocations) do
+                for _, qAllocation in pairs(allocation.allocations) do
+                    if qAllocation.itemID == itemInfo.itemID then
+                        if qAllocation.allocations ~= itemInfo.allocations then
+                            -- if we find any allocation that does not match for the same itemID ..
+                            return false
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return true
 end

@@ -49,6 +49,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
 
 	recipeData.recipeID = recipeInfo.recipeID
+	recipeData.recipeType = recipeType
 
 	local details = schematicForm.Details
 	local operationInfo = details.operationInfo
@@ -61,7 +62,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	local currentTransaction = schematicForm:GetTransaction()
 	
-
+	recipeData.currentTransaction = currentTransaction
 	recipeData.reagents = {}
 
 	local salvageAllocation = currentTransaction:GetSalvageAllocation()
@@ -340,5 +341,4 @@ function CraftSimDATAEXPORT:GetReagentNameFromReagentData(itemID)
 			return "Unknown"
 		end
 	end
-
 end

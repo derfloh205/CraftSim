@@ -87,31 +87,29 @@ function CraftSimFRAME:InitBestAllocationsFrame()
 		insets = { left = 8, right = 6, top = 8, bottom = 8 },
 	})
 	frame:SetSize(270, 200)
-    local contentOffsetY = -60
+    local contentOffsetY = -10
 	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.title:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 117)
-	frame.title:SetText("Minimum cost to reach quality (WIP)")
-
-    -- frame.calculateButton = CreateFrame("Button", "CraftSimReagentHintButton", frame, "UIPanelButtonTemplate")
-	-- frame.calculateButton:SetSize(70, 25)
-	-- frame.calculateButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, contentOffsetY + 30)	
-	-- frame.calculateButton:SetText("Calculate")
-    -- frame.calculateButton:SetScript("OnClick", function(self) 
-    --     CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation()
-    -- end)
+	frame.title:SetPoint("TOP", frame, "TOP", 0, contentOffsetY)
+	frame.title:SetText("Minimum cost to reach quality")
 
     frame.qualityText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.qualityText:SetPoint("TOP", frame, "TOP", 0, -35)
+	frame.qualityText:SetPoint("TOP", frame.title, "TOP", 0, -20)
 	frame.qualityText:SetText("Highest Quality: ")
 
     frame.qualityIcon = CraftSimFRAME:CreateQualityIcon(frame, 25, 25, frame.qualityText, "LEFT", "RIGHT", 3, 0)
 
-    frame.notFoundText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.notFoundText:SetPoint("CENTER", frame, "CENTER", 0, 0)
-	frame.notFoundText:SetText("No combination found \nto increase quality")
+    frame.allocateButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame, "UIPanelButtonTemplate")
+	frame.allocateButton:SetSize(50, 25)
+	frame.allocateButton:SetPoint("TOP", frame.qualityText, "TOP", 0, -20)	
+	frame.allocateButton:SetText("Assign")
 
-    local iconsOffsetY = 40
-    local iconsOffsetX = -40
+    frame.infoText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.infoText:SetPoint("CENTER", frame, "CENTER", 0, 0)
+    frame.infoText.NoCombinationFound = "No combination found \nto increase quality"
+    frame.infoText.SameCombination = "Best combination assigned"
+	frame.infoText:SetText(frame.infoText.NoCombinationFound)
+
+    local iconsOffsetY = -30
     local iconsSpacingY = 25
 
     frame.reagentFrames = {}
@@ -119,19 +117,19 @@ function CraftSimFRAME:InitBestAllocationsFrame()
     frame.reagentFrames.numReagents = 0
     local baseX = -20
     local iconSize = 30
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY, iconSize))
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY, iconSize))
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*2, iconSize))
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*3, iconSize))
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, contentOffsetY + iconsOffsetY + iconsSpacingY*4, iconSize))
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, frame.allocateButton, iconsOffsetY, iconSize))
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, frame.allocateButton, iconsOffsetY - iconsSpacingY, iconSize))
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, frame.allocateButton, iconsOffsetY - iconsSpacingY*2, iconSize))
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, frame.allocateButton, iconsOffsetY - iconsSpacingY*3, iconSize))
+    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, frame.allocateButton, iconsOffsetY - iconsSpacingY*4, iconSize))
 
     frame:Hide()
 end
 
-function CraftSimFRAME:CreateReagentFrame(parent, y, iconSize)
+function CraftSimFRAME:CreateReagentFrame(parent, hookFrame, y, iconSize)
     local reagentFrame = CreateFrame("frame", nil, parent)
     reagentFrame:SetSize(parent:GetWidth(), iconSize)
-    reagentFrame:SetPoint("CENTER", parent, "CENTER", 0, y)
+    reagentFrame:SetPoint("TOP", hookFrame, "TOP", 0, y)
     
     local qualityIconSize = 20
     local qualityIconX = 3
@@ -176,11 +174,18 @@ function CraftSimFRAME:CreateReagentFrame(parent, y, iconSize)
 end
 
 -- DEBUG
-function CraftSimFRAME:ShowBestReagentAllocation(bestAllocation)
-    if bestAllocation == nil then
-        CraftSimReagentHintFrame.notFoundText:Show()
+function CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation)
+    if bestAllocation == nil or isSameAllocation then
+        CraftSimReagentHintFrame.infoText:Show()
+        if isSameAllocation then
+            CraftSimReagentHintFrame.infoText:SetText(CraftSimReagentHintFrame.infoText.SameCombination)
+        else
+            CraftSimReagentHintFrame.infoText:SetText(CraftSimReagentHintFrame.infoText.NoCombinationFound)
+        end
+
         CraftSimReagentHintFrame.qualityIcon:Hide()
         CraftSimReagentHintFrame.qualityText:Hide()
+        CraftSimReagentHintFrame.allocateButton:Hide()
 
         for i = 1, 5, 1 do
             CraftSimReagentHintFrame.reagentFrames.rows[i]:Hide()
@@ -188,9 +193,20 @@ function CraftSimFRAME:ShowBestReagentAllocation(bestAllocation)
 
         return
     else
-        CraftSimReagentHintFrame.notFoundText:Hide()
+        CraftSimReagentHintFrame.infoText:Hide()
         CraftSimReagentHintFrame.qualityIcon:Show()
         CraftSimReagentHintFrame.qualityText:Show()
+        CraftSimReagentHintFrame.allocateButton:Show()
+        CraftSimReagentHintFrame.allocateButton:SetEnabled(hasItems)
+        if hasItems then
+            CraftSimReagentHintFrame.allocateButton:SetText("Assign")
+            CraftSimReagentHintFrame.allocateButton:SetScript("OnClick", function(self) 
+                CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeType, priceData, bestAllocation)
+            end)
+        else
+            CraftSimReagentHintFrame.allocateButton:SetText("Missing materials")
+        end
+        CraftSimReagentHintFrame.allocateButton:SetSize(CraftSimReagentHintFrame.allocateButton:GetTextWidth() + 15, 25)
     end
     CraftSimReagentHintFrame.qualityIcon.SetQuality(bestAllocation.qualityReached)
     for frameIndex = 1, 5, 1 do
