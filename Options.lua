@@ -35,10 +35,15 @@ function CraftSimOPTIONS:InitOptionsFrame()
     TSMTab.content:SetSize(300, 350)
 
     local tsmPriceKeys = {"DBRecent", "DBMarket", "DBMinbuyout"}
-        CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdown", TSMTab.content ,"TSM Price Source Key", 0, -50, 200, tsmPriceKeys, 
-        function(arg1) 
-            CraftSimOptions.tsmPriceKey = arg1
-        end, CraftSimOptions.tsmPriceKey)
+    CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownMaterials", TSMTab.content ,"TSM Price Source Key Materials", 0, -50, 200, tsmPriceKeys, 
+    function(arg1) 
+        CraftSimOptions.tsmPriceKeyMaterials = arg1
+    end, CraftSimOptions.tsmPriceKeyMaterials)
+
+    CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownCraftedItems", TSMTab.content ,"TSM Price Source Key Crafted Items", 0, -100, 200, tsmPriceKeys, 
+    function(arg1) 
+        CraftSimOptions.tsmPriceKeyItems = arg1
+    end, CraftSimOptions.tsmPriceKeyItems)
 
     TSMTab:SetEnabled(IsAddOnLoaded("TradeSkillMaster"))
     TSMTab.canBeEnabled = IsAddOnLoaded("TradeSkillMaster")
@@ -51,11 +56,6 @@ function CraftSimOPTIONS:InitOptionsFrame()
         function(arg1) 
             CraftSimPriceAPIs:SwitchAPIByAddonName(arg1)
             CraftSimOptions.priceSource = arg1
-            if arg1 == "TradeSkillMaster" and CraftSimTSMPriceSourceDropdown then
-                CraftSimTSMPriceSourceDropdown:Show()
-            else
-                CraftSimTSMPriceSourceDropdown:Hide()
-            end
         end, CraftSimPriceAPI.name)
     elseif #priceSourceAddons == 1 then
         local info = generalTab.content:CreateFontString('info', 'OVERLAY', 'GameFontNormal')

@@ -83,7 +83,7 @@ function CraftSimPriceAPIs:InitAvailablePriceAPI()
     end
 end
 
-function CraftSimTSM:GetMinBuyoutByItemID(itemID)
+function CraftSimTSM:GetMinBuyoutByItemID(itemID, isReagent)
     if itemID == nil then
         return
     end
@@ -95,11 +95,18 @@ function CraftSimTSM:GetMinBuyoutByItemID(itemID)
         tsmItemString = TSM_API.ToItemString(itemLink)
     end
     
-    return CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString)
+    return CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString, isReagent)
 end
 
-function CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString)
-    local minBuyoutPriceSourceKey = CraftSimOptions.tsmPriceKey
+function CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString, isReagent)
+    local minBuyoutPriceSourceKey = nil
+    if isReagent then
+        minBuyoutPriceSourceKey = CraftSimOptions.tsmPriceKeyMaterials
+    else
+        minBuyoutPriceSourceKey = CraftSimOptions.tsmPriceKeyItems
+
+    end
+
     local vendorBuy = "VendorBuy"
     local vendorBuyPrice, error = TSM_API.GetCustomPriceValue(vendorBuy, tsmItemString)
 
@@ -113,13 +120,13 @@ function CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString)
     end
 end
 
-function CraftSimTSM:GetMinBuyoutByItemLink(itemLink)
+function CraftSimTSM:GetMinBuyoutByItemLink(itemLink, isReagent)
     if itemLink == nil then
         return
     end
     local tsmItemString = TSM_API.ToItemString(itemLink)
     -- NOTE: the bonusID 3524 which is often used for df crafted gear is not included in the tsm bonus id map yet
-    return CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString)
+    return CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString, isReagent)
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)

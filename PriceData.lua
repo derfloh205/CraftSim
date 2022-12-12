@@ -13,7 +13,7 @@ function CraftSimPRICEDATA:GetReagentCosts(recipeData, getMinimum)
         else
             local totalBuyout = 0
             for _qualityIndex, itemInfo in pairs(reagentInfo.itemsInfo) do
-                local minbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemInfo.itemID)
+                local minbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemInfo.itemID, true)
                     totalBuyout = totalBuyout +  (minbuyout * itemInfo.allocations)
                     itemInfo.minBuyout = minbuyout -- used by lowestcostbyqualityID
             end
@@ -21,7 +21,7 @@ function CraftSimPRICEDATA:GetReagentCosts(recipeData, getMinimum)
                 -- Assuming that the player has 0 of an required item, set the buyout to lowest qID of that item * required
                 -- Or if getMinimum is set override
                 local qualityID = CraftSimPRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentInfo.itemsInfo)
-                local minbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(reagentInfo.itemsInfo[qualityID].itemID)
+                local minbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(reagentInfo.itemsInfo[qualityID].itemID, true)
                 totalBuyout = minbuyout * reagentInfo.requiredQuantity
             end
             table.insert(reagentCosts, totalBuyout)
@@ -42,7 +42,7 @@ function CraftSimPRICEDATA:GetTotalCraftingCost(recipeData, getMinimum)
 
         return totalCraftingCost
     else
-        return CraftSimPRICEDATA:GetMinBuyoutByItemLink(recipeData.salvageReagent.itemLink) * recipeData.salvageReagent.requiredQuantity
+        return CraftSimPRICEDATA:GetMinBuyoutByItemLink(recipeData.salvageReagent.itemLink, true) * recipeData.salvageReagent.requiredQuantity
     end 
 end
 
@@ -53,7 +53,7 @@ function CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
         if reagent.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
             local reagentPriceData = CopyTable(reagent.itemsInfo)
             for _, itemInfo in pairs(reagentPriceData) do
-                itemInfo.minBuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemInfo.itemID)
+                itemInfo.minBuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemInfo.itemID, true)
             end
             reagentQualityPrices[reagentIndex] = reagentPriceData
         end
@@ -101,8 +101,8 @@ function CraftSimPRICEDATA:GetPriceData(recipeData, recipeType)
 end
 
 -- Wrappers 
-function CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID)
-    local minbuyout = CraftSimPriceAPI:GetMinBuyoutByItemID(itemID)
+function CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID, isReagent)
+    local minbuyout = CraftSimPriceAPI:GetMinBuyoutByItemID(itemID, isReagent)
     if minbuyout == nil then
         local _, link = GetItemInfo(itemID)
         if link == nil then
@@ -117,8 +117,8 @@ function CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID)
     return minbuyout
 end
 
-function CraftSimPRICEDATA:GetMinBuyoutByItemLink(itemLink)
-    local minbuyout = CraftSimPriceAPI:GetMinBuyoutByItemLink(itemLink)
+function CraftSimPRICEDATA:GetMinBuyoutByItemLink(itemLink, isReagent)
+    local minbuyout = CraftSimPriceAPI:GetMinBuyoutByItemLink(itemLink, isReagent)
     if minbuyout == nil then
         if CraftSimPRICEDATA.noPriceDataLinks[itemLink] == nil then
             -- not beautiful but hey, easy map

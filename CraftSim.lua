@@ -15,7 +15,8 @@ addon:RegisterEvent("PLAYER_LOGIN")
 CraftSimOptions = CraftSimOptions or {
 	priceDebug = false,
 	priceSource = nil,
-	tsmPriceKey = "DBMinbuyout",
+	tsmPriceKeyMaterials = "DBMinbuyout",
+	tsmPriceKeyItems = "DBMinbuyout",
 	topGearMode = "Top Profit",
 	breakPointOffset = false,
 	autoAssignVellum = false,
@@ -24,7 +25,9 @@ CraftSimOptions = CraftSimOptions or {
 
 function addon:handleCraftSimOptionsUpdates()
 	if CraftSimOptions then
-		CraftSimOptions.tsmPriceKey = CraftSimOptions.tsmPriceKey or "DBMinbuyout"
+		CraftSimOptions.tsmPriceKey = nil
+		CraftSimOptions.tsmPriceKeyMaterials = CraftSimOptions.tsmPriceKeyMaterials or "DBMinbuyout"
+		CraftSimOptions.tsmPriceKeyItems = CraftSimOptions.tsmPriceKeyItems or "DBMinbuyout"
 		CraftSimOptions.topGearMode = CraftSimOptions.topGearMode or "Top Profit"
 		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
 		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
