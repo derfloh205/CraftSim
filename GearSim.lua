@@ -456,7 +456,7 @@ function CraftSimGEARSIM:GetEquippedSimResult(simulationResults)
         end
     end
 
-    error("Could not find currently equipped simulation result.. should not happen please contact addon dev")
+    -- can happen when window closes..
 end
 
 function CraftSimGEARSIM:GetEquippedCombo()

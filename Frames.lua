@@ -274,7 +274,7 @@ function CraftSimFRAME:InitCostOverviewFrame()
         local profitFrame = CreateFrame("frame", nil, parent)
         profitFrame:SetSize(parent:GetWidth(), 25)
         profitFrame:SetPoint("TOP", hookFrame, "TOP", 0, offsetY)
-        profitFrame.icon = CraftSimFRAME:CreateQualityIcon(profitFrame, 20, 20, profitFrame, "CENTER", "CENTER", -60, 0)
+        profitFrame.icon = CraftSimFRAME:CreateQualityIcon(profitFrame, 20, 20, profitFrame, "CENTER", "CENTER", -75, 0)
 
         profitFrame.text = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         profitFrame.text:SetPoint("LEFT", profitFrame.icon, "LEFT", 30, 0)
