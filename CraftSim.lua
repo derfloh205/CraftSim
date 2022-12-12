@@ -138,11 +138,10 @@ function addon:PLAYER_LOGIN()
 
 	CraftSimPriceAPI:InitPriceSource()
 	CraftSimOPTIONS:InitOptionsFrame()
-	
-	if IsAddOnLoaded("Auctionator") then
-		-- To prevent overlapping and duplicated information
-		Auctionator.Config.Options.CRAFTING_INFO_SHOW = false
-	end
+
+	-- if IsAddOnLoaded("Auctionator") then
+	-- 	Auctionator.Config.Options.CRAFTING_INFO_SHOW = CraftSimOptions.showAuctionatorFrame
+	-- end
 end
 
 function addon:TriggerModulesByRecipeType()

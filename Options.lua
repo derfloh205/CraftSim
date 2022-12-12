@@ -34,6 +34,21 @@ function CraftSimOPTIONS:InitOptionsFrame()
     TSMTab.content:SetPoint("TOP", CraftSimOPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
     TSMTab.content:SetSize(300, 350)
 
+    TSMTab:SetEnabled(IsAddOnLoaded("TradeSkillMaster"))
+    TSMTab.canBeEnabled = IsAddOnLoaded("TradeSkillMaster")
+
+    -- local AuctionatorTab = CreateFrame("Button", "CraftSimOptionsAuctionatorTab", CraftSimOPTIONS.optionsPanel, "UIPanelButtonTemplate")
+    -- AuctionatorTab:SetText("Auctionator")
+    -- AuctionatorTab:SetSize(AuctionatorTab:GetTextWidth() + tabExtraWidth, 30)
+    -- AuctionatorTab:SetPoint("LEFT", TSMTab, "RIGHT", 0, 0)
+
+    -- AuctionatorTab.content = CreateFrame("Frame", nil, CraftSimOPTIONS.optionsPanel)
+    -- AuctionatorTab.content:SetPoint("TOP", CraftSimOPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
+    -- AuctionatorTab.content:SetSize(300, 350)
+
+    -- AuctionatorTab:SetEnabled(IsAddOnLoaded("Auctionator"))
+    -- AuctionatorTab.canBeEnabled = IsAddOnLoaded("Auctionator")
+
     local tsmPriceKeys = {"DBRecent", "DBMarket", "DBMinbuyout"}
     CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownMaterials", TSMTab.content ,"TSM Price Source Key Materials", 0, -50, 200, tsmPriceKeys, 
     function(arg1) 
@@ -45,10 +60,9 @@ function CraftSimOPTIONS:InitOptionsFrame()
         CraftSimOptions.tsmPriceKeyItems = arg1
     end, CraftSimOptions.tsmPriceKeyItems)
 
-    TSMTab:SetEnabled(IsAddOnLoaded("TradeSkillMaster"))
-    TSMTab.canBeEnabled = IsAddOnLoaded("TradeSkillMaster")
+    
 
-    CraftSimFRAME:InitTabSystem({generalTab, TSMTab})
+    CraftSimFRAME:InitTabSystem({generalTab, TSMTab, AuctionatorTab})
 
     local priceSourceAddons = CraftSimPriceAPIs:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
