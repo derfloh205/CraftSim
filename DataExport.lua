@@ -54,7 +54,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	local details = schematicForm.Details
 	local operationInfo = details.operationInfo
 
-    if operationInfo == nil then
+    if operationInfo == nil or recipeType == CraftSimCONST.RECIPE_TYPES.GATHERING then
         return nil
     end
 
@@ -154,6 +154,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	recipeData.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
 	recipeData.hasSingleItemOutput = recipeInfo.hasSingleItemOutput
+
 
 	recipeData.recipeDifficulty = operationInfo.baseDifficulty + operationInfo.bonusDifficulty
 	 -- baseSkill is like the base of the players skill and bonusSkill is what is added through reagents
