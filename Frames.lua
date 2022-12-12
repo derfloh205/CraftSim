@@ -552,3 +552,23 @@ function CraftSimFRAME:CreateQualityIcon(frame, x, y, anchorFrame, anchorSelf, a
 
     return icon
 end
+
+function CraftSimFRAME:InitTabSystem(tabs)
+    if #tabs == 0 then
+        return
+    end
+    -- show first tab
+    for _, tab in pairs(tabs) do
+        tab:SetScript("OnClick", function(self) 
+            for _, otherTab in pairs(tabs) do
+                otherTab.content:Hide()
+                otherTab:SetEnabled(tab.canBeEnabled)
+            end
+            tab.content:Show()
+            tab:SetEnabled(false)
+        end)
+        tab.content:Hide()
+    end
+    tabs[1].content:Show()
+    tabs[1]:SetEnabled(false)
+end

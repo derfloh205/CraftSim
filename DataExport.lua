@@ -180,6 +180,9 @@ function CraftSimDATAEXPORT:exportRecipeData()
 			qualityItemIDs[4],
 			qualityItemIDs[5]}
 	elseif recipeType == CraftSimCONST.RECIPE_TYPES.ENCHANT then
+		if not CraftSimENCHANT_DATA[recipeData.recipeID] then
+			error("CraftSim: Enchant Recipe Missing in Data: " .. recipeData.recipeID .. " Please contact the developer (discord: genju#4210)")
+		end
 		recipeData.result.itemIDs = {
 			CraftSimENCHANT_DATA[recipeData.recipeID].q1,
 			CraftSimENCHANT_DATA[recipeData.recipeID].q2,

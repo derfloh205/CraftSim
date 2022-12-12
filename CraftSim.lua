@@ -17,7 +17,8 @@ CraftSimOptions = CraftSimOptions or {
 	priceSource = nil,
 	tsmPriceKey = "DBMinbuyout",
 	topGearMode = "Top Profit",
-	breakPointOffset = false
+	breakPointOffset = false,
+	autoAssignVellum = false
 }
 
 function addon:handleCraftSimOptionsUpdates()
@@ -25,6 +26,7 @@ function addon:handleCraftSimOptionsUpdates()
 		CraftSimOptions.tsmPriceKey = CraftSimOptions.tsmPriceKey or "DBMinbuyout"
 		CraftSimOptions.topGearMode = CraftSimOptions.topGearMode or "Top Profit"
 		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
+		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
 	end
 end
 
@@ -41,6 +43,7 @@ function addon:HookToDetailsHide()
 end
 
 local hookedEvent = false
+
 function addon:HookToEvent()
 	if hookedEvent then
 		return
@@ -138,6 +141,13 @@ function addon:PLAYER_LOGIN()
 end
 
 function addon:TriggerModulesByRecipeType()
+
+	if CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate then
+		print("prevent loop by vellum update..")
+		CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
+		return
+	end
+
     local professionInfo = ProfessionsFrame.professionInfo
 	local professionFullName = professionInfo.professionName
 	local craftingPage = ProfessionsFrame.CraftingPage
@@ -182,6 +192,10 @@ function addon:TriggerModulesByRecipeType()
 			showTopGear = true
 			showCostOverview = true
 			showStatweights = true
+
+			if CraftSimOptions.autoAssignVellum then
+				CraftSimREAGENT_OPTIMIZATION:AutoAssignVellum(recipeData)
+			end
 		elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
 			-- show everything except material allocation and total cost overview
 			showTopGear = true

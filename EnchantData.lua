@@ -49,7 +49,7 @@ CraftSimENCHANT_DATA = {
     [389540] = {name = "Earthen Writ", q1 = 199969, q2 = 200011, q3 = 200053},
     [389543] = {name = "Frozen Writ", q1 = 199973, q2 = 200015, q3 = 200057},
     [389542] = {name = "Sophic Writ", q1 = 199971, q2 = 200013, q3 = 200055},
-    [389546] = {name = "Wafting Writ", q1 = 199975, q2 = 200059, q3 = 200017},
+    [389546] = {name = "Wafting Writ", q1 = 199975, q2 = 200017, q3 = 200059},
 
     -- Profession Tools
     [389508] = {name = "Draconic Deftness", q1 = 199961, q2 = 200003, q3 = 200045},

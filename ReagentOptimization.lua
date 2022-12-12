@@ -530,3 +530,20 @@ function CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAlloca
 
     return true
 end
+
+-- To prevent looping
+CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
+function CraftSimREAGENT_OPTIMIZATION:AutoAssignVellum(recipeData)
+    local vellumItemID = 38682
+
+    ItemUtil.IteratePlayerInventoryAndEquipment(function(itemLocation)
+        if C_Item.GetItemID(itemLocation) == vellumItemID then
+            local vellumItem = Item:CreateFromItemGUID(C_Item.GetItemGUID(itemLocation));
+            CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = true
+            recipeData.currentTransaction:SetEnchantAllocation(vellumItem);
+            ProfessionsFrame.CraftingPage.SchematicForm.enchantSlot:SetItem(vellumItem)
+            ProfessionsFrame.CraftingPage.CreateAllButton:SetEnabled(true);
+            ProfessionsFrame.CraftingPage.CreateMultipleInputBox:SetEnabled(true);
+        end
+    end);
+end
