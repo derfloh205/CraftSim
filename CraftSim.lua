@@ -18,7 +18,8 @@ CraftSimOptions = CraftSimOptions or {
 	tsmPriceKey = "DBMinbuyout",
 	topGearMode = "Top Profit",
 	breakPointOffset = false,
-	autoAssignVellum = false
+	autoAssignVellum = false,
+	showProfitPercentage = false
 }
 
 function addon:handleCraftSimOptionsUpdates()
@@ -27,6 +28,7 @@ function addon:handleCraftSimOptionsUpdates()
 		CraftSimOptions.topGearMode = CraftSimOptions.topGearMode or "Top Profit"
 		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
 		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
+		CraftSimOptions.showProfitPercentage = CraftSimOptions.showProfitPercentage or false
 	end
 end
 
@@ -232,7 +234,7 @@ function addon:TriggerModulesByRecipeType()
     if showStatweights then
         local statWeights = CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
         if statWeights ~= CraftSimCONST.ERROR.NO_PRICE_DATA then
-            CraftSimFRAME:UpdateStatWeightFrameText(statWeights)
+            CraftSimFRAME:UpdateStatWeightFrameText(priceData, statWeights)
         end
     end
 

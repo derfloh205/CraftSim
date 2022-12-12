@@ -17,14 +17,14 @@ function CraftSimFRAME:InitStatWeightFrame()
 	frame.title:SetText("CraftSim Statweights")
 
 	frame.statText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.statText:SetPoint("LEFT", frame, "LEFT", 20, -5)
+	frame.statText:SetPoint("LEFT", frame, "LEFT", 15, -5)
 
 	frame.valueText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.valueText:SetPoint("CENTER", frame, "CENTER", 40, -8)
+	frame.valueText:SetPoint("RIGHT", frame, "RIGHT", -10, -5)
 	frame:Hide()
 end
 
-function CraftSimFRAME:UpdateStatWeightFrameText(statWeights)
+function CraftSimFRAME:UpdateStatWeightFrameText(priceData, statWeights)
     if statWeights == nil then
         CraftSimDetailsFrame.statText:SetText("")
         CraftSimDetailsFrame.valueText:SetText("")
@@ -34,7 +34,8 @@ function CraftSimFRAME:UpdateStatWeightFrameText(statWeights)
 
         if statWeights.meanProfit then
             statText = statText .. "Mean Profit:" .. "\n"
-            valueText = valueText .. CraftSimUTIL:FormatMoney(statWeights.meanProfit, true) .. "\n"
+            local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCostPerCraft or nil
+            valueText = valueText .. CraftSimUTIL:FormatMoney(statWeights.meanProfit, true, relativeValue) .. "\n"
         end
         if statWeights.inspiration then
             statText = statText .. "Inspiration:" .. "\n"
@@ -238,7 +239,7 @@ function CraftSimFRAME:InitCostOverviewFrame()
 		edgeSize = 16,
 		insets = { left = 8, right = 6, top = 8, bottom = 8 },
 	})
-	frame:SetSize(200, 270)
+	frame:SetSize(250, 270)
     local contentOffsetY = -20
     local textSpacingY = -20
 	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -316,7 +317,8 @@ function CraftSimFRAME:FillCostOverview(craftingCosts, minCraftingCosts, profitP
     for index, profitFrame in pairs(CraftSimCostOverviewFrame.profitFrames) do
         if profitPerQuality[index] ~= nil then
             profitFrame.icon.SetQuality(currentQuality + index - 1)
-            profitFrame.text:SetText(CraftSimUTIL:FormatMoney(profitPerQuality[index], true))
+            local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
+            profitFrame.text:SetText(CraftSimUTIL:FormatMoney(profitPerQuality[index], true, relativeValue))
             profitFrame:Show()
         else
             profitFrame:Hide()
@@ -326,7 +328,7 @@ end
 
 function CraftSimFRAME:InitGearSimFrame()
     local frame = CreateFrame("frame", "CraftSimSimFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
-	frame:SetPoint("TOPRIGHT",  ProfessionsFrame.CloseButton, 195, 3)
+	frame:SetPoint("TOPLEFT",  ProfessionsFrame.CloseButton, "TOPRIGHT", -5, 3)
 	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 	frame:SetBackdrop({
 		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -334,7 +336,7 @@ function CraftSimFRAME:InitGearSimFrame()
 		edgeSize = 16,
 		insets = { left = 8, right = 6, top = 8, bottom = 8 },
 	})
-	frame:SetSize(200, 300)
+	frame:SetSize(250, 300)
     local contentOffsetY = -20
     local iconsOffsetY = 80
     frame.gear1Icon = CraftSimFRAME:CreateIcon(frame, -45, contentOffsetY + iconsOffsetY, CraftSimCONST.EMPTY_SLOT_TEXTURE, 40, 40)

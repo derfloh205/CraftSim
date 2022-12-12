@@ -196,7 +196,7 @@ function CraftSimUTIL:PrintTable(t, recursive)
     end
 end
 
-function CraftSimUTIL:FormatMoney(copperValue, useColor)
+function CraftSimUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     local absValue = abs(copperValue)
     local minusText = ""
     local startLine = "\124"
@@ -204,6 +204,14 @@ function CraftSimUTIL:FormatMoney(copperValue, useColor)
     local redColor = "cffFF0000"
     local greenColor = "cff00FF00"
     local color = greenColor
+    local percentageText = ""
+
+    if percentRelativeTo then
+        local oneP = percentRelativeTo / 100
+        local percent = CraftSimUTIL:round(copperValue / oneP, 0)
+
+        percentageText = " (" .. percent .. "%)"
+    end
 
     if copperValue < 0 then
         minusText = "-"
@@ -211,9 +219,9 @@ function CraftSimUTIL:FormatMoney(copperValue, useColor)
     end
 
     if useColor then
-        return startLine .. color .. minusText .. GetCoinTextureString(absValue) .. endLine
+        return startLine .. color .. minusText .. GetCoinTextureString(absValue, 10) .. percentageText .. endLine
     else
-        return minusText .. GetCoinTextureString(absValue)
+        return minusText .. GetCoinTextureString(absValue, 10) .. percentageText
     end
 end
 

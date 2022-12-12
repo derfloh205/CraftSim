@@ -80,7 +80,7 @@ function CraftSimOPTIONS:InitOptionsFrame()
 	end)
 
     local autoVellumCheckBox = CreateFrame("CheckButton", nil, generalTab.content, "ChatConfigCheckButtonTemplate")
-	autoVellumCheckBox:SetPoint("TOP", checkButton, 0, -40)
+	autoVellumCheckBox:SetPoint("TOP", checkButton, 0, -20)
 	autoVellumCheckBox.Text:SetText(" Auto Assign Enchanting Vellum")
     autoVellumCheckBox.tooltip = "Always put enchanting vellum as the target enchanting item"
 	-- there already is an existing OnClick script that plays a sound, hook it
@@ -88,6 +88,17 @@ function CraftSimOPTIONS:InitOptionsFrame()
 	autoVellumCheckBox:HookScript("OnClick", function(_, btn, down)
 		local checked = autoVellumCheckBox:GetChecked()
 		CraftSimOptions.autoAssignVellum = checked
+	end)
+
+    local precentProfitCheckbox = CreateFrame("CheckButton", nil, generalTab.content, "ChatConfigCheckButtonTemplate")
+	precentProfitCheckbox:SetPoint("TOP", autoVellumCheckBox, 0, -20)
+	precentProfitCheckbox.Text:SetText(" Show Profit Percentage")
+    precentProfitCheckbox.tooltip = "Show the percentage of profit to crafting costs besides the gold value"
+	-- there already is an existing OnClick script that plays a sound, hook it
+    precentProfitCheckbox:SetChecked(CraftSimOptions.showProfitPercentage)
+	precentProfitCheckbox:HookScript("OnClick", function(_, btn, down)
+		local checked = precentProfitCheckbox:GetChecked()
+		CraftSimOptions.showProfitPercentage = checked
 	end)
 
     local supportedPriceSources = generalTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
