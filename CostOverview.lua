@@ -7,7 +7,7 @@ function CraftSimCOSTS:CalculateCostOverview(recipeData, recipeType, priceData, 
         for i = recipeData.expectedQuality, recipeData.maxQuality, 1 do
             local currRecipeData = CopyTable(recipeData)
             currRecipeData.expectedQuality = i
-            local meanProfitCurrentQuality = CraftSimSTATS:getMeanProfit(currRecipeData, priceData)
+            local meanProfitCurrentQuality = priceData.minBuyoutPerQuality[i] * CraftSimCONST.AUCTION_HOUSE_CUT - priceData.craftingCostPerCraft
             table.insert(profitByNextQualities, meanProfitCurrentQuality)
         end
     end

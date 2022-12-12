@@ -2,6 +2,7 @@ CraftSimFRAME = {}
 
 function CraftSimFRAME:InitStatWeightFrame()
 	local frame = CreateFrame("frame", "CraftSimDetailsFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
+    CraftSimFRAME:makeFrameMoveable(frame)
 	frame:SetPoint("BOTTOM",  ProfessionsFrame.CraftingPage.SchematicForm.Details, 0, -80)
 	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 	frame:SetBackdrop({
@@ -33,7 +34,7 @@ function CraftSimFRAME:UpdateStatWeightFrameText(priceData, statWeights)
         local valueText = ""
 
         if statWeights.meanProfit then
-            statText = statText .. "Mean Profit:" .. "\n"
+            statText = statText .. "Ø Profit:" .. "\n"
             local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCostPerCraft or nil
             valueText = valueText .. CraftSimUTIL:FormatMoney(statWeights.meanProfit, true, relativeValue) .. "\n"
         end
@@ -78,6 +79,8 @@ end
 
 function CraftSimFRAME:InitBestAllocationsFrame()
     local frame = CreateFrame("frame", "CraftSimReagentHintFrame", ProfessionsFrame.CraftingPage.SchematicForm.Reagents, "BackdropTemplate")
+
+    CraftSimFRAME:makeFrameMoveable(frame)
 
     frame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "BOTTOM", 0, 0)
 	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
@@ -231,6 +234,7 @@ end
 
 function CraftSimFRAME:InitCostOverviewFrame()
     local frame = CreateFrame("frame", "CraftSimCostOverviewFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
+    CraftSimFRAME:makeFrameMoveable(frame)
 	frame:SetPoint("TOP",  CraftSimSimFrame, "BOTTOM", 0, 10)
 	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 	frame:SetBackdrop({
@@ -328,6 +332,7 @@ end
 
 function CraftSimFRAME:InitGearSimFrame()
     local frame = CreateFrame("frame", "CraftSimSimFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
+    CraftSimFRAME:makeFrameMoveable(frame)
 	frame:SetPoint("TOPLEFT",  ProfessionsFrame.CloseButton, "TOPRIGHT", -5, 3)
 	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 	frame:SetBackdrop({
@@ -451,7 +456,7 @@ function CraftSimFRAME:FillSimResultData(bestSimulation, topGearMode)
     end
     -- TODO: maybe show in red or smth if negative
     if topGearMode == CraftSimCONST.GEAR_SIM_MODES.PROFIT then
-        CraftSimSimFrame.profitText:SetText("Profit Difference / Craft\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff, true))
+        CraftSimSimFrame.profitText:SetText("Ø Profit Difference\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff, true))
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.MULTICRAFT then
         CraftSimSimFrame.profitText:SetText("New Multicraft\n".. CraftSimUTIL:round(bestSimulation.multicraftPercent, 2) .. "%")
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.CRAFTING_SPEED then
@@ -573,4 +578,26 @@ function CraftSimFRAME:InitTabSystem(tabs)
     end
     tabs[1].content:Show()
     tabs[1]:SetEnabled(false)
+end
+
+function CraftSimFRAME:makeFrameMoveable(frame)
+	frame:SetMovable(true)
+	frame:SetScript("OnMouseDown", function(self, button)
+		self:StartMoving()
+		end)
+		frame:SetScript("OnMouseUp", function(self, button)
+		self:StopMovingOrSizing()
+		end)
+end
+
+function CraftSimFRAME:ResetFrames()
+    CraftSimReagentHintFrame:ClearAllPoints()
+    CraftSimCostOverviewFrame:ClearAllPoints()
+    CraftSimSimFrame:ClearAllPoints()
+    CraftSimDetailsFrame:ClearAllPoints()
+
+    CraftSimReagentHintFrame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "BOTTOM", 0, 0)
+    CraftSimCostOverviewFrame:SetPoint("TOP",  CraftSimSimFrame, "BOTTOM", 0, 10)
+    CraftSimSimFrame:SetPoint("TOPLEFT",  ProfessionsFrame.CloseButton, "TOPRIGHT", -5, 3)
+    CraftSimDetailsFrame:SetPoint("BOTTOM",  ProfessionsFrame.CraftingPage.SchematicForm.Details, 0, -80)
 end

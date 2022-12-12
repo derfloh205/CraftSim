@@ -104,6 +104,8 @@ function CraftSimOPTIONS:InitOptionsFrame()
 		CraftSimOptions.autoAssignVellum = checked
 	end)
 
+   
+
     local precentProfitCheckbox = CreateFrame("CheckButton", nil, generalTab.content, "ChatConfigCheckButtonTemplate")
 	precentProfitCheckbox:SetPoint("TOP", autoVellumCheckBox, 0, -20)
 	precentProfitCheckbox.Text:SetText(" Show Profit Percentage")
@@ -114,6 +116,16 @@ function CraftSimOPTIONS:InitOptionsFrame()
 		local checked = precentProfitCheckbox:GetChecked()
 		CraftSimOptions.showProfitPercentage = checked
 	end)
+
+    local resetFramesButton = CreateFrame("Button", "CraftSimResetFramesButton", generalTab.content, "UIPanelButtonTemplate")
+	resetFramesButton:SetPoint("TOP", precentProfitCheckbox, "TOP", 90, -30)	
+	resetFramesButton:SetText("Reset Frame Positions")
+	resetFramesButton:SetSize(resetFramesButton:GetTextWidth() + 20, 25)
+    resetFramesButton:SetScript("OnClick", function(self) 
+        CraftSimFRAME:ResetFrames()
+    end)
+
+
 
     local supportedPriceSources = generalTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -200)

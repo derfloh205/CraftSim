@@ -26,7 +26,7 @@ CraftSimOptions = CraftSimOptions or {
 function addon:handleCraftSimOptionsUpdates()
 	if CraftSimOptions then
 		CraftSimOptions.tsmPriceKey = nil
-		CraftSimOptions.tsmPriceKeyMaterials = CraftSimOptions.tsmPriceKeyMaterials or "DBMinbuyout"
+		CraftSimOptions.tsmPriceKeyMaterials = CraftSimOptions.tsmPriceKeyMaterials or "DBRecent"
 		CraftSimOptions.tsmPriceKeyItems = CraftSimOptions.tsmPriceKeyItems or "DBMinbuyout"
 		CraftSimOptions.topGearMode = CraftSimOptions.topGearMode or "Top Profit"
 		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false

@@ -71,3 +71,22 @@ CraftSimCONST.GEAR_SIM_MODES = {
     RESOURCEFULNESS = "Top Resourcefulness",
     CRAFTING_SPEED = "Top Crafting Speed",
 }
+
+CraftSimCONST.DEFAULT_POSITIONS = {
+    REAGENT_FRAME = {
+        x = 0,
+        y = 0,
+    },
+    COST_OVERVIEW_FRAME = {
+        x = 0,
+        y = 10,
+    },
+    TOP_GEAR_FRAME = {
+        x = -5,
+        y = 3,
+    },
+    STAT_WEIGHT_FRAME = {
+        x = 0,
+        y = -80,
+    }
+}
