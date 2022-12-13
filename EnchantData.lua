@@ -58,4 +58,10 @@ CraftSimENCHANT_DATA = {
     [389525] = {name = "Draconic Perception", q1 = 199964, q2 = 200006, q3 = 200048},
     [389530] = {name = "Draconic Resourcefulness", q1 = 199965, q2 = 200007, q3 = 200049},
 
+    -- Cosmetic
+    [391811] = {name = "Illusory Adornment: Earth", q1 = 201315, q2 = 201314, q3 = 201313},
+    [391809] = {name = "Illusory Adornment: Frost", q1 = 201312, q2 = 201311, q3 = 201310},
+    [390951] = {name = "Illusory Adornment: Fire", q1 = 200614, q2 = 200615, q3 = 200616},
+    [391810] = {name = "Illusory Adornment: Air", q1 = 201318, q2 = 201317, q3 = 201316},
+    [391812] = {name = "Illusory Adornment: Order", q1 = 201321, q2 = 201320, q3 = 201319}
 }

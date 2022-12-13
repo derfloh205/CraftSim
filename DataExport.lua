@@ -1,5 +1,8 @@
 CraftSimDATAEXPORT = {}
 
+CraftSimRecipeData = CraftSimRecipeData or {}
+CraftSimItemCache = CraftSimItemCache or {}
+
 function CraftSimDATAEXPORT:getExportString()
 	local exportData = CraftSimDATAEXPORT:exportRecipeData()
 	-- now digest into an export string
@@ -349,5 +352,89 @@ function CraftSimDATAEXPORT:GetReagentNameFromReagentData(itemID)
 		else
 			return "Unknown"
 		end
+	end
+end
+
+function CraftSimDATAEXPORT:UpdateRecipeData(recipeData)
+    if recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
+        -- map itemlinks to data
+		CraftSimRecipeData[recipeData.result.hyperlink] = {
+            recipeData = recipeData
+        }
+	elseif recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
+		CraftSimRecipeData[recipeData.result.itemID] = {
+            recipeData = recipeData
+        }
+	else
+        -- map itemids to data
+        -- the item id has a certain quality, so remember the itemid and the current crafting costs as "last crafting costs"
+        CraftSimRecipeData[recipeData.result.itemIDs[recipeData.expectedQuality]] = {
+            recipeData = recipeData
+        }
+    end
+end
+
+function CraftSimDATAEXPORT:GetItemFromCacheByItemID(itemID)
+	if CraftSimItemCache[itemID] then
+		return CraftSimItemCache[itemID]
+	else
+		local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType,
+		itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType,
+		expacID, setID, isCraftingReagent = GetItemInfo(itemID) 
+
+		local itemData = {
+			name = itemName,
+			link = itemLink,
+			quality = itemQuality,
+			itemLevel = itemLevel,
+			itemMinLevel = itemMinLevel,
+			itemType = itemType,
+			itemSubType = itemSubType,
+			itemStackCount = itemStackCount,
+			itemEquipLoc = itemEquipLoc,
+			itemTexture = itemTexture,
+			sellPrice = sellPrice,
+			classID = classID,
+			subclassID = subclassID,
+			bindType = bindType,
+			expacID = expacID,
+			setID = setID,
+			isCraftingReagent = isCraftingReagent
+		}
+
+		if not itemName then
+			itemData.name = "Fetching Item.."
+			local item = Item:CreateFromItemID(itemID)
+
+			item:ContinueOnItemLoad(function()
+				local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType,
+				itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType,
+				expacID, setID, isCraftingReagent = GetItemInfo(itemID) 
+
+				local itemData = {
+					name = itemName,
+					link = itemLink,
+					quality = itemQuality,
+					itemLevel = itemLevel,
+					itemMinLevel = itemMinLevel,
+					itemType = itemType,
+					itemSubType = itemSubType,
+					itemStackCount = itemStackCount,
+					itemEquipLoc = itemEquipLoc,
+					itemTexture = itemTexture,
+					sellPrice = sellPrice,
+					classID = classID,
+					subclassID = subclassID,
+					bindType = bindType,
+					expacID = expacID,
+					setID = setID,
+					isCraftingReagent = isCraftingReagent
+				}
+
+				CraftSimItemCache[itemID] = itemData
+			end)
+		end
+
+		return itemData
 	end
 end

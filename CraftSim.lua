@@ -75,23 +75,11 @@ function addon:ADDON_LOADED(addon_name)
 		CraftSimFRAME:InitPriceDataWarningFrame()
 		CraftSimFRAME:InitBestAllocationsFrame()
 		CraftSimFRAME:InitCostOverviewFrame()
+		CraftSimTOOLTIP:Init()
 		addon:HookToEvent()
 		addon:HookToDetailsHide()
 		addon:handleCraftSimOptionsUpdates()
-		
-		--print("load craftsim")
 	end
-	-- if not priceApiLoaded then
-	-- 	if CraftSimOptions.priceDebug then
-	-- 		CraftSimPriceAPI = CraftSimDEBUG_PRICE_API
-	-- 		priceApiLoaded = true
-	-- 		print("load debug prices")
-	-- 	elseif CraftSimPriceAPIs:IsPriceApiAddonLoaded() or CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name) then
-	-- 		--print("load price api")
-	-- 		CraftSimPriceAPIs:InitAvailablePriceAPI()
-	-- 		priceApiLoaded = true
-	-- 	end
-	-- end
 end
 
 function addon:PLAYER_LOGIN()
@@ -186,6 +174,8 @@ function addon:TriggerModulesByRecipeType()
     -- TODO: in specific situations, show some modules but hide the others..
     -- TODO: maybe use a switch here?
 	if recipeData and priceData then
+		CraftSimDATAEXPORT:UpdateRecipeData(recipeData)
+
 		if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
 			-- show everything
 			showMaterialAllocation = true

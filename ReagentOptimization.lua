@@ -167,15 +167,16 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     local results = CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP)  
 
     -- remove any result that maps to the expected quality without reagent increase
+    -- NEW: any that is below! Same is fine
     local results = CraftSimUTIL:FilterTable(results, function(result) 
-        return result.qualityReached > expectedQualityWithoutReagents
+        return result.qualityReached >= expectedQualityWithoutReagents
     end)
 
     -- TODO: remove results that are the same allocation as the current one? and disable button?
 
     
     local hasItems = true
-    local bestAllocation = results[#results]
+    local bestAllocation = results[1]--results[#results]
     local isSameAllocation = CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
 
     if bestAllocation and not isSameAllocation then

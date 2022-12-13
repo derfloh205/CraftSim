@@ -205,6 +205,11 @@ function CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceDa
         if hasItems then
             CraftSimReagentHintFrame.allocateButton:SetText("Assign")
             CraftSimReagentHintFrame.allocateButton:SetScript("OnClick", function(self) 
+                -- uncheck best quality box if checked
+                local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
+                if bestQBox:GetChecked() then
+                    bestQBox:Click()
+                end
                 CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeType, priceData, bestAllocation)
             end)
         else
