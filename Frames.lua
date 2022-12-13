@@ -406,10 +406,12 @@ function CraftSimFRAME:ShowComboItemIcons(professionGearCombo)
             local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(professionGearCombo[index].itemLink) 
             iconButton:SetNormalTexture(itemTexture)
             iconButton:SetScript("OnEnter", function(self) 
-				GameTooltip:SetHyperlink(professionGearCombo[index].itemLink)
-                GameTooltip:ClearAllPoints()
-                --GameTooltip:SetOwner(iconButton, "ANCHOR_TOP");
-	            GameTooltip:SetPoint("BOTTOM", iconButton, "TOP", 0, 0);
+                local itemName, ItemLink = GameTooltip:GetItem()
+                GameTooltip:SetOwner(CraftSimSimFrame, "ANCHOR_RIGHT");
+                if ItemLink ~= professionGearCombo[index].itemLink then
+                    -- to not set it again and hide the tooltip..
+                    GameTooltip:SetHyperlink(professionGearCombo[index].itemLink)
+                end
 				GameTooltip:Show();
             end)
             iconButton:SetScript("OnLeave", function(self) 
