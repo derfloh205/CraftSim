@@ -33,6 +33,10 @@ function CraftSimTOOLTIP:Init()
         GameTooltip:AddLine(titleLine)
         GameTooltip:AddDoubleLine("Crafting costs with last used material combination:", CraftSimUTIL:FormatMoney(craftingCosts), 0.43, 0.57, 0.89, 1, 1, 1)
 
+        if not CraftSimOptions.detailedCraftingInfoTooltip then
+            return
+        end
+
         for _, reagent in pairs(recipeData.reagents) do
             local combinationText = ""
             local priceText = ""

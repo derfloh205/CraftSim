@@ -24,11 +24,22 @@ function CraftSimOPTIONS:InitOptionsFrame()
     generalTab.content = CreateFrame("Frame", nil, CraftSimOPTIONS.optionsPanel)
     generalTab.content:SetPoint("TOP", CraftSimOPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
     generalTab.content:SetSize(300, 350)
+    generalTab.canBeEnabled = true
+
+    local tooltipTab = CreateFrame("Button", "CraftSimOptionsTooltipTab", CraftSimOPTIONS.optionsPanel, "UIPanelButtonTemplate")
+    tooltipTab:SetText("Tooltip")
+    tooltipTab:SetSize(tooltipTab:GetTextWidth() + tabExtraWidth, 30)
+    tooltipTab:SetPoint("LEFT", generalTab, "RIGHT", 0, 0)
+
+    tooltipTab.content = CreateFrame("Frame", nil, CraftSimOPTIONS.optionsPanel)
+    tooltipTab.content:SetPoint("TOP", CraftSimOPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
+    tooltipTab.content:SetSize(300, 350)
+    tooltipTab.canBeEnabled = true
 
     local TSMTab = CreateFrame("Button", "CraftSimOptionsTSMTab", CraftSimOPTIONS.optionsPanel, "UIPanelButtonTemplate")
     TSMTab:SetText("TSM")
     TSMTab:SetSize(TSMTab:GetTextWidth() + tabExtraWidth, 30)
-    TSMTab:SetPoint("LEFT", generalTab, "RIGHT", 0, 0)
+    TSMTab:SetPoint("LEFT", tooltipTab, "RIGHT", 0, 0)
 
     TSMTab.content = CreateFrame("Frame", nil, CraftSimOPTIONS.optionsPanel)
     TSMTab.content:SetPoint("TOP", CraftSimOPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
@@ -62,7 +73,7 @@ function CraftSimOPTIONS:InitOptionsFrame()
 
     
 
-    CraftSimFRAME:InitTabSystem({generalTab, TSMTab, AuctionatorTab})
+    CraftSimFRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AuctionatorTab})
 
     local priceSourceAddons = CraftSimPriceAPIs:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
@@ -125,7 +136,16 @@ function CraftSimOPTIONS:InitOptionsFrame()
         CraftSimFRAME:ResetFrames()
     end)
 
-
+    local detailedTooltips = CreateFrame("CheckButton", nil, tooltipTab.content, "ChatConfigCheckButtonTemplate")
+	detailedTooltips:SetPoint("TOP", tooltipTab.content, -90, -50)
+	detailedTooltips.Text:SetText(" Detailed Last Crafting Information")
+    detailedTooltips.tooltip = "Show the complete breakdown of your last used material combination in an item tooltip"
+	-- there already is an existing OnClick script that plays a sound, hook it
+    detailedTooltips:SetChecked(CraftSimOptions.detailedCraftingInfoTooltip)
+	detailedTooltips:HookScript("OnClick", function(_, btn, down)
+		local checked = detailedTooltips:GetChecked()
+		CraftSimOptions.detailedCraftingInfoTooltip = checked
+	end)
 
     local supportedPriceSources = generalTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -200)

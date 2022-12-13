@@ -20,7 +20,8 @@ CraftSimOptions = CraftSimOptions or {
 	topGearMode = "Top Profit",
 	breakPointOffset = false,
 	autoAssignVellum = false,
-	showProfitPercentage = false
+	showProfitPercentage = false,
+	detailedCraftingInfoTooltip = true
 }
 
 function addon:handleCraftSimOptionsUpdates()
@@ -32,6 +33,9 @@ function addon:handleCraftSimOptionsUpdates()
 		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
 		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
 		CraftSimOptions.showProfitPercentage = CraftSimOptions.showProfitPercentage or false
+		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
+			CraftSimOptions.detailedCraftingInfoTooltip = true
+		end
 	end
 end
 
