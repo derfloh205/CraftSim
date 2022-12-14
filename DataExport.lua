@@ -365,7 +365,8 @@ function CraftSimDATAEXPORT:UpdateRecipeData(recipeData)
 		CraftSimRecipeData[recipeData.result.itemID] = {
             recipeData = recipeData
         }
-	else
+	elseif recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.GATHERING and recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_CRAFT_OPERATION and
+	 recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.RECRAFT and recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_ITEM then
         -- map itemids to data
         -- the item id has a certain quality, so remember the itemid and the current crafting costs as "last crafting costs"
         CraftSimRecipeData[recipeData.result.itemIDs[recipeData.expectedQuality]] = {

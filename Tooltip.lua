@@ -27,11 +27,15 @@ function CraftSimTOOLTIP:Init()
         end
 
         local recipeData = cachedData.recipeData
-        local craftingCosts = CraftSimPRICEDATA:GetTotalCraftingCost(recipeData)
+        local priceData = CraftSimPRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
+        local resultBuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID)
+        local profitByItem = (resultBuyout * recipeData.baseItemAmount) * CraftSimCONST.AUCTION_HOUSE_CUT - priceData.craftingCostPerCraft
 
         local titleLine = "CraftSim"
         GameTooltip:AddLine(titleLine)
-        GameTooltip:AddDoubleLine("Crafting costs with last used material combination:", CraftSimUTIL:FormatMoney(craftingCosts), 0.43, 0.57, 0.89, 1, 1, 1)
+        local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCostPerCraft or nil
+        GameTooltip:AddDoubleLine(" Profit / Craft (".. recipeData.baseItemAmount .." Items):", CraftSimUTIL:FormatMoney(profitByItem, true, relativeValue), 0.43, 0.57, 0.89)
+        GameTooltip:AddDoubleLine(" Crafting costs with last used material combination:", CraftSimUTIL:FormatMoney(priceData.craftingCostPerCraft), 0.43, 0.57, 0.89, 1, 1, 1)
 
         if not CraftSimOptions.detailedCraftingInfoTooltip then
             return
@@ -71,7 +75,7 @@ function CraftSimTOOLTIP:Init()
                 priceText = CraftSimUTIL:FormatMoney(price)
             end
             local itemData = CraftSimDATAEXPORT:GetItemFromCacheByItemID(reagent.itemsInfo[1].itemID)
-            GameTooltip:AddDoubleLine(itemData.name .. ": " .. combinationText, priceText, 1, 1, 1, 1, 1, 1)
+            GameTooltip:AddDoubleLine(" " .. itemData.name .. ": " .. combinationText, priceText, 1, 1, 1, 1, 1, 1)
         end
     end
 
