@@ -83,6 +83,7 @@ function addon:ADDON_LOADED(addon_name)
 		addon:HookToEvent()
 		addon:HookToDetailsHide()
 		addon:handleCraftSimOptionsUpdates()
+		CraftSimFRAME:HandleAuctionatorOverlaps()
 	end
 end
 

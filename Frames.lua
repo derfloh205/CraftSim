@@ -608,3 +608,20 @@ function CraftSimFRAME:ResetFrames()
     CraftSimSimFrame:SetPoint("TOPLEFT",  ProfessionsFrame.CloseButton, "TOPRIGHT", -5, 3)
     CraftSimDetailsFrame:SetPoint("BOTTOM",  ProfessionsFrame.CraftingPage.SchematicForm.Details, 0, -80)
 end
+
+local hooked = false
+function CraftSimFRAME:HandleAuctionatorOverlaps()
+    if hooked then
+        return
+    end
+    hooked = true
+    if IsAddOnLoaded("Auctionator") then
+        Auctionator.CraftingInfo._InitializeProfessionsFrame = Auctionator.CraftingInfo.InitializeProfessionsFrame
+        Auctionator.CraftingInfo.InitializeProfessionsFrame = function(self) 
+            Auctionator.CraftingInfo:_InitializeProfessionsFrame()
+            AuctionatorCraftingInfoProfessionsFrame.SearchButton:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "TOPLEFT", 0, 25)
+        end
+    end
+    
+
+end
