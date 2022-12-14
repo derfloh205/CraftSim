@@ -48,17 +48,15 @@ function CraftSimOPTIONS:InitOptionsFrame()
     TSMTab:SetEnabled(IsAddOnLoaded("TradeSkillMaster"))
     TSMTab.canBeEnabled = IsAddOnLoaded("TradeSkillMaster")
 
-    -- local AuctionatorTab = CreateFrame("Button", "CraftSimOptionsAuctionatorTab", CraftSimOPTIONS.optionsPanel, "UIPanelButtonTemplate")
-    -- AuctionatorTab:SetText("Auctionator")
-    -- AuctionatorTab:SetSize(AuctionatorTab:GetTextWidth() + tabExtraWidth, 30)
-    -- AuctionatorTab:SetPoint("LEFT", TSMTab, "RIGHT", 0, 0)
+    local AccountSyncTab = CreateFrame("Button", "CraftSimOptionsAccountSyncTab", CraftSimOPTIONS.optionsPanel, "UIPanelButtonTemplate")
+    AccountSyncTab:SetText("Account Sync")
+    AccountSyncTab:SetSize(AccountSyncTab:GetTextWidth() + tabExtraWidth, 30)
+    AccountSyncTab:SetPoint("LEFT", TSMTab, "RIGHT", 0, 0)
 
-    -- AuctionatorTab.content = CreateFrame("Frame", nil, CraftSimOPTIONS.optionsPanel)
-    -- AuctionatorTab.content:SetPoint("TOP", CraftSimOPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
-    -- AuctionatorTab.content:SetSize(300, 350)
-
-    -- AuctionatorTab:SetEnabled(IsAddOnLoaded("Auctionator"))
-    -- AuctionatorTab.canBeEnabled = IsAddOnLoaded("Auctionator")
+    AccountSyncTab.content = CreateFrame("Frame", nil, CraftSimOPTIONS.optionsPanel)
+    AccountSyncTab.content:SetPoint("TOP", CraftSimOPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
+    AccountSyncTab.content:SetSize(300, 350)
+    AccountSyncTab.canBeEnabled = true
 
     local tsmPriceKeys = {"DBRecent", "DBMarket", "DBMinbuyout"}
     CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownMaterials", TSMTab.content ,"TSM Price Source Key Materials", 0, -50, 200, tsmPriceKeys, 
@@ -73,7 +71,7 @@ function CraftSimOPTIONS:InitOptionsFrame()
 
     
 
-    CraftSimFRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AuctionatorTab})
+    CraftSimFRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab})
 
     local priceSourceAddons = CraftSimPriceAPIs:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
@@ -115,8 +113,6 @@ function CraftSimOPTIONS:InitOptionsFrame()
 		CraftSimOptions.autoAssignVellum = checked
 	end)
 
-   
-
     local precentProfitCheckbox = CreateFrame("CheckButton", nil, generalTab.content, "ChatConfigCheckButtonTemplate")
 	precentProfitCheckbox:SetPoint("TOP", autoVellumCheckBox, 0, -20)
 	precentProfitCheckbox.Text:SetText(" Show Profit Percentage")
@@ -146,6 +142,42 @@ function CraftSimOPTIONS:InitOptionsFrame()
 		local checked = detailedTooltips:GetChecked()
 		CraftSimOptions.detailedCraftingInfoTooltip = checked
 	end)
+
+    local characterNameInput = CreateFrame("EditBox", "CraftSimSyncCharacterInput", AccountSyncTab.content, "UIPanelButtonTemplate")
+    characterNameInput:SetPoint("TOP", AccountSyncTab.content, "TOP", 20, -50)
+    characterNameInput:SetSize(100, 20)
+    characterNameInput:SetAutoFocus(false) -- dont automatically focus
+    characterNameInput:SetFontObject("ChatFontNormal")
+    characterNameInput:SetText(CraftSimOptions.syncTarget or "")
+    characterNameInput:SetScript("OnEscapePressed", function() characterNameInput:ClearFocus() end)
+    characterNameInput:SetScript("OnEnterPressed", function() characterNameInput:ClearFocus() end)
+    characterNameInput:SetScript("OnTextChanged", function() 
+        CraftSimOptions.syncTarget = characterNameInput:GetText()
+    end)
+
+    local inputBoxDescription = characterNameInput:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    inputBoxDescription:SetPoint("RIGHT", characterNameInput, "LEFT", 0, 0)
+    inputBoxDescription:SetText("Target Character: ")
+
+    local sendingProgress = characterNameInput:CreateFontString("CraftSimAccountSyncSendingProgress", 'OVERLAY', 'GameFontNormal')
+    sendingProgress:SetPoint("LEFT", characterNameInput, "RIGHT", 5, 0)
+    sendingProgress:SetText("")
+
+    local accountSyncButton = CreateFrame("Button", "CraftSimAccountSyncButton", AccountSyncTab.content, "UIPanelButtonTemplate")
+	accountSyncButton:SetPoint("TOPRIGHT", characterNameInput, "TOPRIGHT", 0, -30)	
+	accountSyncButton:SetText("Synchronize Tooltip Data")
+	accountSyncButton:SetSize(accountSyncButton:GetTextWidth() + 20, 25)
+    accountSyncButton:SetScript("OnClick", function(self) 
+        CraftSimAccountSync:SynchronizeAccounts()
+    end)
+
+    local optionsSyncButton = CreateFrame("Button", "CraftSimOptionsSyncButton", AccountSyncTab.content, "UIPanelButtonTemplate")
+	optionsSyncButton:SetPoint("TOPRIGHT", accountSyncButton, "TOPRIGHT", 0, -30)	
+	optionsSyncButton:SetText("Synchronize Options")
+	optionsSyncButton:SetSize(optionsSyncButton:GetTextWidth() + 20, 25)
+    optionsSyncButton:SetScript("OnClick", function(self) 
+        CraftSimAccountSync:SynchronizeOptions()
+    end)
 
     local supportedPriceSources = generalTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -200)

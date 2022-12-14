@@ -5,8 +5,11 @@
 ## Notes: Calculates profession statweights and displays them per recipe
 ## Author: genju
 ## Version: 1.1
-## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimRecipeData, CraftSimItemCache
+## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimTooltipData, CraftSimItemCache
 
+embeds.xml
+
+AccountSync.lua
 Tooltip.lua
 EnchantData.lua
 Options.lua

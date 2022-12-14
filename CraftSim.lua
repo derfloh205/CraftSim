@@ -21,7 +21,8 @@ CraftSimOptions = CraftSimOptions or {
 	breakPointOffset = false,
 	autoAssignVellum = false,
 	showProfitPercentage = false,
-	detailedCraftingInfoTooltip = true
+	detailedCraftingInfoTooltip = true,
+	syncTarget = nil
 }
 
 function addon:handleCraftSimOptionsUpdates()
@@ -84,6 +85,7 @@ function addon:ADDON_LOADED(addon_name)
 		addon:HookToDetailsHide()
 		addon:handleCraftSimOptionsUpdates()
 		CraftSimFRAME:HandleAuctionatorOverlaps()
+		CraftSimAccountSync:Init()
 	end
 end
 
@@ -178,7 +180,7 @@ function addon:TriggerModulesByRecipeType()
     -- TODO: in specific situations, show some modules but hide the others..
     -- TODO: maybe use a switch here?
 	if recipeData and priceData then
-		CraftSimDATAEXPORT:UpdateRecipeData(recipeData)
+		CraftSimDATAEXPORT:UpdateTooltipData(recipeData)
 
 		if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
 			-- show everything

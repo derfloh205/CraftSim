@@ -1,7 +1,9 @@
 CraftSimDATAEXPORT = {}
 
-CraftSimRecipeData = CraftSimRecipeData or {}
+CraftSimTooltipData = CraftSimTooltipData or {}
 CraftSimItemCache = CraftSimItemCache or {}
+
+LibCompress = LibStub:GetLibrary("LibCompress")
 
 function CraftSimDATAEXPORT:getExportString()
 	local exportData = CraftSimDATAEXPORT:exportRecipeData()
@@ -355,23 +357,34 @@ function CraftSimDATAEXPORT:GetReagentNameFromReagentData(itemID)
 	end
 end
 
-function CraftSimDATAEXPORT:UpdateRecipeData(recipeData)
+function CraftSimDATAEXPORT:ExportTooltipData(recipeData)
+	local crafter = GetUnitName("player", showServerName)
+
+	local tooltipData = {
+		expectedQuality = recipeData.expectedQuality,
+		recipeType = recipeData.recipeType,
+		baseItemAmount = recipeData.baseItemAmount,
+		reagents = recipeData.reagents,
+		result = recipeData.result,
+		crafter = crafter
+	}
+
+	-- needed data: recipetype, reagents, and results, and the source character
+	return tooltipData
+end
+
+function CraftSimDATAEXPORT:UpdateTooltipData(recipeData)
+	local data = CraftSimDATAEXPORT:ExportTooltipData(recipeData)
     if recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
         -- map itemlinks to data
-		CraftSimRecipeData[recipeData.result.hyperlink] = {
-            recipeData = recipeData
-        }
+		CraftSimTooltipData[recipeData.result.hyperlink] = data
 	elseif recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
-		CraftSimRecipeData[recipeData.result.itemID] = {
-            recipeData = recipeData
-        }
+		CraftSimTooltipData[recipeData.result.itemID] = data
 	elseif recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.GATHERING and recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_CRAFT_OPERATION and
 	 recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.RECRAFT and recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_ITEM then
         -- map itemids to data
         -- the item id has a certain quality, so remember the itemid and the current crafting costs as "last crafting costs"
-        CraftSimRecipeData[recipeData.result.itemIDs[recipeData.expectedQuality]] = {
-            recipeData = recipeData
-        }
+        CraftSimTooltipData[recipeData.result.itemIDs[recipeData.expectedQuality]] = data
     end
 end
 

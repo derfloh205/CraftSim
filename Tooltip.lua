@@ -20,28 +20,40 @@ function CraftSimTOOLTIP:Init()
             return
         end
 
-        local cachedData = CraftSimRecipeData[itemID] or CraftSimRecipeData[itemLink]
+        local tooltipData = CraftSimTooltipData[itemID] or CraftSimTooltipData[itemLink]
 
-        if not cachedData then
+        if not tooltipData then
             return
         end
 
-        local recipeData = cachedData.recipeData
-        local priceData = CraftSimPRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
-        local resultBuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID)
-        local profitByItem = (resultBuyout * recipeData.baseItemAmount) * CraftSimCONST.AUCTION_HOUSE_CUT - priceData.craftingCostPerCraft
+        -- only reagent data is needed for this within the recipeData
+        local craftingCostPerCraft = CraftSimPRICEDATA:GetTotalCraftingCost(tooltipData)
+
+        local resultValue = 0
+        if tooltipData.recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or tooltipData.recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
+            resultValue = CraftSimPRICEDATA:GetMinBuyoutByItemLink(tooltipData.result.hyperlink)
+        elseif tooltipData.recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or tooltipData.recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
+            resultValue = CraftSimPRICEDATA:GetMinBuyoutByItemID(tooltipData.result.itemID) * tooltipData.baseItemAmount
+        elseif tooltipData.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_ITEM and tooltipData.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
+            resultValue = CraftSimPRICEDATA:GetMinBuyoutByItemID(tooltipData.result.itemIDs[tooltipData.expectedQuality]) * tooltipData.baseItemAmount
+        end
+        
+        local profitByCraft = resultValue * CraftSimCONST.AUCTION_HOUSE_CUT - craftingCostPerCraft
 
         local titleLine = "CraftSim"
         GameTooltip:AddLine(titleLine)
-        local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCostPerCraft or nil
-        GameTooltip:AddDoubleLine(" Profit / Craft (".. recipeData.baseItemAmount .." Items):", CraftSimUTIL:FormatMoney(profitByItem, true, relativeValue), 0.43, 0.57, 0.89)
-        GameTooltip:AddDoubleLine(" Crafting costs with last used material combination:", CraftSimUTIL:FormatMoney(priceData.craftingCostPerCraft), 0.43, 0.57, 0.89, 1, 1, 1)
+        local relativeValue = CraftSimOptions.showProfitPercentage and craftingCostPerCraft or nil
+        GameTooltip:AddDoubleLine(" Crafter:", tooltipData.crafter, 0.43, 0.57, 0.89, 1, 1, 1) -- TODO: class colors?
+        GameTooltip:AddDoubleLine(" Profit / Craft (".. tooltipData.baseItemAmount .." Items):", CraftSimUTIL:FormatMoney(profitByCraft, true, relativeValue), 0.43, 0.57, 0.89)
+        GameTooltip:AddDoubleLine(" Crafting costs with last used material combination:", CraftSimUTIL:FormatMoney(craftingCostPerCraft), 0.43, 0.57, 0.89, 1, 1, 1)
 
         if not CraftSimOptions.detailedCraftingInfoTooltip then
             return
         end
 
-        for _, reagent in pairs(recipeData.reagents) do
+        -- TODO: show last sync?
+
+        for _, reagent in pairs(tooltipData.reagents) do
             local combinationText = ""
             local priceText = ""
 
