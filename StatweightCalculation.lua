@@ -75,7 +75,7 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
         local totalReagentAllocationsByQuality = {}
         for reagentIndex, reagentData in pairs(recipeData.reagents) do
             if reagentData.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
-                    totalReagentAllocationsByQuality[reagentIndex] = CopyTable(reagentData.itemsInfo)
+                totalReagentAllocationsByQuality[reagentIndex] = CopyTable(reagentData.itemsInfo)
                     local totalAllocations = 0
                     for _, itemInfo in pairs(totalReagentAllocationsByQuality[reagentIndex]) do
                         totalAllocations = totalAllocations + itemInfo.allocations

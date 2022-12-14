@@ -130,6 +130,14 @@ function CraftSimPRICEDATA:GetMinBuyoutByItemLink(itemLink, isReagent)
 end
 
 function CraftSimPRICEDATA:GetLowestCostQualityIDByItemsInfo(itemsInfo)
+    -- TODO: refactor spaghetti
+    if not itemsInfo[1].minBuyout then
+        --populate with minbuyout info
+        for _, itemInfo in pairs(itemsInfo) do
+            itemInfo.minBuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemInfo.itemID, true)
+        end
+    end
+
     local lowestQualityID = 1
     local lowestMinBuyout = itemsInfo[1].minBuyout
     for qualityID, itemInfo in pairs(itemsInfo) do

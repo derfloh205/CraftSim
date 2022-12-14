@@ -139,7 +139,6 @@ end
 function addon:TriggerModulesByRecipeType()
 
 	if CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate then
-		print("prevent loop by vellum update..")
 		CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
 		return
 	end
