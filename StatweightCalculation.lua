@@ -3,13 +3,14 @@ CraftSimSTATS = {}
 local numCrafts = 1000000
 local statIncreaseFactor = 5
 
-function CraftSimSTATS:GetQualityThresholds(maxQuality, recipeDifficulty)
+function CraftSimSTATS:GetQualityThresholds(maxQuality, recipeDifficulty, breakPointOffset)
+    local offset = breakPointOffset and 1 or 0
     if maxQuality == 1 then
         return {}
     elseif maxQuality == 3 then
-        return {recipeDifficulty*0.5, recipeDifficulty}
+        return {recipeDifficulty*0.5 + offset, recipeDifficulty + offset}
     elseif maxQuality == 5 then
-        return {recipeDifficulty*0.2, recipeDifficulty*0.5, recipeDifficulty*0.8, recipeDifficulty}
+        return {recipeDifficulty*0.2 + offset, recipeDifficulty*0.5 + offset, recipeDifficulty*0.8 + offset, recipeDifficulty + offset}
     end
 end
 
@@ -178,9 +179,9 @@ function CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe(recipeData, pric
 	return statweights
 end
 
-function CraftSimSTATS:GetExpectedQualityBySkill(recipeData, skill)
+function CraftSimSTATS:GetExpectedQualityBySkill(recipeData, skill, breakPointOffset)
     local expectedQuality = 1
-    local thresholds = CraftSimSTATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
+    local thresholds = CraftSimSTATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty, breakPointOffset)
 
     for _, threshold in pairs(thresholds) do
         if skill > threshold then

@@ -198,7 +198,7 @@ function CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeTy
         recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE and 
         recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
         modifiedRecipeData.stats.skill = modifiedRecipeData.stats.skill + statChanges.skill
-        local expectedQualityWithItems = CraftSimSTATS:GetExpectedQualityBySkill(modifiedRecipeData, modifiedRecipeData.stats.skill)
+        local expectedQualityWithItems = CraftSimSTATS:GetExpectedQualityBySkill(modifiedRecipeData, modifiedRecipeData.stats.skill, true)
         --print("expectedQ with Items: " .. tostring(expectedQualityWithItems))
         local oldexpected = modifiedRecipeData.expectedQuality
         modifiedRecipeData.expectedQuality = expectedQualityWithItems
@@ -233,6 +233,10 @@ function CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
     bestSimulation.statDiff = {}
     if bestSimulation.modifiedRecipeData.stats.inspiration ~= nil then
         bestSimulation.statDiff.inspiration = bestSimulation.modifiedRecipeData.stats.inspiration.percent - recipeData.stats.inspiration.percent
+
+        if recipeData.stats.inspiration.bonusskill then
+            bestSimulation.statDiff.inspirationBonusskill = bestSimulation.modifiedRecipeData.stats.inspiration.bonusskill - recipeData.stats.inspiration.bonusskill
+        end
     end
     if bestSimulation.modifiedRecipeData.stats.resourcefulness ~= nil then
         bestSimulation.statDiff.resourcefulness = bestSimulation.modifiedRecipeData.stats.resourcefulness.percent - recipeData.stats.resourcefulness.percent

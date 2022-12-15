@@ -230,6 +230,11 @@ function CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 	local parsedSkill = 0
 	local parsedInspirationSkillBonusPercent = 0
 	local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
+	-- For now there is only inspiration and resourcefulness as enchant?
+	local parsedEnchantingStats = {
+		inspiration = 0,
+		resourcefulness = 0
+	}
 	for lineNum, line in pairs(tooltipData.lines) do
 		for argNum, arg in pairs(line.args) do
 			if arg.stringVal and string.find(arg.stringVal, "Equip:") then -- TODO: Localization differences? 
@@ -240,8 +245,17 @@ function CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 				--
 				parsedInspirationSkillBonusPercent = tonumber(string.match(arg.stringVal, "by (%d+)%%"))
 			end
+			if arg.stringVal and string.find(arg.stringVal, "Enchanted:") then
+				if string.find(arg.stringVal, "Inspiration") then
+					parsedEnchantingStats.inspiration = tonumber(string.match(arg.stringVal, "%+(%d+)"))
+				elseif string.find(arg.stringVal, "Resourcefulness") then
+					parsedEnchantingStats.resourcefulness = tonumber(string.match(arg.stringVal, "%+(%d+)"))
+				end
+			end
 		end
 	end
+	stats.inspiration = (stats.inspiration or 0) + parsedEnchantingStats.inspiration
+	stats.resourcefulness = (stats.resourcefulness or 0) + parsedEnchantingStats.resourcefulness
 
 	stats.skill = parsedSkill
 	stats.inspirationBonusSkillPercent = parsedInspirationSkillBonusPercent
