@@ -59,12 +59,12 @@ function CraftSimOPTIONS:InitOptionsFrame()
     AccountSyncTab.canBeEnabled = true
 
     local tsmPriceKeys = {"DBRecent", "DBMarket", "DBMinbuyout"}
-    CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownMaterials", TSMTab.content ,"TSM Price Source Key Materials", 0, -50, 200, tsmPriceKeys, 
+    CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownMaterials", TSMTab.content, TSMTab.content ,"TSM Price Source Key Materials", 0, -50, 200, tsmPriceKeys, 
     function(arg1) 
         CraftSimOptions.tsmPriceKeyMaterials = arg1
     end, CraftSimOptions.tsmPriceKeyMaterials)
 
-    CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownCraftedItems", TSMTab.content ,"TSM Price Source Key Crafted Items", 0, -100, 200, tsmPriceKeys, 
+    CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownCraftedItems", TSMTab.content, TSMTab.content ,"TSM Price Source Key Crafted Items", 0, -100, 200, tsmPriceKeys, 
     function(arg1) 
         CraftSimOptions.tsmPriceKeyItems = arg1
     end, CraftSimOptions.tsmPriceKeyItems)
@@ -75,7 +75,7 @@ function CraftSimOPTIONS:InitOptionsFrame()
 
     local priceSourceAddons = CraftSimPriceAPIs:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
-        CraftSimFRAME:initDropdownMenu("CraftSimPriceSourcesDropdown", generalTab.content, "Price Source", 0, -50, 200, priceSourceAddons, 
+        CraftSimFRAME:initDropdownMenu("CraftSimPriceSourcesDropdown", generalTab.content, generalTab.content, "Price Source", 0, -50, 200, priceSourceAddons, 
         function(arg1) 
             CraftSimPriceAPIs:SwitchAPIByAddonName(arg1)
             CraftSimOptions.priceSource = arg1

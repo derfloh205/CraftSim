@@ -1,34 +1,30 @@
 CraftSimFRAME = {}
 
 function CraftSimFRAME:InitStatWeightFrame()
-	local frame = CreateFrame("frame", "CraftSimDetailsFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
-    CraftSimFRAME:makeFrameMoveable(frame)
-	frame:SetPoint("BOTTOM",  ProfessionsFrame.CraftingPage.SchematicForm.Details, 0, -80)
-	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-	frame:SetBackdrop({
-		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-		edgeSize = 16,
-		insets = { left = 8, right = 6, top = 8, bottom = 8 },
-	})
-	frame:SetSize(270, 100)
+    local frame = CraftSimFRAME:CreateCraftSimFrame(
+        "CraftSimDetailsFrame", 
+        "CraftSim Statweights", 
+        ProfessionsFrame.CraftingPage.SchematicForm,
+        ProfessionsFrame.CraftingPage.SchematicForm.Details, 
+        "TOP", 
+        "BOTTOM", 
+        0, 
+        0, 
+        270, 
+        100)
 
-	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.title:SetPoint("CENTER", frame, "CENTER", 0, 27)
-	frame.title:SetText("CraftSim Statweights")
+	frame.content.statText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.content.statText:SetPoint("LEFT", frame.content, "LEFT", 15, -5)
 
-	frame.statText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.statText:SetPoint("LEFT", frame, "LEFT", 15, -5)
-
-	frame.valueText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.valueText:SetPoint("RIGHT", frame, "RIGHT", -10, -5)
+	frame.content.valueText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.content.valueText:SetPoint("RIGHT", frame.content, "RIGHT", -10, -5)
 	frame:Hide()
 end
 
 function CraftSimFRAME:UpdateStatWeightFrameText(priceData, statWeights)
     if statWeights == nil then
-        CraftSimDetailsFrame.statText:SetText("")
-        CraftSimDetailsFrame.valueText:SetText("")
+        CraftSimDetailsFrame.content.statText:SetText("")
+        CraftSimDetailsFrame.content.valueText:SetText("")
     else
         local statText = ""
         local valueText = ""
@@ -50,8 +46,8 @@ function CraftSimFRAME:UpdateStatWeightFrameText(priceData, statWeights)
             statText = statText .. "Resourcefulness:"
             valueText = valueText .. CraftSimUTIL:FormatMoney(statWeights.resourcefulness)
         end
-        CraftSimDetailsFrame.statText:SetText(statText)
-        CraftSimDetailsFrame.valueText:SetText(valueText)
+        CraftSimDetailsFrame.content.statText:SetText(statText)
+        CraftSimDetailsFrame.content.valueText:SetText(valueText)
     end
 end
 
@@ -78,54 +74,50 @@ function CraftSimFRAME:InitPriceDataWarningFrame()
 end
 
 function CraftSimFRAME:InitBestAllocationsFrame()
-    local frame = CreateFrame("frame", "CraftSimReagentHintFrame", ProfessionsFrame.CraftingPage.SchematicForm.Reagents, "BackdropTemplate")
+    local frame = CraftSimFRAME:CreateCraftSimFrame(
+        "CraftSimReagentHintFrame", 
+        "CraftSim Min Cost Material", 
+        ProfessionsFrame.CraftingPage.SchematicForm.Reagents, 
+        ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, 
+        "TOP", 
+        "TOP", 
+        0, 
+        0, 
+        270, 
+        200)
 
-    CraftSimFRAME:makeFrameMoveable(frame)
-
-    frame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "BOTTOM", 0, 0)
-	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-	frame:SetBackdrop({
-		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-		edgeSize = 16,
-		insets = { left = 8, right = 6, top = 8, bottom = 8 },
-	})
-	frame:SetSize(270, 200)
     local contentOffsetY = -15
-	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.title:SetPoint("TOP", frame, "TOP", 0, contentOffsetY)
-	frame.title:SetText("Minimum cost to reach quality")
 
-    frame.qualityText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.qualityText:SetPoint("TOP", frame.title, "TOP", 0, -20)
-	frame.qualityText:SetText("Highest Quality: ")
+    frame.content.qualityText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.content.qualityText:SetPoint("TOP", frame.title, "TOP", 0, -20)
+	frame.content.qualityText:SetText("Highest Quality: ")
 
-    frame.qualityIcon = CraftSimFRAME:CreateQualityIcon(frame, 25, 25, frame.qualityText, "LEFT", "RIGHT", 3, 0)
+    frame.content.qualityIcon = CraftSimFRAME:CreateQualityIcon(frame.content, 25, 25, frame.content.qualityText, "LEFT", "RIGHT", 3, 0)
 
-    frame.allocateButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame, "UIPanelButtonTemplate")
-	frame.allocateButton:SetSize(50, 25)
-	frame.allocateButton:SetPoint("TOP", frame.qualityText, "TOP", 0, -20)	
-	frame.allocateButton:SetText("Assign")
+    frame.content.allocateButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame.content, "UIPanelButtonTemplate")
+	frame.content.allocateButton:SetSize(50, 25)
+	frame.content.allocateButton:SetPoint("TOP", frame.content.qualityText, "TOP", 0, -20)	
+	frame.content.allocateButton:SetText("Assign")
 
-    frame.infoText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.infoText:SetPoint("CENTER", frame, "CENTER", 0, 0)
-    frame.infoText.NoCombinationFound = "No combination found \nto increase quality"
-    frame.infoText.SameCombination = "Best combination assigned"
-	frame.infoText:SetText(frame.infoText.NoCombinationFound)
+    frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.content.infoText:SetPoint("CENTER", frame.content, "CENTER", 0, 0)
+    frame.content.infoText.NoCombinationFound = "No combination found \nto increase quality"
+    frame.content.infoText.SameCombination = "Best combination assigned"
+	frame.content.infoText:SetText(frame.content.infoText.NoCombinationFound)
 
     local iconsOffsetY = -30
     local iconsSpacingY = 25
 
-    frame.reagentFrames = {}
-    frame.reagentFrames.rows = {}
-    frame.reagentFrames.numReagents = 0
+    frame.content.reagentFrames = {}
+    frame.content.reagentFrames.rows = {}
+    frame.content.reagentFrames.numReagents = 0
     local baseX = -20
     local iconSize = 30
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, frame.allocateButton, iconsOffsetY, iconSize))
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, frame.allocateButton, iconsOffsetY - iconsSpacingY, iconSize))
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, frame.allocateButton, iconsOffsetY - iconsSpacingY*2, iconSize))
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, frame.allocateButton, iconsOffsetY - iconsSpacingY*3, iconSize))
-    table.insert(frame.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame, frame.allocateButton, iconsOffsetY - iconsSpacingY*4, iconSize))
+    table.insert(frame.content.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY, iconSize))
+    table.insert(frame.content.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY, iconSize))
+    table.insert(frame.content.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*2, iconSize))
+    table.insert(frame.content.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*3, iconSize))
+    table.insert(frame.content.reagentFrames.rows, CraftSimFRAME:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*4, iconSize))
 
     frame:Hide()
 end
@@ -180,31 +172,31 @@ end
 -- DEBUG
 function CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation)
     if bestAllocation == nil or isSameAllocation then
-        CraftSimReagentHintFrame.infoText:Show()
+        CraftSimReagentHintFrame.content.infoText:Show()
         if isSameAllocation then
-            CraftSimReagentHintFrame.infoText:SetText(CraftSimReagentHintFrame.infoText.SameCombination)
+            CraftSimReagentHintFrame.content.infoText:SetText(CraftSimReagentHintFrame.content.infoText.SameCombination)
         else
-            CraftSimReagentHintFrame.infoText:SetText(CraftSimReagentHintFrame.infoText.NoCombinationFound)
+            CraftSimReagentHintFrame.content.infoText:SetText(CraftSimReagentHintFrame.content.infoText.NoCombinationFound)
         end
 
-        CraftSimReagentHintFrame.qualityIcon:Hide()
-        CraftSimReagentHintFrame.qualityText:Hide()
-        CraftSimReagentHintFrame.allocateButton:Hide()
+        CraftSimReagentHintFrame.content.qualityIcon:Hide()
+        CraftSimReagentHintFrame.content.qualityText:Hide()
+        CraftSimReagentHintFrame.content.allocateButton:Hide()
 
         for i = 1, 5, 1 do
-            CraftSimReagentHintFrame.reagentFrames.rows[i]:Hide()
+            CraftSimReagentHintFrame.content.reagentFrames.rows[i]:Hide()
         end
 
         return
     else
-        CraftSimReagentHintFrame.infoText:Hide()
-        CraftSimReagentHintFrame.qualityIcon:Show()
-        CraftSimReagentHintFrame.qualityText:Show()
-        CraftSimReagentHintFrame.allocateButton:Show()
-        CraftSimReagentHintFrame.allocateButton:SetEnabled(hasItems)
+        CraftSimReagentHintFrame.content.infoText:Hide()
+        CraftSimReagentHintFrame.content.qualityIcon:Show()
+        CraftSimReagentHintFrame.content.qualityText:Show()
+        CraftSimReagentHintFrame.content.allocateButton:Show()
+        CraftSimReagentHintFrame.content.allocateButton:SetEnabled(hasItems)
         if hasItems then
-            CraftSimReagentHintFrame.allocateButton:SetText("Assign")
-            CraftSimReagentHintFrame.allocateButton:SetScript("OnClick", function(self) 
+            CraftSimReagentHintFrame.content.allocateButton:SetText("Assign")
+            CraftSimReagentHintFrame.content.allocateButton:SetScript("OnClick", function(self) 
                 -- uncheck best quality box if checked
                 local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
                 if bestQBox:GetChecked() then
@@ -213,76 +205,74 @@ function CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceDa
                 CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeType, priceData, bestAllocation)
             end)
         else
-            CraftSimReagentHintFrame.allocateButton:SetText("Missing materials")
+            CraftSimReagentHintFrame.content.allocateButton:SetText("Missing materials")
         end
-        CraftSimReagentHintFrame.allocateButton:SetSize(CraftSimReagentHintFrame.allocateButton:GetTextWidth() + 15, 25)
+        CraftSimReagentHintFrame.content.allocateButton:SetSize(CraftSimReagentHintFrame.content.allocateButton:GetTextWidth() + 15, 25)
     end
-    CraftSimReagentHintFrame.qualityIcon.SetQuality(bestAllocation.qualityReached)
+    CraftSimReagentHintFrame.content.qualityIcon.SetQuality(bestAllocation.qualityReached)
     for frameIndex = 1, 5, 1 do
         local allocation = bestAllocation.allocations[frameIndex]
         if allocation ~= nil then
             local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(allocation.allocations[1].itemID) 
-            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
-            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
-            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
-            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q1text:SetText(allocation.allocations[1].allocations)
-            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q2text:SetText(allocation.allocations[2].allocations)
-            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex].q3text:SetText(allocation.allocations[3].allocations)
+            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
+            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
+            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
+            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q1text:SetText(allocation.allocations[1].allocations)
+            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q2text:SetText(allocation.allocations[2].allocations)
+            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(allocation.allocations[3].allocations)
 
-            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex]:Show()
+            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex]:Show()
         else
-            CraftSimReagentHintFrame.reagentFrames.rows[frameIndex]:Hide()
+            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex]:Hide()
         end
         
     end
 end
 
 function CraftSimFRAME:InitCostOverviewFrame()
-    local frame = CreateFrame("frame", "CraftSimCostOverviewFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
-    CraftSimFRAME:makeFrameMoveable(frame)
-	frame:SetPoint("TOP",  CraftSimSimFrame, "BOTTOM", 0, 10)
-	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-	frame:SetBackdrop({
-		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-		edgeSize = 16,
-		insets = { left = 8, right = 6, top = 8, bottom = 8 },
-	})
-	frame:SetSize(250, 270)
+    local frame = CraftSimFRAME:CreateCraftSimFrame(
+        "CraftSimCostOverviewFrame", 
+        "CraftSim Cost Overview", 
+        ProfessionsFrame.CraftingPage.SchematicForm,
+        CraftSimSimFrame, 
+        "TOP", 
+        "BOTTOM", 
+        0, 
+        10, 
+        250, 
+        270)
+
     local contentOffsetY = -20
     local textSpacingY = -20
-	frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.title:SetPoint("TOP", frame, "TOP", 0, contentOffsetY)
-	frame.title:SetText("CraftSim Cost Overview")
 
-    frame.minCraftingCostsTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.minCraftingCostsTitle:SetPoint("TOP", frame.title, "TOP", 0, textSpacingY)
-    frame.minCraftingCostsTitle:SetText("Min Crafting Costs")
+    frame.content.minCraftingCostsTitle = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.content.minCraftingCostsTitle:SetPoint("TOP", frame.title, "TOP", 0, textSpacingY)
+    frame.content.minCraftingCostsTitle:SetText("Min Crafting Costs")
 
-    frame.minCraftingCosts = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.minCraftingCosts:SetPoint("TOP", frame.minCraftingCostsTitle, "TOP", 0, textSpacingY)
-    frame.minCraftingCosts:SetText("???")
+    frame.content.minCraftingCosts = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.content.minCraftingCosts:SetPoint("TOP", frame.content.minCraftingCostsTitle, "TOP", 0, textSpacingY)
+    frame.content.minCraftingCosts:SetText("???")
 
-    frame.craftingCostsTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.craftingCostsTitle:SetPoint("TOP", frame.minCraftingCosts, "TOP", 0, textSpacingY)
-    frame.craftingCostsTitle:SetText("Current Crafting Costs")
-    frame.craftingCostsTitle.SwitchAnchor = function(newAnchor) 
-        frame.craftingCostsTitle:SetPoint("TOP", newAnchor, "TOP", 0, textSpacingY)
+    frame.content.craftingCostsTitle = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.content.craftingCostsTitle:SetPoint("TOP", frame.content.minCraftingCosts, "TOP", 0, textSpacingY)
+    frame.content.craftingCostsTitle:SetText("Current Crafting Costs")
+    frame.content.craftingCostsTitle.SwitchAnchor = function(newAnchor) 
+        frame.content.craftingCostsTitle:SetPoint("TOP", newAnchor, "TOP", 0, textSpacingY)
     end
 
-    frame.craftingCosts = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.craftingCosts:SetPoint("TOP", frame.craftingCostsTitle, "TOP", 0, textSpacingY)
-    frame.craftingCosts:SetText("???")
+    frame.content.craftingCosts = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.content.craftingCosts:SetPoint("TOP", frame.content.craftingCostsTitle, "TOP", 0, textSpacingY)
+    frame.content.craftingCosts:SetText("???")
     
 
-    frame.resultProfitsTitle = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.resultProfitsTitle:SetPoint("TOP", frame.craftingCosts, "TOP", 0, textSpacingY - 10)
-    frame.resultProfitsTitle:SetText("Profit By Quality")
+    frame.content.resultProfitsTitle = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.content.resultProfitsTitle:SetPoint("TOP", frame.content.craftingCosts, "TOP", 0, textSpacingY - 10)
+    frame.content.resultProfitsTitle:SetText("Profit By Quality")
 
-    local function createProfitFrame(offsetY, parent, hookFrame)
+    local function createProfitFrame(offsetY, parent, newHookFrame)
         local profitFrame = CreateFrame("frame", nil, parent)
         profitFrame:SetSize(parent:GetWidth(), 25)
-        profitFrame:SetPoint("TOP", hookFrame, "TOP", 0, offsetY)
+        profitFrame:SetPoint("TOP", newHookFrame, "TOP", 0, offsetY)
         profitFrame.icon = CraftSimFRAME:CreateQualityIcon(profitFrame, 20, 20, profitFrame, "CENTER", "CENTER", -75, 0)
 
         profitFrame.text = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -295,12 +285,12 @@ function CraftSimFRAME:InitCostOverviewFrame()
 
     local baseY = -20
     local profitFramesSpacingY = -20
-    frame.profitFrames = {}
-    table.insert(frame.profitFrames, createProfitFrame(baseY, frame, frame.resultProfitsTitle))
-    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame, frame.resultProfitsTitle))
-    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*2, frame, frame.resultProfitsTitle))
-    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*3, frame, frame.resultProfitsTitle))
-    table.insert(frame.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame, frame.resultProfitsTitle))
+    frame.content.profitFrames = {}
+    table.insert(frame.content.profitFrames, createProfitFrame(baseY, frame.content, frame.content.resultProfitsTitle))
+    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame.content, frame.content.resultProfitsTitle))
+    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*2, frame.content, frame.content.resultProfitsTitle))
+    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*3, frame.content, frame.content.resultProfitsTitle))
+    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame.content, frame.content.resultProfitsTitle))
     
 
 	frame:Hide()
@@ -309,21 +299,21 @@ end
 function CraftSimFRAME:FillCostOverview(craftingCosts, minCraftingCosts, profitPerQuality, currentQuality)
 
     if craftingCosts == minCraftingCosts then
-        CraftSimCostOverviewFrame.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
-        CraftSimCostOverviewFrame.craftingCostsTitle.SwitchAnchor(CraftSimCostOverviewFrame.title)
-        CraftSimCostOverviewFrame.minCraftingCosts:Hide()
-        CraftSimCostOverviewFrame.minCraftingCostsTitle:Hide()
+        CraftSimCostOverviewFrame.content.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
+        CraftSimCostOverviewFrame.content.craftingCostsTitle.SwitchAnchor(CraftSimCostOverviewFrame.title)
+        CraftSimCostOverviewFrame.content.minCraftingCosts:Hide()
+        CraftSimCostOverviewFrame.content.minCraftingCostsTitle:Hide()
     else
-        CraftSimCostOverviewFrame.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
-        CraftSimCostOverviewFrame.minCraftingCosts:SetText(CraftSimUTIL:FormatMoney(minCraftingCosts))
-        CraftSimCostOverviewFrame.craftingCostsTitle.SwitchAnchor(CraftSimCostOverviewFrame.minCraftingCosts)
-        CraftSimCostOverviewFrame.minCraftingCosts:Show()
-        CraftSimCostOverviewFrame.minCraftingCostsTitle:Show()
+        CraftSimCostOverviewFrame.content.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
+        CraftSimCostOverviewFrame.content.minCraftingCosts:SetText(CraftSimUTIL:FormatMoney(minCraftingCosts))
+        CraftSimCostOverviewFrame.content.craftingCostsTitle.SwitchAnchor(CraftSimCostOverviewFrame.content.minCraftingCosts)
+        CraftSimCostOverviewFrame.content.minCraftingCosts:Show()
+        CraftSimCostOverviewFrame.content.minCraftingCostsTitle:Show()
     end
 
-    CraftSimFRAME:ToggleFrame(CraftSimCostOverviewFrame.resultProfitsTitle, #profitPerQuality > 0)
+    CraftSimFRAME:ToggleFrame(CraftSimCostOverviewFrame.content.resultProfitsTitle, #profitPerQuality > 0)
 
-    for index, profitFrame in pairs(CraftSimCostOverviewFrame.profitFrames) do
+    for index, profitFrame in pairs(CraftSimCostOverviewFrame.content.profitFrames) do
         if profitPerQuality[index] ~= nil then
             profitFrame.icon.SetQuality(currentQuality + index - 1)
             local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
@@ -336,83 +326,84 @@ function CraftSimFRAME:FillCostOverview(craftingCosts, minCraftingCosts, profitP
 end
 
 function CraftSimFRAME:InitGearSimFrame()
-    local frame = CreateFrame("frame", "CraftSimSimFrame", ProfessionsFrame.CraftingPage.SchematicForm, "BackdropTemplate")
-    CraftSimFRAME:makeFrameMoveable(frame)
-	frame:SetPoint("TOPLEFT",  ProfessionsFrame.CloseButton, "TOPRIGHT", -5, 3)
-	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-	frame:SetBackdrop({
-		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-		edgeSize = 16,
-		insets = { left = 8, right = 6, top = 8, bottom = 8 },
-	})
-	frame:SetSize(250, 300)
+    local frame = CraftSimFRAME:CreateCraftSimFrame(
+        "CraftSimSimFrame", 
+        "CraftSim Top Gear", 
+        ProfessionsFrame.CraftingPage.SchematicForm,
+        ProfessionsFrame.CloseButton, 
+        "TOPLEFT", 
+        "TOPRIGHT", 
+        -5, 
+        3, 
+        250, 
+        300)
+
     local contentOffsetY = -20
     local iconsOffsetY = 80
-    frame.gear1Icon = CraftSimFRAME:CreateIcon(frame, -45, contentOffsetY + iconsOffsetY, CraftSimCONST.EMPTY_SLOT_TEXTURE, 40, 40)
-    frame.gear2Icon = CraftSimFRAME:CreateIcon(frame,  -0, contentOffsetY + iconsOffsetY, CraftSimCONST.EMPTY_SLOT_TEXTURE, 40, 40)
-    frame.toolIcon = CraftSimFRAME:CreateIcon(frame, 50, contentOffsetY + iconsOffsetY, CraftSimCONST.EMPTY_SLOT_TEXTURE, 40, 40)
+    frame.content.gear1Icon = CraftSimFRAME:CreateIcon(frame.content, -45, contentOffsetY + iconsOffsetY, CraftSimCONST.EMPTY_SLOT_TEXTURE, 40, 40)
+    frame.content.gear2Icon = CraftSimFRAME:CreateIcon(frame.content,  -0, contentOffsetY + iconsOffsetY, CraftSimCONST.EMPTY_SLOT_TEXTURE, 40, 40)
+    frame.content.toolIcon = CraftSimFRAME:CreateIcon(frame.content, 50, contentOffsetY + iconsOffsetY, CraftSimCONST.EMPTY_SLOT_TEXTURE, 40, 40)
 
-    frame.equipButton = CreateFrame("Button", "CraftSimTopGearEquipButton", frame, "UIPanelButtonTemplate")
-	frame.equipButton:SetSize(50, 25)
-	frame.equipButton:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 40)	
-	frame.equipButton:SetText("Equip")
-    frame.equipButton:SetScript("OnClick", function(self) 
+    frame.content.equipButton = CreateFrame("Button", "CraftSimTopGearEquipButton", frame.content, "UIPanelButtonTemplate")
+	frame.content.equipButton:SetSize(50, 25)
+	frame.content.equipButton:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 40)	
+	frame.content.equipButton:SetText("Equip")
+    frame.content.equipButton:SetScript("OnClick", function(self) 
         CraftSimGEARSIM:EquipTopGear()
     end)
 
-    frame.simModeDropdown = 
-    CraftSimFRAME:initDropdownMenu("CraftSimTopGearSimMode", frame, "CraftSim Top Gear", 0, contentOffsetY - 10, 120, {"Placeholder"}, function(arg1) 
+    frame.content.simModeDropdown = 
+    CraftSimFRAME:initDropdownMenu("CraftSimTopGearSimMode", frame.content, frame.title, "", 0, contentOffsetY, 120, {"Placeholder"}, function(arg1) 
         CraftSimOptions.topGearMode = arg1
         CraftSimGEARSIM:SimulateBestProfessionGearCombination(CraftSimTopGearSimMode.recipeData, CraftSimTopGearSimMode.recipeType, CraftSimTopGearSimMode.priceData)
     end, "Placeholder")
-    frame.simModeDropdown.isSimModeDropdown = true
-    frame.profitText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.profitText:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY + 10)
+    frame.content.simModeDropdown.isSimModeDropdown = true
+    frame.content.profitText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.content.profitText:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 10)
 
-    frame.statDiff = CreateFrame("frame", nil, frame)
-    frame.statDiff:SetSize(200, 100)
-    frame.statDiff:SetPoint("CENTER", frame, "CENTER", 0, contentOffsetY - 50)
+    frame.content.statDiff = CreateFrame("frame", nil, frame.content)
+    frame.content.statDiff:SetSize(200, 100)
+    frame.content.statDiff:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY - 50)
 
     local statTxtSpacingY = -15
-    frame.statDiff.inspiration = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.statDiff.inspiration:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*1)
-    frame.statDiff.inspiration:SetText("Inspiration: ")
+    frame.content.statDiff.inspiration = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.content.statDiff.inspiration:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*1)
+    frame.content.statDiff.inspiration:SetText("Inspiration: ")
 
-    frame.statDiff.multicraft = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.statDiff.multicraft:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*2)
-    frame.statDiff.multicraft:SetText("Multicraft: ")
+    frame.content.statDiff.multicraft = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.content.statDiff.multicraft:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*2)
+    frame.content.statDiff.multicraft:SetText("Multicraft: ")
 
-    frame.statDiff.resourcefulness = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.statDiff.resourcefulness:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*3)
-    frame.statDiff.resourcefulness:SetText("Resourcefulness: ")
+    frame.content.statDiff.resourcefulness = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.content.statDiff.resourcefulness:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*3)
+    frame.content.statDiff.resourcefulness:SetText("Resourcefulness: ")
 
-    frame.statDiff.craftingspeed = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.statDiff.craftingspeed:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*4)
-    frame.statDiff.craftingspeed:SetText("Crafting Speed: ")
+    frame.content.statDiff.craftingspeed = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.content.statDiff.craftingspeed:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*4)
+    frame.content.statDiff.craftingspeed:SetText("Crafting Speed: ")
 
-    frame.statDiff.skill = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.statDiff.skill:SetPoint("TOP", frame.statDiff, "TOP", 0, statTxtSpacingY*5)
-    frame.statDiff.skill:SetText("Skill: ")
+    frame.content.statDiff.skill = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.content.statDiff.skill:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*5)
+    frame.content.statDiff.skill:SetText("Skill: ")
 
-    frame.statDiff.quality = frame.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.statDiff.quality:SetPoint("TOP", frame.statDiff, "TOP", -5, statTxtSpacingY*6)
-    frame.statDiff.quality:SetText("Quality: ")
+    frame.content.statDiff.quality = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.content.statDiff.quality:SetPoint("TOP", frame.content.statDiff, "TOP", -5, statTxtSpacingY*6)
+    frame.content.statDiff.quality:SetText("Quality: ")
 
-    frame.statDiff.qualityIcon = CraftSimFRAME:CreateQualityIcon(frame, 20, 20, frame.statDiff.quality, "LEFT", "RIGHT", 3, 0)
+    frame.content.statDiff.qualityIcon = CraftSimFRAME:CreateQualityIcon(frame.content, 20, 20, frame.content.statDiff.quality, "LEFT", "RIGHT", 3, 0)
 
 	frame:Hide()
 end
 
 function CraftSimFRAME:ShowComboItemIcons(professionGearCombo)
-    local iconButtons = {CraftSimSimFrame.toolIcon, CraftSimSimFrame.gear1Icon, CraftSimSimFrame.gear2Icon}
+    local iconButtons = {CraftSimSimFrame.content.toolIcon, CraftSimSimFrame.content.gear1Icon, CraftSimSimFrame.content.gear2Icon}
     for index, iconButton in pairs(iconButtons) do
         if not professionGearCombo[index].isEmptySlot then
             local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(professionGearCombo[index].itemLink) 
             iconButton:SetNormalTexture(itemTexture)
             iconButton:SetScript("OnEnter", function(self) 
                 local itemName, ItemLink = GameTooltip:GetItem()
-                GameTooltip:SetOwner(CraftSimSimFrame, "ANCHOR_RIGHT");
+                GameTooltip:SetOwner(CraftSimSimFrame.content, "ANCHOR_RIGHT");
                 if ItemLink ~= professionGearCombo[index].itemLink then
                     -- to not set it again and hide the tooltip..
                     GameTooltip:SetHyperlink(professionGearCombo[index].itemLink)
@@ -459,23 +450,23 @@ end
 function CraftSimFRAME:FillSimResultData(bestSimulation, topGearMode)
     CraftSimFRAME:ShowComboItemIcons(bestSimulation.combo)
     if not CraftSimGEARSIM.IsEquipping then
-        CraftSimSimFrame.currentCombo = bestSimulation.combo
+        CraftSimSimFrame.content.currentCombo = bestSimulation.combo
     end
     -- TODO: maybe show in red or smth if negative
     if topGearMode == CraftSimCONST.GEAR_SIM_MODES.PROFIT then
-        CraftSimSimFrame.profitText:SetText("Ø Profit Difference\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff, true))
+        CraftSimSimFrame.content.profitText:SetText("Ø Profit Difference\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff, true))
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.MULTICRAFT then
-        CraftSimSimFrame.profitText:SetText("New Multicraft\n".. CraftSimUTIL:round(bestSimulation.multicraftPercent, 2) .. "%")
+        CraftSimSimFrame.content.profitText:SetText("New Multicraft\n".. CraftSimUTIL:round(bestSimulation.multicraftPercent, 2) .. "%")
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.CRAFTING_SPEED then
-        CraftSimSimFrame.profitText:SetText("New Crafting Speed\n".. CraftSimUTIL:round(bestSimulation.craftingspeedPercent, 2) .. "%")
+        CraftSimSimFrame.content.profitText:SetText("New Crafting Speed\n".. CraftSimUTIL:round(bestSimulation.craftingspeedPercent, 2) .. "%")
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.RESOURCEFULNESS then
-        CraftSimSimFrame.profitText:SetText("New Resourcefulness\n".. CraftSimUTIL:round(bestSimulation.resourcefulnessPercent, 2) .. "%")
+        CraftSimSimFrame.content.profitText:SetText("New Resourcefulness\n".. CraftSimUTIL:round(bestSimulation.resourcefulnessPercent, 2) .. "%")
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.INSPIRATION then
-        CraftSimSimFrame.profitText:SetText("New Inspiration\n".. CraftSimUTIL:round(bestSimulation.inspirationPercent, 2) .. "%")
+        CraftSimSimFrame.content.profitText:SetText("New Inspiration\n".. CraftSimUTIL:round(bestSimulation.inspirationPercent, 2) .. "%")
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.SKILL then
-        CraftSimSimFrame.profitText:SetText("New Skill\n".. bestSimulation.skill)
+        CraftSimSimFrame.content.profitText:SetText("New Skill\n".. bestSimulation.skill)
     else
-        CraftSimSimFrame.profitText:SetText("Unhandled Sim Mode")
+        CraftSimSimFrame.content.profitText:SetText("Unhandled Sim Mode")
     end
     CraftSimTopGearEquipButton:SetEnabled(true)
 
@@ -485,19 +476,19 @@ function CraftSimFRAME:FillSimResultData(bestSimulation, topGearMode)
         inspirationBonusSkillText = " (" .. prefix .. CraftSimUTIL:round(bestSimulation.statDiff.inspirationBonusskill, 0) .. " Bonus)"
     end
 
-    CraftSimSimFrame.statDiff.inspiration:SetText("Inspiration: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.inspiration, 2, "%") .. inspirationBonusSkillText)
-    CraftSimSimFrame.statDiff.multicraft:SetText("Multicraft: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.multicraft, 2, "%"))
-    CraftSimSimFrame.statDiff.resourcefulness:SetText("Resourcefulness: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.resourcefulness, 2, "%"))
-    CraftSimSimFrame.statDiff.craftingspeed:SetText("Crafting Speed: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.craftingspeed, 2, "%"))
-    CraftSimSimFrame.statDiff.skill:SetText("Skill: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.skill, 0))
+    CraftSimSimFrame.content.statDiff.inspiration:SetText("Inspiration: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.inspiration, 2, "%") .. inspirationBonusSkillText)
+    CraftSimSimFrame.content.statDiff.multicraft:SetText("Multicraft: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.multicraft, 2, "%"))
+    CraftSimSimFrame.content.statDiff.resourcefulness:SetText("Resourcefulness: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.resourcefulness, 2, "%"))
+    CraftSimSimFrame.content.statDiff.craftingspeed:SetText("Crafting Speed: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.craftingspeed, 2, "%"))
+    CraftSimSimFrame.content.statDiff.skill:SetText("Skill: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.skill, 0))
 
     if CraftSimTopGearSimMode.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE and CraftSimTopGearSimMode.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
-        CraftSimSimFrame.statDiff.qualityIcon.SetQuality(bestSimulation.modifiedRecipeData.expectedQuality)
-        CraftSimSimFrame.statDiff.quality:Show()
-        CraftSimSimFrame.statDiff.qualityIcon:Show()
+        CraftSimSimFrame.content.statDiff.qualityIcon.SetQuality(bestSimulation.modifiedRecipeData.expectedQuality)
+        CraftSimSimFrame.content.statDiff.quality:Show()
+        CraftSimSimFrame.content.statDiff.qualityIcon:Show()
     else
-        CraftSimSimFrame.statDiff.quality:Hide()
-        CraftSimSimFrame.statDiff.qualityIcon:Hide()
+        CraftSimSimFrame.content.statDiff.quality:Hide()
+        CraftSimSimFrame.content.statDiff.qualityIcon:Hide()
     end
 
 end
@@ -505,15 +496,15 @@ end
 function CraftSimFRAME:ClearResultData()
     CraftSimFRAME:ShowComboItemIcons({{isEmptySlot = true}, {isEmptySlot = true}, {isEmptySlot = true}})
     CraftSimTopGearEquipButton:SetEnabled(false)
-    CraftSimSimFrame.profitText:SetText("Top Gear equipped")
+    CraftSimSimFrame.content.profitText:SetText("Top Gear equipped")
 
-    CraftSimSimFrame.statDiff.inspiration:SetText("")
-    CraftSimSimFrame.statDiff.multicraft:SetText("")
-    CraftSimSimFrame.statDiff.resourcefulness:SetText("")
-    CraftSimSimFrame.statDiff.craftingspeed:SetText("")
-    CraftSimSimFrame.statDiff.skill:SetText("")
-    CraftSimSimFrame.statDiff.quality:Hide()
-    CraftSimSimFrame.statDiff.qualityIcon:Hide()
+    CraftSimSimFrame.content.statDiff.inspiration:SetText("")
+    CraftSimSimFrame.content.statDiff.multicraft:SetText("")
+    CraftSimSimFrame.content.statDiff.resourcefulness:SetText("")
+    CraftSimSimFrame.content.statDiff.craftingspeed:SetText("")
+    CraftSimSimFrame.content.statDiff.skill:SetText("")
+    CraftSimSimFrame.content.statDiff.quality:Hide()
+    CraftSimSimFrame.content.statDiff.qualityIcon:Hide()
 end
 
 function CraftSimFRAME:ToggleFrame(frame, visible)
@@ -524,10 +515,10 @@ function CraftSimFRAME:ToggleFrame(frame, visible)
     end
 end
 
-function CraftSimFRAME:initDropdownMenu(frameName, parent, label, offsetX, offsetY, width, list, clickCallback, defaultValue)
+function CraftSimFRAME:initDropdownMenu(frameName, parent, anchorFrame, label, offsetX, offsetY, width, list, clickCallback, defaultValue)
 	local dropDown = CreateFrame("Frame", frameName, parent, "UIDropDownMenuTemplate")
     dropDown.clickCallback = clickCallback
-	dropDown:SetPoint("TOP", parent, offsetX, offsetY)
+	dropDown:SetPoint("TOP", anchorFrame, offsetX, offsetY)
 	UIDropDownMenu_SetWidth(dropDown, width)
 	
 	CraftSimFRAME:initializeDropdown(dropDown, list, defaultValue)
@@ -594,12 +585,12 @@ function CraftSimFRAME:InitTabSystem(tabs)
 end
 
 function CraftSimFRAME:makeFrameMoveable(frame)
-	frame:SetMovable(true)
+	frame.hookFrame:SetMovable(true)
 	frame:SetScript("OnMouseDown", function(self, button)
-		self:StartMoving()
+		frame.hookFrame:StartMoving()
 		end)
 		frame:SetScript("OnMouseUp", function(self, button)
-		self:StopMovingOrSizing()
+		frame.hookFrame:StopMovingOrSizing()
 		end)
 end
 
@@ -628,6 +619,59 @@ function CraftSimFRAME:HandleAuctionatorOverlaps()
             AuctionatorCraftingInfoProfessionsFrame.SearchButton:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "TOPLEFT", 0, 25)
         end
     end
-    
+end
 
+function CraftSimFRAME:MakeCollapsable(frame, originalX, originalY)
+    frame.collapsed = false -- TODO: saved variable
+    frame.collapseButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame, "UIPanelButtonTemplate")
+	frame.collapseButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
+	frame.collapseButton:SetText("-")
+	frame.collapseButton:SetSize(frame.collapseButton:GetTextWidth() + 15, 20)
+
+    frame.collapseButton:SetScript("OnClick", function(self) 
+        if frame.collapsed then
+            frame.collapsed = false
+            -- restore
+            frame.collapseButton:SetText("-")
+            frame:SetSize(originalX, originalY)
+            frame.content:Show()
+        else
+            frame.collapsed = true
+            -- make smaller and hide content, only show frameTitle
+            frame:SetSize(originalX, 40)
+            frame.collapseButton:SetText("+")
+            frame.content:Hide()
+        end
+    end)
+end
+
+function CraftSimFRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY)
+    local hookFrame = CreateFrame("frame", nil, parent)
+    hookFrame:SetPoint(anchorA, anchorFrame, anchorB, offsetX, offsetY)
+    local frame = CreateFrame("frame", name, hookFrame, "BackdropTemplate")
+    frame.hookFrame = hookFrame
+    hookFrame:SetSize(sizeX, sizeY)
+    frame:SetSize(sizeX, sizeY)
+
+    frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	frame.title:SetPoint("TOP", frame, "TOP", 0, -15)
+	frame.title:SetText(title)
+    
+    frame:SetPoint("TOP",  hookFrame, "TOP", 0, 0)
+	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
+	frame:SetBackdrop({
+		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+		edgeSize = 16,
+		insets = { left = 8, right = 6, top = 8, bottom = 8 },
+	})
+
+    CraftSimFRAME:MakeCollapsable(frame, sizeX, sizeY)
+    CraftSimFRAME:makeFrameMoveable(frame)
+	
+    frame.content = CreateFrame("frame", nil, frame)
+    frame.content:SetPoint("TOP", frame, "TOP")
+    frame.content:SetSize(sizeX, sizeY)
+
+    return frame
 end

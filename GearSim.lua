@@ -303,7 +303,7 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
     if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
         CraftSimOptions.topGearMode = availableModes[1]
     end
-    CraftSimFRAME:initializeDropdown(CraftSimSimFrame.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
+    CraftSimFRAME:initializeDropdown(CraftSimSimFrame.content.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
 
     -- cache it
     CraftSimTopGearSimMode.recipeData = recipeData
