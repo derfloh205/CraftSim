@@ -11,7 +11,8 @@ function CraftSimFRAME:InitStatWeightFrame()
         0, 
         0, 
         270, 
-        100)
+        100, 
+        CraftSimCONST.FRAMES.STAT_WEIGHTS)
 
 	frame.content.statText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.content.statText:SetPoint("LEFT", frame.content, "LEFT", 15, -5)
@@ -84,7 +85,8 @@ function CraftSimFRAME:InitBestAllocationsFrame()
         0, 
         0, 
         270, 
-        200)
+        200,
+        CraftSimCONST.FRAMES.MATERIALS)
 
     local contentOffsetY = -15
 
@@ -240,7 +242,8 @@ function CraftSimFRAME:InitCostOverviewFrame()
         0, 
         10, 
         250, 
-        270)
+        270,
+        CraftSimCONST.FRAMES.COST_OVERVIEW)
 
     local contentOffsetY = -20
     local textSpacingY = -20
@@ -336,7 +339,8 @@ function CraftSimFRAME:InitGearSimFrame()
         -5, 
         3, 
         250, 
-        300)
+        300,
+        CraftSimCONST.FRAMES.TOP_GEAR)
 
     local contentOffsetY = -20
     local iconsOffsetY = 80
@@ -621,31 +625,40 @@ function CraftSimFRAME:HandleAuctionatorOverlaps()
     end
 end
 
-function CraftSimFRAME:MakeCollapsable(frame, originalX, originalY)
-    frame.collapsed = false -- TODO: saved variable
+function CraftSimFRAME:MakeCollapsable(frame, originalX, originalY, frameID)
+    frame.collapsed = false
     frame.collapseButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame, "UIPanelButtonTemplate")
 	frame.collapseButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
 	frame.collapseButton:SetText("-")
 	frame.collapseButton:SetSize(frame.collapseButton:GetTextWidth() + 15, 20)
+    frame.collapse = function(self) 
+        frame.collapsed = true
+        CraftSimCollapsedFrames[frameID] = true
+        -- make smaller and hide content, only show frameTitle
+        frame:SetSize(originalX, 40)
+        frame.collapseButton:SetText("+")
+        frame.content:Hide()
+    end
+
+    frame.decollapse = function(self) 
+        -- restore
+        frame.collapsed = false
+        CraftSimCollapsedFrames[frameID] = false
+        frame.collapseButton:SetText("-")
+        frame:SetSize(originalX, originalY)
+        frame.content:Show()
+    end
 
     frame.collapseButton:SetScript("OnClick", function(self) 
         if frame.collapsed then
-            frame.collapsed = false
-            -- restore
-            frame.collapseButton:SetText("-")
-            frame:SetSize(originalX, originalY)
-            frame.content:Show()
+            frame.decollapse()
         else
-            frame.collapsed = true
-            -- make smaller and hide content, only show frameTitle
-            frame:SetSize(originalX, 40)
-            frame.collapseButton:SetText("+")
-            frame.content:Hide()
+            frame.collapse()
         end
     end)
 end
 
-function CraftSimFRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY)
+function CraftSimFRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, frameID)
     local hookFrame = CreateFrame("frame", nil, parent)
     hookFrame:SetPoint(anchorA, anchorFrame, anchorB, offsetX, offsetY)
     local frame = CreateFrame("frame", name, hookFrame, "BackdropTemplate")
@@ -666,7 +679,7 @@ function CraftSimFRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anc
 		insets = { left = 8, right = 6, top = 8, bottom = 8 },
 	})
 
-    CraftSimFRAME:MakeCollapsable(frame, sizeX, sizeY)
+    CraftSimFRAME:MakeCollapsable(frame, sizeX, sizeY, frameID)
     CraftSimFRAME:makeFrameMoveable(frame)
 	
     frame.content = CreateFrame("frame", nil, frame)

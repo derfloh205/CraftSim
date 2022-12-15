@@ -26,6 +26,8 @@ CraftSimOptions = CraftSimOptions or {
 	openLastRecipe = true,
 }
 
+CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
+
 function addon:handleCraftSimOptionsUpdates()
 	if CraftSimOptions then
 		CraftSimOptions.tsmPriceKey = nil
@@ -91,6 +93,21 @@ function addon:ADDON_LOADED(addon_name)
 		addon:HookToProfessionsFrame()
 		CraftSimFRAME:HandleAuctionatorOverlaps()
 		CraftSimAccountSync:Init()
+	end
+end
+
+function addon:HandleCollapsedFrameSave()
+	if CraftSimCollapsedFrames[CraftSimCONST.FRAMES.MATERIALS] then
+		CraftSimReagentHintFrame.collapse()
+	end
+	if CraftSimCollapsedFrames[CraftSimCONST.FRAMES.TOP_GEAR] then
+		CraftSimSimFrame.collapse()
+	end
+	if CraftSimCollapsedFrames[CraftSimCONST.FRAMES.COST_OVERVIEW] then
+		CraftSimCostOverviewFrame.collapse()
+	end
+	if CraftSimCollapsedFrames[CraftSimCONST.FRAMES.STAT_WEIGHTS] then
+		CraftSimDetailsFrame.collapse()
 	end
 end
 
@@ -171,10 +188,7 @@ function addon:PLAYER_LOGIN()
 
 	CraftSimPriceAPI:InitPriceSource()
 	CraftSimOPTIONS:InitOptionsFrame()
-
-	-- if IsAddOnLoaded("Auctionator") then
-	-- 	Auctionator.Config.Options.CRAFTING_INFO_SHOW = CraftSimOptions.showAuctionatorFrame
-	-- end
+	addon:HandleCollapsedFrameSave()
 end
 
 function addon:TriggerModulesByRecipeType()

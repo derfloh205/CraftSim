@@ -1,5 +1,12 @@
 CraftSimCONST = {}
 
+CraftSimCONST.FRAMES = {
+    MATERIALS = 0,
+    STAT_WEIGHTS = 1,
+    TOP_GEAR = 2,
+    COST_OVERVIEW = 3
+}
+
 CraftSimCONST.ERROR = {
     NO_PRICE_DATA = 0,
     NO_RECIPE_DATA = 1
