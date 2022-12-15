@@ -22,7 +22,8 @@ CraftSimOptions = CraftSimOptions or {
 	autoAssignVellum = false,
 	showProfitPercentage = false,
 	detailedCraftingInfoTooltip = true,
-	syncTarget = nil
+	syncTarget = nil,
+	openLastRecipe = true,
 }
 
 function addon:handleCraftSimOptionsUpdates()
@@ -36,6 +37,9 @@ function addon:handleCraftSimOptionsUpdates()
 		CraftSimOptions.showProfitPercentage = CraftSimOptions.showProfitPercentage or false
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
+		end
+		if CraftSimOptions.openLastRecipe == nil then
+			CraftSimOptions.openLastRecipe = true
 		end
 	end
 end
@@ -84,9 +88,43 @@ function addon:ADDON_LOADED(addon_name)
 		addon:HookToEvent()
 		addon:HookToDetailsHide()
 		addon:handleCraftSimOptionsUpdates()
+		addon:HookToProfessionsFrame()
 		CraftSimFRAME:HandleAuctionatorOverlaps()
 		CraftSimAccountSync:Init()
 	end
+end
+
+local professionFrameHooked = false
+function addon:HookToProfessionsFrame()
+	if professionFrameHooked then
+		return
+	end
+	professionFrameHooked = true
+
+	ProfessionsFrame:HookScript("OnShow", 
+   function()
+		if CraftSimOptions.openLastRecipe then
+			C_Timer.After(1, function() 
+				local recipeInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeInfo()
+				local professionInfo = ProfessionsFrame:GetProfessionInfo()
+				local professionFullName = professionInfo.professionName
+				local profession = professionInfo.parentProfessionName
+				if CraftSimOPTIONS.lastOpenRecipeID[profession] then
+					C_TradeSkillUI.OpenRecipe(CraftSimOPTIONS.lastOpenRecipeID[profession])
+				end
+			end)
+		end
+   end)
+
+   ProfessionsFrame.CraftingPage:HookScript("OnHide", 
+   function()
+	local professionInfo = ProfessionsFrame:GetProfessionInfo()
+	local profession = professionInfo.parentProfessionName
+	local recipeInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeInfo()
+	if profession then
+		CraftSimOPTIONS.lastOpenRecipeID[profession] = recipeInfo.recipeID
+	end
+   end)
 end
 
 function addon:PLAYER_LOGIN()
@@ -151,7 +189,6 @@ function addon:TriggerModulesByRecipeType()
 	local craftingPage = ProfessionsFrame.CraftingPage
 	local schematicForm = craftingPage.SchematicForm
     local recipeInfo = schematicForm:GetRecipeInfo()
-
 
     if not string.find(professionFullName, "Dragon Isles") then -- TODO: factor in other localizations
 		return

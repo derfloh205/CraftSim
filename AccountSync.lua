@@ -79,6 +79,20 @@ function CraftSimAccountSync:SendData(prefix, data, target)
     if not target then
         return
     end
+    local isOnline = false
+    -- set target as friend
+    C_FriendList.AddFriend(target, "CraftSim AccountSync")
+    -- check if online with and without server
+    local friendInfo = C_FriendList.GetFriendInfo(target)
+    if not friendInfo then
+        targetNoServer = strsplit("-", target)[1] -- remove server name
+        friendInfo = C_FriendList.GetFriendInfo(targetNoServer)
+    end
+
+    if not friendInfo or not friendInfo.connected then
+        print("CraftSim AccountSync: Character not online (" .. tostring(target) .. ")")
+        return
+    end
     local payload = CraftSimAccountSync:DigestDataForSync(data)
 
     CraftSimAccountSync:SendCommMessage(prefix, payload, "WHISPER", target, "NORMAL", function(arg1, arg2, arg3) 
@@ -86,7 +100,6 @@ function CraftSimAccountSync:SendData(prefix, data, target)
         if percent % 10 > 1 then
             return
         end
-        --print("CraftSim AccountSync Sending Data: " .. tostring(CraftSimUTIL:round(percent, 0)) .. "%")
         local percentProgress = CraftSimUTIL:round(percent, 0)
         if tonumber(percentProgress) < 100 then
             CraftSimAccountSyncSendingProgress:SetText("Sending.. " .. tostring(CraftSimUTIL:round(percent, 0)) .. "%")

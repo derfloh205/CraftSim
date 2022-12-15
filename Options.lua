@@ -1,6 +1,6 @@
 CraftSimOPTIONS = {}
 
-
+CraftSimOPTIONS.lastOpenRecipeID = {}
 function CraftSimOPTIONS:InitOptionsFrame()
     CraftSimOPTIONS.optionsPanel = CreateFrame("Frame", "CraftSimOptionsPanel")
     
@@ -124,8 +124,19 @@ function CraftSimOPTIONS:InitOptionsFrame()
 		CraftSimOptions.showProfitPercentage = checked
 	end)
 
+    local openLastRecipeCheckbox = CreateFrame("CheckButton", nil, generalTab.content, "ChatConfigCheckButtonTemplate")
+	openLastRecipeCheckbox:SetPoint("TOP", precentProfitCheckbox, 0, -20)
+	openLastRecipeCheckbox.Text:SetText(" Remember Last Recipe")
+    openLastRecipeCheckbox.tooltip = "Reopen last selected recipe when opening the crafting window"
+	-- there already is an existing OnClick script that plays a sound, hook it
+    openLastRecipeCheckbox:SetChecked(CraftSimOptions.openLastRecipe)
+	openLastRecipeCheckbox:HookScript("OnClick", function(_, btn, down)
+		local checked = openLastRecipeCheckbox:GetChecked()
+		CraftSimOptions.openLastRecipe = checked
+	end)
+
     local resetFramesButton = CreateFrame("Button", "CraftSimResetFramesButton", generalTab.content, "UIPanelButtonTemplate")
-	resetFramesButton:SetPoint("TOP", precentProfitCheckbox, "TOP", 90, -30)	
+	resetFramesButton:SetPoint("TOP", openLastRecipeCheckbox, "TOP", 90, -30)	
 	resetFramesButton:SetText("Reset Frame Positions")
 	resetFramesButton:SetSize(resetFramesButton:GetTextWidth() + 20, 25)
     resetFramesButton:SetScript("OnClick", function(self) 
