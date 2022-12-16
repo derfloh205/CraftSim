@@ -97,6 +97,10 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
         for reagentIndex, itemsInfo in pairs(totalReagentAllocationsByQuality) do
             for qualityIndex, itemInfo in pairs(itemsInfo) do
                 local savedItems = itemInfo.allocations * (recipeData.stats.resourcefulness.percent / 100)
+                -- test
+                savedItems = savedItems * CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
+                savedItems = savedItems * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
+                --
                 totalSavedCosts = totalSavedCosts + priceData.reagentsPriceByQuality[reagentIndex][qualityIndex].minBuyout * savedItems
             end
         end

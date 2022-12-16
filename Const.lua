@@ -1,5 +1,8 @@
 CraftSimCONST = {}
 
+-- this average comes from 20-40% resources saved on proc with a minimum of 1
+CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 1.40
+
 CraftSimCONST.FRAMES = {
     MATERIALS = 0,
     STAT_WEIGHTS = 1,
@@ -108,5 +111,27 @@ CraftSimCONST.RECIPE_CATEGORIES = {
     BLACKSMITHING = {
         STONEWORK = 1684,
         SMELTING = 1678
+    },
+    ALCHEMY = {
+        ELEMENTAL_BOTH = 1646,
+        PHIALS = {
+            AIR = 1603,
+            FROST = 1644,
+        },
+        POTIONS = {
+            AIR = 1602,
+            FROST = 1645
+        },
+        REAGENT = 1611,
+        FINISHING_REAGENT = 1608,
+        OPTIONAL_REAGENTS = 1609,
+        INCENSE = 1610,
+    },
+    LEATHERWORKING = {
+        DRUMS = 1655,
+        ARMORKITS = 1651
+    },
+    INSCRIPTION = {
+        INKS = 1754
     }
 }
