@@ -234,6 +234,7 @@ function CraftSimMAIN:TriggerModulesByRecipeType()
     -- TODO: maybe use a switch here?
 	if recipeData and priceData then
 		CraftSimDATAEXPORT:UpdateTooltipData(recipeData)
+		CraftSimFRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
 
 		if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
 			-- show everything

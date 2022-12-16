@@ -53,6 +53,8 @@ function CraftSimSTATS:getMeanProfit(recipeData, priceData)
         -- TODO implement multicraft additional item chance/amount based on multicraft tracker data
         -- For now just use a random value of 1-2.5y additional items at mean
         local expectedAdditionalItems = (1 + (2.5*recipeData.baseItemAmount)) / 2 
+        -- Also add any additional items factor
+        expectedAdditionalItems = expectedAdditionalItems * recipeData.extraItemFactors.multicraftExtraItemsFactor
 
         -- Since multicraft and inspiration can proc together add expected multicraft gain to both qualities
         local craftNumBase = craftedItems.baseQuality / recipeData.baseItemAmount

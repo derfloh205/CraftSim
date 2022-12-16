@@ -97,3 +97,16 @@ CraftSimCONST.DEFAULT_POSITIONS = {
         y = -80,
     }
 }
+
+CraftSimCONST.COLORS = {
+    GREEN = "cff00FF00",
+    RED = "cffFF0000"
+}
+
+-- only need the ones that modify resourcefulness/multicraft
+CraftSimCONST.RECIPE_CATEGORIES = {
+    BLACKSMITHING = {
+        STONEWORK = 1684,
+        SMELTING = 1678
+    }
+}

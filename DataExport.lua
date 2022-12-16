@@ -49,6 +49,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	end
 
 	recipeData.profession = professionInfo.parentProfessionName
+	recipeData.professionID = professionInfo.profession
 	local recipeInfo = schematicForm:GetRecipeInfo()
 
 	local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
@@ -213,6 +214,10 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	else
 		print("recipeType not covered in export: " .. tostring(recipeType))
 	end
+
+	recipeData.categoryID = recipeInfo.categoryID
+
+	recipeData.extraItemFactors = CraftSimSPECDATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
 	
 	return recipeData
 end

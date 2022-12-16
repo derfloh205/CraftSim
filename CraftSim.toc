@@ -9,6 +9,7 @@
 
 embeds.xml
 
+SpecData.lua
 AccountSync.lua
 Tooltip.lua
 EnchantData.lua

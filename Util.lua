@@ -199,11 +199,7 @@ end
 function CraftSimUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     local absValue = abs(copperValue)
     local minusText = ""
-    local startLine = "\124"
-    local endLine = "\124r"
-    local redColor = "cffFF0000"
-    local greenColor = "cff00FF00"
-    local color = greenColor
+    local color = CraftSimCONST.COLORS.GREEN
     local percentageText = ""
 
     if percentRelativeTo then
@@ -215,11 +211,11 @@ function CraftSimUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
 
     if copperValue < 0 then
         minusText = "-"
-        color = redColor
+        color = CraftSimCONST.COLORS.RED
     end
 
     if useColor then
-        return startLine .. color .. minusText .. GetCoinTextureString(absValue, 10) .. percentageText .. endLine
+        return CraftSimUTIL:ColorizeText(minusText .. GetCoinTextureString(absValue, 10) .. percentageText, color)
     else
         return minusText .. GetCoinTextureString(absValue, 10) .. percentageText
     end
@@ -257,4 +253,15 @@ function CraftSimUTIL:FoldTable(t, foldFunction, startAtZero)
     end
 
     return foldedValue
+end
+
+function CraftSimUTIL:FormatFactorToPercent(factor)
+    local percentText = CraftSimUTIL:round((factor-1) * 100, 0)
+    return "+" .. percentText .. "%"
+end
+
+function CraftSimUTIL:ColorizeText(text, color)
+    local startLine = "\124"
+    local endLine = "\124r"
+    return startLine .. color .. text .. endLine
 end
