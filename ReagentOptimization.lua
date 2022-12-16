@@ -112,13 +112,6 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
 
     local expectedQualityWithoutReagents = CraftSimSTATS:GetExpectedQualityBySkill(recipeData, skillWithoutReagentIncrease)
 
-    -- print("expected quality without reagent skill increase: " .. expectedQualityWithoutReagents)
-    -- print("expected quality with current reagent skill increase: " .. recipeData.expectedQuality)
-    
-    -- print("totalSkill: " .. totalSkill)
-    -- print("reagentSkillContribution: " ..  reagentSkillContribution)
-    -- print("skillWithoutReagentIncrease: " ..  skillWithoutReagentIncrease)
-
     for i = 0, numBP - 1, 1 do
         --print("checking BP: " .. tostring(craftingDifficultyBP[i]))
         local extraSkillPoint = 0
@@ -129,7 +122,8 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
         --print("skill BP: " .. skillBreakpoint)
         -- EXPERIMENT: try to adjust skillbp by 1 to workaround blizz rounding errors
         --skillBreakpoint = skillBreakpoint + 1
-        arrayBP[i] = skillBreakpoint - skillWithoutReagentIncrease
+        local inspirationBonusSkill = CraftSimOptions.materialSuggestionInspirationThreshold and recipeData.stats.inspiration.bonusskill or 0
+        arrayBP[i] = skillBreakpoint - (skillWithoutReagentIncrease + inspirationBonusSkill)
         --print("skill needed for this breakpoint:" .. arrayBP[i])
         -- If skill already meets or exceeds this BP...
         if arrayBP[i] <= 0 then  -- ...then no skill bonus is needed to reach this breakpoint

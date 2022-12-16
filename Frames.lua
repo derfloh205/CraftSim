@@ -85,14 +85,25 @@ function CraftSimFRAME:InitBestAllocationsFrame()
         0, 
         0, 
         270, 
-        200,
+        250,
         CraftSimCONST.FRAMES.MATERIALS)
 
     local contentOffsetY = -15
 
+    frame.content.inspirationCheck = CreateFrame("CheckButton", nil, frame.content, "ChatConfigCheckButtonTemplate")
+	frame.content.inspirationCheck:SetPoint("TOP", frame.title, -90, -20)
+	frame.content.inspirationCheck.Text:SetText(" Reach Inspiration Breakpoint")
+    frame.content.inspirationCheck.tooltip = "Try to reach the skill breakpoint where an inspiration proc upgrades to the next higher quality with the cheapest material combination"
+    frame.content.inspirationCheck:SetChecked(CraftSimOptions.materialSuggestionInspirationThreshold)
+	frame.content.inspirationCheck:HookScript("OnClick", function(_, btn, down)
+		local checked = frame.content.inspirationCheck:GetChecked()
+		CraftSimOptions.materialSuggestionInspirationThreshold = checked
+        CraftSimMAIN:TriggerModulesByRecipeType() -- TODO: if this is not performant enough, try to only recalc the material stuff not all, lazy solution for now
+	end)
+
     frame.content.qualityText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.qualityText:SetPoint("TOP", frame.title, "TOP", 0, -20)
-	frame.content.qualityText:SetText("Highest Quality: ")
+	frame.content.qualityText:SetPoint("TOP", frame.title, "TOP", 0, -45)
+	frame.content.qualityText:SetText("Reachable Quality: ")
 
     frame.content.qualityIcon = CraftSimFRAME:CreateQualityIcon(frame.content, 25, 25, frame.content.qualityText, "LEFT", "RIGHT", 3, 0)
 

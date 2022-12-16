@@ -7,10 +7,10 @@
 -- TODO: FEATURE: suggest or even auto equip most profitable profession gear combo for recipe (maybe on button click?)
 -- TODO: FEATURE: integrate knapsack problem to solve best reagent configuration
 
-local addon = CreateFrame("Frame", "CraftSimAddon")
-addon:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
-addon:RegisterEvent("ADDON_LOADED")
-addon:RegisterEvent("PLAYER_LOGIN")
+CraftSimMAIN = CreateFrame("Frame", "CraftSimAddon")
+CraftSimMAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
+CraftSimMAIN:RegisterEvent("ADDON_LOADED")
+CraftSimMAIN:RegisterEvent("PLAYER_LOGIN")
 
 CraftSimOptions = CraftSimOptions or {
 	priceDebug = false,
@@ -24,11 +24,12 @@ CraftSimOptions = CraftSimOptions or {
 	detailedCraftingInfoTooltip = true,
 	syncTarget = nil,
 	openLastRecipe = true,
+	materialSuggestionInspirationThreshold = false
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
 
-function addon:handleCraftSimOptionsUpdates()
+function CraftSimMAIN:handleCraftSimOptionsUpdates()
 	if CraftSimOptions then
 		CraftSimOptions.tsmPriceKey = nil
 		CraftSimOptions.tsmPriceKeyMaterials = CraftSimOptions.tsmPriceKeyMaterials or "DBRecent"
@@ -37,6 +38,7 @@ function addon:handleCraftSimOptionsUpdates()
 		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
 		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
 		CraftSimOptions.showProfitPercentage = CraftSimOptions.showProfitPercentage or false
+		CraftSimOptions.materialSuggestionInspirationThreshold = CraftSimOptions.materialSuggestionInspirationThreshold or false
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end
@@ -48,19 +50,19 @@ end
 
 local hookedToDetailsFrame = false
 -- this should cover the case of switching to a frame that does not show the details like recrafting, from a frame that does
-function addon:HookToDetailsHide()
+function CraftSimMAIN:HookToDetailsHide()
 	if hookedToDetailsFrame then
 		return
 	end
 	hookedToDetailsFrame = true
 	ProfessionsFrame.CraftingPage.SchematicForm.Details:HookScript("OnHide", function(self)
-		addon:TriggerModulesByRecipeType()
+		CraftSimMAIN:TriggerModulesByRecipeType()
 	end)
 end
 
 local hookedEvent = false
 
-function addon:HookToEvent()
+function CraftSimMAIN:HookToEvent()
 	if hookedEvent then
 		return
 	end
@@ -74,12 +76,12 @@ function addon:HookToEvent()
 	-- TODO: check if there are any reagents that impact profit and do not change a stat??
 	-- Note: OnShow also 'works', it triggers but there is no recipe info yet, so we need something that also triggers and comes after OnShow..
 	hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm.Details, "SetStats", function(self)
-		addon:TriggerModulesByRecipeType()
+		CraftSimMAIN:TriggerModulesByRecipeType()
 	end)
 end
 
 local priceApiLoaded = false
-function addon:ADDON_LOADED(addon_name)
+function CraftSimMAIN:ADDON_LOADED(addon_name)
 	if addon_name == 'CraftSim' then
 		CraftSimFRAME:InitStatWeightFrame()
 		CraftSimFRAME:InitGearSimFrame()
@@ -87,16 +89,16 @@ function addon:ADDON_LOADED(addon_name)
 		CraftSimFRAME:InitBestAllocationsFrame()
 		CraftSimFRAME:InitCostOverviewFrame()
 		CraftSimTOOLTIP:Init()
-		addon:HookToEvent()
-		addon:HookToDetailsHide()
-		addon:handleCraftSimOptionsUpdates()
-		addon:HookToProfessionsFrame()
+		CraftSimMAIN:HookToEvent()
+		CraftSimMAIN:HookToDetailsHide()
+		CraftSimMAIN:handleCraftSimOptionsUpdates()
+		CraftSimMAIN:HookToProfessionsFrame()
 		CraftSimFRAME:HandleAuctionatorOverlaps()
 		CraftSimAccountSync:Init()
 	end
 end
 
-function addon:HandleCollapsedFrameSave()
+function CraftSimMAIN:HandleCollapsedFrameSave()
 	if CraftSimCollapsedFrames[CraftSimCONST.FRAMES.MATERIALS] then
 		CraftSimReagentHintFrame.collapse()
 	end
@@ -112,7 +114,7 @@ function addon:HandleCollapsedFrameSave()
 end
 
 local professionFrameHooked = false
-function addon:HookToProfessionsFrame()
+function CraftSimMAIN:HookToProfessionsFrame()
 	if professionFrameHooked then
 		return
 	end
@@ -144,7 +146,7 @@ function addon:HookToProfessionsFrame()
    end)
 end
 
-function addon:PLAYER_LOGIN()
+function CraftSimMAIN:PLAYER_LOGIN()
 	SLASH_CRAFTSIM1 = "/craftsim"
 	SLASH_CRAFTSIM2 = "/crafts"
 	SLASH_CRAFTSIM3 = "/simcc"
@@ -188,10 +190,10 @@ function addon:PLAYER_LOGIN()
 
 	CraftSimPriceAPI:InitPriceSource()
 	CraftSimOPTIONS:InitOptionsFrame()
-	addon:HandleCollapsedFrameSave()
+	CraftSimMAIN:HandleCollapsedFrameSave()
 end
 
-function addon:TriggerModulesByRecipeType()
+function CraftSimMAIN:TriggerModulesByRecipeType()
 
 	if CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate then
 		CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
