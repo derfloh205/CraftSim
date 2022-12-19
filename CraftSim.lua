@@ -29,6 +29,10 @@ CraftSimOptions = CraftSimOptions or {
 	modulesStatWeights = true,
 	modulesTopGear = true,
 	modulesCostOverview = true,
+	transparencyMaterials = 1,
+	transparencyStatWeights = 1,
+	transparencyTopGear = 1,
+	transparencyCostOverview = 1
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -43,6 +47,10 @@ function CraftSimMAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
 		CraftSimOptions.showProfitPercentage = CraftSimOptions.showProfitPercentage or false
 		CraftSimOptions.materialSuggestionInspirationThreshold = CraftSimOptions.materialSuggestionInspirationThreshold or false
+		CraftSimOptions.transparencyMaterials = CraftSimOptions.transparencyMaterials or 1
+		CraftSimOptions.transparencyStatWeights = CraftSimOptions.transparencyStatWeights or 1
+		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
+		CraftSimOptions.transparencyCostOverview = CraftSimOptions.transparencyCostOverview or 1
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end
@@ -102,8 +110,8 @@ function CraftSimMAIN:ADDON_LOADED(addon_name)
 		CraftSimFRAME:InitStatWeightFrame()
 		CraftSimFRAME:InitGearSimFrame()
 		CraftSimFRAME:InitPriceDataWarningFrame()
-		CraftSimFRAME:InitBestAllocationsFrame()
 		CraftSimFRAME:InitCostOverviewFrame()
+		CraftSimFRAME:InitBestAllocationsFrame()
 		CraftSimTOOLTIP:Init()
 		CraftSimMAIN:HookToEvent()
 		CraftSimMAIN:HookToDetailsHide()

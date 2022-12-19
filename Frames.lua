@@ -1,5 +1,6 @@
 CraftSimFRAME = {}
 
+CraftSimFRAME.frames = {}
 function CraftSimFRAME:InitStatWeightFrame()
     local frame = CraftSimFRAME:CreateCraftSimFrame(
         "CraftSimDetailsFrame", 
@@ -84,10 +85,10 @@ function CraftSimFRAME:InitBestAllocationsFrame()
         "CraftSimReagentHintFrame", 
         "CraftSim Min Cost Material", 
         ProfessionsFrame.CraftingPage.SchematicForm.Reagents, 
-        ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, 
-        "TOP", 
-        "TOP", 
-        0, 
+        CraftSimCostOverviewFrame, 
+        "TOPLEFT", 
+        "TOPRIGHT", 
+        -10, 
         0, 
         270, 
         250,
@@ -633,11 +634,10 @@ function CraftSimFRAME:ResetFrames()
     CraftSimCostOverviewFrame:ClearAllPoints()
     CraftSimSimFrame:ClearAllPoints()
     CraftSimDetailsFrame:ClearAllPoints()
-
     CraftSimReagentHintFrame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "BOTTOM", 0, 0)
     CraftSimCostOverviewFrame:SetPoint("TOP",  CraftSimSimFrame, "BOTTOM", 0, 10)
     CraftSimSimFrame:SetPoint("TOPLEFT",  ProfessionsFrame.CloseButton, "TOPRIGHT", -5, 3)
-    CraftSimDetailsFrame:SetPoint("BOTTOM",  ProfessionsFrame.CraftingPage.SchematicForm.Details, 0, -80)
+    CraftSimDetailsFrame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.Details, "BOTTOM", 0, 19)
 end
 
 local hooked = false
@@ -701,13 +701,21 @@ function CraftSimFRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anc
 	frame.title:SetText(title)
     
     frame:SetPoint("TOP",  hookFrame, "TOP", 0, 0)
+	--frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 	frame:SetBackdrop({
-		bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+		--bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+		bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
 		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
 		edgeSize = 16,
 		insets = { left = 8, right = 6, top = 8, bottom = 8 },
 	})
+
+    frame:SetBackdropColor(0, 0, 0 , 1)
+
+    frame.SetTransparency = function(self, transparency) 
+        frame:SetBackdropColor(0, 0, 0 , transparency)
+    end
 
     CraftSimFRAME:MakeCollapsable(frame, sizeX, sizeY, frameID)
     CraftSimFRAME:makeFrameMoveable(frame)
@@ -716,6 +724,8 @@ function CraftSimFRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anc
     frame.content:SetPoint("TOP", frame, "TOP")
     frame.content:SetSize(sizeX, sizeY)
 
+
+    table.insert(CraftSimFRAME.frames, name)
     return frame
 end
 
@@ -752,4 +762,20 @@ function CraftSimFRAME:CreateCheckbox(label, description, optionName, parent, an
 	end)
 
     return checkBox
+end
+
+function CraftSimFRAME:CreateSlider(name, label, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, orientation, min, max, initialValue, lowText, highText, updateCallback)
+    local newSlider = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
+    newSlider:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+    newSlider:SetSize(sizeX, sizeY)
+    newSlider:SetOrientation(orientation)
+    newSlider:SetMinMaxValues(min, max)
+    newSlider:SetValue(initialValue)
+    _G[newSlider:GetName() .. 'Low']:SetText(lowText)        -- Sets the left-side slider text (default is "Low").
+    _G[newSlider:GetName() .. 'High']:SetText(highText)     -- Sets the right-side slider text (default is "High").
+    _G[newSlider:GetName() .. 'Text']:SetText(label)       -- Sets the "title" text (top-centre of slider).
+
+    newSlider:SetScript("OnValueChanged", updateCallback)
+
+    return newSlider
 end
