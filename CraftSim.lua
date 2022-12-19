@@ -211,6 +211,10 @@ end
 
 function CraftSimMAIN:TriggerModulesByRecipeType()
 
+	if UIDROPDOWNMENU_OPEN_MENU then
+		return
+	end
+
 	if CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate then
 		CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
 		return
@@ -246,8 +250,6 @@ function CraftSimMAIN:TriggerModulesByRecipeType()
     local showCostOverview = false
     local showCostOverviewCraftingCostsOnly = false
 
-    -- TODO: in specific situations, show some modules but hide the others..
-    -- TODO: maybe use a switch here?
 	if recipeData and priceData then
 		CraftSimDATAEXPORT:UpdateTooltipData(recipeData)
 		CraftSimFRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
