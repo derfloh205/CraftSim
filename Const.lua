@@ -34,6 +34,10 @@ CraftSimCONST.PROFESSION_INV_SLOTS = {{
         TOOL = "PROF1TOOLSLOT",
         GEAR0 = "PROF1GEAR0SLOT",
         GEAR1 = "PROF1GEAR1SLOT"
+    },
+    {
+        TOOL = "COOKINGTOOLSLOT",
+        GEAR0 = "COOKINGGEAR0SLOT"
     }
 }
 

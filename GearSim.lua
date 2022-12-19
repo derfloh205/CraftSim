@@ -2,43 +2,77 @@ CraftSimGEARSIM = {}
 
 CraftSimGEARSIM.IsEquipping = false
 
-function CraftSimGEARSIM:GetUniqueCombosFromAllPermutations(totalCombos)
+function CraftSimGEARSIM:GetUniqueCombosFromAllPermutations(totalCombos, isCooking)
     local uniqueCombos = {}
     local combinationList = {}
 
-    local function checkIfCombinationExists(combinationToTest)
-        for _, combination in pairs(combinationList) do
-            local exists1 = false
-            local exists2 = false   
-            local exists3 = false
-            for _, itemLink in pairs(combination) do 
-                if combinationToTest[1] == itemLink then
-                    exists1 = true
-                elseif combinationToTest[2] == itemLink then
-                    exists2 = true
-                elseif combinationToTest[3] == itemLink then
-                    exists3 = true
+    if not isCooking then
+        local function checkIfCombinationExists(combinationToTest)
+            for _, combination in pairs(combinationList) do
+                local exists1 = false
+                local exists2 = false   
+                local exists3 = false
+                for _, itemLink in pairs(combination) do 
+                    if combinationToTest[1] == itemLink then
+                        exists1 = true
+                    elseif combinationToTest[2] == itemLink then
+                        exists2 = true
+                    elseif combinationToTest[3] == itemLink then
+                        exists3 = true
+                    end
+                end
+                if exists1 and exists2 and exists3 then
+                    --print("found existing combo..")
+                    return true
                 end
             end
-            if exists1 and exists2 and exists3 then
-                --print("found existing combo..")
-                return true
+            --print("combo not existing..")
+            return false
+        end
+    
+        for _, combo in pairs(totalCombos) do
+            -- check if combinationList of itemLinks already exists in combinationList
+            -- write the itemLink of an empty slot as "empty"
+            local link1 = combo[1].itemLink
+            local link2 = combo[2].itemLink
+            local link3 = combo[3].itemLink
+            local comboTuple = {link1, link2, link3}
+            if not checkIfCombinationExists(comboTuple) then
+                table.insert(combinationList, comboTuple)
+                table.insert(uniqueCombos, combo)
             end
         end
-        --print("combo not existing..")
-        return false
-    end
-
-    for _, combo in pairs(totalCombos) do
-        -- check if combinationList of itemLinks already exists in combinationList
-        -- write the itemLink of an empty slot as "empty"
-        local link1 = combo[1].itemLink
-        local link2 = combo[2].itemLink
-        local link3 = combo[3].itemLink
-        local comboTuple = {link1, link2, link3}
-        if not checkIfCombinationExists(comboTuple) then
-            table.insert(combinationList, comboTuple)
-            table.insert(uniqueCombos, combo)
+    else
+        local function checkIfCombinationExists(combinationToTest)
+            for _, combination in pairs(combinationList) do
+                local exists1 = false
+                local exists2 = false   
+                for _, itemLink in pairs(combination) do 
+                    if combinationToTest[1] == itemLink then
+                        exists1 = true
+                    elseif combinationToTest[2] == itemLink then
+                        exists2 = true
+                    end
+                end
+                if exists1 and exists2 then
+                    --print("found existing combo..")
+                    return true
+                end
+            end
+            --print("combo not existing..")
+            return false
+        end
+    
+        for _, combo in pairs(totalCombos) do
+            -- check if combinationList of itemLinks already exists in combinationList
+            -- write the itemLink of an empty slot as "empty"
+            local link1 = combo[1].itemLink
+            local link2 = combo[2].itemLink
+            local comboTuple = {link1, link2}
+            if not checkIfCombinationExists(comboTuple) then
+                table.insert(combinationList, comboTuple)
+                table.insert(uniqueCombos, combo)
+            end
         end
     end
 
@@ -69,7 +103,7 @@ function CraftSimGEARSIM:GetValidCombosFromUniqueCombos(uniqueCombos)
     return validCombos
 end
 
-function CraftSimGEARSIM:GetProfessionGearCombinations()
+function CraftSimGEARSIM:GetProfessionGearCombinations(isCooking)
     local equippedGear = CraftSimDATAEXPORT:GetEquippedProfessionGear()
     local inventoryGear =  CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 
@@ -106,33 +140,54 @@ function CraftSimGEARSIM:GetProfessionGearCombinations()
     end
 
     -- permutate the gearslot items to get all combinations of two
+
+    -- if cooking we do not need to make any combinations cause we only have one gear slot
     local gearSlotCombos = {}
-    for key, gear in pairs(gearSlotItems) do
-        for subkey, subgear in pairs(gearSlotItems) do
-            if subkey ~= key then
-                -- do not match item with itself..
-                -- todo: somehow neglect order cause it is not important (maybe with temp list to remove items from..)
-                table.insert(gearSlotCombos, {gear, subgear})
+
+    if not isCooking then
+        for key, gear in pairs(gearSlotItems) do
+            for subkey, subgear in pairs(gearSlotItems) do
+                if subkey ~= key then
+                    -- do not match item with itself..
+                    -- todo: somehow neglect order cause it is not important (maybe with temp list to remove items from..)
+                    table.insert(gearSlotCombos, {gear, subgear})
+                end
+            end
+        end
+    else
+        gearSlotCombos = gearSlotItems
+    end
+    
+
+    -- then permutate those combinations with the tool items to get all available gear combos
+    -- if cooking just combine 1 gear with tool
+    local totalCombos = {}
+
+    if not isCooking then
+        for _, gearcombo in pairs(gearSlotCombos) do
+            for _, tool in pairs(toolSlotItems) do
+                table.insert(totalCombos, {tool, gearcombo[1], gearcombo[2]})
+            end
+        end
+    else
+        for _, gearcombo in pairs(gearSlotCombos) do
+            for _, tool in pairs(toolSlotItems) do
+                table.insert(totalCombos, {tool, gearcombo})
             end
         end
     end
-
-    -- then permutate those combinations with the tool items to get all available gear combos
-    local totalCombos = {}
-    for _, gearcombo in pairs(gearSlotCombos) do
-        for _, tool in pairs(toolSlotItems) do
-            table.insert(totalCombos, {tool, gearcombo[1], gearcombo[2]})
-        end
-    end
-
-    local uniqueCombos = CraftSimGEARSIM:GetUniqueCombosFromAllPermutations(totalCombos)
     
 
-    -- TODO: remove invalid combos (with two gear items that share the same unique equipped restriction)
+    local uniqueCombos = CraftSimGEARSIM:GetUniqueCombosFromAllPermutations(totalCombos, isCooking)
+    
 
-    local validCombos = CraftSimGEARSIM:GetValidCombosFromUniqueCombos(uniqueCombos)
-
-    return validCombos
+    -- Remove invalid combos (with two gear items that share the same unique equipped restriction)
+    -- only needed if not cooking
+    if not isCooking then
+        return CraftSimGEARSIM:GetValidCombosFromUniqueCombos(uniqueCombos)
+    else
+        return uniqueCombos
+    end
 end
 
 function CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
@@ -294,6 +349,7 @@ end
 
 function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
 
+    local isCooking = recipeData.professionID == Enum.Profession.Cooking
     -- update top gear mode dropdown
     if UIDROPDOWNMENU_OPEN_MENU and UIDROPDOWNMENU_OPEN_MENU.isSimModeDropdown then
         -- do not sim cause dropdown is open
@@ -311,10 +367,10 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
     CraftSimTopGearSimMode.priceData = priceData
 
 
-    local gearCombos = CraftSimGEARSIM:GetProfessionGearCombinations()
+    local gearCombos = CraftSimGEARSIM:GetProfessionGearCombinations(isCooking)
 
     if not gearCombos then
-        CraftSimFRAME:ClearResultData()
+        CraftSimFRAME:ClearResultData(isCooking)
         return
     end
 
@@ -329,7 +385,7 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
 
         -- set the initial best combo as the current equipped combo!
         -- this leads to only better combos or combos with more items slotted being displayed
-        local equippedSimResult = CraftSimGEARSIM:GetEquippedSimResult(validSimulationResults)
+        local equippedSimResult = CraftSimGEARSIM:GetEquippedSimResult(validSimulationResults, isCooking)
         local bestSimulation = equippedSimResult
         local foundBetter = false
         for index, simResult in pairs(validSimulationResults) do
@@ -344,12 +400,12 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
 
         if foundBetter then
             CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
-            CraftSimFRAME:FillSimResultData(bestSimulation, CraftSimOptions.topGearMode)
+            CraftSimFRAME:FillSimResultData(bestSimulation, CraftSimOptions.topGearMode, isCooking)
         else
-            CraftSimFRAME:ClearResultData()
+            CraftSimFRAME:ClearResultData(isCooking)
         end
     elseif CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.SKILL then
-        local equippedCombo = CraftSimGEARSIM:GetEquippedCombo()
+        local equippedCombo = CraftSimGEARSIM:GetEquippedCombo(isCooking)
         local bestSimulation =  {
             combo = equippedCombo,
             modifiedRecipeData = recipeData
@@ -373,9 +429,9 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
 
         if foundBetter then
             CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
-            CraftSimFRAME:FillSimResultData(bestSimulation, CraftSimOptions.topGearMode)
+            CraftSimFRAME:FillSimResultData(bestSimulation, CraftSimOptions.topGearMode, isCooking)
         else
-            CraftSimFRAME:ClearResultData()
+            CraftSimFRAME:ClearResultData(isCooking)
         end
     elseif 
         CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.INSPIRATION or 
@@ -385,7 +441,7 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
         CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.SKILL
      then
         local statName = CraftSimGEARSIM:GetRelevantStatNameByTopGearMode(CraftSimOptions.topGearMode)
-        local equippedCombo = CraftSimGEARSIM:GetEquippedCombo()
+        local equippedCombo = CraftSimGEARSIM:GetEquippedCombo(isCooking)
         local bestSimulation =  {
             combo = equippedCombo,
             modifiedRecipeData = recipeData
@@ -412,9 +468,9 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
 
         if foundBetter then
             CraftSimGEARSIM:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
-            CraftSimFRAME:FillSimResultData(bestSimulation, CraftSimOptions.topGearMode)
+            CraftSimFRAME:FillSimResultData(bestSimulation, CraftSimOptions.topGearMode, isCooking)
         else
-            CraftSimFRAME:ClearResultData()
+            CraftSimFRAME:ClearResultData(isCooking)
         end
     end
     
@@ -434,40 +490,63 @@ function CraftSimGEARSIM:countEmptySlots(combo)
     return numEmpty
 end
 
-function CraftSimGEARSIM:GetEquippedSimResult(simulationResults)
-    local equippedCombo = CraftSimGEARSIM:GetEquippedCombo()
+function CraftSimGEARSIM:GetEquippedSimResult(simulationResults, isCooking)
+    local equippedCombo = CraftSimGEARSIM:GetEquippedCombo(isCooking)
 
-    for _, result in pairs(simulationResults) do
-        local foundSlot1 = false
-        local foundSlot2 = false
-        local foundSlot3 = false
-
-        for _, slot in pairs(result.combo) do
-            if slot.itemLink == equippedCombo[1].itemLink then
-                foundSlot1 = true
+    if not isCooking then
+        for _, result in pairs(simulationResults) do
+            local foundSlot1 = false
+            local foundSlot2 = false
+            local foundSlot3 = false
+    
+            for _, slot in pairs(result.combo) do
+                if slot.itemLink == equippedCombo[1].itemLink then
+                    foundSlot1 = true
+                end
+                if slot.itemLink == equippedCombo[2].itemLink then
+                    foundSlot2 = true
+                end
+                if slot.itemLink == equippedCombo[3].itemLink then
+                    foundSlot3 = true
+                end
             end
-            if slot.itemLink == equippedCombo[2].itemLink then
-                foundSlot2 = true
-            end
-            if slot.itemLink == equippedCombo[3].itemLink then
-                foundSlot3 = true
+    
+            if foundSlot1 and foundSlot2 and foundSlot3 then
+                --print("found currently equipped simulation result!")
+                return result
             end
         end
-
-        if foundSlot1 and foundSlot2 and foundSlot3 then
-            --print("found currently equipped simulation result!")
-            return result
+    else
+        for _, result in pairs(simulationResults) do
+            local foundSlot1 = false
+            local foundSlot2 = false
+    
+            for _, slot in pairs(result.combo) do
+                if slot.itemLink == equippedCombo[1].itemLink then
+                    foundSlot1 = true
+                end
+                if slot.itemLink == equippedCombo[2].itemLink then
+                    foundSlot2 = true
+                end
+            end
+    
+            if foundSlot1 and foundSlot2 then
+                --print("found currently equipped simulation result!")
+                return result
+            end
         end
     end
-
     -- can happen when window closes..
 end
 
-function CraftSimGEARSIM:GetEquippedCombo()
+function CraftSimGEARSIM:GetEquippedCombo(isCooking)
     -- set the initial best combo as the current equipped combo!
     local equippedGear = CraftSimDATAEXPORT:GetEquippedProfessionGear()
     local equippedCombo = {}
     local emptySlots = 3 - #equippedGear
+    if isCooking then
+        emptySlots = 2 - #equippedGear
+    end
     for i = 1, emptySlots, 1 do
         table.insert(equippedCombo, {isEmptySlot = true, itemLink = CraftSimCONST.EMPTY_SLOT_LINK})
     end
@@ -504,7 +583,6 @@ end
 
 function CraftSimGEARSIM:EquipBestCombo()
     local combo = CraftSimSimFrame.currentCombo
-
     for _, item in pairs(combo) do
         if not item.isEmptySlot then
             --print("eqipping: " .. item.itemLink)

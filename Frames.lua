@@ -410,9 +410,17 @@ function CraftSimFRAME:InitGearSimFrame()
 	frame:Hide()
 end
 
-function CraftSimFRAME:ShowComboItemIcons(professionGearCombo)
+function CraftSimFRAME:ShowComboItemIcons(professionGearCombo, isCooking)
     local iconButtons = {CraftSimSimFrame.content.toolIcon, CraftSimSimFrame.content.gear1Icon, CraftSimSimFrame.content.gear2Icon}
+    for _, button in pairs(iconButtons) do
+        button:Hide() -- only to consider cooking ...
+    end
+    if isCooking then
+        iconButtons = {CraftSimSimFrame.content.toolIcon, CraftSimSimFrame.content.gear2Icon}
+    end
+
     for index, iconButton in pairs(iconButtons) do
+        iconButton:Show()
         if not professionGearCombo[index].isEmptySlot then
             local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(professionGearCombo[index].itemLink) 
             iconButton:SetNormalTexture(itemTexture)
@@ -442,6 +450,8 @@ function CraftSimFRAME:GetProfessionEquipSlots()
         return CraftSimCONST.PROFESSION_INV_SLOTS[1]
     elseif ProfessionsFrame.CraftingPage.Prof1Gear0Slot:IsVisible() then
         return CraftSimCONST.PROFESSION_INV_SLOTS[2]
+    elseif ProfessionsFrame.CraftingPage.CookingGear0Slot:IsVisible() then
+        return CraftSimCONST.PROFESSION_INV_SLOTS[3]
     else
         --print("no profession tool slot visible.. what is going on?")
         return {}
@@ -462,10 +472,10 @@ function CraftSimFRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
     return sign .. CraftSimUTIL:round(statDiff, roundTo) .. suffix
 end
 
-function CraftSimFRAME:FillSimResultData(bestSimulation, topGearMode)
-    CraftSimFRAME:ShowComboItemIcons(bestSimulation.combo)
+function CraftSimFRAME:FillSimResultData(bestSimulation, topGearMode, isCooking)
+    CraftSimFRAME:ShowComboItemIcons(bestSimulation.combo, isCooking)
     if not CraftSimGEARSIM.IsEquipping then
-        CraftSimSimFrame.content.currentCombo = bestSimulation.combo
+        CraftSimSimFrame.currentCombo = bestSimulation.combo
     end
     -- TODO: maybe show in red or smth if negative
     if topGearMode == CraftSimCONST.GEAR_SIM_MODES.PROFIT then
@@ -508,8 +518,13 @@ function CraftSimFRAME:FillSimResultData(bestSimulation, topGearMode)
 
 end
 
-function CraftSimFRAME:ClearResultData()
-    CraftSimFRAME:ShowComboItemIcons({{isEmptySlot = true}, {isEmptySlot = true}, {isEmptySlot = true}})
+function CraftSimFRAME:ClearResultData(isCooking)
+    if not isCooking then
+        CraftSimFRAME:ShowComboItemIcons({{isEmptySlot = true}, {isEmptySlot = true}, {isEmptySlot = true}}, isCooking)
+    else
+        CraftSimFRAME:ShowComboItemIcons({{isEmptySlot = true}, {isEmptySlot = true}}, isCooking)
+    end
+
     CraftSimTopGearEquipButton:SetEnabled(false)
     CraftSimSimFrame.content.profitText:SetText("Top Gear equipped")
 

@@ -10,13 +10,13 @@ function CraftSimSPECDATA:GetExtraItemFactors(recipeData, relevantNodes)
     }
 
     for thresholdName, nodeData in pairs(relevantNodes) do 
+        --print("getting nodeinfo: " .. tostring(configID))
         local nodeInfo = C_Traits.GetNodeInfo(configID, nodeData.nodeID)
-
         -- minus one cause its always 1 more than the ui rank to know wether it was learned or not (learned with 0 has 1 rank)
         -- only increase if the current recipe has a matching category (like whetstone -> stonework, then only stonework marked nodes are relevant)
         -- or if categoryID of nodeData is nil which means its for the whole profession
         -- or if its debugged
-        if nodeData.debug or (tContains(nodeData.categoryIDs, recipeData.categoryID) or #nodeData.categoryIDs == 0) and (nodeInfo.activeRank - 1) >= nodeData.threshold then
+        if nodeInfo and (nodeData.debug or (tContains(nodeData.categoryIDs, recipeData.categoryID) or #nodeData.categoryIDs == 0) and (nodeInfo.activeRank - 1) >= nodeData.threshold) then
             -- they stack multiplicatively
             extraItemFactors.multicraftExtraItemsFactor = extraItemFactors.multicraftExtraItemsFactor * (1 + (nodeData.multicraftExtraItemsFactor or 0))
             extraItemFactors.resourcefulnessExtraItemsFactor = extraItemFactors.resourcefulnessExtraItemsFactor * (1 + (nodeData.resourcefulnessExtraItemsFactor or 0))
@@ -34,7 +34,7 @@ function CraftSimSPECDATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
     -- TODO: All professions...
     local relevantNodes = CraftSimSPECDATA.RELEVANT_NODES()[recipeData.professionID]
     if relevantNodes == nil then
-        print("Profession specs not considered: " .. recipeData.professionID)
+        --print("Profession specs not considered: " .. recipeData.professionID)
         return defaultFactors
     end
 
