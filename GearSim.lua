@@ -609,7 +609,8 @@ end
 
 function CraftSimGEARSIM:GetAvailableTopGearModesByRecipeDataAndType(recipeData, recipeType)
     local availableModes = {}
-    if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
+    if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or 
+    recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE or recipeType == CraftSimCONST.RECIPE_TYPES.ENCHANT then
         availableModes = {
             CraftSimCONST.GEAR_SIM_MODES.PROFIT,
             CraftSimCONST.GEAR_SIM_MODES.SKILL
@@ -621,11 +622,6 @@ function CraftSimGEARSIM:GetAvailableTopGearModesByRecipeDataAndType(recipeData,
     elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
         availableModes = {
             CraftSimCONST.GEAR_SIM_MODES.PROFIT,
-        }
-    elseif recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
-        availableModes = {
-            CraftSimCONST.GEAR_SIM_MODES.PROFIT,
-            CraftSimCONST.GEAR_SIM_MODES.SKILL
         }
     elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_ITEM then
         availableModes = {
