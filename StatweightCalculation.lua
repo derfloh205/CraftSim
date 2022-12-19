@@ -59,7 +59,7 @@ end
 
 function CraftSimSTATS:CalculateStatWeights(recipeData, priceData)
 
-    local calculationResult = {}
+    local calculationResult = {} 
     calculationResult.meanProfit = CraftSimCALC:getMeanProfit(recipeData, priceData)
 
     local inspirationResults = CraftSimSTATS:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
