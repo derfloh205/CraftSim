@@ -42,7 +42,6 @@ function CraftSimSTATS:getResourcefulnessWeight(recipeData, priceData, baseMeanP
     end
     local modifiedData = CopyTable(recipeData)
     modifiedData.stats.resourcefulness.percent = modifiedData.stats.resourcefulness.percent + (CraftSimUTIL:GetResourcefulnessPercentByStat(statIncreaseFactor) * 100)
-    
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
 end
 
@@ -51,7 +50,11 @@ function CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData
     local profitDiff = meanProfitModified - baseMeanProfit
     local statWeight = profitDiff / statIncreaseFactor
 
-    return statWeight
+    return {
+        statWeight = statWeight,
+        profitDiff = profitDiff,
+        meanProfit = meanProfitModified
+    }
 end
 
 function CraftSimSTATS:CalculateStatWeights(recipeData, priceData)
@@ -59,11 +62,13 @@ function CraftSimSTATS:CalculateStatWeights(recipeData, priceData)
     local calculationResult = {}
     calculationResult.meanProfit = CraftSimCALC:getMeanProfit(recipeData, priceData)
 
-    calculationResult.inspiration = CraftSimSTATS:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
-    calculationResult.multicraft = CraftSimSTATS:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)
-    calculationResult.resourcefulness = CraftSimSTATS:getResourcefulnessWeight(recipeData, priceData, calculationResult.meanProfit)
+    local inspirationResults = CraftSimSTATS:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
+    local multicraftResults = CraftSimSTATS:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)
+    local resourcefulnessResults = CraftSimSTATS:getResourcefulnessWeight(recipeData, priceData, calculationResult.meanProfit)
+    calculationResult.inspiration = inspirationResults and inspirationResults.statWeight or 0
+    calculationResult.multicraft = multicraftResults and multicraftResults.statWeight or 0
+    calculationResult.resourcefulness = resourcefulnessResults and resourcefulnessResults.statWeight or 0
 
-    --print("BaseMeanProfit: " .. CraftSimUTIL:round(calculationResult.meanProfit, 2))
     return calculationResult
 end
 

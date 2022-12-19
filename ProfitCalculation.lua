@@ -46,8 +46,6 @@ end
 function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData)
     local savedCosts = 0
     if recipeData.stats.resourcefulness ~= nil then
-        
-
         local totalReagents = {}
         for reagentIndex, reagentData in pairs(recipeData.reagents) do
             if reagentData.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
@@ -99,6 +97,9 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData)
                 if bit == 1 then
                     -- TODO: factor in required quantity ? How to do this with different qualities?
                     materialCost = materialCost * 0.3 -- for now just save 30% of this material costs if it was procced
+                else
+                    -- if the material was not procced then we save nothing
+                    materialCost = 0
                 end
                 -- the value of this combination
                 combinationCraftingCost = combinationCraftingCost + materialCost
@@ -115,8 +116,6 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData)
 
         savedCosts = savedCosts / #averageSavedCostsByCombination
     end
-
-    --print("average saved costs: " .. CraftSimUTIL:FormatMoney(savedCosts))
 
     return savedCosts
 end
@@ -178,7 +177,6 @@ function CraftSimCALC:getMeanProfit(recipeData, priceData)
     CraftSimCALC:handleMulticraft(recipeData, crafts, craftedItems)
 
     local totalSavedCosts = CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData)
-    print("saved by resourcefulness: " .. CraftSimUTIL:FormatMoney(totalSavedCosts))
 
     local totalCraftingCosts = priceData.craftingCostPerCraft - totalSavedCosts
     local totalWorth = 0
