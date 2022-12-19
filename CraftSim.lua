@@ -24,7 +24,11 @@ CraftSimOptions = CraftSimOptions or {
 	detailedCraftingInfoTooltip = true,
 	syncTarget = nil,
 	openLastRecipe = true,
-	materialSuggestionInspirationThreshold = false
+	materialSuggestionInspirationThreshold = false,
+	modulesMaterials = true,
+	modulesStatWeights = true,
+	modulesTopGear = true,
+	modulesCostOverview = true,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -44,6 +48,18 @@ function CraftSimMAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.openLastRecipe == nil then
 			CraftSimOptions.openLastRecipe = true
+		end
+		if CraftSimOptions.modulesMaterials == nil then
+			CraftSimOptions.modulesMaterials = true
+		end
+		if CraftSimOptions.modulesStatWeights == nil then
+			CraftSimOptions.modulesStatWeights = true
+		end
+		if CraftSimOptions.modulesTopGear == nil then
+			CraftSimOptions.modulesTopGear = true
+		end
+		if CraftSimOptions.modulesCostOverview == nil then
+			CraftSimOptions.modulesCostOverview = true
 		end
 	end
 end
@@ -275,6 +291,11 @@ function CraftSimMAIN:TriggerModulesByRecipeType()
 			showCostOverviewCraftingCostsOnly = true
 		end
 	end
+
+	local showMaterialAllocation = showMaterialAllocation and CraftSimOptions.modulesMaterials
+    local showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
+    local showTopGear = showTopGear and CraftSimOptions.modulesTopGear
+    local showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
 
 	showMaterialAllocation = showMaterialAllocation and recipeData.hasReagentsWithQuality
     CraftSimFRAME:ToggleFrame(CraftSimReagentHintFrame, showMaterialAllocation)

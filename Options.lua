@@ -58,6 +58,16 @@ function CraftSimOPTIONS:InitOptionsFrame()
     AccountSyncTab.content:SetSize(300, 350)
     AccountSyncTab.canBeEnabled = true
 
+    local ModulesTab = CreateFrame("Button", "CraftSimOptionsModulesTab", CraftSimOPTIONS.optionsPanel, "UIPanelButtonTemplate")
+    ModulesTab:SetText("Modules")
+    ModulesTab:SetSize(ModulesTab:GetTextWidth() + tabExtraWidth, 30)
+    ModulesTab:SetPoint("LEFT", AccountSyncTab, "RIGHT", 0, 0)
+
+    ModulesTab.content = CreateFrame("Frame", nil, CraftSimOPTIONS.optionsPanel)
+    ModulesTab.content:SetPoint("TOP", CraftSimOPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
+    ModulesTab.content:SetSize(300, 350)
+    ModulesTab.canBeEnabled = true
+
     local tsmPriceKeys = {"DBRecent", "DBMarket", "DBMinbuyout"}
     CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownMaterials", TSMTab.content, TSMTab.content ,"TSM Price Source Key Materials", 0, -50, 200, tsmPriceKeys, 
     function(arg1) 
@@ -71,7 +81,7 @@ function CraftSimOPTIONS:InitOptionsFrame()
 
     
 
-    CraftSimFRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab})
+    CraftSimFRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab})
 
     local priceSourceAddons = CraftSimPriceAPIs:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
@@ -89,51 +99,87 @@ function CraftSimOPTIONS:InitOptionsFrame()
         warning:SetPoint("TOP", 0, -50)
         warning:SetText("No Supported Price Source Addon loaded!")
     end
-	
 
-    local checkButton = CreateFrame("CheckButton", nil, generalTab.content, "ChatConfigCheckButtonTemplate")
-	checkButton:SetPoint("TOP", generalTab.content, -90, -80)
-	checkButton.Text:SetText(" Offset Skill Breakpoints by 1")
-    checkButton.tooltip = "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required"
-	-- there already is an existing OnClick script that plays a sound, hook it
-    checkButton:SetChecked(CraftSimOptions.breakPointOffset)
-	checkButton:HookScript("OnClick", function(_, btn, down)
-		local checked = checkButton:GetChecked()
-		CraftSimOptions.breakPointOffset = checked
-	end)
+    local materialSuggestionCheckbox = CraftSimFRAME:CreateCheckbox(" Material Suggestion", 
+     "Activate the module that suggest the cheapest materials to reach the highest quality/inspiration threshold",
+     "modulesMaterials", 
+     ModulesTab.content, 
+     ModulesTab.content, 
+     "TOP", 
+     "TOP", 
+     -90, 
+     -50)
 
-    local autoVellumCheckBox = CreateFrame("CheckButton", nil, generalTab.content, "ChatConfigCheckButtonTemplate")
-	autoVellumCheckBox:SetPoint("TOP", checkButton, 0, -20)
-	autoVellumCheckBox.Text:SetText(" Auto Assign Enchanting Vellum")
-    autoVellumCheckBox.tooltip = "Always put enchanting vellum as the target enchanting item"
-	-- there already is an existing OnClick script that plays a sound, hook it
-    autoVellumCheckBox:SetChecked(CraftSimOptions.autoAssignVellum)
-	autoVellumCheckBox:HookScript("OnClick", function(_, btn, down)
-		local checked = autoVellumCheckBox:GetChecked()
-		CraftSimOptions.autoAssignVellum = checked
-	end)
+    local statWeightsCheckbox = CraftSimFRAME:CreateCheckbox(" Stat Weights", 
+     "Activate the module that shows the average profit based on your profession stats and the profit stat weights",
+     "modulesStatWeights", 
+     ModulesTab.content, 
+     materialSuggestionCheckbox, 
+     "TOP", 
+     "TOP", 
+     0, 
+     -20)
 
-    local precentProfitCheckbox = CreateFrame("CheckButton", nil, generalTab.content, "ChatConfigCheckButtonTemplate")
-	precentProfitCheckbox:SetPoint("TOP", autoVellumCheckBox, 0, -20)
-	precentProfitCheckbox.Text:SetText(" Show Profit Percentage")
-    precentProfitCheckbox.tooltip = "Show the percentage of profit to crafting costs besides the gold value"
-	-- there already is an existing OnClick script that plays a sound, hook it
-    precentProfitCheckbox:SetChecked(CraftSimOptions.showProfitPercentage)
-	precentProfitCheckbox:HookScript("OnClick", function(_, btn, down)
-		local checked = precentProfitCheckbox:GetChecked()
-		CraftSimOptions.showProfitPercentage = checked
-	end)
+     local topGearCheckbox = CraftSimFRAME:CreateCheckbox(" Top Gear", 
+     "Activate the module that shows the best available profession gear combination based on the selected mode",
+     "modulesTopGear", 
+     ModulesTab.content, 
+     statWeightsCheckbox, 
+     "TOP", 
+     "TOP", 
+     0, 
+     -20)
 
-    local openLastRecipeCheckbox = CreateFrame("CheckButton", nil, generalTab.content, "ChatConfigCheckButtonTemplate")
-	openLastRecipeCheckbox:SetPoint("TOP", precentProfitCheckbox, 0, -20)
-	openLastRecipeCheckbox.Text:SetText(" Remember Last Recipe")
-    openLastRecipeCheckbox.tooltip = "Reopen last selected recipe when opening the crafting window"
-	-- there already is an existing OnClick script that plays a sound, hook it
-    openLastRecipeCheckbox:SetChecked(CraftSimOptions.openLastRecipe)
-	openLastRecipeCheckbox:HookScript("OnClick", function(_, btn, down)
-		local checked = openLastRecipeCheckbox:GetChecked()
-		CraftSimOptions.openLastRecipe = checked
-	end)
+     local costOverviewCheckbox = CraftSimFRAME:CreateCheckbox(" Cost Overview", 
+     "Activate the module that shows a crafting cost and sell profit overview by resulting quality",
+     "modulesCostOverview", 
+     ModulesTab.content, 
+     topGearCheckbox, 
+     "TOP", 
+     "TOP", 
+     0, 
+     -20)
+
+     local skillBreakpointsCheckbox = CraftSimFRAME:CreateCheckbox(" Offset Skill Breakpoints by 1", 
+     "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
+     "breakPointOffset", 
+     generalTab.content, 
+     generalTab.content, 
+     "TOP", 
+     "TOP", 
+     -90, 
+     -80)
+
+    local autoVellumCheckBox = CraftSimFRAME:CreateCheckbox(" Auto Assign Enchanting Vellum", 
+    "Always put enchanting vellum as the target enchanting item",
+    "autoAssignVellum", 
+    generalTab.content, 
+    skillBreakpointsCheckbox, 
+    "TOP", 
+    "TOP", 
+    0, 
+    -20)
+
+    local precentProfitCheckbox = CraftSimFRAME:CreateCheckbox(" Show Profit Percentage", 
+    "Show the percentage of profit to crafting costs besides the gold value",
+    "showProfitPercentage", 
+    generalTab.content, 
+    autoVellumCheckBox, 
+    "TOP", 
+    "TOP", 
+    0, 
+    -20)
+
+
+    local openLastRecipeCheckbox = CraftSimFRAME:CreateCheckbox(" Remember Last Recipe", 
+    "Reopen last selected recipe when opening the crafting window",
+    "openLastRecipe", 
+    generalTab.content, 
+    precentProfitCheckbox, 
+    "TOP", 
+    "TOP", 
+    0, 
+    -20)
 
     local resetFramesButton = CreateFrame("Button", "CraftSimResetFramesButton", generalTab.content, "UIPanelButtonTemplate")
 	resetFramesButton:SetPoint("TOP", openLastRecipeCheckbox, "TOP", 90, -30)	
@@ -143,16 +189,15 @@ function CraftSimOPTIONS:InitOptionsFrame()
         CraftSimFRAME:ResetFrames()
     end)
 
-    local detailedTooltips = CreateFrame("CheckButton", nil, tooltipTab.content, "ChatConfigCheckButtonTemplate")
-	detailedTooltips:SetPoint("TOP", tooltipTab.content, -90, -50)
-	detailedTooltips.Text:SetText(" Detailed Last Crafting Information")
-    detailedTooltips.tooltip = "Show the complete breakdown of your last used material combination in an item tooltip"
-	-- there already is an existing OnClick script that plays a sound, hook it
-    detailedTooltips:SetChecked(CraftSimOptions.detailedCraftingInfoTooltip)
-	detailedTooltips:HookScript("OnClick", function(_, btn, down)
-		local checked = detailedTooltips:GetChecked()
-		CraftSimOptions.detailedCraftingInfoTooltip = checked
-	end)
+    local detailedTooltips = CraftSimFRAME:CreateCheckbox(" Detailed Last Crafting Information", 
+    "Show the complete breakdown of your last used material combination in an item tooltip",
+    "detailedCraftingInfoTooltip", 
+    tooltipTab.content, 
+    tooltipTab.content, 
+    "TOP", 
+    "TOP", 
+    -90, 
+    -50)
 
     local characterNameInput = CreateFrame("EditBox", "CraftSimSyncCharacterInput", AccountSyncTab.content, "UIPanelButtonTemplate")
     characterNameInput:SetPoint("TOP", AccountSyncTab.content, "TOP", 20, -50)

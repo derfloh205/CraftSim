@@ -734,3 +734,18 @@ function CraftSimFRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
 		end
 	end
 end
+
+function CraftSimFRAME:CreateCheckbox(label, description, optionName, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
+    local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
+	checkBox:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+	checkBox.Text:SetText(label)
+    checkBox.tooltip = description
+	-- there already is an existing OnClick script that plays a sound, hook it
+    checkBox:SetChecked(CraftSimOptions[optionName])
+	checkBox:HookScript("OnClick", function(_, btn, down)
+		local checked = checkBox:GetChecked()
+		CraftSimOptions[optionName] = checked
+	end)
+
+    return checkBox
+end

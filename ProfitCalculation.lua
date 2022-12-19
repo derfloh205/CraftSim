@@ -116,12 +116,12 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData)
         savedCosts = savedCosts / #averageSavedCostsByCombination
     end
 
-    print("average saved costs: " .. CraftSimUTIL:FormatMoney(savedCosts))
+    --print("average saved costs: " .. CraftSimUTIL:FormatMoney(savedCosts))
 
     return savedCosts
 end
 
-function CraftSimCALC:getResourcefulnessSavedCosts(recipeData, priceData)
+function CraftSimCALC:getResourcefulnessSavedCostsV1(recipeData, priceData)
     local totalSavedCosts = 0
     if recipeData.stats.resourcefulness ~= nil then
         -- Recipe considers resourcefulness
@@ -178,6 +178,7 @@ function CraftSimCALC:getMeanProfit(recipeData, priceData)
     CraftSimCALC:handleMulticraft(recipeData, crafts, craftedItems)
 
     local totalSavedCosts = CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData)
+    print("saved by resourcefulness: " .. CraftSimUTIL:FormatMoney(totalSavedCosts))
 
     local totalCraftingCosts = priceData.craftingCostPerCraft - totalSavedCosts
     local totalWorth = 0
