@@ -8,7 +8,8 @@ CraftSimCONST.FRAMES = {
     MATERIALS = 0,
     STAT_WEIGHTS = 1,
     TOP_GEAR = 2,
-    COST_OVERVIEW = 3
+    COST_OVERVIEW = 3,
+    PROFIT_DETAILS = 4
 }
 
 CraftSimCONST.ERROR = {

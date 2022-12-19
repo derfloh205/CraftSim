@@ -348,7 +348,7 @@ function CraftSimGEARSIM:DeductCurrentItemStats(recipeData, recipeType)
 end
 
 function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
-
+    local topGearFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.TOP_GEAR)
     local isCooking = recipeData.professionID == Enum.Profession.Cooking
     -- update top gear mode dropdown
 
@@ -356,7 +356,7 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
     if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
         CraftSimOptions.topGearMode = availableModes[1]
     end
-    CraftSimFRAME:initializeDropdown(CraftSimSimFrame.content.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
+    CraftSimFRAME:initializeDropdown(topGearFrame.content.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
 
     -- cache it
     CraftSimTopGearSimMode.recipeData = recipeData
@@ -566,8 +566,9 @@ function CraftSimGEARSIM:UnequipProfessionItems()
 end
 
 function CraftSimGEARSIM:EquipTopGear()
+    local topGearFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.TOP_GEAR)
     CraftSimGEARSIM.IsEquipping = true
-    local combo = CraftSimSimFrame.currentCombo
+    local combo = topGearFrame.currentCombo
     if combo == nil then
         --print("no combo yet")
         return
@@ -579,7 +580,8 @@ function CraftSimGEARSIM:EquipTopGear()
 end
 
 function CraftSimGEARSIM:EquipBestCombo()
-    local combo = CraftSimSimFrame.currentCombo
+    local topGearFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.TOP_GEAR)
+    local combo = topGearFrame.currentCombo
     for _, item in pairs(combo) do
         if not item.isEmptySlot then
             --print("eqipping: " .. item.itemLink)

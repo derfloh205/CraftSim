@@ -1,6 +1,15 @@
 CraftSimFRAME = {}
 
 CraftSimFRAME.frames = {}
+
+function CraftSimFRAME:GetFrame(frameID)
+    local frameName = CraftSimFRAME.frames[frameID]
+    if not frameName then
+        error("CraftSim Error: Frame not found: " .. tostring(frameID))
+    end
+    return _G[frameName]
+end
+
 function CraftSimFRAME:InitStatWeightFrame()
     local frame = CraftSimFRAME:CreateCraftSimFrame(
         "CraftSimDetailsFrame", 
@@ -29,9 +38,10 @@ function CraftSimFRAME:InitStatWeightFrame()
 end
 
 function CraftSimFRAME:UpdateStatWeightFrameText(priceData, statWeights)
+    local statweightFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.STAT_WEIGHTS)
     if statWeights == nil then
-        CraftSimDetailsFrame.content.statText:SetText("")
-        CraftSimDetailsFrame.content.valueText:SetText("")
+        statweightFrame.content.statText:SetText("")
+        statweightFrame.content.valueText:SetText("")
     else
         local statText = ""
         local valueText = ""
@@ -53,8 +63,8 @@ function CraftSimFRAME:UpdateStatWeightFrameText(priceData, statWeights)
             statText = statText .. "Resourcefulness:"
             valueText = valueText .. CraftSimUTIL:FormatMoney(statWeights.resourcefulness)
         end
-        CraftSimDetailsFrame.content.statText:SetText(statText)
-        CraftSimDetailsFrame.content.valueText:SetText(valueText)
+        statweightFrame.content.statText:SetText(statText)
+        statweightFrame.content.valueText:SetText(valueText)
     end
 end
 
@@ -190,32 +200,33 @@ end
 
 -- DEBUG
 function CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation)
+    local materialFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.MATERIALS)
     if bestAllocation == nil or isSameAllocation then
-        CraftSimReagentHintFrame.content.infoText:Show()
+        materialFrame.content.infoText:Show()
         if isSameAllocation then
-            CraftSimReagentHintFrame.content.infoText:SetText(CraftSimReagentHintFrame.content.infoText.SameCombination)
+            materialFrame.content.infoText:SetText(materialFrame.content.infoText.SameCombination)
         else
-            CraftSimReagentHintFrame.content.infoText:SetText(CraftSimReagentHintFrame.content.infoText.NoCombinationFound)
+            materialFrame.content.infoText:SetText(materialFrame.content.infoText.NoCombinationFound)
         end
 
-        CraftSimReagentHintFrame.content.qualityIcon:Hide()
-        CraftSimReagentHintFrame.content.qualityText:Hide()
-        CraftSimReagentHintFrame.content.allocateButton:Hide()
+        materialFrame.content.qualityIcon:Hide()
+        materialFrame.content.qualityText:Hide()
+        materialFrame.content.allocateButton:Hide()
 
         for i = 1, 5, 1 do
-            CraftSimReagentHintFrame.content.reagentFrames.rows[i]:Hide()
+            materialFrame.content.reagentFrames.rows[i]:Hide()
         end
 
         return
     else
-        CraftSimReagentHintFrame.content.infoText:Hide()
-        CraftSimReagentHintFrame.content.qualityIcon:Show()
-        CraftSimReagentHintFrame.content.qualityText:Show()
-        CraftSimReagentHintFrame.content.allocateButton:Show()
-        CraftSimReagentHintFrame.content.allocateButton:SetEnabled(hasItems)
+        materialFrame.content.infoText:Hide()
+        materialFrame.content.qualityIcon:Show()
+        materialFrame.content.qualityText:Show()
+        materialFrame.content.allocateButton:Show()
+        materialFrame.content.allocateButton:SetEnabled(hasItems)
         if hasItems then
-            CraftSimReagentHintFrame.content.allocateButton:SetText("Assign")
-            CraftSimReagentHintFrame.content.allocateButton:SetScript("OnClick", function(self) 
+            materialFrame.content.allocateButton:SetText("Assign")
+            materialFrame.content.allocateButton:SetScript("OnClick", function(self) 
                 -- uncheck best quality box if checked
                 local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
                 if bestQBox:GetChecked() then
@@ -224,25 +235,25 @@ function CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceDa
                 CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeType, priceData, bestAllocation)
             end)
         else
-            CraftSimReagentHintFrame.content.allocateButton:SetText("Missing materials")
+            materialFrame.content.allocateButton:SetText("Missing materials")
         end
-        CraftSimReagentHintFrame.content.allocateButton:SetSize(CraftSimReagentHintFrame.content.allocateButton:GetTextWidth() + 15, 25)
+        materialFrame.content.allocateButton:SetSize(materialFrame.content.allocateButton:GetTextWidth() + 15, 25)
     end
-    CraftSimReagentHintFrame.content.qualityIcon.SetQuality(bestAllocation.qualityReached)
+    materialFrame.content.qualityIcon.SetQuality(bestAllocation.qualityReached)
     for frameIndex = 1, 5, 1 do
         local allocation = bestAllocation.allocations[frameIndex]
         if allocation ~= nil then
             local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(allocation.allocations[1].itemID) 
-            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
-            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
-            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
-            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q1text:SetText(allocation.allocations[1].allocations)
-            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q2text:SetText(allocation.allocations[2].allocations)
-            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(allocation.allocations[3].allocations)
+            materialFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
+            materialFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
+            materialFrame.content.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
+            materialFrame.content.reagentFrames.rows[frameIndex].q1text:SetText(allocation.allocations[1].allocations)
+            materialFrame.content.reagentFrames.rows[frameIndex].q2text:SetText(allocation.allocations[2].allocations)
+            materialFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(allocation.allocations[3].allocations)
 
-            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex]:Show()
+            materialFrame.content.reagentFrames.rows[frameIndex]:Show()
         else
-            CraftSimReagentHintFrame.content.reagentFrames.rows[frameIndex]:Hide()
+            materialFrame.content.reagentFrames.rows[frameIndex]:Hide()
         end
         
     end
@@ -317,23 +328,23 @@ function CraftSimFRAME:InitCostOverviewFrame()
 end
 
 function CraftSimFRAME:FillCostOverview(craftingCosts, minCraftingCosts, profitPerQuality, currentQuality)
-
+    local costOverviewFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.COST_OVERVIEW)
     if craftingCosts == minCraftingCosts then
-        CraftSimCostOverviewFrame.content.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
-        CraftSimCostOverviewFrame.content.craftingCostsTitle.SwitchAnchor(CraftSimCostOverviewFrame.title)
-        CraftSimCostOverviewFrame.content.minCraftingCosts:Hide()
-        CraftSimCostOverviewFrame.content.minCraftingCostsTitle:Hide()
+        costOverviewFrame.content.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
+        costOverviewFrame.content.craftingCostsTitle.SwitchAnchor(costOverviewFrame.title)
+        costOverviewFrame.content.minCraftingCosts:Hide()
+        costOverviewFrame.content.minCraftingCostsTitle:Hide()
     else
-        CraftSimCostOverviewFrame.content.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
-        CraftSimCostOverviewFrame.content.minCraftingCosts:SetText(CraftSimUTIL:FormatMoney(minCraftingCosts))
-        CraftSimCostOverviewFrame.content.craftingCostsTitle.SwitchAnchor(CraftSimCostOverviewFrame.content.minCraftingCosts)
-        CraftSimCostOverviewFrame.content.minCraftingCosts:Show()
-        CraftSimCostOverviewFrame.content.minCraftingCostsTitle:Show()
+        costOverviewFrame.content.craftingCosts:SetText(CraftSimUTIL:FormatMoney(craftingCosts))
+        costOverviewFrame.content.minCraftingCosts:SetText(CraftSimUTIL:FormatMoney(minCraftingCosts))
+        costOverviewFrame.content.craftingCostsTitle.SwitchAnchor(costOverviewFrame.content.minCraftingCosts)
+        costOverviewFrame.content.minCraftingCosts:Show()
+        costOverviewFrame.content.minCraftingCostsTitle:Show()
     end
 
-    CraftSimFRAME:ToggleFrame(CraftSimCostOverviewFrame.content.resultProfitsTitle, #profitPerQuality > 0)
+    CraftSimFRAME:ToggleFrame(costOverviewFrame.content.resultProfitsTitle, #profitPerQuality > 0)
 
-    for index, profitFrame in pairs(CraftSimCostOverviewFrame.content.profitFrames) do
+    for index, profitFrame in pairs(costOverviewFrame.content.profitFrames) do
         if profitPerQuality[index] ~= nil then
             profitFrame.icon.SetQuality(currentQuality + index - 1)
             local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
@@ -343,6 +354,21 @@ function CraftSimFRAME:FillCostOverview(craftingCosts, minCraftingCosts, profitP
             profitFrame:Hide()
         end
     end
+end
+
+function CraftSimFRAME:InitProfitDetailsFrame()
+    local frame = CraftSimFRAME:CreateCraftSimFrame(
+        "CraftSimProfitDetailsFrame", 
+        "CraftSim Profit Details", 
+        UIParent,
+        UIParent, 
+        "CENTER", 
+        "CENTER", 
+        0, 
+        0, 
+        300, 
+        300,
+        CraftSimCONST.FRAMES.TOP_GEAR)
 end
 
 function CraftSimFRAME:InitGearSimFrame()
@@ -416,12 +442,13 @@ function CraftSimFRAME:InitGearSimFrame()
 end
 
 function CraftSimFRAME:ShowComboItemIcons(professionGearCombo, isCooking)
-    local iconButtons = {CraftSimSimFrame.content.toolIcon, CraftSimSimFrame.content.gear1Icon, CraftSimSimFrame.content.gear2Icon}
+    local topGearFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.TOP_GEAR)
+    local iconButtons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
     for _, button in pairs(iconButtons) do
         button:Hide() -- only to consider cooking ...
     end
     if isCooking then
-        iconButtons = {CraftSimSimFrame.content.toolIcon, CraftSimSimFrame.content.gear2Icon}
+        iconButtons = {topGearFrame.content.toolIcon, topGearFrame.content.gear2Icon}
     end
 
     for index, iconButton in pairs(iconButtons) do
@@ -431,7 +458,7 @@ function CraftSimFRAME:ShowComboItemIcons(professionGearCombo, isCooking)
             iconButton:SetNormalTexture(itemTexture)
             iconButton:SetScript("OnEnter", function(self) 
                 local itemName, ItemLink = GameTooltip:GetItem()
-                GameTooltip:SetOwner(CraftSimSimFrame.content, "ANCHOR_RIGHT");
+                GameTooltip:SetOwner(topGearFrame.content, "ANCHOR_RIGHT");
                 if ItemLink ~= professionGearCombo[index].itemLink then
                     -- to not set it again and hide the tooltip..
                     GameTooltip:SetHyperlink(professionGearCombo[index].itemLink)
@@ -478,25 +505,26 @@ function CraftSimFRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
 end
 
 function CraftSimFRAME:FillSimResultData(bestSimulation, topGearMode, isCooking)
+    local topGearFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.TOP_GEAR)
     CraftSimFRAME:ShowComboItemIcons(bestSimulation.combo, isCooking)
     if not CraftSimGEARSIM.IsEquipping then
-        CraftSimSimFrame.currentCombo = bestSimulation.combo
+        topGearFrame.currentCombo = bestSimulation.combo
     end
     -- TODO: maybe show in red or smth if negative
     if topGearMode == CraftSimCONST.GEAR_SIM_MODES.PROFIT then
-        CraftSimSimFrame.content.profitText:SetText("Ø Profit Difference\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff, true))
+        topGearFrame.content.profitText:SetText("Ø Profit Difference\n".. CraftSimUTIL:FormatMoney(bestSimulation.profitDiff, true))
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.MULTICRAFT then
-        CraftSimSimFrame.content.profitText:SetText("New Multicraft\n".. CraftSimUTIL:round(bestSimulation.multicraftPercent, 2) .. "%")
+        topGearFrame.content.profitText:SetText("New Multicraft\n".. CraftSimUTIL:round(bestSimulation.multicraftPercent, 2) .. "%")
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.CRAFTING_SPEED then
-        CraftSimSimFrame.content.profitText:SetText("New Crafting Speed\n".. CraftSimUTIL:round(bestSimulation.craftingspeedPercent, 2) .. "%")
+        topGearFrame.content.profitText:SetText("New Crafting Speed\n".. CraftSimUTIL:round(bestSimulation.craftingspeedPercent, 2) .. "%")
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.RESOURCEFULNESS then
-        CraftSimSimFrame.content.profitText:SetText("New Resourcefulness\n".. CraftSimUTIL:round(bestSimulation.resourcefulnessPercent, 2) .. "%")
+        topGearFrame.content.profitText:SetText("New Resourcefulness\n".. CraftSimUTIL:round(bestSimulation.resourcefulnessPercent, 2) .. "%")
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.INSPIRATION then
-        CraftSimSimFrame.content.profitText:SetText("New Inspiration\n".. CraftSimUTIL:round(bestSimulation.inspirationPercent, 2) .. "%")
+        topGearFrame.content.profitText:SetText("New Inspiration\n".. CraftSimUTIL:round(bestSimulation.inspirationPercent, 2) .. "%")
     elseif topGearMode == CraftSimCONST.GEAR_SIM_MODES.SKILL then
-        CraftSimSimFrame.content.profitText:SetText("New Skill\n".. bestSimulation.skill)
+        topGearFrame.content.profitText:SetText("New Skill\n".. bestSimulation.skill)
     else
-        CraftSimSimFrame.content.profitText:SetText("Unhandled Sim Mode")
+        topGearFrame.content.profitText:SetText("Unhandled Sim Mode")
     end
     CraftSimTopGearEquipButton:SetEnabled(true)
 
@@ -506,24 +534,25 @@ function CraftSimFRAME:FillSimResultData(bestSimulation, topGearMode, isCooking)
         inspirationBonusSkillText = " (" .. prefix .. CraftSimUTIL:round(bestSimulation.statDiff.inspirationBonusskill, 0) .. " Bonus)"
     end
 
-    CraftSimSimFrame.content.statDiff.inspiration:SetText("Inspiration: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.inspiration, 2, "%") .. inspirationBonusSkillText)
-    CraftSimSimFrame.content.statDiff.multicraft:SetText("Multicraft: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.multicraft, 2, "%"))
-    CraftSimSimFrame.content.statDiff.resourcefulness:SetText("Resourcefulness: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.resourcefulness, 2, "%"))
-    CraftSimSimFrame.content.statDiff.craftingspeed:SetText("Crafting Speed: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.craftingspeed, 2, "%"))
-    CraftSimSimFrame.content.statDiff.skill:SetText("Skill: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.skill, 0))
+    topGearFrame.content.statDiff.inspiration:SetText("Inspiration: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.inspiration, 2, "%") .. inspirationBonusSkillText)
+    topGearFrame.content.statDiff.multicraft:SetText("Multicraft: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.multicraft, 2, "%"))
+    topGearFrame.content.statDiff.resourcefulness:SetText("Resourcefulness: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.resourcefulness, 2, "%"))
+    topGearFrame.content.statDiff.craftingspeed:SetText("Crafting Speed: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.craftingspeed, 2, "%"))
+    topGearFrame.content.statDiff.skill:SetText("Skill: " .. CraftSimFRAME:FormatStatDiffpercentText(bestSimulation.statDiff.skill, 0))
 
     if CraftSimTopGearSimMode.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE and CraftSimTopGearSimMode.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
-        CraftSimSimFrame.content.statDiff.qualityIcon.SetQuality(bestSimulation.modifiedRecipeData.expectedQuality)
-        CraftSimSimFrame.content.statDiff.quality:Show()
-        CraftSimSimFrame.content.statDiff.qualityIcon:Show()
+        topGearFrame.content.statDiff.qualityIcon.SetQuality(bestSimulation.modifiedRecipeData.expectedQuality)
+        topGearFrame.content.statDiff.quality:Show()
+        topGearFrame.content.statDiff.qualityIcon:Show()
     else
-        CraftSimSimFrame.content.statDiff.quality:Hide()
-        CraftSimSimFrame.content.statDiff.qualityIcon:Hide()
+        topGearFrame.content.statDiff.quality:Hide()
+        topGearFrame.content.statDiff.qualityIcon:Hide()
     end
 
 end
 
 function CraftSimFRAME:ClearResultData(isCooking)
+    local topGearFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.TOP_GEAR)
     if not isCooking then
         CraftSimFRAME:ShowComboItemIcons({{isEmptySlot = true}, {isEmptySlot = true}, {isEmptySlot = true}}, isCooking)
     else
@@ -531,15 +560,15 @@ function CraftSimFRAME:ClearResultData(isCooking)
     end
 
     CraftSimTopGearEquipButton:SetEnabled(false)
-    CraftSimSimFrame.content.profitText:SetText("Top Gear equipped")
+    topGearFrame.content.profitText:SetText("Top Gear equipped")
 
-    CraftSimSimFrame.content.statDiff.inspiration:SetText("")
-    CraftSimSimFrame.content.statDiff.multicraft:SetText("")
-    CraftSimSimFrame.content.statDiff.resourcefulness:SetText("")
-    CraftSimSimFrame.content.statDiff.craftingspeed:SetText("")
-    CraftSimSimFrame.content.statDiff.skill:SetText("")
-    CraftSimSimFrame.content.statDiff.quality:Hide()
-    CraftSimSimFrame.content.statDiff.qualityIcon:Hide()
+    topGearFrame.content.statDiff.inspiration:SetText("")
+    topGearFrame.content.statDiff.multicraft:SetText("")
+    topGearFrame.content.statDiff.resourcefulness:SetText("")
+    topGearFrame.content.statDiff.craftingspeed:SetText("")
+    topGearFrame.content.statDiff.skill:SetText("")
+    topGearFrame.content.statDiff.quality:Hide()
+    topGearFrame.content.statDiff.qualityIcon:Hide()
 end
 
 function CraftSimFRAME:ToggleFrame(frame, visible)
@@ -630,14 +659,18 @@ function CraftSimFRAME:makeFrameMoveable(frame)
 end
 
 function CraftSimFRAME:ResetFrames()
-    CraftSimReagentHintFrame:ClearAllPoints()
-    CraftSimCostOverviewFrame:ClearAllPoints()
-    CraftSimSimFrame:ClearAllPoints()
-    CraftSimDetailsFrame:ClearAllPoints()
-    CraftSimReagentHintFrame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "BOTTOM", 0, 0)
-    CraftSimCostOverviewFrame:SetPoint("TOP",  CraftSimSimFrame, "BOTTOM", 0, 10)
-    CraftSimSimFrame:SetPoint("TOPLEFT",  ProfessionsFrame.CloseButton, "TOPRIGHT", -5, 3)
-    CraftSimDetailsFrame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.Details, "BOTTOM", 0, 19)
+    local materialFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.MATERIALS)
+    local costOverviewFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.COST_OVERVIEW)
+    local topGearFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.TOP_GEAR)
+    local statweightFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.STAT_WEIGHTS)
+    materialFrame:ClearAllPoints()
+    costOverviewFrame:ClearAllPoints()
+    topGearFrame:ClearAllPoints()
+    statweightFrame:ClearAllPoints()
+    materialFrame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "BOTTOM", 0, 0)
+    costOverviewFrame:SetPoint("TOP",  topGearFrame, "BOTTOM", 0, 10)
+    topGearFrame:SetPoint("TOPLEFT",  ProfessionsFrame.CloseButton, "TOPRIGHT", -5, 3)
+    statweightFrame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.Details, "BOTTOM", 0, 19)
 end
 
 local hooked = false
@@ -725,7 +758,7 @@ function CraftSimFRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anc
     frame.content:SetSize(sizeX, sizeY)
 
 
-    table.insert(CraftSimFRAME.frames, name)
+    CraftSimFRAME.frames[frameID] = name
     return frame
 end
 

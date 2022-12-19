@@ -219,10 +219,6 @@ end
 
 function CraftSimMAIN:TriggerModulesByRecipeType()
 
-	if UIDROPDOWNMENU_OPEN_MENU then
-		return
-	end
-
 	if CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate then
 		CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
 		return
@@ -261,6 +257,10 @@ function CraftSimMAIN:TriggerModulesByRecipeType()
 	if recipeData and priceData then
 		CraftSimDATAEXPORT:UpdateTooltipData(recipeData)
 		CraftSimFRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
+
+		if UIDROPDOWNMENU_OPEN_MENU then
+			return
+		end
 
 		if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
 			-- show everything

@@ -117,10 +117,10 @@ function CraftSimOPTIONS:InitOptionsFrame()
         0, 1, CraftSimOptions.transparencyMaterials, -- get from options..
         "0", "1", 
         function(self, value)
-            CraftSimReagentHintFrame:SetTransparency(value)
+            CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.MATERIALS):SetTransparency(value)
             CraftSimOptions.transparencyMaterials = value
         end)
-    CraftSimReagentHintFrame:SetTransparency(CraftSimOptions.transparencyMaterials)
+        CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions.transparencyMaterials)
 
     local statWeightsCheckbox = CraftSimFRAME:CreateCheckbox(" Average Profit and Statweights", 
      "Activate the module that shows the average profit based on your profession stats and the profit stat weights",
@@ -138,10 +138,10 @@ function CraftSimOPTIONS:InitOptionsFrame()
         0, 1, CraftSimOptions.transparencyStatWeights, -- get from options..
         "0", "1", 
         function(self, value)
-            CraftSimDetailsFrame:SetTransparency(value)
+            CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.STAT_WEIGHTS):SetTransparency(value)
             CraftSimOptions.transparencyStatWeights = value
         end)
-    CraftSimDetailsFrame:SetTransparency(CraftSimOptions.transparencyStatWeights)
+    CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.STAT_WEIGHTS):SetTransparency(CraftSimOptions.transparencyStatWeights)
 
      local topGearCheckbox = CraftSimFRAME:CreateCheckbox(" Top Gear", 
      "Activate the module that shows the best available profession gear combination based on the selected mode",
@@ -159,10 +159,10 @@ function CraftSimOPTIONS:InitOptionsFrame()
         0, 1, CraftSimOptions.transparencyTopGear, -- get from options..
         "0", "1", 
         function(self, value)
-            CraftSimSimFrame:SetTransparency(value)
+            CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.TOP_GEAR):SetTransparency(value)
             CraftSimOptions.transparencyTopGear = value
         end)
-    CraftSimSimFrame:SetTransparency(CraftSimOptions.transparencyTopGear)
+    CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.TOP_GEAR):SetTransparency(CraftSimOptions.transparencyTopGear)
 
      local costOverviewCheckbox = CraftSimFRAME:CreateCheckbox(" Cost Overview", 
      "Activate the module that shows a crafting cost and sell profit overview by resulting quality",
@@ -180,10 +180,11 @@ function CraftSimOPTIONS:InitOptionsFrame()
         0, 1, CraftSimOptions.transparencyCostOverview, -- get from options..
         "0", "1", 
         function(self, value)
+            CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.COST_OVERVIEW):SetTransparency(value)
             CraftSimCostOverviewFrame:SetTransparency(value)
             CraftSimOptions.transparencyCostOverview = value
         end)
-    CraftSimCostOverviewFrame:SetTransparency(CraftSimOptions.transparencyCostOverview)
+        CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.COST_OVERVIEW):SetTransparency(CraftSimOptions.transparencyCostOverview)
 
      local skillBreakpointsCheckbox = CraftSimFRAME:CreateCheckbox(" Offset Skill Breakpoints by 1", 
      "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
