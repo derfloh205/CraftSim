@@ -3,22 +3,27 @@ CraftSimFRAME = {}
 function CraftSimFRAME:InitStatWeightFrame()
     local frame = CraftSimFRAME:CreateCraftSimFrame(
         "CraftSimDetailsFrame", 
-        "CraftSim Statweights", 
+        "CraftSim Average Profit", 
         ProfessionsFrame.CraftingPage.SchematicForm,
         ProfessionsFrame.CraftingPage.SchematicForm.Details, 
         "TOP", 
         "BOTTOM", 
         0, 
-        0, 
+        19, 
         270, 
-        100, 
+        120, 
         CraftSimCONST.FRAMES.STAT_WEIGHTS)
 
+        frame.content.breakdownButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame.content, "UIPanelButtonTemplate")
+        frame.content.breakdownButton:SetPoint("TOP", frame.title, "TOP", 0, -15)	
+        frame.content.breakdownButton:SetText("Show Details")
+        frame.content.breakdownButton:SetSize(frame.content.breakdownButton:GetTextWidth() + 15, 20)
+
 	frame.content.statText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.statText:SetPoint("LEFT", frame.content, "LEFT", 15, -5)
+	frame.content.statText:SetPoint("LEFT", frame.content, "LEFT", 15, -20)
 
 	frame.content.valueText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.valueText:SetPoint("RIGHT", frame.content, "RIGHT", -10, -5)
+	frame.content.valueText:SetPoint("RIGHT", frame.content, "RIGHT", -15, -20)
 	frame:Hide()
 end
 

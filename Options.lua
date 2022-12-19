@@ -110,7 +110,7 @@ function CraftSimOPTIONS:InitOptionsFrame()
      -90, 
      -50)
 
-    local statWeightsCheckbox = CraftSimFRAME:CreateCheckbox(" Stat Weights", 
+    local statWeightsCheckbox = CraftSimFRAME:CreateCheckbox(" Average Profit and Statweights", 
      "Activate the module that shows the average profit based on your profession stats and the profit stat weights",
      "modulesStatWeights", 
      ModulesTab.content, 
