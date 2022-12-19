@@ -96,7 +96,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData)
                 local materialCost = CraftSimPRICEDATA:GetMinBuyoutByItemID(totalReagents[materialIndex].itemID, true) * totalReagents[materialIndex].allocations
                 if bit == 1 then
                     -- TODO: factor in required quantity ? How to do this with different qualities?
-                    materialCost = materialCost * 0.3 -- for now just save 30% of this material costs if it was procced
+                    materialCost = materialCost * (0.3 * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor) -- for now just save 30% of this material costs plus the specced addition if it was procced
                 else
                     -- if the material was not procced then we save nothing
                     materialCost = 0
