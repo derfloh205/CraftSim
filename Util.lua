@@ -265,3 +265,16 @@ function CraftSimUTIL:ColorizeText(text, color)
     local endLine = "\124r"
     return startLine .. color .. text .. endLine
 end
+
+-- from stackoverflow: 
+-- https://stackoverflow.com/questions/9079853/lua-print-integer-as-a-binary
+function CraftSimUTIL:toBits(num, bits)
+    -- returns a table of bits, most significant first.
+    bits = bits or math.max(1, select(2, math.frexp(num)))
+    local t = {} -- will contain the bits        
+    for b = bits, 1, -1 do
+        t[b] = math.fmod(num, 2)
+        num = math.floor((num - t[b]) / 2)
+    end
+    return t
+end

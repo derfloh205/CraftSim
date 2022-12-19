@@ -1,7 +1,8 @@
 CraftSimCONST = {}
 
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
-CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 1.40
+-- currently this is just an approximation
+CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 1.30
 
 CraftSimCONST.FRAMES = {
     MATERIALS = 0,

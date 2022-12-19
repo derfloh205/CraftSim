@@ -9,6 +9,7 @@
 
 embeds.xml
 
+ProfitCalculation.lua
 SpecData.lua
 AccountSync.lua
 Tooltip.lua

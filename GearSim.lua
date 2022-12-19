@@ -271,7 +271,7 @@ function CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeDa
     for _, gearCombination in pairs(gearCombos) do
         local statChanges = CraftSimGEARSIM:GetStatChangesFromGearCombination(gearCombination)
         local modifiedRecipeData = CraftSimGEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeType, statChanges)
-        local meanProfit = CraftSimSTATS:getMeanProfit(modifiedRecipeData, priceData)
+        local meanProfit = CraftSimCALC:getMeanProfit(modifiedRecipeData, priceData)
         local profitDiff = meanProfit - baseProfit
         table.insert(results, {
             meanProfit = meanProfit,
@@ -377,8 +377,8 @@ function CraftSimGEARSIM:SimulateBestProfessionGearCombination(recipeData, recip
     local noItemsRecipeData = CraftSimGEARSIM:DeductCurrentItemStats(recipeData, recipeType)
 
     if CraftSimOptions.topGearMode == CraftSimCONST.GEAR_SIM_MODES.PROFIT then
-        local currentComboMeanProfit = CraftSimSTATS:getMeanProfit(recipeData, priceData)
-        local noItemMeanProfit = CraftSimSTATS:getMeanProfit(noItemsRecipeData, priceData)
+        local currentComboMeanProfit = CraftSimCALC:getMeanProfit(recipeData, priceData)
+        local noItemMeanProfit = CraftSimCALC:getMeanProfit(noItemsRecipeData, priceData)
         local simulationResults = CraftSimGEARSIM:SimulateProfessionGearCombinations(gearCombos, noItemsRecipeData, recipeType, priceData, currentComboMeanProfit)
 
         local validSimulationResults = simulationResults
