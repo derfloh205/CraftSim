@@ -28,3 +28,6 @@ Util.lua
 StatweightCalculation.lua
 CraftSim.lua
 CraftSim.xml
+
+Localization.lua
+enEN.lua

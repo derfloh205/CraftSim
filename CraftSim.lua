@@ -107,6 +107,8 @@ end
 local priceApiLoaded = false
 function CraftSimMAIN:ADDON_LOADED(addon_name)
 	if addon_name == 'CraftSim' then
+		CraftSimLOC:Init()
+		
 		CraftSimFRAME:InitStatWeightFrame()
 		CraftSimFRAME:InitGearSimFrame()
 		CraftSimFRAME:InitPriceDataWarningFrame()

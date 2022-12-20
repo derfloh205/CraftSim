@@ -26,6 +26,9 @@ function CraftSimCALC:handleInspiration(recipeData, priceData, crafts, craftedIt
     if calculationData.inspiration then
         calculationData.inspiration.averageInspirationItemsCurrent = craftedItems.baseQuality
         calculationData.inspiration.averageInspirationItemsHigher = craftedItems.nextQuality or 0
+
+        calculationData.inspiration.inspirationItemsValueCurrent = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]
+        calculationData.inspiration.inspirationItemsValueHigher = craftedItems.nextQuality * (priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1] or 0)
     end
 end
 
@@ -68,8 +71,10 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
             if reagentData.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
                     local itemsInfo = CopyTable(reagentData.itemsInfo)
                     local totalAllocations = 0
-                    for _, itemInfo in pairs(reagentData.itemsInfo) do
+                    for _, itemInfo in pairs(itemsInfo) do
                         totalAllocations = totalAllocations + itemInfo.allocations
+                        itemInfo.differentQualities = reagentData.differentQualities
+                        itemInfo.requiredQuantity = reagentData.requiredQuantity
                     end
 
                     if totalAllocations == 0 then
@@ -113,25 +118,41 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
                 local materialCost = CraftSimPRICEDATA:GetMinBuyoutByItemID(totalReagents[materialIndex].itemID, true) * totalReagents[materialIndex].allocations
                 if bit == 1 then
                     -- TODO: factor in required quantity ? How to do this with different qualities?
-                    materialCost = materialCost * (0.3 * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor) -- for now just save 30% of this material costs plus the specced addition if it was procced
+                    -- use the lower quantity = min 1 saved "rule" for non quality materials for now
+                    if totalReagents[materialIndex].differentQualities then
+                        -- Save 30% of this material costs plus the specced addition if it was procced
+                        materialCost = materialCost * (CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor) 
+                    else
+                        if totalReagents[materialIndex].requiredQuantity < 5 then
+                            -- 5 -> 1.5 mats on average.. so either 1 or 2
+                            -- anything < 5 defaults to exact 1 material saved on average because it is assumed to round down from < 1.5 to 1
+                            -- If 30% of a material would put us below 1, then assume that 1 is saved on average
+                            materialCost = materialCost * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
+                        else
+                            -- if is >= 5 then just take the usual 0.3%
+                            materialCost = materialCost * (CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor)
+                        end
+                    end
                 else
                     -- if the material was not procced then we save nothing
                     materialCost = 0
                 end
                 -- the value of this combination
                 combinationCraftingCost = combinationCraftingCost + materialCost
-                -- we get the average value of this combination by multiplying it with its chance to occur
+                -- we get the average contributing value of this combination by multiplying it with its chance to occur
                 combinationCraftingCost = combinationCraftingCost * chance
             end
             table.insert(averageSavedCostsByCombination, combinationCraftingCost)
             --print("chance/cost for " .. table.concat(combination, "") .. ": " .. CraftSimUTIL:round(chance * 100, 5) .. "% -> " .. CraftSimUTIL:FormatMoney(combinationCraftingCost))
         end
 
+        -- now we sum up all the little contributions to the total average
         for _, avgSavedCost in pairs(averageSavedCostsByCombination) do
             savedCosts = savedCosts + avgSavedCost
         end
-
-        savedCosts = savedCosts / #averageSavedCostsByCombination
+        -- this is actually too much, cause the average is already based and weighted by the different chances of occurance
+        -- THX to Kroge for pointing that out!
+        --savedCosts = savedCosts / #averageSavedCostsByCombination
     end
 
     if calculationData.resourcefulness then
