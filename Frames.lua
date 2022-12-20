@@ -24,7 +24,7 @@ function CraftSimFRAME:InitStatWeightFrame()
         120, 
         CraftSimCONST.FRAMES.STAT_WEIGHTS)
 
-    frame.content.breakdownButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame.content, "UIPanelButtonTemplate")
+    frame.content.breakdownButton = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
     frame.content.breakdownButton:SetPoint("TOP", frame.title, "TOP", 0, -15)	
     frame.content.breakdownButton:SetText("Show Explanation")
     frame.content.breakdownButton:SetSize(frame.content.breakdownButton:GetTextWidth() + 15, 20)
@@ -100,7 +100,7 @@ function CraftSimFRAME:InitBestAllocationsFrame()
     local frame = CraftSimFRAME:CreateCraftSimFrame(
         "CraftSimReagentHintFrame", 
         "CraftSim Min Cost Material", 
-        ProfessionsFrame.CraftingPage.SchematicForm.Reagents, 
+        ProfessionsFrame.CraftingPage.SchematicForm, 
         CraftSimCostOverviewFrame, 
         "TOPLEFT", 
         "TOPRIGHT", 
@@ -955,7 +955,7 @@ end
 
 function CraftSimFRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     frame.collapsed = false
-    frame.collapseButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame, "UIPanelButtonTemplate")
+    frame.collapseButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.collapseButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
 	frame.collapseButton:SetText("-")
 	frame.collapseButton:SetSize(frame.collapseButton:GetTextWidth() + 15, 20)
@@ -1095,4 +1095,122 @@ function CraftSimFRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, ancho
     end)
 
     return helpButton
+end
+
+function CraftSimFRAME:InitSimModeFrames()
+    local toggleButton = CreateFrame("Button", "CraftSimSimModeToggleButton", ProfessionsFrame.CraftingPage.SchematicForm, "UIPanelButtonTemplate")
+    toggleButton:SetPoint("BOTTOM", ProfessionsFrame.CraftingPage.SchematicForm.Details, "TOP", 0, 0)	
+    toggleButton:SetText("Simulation Mode: Off")
+    toggleButton:SetSize(toggleButton:GetTextWidth() + 15, 20)
+    toggleButton:SetScript("OnClick", function(self) 
+        CraftSimSIMULATION_MODE.isActive = not CraftSimSIMULATION_MODE.isActive
+        toggleButton:SetText(CraftSimSIMULATION_MODE.isActive and "Simulation Mode: On" or "Simulation Mode: Off")
+        local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
+        if bestQBox:GetChecked() and CraftSimSIMULATION_MODE.isActive then
+            bestQBox:Click()
+        end
+        CraftSimMAIN:TriggerModulesByRecipeType()
+    end)
+
+    local reagentOverwriteFrame = CreateFrame("frame", nil, ProfessionsFrame.CraftingPage.SchematicForm)
+    reagentOverwriteFrame:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.SchematicForm.Reagents, "TOPLEFT", -40, -35)
+    reagentOverwriteFrame:SetSize(200, 400)
+
+    local baseX = 10
+    local inputOffsetX = 25
+
+    reagentOverwriteFrame.qualityIcon1 = CraftSimFRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX - 15, 15, 1)
+    reagentOverwriteFrame.qualityIcon2 = CraftSimFRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX+inputOffsetX - 15, 15, 2)
+    reagentOverwriteFrame.qualityIcon3 = CraftSimFRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX+inputOffsetX*2 - 15, 15, 3)
+
+    reagentOverwriteFrame.reagentOverwriteInputs = {}
+
+    local offsetY = -45
+
+    table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSimFRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, 0, 0, baseX, inputOffsetX))
+    table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSimFRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, 0, offsetY, baseX, inputOffsetX))
+    table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSimFRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, 0, offsetY*2, baseX, inputOffsetX))
+    table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSimFRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, 0, offsetY*3, baseX, inputOffsetX))
+    table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSimFRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, 0, offsetY*4, baseX, inputOffsetX))
+
+    CraftSimSIMULATION_MODE.reagentOverwriteFrame = reagentOverwriteFrame
+
+end
+
+function CraftSimFRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, offsetX, offsetY, baseX, inputOffsetX)
+    local overwriteInput = CreateFrame("frame", nil, reagentOverwriteFrame)
+    overwriteInput:SetPoint("TOP", reagentOverwriteFrame, "TOP", offsetX, offsetY)
+    overwriteInput:SetSize(50, 50)
+    
+    overwriteInput.icon = CraftSimFRAME:CreateIcon(overwriteInput, 0, 0, CraftSimCONST.EMPTY_SLOT_TEXTURE, 40, 40, "RIGHT", "LEFT")
+    -- overwriteInput.reagentName = overwriteInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	-- overwriteInput.reagentName:SetPoint("BOTTOMLEFT", overwriteInput.icon, "BOTTOMRIGHT", 5, 5)
+	-- overwriteInput.reagentName:SetText("Test")
+
+    overwriteInput.inputq1 = CraftSimFRAME:CreateSimModeOverWriteInput(overwriteInput, baseX, 1)
+    overwriteInput.inputq2 = CraftSimFRAME:CreateSimModeOverWriteInput(overwriteInput, baseX+inputOffsetX, 2)
+    overwriteInput.inputq3 = CraftSimFRAME:CreateSimModeOverWriteInput(overwriteInput, baseX+inputOffsetX*2, 3)
+
+    overwriteInput.requiredQuantity = overwriteInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+	overwriteInput.requiredQuantity:SetPoint("LEFT", overwriteInput.inputq3, "RIGHT", 5, 0)
+	overwriteInput.requiredQuantity:SetText("/ 99")
+
+    return overwriteInput
+end
+
+function CraftSimFRAME:CreateSimModeOverWriteInput(overwriteInputFrame, offsetX, qualityID)
+    local inputBox = CreateFrame("EditBox", nil, overwriteInputFrame, "UIPanelButtonTemplate")
+    inputBox.qualityID = qualityID
+    inputBox:SetPoint("LEFT", overwriteInputFrame.icon, "RIGHT", offsetX , 0)
+    inputBox:SetSize(20, 20)
+    inputBox:SetAutoFocus(false) -- dont automatically focus
+    inputBox:SetFontObject("ChatFontNormal")
+    inputBox:SetText(0)
+    inputBox:SetScript("OnEscapePressed", function() inputBox:ClearFocus() end)
+    inputBox:SetScript("OnEnterPressed", function() inputBox:ClearFocus() end)
+    inputBox:SetScript("OnTextChanged", CraftSimSIMULATION_MODE.OnInputAllocationChanged)
+    return inputBox
+end
+
+function CraftSimFRAME:UpdateSimModeFrames(recipeData)
+    local simModeAvailable = recipeData and CraftSimSIMULATION_MODE.isActive -- if recipeData null do not toggle on
+    CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not simModeAvailable)
+    CraftSimFRAME:ToggleFrame(CraftSimSIMULATION_MODE.reagentOverwriteFrame, simModeAvailable)
+    local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
+    CraftSimFRAME:ToggleFrame(bestQBox, not simModeAvailable)
+    for index, inputFrame in pairs(CraftSimSIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
+        local reagentData = recipeData.reagents[index]
+
+        CraftSimFRAME:ToggleFrame(inputFrame, simModeAvailable and reagentData)
+
+        if reagentData then
+            --inputFrame.reagentName:SetText(reagentData.name)
+            inputFrame.requiredQuantity:SetText("/ " .. reagentData.requiredQuantity)
+            CraftSimFRAME:ToggleFrame(inputFrame.inputq2, reagentData.differentQualities)
+            CraftSimFRAME:ToggleFrame(inputFrame.inputq3, reagentData.differentQualities)
+            inputFrame.inputq1.reagentIndex = index
+            inputFrame.inputq2.reagentIndex = index
+            inputFrame.inputq3.reagentIndex = index
+
+
+            local itemData = CraftSimDATAEXPORT:GetItemFromCacheByItemID(reagentData.itemsInfo[1].itemID)
+            inputFrame.icon:SetNormalTexture(itemData.itemTexture)
+            inputFrame.icon:SetScript("OnEnter", function(self) 
+                local itemName, ItemLink = GameTooltip:GetItem()
+                GameTooltip:SetOwner(inputFrame, "ANCHOR_RIGHT");
+                if ItemLink ~= itemData.link then
+                    -- to not set it again and hide the tooltip..
+                    GameTooltip:SetHyperlink(itemData.link)
+                end
+				GameTooltip:Show();
+            end)
+            inputFrame.icon:SetScript("OnLeave", function(self) 
+                GameTooltip:Hide();
+            end)
+        else
+            inputFrame.icon:SetScript("OnEnter", nil)
+            inputFrame.icon:SetScript("OnLeave", nil)
+
+        end
+    end
 end

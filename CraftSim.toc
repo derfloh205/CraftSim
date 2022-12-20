@@ -9,6 +9,7 @@
 
 embeds.xml
 
+SimMode.lua
 ProfitCalculation.lua
 SpecData.lua
 AccountSync.lua

@@ -92,25 +92,16 @@ function CraftSimMAIN:HookToEvent()
 	end
 	hookedEvent = true
 
-	-- hook to the "SetStats" function of the Details panel
-	-- this makes the most sense cause we only really need to calculate again when the stats of the recipe are changed
-	-- and all reagents change some stats (like difficulty or quality at least)
-	-- it is also fired when a recipe is opened or changed
-	-- it is also fired multi times when a reagent is changed but like 5 or 6 times at most, this should not be a performance problem
-	-- TODO: check if there are any reagents that impact profit and do not change a stat??
-	-- Note: OnShow also 'works', it triggers but there is no recipe info yet, so we need something that also triggers and comes after OnShow..
-
-	--TEST
-	-- hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm.Details, "SetStats", function(self)
-	-- 	CraftSimMAIN:TriggerModulesByRecipeType()
-	-- end)
-
 	local function Update()
-		CraftSimMAIN:TriggerModulesByRecipeType()
+		CraftSimMAIN:TriggerModulesByRecipeType(false)
+	end
+
+	local function Init()
+		CraftSimMAIN:TriggerModulesByRecipeType(true)
 	end
 
 	local hookFrame = ProfessionsFrame.CraftingPage.SchematicForm
-	hooksecurefunc(hookFrame, "Init", Update)
+	hooksecurefunc(hookFrame, "Init", Init)
 
 	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, Update)
 	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, Update)
@@ -127,6 +118,7 @@ function CraftSimMAIN:ADDON_LOADED(addon_name)
 		CraftSimFRAME:InitCostOverviewFrame()
 		CraftSimFRAME:InitBestAllocationsFrame()
 		CraftSimFRAME:InitProfitDetailsFrame()
+		CraftSimSIMULATION_MODE:Init()
 		CraftSimTOOLTIP:Init()
 		CraftSimMAIN:HookToEvent()
 		CraftSimMAIN:HookToDetailsHide()
@@ -232,7 +224,13 @@ function CraftSimMAIN:PLAYER_LOGIN()
 	CraftSimMAIN:HandleCollapsedFrameSave()
 end
 
-function CraftSimMAIN:TriggerModulesByRecipeType()
+function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
+
+	-- if init, turn sim mode off
+	if isInit then
+		CraftSimSIMULATION_MODE.isActive = false
+		CraftSimSimModeToggleButton:SetText("Simulation Mode: Off")
+	end
 
 	if CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate then
 		CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
@@ -252,7 +250,12 @@ function CraftSimMAIN:TriggerModulesByRecipeType()
     local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
     --print("trigger by recipeType.. " .. tostring(recipeType))
 
-	local recipeData = CraftSimDATAEXPORT:exportRecipeData()
+	local recipeData = nil 
+	if CraftSimSIMULATION_MODE.isActive and CraftSimSIMULATION_MODE.recipeData then
+		recipeData = CraftSimSIMULATION_MODE.recipeData
+	else
+		recipeData = CraftSimDATAEXPORT:exportRecipeData()
+	end
 
 	local priceData = CraftSimPRICEDATA:GetPriceData(recipeData, recipeType)
     -- when to see what?
@@ -272,6 +275,7 @@ function CraftSimMAIN:TriggerModulesByRecipeType()
 	if recipeData and priceData then
 		CraftSimDATAEXPORT:UpdateTooltipData(recipeData)
 		CraftSimFRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
+		CraftSimSIMULATION_MODE:InitSimModeData(recipeData)
 
 		if UIDROPDOWNMENU_OPEN_MENU then
 			return
