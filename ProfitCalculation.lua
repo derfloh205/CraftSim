@@ -2,6 +2,8 @@ CraftSimCALC = {}
 
 function CraftSimCALC:handleInspiration(recipeData, priceData, crafts, craftedItems, calculationData)
     local inspirationCanUpgrade = false
+    calculationData.inspiration = {}
+
     if recipeData.expectedQuality ~= recipeData.maxQuality and recipeData.stats.inspiration ~= nil then
         local qualityThresholds = CraftSimSTATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
         local qualityUpgradeThreshold = qualityThresholds[recipeData.expectedQuality]
@@ -9,7 +11,6 @@ function CraftSimCALC:handleInspiration(recipeData, priceData, crafts, craftedIt
         inspirationCanUpgrade = (recipeData.stats.skill + recipeData.stats.inspiration.bonusskill) >= qualityUpgradeThreshold
     end
     if inspirationCanUpgrade then
-        calculationData.inspiration = {}
         -- Recipe considers inspiration and inspiration upgrades are possible
         local inspirationProcs = (recipeData.stats.inspiration.percent / 100)
 
@@ -23,13 +24,10 @@ function CraftSimCALC:handleInspiration(recipeData, priceData, crafts, craftedIt
         crafts.baseQuality = 1
     end
 
-    if calculationData.inspiration then
-        calculationData.inspiration.averageInspirationItemsCurrent = craftedItems.baseQuality
-        calculationData.inspiration.averageInspirationItemsHigher = craftedItems.nextQuality or 0
-
-        calculationData.inspiration.inspirationItemsValueCurrent = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]
-        calculationData.inspiration.inspirationItemsValueHigher = craftedItems.nextQuality * (priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1] or 0)
-    end
+    calculationData.inspiration.averageInspirationItemsCurrent = craftedItems.baseQuality
+    calculationData.inspiration.averageInspirationItemsHigher = craftedItems.nextQuality or 0
+    calculationData.inspiration.inspirationItemsValueCurrent = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]
+    calculationData.inspiration.inspirationItemsValueHigher = craftedItems.nextQuality * (priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1] or 0)
 end
 
 function CraftSimCALC:handleMulticraft(recipeData, priceData, crafts, craftedItems, calculationData)
@@ -235,6 +233,8 @@ function CraftSimCALC:getMeanProfit(recipeData, priceData)
             craftedItems.nextQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1]
     end
     local meanProfit = ((totalWorth*CraftSimCONST.AUCTION_HOUSE_CUT) - totalCraftingCosts)
+
+    calculationData.craftingCostPerCraft = totalCraftingCosts
 
     return meanProfit, calculationData
 end

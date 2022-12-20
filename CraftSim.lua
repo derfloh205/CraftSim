@@ -99,16 +99,28 @@ function CraftSimMAIN:HookToEvent()
 	-- it is also fired multi times when a reagent is changed but like 5 or 6 times at most, this should not be a performance problem
 	-- TODO: check if there are any reagents that impact profit and do not change a stat??
 	-- Note: OnShow also 'works', it triggers but there is no recipe info yet, so we need something that also triggers and comes after OnShow..
-	hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm.Details, "SetStats", function(self)
+
+	--TEST
+	-- hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm.Details, "SetStats", function(self)
+	-- 	CraftSimMAIN:TriggerModulesByRecipeType()
+	-- end)
+
+	local function Update()
 		CraftSimMAIN:TriggerModulesByRecipeType()
-	end)
+	end
+
+	local hookFrame = ProfessionsFrame.CraftingPage.SchematicForm
+	hooksecurefunc(hookFrame, "Init", Update)
+
+	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, Update)
+	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, Update)
 end
 
 local priceApiLoaded = false
 function CraftSimMAIN:ADDON_LOADED(addon_name)
 	if addon_name == 'CraftSim' then
 		CraftSimLOC:Init()
-		
+
 		CraftSimFRAME:InitStatWeightFrame()
 		CraftSimFRAME:InitGearSimFrame()
 		CraftSimFRAME:InitPriceDataWarningFrame()
