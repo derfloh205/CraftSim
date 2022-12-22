@@ -96,14 +96,13 @@ function CraftSimMAIN:HookToEvent()
 	hookedEvent = true
 
 	local function Update(self)
-		--print("updating..")
 		CraftSimMAIN:TriggerModulesByRecipeType(false)
 	end
 
 	local function Init(self, recipeInfo)
 		CraftSimMAIN.currentRecipeInfo = recipeInfo
+		
 		if recipeInfo then
-			--print("got recipeInfo")
 			CraftSimMAIN:TriggerModulesByRecipeType(true)
 		else
 			--print("loading recipeInfo..")
@@ -163,6 +162,7 @@ function CraftSimMAIN:HookToProfessionsFrame()
 
 	ProfessionsFrame:HookScript("OnShow", 
    function()
+		CraftSimMAIN.lastRecipeID = nil
 		if CraftSimOptions.openLastRecipe then
 			C_Timer.After(1, function() 
 				local recipeInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeInfo()
@@ -235,10 +235,7 @@ function CraftSimMAIN:PLAYER_LOGIN()
 end
 
 function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
-	if CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate then
-		CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
-		return
-	end
+
 
     local professionInfo = ProfessionsFrame.professionInfo
 	local professionFullName = professionInfo.professionName
@@ -304,10 +301,6 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 			showCostOverview = true
 			showStatweights = true
 			showSimulationMode = true
-
-			if CraftSimOptions.autoAssignVellum then
-				CraftSimREAGENT_OPTIMIZATION:AutoAssignVellum(recipeData)
-			end
 		elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
 			-- show everything except material allocation and total cost overview
 			showTopGear = true

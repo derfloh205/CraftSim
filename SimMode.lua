@@ -7,13 +7,17 @@ CraftSimSIMULATION_MODE.recipeData = nil
 CraftSimSIMULATION_MODE.baseSkill = nil
 CraftSimSIMULATION_MODE.reagentSkillIncrease = nil
 
+CraftSimSIMULATION_MODE.baseInspiration = nil
+CraftSimSIMULATION_MODE.baseMulticraft = nil
+CraftSimSIMULATION_MODE.baseResourcefulness = nil
+
 function CraftSimSIMULATION_MODE:Init()
 
     CraftSimFRAME:InitSimModeFrames()
 end
 
-function CraftSimSIMULATION_MODE:OnInputAllocationChanged()
-    if not CraftSimSIMULATION_MODE.recipeData then
+function CraftSimSIMULATION_MODE:OnInputAllocationChanged(userInput)
+    if not userInput or not CraftSimSIMULATION_MODE.recipeData then
         return
     end
     local inputBox = self
@@ -32,34 +36,17 @@ function CraftSimSIMULATION_MODE:OnInputAllocationChanged()
         inputNumber = reagentData.requiredQuantity - otherAllocations
         inputBox:SetText(inputNumber)
     end
+    --reagentData.itemsInfo[inputBox.qualityID].allocations = tonumber(inputNumber)
 
-    reagentData.itemsInfo[inputBox.qualityID].allocations = tonumber(inputNumber)
-
-    -- recalculate the skill increase by reagents and adjust skill
-    local reagentSkillIncrease = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSimSIMULATION_MODE.recipeData)
-    CraftSimSIMULATION_MODE.reagentSkillIncrease = reagentSkillIncrease
-
-    -- Update Stats -> TODO: gather stats somewhere and update in one method? .. always update everything..?
-    local skillMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true)
-    CraftSimSIMULATION_MODE.recipeData.stats.skill = CraftSimSIMULATION_MODE.baseSkill + reagentSkillIncrease + skillMod
-
+    CraftSimSIMULATION_MODE:UpdateSimulationMode()
     CraftSimMAIN:TriggerModulesByRecipeType()
 end
 
-function CraftSimSIMULATION_MODE:OnStatModifierChanged()
-    if not CraftSimSIMULATION_MODE.isActive then
-        -- This could be triggered on init when some values are set
+function CraftSimSIMULATION_MODE:OnStatModifierChanged(userInput)
+    if not userInput then
         return
     end
-    local inputNumber = CraftSimUTIL:ValidateNumberInput(self, true)
-    local stat = self.stat
-
-    if stat == CraftSimCONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY then
-        CraftSimSIMULATION_MODE.recipeData.recipeDifficulty = CraftSimSIMULATION_MODE.baseRecipeDifficulty + inputNumber
-    elseif stat == CraftSimCONST.STAT_MAP.CRAFTING_DETAILS_SKILL then
-        CraftSimSIMULATION_MODE.recipeData.stats.skill = CraftSimSIMULATION_MODE.baseSkill + CraftSimSIMULATION_MODE.reagentSkillIncrease + inputNumber
-    end
-
+    CraftSimSIMULATION_MODE:UpdateSimulationMode()
     CraftSimMAIN:TriggerModulesByRecipeType()
 end
 
@@ -88,6 +75,37 @@ function CraftSimSIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
     local skillMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true)
     CraftSimSIMULATION_MODE.recipeData.stats.skill = CraftSimSIMULATION_MODE.baseSkill + reagentSkillIncrease + skillMod
 
+    -- update other stats
+    if CraftSimSIMULATION_MODE.recipeData.stats.inspiration then
+        local inspirationMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeInspirationModInput, true)
+        CraftSimSIMULATION_MODE.recipeData.stats.inspiration.value = CraftSimSIMULATION_MODE.baseInspiration.value + inspirationMod
+        CraftSimSIMULATION_MODE.recipeData.stats.inspiration.percent = CraftSimUTIL:GetInspirationPercentByStat(CraftSimSIMULATION_MODE.recipeData.stats.inspiration.value) * 100
+        if CraftSimSIMULATION_MODE.recipeData.stats.inspiration.percent > 100 then
+            -- More than 100 is not possible and it does not make sense in the calculation and would inflate the worth
+            CraftSimSIMULATION_MODE.recipeData.stats.inspiration.percent = 100
+        end
+    end
+
+    if CraftSimSIMULATION_MODE.recipeData.stats.multicraft then
+        local multicraftMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeMulticraftModInput, true)
+        CraftSimSIMULATION_MODE.recipeData.stats.multicraft.value = CraftSimSIMULATION_MODE.baseMulticraft.value + multicraftMod
+        CraftSimSIMULATION_MODE.recipeData.stats.multicraft.percent = CraftSimUTIL:GetMulticraftPercentByStat(CraftSimSIMULATION_MODE.recipeData.stats.multicraft.value) * 100
+        if CraftSimSIMULATION_MODE.recipeData.stats.multicraft.percent > 100 then
+            -- More than 100 is not possible and it does not make sense in the calculation and would inflate the worth
+            CraftSimSIMULATION_MODE.recipeData.stats.multicraft.percent = 100
+        end
+    end
+
+    if CraftSimSIMULATION_MODE.recipeData.stats.resourcefulness then
+        local resourcefulnessMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeResourcefulnessModInput, true)
+        CraftSimSIMULATION_MODE.recipeData.stats.resourcefulness.value = CraftSimSIMULATION_MODE.baseResourcefulness.value + resourcefulnessMod
+        CraftSimSIMULATION_MODE.recipeData.stats.resourcefulness.percent = CraftSimUTIL:GetResourcefulnessPercentByStat(CraftSimSIMULATION_MODE.recipeData.stats.resourcefulness.value) * 100
+        if CraftSimSIMULATION_MODE.recipeData.stats.resourcefulness.percent > 100 then
+            -- More than 100 is not possible and it does not make sense in the calculation and would inflate the worth
+            CraftSimSIMULATION_MODE.recipeData.stats.resourcefulness.percent = 100
+        end
+    end
+
     -- adjust expected quality by skill if quality recipe
     if not CraftSimSIMULATION_MODE.recipeData.result.isNoQuality then
         CraftSimSIMULATION_MODE.recipeData.expectedQuality = CraftSimSTATS:GetExpectedQualityBySkill(CraftSimSIMULATION_MODE.recipeData, CraftSimSIMULATION_MODE.recipeData.stats.skill, CraftSimOptions.breakPointOffset)
@@ -108,11 +126,19 @@ function CraftSimSIMULATION_MODE:InitializeSimulationMode(recipeData)
     local OldReagentSkillIncrease = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSimSIMULATION_MODE.recipeData)
     CraftSimSIMULATION_MODE.baseSkill = CraftSimSIMULATION_MODE.recipeData.stats.skill - OldReagentSkillIncrease
     CraftSimSIMULATION_MODE.baseRecipeDifficulty = CraftSimSIMULATION_MODE.recipeData.baseDifficulty
+    
+    CraftSimSIMULATION_MODE.baseInspiration = CopyTable(CraftSimSIMULATION_MODE.recipeData.stats.inspiration)
+    CraftSimSIMULATION_MODE.baseMulticraft = CopyTable(CraftSimSIMULATION_MODE.recipeData.stats.multicraft)
+    CraftSimSIMULATION_MODE.baseResourcefulness = CopyTable(CraftSimSIMULATION_MODE.recipeData.stats.resourcefulness)
+    -- crafting speed... for later profit per time interval?
 
     -- update frame visiblity and initialize the input fields
     CraftSimFRAME:ToggleSimModeFrames()
     CraftSimFRAME:InitilizeSimModeReagentOverwrites()
 
-    -- -- update simulation recipe data and frontend
-    -- CraftSimSIMULATION_MODE:UpdateSimulationMode()
+    -- update simulation recipe data and frontend
+    CraftSimSIMULATION_MODE:UpdateSimulationMode()
+
+    -- recalculate modules
+    CraftSimMAIN:TriggerModulesByRecipeType()
 end

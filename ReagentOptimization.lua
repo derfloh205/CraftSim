@@ -477,45 +477,46 @@ function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeTyp
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeData.recipeID, false)
 	--print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
     if not CraftSimSIMULATION_MODE.isActive then
-        --print("no sim mode allocate..")
-        local reagentSlots = ProfessionsFrame.CraftingPage.SchematicForm.reagentSlots[1]
-        for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
-            local reagents = currentSlot.reagents
-            local reagentType = currentSlot.reagentType
-            local reagentName = CraftSimDATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
-            local allocations = recipeData.currentTransaction:GetAllocations(slotIndex)
-            --allocations:Clear(); -- set all to zero
-            if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
-                local hasMoreThanOneQuality = reagents[2] ~= nil
+        -- -- TODO: possibly protected.. 
+        -- return
+        -- local reagentSlots = ProfessionsFrame.CraftingPage.SchematicForm.reagentSlots[1]
+        -- for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
+        --     local reagents = currentSlot.reagents
+        --     local reagentType = currentSlot.reagentType
+        --     local reagentName = CraftSimDATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
+        --     local allocations = recipeData.currentTransaction:GetAllocations(slotIndex)
+        --     --allocations:Clear(); -- set all to zero
+        --     if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
+        --         local hasMoreThanOneQuality = reagents[2] ~= nil
     
-                if hasMoreThanOneQuality then
-                    for reagentIndex, reagent in pairs(reagents) do
-                        local allocationForQuality = nil
-                        -- check if bestAllocations has a allocation set for this reagent
-                        for _, allocation in pairs(bestAllocation.allocations) do
-                            for _, qAllocation in pairs(allocation.allocations) do
-                                if qAllocation.itemID == reagent.itemID then
-                                    --print("found qAllocation..")
-                                    allocationForQuality = qAllocation.allocations
-                                end
-                            end
-                        end
-                        if allocationForQuality then
-                            --print("Allocate: " .. reagent.itemID .. ": " .. allocationForQuality)
-                            allocations:Allocate(reagent, allocationForQuality);
-                        end
-                    end
-                else
-                    local itemCount = GetItemCount(reagents[1].itemID, true, true, true)
-                    allocations:Allocate(reagents[1], math.min(itemCount, recipeData.reagents[slotIndex].requiredQuantity))
-                end
-                recipeData.currentTransaction:OverwriteAllocations(slotIndex, allocations);
-                recipeData.currentTransaction:SetManuallyAllocated(true);
-                reagentSlots[slotIndex]:Update();
-            end
-        end
-        -- this should trigger our modules AND everything blizzard needs to know
-        ProfessionsFrame.CraftingPage.SchematicForm:TriggerEvent(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified)
+        --         if hasMoreThanOneQuality then
+        --             for reagentIndex, reagent in pairs(reagents) do
+        --                 local allocationForQuality = nil
+        --                 -- check if bestAllocations has a allocation set for this reagent
+        --                 for _, allocation in pairs(bestAllocation.allocations) do
+        --                     for _, qAllocation in pairs(allocation.allocations) do
+        --                         if qAllocation.itemID == reagent.itemID then
+        --                             --print("found qAllocation..")
+        --                             allocationForQuality = qAllocation.allocations
+        --                         end
+        --                     end
+        --                 end
+        --                 if allocationForQuality then
+        --                     --print("Allocate: " .. reagent.itemID .. ": " .. allocationForQuality)
+        --                     allocations:Allocate(reagent, allocationForQuality);
+        --                 end
+        --             end
+        --         else
+        --             local itemCount = GetItemCount(reagents[1].itemID, true, true, true)
+        --             allocations:Allocate(reagents[1], math.min(itemCount, recipeData.reagents[slotIndex].requiredQuantity))
+        --         end
+        --         recipeData.currentTransaction:OverwriteAllocations(slotIndex, allocations);
+        --         recipeData.currentTransaction:SetManuallyAllocated(true);
+        --         reagentSlots[slotIndex]:Update();
+        --     end
+        -- end
+        -- -- this should trigger our modules AND everything blizzard needs to know
+        -- ProfessionsFrame.CraftingPage.SchematicForm:TriggerEvent(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified)
         -- update frontend with fresh data
         -- local freshRecipeData = CraftSimDATAEXPORT:exportRecipeData()
         -- local freshPriceData = CraftSimPRICEDATA:GetPriceData(freshRecipeData, freshRecipeData.recipeType)
@@ -574,19 +575,26 @@ function CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAlloca
     return true
 end
 
--- To prevent looping
-CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
+-- TODO: does not work cause allocations are protected..
 function CraftSimREAGENT_OPTIMIZATION:AutoAssignVellum(recipeData)
-    local vellumItemID = 38682
+    -- print("vellum auto assign")
+    -- local vellumItemID = 38682
+    -- -- local enchantAllocation = recipeData.currentTransaction:GetEnchantAllocation()
+    -- -- -- if something is already allocated, ignore
+    -- -- if enchantAllocation then
+    -- --     print("ignore cause enchant is allocated")
+    -- --     return
+    -- -- end
+    -- ItemUtil.IteratePlayerInventoryAndEquipment(function(itemLocation)
+    --     if C_Item.GetItemID(itemLocation) == vellumItemID then
 
-    ItemUtil.IteratePlayerInventoryAndEquipment(function(itemLocation)
-        if C_Item.GetItemID(itemLocation) == vellumItemID then
-            local vellumItem = Item:CreateFromItemGUID(C_Item.GetItemGUID(itemLocation));
-            CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = true
-            recipeData.currentTransaction:SetEnchantAllocation(vellumItem);
-            ProfessionsFrame.CraftingPage.SchematicForm.enchantSlot:SetItem(vellumItem)
-            ProfessionsFrame.CraftingPage.CreateAllButton:SetEnabled(true);
-            ProfessionsFrame.CraftingPage.CreateMultipleInputBox:SetEnabled(true);
-        end
-    end);
+    --         local allocations = recipeData.currentTransaction:GetAllocations(slotIndex)
+    --         print("try to set enchant")
+    --         local vellumItem = Item:CreateFromItemGUID(C_Item.GetItemGUID(itemLocation))
+    --         recipeData.currentTransaction:SetEnchantAllocation(vellumItem) -- seems to be protected???
+    --         ProfessionsFrame.CraftingPage.SchematicForm.enchantSlot:SetItem(vellumItem)
+    --         recipeData.currentTransaction:SanitizeTargetAllocations();
+    --         ProfessionsFrame.CraftingPage.SchematicForm:TriggerEvent(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified);
+    --     end
+    -- end);
 end

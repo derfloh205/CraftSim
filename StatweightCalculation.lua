@@ -20,7 +20,6 @@ function CraftSimSTATS:getInspirationWeight(recipeData, priceData, baseMeanProfi
     end
     local modifiedData = CopyTable(recipeData)
     modifiedData.stats.inspiration.percent = modifiedData.stats.inspiration.percent + (CraftSimUTIL:GetInspirationPercentByStat(statIncreaseFactor) * 100)
-    
     return CraftSimSTATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
 end
 

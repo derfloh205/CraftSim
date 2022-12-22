@@ -196,21 +196,21 @@ function CraftSimOPTIONS:InitOptionsFrame()
      -90, 
      -80)
 
-    local autoVellumCheckBox = CraftSimFRAME:CreateCheckbox(" Auto Assign Enchanting Vellum", 
-    "Always put enchanting vellum as the target enchanting item",
-    "autoAssignVellum", 
-    generalTab.content, 
-    skillBreakpointsCheckbox, 
-    "TOP", 
-    "TOP", 
-    0, 
-    -20)
+    -- local autoVellumCheckBox = CraftSimFRAME:CreateCheckbox(" Auto Assign Enchanting Vellum", 
+    -- "Always put enchanting vellum as the target enchanting item",
+    -- "autoAssignVellum", 
+    -- generalTab.content, 
+    -- skillBreakpointsCheckbox, 
+    -- "TOP", 
+    -- "TOP", 
+    -- 0, 
+    -- -20)
 
     local precentProfitCheckbox = CraftSimFRAME:CreateCheckbox(" Show Profit Percentage", 
     "Show the percentage of profit to crafting costs besides the gold value",
     "showProfitPercentage", 
     generalTab.content, 
-    autoVellumCheckBox, 
+    skillBreakpointsCheckbox, 
     "TOP", 
     "TOP", 
     0, 
