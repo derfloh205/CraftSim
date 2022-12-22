@@ -207,6 +207,7 @@ end
 -- DEBUG
 function CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation)
     local materialFrame = CraftSimFRAME:GetFrame(CraftSimCONST.FRAMES.MATERIALS)
+    hasItems = hasItems or CraftSimSIMULATION_MODE.isActive
     if bestAllocation == nil or isSameAllocation then
         materialFrame.content.infoText:Show()
         if isSameAllocation then
@@ -230,7 +231,7 @@ function CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceDa
         materialFrame.content.qualityText:Show()
         materialFrame.content.allocateButton:Show()
         materialFrame.content.allocateButton:SetEnabled(hasItems)
-        if hasItems or CraftSimSIMULATION_MODE.isActive then
+        if hasItems then
             materialFrame.content.allocateButton:SetText("Assign")
             materialFrame.content.allocateButton:SetScript("OnClick", function(self) 
                 -- uncheck best quality box if checked
@@ -1111,6 +1112,10 @@ function CraftSimFRAME:InitSimModeFrames()
         if bestQBox:GetChecked() and CraftSimSIMULATION_MODE.isActive then
             bestQBox:Click()
         end
+        if CraftSimSIMULATION_MODE.isActive then
+            CraftSimSIMULATION_MODE:InitializeSimulationMode(CraftSimMAIN.currentRecipeData)
+        end
+
         CraftSimMAIN:TriggerModulesByRecipeType()
     end)
 
@@ -1139,7 +1144,6 @@ function CraftSimFRAME:InitSimModeFrames()
     CraftSimSIMULATION_MODE.reagentOverwriteFrame = reagentOverwriteFrame
 
     -- DETAILS FRAME
-
     local simModeDetailsFrame = CraftSimFRAME:CreateCraftSimFrame(
         "CraftSimSimModeDetailsFrame", 
         "CraftSim Details", 
@@ -1206,7 +1210,7 @@ function CraftSimFRAME:InitSimModeFrames()
         simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetText("Material Quality Bonus:")
 
         simModeDetailsFrame.content.reagentSkillIncreaseValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-        simModeDetailsFrame.content.reagentSkillIncreaseValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP", valueOffsetX, offsetY - 5)
+        simModeDetailsFrame.content.reagentSkillIncreaseValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP", valueOffsetX - 5, offsetY - 5)
         simModeDetailsFrame.content.reagentSkillIncreaseValue:SetText("0")
 
         simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
@@ -1233,10 +1237,26 @@ function CraftSimFRAME:InitSimModeFrames()
         qualityFrame.nextQualityThreshold:SetPoint("RIGHT", qualityFrame.nextQualityIcon, "LEFT", -5, 0)
         qualityFrame.nextQualityThreshold:SetText("> ???")
 
+        qualityFrame.nextQualityMissingSkillTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityMissingSkillTitle:SetPoint("TOPLEFT", qualityFrame.nextQualityTitle, "TOPLEFT", 0, offsetY)
+        qualityFrame.nextQualityMissingSkillTitle:SetText("Missing Skill:")
+
+        qualityFrame.nextQualityMissingSkillValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityMissingSkillValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityThreshold, "TOPRIGHT", 0, offsetY)
+        qualityFrame.nextQualityMissingSkillValue:SetText("???")
+
+        qualityFrame.nextQualityMissingSkillInspiration = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityMissingSkillInspiration:SetPoint("TOPLEFT", qualityFrame.nextQualityMissingSkillTitle, "TOPLEFT", 0, offsetY)
+        qualityFrame.nextQualityMissingSkillInspiration:SetText("Missing Skill (Inspiration):")
+
+        qualityFrame.nextQualityMissingSkillInspirationValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityMissingSkillInspirationValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityMissingSkillValue, "TOPRIGHT", 0, offsetY)
+        qualityFrame.nextQualityMissingSkillInspirationValue:SetText("???")
+
          -- warning
-         simModeDetailsFrame.content.warningText = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-         simModeDetailsFrame.content.warningText:SetPoint("BOTTOM", simModeDetailsFrame.content, "BOTTOM", 0, 30)
-         simModeDetailsFrame.content.warningText:SetText(CraftSimUTIL:ColorizeText("~ WORK IN PROGRESS ~", CraftSimCONST.COLORS.RED))
+        -- simModeDetailsFrame.content.warningText = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        -- simModeDetailsFrame.content.warningText:SetPoint("BOTTOM", simModeDetailsFrame.content, "BOTTOM", 0, 30)
+        -- simModeDetailsFrame.content.warningText:SetText(CraftSimUTIL:ColorizeText("~ WORK IN PROGRESS ~", CraftSimCONST.COLORS.RED))
 
 
         CraftSimSIMULATION_MODE.craftingDetailsFrame = simModeDetailsFrame
@@ -1277,22 +1297,12 @@ function CraftSimFRAME:CreateSimModeOverWriteInput(overwriteInputFrame, offsetX,
     return inputBox
 end
 
-function CraftSimFRAME:UpdateSimModeFrames(simModeAvailable)
-    -- frame visiblities
-    simModeAvailable = simModeAvailable and CraftSimSIMULATION_MODE.recipeData and CraftSimSIMULATION_MODE.isActive -- if recipeData null do not toggle on
-    CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not simModeAvailable)
-    CraftSimFRAME:ToggleFrame(CraftSimSIMULATION_MODE.reagentOverwriteFrame, simModeAvailable)
-    CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Details, not simModeAvailable)
-    CraftSimFRAME:ToggleFrame(CraftSimSIMULATION_MODE.craftingDetailsFrame, simModeAvailable)
-
-    local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
-    CraftSimFRAME:ToggleFrame(bestQBox, not simModeAvailable)
-
+function CraftSimFRAME:InitilizeSimModeReagentOverwrites()
     -- reagent overwrites
     for index, inputFrame in pairs(CraftSimSIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
         local reagentData = CraftSimSIMULATION_MODE.recipeData and CraftSimSIMULATION_MODE.recipeData.reagents[index] or nil
 
-        CraftSimFRAME:ToggleFrame(inputFrame, simModeAvailable and reagentData)
+        CraftSimFRAME:ToggleFrame(inputFrame, CraftSimSIMULATION_MODE.isActive and reagentData)
 
         if reagentData then
             --inputFrame.reagentName:SetText(reagentData.name)
@@ -1315,7 +1325,7 @@ function CraftSimFRAME:UpdateSimModeFrames(simModeAvailable)
                     -- to not set it again and hide the tooltip..
                     GameTooltip:SetHyperlink(itemData.link)
                 end
-				GameTooltip:Show();
+                GameTooltip:Show();
             end)
             inputFrame.icon:SetScript("OnLeave", function(self) 
                 GameTooltip:Hide();
@@ -1328,32 +1338,61 @@ function CraftSimFRAME:UpdateSimModeFrames(simModeAvailable)
     end
 end
 
-function CraftSimFRAME:UpdateSimModeStatDetails()
-    -- CAREFUL, the real recipe data when not in sim code can come in here.. do not modify!
+function CraftSimFRAME:ToggleSimModeFrames()
+    -- frame visiblities
+    CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not CraftSimSIMULATION_MODE.isActive)
 
+    -- only if recipe has optionalReagents
+    local hasOptionalReagents = ProfessionsFrame.CraftingPage.SchematicForm.reagentSlots[0] ~= nil
+    CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, not CraftSimSIMULATION_MODE.isActive and hasOptionalReagents)
+
+    CraftSimFRAME:ToggleFrame(CraftSimSIMULATION_MODE.reagentOverwriteFrame, CraftSimSIMULATION_MODE.isActive)
+    CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Details, not CraftSimSIMULATION_MODE.isActive)
+    CraftSimFRAME:ToggleFrame(CraftSimSIMULATION_MODE.craftingDetailsFrame, CraftSimSIMULATION_MODE.isActive)
+
+    local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
+    CraftSimFRAME:ToggleFrame(bestQBox, not CraftSimSIMULATION_MODE.isActive)
+    
+    -- also toggle the blizzard create all buttons and so on so that a user does not get the idea to press create when in sim mode..
+    CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.CreateAllButton, not CraftSimSIMULATION_MODE.isActive)
+    CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.CreateMultipleInputBox, not CraftSimSIMULATION_MODE.isActive)
+    CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.CreateButton, not CraftSimSIMULATION_MODE.isActive)
+end
+
+function CraftSimFRAME:UpdateSimModeStatDisplay()
     -- stat details
     local reagentSkillIncrease = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSimSIMULATION_MODE.recipeData)
     local recipeDifficultyMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput)  
     local fullRecipeDifficulty = CraftSimSIMULATION_MODE.baseRecipeDifficulty + recipeDifficultyMod 
     CraftSimSIMULATION_MODE.craftingDetailsFrame.content.recipeDifficultyValue:SetText(fullRecipeDifficulty .. " (" .. CraftSimSIMULATION_MODE.baseRecipeDifficulty .. "+" .. recipeDifficultyMod  .. ")")
     CraftSimSIMULATION_MODE.craftingDetailsFrame.content.baseSkillValue:SetText(CraftSimSIMULATION_MODE.recipeData.stats.skill .. " (" .. CraftSimSIMULATION_MODE.baseSkill .. "+" .. reagentSkillIncrease .. ")")
-    CraftSimSIMULATION_MODE.craftingDetailsFrame.content.reagentSkillIncreaseValue:SetText(reagentSkillIncrease)
-
-    -- adjust expected Quality by skill
-    CraftSimSIMULATION_MODE.recipeData.expectedQuality = CraftSimSTATS:GetExpectedQualityBySkill(CraftSimSIMULATION_MODE.recipeData, CraftSimSIMULATION_MODE.recipeData.stats.skill, CraftSimOptions.breakPointOffset)
+    -- I assume its always from base..? Wouldnt make sense to give the materials more skill contribution if you artificially make the recipe harder
+    local maxReagentSkillIncrease = CraftSimUTIL:round(0.25 * CraftSimSIMULATION_MODE.baseRecipeDifficulty)
+    CraftSimSIMULATION_MODE.craftingDetailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSimSIMULATION_MODE.reagentSkillIncrease .. " / " .. maxReagentSkillIncrease)
 
     local qualityFrame = CraftSimSIMULATION_MODE.craftingDetailsFrame.content.qualityFrame
     CraftSimFRAME:ToggleFrame(qualityFrame, not CraftSimSIMULATION_MODE.recipeData.result.isNoQuality)
     if not CraftSimSIMULATION_MODE.recipeData.result.isNoQuality then
         local thresholds = CraftSimSTATS:GetQualityThresholds(CraftSimSIMULATION_MODE.recipeData.maxQuality, CraftSimSIMULATION_MODE.recipeData.recipeDifficulty, CraftSimOptions.breakPointOffset)
         qualityFrame.currentQualityIcon.SetQuality(CraftSimSIMULATION_MODE.recipeData.expectedQuality)
-        qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[CraftSimSIMULATION_MODE.recipeData.recipeDifficulty - 1] or 0))
+        qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[CraftSimSIMULATION_MODE.recipeData.expectedQuality - 1] or 0))
         
         local hasNextQuality = CraftSimSIMULATION_MODE.recipeData.expectedQuality < CraftSimSIMULATION_MODE.recipeData.maxQuality
         CraftSimFRAME:ToggleFrame(qualityFrame.nextQualityIcon, hasNextQuality)
         CraftSimFRAME:ToggleFrame(qualityFrame.nextQualityThreshold, hasNextQuality)
         CraftSimFRAME:ToggleFrame(qualityFrame.nextQualityTitle, hasNextQuality)
+        CraftSimFRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillTitle, hasNextQuality)
+        CraftSimFRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillInspiration, hasNextQuality)
+        CraftSimFRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillValue, hasNextQuality)
+        CraftSimFRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillInspirationValue, hasNextQuality)
         if hasNextQuality then
+            local nextQualityThreshold = thresholds[CraftSimSIMULATION_MODE.recipeData.expectedQuality]
+            local missingSkill = nextQualityThreshold - CraftSimSIMULATION_MODE.recipeData.stats.skill
+            local missingSkillInspiration = nextQualityThreshold - (CraftSimSIMULATION_MODE.recipeData.stats.skill + CraftSimSIMULATION_MODE.recipeData.stats.inspiration.bonusskill)
+            missingSkill = missingSkill > 0 and missingSkill or 0
+            missingSkillInspiration = missingSkillInspiration > 0 and missingSkillInspiration or 0
+            qualityFrame.nextQualityMissingSkillValue:SetText(missingSkill)
+            qualityFrame.nextQualityMissingSkillInspirationValue:SetText(missingSkillInspiration)
             qualityFrame.nextQualityIcon.SetQuality(CraftSimSIMULATION_MODE.recipeData.expectedQuality + 1)
             qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[CraftSimSIMULATION_MODE.recipeData.expectedQuality])
         end

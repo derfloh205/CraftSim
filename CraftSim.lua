@@ -38,6 +38,7 @@ CraftSimOptions = CraftSimOptions or {
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
 
 CraftSimMAIN.currentRecipeInfo = nil
+CraftSimMAIN.currentRecipeData = nil
 
 function CraftSimMAIN:handleCraftSimOptionsUpdates()
 	if CraftSimOptions then
@@ -234,9 +235,6 @@ function CraftSimMAIN:PLAYER_LOGIN()
 end
 
 function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
-
-	
-
 	if CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate then
 		CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
 		return
@@ -269,6 +267,7 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 	local recipeData = nil 
 	if CraftSimSIMULATION_MODE.isActive and CraftSimSIMULATION_MODE.recipeData then
 		recipeData = CraftSimSIMULATION_MODE.recipeData
+		CraftSimMAIN.currentRecipeData = CraftSimSIMULATION_MODE.recipeData
 	else
 		recipeData = CraftSimDATAEXPORT:exportRecipeData()
 	end
@@ -343,13 +342,12 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
     local showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
 
 	CraftSimFRAME:ToggleFrame(CraftSimSimModeToggleButton, showSimulationMode)
+	CraftSimFRAME:ToggleSimModeFrames() -- show sim mode frames depending if active or not
 	if CraftSimSIMULATION_MODE.isActive then
-		-- only update displayed data by the recipeData that was saved to sim mode
-		CraftSimFRAME:UpdateSimModeFrames(showSimulationMode)
-		CraftSimFRAME:UpdateSimModeStatDetails()
-	else
-		-- remember current recipe data, init base stats, and update frames in background (if sim mode is available for this mode)
-		CraftSimSIMULATION_MODE:InitSimModeData(recipeData, showSimulationMode)
+		-- update simulationframe recipedata by inputs and the frontend
+		-- since recipeData is a reference here to the recipeData in the simulationmode, 
+		-- the recipeData that is used in the below modules should also be the modified one!
+		CraftSimSIMULATION_MODE:UpdateSimulationMode()
 	end
 
 	showMaterialAllocation = showMaterialAllocation and recipeData.hasReagentsWithQuality

@@ -47,6 +47,10 @@ function CraftSimSIMULATION_MODE:OnInputAllocationChanged()
 end
 
 function CraftSimSIMULATION_MODE:OnStatModifierChanged()
+    if not CraftSimSIMULATION_MODE.isActive then
+        -- This could be triggered on init when some values are set
+        return
+    end
     local inputNumber = CraftSimUTIL:ValidateNumberInput(self, true)
     local stat = self.stat
 
@@ -59,17 +63,7 @@ function CraftSimSIMULATION_MODE:OnStatModifierChanged()
     CraftSimMAIN:TriggerModulesByRecipeType()
 end
 
-function CraftSimSIMULATION_MODE:InitSimModeData(recipeData, simModeAvailable)
-    CraftSimSIMULATION_MODE.recipeData = CopyTable(recipeData)   
-    CraftSimSIMULATION_MODE.recipeData.isSimModeData = true
-
-    local OldReagentSkillIncrease = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSimSIMULATION_MODE.recipeData)
-    CraftSimSIMULATION_MODE.baseSkill = CraftSimSIMULATION_MODE.recipeData.stats.skill - OldReagentSkillIncrease
-    CraftSimSIMULATION_MODE.baseRecipeDifficulty = CraftSimSIMULATION_MODE.recipeData.baseDifficulty
-
-    -- update frame visiblity and reagent input data
-    CraftSimFRAME:UpdateSimModeFrames(CraftSimSIMULATION_MODE.recipeData, simModeAvailable)
-
+function CraftSimSIMULATION_MODE:UpdateReagentAllocationsByInput()
     -- update item allocations based on inputfields
     for _, overwriteInput in pairs(CraftSimSIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
         if overwriteInput.isActive then
@@ -83,14 +77,42 @@ function CraftSimSIMULATION_MODE:InitSimModeData(recipeData, simModeAvailable)
             end
         end
     end
+end
 
-    -- update reagent skill increase by new allocation
+function CraftSimSIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
+    -- update reagent skill increase by material allocation
     local reagentSkillIncrease = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSimSIMULATION_MODE.recipeData)
     CraftSimSIMULATION_MODE.reagentSkillIncrease = reagentSkillIncrease
 
+    -- update skill by input modifier and reagent skill increase
     local skillMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true)
     CraftSimSIMULATION_MODE.recipeData.stats.skill = CraftSimSIMULATION_MODE.baseSkill + reagentSkillIncrease + skillMod
 
-    -- update details
-    CraftSimFRAME:UpdateSimModeStatDetails()
+    -- adjust expected quality by skill if quality recipe
+    if not CraftSimSIMULATION_MODE.recipeData.result.isNoQuality then
+        CraftSimSIMULATION_MODE.recipeData.expectedQuality = CraftSimSTATS:GetExpectedQualityBySkill(CraftSimSIMULATION_MODE.recipeData, CraftSimSIMULATION_MODE.recipeData.stats.skill, CraftSimOptions.breakPointOffset)
+    end
+end
+
+function CraftSimSIMULATION_MODE:UpdateSimulationMode()
+    CraftSimSIMULATION_MODE:UpdateReagentAllocationsByInput()
+    CraftSimSIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
+    CraftSimFRAME:UpdateSimModeStatDisplay()
+end
+
+function CraftSimSIMULATION_MODE:InitializeSimulationMode(recipeData)
+    CraftSimSIMULATION_MODE.recipeData = CopyTable(recipeData)   
+    CraftSimSIMULATION_MODE.recipeData.isSimModeData = true
+
+    -- initialize base values based on original recipeData
+    local OldReagentSkillIncrease = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSimSIMULATION_MODE.recipeData)
+    CraftSimSIMULATION_MODE.baseSkill = CraftSimSIMULATION_MODE.recipeData.stats.skill - OldReagentSkillIncrease
+    CraftSimSIMULATION_MODE.baseRecipeDifficulty = CraftSimSIMULATION_MODE.recipeData.baseDifficulty
+
+    -- update frame visiblity and initialize the input fields
+    CraftSimFRAME:ToggleSimModeFrames()
+    CraftSimFRAME:InitilizeSimModeReagentOverwrites()
+
+    -- -- update simulation recipe data and frontend
+    -- CraftSimSIMULATION_MODE:UpdateSimulationMode()
 end

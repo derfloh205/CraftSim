@@ -5,6 +5,7 @@ CraftSimItemCache = CraftSimItemCache or {}
 
 LibCompress = LibStub:GetLibrary("LibCompress")
 
+-- DEPRICATED
 function CraftSimDATAEXPORT:getExportString()
 	local exportData = CraftSimDATAEXPORT:exportRecipeData()
 	-- now digest into an export string
@@ -219,6 +220,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	recipeData.extraItemFactors = CraftSimSPECDATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
 	
+	CraftSimMAIN.currentRecipeData = recipeData
 	return recipeData
 end
 

@@ -526,7 +526,7 @@ function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeTyp
             local reagentIndex = currentInput.inputq1.reagentIndex
             local reagentData = recipeData.reagents[reagentIndex]
 
-            if reagentData.differentQualities and currentInput.isActive then
+            if currentInput.isActive and reagentData.differentQualities then
                 for i = 1, 3, 1 do
                     local allocationForQuality = nil
                     -- check if bestAllocations has a allocation set for this reagent
