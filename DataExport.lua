@@ -59,11 +59,11 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	recipeData.recipeType = recipeType
 	
 	local operationInfo = schematicForm:GetRecipeOperationInfo()
-	recipeData.expectedQuality = operationInfo.craftingQuality
-
+	
     if operationInfo == nil or recipeType == CraftSimCONST.RECIPE_TYPES.GATHERING then
         return nil
     end
+	recipeData.expectedQuality = operationInfo.craftingQuality
 
 	local bonusStats = operationInfo.bonusStats
 
