@@ -230,7 +230,7 @@ function CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceDa
         materialFrame.content.qualityText:Show()
         materialFrame.content.allocateButton:Show()
         materialFrame.content.allocateButton:SetEnabled(hasItems)
-        if hasItems then
+        if hasItems or CraftSimSIMULATION_MODE.isActive then
             materialFrame.content.allocateButton:SetText("Assign")
             materialFrame.content.allocateButton:SetScript("OnClick", function(self) 
                 -- uncheck best quality box if checked
@@ -369,7 +369,7 @@ function CraftSimFRAME:UpdateProfitDetails(recipeData, calculationData)
 
     profitDetailsFrame.content.craftingCostValue:SetText(CraftSimUTIL:FormatMoney(calculationData.craftingCostPerCraft))
 
-    local profitCalculationText = "((MCS + (M_AI_1 * M_AV_1 + M_AI_2 * M_AV_2) + (I_I_1 * I_V_1 + I_I_2 * I_V_2)) * 0.95) - CCC = " .. CraftSimUTIL:FormatMoney(calculationData.meanProfit, true)
+    local profitCalculationText = "(((M_AI_1 * M_AV_1 + M_AI_2 * M_AV_2) + (I_I_1 * I_V_1 + I_I_2 * I_V_2)) * 0.95) - CCC - MCS = " .. CraftSimUTIL:FormatMoney(calculationData.meanProfit, true)
     profitDetailsFrame.content.averageProfitValue:SetText(profitCalculationText)
 
 
@@ -455,14 +455,15 @@ function CraftSimFRAME:InitProfitDetailsFrame()
     frame.content.description = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.content.description:SetPoint("TOP", frame.title, "TOP", 0, -20)
 	frame.content.description:SetText(
-        "The Ø (Ø = Average) Profit is calculated by\n\n".. CraftSimUTIL:ColorizeText("((The sum of the Ø material cost saved from resourcefulness\n", blue) ..
+        "The Ø (Ø = Average) Profit is calculated by\n\n"..
+        CraftSimUTIL:ColorizeText("The Ø value of additional items from multicraft considering inspiration and multicraft proccing together\n", blue) ..
         CraftSimUTIL:ColorizeText("+\n", green) ..
-        CraftSimUTIL:ColorizeText("The Ø value of additional items from multicraft (considering inspiration and multicraft proccing together)\n", blue) ..
-        CraftSimUTIL:ColorizeText("+\n", green) ..
-        CraftSimUTIL:ColorizeText("The worth of the Ø number of items gained per quality based on your inspiration)\n", blue) ..
-        CraftSimUTIL:ColorizeText("*\n", red) .. CraftSimUTIL:ColorizeText("0.95\n", red) .. CraftSimUTIL:ColorizeText("(5% auction house cut) )\n", blue) .. 
+        CraftSimUTIL:ColorizeText("The worth of the Ø number of items gained per quality based on your inspiration\n", blue) ..
+        CraftSimUTIL:ColorizeText("*\n", red) .. CraftSimUTIL:ColorizeText("0.95\n", red) .. CraftSimUTIL:ColorizeText("(5% auction house cut)\n", blue) .. 
         CraftSimUTIL:ColorizeText("-\n", red) ..
-        CraftSimUTIL:ColorizeText("The total crafting costs based on the materials and their quality you currently selected\n\n", blue) ..
+        CraftSimUTIL:ColorizeText("The total crafting costs based on the materials and their quality you currently selected\n", blue) ..
+        CraftSimUTIL:ColorizeText("-\n", red) ..
+        CraftSimUTIL:ColorizeText("The sum of the Ø material cost saved from resourcefulness\n\n", blue) ..
         "If you do not have enough of a material, CraftSim assumes the cheapest quality of a material\n(Does not have not be the lowest quality)")
 
     local descriptionHeight = frame.content.description:GetNumLines() * frame.content.description:GetLineHeight()
@@ -1098,6 +1099,7 @@ function CraftSimFRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, ancho
 end
 
 function CraftSimFRAME:InitSimModeFrames()
+    -- BUTTON
     local toggleButton = CreateFrame("Button", "CraftSimSimModeToggleButton", ProfessionsFrame.CraftingPage.SchematicForm, "UIPanelButtonTemplate")
     toggleButton:SetPoint("BOTTOM", ProfessionsFrame.CraftingPage.SchematicForm.Details, "TOP", 0, 0)	
     toggleButton:SetText("Simulation Mode: Off")
@@ -1112,6 +1114,7 @@ function CraftSimFRAME:InitSimModeFrames()
         CraftSimMAIN:TriggerModulesByRecipeType()
     end)
 
+    -- REAGENT OVERWRITE FRAMES
     local reagentOverwriteFrame = CreateFrame("frame", nil, ProfessionsFrame.CraftingPage.SchematicForm)
     reagentOverwriteFrame:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.SchematicForm.Reagents, "TOPLEFT", -40, -35)
     reagentOverwriteFrame:SetSize(200, 400)
@@ -1135,6 +1138,108 @@ function CraftSimFRAME:InitSimModeFrames()
 
     CraftSimSIMULATION_MODE.reagentOverwriteFrame = reagentOverwriteFrame
 
+    -- DETAILS FRAME
+
+    local simModeDetailsFrame = CraftSimFRAME:CreateCraftSimFrame(
+        "CraftSimSimModeDetailsFrame", 
+        "CraftSim Details", 
+        ProfessionsFrame.CraftingPage.SchematicForm,
+        ProfessionsFrame.CraftingPage.SchematicForm.Details, 
+        "TOP", 
+        "TOP", 
+        0, 
+        0, 
+        270, 
+        300, 
+        CraftSimCONST.FRAMES.CRAFTING_DETAILS)
+
+        local offsetY = -20
+        local modOffsetX = 20
+        local valueOffsetX = -5
+        local valueOffsetY = 0.5
+
+        -- recipe difficulty
+        simModeDetailsFrame.content.recipeDifficultyTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.recipeDifficultyTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content, "TOPLEFT", 20, offsetY - 20)
+        simModeDetailsFrame.content.recipeDifficultyTitle:SetText(CraftSimLOC:GetText(CraftSimCONST.TEXT.RECIPE_DIFFICULTY_LABEL))
+
+        simModeDetailsFrame.content.recipeDifficultyMod = CreateFrame("EditBox", "CraftSimSimModeRecipeDifficultyModInput", simModeDetailsFrame.content, "UIPanelButtonTemplate")
+        simModeDetailsFrame.content.recipeDifficultyMod.stat = CraftSimCONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY
+        simModeDetailsFrame.content.recipeDifficultyMod:SetPoint("TOPRIGHT", simModeDetailsFrame.content, "TOPRIGHT", modOffsetX - 30, offsetY - 20 + 3.5)
+        simModeDetailsFrame.content.recipeDifficultyMod:SetSize(30, 20)
+        simModeDetailsFrame.content.recipeDifficultyMod:SetAutoFocus(false) -- dont automatically focus
+        simModeDetailsFrame.content.recipeDifficultyMod:SetFontObject("ChatFontNormal")
+        simModeDetailsFrame.content.recipeDifficultyMod:SetText(0)
+        simModeDetailsFrame.content.recipeDifficultyMod:SetScript("OnEscapePressed", function() simModeDetailsFrame.content.recipeDifficultyMod:ClearFocus() end)
+        simModeDetailsFrame.content.recipeDifficultyMod:SetScript("OnEnterPressed", function() simModeDetailsFrame.content.recipeDifficultyMod:ClearFocus() end)
+        simModeDetailsFrame.content.recipeDifficultyMod:SetScript("OnTextChanged", CraftSimSIMULATION_MODE.OnStatModifierChanged)
+
+        simModeDetailsFrame.content.recipeDifficultyValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.recipeDifficultyValue:SetPoint("RIGHT", simModeDetailsFrame.content.recipeDifficultyMod, "LEFT", valueOffsetX, valueOffsetY)
+        simModeDetailsFrame.content.recipeDifficultyValue:SetText("0")
+
+        -- skill
+
+        simModeDetailsFrame.content.baseSkillTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.baseSkillTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.recipeDifficultyTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.baseSkillTitle:SetText("Skill:")
+
+        simModeDetailsFrame.content.baseSkillMod = CreateFrame("EditBox", "CraftSimSimModeSkillModInput", simModeDetailsFrame.content, "UIPanelButtonTemplate")
+        simModeDetailsFrame.content.baseSkillMod.stat = CraftSimCONST.STAT_MAP.CRAFTING_DETAILS_SKILL
+        simModeDetailsFrame.content.baseSkillMod:SetPoint("TOPRIGHT", simModeDetailsFrame.content.recipeDifficultyMod, "TOPRIGHT", 0 , offsetY)
+        simModeDetailsFrame.content.baseSkillMod:SetSize(30, 20)
+        simModeDetailsFrame.content.baseSkillMod:SetAutoFocus(false) -- dont automatically focus
+        simModeDetailsFrame.content.baseSkillMod:SetFontObject("ChatFontNormal")
+        simModeDetailsFrame.content.baseSkillMod:SetText(0)
+        simModeDetailsFrame.content.baseSkillMod:SetScript("OnEscapePressed", function() simModeDetailsFrame.content.baseSkillMod:ClearFocus() end)
+        simModeDetailsFrame.content.baseSkillMod:SetScript("OnEnterPressed", function() simModeDetailsFrame.content.baseSkillMod:ClearFocus() end)
+        simModeDetailsFrame.content.baseSkillMod:SetScript("OnTextChanged", CraftSimSIMULATION_MODE.OnStatModifierChanged)
+
+        simModeDetailsFrame.content.baseSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.baseSkillValue:SetPoint("RIGHT", simModeDetailsFrame.content.baseSkillMod, "LEFT", valueOffsetX, valueOffsetY)
+        simModeDetailsFrame.content.baseSkillValue:SetText("0")
+
+        -- reagent skill
+
+        simModeDetailsFrame.content.reagentSkillIncreaseTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.baseSkillTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetText("Material Quality Bonus:")
+
+        simModeDetailsFrame.content.reagentSkillIncreaseValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.reagentSkillIncreaseValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP", valueOffsetX, offsetY - 5)
+        simModeDetailsFrame.content.reagentSkillIncreaseValue:SetText("0")
+
+        simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
+        simModeDetailsFrame.content.qualityFrame:SetSize(230, 200)
+        simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY*5)
+        local qualityFrame = simModeDetailsFrame.content.qualityFrame
+        qualityFrame.currentQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.currentQualityTitle:SetPoint("TOPLEFT", qualityFrame, "TOPLEFT", 0, 0)
+        qualityFrame.currentQualityTitle:SetText("Expected Quality:")
+
+        qualityFrame.currentQualityIcon = CraftSimFRAME:CreateQualityIcon(qualityFrame, 25, 25, qualityFrame, "TOPRIGHT", "TOPRIGHT", 0, 5)
+
+        qualityFrame.currentQualityThreshold = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.currentQualityThreshold:SetPoint("RIGHT", qualityFrame.currentQualityIcon, "LEFT", -5, 0)
+        qualityFrame.currentQualityThreshold:SetText("> ???")
+
+        qualityFrame.nextQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityTitle:SetPoint("TOPLEFT", qualityFrame.currentQualityTitle, "TOPLEFT", 0, offsetY)
+        qualityFrame.nextQualityTitle:SetText("Next Quality:")
+
+        qualityFrame.nextQualityIcon = CraftSimFRAME:CreateQualityIcon(qualityFrame, 25, 25, qualityFrame.currentQualityIcon, "TOP", "TOP", 0, offsetY)
+
+        qualityFrame.nextQualityThreshold = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityThreshold:SetPoint("RIGHT", qualityFrame.nextQualityIcon, "LEFT", -5, 0)
+        qualityFrame.nextQualityThreshold:SetText("> ???")
+
+         -- warning
+         simModeDetailsFrame.content.warningText = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+         simModeDetailsFrame.content.warningText:SetPoint("BOTTOM", simModeDetailsFrame.content, "BOTTOM", 0, 30)
+         simModeDetailsFrame.content.warningText:SetText(CraftSimUTIL:ColorizeText("~ WORK IN PROGRESS ~", CraftSimCONST.COLORS.RED))
+
+
+        CraftSimSIMULATION_MODE.craftingDetailsFrame = simModeDetailsFrame
 end
 
 function CraftSimFRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, offsetX, offsetY, baseX, inputOffsetX)
@@ -1172,14 +1277,20 @@ function CraftSimFRAME:CreateSimModeOverWriteInput(overwriteInputFrame, offsetX,
     return inputBox
 end
 
-function CraftSimFRAME:UpdateSimModeFrames(recipeData)
-    local simModeAvailable = recipeData and CraftSimSIMULATION_MODE.isActive -- if recipeData null do not toggle on
+function CraftSimFRAME:UpdateSimModeFrames(simModeAvailable)
+    -- frame visiblities
+    simModeAvailable = simModeAvailable and CraftSimSIMULATION_MODE.recipeData and CraftSimSIMULATION_MODE.isActive -- if recipeData null do not toggle on
     CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not simModeAvailable)
     CraftSimFRAME:ToggleFrame(CraftSimSIMULATION_MODE.reagentOverwriteFrame, simModeAvailable)
+    CraftSimFRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Details, not simModeAvailable)
+    CraftSimFRAME:ToggleFrame(CraftSimSIMULATION_MODE.craftingDetailsFrame, simModeAvailable)
+
     local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
     CraftSimFRAME:ToggleFrame(bestQBox, not simModeAvailable)
+
+    -- reagent overwrites
     for index, inputFrame in pairs(CraftSimSIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
-        local reagentData = recipeData.reagents[index]
+        local reagentData = CraftSimSIMULATION_MODE.recipeData and CraftSimSIMULATION_MODE.recipeData.reagents[index] or nil
 
         CraftSimFRAME:ToggleFrame(inputFrame, simModeAvailable and reagentData)
 
@@ -1191,6 +1302,8 @@ function CraftSimFRAME:UpdateSimModeFrames(recipeData)
             inputFrame.inputq1.reagentIndex = index
             inputFrame.inputq2.reagentIndex = index
             inputFrame.inputq3.reagentIndex = index
+
+            inputFrame.isActive = true
 
 
             local itemData = CraftSimDATAEXPORT:GetItemFromCacheByItemID(reagentData.itemsInfo[1].itemID)
@@ -1210,7 +1323,39 @@ function CraftSimFRAME:UpdateSimModeFrames(recipeData)
         else
             inputFrame.icon:SetScript("OnEnter", nil)
             inputFrame.icon:SetScript("OnLeave", nil)
+            inputFrame.isActive = false
+        end
+    end
+end
 
+function CraftSimFRAME:UpdateSimModeStatDetails()
+    -- CAREFUL, the real recipe data when not in sim code can come in here.. do not modify!
+
+    -- stat details
+    local reagentSkillIncrease = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSimSIMULATION_MODE.recipeData)
+    local recipeDifficultyMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput)  
+    local fullRecipeDifficulty = CraftSimSIMULATION_MODE.baseRecipeDifficulty + recipeDifficultyMod 
+    CraftSimSIMULATION_MODE.craftingDetailsFrame.content.recipeDifficultyValue:SetText(fullRecipeDifficulty .. " (" .. CraftSimSIMULATION_MODE.baseRecipeDifficulty .. "+" .. recipeDifficultyMod  .. ")")
+    CraftSimSIMULATION_MODE.craftingDetailsFrame.content.baseSkillValue:SetText(CraftSimSIMULATION_MODE.recipeData.stats.skill .. " (" .. CraftSimSIMULATION_MODE.baseSkill .. "+" .. reagentSkillIncrease .. ")")
+    CraftSimSIMULATION_MODE.craftingDetailsFrame.content.reagentSkillIncreaseValue:SetText(reagentSkillIncrease)
+
+    -- adjust expected Quality by skill
+    CraftSimSIMULATION_MODE.recipeData.expectedQuality = CraftSimSTATS:GetExpectedQualityBySkill(CraftSimSIMULATION_MODE.recipeData, CraftSimSIMULATION_MODE.recipeData.stats.skill, CraftSimOptions.breakPointOffset)
+
+    local qualityFrame = CraftSimSIMULATION_MODE.craftingDetailsFrame.content.qualityFrame
+    CraftSimFRAME:ToggleFrame(qualityFrame, not CraftSimSIMULATION_MODE.recipeData.result.isNoQuality)
+    if not CraftSimSIMULATION_MODE.recipeData.result.isNoQuality then
+        local thresholds = CraftSimSTATS:GetQualityThresholds(CraftSimSIMULATION_MODE.recipeData.maxQuality, CraftSimSIMULATION_MODE.recipeData.recipeDifficulty, CraftSimOptions.breakPointOffset)
+        qualityFrame.currentQualityIcon.SetQuality(CraftSimSIMULATION_MODE.recipeData.expectedQuality)
+        qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[CraftSimSIMULATION_MODE.recipeData.recipeDifficulty - 1] or 0))
+        
+        local hasNextQuality = CraftSimSIMULATION_MODE.recipeData.expectedQuality < CraftSimSIMULATION_MODE.recipeData.maxQuality
+        CraftSimFRAME:ToggleFrame(qualityFrame.nextQualityIcon, hasNextQuality)
+        CraftSimFRAME:ToggleFrame(qualityFrame.nextQualityThreshold, hasNextQuality)
+        CraftSimFRAME:ToggleFrame(qualityFrame.nextQualityTitle, hasNextQuality)
+        if hasNextQuality then
+            qualityFrame.nextQualityIcon.SetQuality(CraftSimSIMULATION_MODE.recipeData.expectedQuality + 1)
+            qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[CraftSimSIMULATION_MODE.recipeData.expectedQuality])
         end
     end
 end

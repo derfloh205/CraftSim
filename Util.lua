@@ -196,6 +196,29 @@ function CraftSimUTIL:PrintTable(t, recursive)
     end
 end
 
+function CraftSimUTIL:ValidateNumberInput(inputBox, allowNegative)
+    local inputNumber = inputBox:GetNumber()
+    local inputText = inputBox:GetText()
+
+    if inputText == "" then
+        return 0 -- otherwise its treated as 1
+    end
+
+    if inputText == "-" then
+        -- User is in the process of writing a negative number
+        return 0
+    end
+
+    if (not allowNegative and inputNumber < 0) or (inputNumber == 0 and inputText ~= "0") then
+        inputNumber = 0
+        if inputText ~= "" then
+            inputBox:SetText(inputNumber)
+        end
+    end
+
+    return inputNumber
+end
+
 function CraftSimUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     local absValue = abs(copperValue)
     local minusText = ""

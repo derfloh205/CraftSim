@@ -431,6 +431,7 @@ function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(r
     local matBonus = {}
     local totalWeight = 0
 
+    local hasAtLeastOneFullSlot = false
     for index, reagent in pairs(recipeData.reagents) do
         if reagent.differentQualities then
             local n3 = reagent.itemsInfo[3].allocations
@@ -439,23 +440,31 @@ function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(r
             local matQuantity = n1 + n2 + n3
             local matWeight = CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(reagent.itemsInfo[1].itemID)
             local relativeBonus = (n2 + 2 * n3) / 2 * matWeight
+            if matQuantity < reagent.requiredQuantity then
+                -- If you do not have enough of a material in total for a reagent slot, blizz assumes that you have max quantity of q2
+                matQuantity = reagent.requiredQuantity
+                relativeBonus = matQuantity / 2 * matWeight
+            else
+                if n2 + n3 > 0 then
+                    -- the other slots are only treated as max q2 IF you have at least one slot that is satisfied AND gives you quality..
+                    -- so full q1 does not count
+                    hasAtLeastOneFullSlot = true
+                end
+            end
+            --print("matQuantity: " .. matQuantity)
             table.insert(matBonus, relativeBonus)
-            
             totalWeight = totalWeight + matQuantity * matWeight
         end
     end
 
-    -- if total weight is 0 we have no allocations, thus weight is also 0
-    if totalWeight == 0 then 
+    -- if nothing is allocated to satisfy a required quantity than the reagent skill contribution is 0
+    if not hasAtLeastOneFullSlot then 
         return 0 
     end
 
     local matSkillBonus = 0
     local recipeMaxSkillBonus = 0.25 * recipeData.recipeDifficulty
     for _, bonus in pairs(matBonus) do
-        --print("adding to mat skill bonus: ")
-        --print("matSkillBonus + bonus / totalWeight * recipeMaxSkillBonus")
-        --print(tostring(matSkillBonus) .. " + " .. tostring(bonus) .. "/" .. tostring(totalWeight) .. "*" .. tostring(recipeMaxSkillBonus))
         matSkillBonus = matSkillBonus + bonus / totalWeight * recipeMaxSkillBonus
     end
 
@@ -467,41 +476,79 @@ end
 function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeType, priceData, bestAllocation)
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeData.recipeID, false)
 	--print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
-	for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
-		local reagents = currentSlot.reagents
-		local reagentType = currentSlot.reagentType
-		local reagentName = CraftSimDATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
-        local allocations = recipeData.currentTransaction:GetAllocations(slotIndex)
-        allocations:Clear(); -- set all to zero
-		if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
-			local hasMoreThanOneQuality = reagents[2] ~= nil
+    if not CraftSimSIMULATION_MODE.isActive then
+        --print("no sim mode allocate..")
+        local reagentSlots = ProfessionsFrame.CraftingPage.SchematicForm.reagentSlots[1]
+        for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
+            local reagents = currentSlot.reagents
+            local reagentType = currentSlot.reagentType
+            local reagentName = CraftSimDATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
+            local allocations = recipeData.currentTransaction:GetAllocations(slotIndex)
+            --allocations:Clear(); -- set all to zero
+            if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
+                local hasMoreThanOneQuality = reagents[2] ~= nil
+    
+                if hasMoreThanOneQuality then
+                    for reagentIndex, reagent in pairs(reagents) do
+                        local allocationForQuality = nil
+                        -- check if bestAllocations has a allocation set for this reagent
+                        for _, allocation in pairs(bestAllocation.allocations) do
+                            for _, qAllocation in pairs(allocation.allocations) do
+                                if qAllocation.itemID == reagent.itemID then
+                                    --print("found qAllocation..")
+                                    allocationForQuality = qAllocation.allocations
+                                end
+                            end
+                        end
+                        if allocationForQuality then
+                            --print("Allocate: " .. reagent.itemID .. ": " .. allocationForQuality)
+                            allocations:Allocate(reagent, allocationForQuality);
+                        end
+                    end
+                else
+                    local itemCount = GetItemCount(reagents[1].itemID, true, true, true)
+                    allocations:Allocate(reagents[1], math.min(itemCount, recipeData.reagents[slotIndex].requiredQuantity))
+                end
+                recipeData.currentTransaction:OverwriteAllocations(slotIndex, allocations);
+                recipeData.currentTransaction:SetManuallyAllocated(true);
+                reagentSlots[slotIndex]:Update();
+            end
+        end
+        -- this should trigger our modules AND everything blizzard needs to know
+        ProfessionsFrame.CraftingPage.SchematicForm:TriggerEvent(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified)
+        -- update frontend with fresh data
+        -- local freshRecipeData = CraftSimDATAEXPORT:exportRecipeData()
+        -- local freshPriceData = CraftSimPRICEDATA:GetPriceData(freshRecipeData, freshRecipeData.recipeType)
+        -- CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(freshRecipeData, freshRecipeData.recipeType, freshPriceData)
+    else
+        --print("sim mode allocate..")
+        for _, currentInput in pairs(CraftSimSIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
+            local reagentIndex = currentInput.inputq1.reagentIndex
+            local reagentData = recipeData.reagents[reagentIndex]
 
-			if hasMoreThanOneQuality then
-                for reagentIndex, reagent in pairs(reagents) do
+            if reagentData.differentQualities and currentInput.isActive then
+                for i = 1, 3, 1 do
                     local allocationForQuality = nil
                     -- check if bestAllocations has a allocation set for this reagent
                     for _, allocation in pairs(bestAllocation.allocations) do
                         for _, qAllocation in pairs(allocation.allocations) do
-                            if qAllocation.itemID == reagent.itemID then
+                            if qAllocation.itemID == reagentData.itemsInfo[i].itemID then
                                 --print("found qAllocation..")
                                 allocationForQuality = qAllocation.allocations
                             end
                         end
                     end
                     if allocationForQuality then
-                        --print("Allocate: " .. reagent.itemID .. ": " .. allocationForQuality)
-                        allocations:Allocate(reagent, allocationForQuality);
+                        reagentData.itemsInfo[i].allocations = allocationForQuality
+                        currentInput["inputq" .. i]:SetText(allocationForQuality)
                     end
                 end
-            
-			end
-		end
-	end
-
-    -- update frontend with fresh data
-    local freshRecipeData = CraftSimDATAEXPORT:exportRecipeData()
-    local freshPriceData = CraftSimPRICEDATA:GetPriceData(freshRecipeData, freshRecipeData.recipeType)
-    CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(freshRecipeData, freshRecipeData.recipeType, freshPriceData)
+            end
+        end
+    
+        CraftSimMAIN:TriggerModulesByRecipeType()
+    end
+	
 end
 
 function CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
@@ -510,6 +557,7 @@ function CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAlloca
     end
     for _, reagent in pairs(recipeData.reagents) do
         for _, itemInfo in pairs(reagent.itemsInfo) do
+            --print("check same alloc: " .. reagent.name)
             for _, allocation in pairs(bestAllocation.allocations) do
                 for _, qAllocation in pairs(allocation.allocations) do
                     if qAllocation.itemID == itemInfo.itemID then

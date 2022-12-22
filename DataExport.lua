@@ -50,15 +50,15 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	recipeData.profession = professionInfo.parentProfessionName
 	recipeData.professionID = professionInfo.profession
-	local recipeInfo = schematicForm:GetRecipeInfo()
+	local recipeInfo = CraftSimMAIN.currentRecipeInfo or schematicForm:GetRecipeInfo() -- should always be the first
 
 	local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
 
 	recipeData.recipeID = recipeInfo.recipeID
 	recipeData.recipeType = recipeType
-
-	local details = schematicForm.Details
-	local operationInfo = details.operationInfo
+	
+	local operationInfo = schematicForm:GetRecipeOperationInfo()
+	recipeData.expectedQuality = operationInfo.craftingQuality
 
     if operationInfo == nil or recipeType == CraftSimCONST.RECIPE_TYPES.GATHERING then
         return nil
@@ -66,7 +66,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	local bonusStats = operationInfo.bonusStats
 
-	local currentTransaction = schematicForm:GetTransaction()
+	local currentTransaction = schematicForm.transaction or schematicForm:GetTransaction()
 	
 	recipeData.currentTransaction = currentTransaction
 	recipeData.reagents = {}
@@ -155,7 +155,6 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		}
 	end
 
-	recipeData.expectedQuality = details.craftingQuality
 	recipeData.maxQuality = recipeInfo.maxQuality
 
 	recipeData.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
@@ -163,6 +162,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 
 	recipeData.recipeDifficulty = operationInfo.baseDifficulty + operationInfo.bonusDifficulty
+	recipeData.baseDifficulty = operationInfo.baseDifficulty
 	 -- baseSkill is like the base of the players skill and bonusSkill is what is added through reagents
 	recipeData.stats.skill = operationInfo.baseSkill + operationInfo.bonusSkill
 	recipeData.stats.baseSkill = operationInfo.baseSkill -- Needed for reagent optimization

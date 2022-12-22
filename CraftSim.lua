@@ -37,6 +37,8 @@ CraftSimOptions = CraftSimOptions or {
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
 
+CraftSimMAIN.currentRecipeInfo = nil
+
 function CraftSimMAIN:handleCraftSimOptionsUpdates()
 	if CraftSimOptions then
 		CraftSimOptions.tsmPriceKey = nil
@@ -92,12 +94,19 @@ function CraftSimMAIN:HookToEvent()
 	end
 	hookedEvent = true
 
-	local function Update()
+	local function Update(self)
+		--print("updating..")
 		CraftSimMAIN:TriggerModulesByRecipeType(false)
 	end
 
-	local function Init()
-		CraftSimMAIN:TriggerModulesByRecipeType(true)
+	local function Init(self, recipeInfo)
+		CraftSimMAIN.currentRecipeInfo = recipeInfo
+		if recipeInfo then
+			--print("got recipeInfo")
+			CraftSimMAIN:TriggerModulesByRecipeType(true)
+		else
+			--print("loading recipeInfo..")
+		end
 	end
 
 	local hookFrame = ProfessionsFrame.CraftingPage.SchematicForm
@@ -121,7 +130,7 @@ function CraftSimMAIN:ADDON_LOADED(addon_name)
 		CraftSimSIMULATION_MODE:Init()
 		CraftSimTOOLTIP:Init()
 		CraftSimMAIN:HookToEvent()
-		CraftSimMAIN:HookToDetailsHide()
+		--CraftSimMAIN:HookToDetailsHide()
 		CraftSimMAIN:handleCraftSimOptionsUpdates()
 		CraftSimMAIN:HookToProfessionsFrame()
 		CraftSimFRAME:HandleAuctionatorOverlaps()
@@ -226,11 +235,7 @@ end
 
 function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 
-	-- if init, turn sim mode off
-	if isInit then
-		CraftSimSIMULATION_MODE.isActive = false
-		CraftSimSimModeToggleButton:SetText("Simulation Mode: Off")
-	end
+	
 
 	if CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate then
 		CraftSimREAGENT_OPTIMIZATION.TriggeredByVellumUpdate = false
@@ -241,7 +246,12 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 	local professionFullName = professionInfo.professionName
 	local craftingPage = ProfessionsFrame.CraftingPage
 	local schematicForm = craftingPage.SchematicForm
-    local recipeInfo = schematicForm:GetRecipeInfo()
+    local recipeInfo = CraftSimMAIN.currentRecipeInfo or schematicForm:GetRecipeInfo()
+
+	if not recipeInfo then
+		print("no recipeInfo found.. try again soon?")
+		return
+	end
 
     if not string.find(professionFullName, "Dragon Isles") then -- TODO: factor in other localizations
 		return
@@ -249,6 +259,12 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 
     local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
     --print("trigger by recipeType.. " .. tostring(recipeType))
+
+	-- if init or recraft, turn sim mode off
+	if isInit or recipeType == CraftSimCONST.RECIPE_TYPES.RECRAFT then
+		CraftSimSIMULATION_MODE.isActive = false
+		CraftSimSimModeToggleButton:SetText("Simulation Mode: Off")
+	end
 
 	local recipeData = nil 
 	if CraftSimSIMULATION_MODE.isActive and CraftSimSIMULATION_MODE.recipeData then
@@ -271,15 +287,11 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
     local showTopGear = false
     local showCostOverview = false
     local showCostOverviewCraftingCostsOnly = false
+	local showSimulationMode = false
 
 	if recipeData and priceData then
 		CraftSimDATAEXPORT:UpdateTooltipData(recipeData)
 		CraftSimFRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
-		CraftSimSIMULATION_MODE:InitSimModeData(recipeData)
-
-		if UIDROPDOWNMENU_OPEN_MENU then
-			return
-		end
 
 		if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
 			-- show everything
@@ -287,10 +299,12 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 			showTopGear = true
 			showCostOverview = true
 			showStatweights = true
+			showSimulationMode = true
 		elseif recipeType == CraftSimCONST.RECIPE_TYPES.ENCHANT then
 			showTopGear = true
 			showCostOverview = true
 			showStatweights = true
+			showSimulationMode = true
 
 			if CraftSimOptions.autoAssignVellum then
 				CraftSimREAGENT_OPTIMIZATION:AutoAssignVellum(recipeData)
@@ -301,6 +315,7 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 			showCostOverview = true
 			showCostOverviewCraftingCostsOnly = true
 			showStatweights = true
+			showSimulationMode = true
 		elseif recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.NO_ITEM then
 			-- show crafting costs and highest material allocation
 			showCostOverview = true
@@ -308,6 +323,7 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 			showMaterialAllocation = true
 			-- also show top gear cause we have different modes now
 			showTopGear = true
+			showSimulationMode = true
 		elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
 			-- show nothing
 		elseif recipeType == CraftSimCONST.RECIPE_TYPES.RECRAFT then
@@ -325,6 +341,16 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
     local showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
     local showTopGear = showTopGear and CraftSimOptions.modulesTopGear
     local showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
+
+	CraftSimFRAME:ToggleFrame(CraftSimSimModeToggleButton, showSimulationMode)
+	if CraftSimSIMULATION_MODE.isActive then
+		-- only update displayed data by the recipeData that was saved to sim mode
+		CraftSimFRAME:UpdateSimModeFrames(showSimulationMode)
+		CraftSimFRAME:UpdateSimModeStatDetails()
+	else
+		-- remember current recipe data, init base stats, and update frames in background (if sim mode is available for this mode)
+		CraftSimSIMULATION_MODE:InitSimModeData(recipeData, showSimulationMode)
+	end
 
 	showMaterialAllocation = showMaterialAllocation and recipeData.hasReagentsWithQuality
     CraftSimFRAME:ToggleFrame(CraftSimReagentHintFrame, showMaterialAllocation)

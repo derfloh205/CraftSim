@@ -52,7 +52,7 @@ function CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
     for reagentIndex, reagent in pairs(recipeData.reagents) do
         if reagent.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
             local reagentPriceData = CopyTable(reagent.itemsInfo)
-            for _, itemInfo in pairs(reagentPriceData) do
+            for q, itemInfo in pairs(reagentPriceData) do
                 itemInfo.minBuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemInfo.itemID, true)
             end
             reagentQualityPrices[reagentIndex] = reagentPriceData
