@@ -23,7 +23,6 @@ function CraftSimCALC:handleInspiration(recipeData, priceData, crafts, craftedIt
         craftedItems.baseQuality = recipeData.baseItemAmount
         crafts.baseQuality = 1
     end
-
     calculationData.inspiration.averageInspirationItemsCurrent = craftedItems.baseQuality
     calculationData.inspiration.averageInspirationItemsHigher = craftedItems.nextQuality or 0
     calculationData.inspiration.inspirationItemsValueCurrent = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]

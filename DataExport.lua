@@ -40,18 +40,15 @@ end
 function CraftSimDATAEXPORT:exportRecipeData()
 	local recipeData = {}
 
-	local professionInfo = ProfessionsFrame.professionInfo
-	local professionFullName = professionInfo.professionName
+	--local professionInfo = ProfessionsFrame.professionInfo
+	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+	local expansionName = professionInfo.expansionName
 	local craftingPage = ProfessionsFrame.CraftingPage
 	local schematicForm = craftingPage.SchematicForm
 
-	if not string.find(professionFullName, "Dragon Isles") then
-		return nil
-	end
-
 	recipeData.profession = professionInfo.parentProfessionName
 	recipeData.professionID = professionInfo.profession
-	local recipeInfo = CraftSimMAIN.currentRecipeInfo or schematicForm:GetRecipeInfo() -- should always be the first
+	local recipeInfo = CraftSimMAIN.currentRecipeInfo --or schematicForm:GetRecipeInfo() -- should always be the first
 
 	local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
 

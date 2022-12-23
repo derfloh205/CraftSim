@@ -95,7 +95,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     numBP = #craftingDifficultyBP + 1 -- the 0 index will not be counted..
     --print("numBP: " .. numBP)
 
-    local recipeMaxSkillBonus = 0.25 * recipeData.recipeDifficulty
+    local recipeMaxSkillBonus = 0.25 * recipeData.baseDifficulty
     
     -- Calculate the material bonus needed to meet each breakpoint based on the player's
     --   existing skill and the recipe difficulty (as a fraction of the recipeMaxSkillBonus
@@ -463,7 +463,7 @@ function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(r
     end
 
     local matSkillBonus = 0
-    local recipeMaxSkillBonus = 0.25 * recipeData.recipeDifficulty
+    local recipeMaxSkillBonus = 0.25 * recipeData.baseDifficulty
     for _, bonus in pairs(matBonus) do
         matSkillBonus = matSkillBonus + bonus / totalWeight * recipeMaxSkillBonus
     end

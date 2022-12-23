@@ -127,9 +127,17 @@ function CraftSimSIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSimSIMULATION_MODE.baseSkill = CraftSimSIMULATION_MODE.recipeData.stats.skill - OldReagentSkillIncrease
     CraftSimSIMULATION_MODE.baseRecipeDifficulty = CraftSimSIMULATION_MODE.recipeData.baseDifficulty
     
-    CraftSimSIMULATION_MODE.baseInspiration = CopyTable(CraftSimSIMULATION_MODE.recipeData.stats.inspiration)
-    CraftSimSIMULATION_MODE.baseMulticraft = CopyTable(CraftSimSIMULATION_MODE.recipeData.stats.multicraft)
-    CraftSimSIMULATION_MODE.baseResourcefulness = CopyTable(CraftSimSIMULATION_MODE.recipeData.stats.resourcefulness)
+    if CraftSimSIMULATION_MODE.recipeData.stats.inspiration then
+        CraftSimSIMULATION_MODE.baseInspiration = CopyTable(CraftSimSIMULATION_MODE.recipeData.stats.inspiration)
+    end
+    
+    if CraftSimSIMULATION_MODE.recipeData.stats.multicraft then
+        CraftSimSIMULATION_MODE.baseMulticraft = CopyTable(CraftSimSIMULATION_MODE.recipeData.stats.multicraft)
+    end
+
+    if CraftSimSIMULATION_MODE.recipeData.stats.resourcefulness then
+        CraftSimSIMULATION_MODE.baseResourcefulness = CopyTable(CraftSimSIMULATION_MODE.recipeData.stats.resourcefulness)
+    end
     -- crafting speed... for later profit per time interval?
 
     -- update frame visiblity and initialize the input fields
