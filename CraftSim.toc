@@ -32,3 +32,11 @@ CraftSim.xml
 
 Localization.lua
 enEN.lua
+
+SpecNodeData/Alchemy.lua
+SpecNodeData/Blacksmithing.lua
+SpecNodeData/Enchanting.lua
+SpecNodeData/Inscription.lua
+SpecNodeData/Jewelcrafting.lua
+SpecNodeData/Leatherworking.lua
+SpecNodeData/Tailoring.lua

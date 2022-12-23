@@ -37,6 +37,223 @@ function CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
 	 return linksByQuality
 end
 
+function CraftSimDATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
+	-- if stat not available -> not supported
+	local bonusStats = operationInfo.bonusStats
+	-- crafting speed is always supported!
+	recipeData.stats = {craftingspeed = {}}
+	for _, statInfo in pairs(bonusStats) do
+		local statName = string.lower(statInfo.bonusStatName)
+		if statName == "crafting speed" then
+			statName = "craftingspeed"
+		end
+		if recipeData.stats[statName] == nil then
+			recipeData.stats[statName] = {}
+		end
+	end
+end
+
+function CraftSimDATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
+	local bonusStats = operationInfo.bonusStats
+	recipeData.stats = {}
+	for _, statInfo in pairs(bonusStats) do
+		local statName = string.lower(statInfo.bonusStatName)
+		if statName == "crafting speed" then
+			statName = "craftingspeed"
+		end
+		if recipeData.stats[statName] == nil then
+			recipeData.stats[statName] = {}
+		end
+		recipeData.stats[statName].value = statInfo.bonusStatValue
+		recipeData.stats[statName].description = statInfo.ratingDescription
+		recipeData.stats[statName].percent = statInfo.ratingPct
+		if statName == 'inspiration' then
+			-- matches a row of numbers coming after the % character and any characters in between plus a space, should hopefully match in every localization...
+			local _, _, bonusSkill = string.find(statInfo.ratingDescription, "%%.* (%d+)") 
+			recipeData.stats[statName].bonusskill = bonusSkill
+			--print("inspirationbonusskill: " .. tostring(bonusSkill))
+		end
+	end
+
+	-- baseSkill is like the base of the players skill and bonusSkill is what is added through reagents
+	recipeData.stats.skill = operationInfo.baseSkill + operationInfo.bonusSkill
+	recipeData.stats.baseSkill = operationInfo.baseSkill -- Needed for reagent optimization
+
+	-- crafting speed is always relevant but it is not shown in details when it is zero
+	if not recipeData.stats.craftingspeed then
+		recipeData.stats.craftingspeed = {
+			value = 0,
+			percent = 0,
+			description = ""
+		}
+	end
+end
+
+function CraftSimDATAEXPORT:GetStatsFromBuffs(buffData)
+	-- TODO: Implement
+    return {	
+        inspiration = 0,
+        inspirationBonusSkillPercent = 0,
+        multicraft = 0,
+        multicraftBonusItemsFactor = 1,
+        resourcefulness = 0,
+        resourcefulnessBonusItemsFactor = 1,
+        craftingspeed = 0,
+		craftingspeedBonusFactor = 1,
+        skill = 0
+    }
+end
+
+function CraftSimDATAEXPORT:exportBuffData(recipeData)
+	return { -- TODO: information about relevant stats like crafting speed / inspiration incense / inspiration portrait (?)
+
+	}
+end
+
+function CraftSimDATAEXPORT:exportSpecNodeData(recipeData)
+	local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    local configID = C_ProfSpecs.GetConfigIDForSkillLine(skillLineID)
+
+	local nodes = CraftSimCONST.NODES()[recipeData.professionID] or {}
+
+	local specNodeData = {}
+	for _, currentNode in pairs(nodes) do
+		--print("checking node -> " .. currentNode.name)
+		local nodeInfo = C_Traits.GetNodeInfo(configID, currentNode.nodeID)
+		if nodeInfo then
+			specNodeData[currentNode.nodeID] = {
+				nodeID = currentNode.nodeID,
+				name = currentNode.name,
+				activeRank = nodeInfo.activeRank
+				-- parent nodes? and other stuff..
+			}
+		end
+	end
+	return specNodeData
+end
+
+function CraftSimDATAEXPORT:GetStatsFromReagents(recipeData)
+	-- TODO: export optional and finishing reagents and get their modifiers
+	return {	
+        inspiration = 0,
+        inspirationBonusSkillFactor = 1,
+        multicraft = 0,
+        multicraftBonusItemsFactor = 1,
+        resourcefulness = 0,
+        resourcefulnessBonusItemsFactor = 1,
+        craftingspeed = 0,
+		craftingspeedBonusFactor = 1,
+        skill = 0
+    }
+end
+
+function CraftSimDATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
+	print("player stats v2")
+	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+	local professionGearStats = CraftSimDATAEXPORT:GetCurrentProfessionItemStats()
+
+	local relevantNodes = CraftSimSPECDATA.RELEVANT_NODES()[recipeData.professionID]
+
+	local specNodeStats = CraftSimSPECDATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
+	local buffStats = CraftSimDATAEXPORT:GetStatsFromBuffs(recipeData.buffData)
+	local reagentStats = CraftSimDATAEXPORT:GetStatsFromReagents(recipeData)
+
+	print("specnodestats: ")
+	CraftSimUTIL:PrintTable(specNodeStats)
+
+	-- skill
+	local baseSkill = professionInfo.skillLevel
+	local racialSkill = CraftSimDATAEXPORT:GetRacialProfessionSkillBonus(recipeData.professionID)
+	local itemSkill = professionGearStats.skill
+	local specNodeSkill = specNodeStats.skill
+	local reagentSkill = reagentStats.skill
+
+	recipeData.stats.skill = baseSkill + racialSkill + itemSkill + specNodeSkill + reagentSkill
+
+	-- inspiration
+	if recipeData.stats.inspiration then
+		local basePercent = 5 -- everyone has this as base 
+		local baseInspirationBonusSkill = 0
+		local specNodeBonus = specNodeStats.inspiration
+		local itemBonus = professionGearStats.inspiration
+		local itemBonusSkillFactor = 1 + (professionGearStats.inspirationBonusSkillPercent / 100) -- 15% -> 1.15
+		local specNodeBonusSkillFactor = specNodeStats.inspirationBonusSkillFactor
+		-- TODO: consider stable fluidic draconium 
+		local finishingReagentsBonusSkillFactor = reagentStats.inspirationBonusSkillFactor
+
+		if not recipeData.result.isNoQuality then
+			if recipeData.maxQuality == 5 then
+				baseInspirationBonusSkill = recipeData.baseDifficulty * (1/6)
+			else -- its 3
+				baseInspirationBonusSkill = recipeData.baseDifficulty * (1/3)
+			end
+		end
+
+		recipeData.stats.inspiration.value = buffStats.inspiration + itemBonus + specNodeBonus
+		recipeData.stats.inspiration.percent = basePercent + CraftSimUTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
+		recipeData.stats.inspiration.bonusskill = baseInspirationBonusSkill * specNodeBonusSkillFactor * itemBonusSkillFactor * finishingReagentsBonusSkillFactor
+	end
+
+	-- multicraft
+	if recipeData.stats.multicraft then
+		-- TODO BUFFS?
+		local specNodeBonus = specNodeStats.multicraft
+		local itemBonus = professionGearStats.multicraft
+		local specNodeBonusItemsFactor = specNodeStats.multicraftBonusItemsFactor
+		-- TODO: consider ??? I think in cooking maybe
+		local finishingReagentsBonusItemsFactor = reagentStats.multicraftBonusItemsFactor
+		recipeData.stats.multicraft.value = buffStats.multicraft + itemBonus + specNodeBonus
+		recipeData.stats.multicraft.percent = CraftSimUTIL:GetMulticraftPercentByStat(recipeData.stats.multicraft.value) * 100
+		recipeData.stats.multicraft.bonusItemsFactor = specNodeBonusItemsFactor * finishingReagentsBonusItemsFactor
+	end
+
+	-- resourcefulness
+	if recipeData.stats.resourcefulness then
+		-- TODO BUFFS?
+		local specNodeBonus = specNodeStats.resourcefulness
+		local itemBonus = professionGearStats.resourcefulness
+		local specNodeBonusItemsFactor = specNodeStats.resourcefulnessBonusItemsFactor
+		-- TODO: consider ??? Dont know if that even exists
+		local finishingReagentsBonusItemsFactor = reagentStats.resourcefulnessBonusItemsFactor
+
+		recipeData.stats.resourcefulness.value = buffStats.resourcefulness + itemBonus + specNodeBonus
+		recipeData.stats.resourcefulness.percent = CraftSimUTIL:GetResourcefulnessPercentByStat(recipeData.stats.resourcefulness.value) * 100
+		recipeData.stats.resourcefulness.bonusItemsFactor = specNodeBonusItemsFactor * finishingReagentsBonusItemsFactor
+	end
+
+	-- craftingspeed
+	if recipeData.stats.craftingspeed then
+		-- TODO BUFFS?
+		local specNodeBonus = specNodeStats.craftingspeed
+		local itemBonus = professionGearStats.craftingspeed
+		local specNodeBonusItemsFactor = specNodeStats.craftingspeedBonusFactor
+		-- TODO: consider ??? Dont know if that even exists
+		local finishingReagentsBonusFactor = reagentStats.craftingspeedBonusFactor
+
+		recipeData.stats.craftingspeed.value = buffStats.craftingspeed + itemBonus + specNodeBonus
+		recipeData.stats.craftingspeed.percent = CraftSimUTIL:GetCraftingSpeedPercentByStat(recipeData.stats.craftingspeed.value) * 100
+	end
+
+	-- debug
+	-- print("total skill: " .. tostring(recipeData.stats.skill))
+	-- print("total inspiration: ")
+	-- CraftSimUTIL:PrintTable(recipeData.stats.inspiration or {})
+	-- print("total multicraft: ")
+	-- CraftSimUTIL:PrintTable(recipeData.stats.multicraft or {})
+	-- print("total resourcefulness: ")
+	-- CraftSimUTIL:PrintTable(recipeData.stats.resourcefulness or {})
+end
+
+function CraftSimDATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
+	local implemented = tContains(CraftSimCONST.IMPLEMENTED_SKILL_BUILD_UP(), recipeData.professionID)
+
+	if not implemented then
+		CraftSimDATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
+	else
+		CraftSimDATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
+	end
+end
+
 function CraftSimDATAEXPORT:exportRecipeData()
 	local recipeData = {}
 
@@ -62,7 +279,6 @@ function CraftSimDATAEXPORT:exportRecipeData()
     end
 	recipeData.expectedQuality = operationInfo.craftingQuality
 
-	local bonusStats = operationInfo.bonusStats
 
 	local currentTransaction = schematicForm.transaction or schematicForm:GetTransaction()
 	
@@ -124,34 +340,6 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		end
 	end
 	recipeData.hasReagentsWithQuality = hasReagentsWithQuality
-	recipeData.stats = {}
-	for _, statInfo in pairs(bonusStats) do
-		local statName = string.lower(statInfo.bonusStatName)
-		if statName == "crafting speed" then
-			statName = "craftingspeed"
-		end
-		if recipeData.stats[statName] == nil then
-			recipeData.stats[statName] = {}
-		end
-		recipeData.stats[statName].value = statInfo.bonusStatValue
-		recipeData.stats[statName].description = statInfo.ratingDescription
-		recipeData.stats[statName].percent = statInfo.ratingPct
-		if statName == 'inspiration' then
-			-- matches a row of numbers coming after the % character and any characters in between plus a space, should hopefully match in every localization...
-			local _, _, bonusSkill = string.find(statInfo.ratingDescription, "%%.* (%d+)") 
-			recipeData.stats[statName].bonusskill = bonusSkill
-			--print("inspirationbonusskill: " .. tostring(bonusSkill))
-		end
-	end
-
-	-- crafting speed is always relevant but it is not shown in details when it is zero
-	if not recipeData.stats.craftingspeed then
-		recipeData.stats.craftingspeed = {
-			value = 0,
-			percent = 0,
-			description = ""
-		}
-	end
 
 	recipeData.maxQuality = recipeInfo.maxQuality
 
@@ -161,9 +349,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	recipeData.recipeDifficulty = operationInfo.baseDifficulty + operationInfo.bonusDifficulty
 	recipeData.baseDifficulty = operationInfo.baseDifficulty
-	 -- baseSkill is like the base of the players skill and bonusSkill is what is added through reagents
-	recipeData.stats.skill = operationInfo.baseSkill + operationInfo.bonusSkill
-	recipeData.stats.baseSkill = operationInfo.baseSkill -- Needed for reagent optimization
+
 	recipeData.result = {}
 
 	local allocationItemGUID = currentTransaction:GetAllocationItemGUID()
@@ -213,9 +399,20 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		print("recipeType not covered in export: " .. tostring(recipeType))
 	end
 
+	-- I need both to identify the spec boni
 	recipeData.categoryID = recipeInfo.categoryID
+	local itemData = CraftSimDATAEXPORT:GetItemFromCacheByItemID(recipeData.result.itemID or recipeData.result.itemIDs[1]) or {}
+	recipeData.subtypeID = itemData.subclassID or nil
 
-	recipeData.extraItemFactors = CraftSimSPECDATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
+	CraftSimDATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
+
+	--recipeData.extraItemFactors = CraftSimSPECDATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
+
+	recipeData.buffData = CraftSimDATAEXPORT:exportBuffData()
+	recipeData.specNodeData = CraftSimDATAEXPORT:exportSpecNodeData(recipeData)
+
+	CraftSimDATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
+
 	
 	CraftSimMAIN.currentRecipeData = recipeData
 	return recipeData
@@ -469,4 +666,70 @@ function CraftSimDATAEXPORT:GetItemFromCacheByItemID(itemID)
 
 		return itemData
 	end
+end
+
+function CraftSimDATAEXPORT:GetRacialProfessionSkillBonus(professionID)
+	local _, playerRace = UnitRace("player")
+	local data = {
+		Gnome = {
+			professionIDs = {Enum.Profession.Engineering},
+			professionBonus = 5,
+		},
+		Draenei = {
+			professionIDs = {Enum.Profession.Jewelcrafting},
+			professionBonus = 5,
+		},
+		Worgen = {
+			professionIDs = {Enum.Profession.Skinning},
+			professionBonus = 5,
+		},
+		LightforgedDraenei = {
+			professionIDs = {Enum.Profession.Blacksmithing},
+			professionBonus = 5,
+		},
+		DarkIronDwarf = {
+			professionIDs = {Enum.Profession.Blacksmithing},
+			professionBonus = 5,
+		},
+		KulTiran = {
+			professionIDs = nil, -- everything
+			professionBonus = 2,
+		},
+		Pandaren = {
+			professionIDs = {Enum.Profession.Cooking},
+			professionBonus = 5,
+		},
+		Tauren = {
+			professionIDs = {Enum.Profession.Herbalism},
+			professionBonus = 5,
+		},
+		BloodElf = {
+			professionIDs = {Enum.Profession.Enchanting},
+			professionBonus = 5,
+		},
+		Goblin = {
+			professionIDs = {Enum.Profession.Alchemy},
+			professionBonus = 5,
+		},
+		Nightborne = {
+			professionIDs = {Enum.Profession.Inscription},
+			professionBonus = 5,
+		},
+		HighmountainTauren = {
+			professionIDs = {Enum.Profession.Mining},
+			professionBonus = 5,
+		}
+	}
+
+	local bonusData = data[playerRace]
+	if not bonusData then
+		return 0
+	end
+
+	if bonusData.professionIDs == nil or tContains(bonusData.professionIDs, professionID) then
+		return bonusData.professionBonus
+	else
+		return 0
+	end
+		
 end

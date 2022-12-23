@@ -119,11 +119,12 @@ CraftSimCONST.COLORS = {
     DARK_BLUE = "cff2596be"
 }
 
--- only need the ones that modify resourcefulness/multicraft
 CraftSimCONST.RECIPE_CATEGORIES = {
     BLACKSMITHING = {
         STONEWORK = 1684,
-        SMELTING = 1678
+        SMELTING = 1678,
+        TOOLS = 1677,
+        WEAPONS = 1675,
     },
     ALCHEMY = {
         ELEMENTAL_BOTH = 1646,
@@ -146,6 +147,46 @@ CraftSimCONST.RECIPE_CATEGORIES = {
     },
     INSCRIPTION = {
         INKS = 1754
+    }
+}
+
+CraftSimCONST.RECIPE_ITEM_SUBTYPES = {
+    BLACKSMITHING = {
+        STONEWORK = 8, -- "Other"
+        METAL_AND_STONE = 7,
+        BLACKSMITHING = 0,
+        LEATHERWORKING = 1,
+        SKINNING = 10,
+        TAILORING = 6,
+        HERBALISM = 3,
+        MINING = 5,
+
+        -- WEAPONS
+        MACE_2H = 5,
+        FIST = 13,
+        POLEARM = 6,
+        SWORDS_1H = 7,
+        AXE_1H = 0,
+        DAGGERS = 15,
+        AXE_2H = 1,
+        SWORDS_2H = 8,
+        MACE_1H = 4,
+        WARGLAIVES = 9,
+    },
+    ALCHEMY = {
+        PHIALS = 3, -- "Flask"
+        POTIONS = 1,
+        REAGENT = 11, -- "Other"
+        FINISHING_REAGENT = 19,
+        OPTIONAL_REAGENTS = 18,
+        INCENSE = 8,
+    },
+    LEATHERWORKING = {
+        DRUMS = 8, -- "Other"
+        ARMORKITS = 14, -- "Misc"
+    },
+    INSCRIPTION = {
+        INKS = 16, -- "Inscription"
     }
 }
 
@@ -174,3 +215,74 @@ CraftSimCONST.TEXT = {
     RESOURCEFULNESS_EXPLANATION_TOOLTIP = 16,
     REAGENTSKILL_EXPLANATION_TOOLTIP = 17,
 }
+
+CraftSimCONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
+    return {Enum.Profession.Blacksmithing}
+end
+
+CraftSimCONST.NODES = function()
+    -- TODO: names from localizations 
+    return {
+        [Enum.Profession.Blacksmithing] = {
+            -- Hammer Control
+            {
+                name = "Hammer Control",
+                nodeID = 42828
+            },
+            {
+                name = "Safety Smithing",
+                nodeID = 42827
+            },
+            {
+                name = "Poignant Plans",
+                nodeID = 42826
+            },
+            -- Speciality Smithing
+            {
+                name = "Speciality Smithing",
+                nodeID = 23765
+            },
+            {
+                name = "Toolsmithing",
+                nodeID = 23764
+            },
+            {
+                name = "Stonework",
+                nodeID = 23762
+            },
+            {
+                name = "Smelting",
+                nodeID = 23761
+            },
+            -- Weapon Smithing
+            {
+                name = "Weapon Smithing",
+                nodeID = 23727
+            },
+            {
+                name = "Blades",
+                nodeID = 23726
+            },
+            {
+                name = "Hafted",
+                nodeID = 23723
+            },
+            {
+                name = "Short Blades",
+                nodeID = 23725
+            },
+            {
+                name = "Long Blades",
+                nodeID = 23724
+            },
+            {
+                name = "Maces & Hammers",
+                nodeID = 23722
+            },
+            {
+                name = "Axes, Picks & Polearms",
+                nodeID = 23721
+            },
+        } 
+    }
+end
