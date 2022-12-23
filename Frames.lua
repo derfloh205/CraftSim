@@ -1493,6 +1493,7 @@ function CraftSimFRAME:UpdateSimModeStatDisplay()
     local qualityFrame = CraftSimSIMULATION_MODE.craftingDetailsFrame.content.qualityFrame
     CraftSimFRAME:ToggleFrame(qualityFrame, not CraftSimSIMULATION_MODE.recipeData.result.isNoQuality)
     if not CraftSimSIMULATION_MODE.recipeData.result.isNoQuality then
+        --print("getting thresholds with difficulty: " .. CraftSimSIMULATION_MODE.recipeData.recipeDifficulty)
         local thresholds = CraftSimSTATS:GetQualityThresholds(CraftSimSIMULATION_MODE.recipeData.maxQuality, CraftSimSIMULATION_MODE.recipeData.recipeDifficulty, CraftSimOptions.breakPointOffset)
         qualityFrame.currentQualityIcon.SetQuality(CraftSimSIMULATION_MODE.recipeData.expectedQuality)
         qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[CraftSimSIMULATION_MODE.recipeData.expectedQuality - 1] or 0))
@@ -1512,7 +1513,9 @@ function CraftSimFRAME:UpdateSimModeStatDisplay()
             missingSkill = missingSkill > 0 and missingSkill or 0
             missingSkillInspiration = missingSkillInspiration > 0 and missingSkillInspiration or 0
             qualityFrame.nextQualityMissingSkillValue:SetText(missingSkill)
-            qualityFrame.nextQualityMissingSkillInspirationValue:SetText(missingSkillInspiration)
+            local missinSkillText = CraftSimUTIL:ColorizeText(missingSkillInspiration, 
+            missingSkillInspiration == 0 and CraftSimCONST.COLORS.GREEN or CraftSimCONST.COLORS.RED)
+            qualityFrame.nextQualityMissingSkillInspirationValue:SetText(missinSkillText)
             qualityFrame.nextQualityIcon.SetQuality(CraftSimSIMULATION_MODE.recipeData.expectedQuality + 1)
             qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[CraftSimSIMULATION_MODE.recipeData.expectedQuality])
         end

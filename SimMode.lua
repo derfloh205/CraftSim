@@ -75,6 +75,10 @@ function CraftSimSIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
     local skillMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true)
     CraftSimSIMULATION_MODE.recipeData.stats.skill = CraftSimSIMULATION_MODE.baseSkill + reagentSkillIncrease + skillMod
 
+    -- update difficulty based on input
+    local recipeDifficultyMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput, true)
+    CraftSimSIMULATION_MODE.recipeData.recipeDifficulty = CraftSimSIMULATION_MODE.baseRecipeDifficulty + recipeDifficultyMod
+
     -- update other stats
     if CraftSimSIMULATION_MODE.recipeData.stats.inspiration then
         local inspirationMod = CraftSimUTIL:ValidateNumberInput(CraftSimSimModeInspirationModInput, true)
