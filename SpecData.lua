@@ -109,13 +109,14 @@ function CraftSimSPECDATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
     return stats
 end
 
+-- LEGACY.. remove when other ready
 function CraftSimSPECDATA:GetExtraItemFactors(recipeData, relevantNodes)
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(skillLineID)
 
     local extraItemFactors = {
-        multicraftExtraItemsFactor = 1,
-        resourcefulnessExtraItemsFactor = 1
+        multicraftBonusItemsFactor = 1,
+        resourcefulnessBonusItemsFactor = 1
     }
 
     for thresholdName, nodeData in pairs(relevantNodes) do 
@@ -125,10 +126,10 @@ function CraftSimSPECDATA:GetExtraItemFactors(recipeData, relevantNodes)
         -- only increase if the current recipe has a matching category (like whetstone -> stonework, then only stonework marked nodes are relevant)
         -- or if categoryID of nodeData is nil which means its for the whole profession
         -- or if its debugged
-        if nodeData.threshold and nodeInfo and (nodeData.debug or (tContains(nodeData.categoryIDs, recipeData.categoryID) or #nodeData.categoryIDs == 0) and (nodeInfo.activeRank - 1) >= nodeData.threshold) then
+        if nodeData and nodeData.categoryIDs and nodeData.threshold and nodeInfo and (nodeData.debug or (tContains(nodeData.categoryIDs, recipeData.categoryID) or #nodeData.categoryIDs == 0) and (nodeInfo.activeRank - 1) >= nodeData.threshold) then
             -- they stack multiplicatively
-            extraItemFactors.multicraftExtraItemsFactor = extraItemFactors.multicraftExtraItemsFactor * (1 + (nodeData.multicraftExtraItemsFactor or 0))
-            extraItemFactors.resourcefulnessExtraItemsFactor = extraItemFactors.resourcefulnessExtraItemsFactor * (1 + (nodeData.resourcefulnessExtraItemsFactor or 0))
+            extraItemFactors.multicraftBonusItemsFactor = extraItemFactors.multicraftBonusItemsFactor * (1 + (nodeData.multicraftBonusItemsFactor or 0))
+            extraItemFactors.resourcefulnessBonusItemsFactor = extraItemFactors.resourcefulnessBonusItemsFactor * (1 + (nodeData.resourcefulnessBonusItemsFactor or 0))
         end
     end
     return extraItemFactors

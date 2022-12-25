@@ -1040,20 +1040,23 @@ function CraftSimFRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anc
     return frame
 end
 
+--multicraftBonusItemsFactor = 1,
+-- resourcefulnessBonusItemsFactor = 1
+
 function CraftSimFRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
     local lines = ProfessionsFrame.CraftingPage.SchematicForm.Details.statLinePool
 	local activeObjects = lines.activeObjects
     -- TODO: update tooltips of statlines to explain the extra item stuff to save space
 	for statLine, _ in pairs(activeObjects) do 
-		if string.find(statLine.LeftLabel:GetText(), "Multicraft") and recipeData.extraItemFactors.multicraftExtraItemsFactor > 1 then
+		if string.find(statLine.LeftLabel:GetText(), "Multicraft") and (recipeData.extraItemFactors.multicraftBonusItemsFactor or 0) > 1 then
 			local baseText = "Multicraft "
-			local formatted = CraftSimUTIL:FormatFactorToPercent(recipeData.extraItemFactors.multicraftExtraItemsFactor)
+			local formatted = CraftSimUTIL:FormatFactorToPercent(recipeData.extraItemFactors.multicraftBonusItemsFactor)
 			local text = baseText .. CraftSimUTIL:ColorizeText("" .. formatted .. " Items", CraftSimCONST.COLORS.GREEN)
 			statLine.LeftLabel:SetText(text)
 		end
-		if string.find(statLine.LeftLabel:GetText(), "Resourcefulness") and recipeData.extraItemFactors.resourcefulnessExtraItemsFactor > 1 then
+		if string.find(statLine.LeftLabel:GetText(), "Resourcefulness") and (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 0) > 1 then
 			local baseText = "Resourcefulness " 
-			local formatted = CraftSimUTIL:FormatFactorToPercent(recipeData.extraItemFactors.resourcefulnessExtraItemsFactor)
+			local formatted = CraftSimUTIL:FormatFactorToPercent(recipeData.extraItemFactors.resourcefulnessBonusItemsFactor)
 			local text = baseText .. CraftSimUTIL:ColorizeText("" .. formatted .. " Items", CraftSimCONST.COLORS.GREEN)
 			statLine.LeftLabel:SetText(text)
 		end

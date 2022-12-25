@@ -217,7 +217,7 @@ CraftSimCONST.TEXT = {
 }
 
 CraftSimCONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
-    return {Enum.Profession.Blacksmithing}
+    return {} -- {Enum.Profession.Blacksmithing}
 end
 
 CraftSimCONST.NODES = function()

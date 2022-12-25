@@ -37,7 +37,7 @@ function CraftSimCALC:handleMulticraft(recipeData, priceData, crafts, craftedIte
         -- For now just use a random value of 1-2.5y additional items at mean
         local expectedAdditionalItems = (1 + (2.5*recipeData.baseItemAmount)) / 2 
         -- Also add any additional items factor
-        expectedAdditionalItems = expectedAdditionalItems * recipeData.extraItemFactors.multicraftExtraItemsFactor
+        expectedAdditionalItems = expectedAdditionalItems * (recipeData.extraItemFactors.multicraftBonusItemsFactor or 1)
 
         -- Since multicraft and inspiration can proc together add expected multicraft gain to both qualities
         local multicraftProcsBase = crafts.baseQuality*(recipeData.stats.multicraft.percent / 100)
@@ -118,16 +118,16 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
                     -- use the lower quantity = min 1 saved "rule" for non quality materials for now
                     if totalReagents[materialIndex].differentQualities then
                         -- Save 30% of this material costs plus the specced addition if it was procced
-                        materialCost = materialCost * (CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor) 
+                        materialCost = materialCost * (CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1)) 
                     else
                         if totalReagents[materialIndex].requiredQuantity < 5 then
                             -- 5 -> 1.5 mats on average.. so either 1 or 2
                             -- anything < 5 defaults to exact 1 material saved on average because it is assumed to round down from < 1.5 to 1
                             -- If 30% of a material would put us below 1, then assume that 1 is saved on average
-                            materialCost = materialCost * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
+                            materialCost = materialCost * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1)
                         else
                             -- if is >= 5 then just take the usual 0.3%
-                            materialCost = materialCost * (CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor)
+                            materialCost = materialCost * (CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1))
                         end
                     end
                 else

@@ -283,7 +283,6 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 
 	if recipeData and priceData then
 		CraftSimDATAEXPORT:UpdateTooltipData(recipeData)
-		CraftSimFRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
 
 		if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
 			-- show everything
@@ -329,6 +328,10 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 	local showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
 	local showTopGear = showTopGear and CraftSimOptions.modulesTopGear
 	local showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
+
+	if recipeData and recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_ITEM and recipeType ~= CraftSimCONST.RECIPE_TYPES.GATHERING and recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_CRAFT_OPERATION and recipeType ~= CraftSimCONST.RECIPE_TYPES.RECRAFT then
+		CraftSimFRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
+	end
 
 	CraftSimFRAME:ToggleFrame(CraftSimSimModeToggleButton, showSimulationMode)
 	CraftSimFRAME:ToggleSimModeFrames() -- show sim mode frames depending if active or not

@@ -254,6 +254,13 @@ function CraftSimDATAEXPORT:handlePlayerProfessionStats(recipeData, operationInf
 	end
 end
 
+function CraftSimDATAEXPORT:handleOutputIDs(recipeData, recipeInfo)
+	-- I need both to identify the spec boni
+	recipeData.categoryID = recipeInfo.categoryID
+	local itemData = CraftSimDATAEXPORT:GetItemFromCacheByItemID(recipeData.result.itemID or recipeData.result.itemIDs[1]) or {}
+	recipeData.subtypeID = itemData.subclassID or nil
+end
+
 function CraftSimDATAEXPORT:exportRecipeData()
 	local recipeData = {}
 
@@ -399,17 +406,21 @@ function CraftSimDATAEXPORT:exportRecipeData()
 		print("recipeType not covered in export: " .. tostring(recipeType))
 	end
 
-	-- I need both to identify the spec boni
-	recipeData.categoryID = recipeInfo.categoryID
-	local itemData = CraftSimDATAEXPORT:GetItemFromCacheByItemID(recipeData.result.itemID or recipeData.result.itemIDs[1]) or {}
-	recipeData.subtypeID = itemData.subclassID or nil
+	if recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_ITEM and recipeType ~= CraftSimCONST.RECIPE_TYPES.GATHERING then
+		CraftSimDATAEXPORT:handleOutputIDs(recipeData, recipeInfo)
+	end
 
 	CraftSimDATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
 
-	--recipeData.extraItemFactors = CraftSimSPECDATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
+	local implemented = tContains(CraftSimCONST.IMPLEMENTED_SKILL_BUILD_UP(), recipeData.professionID)
 
-	recipeData.buffData = CraftSimDATAEXPORT:exportBuffData()
-	recipeData.specNodeData = CraftSimDATAEXPORT:exportSpecNodeData(recipeData)
+	if not implemented then
+		recipeData.extraItemFactors = CraftSimSPECDATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
+	else
+		recipeData.buffData = CraftSimDATAEXPORT:exportBuffData()
+		recipeData.specNodeData = CraftSimDATAEXPORT:exportSpecNodeData(recipeData)
+	end
+
 
 	CraftSimDATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
 
