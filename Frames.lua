@@ -915,7 +915,7 @@ function CraftSimFRAME:InitTabSystem(tabs)
         tab:SetScript("OnClick", function(self) 
             for _, otherTab in pairs(tabs) do
                 otherTab.content:Hide()
-                otherTab:SetEnabled(tab.canBeEnabled)
+                otherTab:SetEnabled(otherTab.canBeEnabled)
             end
             tab.content:Show()
             tab:SetEnabled(false)
@@ -1133,10 +1133,13 @@ function CraftSimFRAME:InitSimModeFrames()
         CraftSimMAIN:TriggerModulesByRecipeType()
     end)
 
+    toggleButton:Hide()
+
     -- REAGENT OVERWRITE FRAMES
     local reagentOverwriteFrame = CreateFrame("frame", nil, ProfessionsFrame.CraftingPage.SchematicForm)
     reagentOverwriteFrame:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.SchematicForm.Reagents, "TOPLEFT", -40, -35)
     reagentOverwriteFrame:SetSize(200, 400)
+    reagentOverwriteFrame:Hide()
 
     local baseX = 10
     local inputOffsetX = 25

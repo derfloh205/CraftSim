@@ -234,12 +234,16 @@ function CraftSimMAIN:TriggerModulesByRecipeType(isInit)
 		return nil
 	end
 
+	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
+		return nil
+	end
+
 	local craftingPage = ProfessionsFrame.CraftingPage
 	local schematicForm = craftingPage.SchematicForm
     local recipeInfo = CraftSimMAIN.currentRecipeInfo or schematicForm:GetRecipeInfo()
 
 	if not recipeInfo then
-		print("no recipeInfo found.. try again soon?")
+		--print("no recipeInfo found.. try again soon?")
 		return
 	end
 
