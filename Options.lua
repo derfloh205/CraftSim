@@ -68,16 +68,36 @@ function CraftSimOPTIONS:InitOptionsFrame()
     ModulesTab.content:SetSize(300, 350)
     ModulesTab.canBeEnabled = true
 
-    local tsmPriceKeys = {"DBRecent", "DBMarket", "DBMinbuyout"}
-    CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownMaterials", TSMTab.content, TSMTab.content ,"TSM Price Source Key Materials", 0, -50, 200, tsmPriceKeys, 
+    local tsmPriceKeysMats = {"DBRecent", "DBMarket", "DBMinbuyout", "SmartAvgBuy", "first(MatPrice, DBRecent, DBMinBuyout)"}
+    local tsmPriceKeysItems = {"DBRecent", "DBMarket", "DBMinbuyout"}
+    CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownMaterials", TSMTab.content, TSMTab.content ,"TSM Price Source Key Materials", 0, -50, 200, tsmPriceKeysMats, 
     function(arg1) 
         CraftSimOptions.tsmPriceKeyMaterials = arg1
     end, CraftSimOptions.tsmPriceKeyMaterials)
 
-    CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownCraftedItems", TSMTab.content, TSMTab.content ,"TSM Price Source Key Crafted Items", 0, -100, 200, tsmPriceKeys, 
+    CraftSimFRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownCraftedItems", TSMTab.content, TSMTab.content ,"TSM Price Source Key Crafted Items", 0, -100, 200, tsmPriceKeysItems, 
     function(arg1) 
         CraftSimOptions.tsmPriceKeyItems = arg1
     end, CraftSimOptions.tsmPriceKeyItems)
+
+    -- local tsmMaterialsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionMaterials", TSMTab.content, "UIPanelButtonTemplate")
+    -- tsmMaterialsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 20, -50)
+    -- tsmMaterialsPriceExpression:SetSize(100, 50)
+    -- tsmMaterialsPriceExpression:SetMultiLine(100, 20)
+    -- tsmMaterialsPriceExpression:SetAutoFocus(false) -- dont automatically focus
+    -- tsmMaterialsPriceExpression:SetFontObject("ChatFontNormal")
+    -- tsmMaterialsPriceExpression:SetText(CraftSimOptions.tsmPriceKeyMaterials)
+    -- tsmMaterialsPriceExpression:SetScript("OnEscapePressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
+    -- tsmMaterialsPriceExpression:SetScript("OnEnterPressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
+    -- tsmMaterialsPriceExpression:SetScript("OnTextChanged", function()
+    --     local expression = tsmMaterialsPriceExpression:GetText()
+    --     local isValid = TSM_API.IsCustomPriceValid(expression)
+    --     if not isValid then
+    --         print("CraftSim TSM Price Expression not valid")
+    --     else
+    --         CraftSimOptions.tsmPriceKeyMaterials = tsmMaterialsPriceExpression:GetText()
+    --     end
+    -- end)
 
     
 
