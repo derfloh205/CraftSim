@@ -112,21 +112,23 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
             for materialIndex, bit in pairs(combination) do
                 local bitChance = bit == 1 and procChancePerMaterial or bit == 0 and negativeChancePerMaterial
                 chance = chance * bitChance
-                local materialCost = CraftSimPRICEDATA:GetMinBuyoutByItemID(totalReagents[materialIndex].itemID, true) * totalReagents[materialIndex].allocations
+                local materialCost = CraftSimPRICEDATA:GetMinBuyoutByItemID(totalReagents[materialIndex].itemID, true)
+                local materialAllocations = totalReagents[materialIndex].allocations
                 if bit == 1 then
                     -- TODO: factor in required quantity ? How to do this with different qualities?
                     -- use the lower quantity = min 1 saved "rule" for non quality materials for now
                     if totalReagents[materialIndex].differentQualities then
                         -- Save 30% of this material costs plus the specced addition if it was procced
+                        materialCost = materialCost * materialAllocations
                         materialCost = materialCost * (CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1)) 
                     else
-                        if totalReagents[materialIndex].requiredQuantity < 5 then
-                            -- 5 -> 1.5 mats on average.. so either 1 or 2
-                            -- anything < 5 defaults to exact 1 material saved on average because it is assumed to round down from < 1.5 to 1
-                            -- If 30% of a material would put us below 1, then assume that 1 is saved on average
+                        local savedMats = materialAllocations * CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
+                        if savedMats < 1 then
+                            -- If 30% of a material would put us below 1, then assume that 1 is saved on average plus any bonus
                             materialCost = materialCost * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1)
                         else
-                            -- if is >= 5 then just take the usual 0.3%
+                            -- if is >= 1 then just take the usual 0.3% of all allocatins and bonus
+                            materialCost = materialCost * materialAllocations
                             materialCost = materialCost * (CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1))
                         end
                     end
