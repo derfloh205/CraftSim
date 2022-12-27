@@ -3,6 +3,7 @@ CraftSimPriceAPIs = {}
 
 CraftSimTSM = {name = "TradeSkillMaster"}
 CraftSimAUCTIONATOR = {name = "Auctionator"}
+CraftSimRECRYSTALLIZE  = {name = "RECrystallize"}
 CraftSimDEBUG_PRICE_API = {name = "Debug"}
 
 CraftSimDebugData = CraftSimDebugData or {}
@@ -31,6 +32,8 @@ function CraftSimPriceAPIs:SwitchAPIByAddonName(addonName)
         CraftSimPriceAPI = CraftSimTSM
     elseif addonName == "Auctionator" then
         CraftSimPriceAPI = CraftSimAUCTIONATOR
+    elseif addonName == "RECrystallize" then
+        CraftSimPriceAPI = CraftSimRECRYSTALLIZE
     end
 end
 
@@ -67,6 +70,7 @@ end
 function CraftSimPriceAPIs:InitAvailablePriceAPI()
     local _, tsmLoaded = IsAddOnLoaded("TradeSkillMaster")
     local _, auctionatorLoaded = IsAddOnLoaded("Auctionator")
+    local _, recrystallizeLoaded = IsAddOnLoaded("RECrystallize")
     -- TODO: currently tsm will be prioritized as the price source api if multiple are loaded.. maybe create an optionspanel with dropdown to let the player choose?
     if tsmLoaded then
         --print("Load TSM API")
@@ -74,6 +78,9 @@ function CraftSimPriceAPIs:InitAvailablePriceAPI()
     elseif auctionatorLoaded then
         --print("Load Auctionator API")
         CraftSimPriceAPI = CraftSimAUCTIONATOR
+    elseif recrystallizeLoaded then
+        --print("Load RECrystallize API")
+        CraftSimPriceAPI = CraftSimRECRYSTALLIZE
     else
         print("CraftSim: No supported price source found")
         print("Supported addons are: ")
@@ -145,6 +152,16 @@ function CraftSimAUCTIONATOR:GetMinBuyoutByItemLink(itemLink)
     else
         return Auctionator.API.v1.GetAuctionPriceByItemLink(CraftSimCONST.AUCTIONATOR_CALLER_ID , itemLink)
     end
+end
+
+function CraftSimRECRYSTALLIZE:GetMinBuyoutByItemID(itemID)
+    local output = RECrystallize_PriceCheckItemID(itemID)
+    return output and output or 0
+end
+
+function CraftSimRECRYSTALLIZE:GetMinBuyoutByItemLink(itemLink)
+    local output = RECrystallize_PriceCheck(itemLink)
+    return output and output or 0
 end
 
 function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
