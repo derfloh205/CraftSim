@@ -70,36 +70,66 @@ function CraftSim.OPTIONS:InitOptionsFrame()
     ModulesTab.content:SetSize(300, 350)
     ModulesTab.canBeEnabled = true
 
-    local tsmPriceKeysMats = {"DBRecent", "DBMarket", "DBMinbuyout", "SmartAvgBuy", "first(MatPrice, DBRecent, DBMinBuyout)"}
-    local tsmPriceKeysItems = {"DBRecent", "DBMarket", "DBMinbuyout"}
-    CraftSim.FRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownMaterials", TSMTab.content, TSMTab.content ,"TSM Price Source Key Materials", 0, -50, 200, tsmPriceKeysMats, 
-    function(arg1) 
-        CraftSimOptions.tsmPriceKeyMaterials = arg1
-    end, CraftSimOptions.tsmPriceKeyMaterials)
+    local expressionSizeX = 300
+    local expressionSizeY = 50
 
-    CraftSim.FRAME:initDropdownMenu("CraftSimTSMPriceSourceDropdownCraftedItems", TSMTab.content, TSMTab.content ,"TSM Price Source Key Crafted Items", 0, -100, 200, tsmPriceKeysItems, 
-    function(arg1) 
-        CraftSimOptions.tsmPriceKeyItems = arg1
-    end, CraftSimOptions.tsmPriceKeyItems)
+    local tsmMaterialsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionMaterials", TSMTab.content, "UIPanelButtonTemplate")
+    tsmMaterialsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -50)
+    tsmMaterialsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
+    tsmMaterialsPriceExpression:SetMultiLine(true)
+    tsmMaterialsPriceExpression:SetAutoFocus(false) -- dont automatically focus
+    tsmMaterialsPriceExpression:SetFontObject("ChatFontNormal")
+    tsmMaterialsPriceExpression:SetText(CraftSimOptions.tsmPriceKeyMaterials)
+    tsmMaterialsPriceExpression:SetScript("OnEscapePressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
+    tsmMaterialsPriceExpression:SetScript("OnEnterPressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
+    tsmMaterialsPriceExpression:SetScript("OnTextChanged", function()
+        local expression = tsmMaterialsPriceExpression:GetText()
+        local isValid = TSM_API.IsCustomPriceValid(expression)
+        if not isValid then
+            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.UTIL:ColorizeText("Expression Invalid", CraftSim.CONST.COLORS.RED))
+        else
+            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+            CraftSimOptions.tsmPriceKeyMaterials = tsmMaterialsPriceExpression:GetText()
+        end
+    end)
 
-    -- local tsmMaterialsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionMaterials", TSMTab.content, "UIPanelButtonTemplate")
-    -- tsmMaterialsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 20, -50)
-    -- tsmMaterialsPriceExpression:SetSize(100, 50)
-    -- tsmMaterialsPriceExpression:SetMultiLine(100, 20)
-    -- tsmMaterialsPriceExpression:SetAutoFocus(false) -- dont automatically focus
-    -- tsmMaterialsPriceExpression:SetFontObject("ChatFontNormal")
-    -- tsmMaterialsPriceExpression:SetText(CraftSimOptions.tsmPriceKeyMaterials)
-    -- tsmMaterialsPriceExpression:SetScript("OnEscapePressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
-    -- tsmMaterialsPriceExpression:SetScript("OnEnterPressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
-    -- tsmMaterialsPriceExpression:SetScript("OnTextChanged", function()
-    --     local expression = tsmMaterialsPriceExpression:GetText()
-    --     local isValid = TSM_API.IsCustomPriceValid(expression)
-    --     if not isValid then
-    --         print("CraftSim TSM Price Expression not valid")
-    --     else
-    --         CraftSimOptions.tsmPriceKeyMaterials = tsmMaterialsPriceExpression:GetText()
-    --     end
-    -- end)
+    local tsmExpressionTitleMaterials = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    tsmExpressionTitleMaterials:SetPoint("BOTTOMLEFT", tsmMaterialsPriceExpression, "TOPLEFT",  0, 10)
+    tsmExpressionTitleMaterials:SetText("TSM Crafting Materials Price Expression")
+
+    local validationInfoMaterials = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoMaterials', 'OVERLAY', 'GameFontNormal')
+    validationInfoMaterials:SetPoint("TOPLEFT", tsmMaterialsPriceExpression, "TOPRIGHT",  5, 0)
+    validationInfoMaterials:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+
+    local tsmItemsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionMaterials", TSMTab.content, "UIPanelButtonTemplate")
+    tsmItemsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -200)
+    tsmItemsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
+    tsmItemsPriceExpression:SetMultiLine(true)
+    tsmItemsPriceExpression:SetAutoFocus(false) -- dont automatically focus
+    tsmItemsPriceExpression:SetFontObject("ChatFontNormal")
+    tsmItemsPriceExpression:SetText(CraftSimOptions.tsmPriceKeyMaterials)
+    tsmItemsPriceExpression:SetScript("OnEscapePressed", function() tsmItemsPriceExpression:ClearFocus() end)
+    tsmItemsPriceExpression:SetScript("OnEnterPressed", function() tsmItemsPriceExpression:ClearFocus() end)
+    tsmItemsPriceExpression:SetScript("OnTextChanged", function()
+        local expression = tsmItemsPriceExpression:GetText()
+        local isValid = TSM_API.IsCustomPriceValid(expression)
+        if not isValid then
+            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Invalid", CraftSim.CONST.COLORS.RED))
+        else
+            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+            CraftSimOptions.tsmPriceKeyItems = tsmItemsPriceExpression:GetText()
+        end
+    end)
+
+    local tsmExpressionTitleItems = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    tsmExpressionTitleItems:SetPoint("BOTTOMLEFT", tsmItemsPriceExpression, "TOPLEFT",  0, 10)
+    tsmExpressionTitleItems:SetText("TSM Crafted Items Price Expression")
+
+    local validationInfoItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoItems', 'OVERLAY', 'GameFontNormal')
+    validationInfoItems:SetPoint("TOPLEFT", tsmItemsPriceExpression, "TOPRIGHT",  5, 0)
+    validationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+
+
 
     
 
