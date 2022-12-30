@@ -8,8 +8,8 @@ function CraftSim.LOCAL:Init()
         CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_EN
     elseif currentLocale == CraftSim.CONST.LOCALES.DE then
         CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_DE
-    -- elseif currentLocale == CraftSim.CONST.LOCALES.IT then
-    --     CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_IT
+    elseif currentLocale == CraftSim.CONST.LOCALES.IT then
+        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_IT
     elseif currentLocale == CraftSim.CONST.LOCALES.RU then
         CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_RU
     else
