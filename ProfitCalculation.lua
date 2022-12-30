@@ -39,7 +39,16 @@ function CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedIt
         -- For now just use a random value of 1-2.5y additional items at mean
         local expectedAdditionalItems = (1 + (2.5*recipeData.baseItemAmount)) / 2 
         -- Also add any additional items factor
-        expectedAdditionalItems = expectedAdditionalItems * (recipeData.extraItemFactors.multicraftBonusItemsFactor or 1)
+        local specData = recipeData.specNodeData
+        local multicraftBonusItemsFactor = 1
+
+        if specData then
+            multicraftBonusItemsFactor = recipeData.stats.multicraft.bonusItemsFactor
+        else
+            multicraftBonusItemsFactor = recipeData.extraItemFactors.multicraftBonusItemsFactor
+        end
+        
+        expectedAdditionalItems = expectedAdditionalItems * (multicraftBonusItemsFactor or 1)
 
         -- Since multicraft and inspiration can proc together add expected multicraft gain to both qualities
         local multicraftProcsBase = crafts.baseQuality*(recipeData.stats.multicraft.percent / 100)
@@ -108,6 +117,16 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, cal
         local procChancePerMaterial = recipeData.stats.resourcefulness.percent / 100
         local negativeChancePerMaterial = 1 - procChancePerMaterial
         local averageSavedCostsByCombination = {}
+
+        local specData = recipeData.specNodeData
+        local resourcefulnessBonusItemsFactor = 1
+
+        if specData then
+            resourcefulnessBonusItemsFactor = recipeData.stats.resourcefulness.bonusItemsFactor
+        else
+            resourcefulnessBonusItemsFactor = recipeData.extraItemFactors.resourcefulnessBonusItemsFactor
+        end
+
         for _, combination in pairs(totalCombinations) do
             local chance = 1
             local combinationCraftingCost = 0
@@ -122,16 +141,16 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, cal
                     if totalReagents[materialIndex].differentQualities then
                         -- Save 30% of this material costs plus the specced addition if it was procced
                         materialCost = materialCost * materialAllocations
-                        materialCost = materialCost * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1)) 
+                        materialCost = materialCost * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (resourcefulnessBonusItemsFactor or 1)) 
                     else
                         local savedMats = materialAllocations * CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
                         if savedMats < 1 then
                             -- If 30% of a material would put us below 1, then assume that 1 is saved on average plus any bonus
-                            materialCost = materialCost * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1)
+                            materialCost = materialCost * (resourcefulnessBonusItemsFactor or 1)
                         else
                             -- if is >= 1 then just take the usual 0.3% of all allocatins and bonus
                             materialCost = materialCost * materialAllocations
-                            materialCost = materialCost * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1))
+                            materialCost = materialCost * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (resourcefulnessBonusItemsFactor or 1))
                         end
                     end
                 else

@@ -632,7 +632,644 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM, -- sickles
-            }
+            },
         },
+      -- Armor Smithing
+      ARMOR_SMITHING_1 = {
+        childNodeIDs = {"LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1"},
+        nodeID = 23912,
+        equalsSkill = true,
+      },
+      ARMOR_SMITHING_2 = {
+        childNodeIDs = {"LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1"},
+        nodeID = 23912,
+        threshold = 5,
+        inspiration = 5,
+      },
+      ARMOR_SMITHING_3 = {
+        childNodeIDs = {"LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1"},
+        nodeID = 23912,
+        threshold = 15,
+        resourcefulness = 5,
+      },
+      ARMOR_SMITHING_4 = {
+        childNodeIDs = {"LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1"},
+        nodeID = 23912,
+        threshold = 25,
+        inspiration = 5,
+      },
+      ARMOR_SMITHING_5 = {
+        childNodeIDs = {"LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1"},
+        nodeID = 23912,
+        threshold = 30,
+        inspiration = 15,
+        resourcefulness = 15,
+        craftingspeedBonusFactor = 0.15,
+      },
+      LARGE_PLATE_ARMOR_1 = {
+        childNodeIDs = {"BREASTPLATES_1", "SHIELDS_1", "GREAVES_1"},
+        nodeID = 23911,
+        equalsSkill = true,
+      },
+      LARGE_PLATE_ARMOR_2 = {
+        childNodeIDs = {"BREASTPLATES_1", "SHIELDS_1", "GREAVES_1"},
+        nodeID = 23911,
+        threshold = 5,
+        inspiration = 10,
+      },
+      LARGE_PLATE_ARMOR_3 = {
+        childNodeIDs = {"BREASTPLATES_1", "SHIELDS_1", "GREAVES_1"},
+        nodeID = 23911,
+        threshold = 15,
+        resourcefulness = 10,
+      },
+      LARGE_PLATE_ARMOR_4 = {
+        childNodeIDs = {"BREASTPLATES_1", "SHIELDS_1", "GREAVES_1"},
+        nodeID = 23911,
+        threshold = 25,
+        inspiration = 10,
+      },
+      BREASTPLATES_1 = {
+        nodeID = 23910,
+        equalsSkill = true,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
+        },
+      },
+      BREASTPLATES_2 = {
+        nodeID = 23910,
+        threshold = 5,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
+        },
+      },
+      BREASTPLATES_3 = {
+        nodeID = 23910,
+        threshold = 10,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
+        },
+      },
+      BREASTPLATES_4 = {
+        nodeID = 23910,
+        threshold = 15,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
+        },
+      },
+      BREASTPLATES_5 = {
+        nodeID = 23910,
+        threshold = 25,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
+        },
+      },
+      SHIELDS_1 = {
+        nodeID = 23909,
+        equalsSkill = true,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS},
+      },
+      SHIELDS_2 = {
+        nodeID = 23909,
+        threshold = 5,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS},
+      },
+      SHIELDS_3 = {
+        nodeID = 23909,
+        threshold = 10,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS},
+      },
+      SHIELDS_4 = {
+        nodeID = 23909,
+        threshold = 15,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS},
+      },
+      SHIELDS_5 = {
+        nodeID = 23909,
+        threshold = 25,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS},
+      },
+      GREAVES_1 = {
+        nodeID = 23908,
+        equalsSkill = true,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
+        },
+      },
+      GREAVES_2 = {
+        nodeID = 23908,
+        threshold = 5,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
+        },
+      },
+      GREAVES_3 = {
+        nodeID = 23908,
+        threshold = 10,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
+        },
+      },
+      GREAVES_4 = {
+        nodeID = 23908,
+        threshold = 15,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
+        },
+      },
+      GREAVES_5 = {
+        nodeID = 23908,
+        threshold = 25,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
+        },
+      },
+      SCULPTED_ARMOR_1 = {
+        childNodeIDs = {"HELMS_1", "PAULDRONS_1", "SABATONS_1"},
+        nodeID = 23907,
+        equalsSkill = true,
+      },
+      SCULPTED_ARMOR_2 = {
+        childNodeIDs = {"HELMS_1", "PAULDRONS_1", "SABATONS_1"},
+        nodeID = 23907,
+        threshold = 5,
+        inspiration = 10,
+      },
+      SCULPTED_ARMOR_3 = {
+        childNodeIDs = {"HELMS_1", "PAULDRONS_1", "SABATONS_1"},
+        nodeID = 23907,
+        threshold = 15,
+        resourcefulness = 10,
+      },
+      SCULPTED_ARMOR_4 = {
+        childNodeIDs = {"HELMS_1", "PAULDRONS_1", "SABATONS_1"},
+        nodeID = 23907,
+        threshold = 25,
+        inspiration = 10,
+      },
+      HELMS_1 = {
+        nodeID = 23906,
+        equalsSkill = true,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
+        },
+      },
+      HELMS_2 = {
+        nodeID = 23906,
+        threshold = 5,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
+        },
+      },
+      HELMS_3 = {
+        nodeID = 23906,
+        threshold = 10,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
+        },
+      },
+      HELMS_4 = {
+        nodeID = 23906,
+        threshold = 15,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
+        },
+      },
+      HELMS_5 = {
+        nodeID = 23906,
+        threshold = 25,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
+        },
+      },
+      PAULDRONS_1 = {
+        nodeID = 23905,
+        equalsSkill = true,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
+        },
+      },
+      PAULDRONS_2 = {
+        nodeID = 23905,
+        threshold = 5,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
+        },
+      },
+      PAULDRONS_3 = {
+        nodeID = 23905,
+        threshold = 10,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
+        },
+      },
+      PAULDRONS_4 = {
+        nodeID = 23905,
+        threshold = 15,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
+        },
+      },
+      PAULDRONS_5 = {
+        nodeID = 23905,
+        threshold = 25,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
+        },
+      },
+      SABATONS_1 = {
+        nodeID = 23904,
+        equalsSkill = true,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
+        },
+      },
+      SABATONS_2 = {
+        nodeID = 23904,
+        threshold = 5,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
+        },
+      },
+      SABATONS_3 = {
+        nodeID = 23904,
+        threshold = 10,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
+        },
+      },
+      SABATONS_4 = {
+        nodeID = 23904,
+        threshold = 15,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
+        },
+      },
+      SABATONS_5 = {
+        nodeID = 23904,
+        threshold = 25,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
+        },
+      },
+      FINE_ARMOR_1 = {
+        childNodeIDs = {"BELTS_1", "VAMBRACES_1", "GAUNTLETS_1"},
+        nodeID = 23903,
+        equalsSkill = true,
+      },
+      FINE_ARMOR_2 = {
+        childNodeIDs = {"BELTS_1", "VAMBRACES_1", "GAUNTLETS_1"},
+        nodeID = 23903,
+        threshold = 5,
+        inspiration = 10,
+      },
+      FINE_ARMOR_3 = {
+        childNodeIDs = {"BELTS_1", "VAMBRACES_1", "GAUNTLETS_1"},
+        nodeID = 23903,
+        threshold = 15,
+        resourcefulness = 10,
+      },
+      FINE_ARMOR_4 = {
+        childNodeIDs = {"BELTS_1", "VAMBRACES_1", "GAUNTLETS_1"},
+        nodeID = 23903,
+        threshold = 25,
+        inspiration = 10,
+      },
+      BELTS_1 = {
+        nodeID = 23902,
+        equalsSkill = true,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+        },
+      },
+      BELTS_2 = {
+        nodeID = 23902,
+        threshold = 5,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+        },
+      },
+      BELTS_3 = {
+        nodeID = 23902,
+        threshold = 10,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+        },
+      },
+      BELTS_4 = {
+        nodeID = 23902,
+        threshold = 15,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+        },
+      },
+      BELTS_5 = {
+        nodeID = 23902,
+        threshold = 25,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+        },
+      },
+      VAMBRACES_1 = {
+        nodeID = 23901,
+        equalsSkill = true,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
+        },
+      },
+      VAMBRACES_2 = {
+        nodeID = 23901,
+        threshold = 5,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
+        },
+      },
+      VAMBRACES_3 = {
+        nodeID = 23901,
+        threshold = 10,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
+        },
+      },
+      VAMBRACES_4 = {
+        nodeID = 23901,
+        threshold = 15,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
+        },
+      },
+      VAMBRACES_5 = {
+        nodeID = 23901,
+        threshold = 25,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
+        },
+      },
+      GAUNTLETS_1 = {
+        nodeID = 23900,
+        equalsSkill = true,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
+        },
+      },
+      GAUNTLETS_2 = {
+        nodeID = 23900,
+        threshold = 5,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
+        },
+      },
+      GAUNTLETS_3 = {
+        nodeID = 23900,
+        threshold = 10,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
+        },
+      },
+      GAUNTLETS_4 = {
+        nodeID = 23900,
+        threshold = 15,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
+        },
+      },
+      GAUNTLETS_5 = {
+        nodeID = 23900,
+        threshold = 25,
+        skill = 5,
+        categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.ARMOR},
+        subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.PLATE},
+        exceptionRecipeIDs = {
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
+        },
+      },
     }
 end

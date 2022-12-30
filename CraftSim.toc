@@ -28,6 +28,7 @@ DataExport.lua
 PriceData.lua
 Util.lua
 StatweightCalculation.lua
+Debug.lua
 CraftSim.lua
 CraftSim.xml
 

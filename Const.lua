@@ -127,6 +127,8 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
         SMELTING = 1678,
         TOOLS = 1677,
         WEAPONS = 1675,
+        ARMOR = 1567,
+        SHIELDS = 1786,
     },
     ALCHEMY = {
         ELEMENTAL_BOTH = 1646,
@@ -174,6 +176,10 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         SWORDS_2H = 8,
         MACE_1H = 4,
         WARGLAIVES = 9,
+
+        -- ARMOR
+        PLATE = 4,
+        SHIELDS = 6,
     },
     ALCHEMY = {
         PHIALS = 3, -- "Flask"
@@ -231,11 +237,10 @@ CraftSim.CONST.TEXT = {
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
-    return {} -- {Enum.Profession.Blacksmithing}
+    return {} --{Enum.Profession.Blacksmithing}
 end
 
 CraftSim.CONST.NODES = function()
-    -- TODO: names from localizations 
     return {
         [Enum.Profession.Blacksmithing] = {
             -- Hammer Control
@@ -297,6 +302,60 @@ CraftSim.CONST.NODES = function()
                 name = "Axes, Picks & Polearms",
                 nodeID = 23721
             },
-        } 
+
+        -- Armor Smithing
+            {
+                name = "Armor Smithing",
+                nodeID = 23912
+            },
+            {
+                name = "Belts",
+                nodeID = 23902
+            },
+            {
+                name = "Breastplates",
+                nodeID = 23910
+            },
+            {
+                name = "Fine Armor",
+                nodeID = 23903
+            },
+            {
+                name = "Gauntlets",
+                nodeID = 23900
+            },
+            {
+                name = "Greaves",
+                nodeID = 23908
+            },
+            {
+                name = "Helms",
+                nodeID = 23906
+            },
+            {
+                name = "Large Plate Armor",
+                nodeID = 23911
+            },
+            {
+                name = "Pauldrons",
+                nodeID = 23905
+            },
+            {
+                name = "Sabatons",
+                nodeID = 23904
+            },
+            {
+                name = "Sculpted Armor",
+                nodeID = 23907
+            },
+            {
+                name = "Shields",
+                nodeID = 23909
+            },
+            {
+                name = "Vambraces",
+                nodeID = 23901
+            }
+        },
     }
 end

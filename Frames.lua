@@ -1042,23 +1042,35 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
     return frame
 end
 
---multicraftBonusItemsFactor = 1,
--- resourcefulnessBonusItemsFactor = 1
-
 function CraftSim.FRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
     local lines = ProfessionsFrame.CraftingPage.SchematicForm.Details.statLinePool
 	local activeObjects = lines.activeObjects
-    -- TODO: update tooltips of statlines to explain the extra item stuff to save space
+
+    local specData = recipeData.specNodeData
+
+    local multicraftBonusItemsFactor = 1
+    local resourcefulnessBonusItemsFactor = 1
+
+    if specData then
+        multicraftBonusItemsFactor = recipeData.stats.multicraft ~= nil and recipeData.stats.multicraft.bonusItemsFactor
+        resourcefulnessBonusItemsFactor = recipeData.stats.resourcefulness ~= nil and recipeData.stats.resourcefulness.bonusItemsFactor
+    else
+        multicraftBonusItemsFactor = recipeData.extraItemFactors.multicraftBonusItemsFactor
+        resourcefulnessBonusItemsFactor = recipeData.extraItemFactors.resourcefulnessBonusItemsFactor
+    end
+    
 	for statLine, _ in pairs(activeObjects) do 
-		if string.find(statLine.LeftLabel:GetText(), "Multicraft") and (recipeData.extraItemFactors.multicraftBonusItemsFactor or 0) > 1 then
-			local baseText = "Multicraft "
-			local formatted = CraftSim.UTIL:FormatFactorToPercent(recipeData.extraItemFactors.multicraftBonusItemsFactor)
+        local multicraftText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT)
+        local resourcefulnessText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS)
+		if string.find(statLine.LeftLabel:GetText(), multicraftText) and (multicraftBonusItemsFactor or 0) > 1 then
+			local baseText = multicraftText .. " "
+			local formatted = CraftSim.UTIL:FormatFactorToPercent(multicraftBonusItemsFactor)
 			local text = baseText .. CraftSim.UTIL:ColorizeText("" .. formatted .. " Items", CraftSim.CONST.COLORS.GREEN)
 			statLine.LeftLabel:SetText(text)
 		end
-		if string.find(statLine.LeftLabel:GetText(), "Resourcefulness") and (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 0) > 1 then
-			local baseText = "Resourcefulness " 
-			local formatted = CraftSim.UTIL:FormatFactorToPercent(recipeData.extraItemFactors.resourcefulnessBonusItemsFactor)
+		if string.find(statLine.LeftLabel:GetText(), resourcefulnessText) and (resourcefulnessBonusItemsFactor or 0) > 1 then
+			local baseText = resourcefulnessText .. " " 
+			local formatted = CraftSim.UTIL:FormatFactorToPercent(resourcefulnessBonusItemsFactor)
 			local text = baseText .. CraftSim.UTIL:ColorizeText("" .. formatted .. " Items", CraftSim.CONST.COLORS.GREEN)
 			statLine.LeftLabel:SetText(text)
 		end

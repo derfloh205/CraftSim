@@ -255,13 +255,13 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	end
 
 	-- debug
-	-- print("total skill: " .. tostring(recipeData.stats.skill))
-	-- print("total inspiration: ")
-	-- CraftSim.UTIL:PrintTable(recipeData.stats.inspiration or {})
-	-- print("total multicraft: ")
-	-- CraftSim.UTIL:PrintTable(recipeData.stats.multicraft or {})
-	-- print("total resourcefulness: ")
-	-- CraftSim.UTIL:PrintTable(recipeData.stats.resourcefulness or {})
+	print("total skill: " .. tostring(recipeData.stats.skill))
+	print("total inspiration: ")
+	CraftSim.UTIL:PrintTable(recipeData.stats.inspiration or {})
+	print("total multicraft: ")
+	CraftSim.UTIL:PrintTable(recipeData.stats.multicraft or {})
+	print("total resourcefulness: ")
+	CraftSim.UTIL:PrintTable(recipeData.stats.resourcefulness or {})
 end
 
 function CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)

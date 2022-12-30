@@ -58,20 +58,20 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
         end
         -- minus one cause its always 1 more than the ui rank to know wether it was learned or not (learned with 0 has 1 rank)
         -- only increase if the current recipe has a matching category AND Subtype (like weapons -> one handed axes)
-        local nodeRank = nodeInfo.activeRank - 1
-        local nodeActualValue = nodeInfo.activeRank
+        local nodeRank = nodeInfo.activeRank
+        local nodeActualValue = nodeInfo.activeRank - 1
 
         -- fetch all subtypeIDs, categoryIDs and expectionRecipeIDs recursively
         local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, relevantNodes)
 
-        local isCategoryID = not IDs.categoryIDs or tContains(IDs.categoryIDs, recipeData.categoryID)
-        local isSubtypeID = not IDs.subtypeIDs or tContains(IDs.subtypeIDs, recipeData.subtypeID)
+        local isCategoryID = #IDs.categoryIDs == 0 or tContains(IDs.categoryIDs, recipeData.categoryID)
+        local isSubtypeID = #IDs.subtypeIDs == 0 or tContains(IDs.subtypeIDs, recipeData.subtypeID)
         local isException = IDs.exceptionRecipeIDs and tContains(IDs.expectionRecipeIDs, recipeData.recipeID)
         local nodeAffectsRecipe = isSubtypeID and isCategoryID
         -- sometimes the category and subcategory can still not uniquely determine ..
         nodeAffectsRecipe = nodeAffectsRecipe or isException
 
-        if nodeData.nodeID == 23761 then
+        if nodeData.nodeID == 42828 then
             -- debug
             print("node affected: " .. tostring(nodeAffectsRecipe))
             print("isCategoryID: " .. tostring(isCategoryID))
@@ -95,6 +95,8 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
                 stats.resourcefulness = stats.resourcefulness + (nodeData.resourcefulness or 0)
                 stats.craftingspeed = stats.craftingspeed + (nodeData.craftingspeed or 0)
             elseif nodeData.equalsSkill then
+                print("equals skill node rule: " .. nodeData.nodeID)
+                print("node equals skill, add " .. tostring(nodeActualValue))
                 stats.skill = stats.skill + nodeActualValue
             elseif nodeData.equalsMulticraft then
                 stats.multicraft = stats.multicraft + nodeActualValue
