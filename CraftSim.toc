@@ -34,6 +34,7 @@ CraftSim.xml
 Locals/Localization.lua
 Locals/enEN.lua
 Locals/deDE.lua
+Locals/deIT.lua
 
 SpecNodeData/Alchemy.lua
 SpecNodeData/Blacksmithing.lua

@@ -195,6 +195,7 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
 CraftSim.CONST.LOCALES = {
     EN = "enEN",
     DE = "deDE",
+    IT = "itIT",
 }
 
 CraftSim.CONST.TEXT = {

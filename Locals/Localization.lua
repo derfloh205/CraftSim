@@ -4,11 +4,12 @@ CraftSim.LOCAL = {}
 
 function CraftSim.LOCAL:Init()
     local currentLocale = GetLocale()
-    print("locale: " .. tostring(currentLocale))
-    if currentLocale == "enEN" then
+    if currentLocale == CraftSim.CONST.LOCALES.EN then
         CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_EN
-    elseif currentLocale == "deDE" then
+    elseif currentLocale == CraftSim.CONST.LOCALES.DE then
         CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_DE
+    -- elseif currentLocale == CraftSim.CONST.LOCALES.IT then
+    --     CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_IT
     else
         error("CraftSim Error: Client not supported: " .. tostring(currentLocale)) 
     end
