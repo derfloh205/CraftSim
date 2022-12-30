@@ -5,7 +5,7 @@ CraftSim.LOCAL_IT = {}
 function CraftSim.LOCAL_IT:GetData()
     return {
         -- REQUIRED:
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Izpiratione",
+        [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Ispirazione",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Creazione multipla",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Parsimonia",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Velocità di creazione",
