@@ -102,9 +102,9 @@ function CraftSim.ACCOUNTSYNC:SendData(prefix, data, target)
         if percent % 10 > 1 then
             return
         end
-        local percentProgress = CraftSimUTIL:round(percent, 0)
+        local percentProgress = CraftSim.UTIL:round(percent, 0)
         if tonumber(percentProgress) < 100 then
-            CraftSimACCOUNTSYNCSendingProgress:SetText("Sending.. " .. tostring(CraftSimUTIL:round(percent, 0)) .. "%")
+            CraftSimACCOUNTSYNCSendingProgress:SetText("Sending.. " .. tostring(CraftSim.UTIL:round(percent, 0)) .. "%")
         else
             CraftSimACCOUNTSYNCSendingProgress:SetText("Sync Finished!")
         end

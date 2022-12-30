@@ -1,15 +1,15 @@
-CraftSimREAGENT_OPTIMIZATION = {}
+addonName, CraftSim = ...
 
--- TODO: check why the calculation is off
+CraftSim.REAGENT_OPTIMIZATION = {}
 
 local function translateLuaIndex(index)
     return index + 1
 end
 
 -- By Liqorice's knapsack solution
-function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)
+function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)
     -- insert costs
-    local reagentCostsByQuality = CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
+    local reagentCostsByQuality = CraftSim.PRICEDATA:GetReagentsPriceByQuality(recipeData)
 
     -- insert
     local requiredReagents = {}
@@ -25,7 +25,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     end
 
     -- Create Knapsacks for required reagents with different Qualities
-    local requiredReagents = CraftSimUTIL:FilterTable(recipeData.reagents, function(reagent) 
+    local requiredReagents = CraftSim.UTIL:FilterTable(recipeData.reagents, function(reagent) 
         return reagent.reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED and reagent.differentQualities
     end)
 
@@ -34,14 +34,14 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     for i = 0, #requiredReagents - 1, 1 do
         local reagent = requiredReagents[translateLuaIndex(i)]
         local itemID = reagent.itemsInfo[1].itemID
-        --print("mWeight array init: " .. i .. " to " .. CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) )
-        mWeight[i] = CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) --  * reagent.requiredQuantity fixed double counting of quantity
+        --print("mWeight array init: " .. i .. " to " .. CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) )
+        mWeight[i] = CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) --  * reagent.requiredQuantity fixed double counting of quantity
     end
 
     --print(" calculating gcd of " .. unpack(mWeight))
-    local weightGCD = CraftSimUTIL:FoldTable(mWeight, function(a, b) 
+    local weightGCD = CraftSim.UTIL:FoldTable(mWeight, function(a, b) 
         --print("fold " .. a .. " and " .. b)
-        return CraftSimREAGENT_OPTIMIZATION:GetGCD(a, b)
+        return CraftSim.REAGENT_OPTIMIZATION:GetGCD(a, b)
     end, true)
 
     --print("gcd: " .. tostring(weightGCD))
@@ -69,7 +69,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
         --print("mWeight[index] / weightGCD -> " .. mWeight[index] .. " / " .. weightGCD .. " = " .. mWeight[index] / weightGCD)
 
         -- fill crumbs
-        CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
+        CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
         ksItems[index] = ksItem
     end
 
@@ -105,12 +105,12 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     --               > 0 means the indicated skill bonus is required to reach this BP
     -- At least one entry will be >= 0
     local totalSkill = recipeData.stats.skill
-    local reagentSkillContribution = CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData) or 0
+    local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData) or 0
     local skillWithoutReagentIncrease = totalSkill - reagentSkillContribution
     --print("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
     --print("reagentSkillContribution: " .. tostring(reagentSkillContribution))
 
-    local expectedQualityWithoutReagents = CraftSimSTATS:GetExpectedQualityBySkill(recipeData, skillWithoutReagentIncrease)
+    local expectedQualityWithoutReagents = CraftSim.STATS:GetExpectedQualityBySkill(recipeData, skillWithoutReagentIncrease)
 
     for i = 0, numBP - 1, 1 do
         --print("checking BP: " .. tostring(craftingDifficultyBP[i]))
@@ -148,7 +148,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     end
 
     --print("arrayBP: ")
-    --CraftSimUTIL:PrintTable(arrayBP)
+    --CraftSim.UTIL:PrintTable(arrayBP)
 
     -- print("ksItems: ")
     -- for k, v in pairs(ksItems) do
@@ -158,11 +158,11 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
 
 
     -- Optimize Knapsack
-    local results = CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP)  
+    local results = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP)  
 
     -- remove any result that maps to the expected quality without reagent increase
     -- NEW: any that is below! Same is fine
-    local results = CraftSimUTIL:FilterTable(results, function(result) 
+    local results = CraftSim.UTIL:FilterTable(results, function(result) 
         return result.qualityReached >= expectedQualityWithoutReagents
     end)
 
@@ -171,7 +171,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     
     local hasItems = true
     local bestAllocation = results[1]--results[#results]
-    local isSameAllocation = CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
+    local isSameAllocation = CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
 
     if bestAllocation and not isSameAllocation then
         for _, matAllocation in pairs(bestAllocation.allocations) do
@@ -187,7 +187,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
     CraftSim.FRAME:ShowBestReagentAllocation(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation)
 end
 
-function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
+function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
     local inf = math.huge
 
     local j, k, a, b, c, n, w
@@ -227,8 +227,8 @@ function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
     end
 end
 
-function CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) 
-    local weightEntry = CraftSimREAGENTWEIGHTS[itemID]
+function CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(itemID) 
+    local weightEntry = CraftSim.REAGENT_DATA[itemID]
     if weightEntry == nil then
         return 0
     end
@@ -236,16 +236,16 @@ function CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(itemID)
 end
 
 
-function CraftSimREAGENT_OPTIMIZATION:GetGCD(a, b)
+function CraftSim.REAGENT_OPTIMIZATION:GetGCD(a, b)
         --print("get gcd between " .. a .. " and " .. b)
         if b ~= 0 then
-            return CraftSimREAGENT_OPTIMIZATION:GetGCD(b, a % b)
+            return CraftSim.REAGENT_OPTIMIZATION:GetGCD(b, a % b)
         else
             return abs(a)
         end
 end
 
-function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
+function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
     --print("Starting optimization...")
     local numMaterials, i, j, k, maxWeight
 
@@ -286,7 +286,7 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
     local i = 0
     for k = 0, 2 * ks[i].n, 1 do -- for each weight and value in material(0)
         --print("current crumb: " .. k)
-        --CraftSimUTIL:PrintTable(ks[i].crumb[k])
+        --CraftSim.UTIL:PrintTable(ks[i].crumb[k])
         b[i][ks[i].crumb[k].weight] = ks[i].crumb[k].value
         c[i][ks[i].crumb[k].weight] = k
     end
@@ -406,7 +406,7 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
     end
 
     --print("outArr:")
-    --CraftSimUTIL:PrintTable(outArr)
+    --CraftSim.UTIL:PrintTable(outArr)
 
     --print("results: ")
     for _, itemAllocation in pairs(outResult) do
@@ -426,7 +426,7 @@ function CraftSimREAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
     return outResult
 end
 
-function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
+function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
 
     local matBonus = {}
     local totalWeight = 0
@@ -438,7 +438,7 @@ function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(r
             local n2 = reagent.itemsInfo[2].allocations
             local n1 = reagent.itemsInfo[1].allocations
             local matQuantity = n1 + n2 + n3
-            local matWeight = CraftSimREAGENT_OPTIMIZATION:GetReagentWeightByID(reagent.itemsInfo[1].itemID)
+            local matWeight = CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(reagent.itemsInfo[1].itemID)
             local relativeBonus = (n2 + 2 * n3) / 2 * matWeight
             if matQuantity < reagent.requiredQuantity then
                 -- If you do not have enough of a material in total for a reagent slot, blizz assumes that you have max quantity of q2
@@ -470,13 +470,13 @@ function CraftSimREAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(r
 
     --print("reagent skill contribution: " .. matSkillBonus)
     -- Try rounding it..
-    return CraftSimUTIL:round(matSkillBonus)
+    return CraftSim.UTIL:round(matSkillBonus)
 end
 
-function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeType, priceData, bestAllocation)
+function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeType, priceData, bestAllocation)
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeData.recipeID, false)
 	--print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
-    if not CraftSimSIMULATION_MODE.isActive then
+    if not CraftSim.SIMULATION_MODE.isActive then
         -- -- TODO: possibly protected.. 
         -- return
         -- local reagentSlots = ProfessionsFrame.CraftingPage.SchematicForm.reagentSlots[1]
@@ -519,11 +519,11 @@ function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeTyp
         -- ProfessionsFrame.CraftingPage.SchematicForm:TriggerEvent(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified)
         -- update frontend with fresh data
         -- local freshRecipeData = CraftSim.DATAEXPORT:exportRecipeData()
-        -- local freshPriceData = CraftSimPRICEDATA:GetPriceData(freshRecipeData, freshRecipeData.recipeType)
-        -- CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(freshRecipeData, freshRecipeData.recipeType, freshPriceData)
+        -- local freshPriceData = CraftSim.PRICEDATA:GetPriceData(freshRecipeData, freshRecipeData.recipeType)
+        -- CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(freshRecipeData, freshRecipeData.recipeType, freshPriceData)
     else
         --print("sim mode allocate..")
-        for _, currentInput in pairs(CraftSimSIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
+        for _, currentInput in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
             local reagentIndex = currentInput.inputq1.reagentIndex
             local reagentData = recipeData.reagents[reagentIndex]
 
@@ -552,7 +552,7 @@ function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeTyp
 	
 end
 
-function CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
+function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
     if not bestAllocation then
         return false
     end
@@ -576,7 +576,7 @@ function CraftSimREAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAlloca
 end
 
 -- TODO: does not work cause allocations are protected..
-function CraftSimREAGENT_OPTIMIZATION:AutoAssignVellum(recipeData)
+function CraftSim.REAGENT_OPTIMIZATION:AutoAssignVellum(recipeData)
     -- print("vellum auto assign")
     -- local vellumItemID = 38682
     -- -- local enchantAllocation = recipeData.currentTransaction:GetEnchantAllocation()

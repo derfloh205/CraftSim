@@ -108,8 +108,8 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.FRAME:InitCostOverviewFrame()
 		CraftSim.FRAME:InitBestAllocationsFrame()
 		CraftSim.FRAME:InitProfitDetailsFrame()
-		CraftSimSIMULATION_MODE:Init()
-		CraftSimTOOLTIP:Init()
+		CraftSim.SIMULATION_MODE:Init()
+		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
 		CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSim.MAIN:HookToProfessionsFrame()
@@ -185,7 +185,7 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 		if command == "export" then
 			if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
 				print("CRAFTSIM: Export Data")
-				--CraftSimUTIL:KethoEditBox_Show(CraftSim.DATAEXPORT:getExportString())
+				--CraftSim.UTIL:KethoEditBox_Show(CraftSim.DATAEXPORT:getExportString())
 				--KethoEditBoxEditBox:HighlightText()
 				-- TODO: refactor to work with new recipeData format
 			else
@@ -240,19 +240,19 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		return
 	end
 
-    local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
+    local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
     --print("trigger by recipeType.. " .. tostring(recipeType))
 
 	-- if init or recraft, turn sim mode off
 	if isInit or recipeType == CraftSim.CONST.RECIPE_TYPES.RECRAFT then
-		CraftSimSIMULATION_MODE.isActive = false
+		CraftSim.SIMULATION_MODE.isActive = false
 		CraftSimSimModeToggleButton:SetText("Simulation Mode: Off")
 	end
 
 	local recipeData = nil 
-	if CraftSimSIMULATION_MODE.isActive and CraftSimSIMULATION_MODE.recipeData then
-		recipeData = CraftSimSIMULATION_MODE.recipeData
-		CraftSim.MAIN.currentRecipeData = CraftSimSIMULATION_MODE.recipeData
+	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
+		recipeData = CraftSim.SIMULATION_MODE.recipeData
+		CraftSim.MAIN.currentRecipeData = CraftSim.SIMULATION_MODE.recipeData
 	else
 		recipeData = CraftSim.DATAEXPORT:exportRecipeData()
 	end
@@ -262,7 +262,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		debugTest = false
 	end
 
-	local priceData = CraftSimPRICEDATA:GetPriceData(recipeData, recipeType)
+	local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
     -- when to see what?
     -- top gear: everything that is sellable!
     -- stat weights: everything that is sellable!
@@ -332,22 +332,22 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	CraftSim.FRAME:ToggleFrame(CraftSimSimModeToggleButton, showSimulationMode)
 	CraftSim.FRAME:ToggleSimModeFrames() -- show sim mode frames depending if active or not
-	if CraftSimSIMULATION_MODE.isActive and recipeData then -- recipeData could still be nil here if e.g. in a gathering recipe
+	if CraftSim.SIMULATION_MODE.isActive and recipeData then -- recipeData could still be nil here if e.g. in a gathering recipe
 		-- update simulationframe recipedata by inputs and the frontend
 		-- since recipeData is a reference here to the recipeData in the simulationmode, 
 		-- the recipeData that is used in the below modules should also be the modified one!
-		CraftSimSIMULATION_MODE:UpdateSimulationMode()
+		CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 	end
 
 	showMaterialAllocation = showMaterialAllocation and recipeData.hasReagentsWithQuality
 	CraftSim.FRAME:ToggleFrame(CraftSimReagentHintFrame, showMaterialAllocation)
 	if showMaterialAllocation then
-		CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)
+		CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)
 	end
 
 	CraftSim.FRAME:ToggleFrame(CraftSimDetailsFrame, showStatweights)
 	if showStatweights then
-		local statWeights = CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
+		local statWeights = CraftSim.STATS:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
 		if statWeights ~= CraftSim.CONST.ERROR.NO_PRICE_DATA then
 			CraftSim.FRAME:UpdateStatWeightFrameText(priceData, statWeights)
 		end

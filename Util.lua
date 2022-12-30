@@ -1,64 +1,66 @@
-CraftSimUTIL = {}
+addonName, CraftSim = ...
+
+CraftSim.UTIL = {}
 
 local inspirationFactor = 0.001
 local multicraftFactor = 0.0009
 local resourcefulnessFactor = 0.00111
 local craftingspeedFactor = 0.002
 
-function CraftSimUTIL:GetInspirationStatByPercent(percent) 
+function CraftSim.UTIL:GetInspirationStatByPercent(percent) 
     if percent == nil then 
         return 0 
     end
     return percent / inspirationFactor
 end
 
-function CraftSimUTIL:GetCraftingSpeedStatByPercent(percent) 
+function CraftSim.UTIL:GetCraftingSpeedStatByPercent(percent) 
     if percent == nil then 
         return 0 
     end
     return percent / craftingspeedFactor
 end
 
-function CraftSimUTIL:GetMulticraftStatByPercent(percent) 
+function CraftSim.UTIL:GetMulticraftStatByPercent(percent) 
     if percent == nil then 
         return 0 
     end
     return percent / multicraftFactor
 end
 
-function CraftSimUTIL:GetResourcefulnessStatByPercent(percent) 
+function CraftSim.UTIL:GetResourcefulnessStatByPercent(percent) 
     if percent == nil then 
         return 0 
     end
     return percent / resourcefulnessFactor
 end
 
-function CraftSimUTIL:GetInspirationPercentByStat(stat) 
+function CraftSim.UTIL:GetInspirationPercentByStat(stat) 
     return stat * inspirationFactor
 end
 
-function CraftSimUTIL:GetCraftingSpeedPercentByStat(stat)
+function CraftSim.UTIL:GetCraftingSpeedPercentByStat(stat)
     return stat * craftingspeedFactor
 end
 
-function CraftSimUTIL:GetMulticraftPercentByStat(stat) 
+function CraftSim.UTIL:GetMulticraftPercentByStat(stat) 
     return stat * multicraftFactor
 end
 
-function CraftSimUTIL:GetResourcefulnessPercentByStat(stat) 
+function CraftSim.UTIL:GetResourcefulnessPercentByStat(stat) 
     return stat * resourcefulnessFactor
 end
 
-function CraftSimUTIL:round(number, decimals)
+function CraftSim.UTIL:round(number, decimals)
     return (("%%.%df"):format(decimals)):format(number)
 end
 
-function CraftSimUTIL:GetItemIDByLink(hyperlink)
+function CraftSim.UTIL:GetItemIDByLink(hyperlink)
     local _, _, foundID = string.find(hyperlink, "item:(%d+)")
     return tonumber(foundID)
 end
 
-function CraftSimUTIL:EquipItemByLink(link)
+function CraftSim.UTIL:EquipItemByLink(link)
 	for bag=BANK_CONTAINER, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
 		for slot=1,C_Container.GetContainerNumSlots(bag) do
 			local item = C_Container.GetContainerItemLink(bag, slot)
@@ -73,7 +75,7 @@ function CraftSimUTIL:EquipItemByLink(link)
 end
 
 -- thx ketho forum guy
-function CraftSimUTIL:KethoEditBox_Show(text)
+function CraftSim.UTIL:KethoEditBox_Show(text)
     if not KethoEditBox then
         local f = CreateFrame("Frame", "KethoEditBox", UIParent, "DialogBoxFrame")
         f:SetPoint("CENTER")
@@ -144,12 +146,12 @@ function CraftSimUTIL:KethoEditBox_Show(text)
     KethoEditBox:Show()
 end
 
-function CraftSimUTIL:isItemSoulbound(itemID)
+function CraftSim.UTIL:isItemSoulbound(itemID)
     local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID) 
     return bindType == CraftSim.CONST.BINDTYPES.SOULBOUND
 end
 
-function CraftSimUTIL:GetRecipeType(recipeInfo) -- the raw info
+function CraftSim.UTIL:GetRecipeType(recipeInfo) -- the raw info
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
     if recipeInfo.isEnchantingRecipe then
         return CraftSim.CONST.RECIPE_TYPES.ENCHANT
@@ -159,7 +161,7 @@ function CraftSimUTIL:GetRecipeType(recipeInfo) -- the raw info
         return CraftSim.CONST.RECIPE_TYPES.GATHERING
     elseif recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil then -- its gear
         local itemID = schematicInfo.outputItemID
-		if CraftSimUTIL:isItemSoulbound(itemID) then
+		if CraftSim.UTIL:isItemSoulbound(itemID) then
             return CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR
         else
             return CraftSim.CONST.RECIPE_TYPES.GEAR
@@ -184,19 +186,19 @@ end
 
 
 -- for debug purposes
-function CraftSimUTIL:PrintTable(t, recursive)
+function CraftSim.UTIL:PrintTable(t, recursive)
     for k, v in pairs(t) do
         if not recursive or type(v) ~= "table" then
             print(tostring(k) .. ": " .. tostring(v))
         elseif type(v) == "table" then
             print(tostring(k) .. ": ")
-            CraftSimUTIL:PrintTable(v, recursive)
+            CraftSim.UTIL:PrintTable(v, recursive)
         end
 
     end
 end
 
-function CraftSimUTIL:ValidateNumberInput(inputBox, allowNegative)
+function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     local inputNumber = inputBox:GetNumber()
     local inputText = inputBox:GetText()
 
@@ -219,7 +221,7 @@ function CraftSimUTIL:ValidateNumberInput(inputBox, allowNegative)
     return inputNumber
 end
 
-function CraftSimUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
+function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     local absValue = abs(copperValue)
     local minusText = ""
     local color = CraftSim.CONST.COLORS.GREEN
@@ -227,7 +229,7 @@ function CraftSimUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
 
     if percentRelativeTo then
         local oneP = percentRelativeTo / 100
-        local percent = CraftSimUTIL:round(copperValue / oneP, 0)
+        local percent = CraftSim.UTIL:round(copperValue / oneP, 0)
 
         percentageText = " (" .. percent .. "%)"
     end
@@ -238,13 +240,13 @@ function CraftSimUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     end
 
     if useColor then
-        return CraftSimUTIL:ColorizeText(minusText .. GetCoinTextureString(absValue, 10) .. percentageText, color)
+        return CraftSim.UTIL:ColorizeText(minusText .. GetCoinTextureString(absValue, 10) .. percentageText, color)
     else
         return minusText .. GetCoinTextureString(absValue, 10) .. percentageText
     end
 end
 
-function CraftSimUTIL:FilterTable(t, filterFunc)
+function CraftSim.UTIL:FilterTable(t, filterFunc)
     local filtered = {}
     for k, v in pairs(t) do
         if filterFunc(v) then
@@ -254,7 +256,7 @@ function CraftSimUTIL:FilterTable(t, filterFunc)
     return filtered
 end
 
-function CraftSimUTIL:FoldTable(t, foldFunction, startAtZero)
+function CraftSim.UTIL:FoldTable(t, foldFunction, startAtZero)
     local foldedValue = nil
     if #t < 2 and not startAtZero then
         return t[1]
@@ -278,12 +280,12 @@ function CraftSimUTIL:FoldTable(t, foldFunction, startAtZero)
     return foldedValue
 end
 
-function CraftSimUTIL:FormatFactorToPercent(factor)
-    local percentText = CraftSimUTIL:round((factor-1) * 100, 0)
+function CraftSim.UTIL:FormatFactorToPercent(factor)
+    local percentText = CraftSim.UTIL:round((factor-1) * 100, 0)
     return "+" .. percentText .. "%"
 end
 
-function CraftSimUTIL:ColorizeText(text, color)
+function CraftSim.UTIL:ColorizeText(text, color)
     local startLine = "\124"
     local endLine = "\124r"
     return startLine .. color .. text .. endLine
@@ -291,7 +293,7 @@ end
 
 -- from stackoverflow: 
 -- https://stackoverflow.com/questions/9079853/lua-print-integer-as-a-binary
-function CraftSimUTIL:toBits(num, bits)
+function CraftSim.UTIL:toBits(num, bits)
     -- returns a table of bits, most significant first.
     bits = bits or math.max(1, select(2, math.frexp(num)))
     local t = {} -- will contain the bits        

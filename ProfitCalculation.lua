@@ -1,11 +1,13 @@
-CraftSimCALC = {}
+addonName, CraftSim = ...
 
-function CraftSimCALC:handleInspiration(recipeData, priceData, crafts, craftedItems, calculationData)
+CraftSim.CALC = {}
+
+function CraftSim.CALC:handleInspiration(recipeData, priceData, crafts, craftedItems, calculationData)
     local inspirationCanUpgrade = false
     calculationData.inspiration = {}
 
     if recipeData.expectedQuality ~= recipeData.maxQuality and recipeData.stats.inspiration ~= nil then
-        local qualityThresholds = CraftSimSTATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
+        local qualityThresholds = CraftSim.STATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
         local qualityUpgradeThreshold = qualityThresholds[recipeData.expectedQuality]
 
         inspirationCanUpgrade = (recipeData.stats.skill + recipeData.stats.inspiration.bonusskill) >= qualityUpgradeThreshold
@@ -29,7 +31,7 @@ function CraftSimCALC:handleInspiration(recipeData, priceData, crafts, craftedIt
     calculationData.inspiration.inspirationItemsValueHigher = craftedItems.nextQuality * (priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1] or 0)
 end
 
-function CraftSimCALC:handleMulticraft(recipeData, priceData, crafts, craftedItems, calculationData)
+function CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedItems, calculationData)
     if recipeData.stats.multicraft ~= nil then
         calculationData.multicraft = {}
         -- Recipe considers multicraft
@@ -59,7 +61,7 @@ function CraftSimCALC:handleMulticraft(recipeData, priceData, crafts, craftedIte
 end
 
 -- TODO: get all possible procs of saved reagents and calculate the mean profit between them
-function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calculationData)
+function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calculationData)
     local savedCosts = 0
     if recipeData.stats.resourcefulness ~= nil then
         calculationData.resourcefulness = {}
@@ -76,7 +78,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
 
                     if totalAllocations == 0 then
                         -- not enough items, assume maxquantity with lowest price quality
-                        local lowestCostQualityID = CraftSimPRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentData.itemsInfo)
+                        local lowestCostQualityID = CraftSim.PRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentData.itemsInfo)
                         itemsInfo[lowestCostQualityID].allocations = reagentData.requiredQuantity
                     end
 
@@ -98,7 +100,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
         local bitMaxNumber = tonumber(bitMax, 2)
         local totalCombinations = {}
         for currentCombination = 0, bitMaxNumber, 1 do
-            local bits = CraftSimUTIL:toBits(currentCombination, numBits)
+            local bits = CraftSim.UTIL:toBits(currentCombination, numBits)
             table.insert(totalCombinations, bits)
         end 
 
@@ -112,7 +114,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
             for materialIndex, bit in pairs(combination) do
                 local bitChance = bit == 1 and procChancePerMaterial or bit == 0 and negativeChancePerMaterial
                 chance = chance * bitChance
-                local materialCost = CraftSimPRICEDATA:GetMinBuyoutByItemID(totalReagents[materialIndex].itemID, true)
+                local materialCost = CraftSim.PRICEDATA:GetMinBuyoutByItemID(totalReagents[materialIndex].itemID, true)
                 local materialAllocations = totalReagents[materialIndex].allocations
                 if bit == 1 then
                     -- TODO: factor in required quantity ? How to do this with different qualities?
@@ -142,7 +144,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
                 combinationCraftingCost = combinationCraftingCost * chance
             end
             table.insert(averageSavedCostsByCombination, combinationCraftingCost)
-            --print("chance/cost for " .. table.concat(combination, "") .. ": " .. CraftSimUTIL:round(chance * 100, 5) .. "% -> " .. CraftSimUTIL:FormatMoney(combinationCraftingCost))
+            --print("chance/cost for " .. table.concat(combination, "") .. ": " .. CraftSim.UTIL:round(chance * 100, 5) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationCraftingCost))
         end
 
         -- now we sum up all the little contributions to the total average
@@ -161,7 +163,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
     return savedCosts
 end
 
-function CraftSimCALC:getResourcefulnessSavedCostsV1(recipeData, priceData)
+function CraftSim.CALC:getResourcefulnessSavedCostsV1(recipeData, priceData)
     local totalSavedCosts = 0
     if recipeData.stats.resourcefulness ~= nil then
         -- Recipe considers resourcefulness
@@ -183,7 +185,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV1(recipeData, priceData)
                     if totalAllocations == 0 then
                         -- not enough items, assume maxquantity with lowest price quality
                         -- TODO: maybe show a warning or smth?
-                        local lowestCostQualityID = CraftSimPRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentData.itemsInfo)
+                        local lowestCostQualityID = CraftSim.PRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentData.itemsInfo)
                         totalReagentAllocationsByQuality[reagentIndex][lowestCostQualityID].allocations = reagentData.requiredQuantity
                     end
             end
@@ -204,7 +206,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV1(recipeData, priceData)
     return totalSavedCosts
 end
 
-function CraftSimCALC:getMeanProfit(recipeData, priceData)
+function CraftSim.CALC:getMeanProfit(recipeData, priceData)
     local craftedItems = {
         baseQuality = 0,
         nextQuality = 0
@@ -220,10 +222,10 @@ function CraftSimCALC:getMeanProfit(recipeData, priceData)
         resourcefulness = nil
     }
 
-    CraftSimCALC:handleInspiration(recipeData, priceData, crafts, craftedItems, calculationData)
-    CraftSimCALC:handleMulticraft(recipeData, priceData, crafts, craftedItems, calculationData)
+    CraftSim.CALC:handleInspiration(recipeData, priceData, crafts, craftedItems, calculationData)
+    CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedItems, calculationData)
 
-    local totalSavedCosts = CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calculationData)
+    local totalSavedCosts = CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calculationData)
 
     local totalCraftingCosts = priceData.craftingCostPerCraft - totalSavedCosts
     local totalWorth = 0

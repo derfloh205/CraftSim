@@ -1,6 +1,8 @@
-CraftSimSPECDATA = {}
+addonName, CraftSim = ...
 
-function CraftSimSPECDATA:GetIDsFromChildNodes(nodeData, relevantNodes)
+CraftSim.SPEC_DATA = {}
+
+function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, relevantNodes)
     local IDs = {
         subtypeIDs = nodeData.subtypeIDs or {},
         categoryIDs = nodeData.categoryIDs or {},
@@ -13,7 +15,7 @@ function CraftSimSPECDATA:GetIDsFromChildNodes(nodeData, relevantNodes)
         for _, childNodeID in pairs(childNodeIDs) do
             local childNoteData = relevantNodes[childNodeID]
 
-            local childIDs = CraftSimSPECDATA:GetIDsFromChildNodes(childNoteData, relevantNodes)
+            local childIDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(childNoteData, relevantNodes)
     
             for _, subtypeID in pairs(childIDs.subtypeIDs) do
                 table.insert(IDs.subtypeIDs, subtypeID)
@@ -32,7 +34,7 @@ function CraftSimSPECDATA:GetIDsFromChildNodes(nodeData, relevantNodes)
     return IDs
 end
 
-function CraftSimSPECDATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
+function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
     local specNodeData = recipeData.specNodeData
 
     local stats = {	
@@ -60,7 +62,7 @@ function CraftSimSPECDATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
         local nodeActualValue = nodeInfo.activeRank
 
         -- fetch all subtypeIDs, categoryIDs and expectionRecipeIDs recursively
-        local IDs = CraftSimSPECDATA:GetIDsFromChildNodes(nodeData, relevantNodes)
+        local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, relevantNodes)
 
         local isCategoryID = not IDs.categoryIDs or tContains(IDs.categoryIDs, recipeData.categoryID)
         local isSubtypeID = not IDs.subtypeIDs or tContains(IDs.subtypeIDs, recipeData.subtypeID)
@@ -76,7 +78,7 @@ function CraftSimSPECDATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
             print("isSubtypeID: " .. tostring(isSubtypeID))
             print("isException " .. tostring(isException))
             print("ids: ")
-            CraftSimUTIL:PrintTable(IDs)
+            CraftSim.UTIL:PrintTable(IDs)
         end
         if nodeInfo and (nodeAffectsRecipe or nodeData.debug) then
             if nodeData.threshold and (nodeInfo.activeRank - 1) >= nodeData.threshold then
@@ -110,7 +112,7 @@ function CraftSimSPECDATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
 end
 
 -- LEGACY.. remove when other ready
-function CraftSimSPECDATA:GetExtraItemFactors(recipeData, relevantNodes)
+function CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, relevantNodes)
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(skillLineID)
 
@@ -135,24 +137,24 @@ function CraftSimSPECDATA:GetExtraItemFactors(recipeData, relevantNodes)
     return extraItemFactors
 end
 
-function CraftSimSPECDATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
+function CraftSim.SPEC_DATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
     local defaultFactors = {
         multicraftExtraItemsFactor = 1,
         resourcefulnessExtraItemsFactor = 1
     }
 
-    local relevantNodes = CraftSimSPECDATA.RELEVANT_NODES()[recipeData.professionID]
+    local relevantNodes = CraftSim.SPEC_DATA.RELEVANT_NODES()[recipeData.professionID]
     if relevantNodes == nil then
         --print("Profession specs not considered: " .. recipeData.professionID)
         return defaultFactors
     end
 
-    return CraftSimSPECDATA:GetExtraItemFactors(recipeData, relevantNodes)
+    return CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, relevantNodes)
 end
 
 -- its a function so craftsimConst can be accessed (otherwise nil cause not yet initialized)
 -- TODO: use if else if performance relevant
-CraftSimSPECDATA.RELEVANT_NODES = function() 
+CraftSim.SPEC_DATA.RELEVANT_NODES = function() 
     return {
     [Enum.Profession.Blacksmithing] =  CraftSim.BLACKSMITHING_DATA:GetData(),
     [Enum.Profession.Alchemy] = CraftSim.ALCHEMY_DATA:GetData(),

@@ -233,29 +233,29 @@ function CraftSim.GEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeT
     local modifiedRecipeData = CopyTable(recipeData)
     if modifiedRecipeData.stats.inspiration ~= nil then
         modifiedRecipeData.stats.inspiration.value = modifiedRecipeData.stats.inspiration.value + statChanges.inspiration
-        modifiedRecipeData.stats.inspiration.percent = modifiedRecipeData.stats.inspiration.percent + CraftSimUTIL:GetInspirationPercentByStat(statChanges.inspiration)*100
+        modifiedRecipeData.stats.inspiration.percent = modifiedRecipeData.stats.inspiration.percent + CraftSim.UTIL:GetInspirationPercentByStat(statChanges.inspiration)*100
         modifiedRecipeData.stats.inspiration.bonusskill = modifiedRecipeData.stats.inspiration.bonusskill * (1 + statChanges.inspirationBonusSkillPercent / 100)
     end
     if modifiedRecipeData.stats.multicraft ~= nil then
         modifiedRecipeData.stats.multicraft.value = modifiedRecipeData.stats.multicraft.value + statChanges.multicraft
-        modifiedRecipeData.stats.multicraft.percent = modifiedRecipeData.stats.multicraft.percent + CraftSimUTIL:GetMulticraftPercentByStat(statChanges.multicraft)*100 
+        modifiedRecipeData.stats.multicraft.percent = modifiedRecipeData.stats.multicraft.percent + CraftSim.UTIL:GetMulticraftPercentByStat(statChanges.multicraft)*100 
     end
     if modifiedRecipeData.stats.resourcefulness ~= nil then
         modifiedRecipeData.stats.resourcefulness.value = modifiedRecipeData.stats.resourcefulness.value + statChanges.resourcefulness
         modifiedRecipeData.stats.resourcefulness.percent = modifiedRecipeData.stats.resourcefulness.percent + 
-            CraftSimUTIL:GetResourcefulnessPercentByStat(statChanges.resourcefulness)*100 
+            CraftSim.UTIL:GetResourcefulnessPercentByStat(statChanges.resourcefulness)*100 
     end
     if modifiedRecipeData.stats.craftingspeed ~= nil then
         modifiedRecipeData.stats.craftingspeed.value = modifiedRecipeData.stats.craftingspeed.value + statChanges.craftingspeed
         modifiedRecipeData.stats.craftingspeed.percent = modifiedRecipeData.stats.craftingspeed.percent + 
-            CraftSimUTIL:GetCraftingSpeedPercentByStat(statChanges.craftingspeed)*100 
+            CraftSim.UTIL:GetCraftingSpeedPercentByStat(statChanges.craftingspeed)*100 
     end
 
     if modifiedRecipeData.stats.skill ~= nil and 
         recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE and 
         recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
         modifiedRecipeData.stats.skill = modifiedRecipeData.stats.skill + statChanges.skill
-        local expectedQualityWithItems = CraftSimSTATS:GetExpectedQualityBySkill(modifiedRecipeData, modifiedRecipeData.stats.skill, true)
+        local expectedQualityWithItems = CraftSim.STATS:GetExpectedQualityBySkill(modifiedRecipeData, modifiedRecipeData.stats.skill, true)
         --print("expectedQ with Items: " .. tostring(expectedQualityWithItems))
         local oldexpected = modifiedRecipeData.expectedQuality
         modifiedRecipeData.expectedQuality = expectedQualityWithItems
@@ -273,7 +273,7 @@ function CraftSim.GEARSIM:SimulateProfessionGearCombinations(gearCombos, recipeD
     for _, gearCombination in pairs(gearCombos) do
         local statChanges = CraftSim.GEARSIM:GetStatChangesFromGearCombination(gearCombination)
         local modifiedRecipeData = CraftSim.GEARSIM:GetModifiedRecipeDataByStatChanges(recipeData, recipeType, statChanges)
-        local meanProfit = CraftSimCALC:getMeanProfit(modifiedRecipeData, priceData)
+        local meanProfit = CraftSim.CALC:getMeanProfit(modifiedRecipeData, priceData)
         local profitDiff = meanProfit - baseProfit
         table.insert(results, {
             meanProfit = meanProfit,
@@ -315,20 +315,20 @@ function CraftSim.GEARSIM:DeductCurrentItemStats(recipeData, recipeType)
 
     if noItemRecipeData.stats.inspiration ~= nil then
         noItemRecipeData.stats.inspiration.value = noItemRecipeData.stats.inspiration.value - itemStats.inspiration
-        noItemRecipeData.stats.inspiration.percent = noItemRecipeData.stats.inspiration.percent - CraftSimUTIL:GetInspirationPercentByStat(itemStats.inspiration)*100
+        noItemRecipeData.stats.inspiration.percent = noItemRecipeData.stats.inspiration.percent - CraftSim.UTIL:GetInspirationPercentByStat(itemStats.inspiration)*100
         noItemRecipeData.stats.inspiration.bonusskill = noItemRecipeData.stats.inspiration.bonusskill / (1 + itemStats.inspirationBonusSkillPercent / 100)
     end
     if noItemRecipeData.stats.multicraft ~= nil then
         noItemRecipeData.stats.multicraft.value = noItemRecipeData.stats.multicraft.value - itemStats.multicraft
-        noItemRecipeData.stats.multicraft.percent = noItemRecipeData.stats.multicraft.percent - CraftSimUTIL:GetMulticraftPercentByStat(itemStats.multicraft)*100
+        noItemRecipeData.stats.multicraft.percent = noItemRecipeData.stats.multicraft.percent - CraftSim.UTIL:GetMulticraftPercentByStat(itemStats.multicraft)*100
     end
     if noItemRecipeData.stats.resourcefulness ~= nil then
         noItemRecipeData.stats.resourcefulness.value = noItemRecipeData.stats.resourcefulness.value - itemStats.resourcefulness
-        noItemRecipeData.stats.resourcefulness.percent = noItemRecipeData.stats.resourcefulness.percent - CraftSimUTIL:GetResourcefulnessPercentByStat(itemStats.resourcefulness)*100
+        noItemRecipeData.stats.resourcefulness.percent = noItemRecipeData.stats.resourcefulness.percent - CraftSim.UTIL:GetResourcefulnessPercentByStat(itemStats.resourcefulness)*100
     end
     if noItemRecipeData.stats.craftingspeed ~= nil then
         noItemRecipeData.stats.craftingspeed.value = noItemRecipeData.stats.craftingspeed.value - itemStats.craftingspeed
-        noItemRecipeData.stats.craftingspeed.percent = noItemRecipeData.stats.craftingspeed.percent - CraftSimUTIL:GetCraftingSpeedPercentByStat(itemStats.craftingspeed)*100
+        noItemRecipeData.stats.craftingspeed.percent = noItemRecipeData.stats.craftingspeed.percent - CraftSim.UTIL:GetCraftingSpeedPercentByStat(itemStats.craftingspeed)*100
     end
     if noItemRecipeData.stats.skill ~= nil and 
         recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE and 
@@ -336,7 +336,7 @@ function CraftSim.GEARSIM:DeductCurrentItemStats(recipeData, recipeType)
         noItemRecipeData.stats.skill = noItemRecipeData.stats.skill - itemStats.skill
 
         -- recalculate expected quality in case it decreases..
-        local expectedQualityWithoutItems = CraftSimSTATS:GetExpectedQualityBySkill(noItemRecipeData, noItemRecipeData.stats.skill)
+        local expectedQualityWithoutItems = CraftSim.STATS:GetExpectedQualityBySkill(noItemRecipeData, noItemRecipeData.stats.skill)
         --print("expectedQ with Items: " .. tostring(expectedQualityWithItems))
         local oldexpected = noItemRecipeData.expectedQuality
         noItemRecipeData.expectedQuality = expectedQualityWithoutItems
@@ -376,8 +376,8 @@ function CraftSim.GEARSIM:SimulateBestProfessionGearCombination(recipeData, reci
     local noItemsRecipeData = CraftSim.GEARSIM:DeductCurrentItemStats(recipeData, recipeType)
 
     if CraftSimOptions.topGearMode == CraftSim.CONST.GEAR_SIM_MODES.PROFIT then
-        local currentComboMeanProfit = CraftSimCALC:getMeanProfit(recipeData, priceData)
-        local noItemMeanProfit = CraftSimCALC:getMeanProfit(noItemsRecipeData, priceData)
+        local currentComboMeanProfit = CraftSim.CALC:getMeanProfit(recipeData, priceData)
+        local noItemMeanProfit = CraftSim.CALC:getMeanProfit(noItemsRecipeData, priceData)
         local simulationResults = CraftSim.GEARSIM:SimulateProfessionGearCombinations(gearCombos, noItemsRecipeData, recipeType, priceData, currentComboMeanProfit)
 
         local validSimulationResults = simulationResults
@@ -587,7 +587,7 @@ function CraftSim.GEARSIM:EquipBestCombo()
     for _, item in pairs(combo) do
         if not item.isEmptySlot then
             --print("eqipping: " .. item.itemLink)
-            CraftSimUTIL:EquipItemByLink(item.itemLink)
+            CraftSim.UTIL:EquipItemByLink(item.itemLink)
             EquipPendingItem(0)
         end
     end
