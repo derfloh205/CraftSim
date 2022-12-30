@@ -32,7 +32,7 @@ function CraftSim.CALC:handleInspiration(recipeData, priceData, crafts, craftedI
 end
 
 function CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedItems, calculationData)
-    if recipeData.stats.multicraft ~= nil then
+    if recipeData.stats.multicraft then
         calculationData.multicraft = {}
         -- Recipe considers multicraft
         -- TODO implement multicraft additional item chance/amount based on multicraft tracker data

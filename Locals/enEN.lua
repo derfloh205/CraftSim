@@ -4,6 +4,16 @@ CraftSim.LOCAL_EN = {}
 
 function CraftSim.LOCAL_EN:GetData()
     return {
+        -- REQUIRED:
+        [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Inspiration",
+        [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Multicraft",
+        [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Resourcefulness",
+        [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Crafting Speed",
+        [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Equip:",
+        [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Enchanted:",
+        [CraftSim.CONST.TEXT.INSPIRATIONBONUS_SKILL_ITEM_MATCH_STRING] = "increases the Skill provided when inspired by",
+
+        -- OPTIONAL (Defaulting to EN if not available):
         -- Profit Breakdown Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] = "Resourcefulness proccs for every material individually and then saves about 30% of its quantity.\n\nThe average value it saves is the average saved value of EVERY combination and their chances.\n(All materials proccing at once is very unlikely but saves a lot)\n\nThe average total saved material costs is the sum of the saved material costs of all combinations weighted against their chance.",
         [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP] = "This number shows the average amount of items that are additionally created by multicraft.\n\nThis considers your chance and assumes for multicraft that\n(1-2.5y)*any_spec_bonus additional items are created where y is base average of items created for 1 craft",

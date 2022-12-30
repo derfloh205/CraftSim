@@ -31,8 +31,9 @@ StatweightCalculation.lua
 CraftSim.lua
 CraftSim.xml
 
-Localization.lua
-enEN.lua
+Locals/Localization.lua
+Locals/enEN.lua
+Locals/deDE.lua
 
 SpecNodeData/Alchemy.lua
 SpecNodeData/Blacksmithing.lua

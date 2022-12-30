@@ -40,40 +40,58 @@ function CraftSim.DATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
 end
 
 function CraftSim.DATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
-	-- if stat not available -> not supported
 	local bonusStats = operationInfo.bonusStats
-	-- crafting speed is always supported!
-	recipeData.stats = {craftingspeed = {}}
+	recipeData.stats = {}
 	for _, statInfo in pairs(bonusStats) do
 		local statName = string.lower(statInfo.bonusStatName)
-		if statName == "crafting speed" then
-			statName = "craftingspeed"
-		end
-		if recipeData.stats[statName] == nil then
-			recipeData.stats[statName] = {}
+		-- check each stat individually to consider localization
+		local inspiration = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION))
+		local multicraft = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT))
+		local resourcefulness = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS))
+		local craftingspeed = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED))
+		if statName == craftingspeed then
+			recipeData.stats.craftingspeed = {}
+		elseif statName == inspiration then
+			--print("add inspiration")
+			recipeData.stats.inspiration = {}
+		elseif statName == multicraft then
+			recipeData.stats.multicraft = {}
+		elseif statName == resourcefulness then
+			recipeData.stats.resourcefulness = {}
 		end
 	end
 end
 
 function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
 	local bonusStats = operationInfo.bonusStats
-	recipeData.stats = {}
 	for _, statInfo in pairs(bonusStats) do
 		local statName = string.lower(statInfo.bonusStatName)
-		if statName == "crafting speed" then
-			statName = "craftingspeed"
-		end
-		if recipeData.stats[statName] == nil then
-			recipeData.stats[statName] = {}
-		end
-		recipeData.stats[statName].value = statInfo.bonusStatValue
-		recipeData.stats[statName].description = statInfo.ratingDescription
-		recipeData.stats[statName].percent = statInfo.ratingPct
-		if statName == 'inspiration' then
+		-- check each stat individually to consider localization
+		local inspiration = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION))
+		local multicraft = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT))
+		local resourcefulness = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS))
+		local craftingspeed = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED))
+
+		if statName == craftingspeed then
+			recipeData.stats.craftingspeed.value = statInfo.bonusStatValue
+			recipeData.stats.craftingspeed.description = statInfo.ratingDescription
+			recipeData.stats.craftingspeed.percent = statInfo.ratingPct
+		elseif statName == inspiration then
+			recipeData.stats.inspiration.value = statInfo.bonusStatValue
+			recipeData.stats.inspiration.description = statInfo.ratingDescription
+			recipeData.stats.inspiration.percent = statInfo.ratingPct
+
 			-- matches a row of numbers coming after the % character and any characters in between plus a space, should hopefully match in every localization...
 			local _, _, bonusSkill = string.find(statInfo.ratingDescription, "%%.* (%d+)") 
-			recipeData.stats[statName].bonusskill = bonusSkill
-			--print("inspirationbonusskill: " .. tostring(bonusSkill))
+			recipeData.stats.inspiration.bonusskill = bonusSkill
+		elseif statName == multicraft then
+			recipeData.stats.multicraft.value = statInfo.bonusStatValue
+			recipeData.stats.multicraft.description = statInfo.ratingDescription
+			recipeData.stats.multicraft.percent = statInfo.ratingPct
+		elseif statName == resourcefulness then
+			recipeData.stats.resourcefulness.value = statInfo.bonusStatValue
+			recipeData.stats.resourcefulness.description = statInfo.ratingDescription
+			recipeData.stats.resourcefulness.percent = statInfo.ratingPct
 		end
 	end
 
@@ -449,20 +467,24 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 		inspiration = 0,
 		resourcefulness = 0
 	}
+	local equipMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EQUIP_MATCH_STRING)
+	local inspirationIncreaseMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATIONBONUS_SKILL_ITEM_MATCH_STRING)
+	local enchantedMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING)
+	local inspirationMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION)
+	local resourcefulnessMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS)
 	for lineNum, line in pairs(tooltipData.lines) do
 		for argNum, arg in pairs(line.args) do
-			if arg.stringVal and string.find(arg.stringVal, "Equip:") then -- TODO: Localization differences? 
+			if arg.stringVal and string.find(arg.stringVal, equipMatchString) then
 				-- here the stringVal looks like "Equip: +6 Blacksmithing Skill"
 				parsedSkill = tonumber(string.match(arg.stringVal, "%+(%d+)"))
 			end
-			if arg.stringVal and string.find(arg.stringVal, "increases the Skill provided when inspired by") then -- TODO: Localization?
-				--
-				parsedInspirationSkillBonusPercent = tonumber(string.match(arg.stringVal, "by (%d+)%%"))
+			if arg.stringVal and string.find(arg.stringVal, inspirationIncreaseMatchString) then
+				parsedInspirationSkillBonusPercent = tonumber(string.match(arg.stringVal, "(%d+)%%"))
 			end
-			if arg.stringVal and string.find(arg.stringVal, "Enchanted:") then
-				if string.find(arg.stringVal, "Inspiration") then
+			if arg.stringVal and string.find(arg.stringVal, enchantedMatchString) then
+				if string.find(arg.stringVal, inspirationMatchString) then
 					parsedEnchantingStats.inspiration = tonumber(string.match(arg.stringVal, "%+(%d+)"))
-				elseif string.find(arg.stringVal, "Resourcefulness") then
+				elseif string.find(arg.stringVal, resourcefulnessMatchString) then
 					parsedEnchantingStats.resourcefulness = tonumber(string.match(arg.stringVal, "%+(%d+)"))
 				end
 			end

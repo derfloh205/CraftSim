@@ -122,7 +122,10 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
         --print("skill BP: " .. skillBreakpoint)
         -- EXPERIMENT: try to adjust skillbp by 1 to workaround blizz rounding errors
         --skillBreakpoint = skillBreakpoint + 1
-        local inspirationBonusSkill = CraftSimOptions.materialSuggestionInspirationThreshold and recipeData.stats.inspiration.bonusskill or 0
+        local inspirationBonusSkill = 0
+        if recipeData.stats.inspiration then
+            inspirationBonusSkill = CraftSimOptions.materialSuggestionInspirationThreshold and recipeData.stats.inspiration.bonusskill or 0
+        end
         arrayBP[i] = skillBreakpoint - (skillWithoutReagentIncrease + inspirationBonusSkill)
         --print("skill needed for this breakpoint:" .. arrayBP[i])
         -- If skill already meets or exceeds this BP...
