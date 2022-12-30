@@ -1,10 +1,12 @@
-CraftSimCONST = {}
+addonName, CraftSim = ...
+
+CraftSim.CONST = {}
 
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
 -- currently this is just an approximation
-CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
+CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
 
-CraftSimCONST.FRAMES = {
+CraftSim.CONST.FRAMES = {
     MATERIALS = 0,
     STAT_WEIGHTS = 1,
     TOP_GEAR = 2,
@@ -13,22 +15,22 @@ CraftSimCONST.FRAMES = {
     CRAFTING_DETAILS = 5
 }
 
-CraftSimCONST.ERROR = {
+CraftSim.CONST.ERROR = {
     NO_PRICE_DATA = 0,
     NO_RECIPE_DATA = 1
 }
 
 -- if more needed, add https://wowpedia.fandom.com/wiki/LE_ITEM_BIND
-CraftSimCONST.BINDTYPES = {
+CraftSim.CONST.BINDTYPES = {
     SOULBOUND = 1
 }
 
-CraftSimCONST.PROFESSIONTOOL_INV_TYPES = {
+CraftSim.CONST.PROFESSIONTOOL_INV_TYPES = {
     TOOL = "INVTYPE_PROFESSION_TOOL",
     GEAR = "INVTYPE_PROFESSION_GEAR"
 }
 
-CraftSimCONST.PROFESSION_INV_SLOTS = {{
+CraftSim.CONST.PROFESSION_INV_SLOTS = {{
     TOOL = "PROF0TOOLSLOT",
     GEAR0 = "PROF0GEAR0SLOT",
     GEAR1 = "PROF0GEAR1SLOT"
@@ -44,7 +46,7 @@ CraftSimCONST.PROFESSION_INV_SLOTS = {{
     }
 }
 
-CraftSimCONST.STAT_MAP = {
+CraftSim.CONST.STAT_MAP = {
     ITEM_MOD_RESOURCEFULNESS_SHORT = "resourcefulness",
     ITEM_MOD_INSPIRATION_SHORT = "inspiration",
     ITEM_MOD_MULTICRAFT_SHORT = "multicraft",
@@ -56,22 +58,22 @@ CraftSimCONST.STAT_MAP = {
     CRAFTING_DETAILS_RESOURCEFULNESS = "resourcefulness",
 }
 
-CraftSimCONST.EMPTY_SLOT_LINK = "empty"
-CraftSimCONST.EMPTY_SLOT_TEXTURE = "Interface\\containerframe\\bagsitemslot2x"
+CraftSim.CONST.EMPTY_SLOT_LINK = "empty"
+CraftSim.CONST.EMPTY_SLOT_TEXTURE = "Interface\\containerframe\\bagsitemslot2x"
 
-CraftSimCONST.SUPPORTED_PRICE_API_ADDONS = {"TradeSkillMaster", "Auctionator"}
+CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS = {"TradeSkillMaster", "Auctionator"}
 
-CraftSimCONST.AUCTIONATOR_CALLER_ID = "CraftSim"
+CraftSim.CONST.AUCTIONATOR_CALLER_ID = "CraftSim"
 
-CraftSimCONST.REAGENT_TYPE = {
+CraftSim.CONST.REAGENT_TYPE = {
 	OPTIONAL = 0,
 	REQUIRED = 1,
 	FINISHING_REAGENT = 2
 }
 
-CraftSimCONST.AUCTION_HOUSE_CUT = 0.95
+CraftSim.CONST.AUCTION_HOUSE_CUT = 0.95
 
-CraftSimCONST.RECIPE_TYPES = {
+CraftSim.CONST.RECIPE_TYPES = {
     GEAR = 0, -- like blue gear
     SOULBOUND_GEAR = 1, -- like purple gear
     NO_QUALITY_MULTIPLE = 2, -- like transmuted air
@@ -85,7 +87,7 @@ CraftSimCONST.RECIPE_TYPES = {
     ENCHANT = 10,
 }
 
-CraftSimCONST.GEAR_SIM_MODES = {
+CraftSim.CONST.GEAR_SIM_MODES = {
     PROFIT = "Top Profit",
     SKILL = "Top Skill",
     INSPIRATION = "Top Inspiration",
@@ -94,7 +96,7 @@ CraftSimCONST.GEAR_SIM_MODES = {
     CRAFTING_SPEED = "Top Crafting Speed",
 }
 
-CraftSimCONST.DEFAULT_POSITIONS = {
+CraftSim.CONST.DEFAULT_POSITIONS = {
     REAGENT_FRAME = {
         x = 0,
         y = 0,
@@ -113,13 +115,13 @@ CraftSimCONST.DEFAULT_POSITIONS = {
     }
 }
 
-CraftSimCONST.COLORS = {
+CraftSim.CONST.COLORS = {
     GREEN = "cff00FF00",
     RED = "cffFF0000",
     DARK_BLUE = "cff2596be"
 }
 
-CraftSimCONST.RECIPE_CATEGORIES = {
+CraftSim.CONST.RECIPE_CATEGORIES = {
     BLACKSMITHING = {
         STONEWORK = 1684,
         SMELTING = 1678,
@@ -150,7 +152,7 @@ CraftSimCONST.RECIPE_CATEGORIES = {
     }
 }
 
-CraftSimCONST.RECIPE_ITEM_SUBTYPES = {
+CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
     BLACKSMITHING = {
         STONEWORK = 8, -- "Other"
         METAL_AND_STONE = 7,
@@ -190,12 +192,12 @@ CraftSimCONST.RECIPE_ITEM_SUBTYPES = {
     }
 }
 
-CraftSimCONST.LOCALES = {
+CraftSim.CONST.LOCALES = {
     -- TODO
     EN = "enEN"
 }
 
-CraftSimCONST.TEXT = {
+CraftSim.CONST.TEXT = {
     RESOURCEFULNESS_EXPLANATION_TOOLTIP = 0,
     MULTICRAFT_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP = 1,
     MULTICRAFT_ADDITIONAL_ITEMS_VALUE_EXPLANATION_TOOLTIP = 2,
@@ -216,11 +218,11 @@ CraftSimCONST.TEXT = {
     REAGENTSKILL_EXPLANATION_TOOLTIP = 17,
 }
 
-CraftSimCONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
+CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
     return {} -- {Enum.Profession.Blacksmithing}
 end
 
-CraftSimCONST.NODES = function()
+CraftSim.CONST.NODES = function()
     -- TODO: names from localizations 
     return {
         [Enum.Profession.Blacksmithing] = {

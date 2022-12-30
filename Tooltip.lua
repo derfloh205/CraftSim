@@ -30,15 +30,15 @@ function CraftSimTOOLTIP:Init()
         local craftingCostPerCraft = CraftSimPRICEDATA:GetTotalCraftingCost(tooltipData)
 
         local resultValue = 0
-        if tooltipData.recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or tooltipData.recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
+        if tooltipData.recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or tooltipData.recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR then
             resultValue = CraftSimPRICEDATA:GetMinBuyoutByItemLink(tooltipData.result.hyperlink)
-        elseif tooltipData.recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or tooltipData.recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
+        elseif tooltipData.recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or tooltipData.recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
             resultValue = CraftSimPRICEDATA:GetMinBuyoutByItemID(tooltipData.result.itemID) * tooltipData.baseItemAmount
-        elseif tooltipData.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_ITEM and tooltipData.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
+        elseif tooltipData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and tooltipData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
             resultValue = CraftSimPRICEDATA:GetMinBuyoutByItemID(tooltipData.result.itemIDs[tooltipData.expectedQuality]) * tooltipData.baseItemAmount
         end
         
-        local profitByCraft = resultValue * CraftSimCONST.AUCTION_HOUSE_CUT - craftingCostPerCraft
+        local profitByCraft = resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT - craftingCostPerCraft
 
         local titleLine = "CraftSim"
         GameTooltip:AddLine(titleLine)
@@ -86,7 +86,7 @@ function CraftSimTOOLTIP:Init()
                 local price = CraftSimPRICEDATA:GetMinBuyoutByItemID(reagent.itemsInfo[1].itemID, true) * allocations
                 priceText = CraftSimUTIL:FormatMoney(price)
             end
-            local itemData = CraftSimDATAEXPORT:GetItemFromCacheByItemID(reagent.itemsInfo[1].itemID)
+            local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(reagent.itemsInfo[1].itemID)
             GameTooltip:AddDoubleLine(" " .. itemData.name .. ": " .. combinationText, priceText, 1, 1, 1, 1, 1, 1)
         end
     end

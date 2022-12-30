@@ -1,6 +1,8 @@
-CraftSimSPEC_NODE_DATA_INSCRIPTION = {}
+addonName, CraftSim = ...
 
-function CraftSimSPEC_NODE_DATA_INSCRIPTION:GetData()
+CraftSim.INSCRIPTION_DATA = {}
+
+function CraftSim.INSCRIPTION_DATA:GetData()
     return {
         PERFECT_PRACTICE_1 = {
             nodeID = 34834,
@@ -34,8 +36,8 @@ function CraftSimSPEC_NODE_DATA_INSCRIPTION:GetData()
             nodeID = 34831,
             threshold = 20,
             multicraftExtraItemsFactor = 0.50,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.INSCRIPTION.INSCRIPTION},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.INK}
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.INSCRIPTION},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.INK}
         }
     }
 end

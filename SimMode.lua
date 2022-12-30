@@ -13,7 +13,7 @@ CraftSimSIMULATION_MODE.baseResourcefulness = nil
 
 function CraftSimSIMULATION_MODE:Init()
 
-    CraftSimFRAME:InitSimModeFrames()
+    CraftSim.FRAME:InitSimModeFrames()
 end
 
 function CraftSimSIMULATION_MODE:OnInputAllocationChanged(userInput)
@@ -39,7 +39,7 @@ function CraftSimSIMULATION_MODE:OnInputAllocationChanged(userInput)
     --reagentData.itemsInfo[inputBox.qualityID].allocations = tonumber(inputNumber)
 
     CraftSimSIMULATION_MODE:UpdateSimulationMode()
-    CraftSimMAIN:TriggerModulesByRecipeType()
+    CraftSim.MAIN:TriggerModulesByRecipeType()
 end
 
 function CraftSimSIMULATION_MODE:OnStatModifierChanged(userInput)
@@ -47,7 +47,7 @@ function CraftSimSIMULATION_MODE:OnStatModifierChanged(userInput)
         return
     end
     CraftSimSIMULATION_MODE:UpdateSimulationMode()
-    CraftSimMAIN:TriggerModulesByRecipeType()
+    CraftSim.MAIN:TriggerModulesByRecipeType()
 end
 
 function CraftSimSIMULATION_MODE:UpdateReagentAllocationsByInput()
@@ -119,7 +119,7 @@ end
 function CraftSimSIMULATION_MODE:UpdateSimulationMode()
     CraftSimSIMULATION_MODE:UpdateReagentAllocationsByInput()
     CraftSimSIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
-    CraftSimFRAME:UpdateSimModeStatDisplay()
+    CraftSim.FRAME:UpdateSimModeStatDisplay()
 end
 
 function CraftSimSIMULATION_MODE:InitializeSimulationMode(recipeData)
@@ -145,12 +145,12 @@ function CraftSimSIMULATION_MODE:InitializeSimulationMode(recipeData)
     -- crafting speed... for later profit per time interval?
 
     -- update frame visiblity and initialize the input fields
-    CraftSimFRAME:ToggleSimModeFrames()
-    CraftSimFRAME:InitilizeSimModeReagentOverwrites()
+    CraftSim.FRAME:ToggleSimModeFrames()
+    CraftSim.FRAME:InitilizeSimModeReagentOverwrites()
 
     -- update simulation recipe data and frontend
     CraftSimSIMULATION_MODE:UpdateSimulationMode()
 
     -- recalculate modules
-    CraftSimMAIN:TriggerModulesByRecipeType()
+    CraftSim.MAIN:TriggerModulesByRecipeType()
 end

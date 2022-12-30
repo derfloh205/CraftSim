@@ -63,7 +63,7 @@ function CraftSimSTATS:CalculateStatWeights(recipeData, priceData)
     calculationResult.meanProfit, calculationData = CraftSimCALC:getMeanProfit(recipeData, priceData)
 
     calculationData.meanProfit = calculationResult.meanProfit
-    CraftSimFRAME:UpdateProfitDetails(recipeData, calculationData)
+    CraftSim.FRAME:UpdateProfitDetails(recipeData, calculationData)
 
     local inspirationResults = CraftSimSTATS:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
     local multicraftResults = CraftSimSTATS:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)
@@ -78,8 +78,8 @@ end
 function CraftSimSTATS:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
 	local statweights = CraftSimSTATS:CalculateStatWeights(recipeData, priceData)
 
-    if statWeights == CraftSimCONST.ERROR.NO_PRICE_DATA then
-        return CraftSimCONST.ERROR.NO_PRICE_DATA
+    if statWeights == CraftSim.CONST.ERROR.NO_PRICE_DATA then
+        return CraftSim.CONST.ERROR.NO_PRICE_DATA
     end
 
 	return statweights

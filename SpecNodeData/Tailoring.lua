@@ -1,6 +1,8 @@
-CraftSimSPEC_NODE_DATA_TAILORING = {}
+addonName, CraftSim = ...
 
-function CraftSimSPEC_NODE_DATA_TAILORING:GetData()
+CraftSim.TAILORING_DATA = {}
+
+function CraftSim.TAILORING_DATA:GetData()
     return {
         SPARING_SEWING_1 = {
             nodeID = 40006,

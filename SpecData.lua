@@ -154,11 +154,11 @@ end
 -- TODO: use if else if performance relevant
 CraftSimSPECDATA.RELEVANT_NODES = function() 
     return {
-    [Enum.Profession.Blacksmithing] =  CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData(),
-    [Enum.Profession.Alchemy] = CraftSimSPEC_NODE_DATA_ALCHEMY:GetData(),
-    [Enum.Profession.Leatherworking] = CraftSimSPEC_NODE_DATA_LEATHERWORKING:GetData(),
-    [Enum.Profession.Jewelcrafting] = CraftSimSPEC_NODE_DATA_JEWELCRAFTING:GetData(),
-    [Enum.Profession.Enchanting] = CraftSimSPEC_NODE_DATA_ENCHANTING:GetData(),
-    [Enum.Profession.Tailoring] = CraftSimSPEC_NODE_DATA_TAILORING:GetData(),
-    [Enum.Profession.Inscription] = CraftSimSPEC_NODE_DATA_INSCRIPTION:GetData()
+    [Enum.Profession.Blacksmithing] =  CraftSim.BLACKSMITHING_DATA:GetData(),
+    [Enum.Profession.Alchemy] = CraftSim.ALCHEMY_DATA:GetData(),
+    [Enum.Profession.Leatherworking] = CraftSim.LEATHERWORKING_DATA:GetData(),
+    [Enum.Profession.Jewelcrafting] = CraftSim.JEWELCRAFTING_DATA:GetData(),
+    [Enum.Profession.Enchanting] = CraftSim.ENCHANTING_DATA:GetData(),
+    [Enum.Profession.Tailoring] = CraftSim.TAILORING_DATA:GetData(),
+    [Enum.Profession.Inscription] = CraftSim.INSCRIPTION_DATA:GetData()
 } end

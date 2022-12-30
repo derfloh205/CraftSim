@@ -65,7 +65,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
         calculationData.resourcefulness = {}
         local totalReagents = {}
         for reagentIndex, reagentData in pairs(recipeData.reagents) do
-            if reagentData.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
+            if reagentData.reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
                     local itemsInfo = CopyTable(reagentData.itemsInfo)
                     local totalAllocations = 0
                     for _, itemInfo in pairs(itemsInfo) do
@@ -120,16 +120,16 @@ function CraftSimCALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calc
                     if totalReagents[materialIndex].differentQualities then
                         -- Save 30% of this material costs plus the specced addition if it was procced
                         materialCost = materialCost * materialAllocations
-                        materialCost = materialCost * (CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1)) 
+                        materialCost = materialCost * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1)) 
                     else
-                        local savedMats = materialAllocations * CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
+                        local savedMats = materialAllocations * CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
                         if savedMats < 1 then
                             -- If 30% of a material would put us below 1, then assume that 1 is saved on average plus any bonus
                             materialCost = materialCost * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1)
                         else
                             -- if is >= 1 then just take the usual 0.3% of all allocatins and bonus
                             materialCost = materialCost * materialAllocations
-                            materialCost = materialCost * (CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1))
+                            materialCost = materialCost * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (recipeData.extraItemFactors.resourcefulnessBonusItemsFactor or 1))
                         end
                     end
                 else
@@ -172,7 +172,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV1(recipeData, priceData)
 
         local totalReagentAllocationsByQuality = {}
         for reagentIndex, reagentData in pairs(recipeData.reagents) do
-            if reagentData.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
+            if reagentData.reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
                 totalReagentAllocationsByQuality[reagentIndex] = CopyTable(reagentData.itemsInfo)
                     local totalAllocations = 0
                     for _, itemInfo in pairs(totalReagentAllocationsByQuality[reagentIndex]) do
@@ -193,7 +193,7 @@ function CraftSimCALC:getResourcefulnessSavedCostsV1(recipeData, priceData)
             for qualityIndex, itemInfo in pairs(itemsInfo) do
                 local savedItems = itemInfo.allocations * (recipeData.stats.resourcefulness.percent / 100)
                 -- test
-                savedItems = savedItems * CraftSimCONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
+                savedItems = savedItems * CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
                 savedItems = savedItems * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
                 --
                 totalSavedCosts = totalSavedCosts + priceData.reagentsPriceByQuality[reagentIndex][qualityIndex].minBuyout * savedItems
@@ -233,7 +233,7 @@ function CraftSimCALC:getMeanProfit(recipeData, priceData)
         totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality] + 
             craftedItems.nextQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1]
     end
-    local meanProfit = ((totalWorth*CraftSimCONST.AUCTION_HOUSE_CUT) - totalCraftingCosts)
+    local meanProfit = ((totalWorth*CraftSim.CONST.AUCTION_HOUSE_CUT) - totalCraftingCosts)
 
     calculationData.craftingCostPerCraft = totalCraftingCosts
 

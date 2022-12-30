@@ -1,6 +1,8 @@
-CraftSimSPEC_NODE_DATA_BLACKSMITHING = {}
+addonName, CraftSim = ...
 
-function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
+CraftSim.BLACKSMITHING_DATA = {}
+
+function CraftSim.BLACKSMITHING_DATA:GetData()
     return {
         -- HAMMER CONTROL
         HAMMER_CONTROL_1 = {
@@ -180,167 +182,167 @@ function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
         TOOLSMITHING_1 = {
             nodeID = 23764,
             equalsSkill = true,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
             },
         },
         TOOLSMITHING_2 = {
             nodeID = 23764,
             threshold = 0,
             skill = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
             },
         },
         TOOLSMITHING_3 = {
             nodeID = 23764,
             threshold = 5,
             inspiration = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
             },
         },
         TOOLSMITHING_4 = {
             nodeID = 23764,
             threshold = 15,
             skill = 15,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
             },
         },
         TOOLSMITHING_5 = {
             nodeID = 23764,
             threshold = 20,
             inspiration = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
             },
         },
         TOOLSMITHING_6 = {
             nodeID = 23764,
             threshold = 25,
             skill = 15,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.LEATHERWORKING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SKINNING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.TAILORING,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING,
             },
         },
         STONEWORK_1 = {
             nodeID = 23762,
             equalsSkill = true,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
         },
         STONEWORK_2 = {
             nodeID = 23762,
             threshold = 0,
             multicraft = 20,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
         },
         STONEWORK_3 = {
             nodeID = 23762,
             threshold = 5,
             inspiration = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
         },
         STONEWORK_4 = {
             nodeID = 23762,
             threshold = 10,
             multicraft = 40,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
         },
         STONEWORK_5 = {
             nodeID = 23762,
             threshold = 15,
             inspiration = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
         },
         STONEWORK_6 = {
             nodeID = 23762,
             threshold = 20,
             multicraftBonusItemsFactor = 0.50,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK},
         },
         SMELTING_1 = {
             nodeID = 23761,
             equalsSkill = true,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
         },
         SMELTING_2 = {
             nodeID = 23761,
             threshold = 0,
             multicraft = 20,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
         },
         SMELTING_3 = {
             nodeID = 23761,
             threshold = 5,
             inspiration = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
         },
         SMELTING_4 = {
             nodeID = 23761,
             threshold = 10,
             multicraft = 20,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
         },
         SMELTING_5 = {
             nodeID = 23761,
             threshold = 15,
             inspiration = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
         },
         SMELTING_6 = {
             nodeID = 23761,
             threshold = 20,
             multicraftBonusItemsFactor = 0.50,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE},
         },
         -- Weapon Smithing
         WEAPON_SMITHING_1 = {
@@ -400,57 +402,57 @@ function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
         AXES_1 = {
             nodeID = 23721,
             equalsSkill = true,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING, -- only picks
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING, -- only picks
             }
         },
         AXES_2 = {
             nodeID = 23721,
             threshold = 5,
             skill = 5,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING, -- only picks
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING, -- only picks
             }
         },
         AXES_3 = {
             nodeID = 23721,
             threshold = 15,
             skill = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING, -- only picks
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING, -- only picks
             }
         },
         AXES_4 = {
             nodeID = 23721,
             threshold = 20,
             skill = 5,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING, -- only picks
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MINING, -- only picks
             }
         },
         MACES_1 = {
             nodeID = 23722,
             equalsSkill = true,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
             },
             exceptionRecipeIDs = {
                 371372, -- epic hammer
@@ -461,10 +463,10 @@ function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
             nodeID = 23722,
             threshold = 5,
             skill = 5,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
             },
             exceptionRecipeIDs = {
                 371372, -- epic hammer
@@ -475,10 +477,10 @@ function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
             nodeID = 23722,
             threshold = 15,
             skill = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
             },
             exceptionRecipeIDs = {
                 371372, -- epic hammer
@@ -489,10 +491,10 @@ function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
             nodeID = 23722,
             threshold = 20,
             skill = 5,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
             },
             exceptionRecipeIDs = {
                 371372, -- epic hammer
@@ -525,10 +527,10 @@ function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
         SHORT_BLADES_1 = {
             nodeID = 23725,
             equalsSkill = true,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
             },
             exceptionRecipeIDs = {
                 371369, -- blue lw knife
@@ -541,10 +543,10 @@ function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
             nodeID = 23725,
             threshold = 10,
             skill = 5,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
             },
             exceptionRecipeIDs = {
                 371369, -- blue lw knife
@@ -557,10 +559,10 @@ function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
             nodeID = 23725,
             threshold = 15,
             skill = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
             },
             exceptionRecipeIDs = {
                 371369, -- blue lw knife
@@ -573,10 +575,10 @@ function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
             nodeID = 23725,
             threshold = 20,
             skill = 5,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
             },
             exceptionRecipeIDs = {
                 371369, -- blue lw knife
@@ -588,48 +590,48 @@ function CraftSimSPEC_NODE_DATA_BLACKSMITHING:GetData()
         LONG_BLADES_1 = {
             nodeID = 23724,
             equalsSkill = true,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM, -- sickles
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM, -- sickles
             }
         },
         LONG_BLADES_2 = {
             nodeID = 23724,
             threshold = 10,
             skill = 5,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM, -- sickles
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM, -- sickles
             }
         },
         LONG_BLADES_3 = {
             nodeID = 23724,
             threshold = 15,
             skill = 10,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM, -- sickles
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM, -- sickles
             }
         },
         LONG_BLADES_4 = {
             nodeID = 23724,
             threshold = 20,
             skill = 5,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSimCONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS, CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS},
             subtypeIDs = {
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
-                CraftSimCONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM, -- sickles
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.HERBALISM, -- sickles
             }
         },
     }

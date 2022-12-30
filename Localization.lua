@@ -1,15 +1,17 @@
-CraftSimLOC = {}
+addonName, CraftSim = ...
 
-function CraftSimLOC:Init()
+CraftSim.LOCAL = {}
+
+function CraftSim.LOCAL:Init()
     -- TODO
-    CraftSimLOC.LOCAL = CraftSimLOC_EN
+    CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_EN
 end
 
-function CraftSimLOC:GetText(ID)
-    local localizedText = CraftSimLOC.LOCAL:GetData()[ID]
+function CraftSim.LOCAL:GetText(ID)
+    local localizedText = CraftSim.LOCAL.LOCAL:GetData()[ID]
 
     if not localizedText then
-        return CraftSimLOC_EN[ID] -- default to english
+        return CraftSim.LOCAL_EN[ID] -- default to english
     else
         return localizedText
     end

@@ -1,6 +1,8 @@
-CraftSimSPEC_NODE_DATA_LEATHERWORKING = {}
+addonName, CraftSim = ...
 
-function CraftSimSPEC_NODE_DATA_LEATHERWORKING:GetData()
+CraftSim.LEATHERWORKING_DATA = {}
+
+function CraftSim.LEATHERWORKING_DATA:GetData()
     return {
         SHEAR_MASTERY_1 = {
             nodeID = 31183,
@@ -34,15 +36,15 @@ function CraftSimSPEC_NODE_DATA_LEATHERWORKING:GetData()
             nodeID = 31181,
             threshold = 20,
             multicraftExtraItemsFactor = 0.50,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS},
         },
         CURING_AND_TANNING = {
             nodeID = 31180,
             threshold = 20,
             multicraftExtraItemsFactor = 0.50,
-            categoryIDs = {CraftSimCONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMORKITS},
-            subtypeIDs = {CraftSimCONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ARMORKITS},
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMORKITS},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ARMORKITS},
         }
     }
 end

@@ -50,7 +50,7 @@ function CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
     local reagentQualityPrices = {}
 
     for reagentIndex, reagent in pairs(recipeData.reagents) do
-        if reagent.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
+        if reagent.reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
             local reagentPriceData = CopyTable(reagent.itemsInfo)
             for q, itemInfo in pairs(reagentPriceData) do
                 itemInfo.minBuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemInfo.itemID, true)
@@ -73,17 +73,17 @@ function CraftSimPRICEDATA:GetPriceData(recipeData, recipeType)
     local reagentsPriceByQuality = CraftSimPRICEDATA:GetReagentsPriceByQuality(recipeData)
     local minBuyoutPerQuality = {}
 
-    if recipeType == CraftSimCONST.RECIPE_TYPES.GEAR then
+    if recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR then
         for _, itemLink in pairs(recipeData.result.itemQualityLinks) do
             local currentMinbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemLink(itemLink)
             table.insert(minBuyoutPerQuality, currentMinbuyout)
         end
-    elseif recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.NO_ITEM then
+    elseif recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
         -- nothing.. we only want the reagentspriceby quality and the crafting costs
-    elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE or recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE then
+    elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE then
         local currentMinbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(recipeData.result.itemID)
         table.insert(minBuyoutPerQuality, currentMinbuyout)
-    elseif recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE or recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.ENCHANT then
+    elseif recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE or recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.ENCHANT then
         for _, itemID in pairs(recipeData.result.itemIDs) do
             local currentMinbuyout = CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID)
             table.insert(minBuyoutPerQuality, currentMinbuyout)
@@ -102,7 +102,7 @@ end
 
 -- Wrappers 
 function CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID, isReagent)
-    local minbuyout = CraftSimPriceAPI:GetMinBuyoutByItemID(itemID, isReagent)
+    local minbuyout = CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, isReagent)
     if minbuyout == nil then
         local _, link = GetItemInfo(itemID)
         if link == nil then
@@ -118,7 +118,7 @@ function CraftSimPRICEDATA:GetMinBuyoutByItemID(itemID, isReagent)
 end
 
 function CraftSimPRICEDATA:GetMinBuyoutByItemLink(itemLink, isReagent)
-    local minbuyout = CraftSimPriceAPI:GetMinBuyoutByItemLink(itemLink, isReagent)
+    local minbuyout = CraftSim.PRICE_API:GetMinBuyoutByItemLink(itemLink, isReagent)
     if minbuyout == nil then
         if CraftSimPRICEDATA.noPriceDataLinks[itemLink] == nil then
             -- not beautiful but hey, easy map

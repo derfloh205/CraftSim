@@ -1,6 +1,8 @@
-CraftSimSPEC_NODE_DATA_ENCHANTING = {}
+addonName, CraftSim = ...
 
-function CraftSimSPEC_NODE_DATA_ENCHANTING:GetData()
+CraftSim.ENCHANTING_DATA = {}
+
+function CraftSim.ENCHANTING_DATA:GetData()
     return {
         RESOURCEFUL_WRIT_1 = {
             nodeID = 68442,

@@ -1,4 +1,6 @@
-CraftSimENCHANT_DATA = {
+addonName, CraftSim = ...
+
+CraftSim.ENCHANT_RECIPE_DATA = {
     -- RecipeID -> q1, q2, q3 enchant item and name
 
     -- Ring

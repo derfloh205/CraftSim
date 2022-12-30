@@ -1,6 +1,8 @@
-CraftSimSPEC_NODE_DATA_JEWELCRAFTING = {}
+addonName, CraftSim = ...
 
-function CraftSimSPEC_NODE_DATA_JEWELCRAFTING:GetData()
+CraftSim.JEWELCRAFTING_DATA = {}
+
+function CraftSim.JEWELCRAFTING_DATA:GetData()
     return {
         SAVING_SLIVERS_1 = {
             nodeID = 81119,

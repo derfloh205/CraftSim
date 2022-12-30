@@ -1,5 +1,7 @@
-CraftSimPriceAPI = {}
-CraftSimPriceAPIs = {}
+addonName, CraftSim = ...
+
+CraftSim.PRICE_API = {}
+CraftSim.PRICE_APIS = {}
 
 CraftSimTSM = {name = "TradeSkillMaster"}
 CraftSimAUCTIONATOR = {name = "Auctionator"}
@@ -7,8 +9,8 @@ CraftSimDEBUG_PRICE_API = {name = "Debug"}
 
 CraftSimDebugData = CraftSimDebugData or {}
 
-function CraftSimPriceAPI:InitPriceSource()
-    local loadedSources = CraftSimPriceAPIs:GetAvailablePriceSourceAddons()
+function CraftSim.PRICE_API:InitPriceSource()
+    local loadedSources = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
 
     if #loadedSources == 0 then
         print("CraftSim: No Supported Price Source Available!")
@@ -19,24 +21,24 @@ function CraftSimPriceAPI:InitPriceSource()
     local savedSource = CraftSimOptions.priceSource
 
     if tContains(loadedSources, savedSource) then
-        CraftSimPriceAPIs:SwitchAPIByAddonName(savedSource)
+        CraftSim.PRICE_APIS:SwitchAPIByAddonName(savedSource)
     else
-        CraftSimPriceAPIs:SwitchAPIByAddonName(loadedSources[1])
+        CraftSim.PRICE_APIS:SwitchAPIByAddonName(loadedSources[1])
         CraftSimOptions.priceSource = loadedSources[1]
     end
 end
 
-function CraftSimPriceAPIs:SwitchAPIByAddonName(addonName)
+function CraftSim.PRICE_APIS:SwitchAPIByAddonName(addonName)
     if addonName == "TradeSkillMaster" then
-        CraftSimPriceAPI = CraftSimTSM
+        CraftSim.PRICE_API = CraftSimTSM
     elseif addonName == "Auctionator" then
-        CraftSimPriceAPI = CraftSimAUCTIONATOR
+        CraftSim.PRICE_API = CraftSimAUCTIONATOR
     end
 end
 
-function CraftSimPriceAPIs:GetAvailablePriceSourceAddons()
+function CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
     local loadedAddons = {}
-    for _, addonName in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do
+    for _, addonName in pairs(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS) do
         if IsAddOnLoaded(addonName) then
             table.insert(loadedAddons, addonName)
         end
@@ -44,9 +46,9 @@ function CraftSimPriceAPIs:GetAvailablePriceSourceAddons()
     return loadedAddons
 end
 
-function CraftSimPriceAPIs:IsPriceApiAddonLoaded()
+function CraftSim.PRICE_APIS:IsPriceApiAddonLoaded()
     local loaded = false
-    for _, name in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do
+    for _, name in pairs(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS) do
         if IsAddOnLoaded(name) then
             return true
         end
@@ -54,9 +56,9 @@ function CraftSimPriceAPIs:IsPriceApiAddonLoaded()
     return false
 end
 
-function CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name)
+function CraftSim.PRICE_APIS:IsAddonPriceApiAddon(addon_name)
     local loading = false
-    for _, name in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do
+    for _, name in pairs(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS) do
         if addon_name == name then
             return true
         end
@@ -64,20 +66,19 @@ function CraftSimPriceAPIs:IsAddonPriceApiAddon(addon_name)
     return false
 end
 
-function CraftSimPriceAPIs:InitAvailablePriceAPI()
+function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
     local _, tsmLoaded = IsAddOnLoaded("TradeSkillMaster")
     local _, auctionatorLoaded = IsAddOnLoaded("Auctionator")
-    -- TODO: currently tsm will be prioritized as the price source api if multiple are loaded.. maybe create an optionspanel with dropdown to let the player choose?
     if tsmLoaded then
         --print("Load TSM API")
-        CraftSimPriceAPI = CraftSimTSM
+        CraftSim.PRICE_API = CraftSimTSM
     elseif auctionatorLoaded then
         --print("Load Auctionator API")
-        CraftSimPriceAPI = CraftSimAUCTIONATOR
+        CraftSim.PRICE_API = CraftSimAUCTIONATOR
     else
         print("CraftSim: No supported price source found")
         print("Supported addons are: ")
-        for _, name in pairs(CraftSimCONST.SUPPORTED_PRICE_API_ADDONS) do
+        for _, name in pairs(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS) do
             print(name)
         end
     end
@@ -130,20 +131,20 @@ function CraftSimTSM:GetMinBuyoutByItemLink(itemLink, isReagent)
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)
-    local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemID(CraftSimCONST.AUCTIONATOR_CALLER_ID, itemID)
+    local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemID(CraftSim.CONST.AUCTIONATOR_CALLER_ID, itemID)
     if vendorPrice then
         return vendorPrice
     else
-        return Auctionator.API.v1.GetAuctionPriceByItemID(CraftSimCONST.AUCTIONATOR_CALLER_ID , itemID)
+        return Auctionator.API.v1.GetAuctionPriceByItemID(CraftSim.CONST.AUCTIONATOR_CALLER_ID , itemID)
     end
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemLink(itemLink)
-    local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemLink(CraftSimCONST.AUCTIONATOR_CALLER_ID, itemLink)
+    local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemLink(CraftSim.CONST.AUCTIONATOR_CALLER_ID, itemLink)
     if vendorPrice then
         return vendorPrice
     else
-        return Auctionator.API.v1.GetAuctionPriceByItemLink(CraftSimCONST.AUCTIONATOR_CALLER_ID , itemLink)
+        return Auctionator.API.v1.GetAuctionPriceByItemLink(CraftSim.CONST.AUCTIONATOR_CALLER_ID , itemLink)
     end
 end
 

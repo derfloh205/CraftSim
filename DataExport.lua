@@ -1,4 +1,6 @@
-CraftSimDATAEXPORT = {}
+addonName, CraftSim = ...
+
+CraftSim.DATAEXPORT = {}
 
 CraftSimTooltipData = CraftSimTooltipData or {}
 CraftSimItemCache = CraftSimItemCache or {}
@@ -6,8 +8,8 @@ CraftSimItemCache = CraftSimItemCache or {}
 LibCompress = LibStub:GetLibrary("LibCompress")
 
 -- DEPRICATED
-function CraftSimDATAEXPORT:getExportString()
-	local exportData = CraftSimDATAEXPORT:exportRecipeData()
+function CraftSim.DATAEXPORT:getExportString()
+	local exportData = CraftSim.DATAEXPORT:exportRecipeData()
 	-- now digest into an export string
 	if exportData == nil then
 		return "Current Recipe Type not supported"
@@ -19,7 +21,7 @@ function CraftSimDATAEXPORT:getExportString()
 	return exportString
 end
 
-function CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
+function CraftSim.DATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
 	-- TODO: is this consistent enough?
 	local linksByQuality = {}
 	local itemString = select(3, strfind(itemLink, "|H(.+)|h%["))
@@ -37,7 +39,7 @@ function CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
 	 return linksByQuality
 end
 
-function CraftSimDATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
+function CraftSim.DATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
 	-- if stat not available -> not supported
 	local bonusStats = operationInfo.bonusStats
 	-- crafting speed is always supported!
@@ -53,7 +55,7 @@ function CraftSimDATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
 	end
 end
 
-function CraftSimDATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
+function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
 	local bonusStats = operationInfo.bonusStats
 	recipeData.stats = {}
 	for _, statInfo in pairs(bonusStats) do
@@ -89,7 +91,7 @@ function CraftSimDATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationI
 	end
 end
 
-function CraftSimDATAEXPORT:GetStatsFromBuffs(buffData)
+function CraftSim.DATAEXPORT:GetStatsFromBuffs(buffData)
 	-- TODO: Implement
     return {	
         inspiration = 0,
@@ -104,17 +106,17 @@ function CraftSimDATAEXPORT:GetStatsFromBuffs(buffData)
     }
 end
 
-function CraftSimDATAEXPORT:exportBuffData(recipeData)
+function CraftSim.DATAEXPORT:exportBuffData(recipeData)
 	return { -- TODO: information about relevant stats like crafting speed / inspiration incense / inspiration portrait (?)
 
 	}
 end
 
-function CraftSimDATAEXPORT:exportSpecNodeData(recipeData)
+function CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
 	local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(skillLineID)
 
-	local nodes = CraftSimCONST.NODES()[recipeData.professionID] or {}
+	local nodes = CraftSim.CONST.NODES()[recipeData.professionID] or {}
 
 	local specNodeData = {}
 	for _, currentNode in pairs(nodes) do
@@ -132,7 +134,7 @@ function CraftSimDATAEXPORT:exportSpecNodeData(recipeData)
 	return specNodeData
 end
 
-function CraftSimDATAEXPORT:GetStatsFromReagents(recipeData)
+function CraftSim.DATAEXPORT:GetStatsFromReagents(recipeData)
 	-- TODO: export optional and finishing reagents and get their modifiers
 	return {	
         inspiration = 0,
@@ -147,23 +149,23 @@ function CraftSimDATAEXPORT:GetStatsFromReagents(recipeData)
     }
 end
 
-function CraftSimDATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
+function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	print("player stats v2")
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-	local professionGearStats = CraftSimDATAEXPORT:GetCurrentProfessionItemStats()
+	local professionGearStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
 
 	local relevantNodes = CraftSimSPECDATA.RELEVANT_NODES()[recipeData.professionID]
 
 	local specNodeStats = CraftSimSPECDATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
-	local buffStats = CraftSimDATAEXPORT:GetStatsFromBuffs(recipeData.buffData)
-	local reagentStats = CraftSimDATAEXPORT:GetStatsFromReagents(recipeData)
+	local buffStats = CraftSim.DATAEXPORT:GetStatsFromBuffs(recipeData.buffData)
+	local reagentStats = CraftSim.DATAEXPORT:GetStatsFromReagents(recipeData)
 
 	print("specnodestats: ")
 	CraftSimUTIL:PrintTable(specNodeStats)
 
 	-- skill
 	local baseSkill = professionInfo.skillLevel
-	local racialSkill = CraftSimDATAEXPORT:GetRacialProfessionSkillBonus(recipeData.professionID)
+	local racialSkill = CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(recipeData.professionID)
 	local itemSkill = professionGearStats.skill
 	local specNodeSkill = specNodeStats.skill
 	local reagentSkill = reagentStats.skill
@@ -244,24 +246,24 @@ function CraftSimDATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	-- CraftSimUTIL:PrintTable(recipeData.stats.resourcefulness or {})
 end
 
-function CraftSimDATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
-	local implemented = tContains(CraftSimCONST.IMPLEMENTED_SKILL_BUILD_UP(), recipeData.professionID)
+function CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
+	local implemented = tContains(CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP(), recipeData.professionID)
 
 	if not implemented then
-		CraftSimDATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
+		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
 	else
-		CraftSimDATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
+		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	end
 end
 
-function CraftSimDATAEXPORT:handleOutputIDs(recipeData, recipeInfo)
+function CraftSim.DATAEXPORT:handleOutputIDs(recipeData, recipeInfo)
 	-- I need both to identify the spec boni
 	recipeData.categoryID = recipeInfo.categoryID
-	local itemData = CraftSimDATAEXPORT:GetItemFromCacheByItemID(recipeData.result.itemID or recipeData.result.itemIDs[1]) or {}
+	local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(recipeData.result.itemID or recipeData.result.itemIDs[1]) or {}
 	recipeData.subtypeID = itemData.subclassID or nil
 end
 
-function CraftSimDATAEXPORT:exportRecipeData()
+function CraftSim.DATAEXPORT:exportRecipeData()
 	local recipeData = {}
 
 	--local professionInfo = ProfessionsFrame.professionInfo
@@ -272,7 +274,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 
 	recipeData.profession = professionInfo.parentProfessionName
 	recipeData.professionID = professionInfo.profession
-	local recipeInfo = CraftSimMAIN.currentRecipeInfo --or schematicForm:GetRecipeInfo() -- should always be the first
+	local recipeInfo = CraftSim.MAIN.currentRecipeInfo --or schematicForm:GetRecipeInfo() -- should always be the first
 
 	local recipeType = CraftSimUTIL:GetRecipeType(recipeInfo)
 
@@ -281,7 +283,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	
 	local operationInfo = schematicForm:GetRecipeOperationInfo()
 	
-    if operationInfo == nil or recipeType == CraftSimCONST.RECIPE_TYPES.GATHERING then
+    if operationInfo == nil or recipeType == CraftSim.CONST.RECIPE_TYPES.GATHERING then
         return nil
     end
 	recipeData.expectedQuality = operationInfo.craftingQuality
@@ -309,9 +311,9 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
 		local reagents = currentSlot.reagents
 		local reagentType = currentSlot.reagentType
-		local reagentName = CraftSimDATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
+		local reagentName = CraftSim.DATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
 		-- for now only consider the required reagents
-		if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
+		if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
 			local hasMoreThanOneQuality = reagents[2] ~= nil
 
 			if hasMoreThanOneQuality then
@@ -363,7 +365,7 @@ function CraftSimDATAEXPORT:exportRecipeData()
 	local craftingReagentInfoTbl = currentTransaction:CreateCraftingReagentInfoTbl()
 	local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 
-	if recipeType == CraftSimCONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSimCONST.RECIPE_TYPES.SINGLE then
+	if recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
 		-- recipe is anything that results in 1-5 different itemids with quality
 		local qualityItemIDs = CopyTable(recipeInfo.qualityItemIDs)
 		if qualityItemIDs[1] > qualityItemIDs[3] then
@@ -377,65 +379,65 @@ function CraftSimDATAEXPORT:exportRecipeData()
 			qualityItemIDs[3],
 			qualityItemIDs[4],
 			qualityItemIDs[5]}
-	elseif recipeType == CraftSimCONST.RECIPE_TYPES.ENCHANT then
-		if not CraftSimENCHANT_DATA[recipeData.recipeID] then
+	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.ENCHANT then
+		if not CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID] then
 			error("CraftSim: Enchant Recipe Missing in Data: " .. recipeData.recipeID .. " Please contact the developer (discord: genju#4210)")
 		end
 		recipeData.result.itemIDs = {
-			CraftSimENCHANT_DATA[recipeData.recipeID].q1,
-			CraftSimENCHANT_DATA[recipeData.recipeID].q2,
-			CraftSimENCHANT_DATA[recipeData.recipeID].q3}
-	elseif recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
+			CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID].q1,
+			CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID].q2,
+			CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID].q3}
+	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR then
 		recipeData.result.itemID = schematicInfo.outputItemID
 		
 		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 		recipeData.result.hyperlink = outputItemData.hyperlink
 		local baseIlvl = recipeInfo.itemLevel
-		recipeData.result.itemQualityLinks = CraftSimDATAEXPORT:GetDifferentQualityLinksByLink(outputItemData.hyperlink)
+		recipeData.result.itemQualityLinks = CraftSim.DATAEXPORT:GetDifferentQualityLinksByLink(outputItemData.hyperlink)
 		recipeData.result.baseILvL = baseIlvl
-	elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE then
+	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE then
 		-- Probably something like transmuting air reagent that creates non equip stuff without qualities
 		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)
 		recipeData.result.isNoQuality = true		
-	elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
+	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
 		recipeData.result.itemID = CraftSimUTIL:GetItemIDByLink(recipeInfo.hyperlink)
 		recipeData.result.isNoQuality = true	
-	elseif recipeType == CraftSimCONST.RECIPE_TYPES.NO_ITEM then
+	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
 		-- nothing cause there is no result
 	else
 		print("recipeType not covered in export: " .. tostring(recipeType))
 	end
 
-	if recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_ITEM and recipeType ~= CraftSimCONST.RECIPE_TYPES.GATHERING then
-		CraftSimDATAEXPORT:handleOutputIDs(recipeData, recipeInfo)
+	if recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING then
+		CraftSim.DATAEXPORT:handleOutputIDs(recipeData, recipeInfo)
 	end
 
-	CraftSimDATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
+	CraftSim.DATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
 
-	local implemented = tContains(CraftSimCONST.IMPLEMENTED_SKILL_BUILD_UP(), recipeData.professionID)
+	local implemented = tContains(CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP(), recipeData.professionID)
 
 	if not implemented then
 		recipeData.extraItemFactors = CraftSimSPECDATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
 	else
-		recipeData.buffData = CraftSimDATAEXPORT:exportBuffData()
-		recipeData.specNodeData = CraftSimDATAEXPORT:exportSpecNodeData(recipeData)
+		recipeData.buffData = CraftSim.DATAEXPORT:exportBuffData()
+		recipeData.specNodeData = CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
 	end
 
 
-	CraftSimDATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
+	CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
 
 	
-	CraftSimMAIN.currentRecipeData = recipeData
+	CraftSim.MAIN.currentRecipeData = recipeData
 	return recipeData
 end
 
-function CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
+function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 	local extractedStats = GetItemStats(itemLink)
 	local stats = {}
 
 	for statKey, value in pairs(extractedStats) do
-		if CraftSimCONST.STAT_MAP[statKey] ~= nil then
-			stats[CraftSimCONST.STAT_MAP[statKey]] = value
+		if CraftSim.CONST.STAT_MAP[statKey] ~= nil then
+			stats[CraftSim.CONST.STAT_MAP[statKey]] = value
 		end
 	end
 
@@ -475,7 +477,7 @@ function CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 	return stats
 end
 
-function CraftSimDATAEXPORT:GetCurrentProfessionItemStats()
+function CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
 	local stats = {
 		inspiration = 0,
 		inspirationBonusSkillPercent = 0,
@@ -484,13 +486,13 @@ function CraftSimDATAEXPORT:GetCurrentProfessionItemStats()
 		craftingspeed = 0,
 		skill = 0
 	}
-	local currentProfessionSlots = CraftSimFRAME:GetProfessionEquipSlots()
+	local currentProfessionSlots = CraftSim.FRAME:GetProfessionEquipSlots()
 
 	for _, slotName in pairs(currentProfessionSlots) do
 		local slotID = GetInventorySlotInfo(slotName)
 		local itemLink = GetInventoryItemLink("player", slotID)
 		if itemLink ~= nil then
-			local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
+			local itemStats = CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 			if itemStats.inspiration then
 				stats.inspiration = stats.inspiration + itemStats.inspiration
 			end
@@ -517,9 +519,9 @@ function CraftSimDATAEXPORT:GetCurrentProfessionItemStats()
 	return stats
 end
 
-function CraftSimDATAEXPORT:GetEquippedProfessionGear()
+function CraftSim.DATAEXPORT:GetEquippedProfessionGear()
 	local professionGear = {}
-	local currentProfessionSlots = CraftSimFRAME:GetProfessionEquipSlots()
+	local currentProfessionSlots = CraftSim.FRAME:GetProfessionEquipSlots()
 	
 	for _, slotName in pairs(currentProfessionSlots) do
 		--print("checking slot: " .. slotName)
@@ -527,7 +529,7 @@ function CraftSimDATAEXPORT:GetEquippedProfessionGear()
 		local itemLink = GetInventoryItemLink("player", slotID)
 		if itemLink ~= nil then
 			local _, _, _, _, _, _, _, _, equipSlot = GetItemInfo(itemLink) 
-			local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
+			local itemStats = CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 			--print("e ->: " .. itemLink)
 			table.insert(professionGear, {
 				itemID = CraftSimUTIL:GetItemIDByLink(itemLink),
@@ -541,7 +543,7 @@ function CraftSimDATAEXPORT:GetEquippedProfessionGear()
 	return professionGear
 end
 
-function CraftSimDATAEXPORT:GetProfessionGearFromInventory()
+function CraftSim.DATAEXPORT:GetProfessionGearFromInventory()
 	local currentProfession = ProfessionsFrame.professionInfo.parentProfessionName
 	local professionGear = {}
 
@@ -552,7 +554,7 @@ function CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 				local _, _, _, _, _, _, itemSubType, _, equipSlot = GetItemInfo(itemLink) 
 				if itemSubType == currentProfession then
 					--print("i -> " .. tostring(itemLink))
-					local itemStats = CraftSimDATAEXPORT:GetProfessionGearStatsByLink(itemLink)
+					local itemStats = CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 					table.insert(professionGear, {
 						itemID = CraftSimUTIL:GetItemIDByLink(itemLink),
 						itemLink = itemLink,
@@ -567,7 +569,7 @@ function CraftSimDATAEXPORT:GetProfessionGearFromInventory()
 	return professionGear
 end
 
-function CraftSimDATAEXPORT:GetReagentNameFromReagentData(itemID)
+function CraftSim.DATAEXPORT:GetReagentNameFromReagentData(itemID)
 	local reagentData = CraftSimREAGENTWEIGHTS[itemID]
 
 	if reagentData then
@@ -583,7 +585,7 @@ function CraftSimDATAEXPORT:GetReagentNameFromReagentData(itemID)
 	end
 end
 
-function CraftSimDATAEXPORT:ExportTooltipData(recipeData)
+function CraftSim.DATAEXPORT:ExportTooltipData(recipeData)
 	local crafter = GetUnitName("player", showServerName)
 
 	local tooltipData = {
@@ -599,22 +601,22 @@ function CraftSimDATAEXPORT:ExportTooltipData(recipeData)
 	return tooltipData
 end
 
-function CraftSimDATAEXPORT:UpdateTooltipData(recipeData)
-	local data = CraftSimDATAEXPORT:ExportTooltipData(recipeData)
-    if recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.GEAR or recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR then
+function CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
+	local data = CraftSim.DATAEXPORT:ExportTooltipData(recipeData)
+    if recipeData.recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeData.recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR then
         -- map itemlinks to data
 		CraftSimTooltipData[recipeData.result.hyperlink] = data
-	elseif recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeData.recipeType == CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
+	elseif recipeData.recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeData.recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
 		CraftSimTooltipData[recipeData.result.itemID] = data
-	elseif recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.GATHERING and recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_CRAFT_OPERATION and
-	 recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.RECRAFT and recipeData.recipeType ~= CraftSimCONST.RECIPE_TYPES.NO_ITEM then
+	elseif recipeData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING and recipeData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION and
+	 recipeData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.RECRAFT and recipeData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
         -- map itemids to data
         -- the item id has a certain quality, so remember the itemid and the current crafting costs as "last crafting costs"
         CraftSimTooltipData[recipeData.result.itemIDs[recipeData.expectedQuality]] = data
     end
 end
 
-function CraftSimDATAEXPORT:GetItemFromCacheByItemID(itemID)
+function CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID)
 	if CraftSimItemCache[itemID] then
 		return CraftSimItemCache[itemID]
 	else
@@ -679,7 +681,7 @@ function CraftSimDATAEXPORT:GetItemFromCacheByItemID(itemID)
 	end
 end
 
-function CraftSimDATAEXPORT:GetRacialProfessionSkillBonus(professionID)
+function CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(professionID)
 	local _, playerRace = UnitRace("player")
 	local data = {
 		Gnome = {

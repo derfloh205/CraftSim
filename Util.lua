@@ -146,37 +146,37 @@ end
 
 function CraftSimUTIL:isItemSoulbound(itemID)
     local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID) 
-    return bindType == CraftSimCONST.BINDTYPES.SOULBOUND
+    return bindType == CraftSim.CONST.BINDTYPES.SOULBOUND
 end
 
 function CraftSimUTIL:GetRecipeType(recipeInfo) -- the raw info
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
     if recipeInfo.isEnchantingRecipe then
-        return CraftSimCONST.RECIPE_TYPES.ENCHANT
+        return CraftSim.CONST.RECIPE_TYPES.ENCHANT
     elseif recipeInfo.isRecraft then
-        return CraftSimCONST.RECIPE_TYPES.RECRAFT
+        return CraftSim.CONST.RECIPE_TYPES.RECRAFT
     elseif schematicInfo.hasGatheringOperationInfo then
-        return CraftSimCONST.RECIPE_TYPES.GATHERING
+        return CraftSim.CONST.RECIPE_TYPES.GATHERING
     elseif recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil then -- its gear
         local itemID = schematicInfo.outputItemID
 		if CraftSimUTIL:isItemSoulbound(itemID) then
-            return CraftSimCONST.RECIPE_TYPES.SOULBOUND_GEAR
+            return CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR
         else
-            return CraftSimCONST.RECIPE_TYPES.GEAR
+            return CraftSim.CONST.RECIPE_TYPES.GEAR
         end
 	elseif recipeInfo.supportsQualities then
         if not recipeInfo.qualityItemIDs and not recipeInfo.qualityIlvlBonuses then
-            return CraftSimCONST.RECIPE_TYPES.NO_ITEM
+            return CraftSim.CONST.RECIPE_TYPES.NO_ITEM
         elseif schematicInfo.quantityMin > 1 or schematicInfo.quantityMax > 1 then
-            return CraftSimCONST.RECIPE_TYPES.MULTIPLE
+            return CraftSim.CONST.RECIPE_TYPES.MULTIPLE
         elseif schematicInfo.quantityMin == 1 and schematicInfo.quantityMax == 1 then
-            return CraftSimCONST.RECIPE_TYPES.SINGLE
+            return CraftSim.CONST.RECIPE_TYPES.SINGLE
         end
     elseif not recipeInfo.supportsQualities then
         if schematicInfo.quantityMin > 1 or schematicInfo.quantityMax > 1 then
-            return CraftSimCONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE
+            return CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE
         elseif schematicInfo.quantityMin == 1 and schematicInfo.quantityMax == 1 then
-            return CraftSimCONST.RECIPE_TYPES.NO_QUALITY_SINGLE
+            return CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE
         end
     end
 end
@@ -222,7 +222,7 @@ end
 function CraftSimUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     local absValue = abs(copperValue)
     local minusText = ""
-    local color = CraftSimCONST.COLORS.GREEN
+    local color = CraftSim.CONST.COLORS.GREEN
     local percentageText = ""
 
     if percentRelativeTo then
@@ -234,7 +234,7 @@ function CraftSimUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
 
     if copperValue < 0 then
         minusText = "-"
-        color = CraftSimCONST.COLORS.RED
+        color = CraftSim.CONST.COLORS.RED
     end
 
     if useColor then

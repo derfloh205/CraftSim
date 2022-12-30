@@ -26,7 +26,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
 
     -- Create Knapsacks for required reagents with different Qualities
     local requiredReagents = CraftSimUTIL:FilterTable(recipeData.reagents, function(reagent) 
-        return reagent.reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED and reagent.differentQualities
+        return reagent.reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED and reagent.differentQualities
     end)
 
     local mWeight = {}
@@ -184,7 +184,7 @@ function CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, reci
         end
     end
     
-    CraftSimFRAME:ShowBestReagentAllocation(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation)
+    CraftSim.FRAME:ShowBestReagentAllocation(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation)
 end
 
 function CraftSimREAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
@@ -483,10 +483,10 @@ function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeTyp
         -- for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
         --     local reagents = currentSlot.reagents
         --     local reagentType = currentSlot.reagentType
-        --     local reagentName = CraftSimDATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
+        --     local reagentName = CraftSim.DATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
         --     local allocations = recipeData.currentTransaction:GetAllocations(slotIndex)
         --     --allocations:Clear(); -- set all to zero
-        --     if reagentType == CraftSimCONST.REAGENT_TYPE.REQUIRED then
+        --     if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
         --         local hasMoreThanOneQuality = reagents[2] ~= nil
     
         --         if hasMoreThanOneQuality then
@@ -518,7 +518,7 @@ function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeTyp
         -- -- this should trigger our modules AND everything blizzard needs to know
         -- ProfessionsFrame.CraftingPage.SchematicForm:TriggerEvent(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified)
         -- update frontend with fresh data
-        -- local freshRecipeData = CraftSimDATAEXPORT:exportRecipeData()
+        -- local freshRecipeData = CraftSim.DATAEXPORT:exportRecipeData()
         -- local freshPriceData = CraftSimPRICEDATA:GetPriceData(freshRecipeData, freshRecipeData.recipeType)
         -- CraftSimREAGENT_OPTIMIZATION:OptimizeReagentAllocation(freshRecipeData, freshRecipeData.recipeType, freshPriceData)
     else
@@ -547,7 +547,7 @@ function CraftSimREAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeTyp
             end
         end
     
-        CraftSimMAIN:TriggerModulesByRecipeType()
+        CraftSim.MAIN:TriggerModulesByRecipeType()
     end
 	
 end
