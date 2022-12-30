@@ -39,10 +39,3 @@ jobs:
       # once cloned, we just run the GitHub Action for the packager project
       - name: Package and release
         uses: BigWigsMods/packager@v2
-
-      # another example where we supply additional arguments, this example is specifically to release
-      # for the Wrath of the Lich King Classic version of the game and doesn't upload to WoWInterface
-      - name: Package and release for Wrath of the Lich King Classic
-        uses: BigWigsMods/packager@v2
-        with:
-          args: -g wrath -w 0
