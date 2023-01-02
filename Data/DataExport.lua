@@ -130,7 +130,8 @@ function CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
 			specNodeData[currentNode.nodeID] = {
 				nodeID = currentNode.nodeID,
 				name = currentNode.name,
-				activeRank = nodeInfo.activeRank
+				activeRank = nodeInfo.activeRank,
+				maxRanks = nodeInfo.maxRanks,
 				-- parent nodes? and other stuff..
 			}
 		end

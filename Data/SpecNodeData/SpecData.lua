@@ -63,7 +63,7 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
     if not singleNodeID then
         recipeData.specNodeData.affectedNodes = {}
     end
-    
+
     for name, nodeData in pairs(ruleNodes) do 
         local nodeInfo = specNodeData[nodeData.nodeID]
 
@@ -100,6 +100,7 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
                     table.insert(recipeData.specNodeData.affectedNodes, {
                         nodeID = nodeData.nodeID,
                         nodeRank = nodeRank,
+                        maxRanks = nodeInfo.maxRanks,
                         nodeActualValue = nodeActualValue,
                         nodeStats = nodeStats,
                     })

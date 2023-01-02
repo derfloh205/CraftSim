@@ -1144,7 +1144,7 @@ function CraftSim.FRAME:InitSpecInfoFrame()
         nodeLine:SetSize(frame.content:GetWidth(), 25)
         nodeLine:SetPoint("TOP", anchorParent, "TOP", 0, offsetY)
 
-        nodeLine.statTooltip = CraftSim.FRAME:CreateHelpIcon("No data", nodeLine, nodeLine, "CENTER", "CENTER", -70, 0)
+        nodeLine.statTooltip = CraftSim.FRAME:CreateHelpIcon("No data", nodeLine, nodeLine, "LEFT", "LEFT", 20, 0)
 
         nodeLine.nodeName = nodeLine:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         nodeLine.nodeName:SetPoint("LEFT", nodeLine.statTooltip, "RIGHT", 10, 0)
@@ -1187,7 +1187,7 @@ function CraftSim.FRAME:FillSpecInfoFrame(recipeData)
 
                 local nodeName = nodeNameData.name
 
-                nodeLine.nodeName:SetText(nodeName)
+                nodeLine.nodeName:SetText(nodeName .. " (" .. tostring(affectedNode.nodeActualValue) .. "/" .. tostring(affectedNode.maxRanks-1) .. ")")
 
                 local nodeStats = affectedNode.nodeStats
 
