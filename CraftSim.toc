@@ -37,6 +37,7 @@ Locals/enUS.lua
 Locals/deDE.lua
 Locals/itIT.lua
 Locals/ruRU.lua
+Locals/ptBR.lua
 Locals/frFR.lua
 Locals/esES.lua
 
