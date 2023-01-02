@@ -10,26 +10,27 @@
 
 embeds.xml
 
-SimMode.lua
-ProfitCalculation.lua
-AccountSync.lua
-Tooltip.lua
-EnchantData.lua
+
 Options.lua
-CostOverview.lua
-ReagentWeightData.lua
-ReagentOptimization.lua
-Frames.lua
-GearSim.lua
-PriceAPIs.lua
+
 Const.lua
-DataExport.lua
-PriceData.lua
 Util.lua
-StatweightCalculation.lua
 Debug.lua
 CraftSim.lua
 CraftSim.xml
+
+Pricing/ProfitCalculation.lua
+Pricing/PriceAPIs.lua
+Pricing/PriceData.lua
+
+Modules/SimMode.lua
+Modules/StatweightCalculation.lua
+Modules/ReagentOptimization.lua
+Modules/Frames.lua
+Modules/GearSim.lua
+Modules/CostOverview.lua
+Modules/AccountSync.lua
+Modules/Tooltip.lua
 
 Locals/Localization.lua
 Locals/enUS.lua
@@ -40,11 +41,15 @@ Locals/ptBR.lua
 Locals/frFR.lua
 Locals/esES.lua
 
-SpecNodeData/SpecData.lua
-SpecNodeData/Alchemy.lua
-SpecNodeData/Blacksmithing.lua
-SpecNodeData/Enchanting.lua
-SpecNodeData/Inscription.lua
-SpecNodeData/Jewelcrafting.lua
-SpecNodeData/Leatherworking.lua
-SpecNodeData/Tailoring.lua
+Data/EnchantData.lua
+Data/ReagentWeightData.lua
+Data/DataExport.lua
+
+Data/SpecNodeData/SpecData.lua
+Data/SpecNodeData/Alchemy.lua
+Data/SpecNodeData/Blacksmithing.lua
+Data/SpecNodeData/Enchanting.lua
+Data/SpecNodeData/Inscription.lua
+Data/SpecNodeData/Jewelcrafting.lua
+Data/SpecNodeData/Leatherworking.lua
+Data/SpecNodeData/Tailoring.lua
