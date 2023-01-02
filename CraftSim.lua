@@ -182,17 +182,6 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 		command = command and command:lower()
 		rest = (rest and rest ~= "") and rest:trim() or nil
 
-		if command == "export" then
-			if ProfessionsFrame:IsVisible() and ProfessionsFrame.CraftingPage:IsVisible() then
-				print("CRAFTSIM: Export Data")
-				--CraftSim.UTIL:KethoEditBox_Show(CraftSim.DATAEXPORT:getExportString())
-				--KethoEditBoxEditBox:HighlightText()
-				-- TODO: refactor to work with new recipeData format
-			else
-				print("CRAFTSIM ERROR: No Recipe Opened")
-			end
-		end
-
 		if command == "pricedebug" then
 			CraftSimOptions.priceDebug = not CraftSimOptions.priceDebug
 			print("Craftsim: Toggled price debug mode: " .. tostring(CraftSimOptions.priceDebug))
@@ -202,10 +191,9 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 			else
 				CraftSim.PRICE_APIS:InitAvailablePriceAPI()
 			end
-		end
-
-		if command == "convert" then
-			CraftSim.DATAEXPORT:ConvertData()
+		else 
+			-- open options if any other command or no command is given
+			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
 		end
 	end
 

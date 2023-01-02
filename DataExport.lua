@@ -7,20 +7,6 @@ CraftSimItemCache = CraftSimItemCache or {}
 
 LibCompress = LibStub:GetLibrary("LibCompress")
 
--- DEPRICATED
-function CraftSim.DATAEXPORT:getExportString()
-	local exportData = CraftSim.DATAEXPORT:exportRecipeData()
-	-- now digest into an export string
-	if exportData == nil then
-		return "Current Recipe Type not supported"
-	end
-	local exportString = ""
-	for property, value in pairs(exportData) do
-		exportString = exportString .. tostring(property) .. "," .. tostring(value) .. "\n"
-	end
-	return exportString
-end
-
 function CraftSim.DATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
 	-- TODO: is this consistent enough?
 	local linksByQuality = {}
