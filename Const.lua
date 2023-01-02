@@ -204,6 +204,7 @@ CraftSim.CONST.LOCALES = {
     IT = "itIT",
     RU = "ruRU",
     ES = "esES",
+    FR = "frFR",
 }
 
 CraftSim.CONST.TEXT = {
