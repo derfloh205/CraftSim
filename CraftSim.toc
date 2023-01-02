@@ -31,6 +31,7 @@ Modules/GearSim.lua
 Modules/CostOverview.lua
 Modules/AccountSync.lua
 Modules/Tooltip.lua
+Modules/SpecInfo.lua
 
 Locals/Localization.lua
 Locals/enUS.lua

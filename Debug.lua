@@ -36,7 +36,7 @@ function CraftSim_DEBUG:CheckSpecNode(nodeID)
 
     local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[professionID]
 
-    local statsFromData = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeID)
+    local statsFromData = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeID, true)
 
     print("Stats from node: ")
     CraftSim.UTIL:PrintTable(statsFromData, true)

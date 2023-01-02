@@ -40,7 +40,7 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
     return IDs
 end
 
-function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, debugNodeID)
+function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, singleNodeID, printDebug)
     local specNodeData = recipeData.specNodeData
 
     local stats = {	
@@ -60,10 +60,14 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, debu
     }
 
     local debugPrinted = false
+    if not singleNodeID then
+        recipeData.specNodeData.affectedNodes = {}
+    end
+    
     for name, nodeData in pairs(ruleNodes) do 
         local nodeInfo = specNodeData[nodeData.nodeID]
 
-        if not debugNodeID or (debugNodeID and debugNodeID == nodeData.nodeID) then
+        if not singleNodeID or (singleNodeID and singleNodeID == nodeData.nodeID) then
 
             if not nodeInfo then
                 error("CraftSim Error: Node ID not implemented: " .. tostring(nodeData.nodeID))
@@ -80,11 +84,29 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, debu
             local isCategoryID = tContains(IDs.categoryIDs, recipeData.categoryID) or tContains(IDs.categoryIDs, CraftSim.CONST.RECIPE_CATEGORIES.ALL)
             local isSubtypeID = tContains(IDs.subtypeIDs, recipeData.subtypeID) or tContains(IDs.subtypeIDs, CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL)
             local isException = IDs.exceptionRecipeIDs and tContains(IDs.exceptionRecipeIDs, recipeData.recipeID)
-            local nodeAffectsRecipe = isSubtypeID and isCategoryID
+            local nodeAffectsRecipe = isSubtypeID and isCategoryID 
             -- sometimes the category and subcategory can still not uniquely determine ..
             nodeAffectsRecipe = nodeAffectsRecipe or isException
+
+            nodeAffectsRecipe = nodeAffectsRecipe and nodeRank > 0
+
+            if (nodeAffectsRecipe or nodeData.debug) and not singleNodeID then
+                local containsNode = CraftSim.UTIL:Find(recipeData.specNodeData.affectedNodes, function(node) 
+                    return node.nodeID == nodeData.nodeID
+                end)
+                if not containsNode then
+                    print("add node to affected: " .. tostring(nodeData.nodeID))
+                    local nodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeData.nodeID, false)
+                    table.insert(recipeData.specNodeData.affectedNodes, {
+                        nodeID = nodeData.nodeID,
+                        nodeRank = nodeRank,
+                        nodeActualValue = nodeActualValue,
+                        nodeStats = nodeStats,
+                    })
+                end
+            end
     
-            if debugNodeID and not debugPrinted then
+            if printDebug and not debugPrinted then
                 debugPrinted = true
                 -- debug
                 print("CHECK NODE: " .. tostring(nodeData.nodeID))

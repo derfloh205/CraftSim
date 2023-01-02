@@ -233,10 +233,30 @@ function CraftSim.OPTIONS:InitOptionsFrame()
         "0", "1", 
         function(self, value)
             CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW):SetTransparency(value)
-            CraftSimCostOverviewFrame:SetTransparency(value)
             CraftSimOptions.transparencyCostOverview = value
         end)
         CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW):SetTransparency(CraftSimOptions.transparencyCostOverview)
+
+    local specInfoCheckbox = CraftSim.FRAME:CreateCheckbox(" Specialization Info", 
+    "Activate the module that shows how your profession specializations affect this recipe\nDISCLAIMER: This shows up only for professions that already support the specialization tree data",
+    "modulesSpecInfo", 
+    ModulesTab.content, 
+    costOverviewCheckbox, 
+    "TOP", 
+    "TOP", 
+    0, 
+    -20)
+
+    local specInfoTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimSpecInfoSlider", 
+        "", ModulesTab.content, CraftSimCostOverviewTransparencySlider, 
+        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL", 
+        0, 1, CraftSimOptions.transparencySpecInfo, -- get from options..
+        "0", "1", 
+        function(self, value)
+            CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(value)
+            CraftSimOptions.transparencySpecInfo = value
+        end)
+        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions.transparencySpecInfo)
 
      local skillBreakpointsCheckbox = CraftSim.FRAME:CreateCheckbox(" Offset Skill Breakpoints by 1", 
      "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",

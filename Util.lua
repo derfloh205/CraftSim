@@ -256,6 +256,16 @@ function CraftSim.UTIL:FilterTable(t, filterFunc)
     return filtered
 end
 
+function CraftSim.UTIL:Find(t, findFunc)
+    for k, v in pairs(t) do
+        if findFunc(v) then
+            return v
+        end
+    end
+
+    return false
+end
+
 function CraftSim.UTIL:FoldTable(t, foldFunction, startAtZero)
     local foldedValue = nil
     if #t < 2 and not startAtZero then

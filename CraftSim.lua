@@ -22,10 +22,12 @@ CraftSimOptions = CraftSimOptions or {
 	modulesStatWeights = true,
 	modulesTopGear = true,
 	modulesCostOverview = true,
+	modulesSpecInfo = true,
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
 	transparencyTopGear = 1,
-	transparencyCostOverview = 1
+	transparencyCostOverview = 1,
+	transparencySpecInfo = 1
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -47,6 +49,7 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.transparencyStatWeights = CraftSimOptions.transparencyStatWeights or 1
 		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
 		CraftSimOptions.transparencyCostOverview = CraftSimOptions.transparencyCostOverview or 1
+		CraftSimOptions.transparencySpecInfo = CraftSimOptions.transparencySpecInfo or 1
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end
@@ -64,6 +67,9 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.modulesCostOverview == nil then
 			CraftSimOptions.modulesCostOverview = true
+		end
+		if CraftSimOptions.modulesSpecInfo == nil then
+			CraftSimOptions.modulesSpecInfo = true
 		end
 	end
 end
@@ -108,6 +114,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.FRAME:InitCostOverviewFrame()
 		CraftSim.FRAME:InitBestAllocationsFrame()
 		CraftSim.FRAME:InitProfitDetailsFrame()
+		CraftSim.FRAME:InitSpecInfoFrame()
 		CraftSim.SIMULATION_MODE:Init()
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -265,6 +272,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
     local showCostOverview = false
     local showCostOverviewCraftingCostsOnly = false
 	local showSimulationMode = false
+	local showSpecInfo = false
 
 	if recipeData and priceData then
 		CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
@@ -276,11 +284,13 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			showCostOverview = true
 			showStatweights = true
 			showSimulationMode = true
+			showSpecInfo = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.ENCHANT then
 			showTopGear = true
 			showCostOverview = true
 			showStatweights = true
 			showSimulationMode = true
+			showSpecInfo = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
 			-- show everything except material allocation and total cost overview
 			showTopGear = true
@@ -288,6 +298,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			showCostOverviewCraftingCostsOnly = true
 			showStatweights = true
 			showSimulationMode = true
+			showSpecInfo = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
 			-- show crafting costs and highest material allocation
 			showCostOverview = true
@@ -296,6 +307,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			-- also show top gear cause we have different modes now
 			showTopGear = true
 			showSimulationMode = true
+			showSpecInfo = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
 			-- show nothing
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.RECRAFT then
@@ -306,16 +318,23 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			-- show crafting costs
 			showCostOverview = true
 			showCostOverviewCraftingCostsOnly = true
+			showSpecInfo = true
 		end
 	end
 
-	local showMaterialAllocation = showMaterialAllocation and CraftSimOptions.modulesMaterials
-	local showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
-	local showTopGear = showTopGear and CraftSimOptions.modulesTopGear
-	local showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
+	showMaterialAllocation = showMaterialAllocation and CraftSimOptions.modulesMaterials
+	showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
+	showTopGear = showTopGear and CraftSimOptions.modulesTopGear
+	showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
+	showSpecInfo = showSpecInfo and CraftSimOptions.modulesSpecInfo
 
 	if recipeData and recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING and recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION and recipeType ~= CraftSim.CONST.RECIPE_TYPES.RECRAFT then
 		CraftSim.FRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
+	end
+
+	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO), showSpecInfo)
+	if recipeData and showSpecInfo then
+		CraftSim.FRAME:FillSpecInfoFrame(recipeData)
 	end
 
 	CraftSim.FRAME:ToggleFrame(CraftSimSimModeToggleButton, showSimulationMode)

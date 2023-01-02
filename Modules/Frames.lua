@@ -939,18 +939,11 @@ function CraftSim.FRAME:makeFrameMoveable(frame)
 end
 
 function CraftSim.FRAME:ResetFrames()
-    local materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
-    local costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
-    local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
-    local statweightFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS)
-    materialFrame:ClearAllPoints()
-    costOverviewFrame:ClearAllPoints()
-    topGearFrame:ClearAllPoints()
-    statweightFrame:ClearAllPoints()
-    materialFrame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "BOTTOM", 0, 0)
-    costOverviewFrame:SetPoint("TOP",  topGearFrame, "BOTTOM", 0, 10)
-    topGearFrame:SetPoint("TOPLEFT",  ProfessionsFrame.CloseButton, "TOPRIGHT", -5, 3)
-    statweightFrame:SetPoint("TOP",  ProfessionsFrame.CraftingPage.SchematicForm.Details, "BOTTOM", 0, 19)
+    for _, frameName in pairs(CraftSim.FRAME.frames) do
+        local frame = _G[frameName]
+        frame.hookFrame:ClearAllPoints()
+        frame.resetPosition()
+    end
 end
 
 local hooked = false
@@ -1008,6 +1001,10 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
     frame.hookFrame = hookFrame
     hookFrame:SetSize(sizeX, sizeY)
     frame:SetSize(sizeX, sizeY)
+
+    frame.resetPosition = function() 
+        hookFrame:SetPoint(anchorA, anchorFrame, anchorB, offsetX, offsetY)
+    end
 
     frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.title:SetPoint("TOP", frame, "TOP", 0, -15)
@@ -1110,14 +1107,19 @@ end
 
 function CraftSim.FRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
     local helpButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+    helpButton.tooltipText = text
     helpButton:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)	
     helpButton:SetText("?")
     helpButton:SetSize(helpButton:GetTextWidth() + 15, 15)
 
+    helpButton.SetTooltipText = function(newText) 
+        helpButton.tooltipText = newText
+    end
+
     helpButton:SetScript("OnEnter", function(self) 
         GameTooltip:SetOwner(helpButton, "ANCHOR_RIGHT")
         GameTooltip:ClearLines() 
-        GameTooltip:SetText(text)
+        GameTooltip:SetText(self.tooltipText)
         GameTooltip:Show()
     end)
     helpButton:SetScript("OnLeave", function(self) 
@@ -1125,6 +1127,103 @@ function CraftSim.FRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, anch
     end)
 
     return helpButton
+end
+
+function CraftSim.FRAME:InitSpecInfoFrame()
+    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimSpecInfoFrame", 
+    "CraftSim Specialization Info", 
+    ProfessionsFrame.CraftingPage.SchematicForm, 
+    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR), 
+    "TOPLEFT", "TOPRIGHT", -10, 0, 250, 300, CraftSim.CONST.FRAMES.SPEC_INFO)
+
+    -- TODO: possible scrollframe?
+
+    frame.content.nodeLines = {}
+    local function createNodeLine(parent, anchorParent, offsetY)
+        local nodeLine = CreateFrame("frame", nil, parent)
+        nodeLine:SetSize(frame.content:GetWidth(), 25)
+        nodeLine:SetPoint("TOP", anchorParent, "TOP", 0, offsetY)
+
+        nodeLine.statTooltip = CraftSim.FRAME:CreateHelpIcon("No data", nodeLine, nodeLine, "CENTER", "CENTER", -70, 0)
+
+        nodeLine.nodeName = nodeLine:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        nodeLine.nodeName:SetPoint("LEFT", nodeLine.statTooltip, "RIGHT", 10, 0)
+        nodeLine.nodeName:SetText("NodeName")
+        return nodeLine
+    end
+    -- TODO: how many do I need?
+    local baseY = -20
+    local nodeLineSpacingY = -20
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title, baseY))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*2))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*3))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*4))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*5))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*6))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*7))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*8))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*9))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*10))
+    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*11))
+end
+
+function CraftSim.FRAME:FillSpecInfoFrame(recipeData)
+    local professionID = recipeData.professionID
+
+    local professionNodes = CraftSim.SPEC_DATA:GetNodes(professionID)
+
+    
+    local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
+    if recipeData.specNodeData and recipeData.specNodeData.affectedNodes and #recipeData.specNodeData.affectedNodes > 0 then
+        print("Affecting Nodes: " .. tostring(#recipeData.specNodeData.affectedNodes))
+        for nodeLineIndex, nodeLine in pairs(specInfoFrame.content.nodeLines) do
+            local affectedNode = recipeData.specNodeData.affectedNodes[nodeLineIndex]
+
+            if affectedNode then
+                local nodeNameData = CraftSim.UTIL:FilterTable(professionNodes, function(node) 
+                    return affectedNode.nodeID == node.nodeID
+                end)[1]
+
+                local nodeName = nodeNameData.name
+
+                nodeLine.nodeName:SetText(nodeName)
+
+                local nodeStats = affectedNode.nodeStats
+
+                local tooltipText = "This node grants you following stats for this recipe:\n\n"
+
+                for statName, statValue in pairs(nodeStats) do
+                    local translatedStatName = CraftSim.LOCAL:TranslateStatName(statName)
+                    local includeStat = statValue > 0
+                    local isPercent = false
+                    if string.match(statName, "Factor")  then
+                        isPercent = true
+                        if statValue == 1 then
+                            includeStat = false
+                        end
+                    end 
+                    if includeStat then
+                        if isPercent then
+                            local displayValue = CraftSim.UTIL:FormatFactorToPercent(statValue)
+                            tooltipText = tooltipText .. tostring(translatedStatName) .. ": " .. tostring(displayValue) .. "\n"
+                        else
+                            tooltipText = tooltipText .. tostring(translatedStatName) .. ": +" .. tostring(statValue) .. "\n"
+                        end
+                    end
+                end
+
+                nodeLine.statTooltip.SetTooltipText(tooltipText)
+                nodeLine:Show()
+            else
+                nodeLine:Hide()
+            end
+        end
+    elseif recipeData.specNodeData and recipeData.specNodeData.affectedNodes and #recipeData.specNodeData.affectedNodes == 0 then
+        specInfoFrame.content.nodeList:SetText("Recipe not affected by specializations")
+    else
+        specInfoFrame.content.nodeList:SetText("Profession not implemented yet")
+    end
 end
 
 function CraftSim.FRAME:InitSimModeFrames()
