@@ -6,7 +6,7 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
     local IDs = {
         subtypeIDs = nodeData.subtypeIDs or {},
         categoryIDs = nodeData.categoryIDs or {},
-        expectionRecipeIDs = nodeData.expectionRecipeIDs or {}
+        exceptionRecipeIDs = nodeData.exceptionRecipeIDs or {}
     }
 
     -- add from childs
@@ -17,14 +17,20 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
 
             local childIDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(childNoteData, ruleNodes)
     
-            for _, subtypeID in pairs(childIDs.subtypeIDs) do
-                table.insert(IDs.subtypeIDs, subtypeID)
+            for _, subtypeID in pairs(childIDs.subtypeIDs or {}) do
+                if not tContains(IDs.subtypeIDs, subtypeID) then
+                    table.insert(IDs.subtypeIDs, subtypeID)
+                end
             end
-            for _, categoryID in pairs(childIDs.categoryIDs) do
-                table.insert(IDs.categoryIDs, categoryID)
+            for _, categoryID in pairs(childIDs.categoryIDs or {}) do
+                if not tContains(IDs.categoryIDs, categoryID) then
+                    table.insert(IDs.categoryIDs, categoryID)
+                end
             end
-            for _, expectionID in pairs(childIDs.expectionRecipeIDs) do
-                table.insert(IDs.expectionRecipeIDs, expectionID)
+            for _, expectionID in pairs(childIDs.exceptionRecipeIDs or {}) do
+                if not tContains(IDs.exceptionRecipeIDs, expectionID) then
+                    table.insert(IDs.exceptionRecipeIDs, expectionID)
+                end
             end
         end
 
@@ -34,7 +40,7 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
     return IDs
 end
 
-function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes)
+function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, debugNodeID)
     local specNodeData = recipeData.specNodeData
 
     local stats = {	
@@ -53,69 +59,76 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes)
         potionExperimentationChanceFactor = 1,
     }
 
+    local debugPrinted = false
     for name, nodeData in pairs(ruleNodes) do 
-        --local nodeInfo = C_Traits.GetNodeInfo(configID, nodeData.nodeID)
         local nodeInfo = specNodeData[nodeData.nodeID]
 
-        if not nodeInfo then
-            error("CraftSim Error: Node ID not implemented: " .. tostring(nodeData.nodeID))
-        end
-        -- minus one cause its always 1 more than the ui rank to know wether it was learned or not (learned with 0 has 1 rank)
-        -- only increase if the current recipe has a matching category AND Subtype (like weapons -> one handed axes)
-        local nodeRank = nodeInfo.activeRank
-        local nodeActualValue = nodeInfo.activeRank - 1
+        if not debugNodeID or (debugNodeID and debugNodeID == nodeData.nodeID) then
 
-        -- fetch all subtypeIDs, categoryIDs and expectionRecipeIDs recursively
-        local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
+            if not nodeInfo then
+                error("CraftSim Error: Node ID not implemented: " .. tostring(nodeData.nodeID))
+            end
 
-        local isCategoryID = #IDs.categoryIDs == 0 or tContains(IDs.categoryIDs, recipeData.categoryID)
-        local isSubtypeID = #IDs.subtypeIDs == 0 or tContains(IDs.subtypeIDs, recipeData.subtypeID)
-        local isException = IDs.exceptionRecipeIDs and tContains(IDs.expectionRecipeIDs, recipeData.recipeID)
-        local nodeAffectsRecipe = isSubtypeID and isCategoryID
-        -- sometimes the category and subcategory can still not uniquely determine ..
-        nodeAffectsRecipe = nodeAffectsRecipe or isException
-
-        if nodeData.nodeID == 42828 then
-            -- debug
-            print("node affected: " .. tostring(nodeAffectsRecipe))
-            print("isCategoryID: " .. tostring(isCategoryID))
-            print("isSubtypeID: " .. tostring(isSubtypeID))
-            print("isException " .. tostring(isException))
-            print("ids: ")
-            CraftSim.UTIL:PrintTable(IDs)
-        end
-        if nodeInfo and (nodeAffectsRecipe or nodeData.debug) then
-            if nodeData.threshold and (nodeInfo.activeRank - 1) >= nodeData.threshold then
-                -- ThresholdNode
-                -- Stack additively..
-                stats.multicraftBonusItemsFactor = stats.multicraftBonusItemsFactor + (nodeData.multicraftBonusItemsFactor or 0)
-                stats.resourcefulnessBonusItemsFactor = stats.resourcefulnessBonusItemsFactor + (nodeData.resourcefulnessBonusItemsFactor or 0)
-                stats.craftingspeedBonusFactor = stats.craftingspeedBonusFactor + (nodeData.craftingspeedBonusFactor or 0)
-                stats.inspirationBonusSkillFactor = stats.inspirationBonusSkillFactor + (nodeData.inspirationBonusSkillFactor or 0)
-                stats.phialExperimentationChanceFactor = stats.phialExperimentationChanceFactor + (nodeData.phialExperimentationChanceFactor or 0)
-                stats.potionExperimentationChanceFactor = stats.potionExperimentationChanceFactor + (nodeData.potionExperimentationChanceFactor or 0)
-
-                stats.skill = stats.skill + (nodeData.skill or 0)
-                stats.inspiration = stats.inspiration + (nodeData.inspiration or 0)
-                stats.multicraft = stats.multicraft + (nodeData.multicraft or 0)
-                stats.resourcefulness = stats.resourcefulness + (nodeData.resourcefulness or 0)
-                stats.craftingspeed = stats.craftingspeed + (nodeData.craftingspeed or 0)
-            elseif nodeData.equalsSkill then
-                stats.skill = stats.skill + nodeActualValue
-            elseif nodeData.equalsMulticraft then
-                stats.multicraft = stats.multicraft + nodeActualValue
-            elseif nodeData.equalsInspiration then
-                stats.inspiration = stats.inspiration + nodeActualValue
-            elseif nodeData.equalsResourcefulness then
-                stats.resourcefulness = stats.resourcefulness + nodeActualValue
-            elseif nodeData.equalsCraftingspeed then
-                stats.craftingspeed = stats.craftingspeed + nodeActualValue
-            elseif nodeData.equalsResourcefulnessExtraItemsFactor then
-                stats.resourcefulnessExtraItemsFactor = stats.resourcefulnessExtraItemsFactor + nodeActualValue*0.01 
-            elseif nodeData.equalsPhialExperimentationChanceFactor then
-                stats.phialExperimentationChanceFactor = stats.phialExperimentationChanceFactor + nodeActualValue*0.01
-            elseif nodeData.equalsPotionExperimentationChanceFactor then
-                stats.potionExperimentationChanceFactor = stats.potionExperimentationChanceFactor + nodeActualValue*0.01
+            -- minus one cause its always 1 more than the ui rank to know wether it was learned or not (learned with 0 has 1 rank)
+            -- only increase if the current recipe has a matching category AND Subtype (like weapons -> one handed axes)
+            local nodeRank = nodeInfo.activeRank
+            local nodeActualValue = nodeInfo.activeRank - 1
+    
+            -- fetch all subtypeIDs, categoryIDs and exceptionRecipeIDs recursively
+            local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
+    
+            local isCategoryID = tContains(IDs.categoryIDs, recipeData.categoryID) or tContains(IDs.categoryIDs, CraftSim.CONST.RECIPE_CATEGORIES.ALL)
+            local isSubtypeID = tContains(IDs.subtypeIDs, recipeData.subtypeID) or tContains(IDs.subtypeIDs, CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL)
+            local isException = IDs.exceptionRecipeIDs and tContains(IDs.exceptionRecipeIDs, recipeData.recipeID)
+            local nodeAffectsRecipe = isSubtypeID and isCategoryID
+            -- sometimes the category and subcategory can still not uniquely determine ..
+            nodeAffectsRecipe = nodeAffectsRecipe or isException
+    
+            if debugNodeID and not debugPrinted then
+                debugPrinted = true
+                -- debug
+                print("CHECK NODE: " .. tostring(nodeData.nodeID))
+                print("-- Affected: " .. tostring(nodeAffectsRecipe))
+                print("-- isCategoryID: " .. tostring(isCategoryID))
+                print("-- isSubtypeID: " .. tostring(isSubtypeID))
+                print("-- isException " .. tostring(isException))
+                print(tostring(IDs.exceptionRecipeIDs) .. " and " .. "contains " .. tostring(IDs.exceptionRecipeIDs) .. ", " .. tostring(recipeData.recipeID))
+                print("-- ids: ")
+                CraftSim.UTIL:PrintTable(IDs, true)
+            end
+            if nodeInfo and (nodeAffectsRecipe or nodeData.debug) then
+                if nodeData.threshold and (nodeInfo.activeRank - 1) >= nodeData.threshold then
+                    -- ThresholdNode
+                    -- Stack additively..
+                    stats.multicraftBonusItemsFactor = stats.multicraftBonusItemsFactor + (nodeData.multicraftBonusItemsFactor or 0)
+                    stats.resourcefulnessBonusItemsFactor = stats.resourcefulnessBonusItemsFactor + (nodeData.resourcefulnessBonusItemsFactor or 0)
+                    stats.craftingspeedBonusFactor = stats.craftingspeedBonusFactor + (nodeData.craftingspeedBonusFactor or 0)
+                    stats.inspirationBonusSkillFactor = stats.inspirationBonusSkillFactor + (nodeData.inspirationBonusSkillFactor or 0)
+                    stats.phialExperimentationChanceFactor = stats.phialExperimentationChanceFactor + (nodeData.phialExperimentationChanceFactor or 0)
+                    stats.potionExperimentationChanceFactor = stats.potionExperimentationChanceFactor + (nodeData.potionExperimentationChanceFactor or 0)
+    
+                    stats.skill = stats.skill + (nodeData.skill or 0)
+                    stats.inspiration = stats.inspiration + (nodeData.inspiration or 0)
+                    stats.multicraft = stats.multicraft + (nodeData.multicraft or 0)
+                    stats.resourcefulness = stats.resourcefulness + (nodeData.resourcefulness or 0)
+                    stats.craftingspeed = stats.craftingspeed + (nodeData.craftingspeed or 0)
+                elseif nodeData.equalsSkill and nodeRank > 0 then
+                    stats.skill = stats.skill + nodeActualValue
+                elseif nodeData.equalsMulticraft and nodeRank > 0 then
+                    stats.multicraft = stats.multicraft + nodeActualValue
+                elseif nodeData.equalsInspiration and nodeRank > 0 then
+                    stats.inspiration = stats.inspiration + nodeActualValue
+                elseif nodeData.equalsResourcefulness and nodeRank > 0 then
+                    stats.resourcefulness = stats.resourcefulness + nodeActualValue
+                elseif nodeData.equalsCraftingspeed and nodeRank > 0 then
+                    stats.craftingspeed = stats.craftingspeed + nodeActualValue
+                elseif nodeData.equalsResourcefulnessExtraItemsFactor and nodeRank > 0 then
+                    stats.resourcefulnessExtraItemsFactor = stats.resourcefulnessExtraItemsFactor + nodeActualValue*0.01 
+                elseif nodeData.equalsPhialExperimentationChanceFactor and nodeRank > 0 then
+                    stats.phialExperimentationChanceFactor = stats.phialExperimentationChanceFactor + nodeActualValue*0.01
+                elseif nodeData.equalsPotionExperimentationChanceFactor and nodeRank > 0 then
+                    stats.potionExperimentationChanceFactor = stats.potionExperimentationChanceFactor + nodeActualValue*0.01
+                end
             end
         end
     end

@@ -127,40 +127,40 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = {"SAFETY_SMITHING_1", "POIGNANT_PLANS_1"},
             nodeID = 42828,
             equalsSkill = true,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         HAMMER_CONTROL_2 = {
             childNodeIDs = {"SAFETY_SMITHING_1", "POIGNANT_PLANS_1"},
             nodeID = 42828,
             threshold = 0,
             craftingspeedBonusFactor = 0.15,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         HAMMER_CONTROL_3 = {
             childNodeIDs = {"SAFETY_SMITHING_1", "POIGNANT_PLANS_1"},
             nodeID = 42828,
             threshold = 5,
             skill = 3,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         HAMMER_CONTROL_4 = {
             childNodeIDs = {"SAFETY_SMITHING_1", "POIGNANT_PLANS_1"},
             nodeID = 42828,
             threshold = 15,
             skill = 4,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         HAMMER_CONTROL_5 = {
             childNodeIDs = {"SAFETY_SMITHING_1", "POIGNANT_PLANS_1"},
             nodeID = 42828,
             threshold = 25,
             skill = 3,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         HAMMER_CONTROL_6 = {
             childNodeIDs = {"SAFETY_SMITHING_1", "POIGNANT_PLANS_1"},
@@ -169,97 +169,97 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             craftingspeedBonusFactor = 0.10,
             inspiration = 10,
             resourcefulness = 10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         SAFETY_SMITHING_1 = {
             nodeID = 42827,
             threshold = 0,
             resourcefulnessBonusItemsFactor = 0.05,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         SAFETY_SMITHING_2 = {
             nodeID = 42827,
             threshold = 10,
             resourcefulnessBonusItemsFactor = 0.10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         SAFETY_SMITHING_3 = {
             nodeID = 42827,
             threshold = 20,
             resourcefulnessBonusItemsFactor = 0.10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         SAFETY_SMITHING_4 = {
             nodeID = 42827,
             threshold = 30,
             resourcefulnessBonusItemsFactor = 0.25,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         SAFETY_SMITHING_5 = {
             nodeID = 42827,
             equalsResourcefulness = true,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         POIGNANT_PLANS_1 = {
             nodeID = 42826,
             equalsInspiration = true,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         POIGNANT_PLANS_2 = {
             nodeID = 42826,
             threshold = 0,
             inspirationBonusSkillFactor = 0.05,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         POIGNANT_PLANS_3 = {
             nodeID = 42826,
             threshold = 5,
             inspiration = 10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         POIGNANT_PLANS_4 = {
             nodeID = 42826,
             threshold = 10,
             inspirationBonusSkillFactor = 0.10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         POIGNANT_PLANS_5 = {
             nodeID = 42826,
             threshold = 15,
             inspiration = 10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         POIGNANT_PLANS_6 = {
             nodeID = 42826,
             threshold = 20,
             inspirationBonusSkillFactor = 0.10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         POIGNANT_PLANS_7 = {
             nodeID = 42826,
             threshold = 25,
             inspiration = 10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         POIGNANT_PLANS_8 = {
             nodeID = 42826,
             threshold = 30,
             inspirationBonusSkillFactor = 0.25,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL},
         },
         -- Speciality Smithing
         SPECIALITY_SMITHING_1 = {

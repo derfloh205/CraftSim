@@ -122,6 +122,7 @@ CraftSim.CONST.COLORS = {
 }
 
 CraftSim.CONST.RECIPE_CATEGORIES = {
+    ALL = 999999,
     BLACKSMITHING = {
         STONEWORK = 1684,
         SMELTING = 1678,
@@ -146,6 +147,7 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
         INCENSE = 1610,
         TRANSMUTATIONS = 1604,
         ESSENTIALS = 1681,
+        ALCHEMIST_STONES = 1605,
     },
     LEATHERWORKING = {
         DRUMS = 1655,
@@ -157,6 +159,7 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
 }
 
 CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
+    ALL = 999999,
     BLACKSMITHING = {
         STONEWORK = 8, -- "Other"
         METAL_AND_STONE = 7,
@@ -192,6 +195,7 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         INCENSE = 8, -- "other"
         ELEMENTAL = 10, -- transmutations
         EXPLOSIVES_AND_DEVICES = 0, -- transmutations
+        MISC = 0, -- trinket
     },
     LEATHERWORKING = {
         DRUMS = 8, -- "Other"
@@ -244,5 +248,5 @@ CraftSim.CONST.TEXT = {
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
-    return {} --{Enum.Profession.Blacksmithing}
+    return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy}
 end
