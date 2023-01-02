@@ -96,8 +96,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operation
 end
 
 function CraftSim.DATAEXPORT:GetStatsFromBuffs(buffData)
-	-- TODO: Implement
-    return {	
+	local stats = {	
         inspiration = 0,
         inspirationBonusSkillPercent = 0,
         multicraft = 0,
@@ -108,12 +107,27 @@ function CraftSim.DATAEXPORT:GetStatsFromBuffs(buffData)
 		craftingspeedBonusFactor = 1,
         skill = 0
     }
+
+	stats.inspiration = buffData.inspirationIncense or 0
+	stats.craftingspeedBonusFactor = 1 + ( (buffData.quickPhial or 0) / 100)
+	
+    return stats
 end
 
-function CraftSim.DATAEXPORT:exportBuffData(recipeData)
-	return { -- TODO: information about relevant stats like crafting speed / inspiration incense / inspiration portrait (?)
-
+function CraftSim.DATAEXPORT:exportBuffData()
+	local buffData = {
+		inspirationIncense = false,
+		quickPhial = false
 	}
+	
+	-- check for buffs
+	local inspirationIncense = C_UnitAuras.GetPlayerAuraBySpellID(CraftSim.CONST.BUFF_IDS.INSPIRATION_INCENSE)
+	local quickPhial = C_UnitAuras.GetPlayerAuraBySpellID(CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS)
+
+	buffData.inspirationIncense = inspirationIncense and 20 -- gives 20 inspiration
+	buffData.quickPhial = quickPhial and quickPhial.points[1] -- points gives us the % as integer
+
+	return buffData
 end
 
 function CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
@@ -183,6 +197,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		local baseInspirationBonusSkill = 0
 		local specNodeBonus = specNodeStats.inspiration
 		local itemBonus = professionGearStats.inspiration
+		local buffBonus = buffStats.inspiration
 		local itemBonusSkillFactor = 1 + (professionGearStats.inspirationBonusSkillPercent / 100) -- 15% -> 1.15
 		local specNodeBonusSkillFactor = specNodeStats.inspirationBonusSkillFactor
 		-- TODO: consider stable fluidic draconium 
@@ -196,7 +211,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 			end
 		end
 
-		recipeData.stats.inspiration.value = buffStats.inspiration + itemBonus + specNodeBonus
+		recipeData.stats.inspiration.value = buffStats.inspiration + itemBonus + specNodeBonus + buffBonus
 		recipeData.stats.inspiration.percent = basePercent + CraftSim.UTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
 		recipeData.stats.inspiration.bonusskill = baseInspirationBonusSkill * specNodeBonusSkillFactor * itemBonusSkillFactor * finishingReagentsBonusSkillFactor
 	end
@@ -233,12 +248,14 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		-- TODO BUFFS?
 		local specNodeBonus = specNodeStats.craftingspeed
 		local itemBonus = professionGearStats.craftingspeed
-		local specNodeBonusItemsFactor = specNodeStats.craftingspeedBonusFactor
+		local specNodeBonusPercent = (specNodeStats.craftingspeedBonusFactor - 1) * 100
+		local buffBonusPercent = (buffStats.craftingspeedBonusFactor - 1) * 100
+		print("crafting speed from buff: " .. buffStats.craftingspeedBonusFactor)
 		-- TODO: consider ??? Dont know if that even exists
 		local finishingReagentsBonusFactor = reagentStats.craftingspeedBonusFactor
 
 		recipeData.stats.craftingspeed.value = buffStats.craftingspeed + itemBonus + specNodeBonus
-		recipeData.stats.craftingspeed.percent = CraftSim.UTIL:GetCraftingSpeedPercentByStat(recipeData.stats.craftingspeed.value) * 100
+		recipeData.stats.craftingspeed.percent = (CraftSim.UTIL:GetCraftingSpeedPercentByStat(recipeData.stats.craftingspeed.value) * 100) + buffBonusPercent + specNodeBonusPercent
 	end
 
 	-- debug
@@ -249,6 +266,8 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	CraftSim.UTIL:PrintTable(recipeData.stats.multicraft or {})
 	print("total resourcefulness: ")
 	CraftSim.UTIL:PrintTable(recipeData.stats.resourcefulness or {})
+	print("total crafting speed: ")
+	CraftSim.UTIL:PrintTable(recipeData.stats.craftingspeed or {})
 end
 
 function CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)

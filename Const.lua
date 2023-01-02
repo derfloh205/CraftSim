@@ -207,6 +207,11 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
     }
 }
 
+CraftSim.CONST.BUFF_IDS = {
+    INSPIRATION_INCENSE = 371234,
+    PHIAL_OF_QUICK_HANDS = 393665,
+}
+
 CraftSim.CONST.LOCALES = {
     EN = "enUS",
     DE = "deDE",
@@ -258,5 +263,5 @@ CraftSim.CONST.TEXT = {
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
-    return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy}
+    return {} --{Enum.Profession.Blacksmithing, Enum.Profession.Alchemy}
 end

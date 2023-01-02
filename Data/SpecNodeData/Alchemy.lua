@@ -557,6 +557,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             equalsMulticraft = true,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370746, -- basic
+                370747, -- advanced
+            },
         },
         PHIAL_BATCH_PRODUCTION_2 = {
             nodeID = 22478,
@@ -564,6 +568,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraft = 60,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370746, -- basic
+                370747, -- advanced
+            },
         },
         PHIAL_BATCH_PRODUCTION_3 = {
             nodeID = 22478,
@@ -571,6 +579,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             craftingspeedBonusFactor = 0.10,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370746, -- basic
+                370747, -- advanced
+            },
         },
         PHIAL_BATCH_PRODUCTION_4 = {
             nodeID = 22478,
@@ -578,6 +590,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraft = 60,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370746, -- basic
+                370747, -- advanced
+            },
         },
         PHIAL_BATCH_PRODUCTION_5 = {
             nodeID = 22478,
@@ -585,6 +601,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             craftingspeedBonusFactor = 0.10,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370746, -- basic
+                370747, -- advanced
+            },
         },
         PHIAL_BATCH_PRODUCTION_6 = {
             nodeID = 22478,
@@ -592,6 +612,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraftExtraItemsFactor = 0.50,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370746, -- basic
+                370747, -- advanced
+            },
         },
 
         -- Potion Mastery
@@ -755,6 +779,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             equalsMulticraft = true,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370743, -- basic
+                370745, -- advanced
+            },
         },
         POTION_BATCH_PRODUCTION_2 = {
             nodeID = 19482,
@@ -762,6 +790,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraft = 60,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370743, -- basic
+                370745, -- advanced
+            },
         },
         POTION_BATCH_PRODUCTION_3 = {
             nodeID = 19482,
@@ -769,6 +801,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             craftingspeedBonusFactor = 0.20,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370743, -- basic
+                370745, -- advanced
+            },
         },
         POTION_BATCH_PRODUCTION_4 = {
             nodeID = 19482,
@@ -776,6 +812,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraft = 60,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370743, -- basic
+                370745, -- advanced
+            },
         },
         POTION_BATCH_PRODUCTION_5 = {
             nodeID = 19482,
@@ -783,6 +823,10 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraftExtraItemsFactor = 0.50,
             categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
             subtypeIDs = {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS},
+            exceptionRecipeIDs = { -- the crafting speed effects experimentations
+                370743, -- basic
+                370745, -- advanced
+            },
         },
     }
 end
