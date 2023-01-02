@@ -1,1 +1,1 @@
-See curseforge
+https://www.curseforge.com/wow/addons/craftsim
