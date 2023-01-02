@@ -1171,7 +1171,8 @@ function CraftSim.FRAME:InitSimModeFrames()
     table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.FRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, 0, offsetY*2, baseX, inputOffsetX))
     table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.FRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, 0, offsetY*3, baseX, inputOffsetX))
     table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.FRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, 0, offsetY*4, baseX, inputOffsetX))
-
+    table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.FRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame, 0, offsetY*5, baseX, inputOffsetX))
+    
     CraftSim.SIMULATION_MODE.reagentOverwriteFrame = reagentOverwriteFrame
 
     -- DETAILS FRAME
