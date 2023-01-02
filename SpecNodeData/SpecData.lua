@@ -2,7 +2,7 @@ addonName, CraftSim = ...
 
 CraftSim.SPEC_DATA = {}
 
-function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, relevantNodes)
+function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
     local IDs = {
         subtypeIDs = nodeData.subtypeIDs or {},
         categoryIDs = nodeData.categoryIDs or {},
@@ -13,9 +13,9 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, relevantNodes)
     local childNodeIDs = nodeData.childNodeIDs
     if childNodeIDs then
         for _, childNodeID in pairs(childNodeIDs) do
-            local childNoteData = relevantNodes[childNodeID]
+            local childNoteData = ruleNodes[childNodeID]
 
-            local childIDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(childNoteData, relevantNodes)
+            local childIDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(childNoteData, ruleNodes)
     
             for _, subtypeID in pairs(childIDs.subtypeIDs) do
                 table.insert(IDs.subtypeIDs, subtypeID)
@@ -34,7 +34,7 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, relevantNodes)
     return IDs
 end
 
-function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
+function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes)
     local specNodeData = recipeData.specNodeData
 
     local stats = {	
@@ -46,10 +46,14 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
         resourcefulnessBonusItemsFactor = 1,
         craftingspeed = 0,
         craftingspeedBonusFactor = 1,
-        skill = 0
+        skill = 0,
+
+        -- special
+        phialExperimentationChanceFactor = 1,
+        potionExperimentationChanceFactor = 1,
     }
 
-    for name, nodeData in pairs(relevantNodes) do 
+    for name, nodeData in pairs(ruleNodes) do 
         --local nodeInfo = C_Traits.GetNodeInfo(configID, nodeData.nodeID)
         local nodeInfo = specNodeData[nodeData.nodeID]
 
@@ -62,7 +66,7 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
         local nodeActualValue = nodeInfo.activeRank - 1
 
         -- fetch all subtypeIDs, categoryIDs and expectionRecipeIDs recursively
-        local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, relevantNodes)
+        local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
 
         local isCategoryID = #IDs.categoryIDs == 0 or tContains(IDs.categoryIDs, recipeData.categoryID)
         local isSubtypeID = #IDs.subtypeIDs == 0 or tContains(IDs.subtypeIDs, recipeData.subtypeID)
@@ -83,11 +87,13 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
         if nodeInfo and (nodeAffectsRecipe or nodeData.debug) then
             if nodeData.threshold and (nodeInfo.activeRank - 1) >= nodeData.threshold then
                 -- ThresholdNode
-                -- Stack multiplicatively (?)
-                stats.multicraftBonusItemsFactor = stats.multicraftBonusItemsFactor * (1 + (nodeData.multicraftBonusItemsFactor or 0))
-                stats.resourcefulnessBonusItemsFactor = stats.resourcefulnessBonusItemsFactor * (1 + (nodeData.resourcefulnessBonusItemsFactor or 0))
-                stats.craftingspeedBonusFactor = stats.craftingspeedBonusFactor * (1 + (nodeData.craftingspeedBonusFactor or 0))
-                stats.inspirationBonusSkillFactor = stats.inspirationBonusSkillFactor * (1 + (nodeData.inspirationBonusSkillFactor or 0))
+                -- Stack additively..
+                stats.multicraftBonusItemsFactor = stats.multicraftBonusItemsFactor + (nodeData.multicraftBonusItemsFactor or 0)
+                stats.resourcefulnessBonusItemsFactor = stats.resourcefulnessBonusItemsFactor + (nodeData.resourcefulnessBonusItemsFactor or 0)
+                stats.craftingspeedBonusFactor = stats.craftingspeedBonusFactor + (nodeData.craftingspeedBonusFactor or 0)
+                stats.inspirationBonusSkillFactor = stats.inspirationBonusSkillFactor + (nodeData.inspirationBonusSkillFactor or 0)
+                stats.phialExperimentationChanceFactor = stats.phialExperimentationChanceFactor + (nodeData.phialExperimentationChanceFactor or 0)
+                stats.potionExperimentationChanceFactor = stats.potionExperimentationChanceFactor + (nodeData.potionExperimentationChanceFactor or 0)
 
                 stats.skill = stats.skill + (nodeData.skill or 0)
                 stats.inspiration = stats.inspiration + (nodeData.inspiration or 0)
@@ -95,8 +101,6 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
                 stats.resourcefulness = stats.resourcefulness + (nodeData.resourcefulness or 0)
                 stats.craftingspeed = stats.craftingspeed + (nodeData.craftingspeed or 0)
             elseif nodeData.equalsSkill then
-                print("equals skill node rule: " .. nodeData.nodeID)
-                print("node equals skill, add " .. tostring(nodeActualValue))
                 stats.skill = stats.skill + nodeActualValue
             elseif nodeData.equalsMulticraft then
                 stats.multicraft = stats.multicraft + nodeActualValue
@@ -106,6 +110,12 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
                 stats.resourcefulness = stats.resourcefulness + nodeActualValue
             elseif nodeData.equalsCraftingspeed then
                 stats.craftingspeed = stats.craftingspeed + nodeActualValue
+            elseif nodeData.equalsResourcefulnessExtraItemsFactor then
+                stats.resourcefulnessExtraItemsFactor = stats.resourcefulnessExtraItemsFactor + nodeActualValue*0.01 
+            elseif nodeData.equalsPhialExperimentationChanceFactor then
+                stats.phialExperimentationChanceFactor = stats.phialExperimentationChanceFactor + nodeActualValue*0.01
+            elseif nodeData.equalsPotionExperimentationChanceFactor then
+                stats.potionExperimentationChanceFactor = stats.potionExperimentationChanceFactor + nodeActualValue*0.01
             end
         end
     end
@@ -114,7 +124,7 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
 end
 
 -- LEGACY.. remove when other ready
-function CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, relevantNodes)
+function CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, ruleNodes)
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(skillLineID)
 
@@ -123,7 +133,7 @@ function CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, relevantNodes)
         resourcefulnessBonusItemsFactor = 1
     }
 
-    for thresholdName, nodeData in pairs(relevantNodes) do 
+    for thresholdName, nodeData in pairs(ruleNodes) do 
         --print("getting nodeinfo: " .. tostring(configID))
         local nodeInfo = C_Traits.GetNodeInfo(configID, nodeData.nodeID)
         -- minus one cause its always 1 more than the ui rank to know wether it was learned or not (learned with 0 has 1 rank)
@@ -145,18 +155,17 @@ function CraftSim.SPEC_DATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
         resourcefulnessExtraItemsFactor = 1
     }
 
-    local relevantNodes = CraftSim.SPEC_DATA.RELEVANT_NODES()[recipeData.professionID]
-    if relevantNodes == nil then
+    local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[recipeData.professionID]
+    if ruleNodes == nil then
         --print("Profession specs not considered: " .. recipeData.professionID)
         return defaultFactors
     end
 
-    return CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, relevantNodes)
+    return CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, ruleNodes)
 end
 
 -- its a function so craftsimConst can be accessed (otherwise nil cause not yet initialized)
--- TODO: use if else if performance relevant
-CraftSim.SPEC_DATA.RELEVANT_NODES = function() 
+CraftSim.SPEC_DATA.RULE_NODES = function() 
     return {
     [Enum.Profession.Blacksmithing] =  CraftSim.BLACKSMITHING_DATA:GetData(),
     [Enum.Profession.Alchemy] = CraftSim.ALCHEMY_DATA:GetData(),
@@ -166,3 +175,14 @@ CraftSim.SPEC_DATA.RELEVANT_NODES = function()
     [Enum.Profession.Tailoring] = CraftSim.TAILORING_DATA:GetData(),
     [Enum.Profession.Inscription] = CraftSim.INSCRIPTION_DATA:GetData()
 } end
+
+function CraftSim.SPEC_DATA:GetNodes(professionID)
+    if professionID == Enum.Profession.Blacksmithing then
+        return CraftSim.BLACKSMITHING_DATA.NODES()
+    elseif professionID == Enum.Profession.Alchemy then
+        return CraftSim.ALCHEMY_DATA.NODES()
+    else
+        error("CraftSim Error: No nodes found for profession id: " .. tostring(professionID))
+        return {}
+    end
+end

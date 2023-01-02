@@ -120,7 +120,7 @@ function CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
 	local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(skillLineID)
 
-	local nodes = CraftSim.CONST.NODES()[recipeData.professionID] or {}
+	local nodes = CraftSim.SPEC_DATA:GetNodes(recipeData.professionID) or {}
 
 	local specNodeData = {}
 	for _, currentNode in pairs(nodes) do
@@ -158,9 +158,9 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 	local professionGearStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
 
-	local relevantNodes = CraftSim.SPEC_DATA.RELEVANT_NODES()[recipeData.professionID]
+	local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[recipeData.professionID]
 
-	local specNodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, relevantNodes)
+	local specNodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes)
 	local buffStats = CraftSim.DATAEXPORT:GetStatsFromBuffs(recipeData.buffData)
 	local reagentStats = CraftSim.DATAEXPORT:GetStatsFromReagents(recipeData)
 

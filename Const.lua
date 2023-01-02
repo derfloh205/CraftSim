@@ -144,6 +144,8 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
         FINISHING_REAGENT = 1608,
         OPTIONAL_REAGENTS = 1609,
         INCENSE = 1610,
+        TRANSMUTATIONS = 1604,
+        ESSENTIALS = 1681,
     },
     LEATHERWORKING = {
         DRUMS = 1655,
@@ -187,7 +189,9 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         REAGENT = 11, -- "Other"
         FINISHING_REAGENT = 19,
         OPTIONAL_REAGENTS = 18,
-        INCENSE = 8,
+        INCENSE = 8, -- "other"
+        ELEMENTAL = 10, -- transmutations
+        EXPLOSIVES_AND_DEVICES = 0, -- transmutations
     },
     LEATHERWORKING = {
         DRUMS = 8, -- "Other"
@@ -241,124 +245,4 @@ CraftSim.CONST.TEXT = {
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
     return {} --{Enum.Profession.Blacksmithing}
-end
-
-CraftSim.CONST.NODES = function()
-    return {
-        [Enum.Profession.Blacksmithing] = {
-            -- Hammer Control
-            {
-                name = "Hammer Control",
-                nodeID = 42828
-            },
-            {
-                name = "Safety Smithing",
-                nodeID = 42827
-            },
-            {
-                name = "Poignant Plans",
-                nodeID = 42826
-            },
-            -- Speciality Smithing
-            {
-                name = "Speciality Smithing",
-                nodeID = 23765
-            },
-            {
-                name = "Toolsmithing",
-                nodeID = 23764
-            },
-            {
-                name = "Stonework",
-                nodeID = 23762
-            },
-            {
-                name = "Smelting",
-                nodeID = 23761
-            },
-            -- Weapon Smithing
-            {
-                name = "Weapon Smithing",
-                nodeID = 23727
-            },
-            {
-                name = "Blades",
-                nodeID = 23726
-            },
-            {
-                name = "Hafted",
-                nodeID = 23723
-            },
-            {
-                name = "Short Blades",
-                nodeID = 23725
-            },
-            {
-                name = "Long Blades",
-                nodeID = 23724
-            },
-            {
-                name = "Maces & Hammers",
-                nodeID = 23722
-            },
-            {
-                name = "Axes, Picks & Polearms",
-                nodeID = 23721
-            },
-
-        -- Armor Smithing
-            {
-                name = "Armor Smithing",
-                nodeID = 23912
-            },
-            {
-                name = "Belts",
-                nodeID = 23902
-            },
-            {
-                name = "Breastplates",
-                nodeID = 23910
-            },
-            {
-                name = "Fine Armor",
-                nodeID = 23903
-            },
-            {
-                name = "Gauntlets",
-                nodeID = 23900
-            },
-            {
-                name = "Greaves",
-                nodeID = 23908
-            },
-            {
-                name = "Helms",
-                nodeID = 23906
-            },
-            {
-                name = "Large Plate Armor",
-                nodeID = 23911
-            },
-            {
-                name = "Pauldrons",
-                nodeID = 23905
-            },
-            {
-                name = "Sabatons",
-                nodeID = 23904
-            },
-            {
-                name = "Sculpted Armor",
-                nodeID = 23907
-            },
-            {
-                name = "Shields",
-                nodeID = 23909
-            },
-            {
-                name = "Vambraces",
-                nodeID = 23901
-            }
-        },
-    }
 end
