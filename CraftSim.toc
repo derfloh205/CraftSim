@@ -4,7 +4,7 @@
 ## Title: CraftSim
 ## Notes: Calculates profession statweights and displays them per recipe
 ## Author: genju
-## Version: 1.3
+## Version: 1.5.2
 ## X-Curse-Project-ID: 705015
 ## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimTooltipData, CraftSimItemCache, CraftSimCollapsedFrames
 
@@ -38,6 +38,8 @@ Locals/deDE.lua
 Locals/itIT.lua
 Locals/ruRU.lua
 Locals/ptBR.lua
+Locals/frFR.lua
+Locals/esES.lua
 
 SpecNodeData/Alchemy.lua
 SpecNodeData/Blacksmithing.lua
