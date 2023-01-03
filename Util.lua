@@ -221,11 +221,7 @@ function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     return inputNumber
 end
 
-function CraftSim.UTIL:IsSpecImplemented()
-    if not CraftSim.MAIN.currentRecipeData then
-        return false
-    end
-    local professionID = CraftSim.MAIN.currentRecipeData.professionID
+function CraftSim.UTIL:IsSpecImplemented(professionID)
 
     if professionID == Enum.Profession.Blacksmithing and not CraftSimOptions.blacksmithingEnabled or
        professionID == Enum.Profession.Alchemy and not CraftSimOptions.alchemyEnabled then

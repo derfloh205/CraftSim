@@ -131,9 +131,6 @@ function CraftSim.DATAEXPORT:exportBuffData()
 end
 
 function CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
-	if not recipeData.professionID then
-		return {} -- when closing or smth
-	end
 	local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(skillLineID)
 
@@ -275,7 +272,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 end
 
 function CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
-	if not CraftSim.UTIL:IsSpecImplemented() then
+	if not CraftSim.UTIL:IsSpecImplemented(recipeData.professionID) then
 		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
 	else
 		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
@@ -300,6 +297,10 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 
 	recipeData.profession = professionInfo.parentProfessionName
 	recipeData.professionID = professionInfo.profession
+	if recipeData.professionID == nil then
+		-- not ready yet
+		return
+	end
 	local recipeInfo = CraftSim.MAIN.currentRecipeInfo --or schematicForm:GetRecipeInfo() -- should always be the first
 
 	local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
@@ -440,7 +441,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 
 	CraftSim.DATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
 
-	if not CraftSim.UTIL:IsSpecImplemented() then
+	if not CraftSim.UTIL:IsSpecImplemented(recipeData.professionID) then
 		recipeData.extraItemFactors = CraftSim.SPEC_DATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
 	else
 		recipeData.buffData = CraftSim.DATAEXPORT:exportBuffData()

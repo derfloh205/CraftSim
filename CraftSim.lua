@@ -220,7 +220,7 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 	CraftSim.MAIN:HandleCollapsedFrameSave()
 
 	-- show one time note
-	CraftSim.FRAME:ShowOneTimeInfo(CraftSim.CONST.currentOneTimeInfoText, CraftSim.CONST.currentInfoVersionID)
+	CraftSim.FRAME:ShowOneTimeInfo(CraftSim.CONST.currentOneTimeInfoText(), CraftSim.CONST.currentInfoVersionID)
 end
 
 local debugTest = true

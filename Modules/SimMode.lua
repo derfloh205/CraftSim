@@ -132,7 +132,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.SIMULATION_MODE.recipeData.isSimModeData = true
 
     -- initialize base values based on original recipeData and based on spec data implemented
-    if not CraftSim.UTIL:IsSpecImplemented() then
+    if not CraftSim.UTIL:IsSpecImplemented(recipeData.professionID) then
         local OldReagentSkillIncrease = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSim.SIMULATION_MODE.recipeData)
         CraftSim.SIMULATION_MODE.baseSkill = CraftSim.SIMULATION_MODE.recipeData.stats.skill - OldReagentSkillIncrease
         CraftSim.SIMULATION_MODE.baseRecipeDifficulty = CraftSim.SIMULATION_MODE.recipeData.baseDifficulty

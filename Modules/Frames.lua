@@ -960,12 +960,14 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     frame.collapseButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.collapseButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
 	frame.collapseButton:SetText("-")
+    frame.originalX = originalX -- so it can be modified later
+    frame.originalY = originalY
 	frame.collapseButton:SetSize(frame.collapseButton:GetTextWidth() + 15, 20)
     frame.collapse = function(self) 
         frame.collapsed = true
         CraftSimCollapsedFrames[frameID] = true
         -- make smaller and hide content, only show frameTitle
-        frame:SetSize(originalX, 40)
+        frame:SetSize(self.originalX, 40)
         frame.collapseButton:SetText("+")
         frame.content:Hide()
     end
@@ -975,15 +977,15 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
         frame.collapsed = false
         CraftSimCollapsedFrames[frameID] = false
         frame.collapseButton:SetText("-")
-        frame:SetSize(originalX, originalY)
+        frame:SetSize(self.originalX, self.originalY)
         frame.content:Show()
     end
 
     frame.collapseButton:SetScript("OnClick", function(self) 
         if frame.collapsed then
-            frame.decollapse()
+            frame:decollapse()
         else
-            frame.collapse()
+            frame:collapse()
         end
     end)
 end
@@ -1158,7 +1160,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO)
 
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.infoText:SetPoint("TOP", frame.title, "TOP", 0, -20)
+    frame.content.infoText:SetPoint("TOP", frame.title, "TOP", 0, -30)
     frame.content.infoText:SetText("No Info")
 
     frame.content.closeButton = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
@@ -1178,13 +1180,18 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
 end
 
 function CraftSim.FRAME:ShowOneTimeInfo(infoText, versionID)
-    if CraftSimOptions.infoVersionID == versionID then
+    if CraftSimOptions.infoVersionID == versionID and not CraftSim.CONST.debugInfoText then
         return
     end
 
     CraftSimOptions.infoVersionID = versionID
 
     local infoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.INFO)
+    -- resize
+    infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
+    infoFrame.content:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
+    infoFrame.originalX = CraftSim.CONST.infoBoxSizeX
+    infoFrame.originalY = CraftSim.CONST.infoBoxSizeY
     infoFrame.showInfo(infoText)
 end
 
