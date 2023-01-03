@@ -2,8 +2,9 @@ addonName, CraftSim = ...
 
 CraftSim.PRICEDATA = {}
 
--- TODO: how to get possible different itemLinks / strings of different ItemUpgrade with different ilvl?
 CraftSim.PRICEDATA.noPriceDataLinks = {}
+
+CraftSim.PRICEDATA.overrideResultPriceMode = false
 
 function CraftSim.PRICEDATA:GetReagentCosts(recipeData, getMinimum) 
     local reagentCosts = {}

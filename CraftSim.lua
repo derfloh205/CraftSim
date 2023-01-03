@@ -383,6 +383,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	CraftSim.FRAME:ToggleFrame(CraftSimCostOverviewFrame, showCostOverview)
 	if showCostOverview then
-		CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, priceData, showCostOverviewCraftingCostsOnly)
+		CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, priceData, false )--showCostOverviewCraftingCostsOnly)
 	end
 end
