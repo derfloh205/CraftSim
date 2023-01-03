@@ -27,7 +27,11 @@ CraftSimOptions = CraftSimOptions or {
 	transparencyStatWeights = 1,
 	transparencyTopGear = 1,
 	transparencyCostOverview = 1,
-	transparencySpecInfo = 1
+	transparencySpecInfo = 1,
+
+	-- specData Refactor
+	blacksmithingEnabled = true,
+	alchemyEnabled = true
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -70,6 +74,12 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.modulesSpecInfo == nil then
 			CraftSimOptions.modulesSpecInfo = true
+		end
+		if CraftSimOptions.blacksmithingEnabled == nil then
+			CraftSimOptions.blacksmithingEnabled = true
+		end
+		if CraftSimOptions.alchemyEnabled == nil then
+			CraftSimOptions.alchemyEnabled = true
 		end
 	end
 end
@@ -115,6 +125,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.FRAME:InitProfitDetailsFrame()
 		CraftSim.FRAME:InitSpecInfoFrame()
 		CraftSim.FRAME:InitWarningFrame()
+		CraftSim.FRAME:InitOneTimeNoteFrame()
 		CraftSim.SIMULATION_MODE:Init()
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -207,6 +218,9 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 	CraftSim.PRICE_API:InitPriceSource()
 	CraftSim.OPTIONS:InitOptionsFrame()
 	CraftSim.MAIN:HandleCollapsedFrameSave()
+
+	-- show one time note
+	CraftSim.FRAME:ShowOneTimeInfo(CraftSim.CONST.currentOneTimeInfoText, CraftSim.CONST.currentInfoVersionID)
 end
 
 local debugTest = true

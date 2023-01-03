@@ -131,6 +131,9 @@ function CraftSim.DATAEXPORT:exportBuffData()
 end
 
 function CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
+	if not recipeData.professionID then
+		return {} -- when closing or smth
+	end
 	local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(skillLineID)
 
@@ -169,7 +172,7 @@ function CraftSim.DATAEXPORT:GetStatsFromReagents(recipeData)
 end
 
 function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
-	print("player stats v2")
+	--print("player stats v2")
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 	local professionGearStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
 
@@ -179,8 +182,8 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	local buffStats = CraftSim.DATAEXPORT:GetStatsFromBuffs(recipeData.buffData)
 	local reagentStats = CraftSim.DATAEXPORT:GetStatsFromReagents(recipeData)
 
-	print("specnodestats: ")
-	CraftSim.UTIL:PrintTable(specNodeStats)
+	-- print("specnodestats: ")
+	-- CraftSim.UTIL:PrintTable(specNodeStats)
 
 	-- skill
 	local baseSkill = professionInfo.skillLevel
@@ -190,6 +193,8 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	local reagentSkill = reagentStats.skill
 
 	recipeData.stats.skill = baseSkill + racialSkill + itemSkill + specNodeSkill + reagentSkill
+	recipeData.stats.skillNoReagents = baseSkill + racialSkill + itemSkill + specNodeSkill
+	recipeData.stats.skillNoItems = baseSkill + racialSkill + specNodeSkill + reagentSkill
 
 	-- inspiration
 	if recipeData.stats.inspiration then
@@ -250,7 +255,6 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		local itemBonus = professionGearStats.craftingspeed
 		local specNodeBonusPercent = (specNodeStats.craftingspeedBonusFactor - 1) * 100
 		local buffBonusPercent = (buffStats.craftingspeedBonusFactor - 1) * 100
-		print("crafting speed from buff: " .. buffStats.craftingspeedBonusFactor)
 		-- TODO: consider ??? Dont know if that even exists
 		local finishingReagentsBonusFactor = reagentStats.craftingspeedBonusFactor
 
@@ -259,21 +263,19 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	end
 
 	-- debug
-	print("total skill: " .. tostring(recipeData.stats.skill))
-	print("total inspiration: ")
-	CraftSim.UTIL:PrintTable(recipeData.stats.inspiration or {})
-	print("total multicraft: ")
-	CraftSim.UTIL:PrintTable(recipeData.stats.multicraft or {})
-	print("total resourcefulness: ")
-	CraftSim.UTIL:PrintTable(recipeData.stats.resourcefulness or {})
-	print("total crafting speed: ")
-	CraftSim.UTIL:PrintTable(recipeData.stats.craftingspeed or {})
+	-- print("total skill: " .. tostring(recipeData.stats.skill))
+	-- print("total inspiration: ")
+	-- CraftSim.UTIL:PrintTable(recipeData.stats.inspiration or {})
+	-- print("total multicraft: ")
+	-- CraftSim.UTIL:PrintTable(recipeData.stats.multicraft or {})
+	-- print("total resourcefulness: ")
+	-- CraftSim.UTIL:PrintTable(recipeData.stats.resourcefulness or {})
+	-- print("total crafting speed: ")
+	-- CraftSim.UTIL:PrintTable(recipeData.stats.craftingspeed or {})
 end
 
 function CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
-	local implemented = tContains(CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP(), recipeData.professionID)
-
-	if not implemented then
+	if not CraftSim.UTIL:IsSpecImplemented() then
 		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
 	else
 		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
@@ -438,9 +440,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 
 	CraftSim.DATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
 
-	local implemented = tContains(CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP(), recipeData.professionID)
-
-	if not implemented then
+	if not CraftSim.UTIL:IsSpecImplemented() then
 		recipeData.extraItemFactors = CraftSim.SPEC_DATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
 	else
 		recipeData.buffData = CraftSim.DATAEXPORT:exportBuffData()

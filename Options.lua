@@ -70,6 +70,16 @@ function CraftSim.OPTIONS:InitOptionsFrame()
     ModulesTab.content:SetSize(300, 350)
     ModulesTab.canBeEnabled = true
 
+    local ExperimentalTab = CreateFrame("Button", "CraftSimOptionsExperimentalTab", CraftSim.OPTIONS.optionsPanel, "UIPanelButtonTemplate")
+    ExperimentalTab:SetText("Experimental")
+    ExperimentalTab:SetSize(ExperimentalTab:GetTextWidth() + tabExtraWidth, 30)
+    ExperimentalTab:SetPoint("LEFT", ModulesTab, "RIGHT", 0, 0)
+
+    ExperimentalTab.content = CreateFrame("Frame", nil, CraftSim.OPTIONS.optionsPanel)
+    ExperimentalTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
+    ExperimentalTab.content:SetSize(300, 350)
+    ExperimentalTab.canBeEnabled = true
+
     local expressionSizeX = 300
     local expressionSizeY = 50
 
@@ -133,7 +143,7 @@ function CraftSim.OPTIONS:InitOptionsFrame()
 
     
 
-    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab})
+    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab, ExperimentalTab})
 
     local priceSourceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
@@ -356,6 +366,26 @@ function CraftSim.OPTIONS:InitOptionsFrame()
     local supportedPriceSources = generalTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -200)
     supportedPriceSources:SetText("Supported Price Sources:\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
+
+    local enableSpecDataBlacksmithingCheckbox = CraftSim.FRAME:CreateCheckbox(" Blacksmithing SpecData", 
+     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
+     "blacksmithingEnabled", 
+     ExperimentalTab.content, 
+     ExperimentalTab.content, 
+     "TOP", 
+     "TOP", 
+     -90, 
+     -50)
+
+     local enableSpecDataAlchemyCheckbox = CraftSim.FRAME:CreateCheckbox(" Alchemy SpecData", 
+     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
+     "alchemyEnabled", 
+     ExperimentalTab.content, 
+     enableSpecDataBlacksmithingCheckbox, 
+     "TOP", 
+     "TOP", 
+     0, 
+     -20)
     
 	InterfaceOptions_AddCategory(self.optionsPanel)
 end

@@ -2,6 +2,16 @@ addonName, CraftSim = ...
 
 CraftSim.CONST = {}
 
+CraftSim.CONST.currentInfoVersionID = 1 -- last highest: 1
+CraftSim.CONST.currentOneTimeInfoText = 
+"Hello and thank you for using CraftSim!\n\n" .. 
+"Blacksmithing and Alchemy now get their stats\n" ..
+"from your profession spec tree instead from the UI.\n" .. 
+"This enables some nice new features like a specialization\n" ..
+"info breakdown!\n\nHowever, this is still experimental!\n" ..
+"If you want, you can opt out in the options ( /craftsim )\n\n" ..
+"Support for other professions is in progress!"
+
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
 -- currently this is just an approximation
 CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
@@ -15,6 +25,7 @@ CraftSim.CONST.FRAMES = {
     CRAFTING_DETAILS = 5,
     SPEC_INFO = 6,
     WARNING = 7,
+    INFO = 8,
 }
 
 CraftSim.CONST.ERROR = {
@@ -56,6 +67,7 @@ CraftSim.CONST.STAT_MAP = {
     CRAFTING_DETAILS_RECIPE_DIFFICULTY = "recipedifficulty",
     CRAFTING_DETAILS_SKILL = "skill",
     CRAFTING_DETAILS_INSPIRATION = "inspiration",
+    CRAFTING_DETAILS_INSPIRATION_SKILL = "inspirationBonusSkill",
     CRAFTING_DETAILS_MULTICRAFT = "multicraft",
     CRAFTING_DETAILS_RESOURCEFULNESS = "resourcefulness",
 }
@@ -261,8 +273,11 @@ CraftSim.CONST.TEXT = {
     STAT_POTION_EXPERIMENTATION = 29,
     STAT_CRAFTINGSPEED_BONUS = 30,
     STAT_INSPIRATION_BONUS = 31,
+
+    INSPIRATION_SKILL_LABEL = 32,
+    INSPIRATION_SKILL_EXPLANATION_TOOLTIP = 33,
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
-    return {} --{Enum.Profession.Blacksmithing, Enum.Profession.Alchemy}
+    return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy}
 end

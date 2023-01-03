@@ -95,7 +95,7 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
                     return node.nodeID == nodeData.nodeID
                 end)
                 if not containsNode then
-                    print("add node to affected: " .. tostring(nodeData.nodeID))
+                    --print("add node to affected: " .. tostring(nodeData.nodeID))
                     local nodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeData.nodeID, false)
                     table.insert(recipeData.specNodeData.affectedNodes, {
                         nodeID = nodeData.nodeID,
