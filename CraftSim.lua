@@ -209,6 +209,8 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 			else
 				CraftSim.PRICE_APIS:InitAvailablePriceAPI()
 			end
+		elseif command == "news" then
+			CraftSim.FRAME:ShowOneTimeInfo(true)
 		else 
 			-- open options if any other command or no command is given
 			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
@@ -220,7 +222,7 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 	CraftSim.MAIN:HandleCollapsedFrameSave()
 
 	-- show one time note
-	CraftSim.FRAME:ShowOneTimeInfo(CraftSim.CONST.currentOneTimeInfoText(), CraftSim.CONST.currentInfoVersionID)
+	CraftSim.FRAME:ShowOneTimeInfo()
 end
 
 local debugTest = true

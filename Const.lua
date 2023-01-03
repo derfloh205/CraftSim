@@ -4,7 +4,7 @@ CraftSim.CONST = {}
 
 -- One Time Info ------------
 CraftSim.CONST.currentInfoVersionID = 1 -- last highest: 1
-CraftSim.CONST.debugInfoText = true
+CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
 CraftSim.CONST.currentOneTimeInfoText = function()
@@ -19,13 +19,14 @@ CraftSim.CONST.currentOneTimeInfoText = function()
         "Hello and thank you for using CraftSim!\n\n\n" .. 
         c("Blacksmithing", b) .. " and " .. c("Alchemy", b) .. " now get their stats\n" ..
         "from your profession spec tree instead from the UI.\n" .. 
-        "This enables some nice new features like a\n" .. c("specialization" ..
-        " info breakdown!", g) .. "\n\nHowever, this is still experimental!\n" ..
+        "This enables some nice new features like a\n" .. c("Specialization" ..
+        " Info Breakdown!", g) .. "\n\nHowever, this is still experimental!\n" ..
         "If you want, you can opt out in the options ( /craftsim )\n\n" ..
         "Support for other professions is in progress!\n\n" .. 
         "What else is new?\n\n" .. 
-        c("Simulation Mode", b) .. "\nnow also includes a modifier for the\n" .. 
-        c("inspiration bonus skill", b) .. "\nprofession stat"
+        "The " .. c("Simulation Mode", b) .. " now also includes a modifier for the\n" .. 
+        c("Inspiration Bonus Skill", b) .. "\nprofession stat\n\n\n\n" .. 
+        "You can always read the update news again by using the command\n/craftsim news"
 end
 ----------------
 

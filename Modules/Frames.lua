@@ -1179,8 +1179,10 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     frame:Hide()
 end
 
-function CraftSim.FRAME:ShowOneTimeInfo(infoText, versionID)
-    if CraftSimOptions.infoVersionID == versionID and not CraftSim.CONST.debugInfoText then
+function CraftSim.FRAME:ShowOneTimeInfo(force)
+    local infoText = CraftSim.CONST.currentOneTimeInfoText()
+    local versionID = CraftSim.CONST.currentInfoVersionID
+    if CraftSimOptions.infoVersionID == versionID and not CraftSim.CONST.debugInfoText and not force then
         return
     end
 
