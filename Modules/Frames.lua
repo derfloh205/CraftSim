@@ -1328,11 +1328,32 @@ function CraftSim.FRAME:InitSimModeFrames()
     reagentOverwriteFrame:Hide()
 
     local baseX = 10
-    local inputOffsetX = 25
+    local inputOffsetX = 50
 
     reagentOverwriteFrame.qualityIcon1 = CraftSim.FRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX - 15, 15, 1)
+    reagentOverwriteFrame.quality1Button = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
+    reagentOverwriteFrame.quality1Button:SetPoint("BOTTOM", reagentOverwriteFrame.qualityIcon1, "TOP", 0, 0)	
+    reagentOverwriteFrame.quality1Button:SetText("->")
+    reagentOverwriteFrame.quality1Button:SetSize(reagentOverwriteFrame.qualityIcon1:GetSize())
+    reagentOverwriteFrame.quality1Button:SetScript("OnClick", function(self) 
+        CraftSim.SIMULATION_MODE:AllocateAllByQuality(1)
+    end)
     reagentOverwriteFrame.qualityIcon2 = CraftSim.FRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX+inputOffsetX - 15, 15, 2)
+    reagentOverwriteFrame.quality2Button = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
+    reagentOverwriteFrame.quality2Button:SetPoint("BOTTOM", reagentOverwriteFrame.qualityIcon2, "TOP", 0, 0)	
+    reagentOverwriteFrame.quality2Button:SetText("->")
+    reagentOverwriteFrame.quality2Button:SetSize(reagentOverwriteFrame.qualityIcon2:GetSize())
+    reagentOverwriteFrame.quality2Button:SetScript("OnClick", function(self) 
+        CraftSim.SIMULATION_MODE:AllocateAllByQuality(2)
+    end)
     reagentOverwriteFrame.qualityIcon3 = CraftSim.FRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX+inputOffsetX*2 - 15, 15, 3)
+    reagentOverwriteFrame.quality3Button = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
+    reagentOverwriteFrame.quality3Button:SetPoint("BOTTOM", reagentOverwriteFrame.qualityIcon3, "TOP", 0, 0)	
+    reagentOverwriteFrame.quality3Button:SetText("->")
+    reagentOverwriteFrame.quality3Button:SetSize(reagentOverwriteFrame.qualityIcon3:GetSize())
+    reagentOverwriteFrame.quality3Button:SetScript("OnClick", function(self) 
+        CraftSim.SIMULATION_MODE:AllocateAllByQuality(3)
+    end)
 
     reagentOverwriteFrame.reagentOverwriteInputs = {}
 
@@ -1362,7 +1383,7 @@ function CraftSim.FRAME:InitSimModeFrames()
         CraftSim.CONST.FRAMES.CRAFTING_DETAILS)
 
         local offsetY = -20
-        local modOffsetX = 20
+        local modOffsetX = 5
         local valueOffsetX = -5
         local valueOffsetY = 0.5
 
@@ -1374,16 +1395,12 @@ function CraftSim.FRAME:InitSimModeFrames()
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP), 
             simModeDetailsFrame.content, simModeDetailsFrame.content.recipeDifficultyTitle, "RIGHT", "LEFT", -20, 0)
 
-        simModeDetailsFrame.content.recipeDifficultyMod = CreateFrame("EditBox", "CraftSimSimModeRecipeDifficultyModInput", simModeDetailsFrame.content, "UIPanelButtonTemplate")
+
+        simModeDetailsFrame.content.recipeDifficultyMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeRecipeDifficultyModInput", simModeDetailsFrame.content, simModeDetailsFrame.content, 
+            "TOPRIGHT", "TOPRIGHT", modOffsetX - 30, offsetY - 20 + 3.5, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
+
         simModeDetailsFrame.content.recipeDifficultyMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY
-        simModeDetailsFrame.content.recipeDifficultyMod:SetPoint("TOPRIGHT", simModeDetailsFrame.content, "TOPRIGHT", modOffsetX - 30, offsetY - 20 + 3.5)
-        simModeDetailsFrame.content.recipeDifficultyMod:SetSize(30, 20)
-        simModeDetailsFrame.content.recipeDifficultyMod:SetAutoFocus(false) -- dont automatically focus
-        simModeDetailsFrame.content.recipeDifficultyMod:SetFontObject("ChatFontNormal")
-        simModeDetailsFrame.content.recipeDifficultyMod:SetText(0)
-        simModeDetailsFrame.content.recipeDifficultyMod:SetScript("OnEscapePressed", function() simModeDetailsFrame.content.recipeDifficultyMod:ClearFocus() end)
-        simModeDetailsFrame.content.recipeDifficultyMod:SetScript("OnEnterPressed", function() simModeDetailsFrame.content.recipeDifficultyMod:ClearFocus() end)
-        simModeDetailsFrame.content.recipeDifficultyMod:SetScript("OnTextChanged", CraftSim.SIMULATION_MODE.OnStatModifierChanged)
 
         simModeDetailsFrame.content.recipeDifficultyValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         simModeDetailsFrame.content.recipeDifficultyValue:SetPoint("RIGHT", simModeDetailsFrame.content.recipeDifficultyMod, "LEFT", valueOffsetX, valueOffsetY)
@@ -1397,16 +1414,10 @@ function CraftSim.FRAME:InitSimModeFrames()
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_EXPLANATION_TOOLTIP), 
             simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationTitle, "RIGHT", "LEFT", -20, 0)
 
-        simModeDetailsFrame.content.inspirationMod = CreateFrame("EditBox", "CraftSimSimModeInspirationModInput", simModeDetailsFrame.content, "UIPanelButtonTemplate")
+        simModeDetailsFrame.content.inspirationMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeInspirationModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.recipeDifficultyMod, 
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
         simModeDetailsFrame.content.inspirationMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION
-        simModeDetailsFrame.content.inspirationMod:SetPoint("TOPRIGHT", simModeDetailsFrame.content.recipeDifficultyMod, "TOPRIGHT", 0, offsetY)
-        simModeDetailsFrame.content.inspirationMod:SetSize(30, 20)
-        simModeDetailsFrame.content.inspirationMod:SetAutoFocus(false) -- dont automatically focus
-        simModeDetailsFrame.content.inspirationMod:SetFontObject("ChatFontNormal")
-        simModeDetailsFrame.content.inspirationMod:SetText(0)
-        simModeDetailsFrame.content.inspirationMod:SetScript("OnEscapePressed", function() simModeDetailsFrame.content.inspirationMod:ClearFocus() end)
-        simModeDetailsFrame.content.inspirationMod:SetScript("OnEnterPressed", function() simModeDetailsFrame.content.inspirationMod:ClearFocus() end)
-        simModeDetailsFrame.content.inspirationMod:SetScript("OnTextChanged", CraftSim.SIMULATION_MODE.OnStatModifierChanged)
 
         simModeDetailsFrame.content.inspirationValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         simModeDetailsFrame.content.inspirationValue:SetPoint("RIGHT", simModeDetailsFrame.content.inspirationMod, "LEFT", valueOffsetX, valueOffsetY)
@@ -1420,16 +1431,10 @@ function CraftSim.FRAME:InitSimModeFrames()
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_SKILL_EXPLANATION_TOOLTIP), 
             simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationTitle, "RIGHT", "LEFT", -20, 0)
 
-        simModeDetailsFrame.content.inspirationSkillMod = CreateFrame("EditBox", "CraftSimSimModeInspirationSkillModInput", simModeDetailsFrame.content, "UIPanelButtonTemplate")
+        simModeDetailsFrame.content.inspirationSkillMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeInspirationSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationMod, 
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
         simModeDetailsFrame.content.inspirationSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION_SKILL
-        simModeDetailsFrame.content.inspirationSkillMod:SetPoint("TOPRIGHT", simModeDetailsFrame.content.inspirationMod, "TOPRIGHT", 0, offsetY)
-        simModeDetailsFrame.content.inspirationSkillMod:SetSize(30, 20)
-        simModeDetailsFrame.content.inspirationSkillMod:SetAutoFocus(false) -- dont automatically focus
-        simModeDetailsFrame.content.inspirationSkillMod:SetFontObject("ChatFontNormal")
-        simModeDetailsFrame.content.inspirationSkillMod:SetText(0)
-        simModeDetailsFrame.content.inspirationSkillMod:SetScript("OnEscapePressed", function() simModeDetailsFrame.content.inspirationSkillMod:ClearFocus() end)
-        simModeDetailsFrame.content.inspirationSkillMod:SetScript("OnEnterPressed", function() simModeDetailsFrame.content.inspirationSkillMod:ClearFocus() end)
-        simModeDetailsFrame.content.inspirationSkillMod:SetScript("OnTextChanged", CraftSim.SIMULATION_MODE.OnStatModifierChanged)
 
         simModeDetailsFrame.content.inspirationSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         simModeDetailsFrame.content.inspirationSkillValue:SetPoint("RIGHT", simModeDetailsFrame.content.inspirationSkillMod, "LEFT", valueOffsetX, valueOffsetY)
@@ -1443,16 +1448,10 @@ function CraftSim.FRAME:InitSimModeFrames()
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP), 
             simModeDetailsFrame.content, simModeDetailsFrame.content.multicraftTitle, "RIGHT", "LEFT", -20, 0)
 
-        simModeDetailsFrame.content.multicraftMod = CreateFrame("EditBox", "CraftSimSimModeMulticraftModInput", simModeDetailsFrame.content, "UIPanelButtonTemplate")
+        simModeDetailsFrame.content.multicraftMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeMulticraftModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationSkillMod, 
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
         simModeDetailsFrame.content.multicraftMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT
-        simModeDetailsFrame.content.multicraftMod:SetPoint("TOPRIGHT", simModeDetailsFrame.content.inspirationSkillMod, "TOPRIGHT", 0, offsetY)
-        simModeDetailsFrame.content.multicraftMod:SetSize(30, 20)
-        simModeDetailsFrame.content.multicraftMod:SetAutoFocus(false) -- dont automatically focus
-        simModeDetailsFrame.content.multicraftMod:SetFontObject("ChatFontNormal")
-        simModeDetailsFrame.content.multicraftMod:SetText(0)
-        simModeDetailsFrame.content.multicraftMod:SetScript("OnEscapePressed", function() simModeDetailsFrame.content.multicraftMod:ClearFocus() end)
-        simModeDetailsFrame.content.multicraftMod:SetScript("OnEnterPressed", function() simModeDetailsFrame.content.multicraftMod:ClearFocus() end)
-        simModeDetailsFrame.content.multicraftMod:SetScript("OnTextChanged", CraftSim.SIMULATION_MODE.OnStatModifierChanged)
 
         simModeDetailsFrame.content.multicraftValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         simModeDetailsFrame.content.multicraftValue:SetPoint("RIGHT", simModeDetailsFrame.content.multicraftMod, "LEFT", valueOffsetX, valueOffsetY)
@@ -1466,16 +1465,10 @@ function CraftSim.FRAME:InitSimModeFrames()
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP), 
             simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessTitle, "RIGHT", "LEFT", -20, 0)
 
-        simModeDetailsFrame.content.resourcefulnessMod = CreateFrame("EditBox", "CraftSimSimModeResourcefulnessModInput", simModeDetailsFrame.content, "UIPanelButtonTemplate")
+        simModeDetailsFrame.content.resourcefulnessMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeResourcefulnessModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.multicraftMod, 
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
         simModeDetailsFrame.content.resourcefulnessMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS
-        simModeDetailsFrame.content.resourcefulnessMod:SetPoint("TOPRIGHT", simModeDetailsFrame.content.multicraftMod, "TOPRIGHT", 0, offsetY)
-        simModeDetailsFrame.content.resourcefulnessMod:SetSize(30, 20)
-        simModeDetailsFrame.content.resourcefulnessMod:SetAutoFocus(false) -- dont automatically focus
-        simModeDetailsFrame.content.resourcefulnessMod:SetFontObject("ChatFontNormal")
-        simModeDetailsFrame.content.resourcefulnessMod:SetText(0)
-        simModeDetailsFrame.content.resourcefulnessMod:SetScript("OnEscapePressed", function() simModeDetailsFrame.content.resourcefulnessMod:ClearFocus() end)
-        simModeDetailsFrame.content.resourcefulnessMod:SetScript("OnEnterPressed", function() simModeDetailsFrame.content.resourcefulnessMod:ClearFocus() end)
-        simModeDetailsFrame.content.resourcefulnessMod:SetScript("OnTextChanged", CraftSim.SIMULATION_MODE.OnStatModifierChanged)
 
         simModeDetailsFrame.content.resourcefulnessValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         simModeDetailsFrame.content.resourcefulnessValue:SetPoint("RIGHT", simModeDetailsFrame.content.resourcefulnessMod, "LEFT", valueOffsetX, valueOffsetY)
@@ -1487,16 +1480,10 @@ function CraftSim.FRAME:InitSimModeFrames()
         simModeDetailsFrame.content.baseSkillTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.resourcefulnessTitle, "TOPLEFT", 0, offsetY)
         simModeDetailsFrame.content.baseSkillTitle:SetText("Skill:")
 
-        simModeDetailsFrame.content.baseSkillMod = CreateFrame("EditBox", "CraftSimSimModeSkillModInput", simModeDetailsFrame.content, "UIPanelButtonTemplate")
+        simModeDetailsFrame.content.baseSkillMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessMod, 
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
         simModeDetailsFrame.content.baseSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL
-        simModeDetailsFrame.content.baseSkillMod:SetPoint("TOPRIGHT", simModeDetailsFrame.content.resourcefulnessMod, "TOPRIGHT", 0 , offsetY)
-        simModeDetailsFrame.content.baseSkillMod:SetSize(30, 20)
-        simModeDetailsFrame.content.baseSkillMod:SetAutoFocus(false) -- dont automatically focus
-        simModeDetailsFrame.content.baseSkillMod:SetFontObject("ChatFontNormal")
-        simModeDetailsFrame.content.baseSkillMod:SetText(0)
-        simModeDetailsFrame.content.baseSkillMod:SetScript("OnEscapePressed", function() simModeDetailsFrame.content.baseSkillMod:ClearFocus() end)
-        simModeDetailsFrame.content.baseSkillMod:SetScript("OnEnterPressed", function() simModeDetailsFrame.content.baseSkillMod:ClearFocus() end)
-        simModeDetailsFrame.content.baseSkillMod:SetScript("OnTextChanged", CraftSim.SIMULATION_MODE.OnStatModifierChanged)
 
         simModeDetailsFrame.content.baseSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         simModeDetailsFrame.content.baseSkillValue:SetPoint("RIGHT", simModeDetailsFrame.content.baseSkillMod, "LEFT", valueOffsetX, valueOffsetY)
@@ -1579,23 +1566,16 @@ function CraftSim.FRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame
     overwriteInput.inputq3 = CraftSim.FRAME:CreateSimModeOverWriteInput(overwriteInput, baseX+inputOffsetX*2, 3)
 
     overwriteInput.requiredQuantity = overwriteInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	overwriteInput.requiredQuantity:SetPoint("LEFT", overwriteInput.inputq3, "RIGHT", 5, 0)
-	overwriteInput.requiredQuantity:SetText("/ 99")
+	overwriteInput.requiredQuantity:SetPoint("LEFT", overwriteInput.inputq3, "RIGHT", 25, 0)
+	overwriteInput.requiredQuantity:SetText("/ ?")
 
     return overwriteInput
 end
 
 function CraftSim.FRAME:CreateSimModeOverWriteInput(overwriteInputFrame, offsetX, qualityID)
-    local inputBox = CreateFrame("EditBox", nil, overwriteInputFrame, "UIPanelButtonTemplate")
+    local inputBox = CraftSim.FRAME:CreateNumericInput(
+        nil, overwriteInputFrame, overwriteInputFrame.icon, "LEFT", "RIGHT", offsetX, 0, 20, 20, 0, false, CraftSim.SIMULATION_MODE.OnInputAllocationChanged)
     inputBox.qualityID = qualityID
-    inputBox:SetPoint("LEFT", overwriteInputFrame.icon, "RIGHT", offsetX , 0)
-    inputBox:SetSize(20, 20)
-    inputBox:SetAutoFocus(false) -- dont automatically focus
-    inputBox:SetFontObject("ChatFontNormal")
-    inputBox:SetText(0)
-    inputBox:SetScript("OnEscapePressed", function() inputBox:ClearFocus() end)
-    inputBox:SetScript("OnEnterPressed", function() inputBox:ClearFocus() end)
-    inputBox:SetScript("OnTextChanged", CraftSim.SIMULATION_MODE.OnInputAllocationChanged)
     return inputBox
 end
 
@@ -1681,8 +1661,8 @@ end
 function CraftSim.FRAME:UpdateSimModeStatDisplay()
     -- stat details
     local reagentSkillIncrease = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSim.SIMULATION_MODE.recipeData)
-    local recipeDifficultyMod = CraftSim.UTIL:round(CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput), 1)
-    local skillMod = CraftSim.UTIL:round(CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeSkillModInput), 1)
+    local recipeDifficultyMod = CraftSim.UTIL:round(CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput, true), 1)
+    local skillMod = CraftSim.UTIL:round(CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true), 1)
     local fullRecipeDifficulty = CraftSim.SIMULATION_MODE.baseRecipeDifficulty + recipeDifficultyMod 
     CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.recipeDifficultyValue:SetText(CraftSim.UTIL:round(fullRecipeDifficulty, 1) .. " (" .. CraftSim.SIMULATION_MODE.baseRecipeDifficulty .. "+" .. recipeDifficultyMod  .. ")")
     CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.baseSkillValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.skill, 1) .. " (" .. CraftSim.SIMULATION_MODE.baseSkill .. "+" .. reagentSkillIncrease .. "+" .. skillMod ..")")
@@ -1763,4 +1743,44 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
             qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[CraftSim.SIMULATION_MODE.recipeData.expectedQuality])
         end
     end
+end
+
+function CraftSim.FRAME:CreateNumericInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, allowNegative, onTextChangedCallback)
+    local numericInput = CreateFrame("EditBox", name, parent, "UIPanelButtonTemplate")
+        numericInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+        numericInput:SetSize(sizeX, sizeY)
+        numericInput:SetAutoFocus(false) -- dont automatically focus
+        numericInput:SetFontObject("ChatFontNormal")
+        numericInput:SetText(initialValue)
+        numericInput:SetScript("OnEscapePressed", function() numericInput:ClearFocus() end)
+        numericInput:SetScript("OnEnterPressed", function() numericInput:ClearFocus() end)
+        numericInput:SetScript("OnTextChanged", onTextChangedCallback)
+
+    -- blizzard's NumericInputSpinnerTemplate is ugly and not configurable enough, so I make my own duh!
+
+    local buttonWidth = 5
+    local buttonHeight = sizeY / 2 - 1
+    local buttonOffsetX = 0
+    local buttonOffsetY = -1
+    numericInput.plusButton = CreateFrame("Button", nil, numericInput, "UIPanelButtonTemplate")
+    numericInput.plusButton:SetPoint("TOPLEFT", numericInput, "TOPRIGHT", buttonOffsetX, buttonOffsetY)	
+    numericInput.plusButton:SetText("+")
+    numericInput.plusButton:SetSize(numericInput.plusButton:GetTextWidth() + buttonWidth, buttonHeight) -- make it smol
+    numericInput.plusButton:SetScript("OnClick", function(self) 
+        local currentValue = CraftSim.UTIL:ValidateNumberInput(numericInput, allowNegative)
+        numericInput:SetText(currentValue + 1)
+        onTextChangedCallback(numericInput, true) -- is the input "self" now? .. yes it is :D
+    end)
+
+    numericInput.minusButton = CreateFrame("Button", nil, numericInput, "UIPanelButtonTemplate")
+    numericInput.minusButton:SetPoint("TOP", numericInput.plusButton, "BOTTOM", 0, 0)	
+    numericInput.minusButton:SetText("-")
+    numericInput.minusButton:SetSize(numericInput.minusButton:GetTextWidth() + buttonWidth, buttonHeight) -- make it smol
+    numericInput.minusButton:SetScript("OnClick", function(self) 
+        local currentValue = CraftSim.UTIL:ValidateNumberInput(numericInput, allowNegative)
+        numericInput:SetText(currentValue - 1)
+        onTextChangedCallback(numericInput, true) -- is the input "self" now? .. yes it is :D
+    end)
+
+    return numericInput
 end

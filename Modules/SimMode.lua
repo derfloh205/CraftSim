@@ -6,6 +6,7 @@ CraftSim.SIMULATION_MODE.isActive = false
 CraftSim.SIMULATION_MODE.reagentOverwriteFrame = nil
 CraftSim.SIMULATION_MODE.craftingDetailsFrame = nil
 CraftSim.SIMULATION_MODE.recipeData = nil
+CraftSim.SIMULATION_MODE.baseSpecNodeData = nil
 CraftSim.SIMULATION_MODE.baseSkill = nil
 CraftSim.SIMULATION_MODE.reagentSkillIncrease = nil
 
@@ -44,10 +45,32 @@ function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(userInput)
     CraftSim.MAIN:TriggerModulesByRecipeType()
 end
 
+function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
+    for _, currentInput in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
+        local reagentIndex = currentInput.inputq1.reagentIndex
+        local reagentData = CraftSim.SIMULATION_MODE.recipeData.reagents[reagentIndex]
+
+        if currentInput.isActive and reagentData.differentQualities then
+            for i = 1, 3, 1 do
+                local allocationForQuality = 0
+                if i == qualityID then 
+                    allocationForQuality = reagentData.requiredQuantity
+                end
+
+                reagentData.itemsInfo[i].allocations = allocationForQuality
+                currentInput["inputq" .. i]:SetText(allocationForQuality)
+            end
+        end
+    end
+
+    CraftSim.MAIN:TriggerModulesByRecipeType()
+end
+
 function CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
     if not userInput then
         return
     end
+    --print("stat mod changed: " .. self.stat)
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()
     CraftSim.MAIN:TriggerModulesByRecipeType()
 end
@@ -150,6 +173,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         end
         -- crafting speed... for later profit per time interval?
     else
+        CraftSim.SIMULATION_MODE.baseSpecNodeData = CopyTable(CraftSim.SIMULATION_MODE.recipeData.specNodeData) -- to make a reset possible
         CraftSim.SIMULATION_MODE.baseSkill = CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents
         CraftSim.SIMULATION_MODE.baseRecipeDifficulty = CraftSim.SIMULATION_MODE.recipeData.baseDifficulty
 
