@@ -6,6 +6,7 @@
 ## Author: genju
 ## Version: 1.5.3
 ## X-Curse-Project-ID: 705015
+## X-Wago-ID: 0mNwaPKo
 ## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimTooltipData, CraftSimItemCache, CraftSimCollapsedFrames
 
 embeds.xml
