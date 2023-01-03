@@ -14,6 +14,7 @@ CraftSim.CONST.FRAMES = {
     PROFIT_DETAILS = 4,
     CRAFTING_DETAILS = 5,
     SPEC_INFO = 6,
+    WARNING = 7,
 }
 
 CraftSim.CONST.ERROR = {

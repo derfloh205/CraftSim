@@ -104,6 +104,10 @@ end
 
 -- Wrappers 
 function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent)
+    if not CraftSim.PRICE_APIS.available then
+        return 0
+    end
+
     local minbuyout = CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, isReagent)
     if minbuyout == nil then
         local _, link = GetItemInfo(itemID)
@@ -120,6 +124,10 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent)
 end
 
 function CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink, isReagent)
+    if not CraftSim.PRICE_APIS.available then
+        return 0
+    end
+    
     local minbuyout = CraftSim.PRICE_API:GetMinBuyoutByItemLink(itemLink, isReagent)
     if minbuyout == nil then
         if CraftSim.PRICEDATA.noPriceDataLinks[itemLink] == nil then

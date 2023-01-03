@@ -92,12 +92,6 @@ function CraftSim.FRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, siz
     return newIcon
 end
 
-function CraftSim.FRAME:InitPriceDataWarningFrame()	
-    
-	-- TODO: price data warning frame.. utilize something similar to the ketho editbox...
-    
-end
-
 function CraftSim.FRAME:InitBestAllocationsFrame()
     local frame = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimReagentHintFrame", 
@@ -1127,6 +1121,38 @@ function CraftSim.FRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, anch
     end)
 
     return helpButton
+end
+
+function CraftSim.FRAME:InitWarningFrame()
+    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimWarningFrame", 
+    CraftSim.UTIL:ColorizeText("CraftSim Warning", CraftSim.CONST.COLORS.RED), 
+    UIParent, 
+    UIParent, 
+    "CENTER", "CENTER", 0, 0, 500, 500, CraftSim.CONST.FRAMES.WARNING)
+
+    frame.content.warningText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.content.warningText:SetPoint("CENTER", frame.content, "CENTER", 0, 0)
+    frame.content.warningText:SetText("No Warning")
+
+    frame.content.closeButton = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
+	frame.content.closeButton:SetPoint("BOTTOM", frame.content, "BOTTOM", 0, 20)	
+	frame.content.closeButton:SetText("Close")
+	frame.content.closeButton:SetSize(frame.content.closeButton:GetTextWidth()+15, 25)
+    frame.content.closeButton:SetScript("OnClick", function(self) 
+        CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING), false)
+    end)
+
+    frame.showWarning = function(warningText) 
+        frame.content.warningText:SetText(warningText)
+        frame:Show()
+    end
+
+    frame:Hide()
+end
+
+function CraftSim.FRAME:ShowWarning(warningText)
+    local warningFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING)
+    warningFrame.showWarning(warningText)
 end
 
 function CraftSim.FRAME:InitSpecInfoFrame()

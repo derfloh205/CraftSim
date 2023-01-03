@@ -231,6 +231,10 @@ function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
         local oneP = percentRelativeTo / 100
         local percent = CraftSim.UTIL:round(copperValue / oneP, 0)
 
+        if oneP == 0 then
+            percent = 0
+        end
+
         percentageText = " (" .. percent .. "%)"
     end
 

@@ -8,13 +8,17 @@ CraftSimAUCTIONATOR = {name = "Auctionator"}
 CraftSimDEBUG_PRICE_API = {name = "Debug"}
 
 CraftSimDebugData = CraftSimDebugData or {}
+CraftSim.PRICE_APIS.available = true
 
 function CraftSim.PRICE_API:InitPriceSource()
     local loadedSources = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
 
     if #loadedSources == 0 then
         print("CraftSim: No Supported Price Source Available!")
-        -- TODO ?
+        CraftSim.PRICE_APIS.available = false
+        CraftSim.FRAME:ShowWarning("No price source found!\n\n" ..
+         "You need to have installed at least one of the\nfollowing price source addons to utilize CraftSim's profit calculations:\n\n\n" ..
+         table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
         return
     end
 
