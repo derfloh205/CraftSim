@@ -314,7 +314,7 @@ function CraftSim.FRAME:InitCostOverviewFrame()
 	frame.content.resultProfitsTitle:SetPoint("TOP", frame.content.craftingCosts, "TOP", 0, textSpacingY - 10)
     frame.content.resultProfitsTitle:SetText("Profit By Quality")
 
-    local function createProfitFrame(offsetY, parent, newHookFrame)
+    local function createProfitFrame(offsetY, parent, newHookFrame, qualityID)
         local profitFrame = CreateFrame("frame", nil, parent)
         profitFrame:SetSize(parent:GetWidth(), 25)
         profitFrame:SetPoint("TOP", newHookFrame, "TOP", 0, offsetY)
@@ -323,6 +323,35 @@ function CraftSim.FRAME:InitCostOverviewFrame()
         profitFrame.text = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         profitFrame.text:SetPoint("LEFT", profitFrame.icon, "LEFT", 30, 0)
         profitFrame.text:SetText("???")
+        
+        --profitFrame.qualityID -- this will be set by the fill function 
+
+        local clickCallback = function(self, button, down) 
+            if self:GetChecked() then
+                -- show input, set override
+                profitFrame.overrideInput:Show()
+                profitFrame.text:Hide()
+                CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = profitFrame.overrideInput.getMoneyValue()
+                CraftSim.MAIN:TriggerModulesByRecipeType()
+            else
+                profitFrame.overrideInput:Hide()
+                profitFrame.text:Show()
+                -- delete override
+                CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = nil
+                CraftSim.MAIN:TriggerModulesByRecipeType()
+            end
+        end
+
+        profitFrame.overrideCheckBox = CraftSim.FRAME:CreateCheckboxCustomCallback(
+            "", "Override sell price for quality\n\nInput is interpreted as gold", initialValue, clickCallback, profitFrame, profitFrame.icon, "RIGHT", "RIGHT", -20, 0)
+
+        profitFrame.overrideInput = CraftSim.FRAME:CreateGoldInput(
+            nil, profitFrame, profitFrame.text, "LEFT", "LEFT", 0, 0, 50, 25, 0, function(overridePrice) 
+                CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = overridePrice
+
+                CraftSim.MAIN:TriggerModulesByRecipeType()
+            end)
+        profitFrame.overrideInput:Hide()
 
         profitFrame:Hide()
         return profitFrame
@@ -331,11 +360,11 @@ function CraftSim.FRAME:InitCostOverviewFrame()
     local baseY = -20
     local profitFramesSpacingY = -20
     frame.content.profitFrames = {}
-    table.insert(frame.content.profitFrames, createProfitFrame(baseY, frame.content, frame.content.resultProfitsTitle))
-    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame.content, frame.content.resultProfitsTitle))
-    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*2, frame.content, frame.content.resultProfitsTitle))
-    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*3, frame.content, frame.content.resultProfitsTitle))
-    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame.content, frame.content.resultProfitsTitle))
+    table.insert(frame.content.profitFrames, createProfitFrame(baseY, frame.content, frame.content.resultProfitsTitle, 1))
+    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame.content, frame.content.resultProfitsTitle, 2))
+    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*2, frame.content, frame.content.resultProfitsTitle, 3))
+    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*3, frame.content, frame.content.resultProfitsTitle, 4))
+    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame.content, frame.content.resultProfitsTitle, 5))
     
 
 	frame:Hide()
@@ -361,6 +390,7 @@ function CraftSim.FRAME:FillCostOverview(craftingCosts, minCraftingCosts, profit
     for index, profitFrame in pairs(costOverviewFrame.content.profitFrames) do
         if profitPerQuality[index] ~= nil then
             profitFrame.icon.SetQuality(currentQuality + index - 1)
+            profitFrame.qualityID = currentQuality + index - 1
             local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
             profitFrame.text:SetText(CraftSim.UTIL:FormatMoney(profitPerQuality[index], true, relativeValue))
             profitFrame:Show()
@@ -1070,8 +1100,22 @@ function CraftSim.FRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
 	end
 end
 
+function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initialValue, clickCallback, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
+    local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
+    checkBox:SetHitRectInsets(0, 0, 0, 0); -- see https://wowpedia.fandom.com/wiki/API_Frame_SetHitRectInsets
+	checkBox:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+	checkBox.Text:SetText(label)
+    checkBox.tooltip = description
+	-- there already is an existing OnClick script that plays a sound, hook it
+    checkBox:SetChecked(initialValue)
+	checkBox:HookScript("OnClick", clickCallback)
+
+    return checkBox
+end
+
 function CraftSim.FRAME:CreateCheckbox(label, description, optionName, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
     local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
+    checkBox:SetHitRectInsets(0, 0, 0, 0); -- see https://wowpedia.fandom.com/wiki/API_Frame_SetHitRectInsets
 	checkBox:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
 	checkBox.Text:SetText(label)
     checkBox.tooltip = description
@@ -1743,6 +1787,32 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
             qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[CraftSim.SIMULATION_MODE.recipeData.expectedQuality])
         end
     end
+end
+
+function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onTextChangedCallback)
+    local goldInput = CreateFrame("EditBox", name, parent, "UIPanelButtonTemplate")
+        goldInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+        goldInput:SetSize(sizeX, sizeY)
+        goldInput:SetAutoFocus(false) -- dont automatically focus
+        goldInput:SetFontObject("ChatFontNormal")
+        goldInput:SetText(initialValue)
+        goldInput:SetScript("OnEscapePressed", function() goldInput:ClearFocus() end)
+        goldInput:SetScript("OnEnterPressed", function() goldInput:ClearFocus() end)
+        goldInput:SetScript("OnTextChanged", function(self) 
+            local moneyValue = goldInput.getMoneyValue()
+            onTextChangedCallback(moneyValue)
+        end)
+
+        goldInput.getMoneyValue = function()
+            local inputText = goldInput:GetNumber()
+            local totalCopper = inputText*10000
+
+            --print("total value: " .. CraftSim.UTIL:FormatMoney(totalCopper))  
+            return totalCopper
+        end
+
+
+    return goldInput
 end
 
 function CraftSim.FRAME:CreateNumericInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, allowNegative, onTextChangedCallback)

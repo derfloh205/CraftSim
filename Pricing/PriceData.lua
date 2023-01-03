@@ -4,7 +4,7 @@ CraftSim.PRICEDATA = {}
 
 CraftSim.PRICEDATA.noPriceDataLinks = {}
 
-CraftSim.PRICEDATA.overrideResultPriceMode = false
+CraftSim.PRICEDATA.overrideResultProfits = {} -- mapped by qualityID
 
 function CraftSim.PRICEDATA:GetReagentCosts(recipeData, getMinimum) 
     local reagentCosts = {}
@@ -93,6 +93,14 @@ function CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
         end
     else
         print("CraftSimError: Unhandled recipeType in priceData: " .. tostring(recipeType))
+    end
+
+    for i = 1, 5, 1 do
+        -- if existent, override price by quality
+        local overridePrice = CraftSim.PRICEDATA.overrideResultProfits[i]
+        if overridePrice ~= nil then
+            minBuyoutPerQuality[i] = overridePrice
+        end
     end
 
     return {
