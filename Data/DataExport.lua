@@ -63,9 +63,10 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operation
 			recipeData.stats.craftingspeed.description = statInfo.ratingDescription
 			recipeData.stats.craftingspeed.percent = statInfo.ratingPct
 		elseif statName == inspiration then
-			recipeData.stats.inspiration.value = statInfo.bonusStatValue
+			local baseInspiration = 50
+			recipeData.stats.inspiration.value = statInfo.bonusStatValue + baseInspiration
 			recipeData.stats.inspiration.description = statInfo.ratingDescription
-			recipeData.stats.inspiration.percent = statInfo.ratingPct
+			recipeData.stats.inspiration.percent = CraftSim.UTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
 
 			-- matches a row of numbers coming after the % character and any characters in between plus a space, should hopefully match in every localization...
 			local _, _, bonusSkill = string.find(statInfo.ratingDescription, "%%.* (%d+)") 
@@ -195,7 +196,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 
 	-- inspiration
 	if recipeData.stats.inspiration then
-		local basePercent = 5 -- everyone has this as base 
+		local baseInspiration = 50 -- everyone has this as base = 5%
 		local baseInspirationBonusSkill = 0
 		local specNodeBonus = specNodeStats.inspiration
 		local itemBonus = professionGearStats.inspiration
@@ -213,8 +214,8 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 			end
 		end
 
-		recipeData.stats.inspiration.value = buffStats.inspiration + itemBonus + specNodeBonus + buffBonus
-		recipeData.stats.inspiration.percent = basePercent + CraftSim.UTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
+		recipeData.stats.inspiration.value = buffStats.inspiration + itemBonus + specNodeBonus + buffBonus + baseInspiration
+		recipeData.stats.inspiration.percent = CraftSim.UTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
 		recipeData.stats.inspiration.bonusskill = baseInspirationBonusSkill * specNodeBonusSkillFactor * itemBonusSkillFactor * finishingReagentsBonusSkillFactor
 	end
 

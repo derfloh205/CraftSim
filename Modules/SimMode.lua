@@ -109,7 +109,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
         local inspirationMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeInspirationModInput, true)
         local inspirationSkillMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeInspirationSkillModInput, true)
         CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value + inspirationMod
-        CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.percent = CraftSim.UTIL:GetInspirationPercentByStat(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.value) * 100
+        CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.percent = (CraftSim.UTIL:GetInspirationPercentByStat(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.value) * 100)
         if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.percent > 100 then
             -- More than 100 is not possible and it does not make sense in the calculation and would inflate the worth
             CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.percent = 100

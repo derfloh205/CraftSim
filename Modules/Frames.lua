@@ -1677,7 +1677,7 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationMod, CraftSim.SIMULATION_MODE.recipeData.stats.inspiration)
     if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration then
         local inspirationDiff = CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.value - CraftSim.SIMULATION_MODE.baseInspiration.value
-        local percentText = CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.percent, 1) + 5 .. "%" -- also display the extra %
+        local percentText = CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.percent, 1) .. "%"
         CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationValue:SetText(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.value .. " (" .. CraftSim.SIMULATION_MODE.baseInspiration.value .."+"..inspirationDiff .. ") " .. percentText)
     end
 
