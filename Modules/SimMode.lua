@@ -42,7 +42,7 @@ function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(userInput)
     --reagentData.itemsInfo[inputBox.qualityID].allocations = tonumber(inputNumber)
 
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()
-    CraftSim.MAIN:TriggerModulesByRecipeType()
+    CraftSim.MAIN:TriggerModulesErrorSafe()
 end
 
 function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
@@ -63,7 +63,7 @@ function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
         end
     end
 
-    CraftSim.MAIN:TriggerModulesByRecipeType()
+    CraftSim.MAIN:TriggerModulesErrorSafe()
 end
 
 function CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
@@ -72,7 +72,7 @@ function CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
     end
     --print("stat mod changed: " .. self.stat)
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()
-    CraftSim.MAIN:TriggerModulesByRecipeType()
+    CraftSim.MAIN:TriggerModulesErrorSafe()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateReagentAllocationsByInput()
@@ -199,5 +199,5 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 
     -- recalculate modules
-    CraftSim.MAIN:TriggerModulesByRecipeType()
+    CraftSim.MAIN:TriggerModulesErrorSafe()
 end

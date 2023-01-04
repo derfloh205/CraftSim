@@ -550,7 +550,7 @@ function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeTy
             end
         end
     
-        CraftSim.MAIN:TriggerModulesByRecipeType()
+        CraftSim.MAIN:TriggerModulesErrorSafe()
     end
 	
 end

@@ -86,6 +86,14 @@ end
 
 local hookedEvent = false
 
+function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
+	local success, errorMsg = pcall(CraftSim.MAIN.TriggerModulesByRecipeType, self, isInit)
+
+	if not success then
+		CraftSim.FRAME:ShowError(tostring(errorMsg), "CraftSim Error")
+	end
+end
+
 function CraftSim.MAIN:HookToEvent()
 	if hookedEvent then
 		return
@@ -93,14 +101,14 @@ function CraftSim.MAIN:HookToEvent()
 	hookedEvent = true
 
 	local function Update(self)
-		CraftSim.MAIN:TriggerModulesByRecipeType(false)
+		CraftSim.MAIN:TriggerModulesErrorSafe(false)
 	end
 
 	local function Init(self, recipeInfo)
 		CraftSim.MAIN.currentRecipeInfo = recipeInfo
 		
 		if recipeInfo then
-			CraftSim.MAIN:TriggerModulesByRecipeType(true)
+			CraftSim.MAIN:TriggerModulesErrorSafe(true)
 		else
 			--print("loading recipeInfo..")
 		end
@@ -227,8 +235,6 @@ end
 
 local debugTest = true
 function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
-
-
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 	local expansionName = professionInfo.expansionName
 	local craftingPage = ProfessionsFrame.CraftingPage

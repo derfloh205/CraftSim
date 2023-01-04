@@ -221,6 +221,27 @@ function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     return inputNumber
 end
 
+function CraftSim.UTIL:WrapText(text, width)
+    local char_pattern = ".[\128-\191]*"  -- for UTF-8 texts
+    -- local char_pattern = "."           -- for 1-byte encodings
+    
+    local function wrap(text, width)
+       local tail, lines = text.." ", {}
+       while tail do
+          lines[#lines + 1], tail = tail
+             :gsub("^%s+", "")
+             :gsub(char_pattern, "\0%0\0", width)
+             :gsub("%z%z", "")
+             :gsub("(%S)%z(%s)", "%1%2\0")
+             :gsub("^(%z[^\r\n%z]*)%f[%s](%Z*)%z(.*)$", "%1\0%2%3")
+             :match"^%z(%Z+)%z(.*)$"
+       end
+       return table.concat(lines, "\n")
+    end
+
+    return wrap(text, width)
+end
+
 function CraftSim.UTIL:IsSpecImplemented(professionID)
 
     if professionID == Enum.Profession.Blacksmithing and not CraftSimOptions.blacksmithingEnabled or

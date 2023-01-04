@@ -116,7 +116,7 @@ function CraftSim.FRAME:InitBestAllocationsFrame()
 	frame.content.inspirationCheck:HookScript("OnClick", function(_, btn, down)
 		local checked = frame.content.inspirationCheck:GetChecked()
 		CraftSimOptions.materialSuggestionInspirationThreshold = checked
-        CraftSim.MAIN:TriggerModulesByRecipeType() -- TODO: if this is not performant enough, try to only recalc the material stuff not all, lazy solution for now
+        CraftSim.MAIN:TriggerModulesErrorSafe() -- TODO: if this is not performant enough, try to only recalc the material stuff not all, lazy solution for now
 	end)
 
     frame.content.qualityText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -332,13 +332,13 @@ function CraftSim.FRAME:InitCostOverviewFrame()
                 profitFrame.overrideInput:Show()
                 profitFrame.text:Hide()
                 CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = profitFrame.overrideInput.getMoneyValue()
-                CraftSim.MAIN:TriggerModulesByRecipeType()
+                CraftSim.MAIN:TriggerModulesErrorSafe()
             else
                 profitFrame.overrideInput:Hide()
                 profitFrame.text:Show()
                 -- delete override
                 CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = nil
-                CraftSim.MAIN:TriggerModulesByRecipeType()
+                CraftSim.MAIN:TriggerModulesErrorSafe()
             end
         end
 
@@ -349,7 +349,7 @@ function CraftSim.FRAME:InitCostOverviewFrame()
             nil, profitFrame, profitFrame.text, "LEFT", "LEFT", 0, 0, 50, 25, 0, function(overridePrice) 
                 CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = overridePrice
 
-                CraftSim.MAIN:TriggerModulesByRecipeType()
+                CraftSim.MAIN:TriggerModulesErrorSafe()
             end)
         profitFrame.overrideInput:Hide()
 
@@ -1020,7 +1020,7 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     end)
 end
 
-function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, frameID)
+function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, frameID, scrollable)
     local hookFrame = CreateFrame("frame", nil, parent)
     hookFrame:SetPoint(anchorA, anchorFrame, anchorB, offsetX, offsetY)
     local frame = CreateFrame("frame", name, hookFrame, "BackdropTemplate")
@@ -1055,12 +1055,26 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
 
     CraftSim.FRAME:MakeCollapsable(frame, sizeX, sizeY, frameID)
     CraftSim.FRAME:makeFrameMoveable(frame)
-	
-    frame.content = CreateFrame("frame", nil, frame)
-    frame.content:SetPoint("TOP", frame, "TOP")
-    frame.content:SetSize(sizeX, sizeY)
 
+    if scrollable then
+        -- scrollframe
+        frame.scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
+        frame.scrollFrame.scrollChild = CreateFrame("frame")
+        local scrollFrame = frame.scrollFrame
+        local scrollChild = scrollFrame.scrollChild
+        scrollFrame:SetSize(frame:GetWidth() - 70, frame:GetHeight() - 50)
+        scrollFrame:SetPoint("TOP", frame.title, "TOP", 0, -20)
+        scrollFrame:SetScrollChild(scrollFrame.scrollChild)
+        scrollChild:SetWidth(scrollFrame:GetWidth() - 5)
+        scrollChild:SetHeight(1) -- ??
 
+        frame.content = scrollChild
+    else
+        frame.content = CreateFrame("frame", nil, frame)
+        frame.content:SetPoint("TOP", frame, "TOP")
+        frame.content:SetSize(sizeX, sizeY)
+    end
+    
     CraftSim.FRAME.frames[frameID] = name
     return frame
 end
@@ -1174,22 +1188,52 @@ function CraftSim.FRAME:InitWarningFrame()
     CraftSim.UTIL:ColorizeText("CraftSim Warning", CraftSim.CONST.COLORS.RED), 
     UIParent, 
     UIParent, 
-    "CENTER", "CENTER", 0, 0, 500, 500, CraftSim.CONST.FRAMES.WARNING)
+    "CENTER", "CENTER", 0, 0, 500, 500, CraftSim.CONST.FRAMES.WARNING, true)
+
+    frame:SetFrameStrata("HIGH")
 
     frame.content.warningText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.warningText:SetPoint("CENTER", frame.content, "CENTER", 0, 0)
+    frame.content.warningText:SetPoint("TOP", frame.content, "TOP", 0, -20)
     frame.content.warningText:SetText("No Warning")
 
-    frame.content.closeButton = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.closeButton:SetPoint("BOTTOM", frame.content, "BOTTOM", 0, 20)	
-	frame.content.closeButton:SetText("Close")
-	frame.content.closeButton:SetSize(frame.content.closeButton:GetTextWidth()+15, 25)
-    frame.content.closeButton:SetScript("OnClick", function(self) 
+    frame.content.errorBox = CreateFrame("EditBox", nil, frame.content)
+    frame.content.errorBox:SetPoint("TOP", frame.content, "TOP", 0, -20)
+    frame.content.errorBox:SetText("No Warning")
+    frame.content.errorBox:SetWidth(frame.content:GetWidth() - 15)
+    frame.content.errorBox:SetHeight(20)
+    frame.content.errorBox:SetMultiLine(true)
+    frame.content.errorBox:SetAutoFocus(false)
+    frame.content.errorBox:SetFontObject("ChatFontNormal")
+
+    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.closeButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -9)	
+	frame.closeButton:SetText("Close")
+	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+15, 20)
+    frame.closeButton:SetScript("OnClick", function(self) 
         CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING), false)
     end)
 
-    frame.showWarning = function(warningText) 
-        frame.content.warningText:SetText(warningText)
+    frame.content.warningText:Hide()
+    frame.content.errorBox:Hide()
+
+    frame.showWarning = function(warningText, optionalTitle) 
+        optionalTitle = optionalTitle or "CraftSim Warning"
+        local wrapped = CraftSim.UTIL:WrapText(warningText, 50)
+        frame.title:SetText(CraftSim.UTIL:ColorizeText(optionalTitle, CraftSim.CONST.COLORS.RED))
+        frame.content.warningText:SetText(wrapped)
+        frame.content.warningText:Show()
+        frame.content.errorBox:Hide()
+        frame.content.errorBox:SetText("")
+        frame:Show()
+    end
+
+    frame.showError = function(errorText, optionalTitle) 
+        optionalTitle = optionalTitle or "CraftSim Warning"
+        frame.title:SetText(CraftSim.UTIL:ColorizeText(optionalTitle, CraftSim.CONST.COLORS.RED))
+        frame.content.errorBox:SetText(errorText)
+        frame.content.errorBox:Show()
+        frame.content.warningText:Hide()
+        frame.content.warningText:SetText("")
         frame:Show()
     end
 
@@ -1241,9 +1285,14 @@ function CraftSim.FRAME:ShowOneTimeInfo(force)
     infoFrame.showInfo(infoText)
 end
 
-function CraftSim.FRAME:ShowWarning(warningText)
+function CraftSim.FRAME:ShowWarning(warningText, optionalTitle)
     local warningFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING)
-    warningFrame.showWarning(warningText)
+    warningFrame.showWarning(warningText, optionalTitle)
+end
+
+function CraftSim.FRAME:ShowError(errorText, optionalTitle)
+    local warningFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING)
+    warningFrame.showError(errorText, optionalTitle)
 end
 
 function CraftSim.FRAME:InitSpecInfoFrame()
@@ -1360,7 +1409,7 @@ function CraftSim.FRAME:InitSimModeFrames()
             CraftSim.SIMULATION_MODE:InitializeSimulationMode(CraftSim.MAIN.currentRecipeData)
         end
 
-        CraftSim.MAIN:TriggerModulesByRecipeType()
+        CraftSim.MAIN:TriggerModulesErrorSafe()
     end)
 
     toggleButton:Hide()
