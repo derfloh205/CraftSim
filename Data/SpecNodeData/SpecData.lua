@@ -2,6 +2,10 @@ addonName, CraftSim = ...
 
 CraftSim.SPEC_DATA = {}
 
+local function print(text, recursive) -- override
+        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SPECDATA, recursive)
+end
+
 function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
     local IDs = {
         subtypeIDs = nodeData.subtypeIDs or {},
@@ -117,7 +121,7 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
                 print("-- isException " .. tostring(isException))
                 print(tostring(IDs.exceptionRecipeIDs) .. " and " .. "contains " .. tostring(IDs.exceptionRecipeIDs) .. ", " .. tostring(recipeData.recipeID))
                 print("-- ids: ")
-                CraftSim.UTIL:PrintTable(IDs, true)
+                print(IDs, CraftSim.CONST.DEBUG_IDS.SPEC_DATA, true)
             end
             if nodeInfo and (nodeAffectsRecipe or nodeData.debug) then
                 if nodeData.threshold and (nodeInfo.activeRank - 1) >= nodeData.threshold then

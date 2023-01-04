@@ -20,6 +20,13 @@ function CraftSim_DEBUG:PrintRecipeIDs()
 end
 
 function CraftSim_DEBUG:CheckSpecNode(nodeID)
+
+    local function print(text, r) -- override
+        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SPECDATA, r)
+    end
+
+    print("This is a test!")
+    
     local professionID = CraftSim.MAIN.currentRecipeData.professionID
     local recipeData = CraftSim.MAIN.currentRecipeData
 
@@ -39,5 +46,17 @@ function CraftSim_DEBUG:CheckSpecNode(nodeID)
     local statsFromData = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeID, true)
 
     print("Stats from node: ")
-    CraftSim.UTIL:PrintTable(statsFromData, true)
+    print(statsFromData, CraftSim.CONST.DEBUG_IDS.SPECDATA, true)
+end
+
+function CraftSim_DEBUG:print(debugOutput, debugID, recursive, noLabel)
+    
+    if CraftSimOptions["enableDebugID_" .. debugID] then
+        if type(debugOutput) == "table" then
+            CraftSim.UTIL:PrintTable(debugOutput, debugID, recursive)
+        else
+            local debugFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG)
+            debugFrame.addDebug(debugOutput, debugID, noLabel)
+        end
+    end
 end

@@ -7,6 +7,10 @@ CraftSimItemCache = CraftSimItemCache or {}
 
 LibCompress = LibStub:GetLibrary("LibCompress")
 
+local function print(text, recursive) -- override
+	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.DATAEXPORT, recursive)
+end
+
 function CraftSim.DATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
 	-- TODO: is this consistent enough?
 	local linksByQuality = {}
@@ -154,7 +158,7 @@ function CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
 	return specNodeData
 end
 
-function CraftSim.DATAEXPORT:GetStatsFromReagents(recipeData)
+function CraftSim.DATAEXPORT:GetStatsFromOptionalReagents(recipeData)
 	-- TODO: export optional and finishing reagents and get their modifiers
 	return {	
         inspiration = 0,
@@ -178,21 +182,20 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 
 	local specNodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes)
 	local buffStats = CraftSim.DATAEXPORT:GetStatsFromBuffs(recipeData.buffData)
-	local reagentStats = CraftSim.DATAEXPORT:GetStatsFromReagents(recipeData)
+	local optionalReagentsStats = CraftSim.DATAEXPORT:GetStatsFromOptionalReagents(recipeData)
 
-	-- print("specnodestats: ")
-	-- CraftSim.UTIL:PrintTable(specNodeStats)
+	print("Stats from Specialization: ")
+	print(specNodeStats)
 
 	-- skill
 	local baseSkill = professionInfo.skillLevel
 	local racialSkill = CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(recipeData.professionID)
 	local itemSkill = professionGearStats.skill
 	local specNodeSkill = specNodeStats.skill
-	local reagentSkill = reagentStats.skill
+	local optionalReagentsSkill = optionalReagentsStats.skill
 
-	recipeData.stats.skill = baseSkill + racialSkill + itemSkill + specNodeSkill + reagentSkill
-	recipeData.stats.skillNoReagents = baseSkill + racialSkill + itemSkill + specNodeSkill
-	recipeData.stats.skillNoItems = baseSkill + racialSkill + specNodeSkill + reagentSkill
+	recipeData.stats.skill = baseSkill + racialSkill + itemSkill + specNodeSkill + optionalReagentsSkill
+	recipeData.stats.skillNoItems = baseSkill + racialSkill + specNodeSkill + optionalReagentsSkill
 
 	-- inspiration
 	if recipeData.stats.inspiration then
@@ -204,7 +207,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		local itemBonusSkillFactor = 1 + (professionGearStats.inspirationBonusSkillPercent / 100) -- 15% -> 1.15
 		local specNodeBonusSkillFactor = specNodeStats.inspirationBonusSkillFactor
 		-- TODO: consider stable fluidic draconium 
-		local finishingReagentsBonusSkillFactor = reagentStats.inspirationBonusSkillFactor
+		local finishingReagentsBonusSkillFactor = optionalReagentsStats.inspirationBonusSkillFactor
 
 		if not recipeData.result.isNoQuality then
 			if recipeData.maxQuality == 5 then
@@ -226,7 +229,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		local itemBonus = professionGearStats.multicraft
 		local specNodeBonusItemsFactor = specNodeStats.multicraftBonusItemsFactor
 		-- TODO: consider ??? I think in cooking maybe
-		local finishingReagentsBonusItemsFactor = reagentStats.multicraftBonusItemsFactor
+		local finishingReagentsBonusItemsFactor = optionalReagentsStats.multicraftBonusItemsFactor
 		recipeData.stats.multicraft.value = buffStats.multicraft + itemBonus + specNodeBonus
 		recipeData.stats.multicraft.percent = CraftSim.UTIL:GetMulticraftPercentByStat(recipeData.stats.multicraft.value) * 100
 		recipeData.stats.multicraft.bonusItemsFactor = specNodeBonusItemsFactor * finishingReagentsBonusItemsFactor
@@ -239,7 +242,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		local itemBonus = professionGearStats.resourcefulness
 		local specNodeBonusItemsFactor = specNodeStats.resourcefulnessBonusItemsFactor
 		-- TODO: consider ??? Dont know if that even exists
-		local finishingReagentsBonusItemsFactor = reagentStats.resourcefulnessBonusItemsFactor
+		local finishingReagentsBonusItemsFactor = optionalReagentsStats.resourcefulnessBonusItemsFactor
 
 		recipeData.stats.resourcefulness.value = buffStats.resourcefulness + itemBonus + specNodeBonus
 		recipeData.stats.resourcefulness.percent = CraftSim.UTIL:GetResourcefulnessPercentByStat(recipeData.stats.resourcefulness.value) * 100
@@ -254,22 +257,22 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		local specNodeBonusPercent = (specNodeStats.craftingspeedBonusFactor - 1) * 100
 		local buffBonusPercent = (buffStats.craftingspeedBonusFactor - 1) * 100
 		-- TODO: consider ??? Dont know if that even exists
-		local finishingReagentsBonusFactor = reagentStats.craftingspeedBonusFactor
+		local finishingReagentsBonusFactor = optionalReagentsStats.craftingspeedBonusFactor
 
 		recipeData.stats.craftingspeed.value = buffStats.craftingspeed + itemBonus + specNodeBonus
 		recipeData.stats.craftingspeed.percent = (CraftSim.UTIL:GetCraftingSpeedPercentByStat(recipeData.stats.craftingspeed.value) * 100) + buffBonusPercent + specNodeBonusPercent
 	end
 
 	-- debug
-	-- print("total skill: " .. tostring(recipeData.stats.skill))
-	-- print("total inspiration: ")
-	-- CraftSim.UTIL:PrintTable(recipeData.stats.inspiration or {})
-	-- print("total multicraft: ")
-	-- CraftSim.UTIL:PrintTable(recipeData.stats.multicraft or {})
-	-- print("total resourcefulness: ")
-	-- CraftSim.UTIL:PrintTable(recipeData.stats.resourcefulness or {})
-	-- print("total crafting speed: ")
-	-- CraftSim.UTIL:PrintTable(recipeData.stats.craftingspeed or {})
+	print("Total Skill No Reagents: " .. tostring(recipeData.stats.skill))
+	print("Total Inspiration: ")
+	print(recipeData.stats.inspiration or {})
+	print("Total Multicraft: ")
+	print(recipeData.stats.multicraft or {})
+	print("Total Resourcefulness: ")
+	print(recipeData.stats.resourcefulness or {})
+	print("Total Crafting speed: ")
+	print(recipeData.stats.craftingspeed or {})
 end
 
 function CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
@@ -446,6 +449,8 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 		recipeData.extraItemFactors = CraftSim.SPEC_DATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
 	else
 		recipeData.buffData = CraftSim.DATAEXPORT:exportBuffData()
+		print("BuffData:")
+		print(recipeData.buffData, true)
 		recipeData.specNodeData = CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
 	end
 

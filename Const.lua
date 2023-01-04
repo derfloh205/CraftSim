@@ -44,6 +44,16 @@ CraftSim.CONST.FRAMES = {
     SPEC_INFO = 6,
     WARNING = 7,
     INFO = 8,
+    DEBUG = 9,
+    DEBUG_CONTROL = 10
+}
+
+CraftSim.CONST.DEBUG_IDS = {
+    MAIN = "MAIN",
+    SPECDATA = "SPECDATA",
+    ERROR = "ERROR",
+    DATAEXPORT = "DATAEXPORT",
+    SIMULATION_MODE = "SIMULATION_MODE",
 }
 
 CraftSim.CONST.ERROR = {

@@ -401,8 +401,6 @@ function CraftSim.FRAME:FillCostOverview(craftingCosts, minCraftingCosts, profit
 end
 
 function CraftSim.FRAME:UpdateProfitDetails(recipeData, calculationData)
-    -- print("calcData:")
-    -- CraftSim.UTIL:PrintTable(calculationData, true)
     local profitDetailsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PROFIT_DETAILS)
 
     profitDetailsFrame.content.craftingCostValue:SetText(CraftSim.UTIL:FormatMoney(calculationData.craftingCostPerCraft))
@@ -1121,8 +1119,14 @@ function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initial
 	checkBox.Text:SetText(label)
     checkBox.tooltip = description
 	-- there already is an existing OnClick script that plays a sound, hook it
-    checkBox:SetChecked(initialValue)
-	checkBox:HookScript("OnClick", clickCallback)
+    checkBox:SetChecked(false)
+	checkBox:HookScript("OnClick", function() 
+        clickCallback(checkBox) -- "self"
+    end)
+
+    if initialValue then
+        checkBox:Click()
+    end
 
     return checkBox
 end
@@ -1183,6 +1187,75 @@ function CraftSim.FRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, anch
     return helpButton
 end
 
+function CraftSim.FRAME:InitDebugFrame()
+    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimDebugFrame", "CraftSim Debug", 
+    UIParent, 
+    UIParent, 
+    "CENTER", "CENTER", 0, 0, 400, 400, CraftSim.CONST.FRAMES.DEBUG, true)
+    frame:SetFrameStrata("HIGH")
+    frame:Hide()
+
+    frame.content.debugBox = CreateFrame("EditBox", nil, frame.content)
+    frame.content.debugBox:SetPoint("TOP", frame.content, "TOP", 0, -20)
+    frame.content.debugBox:SetText("")
+    frame.content.debugBox:SetWidth(frame.content:GetWidth() - 15)
+    frame.content.debugBox:SetHeight(20)
+    frame.content.debugBox:SetMultiLine(true)
+    frame.content.debugBox:SetAutoFocus(false)
+    frame.content.debugBox:SetFontObject("ChatFontNormal")
+    frame.content.debugBox:SetScript("OnEscapePressed", function() frame.content.debugBox:ClearFocus() end)
+    frame.content.debugBox:SetScript("OnEnterPressed", function() frame.content.debugBox:ClearFocus() end)
+
+    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.closeButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -9)	
+	frame.closeButton:SetText("Close")
+	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+5, 20)
+    frame.closeButton:SetScript("OnClick", function(self) 
+        CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING), false)
+    end)
+
+    frame.addDebug = function(debugOutput, debugID, noLabel) 
+        if frame:IsVisible() then -- to not make it too bloated over time
+            local currentOutput = frame.content.debugBox:GetText()
+            if noLabel then
+                frame.content.debugBox:SetText(currentOutput .. "\n" .. tostring(debugOutput))
+            else
+                frame.content.debugBox:SetText(currentOutput .. "\n\n- " .. debugID .. ":\n" .. tostring(debugOutput))
+            end
+        end
+    end
+
+    local controlPanel = CraftSim.FRAME:CreateCraftSimFrame("CraftSimDebugControlFrame", "Debug Control", 
+    frame, 
+    frame, 
+    "TOPRIGHT", "TOPLEFT", 0, 0, 200, 400, CraftSim.CONST.FRAMES.DEBUG_CONTROL)
+
+    controlPanel.content.clearButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
+	controlPanel.content.clearButton:SetPoint("TOP", controlPanel.title, "TOP", 0, -20)	
+	controlPanel.content.clearButton:SetText("Clear")
+	controlPanel.content.clearButton:SetSize(controlPanel.content.clearButton:GetTextWidth()+15, 25)
+    controlPanel.content.clearButton:SetScript("OnClick", function(self) 
+        frame.content.debugBox:SetText("")
+    end)
+
+    local checkBoxOffsetY = -2
+    controlPanel.content.checkBoxID_MAIN = CraftSim.FRAME:CreateCheckbox(
+        " MAIN", "Enable MAIN Output", "enableDebugID_MAIN", controlPanel.content, controlPanel.content.clearButton, "TOP", "TOP", -40, checkBoxOffsetY - 20)
+
+    controlPanel.content.checkBoxID_SPECDATA = CraftSim.FRAME:CreateCheckbox(
+        " SPECDATA", "Enable SPECDATA Output", "enableDebugID_SPECDATA", controlPanel.content, controlPanel.content.checkBoxID_MAIN, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
+
+    controlPanel.content.checkBoxID_ERROR = CraftSim.FRAME:CreateCheckbox(
+    " ERROR", "Enable ERROR Output", "enableDebugID_ERROR", controlPanel.content, controlPanel.content.checkBoxID_SPECDATA, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
+
+    controlPanel.content.checkBoxID_DATAEXPORT = CraftSim.FRAME:CreateCheckbox(
+    " DATAEXPORT", "Enable DATAEXPORT Output", "enableDebugID_DATAEXPORT", controlPanel.content, controlPanel.content.checkBoxID_ERROR, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
+
+    controlPanel.content.checkBoxID_SIMULATION_MODE = CraftSim.FRAME:CreateCheckbox(
+        " SIMULATION_MODE", "Enable SIMULATION_MODE Output", "enableDebugID_SIMULATION_MODE", controlPanel.content, controlPanel.content.checkBoxID_DATAEXPORT, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
+    
+end
+
 function CraftSim.FRAME:InitWarningFrame()
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimWarningFrame", 
     CraftSim.UTIL:ColorizeText("CraftSim Warning", CraftSim.CONST.COLORS.RED), 
@@ -1204,6 +1277,9 @@ function CraftSim.FRAME:InitWarningFrame()
     frame.content.errorBox:SetMultiLine(true)
     frame.content.errorBox:SetAutoFocus(false)
     frame.content.errorBox:SetFontObject("ChatFontNormal")
+    
+    frame.content.errorBox:SetScript("OnEscapePressed", function() frame.content.errorBox:ClearFocus() end)
+    frame.content.errorBox:SetScript("OnEnterPressed", function() frame.content.errorBox:ClearFocus() end)
 
     frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.closeButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -9)	

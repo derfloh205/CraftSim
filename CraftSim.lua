@@ -31,13 +31,24 @@ CraftSimOptions = CraftSimOptions or {
 
 	-- specData Refactor
 	blacksmithingEnabled = true,
-	alchemyEnabled = true
+	alchemyEnabled = true,
+
+	-- debugIDs
+	enableDebugID_MAIN = true,
+	enableDebugID_SPECDATA = true,
+	enableDebugID_ERROR = true,
+	enableDebugID_DATAEXPORT = true,
+	enableDebugID_SIMULATION_MODE = true,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
 
 CraftSim.MAIN.currentRecipeInfo = nil
 CraftSim.MAIN.currentRecipeData = nil
+
+local function print(text, recursive) -- override
+	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.MAIN, recursive)
+end
 
 function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 	if CraftSimOptions then
@@ -81,6 +92,18 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		if CraftSimOptions.alchemyEnabled == nil then
 			CraftSimOptions.alchemyEnabled = true
 		end
+		if CraftSimOptions.enableDebugID_MAIN == nil then
+			CraftSimOptions.enableDebugID_MAIN = true
+		end
+		if CraftSimOptions.enableDebugID_SPECDATA == nil then
+			CraftSimOptions.enableDebugID_SPECDATA = true
+		end
+		if CraftSimOptions.enableDebugID_DATAEXPORT == nil then
+			CraftSimOptions.enableDebugID_DATAEXPORT = true
+		end
+		if CraftSimOptions.enableDebugID_SIMULATION_MODE == nil then
+			CraftSimOptions.enableDebugID_SIMULATION_MODE = true
+		end
 	end
 end
 
@@ -91,6 +114,7 @@ function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
 
 	if not success then
 		CraftSim.FRAME:ShowError(tostring(errorMsg), "CraftSim Error")
+		print(CraftSim.UTIL:ColorizeText(tostring(errorMsg), CraftSim.CONST.COLORS.RED), CraftSim.CONST.DEBUG_IDS.ERROR)
 	end
 end
 
@@ -134,6 +158,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.FRAME:InitSpecInfoFrame()
 		CraftSim.FRAME:InitWarningFrame()
 		CraftSim.FRAME:InitOneTimeNoteFrame()
+		CraftSim.FRAME:InitDebugFrame()
 		CraftSim.SIMULATION_MODE:Init()
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -219,6 +244,8 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 			end
 		elseif command == "news" then
 			CraftSim.FRAME:ShowOneTimeInfo(true)
+		elseif command == "debug" then
+			CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
 		else 
 			-- open options if any other command or no command is given
 			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)

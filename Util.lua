@@ -186,13 +186,13 @@ end
 
 
 -- for debug purposes
-function CraftSim.UTIL:PrintTable(t, recursive)
+function CraftSim.UTIL:PrintTable(t, debugID, recursive)
     for k, v in pairs(t) do
         if not recursive or type(v) ~= "table" then
-            print(tostring(k) .. ": " .. tostring(v))
+            CraftSim_DEBUG:print(tostring(k) .. ": " .. tostring(v), debugID, false, true)
         elseif type(v) == "table" then
             print(tostring(k) .. ": ")
-            CraftSim.UTIL:PrintTable(v, recursive)
+            CraftSim.UTIL:PrintTable(v, debugID, recursive)
         end
 
     end
