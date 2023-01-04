@@ -1,0 +1,4 @@
+addonName, CraftSim = ...
+
+CraftSim.SPECINFO = {}
+
