@@ -361,17 +361,14 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			showTopGear = true
 			showSimulationMode = true
 			showSpecInfo = true
+			-- show for override usages
+			showStatweights = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
 			-- show nothing
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.RECRAFT then
 			-- show nothing? Depends..
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GATHERING then
 			-- show nothing maybe later some top gear for gathering
-		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
-			-- show crafting costs
-			showCostOverview = true
-			showCostOverviewCraftingCostsOnly = true
-			showSpecInfo = true
 		end
 	end
 

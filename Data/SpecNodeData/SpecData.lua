@@ -51,9 +51,9 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
         inspiration = 0,
         inspirationBonusSkillFactor = 1,
         multicraft = 0,
-        multicraftBonusItemsFactor = 1,
+        multicraftExtraItemsFactor = 1,
         resourcefulness = 0,
-        resourcefulnessBonusItemsFactor = 1,
+        resourcefulnessExtraItemsFactor = 1,
         craftingspeed = 0,
         craftingspeedBonusFactor = 1,
         skill = 0,
@@ -127,8 +127,8 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
                 if nodeData.threshold and (nodeInfo.activeRank - 1) >= nodeData.threshold then
                     -- ThresholdNode
                     -- Stack additively..
-                    stats.multicraftBonusItemsFactor = stats.multicraftBonusItemsFactor + (nodeData.multicraftBonusItemsFactor or 0)
-                    stats.resourcefulnessBonusItemsFactor = stats.resourcefulnessBonusItemsFactor + (nodeData.resourcefulnessBonusItemsFactor or 0)
+                    stats.multicraftExtraItemsFactor = stats.multicraftExtraItemsFactor + (nodeData.multicraftExtraItemsFactor or 0)
+                    stats.resourcefulnessExtraItemsFactor = stats.resourcefulnessExtraItemsFactor + (nodeData.resourcefulnessExtraItemsFactor or 0)
                     stats.craftingspeedBonusFactor = stats.craftingspeedBonusFactor + (nodeData.craftingspeedBonusFactor or 0)
                     stats.inspirationBonusSkillFactor = stats.inspirationBonusSkillFactor + (nodeData.inspirationBonusSkillFactor or 0)
                     stats.phialExperimentationChanceFactor = stats.phialExperimentationChanceFactor + (nodeData.phialExperimentationChanceFactor or 0)
@@ -169,8 +169,8 @@ function CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, ruleNodes)
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(skillLineID)
 
     local extraItemFactors = {
-        multicraftBonusItemsFactor = 1,
-        resourcefulnessBonusItemsFactor = 1
+        multicraftExtraItemsFactor = 1,
+        resourcefulnessExtraItemsFactor = 1
     }
 
     for thresholdName, nodeData in pairs(ruleNodes) do 
@@ -182,8 +182,8 @@ function CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, ruleNodes)
         -- or if its debugged
         if nodeData and nodeData.categoryIDs and nodeData.threshold and nodeInfo and (nodeData.debug or (tContains(nodeData.categoryIDs, recipeData.categoryID) or #nodeData.categoryIDs == 0) and (nodeInfo.activeRank - 1) >= nodeData.threshold) then
             -- they stack multiplicatively
-            extraItemFactors.multicraftBonusItemsFactor = extraItemFactors.multicraftBonusItemsFactor * (1 + (nodeData.multicraftBonusItemsFactor or 0))
-            extraItemFactors.resourcefulnessBonusItemsFactor = extraItemFactors.resourcefulnessBonusItemsFactor * (1 + (nodeData.resourcefulnessBonusItemsFactor or 0))
+            extraItemFactors.multicraftExtraItemsFactor = extraItemFactors.multicraftExtraItemsFactor * (1 + (nodeData.multicraftExtraItemsFactor or 0))
+            extraItemFactors.resourcefulnessExtraItemsFactor = extraItemFactors.resourcefulnessExtraItemsFactor * (1 + (nodeData.resourcefulnessExtraItemsFactor or 0))
         end
     end
     return extraItemFactors
