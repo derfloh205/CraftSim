@@ -56,16 +56,18 @@ function CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
     
     local matchesByTypes = false
     -- for all categories check if its subtypes contain the recipesubtype or all
-    -- if any category to subtypeIDs combination matches it matches
+    -- if the specific categoryID to subtypeIDs combination matches it matches
     for index, categoryID in pairs(IDs.categoryIDs) do
-        local categoryIDSubTypeIDs = IDs.subtypeIDs[index]
-        if type(categoryIDSubTypeIDs) ~= "table" then
-            error("CraftSimError: No subtypeIDs assigned to categoryID: " .. tostring(categoryID))
-        end
+        if recipeData.categoryID == categoryID then
+            local categoryIDSubTypeIDs = IDs.subtypeIDs[index]
+            if type(categoryIDSubTypeIDs) ~= "table" then
+                error("CraftSimError: No subtypeIDs assigned to categoryID: " .. tostring(categoryID))
+            end
 
-        -- if the subtype is either in the subtypes for this category or "ALL" it matches
-        if tContains(categoryIDSubTypeIDs, recipeData.subtypeID) or tContains(categoryIDSubTypeIDs, CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL) then
-            matchesByTypes = true
+            -- if the subtype is either in the subtypes for this category or "ALL" it matches
+            if tContains(categoryIDSubTypeIDs, recipeData.subtypeID) or tContains(categoryIDSubTypeIDs, CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL) then
+                matchesByTypes = true
+            end
         end
     end
 
