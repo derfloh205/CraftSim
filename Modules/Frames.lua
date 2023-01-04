@@ -1254,6 +1254,9 @@ function CraftSim.FRAME:InitDebugFrame()
     controlPanel.content.checkBoxID_SIMULATION_MODE = CraftSim.FRAME:CreateCheckbox(
         " SIMULATION_MODE", "Enable SIMULATION_MODE Output", "enableDebugID_SIMULATION_MODE", controlPanel.content, controlPanel.content.checkBoxID_DATAEXPORT, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
     
+    controlPanel.content.checkBoxID_REAGENT_OPTIMIZATION = CraftSim.FRAME:CreateCheckbox(
+        " REAGENT_OPTIMIZATION", "Enable REAGENT_OPTIMIZATION Output", "enableDebugID_REAGENT_OPTIMIZATION", controlPanel.content, controlPanel.content.checkBoxID_SIMULATION_MODE, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
+    
 end
 
 function CraftSim.FRAME:InitWarningFrame()

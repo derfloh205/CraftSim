@@ -2,6 +2,10 @@ addonName, CraftSim = ...
 
 CraftSim.REAGENT_OPTIMIZATION = {}
 
+local function print(text, recursive) -- override
+	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION, recursive)
+end
+
 local function translateLuaIndex(index)
     return index + 1
 end
@@ -107,8 +111,9 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
     local totalSkill = recipeData.stats.skill
     local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData) or 0
     local skillWithoutReagentIncrease = totalSkill - reagentSkillContribution
-    --print("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
-    --print("reagentSkillContribution: " .. tostring(reagentSkillContribution))
+    print("skill total: " .. tostring(totalSkill))
+    print("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
+    print("reagentSkillContribution: " .. tostring(reagentSkillContribution))
 
     local expectedQualityWithoutReagents = CraftSim.STATS:GetExpectedQualityBySkill(recipeData, skillWithoutReagentIncrease)
 
