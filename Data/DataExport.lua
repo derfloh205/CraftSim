@@ -54,6 +54,8 @@ end
 
 function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
 	local bonusStats = operationInfo.bonusStats
+	local professionGearStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
+
 	for _, statInfo in pairs(bonusStats) do
 		local statName = string.lower(statInfo.bonusStatName)
 		-- check each stat individually to consider localization
@@ -86,9 +88,11 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operation
 		end
 	end
 
-	-- baseSkill is like the base of the players skill and bonusSkill is what is added through reagents
+	-- baseSkill is like the base of the players skill and bonusSkill is what is added through reagents and items and specs and such
+	local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
 	recipeData.stats.skill = operationInfo.baseSkill + operationInfo.bonusSkill
-	recipeData.stats.baseSkill = operationInfo.baseSkill -- Needed for reagent optimization
+	recipeData.stats.skillNoReagents = recipeData.stats.skill - reagentSkillContribution
+	recipeData.stats.skillNoItems = recipeData.stats.skill - professionGearStats.skill
 
 	-- crafting speed is always relevant but it is not shown in details when it is zero
 	if not recipeData.stats.craftingspeed then
@@ -193,9 +197,11 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	local itemSkill = professionGearStats.skill
 	local specNodeSkill = specNodeStats.skill
 	local optionalReagentsSkill = optionalReagentsStats.skill
+	local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
 
-	recipeData.stats.skill = baseSkill + racialSkill + itemSkill + specNodeSkill + optionalReagentsSkill
-	recipeData.stats.skillNoItems = baseSkill + racialSkill + specNodeSkill + optionalReagentsSkill
+	recipeData.stats.skill = baseSkill + racialSkill + itemSkill + specNodeSkill + optionalReagentsSkill + reagentSkillContribution
+	recipeData.stats.skillNoReagents = baseSkill + racialSkill + itemSkill + specNodeSkill + optionalReagentsSkill
+	recipeData.stats.skillNoItems = baseSkill + racialSkill + specNodeSkill + optionalReagentsSkill + reagentSkillContribution
 
 	-- inspiration
 	if recipeData.stats.inspiration then
@@ -264,7 +270,9 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	end
 
 	-- debug
-	print("Total Skill No Reagents: " .. tostring(recipeData.stats.skill))
+	print("Total Skill: " .. tostring(recipeData.stats.skill))
+	print("Total Skill no Reagents: " .. tostring(recipeData.stats.skillNoReagents))
+	print("Total Skill no Items: " .. tostring(recipeData.stats.skillNoItems))
 	print("Total Inspiration: ")
 	print(recipeData.stats.inspiration or {})
 	print("Total Multicraft: ")

@@ -1228,7 +1228,7 @@ function CraftSim.FRAME:InitDebugFrame()
     local controlPanel = CraftSim.FRAME:CreateCraftSimFrame("CraftSimDebugControlFrame", "Debug Control", 
     frame, 
     frame, 
-    "TOPRIGHT", "TOPLEFT", 0, 0, 200, 400, CraftSim.CONST.FRAMES.DEBUG_CONTROL)
+    "TOPRIGHT", "TOPLEFT", 0, 0, 300, 400, CraftSim.CONST.FRAMES.DEBUG_CONTROL)
 
     controlPanel.content.clearButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
 	controlPanel.content.clearButton:SetPoint("TOP", controlPanel.title, "TOP", 0, -20)	
@@ -1837,7 +1837,7 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
     local skillMod = CraftSim.UTIL:round(CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true), 1)
     local fullRecipeDifficulty = CraftSim.SIMULATION_MODE.baseRecipeDifficulty + recipeDifficultyMod 
     CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.recipeDifficultyValue:SetText(CraftSim.UTIL:round(fullRecipeDifficulty, 1) .. " (" .. CraftSim.SIMULATION_MODE.baseRecipeDifficulty .. "+" .. recipeDifficultyMod  .. ")")
-    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.baseSkillValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.skill, 1) .. " (" .. CraftSim.SIMULATION_MODE.baseSkill .. "+" .. reagentSkillIncrease .. "+" .. skillMod ..")")
+    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.baseSkillValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.skill, 1) .. " (" .. CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents .. "+" .. reagentSkillIncrease .. "+" .. skillMod ..")")
     -- I assume its always from base..? Wouldnt make sense to give the materials more skill contribution if you artificially make the recipe harder
     local maxReagentSkillIncrease = CraftSim.UTIL:round(0.25 * CraftSim.SIMULATION_MODE.baseRecipeDifficulty, 0)
     CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSim.SIMULATION_MODE.reagentSkillIncrease .. " / " .. maxReagentSkillIncrease)

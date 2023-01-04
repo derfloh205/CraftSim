@@ -7,7 +7,6 @@ CraftSim.SIMULATION_MODE.reagentOverwriteFrame = nil
 CraftSim.SIMULATION_MODE.craftingDetailsFrame = nil
 CraftSim.SIMULATION_MODE.recipeData = nil
 CraftSim.SIMULATION_MODE.baseSpecNodeData = nil
-CraftSim.SIMULATION_MODE.baseSkill = nil
 CraftSim.SIMULATION_MODE.reagentSkillIncrease = nil
 
 CraftSim.SIMULATION_MODE.baseInspiration = nil
@@ -102,7 +101,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
 
     -- update skill by input modifier and reagent skill increase
     local skillMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true)
-    CraftSim.SIMULATION_MODE.recipeData.stats.skill = CraftSim.SIMULATION_MODE.baseSkill + reagentSkillIncrease + skillMod
+    CraftSim.SIMULATION_MODE.recipeData.stats.skill = CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents + reagentSkillIncrease + skillMod
 
     -- update difficulty based on input
     local recipeDifficultyMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput, true)
@@ -160,8 +159,6 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
 
     -- initialize base values based on original recipeData and based on spec data implemented
     if not CraftSim.UTIL:IsSpecImplemented(recipeData.professionID) then
-        local OldReagentSkillIncrease = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSim.SIMULATION_MODE.recipeData)
-        CraftSim.SIMULATION_MODE.baseSkill = CraftSim.SIMULATION_MODE.recipeData.stats.skill - OldReagentSkillIncrease
         CraftSim.SIMULATION_MODE.baseRecipeDifficulty = CraftSim.SIMULATION_MODE.recipeData.baseDifficulty
         
         if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration then
@@ -178,9 +175,9 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         -- crafting speed... for later profit per time interval?
     else
         CraftSim.SIMULATION_MODE.baseSpecNodeData = CopyTable(CraftSim.SIMULATION_MODE.recipeData.specNodeData) -- to make a reset possible
-        CraftSim.SIMULATION_MODE.baseSkill = CraftSim.SIMULATION_MODE.recipeData.stats.skill
         CraftSim.SIMULATION_MODE.baseRecipeDifficulty = CraftSim.SIMULATION_MODE.recipeData.baseDifficulty
 
+        
         if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration then
             CraftSim.SIMULATION_MODE.baseInspiration = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration)
         end
@@ -188,13 +185,12 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         if CraftSim.SIMULATION_MODE.recipeData.stats.multicraft then
             CraftSim.SIMULATION_MODE.baseMulticraft = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.multicraft)
         end
-
+        
         if CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness then
             CraftSim.SIMULATION_MODE.baseResourcefulness = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness)
         end
     end
     
-
     -- update frame visiblity and initialize the input fields
     CraftSim.FRAME:ToggleSimModeFrames()
     CraftSim.FRAME:InitilizeSimModeReagentOverwrites()

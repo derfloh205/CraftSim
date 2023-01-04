@@ -108,10 +108,11 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
     --               0 means no skill bonus required to reach this BP
     --               > 0 means the indicated skill bonus is required to reach this BP
     -- At least one entry will be >= 0
-    local totalSkill = recipeData.stats.skill
+
     local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData) or 0
-    local skillWithoutReagentIncrease = totalSkill - reagentSkillContribution
-    print("skill total: " .. tostring(totalSkill))
+    local skillWithoutReagentIncrease = recipeData.stats.skillNoReagents
+    
+    print("skill total: " .. tostring(recipeData.stats.skill))
     print("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
     print("reagentSkillContribution: " .. tostring(reagentSkillContribution))
 
@@ -124,14 +125,14 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
             extraSkillPoint = 1
         end
         local skillBreakpoint = craftingDifficultyBP[i] * recipeData.recipeDifficulty + extraSkillPoint
-        --print("skill BP: " .. skillBreakpoint)
-        -- EXPERIMENT: try to adjust skillbp by 1 to workaround blizz rounding errors
-        --skillBreakpoint = skillBreakpoint + 1
+        
         local inspirationBonusSkill = 0
         if recipeData.stats.inspiration then
-            inspirationBonusSkill = CraftSimOptions.materialSuggestionInspirationThreshold and recipeData.stats.inspiration.bonusskill or 0
+            inspirationBonusSkill = (CraftSimOptions.materialSuggestionInspirationThreshold and recipeData.stats.inspiration.bonusskill) or 0
+            skillBreakpoint = skillBreakpoint - inspirationBonusSkill -- make it easier to reach 
         end
-        arrayBP[i] = skillBreakpoint - (skillWithoutReagentIncrease + inspirationBonusSkill)
+        print("skill BP: " .. skillBreakpoint)
+        arrayBP[i] = skillBreakpoint - skillWithoutReagentIncrease
         --print("skill needed for this breakpoint:" .. arrayBP[i])
         -- If skill already meets or exceeds this BP...
         if arrayBP[i] <= 0 then  -- ...then no skill bonus is needed to reach this breakpoint
@@ -155,9 +156,6 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
         end
     end
 
-    --print("arrayBP: ")
-    --CraftSim.UTIL:PrintTable(arrayBP)
-
     -- print("ksItems: ")
     -- for k, v in pairs(ksItems) do
     --     print(v.name .. ": ")
@@ -175,7 +173,6 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
     end)
 
     -- TODO: remove results that are the same allocation as the current one? and disable button?
-
     
     local hasItems = true
     local bestAllocation = results[1]--results[#results]
@@ -308,11 +305,6 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
                     -- we know it is reachable
                     -- so look at the spot where adding the new weight would put us
                     -- if its current value is > than what we get by adding the new weight...
-                    -- if b[i][j + ks[i].crumb[k].weight] == nil then
-                    --     -- NOTE: this is to fix calculated floats as weights (like potion of frozen focus which results in weight 10.5)
-                    --     -- Cause the init of it just inits integer j indices
-                    --     b[i][j + ks[i].crumb[k].weight] = inf 
-                    -- end
                     if b[i][j + ks[i].crumb[k].weight] > b[i - 1][j] + ks[i].crumb[k].value then
                         -- our new weight is better so use its value instead
                         b[i][j + ks[i].crumb[k].weight] = b[i - 1][j] + ks[i].crumb[k].value
@@ -413,28 +405,28 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
         end
     end
 
-    --print("outArr:")
-    --CraftSim.UTIL:PrintTable(outArr)
+    -- print("outArr:")
+    -- print(outArr)
 
-    --print("results: ")
+    print("results: ")
     for _, itemAllocation in pairs(outResult) do
-        --print("Reachable quality: " .. itemAllocation.qualityReached)
+        print("Reachable quality: " .. itemAllocation.qualityReached)
 
         for _, matAllocation in pairs(itemAllocation.allocations) do
-            --print("- name: " .. matAllocation.itemName)
+            print("- name: " .. matAllocation.itemName)
 
             local qText = "--"
             for qualityIndex, allocation in pairs(matAllocation.allocations) do
                 qText = qText .. "q" .. qualityIndex .. ": " .. allocation.allocations .. " | "
             end
-            --print(qText)
+            print(qText)
         end
     end
 
     return outResult
 end
 
-function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
+function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData, isKnapsackCalculation)
 
     local matBonus = {}
     local totalWeight = 0
@@ -448,6 +440,7 @@ function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(
             local matQuantity = n1 + n2 + n3
             local matWeight = CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(reagent.itemsInfo[1].itemID)
             local relativeBonus = (n2 + 2 * n3) / 2 * matWeight
+            
             if matQuantity < reagent.requiredQuantity then
                 -- If you do not have enough of a material in total for a reagent slot, blizz assumes that you have max quantity of q2
                 matQuantity = reagent.requiredQuantity
