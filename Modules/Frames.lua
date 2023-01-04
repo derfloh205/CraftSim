@@ -351,6 +351,15 @@ function CraftSim.FRAME:InitCostOverviewFrame()
 
                 CraftSim.MAIN:TriggerModulesErrorSafe()
             end)
+
+        local startLine = "\124T"
+        local endLine = "\124t"
+        local goldCoin = startLine .. "Interface\\Icons\\INV_Misc_Coin_01:16" .. endLine
+
+        profitFrame.overrideInput.goldCoin = profitFrame.overrideInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        profitFrame.overrideInput.goldCoin:SetPoint("LEFT", profitFrame.overrideInput, "RIGHT", 5, 0)
+        profitFrame.overrideInput.goldCoin:SetText(goldCoin)
+
         profitFrame.overrideInput:Hide()
 
         profitFrame:Hide()
