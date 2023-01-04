@@ -1027,7 +1027,7 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     end)
 end
 
-function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, frameID, scrollable)
+function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, frameID, scrollable, scrollFrameWidthModX, scrollFrameWidthModY)
     local hookFrame = CreateFrame("frame", nil, parent)
     hookFrame:SetPoint(anchorA, anchorFrame, anchorB, offsetX, offsetY)
     local frame = CreateFrame("frame", name, hookFrame, "BackdropTemplate")
@@ -1064,18 +1064,27 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
     CraftSim.FRAME:makeFrameMoveable(frame)
 
     if scrollable then
+        
         -- scrollframe
         frame.scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
         frame.scrollFrame.scrollChild = CreateFrame("frame")
         local scrollFrame = frame.scrollFrame
         local scrollChild = scrollFrame.scrollChild
-        scrollFrame:SetSize(frame:GetWidth() - 70, frame:GetHeight() - 50)
+        local offX = scrollFrameWidthModX or -70
+        local offY = scrollFrameWidthModY or -50
+        scrollFrame:SetSize(frame:GetWidth() + offX, frame:GetHeight() + offY)
         scrollFrame:SetPoint("TOP", frame.title, "TOP", 0, -20)
         scrollFrame:SetScrollChild(scrollFrame.scrollChild)
         scrollChild:SetWidth(scrollFrame:GetWidth() - 5)
         scrollChild:SetHeight(1) -- ??
 
         frame.content = scrollChild
+
+        frame.UpdateSize = function(x, y) 
+            frame:SetSize(x, y)
+            scrollFrame:SetSize(frame:GetWidth() + offX, frame:GetHeight() + offY)
+            scrollChild:SetWidth(scrollFrame:GetWidth() - 5)
+        end
     else
         frame.content = CreateFrame("frame", nil, frame)
         frame.content:SetPoint("TOP", frame, "TOP")
@@ -1333,17 +1342,17 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     CraftSim.UTIL:ColorizeText("CraftSim What's New?", CraftSim.CONST.COLORS.GREEN), 
     UIParent, 
     UIParent, 
-    "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO)
+    "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO, true)
 
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.infoText:SetPoint("TOP", frame.title, "TOP", 0, -30)
+    frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 0, -30)
     frame.content.infoText:SetText("No Info")
 
-    frame.content.closeButton = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.closeButton:SetPoint("BOTTOM", frame.content, "BOTTOM", 0, 20)	
-	frame.content.closeButton:SetText("Close")
-	frame.content.closeButton:SetSize(frame.content.closeButton:GetTextWidth()+15, 25)
-    frame.content.closeButton:SetScript("OnClick", function(self) 
+    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.closeButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -9)	
+	frame.closeButton:SetText("Close")
+	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+5, 20)
+    frame.closeButton:SetScript("OnClick", function(self) 
         CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.INFO), false)
     end)
 
@@ -1356,7 +1365,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
 end
 
 function CraftSim.FRAME:ShowOneTimeInfo(force)
-    local infoText = CraftSim.CONST.currentOneTimeInfoText()
+    local infoText = CraftSim.NEWS:GET_NEWS()
     local versionID = CraftSim.CONST.currentInfoVersionID
     if CraftSimOptions.infoVersionID == versionID and not CraftSim.CONST.debugInfoText and not force then
         return
@@ -1366,8 +1375,7 @@ function CraftSim.FRAME:ShowOneTimeInfo(force)
 
     local infoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.INFO)
     -- resize
-    infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
-    infoFrame.content:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
+    infoFrame.UpdateSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
     infoFrame.originalX = CraftSim.CONST.infoBoxSizeX
     infoFrame.originalY = CraftSim.CONST.infoBoxSizeY
     infoFrame.showInfo(infoText)

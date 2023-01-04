@@ -3,31 +3,10 @@ addonName, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 1 -- last highest: 1
+CraftSim.CONST.currentInfoVersionID = 2 -- last highest: 2
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
-CraftSim.CONST.currentOneTimeInfoText = function()
-    -- minimize names to make manual formatting easier :p
-    local b = CraftSim.CONST.COLORS.DARK_BLUE
-    local g = CraftSim.CONST.COLORS.GREEN
-    local r = CraftSim.CONST.COLORS.RED
-    local c = function(text, color) 
-        return CraftSim.UTIL:ColorizeText(text, color)
-    end
-    return 
-        "Hello and thank you for using CraftSim!\n\n\n" .. 
-        c("Blacksmithing", b) .. " and " .. c("Alchemy", b) .. " now get their stats\n" ..
-        "from your profession spec tree instead from the UI.\n" .. 
-        "This enables some nice new features like a\n" .. c("Specialization" ..
-        " Info Breakdown!", g) .. "\n\nHowever, this is still experimental!\n" ..
-        "If you want, you can opt out in the options ( /craftsim )\n\n" ..
-        "Support for other professions is in progress!\n\n" .. 
-        "What else is new?\n\n" .. 
-        "The " .. c("Simulation Mode", b) .. " now also includes a modifier for the\n" .. 
-        c("Inspiration Bonus Skill", b) .. "\nprofession stat\n\n\n\n" .. 
-        "You can always read the update news again by using the command\n/craftsim news"
-end
 ----------------
 
 -- this average comes from 20-40% resources saved on proc with a minimum of 1

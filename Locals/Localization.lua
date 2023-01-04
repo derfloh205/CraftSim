@@ -46,9 +46,9 @@ function CraftSim.LOCAL:TranslateStatName(statName)
         return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED)
     elseif statName == "skill" then
         return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL)
-    elseif statName == "multicraftBonusItemsFactor" then
+    elseif statName == "multicraftExtraItemsFactor" then
         return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS)
-    elseif statName == "resourcefulnessBonusItemsFactor" then
+    elseif statName == "resourcefulnessExtraItemsFactor" then
         return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS)
     elseif statName == "craftingspeedBonusFactor" then
         return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS)

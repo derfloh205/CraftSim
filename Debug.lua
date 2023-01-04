@@ -24,8 +24,6 @@ function CraftSim_DEBUG:CheckSpecNode(nodeID)
     local function print(text, r) -- override
         CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SPECDATA, r)
     end
-
-    print("This is a test!")
     
     local professionID = CraftSim.MAIN.currentRecipeData.professionID
     local recipeData = CraftSim.MAIN.currentRecipeData

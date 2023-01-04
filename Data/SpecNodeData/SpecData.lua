@@ -44,6 +44,34 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
     return IDs
 end
 
+function CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
+    -- an exception always matches
+    if IDs.exceptionRecipeIDs and tContains(IDs.exceptionRecipeIDs, recipeData.recipeID) then
+        return true
+    end
+    -- if it matches all categories it matches all items
+    if tContains(IDs.categoryIDs, CraftSim.CONST.RECIPE_CATEGORIES.ALL) then
+        return true
+    end
+    
+    local matchesByTypes = false
+    -- for all categories check if its subtypes contain the recipesubtype or all
+    -- if any category to subtypeIDs combination matches it matches
+    for index, categoryID in pairs(IDs.categoryIDs) do
+        local categoryIDSubTypeIDs = IDs.subtypeIDs[index]
+        if type(categoryIDSubTypeIDs) ~= "table" then
+            error("CraftSimError: No subtypeIDs assigned to categoryID: " .. tostring(categoryID))
+        end
+
+        -- if the subtype is either in the subtypes for this category or "ALL" it matches
+        if tContains(categoryIDSubTypeIDs, recipeData.subtypeID) or tContains(categoryIDSubTypeIDs, CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL) then
+            matchesByTypes = true
+        end
+    end
+
+    return matchesByTypes
+end
+
 function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, singleNodeID, printDebug)
     local specNodeData = recipeData.specNodeData
 
@@ -84,16 +112,10 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
     
             -- fetch all subtypeIDs, categoryIDs and exceptionRecipeIDs recursively
             local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
-    
-            local isCategoryID = tContains(IDs.categoryIDs, recipeData.categoryID) or tContains(IDs.categoryIDs, CraftSim.CONST.RECIPE_CATEGORIES.ALL)
-            local isSubtypeID = tContains(IDs.subtypeIDs, recipeData.subtypeID) or tContains(IDs.subtypeIDs, CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL)
-            local isException = IDs.exceptionRecipeIDs and tContains(IDs.exceptionRecipeIDs, recipeData.recipeID)
-            local nodeAffectsRecipe = isSubtypeID and isCategoryID 
-            -- sometimes the category and subcategory can still not uniquely determine ..
-            nodeAffectsRecipe = nodeAffectsRecipe or isException
-
-            nodeAffectsRecipe = nodeAffectsRecipe and nodeRank > 0
-
+            
+            
+            local nodeAffectsRecipe = nodeRank > 0 and CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
+            
             if (nodeAffectsRecipe or nodeData.debug) and not singleNodeID then
                 local containsNode = CraftSim.UTIL:Find(recipeData.specNodeData.affectedNodes, function(node) 
                     return node.nodeID == nodeData.nodeID
@@ -116,12 +138,15 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
                 -- debug
                 print("CHECK NODE: " .. tostring(nodeData.nodeID))
                 print("-- Affected: " .. tostring(nodeAffectsRecipe))
-                print("-- isCategoryID: " .. tostring(isCategoryID))
-                print("-- isSubtypeID: " .. tostring(isSubtypeID))
-                print("-- isException " .. tostring(isException))
+                print("-- categoryID: " .. tostring(recipeData.categoryID))
+                print("-- subtypeID: " .. tostring(recipeData.subtypeID))
                 print(tostring(IDs.exceptionRecipeIDs) .. " and " .. "contains " .. tostring(IDs.exceptionRecipeIDs) .. ", " .. tostring(recipeData.recipeID))
-                print("-- ids: ")
-                print(IDs, CraftSim.CONST.DEBUG_IDS.SPEC_DATA, true)
+                print("-- categoryIDs: ")
+                print(IDs.categoryIDs, CraftSim.CONST.DEBUG_IDS.SPEC_DATA, true)
+                print("-- subtypeIDs: ")
+                print(IDs.subtypeIDs, CraftSim.CONST.DEBUG_IDS.SPEC_DATA, true)
+                print("-- exceptionRecipeIDs: ")
+                print(IDs.exceptionRecipeIDs, CraftSim.CONST.DEBUG_IDS.SPEC_DATA, true)
             end
             if nodeInfo and (nodeAffectsRecipe or nodeData.debug) then
                 if nodeData.threshold and (nodeInfo.activeRank - 1) >= nodeData.threshold then
