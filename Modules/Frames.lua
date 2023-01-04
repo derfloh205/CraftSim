@@ -1191,7 +1191,7 @@ function CraftSim.FRAME:InitDebugFrame()
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimDebugFrame", "CraftSim Debug", 
     UIParent, 
     UIParent, 
-    "CENTER", "CENTER", 0, 0, 400, 400, CraftSim.CONST.FRAMES.DEBUG, true)
+    "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 0, 400, 400, CraftSim.CONST.FRAMES.DEBUG, true)
     frame:SetFrameStrata("HIGH")
     frame:Hide()
 
@@ -1240,7 +1240,7 @@ function CraftSim.FRAME:InitDebugFrame()
 
     local checkBoxOffsetY = -2
     controlPanel.content.checkBoxID_MAIN = CraftSim.FRAME:CreateCheckbox(
-        " MAIN", "Enable MAIN Output", "enableDebugID_MAIN", controlPanel.content, controlPanel.content.clearButton, "TOP", "TOP", -40, checkBoxOffsetY - 20)
+        " MAIN", "Enable MAIN Output", "enableDebugID_MAIN", controlPanel.content, controlPanel.content.clearButton, "TOP", "TOP", -70, checkBoxOffsetY - 20)
 
     controlPanel.content.checkBoxID_SPECDATA = CraftSim.FRAME:CreateCheckbox(
         " SPECDATA", "Enable SPECDATA Output", "enableDebugID_SPECDATA", controlPanel.content, controlPanel.content.checkBoxID_MAIN, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)

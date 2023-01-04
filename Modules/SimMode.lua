@@ -178,7 +178,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         -- crafting speed... for later profit per time interval?
     else
         CraftSim.SIMULATION_MODE.baseSpecNodeData = CopyTable(CraftSim.SIMULATION_MODE.recipeData.specNodeData) -- to make a reset possible
-        CraftSim.SIMULATION_MODE.baseSkill = CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents
+        CraftSim.SIMULATION_MODE.baseSkill = CraftSim.SIMULATION_MODE.recipeData.stats.skill
         CraftSim.SIMULATION_MODE.baseRecipeDifficulty = CraftSim.SIMULATION_MODE.recipeData.baseDifficulty
 
         if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration then
