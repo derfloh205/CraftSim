@@ -34,6 +34,7 @@ CraftSimOptions = CraftSimOptions or {
 	alchemyEnabled = true,
 
 	-- debugIDs
+	debugVisible = false,
 	enableDebugID_MAIN = true,
 	enableDebugID_SPECDATA = true,
 	enableDebugID_ERROR = true,
@@ -174,18 +175,24 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 end
 
 function CraftSim.MAIN:HandleCollapsedFrameSave()
-	if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.MATERIALS] then
-		CraftSimReagentHintFrame.collapse()
+	for _, frameID in pairs(CraftSim.CONST.FRAMES) do
+		if CraftSimCollapsedFrames[frameID] then
+			local frame = CraftSim.FRAMES:GetFrame(frameID)
+			frame.collapse(frame)
+		end
 	end
-	if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.TOP_GEAR] then
-		CraftSimSimFrame.collapse()
-	end
-	if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.COST_OVERVIEW] then
-		CraftSimCostOverviewFrame.collapse()
-	end
-	if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.STAT_WEIGHTS] then
-		CraftSimDetailsFrame.collapse()
-	end
+	-- if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.MATERIALS] then
+	-- 	CraftSimReagentHintFrame.collapse(CraftSimReagentHintFrame)
+	-- end
+	-- if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.TOP_GEAR] then
+	-- 	CraftSimSimFrame.collapse(CraftSimSimFrame)
+	-- end
+	-- if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.COST_OVERVIEW] then
+	-- 	CraftSimCostOverviewFrame.collapse(CraftSimCostOverviewFrame)
+	-- end
+	-- if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.STAT_WEIGHTS] then
+	-- 	CraftSimDetailsFrame.collapse(CraftSimDetailsFrame)
+	-- end
 end
 
 local professionFrameHooked = false
@@ -387,6 +394,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		CraftSim.FRAME:FillSpecInfoFrame(recipeData)
 	end
 
+	-- do not show simulation possibility on salvaging for now
+	showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
 	CraftSim.FRAME:ToggleFrame(CraftSimSimModeToggleButton, showSimulationMode)
 	CraftSim.FRAME:ToggleSimModeFrames() -- show sim mode frames depending if active or not
 	if CraftSim.SIMULATION_MODE.isActive and recipeData then -- recipeData could still be nil here if e.g. in a gathering recipe

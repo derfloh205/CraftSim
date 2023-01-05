@@ -333,8 +333,8 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	recipeData.currentTransaction = currentTransaction
 	recipeData.reagents = {}
 
+	recipeData.isSalvageRecipe = recipeInfo.isSalvageRecipe
 	local salvageAllocation = currentTransaction:GetSalvageAllocation()
-
 	if salvageAllocation then
 		recipeData.salvageReagent = {
 			name = salvageAllocation:GetItemName(),

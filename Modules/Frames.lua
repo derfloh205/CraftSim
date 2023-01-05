@@ -1211,7 +1211,10 @@ function CraftSim.FRAME:InitDebugFrame()
     UIParent, 
     "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 0, 400, 400, CraftSim.CONST.FRAMES.DEBUG, true)
     frame:SetFrameStrata("HIGH")
-    frame:Hide()
+    CraftSim.FRAME:ToggleFrame(frame, CraftSimOptions.debugVisible)
+
+    frame:HookScript("OnShow", function() CraftSimOptions.debugVisible = true end)
+    frame:HookScript("OnHide", function() CraftSimOptions.debugVisible = false end)
 
     frame.content.debugBox = CreateFrame("EditBox", nil, frame.content)
     frame.content.debugBox:SetPoint("TOP", frame.content, "TOP", 0, -20)
@@ -1229,7 +1232,7 @@ function CraftSim.FRAME:InitDebugFrame()
 	frame.closeButton:SetText("Close")
 	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+5, 20)
     frame.closeButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING), false)
+        CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG), false)
     end)
 
     frame.addDebug = function(debugOutput, debugID, noLabel) 
