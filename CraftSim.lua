@@ -185,18 +185,6 @@ function CraftSim.MAIN:HandleCollapsedFrameSave()
 			frame.collapse(frame)
 		end
 	end
-	-- if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.MATERIALS] then
-	-- 	CraftSimReagentHintFrame.collapse(CraftSimReagentHintFrame)
-	-- end
-	-- if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.TOP_GEAR] then
-	-- 	CraftSimSimFrame.collapse(CraftSimSimFrame)
-	-- end
-	-- if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.COST_OVERVIEW] then
-	-- 	CraftSimCostOverviewFrame.collapse(CraftSimCostOverviewFrame)
-	-- end
-	-- if CraftSimCollapsedFrames[CraftSim.CONST.FRAMES.STAT_WEIGHTS] then
-	-- 	CraftSimDetailsFrame.collapse(CraftSimDetailsFrame)
-	-- end
 end
 
 local professionFrameHooked = false

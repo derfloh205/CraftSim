@@ -1007,6 +1007,9 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
         frame:SetSize(self.originalX, 40)
         frame.collapseButton:SetText("+")
         frame.content:Hide()
+        if frame.scrollFrame then
+            frame.scrollFrame:Hide()
+        end
     end
 
     frame.decollapse = function(self) 
@@ -1016,6 +1019,9 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
         frame.collapseButton:SetText("-")
         frame:SetSize(self.originalX, self.originalY)
         frame.content:Show()
+        if frame.scrollFrame then
+            frame.scrollFrame:Show()
+        end
     end
 
     frame.collapseButton:SetScript("OnClick", function(self) 
