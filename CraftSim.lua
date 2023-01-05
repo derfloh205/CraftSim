@@ -293,7 +293,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	-- if init or recraft, turn sim mode off
 	if isInit or recipeType == CraftSim.CONST.RECIPE_TYPES.RECRAFT then
 		CraftSim.SIMULATION_MODE.isActive = false
-		CraftSimSimModeToggleButton:SetText("Simulation Mode: Off")
+		CraftSim.SIMULATION_MODE.toggleButton:SetChecked(false)
 	end
 
 	local recipeData = nil 
@@ -390,7 +390,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	-- do not show simulation possibility on salvaging for now
 	showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
-	CraftSim.FRAME:ToggleFrame(CraftSimSimModeToggleButton, showSimulationMode)
+	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.toggleButton, showSimulationMode)
 	CraftSim.FRAME:ToggleSimModeFrames() -- show sim mode frames depending if active or not
 	if CraftSim.SIMULATION_MODE.isActive and recipeData then -- recipeData could still be nil here if e.g. in a gathering recipe
 		-- update simulationframe recipedata by inputs and the frontend

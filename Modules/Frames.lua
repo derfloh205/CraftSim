@@ -17,12 +17,12 @@ function CraftSim.FRAME:InitStatWeightFrame()
         "CraftSimDetailsFrame", 
         "CraftSim Average Profit", 
         ProfessionsFrame.CraftingPage.SchematicForm,
-        ProfessionsFrame.CraftingPage.SchematicForm.Details, 
-        "TOP", 
-        "BOTTOM", 
+        ProfessionsFrame.CraftingPage.SchematicForm, 
+        "BOTTOMRIGHT", 
+        "BOTTOMRIGHT", 
         0, 
-        19, 
-        270, 
+        0, 
+        320, 
         120, 
         CraftSim.CONST.FRAMES.STAT_WEIGHTS)
 
@@ -1493,14 +1493,9 @@ function CraftSim.FRAME:FillSpecInfoFrame(recipeData)
 end
 
 function CraftSim.FRAME:InitSimModeFrames()
-    -- BUTTON
-    local toggleButton = CreateFrame("Button", "CraftSimSimModeToggleButton", ProfessionsFrame.CraftingPage.SchematicForm, "UIPanelButtonTemplate")
-    toggleButton:SetPoint("BOTTOM", ProfessionsFrame.CraftingPage.SchematicForm.Details, "TOP", 0, 0)	
-    toggleButton:SetText("Simulation Mode: Off")
-    toggleButton:SetSize(toggleButton:GetTextWidth() + 15, 20)
-    toggleButton:SetScript("OnClick", function(self) 
-        CraftSim.SIMULATION_MODE.isActive = not CraftSim.SIMULATION_MODE.isActive
-        toggleButton:SetText(CraftSim.SIMULATION_MODE.isActive and "Simulation Mode: On" or "Simulation Mode: Off")
+    -- CHECK BUTTON
+    local clickCallback = function(self) 
+        CraftSim.SIMULATION_MODE.isActive = self:GetChecked()
         local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
         if bestQBox:GetChecked() and CraftSim.SIMULATION_MODE.isActive then
             bestQBox:Click()
@@ -1510,7 +1505,12 @@ function CraftSim.FRAME:InitSimModeFrames()
         end
 
         CraftSim.MAIN:TriggerModulesErrorSafe()
-    end)
+    end
+    local toggleButton = CraftSim.FRAME:CreateCheckboxCustomCallback(
+        " Simulation Mode", "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions", false, clickCallback, 
+        ProfessionsFrame.CraftingPage.SchematicForm, ProfessionsFrame.CraftingPage.SchematicForm.Details, "BOTTOM", "TOP", -65, 0)
+
+    CraftSim.SIMULATION_MODE.toggleButton = toggleButton
 
     toggleButton:Hide()
 
