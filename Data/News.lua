@@ -10,6 +10,9 @@ function CraftSim.NEWS:GET_NEWS()
     local c = function(text, color) 
         return CraftSim.UTIL:ColorizeText(text, color)
     end
+    -- make clickable item links!!
+    local tunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(199345)
+    local frostedTunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(200074)
     return 
         c("Hello and thank you for using CraftSim!\n", b) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
@@ -17,6 +20,7 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\nBugfixes to certain nil errors" ..
         "\n\nFixed error with saving collapsed status of frames" .. 
         "\n\nFixed Material Combination Module trying to show up for noQuality recipes" ..
+        "\n\n" .. (tunaData.link or c("Rimefin Tuna", b)) .. " in cooking recipes\nnow uses " .. (frostedTunaData.link or c("Frosted Rimefin Tuna", b)) .. " for pricing" ..
         "\n\n\n--- Version 1.6.1 ---" ..
         "\n\nVarious fixes to errors popping up for price calculations" .. 
         c("\n\nWARNING: ", r) .. " Recipes with exactly 1 material that has quality\n" ..

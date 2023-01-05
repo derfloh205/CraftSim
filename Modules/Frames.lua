@@ -376,6 +376,7 @@ function CraftSim.FRAME:InitCostOverviewFrame()
     table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame.content, frame.content.resultProfitsTitle, 5))
     
 
+    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
 	frame:Hide()
 end
 
@@ -1337,6 +1338,19 @@ function CraftSim.FRAME:InitWarningFrame()
     frame:Hide()
 end
 
+function CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
+    if type(frame) == "table" and frame.SetHyperlinksEnabled and not frame.enabledLinks then -- prevent inf loop by references
+        frame.enabledLinks = true
+        frame:SetHyperlinksEnabled(true)
+        frame:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow)
+
+        for possibleFrame1, possibleFrame2 in pairs(frame) do
+            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(possibleFrame1)
+            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(possibleFrame2)
+        end
+    end
+end
+
 function CraftSim.FRAME:InitOneTimeNoteFrame()
     local currentVersion = GetAddOnMetadata(addonName, "Version")
 
@@ -1345,10 +1359,12 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     UIParent, 
     UIParent, 
     "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO, true)
+    frame:SetFrameStrata("HIGH")
 
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 0, -30)
     frame.content.infoText:SetText("No Info")
+
 
     frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.closeButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -9)	
@@ -1363,6 +1379,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         frame:Show()
     end
 
+    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
     frame:Hide()
 end
 
