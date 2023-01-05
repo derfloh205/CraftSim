@@ -298,6 +298,27 @@ function CraftSim.DATAEXPORT:handleOutputIDs(recipeData, recipeInfo)
 	recipeData.subtypeID = itemData.subclassID or nil
 end
 
+function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(reagentSlots)
+	if not reagentSlots then
+		return {}
+	end
+	-- could be more than 1 slot for optional and finishing, but is one slot strictly for salvaging
+	local slotToItemIDs = {}
+	for slotIndex, slotData in pairs(reagentSlots) do
+		local button = slotData
+		local reagents = slotData.reagentSlotSchematic.reagents
+
+		local slotItemIDs = {}
+		for _, slotReagentData in pairs(reagents) do
+			table.insert(slotItemIDs, slotReagentData.itemID)
+		end
+
+		table.insert(slotToItemIDs, slotItemIDs)
+	end
+
+	return slotToItemIDs
+end
+
 function CraftSim.DATAEXPORT:exportRecipeData()
 	local recipeData = {}
 
@@ -354,13 +375,33 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	end
 
 	local hasReagentsWithQuality = false
-	local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
-	print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
+	local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, recipeInfo.isRecraft)
 	-- this includes finishing AND optionalReagents too!!!
+
+	recipeData.possibleOptionalReagents = {}
+	recipeData.possibleFinishingReagents = {}
+	recipeData.possibleSalvageReagents = {}
+
+	-- extract possible optional and finishing and salvage reagents per slot
+	recipeData.possibleOptionalReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(schematicForm.reagentSlots[CraftSim.CONST.REAGENT_TYPE.OPTIONAL])
+	recipeData.possibleFinishingReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(schematicForm.reagentSlots[CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT])
+	recipeData.possibleSalvageReagents = C_TradeSkillUI.GetSalvagableItemIDs(recipeData.recipeID) -- thx blizz tbh
+
+	print("possible optional reagents:")
+	print(recipeData.possibleOptionalReagents, true)
+	print("possible finishing reagents:")
+	print(recipeData.possibleFinishingReagents, true)
+	print("possible salvage reagents:")
+	print(recipeData.possibleSalvageReagents, true)
+
+
 
 	recipeData.reagents = {}
 	recipeData.optionalReagents = {}
 	recipeData.finishingReagents = {}
+
+	print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
+	
 	recipeData.numReagentsWithQuality = 0
 	local currentFinishingReagent = 1
 	local currentOptionalReagent = 1
