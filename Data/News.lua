@@ -13,6 +13,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("Hello and thank you for using CraftSim!\n", b) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        "\n\n\n--- Version 1.6.2 ---" ..
+        "\n\nBugfixes to certain nil errors" ..
+        "\n\nFixed error with saving collapsed status of frames" .. 
         "\n\n\n--- Version 1.6.1 ---" ..
         "\n\nVarious fixes to errors popping up for price calculations" .. 
         c("\n\nWARNING: ", r) .. " Recipes with exactly 1 material that has quality\n" ..

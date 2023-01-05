@@ -373,7 +373,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	showMaterialAllocation = showMaterialAllocation and CraftSimOptions.modulesMaterials 
 	-- temporary disable for recipes with only one required qualitity reagent
-	showMaterialAllocation = recipeData and recipeData.numReagentsWithQuality > 1
+	showMaterialAllocation = showMaterialAllocation and recipeData and recipeData.numReagentsWithQuality > 1
 	showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
 	showTopGear = showTopGear and CraftSimOptions.modulesTopGear
 	showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview

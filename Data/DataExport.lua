@@ -307,6 +307,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	local craftingPage = ProfessionsFrame.CraftingPage
 	local schematicForm = craftingPage.SchematicForm
 
+	print("RecipeData Export:")
 	recipeData.profession = professionInfo.parentProfessionName
 	recipeData.professionID = professionInfo.profession
 	if recipeData.professionID == nil then
@@ -318,7 +319,9 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
 
 	recipeData.recipeID = recipeInfo.recipeID
+	print("recipeID: " .. tostring(recipeData.recipeID))
 	recipeData.recipeType = recipeType
+	print("recipeType: " .. tostring(recipeData.recipeType))
 	
 	local operationInfo = schematicForm:GetRecipeOperationInfo()
 	
@@ -326,14 +329,17 @@ function CraftSim.DATAEXPORT:exportRecipeData()
         return nil
     end
 	recipeData.expectedQuality = operationInfo.craftingQuality
-
-
+	print("expectedQuality: " .. tostring(recipeData.expectedQuality))
+	print("expectedQuality: " .. tostring(recipeData.expectedQuality))
+	
+	
 	local currentTransaction = schematicForm.transaction or schematicForm:GetTransaction()
 	
 	recipeData.currentTransaction = currentTransaction
 	recipeData.reagents = {}
-
+	
 	recipeData.isSalvageRecipe = recipeInfo.isSalvageRecipe
+	print("isSalvageRecipe: " .. tostring(recipeData.isSalvageRecipe))
 	local salvageAllocation = currentTransaction:GetSalvageAllocation()
 	if salvageAllocation then
 		recipeData.salvageReagent = {
@@ -429,15 +435,21 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 		end
 	end
 	recipeData.hasReagentsWithQuality = hasReagentsWithQuality
-
+	print("hasReagentsWithQuality: " .. tostring(recipeData.hasReagentsWithQuality))
 	recipeData.maxQuality = recipeInfo.maxQuality
-
+	print("maxQuality: " .. tostring(recipeData.maxQuality))
+	
 	recipeData.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
 	recipeData.hasSingleItemOutput = recipeInfo.hasSingleItemOutput
-
-
+	print("baseItemAmount: " .. tostring(recipeData.baseItemAmount))
+	
+	
 	recipeData.recipeDifficulty = operationInfo.baseDifficulty + operationInfo.bonusDifficulty
 	recipeData.baseDifficulty = operationInfo.baseDifficulty
+	recipeData.bonusDifficulty = operationInfo.bonusDifficulty
+	print("recipeDifficulty: " .. tostring(recipeData.recipeDifficulty))
+	print("baseDifficulty: " .. tostring(recipeData.baseDifficulty))
+	print("bonusDifficulty: " .. tostring(recipeData.bonusDifficulty))
 
 	recipeData.result = {}
 
@@ -478,7 +490,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE then
 		-- Probably something like transmuting air reagent that creates non equip stuff without qualities
 		recipeData.result.itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
-		recipeData.result.isNoQuality = true		
+		recipeData.result.isNoQuality = true	
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
 		recipeData.result.itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
 		recipeData.result.isNoQuality = true	
@@ -487,6 +499,8 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	else
 		print("recipeType not covered in export: " .. tostring(recipeType))
 	end
+	
+	print("isNoQuality: " .. tostring(recipeData.result.isNoQuality))	
 
 	if recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING then
 		CraftSim.DATAEXPORT:handleOutputIDs(recipeData, recipeInfo)
