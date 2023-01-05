@@ -1478,9 +1478,9 @@ function CraftSim.FRAME:FillSpecInfoFrame(recipeData)
             end
         end
     elseif recipeData.specNodeData and recipeData.specNodeData.affectedNodes and #recipeData.specNodeData.affectedNodes == 0 then
-        specInfoFrame.content.nodeList:SetText("Recipe not affected by specializations")
+        --specInfoFrame.content.nodeList:SetText("Recipe not affected by specializations")
     else
-        specInfoFrame.content.nodeList:SetText("Profession not implemented yet")
+        --specInfoFrame.content.nodeList:SetText("Profession not implemented yet")
     end
 end
 
