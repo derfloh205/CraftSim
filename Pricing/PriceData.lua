@@ -37,13 +37,13 @@ function CraftSim.PRICEDATA:GetReagentCosts(recipeData, getMinimum)
     end
     -- optional & finishing (not when minimum)
     if not getMinimum then
-        for reagentIndex, reagentData in pairs(recipeData.optionalReagents) do
+        for reagentIndex, reagentData in pairs(recipeData.optionalReagents or {}) do
             local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentData.itemID, true) or 0
             print("price for " .. reagentData.itemData.link .. " -> " .. price)
             table.insert(reagentCosts, price)
         end
     
-        for reagentIndex, reagentData in pairs(recipeData.finishingReagents) do
+        for reagentIndex, reagentData in pairs(recipeData.finishingReagents or {}) do
             local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentData.itemID, true) or 0
             print("price for " .. reagentData.itemData.link .. " -> " .. price)
             table.insert(reagentCosts, price)

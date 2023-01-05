@@ -61,10 +61,10 @@ function CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedIt
         calculationData.multicraft.averageMulticraftItemsCurrent = expectedExtraItemsBase
         calculationData.multicraft.averageMulticraftItemsHigher = expectedExtraItemsNext
 
-        calculationData.multicraft.averageMulticraftCurrentValue = expectedExtraItemsBase * priceData.minBuyoutPerQuality[recipeData.expectedQuality]
+        calculationData.multicraft.averageMulticraftCurrentValue = expectedExtraItemsBase * (priceData.minBuyoutPerQuality[recipeData.expectedQuality] or 0)
 
         if recipeData.expectedQuality < recipeData.maxQuality then
-            calculationData.multicraft.averageMulticraftHigherValue = expectedExtraItemsNext * priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1]
+            calculationData.multicraft.averageMulticraftHigherValue = expectedExtraItemsNext * (priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1] or 0)
         end
     end
 end
