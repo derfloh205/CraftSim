@@ -181,7 +181,7 @@ end
 function CraftSim.MAIN:HandleCollapsedFrameSave()
 	for _, frameID in pairs(CraftSim.CONST.FRAMES) do
 		if CraftSimCollapsedFrames[frameID] then
-			local frame = CraftSim.FRAMES:GetFrame(frameID)
+			local frame = CraftSim.FRAME:GetFrame(frameID)
 			frame.collapse(frame)
 		end
 	end
