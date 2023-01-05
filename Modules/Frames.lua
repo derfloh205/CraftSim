@@ -1332,8 +1332,10 @@ function CraftSim.FRAME:InitWarningFrame()
 end
 
 function CraftSim.FRAME:InitOneTimeNoteFrame()
+    local currentVersion = GetAddOnMetadata(addonName, "Version")
+
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimOneTimeNoteFrame", 
-    CraftSim.UTIL:ColorizeText("CraftSim What's New?", CraftSim.CONST.COLORS.GREEN), 
+    CraftSim.UTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")", CraftSim.CONST.COLORS.GREEN), 
     UIParent, 
     UIParent, 
     "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO, true)
