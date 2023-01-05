@@ -1402,6 +1402,8 @@ function CraftSim.FRAME:InitSpecInfoFrame()
 
     -- TODO: possible scrollframe?
 
+    frame:Hide()
+
     frame.content.nodeLines = {}
     local function createNodeLine(parent, anchorParent, offsetY)
         local nodeLine = CreateFrame("frame", nil, parent)
