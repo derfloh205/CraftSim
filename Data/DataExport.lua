@@ -766,7 +766,14 @@ function CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
     end
 end
 
+function CraftSim.DATAEXPORT:HandleItemIDMappings(itemID)
+	local mappedID = CraftSim.CONST.ITEM_ID_EXCEPTION_MAPPING[itemID]
+
+	return mappedID or itemID
+end
+
 function CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID)
+	itemID = CraftSim.DATAEXPORT:HandleItemIDMappings(itemID)
 	if CraftSimItemCache[itemID] then
 		return CraftSimItemCache[itemID]
 	else

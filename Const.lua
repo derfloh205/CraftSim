@@ -292,3 +292,7 @@ CraftSim.CONST.TEXT = {
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
     return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy}
 end
+
+CraftSim.CONST.ITEM_ID_EXCEPTION_MAPPING = {
+    [199345] = 200074 -- frosted rimefin tuna to rimefin tuna, due to frosted generating it, and rimefin tuna being soulbound TODO: what about rotten?
+}
