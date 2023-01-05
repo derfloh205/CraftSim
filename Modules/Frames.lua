@@ -1262,22 +1262,13 @@ function CraftSim.FRAME:InitDebugFrame()
     local checkBoxOffsetY = -2
     controlPanel.content.checkBoxID_MAIN = CraftSim.FRAME:CreateCheckbox(
         " MAIN", "Enable MAIN Output", "enableDebugID_MAIN", controlPanel.content, controlPanel.content.clearButton, "TOP", "TOP", -70, checkBoxOffsetY - 20)
-
-    controlPanel.content.checkBoxID_SPECDATA = CraftSim.FRAME:CreateCheckbox(
-        " SPECDATA", "Enable SPECDATA Output", "enableDebugID_SPECDATA", controlPanel.content, controlPanel.content.checkBoxID_MAIN, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
-
-    controlPanel.content.checkBoxID_ERROR = CraftSim.FRAME:CreateCheckbox(
-    " ERROR", "Enable ERROR Output", "enableDebugID_ERROR", controlPanel.content, controlPanel.content.checkBoxID_SPECDATA, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
-
-    controlPanel.content.checkBoxID_DATAEXPORT = CraftSim.FRAME:CreateCheckbox(
-    " DATAEXPORT", "Enable DATAEXPORT Output", "enableDebugID_DATAEXPORT", controlPanel.content, controlPanel.content.checkBoxID_ERROR, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
-
-    controlPanel.content.checkBoxID_SIMULATION_MODE = CraftSim.FRAME:CreateCheckbox(
-        " SIMULATION_MODE", "Enable SIMULATION_MODE Output", "enableDebugID_SIMULATION_MODE", controlPanel.content, controlPanel.content.checkBoxID_DATAEXPORT, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
     
-    controlPanel.content.checkBoxID_REAGENT_OPTIMIZATION = CraftSim.FRAME:CreateCheckbox(
-        " REAGENT_OPTIMIZATION", "Enable REAGENT_OPTIMIZATION Output", "enableDebugID_REAGENT_OPTIMIZATION", controlPanel.content, controlPanel.content.checkBoxID_SIMULATION_MODE, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
-    
+    local lastHook = controlPanel.content.checkBoxID_MAIN
+    for _, debugID in pairs(CraftSim.CONST.DEBUG_IDS) do
+        controlPanel.content["checkboxID_" .. debugID] = CraftSim.FRAME:CreateCheckbox(
+        " " .. debugID, "Enable "..debugID.." Output", "enableDebugID_" .. debugID, controlPanel.content, lastHook, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
+        lastHook = controlPanel.content["checkboxID_" .. debugID]
+    end
 end
 
 function CraftSim.FRAME:InitWarningFrame()

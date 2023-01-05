@@ -41,6 +41,7 @@ CraftSimOptions = CraftSimOptions or {
 	enableDebugID_DATAEXPORT = true,
 	enableDebugID_SIMULATION_MODE = true,
 	enableDebugID_REAGENT_OPTIMIZATION = true,
+	enableDebugID_PRICEDATA = true,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -108,6 +109,9 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.enableDebugID_REAGENT_OPTIMIZATION == nil then
 			CraftSimOptions.enableDebugID_REAGENT_OPTIMIZATION = true
+		end
+		if CraftSimOptions.enableDebugID_PRICEDATA == nil then
+			CraftSimOptions.enableDebugID_PRICEDATA = true
 		end
 	end
 end

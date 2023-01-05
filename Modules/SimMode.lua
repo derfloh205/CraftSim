@@ -79,11 +79,19 @@ function CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
 end
 
 function CraftSim.SIMULATION_MODE:UpdateReagentAllocationsByInput()
+    print("Update Reagent Input Frames:")
+    print("reagents:")
+    for reagentIndex, reagentData in pairs(CraftSim.SIMULATION_MODE.recipeData.reagents) do
+        print(reagentIndex .. " -> " .. tostring(reagentData.name))
+    end
     -- update item allocations based on inputfields
-    for _, overwriteInput in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
+    for i, overwriteInput in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
         if overwriteInput.isActive then
             local reagentIndex = overwriteInput.inputq1.reagentIndex
+            print("- Set reagentInput #" .. tostring(i))
+            print("- Access reagent #: " .. tostring(reagentIndex))
             local reagentData = CraftSim.SIMULATION_MODE.recipeData.reagents[reagentIndex]
+
 
             reagentData.itemsInfo[1].allocations = overwriteInput.inputq1:GetNumber()
             if reagentData.differentQualities then

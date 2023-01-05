@@ -346,20 +346,28 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 
 	local hasReagentsWithQuality = false
 	local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
-	--print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
+	print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
+	-- this includes finishing AND optionalReagents too!!!
+
+	recipeData.reagents = {}
+	recipeData.optionalReagents = {}
+	recipeData.finishingReagents = {}
+	local currentFinishingReagent = 1
+	local currentOptionalReagent = 1
+	local currentRequiredReagent = 1
 	for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
 		local reagents = currentSlot.reagents
 		local reagentType = currentSlot.reagentType
 		local reagentName = CraftSim.DATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
 		-- for now only consider the required reagents
-		if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then --and currentSelected == currentSlot.quantityRequired then
+		if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
+			print(slotIndex .. " -> required #" .. currentRequiredReagent .. ": " .. tostring(reagentName) .. " Type: " .. tostring(reagentType))
 			local hasMoreThanOneQuality = reagents[2] ~= nil
 
 			if hasMoreThanOneQuality then
 				hasReagentsWithQuality = true
 			end
-
-			recipeData.reagents[slotIndex] = {
+			local reagentEntry = {
 				name = reagentName,
 				requiredQuantity = currentSlot.quantityRequired,
 				differentQualities = hasMoreThanOneQuality,
@@ -368,8 +376,8 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 			
 			local slotAllocations = currentTransaction:GetAllocations(slotIndex)
 			local currentSelected = slotAllocations:Accumulate()
-			recipeData.reagents[slotIndex].itemsInfo = {}
-
+			reagentEntry.itemsInfo = {}
+			
 			for i, reagent in pairs(reagents) do
 				local reagentAllocation = slotAllocations:FindAllocationByReagent(reagent)
 				local allocations = 0
@@ -380,11 +388,42 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 					itemID = reagent.itemID,
 					allocations = allocations
 				}
-				table.insert(recipeData.reagents[slotIndex].itemsInfo, itemInfo)
+				table.insert(reagentEntry.itemsInfo, itemInfo)
 			end
-		else
-			--print("reagent not required: " .. tostring(reagentName))
-			-- TODO: export optional reagents
+
+			table.insert(recipeData.reagents, reagentEntry)
+			currentRequiredReagent = currentRequiredReagent + 1
+		elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
+			local button = schematicForm.reagentSlots[CraftSim.CONST.REAGENT_TYPE.OPTIONAL][currentOptionalReagent].Button
+			local slotAllocations = currentTransaction:GetAllocations(slotIndex)
+			local currentSelected = slotAllocations:Accumulate()
+			local allocatedItemID = button:GetItemID()
+			
+			if currentSelected >= 1 then
+				local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(allocatedItemID)
+				print(slotIndex .. " -> optional #" .. currentOptionalReagent .. ": " .. tostring(itemData.link) .. " Type: " .. tostring(reagentType))
+				table.insert(recipeData.optionalReagents, {
+					itemID = allocatedItemID,
+					itemData = itemData,
+				})
+			end
+
+			currentOptionalReagent = currentOptionalReagent + 1
+		elseif reagentType == CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT then
+			local button = schematicForm.reagentSlots[CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT][currentFinishingReagent].Button
+			local slotAllocations = currentTransaction:GetAllocations(slotIndex)
+			local currentSelected = slotAllocations:Accumulate()
+			local allocatedItemID = button:GetItemID()
+
+			if currentSelected >= 1 then
+				local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(allocatedItemID)
+				print(slotIndex .. " -> finishing #" .. currentFinishingReagent .. ": " .. tostring(itemData.link) .. " Type: " .. tostring(reagentType))
+				table.insert(recipeData.finishingReagents, {
+					itemID = allocatedItemID,
+					itemData = itemData,
+				})
+			end
+			currentFinishingReagent = currentFinishingReagent + 1
 		end
 	end
 	recipeData.hasReagentsWithQuality = hasReagentsWithQuality

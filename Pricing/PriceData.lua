@@ -6,8 +6,13 @@ CraftSim.PRICEDATA.noPriceDataLinks = {}
 
 CraftSim.PRICEDATA.overrideResultProfits = {} -- mapped by qualityID
 
+local function print(text, recursive) -- override
+    CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.PRICEDATA, recursive)
+end
+
 function CraftSim.PRICEDATA:GetReagentCosts(recipeData, getMinimum) 
     local reagentCosts = {}
+    -- required
     for reagentIndex, reagentInfo in pairs(recipeData.reagents) do
         -- check if soulbound reagent
         if CraftSim.UTIL:isItemSoulbound(reagentInfo.itemsInfo[1].itemID) then
@@ -30,6 +35,21 @@ function CraftSim.PRICEDATA:GetReagentCosts(recipeData, getMinimum)
             table.insert(reagentCosts, totalBuyout)
         end
     end
+    -- optional & finishing (not when minimum)
+    if not getMinimum then
+        for reagentIndex, reagentData in pairs(recipeData.optionalReagents) do
+            local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentData.itemID, true) or 0
+            print("price for " .. reagentData.itemData.link .. " -> " .. price)
+            table.insert(reagentCosts, price)
+        end
+    
+        for reagentIndex, reagentData in pairs(recipeData.finishingReagents) do
+            local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentData.itemID, true) or 0
+            print("price for " .. reagentData.itemData.link .. " -> " .. price)
+            table.insert(reagentCosts, price)
+        end
+    end
+    
 
     return reagentCosts
 end
