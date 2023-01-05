@@ -252,7 +252,7 @@ function CraftSim.CALC:getMeanProfit(recipeData, priceData)
     local totalCraftingCosts = priceData.craftingCostPerCraft - totalSavedCosts
     local totalWorth = 0
     if recipeData.expectedQuality == recipeData.maxQuality or recipeData.result.isNoQuality then
-        totalWorth = craftedItems.baseQuality * priceData.minBuyoutPerQuality[recipeData.expectedQuality]
+        totalWorth = craftedItems.baseQuality * (priceData.minBuyoutPerQuality[recipeData.expectedQuality] or 0)
     else
         totalWorth = craftedItems.baseQuality * (priceData.minBuyoutPerQuality[recipeData.expectedQuality] or 0) + 
             craftedItems.nextQuality * (priceData.minBuyoutPerQuality[recipeData.expectedQuality + 1] or 0)
