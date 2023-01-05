@@ -69,8 +69,20 @@ function CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedIt
     end
 end
 
--- TODO: get all possible procs of saved reagents and calculate the mean profit between them
 function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calculationData)
+    local specData = recipeData.specNodeData
+    local resourcefulnessExtraItemsFactor = 1
+
+    if specData then
+        resourcefulnessExtraItemsFactor = recipeData.stats.resourcefulness.extraItemsFactor
+    else
+        resourcefulnessExtraItemsFactor = recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
+    end
+
+    if recipeData.salvageReagent then
+        return (priceData.salvageReagentPrice * recipeData.salvageReagent.requiredQuantity) * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (resourcefulnessExtraItemsFactor or 1)) 
+    end
+
     local savedCosts = 0
     if recipeData.stats.resourcefulness ~= nil then
         calculationData.resourcefulness = {}
@@ -117,15 +129,6 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, cal
         local procChancePerMaterial = recipeData.stats.resourcefulness.percent / 100
         local negativeChancePerMaterial = 1 - procChancePerMaterial
         local averageSavedCostsByCombination = {}
-
-        local specData = recipeData.specNodeData
-        local resourcefulnessExtraItemsFactor = 1
-
-        if specData then
-            resourcefulnessExtraItemsFactor = recipeData.stats.resourcefulness.extraItemsFactor
-        else
-            resourcefulnessExtraItemsFactor = recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
-        end
 
         for _, combination in pairs(totalCombinations) do
             local chance = 1

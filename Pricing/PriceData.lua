@@ -94,6 +94,10 @@ function CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
     else
         print("CraftSimError: Unhandled recipeType in priceData: " .. tostring(recipeType))
     end
+    local salvageReagentPrice = 0
+    if recipeData.salvageReagent then
+        salvageReagentPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(recipeData.salvageReagent.itemID, true)
+    end
 
     for i = 1, 5, 1 do
         -- if existent, override price by quality
@@ -104,6 +108,7 @@ function CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
     end
 
     return {
+        salvageReagentPrice = salvageReagentPrice,
         minBuyoutPerQuality = minBuyoutPerQuality,
         craftingCostPerCraft = craftingCostPerCraft,
         minimumCostPerCraft = minimumCostPerCraft,
