@@ -281,10 +281,10 @@ function CraftSim.FRAME:InitCostOverviewFrame()
         CraftSimSimFrame, 
         "TOP", 
         "BOTTOM", 
-        0, 
+        50, 
         10, 
-        250, 
-        270,
+        350, 
+        350,
         CraftSim.CONST.FRAMES.COST_OVERVIEW)
 
     local contentOffsetY = -20
@@ -318,10 +318,13 @@ function CraftSim.FRAME:InitCostOverviewFrame()
         local profitFrame = CreateFrame("frame", nil, parent)
         profitFrame:SetSize(parent:GetWidth(), 25)
         profitFrame:SetPoint("TOP", newHookFrame, "TOP", 0, offsetY)
-        profitFrame.icon = CraftSim.FRAME:CreateQualityIcon(profitFrame, 20, 20, profitFrame, "CENTER", "CENTER", -75, 0)
+        
+        profitFrame.itemLinkText = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        profitFrame.itemLinkText:SetPoint("CENTER", profitFrame, "CENTER", 0, 0)
+        profitFrame.itemLinkText:SetText("???")
 
         profitFrame.text = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        profitFrame.text:SetPoint("LEFT", profitFrame.icon, "LEFT", 30, 0)
+        profitFrame.text:SetPoint("TOP", profitFrame.itemLinkText, "BOTTOM", 0, -7)
         profitFrame.text:SetText("???")
         
         --profitFrame.qualityID -- this will be set by the fill function 
@@ -343,7 +346,7 @@ function CraftSim.FRAME:InitCostOverviewFrame()
         end
 
         profitFrame.overrideCheckBox = CraftSim.FRAME:CreateCheckboxCustomCallback(
-            "", "Override sell price for quality\n\nInput is interpreted as gold", initialValue, clickCallback, profitFrame, profitFrame.icon, "RIGHT", "RIGHT", -20, 0)
+            "", "Override sell price for quality\n\nInput is interpreted as gold", initialValue, clickCallback, profitFrame, profitFrame.text, "RIGHT", "LEFT", 0, 0)
 
         profitFrame.overrideInput = CraftSim.FRAME:CreateGoldInput(
             nil, profitFrame, profitFrame.text, "LEFT", "LEFT", 0, 0, 50, 25, 0, function(overridePrice) 
@@ -361,13 +364,13 @@ function CraftSim.FRAME:InitCostOverviewFrame()
         profitFrame.overrideInput.goldCoin:SetText(goldCoin)
 
         profitFrame.overrideInput:Hide()
-
+        CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(profitFrame)
         profitFrame:Hide()
         return profitFrame
     end
 
     local baseY = -20
-    local profitFramesSpacingY = -20
+    local profitFramesSpacingY = -45
     frame.content.profitFrames = {}
     table.insert(frame.content.profitFrames, createProfitFrame(baseY, frame.content, frame.content.resultProfitsTitle, 1))
     table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame.content, frame.content.resultProfitsTitle, 2))
@@ -382,6 +385,15 @@ end
 
 function CraftSim.FRAME:FillCostOverview(craftingCosts, minCraftingCosts, profitPerQuality, currentQuality)
     local costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
+    local recipeData = nil
+    if CraftSim.SIMULATION_MODE.isActive then
+        recipeData = CraftSim.SIMULATION_MODE.recipeData
+    else
+        recipeData = CraftSim.MAIN.currentRecipeData
+    end
+
+    if not recipeData then return end
+
     if craftingCosts == minCraftingCosts then
         costOverviewFrame.content.craftingCosts:SetText(CraftSim.UTIL:FormatMoney(craftingCosts))
         costOverviewFrame.content.craftingCostsTitle.SwitchAnchor(costOverviewFrame.title)
@@ -399,8 +411,14 @@ function CraftSim.FRAME:FillCostOverview(craftingCosts, minCraftingCosts, profit
 
     for index, profitFrame in pairs(costOverviewFrame.content.profitFrames) do
         if profitPerQuality[index] ~= nil then
-            profitFrame.icon.SetQuality(currentQuality + index - 1)
-            profitFrame.qualityID = currentQuality + index - 1
+            local qualityID = currentQuality + index - 1
+            if recipeData.result.itemIDs then
+                local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(recipeData.result.itemIDs[qualityID])
+                profitFrame.itemLinkText:SetText((itemData and itemData.link) or "Loading..")
+            elseif recipeData.result.itemQualityLinks then
+                profitFrame.itemLinkText:SetText(recipeData.result.itemQualityLinks[qualityID] or "Loading..")
+            end
+            profitFrame.qualityID = qualityID
             local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
             profitFrame.text:SetText(CraftSim.UTIL:FormatMoney(profitPerQuality[index], true, relativeValue))
             profitFrame:Show()

@@ -21,6 +21,7 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\nFixed error with saving collapsed status of frames" .. 
         "\n\nFixed Material Combination Module trying to show up for noQuality recipes" ..
         "\n\n" .. (tunaData.link or c("Rimefin Tuna", b)) .. " in cooking recipes\nnow uses " .. (frostedTunaData.link or c("Frosted Rimefin Tuna", b)) .. " for pricing" ..
+        "\n\n" .. c("Cost Overview", g) .. " now shows the actual item links" ..
         "\n\n\n--- Version 1.6.1 ---" ..
         "\n\nVarious fixes to errors popping up for price calculations" .. 
         c("\n\nWARNING: ", r) .. " Recipes with exactly 1 material that has quality\n" ..
