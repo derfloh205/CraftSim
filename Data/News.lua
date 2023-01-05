@@ -12,7 +12,11 @@ function CraftSim.NEWS:GET_NEWS()
     end
     return 
         c("Hello and thank you for using CraftSim!\n", b) .. 
-        "( Show this window any time with /craftsim news )" ..
+        "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        "\n\n\n--- Version 1.6.1 ---" ..
+        "\n\nVarious fixes to errors popping up for price calculations" .. 
+        c("\n\nWARNING: ", r) .. " Recipes with exactly 1 material that has quality\n" ..
+        "might still suggest wrong low cost max quality combinations!" ..
         "\n\n\n--- Version 1.6 ---" ..
         c("\n\nOverride Sell Price ", g) .. " is a new feature that lets you override\nthe sell price for each quality on an item\n" .. 
         "even soulbound gear! You can use this to e.g. " .. c("simulate craft order comissions!", g) ..
