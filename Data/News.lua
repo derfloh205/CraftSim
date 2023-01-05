@@ -16,6 +16,7 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\n\n--- Version 1.6.2 ---" ..
         "\n\nBugfixes to certain nil errors" ..
         "\n\nFixed error with saving collapsed status of frames" .. 
+        "\n\nFixed Material Combination Module trying to show up for noQuality recipes" ..
         "\n\n\n--- Version 1.6.1 ---" ..
         "\n\nVarious fixes to errors popping up for price calculations" .. 
         c("\n\nWARNING: ", r) .. " Recipes with exactly 1 material that has quality\n" ..
