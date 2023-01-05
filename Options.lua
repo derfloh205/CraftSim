@@ -83,7 +83,7 @@ function CraftSim.OPTIONS:InitOptionsFrame()
     local expressionSizeX = 300
     local expressionSizeY = 50
 
-    local tsmMaterialsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionMaterials", TSMTab.content, "UIPanelButtonTemplate")
+    local tsmMaterialsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionMaterials", TSMTab.content, "InputBoxTemplate")
     tsmMaterialsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -50)
     tsmMaterialsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
     tsmMaterialsPriceExpression:SetMultiLine(true)
@@ -111,7 +111,7 @@ function CraftSim.OPTIONS:InitOptionsFrame()
     validationInfoMaterials:SetPoint("TOPLEFT", tsmMaterialsPriceExpression, "TOPRIGHT",  5, 0)
     validationInfoMaterials:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
 
-    local tsmItemsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionMaterials", TSMTab.content, "UIPanelButtonTemplate")
+    local tsmItemsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionMaterials", TSMTab.content, "InputBoxTemplate")
     tsmItemsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -200)
     tsmItemsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
     tsmItemsPriceExpression:SetMultiLine(true)
@@ -327,7 +327,7 @@ function CraftSim.OPTIONS:InitOptionsFrame()
     -90, 
     -50)
 
-    local characterNameInput = CreateFrame("EditBox", "CraftSimSyncCharacterInput", AccountSyncTab.content, "UIPanelButtonTemplate")
+    local characterNameInput = CreateFrame("EditBox", "CraftSimSyncCharacterInput", AccountSyncTab.content, "InputBoxTemplate")
     characterNameInput:SetPoint("TOP", AccountSyncTab.content, "TOP", 20, -50)
     characterNameInput:SetSize(100, 20)
     characterNameInput:SetAutoFocus(false) -- dont automatically focus

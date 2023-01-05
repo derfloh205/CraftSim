@@ -540,6 +540,14 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 		recipeData.result.isNoQuality = true	
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
 		-- nothing cause there is no result
+	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.RECRAFT then
+		recipeData.result.itemID = schematicInfo.outputItemID
+		
+		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
+		recipeData.result.hyperlink = outputItemData.hyperlink
+		local baseIlvl = recipeInfo.itemLevel
+		recipeData.result.itemQualityLinks = CraftSim.DATAEXPORT:GetDifferentQualityLinksByLink(outputItemData.hyperlink)
+		recipeData.result.baseILvL = baseIlvl
 	else
 		print("recipeType not covered in export: " .. tostring(recipeType))
 	end

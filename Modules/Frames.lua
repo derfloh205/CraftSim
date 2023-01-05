@@ -1939,7 +1939,7 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
 end
 
 function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onTextChangedCallback)
-    local goldInput = CreateFrame("EditBox", name, parent, "UIPanelButtonTemplate")
+    local goldInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
         goldInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
         goldInput:SetSize(sizeX, sizeY)
         goldInput:SetAutoFocus(false) -- dont automatically focus
@@ -1965,7 +1965,7 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
 end
 
 function CraftSim.FRAME:CreateNumericInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, allowNegative, onTextChangedCallback)
-    local numericInput = CreateFrame("EditBox", name, parent, "UIPanelButtonTemplate")
+    local numericInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
         numericInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
         numericInput:SetSize(sizeX, sizeY)
         numericInput:SetAutoFocus(false) -- dont automatically focus
