@@ -96,6 +96,8 @@ CraftSim.CONST.REAGENT_TYPE = {
 
 CraftSim.CONST.AUCTION_HOUSE_CUT = 0.95
 
+CraftSim.CONST.vellumItemID = 38682
+
 CraftSim.CONST.RECIPE_TYPES = {
     GEAR = 0, -- like blue gear
     SOULBOUND_GEAR = 1, -- like purple gear

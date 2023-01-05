@@ -331,6 +331,9 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	recipeData.expectedQuality = operationInfo.craftingQuality
 	print("expectedQuality: " .. tostring(recipeData.expectedQuality))
 	print("expectedQuality: " .. tostring(recipeData.expectedQuality))
+
+	recipeData.isEnchantingRecipe = recipeInfo.isEnchantingRecipe
+	print("isEnchantingRecipe: " .. tostring(recipeData.isEnchantingRecipe))
 	
 	
 	local currentTransaction = schematicForm.transaction or schematicForm:GetTransaction()
@@ -453,7 +456,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 
 	recipeData.result = {}
 
-	local allocationItemGUID = currentTransaction:GetAllocationItemGUID()
+	local allocationItemGUID = currentTransaction:GetAllocationItemGUID() -- either recraft, enchant, or salvage, TODO: export?
 	local craftingReagentInfoTbl = currentTransaction:CreateCraftingReagentInfoTbl()
 	local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 
@@ -499,7 +502,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	else
 		print("recipeType not covered in export: " .. tostring(recipeType))
 	end
-	
+
 	print("isNoQuality: " .. tostring(recipeData.result.isNoQuality))	
 
 	if recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING then

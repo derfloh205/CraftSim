@@ -12,6 +12,13 @@ end
 
 function CraftSim.PRICEDATA:GetReagentCosts(recipeData, getMinimum) 
     local reagentCosts = {}
+
+    if recipeData.isEnchantingRecipe then
+        -- only when vellum is allocated?
+        local vellumPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(CraftSim.CONST.vellumItemID, true) -- should use vendor price if available
+        table.insert(reagentCosts, vellumPrice)
+    end
+
     -- required
     for reagentIndex, reagentInfo in pairs(recipeData.reagents) do
         -- check if soulbound reagent
