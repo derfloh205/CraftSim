@@ -352,6 +352,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	recipeData.reagents = {}
 	recipeData.optionalReagents = {}
 	recipeData.finishingReagents = {}
+	recipeData.numReagentsWithQuality = 0
 	local currentFinishingReagent = 1
 	local currentOptionalReagent = 1
 	local currentRequiredReagent = 1
@@ -366,6 +367,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 
 			if hasMoreThanOneQuality then
 				hasReagentsWithQuality = true
+				recipeData.numReagentsWithQuality = recipeData.numReagentsWithQuality + 1
 			end
 			local reagentEntry = {
 				name = reagentName,

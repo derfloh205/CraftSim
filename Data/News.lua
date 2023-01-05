@@ -17,6 +17,7 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\nVarious fixes to errors popping up for price calculations" .. 
         c("\n\nWARNING: ", r) .. " Recipes with exactly 1 material that has quality\n" ..
         "might still suggest wrong low cost max quality combinations!" ..
+        "\n\nThe " .. c("Material Combination Suggestion", r) .. "\nis now disabled for such recipes until this issue is fixed" .. 
         "\n\n\n--- Version 1.6 ---" ..
         c("\n\nOverride Sell Price ", g) .. " is a new feature that lets you override\nthe sell price for each quality on an item\n" .. 
         "even soulbound gear! You can use this to e.g. " .. c("simulate craft order comissions!", g) ..
