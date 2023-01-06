@@ -90,14 +90,14 @@ end
 
 local hookedEvent = false
 
-CraftSim.MAIN.ErrorHandler = function(errorMsg)
-	local log = tostring(errorMsg) .. "callStack: " .. debugstack(2, 3, 2)
-	CraftSim.FRAME:ShowError(log, "CraftSim Error")
-	print(CraftSim.UTIL:ColorizeText(log, CraftSim.CONST.COLORS.RED), CraftSim.CONST.DEBUG_IDS.ERROR)
-end
+-- CraftSim.MAIN.ErrorHandler = function(errorMsg)
+-- 	local log = tostring(errorMsg) .. "callStack: " .. debugstack(2, 3, 2)
+-- 	CraftSim.FRAME:ShowError(log, "CraftSim Error")
+-- 	print(CraftSim.UTIL:ColorizeText(log, CraftSim.CONST.COLORS.RED), CraftSim.CONST.DEBUG_IDS.ERROR)
+-- end
 
 function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
-	local success, errorMsg = xpcall(CraftSim.MAIN.TriggerModulesByRecipeType, CraftSim.MAIN.ErrorHandler, self, isInit)
+	local success, errorMsg = pcall(CraftSim.MAIN.TriggerModulesByRecipeType, self, isInit)
 
 	if not success then
 		CraftSim.FRAME:ShowError(tostring(errorMsg), "CraftSim Error")

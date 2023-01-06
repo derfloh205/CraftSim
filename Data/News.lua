@@ -16,7 +16,10 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("Hello and thank you for using CraftSim!\n", b) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
-        "\n\n\n--- Version 1.6.2 ---" ..
+        "\n\n\n--- Version 1.6.4 ---" ..
+       " \n\n" .. c("Profit Calculation", g) .. " V2 implemented" ..
+        "\n\n" .. c("Override Crafting Costs Checkbox", g) .. " added" ..
+        "\n\n\n--- Version 1.6.2, 1.6.3 ---" ..
         "\n\nBugfixes to certain nil errors" ..
         "\n\nFixed error with saving collapsed status of frames" .. 
         "\n\nFixed Material Combination Module trying to show up for noQuality recipes" ..

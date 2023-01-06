@@ -302,7 +302,7 @@ function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
     local totalSavedCosts = CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calculationData)  
     local adaptedCraftingCosts = priceData.craftingCostPerCraft - totalSavedCosts
     local baseCraftValue = recipeData.baseItemAmount * (priceData.minBuyoutPerQuality[recipeData.expectedQuality] or 0)
-    print("baseitemamount: " .. recipeData.baseItemAmount)
+    print("totalSavedCosts: " .. CraftSim.UTIL:FormatMoney(totalSavedCosts))
 
     -- case, recipe supports only multicraft not inspiration
     if recipeData.stats.multicraft and not recipeData.stats.inspiration then
