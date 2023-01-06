@@ -62,10 +62,10 @@ function CraftSim.STATS:CalculateStatWeights(recipeData, priceData)
 
     local calculationResult = {} 
     local calculationData = {}
-    calculationResult.meanProfit, calculationData = CraftSim.CALC:getMeanProfit(recipeData, priceData)
-    calculationResult.meanProfit = CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
+    --calculationResult.meanProfit, calculationData = CraftSim.CALC:getMeanProfit(recipeData, priceData)
+    calculationResult.meanProfit, calculationData = CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
 
-    CraftSim_DEBUG:print("MeanProfit V1: " .. CraftSim.UTIL:FormatMoney(calculationResult.meanProfit), CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION)
+    --CraftSim_DEBUG:print("MeanProfit V1: " .. CraftSim.UTIL:FormatMoney(calculationResult.meanProfit), CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION)
     --CraftSim_DEBUG:print("MeanProfit V2: " .. CraftSim.UTIL:FormatMoney(meanProfitV2), CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION)
 
     calculationData.meanProfit = calculationResult.meanProfit
