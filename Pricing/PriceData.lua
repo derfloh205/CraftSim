@@ -5,6 +5,7 @@ CraftSim.PRICEDATA = {}
 CraftSim.PRICEDATA.noPriceDataLinks = {}
 
 CraftSim.PRICEDATA.overrideResultProfits = {} -- mapped by qualityID
+CraftSim.PRICEDATA.overrideCraftingCosts = nil
 
 local function print(text, recursive) -- override
     CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.PRICEDATA, recursive)
@@ -98,8 +99,14 @@ function CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
         return nil
     end
 
-    local craftingCostPerCraft = CraftSim.PRICEDATA:GetTotalCraftingCost(recipeData) 
+    local craftingCostPerCraft = CraftSim.PRICEDATA:GetTotalCraftingCost(recipeData)
     local minimumCostPerCraft = CraftSim.PRICEDATA:GetTotalCraftingCost(recipeData, true) 
+
+    if CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW).content.overrideCraftingCostsCheckbox:GetChecked() then
+        craftingCostPerCraft = CraftSim.PRICEDATA.overrideCraftingCosts
+        minimumCostPerCraft = CraftSim.PRICEDATA.overrideCraftingCosts
+    end
+
     local reagentsPriceByQuality = CraftSim.PRICEDATA:GetReagentsPriceByQuality(recipeData)
     local minBuyoutPerQuality = {}
 

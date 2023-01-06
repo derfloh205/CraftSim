@@ -306,12 +306,45 @@ function CraftSim.FRAME:InitCostOverviewFrame()
     end
 
     frame.content.craftingCosts = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.craftingCosts:SetPoint("TOP", frame.content.craftingCostsTitle, "TOP", 0, textSpacingY)
+	frame.content.craftingCosts:SetPoint("TOPLEFT", frame.content.craftingCostsTitle, "TOPLEFT", 20, textSpacingY)
     frame.content.craftingCosts:SetText("???")
-    
 
+    local clickCallbackCraftingCosts = function(self, button, down) 
+        if self:GetChecked() then
+            -- show input, set override
+            frame.content.overrideCraftingCostsInput:Show()
+            frame.content.craftingCosts:Hide()
+            CraftSim.PRICEDATA.overrideCraftingCosts = frame.content.overrideCraftingCostsInput.getMoneyValue()
+            CraftSim.MAIN:TriggerModulesErrorSafe()
+        else
+            frame.content.overrideCraftingCostsInput:Hide()
+            frame.content.craftingCosts:Show()
+            -- delete override
+            CraftSim.PRICEDATA.overrideCraftingCosts = nil
+            CraftSim.MAIN:TriggerModulesErrorSafe()
+        end
+    end
+
+    frame.content.overrideCraftingCostsCheckbox = CraftSim.FRAME:CreateCheckboxCustomCallback(
+        "", "Override sell price for crafting costs interpreted as gold", false, clickCallbackCraftingCosts, frame.content, frame.content.craftingCosts, "RIGHT", "LEFT", 0, 0)
+
+    frame.content.overrideCraftingCostsInput = CraftSim.FRAME:CreateGoldInput(
+            nil, frame.content, frame.content.craftingCostsTitle, "TOPLEFT", "BOTTOMLEFT", 25, 0, 100, 25, 0, function(overridePrice) 
+                CraftSim.PRICEDATA.overrideCraftingCosts = overridePrice
+
+                CraftSim.MAIN:TriggerModulesErrorSafe()
+            end)
+    local startLine = "\124T"
+    local endLine = "\124t"
+    local goldCoin = startLine .. "Interface\\Icons\\INV_Misc_Coin_01:16" .. endLine
+
+    frame.content.overrideCraftingCostsInput.goldCoin = frame.content.overrideCraftingCostsInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.content.overrideCraftingCostsInput.goldCoin:SetPoint("LEFT", frame.content.overrideCraftingCostsInput, "RIGHT", 5, 0)
+    frame.content.overrideCraftingCostsInput.goldCoin:SetText(goldCoin)
+    
+    frame.content.overrideCraftingCostsInput:Hide()
     frame.content.resultProfitsTitle = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.resultProfitsTitle:SetPoint("TOP", frame.content.craftingCosts, "TOP", 0, textSpacingY - 10)
+	frame.content.resultProfitsTitle:SetPoint("TOP", frame.content.craftingCostsTitle, "TOP", 0, textSpacingY - 20)
     frame.content.resultProfitsTitle:SetText("Profit By Quality")
 
     local function createProfitFrame(offsetY, parent, newHookFrame, qualityID)
@@ -346,10 +379,10 @@ function CraftSim.FRAME:InitCostOverviewFrame()
         end
 
         profitFrame.overrideCheckBox = CraftSim.FRAME:CreateCheckboxCustomCallback(
-            "", "Override sell price for quality\n\nInput is interpreted as gold", initialValue, clickCallback, profitFrame, profitFrame.text, "RIGHT", "LEFT", 0, 0)
+            "", "Override sell price for quality\n\nInput is interpreted as gold", false, clickCallback, profitFrame, profitFrame.text, "RIGHT", "LEFT", 0, 0)
 
         profitFrame.overrideInput = CraftSim.FRAME:CreateGoldInput(
-            nil, profitFrame, profitFrame.text, "LEFT", "LEFT", 0, 0, 50, 25, 0, function(overridePrice) 
+            nil, profitFrame, profitFrame.overrideCheckBox, "LEFT", "RIGHT", 10, 0, 100, 25, 0, function(overridePrice) 
                 CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = overridePrice
 
                 CraftSim.MAIN:TriggerModulesErrorSafe()

@@ -47,7 +47,7 @@ function CraftSim.STATS:getResourcefulnessWeight(recipeData, priceData, baseMean
 end
 
 function CraftSim.STATS:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
-    local meanProfitModified = CraftSim.CALC:getMeanProfit(modifiedData, priceData)
+    local meanProfitModified = CraftSim.CALC:getMeanProfitV2(modifiedData, priceData)
     local profitDiff = meanProfitModified - baseMeanProfit
     local statWeight = profitDiff / statIncreaseFactor
 
@@ -63,6 +63,10 @@ function CraftSim.STATS:CalculateStatWeights(recipeData, priceData)
     local calculationResult = {} 
     local calculationData = {}
     calculationResult.meanProfit, calculationData = CraftSim.CALC:getMeanProfit(recipeData, priceData)
+    calculationResult.meanProfit = CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
+
+    CraftSim_DEBUG:print("MeanProfit V1: " .. CraftSim.UTIL:FormatMoney(calculationResult.meanProfit), CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION)
+    --CraftSim_DEBUG:print("MeanProfit V2: " .. CraftSim.UTIL:FormatMoney(meanProfitV2), CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION)
 
     calculationData.meanProfit = calculationResult.meanProfit
     CraftSim.FRAME:UpdateProfitDetails(recipeData, calculationData)
@@ -92,7 +96,7 @@ function CraftSim.STATS:GetExpectedQualityBySkill(recipeData, skill, breakPointO
     local thresholds = CraftSim.STATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty, breakPointOffset)
 
     for _, threshold in pairs(thresholds) do
-        if skill > threshold then
+        if skill >= threshold then
             expectedQuality = expectedQuality + 1
         end
     end
