@@ -326,7 +326,7 @@ function CraftSim.FRAME:InitCostOverviewFrame()
     end
 
     frame.content.overrideCraftingCostsCheckbox = CraftSim.FRAME:CreateCheckboxCustomCallback(
-        "", "Override sell price for crafting costs interpreted as gold", false, clickCallbackCraftingCosts, frame.content, frame.content.craftingCosts, "RIGHT", "LEFT", 0, 0)
+        "", "Override crafting costs interpreted as gold", false, clickCallbackCraftingCosts, frame.content, frame.content.craftingCosts, "RIGHT", "LEFT", 0, 0)
 
     frame.content.overrideCraftingCostsInput = CraftSim.FRAME:CreateGoldInput(
             nil, frame.content, frame.content.craftingCostsTitle, "TOPLEFT", "BOTTOMLEFT", 25, 0, 100, 25, 0, function(overridePrice) 
