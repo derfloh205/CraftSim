@@ -166,9 +166,9 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, cal
                 end
                 -- the value of this combination
                 combinationCraftingCost = combinationCraftingCost + materialCost
-                -- we get the average contributing value of this combination by multiplying it with its chance to occur
-                combinationCraftingCost = combinationCraftingCost * chance
             end
+            -- we get the average contributing value of this combination by multiplying it with its chance to occur
+            combinationCraftingCost = combinationCraftingCost * chance
             table.insert(averageSavedCostsByCombination, combinationCraftingCost)
             --print("chance/cost for " .. table.concat(combination, "") .. ": " .. CraftSim.UTIL:round(chance * 100, 5) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationCraftingCost))
         end
