@@ -8,29 +8,25 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 68442,
             threshold = 0,
             resourcefulnessExtraItemsFactor = 0.05,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_WRIT_2 = {
             nodeID = 68442,
             threshold = 10,
             resourcefulnessExtraItemsFactor = 0.10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_WRIT_3 = {
             nodeID = 68442,
             threshold = 20,
             resourcefulnessExtraItemsFactor = 0.10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_WRIT_4 = {
             nodeID = 68442,
             threshold = 30,
             resourcefulnessExtraItemsFactor = 0.25,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         }
     }
 end

@@ -8,29 +8,25 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 81119,
             threshold = 0,
             resourcefulnessExtraItemsFactor = 0.05,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         SAVING_SLIVERS_2 = {
             nodeID = 81119,
             threshold = 10,
             resourcefulnessExtraItemsFactor = 0.10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         SAVING_SLIVERS_3 = {
             nodeID = 81119,
             threshold = 20,
             resourcefulnessExtraItemsFactor = 0.10,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         SAVING_SLIVERS_4 = {
             nodeID = 81119,
             threshold = 30,
             resourcefulnessExtraItemsFactor = 0.25,
-            categoryIDs = {},
-            subtypeIDs = {} -- applies to everything
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         }
     }
 end
