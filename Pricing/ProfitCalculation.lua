@@ -292,11 +292,15 @@ end
 
 function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
     local calculationData = {
-        inspiration = nil,
-        multicraft = nil,
+        chanceBase = nil,
+        chanceDouble = nil,
+        inspiration = recipeData.stats.inspiration and {} or nil,
+        multicraft = recipeData.stats.multicraft and {} or nil,
         resourcefulness = nil,
         qualityWithInspiration = nil,
     }
+
+    local averageProfit = 0
 
     -- this is independent to the other proccs
     local totalSavedCosts = CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calculationData)  
@@ -304,16 +308,25 @@ function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
     local baseCraftValue = recipeData.baseItemAmount * (priceData.minBuyoutPerQuality[recipeData.expectedQuality] or 0)
     print("totalSavedCosts: " .. CraftSim.UTIL:FormatMoney(totalSavedCosts))
 
+    if recipeData.stats.multicraft then
+        calculationData.multicraft.averageMulticraftItems = CraftSim.CALC:GetAverageItemsPerCraftByMulticraft(recipeData)
+    end
+
+    
     -- case, recipe supports only multicraft not inspiration
     if recipeData.stats.multicraft and not recipeData.stats.inspiration then
         local chanceBase = 1 - (recipeData.stats.multicraft.percent / 100)
         local chanceMC = (recipeData.stats.multicraft.percent / 100)
-
+        
         local weightedAverageCraftValueBase = chanceBase * baseCraftValue
         local weightedAverageCraftValueMC = chanceMC * CraftSim.CALC:GetAverageCraftValueMulticraft(recipeData, priceData)
-
+        
         local averageCraftValue = weightedAverageCraftValueBase + weightedAverageCraftValueMC
-        return (averageCraftValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - adaptedCraftingCosts
+        averageProfit = (averageCraftValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - adaptedCraftingCosts
+        
+
+        calculationData.chanceBase = chanceBase
+        calculationData.multicraft.chance = chanceMC
     elseif recipeData.stats.inspiration and not recipeData.stats.multicraft then
         local chanceBase = 1 - (recipeData.stats.inspiration.percent / 100)
         local chanceINSP = (recipeData.stats.inspiration.percent / 100)
@@ -323,7 +336,10 @@ function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
         local weightedAverageCraftValueINSP = chanceINSP * CraftSim.CALC:GetAverageCraftValueInspirationByItemsPerCraft(recipeData, priceData, recipeData.baseItemAmount, baseCraftValue)
         local averageCraftValue = weightedAverageCraftValueBase + weightedAverageCraftValueINSP
 
-        return (averageCraftValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - adaptedCraftingCosts
+        averageProfit = (averageCraftValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - adaptedCraftingCosts
+
+        calculationData.chanceBase = chanceBase
+        calculationData.inspiration.chance = chanceINSP
     elseif recipeData.stats.inspiration and recipeData.stats.multicraft then
         -- consider cases:
         local chanceBase = (1 - (recipeData.stats.inspiration.percent / 100)) * (1 - (recipeData.stats.multicraft.percent / 100))
@@ -361,10 +377,19 @@ function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
         print("averageCraftValue " .. CraftSim.UTIL:FormatMoney(averageCraftValue))
         print("adaptedCraftingCosts " .. CraftSim.UTIL:FormatMoney(adaptedCraftingCosts))
         
-        return (averageCraftValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - adaptedCraftingCosts 
+        averageProfit = (averageCraftValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - adaptedCraftingCosts 
+
+        calculationData.chanceBase = chanceBase
+        calculationData.chanceDouble = chanceDOUBLE
+        calculationData.inspiration.chance = chanceINSP
+        calculationData.multicraft.chance = chanceMC
     else
-        return (baseCraftValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - adaptedCraftingCosts 
+        averageProfit = (baseCraftValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - adaptedCraftingCosts 
     end
+    calculationData.meanProfit = averageProfit
+    calculationData.craftingCostPerCraft = priceData.craftingCostPerCraft
+
+    return averageProfit, calculationData
 end
 
 function CraftSim.CALC:getMeanProfit(recipeData, priceData)
