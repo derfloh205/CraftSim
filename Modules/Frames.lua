@@ -479,9 +479,9 @@ function CraftSim.FRAME:UpdateProfitDetails(recipeData, calculationData)
 
     profitDetailsFrame.content.valueText:SetText(
     "Chance to procc nothing: " .. CraftSim.UTIL:round(calculationData.chanceBase, 3) * 100 .. "\n" ..
-    (calculationData.multicraft and "Chance to procc only multicraft: " .. CraftSim.UTIL:round(calculationData.multicraft.chance, 3) * 100 .. "%\n" or "") ..
-    (calculationData.inspiration and "Chance to procc only inspiration: " .. CraftSim.UTIL:round(calculationData.inspiration.chance, 3) * 100 .. "%\n" or "") ..
-    (calculationData.chanceDouble and "Chance to procc both multicraft and inspiration: " .. CraftSim.UTIL:round(calculationData.chanceDouble, 3) * 100 .. "%\n" or "") ..
+    (calculationData.multicraft and "Chance to procc only multicraft: " .. CraftSim.UTIL:round(calculationData.multicraft.chance or 0, 3) * 100 .. "%\n" or "") ..
+    (calculationData.inspiration and "Chance to procc only inspiration: " .. CraftSim.UTIL:round(calculationData.inspiration.chance or 0, 3) * 100 .. "%\n" or "") ..
+    (calculationData.chanceDouble and "Chance to procc both multicraft and inspiration: " .. CraftSim.UTIL:round(calculationData.chanceDouble or 0, 3) * 100 .. "%\n" or "") ..
     "")
 end
 
