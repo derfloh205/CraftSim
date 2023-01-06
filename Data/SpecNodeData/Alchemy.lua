@@ -131,97 +131,207 @@ function CraftSim.ALCHEMY_DATA:GetData()
         TRANSMUTATION_1 = {
             nodeID = 19538,
             equalsResourcefulnessExtraItemsFactor = true,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL
+                }
+            },
         },
         TRANSMUTATION_2 = {
             nodeID = 19538,
             threshold = 0,
             resourcefulnessExtraItemsFactor = 0.05, 
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL
+                }
+            },
         },
         TRANSMUTATION_3 = {
             nodeID = 19538,
             threshold = 5,
             resourcefulnessExtraItemsFactor = 0.05, 
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL
+                }
+            },
         },
         TRANSMUTATION_4 = {
             nodeID = 19538,
             threshold = 15,
             resourcefulnessExtraItemsFactor = 0.15, 
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL
+                }
+            },
         },
         CHEMICAL_SYNTHESIS_1 = {
             nodeID = 19537,
             equalsSkill = true,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                }
+            },
         },
         CHEMICAL_SYNTHESIS_2 = {
             nodeID = 19537,
             threshold = 0,
             multicraft = 20,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE}},
-        },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                }
+            },        },
         CHEMICAL_SYNTHESIS_3 = {
             nodeID = 19537,
             threshold = 5,
             skill = 5,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE}},
+            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                }       
+
         },
         CHEMICAL_SYNTHESIS_4 = {
             nodeID = 19537,
             threshold = 10,
             inspiration = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE}},
-        },
+            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                }       
+            },
         CHEMICAL_SYNTHESIS_5 = {
             nodeID = 19537,
             threshold = 15,
             multicraft = 20,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE}},
-        },
+            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                }       
+            },
         CHEMICAL_SYNTHESIS_6 = {
             nodeID = 19537,
             threshold = 20,
             craftingspeedBonusFactor = 0.10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE}},
-        },
+            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                }       
+            },
         CHEMICAL_SYNTHESIS_7 = {
             nodeID = 19537,
             threshold = 25,
             multicraft = 20,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE}},
-        },
+            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                }       
+            },
         CHEMICAL_SYNTHESIS_8 = {
             nodeID = 19537,
             threshold = 30,
             skill = 5,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE}},
-        },
+            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                }       
+            },
         CHEMICAL_SYNTHESIS_9 = {
             nodeID = 19537,
             threshold = 40,
             multicraftExtraItemsFactor = 0.50,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE}},
-        },
+            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                }       
+            },
         DECAYOLOGY_1 = {
             nodeID = 19536,
             equalsSkill = true,
             exceptionRecipeIDs = {
-                370521, -- air potion
+                            370521, -- air potion
                 370536, -- frost potion
                 370525, -- frost potion
                 370528, -- frost potion
@@ -275,96 +385,96 @@ function CraftSim.ALCHEMY_DATA:GetData()
         RESOURCEFUL_ROUTINES_1 = {
             nodeID = 19535,
             equalsResourcefulness = true,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_ROUTINES_2 = {
             nodeID = 19535,
             threshold = 0,
             resourcefulnessExtraItemsFactor = 0.05,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_ROUTINES_3 = {
             nodeID = 19535,
             threshold = 5,
             resourcefulness = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_ROUTINES_4 = {
             nodeID = 19535,
             threshold = 10,
             resourcefulnessExtraItemsFactor = 0.10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_ROUTINES_5 = {
             nodeID = 19535,
             threshold = 15,
             resourcefulness = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_ROUTINES_6 = {
             nodeID = 19535,
             threshold = 20,
             resourcefulnessExtraItemsFactor = 0.10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_ROUTINES_7 = {
             nodeID = 19535,
             threshold = 25,
             resourcefulness = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_ROUTINES_8 = {
             nodeID = 19535,
             threshold = 25,
             resourcefulnessExtraItemsFactor = 0.25,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         INSPIRING_AMBIENCE_1 = {
             nodeID = 19534,
             equalsInspiration = true,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         INSPIRING_AMBIENCE_2 = {
             nodeID = 19534,
             threshold = 0,
             inspirationBonusSkillFactor = 0.05,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         INSPIRING_AMBIENCE_3 = {
             nodeID = 19534,
             threshold = 5,
             inspiration = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         INSPIRING_AMBIENCE_4 = {
             nodeID = 19534,
             threshold = 10,
             inspirationBonusSkillFactor = 0.10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         INSPIRING_AMBIENCE_5 = {
             nodeID = 19534,
             threshold = 15,
             inspiration = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         INSPIRING_AMBIENCE_6 = {
             nodeID = 19534,
             threshold = 20,
             inspirationBonusSkillFactor = 0.10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         INSPIRING_AMBIENCE_7 = {
             nodeID = 19534,
             threshold = 25,
             inspiration = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         INSPIRING_AMBIENCE_8 = {
             nodeID = 19534,
             threshold = 30,
             inspirationBonusSkillFactor = 0.25,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALL},
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         -- Phial Mastery
         PHIAL_MASTERY_1 = {
@@ -422,84 +532,151 @@ function CraftSim.ALCHEMY_DATA:GetData()
         FROST_PHIALS_1 = {
             nodeID = 22482,
             equalsSkill = true,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },
         },
         FROST_PHIALS_2 = {
             nodeID = 22482,
             threshold = 5,
             inspiration = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
-        },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },        },
         FROST_PHIALS_3 = {
             nodeID = 22482,
             threshold = 10,
             skill = 5,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
-        },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },        },
         FROST_PHIALS_4 = {
             nodeID = 22482,
             threshold = 15,
             resourcefulness = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
-        },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },        },
         FROST_PHIALS_5 = {
             nodeID = 22482,
             threshold = 20,
             skill = 5,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
-        },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },        },
         FROST_PHIALS_6 = {
             nodeID = 22482,
             threshold = 25,
             inspiration = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
-        },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },        },
         AIR_PHIALS_1 = {
             nodeID = 22481,
             equalsSkill = true,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },
         },
         AIR_PHIALS_2 = {
             nodeID = 22481,
             threshold = 5,
             inspiration = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },
         },
         AIR_PHIALS_3 = {
             nodeID = 22481,
             threshold = 10,
             skill = 5,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },
         },
         AIR_PHIALS_4 = {
             nodeID = 22481,
             threshold = 15,
             resourcefulness = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },
         },
         AIR_PHIALS_5 = {
             nodeID = 22481,
             threshold = 20,
             skill = 5,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },
         },
         AIR_PHIALS_6 = {
             nodeID = 22481,
             threshold = 25,
             inspiration = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }
+            },
         },
         PHIAL_EXPERIMENTATION_1 = {
             nodeID = 22479,
@@ -539,8 +716,17 @@ function CraftSim.ALCHEMY_DATA:GetData()
         PHIAL_BATCH_PRODUCTION_1 = {
             nodeID = 22478,
             equalsMulticraft = true,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
@@ -550,8 +736,17 @@ function CraftSim.ALCHEMY_DATA:GetData()
             nodeID = 22478,
             threshold = 0,
             multicraft = 60,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                },  
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
@@ -561,8 +756,17 @@ function CraftSim.ALCHEMY_DATA:GetData()
             nodeID = 22478,
             threshold = 5,
             craftingspeedBonusFactor = 0.10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
@@ -572,8 +776,17 @@ function CraftSim.ALCHEMY_DATA:GetData()
             nodeID = 22478,
             threshold = 10,
             multicraft = 60,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
@@ -583,8 +796,17 @@ function CraftSim.ALCHEMY_DATA:GetData()
             nodeID = 22478,
             threshold = 15,
             craftingspeedBonusFactor = 0.10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
@@ -594,8 +816,17 @@ function CraftSim.ALCHEMY_DATA:GetData()
             nodeID = 22478,
             threshold = 20,
             multicraftExtraItemsFactor = 0.50,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
+                }, 
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
@@ -658,70 +889,160 @@ function CraftSim.ALCHEMY_DATA:GetData()
         FROST_POTIONS_1 = {
             nodeID = 19486,
             equalsSkill = true,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         FROST_POTIONS_2 = {
             nodeID = 19486,
             threshold = 5,
             skill = 5,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         FROST_POTIONS_3 = {
             nodeID = 19486,
             threshold = 10,
             inspiration = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         FROST_POTIONS_4 = {
             nodeID = 19486,
             threshold = 20,
             skill = 5,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         FROST_POTIONS_5 = {
             nodeID = 19486,
             threshold = 25,
             resourcefulness = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         AIR_POTIONS_1 = {
             nodeID = 19485,
             equalsSkill = true,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         AIR_POTIONS_2 = {
             nodeID = 19485,
             threshold = 5,
             skill = 5,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         AIR_POTIONS_3 = {
             nodeID = 19485,
             threshold = 10,
             inspiration = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         AIR_POTIONS_4 = {
             nodeID = 19485,
             threshold = 20,
             skill = 5,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         AIR_POTIONS_5 = {
             nodeID = 19485,
             threshold = 25,
             resourcefulness = 10,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         POTION_EXPERIMENTATION_1 = {
             nodeID = 19483,
@@ -761,8 +1082,20 @@ function CraftSim.ALCHEMY_DATA:GetData()
         POTION_BATCH_PRODUCTION_1 = {
             nodeID = 19482,
             equalsMulticraft = true,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370743, -- basic
                 370745, -- advanced
@@ -772,8 +1105,20 @@ function CraftSim.ALCHEMY_DATA:GetData()
             nodeID = 19482,
             threshold = 0,
             multicraft = 60,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370743, -- basic
                 370745, -- advanced
@@ -783,8 +1128,20 @@ function CraftSim.ALCHEMY_DATA:GetData()
             nodeID = 19482,
             threshold = 5,
             craftingspeedBonusFactor = 0.20,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370743, -- basic
                 370745, -- advanced
@@ -794,8 +1151,20 @@ function CraftSim.ALCHEMY_DATA:GetData()
             nodeID = 19482,
             threshold = 15,
             multicraft = 60,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370743, -- basic
                 370745, -- advanced
@@ -805,8 +1174,20 @@ function CraftSim.ALCHEMY_DATA:GetData()
             nodeID = 19482,
             threshold = 20,
             multicraftExtraItemsFactor = 0.50,
-            categoryIDs = {CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR, CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH},
-            subtypeIDs = {{CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}, {CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS}},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                }, 
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370743, -- basic
                 370745, -- advanced
