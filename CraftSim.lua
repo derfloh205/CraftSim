@@ -32,16 +32,6 @@ CraftSimOptions = CraftSimOptions or {
 	-- specData Refactor
 	blacksmithingEnabled = true,
 	alchemyEnabled = true,
-
-	-- debugIDs
-	debugVisible = false,
-	enableDebugID_MAIN = true,
-	enableDebugID_SPECDATA = true,
-	enableDebugID_ERROR = true,
-	enableDebugID_DATAEXPORT = true,
-	enableDebugID_SIMULATION_MODE = true,
-	enableDebugID_REAGENT_OPTIMIZATION = true,
-	enableDebugID_PRICEDATA = true,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -95,31 +85,19 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		if CraftSimOptions.alchemyEnabled == nil then
 			CraftSimOptions.alchemyEnabled = true
 		end
-		if CraftSimOptions.enableDebugID_MAIN == nil then
-			CraftSimOptions.enableDebugID_MAIN = true
-		end
-		if CraftSimOptions.enableDebugID_SPECDATA == nil then
-			CraftSimOptions.enableDebugID_SPECDATA = true
-		end
-		if CraftSimOptions.enableDebugID_DATAEXPORT == nil then
-			CraftSimOptions.enableDebugID_DATAEXPORT = true
-		end
-		if CraftSimOptions.enableDebugID_SIMULATION_MODE == nil then
-			CraftSimOptions.enableDebugID_SIMULATION_MODE = true
-		end
-		if CraftSimOptions.enableDebugID_REAGENT_OPTIMIZATION == nil then
-			CraftSimOptions.enableDebugID_REAGENT_OPTIMIZATION = true
-		end
-		if CraftSimOptions.enableDebugID_PRICEDATA == nil then
-			CraftSimOptions.enableDebugID_PRICEDATA = true
-		end
 	end
 end
 
 local hookedEvent = false
 
+CraftSim.MAIN.ErrorHandler = function(errorMsg)
+	local log = tostring(errorMsg) .. "callStack: " .. debugstack(2, 3, 2)
+	CraftSim.FRAME:ShowError(log, "CraftSim Error")
+	print(CraftSim.UTIL:ColorizeText(log, CraftSim.CONST.COLORS.RED), CraftSim.CONST.DEBUG_IDS.ERROR)
+end
+
 function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
-	local success, errorMsg = pcall(CraftSim.MAIN.TriggerModulesByRecipeType, self, isInit)
+	local success, errorMsg = xpcall(CraftSim.MAIN.TriggerModulesByRecipeType, CraftSim.MAIN.ErrorHandler, self, isInit)
 
 	if not success then
 		CraftSim.FRAME:ShowError(tostring(errorMsg), "CraftSim Error")
