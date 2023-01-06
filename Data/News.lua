@@ -17,7 +17,8 @@ function CraftSim.NEWS:GET_NEWS()
         c("Hello and thank you for using CraftSim!\n", b) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         "\n\n\n--- Version 1.6.4 ---" ..
-       " \n\n" .. c("Profit Calculation", g) .. " V2 implemented" ..
+        "\n\n" .. c("Profit Calculation", g) .. " V2 implemented" ..
+        "\n\nThe " .. c("Explanation Window", g) .. " shows some small values and an explanation but is not yet complete!"
         "\n\n" .. c("Override Crafting Costs Checkbox", g) .. " added" ..
         "\n\n\n--- Version 1.6.2, 1.6.3 ---" ..
         "\n\nBugfixes to certain nil errors" ..

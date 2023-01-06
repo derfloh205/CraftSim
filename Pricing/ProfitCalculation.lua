@@ -241,9 +241,9 @@ function CraftSim.CALC:GetAverageItemsPerCraftByMulticraft(recipeData)
     local multicraftExtraItemsFactor = 1
 
     if specData then
-        multicraftExtraItemsFactor = recipeData.stats.multicraft.extraItemsFactor
+        multicraftExtraItemsFactor = recipeData.stats.multicraft and recipeData.stats.multicraft.extraItemsFactor or 1
     else
-        multicraftExtraItemsFactor = recipeData.extraItemFactors.multicraftExtraItemsFactor
+        multicraftExtraItemsFactor = recipeData.extraItemFactors and recipeData.extraItemFactors.multicraftExtraItemsFactor or 1
     end
     print("expectedAdditionalItems:" .. expectedAdditionalItems)
     print("Multicraft Extra Items Factor: " .. multicraftExtraItemsFactor)

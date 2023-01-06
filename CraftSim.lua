@@ -30,8 +30,8 @@ CraftSimOptions = CraftSimOptions or {
 	transparencySpecInfo = 1,
 
 	-- specData Refactor
-	blacksmithingEnabled = true,
-	alchemyEnabled = true,
+	blacksmithingEnabled = false,
+	alchemyEnabled = false,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -78,12 +78,6 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.modulesSpecInfo == nil then
 			CraftSimOptions.modulesSpecInfo = true
-		end
-		if CraftSimOptions.blacksmithingEnabled == nil then
-			CraftSimOptions.blacksmithingEnabled = true
-		end
-		if CraftSimOptions.alchemyEnabled == nil then
-			CraftSimOptions.alchemyEnabled = true
 		end
 	end
 end
