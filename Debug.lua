@@ -34,12 +34,19 @@ function CraftSim_DEBUG:CheckSpecNode(nodeID)
     end
 
     local professionNodes = CraftSim.SPEC_DATA:GetNodes(professionID)
+    local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[professionID]
+    if type(nodeID) == "string" then
+        local nodeEntry_1 = ruleNodes[nodeID]
+        if not nodeEntry_1 then
+            print("Error: node not found: " .. tostring(nodeID))
+        end
+        nodeID = ruleNodes[nodeID].nodeID
+    end
     local debugNode = CraftSim.UTIL:FilterTable(professionNodes, function(node) 
         return node.nodeID == nodeID
     end)
     print("Debug Node: " .. tostring(debugNode[1].name))
 
-    local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[professionID]
 
     local statsFromData = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeID, true)
 

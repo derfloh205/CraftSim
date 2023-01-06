@@ -6,6 +6,7 @@ local function print(text, recursive) -- override
         CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SPECDATA, recursive)
 end
 
+local debugActive = false
 function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
     local IDs = {
         idMapping = nodeData.idMapping or {},
@@ -20,16 +21,43 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
 
             local childIDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(childNoteData, ruleNodes)
     
+            if debugActive then
+                print("my ids before: ")
+                print(IDs, true)
+                print("childIDs: ")
+                print(childIDs, true)
+            end
             for categoryID, subtypeIDs in pairs(childIDs.idMapping or {}) do
                 if not IDs.idMapping[categoryID] then
+                    if debugActive then
+                        print("no key found, add: " .. tostring(categoryID))
+                    end
                     IDs.idMapping[categoryID] = subtypeIDs
                 else
+                    if debugActive then
+                        print("key found, check subtypes: " .. #subtypeIDs)
+                        print(subtypeIDs, true)
+                    end
                     for _, subtypeID in pairs(subtypeIDs) do
-                        if not tContains(subtypeIDs, subtypeID) then
+                        if not tContains(IDs.idMapping[categoryID], subtypeID) then
+                            if debugActive then
+                                print("no subtype found, add: " .. tostring(subtypeID))
+                            end
                             table.insert(IDs.idMapping[categoryID], subtypeID)
                         end
                     end
                 end
+            end
+
+            for _, exceptionID in pairs(childIDs.exceptionRecipeIDs or {}) do
+                if not tContains(IDs.exceptionRecipeIDs, exceptionID) then
+                    table.insert(IDs.exceptionRecipeIDs, exceptionID)
+                end
+            end
+
+            if debugActive then
+                print("my ids now:")
+                print(IDs, true)
             end
         end
 
@@ -54,9 +82,9 @@ function CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
     -- if the specific categoryID to subtypeIDs combination matches it matches
     for categoryID, subtypeIDs in pairs(IDs.idMapping) do
         if recipeData.categoryID == categoryID then
-            if subtypeIDs[CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL] then
+            if tContains(subtypeIDs, CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL) then
                 return true
-            elseif subtypeIDs[recipeData.subtypeID] then
+            elseif tContains(subtypeIDs, recipeData.subtypeID) then
                 return true
             end
         end
@@ -104,7 +132,11 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
             local nodeActualValue = nodeInfo.activeRank - 1
     
             -- fetch all subtypeIDs, categoryIDs and exceptionRecipeIDs recursively
+            if nodeData.nodeID == 23727 then
+                debugActive = true
+            end
             local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
+            debugActive = false
             
             
             local nodeAffectsRecipe = nodeRank > 0 and CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
