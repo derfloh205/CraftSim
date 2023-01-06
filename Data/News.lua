@@ -18,8 +18,9 @@ function CraftSim.NEWS:GET_NEWS()
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         "\n\n\n--- Version 1.6.4 ---" ..
         "\n\n" .. c("Profit Calculation", g) .. " V2 implemented" ..
-        "\n\nThe " .. c("Explanation Window", g) .. " shows some small values and an explanation but is not yet complete!" .. 
+        "\n\nThe " .. c("Explanation Window", g) .. "\nshows some small values and an explanation,\nbut is not yet complete!" .. 
         "\n\n" .. c("Override Crafting Costs Checkbox", g) .. " added" ..
+        "\n\n" .. "Various fixes to " .. c("\nExperimental Data from Profession Specializations", g) .. "\nand now turned off per default" ..
         "\n\n\n--- Version 1.6.2, 1.6.3 ---" ..
         "\n\nBugfixes to certain nil errors" ..
         "\n\nFixed error with saving collapsed status of frames" .. 

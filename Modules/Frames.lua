@@ -1248,7 +1248,6 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 0, -30)
     frame.content.infoText:SetText("No Info")
 
-
     frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.closeButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -9)	
 	frame.closeButton:SetText("Close")
