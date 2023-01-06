@@ -36,6 +36,7 @@ function CraftSim.FRAME:InitStatWeightFrame()
         CraftSim.FRAME:ToggleFrame(profitDetailsFrame, not isVisible)
         frame.content.breakdownButton:SetText(isVisible and "Show Explanation" or not isVisible and "Hide Explanation")
     end)
+    frame.content.breakdownButton:SetEnabled(false)
 
 	frame.content.statText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 	frame.content.statText:SetPoint("LEFT", frame.content, "LEFT", 15, -20)
