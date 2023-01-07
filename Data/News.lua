@@ -17,7 +17,7 @@ function CraftSim.NEWS:GET_NEWS()
         c("Hello and thank you for using CraftSim!\n", b) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         "\n\n\n--- Version 1.6.4.2 ---" ..
-        "\n\n\nFixed TSM Price Expression for Items being overwritten by the Material one on reload" ..
+        "\n\n\nFixed TSM Price Expression for Items\nbeing overwritten by the Material one on reload" ..
         "\n\n\n--- Version 1.6.4.1 ---" ..
         "\n\n" .. c("Profit Calculation", g) .. " V2 implemented" ..
         "\n\nThe " .. c("Explanation Window", g) .. "\nshows some small values and an explanation,\nbut is not yet complete!" .. 
