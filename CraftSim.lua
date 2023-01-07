@@ -8,8 +8,8 @@ CraftSim.MAIN:RegisterEvent("PLAYER_LOGIN")
 CraftSimOptions = CraftSimOptions or {
 	priceDebug = false,
 	priceSource = nil,
-	tsmPriceKeyMaterials = "DBMinbuyout",
-	tsmPriceKeyItems = "DBMinbuyout",
+	tsmPriceKeyMaterials = "first(DBRecent, DBMinbuyout)",
+	tsmPriceKeyItems = "first(DBRecent, DBMinbuyout)",
 	topGearMode = "Top Profit",
 	breakPointOffset = false,
 	autoAssignVellum = false,
