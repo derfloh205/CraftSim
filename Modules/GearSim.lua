@@ -614,7 +614,6 @@ function CraftSim.GEARSIM:GetAvailableTopGearModesByRecipeDataAndType(recipeData
     if recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or 
     recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE or recipeType == CraftSim.CONST.RECIPE_TYPES.ENCHANT then
         availableModes = {
-            CraftSim.CONST.GEAR_SIM_MODES.PROFIT,
             CraftSim.CONST.GEAR_SIM_MODES.SKILL
         }
     elseif recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR then
@@ -623,7 +622,6 @@ function CraftSim.GEARSIM:GetAvailableTopGearModesByRecipeDataAndType(recipeData
         }
     elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
         availableModes = {
-            CraftSim.CONST.GEAR_SIM_MODES.PROFIT,
         }
     elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
         availableModes = {
@@ -647,6 +645,7 @@ function CraftSim.GEARSIM:GetAvailableTopGearModesByRecipeDataAndType(recipeData
 
     -- crafting speed should always be able to sim cause it is always available even if not shown in details
     table.insert(availableModes, CraftSim.CONST.GEAR_SIM_MODES.CRAFTING_SPEED)
-
+    table.insert(availableModes, CraftSim.CONST.GEAR_SIM_MODES.PROFIT) -- profit should now also always be available since overwriting prices is always possible
+    
     return availableModes
 end
