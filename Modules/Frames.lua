@@ -455,7 +455,6 @@ function CraftSim.FRAME:FillCostOverview(craftingCosts, minCraftingCosts, profit
         if profitPerQuality[index] ~= nil then
             local qualityID = currentQuality + index - 1
             if recipeData.result.itemIDs then
-                print("qualityID: " .. tostring(qualityID))
                 local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(recipeData.result.itemIDs[qualityID])
                 profitFrame.itemLinkText:SetText((itemData and itemData.link) or "Loading..")
             elseif recipeData.result.itemQualityLinks then
