@@ -4,6 +4,7 @@ CraftSim.MAIN = CreateFrame("Frame", "CraftSimAddon")
 CraftSim.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 CraftSim.MAIN:RegisterEvent("ADDON_LOADED")
 CraftSim.MAIN:RegisterEvent("PLAYER_LOGIN")
+CraftSim.MAIN:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 CraftSimOptions = CraftSimOptions or {
 	priceDebug = false,
@@ -41,6 +42,22 @@ CraftSim.MAIN.currentRecipeData = nil
 
 local function print(text, recursive) -- override
 	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.MAIN, recursive)
+end
+
+function CraftSim.MAIN:COMBAT_LOG_EVENT_UNFILTERED(event)
+	local _, subEvent, _, sourceGUID, sourceName = CombatLogGetCurrentEventInfo()
+	if subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REMOVED" then
+		if ProfessionsFrame:IsVisible() then
+			local playerName = UnitName("player")
+			if sourceName == playerName then
+				local auraID = select(12, CombatLogGetCurrentEventInfo())
+				print("Buff changed: " .. tostring(auraID))
+				if tContains(CraftSim.CONST.BUFF_IDS, auraID) then
+					CraftSim.MAIN:TriggerModulesErrorSafe()
+				end
+			end
+		end
+	end
 end
 
 function CraftSim.MAIN:handleCraftSimOptionsUpdates()
