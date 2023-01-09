@@ -58,6 +58,8 @@ function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
                 local allocationForQuality = 0
                 if i == qualityID then 
                     allocationForQuality = reagentData.requiredQuantity
+                elseif qualityID == 0 then
+                    allocationForQuality = 0
                 end
 
                 reagentData.itemsInfo[i].allocations = allocationForQuality

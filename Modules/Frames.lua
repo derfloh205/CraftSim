@@ -1471,6 +1471,14 @@ function CraftSim.FRAME:InitSimModeFrames()
         CraftSim.SIMULATION_MODE:AllocateAllByQuality(3)
     end)
 
+    reagentOverwriteFrame.clearAllocationsButton = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
+    reagentOverwriteFrame.clearAllocationsButton:SetPoint("LEFT", reagentOverwriteFrame.quality3Button, "RIGHT", inputOffsetX - 30, 0)	
+    reagentOverwriteFrame.clearAllocationsButton:SetText("Clear")
+    reagentOverwriteFrame.clearAllocationsButton:SetSize(reagentOverwriteFrame.clearAllocationsButton:GetTextWidth(), 20)
+    reagentOverwriteFrame.clearAllocationsButton:SetScript("OnClick", function(self) 
+        CraftSim.SIMULATION_MODE:AllocateAllByQuality(0) -- Clear
+    end)
+
     reagentOverwriteFrame.reagentOverwriteInputs = {}
 
     local offsetY = -45
@@ -1673,24 +1681,22 @@ function CraftSim.FRAME:CreateSimModeReagentOverwriteFrame(reagentOverwriteFrame
     overwriteInput:SetSize(50, 50)
     
     overwriteInput.icon = CraftSim.FRAME:CreateIcon(overwriteInput, 0, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "RIGHT", "LEFT")
-    -- overwriteInput.reagentName = overwriteInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	-- overwriteInput.reagentName:SetPoint("BOTTOMLEFT", overwriteInput.icon, "BOTTOMRIGHT", 5, 5)
-	-- overwriteInput.reagentName:SetText("Test")
 
     overwriteInput.inputq1 = CraftSim.FRAME:CreateSimModeOverWriteInput(overwriteInput, baseX, 1)
     overwriteInput.inputq2 = CraftSim.FRAME:CreateSimModeOverWriteInput(overwriteInput, baseX+inputOffsetX, 2)
     overwriteInput.inputq3 = CraftSim.FRAME:CreateSimModeOverWriteInput(overwriteInput, baseX+inputOffsetX*2, 3)
 
     overwriteInput.requiredQuantity = overwriteInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	overwriteInput.requiredQuantity:SetPoint("LEFT", overwriteInput.inputq3, "RIGHT", 25, 0)
+	overwriteInput.requiredQuantity:SetPoint("LEFT", overwriteInput.inputq3, "RIGHT", 20, 2)
 	overwriteInput.requiredQuantity:SetText("/ ?")
 
     return overwriteInput
 end
 
 function CraftSim.FRAME:CreateSimModeOverWriteInput(overwriteInputFrame, offsetX, qualityID)
+    local inputWidth = 30
     local inputBox = CraftSim.FRAME:CreateNumericInput(
-        nil, overwriteInputFrame, overwriteInputFrame.icon, "LEFT", "RIGHT", offsetX, 0, 20, 20, 0, false, CraftSim.SIMULATION_MODE.OnInputAllocationChanged)
+        nil, overwriteInputFrame, overwriteInputFrame.icon, "LEFT", "RIGHT", offsetX, 0, inputWidth, 20, 0, false, CraftSim.SIMULATION_MODE.OnInputAllocationChanged)
     inputBox.qualityID = qualityID
     return inputBox
 end
