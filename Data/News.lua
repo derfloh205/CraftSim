@@ -16,6 +16,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("Hello and thank you for using CraftSim!\n", b) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        "\n\n\n--- Version 1.6.5 ---" ..
+        "\n\n\n" .. c("Debug Mode ( /craftsim debug )", g) ..
+        "\nNew Utilities added" ..
         "\n\n\n--- Version 1.6.4.2 ---" ..
         "\n\n\nFixed TSM Price Expression for Items\nbeing overwritten by the Material one on reload" ..
         "\n\n\n--- Version 1.6.4.1 ---" ..
