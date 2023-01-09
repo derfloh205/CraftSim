@@ -6,7 +6,8 @@ function CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, pri
     -- calculate profit for qualities from current until max
     local profitByNextQualities = {}
     if not craftingCostsOnly then
-        for i = recipeData.expectedQuality, recipeData.maxQuality, 1 do
+        --for i = recipeData.expectedQuality, recipeData.maxQuality, 1 do
+        for i = 1, recipeData.maxQuality, 1 do
             local currRecipeData = CopyTable(recipeData)
             currRecipeData.expectedQuality = i
             local priceForQuality = priceData.minBuyoutPerQuality[i] or 0
@@ -15,5 +16,5 @@ function CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, pri
         end
     end
 
-    CraftSim.FRAME:FillCostOverview(priceData.craftingCostPerCraft, priceData.minimumCostPerCraft, profitByNextQualities, recipeData.expectedQuality)
+    CraftSim.FRAME:FillCostOverview(priceData.craftingCostPerCraft, priceData.minimumCostPerCraft, profitByNextQualities, 1) --recipeData.expectedQuality)
 end

@@ -13,8 +13,8 @@ CraftSim.SIMULATION_MODE.baseInspiration = nil
 CraftSim.SIMULATION_MODE.baseMulticraft = nil
 CraftSim.SIMULATION_MODE.baseResourcefulness = nil
 
-local function print(text, recursive) -- override
-	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE, recursive)
+local function print(text, recursive, l) -- override
+	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE, recursive, l)
 end
 
 function CraftSim.SIMULATION_MODE:Init()

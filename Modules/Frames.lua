@@ -4,6 +4,14 @@ CraftSim.FRAME = {}
 
 CraftSim.FRAME.frames = {}
 
+local function print(text, recursive, l) -- override
+    if CraftSim_DEBUG then
+        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
+    else
+        print(text)
+    end
+end
+
 function CraftSim.FRAME:GetFrame(frameID)
     local frameName = CraftSim.FRAME.frames[frameID]
     if not frameName then
@@ -285,7 +293,7 @@ function CraftSim.FRAME:InitCostOverviewFrame()
         50, 
         10, 
         350, 
-        350,
+        400,
         CraftSim.CONST.FRAMES.COST_OVERVIEW)
 
     local contentOffsetY = -20
@@ -447,6 +455,7 @@ function CraftSim.FRAME:FillCostOverview(craftingCosts, minCraftingCosts, profit
         if profitPerQuality[index] ~= nil then
             local qualityID = currentQuality + index - 1
             if recipeData.result.itemIDs then
+                print("qualityID: " .. tostring(qualityID))
                 local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(recipeData.result.itemIDs[qualityID])
                 profitFrame.itemLinkText:SetText((itemData and itemData.link) or "Loading..")
             elseif recipeData.result.itemQualityLinks then
