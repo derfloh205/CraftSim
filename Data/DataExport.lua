@@ -778,8 +778,10 @@ function CraftSim.DATAEXPORT:HandleItemIDMappings(itemID)
 	return mappedID or itemID
 end
 
-function CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID)
-	itemID = CraftSim.DATAEXPORT:HandleItemIDMappings(itemID)
+function CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID, ignoreOverrides)
+	if not ignoreOverrides then
+		itemID = CraftSim.DATAEXPORT:HandleItemIDMappings(itemID)
+	end
 	if CraftSimItemCache[itemID] then
 		return CraftSimItemCache[itemID]
 	else

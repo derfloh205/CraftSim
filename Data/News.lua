@@ -5,41 +5,44 @@ CraftSim.NEWS = {}
 function CraftSim.NEWS:GET_NEWS()
     -- minimize names to make manual formatting easier :p
     local b = CraftSim.CONST.COLORS.DARK_BLUE
+    local bb = CraftSim.CONST.COLORS.BRIGHT_BLUE
     local g = CraftSim.CONST.COLORS.GREEN
     local r = CraftSim.CONST.COLORS.RED
+    local l = CraftSim.CONST.COLORS.LEGENDARY
     local c = function(text, color) 
         return CraftSim.UTIL:ColorizeText(text, color)
     end
     -- make clickable item links!!
-    local tunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(199345)
+    local tunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(199345, true)
     local frostedTunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(200074)
     return 
-        c("Hello and thank you for using CraftSim!\n", b) .. 
+        c("Hello and thank you for using CraftSim!\n", bb) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
-        "\n\n\n--- Version 1.6.5 ---" ..
+        c("\n\n\n--- Version 1.6.5 ---", l) ..
         "\n\n\n" .. c("Debug Mode ( /craftsim debug )", g) ..
-        "\nNew Utilities added" ..
-        "\nAdded the " .. c("RECrystallize", b) .. " addon to possible price source addons" ..
-        "\nReadjusted the " .. c("Simulation Mode Number Input Width", g) .. "\n to consider numbers with three digits" ..
-        "\n\n\n--- Version 1.6.4.2 ---" ..
+        "\n\nNew Utilities added" ..
+        "\n\nAdded the " .. c("RECrystallize", bb) .. " addon to possible price source addons" ..
+        "\n\nReadjusted the " .. c("Simulation Mode Number Input Width", g) .. "\n to consider numbers with three digits" ..
+        "\n\n" .. c("Cost Overview", g) .. " always show all qualities" ..
+        c("\n\n\n--- Version 1.6.4.2 ---", l) ..
         "\n\n\nFixed TSM Price Expression for Items\nbeing overwritten by the Material one on reload" ..
-        "\n\n\n--- Version 1.6.4.1 ---" ..
+        c("\n\n\n--- Version 1.6.4.1 ---", l) ..
         "\n\n" .. c("Profit Calculation", g) .. " V2 implemented" ..
         "\n\nThe " .. c("Explanation Window", g) .. "\nshows some small values and an explanation,\nbut is not yet complete!" .. 
         "\n\n" .. c("Override Crafting Costs Checkbox", g) .. " added" ..
         "\n\n" .. "Various fixes to " .. c("\nExperimental Data from Profession Specializations", g) .. "\nand now turned off per default" ..
-        "\n\n\n--- Version 1.6.2, 1.6.3 ---" ..
+        c("\n\n\n--- Version 1.6.2, 1.6.3 ---", l) ..
         "\n\nBugfixes to certain nil errors" ..
         "\n\nFixed error with saving collapsed status of frames" .. 
         "\n\nFixed Material Combination Module trying to show up for noQuality recipes" ..
-        "\n\n" .. (tunaData.link or c("Rimefin Tuna", b)) .. " in cooking recipes\nnow uses " .. (frostedTunaData.link or c("Frosted Rimefin Tuna", b)) .. " for pricing" ..
+        "\n\n" .. (tunaData.link or c("Rimefin Tuna", bb)) .. " in cooking recipes\nnow uses " .. (frostedTunaData.link or c("Frosted Rimefin Tuna", bb)) .. " for pricing" ..
         "\n\n" .. c("Cost Overview", g) .. " now shows the actual item links" ..
-        "\n\n\n--- Version 1.6.1 ---" ..
+        c("\n\n\n--- Version 1.6.1 ---", l) ..
         "\n\nVarious fixes to errors popping up for price calculations" .. 
         c("\n\nWARNING: ", r) .. " Recipes with exactly 1 material that has quality\n" ..
         "might still suggest wrong low cost max quality combinations!" ..
         "\n\nThe " .. c("Material Combination Suggestion", r) .. "\nis now disabled for such recipes until this issue is fixed" .. 
-        "\n\n\n--- Version 1.6 ---" ..
+        c("\n\n\n--- Version 1.6 ---", l) ..
         c("\n\nOverride Sell Price ", g) .. " is a new feature that lets you override\nthe sell price for each quality on an item\n" .. 
         "even soulbound gear! You can use this to e.g. " .. c("simulate craft order comissions!", g) ..
         c("\n\nExtra Item Boni", g) .. " for Multicraft and Resourcefulness\nfrom specialization nodes should now be considered correctly!\n\n" ..
@@ -48,13 +51,13 @@ function CraftSim.NEWS:GET_NEWS()
         "might suggest wrong low cost max quality combinations!" ..
         "\n\nA new " .. c("Error Window", r) .. " should now pop up.\nIf CraftSim runs into an error" .. 
         "\n\n--- Version 1.5.7 ---\n\n" ..
-        c("Blacksmithing", b) .. " and " .. c("Alchemy", b) .. " now get their stats\n" ..
+        c("Blacksmithing", bb) .. " and " .. c("Alchemy", bb) .. " now get their stats\n" ..
         "from your profession spec tree instead from the UI.\n" .. 
         "This enables some nice new features like a\n" .. c("Specialization" ..
         " Info Breakdown!", g) .. "\n\nHowever, this is still experimental!\n" ..
         "If you want, you can opt out in the options ( /craftsim )\n\n" ..
         "Support for other professions is in progress!\n\n" .. 
         "What else is new?\n\n" .. 
-        "The " .. c("Simulation Mode", b) .. " now also includes a modifier for the\n" .. 
-        c("Inspiration Bonus Skill", b) .. "\nprofession stat"
+        "The " .. c("Simulation Mode", bb) .. " now also includes a modifier for the\n" .. 
+        c("Inspiration Bonus Skill", bb) .. "\nprofession stat"
 end

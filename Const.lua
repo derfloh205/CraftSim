@@ -145,7 +145,14 @@ CraftSim.CONST.DEFAULT_POSITIONS = {
 CraftSim.CONST.COLORS = {
     GREEN = "cff00FF00",
     RED = "cffFF0000",
-    DARK_BLUE = "cff2596be"
+    DARK_BLUE = "cff2596be",
+    BRIGHT_BLUE = "cff00ccff",
+    LEGENDARY = "cffff8000",
+    EPIC = "cffa335ee",
+    RARE = "cff0070dd",
+    UNCOMMON = "cff1eff00",
+    GREY = "cff9d9d9d",
+    ARTIFACT = "cffe6cc80",
 }
 
 CraftSim.CONST.RECIPE_CATEGORIES = {
