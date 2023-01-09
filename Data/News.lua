@@ -12,7 +12,6 @@ function CraftSim.NEWS:GET_NEWS()
     local c = function(text, color) 
         return CraftSim.UTIL:ColorizeText(text, color)
     end
-    -- make clickable item links!!
     local tunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(199345, true)
     local frostedTunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(200074)
     return 
@@ -25,6 +24,9 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\nReadjusted the " .. c("Simulation Mode Number Input Width", g) .. "\n to consider numbers with three digits" ..
         "\n\n" .. c("Cost Overview", g) .. " always show all qualities" ..
         "\n\n" .. "Fixed several errors and inconsistencies with " .. c("Recrafting", bb) .. 
+        "\n\n" .. c("Top Profit", bb) .. " Mode for the Top Gear module is now\navailable for all recipes to support price overrides" ..
+        "\n\n" .. "Added " .. c("CallbackHandler", bb) .. " dependency to loaded list\nPeople who have " .. 
+        c("Ace3", bb) .. " and " .. c("LibCompress", bb) .. " installed manually\nshould now be able to remove them" ..
         c("\n\n\n--- Version 1.6.4.2 ---", l) ..
         "\n\n\nFixed TSM Price Expression for Items\nbeing overwritten by the Material one on reload" ..
         c("\n\n\n--- Version 1.6.4.1 ---", l) ..
