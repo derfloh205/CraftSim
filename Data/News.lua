@@ -19,6 +19,8 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\n\n--- Version 1.6.5 ---" ..
         "\n\n\n" .. c("Debug Mode ( /craftsim debug )", g) ..
         "\nNew Utilities added" ..
+        "\nAdded the " .. c("RECrystallize", b) .. " addon to possible price source addons" ..
+        "\nReadjusted the " .. c("Simulation Mode Number Input Width", g) .. "\n to consider numbers with three digits" ..
         "\n\n\n--- Version 1.6.4.2 ---" ..
         "\n\n\nFixed TSM Price Expression for Items\nbeing overwritten by the Material one on reload" ..
         "\n\n\n--- Version 1.6.4.1 ---" ..

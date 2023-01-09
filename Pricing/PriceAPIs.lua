@@ -5,6 +5,7 @@ CraftSim.PRICE_APIS = {}
 
 CraftSimTSM = {name = "TradeSkillMaster"}
 CraftSimAUCTIONATOR = {name = "Auctionator"}
+CraftSimRECRYSTALLIZE = {name = "RECrystallize"}
 CraftSimDEBUG_PRICE_API = {name = "Debug"}
 
 CraftSimDebugData = CraftSimDebugData or {}
@@ -37,6 +38,8 @@ function CraftSim.PRICE_APIS:SwitchAPIByAddonName(addonName)
         CraftSim.PRICE_API = CraftSimTSM
     elseif addonName == "Auctionator" then
         CraftSim.PRICE_API = CraftSimAUCTIONATOR
+    elseif addonName == "RECrystallize" then
+        CraftSim.PRICE_API = CraftSimRECRYSTALLIZE
     end
 end
 
@@ -73,12 +76,13 @@ end
 function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
     local _, tsmLoaded = IsAddOnLoaded("TradeSkillMaster")
     local _, auctionatorLoaded = IsAddOnLoaded("Auctionator")
+    local _, recrystallizeLoaded = IsAddOnLoaded("RECrystallize")
     if tsmLoaded then
-        --print("Load TSM API")
         CraftSim.PRICE_API = CraftSimTSM
     elseif auctionatorLoaded then
-        --print("Load Auctionator API")
         CraftSim.PRICE_API = CraftSimAUCTIONATOR
+    elseif recrystallizeLoaded then
+        CraftSimPriceAPI = CraftSimRECRYSTALLIZE
     else
         print("CraftSim: No supported price source found")
         print("Supported addons are: ")
@@ -150,6 +154,16 @@ function CraftSimAUCTIONATOR:GetMinBuyoutByItemLink(itemLink)
     else
         return Auctionator.API.v1.GetAuctionPriceByItemLink(CraftSim.CONST.AUCTIONATOR_CALLER_ID , itemLink)
     end
+end
+
+function CraftSimRECRYSTALLIZE:GetMinBuyoutByItemID(itemID)
+    local output = RECrystallize_PriceCheckItemID(itemID)
+    return output and output or 0
+end
+
+function CraftSimRECRYSTALLIZE:GetMinBuyoutByItemLink(itemLink)
+    local output = RECrystallize_PriceCheck(itemLink)
+    return output and output or 0
 end
 
 function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
