@@ -358,6 +358,7 @@ function CraftSim.GEARSIM:SimulateBestProfessionGearCombination(recipeData, reci
     if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
         CraftSimOptions.topGearMode = availableModes[1]
     end
+    
     CraftSim.FRAME:initializeDropdown(topGearFrame.content.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
 
     -- cache it
@@ -611,24 +612,18 @@ end
 
 function CraftSim.GEARSIM:GetAvailableTopGearModesByRecipeDataAndType(recipeData, recipeType)
     local availableModes = {}
+
+    table.insert(availableModes, CraftSim.CONST.GEAR_SIM_MODES.PROFIT) -- profit should now also always be available since overwriting prices is always possible
+
     if recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or 
     recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE or recipeType == CraftSim.CONST.RECIPE_TYPES.ENCHANT then
-        availableModes = {
-            CraftSim.CONST.GEAR_SIM_MODES.SKILL
-        }
+        table.insert(availableModes, CraftSim.CONST.GEAR_SIM_MODES.SKILL)
     elseif recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR then
-        availableModes = {
-            CraftSim.CONST.GEAR_SIM_MODES.SKILL
-        }
+        table.insert(availableModes, CraftSim.CONST.GEAR_SIM_MODES.SKILL)
     elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
-        availableModes = {
-        }
+
     elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
-        availableModes = {
-            CraftSim.CONST.GEAR_SIM_MODES.SKILL
-        }
-    else
-        availableModes = {}
+        table.insert(availableModes, CraftSim.CONST.GEAR_SIM_MODES.SKILL)
     end
 
     if recipeData.stats.inspiration then
@@ -645,7 +640,6 @@ function CraftSim.GEARSIM:GetAvailableTopGearModesByRecipeDataAndType(recipeData
 
     -- crafting speed should always be able to sim cause it is always available even if not shown in details
     table.insert(availableModes, CraftSim.CONST.GEAR_SIM_MODES.CRAFTING_SPEED)
-    table.insert(availableModes, CraftSim.CONST.GEAR_SIM_MODES.PROFIT) -- profit should now also always be available since overwriting prices is always possible
     
     return availableModes
 end

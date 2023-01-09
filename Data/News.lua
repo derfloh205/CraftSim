@@ -18,7 +18,8 @@ function CraftSim.NEWS:GET_NEWS()
         c("Hello and thank you for using CraftSim!\n", bb) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         c("\n\n\n--- Version 1.6.5 ---", l) ..
-        "\n\n\nNew Utilities added for" ..
+        "\n\n\n" .. "Added Dropdowns for optional and finishing reagents\nin" .. c(" Simulation Mode", g) .. 
+        "\n\nNew Utilities added for" ..
         "\n" .. c("Debug Mode ( /craftsim debug )", g) ..
         "\n\nAdded the " .. c("RECrystallize", bb) .. " addon to possible price source addons" ..
         "\n\nReadjusted the " .. c("Simulation Mode Number Input Width", g) .. "\n to consider numbers with three digits" ..
@@ -27,6 +28,7 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\n" .. c("Top Profit", bb) .. " Mode for the Top Gear module is now\navailable for all recipes to support price overrides" ..
         "\n\n" .. "Added " .. c("CallbackHandler", bb) .. " dependency to loaded list\nPeople who have " .. 
         c("Ace3", bb) .. " and " .. c("LibCompress", bb) .. " installed manually\nshould now be able to remove them" ..
+        c("\n\nFixed Simulation Mode Help Icons", bb) .. " causing error on hover" ..
         c("\n\n\n--- Version 1.6.4.2 ---", l) ..
         "\n\n\nFixed TSM Price Expression for Items\nbeing overwritten by the Material one on reload" ..
         c("\n\n\n--- Version 1.6.4.1 ---", l) ..

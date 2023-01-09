@@ -77,6 +77,14 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operation
 			-- matches a row of numbers coming after the % character and any characters in between plus a space, should hopefully match in every localization...
 			local _, _, bonusSkill = string.find(statInfo.ratingDescription, "%%.* (%d+)") 
 			recipeData.stats.inspiration.bonusskill = bonusSkill
+			recipeData.stats.inspiration.baseBonusSkill = 0
+			if recipeData.maxQuality == 3 then
+				recipeData.stats.inspiration.baseBonusSkill = recipeData.baseRecipeDifficulty * (1/3)
+			elseif recipeData.maxQuality == 5 then
+				recipeData.stats.inspiration.baseBonusSkill = recipeData.baseRecipeDifficulty * (1/6)
+			end
+
+			recipeData.stats.inspiration.bonusSkillFactorNoSpecs = 1 + (professionGearStats.inspirationBonusSkillFactor % 1)
 		elseif statName == multicraft then
 			recipeData.stats.multicraft.value = statInfo.bonusStatValue
 			recipeData.stats.multicraft.description = statInfo.ratingDescription
@@ -234,7 +242,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	-- inspiration
 	if recipeData.stats.inspiration then
 		local baseInspiration = 50 -- everyone has this as base = 5%
-		local baseInspirationBonusSkill = 0
+		local baseBonusSkill = 0
 		local specNodeBonus = specNodeStats.inspiration
 		local itemBonus = professionGearStats.inspiration
 		local buffBonus = buffStats.inspiration
@@ -245,18 +253,20 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 
 		-- stack additively
 		local totalBonusSkillFactor = 1 + specNodeBonusSkillFactor + itemBonusSkillFactor + finishingReagentsBonusSkillFactor
+		recipeData.stats.inspiration.bonusSkillFactorNoSpecs = 1 + itemBonusSkillFactor
 
 		if not recipeData.result.isNoQuality then
 			if recipeData.maxQuality == 5 then
-				baseInspirationBonusSkill = recipeData.baseDifficulty * (1/6)
+				baseBonusSkill = recipeData.baseDifficulty * (1/6)
 			else -- its 3
-				baseInspirationBonusSkill = recipeData.baseDifficulty * (1/3)
+				baseBonusSkill = recipeData.baseDifficulty * (1/3)
 			end
 		end
 
 		recipeData.stats.inspiration.value = buffStats.inspiration + itemBonus + specNodeBonus + buffBonus + baseInspiration
 		recipeData.stats.inspiration.percent = CraftSim.UTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
-		recipeData.stats.inspiration.bonusskill = baseInspirationBonusSkill * totalBonusSkillFactor
+		recipeData.stats.inspiration.bonusskill = baseBonusSkill * totalBonusSkillFactor
+		recipeData.stats.inspiration.baseBonusSkill = baseBonusSkill
 	end
 
 	-- multicraft
@@ -334,20 +344,20 @@ function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(reagent
 		return {}
 	end
 	-- could be more than 1 slot for optional and finishing, but is one slot strictly for salvaging
-	local slotToItemIDs = {}
+	local slotsToItemIDs = {}
 	for slotIndex, slotData in pairs(reagentSlots) do
 		local button = slotData
 		local reagents = slotData.reagentSlotSchematic.reagents
 
-		local slotItemIDs = {}
 		for _, slotReagentData in pairs(reagents) do
-			table.insert(slotItemIDs, slotReagentData.itemID)
+			if slotsToItemIDs[slotIndex] == nil then
+				slotsToItemIDs[slotIndex] = {}
+			end
+			table.insert(slotsToItemIDs[slotIndex], slotReagentData.itemID)
 		end
-
-		table.insert(slotToItemIDs, slotItemIDs)
 	end
 
-	return slotToItemIDs
+	return slotsToItemIDs
 end
 
 function CraftSim.DATAEXPORT:exportRecipeData()

@@ -44,6 +44,16 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [200565] = {recipeDifficulty = 25}, -- ressourcefulness
     [200566] = {recipeDifficulty = 20},
     [200567] = {recipeDifficulty = 15},
+    -- Missives Gathering Stats
+    [200574] = {recipeDifficulty = 25}, -- finesse
+    [200575] = {recipeDifficulty = 20},
+    [200576] = {recipeDifficulty = 15},
+    [200577] = {recipeDifficulty = 25}, -- perception
+    [200578] = {recipeDifficulty = 20},
+    [200579] = {recipeDifficulty = 15},
+    [200580] = {recipeDifficulty = 25}, -- deftness
+    [200581] = {recipeDifficulty = 20},
+    [200582] = {recipeDifficulty = 15},
     -- Embellishments
     [200652] = {recipeDifficulty = 25}, -- Flavor Pocket
     [198256] = {recipeDifficulty = 35}, -- Healing Darts
@@ -61,6 +71,11 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [193941] = {recipeDifficulty = 35}, -- Grip Wrappings
     [193942] = {recipeDifficulty = 30},
     [193943] = {recipeDifficulty = 25},
+
+    -- Titan Matrix
+    [198056] = {recipeDifficulty = 40}, -- II
+    [198058] = {recipeDifficulty = 60}, -- III
+    [198059] = {recipeDifficulty = 150}, -- IV
 
     -- COOKING
     [197765] = {resourcefulness = 110}, -- Impossible Sharp Cutting Knife

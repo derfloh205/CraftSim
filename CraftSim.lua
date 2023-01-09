@@ -108,7 +108,7 @@ function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
 	-- 	CraftSim.FRAME:ShowError(tostring(errorMsg), "CraftSim Error")
 	-- 	print(CraftSim.UTIL:ColorizeText(tostring(errorMsg), CraftSim.CONST.COLORS.RED), CraftSim.CONST.DEBUG_IDS.ERROR)
 	-- end
-	CraftSim.MAIN.TriggerModulesByRecipeType(isInit)
+	CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 end
 
 function CraftSim.MAIN:HookToEvent()
@@ -123,6 +123,12 @@ function CraftSim.MAIN:HookToEvent()
 
 	local function Init(self, recipeInfo)
 		CraftSim.MAIN.currentRecipeInfo = recipeInfo
+
+		-- if init turn sim mode off
+		if CraftSim.SIMULATION_MODE.isActive then
+			CraftSim.SIMULATION_MODE.isActive = false
+			CraftSim.SIMULATION_MODE.toggleButton:SetChecked(false)
+		end
 		
 		if recipeInfo then
 			CraftSim.MAIN:TriggerModulesErrorSafe(true)
@@ -143,6 +149,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == addonName then
 		CraftSim.LOCAL:Init()
 
+		CraftSim.FRAME:InitDebugFrame()
 		CraftSim.FRAME:InitStatWeightFrame()
 		CraftSim.FRAME:InitGearSimFrame()
 		CraftSim.FRAME:InitCostOverviewFrame()
@@ -151,7 +158,6 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.FRAME:InitSpecInfoFrame()
 		CraftSim.FRAME:InitWarningFrame()
 		CraftSim.FRAME:InitOneTimeNoteFrame()
-		CraftSim.FRAME:InitDebugFrame()
 		CraftSim.SIMULATION_MODE:Init()
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -273,12 +279,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
     local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
     --print("trigger by recipeType.. " .. tostring(recipeType))
-
-	-- if init or recraft, turn sim mode off
-	if isInit or recipeType == CraftSim.CONST.RECIPE_TYPES.RECRAFT then
-		CraftSim.SIMULATION_MODE.isActive = false
-		CraftSim.SIMULATION_MODE.toggleButton:SetChecked(false)
-	end
 
 	local recipeData = nil 
 	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then

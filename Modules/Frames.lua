@@ -5,7 +5,7 @@ CraftSim.FRAME = {}
 CraftSim.FRAME.frames = {}
 
 local function print(text, recursive, l) -- override
-    if CraftSim_DEBUG then
+    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
         CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
     else
         print(text)
@@ -907,32 +907,59 @@ function CraftSim.FRAME:ToggleFrame(frame, visible)
     end
 end
 
-function CraftSim.FRAME:initDropdownMenu(frameName, parent, anchorFrame, label, offsetX, offsetY, width, list, clickCallback, defaultValue)
+function CraftSim.FRAME:initDropdownMenu(frameName, parent, anchorFrame, label, offsetX, offsetY, width, list, clickCallback, defaultValue, byData)
 	local dropDown = CreateFrame("Frame", frameName, parent, "UIDropDownMenuTemplate")
     dropDown.clickCallback = clickCallback
 	dropDown:SetPoint("TOP", anchorFrame, offsetX, offsetY)
 	UIDropDownMenu_SetWidth(dropDown, width)
 	
-	CraftSim.FRAME:initializeDropdown(dropDown, list, defaultValue)
+    if byData then
+        CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue)
+    else
+        CraftSim.FRAME:initializeDropdown(dropDown, list, defaultValue)
+    end
 
 	local dd_title = dropDown:CreateFontString('dd_title', 'OVERLAY', 'GameFontNormal')
     dd_title:SetPoint("TOP", 0, 10)
-	dd_title:SetText(label)
+
+    dropDown.SetLabel = function(label) 
+        dd_title:SetText(label)
+    end
+
+    dropDown.SetLabel(label)
+
     return dropDown
+end
+
+function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue)
+	UIDropDownMenu_Initialize(dropDown, function(self) 
+		for k, v in pairs(list) do
+            label = v.label
+            value = v.value
+			local info = UIDropDownMenu_CreateInfo()
+			info.func = function(self, arg1, arg2, checked) 
+                UIDropDownMenu_SetText(dropDown, label)
+                dropDown.clickCallback(dropDown, arg1)
+            end
+			info.text = label
+			info.arg1 = value
+			UIDropDownMenu_AddButton(info)
+		end
+	end)
+
+	UIDropDownMenu_SetText(dropDown, defaultValue)
 end
 
 function CraftSim.FRAME:initializeDropdown(dropDown, list, defaultValue)
 	UIDropDownMenu_Initialize(dropDown, function(self) 
 		for k, v in pairs(list) do
-			name = v
 			local info = UIDropDownMenu_CreateInfo()
 			info.func = function(self, arg1, arg2, checked) 
                 UIDropDownMenu_SetText(dropDown, arg1)
                 dropDown.clickCallback(arg1)
             end
-
-			info.text = name
-			info.arg1 = info.text
+			info.text = v
+			info.arg1 = v
 			UIDropDownMenu_AddButton(info)
 		end
 	end)
@@ -1628,6 +1655,23 @@ function CraftSim.FRAME:InitSimModeFrames()
     
     CraftSim.SIMULATION_MODE.reagentOverwriteFrame = reagentOverwriteFrame
 
+    local function CreateReagentInputDropdown(offsetY)
+        local optionalReagentDropdown = CraftSim.FRAME:initDropdownMenu(nil, reagentOverwriteFrame, ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "Optional", -20, offsetY + 3, 120, {"Placeholder"}, function(self, arg1) 
+            self.selectedItemID = arg1
+            CraftSim.SIMULATION_MODE:UpdateSimulationMode()
+            print("Update Optional Reagents")
+        end, "None")
+        return optionalReagentDropdown
+    end
+
+    reagentOverwriteFrame.optionalReagentFrames = {}
+    local dropdownSpacingY = -40
+    table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(0))
+    table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY))
+    table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*2))
+    table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*3))
+    table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*4))
+
     -- DETAILS FRAME
     local simModeDetailsFrame = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimSimModeDetailsFrame", 
@@ -1837,6 +1881,64 @@ function CraftSim.FRAME:CreateSimModeOverWriteInput(overwriteInputFrame, offsetX
     return inputBox
 end
 
+function CraftSim.FRAME:InitializeSimModeOptionalReagentDropdowns()
+    local recipeData = CraftSim.SIMULATION_MODE.recipeData
+    local possibleOptionalReagents = recipeData.possibleOptionalReagents
+    local possibleFinishingReagents = recipeData.possibleFinishingReagents
+
+    local function convertReagentListToDropdownListData(reagentList)
+        local dropDownListData = {{label = "None", value = nil}}
+        for _, reagentItemID in pairs(reagentList) do
+            local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(reagentItemID)
+            table.insert(dropDownListData, {
+                label = itemData.link or "Loading...",
+                value = reagentItemID,
+            })
+        end
+        return dropDownListData
+    end
+
+    -- init dropdowns
+    for index, dropdown in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames) do
+        dropdown.isOptional = false
+        dropdown.isFinishing = false
+        dropdown.slotIndex = nil
+        dropdown.selectedItemID = nil
+        dropdown:Hide()
+        print("hide dropdown: " .. tostring(index))
+    end
+
+    local dropdownIndex = 1
+
+    print("possibleFinishingReagents: " .. tostring(#possibleFinishingReagents), false, true)
+
+    -- optionals
+    for slotIndex, reagentList in pairs(possibleOptionalReagents) do
+        local currentDropdown = CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames[dropdownIndex]
+        local dropdownlist = convertReagentListToDropdownListData(reagentList)
+        CraftSim.FRAME:initializeDropdownByData(currentDropdown, dropdownlist, nil)
+        currentDropdown:Show()
+        currentDropdown.slotIndex = slotIndex
+        currentDropdown.isOptional = true
+        currentDropdown.SetLabel("Optional #" .. slotIndex)
+        dropdownIndex = dropdownIndex + 1
+    end
+    -- finishing
+    for slotIndex, reagentList in pairs(possibleFinishingReagents) do
+        print("Init Finishing Dropdown: " .. tostring(slotIndex))
+        local currentDropdown = CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames[dropdownIndex]
+        local dropdownlist = convertReagentListToDropdownListData(reagentList)
+        print("DropdownList")
+        print(dropdownlist, true)
+        CraftSim.FRAME:initializeDropdownByData(currentDropdown, dropdownlist, nil)
+        currentDropdown:Show()
+        currentDropdown.slotIndex = slotIndex
+        currentDropdown.isFinishing = true
+        currentDropdown.SetLabel("Finishing #" .. slotIndex)
+        dropdownIndex = dropdownIndex + 1
+    end
+end
+
 function CraftSim.FRAME:InitilizeSimModeReagentOverwrites()
     -- set non quality reagents to max allocations
     local numNonQualityReagents = 0
@@ -1905,6 +2007,14 @@ function CraftSim.FRAME:ToggleSimModeFrames()
         ProfessionsFrame.CraftingPage.SchematicForm.Details.operationInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeOperationInfo()
     end
 
+    if not CraftSim.SIMULATION_MODE.isActive then
+        -- only hide, they will be shown automatically if available
+        for _, dropdown in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames) do
+            CraftSim.FRAME:ToggleFrame(dropdown, false)
+        end
+    end
+    
+
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame, CraftSim.SIMULATION_MODE.isActive)
 
     local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
@@ -1921,8 +2031,9 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
     local reagentSkillIncrease = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSim.SIMULATION_MODE.recipeData)
     local recipeDifficultyMod = CraftSim.UTIL:round(CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput, true), 1)
     local skillMod = CraftSim.UTIL:round(CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true), 1)
-    local fullRecipeDifficulty = CraftSim.SIMULATION_MODE.baseRecipeDifficulty + recipeDifficultyMod 
-    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.recipeDifficultyValue:SetText(CraftSim.UTIL:round(fullRecipeDifficulty, 1) .. " (" .. CraftSim.SIMULATION_MODE.baseRecipeDifficulty .. "+" .. recipeDifficultyMod  .. ")")
+    local statsByOptionalInputs = CraftSim.SIMULATION_MODE:GetStatsFromOptionalReagents()
+    local fullRecipeDifficulty = CraftSim.SIMULATION_MODE.baseRecipeDifficulty + recipeDifficultyMod + statsByOptionalInputs.recipeDifficulty
+    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.recipeDifficultyValue:SetText(CraftSim.UTIL:round(fullRecipeDifficulty, 1) .. " (" .. CraftSim.SIMULATION_MODE.baseRecipeDifficulty .. " + " .. statsByOptionalInputs.recipeDifficulty .. "+" .. recipeDifficultyMod  .. ")")
     CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.baseSkillValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.skill, 1) .. " (" .. CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents .. "+" .. reagentSkillIncrease .. "+" .. skillMod ..")")
     -- I assume its always from base..? Wouldnt make sense to give the materials more skill contribution if you artificially make the recipe harder
     local maxReagentSkillIncrease = CraftSim.UTIL:round(0.25 * CraftSim.SIMULATION_MODE.baseRecipeDifficulty, 0)
@@ -1945,8 +2056,9 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationSkillValue, CraftSim.SIMULATION_MODE.recipeData.stats.inspiration)
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationSkillMod, CraftSim.SIMULATION_MODE.recipeData.stats.inspiration)
     if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration then
-        local inspirationSkillDiff = CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.bonusskill - CraftSim.SIMULATION_MODE.baseInspiration.bonusskill, 1)
-        CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationSkillValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.bonusskill, 1) .. " (" .. CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.baseInspiration.bonusskill, 1) .."+"..inspirationSkillDiff .. ")")
+        local inspirationSkillDiff = CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.bonusskill - CraftSim.SIMULATION_MODE.baseInspiration.baseBonusSkill, 1)
+        CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationSkillValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.bonusskill, 1) .. " (" .. CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.baseInspiration.baseBonusSkill, 1) ..
+        "*" .. CraftSim.SIMULATION_MODE.recipeData.stats.inspirationBonusSkillFactor .."+"..inspirationSkillDiff .. ")")
     end
 
     -- Multicraft Display
