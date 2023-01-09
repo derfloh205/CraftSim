@@ -19,11 +19,12 @@ function CraftSim.NEWS:GET_NEWS()
         c("Hello and thank you for using CraftSim!\n", bb) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         c("\n\n\n--- Version 1.6.5 ---", l) ..
-        "\n\n\n" .. c("Debug Mode ( /craftsim debug )", g) ..
-        "\n\nNew Utilities added" ..
+        "\n\n\nNew Utilities added for" ..
+        "\n" .. c("Debug Mode ( /craftsim debug )", g) ..
         "\n\nAdded the " .. c("RECrystallize", bb) .. " addon to possible price source addons" ..
         "\n\nReadjusted the " .. c("Simulation Mode Number Input Width", g) .. "\n to consider numbers with three digits" ..
         "\n\n" .. c("Cost Overview", g) .. " always show all qualities" ..
+        "\n\n" .. "Fixed several errors and inconsistencies with " .. c("Recrafting", bb) .. 
         c("\n\n\n--- Version 1.6.4.2 ---", l) ..
         "\n\n\nFixed TSM Price Expression for Items\nbeing overwritten by the Material one on reload" ..
         c("\n\n\n--- Version 1.6.4.1 ---", l) ..

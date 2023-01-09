@@ -1506,11 +1506,11 @@ function CraftSim.FRAME:InitSimModeFrames()
         "CraftSim Details", 
         ProfessionsFrame.CraftingPage.SchematicForm,
         ProfessionsFrame.CraftingPage.SchematicForm.Details, 
-        "TOP", 
-        "TOP", 
+        "TOPRIGHT", 
+        "TOPRIGHT", 
+        30, 
         0, 
-        0, 
-        320, 
+        350, 
         300, 
         CraftSim.CONST.FRAMES.CRAFTING_DETAILS)
 
@@ -1635,7 +1635,7 @@ function CraftSim.FRAME:InitSimModeFrames()
         simModeDetailsFrame.content.reagentSkillIncreaseValue:SetText("0")
 
         simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
-        simModeDetailsFrame.content.qualityFrame:SetSize(260, 200)
+        simModeDetailsFrame.content.qualityFrame:SetSize(simModeDetailsFrame:GetWidth() - 40, 200)
         simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY*9)
         local qualityFrame = simModeDetailsFrame.content.qualityFrame
         qualityFrame.currentQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
