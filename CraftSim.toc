@@ -45,6 +45,7 @@ Locals/esES.lua
 
 Data/EnchantData.lua
 Data/ReagentWeightData.lua
+Data/OptionalReagentData.lua
 Data/DataExport.lua
 Data/News.lua
 

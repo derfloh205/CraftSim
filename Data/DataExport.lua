@@ -163,8 +163,10 @@ function CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
 end
 
 function CraftSim.DATAEXPORT:GetStatsFromOptionalReagents(recipeData)
-	-- TODO: export optional and finishing reagents and get their modifiers
-	return {	
+	-- TODO: export optional and finishing reagents and get their modifiers to any stats
+	-- also, recipeDifficulty is relevant here for simulation mode only as non sim mode reads from recipeInfo
+	local stats = {	
+		recipeDifficulty = 0,
         inspiration = 0,
         inspirationBonusSkillFactor = 1,
         multicraft = 0,
@@ -174,7 +176,33 @@ function CraftSim.DATAEXPORT:GetStatsFromOptionalReagents(recipeData)
         craftingspeed = 0,
 		craftingspeedBonusFactor = 1,
         skill = 0
-    }
+    } 
+
+	local function handleStatsFromReagentList(reagentList, stats)
+		for _, reagentData in pairs(reagentList) do
+			local statData = CraftSim.OPTIONAL_REAGENT_DATA[reagentData.itemID]
+	
+			if statData then
+				for statName, _ in pairs(stats) do
+					if statData[statName] then
+						stats[statName] = stats[statName] + statData[statName]
+					end
+				end
+			else
+				local itemData = reagentData.itemData
+				local name = (itemData and itemData.name) or "Not cached"
+				print("No stat data for item: " .. name .. " (" .. reagentData.itemID .. ")")
+			end
+		end
+	end
+
+	handleStatsFromReagentList(recipeData.optionalReagents, stats)
+	handleStatsFromReagentList(recipeData.finishingReagents, stats)
+
+	print("Stats from Reagents:", false, true)
+	print(stats)
+
+	return stats
 end
 
 function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
@@ -210,10 +238,13 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		local specNodeBonus = specNodeStats.inspiration
 		local itemBonus = professionGearStats.inspiration
 		local buffBonus = buffStats.inspiration
-		local itemBonusSkillFactor = 1 + (professionGearStats.inspirationBonusSkillPercent / 100) -- 15% -> 1.15
-		local specNodeBonusSkillFactor = specNodeStats.inspirationBonusSkillFactor
-		-- TODO: consider stable fluidic draconium 
-		local finishingReagentsBonusSkillFactor = optionalReagentsStats.inspirationBonusSkillFactor
+		local itemBonusSkillFactor = (professionGearStats.inspirationBonusSkillPercent / 100) -- 15% -> 0.15
+		local specNodeBonusSkillFactor = specNodeStats.inspirationBonusSkillFactor % 1 -- 1.15 -> 0.15
+
+		local finishingReagentsBonusSkillFactor = optionalReagentsStats.inspirationBonusSkillFactor % 1  -- 1.15 -> 0.15
+
+		-- stack additively
+		local totalBonusSkillFactor = 1 + specNodeBonusSkillFactor + itemBonusSkillFactor + finishingReagentsBonusSkillFactor
 
 		if not recipeData.result.isNoQuality then
 			if recipeData.maxQuality == 5 then
@@ -225,7 +256,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 
 		recipeData.stats.inspiration.value = buffStats.inspiration + itemBonus + specNodeBonus + buffBonus + baseInspiration
 		recipeData.stats.inspiration.percent = CraftSim.UTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
-		recipeData.stats.inspiration.bonusskill = baseInspirationBonusSkill * specNodeBonusSkillFactor * itemBonusSkillFactor * finishingReagentsBonusSkillFactor
+		recipeData.stats.inspiration.bonusskill = baseInspirationBonusSkill * totalBonusSkillFactor
 	end
 
 	-- multicraft
