@@ -160,7 +160,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
         local inspirationMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeInspirationModInput, true)
         local inspirationSkillMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeInspirationSkillModInput, true)
         local inspirationBonusSkillFactor = statsByOptionalInputs.inspirationBonusSkillFactor % 1
-        local specNodeBonusSkillFactor = specNodeStats and (specNodeStats.inspirationBonusSkillFactor % 1)
+        local specNodeBonusSkillFactor = (specNodeStats and (specNodeStats.inspirationBonusSkillFactor % 1)) or 1
         CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value + inspirationMod + statsByOptionalInputs.inspiration
         print("bonusskillfactornospecs: " .. CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs)
         print("inspirationBonusSkillFactorReagents: " .. inspirationBonusSkillFactor)

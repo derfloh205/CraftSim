@@ -79,12 +79,13 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operation
 			recipeData.stats.inspiration.bonusskill = bonusSkill
 			recipeData.stats.inspiration.baseBonusSkill = 0
 			if recipeData.maxQuality == 3 then
-				recipeData.stats.inspiration.baseBonusSkill = recipeData.baseRecipeDifficulty * (1/3)
+				recipeData.stats.inspiration.baseBonusSkill = recipeData.baseDifficulty * (1/3)
 			elseif recipeData.maxQuality == 5 then
-				recipeData.stats.inspiration.baseBonusSkill = recipeData.baseRecipeDifficulty * (1/6)
+				recipeData.stats.inspiration.baseBonusSkill = recipeData.baseDifficulty * (1/6)
 			end
 
-			recipeData.stats.inspiration.bonusSkillFactorNoSpecs = 1 + (professionGearStats.inspirationBonusSkillFactor % 1)
+			-- in this case with specs
+			recipeData.stats.inspiration.bonusSkillFactorNoSpecs = (recipeData.stats.inspiration.bonusskill / recipeData.stats.inspiration.baseBonusSkill) % 1
 		elseif statName == multicraft then
 			recipeData.stats.multicraft.value = statInfo.bonusStatValue
 			recipeData.stats.multicraft.description = statInfo.ratingDescription
