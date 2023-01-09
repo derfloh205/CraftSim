@@ -75,15 +75,9 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operation
 			recipeData.stats.inspiration.percent = CraftSim.UTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
 
 			-- matches a row of numbers coming after the % character and any characters in between plus a space, should hopefully match in every localization...
-			if GetLocale() == CraftSim.CONST.LOCALES.TW then
-				ratingDescriptionCleaned = statInfo.ratingDescription:gsub("[你有的機率獲得靈感，在製作這個配方時得到點額外技能。]", ""):gsub(".*%%", "")
-				ratingDescriptionCleaned = tonumber(ratingDescriptionCleaned)
-			else
-				_, _, ratingDescriptionCleaned = string.find(statInfo.ratingDescription, "%%.* (%d+)")
-			end
-			local bonusSkill = ratingDescriptionCleaned
-
-			--local _, _, bonusSkill = string.find(statInfo.ratingDescription, "%%.* (%d+)") 
+			local bonusSkill = tonumber((statInfo.ratingDescription:gsub("[^0-9%%]", ""):gsub(".*%%", "")))
+			--print("bonusSkill: " .. tostring(bonusSkill))
+			
 			recipeData.stats.inspiration.bonusskill = bonusSkill
 		elseif statName == multicraft then
 			recipeData.stats.multicraft.value = statInfo.bonusStatValue
