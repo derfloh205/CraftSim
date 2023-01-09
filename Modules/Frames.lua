@@ -1126,13 +1126,13 @@ function CraftSim.FRAME:InitDebugFrame()
         CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG), false)
     end)
 
-    frame.addDebug = function(debugOutput, debugID, noLabel) 
+    frame.addDebug = function(debugOutput, debugID, printLabel) 
         if frame:IsVisible() then -- to not make it too bloated over time
             local currentOutput = frame.content.debugBox:GetText()
-            if noLabel then
-                frame.content.debugBox:SetText(currentOutput .. "\n" .. tostring(debugOutput))
-            else
+            if printLabel then
                 frame.content.debugBox:SetText(currentOutput .. "\n\n- " .. debugID .. ":\n" .. tostring(debugOutput))
+            else
+                frame.content.debugBox:SetText(currentOutput .. "\n" .. tostring(debugOutput))
             end
         end
     end
@@ -1140,7 +1140,7 @@ function CraftSim.FRAME:InitDebugFrame()
     local controlPanel = CraftSim.FRAME:CreateCraftSimFrame("CraftSimDebugControlFrame", "Debug Control", 
     frame, 
     frame, 
-    "TOPRIGHT", "TOPLEFT", 0, 0, 300, 400, CraftSim.CONST.FRAMES.DEBUG_CONTROL)
+    "TOPRIGHT", "TOPLEFT", 10, 0, 300, 400, CraftSim.CONST.FRAMES.DEBUG_CONTROL, true)
 
     controlPanel.content.clearButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
 	controlPanel.content.clearButton:SetPoint("TOP", controlPanel.title, "TOP", 0, -20)	
@@ -1150,15 +1150,38 @@ function CraftSim.FRAME:InitDebugFrame()
         frame.content.debugBox:SetText("")
     end)
 
+    controlPanel.content.nodeDebugInput = CraftSim.FRAME:CreateInput(
+        "CraftSimDebugNodeIDInput", controlPanel.content, controlPanel.content.clearButton, 
+        "TOP", "TOP", -50, -25, 120, 20, "", function() end)
+
+    controlPanel.content.debugNodeButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
+	controlPanel.content.debugNodeButton:SetPoint("LEFT", controlPanel.content.nodeDebugInput, "RIGHT", 10, 0)	
+	controlPanel.content.debugNodeButton:SetText("Debug Node")
+	controlPanel.content.debugNodeButton:SetSize(controlPanel.content.debugNodeButton:GetTextWidth()+15, 25)
+    controlPanel.content.debugNodeButton:SetScript("OnClick", function(self) 
+        local nodeIdentifier = CraftSimDebugNodeIDInput:GetText()
+        CraftSim_DEBUG:CheckSpecNode(nodeIdentifier)
+    end)
+
+    controlPanel.content.compareData = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
+	controlPanel.content.compareData:SetPoint("TOPLEFT", controlPanel.content.nodeDebugInput, "TOPLEFT", -5, -25)	
+	controlPanel.content.compareData:SetText("Compare UI/Spec Data")
+	controlPanel.content.compareData:SetSize(controlPanel.content.compareData:GetTextWidth()+15, 25)
+    controlPanel.content.compareData:SetScript("OnClick", function(self) 
+        CraftSim_DEBUG:CompareStatData()
+    end)
+
     local checkBoxOffsetY = -2
     controlPanel.content.checkBoxID_MAIN = CraftSim.FRAME:CreateCheckbox(
-        " MAIN", "Enable MAIN Output", "enableDebugID_MAIN", controlPanel.content, controlPanel.content.clearButton, "TOP", "TOP", -70, checkBoxOffsetY - 20)
+        " MAIN", "Enable MAIN Output", "enableDebugID_MAIN", controlPanel.content, controlPanel.content.nodeDebugInput, "TOPLEFT", "TOPLEFT", -5, checkBoxOffsetY - 55)
     
     local lastHook = controlPanel.content.checkBoxID_MAIN
     for _, debugID in pairs(CraftSim.CONST.DEBUG_IDS) do
-        controlPanel.content["checkboxID_" .. debugID] = CraftSim.FRAME:CreateCheckbox(
+        if debugID ~= CraftSim.CONST.DEBUG_IDS.MAIN then
+            controlPanel.content["checkboxID_" .. debugID] = CraftSim.FRAME:CreateCheckbox(
         " " .. debugID, "Enable "..debugID.." Output", "enableDebugID_" .. debugID, controlPanel.content, lastHook, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
         lastHook = controlPanel.content["checkboxID_" .. debugID]
+        end
     end
 end
 
@@ -1863,6 +1886,24 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
 
     return goldInput
 end
+
+function CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onTextChangedCallback)
+    local numericInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
+        numericInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+        numericInput:SetSize(sizeX, sizeY)
+        numericInput:SetAutoFocus(false) -- dont automatically focus
+        numericInput:SetFontObject("ChatFontNormal")
+        numericInput:SetText(initialValue)
+        numericInput:SetScript("OnEscapePressed", function() numericInput:ClearFocus() end)
+        numericInput:SetScript("OnEnterPressed", function() numericInput:ClearFocus() end)
+        if onTextChangedCallback then
+            numericInput:SetScript("OnTextChanged", onTextChangedCallback)
+        end
+
+
+    return numericInput
+end
+
 
 function CraftSim.FRAME:CreateNumericInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, allowNegative, onTextChangedCallback)
     local numericInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")

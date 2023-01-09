@@ -165,7 +165,6 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
                 print("-- Affected: " .. tostring(nodeAffectsRecipe))
                 print("-- categoryID: " .. tostring(recipeData.categoryID))
                 print("-- subtypeID: " .. tostring(recipeData.subtypeID))
-                print(tostring(IDs.exceptionRecipeIDs) .. " and " .. "contains " .. tostring(IDs.exceptionRecipeIDs) .. ", " .. tostring(recipeData.recipeID))
                 print("-- IDs: ")
                 print(IDs.idMapping, true)
                 print(IDs.exceptionRecipeIDs, true)

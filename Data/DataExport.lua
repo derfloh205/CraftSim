@@ -337,6 +337,11 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	end
 	local recipeInfo = CraftSim.MAIN.currentRecipeInfo --or schematicForm:GetRecipeInfo() -- should always be the first
 
+	-- Can happen when manually called without recipe open
+	if not recipeInfo then
+		return nil
+	end
+
 	local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
 
 	recipeData.recipeID = recipeInfo.recipeID
@@ -350,6 +355,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
         return nil
     end
 	recipeData.expectedQuality = operationInfo.craftingQuality
+	recipeData.operationInfo = operationInfo
 	print("expectedQuality: " .. tostring(recipeData.expectedQuality))
 	print("expectedQuality: " .. tostring(recipeData.expectedQuality))
 
