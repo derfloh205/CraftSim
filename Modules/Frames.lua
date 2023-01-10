@@ -500,8 +500,8 @@ function CraftSim.FRAME:UpdateProfitDetails(recipeData, calculationData)
         CraftSim.FRAME:ToggleFrame(profitDetailsFrame.content.multicraftInfo.averageAdditionalValueHigherQualityTitle, not isMaxQuality)
         CraftSim.FRAME:ToggleFrame(profitDetailsFrame.content.multicraftInfo.averageAdditionalValueHigherQualityTitle.helper, not isMaxQuality)
         if not recipeData.result.isNoQuality and not isMaxQuality then
-            profitDetailsFrame.content.multicraftInfo.higherQualityIcon.SetQuality(recipeData.expectedQuality + 1)
-            profitDetailsFrame.content.multicraftInfo.higherQualityIcon2.SetQuality(recipeData.expectedQuality + 1)
+            profitDetailsFrame.content.multicraftInfo.higherQualityIcon.SetQuality(calculationData.inspirationQuality)
+            profitDetailsFrame.content.multicraftInfo.higherQualityIcon2.SetQuality(calculationData.inspirationQuality)
             profitDetailsFrame.content.multicraftInfo.averageAdditionalItemsHigherQualityValue:SetText(CraftSim.UTIL:round(calculationData.multicraft.averageMulticraftItemsHigher, 3))
             profitDetailsFrame.content.multicraftInfo.averageAdditionalHigherQualityValue:SetText(CraftSim.UTIL:FormatMoney(calculationData.multicraft.averageMulticraftHigherValue))
         end
@@ -521,8 +521,8 @@ function CraftSim.FRAME:UpdateProfitDetails(recipeData, calculationData)
     CraftSim.FRAME:ToggleFrame(profitDetailsFrame.content.inspirationInfo.valueByHigherQualityItemsTitle, not isMaxQuality)
     CraftSim.FRAME:ToggleFrame(profitDetailsFrame.content.inspirationInfo.valueByHigherQualityItemsTitle.helper, not isMaxQuality)
     if  not recipeData.result.isNoQuality and not isMaxQuality then
-        profitDetailsFrame.content.inspirationInfo.higherQualityIcon.SetQuality(recipeData.expectedQuality + 1)
-        profitDetailsFrame.content.inspirationInfo.higherQualityIcon2.SetQuality(recipeData.expectedQuality + 1)
+        profitDetailsFrame.content.inspirationInfo.higherQualityIcon.SetQuality(calculationData.inspirationQuality)
+        profitDetailsFrame.content.inspirationInfo.higherQualityIcon2.SetQuality(calculationData.inspirationQuality)
         
         profitDetailsFrame.content.inspirationInfo.averageHigherQualityItemsValue:SetText(CraftSim.UTIL:round(calculationData.inspiration.averageInspirationItemsHigher or 0, 3))
         profitDetailsFrame.content.inspirationInfo.valueByHigherQualityItemsValue:SetText(CraftSim.UTIL:FormatMoney(calculationData.inspiration.inspirationItemsValueHigher or 0))
@@ -1851,6 +1851,14 @@ function CraftSim.FRAME:InitSimModeFrames()
         qualityFrame.nextQualityMissingSkillInspirationValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityMissingSkillValue, "TOPRIGHT", 0, offsetY)
         qualityFrame.nextQualityMissingSkillInspirationValue:SetText("???")
 
+        qualityFrame.skipQualityMissingSkillInspiration = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.skipQualityMissingSkillInspiration:SetPoint("TOPLEFT", qualityFrame.nextQualityMissingSkillInspiration, "TOPLEFT", 0, offsetY)
+        qualityFrame.skipQualityMissingSkillInspiration:SetText("Missing Skill (Inspiration):")
+
+        qualityFrame.skipQualityMissingSkillInspirationValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.skipQualityMissingSkillInspirationValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityMissingSkillInspirationValue, "TOPRIGHT", 0, offsetY)
+        qualityFrame.skipQualityMissingSkillInspirationValue:SetText("???")
+
          -- warning
         -- simModeDetailsFrame.content.warningText = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         -- simModeDetailsFrame.content.warningText:SetPoint("BOTTOM", simModeDetailsFrame.content, "BOTTOM", 0, 30)
@@ -2097,6 +2105,7 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
         qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[CraftSim.SIMULATION_MODE.recipeData.expectedQuality - 1] or 0))
         
         local hasNextQuality = CraftSim.SIMULATION_MODE.recipeData.expectedQuality < CraftSim.SIMULATION_MODE.recipeData.maxQuality
+        local canSkipQuality = CraftSim.SIMULATION_MODE.recipeData.expectedQuality < (CraftSim.SIMULATION_MODE.recipeData.maxQuality - 1)
         CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityIcon, hasNextQuality)
         CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityThreshold, hasNextQuality)
         CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityTitle, hasNextQuality)
@@ -2104,6 +2113,9 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
         CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillInspiration, hasNextQuality)
         CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillValue, hasNextQuality)
         CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillInspirationValue, hasNextQuality)
+
+        CraftSim.FRAME:ToggleFrame(qualityFrame.skipQualityMissingSkillInspiration, canSkipQuality)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.skipQualityMissingSkillInspirationValue, canSkipQuality)
         if hasNextQuality then
             local nextQualityThreshold = thresholds[CraftSim.SIMULATION_MODE.recipeData.expectedQuality]
             local missingSkill = nextQualityThreshold - CraftSim.SIMULATION_MODE.recipeData.stats.skill
@@ -2113,9 +2125,22 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
             qualityFrame.nextQualityMissingSkillValue:SetText(CraftSim.UTIL:round(missingSkill, 1))
             local missinSkillText = CraftSim.UTIL:ColorizeText(CraftSim.UTIL:round(missingSkillInspiration, 1), 
             missingSkillInspiration == 0 and CraftSim.CONST.COLORS.GREEN or CraftSim.CONST.COLORS.RED)
+            local nextQualityIconText = CraftSim.UTIL:GetQualityIconAsText(CraftSim.SIMULATION_MODE.recipeData.expectedQuality + 1, 20, 20)
+            qualityFrame.nextQualityMissingSkillInspiration:SetText("Missing Skill (Inspiration) " .. nextQualityIconText)
             qualityFrame.nextQualityMissingSkillInspirationValue:SetText(missinSkillText)
             qualityFrame.nextQualityIcon.SetQuality(CraftSim.SIMULATION_MODE.recipeData.expectedQuality + 1)
             qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[CraftSim.SIMULATION_MODE.recipeData.expectedQuality])
+            
+            if canSkipQuality then
+                local skipQualityIconText = CraftSim.UTIL:GetQualityIconAsText(CraftSim.SIMULATION_MODE.recipeData.expectedQuality + 2, 20, 20)
+                local skipQualityThreshold = thresholds[CraftSim.SIMULATION_MODE.recipeData.expectedQuality + 1]
+                local missingSkillInspirationSkip = skipQualityThreshold - (CraftSim.SIMULATION_MODE.recipeData.stats.skill + CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.bonusskill)
+                missingSkillInspirationSkip = missingSkillInspirationSkip > 0 and missingSkillInspirationSkip or 0
+                local missinSkillText = CraftSim.UTIL:ColorizeText(CraftSim.UTIL:round(missingSkillInspirationSkip, 1), 
+                missingSkillInspirationSkip == 0 and CraftSim.CONST.COLORS.GREEN or CraftSim.CONST.COLORS.RED)
+                qualityFrame.skipQualityMissingSkillInspirationValue:SetText(missinSkillText)
+                qualityFrame.skipQualityMissingSkillInspiration:SetText("Missing Skill (Inspiration) " .. skipQualityIconText)
+            end
         end
     end
 end
