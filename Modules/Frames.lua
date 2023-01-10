@@ -2067,7 +2067,7 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
     CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.recipeDifficultyValue:SetText(CraftSim.UTIL:round(fullRecipeDifficulty, 1) .. " (" .. CraftSim.SIMULATION_MODE.baseRecipeDifficulty .. " + " .. statsByOptionalInputs.recipeDifficulty .. "+" .. recipeDifficultyMod  .. ")")
     CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.baseSkillValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.skill, 1) .. " (" .. CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents, 1) .. "+" .. CraftSim.UTIL:round(reagentSkillIncrease, 1) .. "+" .. skillMod ..")")
     -- I assume its always from base..? Wouldnt make sense to give the materials more skill contribution if you artificially make the recipe harder
-    local maxReagentSkillIncrease = CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.maxReagentSkillIncreaseFactor * CraftSim.SIMULATION_MODE.baseRecipeDifficulty, 0)
+    local maxReagentSkillIncrease = CraftSim.SIMULATION_MODE.recipeData.maxReagentSkillIncreaseFactor * CraftSim.SIMULATION_MODE.baseRecipeDifficulty
     CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.reagentSkillIncrease, 1) .. " / " .. CraftSim.UTIL:round(maxReagentSkillIncrease, 1))
 
     -- Inspiration Display
