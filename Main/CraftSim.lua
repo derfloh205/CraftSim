@@ -151,7 +151,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 
 		CraftSim.FRAME:InitDebugFrame()
 		CraftSim.FRAME:InitStatWeightFrame()
-		CraftSim.FRAME:InitGearSimFrame()
+		CraftSim.TOPGEAR.FRAMES:Init()
 		CraftSim.COSTOVERVIEW.FRAMES:Init()
 		CraftSim.FRAME:InitBestAllocationsFrame()
 		CraftSim.FRAME:InitProfitDetailsFrame()
@@ -405,7 +405,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	CraftSim.FRAME:ToggleFrame(CraftSimSimFrame, showTopGear)
 	if showTopGear then
-		CraftSim.GEARSIM:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
+		CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
 	end
 
 	CraftSim.FRAME:ToggleFrame(CraftSimCostOverviewFrame, showCostOverview)

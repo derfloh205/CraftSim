@@ -31,7 +31,9 @@ Modules/SimulationMode/Frames.lua
 
 Modules/StatweightCalculation.lua
 Modules/ReagentOptimization.lua
-Modules/GearSim.lua
+
+Modules/TopGear/TopGear.lua
+Modules/TopGear/Frames.lua
 
 Modules/CostOverview/CostOverview.lua
 Modules/CostOverview/Frames.lua
