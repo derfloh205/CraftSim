@@ -63,7 +63,7 @@ function CraftSim.FRAME:UpdateStatWeightFrameText(priceData, statWeights)
         local valueText = ""
 
         if statWeights.meanProfit then
-            statText = statText .. "Ø Profit:" .. "\n"
+            statText = statText .. "Ø Profit / Craft:" .. "\n"
             local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCostPerCraft or nil
             valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.meanProfit, true, relativeValue) .. "\n"
         end
