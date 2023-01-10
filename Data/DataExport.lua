@@ -250,11 +250,11 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		local itemBonusSkillFactor = (professionGearStats.inspirationBonusSkillPercent / 100) -- 15% -> 0.15
 		local specNodeBonusSkillFactor = specNodeStats.inspirationBonusSkillFactor % 1 -- 1.15 -> 0.15
 
-		local finishingReagentsBonusSkillFactor = optionalReagentsStats.inspirationBonusSkillFactor % 1  -- 1.15 -> 0.15
+		local optionalReagentsBonusSkillFactor = optionalReagentsStats.inspirationBonusSkillFactor % 1  -- 1.15 -> 0.15
 
 		-- stack additively
-		local totalBonusSkillFactor = 1 + specNodeBonusSkillFactor + itemBonusSkillFactor + finishingReagentsBonusSkillFactor
-		recipeData.stats.inspiration.bonusSkillFactorNoSpecs = 1 + itemBonusSkillFactor
+		local totalBonusSkillFactor = specNodeBonusSkillFactor + itemBonusSkillFactor + optionalReagentsBonusSkillFactor
+		recipeData.stats.inspiration.bonusSkillFactorNoSpecs = itemBonusSkillFactor -- format 0.x
 
 		if not recipeData.result.isNoQuality then
 			if recipeData.maxQuality == 5 then
@@ -266,7 +266,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 
 		recipeData.stats.inspiration.value = buffStats.inspiration + itemBonus + specNodeBonus + buffBonus + baseInspiration
 		recipeData.stats.inspiration.percent = CraftSim.UTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
-		recipeData.stats.inspiration.bonusskill = baseBonusSkill * totalBonusSkillFactor
+		recipeData.stats.inspiration.bonusskill = baseBonusSkill * (1 + totalBonusSkillFactor)
 		recipeData.stats.inspiration.baseBonusSkill = baseBonusSkill
 	end
 

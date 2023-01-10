@@ -1897,7 +1897,9 @@ end
 function CraftSim.FRAME:InitializeSimModeOptionalReagentDropdowns()
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
     local possibleOptionalReagents = recipeData.possibleOptionalReagents
+    local optionalReagents = recipeData.optionalReagents
     local possibleFinishingReagents = recipeData.possibleFinishingReagents
+    local finishingReagents = recipeData.finishingReagents
 
     local function convertReagentListToDropdownListData(reagentList)
         local dropDownListData = {{label = "None", value = nil}}
@@ -1935,6 +1937,14 @@ function CraftSim.FRAME:InitializeSimModeOptionalReagentDropdowns()
         currentDropdown.isOptional = true
         currentDropdown.SetLabel("Optional #" .. slotIndex)
         dropdownIndex = dropdownIndex + 1
+        for _ , optionalReagent in pairs(optionalReagents) do
+            local foundReagent = CraftSim.UTIL:Find(reagentList, function(reagentItemID) return reagentItemID == optionalReagent.itemID end)
+            if foundReagent then
+                print("found reagent: " .. optionalReagent.itemData.link)
+                UIDropDownMenu_SetText(currentDropdown, optionalReagent.itemData.link)
+                currentDropdown.selectedItemID = optionalReagent.itemID
+            end
+        end
     end
     -- finishing
     for slotIndex, reagentList in pairs(possibleFinishingReagents) do
@@ -1949,6 +1959,14 @@ function CraftSim.FRAME:InitializeSimModeOptionalReagentDropdowns()
         currentDropdown.isFinishing = true
         currentDropdown.SetLabel("Finishing #" .. slotIndex)
         dropdownIndex = dropdownIndex + 1
+        for _ , finishingReagent in pairs(finishingReagents) do
+            local foundReagent = CraftSim.UTIL:Find(reagentList, function(reagentItemID) return reagentItemID == finishingReagent.itemID end)
+            if foundReagent then
+                print("found reagent: " .. finishingReagent.itemData.link)
+                UIDropDownMenu_SetText(currentDropdown, finishingReagent.itemData.link)
+                currentDropdown.selectedItemID = finishingReagent.itemID
+            end
+        end
     end
 end
 
@@ -2071,7 +2089,7 @@ function CraftSim.FRAME:UpdateSimModeStatDisplay()
     if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration then
         local inspirationSkillDiff = CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.bonusskill - CraftSim.SIMULATION_MODE.baseInspiration.baseBonusSkill, 1)
         CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationSkillValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.bonusskill, 1) .. " (" .. CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.baseInspiration.baseBonusSkill, 1) ..
-        "*" .. CraftSim.SIMULATION_MODE.recipeData.stats.inspirationBonusSkillFactor .."+"..inspirationSkillDiff .. ")")
+        "*" .. CraftSim.UTIL:round(1+CraftSim.SIMULATION_MODE.recipeData.stats.inspirationBonusSkillFactor, 2) .."+"..inspirationSkillDiff .. ")")
     end
 
     -- Multicraft Display

@@ -13,6 +13,8 @@ CraftSim.SIMULATION_MODE.baseInspiration = nil
 CraftSim.SIMULATION_MODE.baseMulticraft = nil
 CraftSim.SIMULATION_MODE.baseResourcefulness = nil
 
+CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents = nil
+
 local function print(text, recursive, l) -- override
 	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE, recursive, l)
 end
@@ -149,7 +151,8 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
 
     -- update skill by input modifier and reagent skill increase
     local skillMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true)
-    CraftSim.SIMULATION_MODE.recipeData.stats.skill = CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents + reagentSkillIncrease + skillMod + statsByOptionalInputs.skill
+    CraftSim.SIMULATION_MODE.recipeData.stats.skill = CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents + reagentSkillIncrease + skillMod + statsByOptionalInputs.skill
+    CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents = CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents + statsByOptionalInputs.skill
 
     -- update difficulty based on input
     local recipeDifficultyMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput, true)
@@ -160,7 +163,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
         local inspirationMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeInspirationModInput, true)
         local inspirationSkillMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeInspirationSkillModInput, true)
         local inspirationBonusSkillFactor = statsByOptionalInputs.inspirationBonusSkillFactor % 1
-        local specNodeBonusSkillFactor = (specNodeStats and (specNodeStats.inspirationBonusSkillFactor % 1)) or 1
+        local specNodeBonusSkillFactor = (specNodeStats and (specNodeStats.inspirationBonusSkillFactor % 1)) or 0
         CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value + inspirationMod + statsByOptionalInputs.inspiration
         print("bonusskillfactornospecs: " .. CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs)
         print("inspirationBonusSkillFactorReagents: " .. inspirationBonusSkillFactor)
@@ -172,7 +175,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
         end
 
         CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.bonusskill =
-         (CraftSim.SIMULATION_MODE.baseInspiration.baseBonusSkill * (CraftSim.SIMULATION_MODE.recipeData.stats.inspirationBonusSkillFactor)) + inspirationSkillMod
+         (CraftSim.SIMULATION_MODE.baseInspiration.baseBonusSkill * (1+CraftSim.SIMULATION_MODE.recipeData.stats.inspirationBonusSkillFactor)) + inspirationSkillMod
         print("BaseBonusSkill: " .. tostring(CraftSim.SIMULATION_MODE.baseInspiration.baseBonusSkill))
         print("bonusskillfactor: " .. tostring(CraftSim.SIMULATION_MODE.recipeData.stats.inspirationBonusSkillFactor))
     end
@@ -212,6 +215,7 @@ end
 function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.SIMULATION_MODE.recipeData = CopyTable(recipeData)   
     CraftSim.SIMULATION_MODE.recipeData.isSimModeData = true
+    local statsByOptionalInputs = CraftSim.DATAEXPORT:GetStatsFromOptionalReagents(recipeData)
 
     -- initialize base values based on original recipeData and based on spec data implemented
     if not CraftSim.UTIL:IsSpecImplemented(recipeData.professionID) then
@@ -219,31 +223,42 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         
         if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration then
             CraftSim.SIMULATION_MODE.baseInspiration = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration)
+            CraftSim.SIMULATION_MODE.baseInspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value - statsByOptionalInputs.inspiration
+            CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs = CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs - (statsByOptionalInputs.inspirationBonusSkillFactor % 1)
+
+            CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents = CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents - statsByOptionalInputs.skill
         end
         
         if CraftSim.SIMULATION_MODE.recipeData.stats.multicraft then
             CraftSim.SIMULATION_MODE.baseMulticraft = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.multicraft)
+            CraftSim.SIMULATION_MODE.baseMulticraft.value = CraftSim.SIMULATION_MODE.baseMulticraft.value - statsByOptionalInputs.multicraft
         end
-
+        
         if CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness then
             CraftSim.SIMULATION_MODE.baseResourcefulness = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness)
+            CraftSim.SIMULATION_MODE.baseResourcefulness.value = CraftSim.SIMULATION_MODE.baseResourcefulness.value - statsByOptionalInputs.resourcefulness
         end
         -- crafting speed... for later profit per time interval?
     else
         CraftSim.SIMULATION_MODE.baseSpecNodeData = CopyTable(CraftSim.SIMULATION_MODE.recipeData.specNodeData) -- to make a reset possible
         CraftSim.SIMULATION_MODE.baseRecipeDifficulty = CraftSim.SIMULATION_MODE.recipeData.baseDifficulty
-
+        
         
         if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration then
             CraftSim.SIMULATION_MODE.baseInspiration = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration)
+            CraftSim.SIMULATION_MODE.baseInspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value - statsByOptionalInputs.inspiration
+            CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs = CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs -- - (statsByOptionalInputs.inspirationBonusSkillFactor % 1)
+            CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents = CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents - statsByOptionalInputs.skill
         end
         
         if CraftSim.SIMULATION_MODE.recipeData.stats.multicraft then
             CraftSim.SIMULATION_MODE.baseMulticraft = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.multicraft)
+            CraftSim.SIMULATION_MODE.baseMulticraft.value = CraftSim.SIMULATION_MODE.baseMulticraft.value - statsByOptionalInputs.multicraft
         end
         
         if CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness then
             CraftSim.SIMULATION_MODE.baseResourcefulness = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness)
+            CraftSim.SIMULATION_MODE.baseResourcefulness.value = CraftSim.SIMULATION_MODE.baseResourcefulness.value - statsByOptionalInputs.resourcefulness
         end
     end
     
