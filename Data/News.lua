@@ -30,6 +30,7 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\n" .. "Added " .. c("CallbackHandler", bb) .. " dependency to loaded list\nPeople who have " .. 
         c("Ace3", bb) .. " and " .. c("LibCompress", bb) .. " installed manually\nshould now be able to remove them" ..
         c("\n\nFixed Simulation Mode Help Icons", bb) .. " causing error on hover" ..
+        "\n\nAuto sort quality itemIDs fetched from\nblizzard to prevent wrong quality orders" .. 
         c("\n\n\n--- Version 1.6.4.2 ---", l) ..
         "\n\n\nFixed TSM Price Expression for Items\nbeing overwritten by the Material one on reload" ..
         c("\n\n\n--- Version 1.6.4.1 ---", l) ..

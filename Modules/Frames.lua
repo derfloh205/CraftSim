@@ -937,8 +937,10 @@ function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue)
             label = v.label
             value = v.value
 			local info = UIDropDownMenu_CreateInfo()
+            --print("init dropdown by data label: " .. tostring(label))
+            --print("init dropdown by data value: " .. tostring(value))
 			info.func = function(self, arg1, arg2, checked) 
-                UIDropDownMenu_SetText(dropDown, label)
+                UIDropDownMenu_SetText(dropDown, self.value) -- value should contain the selected text..
                 dropDown.clickCallback(dropDown, arg1)
             end
 			info.text = label
@@ -1659,7 +1661,6 @@ function CraftSim.FRAME:InitSimModeFrames()
         local optionalReagentDropdown = CraftSim.FRAME:initDropdownMenu(nil, reagentOverwriteFrame, ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "Optional", -20, offsetY + 3, 120, {"Placeholder"}, function(self, arg1) 
             self.selectedItemID = arg1
             CraftSim.SIMULATION_MODE:UpdateSimulationMode()
-            print("Update Optional Reagents")
         end, "None")
         return optionalReagentDropdown
     end
