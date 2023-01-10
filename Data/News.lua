@@ -24,7 +24,8 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\nAdded the " .. c("RECrystallize", bb) .. " addon to possible price source addons" ..
         "\n\nReadjusted the " .. c("Simulation Mode Number Input Width", g) .. "\n to consider numbers with three digits" ..
         "\n\n" .. c("Cost Overview", g) .. " always show all qualities" ..
-        "\n\n" .. "Fixed several errors and inconsistencies with " .. c("Recrafting", bb) .. 
+        "\n\n" .. c("Disabled most Modules for ", r) .. c("Recrafting", bb) .. 
+        "\n" .. " because of wrong reagent skill calculations due to hidden factors" ..
         "\n\n" .. c("Top Profit", bb) .. " Mode for the Top Gear module is now\navailable for all recipes to support price overrides" ..
         "\n\n" .. "Added " .. c("CallbackHandler", bb) .. " dependency to loaded list\nPeople who have " .. 
         c("Ace3", bb) .. " and " .. c("LibCompress", bb) .. " installed manually\nshould now be able to remove them" ..
