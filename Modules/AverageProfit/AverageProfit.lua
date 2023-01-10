@@ -65,7 +65,7 @@ function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData)
     calculationResult.meanProfit, calculationData = CraftSim.CALC:getMeanProfit(recipeData, priceData)
 
     calculationData.meanProfit = calculationResult.meanProfit
-    CraftSim.FRAME:UpdateProfitDetails(recipeData, calculationData)
+    CraftSim.AVERAGEPROFIT.FRAMES:UpdateExplanation(recipeData, calculationData)
 
     local inspirationResults = CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
     local multicraftResults = CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)

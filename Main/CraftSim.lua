@@ -154,8 +154,8 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.TOPGEAR.FRAMES:Init()
 		CraftSim.COSTOVERVIEW.FRAMES:Init()
 		CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
-		CraftSim.FRAME:InitProfitDetailsFrame()
-		CraftSim.FRAME:InitSpecInfoFrame()
+		CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
+		CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
 		CraftSim.FRAME:InitWarningFrame()
 		CraftSim.FRAME:InitOneTimeNoteFrame()
 		CraftSim.SIMULATION_MODE.FRAMES:Init()
@@ -246,7 +246,7 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 	end
 
 	CraftSim.PRICE_API:InitPriceSource()
-	CraftSim.OPTIONS:InitOptionsFrame()
+	CraftSim.OPTIONS:Init()
 	CraftSim.MAIN:HandleCollapsedFrameSave()
 
 	-- show one time note
@@ -375,7 +375,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO), showSpecInfo)
 	if recipeData and showSpecInfo then
-		CraftSim.FRAME:FillSpecInfoFrame(recipeData)
+		CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
 	end
 
 	-- do not show simulation possibility on salvaging for now

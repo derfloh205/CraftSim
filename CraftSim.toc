@@ -19,12 +19,16 @@ Util/Const.lua
 Util/Frames.lua
 
 Main/CraftSim.lua
-Options/Options.lua
-Options/AccountSync.lua
 
 Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
 Pricing/PriceData.lua
+
+Modules/SpecializationInfo/SpecializationInfo.lua
+Modules/SpecializationInfo/Frames.lua
+
+Modules/Options/Options.lua
+Modules/Options/AccountSync.lua
 
 Modules/SimulationMode/SimMode.lua
 Modules/SimulationMode/Frames.lua

@@ -1,0 +1,3 @@
+addonName, CraftSim = ...
+
+CraftSim.SPECIALIZATION_INFO = {}

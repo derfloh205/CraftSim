@@ -3,7 +3,7 @@ addonName, CraftSim = ...
 CraftSim.OPTIONS = {}
 
 CraftSim.OPTIONS.lastOpenRecipeID = {}
-function CraftSim.OPTIONS:InitOptionsFrame()
+function CraftSim.OPTIONS:Init()
     CraftSim.OPTIONS.optionsPanel = CreateFrame("Frame", "CraftSimOptionsPanel")
     
 	CraftSim.OPTIONS.optionsPanel:HookScript("OnShow", function(self)
