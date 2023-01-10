@@ -75,7 +75,9 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operation
 			recipeData.stats.inspiration.percent = CraftSim.UTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
 
 			-- matches a row of numbers coming after the % character and any characters in between plus a space, should hopefully match in every localization...
-			local _, _, bonusSkill = string.find(statInfo.ratingDescription, "%%.* (%d+)") 
+			local bonusSkill = tonumber((statInfo.ratingDescription:gsub("[^0-9%%]", ""):gsub(".*%%", "")))
+			--print("bonusSkill: " .. tostring(bonusSkill))
+			
 			recipeData.stats.inspiration.bonusskill = bonusSkill
 			recipeData.stats.inspiration.baseBonusSkill = 0
 			if recipeData.maxQuality == 3 then
