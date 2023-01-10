@@ -209,7 +209,48 @@ end
 function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
     CraftSim.SIMULATION_MODE:UpdateReagentAllocationsByInput()
     CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
+    CraftSim.SIMULATION_MODE:UpdateGearResultItemsByInputs()
     CraftSim.FRAME:UpdateSimModeStatDisplay()
+end
+
+function CraftSim.SIMULATION_MODE:UpdateGearResultItemsByInputs()
+    local recipeType = CraftSim.SIMULATION_MODE.recipeData.recipeType
+    if recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR then
+        -- add optional reagents to craftingreagentTbl
+        local craftingReagentInfoTbl = {}
+        for _, dropdown in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames) do
+            local allocatedReagentID = dropdown.selectedItemID
+            if allocatedReagentID then
+                local optionalReagent = nil
+                for slotIndex, reagentList in pairs(CraftSim.SIMULATION_MODE.recipeData.possibleOptionalReagents) do
+                    optionalReagent = CraftSim.UTIL:Find(reagentList, function(reagent) return reagent.itemID == allocatedReagentID end)
+                    if optionalReagent then break end;
+                end
+                local finishingReagent = nil
+                for slotIndex, reagentList in pairs(CraftSim.SIMULATION_MODE.recipeData.possibleFinishingReagents) do
+                    finishingReagent = CraftSim.UTIL:Find(reagentList, function(reagent) return reagent.itemID == allocatedReagentID end)
+                    if finishingReagent then break end;
+                end
+                            
+                local reagentData = optionalReagent or finishingReagent
+
+                if reagentData then
+                    table.insert(craftingReagentInfoTbl, {
+                        itemID = reagentData.itemID,
+                        quantity = 1,
+                        dataSlotIndex = reagentData.dataSlotIndex
+                    })
+                else
+                    error("CraftSim Error: Assigned Reagent not found in possible reagents list. What happened here?")
+                end
+            end
+        end
+        CraftSim.SIMULATION_MODE.recipeData.result.itemQualityLinks = CraftSim.DATAEXPORT:GetDifferentQualitiesByCraftingReagentTbl(
+            CraftSim.SIMULATION_MODE.recipeData.recipeID, craftingReagentInfoTbl, CraftSim.SIMULATION_MODE.recipeData.allocationItemGUID)
+
+        print("Sim Mode Quality Links: ")
+        print(CraftSim.SIMULATION_MODE.recipeData.result.itemQualityLinks, true)
+    end
 end
 
 function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)

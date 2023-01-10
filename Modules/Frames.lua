@@ -1353,6 +1353,8 @@ function CraftSim.FRAME:InitDebugFrame()
         lastHook = controlPanel.content["checkboxID_" .. debugID]
         end
     end
+
+    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
 end
 
 function CraftSim.FRAME:InitWarningFrame()
@@ -1665,6 +1667,7 @@ function CraftSim.FRAME:InitSimModeFrames()
         local optionalReagentDropdown = CraftSim.FRAME:initDropdownMenu(nil, reagentOverwriteFrame, ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "Optional", -20, offsetY + 3, 120, {"Placeholder"}, function(self, arg1) 
             self.selectedItemID = arg1
             CraftSim.SIMULATION_MODE:UpdateSimulationMode()
+            CraftSim.MAIN:TriggerModulesErrorSafe()
         end, "None")
         return optionalReagentDropdown
     end
@@ -1903,11 +1906,11 @@ function CraftSim.FRAME:InitializeSimModeOptionalReagentDropdowns()
 
     local function convertReagentListToDropdownListData(reagentList)
         local dropDownListData = {{label = "None", value = nil}}
-        for _, reagentItemID in pairs(reagentList) do
-            local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(reagentItemID)
+        for _, reagent in pairs(reagentList) do
+            local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(reagent.itemID)
             table.insert(dropDownListData, {
                 label = itemData.link or "Loading...",
-                value = reagentItemID,
+                value = reagent.itemID,
             })
         end
         return dropDownListData
@@ -1938,7 +1941,7 @@ function CraftSim.FRAME:InitializeSimModeOptionalReagentDropdowns()
         currentDropdown.SetLabel("Optional #" .. slotIndex)
         dropdownIndex = dropdownIndex + 1
         for _ , optionalReagent in pairs(optionalReagents) do
-            local foundReagent = CraftSim.UTIL:Find(reagentList, function(reagentItemID) return reagentItemID == optionalReagent.itemID end)
+            local foundReagent = CraftSim.UTIL:Find(reagentList, function(reagent) return reagent.itemID == optionalReagent.itemID end)
             if foundReagent then
                 print("found reagent: " .. optionalReagent.itemData.link)
                 UIDropDownMenu_SetText(currentDropdown, optionalReagent.itemData.link)
@@ -1960,7 +1963,7 @@ function CraftSim.FRAME:InitializeSimModeOptionalReagentDropdowns()
         currentDropdown.SetLabel("Finishing #" .. slotIndex)
         dropdownIndex = dropdownIndex + 1
         for _ , finishingReagent in pairs(finishingReagents) do
-            local foundReagent = CraftSim.UTIL:Find(reagentList, function(reagentItemID) return reagentItemID == finishingReagent.itemID end)
+            local foundReagent = CraftSim.UTIL:Find(reagentList, function(reagent) return reagent.itemID == finishingReagent.itemID end)
             if foundReagent then
                 print("found reagent: " .. finishingReagent.itemData.link)
                 UIDropDownMenu_SetText(currentDropdown, finishingReagent.itemData.link)

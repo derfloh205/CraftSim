@@ -11,21 +11,12 @@ local function print(text, recursive) -- override
 	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.DATAEXPORT, recursive)
 end
 
-function CraftSim.DATAEXPORT:GetDifferentQualityLinksByLink(itemLink)
-	-- TODO: is this consistent enough?
+function CraftSim.DATAEXPORT:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID)
 	local linksByQuality = {}
-	local itemString = select(3, strfind(itemLink, "|H(.+)|h%["))
-	--print("itemstring: " .. itemString)
-	for qualityID = 4, 8, 1 do
-		local parts = { string.split(":", itemString) }
-		
-		parts[#parts-5] = qualityID
-		local newString = table.concat(parts, ":")
-		--print("item string q" .. qualityID .. " " .. tostring(newString))
-		local _, link = GetItemInfo(newString)
-		--print("link: " .. link)
-		table.insert(linksByQuality, link)
-	 end
+	for i = 4, 8, 1 do
+		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeID, craftingReagentInfoTbl, allocationItemGUID, i)
+		table.insert(linksByQuality, outputItemData.hyperlink)
+	end
 	 return linksByQuality
 end
 
@@ -349,12 +340,16 @@ function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(reagent
 	for slotIndex, slotData in pairs(reagentSlots) do
 		local button = slotData
 		local reagents = slotData.reagentSlotSchematic.reagents
+		local dataSlotIndex = slotData.reagentSlotSchematic.dataSlotIndex
 
 		for _, slotReagentData in pairs(reagents) do
 			if slotsToItemIDs[slotIndex] == nil then
 				slotsToItemIDs[slotIndex] = {}
 			end
-			table.insert(slotsToItemIDs[slotIndex], slotReagentData.itemID)
+			table.insert(slotsToItemIDs[slotIndex], {
+				itemID = slotReagentData.itemID,
+				dataSlotIndex = dataSlotIndex
+			})
 		end
 	end
 
@@ -515,9 +510,11 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 			if allocatedItemID then
 				local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(allocatedItemID)
 				print(slotIndex .. " -> optional #" .. currentOptionalReagent .. ": " .. tostring(itemData.link) .. " Type: " .. tostring(reagentType))
+				print("dataSlotIndex: " .. tostring(currentSlot.dataSlotIndex))
 				table.insert(recipeData.optionalReagents, {
 					itemID = allocatedItemID,
 					itemData = itemData,
+					dataSlotIndex = currentSlot.dataSlotIndex
 				})
 			end
 			
@@ -530,9 +527,11 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 				print("Finishing Reagent ItemID: " .. tostring(allocatedItemID))
 				local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(allocatedItemID)
 				print(slotIndex .. " -> finishing #" .. currentFinishingReagent .. ": " .. tostring(itemData.link) .. " Type: " .. tostring(reagentType))
+				print("dataSlotIndex: " .. tostring(currentSlot.dataSlotIndex))
 				table.insert(recipeData.finishingReagents, {
 					itemID = allocatedItemID,
 					itemData = itemData,
+					dataSlotIndex = currentSlot.dataSlotIndex
 				})
 			end
 			
@@ -559,8 +558,6 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	recipeData.result = {}
 
 	local allocationItemGUID = currentTransaction:GetAllocationItemGUID() -- either recraft, enchant, or salvage, TODO: export?
-	local craftingReagentInfoTbl = currentTransaction:CreateCraftingReagentInfoTbl()
-	local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 
 	if recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
 		-- recipe is anything that results in 1-5 different itemids with quality
@@ -588,11 +585,10 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR then
 		recipeData.result.itemID = schematicInfo.outputItemID
 		
+		local craftingReagentInfoTbl = currentTransaction:CreateCraftingReagentInfoTbl()
 		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 		recipeData.result.hyperlink = outputItemData.hyperlink
-		local baseIlvl = recipeInfo.itemLevel
-		recipeData.result.itemQualityLinks = CraftSim.DATAEXPORT:GetDifferentQualityLinksByLink(outputItemData.hyperlink)
-		recipeData.result.baseILvL = baseIlvl
+		recipeData.result.itemQualityLinks = CraftSim.DATAEXPORT:GetDifferentQualitiesByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE then
 		-- Probably something like transmuting air reagent that creates non equip stuff without qualities
 		recipeData.result.itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
