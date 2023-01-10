@@ -2,6 +2,14 @@ addonName, CraftSim = ...
 
 CraftSim.COSTOVERVIEW.FRAMES = {}
 
+local function print(text, recursive, l) -- override
+    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
+        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
+    else
+        print(text)
+    end
+end
+
 function CraftSim.COSTOVERVIEW.FRAMES:Fill(craftingCosts, minCraftingCosts, profitPerQuality, currentQuality)
     local costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
     local recipeData = nil
