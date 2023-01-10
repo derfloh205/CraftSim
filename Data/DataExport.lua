@@ -361,6 +361,13 @@ function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(reagent
 	return slotsToItemIDs
 end
 
+-- UNUSED YET UNTIL NEEDED
+function CraftSim.DATAEXPORT:HandleQualityItemIDsOrderException(recipeData)
+	local exceptionOrder = CraftSim.CONST.EXCEPTION_ORDER_ITEM_IDS[recipeData.recipeID]
+	recipeData.result.itemIDs = exceptionOrder
+	return exceptionOrder
+end
+
 function CraftSim.DATAEXPORT:exportRecipeData()
 	local recipeData = {}
 
@@ -557,17 +564,18 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	if recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
 		-- recipe is anything that results in 1-5 different itemids with quality
 		local qualityItemIDs = CopyTable(recipeInfo.qualityItemIDs)
-		if qualityItemIDs[1] > qualityItemIDs[3] then
-			--print("itemIDs for qualities not in expected order, reordering..: " .. outputItemData.hyperlink)
-			table.sort(qualityItemIDs)
-			--print(unpack(qualityItemIDs))
-		end
+		table.sort(qualityItemIDs) -- always order to get the qualities in the correct order
+		-- if qualityItemIDs[1] > qualityItemIDs[3] or qualityItemIDs[2] then
+		-- 	print("itemIDs for qualities not in expected order, reordering..: " .. outputItemData.hyperlink)
+			
+		-- end
 		recipeData.result.itemIDs = {
 			qualityItemIDs[1],
 			qualityItemIDs[2],
 			qualityItemIDs[3],
 			qualityItemIDs[4],
 			qualityItemIDs[5]}
+		
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.ENCHANT then
 		if not CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID] then
 			error("CraftSim: Enchant Recipe Missing in Data: " .. recipeData.recipeID .. " Please contact the developer (discord: genju#4210)")

@@ -306,3 +306,7 @@ end
 CraftSim.CONST.ITEM_ID_EXCEPTION_MAPPING = {
     [199345] = 200074 -- frosted rimefin tuna to rimefin tuna, due to frosted generating it, and rimefin tuna being soulbound
 }
+
+CraftSim.CONST.EXCEPTION_ORDER_ITEM_IDS = {
+    [382363] = {198236, 198237, 198238}
+}
