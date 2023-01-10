@@ -17,6 +17,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("Hello and thank you for using CraftSim!\n", bb) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        c("\n\n\n--- Version 1.7.4 ---", l) ..
+        "\n\nMany fixes to the optional/finishing reagents in " .. c("Simulation Mode", g) ..
+        "\n\n" .. c("Simulation Mode", g) .. " now correctly shows\nthe OutputItem Links for gear\nconsidering missives, infusions and embellishments" ..
         c("\n\n\n--- Version 1.7 ---", l) ..
         "\n\n" .. c("Skill Increase by Reagents", g) .. " is now calculated\nvia an ingame API workaround" ..
         "\n\n" .. c("Recraft Simulations", bb) .. " are now able to consider\nthe hidden quality modifier" ..
