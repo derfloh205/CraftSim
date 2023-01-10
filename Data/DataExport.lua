@@ -406,6 +406,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	local currentTransaction = schematicForm.transaction or schematicForm:GetTransaction()
 	
 	recipeData.isRecraft = currentTransaction:GetRecraftAllocation() ~= nil -- I dont know why but isRecraft is false on recrafts ?
+	recipeData.recraftAllocationGUID = currentTransaction:GetRecraftAllocation()
 	print("isRecraft: " .. tostring(recipeData.isRecraft))
 
 	print("recipeType: " .. tostring(recipeData.recipeType))
@@ -624,6 +625,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 
 
 	CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
+	recipeData.maxReagentSkillIncreaseFactor = CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData)
 
 	
 	CraftSim.MAIN.currentRecipeData = recipeData

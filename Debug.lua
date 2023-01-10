@@ -60,6 +60,14 @@ function CraftSim_DEBUG:CompareStatData()
     end
 end
 
+function CraftSim_DEBUG:TestAllocationSkillFetchV2()
+    CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSim.MAIN.currentRecipeData)
+end
+
+function CraftSim_DEBUG:TestMaxReagentIncreaseFactor()
+    CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(CraftSim.MAIN.currentRecipeData)
+end
+
 function CraftSim_DEBUG:CheckSpecNode(nodeID)
 
     local function print(text, r, l) -- override

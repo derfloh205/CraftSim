@@ -314,7 +314,12 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
 
 		if recipeData.isRecraft then
-			-- show everything that is not dependent on calculated end quality
+			-- show everything
+			showMaterialAllocation = true
+			showTopGear = true
+			showCostOverview = true
+			showStatweights = true
+			showSimulationMode = true
 			showSpecInfo = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
 			-- show everything
@@ -358,7 +363,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	showMaterialAllocation = showMaterialAllocation and CraftSimOptions.modulesMaterials 
 	-- temporary disable for recipes with only one required qualitity reagent
-	showMaterialAllocation = showMaterialAllocation and recipeData and recipeData.numReagentsWithQuality > 1
+	--showMaterialAllocation = showMaterialAllocation and recipeData and recipeData.numReagentsWithQuality > 1
 	showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
 	showTopGear = showTopGear and CraftSimOptions.modulesTopGear
 	showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview

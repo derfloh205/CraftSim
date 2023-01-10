@@ -99,7 +99,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
     numBP = #craftingDifficultyBP + 1 -- the 0 index will not be counted..
     --print("numBP: " .. numBP)
 
-    local recipeMaxSkillBonus = 0.25 * recipeData.baseDifficulty
+    local recipeMaxSkillBonus = recipeData.maxReagentSkillIncreaseFactor * recipeData.baseDifficulty
     
     -- Calculate the material bonus needed to meet each breakpoint based on the player's
     --   existing skill and the recipe difficulty (as a fraction of the recipeMaxSkillBonus
@@ -426,7 +426,102 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
     return outResult
 end
 
-function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData, isKnapsackCalculation)
+function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData)
+    local recipeDataNoReagents = CopyTable(recipeData)
+
+    -- get operationinfo of recipe with no reagents
+    local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, {}, recipeData.recraftAllocationGUID)
+
+    -- create CraftingReagentInfoTbl with max q3 reagents
+    -- https://wowpedia.fandom.com/wiki/API_C_TradeSkillUI.GetCraftingOperationInfo
+    local craftingReagentInfoTbl = {}
+    for index, reagent in pairs(recipeData.reagents) do
+        if reagent.differentQualities then
+            for qualityID, itemInfo in pairs(reagent.itemsInfo) do
+                local allocations = 0
+                if qualityID == 3 then
+                    allocations = reagent.requiredQuantity
+                end
+                local infoEntry = {
+                    itemID = itemInfo.itemID,
+                    quantity = allocations,
+                    dataSlotIndex = 2,
+                }
+                table.insert(craftingReagentInfoTbl, infoEntry)
+            end
+        end
+    end
+    local Q3ReagentsOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, recipeData.recraftAllocationGUID)
+
+    local Q3ReagentsThresholdSkillDifference = Q3ReagentsOperationInfo.upperSkillTreshold - Q3ReagentsOperationInfo.lowerSkillThreshold -- upperSkillTreshold is a blizz typo
+    local baseThresholdSkillDifference = baseOperationInfo.upperSkillTreshold - baseOperationInfo.lowerSkillThreshold -- upperSkillTreshold is a blizz typo
+    
+    local Q3ReagentsQualityFactor = Q3ReagentsOperationInfo.quality % 1
+    local baseQualityFactor = baseOperationInfo.quality % 1
+    local exactSkillQ3Reagents = Q3ReagentsOperationInfo.lowerSkillThreshold + (Q3ReagentsThresholdSkillDifference*Q3ReagentsQualityFactor)
+    local exactBaseSkill = baseOperationInfo.lowerSkillThreshold + (baseThresholdSkillDifference*baseQualityFactor)
+
+    local reagentQualityIncrease = exactSkillQ3Reagents - exactBaseSkill
+
+    print("Reagent Quality Increase: " .. tostring(reagentQualityIncrease))
+
+    local maxReagentIncreaseFactor = recipeData.baseDifficulty / reagentQualityIncrease
+
+    print("maxReagentIncreaseFactor: " .. tostring(maxReagentIncreaseFactor))
+
+    local percentFactor = (100 / maxReagentIncreaseFactor) / 100
+
+    print("maxReagentIncreaseFactor % of difficulty: " .. tostring(percentFactor) .. " %")
+
+    return percentFactor
+end
+
+function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
+    local recipeDataNoReagents = CopyTable(recipeData)
+
+    -- get operationinfo of recipe with no reagents
+    local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, {}, recipeData.recraftAllocationGUID)
+
+    -- create CraftingReagentInfoTbl from current reagents
+    -- https://wowpedia.fandom.com/wiki/API_C_TradeSkillUI.GetCraftingOperationInfo
+    local craftingReagentInfoTbl = {}
+    for index, reagent in pairs(recipeData.reagents) do
+        if reagent.differentQualities then
+            for _, itemInfo in pairs(reagent.itemsInfo) do
+                local infoEntry = {
+                    itemID = itemInfo.itemID,
+                    quantity = itemInfo.allocations,
+                    dataSlotIndex = 2,
+                }
+                table.insert(craftingReagentInfoTbl, infoEntry)
+            end
+        end
+    end
+    local currentOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, recipeData.recraftAllocationGUID)
+    print("Base Operation Info")
+    print(baseOperationInfo)
+    print("Current Operation Info")
+    print(currentOperationInfo)
+
+    local currentThresholdSkillDifference = currentOperationInfo.upperSkillTreshold - currentOperationInfo.lowerSkillThreshold -- upperSkillTreshold is a blizz typo
+    local baseThresholdSkillDifference = baseOperationInfo.upperSkillTreshold - baseOperationInfo.lowerSkillThreshold -- upperSkillTreshold is a blizz typo
+    
+    local currentQualityFactor = currentOperationInfo.quality % 1
+    local baseQualityFactor = baseOperationInfo.quality % 1
+    local exactSkillCurrent = currentOperationInfo.lowerSkillThreshold + (currentThresholdSkillDifference*currentQualityFactor)
+    local exactBaseSkill = baseOperationInfo.lowerSkillThreshold + (baseThresholdSkillDifference*baseQualityFactor)
+
+    print("Exact Skill Base: " .. tostring(exactBaseSkill))
+    print("Exact Skill Current: " .. tostring(exactSkillCurrent))
+
+    local reagentQualityIncrease = exactSkillCurrent - exactBaseSkill
+
+    print("Reagent Quality Increase: " .. tostring(reagentQualityIncrease))
+
+    return reagentQualityIncrease
+end
+
+function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncreaseOLD(recipeData)
 
     local matBonus = {}
     local totalWeight = 0
@@ -464,7 +559,7 @@ function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(
     end
 
     local matSkillBonus = 0
-    local recipeMaxSkillBonus = 0.25 * recipeData.baseDifficulty
+    local recipeMaxSkillBonus = recipeData.maxReagentSkillIncreaseFactor * recipeData.baseDifficulty
     for _, bonus in pairs(matBonus) do
         matSkillBonus = matSkillBonus + bonus / totalWeight * recipeMaxSkillBonus
     end
