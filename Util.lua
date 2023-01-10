@@ -155,8 +155,6 @@ function CraftSim.UTIL:GetRecipeType(recipeInfo) -- the raw info
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
     if recipeInfo.isEnchantingRecipe then
         return CraftSim.CONST.RECIPE_TYPES.ENCHANT
-    elseif recipeInfo.isRecraft then
-        return CraftSim.CONST.RECIPE_TYPES.RECRAFT
     elseif schematicInfo.hasGatheringOperationInfo then
         return CraftSim.CONST.RECIPE_TYPES.GATHERING
     elseif recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil then -- its gear

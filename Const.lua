@@ -108,10 +108,9 @@ CraftSim.CONST.RECIPE_TYPES = {
     MULTIPLE = 4, -- like potions..
     SINGLE = 5, -- like omnium draconis
     NO_CRAFT_OPERATION = 6, -- like reclaim from alchemy
-    RECRAFT = 7, -- like well.. recraft
-    GATHERING = 8,
-    NO_ITEM = 9, -- like phial experimentation
-    ENCHANT = 10,
+    GATHERING = 7,
+    NO_ITEM = 8, -- like phial experimentation
+    ENCHANT = 9,
 }
 
 CraftSim.CONST.GEAR_SIM_MODES = {

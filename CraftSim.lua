@@ -277,9 +277,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		return
 	end
 
-    local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
-    --print("trigger by recipeType.. " .. tostring(recipeType))
-
 	local recipeData = nil 
 	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
 		recipeData = CraftSim.SIMULATION_MODE.recipeData
@@ -292,6 +289,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		recipeData = nil
 		debugTest = false
 	end
+
+	local recipeType = recipeData and recipeData.recipeType
+    --print("trigger by recipeType.. " .. tostring(recipeType))
 
 	local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
     -- when to see what?
@@ -313,7 +313,10 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	if recipeData and priceData then
 		CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
 
-		if recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
+		if recipeData.isRecraft then
+			-- show everything that is not dependent on calculated end quality
+			showSpecInfo = true
+		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
 			-- show everything
 			showMaterialAllocation = true
 			showTopGear = true
@@ -348,8 +351,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			showStatweights = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
 			-- show nothing
-		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.RECRAFT then
-			-- show nothing? Depends..
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GATHERING then
 			-- show nothing maybe later some top gear for gathering
 		end
@@ -363,7 +364,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
 	showSpecInfo = showSpecInfo and CraftSimOptions.modulesSpecInfo and recipeData and recipeData.specNodeData
 
-	if recipeData and recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING and recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION and recipeType ~= CraftSim.CONST.RECIPE_TYPES.RECRAFT then
+	if recipeData and recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING and recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
 		CraftSim.FRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
 	end
 

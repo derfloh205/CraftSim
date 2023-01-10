@@ -389,13 +389,20 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	recipeData.recipeID = recipeInfo.recipeID
 	print("recipeID: " .. tostring(recipeData.recipeID))
 	recipeData.recipeType = recipeType
-	print("recipeType: " .. tostring(recipeData.recipeType))
+	
 	
 	local operationInfo = schematicForm:GetRecipeOperationInfo()
 	
     if operationInfo == nil or recipeType == CraftSim.CONST.RECIPE_TYPES.GATHERING then
         return nil
     end
+	local currentTransaction = schematicForm.transaction or schematicForm:GetTransaction()
+	
+	recipeData.isRecraft = currentTransaction:GetRecraftAllocation() ~= nil -- I dont know why but isRecraft is false on recrafts ?
+	print("isRecraft: " .. tostring(recipeData.isRecraft))
+
+	print("recipeType: " .. tostring(recipeData.recipeType))
+
 	recipeData.expectedQuality = operationInfo.craftingQuality
 	recipeData.operationInfo = operationInfo
 	print("expectedQuality: " .. tostring(recipeData.expectedQuality))
@@ -405,7 +412,6 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	print("isEnchantingRecipe: " .. tostring(recipeData.isEnchantingRecipe))
 	
 	
-	local currentTransaction = schematicForm.transaction or schematicForm:GetTransaction()
 	
 	recipeData.currentTransaction = currentTransaction
 	recipeData.reagents = {}
@@ -423,8 +429,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	end
 
 	local hasReagentsWithQuality = false
-	recipeData.isRecraft = currentTransaction:GetRecraftAllocation() ~= nil -- I dont know why but isRecraft is false on recrafts ?
-	print("isRecraft: " .. tostring(recipeData.isRecraft))
+	
 	local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeData.recipeID, recipeData.isRecraft)
 	-- this includes finishing AND optionalReagents too!!!
 
@@ -588,14 +593,6 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 		recipeData.result.isNoQuality = true	
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
 		-- nothing cause there is no result
-	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.RECRAFT then
-		recipeData.result.itemID = schematicInfo.outputItemID
-		
-		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
-		recipeData.result.hyperlink = outputItemData.hyperlink
-		local baseIlvl = recipeInfo.itemLevel
-		recipeData.result.itemQualityLinks = CraftSim.DATAEXPORT:GetDifferentQualityLinksByLink(outputItemData.hyperlink)
-		recipeData.result.baseILvL = baseIlvl
 	else
 		print("recipeType not covered in export: " .. tostring(recipeType))
 	end
@@ -800,6 +797,9 @@ function CraftSim.DATAEXPORT:ExportTooltipData(recipeData)
 end
 
 function CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
+	if recipeData.isRecraft then
+		return
+	end
 	local data = CraftSim.DATAEXPORT:ExportTooltipData(recipeData)
     if recipeData.recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeData.recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR then
         -- map itemlinks to data
@@ -807,7 +807,7 @@ function CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
 	elseif recipeData.recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeData.recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
 		CraftSimTooltipData[recipeData.result.itemID] = data
 	elseif recipeData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING and recipeData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION and
-	 recipeData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.RECRAFT and recipeData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
+	    recipeData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
         -- map itemids to data
         -- the item id has a certain quality, so remember the itemid and the current crafting costs as "last crafting costs"
         CraftSimTooltipData[recipeData.result.itemIDs[recipeData.expectedQuality]] = data
