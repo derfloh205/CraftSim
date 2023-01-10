@@ -29,7 +29,8 @@ Pricing/PriceData.lua
 Modules/SimulationMode/SimMode.lua
 Modules/SimulationMode/Frames.lua
 
-Modules/StatweightCalculation.lua
+Modules/AverageProfit/AverageProfit.lua
+Modules/AverageProfit/Frames.lua
 
 Modules/ReagentOptimization/ReagentOptimization.lua
 Modules/ReagentOptimization/Frames.lua

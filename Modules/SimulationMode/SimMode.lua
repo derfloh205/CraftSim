@@ -197,7 +197,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
 
     -- adjust expected quality by skill if quality recipe
     if not CraftSim.SIMULATION_MODE.recipeData.result.isNoQuality then
-        CraftSim.SIMULATION_MODE.recipeData.expectedQuality = CraftSim.STATS:GetExpectedQualityBySkill(CraftSim.SIMULATION_MODE.recipeData, CraftSim.SIMULATION_MODE.recipeData.stats.skill, CraftSimOptions.breakPointOffset)
+        CraftSim.SIMULATION_MODE.recipeData.expectedQuality = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(CraftSim.SIMULATION_MODE.recipeData, CraftSim.SIMULATION_MODE.recipeData.stats.skill, CraftSimOptions.breakPointOffset)
     end
 end
 

@@ -150,7 +150,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.LOCAL:Init()
 
 		CraftSim.FRAME:InitDebugFrame()
-		CraftSim.FRAME:InitStatWeightFrame()
+		CraftSim.AVERAGEPROFIT.FRAMES:Init()
 		CraftSim.TOPGEAR.FRAMES:Init()
 		CraftSim.COSTOVERVIEW.FRAMES:Init()
 		CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
@@ -397,9 +397,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	CraftSim.FRAME:ToggleFrame(CraftSimDetailsFrame, showStatweights)
 	if showStatweights then
-		local statWeights = CraftSim.STATS:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
+		local statWeights = CraftSim.AVERAGEPROFIT:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
 		if statWeights ~= CraftSim.CONST.ERROR.NO_PRICE_DATA then
-			CraftSim.FRAME:UpdateStatWeightFrameText(priceData, statWeights)
+			CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplay(priceData, statWeights)
 		end
 	end
 

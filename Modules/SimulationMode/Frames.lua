@@ -545,7 +545,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(qualityFrame, not CraftSim.SIMULATION_MODE.recipeData.result.isNoQuality)
     if not CraftSim.SIMULATION_MODE.recipeData.result.isNoQuality then
         --print("getting thresholds with difficulty: " .. CraftSim.SIMULATION_MODE.recipeData.recipeDifficulty)
-        local thresholds = CraftSim.STATS:GetQualityThresholds(CraftSim.SIMULATION_MODE.recipeData.maxQuality, CraftSim.SIMULATION_MODE.recipeData.recipeDifficulty, CraftSimOptions.breakPointOffset)
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(CraftSim.SIMULATION_MODE.recipeData.maxQuality, CraftSim.SIMULATION_MODE.recipeData.recipeDifficulty, CraftSimOptions.breakPointOffset)
         qualityFrame.currentQualityIcon.SetQuality(CraftSim.SIMULATION_MODE.recipeData.expectedQuality)
         qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[CraftSim.SIMULATION_MODE.recipeData.expectedQuality - 1] or 0))
         

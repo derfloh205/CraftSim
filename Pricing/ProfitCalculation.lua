@@ -13,10 +13,10 @@ function CraftSim.CALC:handleInspiration(recipeData, priceData, crafts, craftedI
     local inspirationQuality = recipeData.expectedQuality
 
     if recipeData.expectedQuality ~= recipeData.maxQuality and recipeData.stats.inspiration ~= nil then
-        local qualityThresholds = CraftSim.STATS:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
+        local qualityThresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
         local qualityUpgradeThreshold = qualityThresholds[recipeData.expectedQuality]
         local skillWithInspiration = recipeData.stats.skill + recipeData.stats.inspiration.bonusskill
-        inspirationQuality = CraftSim.STATS:GetExpectedQualityBySkill(recipeData, skillWithInspiration)
+        inspirationQuality = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skillWithInspiration)
         inspirationCanUpgrade = recipeData.expectedQuality < inspirationQuality
     end
     if inspirationCanUpgrade then

@@ -255,7 +255,7 @@ function CraftSim.TOPGEAR:GetModifiedRecipeDataByStatChanges(recipeData, recipeT
         recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE and 
         recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
         modifiedRecipeData.stats.skill = modifiedRecipeData.stats.skill + statChanges.skill
-        local expectedQualityWithItems = CraftSim.STATS:GetExpectedQualityBySkill(modifiedRecipeData, modifiedRecipeData.stats.skill, true)
+        local expectedQualityWithItems = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(modifiedRecipeData, modifiedRecipeData.stats.skill, true)
         --print("expectedQ with Items: " .. tostring(expectedQualityWithItems))
         local oldexpected = modifiedRecipeData.expectedQuality
         modifiedRecipeData.expectedQuality = expectedQualityWithItems
@@ -336,7 +336,7 @@ function CraftSim.TOPGEAR:DeductCurrentItemStats(recipeData, recipeType)
         noItemRecipeData.stats.skill = noItemRecipeData.stats.skill - itemStats.skill
 
         -- recalculate expected quality in case it decreases..
-        local expectedQualityWithoutItems = CraftSim.STATS:GetExpectedQualityBySkill(noItemRecipeData, noItemRecipeData.stats.skill)
+        local expectedQualityWithoutItems = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(noItemRecipeData, noItemRecipeData.stats.skill)
         --print("expectedQ with Items: " .. tostring(expectedQualityWithItems))
         local oldexpected = noItemRecipeData.expectedQuality
         noItemRecipeData.expectedQuality = expectedQualityWithoutItems
