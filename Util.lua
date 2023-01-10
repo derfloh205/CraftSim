@@ -151,6 +151,10 @@ function CraftSim.UTIL:isItemSoulbound(itemID)
     return bindType == CraftSim.CONST.BINDTYPES.SOULBOUND
 end
 
+function CraftSim.UTIL:GetQualityIconAsText(qualityID, sizeX, sizeY)
+    return CreateAtlasMarkup("Professions-Icon-Quality-Tier" .. qualityID, sizeX, sizeY)
+end
+
 function CraftSim.UTIL:GetRecipeType(recipeInfo) -- the raw info
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
     if recipeInfo.isEnchantingRecipe then

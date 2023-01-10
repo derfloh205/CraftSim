@@ -362,11 +362,11 @@ function CraftSim.FRAME:InitCostOverviewFrame()
         
         profitFrame.itemLinkText = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         profitFrame.itemLinkText:SetPoint("CENTER", profitFrame, "CENTER", 0, 0)
-        profitFrame.itemLinkText:SetText("???")
+        profitFrame.itemLinkText:SetText("")
 
         profitFrame.text = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         profitFrame.text:SetPoint("TOP", profitFrame.itemLinkText, "BOTTOM", 0, -7)
-        profitFrame.text:SetText("???")
+        profitFrame.text:SetText("")
         
         --profitFrame.qualityID -- this will be set by the fill function 
 
@@ -458,6 +458,10 @@ function CraftSim.FRAME:FillCostOverview(craftingCosts, minCraftingCosts, profit
                 profitFrame.itemLinkText:SetText((itemData and itemData.link) or "Loading..")
             elseif recipeData.result.itemQualityLinks then
                 profitFrame.itemLinkText:SetText(recipeData.result.itemQualityLinks[qualityID] or "Loading..")
+            else
+                -- if no item recipe e.g. show quality icon
+                local qualityText = CraftSim.UTIL:GetQualityIconAsText(qualityID, 20, 20)
+                profitFrame.itemLinkText:SetText(qualityText)
             end
             profitFrame.qualityID = qualityID
             local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
