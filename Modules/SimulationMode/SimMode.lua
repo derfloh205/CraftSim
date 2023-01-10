@@ -19,11 +19,6 @@ local function print(text, recursive, l) -- override
 	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE, recursive, l)
 end
 
-function CraftSim.SIMULATION_MODE:Init()
-
-    CraftSim.FRAME:InitSimModeFrames()
-end
-
 function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(userInput)
     if not userInput or not CraftSim.SIMULATION_MODE.recipeData then
         return
@@ -210,7 +205,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
     CraftSim.SIMULATION_MODE:UpdateReagentAllocationsByInput()
     CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
     CraftSim.SIMULATION_MODE:UpdateGearResultItemsByInputs()
-    CraftSim.FRAME:UpdateSimModeStatDisplay()
+    CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateGearResultItemsByInputs()
@@ -304,9 +299,9 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     end
     
     -- update frame visiblity and initialize the input fields
-    CraftSim.FRAME:ToggleSimModeFrames()
-    CraftSim.FRAME:InitilizeSimModeReagentOverwrites()
-    CraftSim.FRAME:InitializeSimModeOptionalReagentDropdowns()
+    CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
+    CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames()
+    CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns()
 
     -- update simulation recipe data and frontend
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()

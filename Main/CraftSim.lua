@@ -152,13 +152,13 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.FRAME:InitDebugFrame()
 		CraftSim.FRAME:InitStatWeightFrame()
 		CraftSim.FRAME:InitGearSimFrame()
-		CraftSim.FRAME:InitCostOverviewFrame()
+		CraftSim.COSTOVERVIEW.FRAMES:Init()
 		CraftSim.FRAME:InitBestAllocationsFrame()
 		CraftSim.FRAME:InitProfitDetailsFrame()
 		CraftSim.FRAME:InitSpecInfoFrame()
 		CraftSim.FRAME:InitWarningFrame()
 		CraftSim.FRAME:InitOneTimeNoteFrame()
-		CraftSim.SIMULATION_MODE:Init()
+		CraftSim.SIMULATION_MODE.FRAMES:Init()
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
 		CraftSim.MAIN:handleCraftSimOptionsUpdates()
@@ -381,7 +381,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	-- do not show simulation possibility on salvaging for now
 	showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
 	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.toggleButton, showSimulationMode)
-	CraftSim.FRAME:ToggleSimModeFrames() -- show sim mode frames depending if active or not
+	CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility() -- show sim mode frames depending if active or not
 	if CraftSim.SIMULATION_MODE.isActive and recipeData then -- recipeData could still be nil here if e.g. in a gathering recipe
 		-- update simulationframe recipedata by inputs and the frontend
 		-- since recipeData is a reference here to the recipeData in the simulationmode, 

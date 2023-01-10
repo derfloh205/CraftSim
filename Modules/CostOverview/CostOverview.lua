@@ -16,5 +16,5 @@ function CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, pri
         end
     end
 
-    CraftSim.FRAME:FillCostOverview(priceData.craftingCostPerCraft, priceData.minimumCostPerCraft, profitByNextQualities, 1) --recipeData.expectedQuality)
+    CraftSim.COSTOVERVIEW.FRAMES:Fill(priceData.craftingCostPerCraft, priceData.minimumCostPerCraft, profitByNextQualities, 1) --recipeData.expectedQuality)
 end

@@ -12,25 +12,29 @@
 
 embeds.xml
 
-Main/CraftSim.lua
-Options/Options.lua
-Options/AccountSync.lua
-
+Util/Debug.lua
 Util/Util.lua
 Util/Tooltip.lua
 Util/Const.lua
-Util/Debug.lua
+Util/Frames.lua
+
+Main/CraftSim.lua
+Options/Options.lua
+Options/AccountSync.lua
 
 Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
 Pricing/PriceData.lua
 
-Modules/SimMode.lua
+Modules/SimulationMode/SimMode.lua
+Modules/SimulationMode/Frames.lua
+
 Modules/StatweightCalculation.lua
 Modules/ReagentOptimization.lua
-Modules/Frames.lua
 Modules/GearSim.lua
-Modules/CostOverview.lua
+
+Modules/CostOverview/CostOverview.lua
+Modules/CostOverview/Frames.lua
 
 Locals/Localization.lua
 Locals/enUS.lua
