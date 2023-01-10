@@ -30,7 +30,9 @@ Modules/SimulationMode/SimMode.lua
 Modules/SimulationMode/Frames.lua
 
 Modules/StatweightCalculation.lua
-Modules/ReagentOptimization.lua
+
+Modules/ReagentOptimization/ReagentOptimization.lua
+Modules/ReagentOptimization/Frames.lua
 
 Modules/TopGear/TopGear.lua
 Modules/TopGear/Frames.lua
