@@ -17,6 +17,10 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("Hello and thank you for using CraftSim!\n", bb) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        c("\n\n\n--- Version 1.7.5 ---", l) ..
+        c("\n\n\nMax Reagent Skill Contribution", bb) .. " is now 25% of recipe difficulty\nfor everything except recrafts. For those the\n" ..
+        "factor will be calculated." ..
+        c("\n\n\nMax Reagent Skill %", g) .. " display added in " .. c("Simulation Mode", bb) ..
         c("\n\n\n--- Version 1.7.4 ---", l) ..
         "\n\nMany fixes to the optional/finishing reagents in " .. c("Simulation Mode", g) ..
         "\n\n" .. c("Simulation Mode", g) .. " now correctly shows\nthe OutputItem Links for gear\nconsidering missives, infusions and embellishments" ..
