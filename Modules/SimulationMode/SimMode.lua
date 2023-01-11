@@ -150,8 +150,8 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
 
     -- update skill by input modifier and reagent skill increase
     local skillMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true)
-    CraftSim.SIMULATION_MODE.recipeData.stats.skill = CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents + reagentSkillIncrease + skillMod + statsByOptionalInputs.skill
-    CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents = CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents + statsByOptionalInputs.skill
+    CraftSim.SIMULATION_MODE.recipeData.stats.skill = CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents + reagentSkillIncrease + skillMod + statsByOptionalInputs.skill + (specNodeStats and specNodeStats.skill or 0)
+    CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents = CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents + statsByOptionalInputs.skill + (specNodeStats and specNodeStats.skill or 0)
 
     -- update difficulty based on input
     local recipeDifficultyMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput, true)
@@ -163,7 +163,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
         local inspirationSkillMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeInspirationSkillModInput, true)
         local inspirationBonusSkillFactor = statsByOptionalInputs.inspirationBonusSkillFactor % 1
         local specNodeBonusSkillFactor = (specNodeStats and (specNodeStats.inspirationBonusSkillFactor % 1)) or 0
-        CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value + inspirationMod + statsByOptionalInputs.inspiration
+        CraftSim.SIMULATION_MODE.recipeData.stats.inspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value + inspirationMod + statsByOptionalInputs.inspiration + (specNodeStats and specNodeStats.inspiration or 0)
         print("bonusskillfactornospecs: " .. CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs)
         print("inspirationBonusSkillFactorReagents: " .. inspirationBonusSkillFactor)
         CraftSim.SIMULATION_MODE.recipeData.stats.inspirationBonusSkillFactor =  CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs + inspirationBonusSkillFactor + specNodeBonusSkillFactor
@@ -181,22 +181,24 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
 
     if CraftSim.SIMULATION_MODE.recipeData.stats.multicraft then
         local multicraftMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeMulticraftModInput, true)
-        CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.value = CraftSim.SIMULATION_MODE.baseMulticraft.value + multicraftMod + statsByOptionalInputs.multicraft
+        CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.value = CraftSim.SIMULATION_MODE.baseMulticraft.value + multicraftMod + statsByOptionalInputs.multicraft + (specNodeStats and specNodeStats.multicraft or 0)
         CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.percent = CraftSim.UTIL:GetMulticraftPercentByStat(CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.value) * 100
         if CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.percent > 100 then
             -- More than 100 is not possible and it does not make sense in the calculation and would inflate the worth
             CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.percent = 100
         end
+        CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.bonusItemsFactor = CraftSim.SIMULATION_MODE.baseMulticraft.bonusItemsFactorNoSpecs + (specNodeStats and (specNodeStats.multicraftExtraItemsFactor % 1) or 0)
     end
-
+    
     if CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness then
         local resourcefulnessMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeResourcefulnessModInput, true)
-        CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.value = CraftSim.SIMULATION_MODE.baseResourcefulness.value + resourcefulnessMod + statsByOptionalInputs.resourcefulness
+        CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.value = CraftSim.SIMULATION_MODE.baseResourcefulness.value + resourcefulnessMod + statsByOptionalInputs.resourcefulness + (specNodeStats and specNodeStats.resourcefulness or 0)
         CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.percent = CraftSim.UTIL:GetResourcefulnessPercentByStat(CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.value) * 100
         if CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.percent > 100 then
             -- More than 100 is not possible and it does not make sense in the calculation and would inflate the worth
             CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.percent = 100
         end
+        CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.bonusItemsFactor = CraftSim.SIMULATION_MODE.baseResourcefulness.bonusItemsFactorNoSpecs + (specNodeStats and (specNodeStats.resourcefulnessExtraItemsFactor % 1) or 0)
     end
 
     -- adjust expected quality by skill if quality recipe
@@ -283,22 +285,26 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         CraftSim.SIMULATION_MODE.baseSpecNodeData = CopyTable(CraftSim.SIMULATION_MODE.recipeData.specNodeData) -- to make a reset possible
         CraftSim.SIMULATION_MODE.baseRecipeDifficulty = CraftSim.SIMULATION_MODE.recipeData.baseDifficulty
         
+        local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[CraftSim.SIMULATION_MODE.recipeData.professionID]
+
+        -- need to deduct specnode stats, for later update by specnode stats
+        local specNodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(CraftSim.SIMULATION_MODE.recipeData, ruleNodes)
         
         if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration then
             CraftSim.SIMULATION_MODE.baseInspiration = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration)
-            CraftSim.SIMULATION_MODE.baseInspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value - statsByOptionalInputs.inspiration
-            CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs = CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs -- - (statsByOptionalInputs.inspirationBonusSkillFactor % 1)
-            CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents = CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents - statsByOptionalInputs.skill
+            CraftSim.SIMULATION_MODE.baseInspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value - statsByOptionalInputs.inspiration - specNodeStats.inspiration
+            --CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs = CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs
+            CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents = CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents - statsByOptionalInputs.skill - specNodeStats.skill
         end
         
         if CraftSim.SIMULATION_MODE.recipeData.stats.multicraft then
             CraftSim.SIMULATION_MODE.baseMulticraft = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.multicraft)
-            CraftSim.SIMULATION_MODE.baseMulticraft.value = CraftSim.SIMULATION_MODE.baseMulticraft.value - statsByOptionalInputs.multicraft
+            CraftSim.SIMULATION_MODE.baseMulticraft.value = CraftSim.SIMULATION_MODE.baseMulticraft.value - statsByOptionalInputs.multicraft - specNodeStats.multicraft
         end
         
         if CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness then
             CraftSim.SIMULATION_MODE.baseResourcefulness = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness)
-            CraftSim.SIMULATION_MODE.baseResourcefulness.value = CraftSim.SIMULATION_MODE.baseResourcefulness.value - statsByOptionalInputs.resourcefulness
+            CraftSim.SIMULATION_MODE.baseResourcefulness.value = CraftSim.SIMULATION_MODE.baseResourcefulness.value - statsByOptionalInputs.resourcefulness - specNodeStats.resourcefulness
         end
     end
     

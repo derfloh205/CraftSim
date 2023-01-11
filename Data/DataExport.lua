@@ -81,10 +81,14 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operation
 			recipeData.stats.multicraft.value = statInfo.bonusStatValue
 			recipeData.stats.multicraft.description = statInfo.ratingDescription
 			recipeData.stats.multicraft.percent = statInfo.ratingPct
+			-- will be set in extra item factors fetch
+			recipeData.stats.multicraft.bonusItemsFactorNoSpecs = 0
 		elseif statName == resourcefulness then
 			recipeData.stats.resourcefulness.value = statInfo.bonusStatValue
 			recipeData.stats.resourcefulness.description = statInfo.ratingDescription
 			recipeData.stats.resourcefulness.percent = statInfo.ratingPct
+			-- will be set in extra item factors fetch
+			recipeData.stats.resourcefulness.bonusItemsFactorNoSpecs = 0
 		end
 	end
 
@@ -266,12 +270,13 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		-- TODO BUFFS?
 		local specNodeBonus = specNodeStats.multicraft
 		local itemBonus = professionGearStats.multicraft
-		local specNodeBonusItemsFactor = specNodeStats.multicraftExtraItemsFactor
-		-- TODO: consider ??? I think in cooking maybe
-		local finishingReagentsBonusItemsFactor = optionalReagentsStats.multicraftExtraItemsFactor
+		local specNodeBonusItemsFactor = specNodeStats.multicraftExtraItemsFactor % 1
+		local finishingReagentsBonusItemsFactor = optionalReagentsStats.multicraftExtraItemsFactor %1
+
 		recipeData.stats.multicraft.value = buffStats.multicraft + itemBonus + specNodeBonus
 		recipeData.stats.multicraft.percent = CraftSim.UTIL:GetMulticraftPercentByStat(recipeData.stats.multicraft.value) * 100
-		recipeData.stats.multicraft.bonusItemsFactor = specNodeBonusItemsFactor * finishingReagentsBonusItemsFactor
+		recipeData.stats.multicraft.bonusItemsFactor = specNodeBonusItemsFactor + finishingReagentsBonusItemsFactor
+		recipeData.stats.multicraft.bonusItemsFactorNoSpecs = 0
 	end
 
 	-- resourcefulness
@@ -279,13 +284,14 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 		-- TODO BUFFS?
 		local specNodeBonus = specNodeStats.resourcefulness
 		local itemBonus = professionGearStats.resourcefulness
-		local specNodeBonusItemsFactor = specNodeStats.resourcefulnessExtraItemsFactor
+		local specNodeBonusItemsFactor = specNodeStats.resourcefulnessExtraItemsFactor % 1
 		-- TODO: consider ??? Dont know if that even exists
-		local finishingReagentsBonusItemsFactor = optionalReagentsStats.resourcefulnessExtraItemsFactor
+		local finishingReagentsBonusItemsFactor = optionalReagentsStats.resourcefulnessExtraItemsFactor % 1
 
 		recipeData.stats.resourcefulness.value = buffStats.resourcefulness + itemBonus + specNodeBonus
 		recipeData.stats.resourcefulness.percent = CraftSim.UTIL:GetResourcefulnessPercentByStat(recipeData.stats.resourcefulness.value) * 100
 		recipeData.stats.resourcefulness.bonusItemsFactor = specNodeBonusItemsFactor * finishingReagentsBonusItemsFactor
+		recipeData.stats.resourcefulness.bonusItemsFactorNoSpecs = 0
 	end
 
 	-- craftingspeed
@@ -613,6 +619,8 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 
 	if not CraftSim.UTIL:IsSpecImplemented(recipeData.professionID) then
 		recipeData.extraItemFactors = CraftSim.SPEC_DATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
+		print("NoSpec ExtraItemFactors:")
+		print(recipeData.extraItemFactors, true)
 	else
 		print(CraftSim.UTIL:ColorizeText("Recipe is using SpecData", CraftSim.CONST.COLORS.GREEN))
 		recipeData.buffData = CraftSim.DATAEXPORT:exportBuffData()

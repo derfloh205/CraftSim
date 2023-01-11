@@ -52,12 +52,12 @@ function CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedIt
         local multicraftExtraItemsFactor = 1
 
         if specData then
-            multicraftExtraItemsFactor = recipeData.stats.multicraft.extraItemsFactor
+            multicraftExtraItemsFactor = 1 + recipeData.stats.multicraft.bonusItemsFactor
         else
             multicraftExtraItemsFactor = recipeData.extraItemFactors.multicraftExtraItemsFactor
         end
         
-        expectedAdditionalItems = expectedAdditionalItems * (multicraftExtraItemsFactor or 1)
+        expectedAdditionalItems = expectedAdditionalItems * multicraftExtraItemsFactor
 
         -- Since multicraft and inspiration can proc together add expected multicraft gain to both qualities
         local multicraftProcsBase = crafts.baseQuality*(recipeData.stats.multicraft.percent / 100)
@@ -83,13 +83,13 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, cal
     local resourcefulnessExtraItemsFactor = 1
 
     if specData then
-        resourcefulnessExtraItemsFactor = recipeData.stats.resourcefulness.extraItemsFactor
+        resourcefulnessExtraItemsFactor = 1 + recipeData.stats.resourcefulness.bonusItemsFactor
     else
         resourcefulnessExtraItemsFactor = recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
     end
 
     if recipeData.salvageReagent then
-        return (priceData.salvageReagentPrice * recipeData.salvageReagent.requiredQuantity) * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (resourcefulnessExtraItemsFactor or 1)) 
+        return (priceData.salvageReagentPrice * recipeData.salvageReagent.requiredQuantity) * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * resourcefulnessExtraItemsFactor) 
     end
 
     local savedCosts = 0

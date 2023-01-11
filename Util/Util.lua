@@ -328,8 +328,16 @@ function CraftSim.UTIL:FoldTable(t, foldFunction, startAtZero)
 end
 
 function CraftSim.UTIL:FormatFactorToPercent(factor)
-    local percentText = CraftSim.UTIL:round((factor-1) * 100, 0)
+    local percentText = CraftSim.UTIL:round((factor % 1) * 100)
     return "+" .. percentText .. "%"
+end
+
+function CraftSim.UTIL:GreyOutByCondition(text, condition)
+    if condition then
+        CraftSim.UTIL:ColorizeText(text, CraftSim.CONST.COLORS.GREY)
+    else
+        return text
+    end
 end
 
 function CraftSim.UTIL:ColorizeText(text, color)

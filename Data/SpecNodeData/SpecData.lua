@@ -226,11 +226,21 @@ function CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, ruleNodes)
         -- only increase if the current recipe has a matching category (like whetstone -> stonework, then only stonework marked nodes are relevant)
         -- or if categoryID of nodeData is nil which means its for the whole profession
         -- or if its debugged
-        if nodeData and nodeData.categoryIDs and nodeData.threshold and nodeInfo and (nodeData.debug or (tContains(nodeData.categoryIDs, recipeData.categoryID) or #nodeData.categoryIDs == 0) and (nodeInfo.activeRank - 1) >= nodeData.threshold) then
-            -- they stack multiplicatively
-            extraItemFactors.multicraftExtraItemsFactor = extraItemFactors.multicraftExtraItemsFactor * (1 + (nodeData.multicraftExtraItemsFactor or 0))
-            extraItemFactors.resourcefulnessExtraItemsFactor = extraItemFactors.resourcefulnessExtraItemsFactor * (1 + (nodeData.resourcefulnessExtraItemsFactor or 0))
+        local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
+        local nodeRank = nodeInfo.activeRank
+        local nodeAffectsRecipe = nodeRank > 0 and CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
+        if nodeAffectsRecipe then
+            -- they stack additively
+            extraItemFactors.multicraftExtraItemsFactor = extraItemFactors.multicraftExtraItemsFactor + (nodeData.multicraftExtraItemsFactor or 0)
+            extraItemFactors.resourcefulnessExtraItemsFactor = extraItemFactors.resourcefulnessExtraItemsFactor + (nodeData.resourcefulnessExtraItemsFactor or 0)
         end
+    end
+
+    if recipeData.stats.multicraft then
+        recipeData.stats.multicraft.bonusItemsFactorNoSpecs = extraItemFactors.multicraftExtraItemsFactor % 1
+    end
+    if recipeData.stats.resourcefulness then
+        recipeData.stats.resourcefulness.bonusItemsFactorNoSpecs = extraItemFactors.resourcefulnessExtraItemsFactor % 1
     end
     return extraItemFactors
 end

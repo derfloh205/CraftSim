@@ -107,7 +107,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     -- DETAILS FRAME
     local simModeDetailsFrame = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimSimModeDetailsFrame", 
-        "CraftSim Details", 
+        "CraftSim Simulation Mode", 
         ProfessionsFrame.CraftingPage.SchematicForm,
         ProfessionsFrame.CraftingPage.SchematicForm.Details, 
         "TOPRIGHT", 
@@ -115,7 +115,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         30, 
         0, 
         350, 
-        325, 
+        355, 
         CraftSim.CONST.FRAMES.CRAFTING_DETAILS)
 
         local offsetY = -20
@@ -193,9 +193,18 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         simModeDetailsFrame.content.multicraftValue:SetPoint("RIGHT", simModeDetailsFrame.content.multicraftMod, "LEFT", valueOffsetX, valueOffsetY)
         simModeDetailsFrame.content.multicraftValue:SetText("0")
 
+        -- Multicraft BonusItemsFactor
+        simModeDetailsFrame.content.multicraftBonusTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.multicraftBonusTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.multicraftTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.multicraftBonusTitle:SetText("Multicraft Item Bonus: ")
+
+        simModeDetailsFrame.content.multicraftBonusValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.multicraftBonusValue:SetPoint("TOP", simModeDetailsFrame.content.multicraftMod, "BOTTOM", 0, -3)
+        simModeDetailsFrame.content.multicraftBonusValue:SetText("0%")
+
         -- Resourcefulness
         simModeDetailsFrame.content.resourcefulnessTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-        simModeDetailsFrame.content.resourcefulnessTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.multicraftTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.resourcefulnessTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.multicraftBonusTitle, "TOPLEFT", 0, offsetY)
         simModeDetailsFrame.content.resourcefulnessTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL))
         simModeDetailsFrame.content.resourcefulnessTitle.helper = CraftSim.FRAME:CreateHelpIcon(
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP), 
@@ -203,22 +212,31 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
 
         simModeDetailsFrame.content.resourcefulnessMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeResourcefulnessModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.multicraftMod, 
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
         simModeDetailsFrame.content.resourcefulnessMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS
 
         simModeDetailsFrame.content.resourcefulnessValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         simModeDetailsFrame.content.resourcefulnessValue:SetPoint("RIGHT", simModeDetailsFrame.content.resourcefulnessMod, "LEFT", valueOffsetX, valueOffsetY)
         simModeDetailsFrame.content.resourcefulnessValue:SetText("0")
 
+        -- Resourcefulness BonusItemsFactor
+        simModeDetailsFrame.content.resourcefulnessBonusTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.resourcefulnessBonusTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.resourcefulnessTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.resourcefulnessBonusTitle:SetText("Resourcefulness Item Bonus: ")
+
+        simModeDetailsFrame.content.resourcefulnessBonusValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.resourcefulnessBonusValue:SetPoint("TOP", simModeDetailsFrame.content.resourcefulnessMod, "BOTTOM", 0, -3)
+        simModeDetailsFrame.content.resourcefulnessBonusValue:SetText("0%")
+
         -- skill
 
         simModeDetailsFrame.content.baseSkillTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-        simModeDetailsFrame.content.baseSkillTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.resourcefulnessTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.baseSkillTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.resourcefulnessBonusTitle, "TOPLEFT", 0, offsetY)
         simModeDetailsFrame.content.baseSkillTitle:SetText("Skill:")
 
         simModeDetailsFrame.content.baseSkillMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessMod, 
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
         simModeDetailsFrame.content.baseSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL
 
         simModeDetailsFrame.content.baseSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
@@ -251,8 +269,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         simModeDetailsFrame.content.reagentMaxFactorValue:SetText("0")
 
         simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
-        simModeDetailsFrame.content.qualityFrame:SetSize(simModeDetailsFrame:GetWidth() - 40, 200)
-        simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY*10)
+        simModeDetailsFrame.content.qualityFrame:SetSize(simModeDetailsFrame:GetWidth() - 40, 230)
+        simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY*12)
         local qualityFrame = simModeDetailsFrame.content.qualityFrame
         qualityFrame.currentQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         qualityFrame.currentQualityTitle:SetPoint("TOPLEFT", qualityFrame, "TOPLEFT", 0, 0)
@@ -467,8 +485,17 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     -- only if recipe has optionalReagents
     local hasOptionalReagents = ProfessionsFrame.CraftingPage.SchematicForm.reagentSlots[0] ~= nil
     CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
+    local hasQualityReagents = CraftSim.MAIN.currentRecipeData.hasReagentsWithQuality
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.quality1Button, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.quality2Button, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.quality3Button, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.qualityIcon1, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.qualityIcon2, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.qualityIcon3, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.clearAllocationsButton, hasQualityReagents)
 
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame, CraftSim.SIMULATION_MODE.isActive)
+
     local wasNotVisibleNowIs = not ProfessionsFrame.CraftingPage.SchematicForm.Details:IsVisible()
     CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Details, not CraftSim.SIMULATION_MODE.isActive)
     wasNotVisibleNowIs = wasNotVisibleNowIs and ProfessionsFrame.CraftingPage.SchematicForm.Details:IsVisible()
@@ -538,21 +565,45 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftTitle.helper, CraftSim.SIMULATION_MODE.recipeData.stats.multicraft)
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftValue, CraftSim.SIMULATION_MODE.recipeData.stats.multicraft)
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftMod, CraftSim.SIMULATION_MODE.recipeData.stats.multicraft)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftBonusTitle, CraftSim.SIMULATION_MODE.recipeData.stats.multicraft)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftBonusValue, CraftSim.SIMULATION_MODE.recipeData.stats.multicraft)
     if CraftSim.SIMULATION_MODE.recipeData.stats.multicraft then
         local multicraftDiff = CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.value - CraftSim.SIMULATION_MODE.baseMulticraft.value
         local percentText = CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.percent, 1) .. "%"
         CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftValue:SetText(CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.value .. " (" .. CraftSim.SIMULATION_MODE.baseMulticraft.value .."+"..multicraftDiff .. ") " .. percentText)
-    end
+        
+        local specData = CraftSim.SIMULATION_MODE.recipeData.specNodeData
+        local multicraftExtraItemsFactor = 1
 
+        if specData then
+            multicraftExtraItemsFactor = CraftSim.SIMULATION_MODE.recipeData.stats.multicraft.bonusItemsFactor
+        else
+            multicraftExtraItemsFactor = CraftSim.SIMULATION_MODE.recipeData.extraItemFactors.multicraftExtraItemsFactor % 1
+        end
+        CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftBonusValue:SetText((multicraftExtraItemsFactor * 100) .. "%")
+    end
+    
     -- Resourcefulness Display
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessTitle, CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness)
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessTitle.helper, CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness)
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessValue, CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness)
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessMod, CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessBonusTitle, CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessBonusValue, CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness)
     if CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness then
         local resourcefulnessDiff = CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.value - CraftSim.SIMULATION_MODE.baseResourcefulness.value
         local percentText = CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.percent, 1) .. "%"
         CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessValue:SetText(CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.value .. " (" .. CraftSim.SIMULATION_MODE.baseResourcefulness.value .."+"..resourcefulnessDiff .. ") " .. percentText)
+        
+        local specData = CraftSim.SIMULATION_MODE.recipeData.specNodeData
+        local resourcefulnessExtraItemsFactor = 1
+
+        if specData then
+            resourcefulnessExtraItemsFactor = CraftSim.SIMULATION_MODE.recipeData.stats.resourcefulness.bonusItemsFactor
+        else
+            resourcefulnessExtraItemsFactor = CraftSim.SIMULATION_MODE.recipeData.extraItemFactors.resourcefulnessExtraItemsFactor % 1
+        end
+        CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessBonusValue:SetText((resourcefulnessExtraItemsFactor * 100) .. "%")
     end
 
     local qualityFrame = CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.qualityFrame
