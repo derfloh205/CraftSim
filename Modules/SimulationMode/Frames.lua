@@ -352,6 +352,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
         nodeModFrame:SetSize(100, 100)
         nodeModFrame:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
         nodeModFrame.layer = layer
+        nodeModFrame.layerMaxNodes = layerMaxNodes
         nodeModFrame.nodeName = nodeModFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         nodeModFrame.nodeName:SetPoint("TOP", nodeModFrame, "TOP", 0, 0)
         nodeModFrame.nodeName:SetText("Test Node")
@@ -361,7 +362,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
         local startPointOffsetY = 10
         nodeModFrame.line:SetStartPoint(anchorA, offsetX, offsetY + startPointOffsetY)
         --nodeModFrame.line:SetEndPoint("BOTTOM",0,-20)
-
+        nodeModFrame:Hide()
         nodeModFrame.SetParentNode = function(parentNode)
             local endPointOffsetY = -20
             if parentNode then
@@ -382,26 +383,271 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
         -- First row is always 1
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", 0, nodeFrameOffsetY, 1, 1),
 
-        -- Second row is either 2 or 3
+        -- Second row is either 4, 3, 2
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 4),
+
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
-        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", 0, nodeFrameOffsetY*2, 2),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", 0, nodeFrameOffsetY*2, 2, 3),
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
 
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*2, 2, 2),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*2, 2, 2),
+
+        -- last row is either 9, 8, 4, 2, 0
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
-        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", 0, nodeFrameOffsetY*3, 3),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", 0, nodeFrameOffsetY*3, 3, 9),
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
         createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
+
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", (nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 8),
+
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 4),
+
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 2),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*3, 3, 2),
     }
 
-    spec1.content.nodeModFrames[2].SetParentNode(spec1.content.nodeModFrames[1])
+    spec2.content.nodeModFrames = {
+        -- First row is always 1
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", 0, nodeFrameOffsetY, 1, 1),
+
+        -- Second row is either 4, 3, 2
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 4),
+
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", 0, nodeFrameOffsetY*2, 2, 3),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
+
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*2, 2, 2),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*2, 2, 2),
+
+        -- last row is either 9, 8, 4, 2, 0
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", 0, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
+
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", (nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 8),
+
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 4),
+
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 2),
+        createNodeModFrame(spec2.content, spec2.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*3, 3, 2),
+    }
+
+    spec3.content.nodeModFrames = {
+        -- First row is always 1
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", 0, nodeFrameOffsetY, 1, 1),
+
+        -- Second row is either 4, 3, 2
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 4),
+
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", 0, nodeFrameOffsetY*2, 2, 3),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
+
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*2, 2, 2),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*2, 2, 2),
+
+        -- last row is either 9, 8, 4, 2, 0
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", 0, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
+
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", (nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 8),
+
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 4),
+
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 2),
+        createNodeModFrame(spec3.content, spec3.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*3, 3, 2),
+    }
+
+    spec4.content.nodeModFrames = {
+        -- First row is always 1
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", 0, nodeFrameOffsetY, 1, 1),
+
+        -- Second row is either 4, 3, 2
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*2, 2, 4),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 4),
+
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", 0, nodeFrameOffsetY*2, 2, 3),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
+
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*2, 2, 2),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*2, 2, 2),
+
+        -- last row is either 9, 8, 4, 2, 0
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", 0, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
+
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", (nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 8),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 8),
+
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*3, 3, 4),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 4),
+
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 2),
+        createNodeModFrame(spec4.content, spec4.content, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*3, 3, 2),
+    }
+
+    --spec1.content.nodeModFrames[2].SetParentNode(spec1.content.nodeModFrames[1])
+
+    local nodeModFramesL1 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(1, 1, 1)
+    local nodeModFramesL2 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(1, 2, 4)
+    local nodeModFramesL3 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(1, 3, 9)
+
+    for _, n in pairs(nodeModFramesL1) do
+        n:Show()
+    end
+
+    for _, n in pairs(nodeModFramesL2) do
+        n:Show()
+    end
+
+    for _, n in pairs(nodeModFramesL3) do
+        n:Show()
+    end
+
+    nodeModFramesL1 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(2, 1, 1)
+    nodeModFramesL2 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(2, 2, 4)
+    nodeModFramesL3 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(2, 3, 9)
+
+    for _, n in pairs(nodeModFramesL1) do
+        n:Show()
+    end
+
+    for _, n in pairs(nodeModFramesL2) do
+        n:Show()
+    end
+
+    for _, n in pairs(nodeModFramesL3) do
+        n:Show()
+    end
+
+    nodeModFramesL1 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(3, 1, 1)
+    nodeModFramesL2 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(3, 2, 4)
+    nodeModFramesL3 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(3, 3, 9)
+
+    for _, n in pairs(nodeModFramesL1) do
+        n:Show()
+    end
+
+    for _, n in pairs(nodeModFramesL2) do
+        n:Show()
+    end
+
+    for _, n in pairs(nodeModFramesL3) do
+        n:Show()
+    end
+
+    nodeModFramesL1 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(4, 1, 1)
+    nodeModFramesL2 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(4, 2, 4)
+    nodeModFramesL3 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(4, 3, 9)
+
+    for _, n in pairs(nodeModFramesL1) do
+        n:Show()
+    end
+
+    for _, n in pairs(nodeModFramesL2) do
+        n:Show()
+    end
+
+    for _, n in pairs(nodeModFramesL3) do
+        n:Show()
+    end
 
 
     frame:Hide()
+end
+
+function CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(tabIndex, layer, layerMaxNodes)
+    local specSimFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+
+    local tab = specSimFrame.content.specializationTabs[tabIndex]
+
+    if tab then
+        local nodeModFrames = tab.content.nodeModFrames
+        local relevantModFrames = CraftSim.UTIL:FilterTable(nodeModFrames, function(nodeModFrame) 
+            return nodeModFrame.layer == layer and nodeModFrame.layerMaxNodes == layerMaxNodes
+        end)
+
+        return relevantModFrames
+    end
+
+    return {}
 end
 
 function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame, offsetX, offsetY, baseX, inputOffsetX)
