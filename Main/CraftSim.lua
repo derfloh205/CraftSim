@@ -206,7 +206,7 @@ function CraftSim.MAIN:HookToProfessionsFrame()
 	local professionInfo = ProfessionsFrame:GetProfessionInfo()
 	local profession = professionInfo.parentProfessionName
 	local recipeInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeInfo()
-	if profession then
+	if profession and recipeInfo then
 		CraftSim.OPTIONS.lastOpenRecipeID[profession] = recipeInfo.recipeID
 	end
    end)
