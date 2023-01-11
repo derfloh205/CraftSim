@@ -239,6 +239,9 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 			CraftSim.FRAME:ShowOneTimeInfo(true)
 		elseif command == "debug" then
 			CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
+		elseif command == "export" then
+			local exportString = CraftSim.DATAEXPORT:GetExportString()
+			CraftSim.UTIL:KethoEditBox_Show(exportString)
 		else 
 			-- open options if any other command or no command is given
 			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)

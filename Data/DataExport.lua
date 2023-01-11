@@ -962,3 +962,51 @@ function CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(professionID)
 	end
 		
 end
+
+function CraftSim.DATAEXPORT:GetExportString()
+	local recipeData = CraftSim.MAIN.currentRecipeData
+
+	if not recipeData then
+		return "No Recipe Open"
+	end
+	-- convert to CSV
+	local csvOutput = ""
+
+	for key, value in pairs(recipeData) do
+		if type(value) ~= "table" then
+			csvOutput = csvOutput .. tostring(key) .. "," .. tostring(value) .. "\n"
+		end
+	end
+
+	for statKey, statValue in pairs(recipeData.stats) do
+		if type(statValue) == 'table' then
+			csvOutput = csvOutput .. tostring(statKey) .. "," .. tostring(statValue.value) .. "\n"
+		else
+			csvOutput = csvOutput .. tostring(statKey) .. "," .. tostring(statValue) .. "\n"
+		end
+	end
+
+	for _, reagentData in pairs(recipeData.reagents) do
+		for qualityID, itemInfo in pairs(reagentData.itemsInfo) do
+			csvOutput = csvOutput .. tostring(itemInfo.itemID) .. "," .. tostring(itemInfo.allocations) .. "\n"
+		end
+	end
+
+	if CraftSim.SIMULATION_MODE.isActive then
+		for index, dropdown in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames) do
+			local itemID = dropdown.selectedItemID
+			if itemID then
+				csvOutput = csvOutput .. tostring(itemID) .. "," .. tostring(true) .. "\n"
+			end
+		end
+	else
+		for index, reagent in pairs(recipeData.optionalReagents) do
+			csvOutput = csvOutput .. tostring(reagent.itemID) .. "," .. tostring(true) .. "\n"
+		end
+		for index, reagent in pairs(recipeData.finishingReagents) do
+			csvOutput = csvOutput .. tostring(reagent.itemID) .. "," .. tostring(true) .. "\n"
+		end
+	end
+
+	return csvOutput
+end
