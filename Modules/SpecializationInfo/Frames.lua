@@ -15,9 +15,19 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     "CraftSim Specialization Info", 
     ProfessionsFrame.CraftingPage.SchematicForm, 
     CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR), 
-    "TOPLEFT", "TOPRIGHT", -10, 0, 250, 300, CraftSim.CONST.FRAMES.SPEC_INFO)
+    "TOPLEFT", "TOPRIGHT", -10, 0, 290, 300, CraftSim.CONST.FRAMES.SPEC_INFO, true)
 
     frame:Hide()
+
+    frame.content.knowledgePointSimulationButton =  CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.content.knowledgePointSimulationButton:SetPoint("TOP", frame.title, "TOP", 0, -20)	
+	frame.content.knowledgePointSimulationButton:SetText("Simulate Knowledge Distribution")
+	frame.content.knowledgePointSimulationButton:SetSize(frame.content.knowledgePointSimulationButton:GetTextWidth()+5, 20)
+    frame.content.knowledgePointSimulationButton:SetScript("OnClick", function(self) 
+        local specSimFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+        CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM), not specSimFrame:IsVisible())
+    end)
+    frame.content.knowledgePointSimulationButton:SetEnabled(false)
 
     frame.content.nodeLines = {}
     local function createNodeLine(parent, anchorParent, offsetY)
@@ -33,7 +43,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         return nodeLine
     end
     -- TODO: how many do I need?
-    local baseY = -20
+    local baseY = -40
     local nodeLineSpacingY = -20
     table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title, baseY))
     table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY))

@@ -17,7 +17,7 @@ CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents = nil
 
 local function print(text, recursive, l) -- override
     if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
+        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE, recursive, l)
     else
         print(text)
     end
@@ -207,7 +207,17 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
     end
 end
 
+function CraftSim.SIMULATION_MODE:UpdateSpecDataByInput()
+    -- check all spec data inputs and adapt spec data
+
+    print("Sim Mode Spec Data:")
+    print(CraftSim.SIMULATION_MODE.recipeData.specNodeData, true)
+end
+
 function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
+    if CraftSim.SIMULATION_MODE.recipeData.specNodeData then
+        CraftSim.SIMULATION_MODE:UpdateSpecDataByInput()
+    end
     CraftSim.SIMULATION_MODE:UpdateReagentAllocationsByInput()
     CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
     CraftSim.SIMULATION_MODE:UpdateGearResultItemsByInputs()
@@ -283,6 +293,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         -- crafting speed... for later profit per time interval?
     else
         CraftSim.SIMULATION_MODE.baseSpecNodeData = CopyTable(CraftSim.SIMULATION_MODE.recipeData.specNodeData) -- to make a reset possible
+        print("copied specnode data: " .. tostring(CraftSim.SIMULATION_MODE.baseSpecNodeData))
         CraftSim.SIMULATION_MODE.baseRecipeDifficulty = CraftSim.SIMULATION_MODE.recipeData.baseDifficulty
         
         local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[CraftSim.SIMULATION_MODE.recipeData.professionID]

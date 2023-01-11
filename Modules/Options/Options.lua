@@ -26,7 +26,6 @@ function CraftSim.OPTIONS:Init()
     generalTab.content = CreateFrame("Frame", nil, CraftSim.OPTIONS.optionsPanel)
     generalTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
     generalTab.content:SetSize(300, 350)
-    generalTab.canBeEnabled = true
 
     local tooltipTab = CreateFrame("Button", "CraftSimOptionsTooltipTab", CraftSim.OPTIONS.optionsPanel, "UIPanelButtonTemplate")
     tooltipTab:SetText("Tooltip")

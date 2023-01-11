@@ -205,14 +205,31 @@ function CraftSim.FRAME:HandleAuctionatorOverlaps()
     end
 end
 
+function CraftSim.FRAME:CreateTab(label, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, canBeEnabled, contentX, contentY, contentParent, contentAnchor, contentOffsetX, contentOffsetY)
+    local tabExtraWidth = 15
+    local tabButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+    tabButton.canBeEnabled = canBeEnabled
+    tabButton:SetText(label)
+    tabButton:SetSize(tabButton:GetTextWidth() + tabExtraWidth, 30)
+    tabButton:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
+
+
+    tabButton.content = CreateFrame("Frame", nil, contentParent)
+    tabButton.content:SetPoint("TOP", contentAnchor, "TOP", contentOffsetX, contentOffsetY)
+    tabButton.content:SetSize(contentX, contentY)
+
+    return tabButton
+end
+
 function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     frame.collapsed = false
     frame.collapseButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	frame.collapseButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
-	frame.collapseButton:SetText("-")
+    local offsetX = frame.closeButton and -43 or -23
+	frame.collapseButton:SetPoint("TOP", frame, "TOPRIGHT", offsetX, -10)	
+	frame.collapseButton:SetText(" - ")
     frame.originalX = originalX -- so it can be modified later
     frame.originalY = originalY
-	frame.collapseButton:SetSize(frame.collapseButton:GetTextWidth() + 15, 20)
+	frame.collapseButton:SetSize(frame.collapseButton:GetTextWidth() + 12, 20)
     frame.collapse = function(self) 
         frame.collapsed = true
         CraftSimCollapsedFrames[frameID] = true
@@ -246,8 +263,18 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     end)
 end
 
+function CraftSim.FRAME:MakeCloseable(frame)
+    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.closeButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
+	frame.closeButton:SetText("X")
+	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+15, 20)
+    frame.closeButton:SetScript("OnClick", function(self) 
+        frame:Hide()
+    end)
+end
+
 function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, 
-    frameID, scrollable, scrollFrameWidthModX, scrollFrameWidthModY, frameStrata)
+    frameID, scrollable, closeable, frameStrata)
     local hookFrame = CreateFrame("frame", nil, parent)
     hookFrame:SetPoint(anchorA, anchorFrame, anchorB, offsetX, offsetY)
     local frame = CreateFrame("frame", name, hookFrame, "BackdropTemplate")
@@ -282,7 +309,12 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
         frame:SetBackdropColor(0, 0, 0 , transparency)
     end
 
+    if closeable then
+        CraftSim.FRAME:MakeCloseable(frame)
+    end
+
     CraftSim.FRAME:MakeCollapsable(frame, sizeX, sizeY, frameID)
+    
     CraftSim.FRAME:makeFrameMoveable(frame)
 
     if scrollable then
@@ -292,20 +324,25 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
         frame.scrollFrame.scrollChild = CreateFrame("frame")
         local scrollFrame = frame.scrollFrame
         local scrollChild = scrollFrame.scrollChild
-        local offX = scrollFrameWidthModX or -70
-        local offY = scrollFrameWidthModY or -50
-        scrollFrame:SetSize(frame:GetWidth() + offX, frame:GetHeight() + offY)
-        scrollFrame:SetPoint("TOP", frame.title, "TOP", 0, -20)
+        scrollFrame:SetSize(frame:GetWidth() , frame:GetHeight())
+        scrollFrame:SetPoint("TOP", frame, "TOP", 0, -30)
+        scrollFrame:SetPoint("LEFT", frame, "LEFT", 20, 0)
+        scrollFrame:SetPoint("RIGHT", frame, "RIGHT", -35, 0)
+        scrollFrame:SetPoint("BOTTOM", frame, "BOTTOM", 0, 0)
         scrollFrame:SetScrollChild(scrollFrame.scrollChild)
-        scrollChild:SetWidth(scrollFrame:GetWidth() - 5)
+        scrollChild:SetWidth(scrollFrame:GetWidth())
         scrollChild:SetHeight(1) -- ??
 
         frame.content = scrollChild
 
         frame.UpdateSize = function(x, y) 
             frame:SetSize(x, y)
-            scrollFrame:SetSize(frame:GetWidth() + offX, frame:GetHeight() + offY)
-            scrollChild:SetWidth(scrollFrame:GetWidth() - 5)
+            scrollFrame:SetSize(frame:GetWidth() , frame:GetHeight())
+            scrollFrame:SetPoint("TOP", frame, "TOP", 0, -30)
+            scrollFrame:SetPoint("LEFT", frame, "LEFT", 20, 0)
+            scrollFrame:SetPoint("RIGHT", frame, "RIGHT", -35, 0)
+            scrollFrame:SetPoint("BOTTOM", frame, "BOTTOM", 0, 20)
+            scrollChild:SetWidth(scrollFrame:GetWidth())
         end
     else
         frame.content = CreateFrame("frame", nil, frame)
@@ -431,7 +468,7 @@ function CraftSim.FRAME:InitDebugFrame()
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimDebugFrame", "CraftSim Debug", 
     UIParent, 
     UIParent, 
-    "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 0, 400, 400, CraftSim.CONST.FRAMES.DEBUG, true)
+    "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 0, 400, 400, CraftSim.CONST.FRAMES.DEBUG, true, true)
     CraftSim.FRAME:ToggleFrame(frame, CraftSimOptions.debugVisible)
 
     frame:HookScript("OnShow", function() CraftSimOptions.debugVisible = true end)
@@ -447,14 +484,6 @@ function CraftSim.FRAME:InitDebugFrame()
     frame.content.debugBox:SetFontObject("ChatFontNormal")
     frame.content.debugBox:SetScript("OnEscapePressed", function() frame.content.debugBox:ClearFocus() end)
     frame.content.debugBox:SetScript("OnEnterPressed", function() frame.content.debugBox:ClearFocus() end)
-
-    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	frame.closeButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -9)	
-	frame.closeButton:SetText("Close")
-	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+5, 20)
-    frame.closeButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG), false)
-    end)
 
     frame.addDebug = function(debugOutput, debugID, printLabel) 
         if frame:IsVisible() then -- to not make it too bloated over time
@@ -522,7 +551,7 @@ function CraftSim.FRAME:InitWarningFrame()
     CraftSim.UTIL:ColorizeText("CraftSim Warning", CraftSim.CONST.COLORS.RED), 
     UIParent, 
     UIParent, 
-    "CENTER", "CENTER", 0, 0, 500, 500, CraftSim.CONST.FRAMES.WARNING, true)
+    "CENTER", "CENTER", 0, 0, 500, 500, CraftSim.CONST.FRAMES.WARNING, true, true)
 
     frame.content.warningText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.content.warningText:SetPoint("TOP", frame.content, "TOP", 0, -20)
@@ -539,14 +568,6 @@ function CraftSim.FRAME:InitWarningFrame()
     
     frame.content.errorBox:SetScript("OnEscapePressed", function() frame.content.errorBox:ClearFocus() end)
     frame.content.errorBox:SetScript("OnEnterPressed", function() frame.content.errorBox:ClearFocus() end)
-
-    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	frame.closeButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -9)	
-	frame.closeButton:SetText("Close")
-	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+15, 20)
-    frame.closeButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING), false)
-    end)
 
     frame.content.warningText:Hide()
     frame.content.errorBox:Hide()
@@ -597,19 +618,11 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     CraftSim.UTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")", CraftSim.CONST.COLORS.GREEN), 
     UIParent, 
     UIParent, 
-    "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO, true)
+    "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO, true, true)
 
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 0, -30)
     frame.content.infoText:SetText("No Info")
-
-    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	frame.closeButton:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -9)	
-	frame.closeButton:SetText("Close")
-	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+5, 20)
-    frame.closeButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.INFO), false)
-    end)
 
     frame.showInfo = function(infoText) 
         frame.content.infoText:SetText(infoText)

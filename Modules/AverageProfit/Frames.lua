@@ -142,7 +142,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
         0, 
         1000, 
         600,
-        CraftSim.CONST.FRAMES.PROFIT_DETAILS, false, 0, 0, "DIALOG")
+        CraftSim.CONST.FRAMES.PROFIT_DETAILS, false, true, "DIALOG")
 
     frame:Hide()
     local red = CraftSim.CONST.COLORS.RED

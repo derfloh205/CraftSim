@@ -325,6 +325,85 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         CraftSim.SIMULATION_MODE.craftingDetailsFrame = simModeDetailsFrame
 end
 
+function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
+    print("init spec mod frame")
+    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimSpecSimFrame", 
+    "CraftSim Knowledge Simulation", 
+    ProfessionsFrame.CraftingPage.SchematicForm, 
+    UIParent, 
+    "CENTER", "CENTER", 0, 0, 800, 700, CraftSim.CONST.FRAMES.SPEC_SIM, false, true)
+
+    
+    local spec2 = CraftSim.FRAME:CreateTab(
+        "Specialization 2", frame.content, frame.content, "TOP", "TOP", -50, -30, true, 400, 400, frame.content, frame.content, 0, -20)
+    local spec3 = CraftSim.FRAME:CreateTab(
+        "Specialization 3", frame.content, spec2, "LEFT", "RIGHT", 0, 0, true, 400, 400, frame.content, frame.content, 0, -20)
+    local spec1 = CraftSim.FRAME:CreateTab(
+        "Specialization 1", frame.content, spec2, "RIGHT", "LEFT", 0, 0, true, 400, 400, frame.content, frame.content, 0, -20)
+    local spec4 = CraftSim.FRAME:CreateTab(
+        "Specialization 4", frame.content, spec3, "LEFT", "RIGHT", 0, 0, true, 400, 400, frame.content, frame.content, 0, -20)
+                
+    frame.content.specializationTabs = {spec1, spec2, spec3, spec4}
+
+    CraftSim.FRAME:InitTabSystem(frame.content.specializationTabs)
+
+    local function createNodeModFrame(parent, anchorParent, anchorA, anchorB, offsetX, offsetY, layer, layerMaxNodes)
+        local nodeModFrame = CreateFrame("frame", nil, parent)
+        nodeModFrame:SetSize(100, 100)
+        nodeModFrame:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+        nodeModFrame.layer = layer
+        nodeModFrame.nodeName = nodeModFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        nodeModFrame.nodeName:SetPoint("TOP", nodeModFrame, "TOP", 0, 0)
+        nodeModFrame.nodeName:SetText("Test Node")
+
+        nodeModFrame.line = parent:CreateLine()
+        nodeModFrame.line:SetColorTexture(1,1,1,1)
+        local startPointOffsetY = 10
+        nodeModFrame.line:SetStartPoint(anchorA, offsetX, offsetY + startPointOffsetY)
+        --nodeModFrame.line:SetEndPoint("BOTTOM",0,-20)
+
+        nodeModFrame.SetParentNode = function(parentNode)
+            local endPointOffsetY = -20
+            if parentNode then
+                local point, relativeTo, relativePoint, offX, offY = parentNode:GetPoint()
+                nodeModFrame.line:SetEndPoint(point, offX, offY + endPointOffsetY)
+                nodeModFrame.line:Show()
+            else
+                nodeModFrame.line:Hide()
+            end
+        end
+
+        return nodeModFrame
+    end
+
+    local nodeFrameOffsetY = -120
+    local nodeFrameSpacingX = 80
+    spec1.content.nodeModFrames = {
+        -- First row is always 1
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", 0, nodeFrameOffsetY, 1, 1),
+
+        -- Second row is either 2 or 3
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", 0, nodeFrameOffsetY*2, 2),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
+
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", 0, nodeFrameOffsetY*3, 3),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
+        createNodeModFrame(spec1.content, spec1.content, "TOP", "TOP", nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
+    }
+
+    spec1.content.nodeModFrames[2].SetParentNode(spec1.content.nodeModFrames[1])
+
+
+    frame:Hide()
+end
+
 function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame, offsetX, offsetY, baseX, inputOffsetX)
     local overwriteInput = CreateFrame("frame", nil, reagentOverwriteFrame)
     overwriteInput:SetPoint("TOP", reagentOverwriteFrame, "TOP", offsetX, offsetY)
@@ -482,6 +561,11 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     -- frame visiblities
     CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive)
 
+    local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
+    specInfoFrame.content.knowledgePointSimulationButton:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
+    if not CraftSim.SIMULATION_MODE.isActive then
+        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM):Hide()
+    end
     -- only if recipe has optionalReagents
     local hasOptionalReagents = ProfessionsFrame.CraftingPage.SchematicForm.reagentSlots[0] ~= nil
     CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)

@@ -25,6 +25,7 @@ CraftSim.CONST.FRAMES = {
     INFO = 8,
     DEBUG = 9,
     DEBUG_CONTROL = 10,
+    SPEC_SIM = 11,
 }
 
 CraftSim.CONST.DEBUG_IDS = {
