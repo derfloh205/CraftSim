@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("Hello and thank you for using CraftSim!\n", bb) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        c("\n\n\n--- Version 1.7.6 ---", l) ..
+        c("\n\nSimulation Mode", bb) .. " now correctly considers costs of\noptional and finishing reagents in crafting costs" .. 
         c("\n\n\n--- Version 1.7.5 ---", l) ..
         c("\n\n\nMax Reagent Skill Contribution", bb) .. " is now 25% of recipe difficulty\nfor everything except recrafts. For those the\n" ..
         "factor will be calculated." ..
