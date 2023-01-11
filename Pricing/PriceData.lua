@@ -43,18 +43,30 @@ function CraftSim.PRICEDATA:GetReagentCosts(recipeData, getMinimum)
             table.insert(reagentCosts, totalBuyout)
         end
     end
-    -- optional & finishing (not when minimum)
-    if not getMinimum then
-        for reagentIndex, reagentData in pairs(recipeData.optionalReagents or {}) do
-            local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentData.itemID, true) or 0
-            print("price for " .. reagentData.itemData.link .. " -> " .. price)
-            table.insert(reagentCosts, price)
+    if not CraftSim.SIMULATION_MODE.isActive then
+        -- optional & finishing (not when minimum)
+        if not getMinimum then
+            for reagentIndex, reagentData in pairs(recipeData.optionalReagents or {}) do
+                local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentData.itemID, true) or 0
+                print("price for " .. reagentData.itemData.link .. " -> " .. price)
+                table.insert(reagentCosts, price)
+            end
+        
+            for reagentIndex, reagentData in pairs(recipeData.finishingReagents or {}) do
+                local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentData.itemID, true) or 0
+                print("price for " .. reagentData.itemData.link .. " -> " .. price)
+                table.insert(reagentCosts, price)
+            end
         end
-    
-        for reagentIndex, reagentData in pairs(recipeData.finishingReagents or {}) do
-            local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentData.itemID, true) or 0
-            print("price for " .. reagentData.itemData.link .. " -> " .. price)
-            table.insert(reagentCosts, price)
+    else
+        -- calculate from sim mode inputs
+        for index, dropdown in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames) do
+            local itemID = dropdown.selectedItemID;
+            if itemID then
+                local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true) or 0
+                print("(SimMode) price for " .. itemID .. " -> " .. price)
+                table.insert(reagentCosts, price)
+            end
         end
     end
     

@@ -256,7 +256,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.SIMULATION_MODE.recipeData = CopyTable(recipeData)   
     CraftSim.SIMULATION_MODE.recipeData.isSimModeData = true
     local statsByOptionalInputs = CraftSim.DATAEXPORT:GetStatsFromOptionalReagents(recipeData)
-
+    CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents = 0 -- to prevent nil errors
     -- initialize base values based on original recipeData and based on spec data implemented
     if not CraftSim.UTIL:IsSpecImplemented(recipeData.professionID) then
         CraftSim.SIMULATION_MODE.baseRecipeDifficulty = CraftSim.SIMULATION_MODE.recipeData.baseDifficulty
