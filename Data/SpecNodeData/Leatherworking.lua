@@ -1,3 +1,5 @@
+test
+
 addonName, CraftSim = ...
 
 CraftSim.LEATHERWORKING_DATA = {}
