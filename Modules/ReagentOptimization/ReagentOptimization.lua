@@ -427,6 +427,14 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
 end
 
 function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData)
+
+    if not recipeData.isRecraft then
+        return 0.25 -- As this is pretty consistent for everything which is not a recraft
+    end
+
+
+    -- For recrafts we need to calculate it
+
     local recipeDataNoReagents = CopyTable(recipeData)
 
     -- get operationinfo of recipe with no reagents
@@ -452,16 +460,11 @@ function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData)
         end
     end
     local Q3ReagentsOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, recipeData.recraftAllocationGUID)
-
-    local Q3ReagentsThresholdSkillDifference = Q3ReagentsOperationInfo.upperSkillTreshold - Q3ReagentsOperationInfo.lowerSkillThreshold -- upperSkillTreshold is a blizz typo
-    local baseThresholdSkillDifference = baseOperationInfo.upperSkillTreshold - baseOperationInfo.lowerSkillThreshold -- upperSkillTreshold is a blizz typo
     
-    local Q3ReagentsQualityFactor = Q3ReagentsOperationInfo.quality % 1
-    local baseQualityFactor = baseOperationInfo.quality % 1
-    local exactSkillQ3Reagents = Q3ReagentsOperationInfo.lowerSkillThreshold + (Q3ReagentsThresholdSkillDifference*Q3ReagentsQualityFactor)
-    local exactBaseSkill = baseOperationInfo.lowerSkillThreshold + (baseThresholdSkillDifference*baseQualityFactor)
+    local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
+    local skillQ3Reagents = Q3ReagentsOperationInfo.baseSkill + Q3ReagentsOperationInfo.bonusSkill
 
-    local reagentQualityIncrease = exactSkillQ3Reagents - exactBaseSkill
+    local reagentQualityIncrease = skillQ3Reagents - baseSkill
 
     print("Reagent Quality Increase: " .. tostring(reagentQualityIncrease))
 
@@ -503,20 +506,15 @@ function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(
     print("Current Operation Info")
     print(currentOperationInfo)
 
-    local currentThresholdSkillDifference = currentOperationInfo.upperSkillTreshold - currentOperationInfo.lowerSkillThreshold -- upperSkillTreshold is a blizz typo
-    local baseThresholdSkillDifference = baseOperationInfo.upperSkillTreshold - baseOperationInfo.lowerSkillThreshold -- upperSkillTreshold is a blizz typo
-    
-    local currentQualityFactor = currentOperationInfo.quality % 1
-    local baseQualityFactor = baseOperationInfo.quality % 1
-    local exactSkillCurrent = currentOperationInfo.lowerSkillThreshold + (currentThresholdSkillDifference*currentQualityFactor)
-    local exactBaseSkill = baseOperationInfo.lowerSkillThreshold + (baseThresholdSkillDifference*baseQualityFactor)
+    local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
+    local skillCurrent = currentOperationInfo.baseSkill + currentOperationInfo.bonusSkill
 
-    print("Exact Skill Base: " .. tostring(exactBaseSkill))
-    print("Exact Skill Current: " .. tostring(exactSkillCurrent))
+    print("baseSkill: " .. tostring(baseSkill))
+    print("skillCurrent: " .. tostring(skillCurrent))
 
-    local reagentQualityIncrease = exactSkillCurrent - exactBaseSkill
+    local reagentQualityIncrease = skillCurrent - baseSkill
 
-    print("Reagent Quality Increase: " .. tostring(reagentQualityIncrease))
+    print("reagentQualityIncrease: " .. tostring(reagentQualityIncrease))
 
     return reagentQualityIncrease
 end
@@ -564,7 +562,8 @@ function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncreaseO
         matSkillBonus = matSkillBonus + bonus / totalWeight * recipeMaxSkillBonus
     end
 
-    --print("reagent skill contribution: " .. matSkillBonus)
+    print("reagent skill contribution old: " .. matSkillBonus)
+    print("reagent skill contribution old (rounded): " .. CraftSim.UTIL:round(matSkillBonus))
     -- Try rounding it..
     return CraftSim.UTIL:round(matSkillBonus)
 end

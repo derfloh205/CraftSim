@@ -63,6 +63,9 @@ end
 function CraftSim_DEBUG:TestAllocationSkillFetchV2()
     CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSim.MAIN.currentRecipeData)
 end
+function CraftSim_DEBUG:TestAllocationSkillFetchV1()
+    CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncreaseOLD(CraftSim.MAIN.currentRecipeData)
+end
 
 function CraftSim_DEBUG:TestMaxReagentIncreaseFactor()
     CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(CraftSim.MAIN.currentRecipeData)

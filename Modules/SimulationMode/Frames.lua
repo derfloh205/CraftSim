@@ -115,7 +115,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         30, 
         0, 
         350, 
-        300, 
+        325, 
         CraftSim.CONST.FRAMES.CRAFTING_DETAILS)
 
         local offsetY = -20
@@ -238,9 +238,21 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         simModeDetailsFrame.content.reagentSkillIncreaseValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP", valueOffsetX - 15, offsetY - 5)
         simModeDetailsFrame.content.reagentSkillIncreaseValue:SetText("0")
 
+        -- reagent max factor
+        simModeDetailsFrame.content.reagentMaxFactorTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.reagentMaxFactorTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.reagentSkillIncreaseTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.reagentMaxFactorTitle:SetText("Material Quality Maximum %:")
+        simModeDetailsFrame.content.reagentMaxFactorTitle.helper = CraftSim.FRAME:CreateHelpIcon(
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP), 
+            simModeDetailsFrame.content, simModeDetailsFrame.content.reagentMaxFactorTitle, "RIGHT", "LEFT", -20, 0)
+
+        simModeDetailsFrame.content.reagentMaxFactorValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.reagentMaxFactorValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP", valueOffsetX - 15, offsetY*2 - 5)
+        simModeDetailsFrame.content.reagentMaxFactorValue:SetText("0")
+
         simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
         simModeDetailsFrame.content.qualityFrame:SetSize(simModeDetailsFrame:GetWidth() - 40, 200)
-        simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY*9)
+        simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY*10)
         local qualityFrame = simModeDetailsFrame.content.qualityFrame
         qualityFrame.currentQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         qualityFrame.currentQualityTitle:SetPoint("TOPLEFT", qualityFrame, "TOPLEFT", 0, 0)
@@ -495,7 +507,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.baseSkillValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.skill, 1) .. " (" .. CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents, 1) .. "+" .. CraftSim.UTIL:round(reagentSkillIncrease, 1) .. "+" .. skillMod ..")")
     -- I assume its always from base..? Wouldnt make sense to give the materials more skill contribution if you artificially make the recipe harder
     local maxReagentSkillIncrease = CraftSim.SIMULATION_MODE.recipeData.maxReagentSkillIncreaseFactor * CraftSim.SIMULATION_MODE.baseRecipeDifficulty
-    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.reagentSkillIncrease, 1) .. " / " .. CraftSim.UTIL:round(maxReagentSkillIncrease, 1))
+    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.reagentSkillIncrease, 0) .. " / " .. CraftSim.UTIL:round(maxReagentSkillIncrease, 0))
+    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.reagentMaxFactorValue:SetText(CraftSim.UTIL:round(CraftSim.SIMULATION_MODE.recipeData.maxReagentSkillIncreaseFactor*100, 1) .. " %")
+
 
     -- Inspiration Display
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationTitle, CraftSim.SIMULATION_MODE.recipeData.stats.inspiration)

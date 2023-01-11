@@ -372,7 +372,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	local craftingPage = ProfessionsFrame.CraftingPage
 	local schematicForm = craftingPage.SchematicForm
 
-	print("RecipeData Export:")
+	print("RecipeData Export:", false, true)
 	recipeData.profession = professionInfo.parentProfessionName
 	recipeData.professionID = professionInfo.profession
 	if recipeData.professionID == nil then
@@ -545,7 +545,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	
 	recipeData.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
 	recipeData.hasSingleItemOutput = recipeInfo.hasSingleItemOutput
-	print("baseItemAmount: " .. tostring(recipeData.baseItemAmount))
+	print("baseItemAmount: " .. tostring(recipeData.baseItemAmount) .. "(" .. tostring(schematicInfo.quantityMin) .. "-" .. tostring(schematicInfo.quantityMax) .. ")")
 	
 	
 	recipeData.recipeDifficulty = operationInfo.baseDifficulty + operationInfo.bonusDifficulty
@@ -558,6 +558,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	recipeData.result = {}
 
 	local allocationItemGUID = currentTransaction:GetAllocationItemGUID() -- either recraft, enchant, or salvage, TODO: export?
+	print("allocationItemGUID: " .. tostring(allocationItemGUID))
 
 	if recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
 		-- recipe is anything that results in 1-5 different itemids with quality
@@ -613,6 +614,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 	if not CraftSim.UTIL:IsSpecImplemented(recipeData.professionID) then
 		recipeData.extraItemFactors = CraftSim.SPEC_DATA:GetSpecExtraItemFactorsByRecipeData(recipeData)
 	else
+		print(CraftSim.UTIL:ColorizeText("Recipe is using SpecData", CraftSim.CONST.COLORS.GREEN))
 		recipeData.buffData = CraftSim.DATAEXPORT:exportBuffData()
 		print("BuffData:")
 		print(recipeData.buffData, true)
@@ -622,6 +624,7 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 
 	CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
 	recipeData.maxReagentSkillIncreaseFactor = CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData)
+	print("maxReagentSkillIncreaseFactor: " .. tostring(recipeData.maxReagentSkillIncreaseFactor))
 
 	
 	CraftSim.MAIN.currentRecipeData = recipeData
