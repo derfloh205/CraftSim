@@ -27,6 +27,8 @@ function CraftSim.NEWS:GET_NEWS()
         s .. "New " .. c("Export Data", g) .. " command: " .. c("/craftsim export", g) .. 
         a .."Lets you export the information about a recipe in CSV format!" .. 
         a .. c("More Info will follow", bb) ..
+        p .. "Fixed " .. c("Stable Fluid Draconium", bb) .. " granting" ..
+        a .. "15% Inspiration on all ranks" ..
         p .. "Fixed an error when other addons are " ..
         a .. "hiding the ProfessionsFrame" ..
         p .. c("Max Reagent Skill Increase", bb) .. " is now always calculated based " ..

@@ -7,8 +7,8 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [191529] = {skill = 30},
     -- Stable Fluid Draconium
     [191511] = {inspirationBonusSkillFactor = 0.15},
-    [191512] = {inspirationBonusSkillFactor = 0.15},
-    [191513] = {inspirationBonusSkillFactor = 0.15},
+    [191512] = {inspirationBonusSkillFactor = 0.20},
+    [191513] = {inspirationBonusSkillFactor = 0.25},
     -- Primal Infusion
     [197921] = {recipeDifficulty = 30},
     [198046] = {recipeDifficulty = 50},
