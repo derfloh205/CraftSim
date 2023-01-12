@@ -211,6 +211,9 @@ function CraftSim.FRAME:CreateTab(label, parent, anchorParent, anchorA, anchorB,
     tabButton.canBeEnabled = canBeEnabled
     tabButton:SetText(label)
     tabButton:SetSize(tabButton:GetTextWidth() + tabExtraWidth, 30)
+    tabButton.ResetWidth = function() 
+        tabButton:SetSize(tabButton:GetTextWidth() + tabExtraWidth, 30)
+    end
     tabButton:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
 
 

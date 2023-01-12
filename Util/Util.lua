@@ -283,6 +283,14 @@ function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     end
 end
 
+function CraftSim.UTIL:CollectGarbageAtThreshold(kbThreshold)
+    local kbUsed = collectgarbage("count")
+    print("kbUsed" .. tostring(kbUsed))
+    if kbUsed >= kbThreshold then
+        collectgarbage("collect")
+    end
+end
+
 function CraftSim.UTIL:FilterTable(t, filterFunc)
     local filtered = {}
     for k, v in pairs(t) do
@@ -291,6 +299,14 @@ function CraftSim.UTIL:FilterTable(t, filterFunc)
         end
     end
     return filtered
+end
+
+function CraftSim.UTIL:Map(t, mapFunc)
+    local mapped = {}
+    for k, v in pairs(t) do
+        table.insert(mapped, mapFunc(v))
+    end
+    return mapped
 end
 
 function CraftSim.UTIL:Find(t, findFunc)
@@ -302,6 +318,7 @@ function CraftSim.UTIL:Find(t, findFunc)
 
     return false
 end
+
 
 function CraftSim.UTIL:FoldTable(t, foldFunction, startAtZero)
     local foldedValue = nil

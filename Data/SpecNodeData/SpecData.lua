@@ -272,6 +272,16 @@ CraftSim.SPEC_DATA.RULE_NODES = function()
     [Enum.Profession.Tailoring] = CraftSim.TAILORING_DATA:GetData(),
     [Enum.Profession.Inscription] = CraftSim.INSCRIPTION_DATA:GetData()
 } end
+CraftSim.SPEC_DATA.BASE_RULE_NODES = function() 
+    return {
+    [Enum.Profession.Blacksmithing] =  {"ARMOR_SMITHING_1", "WEAPON_SMITHING_1", "SPECIALITY_SMITHING_1", "HAMMER_CONTROL_1"},
+    [Enum.Profession.Alchemy] = {"POTION_MASTERY_1", "PHIAL_MASTERY_1", "ALCHEMICAL_THEORY_1"},
+    [Enum.Profession.Leatherworking] = {"PH1", "PH2", "PH3", "PH4"},
+    [Enum.Profession.Jewelcrafting] = {"PH1", "PH2", "PH3", "PH4"},
+    [Enum.Profession.Enchanting] = {"PH1", "PH2", "PH3", "PH4"},
+    [Enum.Profession.Tailoring] = {"PH1", "PH2", "PH3", "PH4"},
+    [Enum.Profession.Inscription] = {"PH1", "PH2", "PH3", "PH4"}
+} end
 
 function CraftSim.SPEC_DATA:GetNodes(professionID)
     if professionID == Enum.Profession.Blacksmithing then

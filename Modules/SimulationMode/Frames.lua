@@ -331,7 +331,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
     "CraftSim Knowledge Simulation", 
     ProfessionsFrame.CraftingPage.SchematicForm, 
     UIParent, 
-    "CENTER", "CENTER", 0, 0, 800, 700, CraftSim.CONST.FRAMES.SPEC_SIM, false, true)
+    "CENTER", "CENTER", 0, 0, 1000, 700, CraftSim.CONST.FRAMES.SPEC_SIM, false, true)
 
     
     local spec2 = CraftSim.FRAME:CreateTab(
@@ -344,163 +344,404 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
         "Specialization 4", frame.content, spec3, "LEFT", "RIGHT", 0, 0, true, 400, 400, frame.content, frame.content, 0, -20)
                 
     frame.content.specializationTabs = {spec1, spec2, spec3, spec4}
+    frame.content.activeNodeModFrames = {}
 
     CraftSim.FRAME:InitTabSystem(frame.content.specializationTabs)
 
-    local function createNodeModFrame(parent, anchorParent, anchorA, anchorB, offsetX, offsetY, layer, layerMaxNodes)
+    local function createNodeModFrame(parent, anchorParent, anchorA, anchorB, offsetX, offsetY, layer, layerMaxNodes, tabNr, numOnLayer)
         local nodeModFrame = CreateFrame("frame", nil, parent)
         nodeModFrame:SetSize(100, 100)
         nodeModFrame:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
         nodeModFrame.layer = layer
+        nodeModFrame.tabNr = tabNr
+        nodeModFrame.debugID = numOnLayer .. "-" .. tabNr .. "-" .. layer .. "-" .. layerMaxNodes
         nodeModFrame.layerMaxNodes = layerMaxNodes
         nodeModFrame.nodeName = nodeModFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         nodeModFrame.nodeName:SetPoint("TOP", nodeModFrame, "TOP", 0, 0)
         nodeModFrame.nodeName:SetText("Test Node")
 
-        nodeModFrame.line = parent:CreateLine()
-        nodeModFrame.line:SetColorTexture(1,1,1,1)
+        nodeModFrame.showParentLine = parent:CreateLine()
+        nodeModFrame.showParentLine:SetThickness(2)
+        nodeModFrame.showParentLine:SetColorTexture(1,1,1,1)
         local startPointOffsetY = 10
-        nodeModFrame.line:SetStartPoint(anchorA, offsetX, offsetY + startPointOffsetY)
-        --nodeModFrame.line:SetEndPoint("BOTTOM",0,-20)
+        nodeModFrame.showParentLine:SetStartPoint(anchorA, offsetX, offsetY + startPointOffsetY)
+        --nodeModFrame.showParentLine:SetEndPoint("BOTTOM",0,-20)
         nodeModFrame:Hide()
         nodeModFrame.SetParentNode = function(parentNode)
-            local endPointOffsetY = -20
+            local endPointOffsetY = -160
             if parentNode then
                 local point, relativeTo, relativePoint, offX, offY = parentNode:GetPoint()
-                nodeModFrame.line:SetEndPoint(point, offX, offY + endPointOffsetY)
-                nodeModFrame.line:Show()
+                nodeModFrame.showParentLine:SetEndPoint(point, offX, offY + endPointOffsetY)
+                nodeModFrame.showParentLine:Show()
             else
-                nodeModFrame.line:Hide()
+                nodeModFrame.showParentLine:Hide()
+            end
+        end
+
+        local offsetX = 0
+        local offsetY = -15
+        local originalSizeY = 80
+
+         -- border
+         local edgeSize = 2
+         nodeModFrame.nodeProgressBorderLEFT = nodeModFrame:CreateLine()
+         nodeModFrame.nodeProgressBorderLEFT:SetColorTexture(0.42,0.48,0.55,1)
+         nodeModFrame.nodeProgressBorderLEFT:SetThickness(edgeSize)
+         nodeModFrame.nodeProgressBorderLEFT:SetStartPoint("BOTTOM", offsetX - (7/2)-1, offsetY-1)
+         nodeModFrame.nodeProgressBorderLEFT:SetEndPoint("BOTTOM", offsetX - (7/2)-1, offsetY + originalSizeY + 1)
+         nodeModFrame.nodeProgressBorderRIGHT = nodeModFrame:CreateLine()
+         nodeModFrame.nodeProgressBorderRIGHT:SetColorTexture(0.42,0.48,0.55,1)
+         nodeModFrame.nodeProgressBorderRIGHT:SetThickness(edgeSize)
+         nodeModFrame.nodeProgressBorderRIGHT:SetStartPoint("BOTTOM", offsetX + (7/2)+1, offsetY-1)
+         nodeModFrame.nodeProgressBorderRIGHT:SetEndPoint("BOTTOM", offsetX + (7/2)+1, offsetY + originalSizeY + 1)
+         nodeModFrame.nodeProgressBorderBOTTOM = nodeModFrame:CreateLine()
+         nodeModFrame.nodeProgressBorderBOTTOM:SetColorTexture(0.42,0.48,0.55,1)
+         nodeModFrame.nodeProgressBorderBOTTOM:SetThickness(edgeSize)
+         nodeModFrame.nodeProgressBorderBOTTOM:SetStartPoint("BOTTOM", offsetX - (7/2)-1, offsetY-1)
+         nodeModFrame.nodeProgressBorderBOTTOM:SetEndPoint("BOTTOM", offsetX + (7/2)+1, offsetY-1)
+         nodeModFrame.nodeProgressBorderTOP = nodeModFrame:CreateLine()
+         nodeModFrame.nodeProgressBorderTOP:SetColorTexture(0.42,0.48,0.55,1)
+         nodeModFrame.nodeProgressBorderTOP:SetThickness(edgeSize)
+         nodeModFrame.nodeProgressBorderTOP:SetStartPoint("BOTTOM", offsetX - (7/2)-1, offsetY + originalSizeY + 1)
+         nodeModFrame.nodeProgressBorderTOP:SetEndPoint("BOTTOM", offsetX + (7/2)+1, offsetY + originalSizeY + 1)
+
+        -- Node Progress Display
+        nodeModFrame.nodeProgressBar = nodeModFrame:CreateLine()
+        nodeModFrame.nodeProgressBar.originalSizeY = originalSizeY
+        nodeModFrame.nodeProgressBar.maxValue = 50 -- the max rank of the node
+        
+        nodeModFrame.nodeProgressBar:SetColorTexture(0.05,0.55,0.23,1)
+        nodeModFrame.nodeProgressBar:SetThickness(7)
+        nodeModFrame.nodeProgressBar:SetStartPoint("BOTTOM", offsetX, offsetY)
+        nodeModFrame.nodeProgressBar:SetEndPoint("BOTTOM", offsetX, offsetY + nodeModFrame.nodeProgressBar.originalSizeY)
+
+        local progressBarDrawlayer, progressBarDrawSublayer = nodeModFrame.nodeProgressBar:GetDrawLayer()
+
+        nodeModFrame.nodeProgressBar.UpdateValueByInput = function()
+            local maxRank = nodeModFrame.nodeProgressBar.maxValue
+            local stepYPerRank = nodeModFrame.nodeProgressBar.originalSizeY / nodeModFrame.nodeProgressBar.maxValue
+            local currentValue = nodeModFrame.input:GetNumber()
+            if currentValue < 0 then
+                currentValue = 0
+            end
+            nodeModFrame.nodeProgressBar:SetEndPoint("BOTTOM", offsetX, offsetY + stepYPerRank*currentValue)
+        end
+
+        nodeModFrame.updateThresholdsByValue = function()
+            local currentValue = nodeModFrame.input:GetNumber()
+            for _, threshold in pairs(nodeModFrame.nodeProgressBar.thresholds) do
+                local thresholdText = threshold[2]
+                local thresholdRankText = threshold[3]
+                --print("update threshold: ")
+                --print("rank: " .. tostring(threshold.rank))
+                --print("currentValue: " .. tostring(currentValue))
+                if threshold.rank and threshold.rank <= currentValue then
+                   -- print("color green")
+                    thresholdText:SetText(CraftSim.UTIL:ColorizeText(threshold.originalText or "", CraftSim.CONST.COLORS.GREEN))
+                    thresholdRankText:SetText(CraftSim.UTIL:ColorizeText(threshold.rank or "", CraftSim.CONST.COLORS.GREEN))
+                else
+                    --print("color grey")
+                    thresholdText:SetText(CraftSim.UTIL:ColorizeText(threshold.originalText or "", CraftSim.CONST.COLORS.GREY))
+                    thresholdRankText:SetText(CraftSim.UTIL:ColorizeText(threshold.rank or "", CraftSim.CONST.COLORS.GREY))
+                end
+            end
+        end
+
+        nodeModFrame.input = CraftSim.FRAME:CreateNumericInput(
+            nil, nodeModFrame, nodeModFrame, "BOTTOM", "BOTTOM", offsetX + 5, offsetY - 30, 20, 20, 0, true, function(self, userInput) 
+                CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
+            end)
+
+        -- all possible thresholds in steps of 5 (Max ?) with 50 max ranks and 0 included its 11
+        nodeModFrame.nodeProgressBar.thresholds = {
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+            {nodeModFrame:CreateLine(), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight"), nodeModFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")},
+        }
+
+        nodeModFrame.InitThresholds = function(maxRank, thresholdValues)
+            nodeModFrame.nodeProgressBar.maxValue = maxRank
+            local numThresholds = maxRank / 5 + 1 -- thresholds are always per 5 points, and there is one at 0 and one at max
+
+            -- reset
+            for index, threshold in pairs(nodeModFrame.nodeProgressBar.thresholds) do
+                threshold.isActive = false
+                threshold[1]:SetDrawLayer(progressBarDrawlayer, progressBarDrawSublayer+1)
+            end
+
+            -- first fill relevant thresholds
+            for index, thresholdValue in pairs(thresholdValues) do
+                if thresholdValue.threshold then
+                    local thresholdIndex = thresholdValue.threshold / 5 + 1 -- could be 0, 5, 10..
+                    local threshold = nodeModFrame.nodeProgressBar.thresholds[thresholdIndex]
+                    threshold.originalText = thresholdValue.label
+                    threshold.isActive = true
+                    threshold[2]:SetText(threshold.originalText)
+                    threshold[3]:SetText(thresholdValue.threshold)
+                end
+            end
+
+            -- then adjust position and visibility
+            for index, threshold in pairs(nodeModFrame.nodeProgressBar.thresholds) do
+                local thresholdLine = threshold[1]
+                local thresholdText = threshold[2]
+                local thresholdRankText = threshold[3]
+
+                CraftSim.FRAME:ToggleFrame(thresholdLine, threshold.isActive)
+                CraftSim.FRAME:ToggleFrame(thresholdText, threshold.isActive)
+                CraftSim.FRAME:ToggleFrame(thresholdRankText, threshold.isActive)
+
+                if index <= numThresholds then
+                    threshold.rank = 5*(index-1)
+                    thresholdLine:SetColorTexture(1,1,1,1)
+                    thresholdLine:SetThickness(1)
+                    local stepYPerValue = nodeModFrame.nodeProgressBar.originalSizeY / (numThresholds - 1)
+                    local thresholdOffsetStartX = offsetX-(7/2)
+                    local thresholdOffsetEndX = offsetX+(7/2) -- Make it show a bit more on the right
+                    local thresholdOffsetY = offsetY + stepYPerValue*(index-1)
+                    thresholdLine:SetStartPoint("BOTTOM", thresholdOffsetStartX,  thresholdOffsetY)
+                    thresholdLine:SetEndPoint("BOTTOM", thresholdOffsetEndX, thresholdOffsetY)
+
+                    local textWidth = thresholdText:GetStringWidth()
+                    thresholdText:SetScale(0.7)
+                    thresholdText:SetPoint("BOTTOM", nodeModFrame, "BOTTOM", ((textWidth / 2) + (thresholdOffsetStartX + 30)*1.4) - 20, (thresholdOffsetY-2.5)*1.4)
+                    thresholdRankText:SetScale(0.7)
+                    thresholdRankText:SetPoint("BOTTOM", nodeModFrame, "BOTTOM", (thresholdOffsetStartX - 10)*1.4, (thresholdOffsetY-2.5)*1.4)
+                else
+                    threshold.rank = nil
+                end
             end
         end
 
         return nodeModFrame
     end
 
-    local nodeFrameOffsetY = -120
-    local nodeFrameSpacingX = 80
+    local baseOffsetY = 120
+    local nodeFrameOffsetY = -190
+    local nodeFrameSpacingX = 100
 
-    local function createNodeFrameCombinationsForTab(parent)
+    local function createNodeFrameCombinationsForTab(parent, tabNr)
         return {
             -- First row is always 1
-            createNodeModFrame(parent, parent, "TOP", "TOP", 0, nodeFrameOffsetY, 1, 1),
+            createNodeModFrame(parent, parent, "TOP", "TOP", 0, baseOffsetY+nodeFrameOffsetY, 1, 1, tabNr, 1),
     
-            -- Second row is either 4, 3, 2
-            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 4),
-            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*2, 2, 4),
-            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*2, 2, 4),
-            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 4),
+            -- Second row is either 5, 4, 3, 2
+            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*2, 2, 5, tabNr, 2),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*2, 2, 5, tabNr,2 ),
+            createNodeModFrame(parent, parent, "TOP", "TOP", 0, baseOffsetY+nodeFrameOffsetY*2, 2, 5, tabNr, 3),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*2, 2, 5, tabNr, 4),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*2, 2, 5, tabNr, 5),
+
+            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*2, 2, 4, tabNr, 1),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), baseOffsetY+nodeFrameOffsetY*2, 2, 4, tabNr, 2),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX / 2, baseOffsetY+nodeFrameOffsetY*2, 2, 4, tabNr, 3),
+            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*2, 2, 4, tabNr, 4),
     
-            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
-            createNodeModFrame(parent, parent, "TOP", "TOP", 0, nodeFrameOffsetY*2, 2, 3),
-            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*2, 2, 3),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*2, 2, 3, tabNr, 1),
+            createNodeModFrame(parent, parent, "TOP", "TOP", 0, baseOffsetY+nodeFrameOffsetY*2, 2, 3, tabNr, 2),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*2, 2, 3, tabNr, 3),
     
-            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*2, 2, 2),
-            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*2, 2, 2),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), baseOffsetY+nodeFrameOffsetY*2, 2, 2, tabNr, 1),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX / 2, baseOffsetY+nodeFrameOffsetY*2, 2, 2, tabNr, 2),
     
             -- last row is either 9, 8, 4, 2, 0
-            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
-            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
-            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
-            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
-            createNodeModFrame(parent, parent, "TOP", "TOP", 0, nodeFrameOffsetY*3, 3, 9),
-            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 9),
-            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 9),
-            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 9),
-            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*4, nodeFrameOffsetY*3, 3, 9),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*4, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 1),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*3, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 2),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 3),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 4),
+            createNodeModFrame(parent, parent, "TOP", "TOP", 0, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 5),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 6),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 7),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*3, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 8),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*4, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 9),
     
-            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 8),
-            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 8),
-            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 8),
-            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 8),
-            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 8),
-            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 8),
-            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*2, nodeFrameOffsetY*3, 3, 8),
-            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*3, nodeFrameOffsetY*3, 3, 8),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*3, baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 1),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 2),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2) - nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 3),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 4),
+            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2), baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 5),
+            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 6),
+            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 7),
+            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*3, baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 8),
     
-            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 4),
-            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 4),
-            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*3, 3, 4),
-            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, nodeFrameOffsetY*3, 3, 4),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 4, tabNr, 1),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), baseOffsetY+nodeFrameOffsetY*3, 3, 4, tabNr, 2),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX / 2, baseOffsetY+nodeFrameOffsetY*3, 3, 4, tabNr, 3),
+            createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2)+nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 4, tabNr, 4),
     
-            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), nodeFrameOffsetY*3, 3, 2),
-            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX / 2, nodeFrameOffsetY*3, 3, 2),
+            createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), baseOffsetY+nodeFrameOffsetY*3, 3, 2, tabNr, 1),
+            createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX / 2, baseOffsetY+nodeFrameOffsetY*3, 3, 2, tabNr, 2),
         }
     end
 
-    spec1.content.nodeModFrames = createNodeFrameCombinationsForTab(spec1.content)
-    spec2.content.nodeModFrames = createNodeFrameCombinationsForTab(spec2.content)
-    spec3.content.nodeModFrames = createNodeFrameCombinationsForTab(spec3.content)
-    spec4.content.nodeModFrames = createNodeFrameCombinationsForTab(spec4.content)
-
-    --spec1.content.nodeModFrames[2].SetParentNode(spec1.content.nodeModFrames[1])
-
-    local nodeModFramesL1 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(1, 1, 1)
-    local nodeModFramesL2 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(1, 2, 4)
-    local nodeModFramesL3 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(1, 3, 9)
-
-    for _, n in pairs(nodeModFramesL1) do
-        n:Show()
-    end
-
-    for _, n in pairs(nodeModFramesL2) do
-        n:Show()
-    end
-
-    for _, n in pairs(nodeModFramesL3) do
-        n:Show()
-    end
-
-    nodeModFramesL1 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(2, 1, 1)
-    nodeModFramesL2 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(2, 2, 4)
-    nodeModFramesL3 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(2, 3, 9)
-
-    for _, n in pairs(nodeModFramesL1) do
-        n:Show()
-    end
-
-    for _, n in pairs(nodeModFramesL2) do
-        n:Show()
-    end
-
-    for _, n in pairs(nodeModFramesL3) do
-        n:Show()
-    end
-
-    nodeModFramesL1 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(3, 1, 1)
-    nodeModFramesL2 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(3, 2, 4)
-    nodeModFramesL3 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(3, 3, 9)
-
-    for _, n in pairs(nodeModFramesL1) do
-        n:Show()
-    end
-
-    for _, n in pairs(nodeModFramesL2) do
-        n:Show()
-    end
-
-    for _, n in pairs(nodeModFramesL3) do
-        n:Show()
-    end
-
-    nodeModFramesL1 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(4, 1, 1)
-    nodeModFramesL2 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(4, 2, 4)
-    nodeModFramesL3 = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(4, 3, 9)
-
-    for _, n in pairs(nodeModFramesL1) do
-        n:Show()
-    end
-
-    for _, n in pairs(nodeModFramesL2) do
-        n:Show()
-    end
-
-    for _, n in pairs(nodeModFramesL3) do
-        n:Show()
-    end
-
+    spec1.content.nodeModFrames = createNodeFrameCombinationsForTab(spec1.content, 1)
+    spec2.content.nodeModFrames = createNodeFrameCombinationsForTab(spec2.content, 2)
+    spec3.content.nodeModFrames = createNodeFrameCombinationsForTab(spec3.content, 3)
+    spec4.content.nodeModFrames = createNodeFrameCombinationsForTab(spec4.content, 4)
 
     frame:Hide()
+end
+
+function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
+    local specNodeData = CraftSim.SIMULATION_MODE.recipeData.specNodeData
+
+    if not specNodeData then
+        return
+    end
+    print("Init Spec Data:", false, true)
+    --print(specNodeData, true)
+
+    local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[CraftSim.SIMULATION_MODE.recipeData.professionID]
+    local professionNodeNameMap = CraftSim.SPEC_DATA:GetNodes(CraftSim.SIMULATION_MODE.recipeData.professionID)
+    -- get the baseNodes
+    local baseRuleNodeNames = CraftSim.SPEC_DATA.BASE_RULE_NODES()[CraftSim.SIMULATION_MODE.recipeData.professionID]
+    print("baseRuleNodeNames: ")
+    print(baseRuleNodeNames, true)
+    local baseRuleNodes = CraftSim.UTIL:Map(baseRuleNodeNames, function(ruleNodeName) 
+        return ruleNodes[ruleNodeName]
+    end)
+
+    print("found base rule nodes: " .. #baseRuleNodes)
+
+    local baseNodeNames = CraftSim.UTIL:Map(baseRuleNodes, function(baseRuleNode) 
+        local foundEntry = CraftSim.UTIL:Find(professionNodeNameMap, function(nameEntry) return nameEntry.nodeID == baseRuleNode.nodeID end)
+        return foundEntry.name
+    end)
+
+    local specModFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+    specModFrame.content.activeNodeModFrames = {}
+
+    -- init tabs
+    local function initTab(tabNr, specTab, specTabName, baseNode) 
+        specTab:SetText(specTabName)
+        specTab:ResetWidth()
+
+        local currentNodeOnLayer = {1, 1, 1}
+
+        local function initNode(node, layer, layerCount, parentNodeModFrame)
+           
+            local nodeNameData = CraftSim.UTIL:Find(professionNodeNameMap, function(entry) return entry.nodeID == node.nodeID end)
+            print("init node: " .. tostring(nodeNameData.name))
+            local nodesOnLayer = layerCount[layer]
+            print("getnodemodframes: " .. tabNr .. "," .. layer .. "," .. nodesOnLayer)
+            local nodeModFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(tabNr, layer, nodesOnLayer)
+            --print("found nodemodframes on this layer: " .. tostring(#nodeModFrames) .. " expected: " .. tostring(layerCount[layer]))
+            print("current node on layer: " .. tostring(currentNodeOnLayer[layer]))
+            local nodeModFrame = nodeModFrames[currentNodeOnLayer[layer]]
+            print("debugID: " .. tostring(nodeModFrame.debugID))
+            -- make name break and smaller
+            local adaptedName = string.gsub(nodeNameData.name, " ", "\n", 1)
+            nodeModFrame.nodeName:SetText(adaptedName)
+            -- Fill relevant data for nodeModFrame
+            nodeModFrame.nodeID = node.nodeID
+            local nodeData = CraftSim.UTIL:Find(specNodeData, function(specNode) return specNode.nodeID == node.nodeID end)
+            nodeModFrame.nodeProgressBar.maxValue = nodeData.maxRanks - 1
+            nodeModFrame.input:SetText(nodeData.activeRank - 1)
+
+            table.insert(specModFrame.content.activeNodeModFrames, nodeModFrame) -- for later easier reference
+
+            -- init the threshold display
+            local thresholdLabels = {}
+            local nodeRules = CraftSim.UTIL:FilterTable(ruleNodes, function(rule) return rule.nodeID == node.nodeID end)
+            for _, rule in pairs(nodeRules) do
+                local label = ""
+                if rule.skill then
+                    label = label .. "SK+" .. rule.skill .. " "
+                end
+                if rule.inspiration then
+                    label = label .. "IN+" .. rule.inspiration .. " "
+                end
+                if rule.inspirationBonusSkillFactor then
+                    label = label .. "ISK+" .. (rule.inspirationBonusSkillFactor*100) .. "% "
+                end
+                if rule.multicraft then
+                    label = label .. "MC+" .. rule.multicraft .. " "
+                end
+                if rule.multicraftExtraItemsFactor then
+                    label = label .. "MCI+" .. (rule.multicraftExtraItemsFactor*100) .. "% "
+                end
+                if rule.resourcefulness then
+                    label = label .. "R+" .. rule.resourcefulness .. " "
+                end
+                if rule.resourcefulnessExtraItemsFactor then
+                    label = label .. "RI+" .. (rule.resourcefulnessExtraItemsFactor*100) .. "% "
+                end
+                if rule.craftingspeedBonusFactor then
+                    label = label .. "CS+" .. (rule.craftingspeedBonusFactor*100) .. "% "
+                end
+                if rule.potionExperimentationChanceFactor then
+                    label = label .. "PB+" .. (rule.potionExperimentationChanceFactor*100) .. "% "
+                end
+                if rule.phialExperimentationChanceFactor then
+                    label = label .. "PB+" .. (rule.phialExperimentationChanceFactor*100) .. "% "
+                end
+
+                table.insert(thresholdLabels, {
+                    label = label,
+                    threshold = rule.threshold
+                })
+            end
+            print("thresholds:")
+            print(thresholdLabels, true)
+            nodeModFrame.InitThresholds(nodeData.maxRanks - 1, thresholdLabels)
+            -- adapt to set values
+            nodeModFrame.nodeProgressBar.UpdateValueByInput()
+            nodeModFrame.updateThresholdsByValue()
+            --
+            nodeModFrame:Show()
+            if parentNodeModFrame then
+                nodeModFrame.SetParentNode(parentNodeModFrame)
+            end
+
+            for _, childNodeID in pairs(node.childNodeIDs or {}) do
+                -- 
+                local childNode = ruleNodes[childNodeID]
+                initNode(childNode, layer + 1, layerCount, nodeModFrame)
+            end
+
+            currentNodeOnLayer[layer] = currentNodeOnLayer[layer] + 1
+        end
+
+        -- get how many nodes there are per layer
+        local function countNodes(node)
+            local layer1Count = 1
+            local layer2Count = (node.childNodeIDs and #node.childNodeIDs) or 0
+            local layer3Count = 0
+            for _, childNodeID in pairs(node.childNodeIDs or {}) do
+                -- 
+                local childNode = ruleNodes[childNodeID]
+                
+                layer3Count = layer3Count + ((childNode.childNodeIDs and #childNode.childNodeIDs) or 0)
+            end
+
+            return layer1Count, layer2Count, layer3Count
+        end
+
+        local count1, count2, count3 = countNodes(baseNode)
+
+        -- init nodes recursively
+        initNode(baseNode, 1, {count1, count2, count3}) 
+    end
+
+    for i = 1, 4, 1 do
+        local specTabName = baseNodeNames[i]
+        local specTab = specModFrame.content.specializationTabs[i]
+        if specTabName then
+            specTab:Show()
+            initTab(i, specTab, specTabName, baseRuleNodes[i])
+        else
+            specTab:Hide()
+        end
+    end
+
 end
 
 function CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(tabIndex, layer, layerMaxNodes)
@@ -682,7 +923,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     if not CraftSim.SIMULATION_MODE.isActive then
         CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM):Hide()
     end
-    specInfoFrame.content.knowledgePointSimulationButton:Hide() -- TODO: REMOVE WHEN READY
+    --specInfoFrame.content.knowledgePointSimulationButton:Hide() -- TODO: REMOVE WHEN READY
     -- only if recipe has optionalReagents
     local hasOptionalReagents = ProfessionsFrame.CraftingPage.SchematicForm.reagentSlots[0] ~= nil
     CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)

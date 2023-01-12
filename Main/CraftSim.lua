@@ -122,6 +122,9 @@ function CraftSim.MAIN:HookToEvent()
 	end
 
 	local function Init(self, recipeInfo)
+		
+		--CraftSim.UTIL:CollectGarbageAtThreshold(15000)
+
 		CraftSim.MAIN.currentRecipeInfo = recipeInfo
 
 		-- if init turn sim mode off

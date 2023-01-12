@@ -23,6 +23,38 @@ local function print(text, recursive, l) -- override
     end
 end
 
+function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
+    if not userInput or not CraftSim.SIMULATION_MODE.recipeData then
+        return
+    end
+    print("assigned node: " .. tostring(nodeModFrame.nodeID))
+    print("max value: " .. tostring(nodeModFrame.nodeProgressBar.maxValue))
+    
+    local inputNumber = CraftSim.UTIL:ValidateNumberInput(nodeModFrame.input, true)
+
+    if inputNumber > nodeModFrame.nodeProgressBar.maxValue then
+        nodeModFrame.input:SetText(nodeModFrame.nodeProgressBar.maxValue)
+        return
+    elseif inputNumber < -1 then
+        inputNumber = -1
+        nodeModFrame.input:SetText("-1")
+    end
+
+    print("input number: " .. tostring(inputNumber))
+    nodeModFrame.nodeProgressBar:UpdateValueByInput()
+    nodeModFrame.updateThresholdsByValue()
+
+    -- update specdata
+    local nodeInSpecData = CraftSim.UTIL:Find(CraftSim.SIMULATION_MODE.recipeData.specNodeData, function(nodeData) return nodeData.nodeID == nodeModFrame.nodeID end)
+ 
+    nodeInSpecData.activeRank = inputNumber + 1
+
+    print("new spec data node:")
+    print(nodeInSpecData, true)
+
+    CraftSim.MAIN:TriggerModulesErrorSafe()
+end
+
 function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(userInput)
     if not userInput or not CraftSim.SIMULATION_MODE.recipeData then
         return
@@ -207,17 +239,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
     end
 end
 
-function CraftSim.SIMULATION_MODE:UpdateSpecDataByInput()
-    -- check all spec data inputs and adapt spec data
-
-    print("Sim Mode Spec Data:")
-    print(CraftSim.SIMULATION_MODE.recipeData.specNodeData, true)
-end
-
 function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
-    if CraftSim.SIMULATION_MODE.recipeData.specNodeData then
-        CraftSim.SIMULATION_MODE:UpdateSpecDataByInput()
-    end
     CraftSim.SIMULATION_MODE:UpdateReagentAllocationsByInput()
     CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
     CraftSim.SIMULATION_MODE:UpdateGearResultItemsByInputs()
@@ -323,6 +345,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames()
     CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns()
+    CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
 
     -- update simulation recipe data and frontend
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()
