@@ -509,6 +509,14 @@ function CraftSim.FRAME:InitDebugFrame()
         frame.content.debugBox:SetText("")
     end)
 
+    controlPanel.content.reloadButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
+	controlPanel.content.reloadButton:SetPoint("RIGHT", controlPanel.content.clearButton, "LEFT", 5, 0)	
+	controlPanel.content.reloadButton:SetText("Reload UI")
+	controlPanel.content.reloadButton:SetSize(controlPanel.content.reloadButton:GetTextWidth()+15, 25)
+    controlPanel.content.reloadButton:SetScript("OnClick", function(self) 
+        C_UI.Reload()
+    end)
+
     controlPanel.content.nodeDebugInput = CraftSim.FRAME:CreateInput(
         "CraftSimDebugNodeIDInput", controlPanel.content, controlPanel.content.clearButton, 
         "TOP", "TOP", -50, -25, 120, 20, "", function() end)
