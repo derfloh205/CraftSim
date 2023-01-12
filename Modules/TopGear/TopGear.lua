@@ -295,8 +295,8 @@ function CraftSim.TOPGEAR:AddStatDiffByBaseRecipeData(bestSimulation, recipeData
             bestSimulation.statDiff.inspirationBonusskill = bestSimulation.modifiedRecipeData.stats.inspiration.bonusskill - recipeData.stats.inspiration.bonusskill
         end
     end
-    if bestSimulation.modifiedRecipeData.stats.resourcefulness ~= nil then
-        bestSimulation.statDiff.resourcefulness = bestSimulation.modifiedRecipeData.stats.resourcefulness.percent - recipeData.stats.resourcefulness.percent
+    if bestSimulation.modifiedRecipeData.stats.multicraft ~= nil then
+        bestSimulation.statDiff.multicraft = bestSimulation.modifiedRecipeData.stats.multicraft.percent - recipeData.stats.multicraft.percent
     end
     if bestSimulation.modifiedRecipeData.stats.resourcefulness ~= nil then
         bestSimulation.statDiff.resourcefulness = bestSimulation.modifiedRecipeData.stats.resourcefulness.percent - recipeData.stats.resourcefulness.percent
