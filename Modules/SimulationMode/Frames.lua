@@ -697,13 +697,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
 
     CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame, CraftSim.SIMULATION_MODE.isActive)
 
-    local wasNotVisibleNowIs = not ProfessionsFrame.CraftingPage.SchematicForm.Details:IsVisible()
-    CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Details, not CraftSim.SIMULATION_MODE.isActive)
-    wasNotVisibleNowIs = wasNotVisibleNowIs and ProfessionsFrame.CraftingPage.SchematicForm.Details:IsVisible()
-    if wasNotVisibleNowIs then
-        -- try to reset it manually so blizz does not throw an operationInfo not found error
-        ProfessionsFrame.CraftingPage.SchematicForm.Details.operationInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeOperationInfo()
-    end
+    -- local wasNotVisibleNowIs = not ProfessionsFrame.CraftingPage.SchematicForm.Details:IsVisible()
+    -- CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Details, not CraftSim.SIMULATION_MODE.isActive)
+    -- wasNotVisibleNowIs = wasNotVisibleNowIs and ProfessionsFrame.CraftingPage.SchematicForm.Details:IsVisible()
+    -- if wasNotVisibleNowIs then
+    --     -- try to reset it manually so blizz does not throw an operationInfo not found error
+    --     ProfessionsFrame.CraftingPage.SchematicForm.Details.operationInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeOperationInfo()
+    -- end
 
     if not CraftSim.SIMULATION_MODE.isActive then
         -- only hide, they will be shown automatically if available
