@@ -428,9 +428,9 @@ end
 
 function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData)
 
-    if not recipeData.isRecraft then
-        return 0.25 -- As this is pretty consistent for everything which is not a recraft
-    end
+    -- if not recipeData.isRecraft then
+    --     return 0.25 -- As this is pretty consistent for everything which is not a recraft
+    -- end
 
 
     -- For recrafts we need to calculate it

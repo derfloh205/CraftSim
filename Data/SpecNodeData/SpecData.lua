@@ -138,8 +138,8 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
             local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
             debugActive = false
             
-            
-            local nodeAffectsRecipe = nodeRank > 0 and CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
+            local affectedNoRank = CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
+            local nodeAffectsRecipe = nodeRank > 0 and affectedNoRank
             
             if (nodeAffectsRecipe or nodeData.debug) and not singleNodeID then
                 local containsNode = CraftSim.UTIL:Find(recipeData.specNodeData.affectedNodes, function(node) 
@@ -162,7 +162,8 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
                 debugPrinted = true
                 -- debug
                 print("CHECK NODE: " .. tostring(nodeData.nodeID))
-                print("-- Affected: " .. tostring(nodeAffectsRecipe))
+                print("-- Affected considering rank: " .. tostring(nodeAffectsRecipe))
+                print("-- Affected by IDs: " .. tostring(affectedNoRank))
                 print("-- categoryID: " .. tostring(recipeData.categoryID))
                 print("-- subtypeID: " .. tostring(recipeData.subtypeID))
                 print("-- IDs: ")

@@ -64,11 +64,12 @@ function CraftSim_DEBUG:TestAllocationSkillFetchV2()
     CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSim.MAIN.currentRecipeData)
 end
 function CraftSim_DEBUG:TestAllocationSkillFetchV1()
-    CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncreaseOLD(CraftSim.MAIN.currentRecipeData)
+    local skillIncrease = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncreaseOLD(CraftSim.MAIN.currentRecipeData)
+    print("Skill Increase: " .. tostring(skillIncrease))
 end
 
 function CraftSim_DEBUG:TestMaxReagentIncreaseFactor()
-    CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(CraftSim.MAIN.currentRecipeData)
+   print("Factor: " .. CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(CraftSim.MAIN.currentRecipeData))
 end
 
 function CraftSim_DEBUG:CheckSpecNode(nodeID)

@@ -17,6 +17,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("Hello and thank you for using CraftSim!\n", bb) .. 
         "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        c("\n\n\n--- Version 1.7.7 ---", l) ..
+        "\n\nNew export data command:\n" .. c("/craftsim export", g) .. "\nlets you export the information about a recipe\nin CSV format!" .. c("More Info will follow", bb) ..
+        "\n\nFixed an error when other addons are hiding the ProfessionsFrame" ..
         c("\n\n\n--- Version 1.7.6 ---", l) ..
         c("\n\nSimulation Mode", bb) .. " now correctly considers costs of\noptional and finishing reagents in crafting costs" .. 
         c("\n\n\n--- Version 1.7.5 ---", l) ..
