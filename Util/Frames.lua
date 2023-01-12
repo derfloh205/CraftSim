@@ -510,11 +510,19 @@ function CraftSim.FRAME:InitDebugFrame()
     end)
 
     controlPanel.content.reloadButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
-	controlPanel.content.reloadButton:SetPoint("RIGHT", controlPanel.content.clearButton, "LEFT", 5, 0)	
+	controlPanel.content.reloadButton:SetPoint("RIGHT", controlPanel.content.clearButton, "LEFT", 0, 0)	
 	controlPanel.content.reloadButton:SetText("Reload UI")
 	controlPanel.content.reloadButton:SetSize(controlPanel.content.reloadButton:GetTextWidth()+15, 25)
     controlPanel.content.reloadButton:SetScript("OnClick", function(self) 
         C_UI.Reload()
+    end)
+
+    controlPanel.content.showNews = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
+	controlPanel.content.showNews:SetPoint("LEFT", controlPanel.content.clearButton, "RIGHT", 5, 0)	
+	controlPanel.content.showNews:SetText("News")
+	controlPanel.content.showNews:SetSize(controlPanel.content.showNews:GetTextWidth()+15, 25)
+    controlPanel.content.showNews:SetScript("OnClick", function(self) 
+        CraftSim.FRAME:ShowOneTimeInfo(true)
     end)
 
     controlPanel.content.nodeDebugInput = CraftSim.FRAME:CreateInput(
@@ -629,8 +637,9 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO, true, true)
 
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 0, -30)
+    frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 20, -30)
     frame.content.infoText:SetText("No Info")
+    frame.content.infoText:SetJustifyH("LEFT")
 
     frame.showInfo = function(infoText) 
         frame.content.infoText:SetText(infoText)

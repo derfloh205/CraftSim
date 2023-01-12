@@ -12,14 +12,27 @@ function CraftSim.NEWS:GET_NEWS()
     local c = function(text, color) 
         return CraftSim.UTIL:ColorizeText(text, color)
     end
+    local p = "\n" .. CraftSim.UTIL:GetQualityIconAsText(1, 15, 15) .. " "
+    local s = "\n" .. CraftSim.UTIL:GetQualityIconAsText(2, 15, 15) .. " "
+    local P = "\n" .. CraftSim.UTIL:GetQualityIconAsText(3, 15, 15) .. " "
+    local a = "\n     "
+    local function newP(v) return c("\n\n\n                                   --- Version " .. v .. " ---\n\n", l) end
     local tunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(199345, true)
     local frostedTunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(200074)
     return 
-        c("Hello and thank you for using CraftSim!\n", bb) .. 
-        "( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
-        c("\n\n\n--- Version 1.7.7 ---", l) ..
-        "\n\nNew export data command:\n" .. c("/craftsim export", g) .. "\nlets you export the information about a recipe\nin CSV format!" .. c("More Info will follow", bb) ..
-        "\n\nFixed an error when other addons are hiding the ProfessionsFrame" ..
+        c("                   Hello and thank you for using CraftSim!\n", bb) .. 
+        "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("1.7.7") ..
+        P .. "New News Format!" ..
+        s .. "New " .. c("Export Data", g) .. " command: " .. c("/craftsim export", g) .. 
+        a .."Lets you export the information about a recipe in CSV format!" .. 
+        a .. c("More Info will follow", bb) ..
+        p .. "Fixed an error when other addons are " ..
+        a .. "hiding the ProfessionsFrame" ..
+        p .. c("Max Reagent Skill Increase", bb) .. " is now always calculated based " ..
+        a .. "on API results." .. 
+        a .. "This is because some non recraft recipes are not " ..
+        a .. "using the standard 25% Recipe Difficulty" ..
         c("\n\n\n--- Version 1.7.6 ---", l) ..
         c("\n\nSimulation Mode", bb) .. " now correctly considers costs of\noptional and finishing reagents in crafting costs" .. 
         c("\n\n\n--- Version 1.7.5 ---", l) ..
@@ -40,13 +53,13 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\nReadjusted the " .. c("Simulation Mode Number Input Width", g) .. "\n to consider numbers with three digits" ..
         "\n\n" .. c("Cost Overview", g) .. " always show all qualities now" ..
         "\n\n" .. c("Disabled most Modules for ", r) .. c("Recrafting", bb) .. 
-        "\n" .. " because of wrong reagent skill calculations due to hidden factors" ..
+        "\n" .. " because of wrong reagent skill\ncalculations due to hidden factors" ..
         "\n\n" .. c("Top Profit", bb) .. " Mode for the Top Gear module is now\navailable for all recipes to support price overrides" ..
         "\n\n" .. "Added " .. c("CallbackHandler", bb) .. " dependency to loaded list\nPeople who have " .. 
         c("Ace3", bb) .. " and " .. c("LibCompress", bb) .. " installed manually\nshould now be able to remove them" ..
         c("\n\nFixed Simulation Mode Help Icons", bb) .. " causing error on hover" ..
         "\n\nAuto sort quality itemIDs fetched from\nblizzard to prevent wrong quality orders" .. 
-        "\n\n" .. c("Profit Calculation", g) .. " now considers skipping a quality with inspiration" .. 
+        "\n\n" .. c("Profit Calculation", g) .. " now considers skipping a quality\nwith inspiration" .. 
         c("\n\n\n--- Version 1.6.4.2 ---", l) ..
         "\n\n\nFixed TSM Price Expression for Items\nbeing overwritten by the Material one on reload" ..
         c("\n\n\n--- Version 1.6.4.1 ---", l) ..
@@ -57,7 +70,7 @@ function CraftSim.NEWS:GET_NEWS()
         c("\n\n\n--- Version 1.6.2, 1.6.3 ---", l) ..
         "\n\nBugfixes to certain nil errors" ..
         "\n\nFixed error with saving collapsed status of frames" .. 
-        "\n\nFixed Material Combination Module trying to show up for noQuality recipes" ..
+        "\n\nFixed Material Combination Module trying to\nshow up for noQuality recipes" ..
         "\n\n" .. (tunaData.link or c("Rimefin Tuna", bb)) .. " in cooking recipes\nnow uses " .. (frostedTunaData.link or c("Frosted Rimefin Tuna", bb)) .. " for pricing" ..
         "\n\n" .. c("Cost Overview", g) .. " now shows the actual item links" ..
         c("\n\n\n--- Version 1.6.1 ---", l) ..
@@ -67,7 +80,7 @@ function CraftSim.NEWS:GET_NEWS()
         "\n\nThe " .. c("Material Combination Suggestion", r) .. "\nis now disabled for such recipes until this issue is fixed" .. 
         c("\n\n\n--- Version 1.6 ---", l) ..
         c("\n\nOverride Sell Price ", g) .. " is a new feature that lets you override\nthe sell price for each quality on an item\n" .. 
-        "even soulbound gear! You can use this to e.g. " .. c("simulate craft order comissions!", g) ..
+        "even soulbound gear!\nYou can use this to e.g. " .. c("simulate craft order comissions!", g) ..
         c("\n\nExtra Item Boni", g) .. " for Multicraft and Resourcefulness\nfrom specialization nodes should now be considered correctly!\n\n" ..
         "New " .. c("Debug Module", g) .. " was added! Are you curious?\nTry " .. c("/craftsim debug\n\n", g) .. 
         c("WARNING: ", r) .. " Recipes with exactly 1 material that has quality\n" ..
