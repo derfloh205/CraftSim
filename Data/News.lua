@@ -22,6 +22,11 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("1.7.8") .. 
+        P .. "koKR (Korean) Localization added" .. 
+        a .. "(Thank you " .. c("github.com/comiluv", bb) .. ")" ..
+        P .. "zhTW (Taiwan) Localization added" .. 
+        a .. "(Thank you " .. c("github.com/Tmv3v", bb) .. ")" ..
         newP("1.7.7") ..
         P .. "New News Format!" ..
         s .. "New " .. c("Export Data", g) .. " command: " .. c("/craftsim export", g) .. 

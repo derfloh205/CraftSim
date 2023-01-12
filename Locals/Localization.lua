@@ -22,6 +22,8 @@ function CraftSim.LOCAL:Init()
         CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_ES
     elseif currentLocale == CraftSim.CONST.LOCALES.KO then
         CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_KO
+    elseif currentLocale == CraftSim.CONST.LOCALES.TW then
+        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_TW
     else
         error("CraftSim Error: Client not supported: " .. tostring(currentLocale)) 
     end
