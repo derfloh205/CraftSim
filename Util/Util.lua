@@ -375,3 +375,10 @@ function CraftSim.UTIL:toBits(num, bits)
     end
     return t
 end
+
+function CraftSim.UTIL:HashTable(t)
+    local serializedData = CraftSim.ACCOUNTSYNC:Serialize(data)
+	local compressedData, compressError = LibCompress:Compress(serializedData)
+    return compressedData
+end
+

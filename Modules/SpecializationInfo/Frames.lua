@@ -43,20 +43,17 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         return nodeLine
     end
     -- TODO: how many do I need?
-    local baseY = -40
+    local baseY = -60
     local nodeLineSpacingY = -20
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title, baseY))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*2))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*3))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*4))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*5))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*6))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*7))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*8))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*9))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*10))
-    table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title,baseY + nodeLineSpacingY*11))
+    local maxNodeLines = 31
+    frame.content.AddNodeLine = function()
+        local numNodeLines = #frame.content.nodeLines
+        table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title, baseY + nodeLineSpacingY*(numNodeLines-1)))
+    end
+    
+    for i = 1, maxNodeLines, 1 do
+        frame.content.AddNodeLine()
+    end
 end
 
 function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
@@ -64,55 +61,125 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
 
     local professionNodes = CraftSim.SPEC_DATA:GetNodes(professionID)
 
-    
     local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
-    if recipeData.specNodeData and recipeData.specNodeData.affectedNodes and #recipeData.specNodeData.affectedNodes > 0 then
-        --print("Affecting Nodes: " .. tostring(#recipeData.specNodeData.affectedNodes))
-        for nodeLineIndex, nodeLine in pairs(specInfoFrame.content.nodeLines) do
-            local affectedNode = recipeData.specNodeData.affectedNodes[nodeLineIndex]
 
-            if affectedNode then
-                local nodeNameData = CraftSim.UTIL:FilterTable(professionNodes, function(node) 
-                    return affectedNode.nodeID == node.nodeID
-                end)[1]
+    local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[recipeData.professionID]
 
-                local nodeName = nodeNameData.name
-
-                nodeLine.nodeName:SetText(nodeName .. " (" .. tostring(affectedNode.nodeActualValue) .. "/" .. tostring(affectedNode.maxRanks-1) .. ")")
-
-                local nodeStats = affectedNode.nodeStats
-
-                local tooltipText = "This node grants you following stats for this recipe:\n\n"
-
-                for statName, statValue in pairs(nodeStats) do
-                    local translatedStatName = CraftSim.LOCAL:TranslateStatName(statName)
-                    local includeStat = statValue > 0
-                    local isPercent = false
-                    if string.match(statName, "Factor")  then
-                        isPercent = true
-                        if statValue == 1 then
-                            includeStat = false
-                        end
-                    end 
-                    if includeStat then
-                        if isPercent then
-                            local displayValue = CraftSim.UTIL:FormatFactorToPercent(statValue)
-                            tooltipText = tooltipText .. tostring(translatedStatName) .. ": " .. tostring(displayValue) .. "\n"
-                        else
-                            tooltipText = tooltipText .. tostring(translatedStatName) .. ": +" .. tostring(statValue) .. "\n"
-                        end
-                    end
+    local function nodeStatsToTooltip(nodeStats)
+        local tooltipText = ""
+        for statName, statValue in pairs(nodeStats) do
+            local translatedStatName = CraftSim.LOCAL:TranslateStatName(statName)
+            local includeStat = statValue > 0
+            local isPercent = false
+            if string.match(statName, "Factor")  then
+                isPercent = true
+                if statValue == 1 then
+                    includeStat = false
                 end
-
-                nodeLine.statTooltip.SetTooltipText(tooltipText)
-                nodeLine:Show()
-            else
-                nodeLine:Hide()
+            end 
+            if includeStat then
+                if isPercent then
+                    local displayValue = CraftSim.UTIL:FormatFactorToPercent(statValue)
+                    tooltipText = tooltipText .. tostring(translatedStatName) .. ": " .. tostring(displayValue) .. "\n"
+                else
+                    tooltipText = tooltipText .. tostring(translatedStatName) .. ": +" .. tostring(statValue) .. "\n"
+                end
             end
         end
-    elseif recipeData.specNodeData and recipeData.specNodeData.affectedNodes and #recipeData.specNodeData.affectedNodes == 0 then
-        --specInfoFrame.content.nodeList:SetText("Recipe not affected by specializations")
-    else
-        --specInfoFrame.content.nodeList:SetText("Profession not implemented yet")
+
+        return tooltipText
+    end
+
+    local affectedNodes = {}
+    for name, nodeData in pairs(ruleNodes) do
+        local nodeInfo = recipeData.specNodeData[nodeData.nodeID]
+
+        -- minus one cause its always 1 more than the ui rank to know wether it was learned or not (learned with 0 has 1 rank)
+            -- only increase if the current recipe has a matching category AND Subtype (like weapons -> one handed axes)
+        local nodeRank = nodeInfo.activeRank
+        local nodeActualValue = nodeInfo.activeRank - 1
+
+        -- fetch all subtypeIDs, categoryIDs and exceptionRecipeIDs recursively
+        local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodesCached(nodeData, ruleNodes)
+        
+        local affectedNoRank = CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
+        local nodeAffectsRecipe = nodeRank > 0 and affectedNoRank
+
+        local alreadyInserted = CraftSim.UTIL:Find(affectedNodes, function(aN) return aN.nodeID == nodeData.nodeID end)
+        
+        if not alreadyInserted then
+            if affectedNoRank and not nodeAffectsRecipe then
+
+                local nodeNameData = CraftSim.UTIL:FilterTable(professionNodes, function(node) 
+                    return nodeData.nodeID == node.nodeID
+                end)[1]
+    
+                if nodeNameData.name == "Short Blades" then
+                    print("SpecInfo: NodeActive: " .. nodeNameData.name)
+                    print("nodeData.nodeID: " .. nodeData.nodeID)
+                    print("nodeData: ")
+                    print(nodeData, true)
+                    print("IDs:")
+                    print(IDs, true)
+                end
+
+                local nodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeData.nodeID)
+    
+                local nodeName = nodeNameData.name
+                table.insert(affectedNodes, {
+                    nodeID = nodeData.nodeID,
+                    name = nodeName,
+                    isActive = false,
+                    value = nodeActualValue,
+                    maxValue = nodeInfo.maxRanks - 1,
+                    nodeStats = nodeStats
+                })
+            elseif nodeAffectsRecipe then
+                local nodeNameData = CraftSim.UTIL:FilterTable(professionNodes, function(node) 
+                    return nodeData.nodeID == node.nodeID
+                end)[1]
+    
+                local nodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeData.nodeID)
+    
+                local nodeName = nodeNameData.name
+                table.insert(affectedNodes, {
+                    nodeID = nodeData.nodeID,
+                    name = nodeName,
+                    isActive = true,
+                    value = nodeActualValue,
+                    maxValue = nodeInfo.maxRanks - 1,
+                    nodeStats = nodeStats
+                })
+            end
+            -- else it does not affect the recipe in any case
+        end
+    end
+
+    print("Affecting Nodes: " .. tostring(#affectedNodes))
+    if #affectedNodes > #specInfoFrame.content.nodeLines then
+        error("You need more nodeLines: " .. #affectedNodes .. " / " .. #specInfoFrame.content.nodeLines)
+    end
+    for nodeLineIndex, nodeLine in pairs(specInfoFrame.content.nodeLines) do
+        local affectedNode = affectedNodes[nodeLineIndex]
+        if affectedNode and affectedNode.isActive then
+            nodeLine.nodeName:SetText(affectedNode.name .. " (" .. tostring(affectedNode.value) .. "/" .. tostring(affectedNode.maxValue) .. ")")
+
+            local nodeStats = affectedNode.nodeStats
+
+            local tooltipText = "This node grants you following stats for this recipe:\n\n"
+
+            tooltipText = tooltipText .. nodeStatsToTooltip(nodeStats)
+
+            nodeLine.statTooltip.SetTooltipText(tooltipText)
+            nodeLine.statTooltip:Show()
+            nodeLine:Show()
+        elseif affectedNode and not affectedNode.isActive then
+            local greyText = CraftSim.UTIL:ColorizeText(affectedNode.name .. " (-/" .. tostring(affectedNode.maxValue) .. ")", CraftSim.CONST.COLORS.GREY)
+            nodeLine.nodeName:SetText(greyText)
+            nodeLine.statTooltip:Hide()
+            nodeLine:Show()
+        else
+            nodeLine:Hide()
+        end
     end
 end

@@ -348,6 +348,27 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
 
     CraftSim.FRAME:InitTabSystem(frame.content.specializationTabs)
 
+    frame.content.resetButton = CraftSim.FRAME:CreateButton("Reset", 
+    frame.content, spec4, "LEFT", "RIGHT", 40, 0, 15, 25, true, function(self) 
+        CraftSim.SIMULATION_MODE:ResetSpecData()
+    end)
+
+    frame.content.legendText = CraftSim.FRAME:CreateText(
+        [[
+            Legend:
+
+            IN ..... Inspiration
+            MC ... Multicraft
+            MCI .. Multicraft Extra Items
+            R ....... Resourcefulness
+            RI ...... Resourcefulness Extra Items
+            CS ..... CraftingSpeed
+            SK ..... Skill
+            PB ..... Potion/Phial Breakthrough Chance
+
+        ]], 
+        frame.content, spec1, "RIGHT", "LEFT", -50, -30, 0.8, nil, {type="H", value="LEFT"})
+
     local function createNodeModFrame(parent, anchorParent, anchorA, anchorB, offsetX, offsetY, layer, layerMaxNodes, tabNr, numOnLayer)
         local nodeModFrame = CreateFrame("frame", nil, parent)
         nodeModFrame:SetSize(100, 100)
@@ -376,6 +397,12 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
             else
                 nodeModFrame.showParentLine:Hide()
             end
+        end
+
+        nodeModFrame.Update = function(newValue)
+            nodeModFrame.input:SetText(newValue)
+            nodeModFrame.nodeProgressBar:UpdateValueByInput()
+            nodeModFrame.updateThresholdsByValue()
         end
 
         local offsetX = 0
@@ -447,10 +474,24 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
             end
         end
 
+        local plusButtonSizeX = 10
+        local plusButtonSizeY = 15
         nodeModFrame.input = CraftSim.FRAME:CreateNumericInput(
             nil, nodeModFrame, nodeModFrame, "BOTTOM", "BOTTOM", offsetX + 5, offsetY - 30, 20, 20, 0, true, function(self, userInput) 
                 CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
             end)
+        nodeModFrame.plusFiveButton = CraftSim.FRAME:CreateButton(
+            "+5", nodeModFrame, nodeModFrame.input, "LEFT", "RIGHT", 10, 0, plusButtonSizeX, plusButtonSizeY, true, function(self) 
+                local currentNumber = nodeModFrame.input:GetNumber()
+                nodeModFrame.input:SetText(currentNumber + 5)
+                CraftSim.SIMULATION_MODE:OnSpecModified(true, nodeModFrame)
+            end)
+        nodeModFrame.minusFiveButton = CraftSim.FRAME:CreateButton(
+        "-5", nodeModFrame, nodeModFrame.input, "RIGHT", "LEFT", -7, 0, plusButtonSizeX, plusButtonSizeY, true, function(self) 
+            local currentNumber = nodeModFrame.input:GetNumber()
+            nodeModFrame.input:SetText(currentNumber - 5)
+            CraftSim.SIMULATION_MODE:OnSpecModified(true, nodeModFrame)
+        end)
 
         -- all possible thresholds in steps of 5 (Max ?) with 50 max ranks and 0 included its 11
         nodeModFrame.nodeProgressBar.thresholds = {

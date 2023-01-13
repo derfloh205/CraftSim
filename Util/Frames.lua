@@ -205,6 +205,21 @@ function CraftSim.FRAME:HandleAuctionatorOverlaps()
     end
 end
 
+function CraftSim.FRAME:CreateButton(label, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, sizeX, sizeY, sizeToText, clickCallback)
+    local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+    button:SetText(label)
+    if sizeToText then
+        button:SetSize(button:GetTextWidth() + sizeX, sizeY)
+    else
+        button:SetSize(sizeX, sizeY)
+    end
+    
+    button:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
+    button:SetScript("OnClick", function() 
+        clickCallback(button)
+    end)
+end
+
 function CraftSim.FRAME:CreateTab(label, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, canBeEnabled, contentX, contentY, contentParent, contentAnchor, contentOffsetX, contentOffsetY)
     local tabExtraWidth = 15
     local tabButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
@@ -274,6 +289,26 @@ function CraftSim.FRAME:MakeCloseable(frame)
     frame.closeButton:SetScript("OnClick", function(self) 
         frame:Hide()
     end)
+end
+
+function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, scale, font, justifyData)
+    scale = scale or 1
+    font = font or "GameFontHighlight"
+
+    local craftSimText = parent:CreateFontString(nil, "OVERLAY", font)
+    craftSimText:SetText(text)
+    craftSimText:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
+    craftSimText:SetScale(scale)
+    
+    if justifyData then
+        if justifyData.type == "V" then
+            craftSimText:SetJustifyV(justifyData.value)
+        else
+            craftSimText:SetJustifyH(justifyData.value)
+        end
+    end
+
+    return craftSimText
 end
 
 function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, 
@@ -521,12 +556,14 @@ function CraftSim.FRAME:InitDebugFrame()
     end)
 
     controlPanel.content.showNews = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
-	controlPanel.content.showNews:SetPoint("LEFT", controlPanel.content.clearButton, "RIGHT", 5, 0)	
+	controlPanel.content.showNews:SetPoint("LEFT", controlPanel.content.clearButton, "RIGHT", 0, 0)	
 	controlPanel.content.showNews:SetText("News")
 	controlPanel.content.showNews:SetSize(controlPanel.content.showNews:GetTextWidth()+15, 25)
     controlPanel.content.showNews:SetScript("OnClick", function(self) 
         CraftSim.FRAME:ShowOneTimeInfo(true)
     end)
+
+    
 
     controlPanel.content.nodeDebugInput = CraftSim.FRAME:CreateInput(
         "CraftSimDebugNodeIDInput", controlPanel.content, controlPanel.content.clearButton, 
@@ -547,6 +584,11 @@ function CraftSim.FRAME:InitDebugFrame()
 	controlPanel.content.compareData:SetSize(controlPanel.content.compareData:GetTextWidth()+15, 25)
     controlPanel.content.compareData:SetScript("OnClick", function(self) 
         CraftSim_DEBUG:CompareStatData()
+    end)
+
+    controlPanel.content.clearCacheButton = CraftSim.FRAME:CreateButton("Clear Cache",
+    controlPanel.content, controlPanel.content.compareData, "LEFT", "RIGHT", 0, 0, 15, 25, true, function(self) 
+        CraftSim.CACHE:ClearAll()
     end)
 
     local checkBoxOffsetY = -2

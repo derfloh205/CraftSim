@@ -33,16 +33,12 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
     local inputNumber = CraftSim.UTIL:ValidateNumberInput(nodeModFrame.input, true)
 
     if inputNumber > nodeModFrame.nodeProgressBar.maxValue then
-        nodeModFrame.input:SetText(nodeModFrame.nodeProgressBar.maxValue)
-        return
+        inputNumber = nodeModFrame.nodeProgressBar.maxValue
     elseif inputNumber < -1 then
         inputNumber = -1
-        nodeModFrame.input:SetText("-1")
     end
-
-    print("input number: " .. tostring(inputNumber))
-    nodeModFrame.nodeProgressBar:UpdateValueByInput()
-    nodeModFrame.updateThresholdsByValue()
+    print("inputNumber: " .. inputNumber)
+    nodeModFrame.Update(inputNumber)
 
     -- update specdata
     local nodeInSpecData = CraftSim.UTIL:Find(CraftSim.SIMULATION_MODE.recipeData.specNodeData, function(nodeData) return nodeData.nodeID == nodeModFrame.nodeID end)
@@ -51,6 +47,18 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
 
     print("new spec data node:")
     print(nodeInSpecData, true)
+
+    CraftSim.MAIN:TriggerModulesErrorSafe()
+end
+
+function CraftSim.SIMULATION_MODE:ResetSpecData()
+    CraftSim.SIMULATION_MODE.recipeData.specNodeData = CopyTable(CraftSim.SIMULATION_MODE.baseSpecNodeData)
+
+    local specModFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+    for _, activeNodeModFrame in pairs(specModFrame.content.activeNodeModFrames) do
+        local nodeData = CraftSim.UTIL:Find(CraftSim.SIMULATION_MODE.recipeData.specNodeData, function(entry) return activeNodeModFrame.nodeID == entry.nodeID end)
+        activeNodeModFrame.Update(nodeData.activeRank - 1)
+    end
 
     CraftSim.MAIN:TriggerModulesErrorSafe()
 end

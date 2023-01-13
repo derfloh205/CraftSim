@@ -6,12 +6,31 @@ local function print(text, recursive) -- override
         CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SPECDATA, recursive)
 end
 
+function CraftSim.SPEC_DATA:GetIDsFromChildNodesCached(nodeData, ruleNodes)
+    local cachedIDs = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimSpecNodeCache, nodeData.nodeID)
+
+    if cachedIDs then
+        print("returning cached IDs")
+        return cachedIDs
+    end
+    print("return non cached")
+
+    local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
+    CraftSim.CACHE:AddCacheEntryByVersion(CraftSimSpecNodeCache, nodeData.nodeID, IDs)
+    return IDs
+end
 local debugActive = false
 function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
+
     local IDs = {
-        idMapping = nodeData.idMapping or {},
-        exceptionRecipeIDs = nodeData.exceptionRecipeIDs or {}
+        idMapping = (nodeData.idMapping ~= nil and CopyTable(nodeData.idMapping)) or {},
+        exceptionRecipeIDs = (nodeData.exceptionRecipeIDs ~= nil and CopyTable(nodeData.exceptionRecipeIDs)) or {}
     }
+
+    -- if nodeData.nodeID == 23725 then
+    --     print("nodeData: ???")
+    --     print(nodeData, true)
+    -- end
 
     -- add from childs
     local childNodeIDs = nodeData.childNodeIDs
@@ -93,8 +112,21 @@ function CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
     return false
 end
 
+local specNodeDataByProfession = {}
 function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, singleNodeID, printDebug)
     local specNodeData = recipeData.specNodeData
+
+    local specNodeLastHash = specNodeDataByProfession[recipeData.professionID]
+    local specNodeHash = CraftSim.UTIL:HashTable(specNodeData)
+
+    local specNodeDataChanged = specNodeLastHash ~= specNodeHash
+    if not singleNodeID and not specNodeDataChanged then
+        print("Reuse specnode stats", false, true)
+        local cachedStats = CraftSim.CACHE:GetFromCache(CraftSim.CACHE.SpecDataStatsByRecipeID, recipeData.recipeID)
+        if cachedStats then
+            return cachedStats
+        end
+    end
 
     local stats = {	
         inspiration = 0,
@@ -113,9 +145,6 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
     }
 
     local debugPrinted = false
-    if not singleNodeID then
-        recipeData.specNodeData.affectedNodes = {}
-    end
 
     for name, nodeData in pairs(ruleNodes) do 
         local nodeInfo = specNodeData[nodeData.nodeID]
@@ -135,28 +164,11 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
             if nodeData.nodeID == 23727 then
                 debugActive = true
             end
-            local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
+            local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodesCached(nodeData, ruleNodes)
             debugActive = false
             
             local affectedNoRank = CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
             local nodeAffectsRecipe = nodeRank > 0 and affectedNoRank
-            
-            if (nodeAffectsRecipe or nodeData.debug) and not singleNodeID then
-                local containsNode = CraftSim.UTIL:Find(recipeData.specNodeData.affectedNodes, function(node) 
-                    return node.nodeID == nodeData.nodeID
-                end)
-                if not containsNode then
-                    --print("add node to affected: " .. tostring(nodeData.nodeID))
-                    local nodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeData.nodeID, false)
-                    table.insert(recipeData.specNodeData.affectedNodes, {
-                        nodeID = nodeData.nodeID,
-                        nodeRank = nodeRank,
-                        maxRanks = nodeInfo.maxRanks,
-                        nodeActualValue = nodeActualValue,
-                        nodeStats = nodeStats,
-                    })
-                end
-            end
     
             if printDebug and not debugPrinted then
                 debugPrinted = true
@@ -206,7 +218,8 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
             end
         end
     end
-    
+
+    CraftSim.CACHE:AddToCache(CraftSim.CACHE.SpecDataStatsByRecipeID, recipeData.recipeID, stats)
     return stats
 end
 
@@ -227,7 +240,7 @@ function CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, ruleNodes)
         -- only increase if the current recipe has a matching category (like whetstone -> stonework, then only stonework marked nodes are relevant)
         -- or if categoryID of nodeData is nil which means its for the whole profession
         -- or if its debugged
-        local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
+        local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodesCached(nodeData, ruleNodes)
         local nodeRank = nodeInfo.activeRank
         local nodeAffectsRecipe = nodeRank > 0 and CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
         if nodeAffectsRecipe then
