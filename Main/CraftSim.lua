@@ -294,8 +294,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		recipeData = CraftSim.DATAEXPORT:exportRecipeData()
 	end
 
-	recipeData.topGearSimulated = false
-
 	if debugTest then
 		recipeData = nil
 		debugTest = false
