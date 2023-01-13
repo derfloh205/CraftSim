@@ -22,6 +22,13 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("1.8") ..
+        P .. c("Knowledge Distribution Simulation", g) .. " added for " .. 
+        a .. c("Blacksmithing", bb) .. " and " .. c("Alchemy", bb) .. " (Experimental Data only)" .. 
+        s .. c("Top Gear Simulation", g) .. " is now on demand " ..
+        a .. "due to performance reasons" ..
+        p .. "Added profiling checkpoints to view in " .. c("Debug Mode", bb) .. 
+        p .. "Cache utilization added for some data to increase performance" .. 
         newP("1.7.8") .. 
         P .. "koKR (Korean) Localization added" .. 
         a .. "(Thank you " .. c("github.com/comiluv", bb) .. ")" ..

@@ -956,6 +956,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames()
 end
 
 function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
+    if not CraftSim.MAIN.currentRecipeData then
+        return -- In what case is this nil?
+    end
     -- frame visiblities
     CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive)
 

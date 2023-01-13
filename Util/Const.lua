@@ -3,7 +3,7 @@ addonName, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 11 -- last highest: 11
+CraftSim.CONST.currentInfoVersionID = 12 -- last highest: 12
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400

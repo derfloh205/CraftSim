@@ -2,8 +2,8 @@ addonName, CraftSim = ...
 
 CraftSim.CALC = {}
 
-local function print(text, recursive) -- override
-	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION, recursive)
+local function print(text, recursive, l) -- override
+	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION, recursive, l)
 end
 
 function CraftSim.CALC:handleInspiration(recipeData, priceData, crafts, craftedItems, calculationData)
@@ -57,7 +57,9 @@ function CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedIt
             multicraftExtraItemsFactor = recipeData.extraItemFactors.multicraftExtraItemsFactor
         end
         
+        print("ProfitCalc MC expectedAdditionalItems No ExtraFactor: " .. tostring(expectedAdditionalItems))
         expectedAdditionalItems = expectedAdditionalItems * multicraftExtraItemsFactor
+        print("ProfitCalc MC expectedAdditionalItems With ExtraFactor: " .. tostring(expectedAdditionalItems))
 
         -- Since multicraft and inspiration can proc together add expected multicraft gain to both qualities
         local multicraftProcsBase = crafts.baseQuality*(recipeData.stats.multicraft.percent / 100)
