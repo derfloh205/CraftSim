@@ -336,6 +336,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationIn
 	if not CraftSim.UTIL:IsSpecImplemented(recipeData.professionID) then
 		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
 	else
+		print("Spec is implemented")
 		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	end
 end

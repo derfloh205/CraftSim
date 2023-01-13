@@ -84,9 +84,9 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, cal
     local specData = recipeData.specNodeData
     local resourcefulnessExtraItemsFactor = 1
 
-    if specData then
+    if specData and recipeData.stats.resourcefulness then
         resourcefulnessExtraItemsFactor = 1 + recipeData.stats.resourcefulness.bonusItemsFactor
-    else
+    elseif recipeData.stats.resourcefulness then
         resourcefulnessExtraItemsFactor = recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
     end
 

@@ -247,6 +247,7 @@ end
 function CraftSim.UTIL:IsSpecImplemented(professionID)
 
     if professionID == Enum.Profession.Blacksmithing and not CraftSimOptions.blacksmithingEnabled or
+       professionID == Enum.Profession.Jewelcrafting and not CraftSimOptions.jewelcraftingEnabled or
        professionID == Enum.Profession.Alchemy and not CraftSimOptions.alchemyEnabled then
         return false
     end

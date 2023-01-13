@@ -33,6 +33,7 @@ CraftSimOptions = CraftSimOptions or {
 	-- specData Refactor
 	blacksmithingEnabled = false,
 	alchemyEnabled = false,
+	jewelcraftingEnabled = false,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}

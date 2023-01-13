@@ -192,6 +192,22 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
     },
     INSCRIPTION = {
         INKS = 1754
+    },
+    JEWELCRAFTING = {
+        REAGENTS = 1630,
+        TRINKETS = 1631,
+        JEWELRY = 1632,
+        STATUES_AND_CARVING = 1633,
+        PROFESSION_EQUIP = 1642,
+        EXTRA_GLASSWARES = 1635,
+        RUDI_GEMS = 1636,
+        AIR_GEMS = 1637,
+        EARTH_GEMS = 1638,
+        FIRE_GEMS = 1639,
+        FROST_GEMS = 1640,
+        PRIMALIST_GEMS = 1641,
+        MISC = 1629,
+
     }
 }
 
@@ -240,7 +256,10 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
     },
     INSCRIPTION = {
         INKS = 16, -- "Inscription"
-    }
+    },
+    JEWELCRAFTING = {
+        GEMS = 9, -- Other
+    },
 }
 
 CraftSim.CONST.BUFF_IDS = {
@@ -306,7 +325,7 @@ CraftSim.CONST.TEXT = {
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
-    return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy}
+    return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy, Enum.Profession.Jewelcrafting}
 end
 
 CraftSim.CONST.ITEM_ID_EXCEPTION_MAPPING = {
