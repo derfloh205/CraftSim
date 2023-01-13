@@ -38,6 +38,13 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         CraftSim.TOPGEAR:EquipTopGear()
     end)
 
+    frame.content.simulateButton = CraftSim.FRAME:CreateButton(
+        "Simulate Top Gear", frame.content, frame.content.equipButton, "CENTER", "CENTER", 0, 0, 5, 25, true, function(self) 
+            local priceData = CraftSim.PRICEDATA:GetPriceData(CraftSim.MAIN.currentRecipeData, CraftSim.MAIN.currentRecipeData.recipeType)
+            CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(CraftSim.MAIN.currentRecipeData, CraftSim.MAIN.currentRecipeData.recipeType, priceData)
+        end)
+    
+
     frame.content.simModeDropdown = 
     CraftSim.FRAME:initDropdownMenu("CraftSimTopGearSimMode", frame.content, frame.title, "", 0, contentOffsetY, 120, {"Placeholder"}, function(arg1) 
         CraftSimOptions.topGearMode = arg1
@@ -139,6 +146,8 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, topGearMod
         topGearFrame.content.profitText:SetText("Unhandled Sim Mode")
     end
     CraftSimTopGearEquipButton:SetEnabled(true)
+    CraftSimTopGearEquipButton:Show()
+    topGearFrame.content.simulateButton:Hide()
 
     local inspirationBonusSkillText = ""
     if bestSimulation.statDiff.inspirationBonusskill then
@@ -163,7 +172,7 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, topGearMod
 
 end
 
-function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking)
+function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, isClear)
     local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
     if not isCooking then
         CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons({{isEmptySlot = true}, {isEmptySlot = true}, {isEmptySlot = true}}, isCooking)
@@ -172,7 +181,10 @@ function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking)
     end
 
     CraftSimTopGearEquipButton:SetEnabled(false)
-    topGearFrame.content.profitText:SetText("Top Gear equipped")
+    topGearFrame.content.profitText:SetText(isClear and "" or "Top Gear equipped")
+
+    CraftSim.FRAME:ToggleFrame(topGearFrame.content.simulateButton, isClear)
+    CraftSim.FRAME:ToggleFrame(CraftSimTopGearEquipButton, not isClear)
 
     topGearFrame.content.statDiff.inspiration:SetText("")
     topGearFrame.content.statDiff.multicraft:SetText("")

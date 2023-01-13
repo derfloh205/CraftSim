@@ -382,3 +382,16 @@ function CraftSim.UTIL:HashTable(t)
     return compressedData
 end
 
+local profilings = {}
+function CraftSim.UTIL:StartProfiling(label)
+    local time = debugprofilestop();
+    profilings[label] = time
+end
+
+function CraftSim.UTIL:StopProfiling(label)
+    local time = debugprofilestop()
+    local diff = time - profilings[label]
+    profilings[label] = nil
+    CraftSim_DEBUG:print("Elapsed Time for " .. label .. ": " .. CraftSim.UTIL:round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+end
+

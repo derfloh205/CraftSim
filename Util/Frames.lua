@@ -218,6 +218,7 @@ function CraftSim.FRAME:CreateButton(label, parent, anchorParent, anchorA, ancho
     button:SetScript("OnClick", function() 
         clickCallback(button)
     end)
+    return button
 end
 
 function CraftSim.FRAME:CreateTab(label, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, canBeEnabled, contentX, contentY, contentParent, contentAnchor, contentOffsetX, contentOffsetY)

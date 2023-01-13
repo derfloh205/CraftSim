@@ -7,9 +7,15 @@ CraftSimItemCache = CraftSimItemCache or {}
 
 LibCompress = LibStub:GetLibrary("LibCompress")
 
-local function print(text, recursive) -- override
-	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.DATAEXPORT, recursive)
+local function print(text, recursive, l, debugID) -- override
+	if not debugID then
+		CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.DATAEXPORT, recursive, l)
+	else
+		CraftSim_DEBUG:print(text, debugID, recursive, l)
+	end
 end
+
+
 
 function CraftSim.DATAEXPORT:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID)
 	local linksByQuality = {}
@@ -376,6 +382,8 @@ end
 function CraftSim.DATAEXPORT:exportRecipeData()
 	local recipeData = {}
 
+	CraftSim.UTIL:StartProfiling("DATAEXPORT")
+
 	--local professionInfo = ProfessionsFrame.professionInfo
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 	local expansionName = professionInfo.expansionName
@@ -640,6 +648,8 @@ function CraftSim.DATAEXPORT:exportRecipeData()
 
 	
 	CraftSim.MAIN.currentRecipeData = recipeData
+
+	CraftSim.UTIL:StopProfiling("DATAEXPORT")
 	return recipeData
 end
 

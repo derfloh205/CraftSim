@@ -379,7 +379,9 @@ function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, reci
     if CraftSimOptions.topGearMode == CraftSim.CONST.GEAR_SIM_MODES.PROFIT then
         local currentComboMeanProfit = CraftSim.CALC:getMeanProfit(recipeData, priceData)
         local noItemMeanProfit = CraftSim.CALC:getMeanProfit(noItemsRecipeData, priceData)
+        CraftSim.UTIL:StartProfiling("Top Gear_CombinationSim")
         local simulationResults = CraftSim.TOPGEAR:SimulateProfessionGearCombinations(gearCombos, noItemsRecipeData, recipeType, priceData, currentComboMeanProfit)
+        CraftSim.UTIL:StopProfiling("Top Gear_CombinationSim")
 
         local validSimulationResults = simulationResults
 

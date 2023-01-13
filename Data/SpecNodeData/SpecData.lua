@@ -10,10 +10,8 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodesCached(nodeData, ruleNodes)
     local cachedIDs = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimSpecNodeCache, nodeData.nodeID)
 
     if cachedIDs then
-        print("returning cached IDs")
         return cachedIDs
     end
-    print("return non cached")
 
     local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
     CraftSim.CACHE:AddCacheEntryByVersion(CraftSimSpecNodeCache, nodeData.nodeID, IDs)
@@ -116,18 +114,6 @@ local specNodeDataByProfession = {}
 function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, singleNodeID, printDebug)
     local specNodeData = recipeData.specNodeData
 
-    local specNodeLastHash = specNodeDataByProfession[recipeData.professionID]
-    local specNodeHash = CraftSim.UTIL:HashTable(specNodeData)
-
-    local specNodeDataChanged = specNodeLastHash ~= specNodeHash
-    if not singleNodeID and not specNodeDataChanged then
-        print("Reuse specnode stats", false, true)
-        local cachedStats = CraftSim.CACHE:GetFromCache(CraftSim.CACHE.SpecDataStatsByRecipeID, recipeData.recipeID)
-        if cachedStats then
-            return cachedStats
-        end
-    end
-
     local stats = {	
         inspiration = 0,
         inspirationBonusSkillFactor = 1,
@@ -219,7 +205,6 @@ function CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, sing
         end
     end
 
-    CraftSim.CACHE:AddToCache(CraftSim.CACHE.SpecDataStatsByRecipeID, recipeData.recipeID, stats)
     return stats
 end
 

@@ -108,7 +108,9 @@ function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
 	-- 	CraftSim.FRAME:ShowError(tostring(errorMsg), "CraftSim Error")
 	-- 	print(CraftSim.UTIL:ColorizeText(tostring(errorMsg), CraftSim.CONST.COLORS.RED), CraftSim.CONST.DEBUG_IDS.ERROR)
 	-- end
+	CraftSim.UTIL:StartProfiling("MODULES UPDATE")
 	CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
+	CraftSim.UTIL:StopProfiling("MODULES UPDATE")
 end
 
 function CraftSim.MAIN:HookToEvent()
@@ -292,6 +294,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		recipeData = CraftSim.DATAEXPORT:exportRecipeData()
 	end
 
+	recipeData.topGearSimulated = false
+
 	if debugTest then
 		recipeData = nil
 		debugTest = false
@@ -399,7 +403,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showMaterialAllocation = showMaterialAllocation and recipeData.hasReagentsWithQuality
 	CraftSim.FRAME:ToggleFrame(CraftSimReagentHintFrame, showMaterialAllocation)
 	if showMaterialAllocation then
+		CraftSim.UTIL:StartProfiling("Reagent Optimization")
 		CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)
+		CraftSim.UTIL:StopProfiling("Reagent Optimization")
 	end
 
 	CraftSim.FRAME:ToggleFrame(CraftSimDetailsFrame, showStatweights)
@@ -412,7 +418,11 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	CraftSim.FRAME:ToggleFrame(CraftSimSimFrame, showTopGear)
 	if showTopGear then
-		CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
+		CraftSim.UTIL:StartProfiling("Top Gear")
+		--CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
+		local isCooking = recipeData.professionID == Enum.Profession.Cooking
+		CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, true)
+		CraftSim.UTIL:StopProfiling("Top Gear")
 	end
 
 	CraftSim.FRAME:ToggleFrame(CraftSimCostOverviewFrame, showCostOverview)
