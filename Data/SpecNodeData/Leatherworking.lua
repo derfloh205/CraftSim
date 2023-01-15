@@ -135,6 +135,142 @@ CraftSim.LEATHERWORKING_DATA.NODES = function()
     }
 end
 
+function CraftSim.LEATHERWORKING_DATA:GetData()
+    return {
+        -- LEATHERWORKING DISCIPLINE
+        LEATHERWORKING_DISCIPLINE_1 = {
+            childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
+            nodeID = 31184,
+            equalsSkill = true,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        LEATHERWORKING_DISCIPLINE_2 = {
+            childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
+            nodeID = 31184,
+            threshold = 0,
+            skill = 5,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        LEATHERWORKING_DISCIPLINE_3 = {
+            childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
+            nodeID = 31184,
+            threshold = 10,
+            skill = 5,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        LEATHERWORKING_DISCIPLINE_4 = {
+            childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
+            nodeID = 31184,
+            threshold = 20,
+            skill = 10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        LEATHERWORKING_DISCIPLINE_4 = {
+            childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
+            nodeID = 31184,
+            threshold = 30,
+            inspiration = 15,
+            resourcefulness = 15,
+            craftingspeedBonusFactor = 0.20,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        SHEAR_MASTERY_OF_LEATHER_1 = {
+            nodeID = 31183,
+            equalsResourcefulness = true,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        SHEAR_MASTERY_OF_LEATHER_2 = {
+            nodeID = 31183,
+            threshold = 0,
+            resourcefulnessExtraItemsFactor = 0.05,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        SHEAR_MASTERY_OF_LEATHER_3 = {
+            nodeID = 31183,
+            threshold = 5,
+            resourcefulness = 10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        SHEAR_MASTERY_OF_LEATHER_4 = {
+            nodeID = 31183,
+            threshold = 10,
+            resourcefulnessExtraItemsFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        SHEAR_MASTERY_OF_LEATHER_5 = {
+            nodeID = 31183,
+            threshold = 15,
+            resourcefulness = 10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        SHEAR_MASTERY_OF_LEATHER_6 = {
+            nodeID = 31183,
+            threshold = 20,
+            resourcefulnessExtraItemsFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        SHEAR_MASTERY_OF_LEATHER_7 = {
+            nodeID = 31183,
+            threshold = 25,
+            resourcefulness = 10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        SHEAR_MASTERY_OF_LEATHER_8 = {
+            nodeID = 31183,
+            threshold = 30,
+            resourcefulnessExtraItemsFactor = 0.25,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        AWL_INSPIRING_WORKS_1 = {
+            nodeID = 31182,
+            equalsInspiration = true,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        AWL_INSPIRING_WORKS_2 = {
+            nodeID = 31182,
+            threshold = 0,
+            inspirationBonusSkillFactor = 0.05,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        AWL_INSPIRING_WORKS_3 = {
+            nodeID = 31182,
+            threshold = 5,
+            inspiration = 10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        AWL_INSPIRING_WORKS_4 = {
+            nodeID = 31182,
+            threshold = 10,
+            inspirationBonusSkillFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        AWL_INSPIRING_WORKS_5 = {
+            nodeID = 31182,
+            threshold = 15,
+            inspiration = 10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        AWL_INSPIRING_WORKS_6 = {
+            nodeID = 31182,
+            threshold = 20,
+            inspirationBonusSkillFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        AWL_INSPIRING_WORKS_7 = {
+            nodeID = 31182,
+            threshold = 25,
+            inspiration = 10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        AWL_INSPIRING_WORKS_8 = {
+            nodeID = 31182,
+            threshold = 30,
+            inspirationBonusSkillFactor = 0.25,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+    }
+end
+
 -- Helpers for quick look/access
 -- resourcefulnessExtraItemsFactor = 0.05,
 -- inspirationBonusSkillFactor = 0.05,
@@ -147,52 +283,3 @@ end
 -- equalsResourcefulness = true,
 -- equalsInspiration = true,
 -- equalsSkill = true,
-
-function CraftSim.LEATHERWORKING_DATA:GetData()
-    return {
-        SHEAR_MASTERY_1 = {
-            nodeID = 31183,
-            threshold = 0,
-            resourcefulnessExtraItemsFactor = 0.05,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
-        },
-        SHEAR_MASTERY_2 = {
-            nodeID = 31183,
-            threshold = 10,
-            resourcefulnessExtraItemsFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
-        },
-        SHEAR_MASTERY_3 = {
-            nodeID = 31183,
-            threshold = 20,
-            resourcefulnessExtraItemsFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
-        },
-        SHEAR_MASTERY_4 = {
-            nodeID = 31183,
-            threshold = 30,
-            resourcefulnessExtraItemsFactor = 0.25,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
-        },
-        BONDING_AND_STITCHING = {
-            nodeID = 31181,
-            threshold = 20,
-            multicraftExtraItemsFactor = 0.50,
-            idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS
-                }
-            },
-        },
-        CURING_AND_TANNING = {
-            nodeID = 31180,
-            threshold = 20,
-            multicraftExtraItemsFactor = 0.50,
-            idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMORKITS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ARMORKITS
-                }
-            },
-        }
-    }
-end
