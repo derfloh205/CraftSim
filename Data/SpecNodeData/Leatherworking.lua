@@ -142,28 +142,24 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
             nodeID = 31184,
             equalsSkill = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         LEATHERWORKING_DISCIPLINE_2 = {
             childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
             nodeID = 31184,
             threshold = 0,
             skill = 5,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         LEATHERWORKING_DISCIPLINE_3 = {
             childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
             nodeID = 31184,
             threshold = 10,
             skill = 5,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         LEATHERWORKING_DISCIPLINE_4 = {
             childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
             nodeID = 31184,
             threshold = 20,
             skill = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         LEATHERWORKING_DISCIPLINE_4 = {
             childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
@@ -172,7 +168,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             inspiration = 15,
             resourcefulness = 15,
             craftingspeedBonusFactor = 0.20,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         SHEAR_MASTERY_OF_LEATHER_1 = {
             nodeID = 31183,
@@ -267,6 +262,87 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             threshold = 30,
             inspirationBonusSkillFactor = 0.25,
             idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        BONDING_AND_STITCHING_1 = {
+            nodeID = 31181,
+            equalsSkill = true,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ALCHEMY,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.SKINNING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BLACKSMITHING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.HERBALISM,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHERWORKING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.JEWELCRAFTING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ENGINEERING
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS
+                }
+            },
+            BONDING_AND_STITCHING_2 = {
+            nodeID = 31181,
+            threshold = 0,
+            multicraft = 20
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS
+                }
+            },
+            BONDING_AND_STITCHING_3 = {
+            nodeID = 31181,
+            threshold = 5,
+            inspiration = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ALCHEMY,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.SKINNING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BLACKSMITHING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.HERBALISM,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHERWORKING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.JEWELCRAFTING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ENGINEERING
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS
+                }
+            },
+            BONDING_AND_STITCHING_4 = {
+            nodeID = 31181,
+            threshold = 10,
+            multicraft = 40
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS
+                }
+            },
+            BONDING_AND_STITCHING_5 = {
+            nodeID = 31181,
+            threshold = 15,
+            inspiration = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ALCHEMY,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.SKINNING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BLACKSMITHING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.HERBALISM,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHERWORKING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.JEWELCRAFTING,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ENGINEERING
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS
+                }
+            },
+            BONDING_AND_STITCHING_6 = {
+            nodeID = 31181,
+            threshold = 20,
+            multicraftExtraItemsFactor = 0.50,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS
+                }
+            },
         },
     }
 end
