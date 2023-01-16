@@ -420,6 +420,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(CraftSimSimFrame, showTopGear)
 	if showTopGear then
 		CraftSim.UTIL:StartProfiling("Top Gear")
+		CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown()
 		--CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
 		local isCooking = recipeData.professionID == Enum.Profession.Cooking
 		CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, true)

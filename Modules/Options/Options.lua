@@ -166,7 +166,7 @@ function CraftSim.OPTIONS:Init()
 
     local materialSuggestionTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimMaterialSlider", 
         "Transparency\n ", ModulesTab.content, ModulesTab.content, 
-        "TOP", "TOP", -15, 2, 100, 10, "HORIZONTAL", 
+        "TOP", "TOP", -15, -50, 100, 10, "HORIZONTAL", 
         0, 1, CraftSimOptions.transparencyMaterials, -- get from options..
         "0", "1", 
         function(self, value)

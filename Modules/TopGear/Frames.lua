@@ -172,6 +172,21 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, topGearMod
 
 end
 
+function CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown()
+    if not CraftSim.MAIN.currentRecipeData then
+        return
+    end
+    local recipeData = CraftSim.MAIN.currentRecipeData
+    local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+
+    local availableModes = CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData, recipeType)
+    if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
+        CraftSimOptions.topGearMode = availableModes[1]
+    end
+    
+    CraftSim.FRAME:initializeDropdown(topGearFrame.content.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
+end
+
 function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, isClear)
     local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
     if not isCooking then

@@ -350,16 +350,16 @@ function CraftSim.TOPGEAR:DeductCurrentItemStats(recipeData, recipeType)
 end
 
 function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
-    local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+    -- local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
     local isCooking = recipeData.professionID == Enum.Profession.Cooking
     -- update top gear mode dropdown
 
-    local availableModes = CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData, recipeType)
-    if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
-        CraftSimOptions.topGearMode = availableModes[1]
-    end
+    -- local availableModes = CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData, recipeType)
+    -- if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
+    --     CraftSimOptions.topGearMode = availableModes[1]
+    -- end
     
-    CraftSim.FRAME:initializeDropdown(topGearFrame.content.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
+    -- CraftSim.FRAME:initializeDropdown(topGearFrame.content.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
 
     -- cache it
     CraftSimTopGearSimMode.recipeData = recipeData
