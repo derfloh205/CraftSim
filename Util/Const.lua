@@ -3,7 +3,7 @@ addonName, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 10 -- last highest: 10
+CraftSim.CONST.currentInfoVersionID = 13 -- last highest: 13
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -25,6 +25,7 @@ CraftSim.CONST.FRAMES = {
     INFO = 8,
     DEBUG = 9,
     DEBUG_CONTROL = 10,
+    SPEC_SIM = 11,
 }
 
 CraftSim.CONST.DEBUG_IDS = {
@@ -37,6 +38,8 @@ CraftSim.CONST.DEBUG_IDS = {
     PRICEDATA = "PRICEDATA",
     PROFIT_CALCULATION = "PROFIT_CALCULATION",
     FRAMES = "FRAMES",
+    CACHE = "CACHE",
+    PROFILING = "PROFILING"
 }
 
 CraftSim.CONST.ERROR = {
@@ -185,10 +188,37 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
     },
     LEATHERWORKING = {
         DRUMS = 1655,
-        ARMORKITS = 1651
+        ARMOR_KITS = 1651,
+	LEATHER_ARMOR = 1657,
+	MAIL_ARMOR = 1658,
+	PROFESSION_EQUIPMENT = 1656,
+	WEAPONS = 1648,
+	ELEMENTAL_PATTERNS = 1811,
+	BESTIAL_PATTERNS = 1812,
+	DECAYED_PATTERNS = 1810,
+	REAGENTS = 1654,
+	FINISHING_REAGENTS = 1650,
+	OPTIONAL_REAGENTS = 1649,
+	TOYS = 1652,
     },
     INSCRIPTION = {
         INKS = 1754
+    },
+    JEWELCRAFTING = {
+        REAGENTS = 1630,
+        TRINKETS = 1631,
+        JEWELRY = 1632,
+        STATUES_AND_CARVING = 1633,
+        PROFESSION_EQUIP = 1642,
+        EXTRA_GLASSWARES = 1635,
+        RUDI_GEMS = 1636,
+        AIR_GEMS = 1637,
+        EARTH_GEMS = 1638,
+        FIRE_GEMS = 1639,
+        FROST_GEMS = 1640,
+        PRIMALIST_GEMS = 1641,
+        MISC = 1629,
+
     }
 }
 
@@ -232,12 +262,41 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         MISC = 0, -- trinket
     },
     LEATHERWORKING = {
-        DRUMS = 8, -- "Other"
-        ARMORKITS = 14, -- "Misc"
+	-- Misc
+        DRUMS = 8, -- Other
+        ARMOR_KITS = 14, --Misc
+	MISCELLANEOUS = 0,
+	OTHER = 4,
+	
+	-- Armor
+	LEATHER = 2,
+	MAIL = 3,
+	
+	-- Tools
+	ALCHEMY = 2,
+	SKINNING = 10,
+	BLACKSMITHING = 0,
+	HERBALISM = 3,
+	LEATHERWORKING = 1,
+	JEWELCRAFTING = 11,
+	ENGINEERING = 7,
+	
+	-- Weapons
+	CROSSBOWS = 18,
+	BOWS = 2,
+	
+	-- Reagents
+	FINISHING_REAGENTS = 19,
+	OPTIONAL_REAGENTS = 18,
+	REAGENTS = 6, -- Leather (Reagents)
+	
     },
     INSCRIPTION = {
         INKS = 16, -- "Inscription"
-    }
+    },
+    JEWELCRAFTING = {
+        GEMS = 9, -- Other
+    },
 }
 
 CraftSim.CONST.BUFF_IDS = {
@@ -254,6 +313,8 @@ CraftSim.CONST.LOCALES = {
     ES = "esES",
     FR = "frFR",
     MX = "esMX",
+    KO = "koKR",
+    TW = "zhTW",
 }
 
 CraftSim.CONST.TEXT = {
@@ -301,7 +362,7 @@ CraftSim.CONST.TEXT = {
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
-    return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy}
+    return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy, Enum.Profession.Jewelcrafting}
 end
 
 CraftSim.CONST.ITEM_ID_EXCEPTION_MAPPING = {
