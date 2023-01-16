@@ -10,6 +10,9 @@ function CraftSim.TOOLTIP:Init()
     hooked = true
 
     local function OnTooltipSetItem(tooltip, data) 
+        if not tooltip.GetItem then
+            return
+        end
         local name, itemLink = tooltip:GetItem()
 
         if not itemLink then
