@@ -51,7 +51,7 @@ end
 
 function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
 	local bonusStats = operationInfo.bonusStats
-	local professionGearStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
+	local professionGearStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats(recipeData.professionID)
 
 	for _, statInfo in pairs(bonusStats) do
 		local statName = string.lower(statInfo.bonusStatName)
@@ -232,7 +232,7 @@ end
 function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	--print("player stats v2")
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-	local professionGearStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
+	local professionGearStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats(recipeData.professionID)
 
 	local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[recipeData.professionID]
 
@@ -765,7 +765,7 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 	return stats
 end
 
-function CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
+function CraftSim.DATAEXPORT:GetCurrentProfessionItemStats(professionID)
 	local stats = {
 		inspiration = 0,
 		inspirationBonusSkillPercent = 0,
@@ -774,10 +774,12 @@ function CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
 		craftingspeed = 0,
 		skill = 0
 	}
-	local currentProfessionSlots = CraftSim.FRAME:GetProfessionEquipSlots()
+	local currentProfessionSlots = C_TradeSkillUI.GetProfessionSlots(professionID)
+	print("professionequipslots: ")
+	print(currentProfessionSlots)
 
-	for _, slotName in pairs(currentProfessionSlots) do
-		local slotID = GetInventorySlotInfo(slotName)
+	for _, slotID in pairs(currentProfessionSlots) do
+		--local slotID = GetInventorySlotInfo(slotName)
 		local itemLink = GetInventoryItemLink("player", slotID)
 		if itemLink ~= nil then
 			local itemStats = CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
@@ -804,16 +806,17 @@ function CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
 		end
 	end
 
+	print("stats from items:", false, true)
+	print(stats, true)
 	return stats
 end
 
-function CraftSim.DATAEXPORT:GetEquippedProfessionGear()
+function CraftSim.DATAEXPORT:GetEquippedProfessionGear(professionID)
 	local professionGear = {}
-	local currentProfessionSlots = CraftSim.FRAME:GetProfessionEquipSlots()
+	local currentProfessionSlots = C_TradeSkillUI.GetProfessionSlots(professionID)
 	
-	for _, slotName in pairs(currentProfessionSlots) do
+	for _, slotID in pairs(currentProfessionSlots) do
 		--print("checking slot: " .. slotName)
-		local slotID = GetInventorySlotInfo(slotName)
 		local itemLink = GetInventoryItemLink("player", slotID)
 		if itemLink ~= nil then
 			local _, _, _, _, _, _, _, _, equipSlot = GetItemInfo(itemLink) 

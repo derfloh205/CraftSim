@@ -106,7 +106,7 @@ function CraftSim.TOPGEAR:GetValidCombosFromUniqueCombos(uniqueCombos)
 end
 
 function CraftSim.TOPGEAR:GetProfessionGearCombinations(isCooking)
-    local equippedGear = CraftSim.DATAEXPORT:GetEquippedProfessionGear()
+    local equippedGear = CraftSim.DATAEXPORT:GetEquippedProfessionGear(CraftSim.MAIN.currentRecipeData.professionID)
     local inventoryGear =  CraftSim.DATAEXPORT:GetProfessionGearFromInventory()
 
     if #equippedGear == 0 and #inventoryGear == 0 then
@@ -310,7 +310,7 @@ function CraftSim.TOPGEAR:AddStatDiffByBaseRecipeData(bestSimulation, recipeData
 end
 
 function CraftSim.TOPGEAR:DeductCurrentItemStats(recipeData, recipeType)
-    local itemStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats()
+    local itemStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats(recipeData.professionID)
     local noItemRecipeData = CopyTable(recipeData)
 
     if noItemRecipeData.stats.inspiration ~= nil then
@@ -543,7 +543,7 @@ end
 
 function CraftSim.TOPGEAR:GetEquippedCombo(isCooking)
     -- set the initial best combo as the current equipped combo!
-    local equippedGear = CraftSim.DATAEXPORT:GetEquippedProfessionGear()
+    local equippedGear = CraftSim.DATAEXPORT:GetEquippedProfessionGear(CraftSim.MAIN.currentRecipeData.professionID)
     local equippedCombo = {}
     local emptySlots = 3 - #equippedGear
     if isCooking then
@@ -560,12 +560,12 @@ function CraftSim.TOPGEAR:GetEquippedCombo(isCooking)
     return equippedCombo
 end
 
-function CraftSim.TOPGEAR:UnequipProfessionItems()
-    local professionSlots = CraftSim.FRAME:GetProfessionEquipSlots()
+function CraftSim.TOPGEAR:UnequipProfessionItems(professionID)
+    local professionSlots = C_TradeSkillUI.GetProfessionSlots(professionID)
     -- TODO: factor in remaining inventory space?
 
     for _, currentSlot in pairs(professionSlots) do
-        PickupInventoryItem(GetInventorySlotInfo(currentSlot))
+        PickupInventoryItem(currentSlot)
         PutItemInBackpack();
     end
 end
@@ -579,7 +579,7 @@ function CraftSim.TOPGEAR:EquipTopGear()
         return
     end
     -- first unequip everything
-    CraftSim.TOPGEAR:UnequipProfessionItems()
+    CraftSim.TOPGEAR:UnequipProfessionItems(CraftSim.MAIN.currentRecipeData.professionID)
     -- then wait a sec to let it unequip TODO: (maybe wait for specific event for each eqipped item to combat lag?)
     C_Timer.After(1, CraftSim.TOPGEAR.EquipBestCombo)
 end

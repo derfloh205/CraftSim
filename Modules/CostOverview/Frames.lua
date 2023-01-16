@@ -10,8 +10,13 @@ local function print(text, recursive, l) -- override
     end
 end
 
-function CraftSim.COSTOVERVIEW.FRAMES:Fill(craftingCosts, minCraftingCosts, profitPerQuality, currentQuality)
-    local costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
+function CraftSim.COSTOVERVIEW.FRAMES:Fill(craftingCosts, minCraftingCosts, profitPerQuality, currentQuality, exportMode)
+    local costOverviewFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
+    else
+        costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
+    end
     local recipeData = nil
     if CraftSim.SIMULATION_MODE.isActive then
         recipeData = CraftSim.SIMULATION_MODE.recipeData
@@ -60,7 +65,7 @@ function CraftSim.COSTOVERVIEW.FRAMES:Fill(craftingCosts, minCraftingCosts, prof
 end
 
 function CraftSim.COSTOVERVIEW.FRAMES:Init()
-    local frame = CraftSim.FRAME:CreateCraftSimFrame(
+    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimCostOverviewFrame", 
         "CraftSim Cost Overview", 
         ProfessionsFrame.CraftingPage.SchematicForm,
@@ -73,131 +78,151 @@ function CraftSim.COSTOVERVIEW.FRAMES:Init()
         400,
         CraftSim.CONST.FRAMES.COST_OVERVIEW)
 
-    local contentOffsetY = -20
-    local textSpacingY = -20
+    local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
+        "CraftSimCostOverviewWOFrame", 
+        "CraftSim Cost Overview " .. CraftSim.UTIL:ColorizeText("WO", CraftSim.CONST.COLORS.GREY), 
+        ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        CraftSimSimFrame, 
+        "TOP", 
+        "BOTTOM", 
+        50, 
+        10, 
+        350, 
+        400,
+        CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
 
-    frame.content.minCraftingCostsTitle = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.minCraftingCostsTitle:SetPoint("TOP", frame.title, "TOP", 0, textSpacingY)
-    frame.content.minCraftingCostsTitle:SetText("Min Crafting Costs")
-
-    frame.content.minCraftingCosts = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.minCraftingCosts:SetPoint("TOP", frame.content.minCraftingCostsTitle, "TOP", 0, textSpacingY)
-    frame.content.minCraftingCosts:SetText("???")
-
-    frame.content.craftingCostsTitle = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.craftingCostsTitle:SetPoint("TOP", frame.content.minCraftingCosts, "TOP", 0, textSpacingY)
-    frame.content.craftingCostsTitle:SetText("Current Crafting Costs")
-    frame.content.craftingCostsTitle.SwitchAnchor = function(newAnchor) 
-        frame.content.craftingCostsTitle:SetPoint("TOP", newAnchor, "TOP", 0, textSpacingY)
-    end
-
-    frame.content.craftingCosts = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.craftingCosts:SetPoint("TOPLEFT", frame.content.craftingCostsTitle, "TOPLEFT", 20, textSpacingY)
-    frame.content.craftingCosts:SetText("???")
-
-    local clickCallbackCraftingCosts = function(self, button, down) 
-        if self:GetChecked() then
-            -- show input, set override
-            frame.content.overrideCraftingCostsInput:Show()
-            frame.content.craftingCosts:Hide()
-            CraftSim.PRICEDATA.overrideCraftingCosts = frame.content.overrideCraftingCostsInput.getMoneyValue()
-            CraftSim.MAIN:TriggerModulesErrorSafe()
-        else
-            frame.content.overrideCraftingCostsInput:Hide()
-            frame.content.craftingCosts:Show()
-            -- delete override
-            CraftSim.PRICEDATA.overrideCraftingCosts = nil
-            CraftSim.MAIN:TriggerModulesErrorSafe()
-        end
-    end
-
-    frame.content.overrideCraftingCostsCheckbox = CraftSim.FRAME:CreateCheckboxCustomCallback(
-        "", "Override crafting costs interpreted as gold", false, clickCallbackCraftingCosts, frame.content, frame.content.craftingCosts, "RIGHT", "LEFT", 0, 0)
-
-    frame.content.overrideCraftingCostsInput = CraftSim.FRAME:CreateGoldInput(
-            nil, frame.content, frame.content.craftingCostsTitle, "TOPLEFT", "BOTTOMLEFT", 25, 0, 100, 25, 0, function(overridePrice) 
-                CraftSim.PRICEDATA.overrideCraftingCosts = overridePrice
-
-                CraftSim.MAIN:TriggerModulesErrorSafe()
-            end)
-    local startLine = "\124T"
-    local endLine = "\124t"
-    local goldCoin = startLine .. "Interface\\Icons\\INV_Misc_Coin_01:16" .. endLine
-
-    frame.content.overrideCraftingCostsInput.goldCoin = frame.content.overrideCraftingCostsInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.overrideCraftingCostsInput.goldCoin:SetPoint("LEFT", frame.content.overrideCraftingCostsInput, "RIGHT", 5, 0)
-    frame.content.overrideCraftingCostsInput.goldCoin:SetText(goldCoin)
+    local function createContent(frame)
     
-    frame.content.overrideCraftingCostsInput:Hide()
-    frame.content.resultProfitsTitle = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.resultProfitsTitle:SetPoint("TOP", frame.content.craftingCostsTitle, "TOP", 0, textSpacingY - 20)
-    frame.content.resultProfitsTitle:SetText("Profit By Quality")
-
-    local function createProfitFrame(offsetY, parent, newHookFrame, qualityID)
-        local profitFrame = CreateFrame("frame", nil, parent)
-        profitFrame:SetSize(parent:GetWidth(), 25)
-        profitFrame:SetPoint("TOP", newHookFrame, "TOP", 0, offsetY)
-        
-        profitFrame.itemLinkText = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        profitFrame.itemLinkText:SetPoint("CENTER", profitFrame, "CENTER", 0, 0)
-        profitFrame.itemLinkText:SetText("")
-
-        profitFrame.text = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        profitFrame.text:SetPoint("TOP", profitFrame.itemLinkText, "BOTTOM", 0, -7)
-        profitFrame.text:SetText("")
-        
-        --profitFrame.qualityID -- this will be set by the fill function 
-
-        local clickCallback = function(self, button, down) 
+        local contentOffsetY = -20
+        local textSpacingY = -20
+    
+        frame.content.minCraftingCostsTitle = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.minCraftingCostsTitle:SetPoint("TOP", frame.title, "TOP", 0, textSpacingY)
+        frame.content.minCraftingCostsTitle:SetText("Min Crafting Costs")
+    
+        frame.content.minCraftingCosts = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.minCraftingCosts:SetPoint("TOP", frame.content.minCraftingCostsTitle, "TOP", 0, textSpacingY)
+        frame.content.minCraftingCosts:SetText("???")
+    
+        frame.content.craftingCostsTitle = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.craftingCostsTitle:SetPoint("TOP", frame.content.minCraftingCosts, "TOP", 0, textSpacingY)
+        frame.content.craftingCostsTitle:SetText("Current Crafting Costs")
+        frame.content.craftingCostsTitle.SwitchAnchor = function(newAnchor) 
+            frame.content.craftingCostsTitle:SetPoint("TOP", newAnchor, "TOP", 0, textSpacingY)
+        end
+    
+        frame.content.craftingCosts = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.craftingCosts:SetPoint("TOPLEFT", frame.content.craftingCostsTitle, "TOPLEFT", 20, textSpacingY)
+        frame.content.craftingCosts:SetText("???")
+    
+        local clickCallbackCraftingCosts = function(self, button, down) 
             if self:GetChecked() then
                 -- show input, set override
-                profitFrame.overrideInput:Show()
-                profitFrame.text:Hide()
-                CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = profitFrame.overrideInput.getMoneyValue()
+                frame.content.overrideCraftingCostsInput:Show()
+                frame.content.craftingCosts:Hide()
+                CraftSim.PRICEDATA.overrideCraftingCosts = frame.content.overrideCraftingCostsInput.getMoneyValue()
                 CraftSim.MAIN:TriggerModulesErrorSafe()
             else
-                profitFrame.overrideInput:Hide()
-                profitFrame.text:Show()
+                frame.content.overrideCraftingCostsInput:Hide()
+                frame.content.craftingCosts:Show()
                 -- delete override
-                CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = nil
+                CraftSim.PRICEDATA.overrideCraftingCosts = nil
                 CraftSim.MAIN:TriggerModulesErrorSafe()
             end
         end
-
-        profitFrame.overrideCheckBox = CraftSim.FRAME:CreateCheckboxCustomCallback(
-            "", "Override sell price for quality\n\nInput is interpreted as gold", false, clickCallback, profitFrame, profitFrame.text, "RIGHT", "LEFT", 0, 0)
-
-        profitFrame.overrideInput = CraftSim.FRAME:CreateGoldInput(
-            nil, profitFrame, profitFrame.overrideCheckBox, "LEFT", "RIGHT", 10, 0, 100, 25, 0, function(overridePrice) 
-                CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = overridePrice
-
-                CraftSim.MAIN:TriggerModulesErrorSafe()
-            end)
-
+    
+        frame.content.overrideCraftingCostsCheckbox = CraftSim.FRAME:CreateCheckboxCustomCallback(
+            "", "Override crafting costs interpreted as gold", false, clickCallbackCraftingCosts, frame.content, frame.content.craftingCosts, "RIGHT", "LEFT", 0, 0)
+    
+        frame.content.overrideCraftingCostsInput = CraftSim.FRAME:CreateGoldInput(
+                nil, frame.content, frame.content.craftingCostsTitle, "TOPLEFT", "BOTTOMLEFT", 25, 0, 100, 25, 0, function(overridePrice) 
+                    CraftSim.PRICEDATA.overrideCraftingCosts = overridePrice
+    
+                    CraftSim.MAIN:TriggerModulesErrorSafe()
+                end)
         local startLine = "\124T"
         local endLine = "\124t"
         local goldCoin = startLine .. "Interface\\Icons\\INV_Misc_Coin_01:16" .. endLine
-
-        profitFrame.overrideInput.goldCoin = profitFrame.overrideInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        profitFrame.overrideInput.goldCoin:SetPoint("LEFT", profitFrame.overrideInput, "RIGHT", 5, 0)
-        profitFrame.overrideInput.goldCoin:SetText(goldCoin)
-
-        profitFrame.overrideInput:Hide()
-        CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(profitFrame)
-        profitFrame:Hide()
-        return profitFrame
+    
+        frame.content.overrideCraftingCostsInput.goldCoin = frame.content.overrideCraftingCostsInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.overrideCraftingCostsInput.goldCoin:SetPoint("LEFT", frame.content.overrideCraftingCostsInput, "RIGHT", 5, 0)
+        frame.content.overrideCraftingCostsInput.goldCoin:SetText(goldCoin)
+        
+        frame.content.overrideCraftingCostsInput:Hide()
+        frame.content.resultProfitsTitle = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.resultProfitsTitle:SetPoint("TOP", frame.content.craftingCostsTitle, "TOP", 0, textSpacingY - 20)
+        frame.content.resultProfitsTitle:SetText("Profit By Quality")
+    
+        local function createProfitFrame(offsetY, parent, newHookFrame, qualityID)
+            local profitFrame = CreateFrame("frame", nil, parent)
+            profitFrame:SetSize(parent:GetWidth(), 25)
+            profitFrame:SetPoint("TOP", newHookFrame, "TOP", 0, offsetY)
+            
+            profitFrame.itemLinkText = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            profitFrame.itemLinkText:SetPoint("CENTER", profitFrame, "CENTER", 0, 0)
+            profitFrame.itemLinkText:SetText("")
+    
+            profitFrame.text = profitFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            profitFrame.text:SetPoint("TOP", profitFrame.itemLinkText, "BOTTOM", 0, -7)
+            profitFrame.text:SetText("")
+            
+            --profitFrame.qualityID -- this will be set by the fill function 
+    
+            local clickCallback = function(self, button, down) 
+                if self:GetChecked() then
+                    -- show input, set override
+                    profitFrame.overrideInput:Show()
+                    profitFrame.text:Hide()
+                    CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = profitFrame.overrideInput.getMoneyValue()
+                    CraftSim.MAIN:TriggerModulesErrorSafe()
+                else
+                    profitFrame.overrideInput:Hide()
+                    profitFrame.text:Show()
+                    -- delete override
+                    CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = nil
+                    CraftSim.MAIN:TriggerModulesErrorSafe()
+                end
+            end
+    
+            profitFrame.overrideCheckBox = CraftSim.FRAME:CreateCheckboxCustomCallback(
+                "", "Override sell price for quality\n\nInput is interpreted as gold", false, clickCallback, profitFrame, profitFrame.text, "RIGHT", "LEFT", 0, 0)
+    
+            profitFrame.overrideInput = CraftSim.FRAME:CreateGoldInput(
+                nil, profitFrame, profitFrame.overrideCheckBox, "LEFT", "RIGHT", 10, 0, 100, 25, 0, function(overridePrice) 
+                    CraftSim.PRICEDATA.overrideResultProfits[profitFrame.qualityID] = overridePrice
+    
+                    CraftSim.MAIN:TriggerModulesErrorSafe()
+                end)
+    
+            local startLine = "\124T"
+            local endLine = "\124t"
+            local goldCoin = startLine .. "Interface\\Icons\\INV_Misc_Coin_01:16" .. endLine
+    
+            profitFrame.overrideInput.goldCoin = profitFrame.overrideInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            profitFrame.overrideInput.goldCoin:SetPoint("LEFT", profitFrame.overrideInput, "RIGHT", 5, 0)
+            profitFrame.overrideInput.goldCoin:SetText(goldCoin)
+    
+            profitFrame.overrideInput:Hide()
+            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(profitFrame)
+            profitFrame:Hide()
+            return profitFrame
+        end
+    
+        local baseY = -20
+        local profitFramesSpacingY = -45
+        frame.content.profitFrames = {}
+        table.insert(frame.content.profitFrames, createProfitFrame(baseY, frame.content, frame.content.resultProfitsTitle, 1))
+        table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame.content, frame.content.resultProfitsTitle, 2))
+        table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*2, frame.content, frame.content.resultProfitsTitle, 3))
+        table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*3, frame.content, frame.content.resultProfitsTitle, 4))
+        table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame.content, frame.content.resultProfitsTitle, 5))
+        
+    
+        CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
+        frame:Hide()
     end
 
-    local baseY = -20
-    local profitFramesSpacingY = -45
-    frame.content.profitFrames = {}
-    table.insert(frame.content.profitFrames, createProfitFrame(baseY, frame.content, frame.content.resultProfitsTitle, 1))
-    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame.content, frame.content.resultProfitsTitle, 2))
-    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*2, frame.content, frame.content.resultProfitsTitle, 3))
-    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*3, frame.content, frame.content.resultProfitsTitle, 4))
-    table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame.content, frame.content.resultProfitsTitle, 5))
-    
+    createContent(frameWO)
+    createContent(frameNO_WO)
 
-    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
-	frame:Hide()
 end

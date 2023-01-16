@@ -2,7 +2,7 @@ addonName, CraftSim = ...
 
 CraftSim.COSTOVERVIEW = {}
 
-function CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, priceData, craftingCostsOnly)
+function CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, priceData, craftingCostsOnly, exportMode)
     -- calculate profit for qualities from current until max
     local profitByNextQualities = {}
     if not craftingCostsOnly then
@@ -16,5 +16,5 @@ function CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, pri
         end
     end
 
-    CraftSim.COSTOVERVIEW.FRAMES:Fill(priceData.craftingCostPerCraft, priceData.minimumCostPerCraft, profitByNextQualities, 1) --recipeData.expectedQuality)
+    CraftSim.COSTOVERVIEW.FRAMES:Fill(priceData.craftingCostPerCraft, priceData.minimumCostPerCraft, profitByNextQualities, 1, exportMode) --recipeData.expectedQuality)
 end

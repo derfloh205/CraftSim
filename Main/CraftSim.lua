@@ -128,11 +128,9 @@ function CraftSim.MAIN:HookToEvent()
 	hookedEvent = true
 
 	local function Update(self)
-		if self:IsVisible() then
-			if CraftSim.MAIN.currentRecipeID then
-				print("Update: " .. tostring(CraftSim.MAIN.currentRecipeID))
-				CraftSim.MAIN:TriggerModulesErrorSafe(false)
-			end
+		if CraftSim.MAIN.currentRecipeID then
+			print("Update: " .. tostring(CraftSim.MAIN.currentRecipeID))
+			CraftSim.MAIN:TriggerModulesErrorSafe(false)
 		end
 	end
 
@@ -463,8 +461,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		CraftSim.UTIL:StopProfiling("Top Gear")
 	end
 
-	CraftSim.FRAME:ToggleFrame(CraftSimCostOverviewFrame, showCostOverview)
+	CraftSim.FRAME:ToggleFrame(CraftSimCostOverviewFrame, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(CraftSimCostOverviewWOFrame, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if showCostOverview then
-		CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, priceData, false )--showCostOverviewCraftingCostsOnly)
+		CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, priceData, false, exportMode)
 	end
 end
