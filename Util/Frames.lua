@@ -367,7 +367,7 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
         scrollFrame:SetPoint("TOP", frame, "TOP", 0, -30)
         scrollFrame:SetPoint("LEFT", frame, "LEFT", 20, 0)
         scrollFrame:SetPoint("RIGHT", frame, "RIGHT", -35, 0)
-        scrollFrame:SetPoint("BOTTOM", frame, "BOTTOM", 0, 0)
+        scrollFrame:SetPoint("BOTTOM", frame, "BOTTOM", 0, 20)
         scrollFrame:SetScrollChild(scrollFrame.scrollChild)
         scrollChild:SetWidth(scrollFrame:GetWidth())
         scrollChild:SetHeight(1) -- ??

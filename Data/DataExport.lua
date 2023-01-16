@@ -246,6 +246,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	-- skill
 	local baseSkill = professionInfo.skillLevel
 	local racialSkill = CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(recipeData.professionID)
+	print("Player Racial Bonus: " .. tostring(racialSkill))
 	local itemSkill = professionGearStats.skill
 	local specNodeSkill = specNodeStats.skill
 	local optionalReagentsSkill = optionalReagentsStats.skill
@@ -932,6 +933,7 @@ end
 
 function CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(professionID)
 	local _, playerRace = UnitRace("player")
+	print("Player Race: " .. tostring(playerRace))
 	local data = {
 		Gnome = {
 			professionIDs = {Enum.Profession.Engineering},

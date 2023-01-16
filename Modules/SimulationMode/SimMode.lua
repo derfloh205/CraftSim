@@ -122,6 +122,10 @@ function CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
 end
 
 function CraftSim.SIMULATION_MODE:UpdateReagentAllocationsByInput()
+    -- should not happen but nil check anyway
+    if not CraftSim.SIMULATION_MODE.recipeData then
+        return
+    end
     print("Update Reagent Input Frames:")
     print("reagents:")
     for reagentIndex, reagentData in pairs(CraftSim.SIMULATION_MODE.recipeData.reagents) do
