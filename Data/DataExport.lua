@@ -501,6 +501,10 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 
 	local schematicReagentSlots = CraftSim.DATAEXPORT:GetSchematicReagentSlotsByExportMode(exportMode)
 
+	if not schematicReagentSlots or #schematicReagentSlots == 0 then
+		return
+	end
+
 	-- extract possible optional and finishing and salvage reagents per slot
 	recipeData.possibleOptionalReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(schematicReagentSlots[CraftSim.CONST.REAGENT_TYPE.OPTIONAL])
 	recipeData.possibleFinishingReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(schematicReagentSlots[CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT])
@@ -567,37 +571,51 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 			table.insert(recipeData.reagents, reagentEntry)
 			currentRequiredReagent = currentRequiredReagent + 1
 		elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
-			local button = schematicReagentSlots[CraftSim.CONST.REAGENT_TYPE.OPTIONAL][currentOptionalReagent].Button
-			local allocatedItemID = button:GetItemID()
-			if allocatedItemID then
-				local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(allocatedItemID)
-				print(slotIndex .. " -> optional #" .. currentOptionalReagent .. ": " .. tostring(itemData.link) .. " Type: " .. tostring(reagentType))
-				print("dataSlotIndex: " .. tostring(currentSlot.dataSlotIndex))
-				table.insert(recipeData.optionalReagents, {
-					itemID = allocatedItemID,
-					itemData = itemData,
-					dataSlotIndex = currentSlot.dataSlotIndex
-				})
+			local hasSlots = schematicReagentSlots[CraftSim.CONST.REAGENT_TYPE.OPTIONAL] ~= nil
+			if hasSlots then
+				local optionalSlots = schematicReagentSlots[CraftSim.CONST.REAGENT_TYPE.OPTIONAL][currentOptionalReagent]
+				if not optionalSlots then
+					return
+				end
+				local button = optionalSlots.Button
+				local allocatedItemID = button:GetItemID()
+				if allocatedItemID then
+					local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(allocatedItemID)
+					print(slotIndex .. " -> optional #" .. currentOptionalReagent .. ": " .. tostring(itemData.link) .. " Type: " .. tostring(reagentType))
+					print("dataSlotIndex: " .. tostring(currentSlot.dataSlotIndex))
+					table.insert(recipeData.optionalReagents, {
+						itemID = allocatedItemID,
+						itemData = itemData,
+						dataSlotIndex = currentSlot.dataSlotIndex
+					})
+				end
+				
+				currentOptionalReagent = currentOptionalReagent + 1
 			end
-			
-			currentOptionalReagent = currentOptionalReagent + 1
 		elseif reagentType == CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT then
-			local button = schematicReagentSlots[CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT][currentFinishingReagent].Button
-			local allocatedItemID = button:GetItemID()
-
-			if allocatedItemID then
-				print("Finishing Reagent ItemID: " .. tostring(allocatedItemID))
-				local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(allocatedItemID)
-				print(slotIndex .. " -> finishing #" .. currentFinishingReagent .. ": " .. tostring(itemData.link) .. " Type: " .. tostring(reagentType))
-				print("dataSlotIndex: " .. tostring(currentSlot.dataSlotIndex))
-				table.insert(recipeData.finishingReagents, {
-					itemID = allocatedItemID,
-					itemData = itemData,
-					dataSlotIndex = currentSlot.dataSlotIndex
-				})
+			local hasSlots = schematicReagentSlots[CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT] ~= nil
+			if hasSlots then
+				local finishingSlots = schematicReagentSlots[CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT][currentFinishingReagent]
+				if not finishingSlots then
+					return
+				end
+				local button = finishingSlots.Button
+				local allocatedItemID = button:GetItemID()
+	
+				if allocatedItemID then
+					print("Finishing Reagent ItemID: " .. tostring(allocatedItemID))
+					local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(allocatedItemID)
+					print(slotIndex .. " -> finishing #" .. currentFinishingReagent .. ": " .. tostring(itemData.link) .. " Type: " .. tostring(reagentType))
+					print("dataSlotIndex: " .. tostring(currentSlot.dataSlotIndex))
+					table.insert(recipeData.finishingReagents, {
+						itemID = allocatedItemID,
+						itemData = itemData,
+						dataSlotIndex = currentSlot.dataSlotIndex
+					})
+				end
+				
+				currentFinishingReagent = currentFinishingReagent + 1
 			end
-			
-			currentFinishingReagent = currentFinishingReagent + 1
 		end
 	end
 	recipeData.hasReagentsWithQuality = hasReagentsWithQuality

@@ -128,9 +128,11 @@ function CraftSim.MAIN:HookToEvent()
 	hookedEvent = true
 
 	local function Update(self)
-		if CraftSim.MAIN.currentRecipeID then
-			print("Update: " .. tostring(CraftSim.MAIN.currentRecipeID))
-			CraftSim.MAIN:TriggerModulesErrorSafe(false)
+		if self:IsVisible() then
+			if CraftSim.MAIN.currentRecipeID then
+				print("Update: " .. tostring(CraftSim.MAIN.currentRecipeID))
+				CraftSim.MAIN:TriggerModulesErrorSafe(false)
+			end
 		end
 	end
 
@@ -167,7 +169,12 @@ function CraftSim.MAIN:HookToEvent()
 	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, Update)
 	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, Update)
 
-	ProfessionsFrame.OrdersPage.OrderView.OrderDetails:HookScript("OnShow", Update)
+	local recipeTab = ProfessionsFrame.TabSystem.tabs[1]
+	local craftingOrderTab = ProfessionsFrame.TabSystem.tabs[3]
+
+	recipeTab:HookScript("OnClick", Update)
+	craftingOrderTab:HookScript("OnClick", Update)
+	--ProfessionsFrame.OrdersPage.OrderView.OrderDetails:HookScript("OnShow", Update)
 end
 
 local priceApiLoaded = false
@@ -309,7 +316,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		return
 	end
 
-	local exportMode = ProfessionsFrame.OrdersPage:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER or CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER
+	local exportMode = (ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER) or CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER
 
 	print("Export Mode: " .. tostring(exportMode))
 
