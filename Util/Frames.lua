@@ -556,16 +556,6 @@ function CraftSim.FRAME:InitDebugFrame()
         C_UI.Reload()
     end)
 
-    controlPanel.content.showNews = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
-	controlPanel.content.showNews:SetPoint("LEFT", controlPanel.content.clearButton, "RIGHT", 0, 0)	
-	controlPanel.content.showNews:SetText("News")
-	controlPanel.content.showNews:SetSize(controlPanel.content.showNews:GetTextWidth()+15, 25)
-    controlPanel.content.showNews:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:ShowOneTimeInfo(true)
-    end)
-
-    
-
     controlPanel.content.nodeDebugInput = CraftSim.FRAME:CreateInput(
         "CraftSimDebugNodeIDInput", controlPanel.content, controlPanel.content.clearButton, 
         "TOP", "TOP", -50, -25, 120, 20, "", function() end)

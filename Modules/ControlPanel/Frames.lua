@@ -37,6 +37,30 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
 
     local cbBaseOffsetX = 20
     local cbBaseOffsetY = -20
+
+    frame.content.newsButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
+	frame.content.newsButton:SetPoint("TOPRIGHT", frame.content, "TOPRIGHT", -40, -9)	
+	frame.content.newsButton:SetText("News")
+	frame.content.newsButton:SetSize(frame.content.newsButton:GetTextWidth()+15, 25)
+    frame.content.newsButton:SetScript("OnClick", function(self) 
+        CraftSim.FRAME:ShowOneTimeInfo(true)
+    end)
+
+    frame.content.debugButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
+	frame.content.debugButton:SetPoint("TOPLEFT", frame.content.newsButton, "BOTTOMLEFT", 0, 0)	
+	frame.content.debugButton:SetText("Debug")
+	frame.content.debugButton:SetSize(frame.content.debugButton:GetTextWidth()+15, 25)
+    frame.content.debugButton:SetScript("OnClick", function(self) 
+        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
+    end)
+
+    frame.content.optionsButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
+	frame.content.optionsButton:SetPoint("RIGHT", frame.content.newsButton, "LEFT", 0, 0)	
+	frame.content.optionsButton:SetText("Options")
+	frame.content.optionsButton:SetSize(frame.content.optionsButton:GetTextWidth()+15, 25)
+    frame.content.optionsButton:SetScript("OnClick", function(self) 
+        InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+    end)
     
     -- 1. Row
     frame.content.materialSuggestionsCB = createModuleCheckbox("Material Optimization", 

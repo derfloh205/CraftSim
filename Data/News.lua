@@ -22,6 +22,10 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("1.9") ..
+        P .. "Introducing the " .. c("CraftSim Control Panel", g) ..
+        a .. "Serving as the main module of CraftSim from now on" .. 
+        a .. "it gives easy access to all different modules" ..
         newP("1.8.3") ..
         s .. "Fixed " .. c("Material Suggestion", bb) .. " sometimes suggesting" .. 
         a .. "too low quality mats." ..
