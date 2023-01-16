@@ -161,9 +161,6 @@ function CraftSim.OPTIONS:Init()
         warning:SetText("No Supported Price Source Addon loaded!")
     end
 
-    
-
-
     local materialSuggestionTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimMaterialSlider", 
         "Transparency\n ", ModulesTab.content, ModulesTab.content, 
         "TOP", "TOP", -15, -50, 100, 10, "HORIZONTAL", 
@@ -173,7 +170,10 @@ function CraftSim.OPTIONS:Init()
             CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
             CraftSimOptions.transparencyMaterials = value
         end)
-        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions.transparencyMaterials)
+    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions.transparencyMaterials)
+
+    CraftSim.FRAME:CreateText("Material Optimizing Module", 
+    ModulesTab.content, materialSuggestionTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
     local CraftSimDetailsTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimDetailsSlider", 
         "", ModulesTab.content, materialSuggestionTransparencySlider, 
@@ -185,6 +185,8 @@ function CraftSim.OPTIONS:Init()
             CraftSimOptions.transparencyStatWeights = value
         end)
     CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(CraftSimOptions.transparencyStatWeights)
+    CraftSim.FRAME:CreateText("Average Profit Module", 
+    ModulesTab.content, CraftSimDetailsTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
 
     local CraftSimTopGearTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimTopGearSlider", 
@@ -197,6 +199,8 @@ function CraftSim.OPTIONS:Init()
             CraftSimOptions.transparencyTopGear = value
         end)
     CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(CraftSimOptions.transparencyTopGear)
+    CraftSim.FRAME:CreateText("Top Gear Module", 
+    ModulesTab.content, CraftSimTopGearTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
 
     local CraftSimCostOverviewTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimCostOverviewSlider", 
@@ -208,7 +212,9 @@ function CraftSim.OPTIONS:Init()
             CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW):SetTransparency(value)
             CraftSimOptions.transparencyCostOverview = value
         end)
-        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW):SetTransparency(CraftSimOptions.transparencyCostOverview)
+    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW):SetTransparency(CraftSimOptions.transparencyCostOverview)
+    CraftSim.FRAME:CreateText("Cost Overview Module", 
+    ModulesTab.content, CraftSimCostOverviewTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
     local specInfoTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimSpecInfoSlider", 
         "", ModulesTab.content, CraftSimCostOverviewTransparencySlider, 
@@ -219,7 +225,9 @@ function CraftSim.OPTIONS:Init()
             CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(value)
             CraftSimOptions.transparencySpecInfo = value
         end)
-        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions.transparencySpecInfo)
+    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions.transparencySpecInfo)
+    CraftSim.FRAME:CreateText("Specialization Info Module", 
+    ModulesTab.content, specInfoTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
      local skillBreakpointsCheckbox = CraftSim.FRAME:CreateCheckbox(" Offset Skill Breakpoints by 1", 
      "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
