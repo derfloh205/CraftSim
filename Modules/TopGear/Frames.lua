@@ -11,7 +11,7 @@ local function print(text, recursive, l) -- override
 end
 
 function CraftSim.TOPGEAR.FRAMES:Init()
-    local frame = CraftSim.FRAME:CreateCraftSimFrame(
+    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimSimFrame", 
         "CraftSim Top Gear", 
         ProfessionsFrame.CraftingPage.SchematicForm,
@@ -24,71 +24,98 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         300,
         CraftSim.CONST.FRAMES.TOP_GEAR)
 
-    local contentOffsetY = -20
-    local iconsOffsetY = 80
-    frame.content.gear1Icon = CraftSim.FRAME:CreateIcon(frame.content, -45, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
-    frame.content.gear2Icon = CraftSim.FRAME:CreateIcon(frame.content,  -0, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
-    frame.content.toolIcon = CraftSim.FRAME:CreateIcon(frame.content, 50, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
+    local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
+        "CraftSimSimWOFrame", 
+        "CraftSim Top Gear " .. CraftSim.UTIL:ColorizeText("WO", CraftSim.CONST.COLORS.GREY), 
+        ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        ProfessionsFrame.CloseButton, 
+        "TOPLEFT", 
+        "TOPRIGHT", 
+        -5, 
+        3, 
+        250, 
+        300,
+        CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
 
-    frame.content.equipButton = CreateFrame("Button", "CraftSimTopGearEquipButton", frame.content, "UIPanelButtonTemplate")
-	frame.content.equipButton:SetSize(50, 25)
-	frame.content.equipButton:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 40)	
-	frame.content.equipButton:SetText("Equip")
-    frame.content.equipButton:SetScript("OnClick", function(self) 
-        CraftSim.TOPGEAR:EquipTopGear()
-    end)
-
-    frame.content.simulateButton = CraftSim.FRAME:CreateButton(
-        "Simulate Top Gear", frame.content, frame.content.equipButton, "CENTER", "CENTER", 0, 0, 5, 25, true, function(self) 
-            local priceData = CraftSim.PRICEDATA:GetPriceData(CraftSim.MAIN.currentRecipeData, CraftSim.MAIN.currentRecipeData.recipeType)
-            CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(CraftSim.MAIN.currentRecipeData, CraftSim.MAIN.currentRecipeData.recipeType, priceData)
+    local function createContent(frame)
+    
+        local contentOffsetY = -20
+        local iconsOffsetY = 80
+        frame.content.gear1Icon = CraftSim.FRAME:CreateIcon(frame.content, -45, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
+        frame.content.gear2Icon = CraftSim.FRAME:CreateIcon(frame.content,  -0, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
+        frame.content.toolIcon = CraftSim.FRAME:CreateIcon(frame.content, 50, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
+    
+        frame.content.equipButton = CreateFrame("Button", "CraftSimTopGearEquipButton", frame.content, "UIPanelButtonTemplate")
+        frame.content.equipButton:SetSize(50, 25)
+        frame.content.equipButton:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 40)	
+        frame.content.equipButton:SetText("Equip")
+        frame.content.equipButton:SetScript("OnClick", function(self) 
+            CraftSim.TOPGEAR:EquipTopGear()
         end)
     
+        frame.content.simulateButton = CraftSim.FRAME:CreateButton(
+            "Simulate Top Gear", frame.content, frame.content.equipButton, "CENTER", "CENTER", 0, 0, 5, 25, true, function(self) 
+                local priceData = CraftSim.PRICEDATA:GetPriceData(CraftSim.MAIN.currentRecipeData, CraftSim.MAIN.currentRecipeData.recipeType)
+                local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+                CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(CraftSim.MAIN.currentRecipeData, CraftSim.MAIN.currentRecipeData.recipeType, priceData, exportMode)
+            end)
+        
+    
+        frame.content.simModeDropdown = 
+        CraftSim.FRAME:initDropdownMenu("CraftSimTopGearSimMode", frame.content, frame.title, "", 0, contentOffsetY, 120, {"Placeholder"}, function(arg1) 
+            CraftSimOptions.topGearMode = arg1
+            local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+            CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(CraftSimTopGearSimMode.recipeData, CraftSimTopGearSimMode.recipeType, CraftSimTopGearSimMode.priceData, exportMode)
+        end, "Placeholder")
+        frame.content.profitText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.profitText:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 10)
+    
+        frame.content.statDiff = CreateFrame("frame", nil, frame.content)
+        frame.content.statDiff:SetSize(200, 100)
+        frame.content.statDiff:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY - 50)
+    
+        local statTxtSpacingY = -15
+        frame.content.statDiff.inspiration = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.statDiff.inspiration:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*1)
+        frame.content.statDiff.inspiration:SetText("Inspiration: ")
+    
+        frame.content.statDiff.multicraft = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.statDiff.multicraft:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*2)
+        frame.content.statDiff.multicraft:SetText("Multicraft: ")
+    
+        frame.content.statDiff.resourcefulness = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.statDiff.resourcefulness:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*3)
+        frame.content.statDiff.resourcefulness:SetText("Resourcefulness: ")
+    
+        frame.content.statDiff.craftingspeed = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.statDiff.craftingspeed:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*4)
+        frame.content.statDiff.craftingspeed:SetText("Crafting Speed: ")
+    
+        frame.content.statDiff.skill = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.statDiff.skill:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*5)
+        frame.content.statDiff.skill:SetText("Skill: ")
+    
+        frame.content.statDiff.quality = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.statDiff.quality:SetPoint("TOP", frame.content.statDiff, "TOP", -5, statTxtSpacingY*6)
+        frame.content.statDiff.quality:SetText("Quality: ")
+    
+        frame.content.statDiff.qualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content, 20, 20, frame.content.statDiff.quality, "LEFT", "RIGHT", 3, 0)
+    
+        frame:Hide()
+    end
 
-    frame.content.simModeDropdown = 
-    CraftSim.FRAME:initDropdownMenu("CraftSimTopGearSimMode", frame.content, frame.title, "", 0, contentOffsetY, 120, {"Placeholder"}, function(arg1) 
-        CraftSimOptions.topGearMode = arg1
-        CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(CraftSimTopGearSimMode.recipeData, CraftSimTopGearSimMode.recipeType, CraftSimTopGearSimMode.priceData)
-    end, "Placeholder")
-    frame.content.profitText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.profitText:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 10)
-
-    frame.content.statDiff = CreateFrame("frame", nil, frame.content)
-    frame.content.statDiff:SetSize(200, 100)
-    frame.content.statDiff:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY - 50)
-
-    local statTxtSpacingY = -15
-    frame.content.statDiff.inspiration = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.statDiff.inspiration:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*1)
-    frame.content.statDiff.inspiration:SetText("Inspiration: ")
-
-    frame.content.statDiff.multicraft = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.statDiff.multicraft:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*2)
-    frame.content.statDiff.multicraft:SetText("Multicraft: ")
-
-    frame.content.statDiff.resourcefulness = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.statDiff.resourcefulness:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*3)
-    frame.content.statDiff.resourcefulness:SetText("Resourcefulness: ")
-
-    frame.content.statDiff.craftingspeed = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.statDiff.craftingspeed:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*4)
-    frame.content.statDiff.craftingspeed:SetText("Crafting Speed: ")
-
-    frame.content.statDiff.skill = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.statDiff.skill:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY*5)
-    frame.content.statDiff.skill:SetText("Skill: ")
-
-    frame.content.statDiff.quality = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.statDiff.quality:SetPoint("TOP", frame.content.statDiff, "TOP", -5, statTxtSpacingY*6)
-    frame.content.statDiff.quality:SetText("Quality: ")
-
-    frame.content.statDiff.qualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content, 20, 20, frame.content.statDiff.quality, "LEFT", "RIGHT", 3, 0)
-
-	frame:Hide()
+    createContent(frameNO_WO)
+    createContent(frameWO)
 end
 
-function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearCombo, isCooking)
-    local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearCombo, isCooking, exportMode)
+    local topGearFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        print("update combo items work order")
+        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+    else
+        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+    end
     local iconButtons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
     for _, button in pairs(iconButtons) do
         button:Hide() -- only to consider cooking ...
@@ -123,9 +150,14 @@ function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearCombo, isC
     end
 end
 
-function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, topGearMode, isCooking)
-    local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
-    CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(bestSimulation.combo, isCooking)
+function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, topGearMode, isCooking, exportMode)
+    local topGearFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+    else
+        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+    end
+    CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(bestSimulation.combo, isCooking, exportMode)
     if not CraftSim.TOPGEAR.IsEquipping then
         topGearFrame.currentCombo = bestSimulation.combo
     end
@@ -145,8 +177,8 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, topGearMod
     else
         topGearFrame.content.profitText:SetText("Unhandled Sim Mode")
     end
-    CraftSimTopGearEquipButton:SetEnabled(true)
-    CraftSimTopGearEquipButton:Show()
+    topGearFrame.content.equipButton:SetEnabled(true)
+    topGearFrame.content.equipButton:Show()
     topGearFrame.content.simulateButton:Hide()
 
     local inspirationBonusSkillText = ""
@@ -172,12 +204,19 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, topGearMod
 
 end
 
-function CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown()
+function CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(exportMode)
     if not CraftSim.MAIN.currentRecipeData then
         return
     end
     local recipeData = CraftSim.MAIN.currentRecipeData
-    local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+
+    local topGearFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+    else
+        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+    end
+
 
     local availableModes = CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData, recipeType)
     if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
@@ -187,19 +226,24 @@ function CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown()
     CraftSim.FRAME:initializeDropdown(topGearFrame.content.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
 end
 
-function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, isClear)
-    local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
-    if not isCooking then
-        CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons({{isEmptySlot = true}, {isEmptySlot = true}, {isEmptySlot = true}}, isCooking)
+function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, isClear, exportMode)
+    local topGearFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
     else
-        CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons({{isEmptySlot = true}, {isEmptySlot = true}}, isCooking)
+        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+    end
+    if not isCooking then
+        CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons({{isEmptySlot = true}, {isEmptySlot = true}, {isEmptySlot = true}}, isCooking, exportMode)
+    else
+        CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons({{isEmptySlot = true}, {isEmptySlot = true}}, isCooking, exportMode)
     end
 
-    CraftSimTopGearEquipButton:SetEnabled(false)
+    topGearFrame.content.equipButton:SetEnabled(false)
     topGearFrame.content.profitText:SetText(isClear and "" or "Top Gear equipped")
 
     CraftSim.FRAME:ToggleFrame(topGearFrame.content.simulateButton, isClear)
-    CraftSim.FRAME:ToggleFrame(CraftSimTopGearEquipButton, not isClear)
+    CraftSim.FRAME:ToggleFrame(topGearFrame.content.equipButton, not isClear)
 
     topGearFrame.content.statDiff.inspiration:SetText("")
     topGearFrame.content.statDiff.multicraft:SetText("")

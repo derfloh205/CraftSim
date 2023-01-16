@@ -255,6 +255,10 @@ function CraftSim.UTIL:IsSpecImplemented(professionID)
     return tContains(CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP(), professionID)
 end
 
+function CraftSim.UTIL:GetExportModeByVisibility()
+    return (ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER) or CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER
+end
+
 function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     local absValue = abs(copperValue)
     local minusText = ""

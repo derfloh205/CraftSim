@@ -50,23 +50,6 @@ function CraftSim.FRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
     return sign .. CraftSim.UTIL:round(statDiff, roundTo) .. suffix
 end
 
--- function CraftSim.FRAME:GetProfessionEquipSlots(professionID)
---     prof1, prof2, archaeology, fishing, cooking, firstAid = GetProfessions();
---     print("get call: ")
---     print(prof1)
---     print(prof2)
---     if professionID == prof1 then
---         return CraftSim.CONST.PROFESSION_INV_SLOTS[1]
---     elseif professionID == prof2 then
---         return CraftSim.CONST.PROFESSION_INV_SLOTS[2]
---     elseif professionID == Enum.Profession.Cooking then
---         return CraftSim.CONST.PROFESSION_INV_SLOTS[3]
---     else
---         --print("no profession tool slot visible.. what is going on?")
---         return {}
---     end
--- end
-
 function CraftSim.FRAME:ToggleFrame(frame, visible)
     if visible then
         frame:Show()

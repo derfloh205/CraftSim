@@ -314,7 +314,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		return
 	end
 
-	local exportMode = (ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER) or CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER
+	local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
 
 	print("Export Mode: " .. tostring(exportMode))
 
@@ -451,13 +451,13 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		end
 	end
 
-	CraftSim.FRAME:ToggleFrame(CraftSimSimFrame, showTopGear)
+	CraftSim.FRAME:ToggleFrame(CraftSimSimFrame, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(CraftSimSimWOFrame, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if showTopGear then
 		CraftSim.UTIL:StartProfiling("Top Gear")
-		CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown()
-		--CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
+		CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(exportMode)
 		local isCooking = recipeData.professionID == Enum.Profession.Cooking
-		CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, true)
+		CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, true, exportMode)
 		CraftSim.UTIL:StopProfiling("Top Gear")
 	end
 

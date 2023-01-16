@@ -349,7 +349,7 @@ function CraftSim.TOPGEAR:DeductCurrentItemStats(recipeData, recipeType)
     return noItemRecipeData
 end
 
-function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData)
+function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData, exportMode)
     -- local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
     local isCooking = recipeData.professionID == Enum.Profession.Cooking
     -- update top gear mode dropdown
@@ -370,7 +370,7 @@ function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, reci
     local gearCombos = CraftSim.TOPGEAR:GetProfessionGearCombinations(isCooking)
 
     if not gearCombos then
-        CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking)
+        CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, exportMode)
         return
     end
 
@@ -402,9 +402,9 @@ function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, reci
 
         if foundBetter then
             CraftSim.TOPGEAR:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
-            CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, CraftSimOptions.topGearMode, isCooking)
+            CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, CraftSimOptions.topGearMode, isCooking, exportMode)
         else
-            CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking)
+            CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, exportMode)
         end
     elseif CraftSimOptions.topGearMode == CraftSim.CONST.GEAR_SIM_MODES.SKILL then
         local equippedCombo = CraftSim.TOPGEAR:GetEquippedCombo(isCooking)
@@ -431,9 +431,9 @@ function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, reci
 
         if foundBetter then
             CraftSim.TOPGEAR:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
-            CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, CraftSimOptions.topGearMode, isCooking)
+            CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, CraftSimOptions.topGearMode, isCooking, exportMode)
         else
-            CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking)
+            CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, exportMode)
         end
     elseif 
         CraftSimOptions.topGearMode == CraftSim.CONST.GEAR_SIM_MODES.INSPIRATION or 
@@ -470,9 +470,9 @@ function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, reci
 
         if foundBetter then
             CraftSim.TOPGEAR:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
-            CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, CraftSimOptions.topGearMode, isCooking)
+            CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, CraftSimOptions.topGearMode, isCooking, exportMode)
         else
-            CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking)
+            CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, exportMode)
         end
     end
     
