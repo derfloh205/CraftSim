@@ -17,15 +17,23 @@ function CraftSim.NEWS:GET_NEWS()
     local P = "\n" .. CraftSim.UTIL:GetQualityIconAsText(3, 15, 15) .. " "
     local a = "\n     "
     local function newP(v) return c("\n\n\n                                   --- Version " .. v .. " ---\n\n", l) end
-    local tunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(199345, true)
-    local frostedTunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(200074)
+    -- local tunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(199345, true)
+    -- local frostedTunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(200074)
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
-        newP("1.9") ..
+        newP("2.0") ..
+        P .. "Implemented most modules for " .. c("Work Orders", g) ..
+        a .. "Simulation Mode for work orders will follow" .. 
+        a .. "in a future update." .. 
+        a .. "Behaviour of the Work Order Modules during recrafting" .. 
+        a .. "is not tested yet" .. 
         P .. "Introducing the " .. c("CraftSim Control Panel", g) ..
         a .. "Serving as the main module of CraftSim from now on" .. 
         a .. "it gives easy access to all different modules" ..
+        s .. c("Removed", r) .. " the price override feature temporary" .. 
+        a .. "This will be reimplemented as a seperate module" .. 
+        a .. "in a future update" .. 
         newP("1.8.3") ..
         s .. "Fixed " .. c("Material Suggestion", bb) .. " sometimes suggesting" .. 
         a .. "too low quality mats." ..

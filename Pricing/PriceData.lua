@@ -114,10 +114,10 @@ function CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
     local craftingCostPerCraft = CraftSim.PRICEDATA:GetTotalCraftingCost(recipeData)
     local minimumCostPerCraft = CraftSim.PRICEDATA:GetTotalCraftingCost(recipeData, true) 
 
-    if CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW).content.overrideCraftingCostsCheckbox:GetChecked() then
-        craftingCostPerCraft = CraftSim.PRICEDATA.overrideCraftingCosts
-        minimumCostPerCraft = CraftSim.PRICEDATA.overrideCraftingCosts
-    end
+    -- if CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW).content.overrideCraftingCostsCheckbox:GetChecked() then
+    --     craftingCostPerCraft = CraftSim.PRICEDATA.overrideCraftingCosts
+    --     minimumCostPerCraft = CraftSim.PRICEDATA.overrideCraftingCosts
+    -- end
 
     local reagentsPriceByQuality = CraftSim.PRICEDATA:GetReagentsPriceByQuality(recipeData)
     local minBuyoutPerQuality = {}
@@ -145,13 +145,13 @@ function CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
         salvageReagentPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(recipeData.salvageReagent.itemID, true)
     end
 
-    for i = 1, 5, 1 do
-        -- if existent, override price by quality
-        local overridePrice = CraftSim.PRICEDATA.overrideResultProfits[i]
-        if overridePrice ~= nil then
-            minBuyoutPerQuality[i] = overridePrice
-        end
-    end
+    -- for i = 1, 5, 1 do
+    --     -- if existent, override price by quality
+    --     local overridePrice = CraftSim.PRICEDATA.overrideResultProfits[i]
+    --     if overridePrice ~= nil then
+    --         minBuyoutPerQuality[i] = overridePrice
+    --     end
+    -- end
 
     return {
         salvageReagentPrice = salvageReagentPrice,

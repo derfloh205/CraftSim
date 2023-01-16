@@ -41,7 +41,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local cbBaseOffsetY = -20
 
     frame.content.newsButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.newsButton:SetPoint("TOPRIGHT", frame.content, "TOPRIGHT", -40, -9)	
+	frame.content.newsButton:SetPoint("TOPRIGHT", frame.content, "TOPRIGHT", -50, -15)	
 	frame.content.newsButton:SetText("News")
 	frame.content.newsButton:SetSize(frame.content.newsButton:GetTextWidth()+15, 25)
     frame.content.newsButton:SetScript("OnClick", function(self) 
