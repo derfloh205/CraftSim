@@ -302,4 +302,9 @@ function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
         CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PROFIT_DETAILS), false)
         CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS).content.breakdownButton:SetText("Show Explanation")
     end)
+    
+    -- due do it being closeable, we have a closeButton
+    frame.closeButton:HookScript("OnClick", function(self) 
+        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS).content.breakdownButton:SetText("Show Explanation")
+    end)
 end
