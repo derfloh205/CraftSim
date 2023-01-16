@@ -35,6 +35,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         return cb
     end
 
+    frame:Hide()
+
     local cbBaseOffsetX = 20
     local cbBaseOffsetY = -20
 

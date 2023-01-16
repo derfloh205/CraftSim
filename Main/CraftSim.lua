@@ -268,17 +268,17 @@ end
 local debugTest = true
 function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-	local expansionName = professionInfo.expansionName
 	local craftingPage = ProfessionsFrame.CraftingPage
 	local schematicForm = craftingPage.SchematicForm
 
-	if not expansionName == "Dragon Isles" then
+	local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
+	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
+		-- hide control panel
+		controlPanel:Hide()
 		return nil
 	end
 
-	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
-		return nil
-	end
+	controlPanel:Show()
 
 	local craftingPage = ProfessionsFrame.CraftingPage
 	local schematicForm = craftingPage.SchematicForm
