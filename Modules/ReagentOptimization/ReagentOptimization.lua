@@ -347,7 +347,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
             outArr[2 * h] = "None"
             outArr[2 * h + 1] = ""
         else
-            tStart = math.floor(BPs[h] * maxWeight)
+            tStart = math.ceil(BPs[h] * maxWeight)
             i = numMaterials -- i was initialized above
             -- walk the last row of the matrix backwards to find the best value (gold cost) for minimum target weight (j = skill bonus)
             i = numMaterials

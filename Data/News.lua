@@ -22,6 +22,11 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("1.8.3") ..
+        s .. "Fixed " .. c("Material Suggestion", bb) .. " sometimes suggesting" .. 
+        a .. "too low quality mats." ..
+        a .. "Thanks to " .. c("https://github.com/AkiKonani", bb) .. 
+        a .. "for suggesting a small but effective solution!" .. 
         newP("1.8.2") ..
         p .. "Fixed " .. c("Inspiration Bonus Skill", bb) .. " sometimes being too high" .. 
         a .. "due to rounding differences" .. 
