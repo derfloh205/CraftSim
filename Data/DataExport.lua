@@ -86,7 +86,17 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operation
 			end
 
 			-- in this case with specs
-			recipeData.stats.inspiration.bonusSkillFactorNoSpecs = (recipeData.stats.inspiration.bonusskill / recipeData.stats.inspiration.baseBonusSkill) % 1
+			recipeData.stats.inspiration.bonusSkillFactorNoSpecs = (recipeData.stats.inspiration.bonusskill / recipeData.stats.inspiration.baseBonusSkill)
+			-- the shown ui bonusskill is probably rounded and the base bonus skill not..
+			-- this is a problem.. cause when the base skill is a little bit higher than the ui one, we get a factor of like 0.99
+			-- solution: if the factor is sub 0 without modulo, its 0%
+			if recipeData.stats.inspiration.bonusSkillFactorNoSpecs < 1 then
+				recipeData.stats.inspiration.bonusSkillFactorNoSpecs = 0
+			else
+				recipeData.stats.inspiration.bonusSkillFactorNoSpecs = recipeData.stats.inspiration.bonusSkillFactorNoSpecs % 1
+			end
+			
+			print("exported bonusSkillfactorNoSpecs: " .. tostring(recipeData.stats.inspiration.bonusSkillFactorNoSpecs))
 		elseif statName == multicraft then
 			recipeData.stats.multicraft.value = statInfo.bonusStatValue
 			recipeData.stats.multicraft.description = statInfo.ratingDescription

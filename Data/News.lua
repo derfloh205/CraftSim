@@ -22,6 +22,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("1.8.2") ..
+        p .. "Fixed " .. c("Inspiration Bonus Skill", bb) .. " sometimes being too high" .. 
+        a .. "due to rounding differences" .. 
         newP("1.8.1") ..
         P .. c("Jewelcrafting", bb) .. " experimental specialization data added" .. 
         a .. "This makes knowledge point distribution simulation possible!" .. 
