@@ -1,0 +1,3 @@
+addonName, CraftSim = ...
+
+CraftSim.CONTROL_PANEL = {}

@@ -172,6 +172,8 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.MAIN:HookToProfessionsFrame()
 		CraftSim.FRAME:HandleAuctionatorOverlaps()
 		CraftSim.ACCOUNTSYNC:Init()
+
+		CraftSim.CONTROL_PANEL.FRAMES:Init()
 	end
 end
 

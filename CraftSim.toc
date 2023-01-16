@@ -25,6 +25,9 @@ Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
 Pricing/PriceData.lua
 
+Modules/ControlPanel/ControlPanel.lua
+Modules/ControlPanel/Frames.lua
+
 Modules/SpecializationInfo/SpecializationInfo.lua
 Modules/SpecializationInfo/Frames.lua
 
