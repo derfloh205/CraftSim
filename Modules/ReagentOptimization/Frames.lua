@@ -11,68 +11,87 @@ local function print(text, recursive, l) -- override
 end
 
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
-    local frame = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimReagentHintFrame", 
-        "CraftSim Min Cost Material", 
+    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
+        "CraftSimMaterialOptimizationFrame", 
+        "CraftSim Material Optimization", 
         ProfessionsFrame.CraftingPage.SchematicForm, 
         CraftSimCostOverviewFrame, 
         "TOPLEFT", 
         "TOPRIGHT", 
         -10, 
         0, 
-        270, 
+        280, 
         250,
         CraftSim.CONST.FRAMES.MATERIALS)
 
-    local contentOffsetY = -15
+    local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
+        "CraftSimMaterialOptimizationWOFrame", 
+        "CraftSim Material Optimization " .. CraftSim.UTIL:ColorizeText("WO", CraftSim.CONST.COLORS.GREY), 
+        ProfessionsFrame.OrdersPage.OrderView.OrderDetails, 
+        CraftSimCostOverviewFrame, 
+        "TOPLEFT", 
+        "TOPRIGHT", 
+        -10, 
+        0, 
+        280, 
+        250,
+        CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
 
-    frame.content.inspirationCheck = CreateFrame("CheckButton", nil, frame.content, "ChatConfigCheckButtonTemplate")
-	frame.content.inspirationCheck:SetPoint("TOP", frame.title, -90, -20)
-	frame.content.inspirationCheck.Text:SetText(" Reach Inspiration Breakpoint")
-    frame.content.inspirationCheck.tooltip = "Try to reach the skill breakpoint where an inspiration proc upgrades to the next higher quality with the cheapest material combination"
-    frame.content.inspirationCheck:SetChecked(CraftSimOptions.materialSuggestionInspirationThreshold)
-	frame.content.inspirationCheck:HookScript("OnClick", function(_, btn, down)
-		local checked = frame.content.inspirationCheck:GetChecked()
-		CraftSimOptions.materialSuggestionInspirationThreshold = checked
-        CraftSim.MAIN:TriggerModulesErrorSafe() -- TODO: if this is not performant enough, try to only recalc the material stuff not all, lazy solution for now
-	end)
+    local function createContent(frame)
 
-    frame.content.qualityText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.qualityText:SetPoint("TOP", frame.title, "TOP", 0, -45)
-	frame.content.qualityText:SetText("Reachable Quality: ")
+        local contentOffsetY = -15
+    
+        frame.content.inspirationCheck = CreateFrame("CheckButton", nil, frame.content, "ChatConfigCheckButtonTemplate")
+        frame.content.inspirationCheck:SetPoint("TOP", frame.title, -90, -20)
+        frame.content.inspirationCheck.Text:SetText(" Reach Inspiration Breakpoint")
+        frame.content.inspirationCheck.tooltip = "Try to reach the skill breakpoint where an inspiration proc upgrades to the next higher quality with the cheapest material combination"
+        frame.content.inspirationCheck:SetChecked(CraftSimOptions.materialSuggestionInspirationThreshold)
+        frame.content.inspirationCheck:HookScript("OnClick", function(_, btn, down)
+            local checked = frame.content.inspirationCheck:GetChecked()
+            CraftSimOptions.materialSuggestionInspirationThreshold = checked
+            CraftSim.MAIN:TriggerModulesErrorSafe() -- TODO: if this is not performant enough, try to only recalc the material stuff not all, lazy solution for now
+        end)
+    
+        frame.content.qualityText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.qualityText:SetPoint("TOP", frame.title, "TOP", 0, -45)
+        frame.content.qualityText:SetText("Reachable Quality: ")
+    
+        frame.content.qualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content, 25, 25, frame.content.qualityText, "LEFT", "RIGHT", 3, 0)
+    
+        frame.content.allocateButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame.content, "UIPanelButtonTemplate")
+        frame.content.allocateButton:SetSize(50, 25)
+        frame.content.allocateButton:SetPoint("TOP", frame.content.qualityText, "TOP", 0, -20)	
+        frame.content.allocateButton:SetText("Assign")
+    
+        frame.content.allocateText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.allocateText:SetPoint("TOP", frame.content.qualityText, "TOP", 0, -20)	
+        frame.content.allocateText:SetText("")
+    
+        frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.infoText:SetPoint("CENTER", frame.content, "CENTER", 0, 0)
+        frame.content.infoText.NoCombinationFound = "No combination found \nto increase quality"
+        frame.content.infoText.SameCombination = "Best combination assigned"
+        frame.content.infoText:SetText(frame.content.infoText.NoCombinationFound)
+    
+        local iconsOffsetY = -30
+        local iconsSpacingY = 25
+    
+        frame.content.reagentFrames = {}
+        frame.content.reagentFrames.rows = {}
+        frame.content.reagentFrames.numReagents = 0
+        local baseX = -20
+        local iconSize = 30
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*2, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*3, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*4, iconSize))
+    
+        frame:Hide()
+    end
 
-    frame.content.qualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content, 25, 25, frame.content.qualityText, "LEFT", "RIGHT", 3, 0)
-
-    frame.content.allocateButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame.content, "UIPanelButtonTemplate")
-	frame.content.allocateButton:SetSize(50, 25)
-	frame.content.allocateButton:SetPoint("TOP", frame.content.qualityText, "TOP", 0, -20)	
-	frame.content.allocateButton:SetText("Assign")
-
-    frame.content.allocateText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.allocateText:SetPoint("TOP", frame.content.qualityText, "TOP", 0, -20)	
-	frame.content.allocateText:SetText("")
-
-    frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.content.infoText:SetPoint("CENTER", frame.content, "CENTER", 0, 0)
-    frame.content.infoText.NoCombinationFound = "No combination found \nto increase quality"
-    frame.content.infoText.SameCombination = "Best combination assigned"
-	frame.content.infoText:SetText(frame.content.infoText.NoCombinationFound)
-
-    local iconsOffsetY = -30
-    local iconsSpacingY = 25
-
-    frame.content.reagentFrames = {}
-    frame.content.reagentFrames.rows = {}
-    frame.content.reagentFrames.numReagents = 0
-    local baseX = -20
-    local iconSize = 30
-    table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY, iconSize))
-    table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY, iconSize))
-    table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*2, iconSize))
-    table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*3, iconSize))
-    table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*4, iconSize))
-
-    frame:Hide()
+    createContent(frameNO_WO)
+    createContent(frameWO)
 end
 
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(parent, hookFrame, y, iconSize)
@@ -122,8 +141,13 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(parent, hookFra
     return reagentFrame
 end
 
-function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation)
-    local materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
+function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation, exportMode)
+    local materialFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+    else
+        materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
+    end
     hasItems = hasItems or CraftSim.SIMULATION_MODE.isActive
     if bestAllocation == nil or isSameAllocation then
         materialFrame.content.infoText:Show()

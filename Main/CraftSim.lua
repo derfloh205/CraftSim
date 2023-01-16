@@ -54,7 +54,14 @@ function CraftSim.MAIN:COMBAT_LOG_EVENT_UNFILTERED(event)
 				local auraID = select(12, CombatLogGetCurrentEventInfo())
 				print("Buff changed: " .. tostring(auraID))
 				if tContains(CraftSim.CONST.BUFF_IDS, auraID) then
-					CraftSim.MAIN:TriggerModulesErrorSafe()
+					if CraftSim.MAIN.currentRecipeID then
+						local isWorkOrder = ProfessionsFrame.OrdersPage:IsVisible()
+						if isWorkOrder then
+							CraftSim.MAIN:TriggerModulesErrorSafe(false, CraftSim.MAIN.currentRecipeID, CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+						else
+							CraftSim.MAIN:TriggerModulesErrorSafe(false, CraftSim.MAIN.currentRecipeID, CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+						end
+					end
 				end
 			end
 		end
@@ -121,15 +128,19 @@ function CraftSim.MAIN:HookToEvent()
 	hookedEvent = true
 
 	local function Update(self)
-		CraftSim.MAIN:TriggerModulesErrorSafe(false)
+		if CraftSim.MAIN.currentRecipeID then
+			print("Update: " .. tostring(CraftSim.MAIN.currentRecipeID))
+			CraftSim.MAIN:TriggerModulesErrorSafe(false)
+		end
 	end
 
+	
 	local function Init(self, recipeInfo)
-		
-		--CraftSim.UTIL:CollectGarbageAtThreshold(15000)
-
-		CraftSim.MAIN.currentRecipeInfo = recipeInfo
-
+		if not self:IsVisible() then
+			return
+		end
+		print("recipeinfo", false, true)
+		print(recipeInfo)
 		-- if init turn sim mode off
 		if CraftSim.SIMULATION_MODE.isActive then
 			CraftSim.SIMULATION_MODE.isActive = false
@@ -137,6 +148,8 @@ function CraftSim.MAIN:HookToEvent()
 		end
 		
 		if recipeInfo then
+			print("Init: " .. tostring(recipeInfo.recipeID))
+			CraftSim.MAIN.currentRecipeID = recipeInfo.recipeID
 			CraftSim.MAIN:TriggerModulesErrorSafe(true)
 		else
 			--print("loading recipeInfo..")
@@ -144,10 +157,17 @@ function CraftSim.MAIN:HookToEvent()
 	end
 
 	local hookFrame = ProfessionsFrame.CraftingPage.SchematicForm
+	local hookFrame2 = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm
 	hooksecurefunc(hookFrame, "Init", Init)
+	hooksecurefunc(hookFrame2, "Init", Init)
 
 	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, Update)
 	hookFrame:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, Update)
+
+	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified, Update)
+	hookFrame2:RegisterCallback(ProfessionsRecipeSchematicFormMixin.Event.UseBestQualityModified, Update)
+
+	ProfessionsFrame.OrdersPage.OrderView.OrderDetails:HookScript("OnShow", Update)
 end
 
 local priceApiLoaded = false
@@ -157,10 +177,10 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 
 		CraftSim.FRAME:InitDebugFrame()
 		CraftSim.AVERAGEPROFIT.FRAMES:Init()
+		CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
 		CraftSim.TOPGEAR.FRAMES:Init()
 		CraftSim.COSTOVERVIEW.FRAMES:Init()
 		CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
-		CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
 		CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
 		CraftSim.FRAME:InitWarningFrame()
 		CraftSim.FRAME:InitOneTimeNoteFrame()
@@ -282,19 +302,23 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	local craftingPage = ProfessionsFrame.CraftingPage
 	local schematicForm = craftingPage.SchematicForm
-    local recipeInfo = CraftSim.MAIN.currentRecipeInfo or schematicForm:GetRecipeInfo()
+    local recipeInfo =  C_TradeSkillUI.GetRecipeInfo(CraftSim.MAIN.currentRecipeID)
 
 	if not recipeInfo then
 		--print("no recipeInfo found.. try again soon?")
 		return
 	end
 
+	local exportMode = ProfessionsFrame.OrdersPage:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER or CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER
+
+	print("Export Mode: " .. tostring(exportMode))
+
 	local recipeData = nil 
 	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
 		recipeData = CraftSim.SIMULATION_MODE.recipeData
 		CraftSim.MAIN.currentRecipeData = CraftSim.SIMULATION_MODE.recipeData
 	else
-		recipeData = CraftSim.DATAEXPORT:exportRecipeData()
+		recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, exportMode)
 	end
 
 	if debugTest then
@@ -323,7 +347,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local showSpecInfo = false
 
 	if recipeData and priceData then
-		CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
+		--CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
+		-- TODO: on demand
 
 		if recipeData.isRecraft then
 			-- show everything
@@ -402,18 +427,22 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	end
 
 	showMaterialAllocation = showMaterialAllocation and recipeData.hasReagentsWithQuality
-	CraftSim.FRAME:ToggleFrame(CraftSimReagentHintFrame, showMaterialAllocation)
+	local materialOptimizationFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
+	local materialOptimizationWOFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(materialOptimizationFrame, showMaterialAllocation and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(materialOptimizationWOFrame, showMaterialAllocation and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if showMaterialAllocation then
 		CraftSim.UTIL:StartProfiling("Reagent Optimization")
-		CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)
+		CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData, exportMode)
 		CraftSim.UTIL:StopProfiling("Reagent Optimization")
 	end
 
-	CraftSim.FRAME:ToggleFrame(CraftSimDetailsFrame, showStatweights)
+	CraftSim.FRAME:ToggleFrame(CraftSimDetailsFrame, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(CraftSimDetailsWOFrame, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if showStatweights then
-		local statWeights = CraftSim.AVERAGEPROFIT:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
+		local statWeights = CraftSim.AVERAGEPROFIT:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData, exportMode)
 		if statWeights ~= CraftSim.CONST.ERROR.NO_PRICE_DATA then
-			CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplay(priceData, statWeights)
+			CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplay(priceData, statWeights, exportMode)
 		end
 	end
 

@@ -11,7 +11,7 @@ local function translateLuaIndex(index)
 end
 
 -- By Liqorice's knapsack solution
-function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData)
+function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData, exportMode)
     -- insert costs
     local reagentCostsByQuality = CraftSim.PRICEDATA:GetReagentsPriceByQuality(recipeData)
 
@@ -109,7 +109,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
     --               > 0 means the indicated skill bonus is required to reach this BP
     -- At least one entry will be >= 0
 
-    local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData) or 0
+    local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData, exportMode) or 0
     local skillWithoutReagentIncrease = recipeData.stats.skillNoReagents
     
     print("skill total: " .. tostring(recipeData.stats.skill))
@@ -189,7 +189,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
         end
     end
     
-    CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation)
+    CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation, exportMode)
 end
 
 function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
@@ -426,11 +426,9 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
     return outResult
 end
 
-function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData)
+function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData, exportMode)
 
-    -- if not recipeData.isRecraft then
-    --     return 0.25 -- As this is pretty consistent for everything which is not a recraft
-    -- end
+    
 
 
     -- For recrafts we need to calculate it
@@ -438,7 +436,13 @@ function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData)
     local recipeDataNoReagents = CopyTable(recipeData)
 
     -- get operationinfo of recipe with no reagents
-    local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, {}, recipeData.recraftAllocationGUID)
+    local orderID = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        orderID = ProfessionsFrame.OrdersPage.OrderView.order.orderID
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeData.recipeID, {}, orderID)
+    else
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, {}, recipeData.recraftAllocationGUID)
+    end
 
     -- create CraftingReagentInfoTbl with max q3 reagents
     -- https://wowpedia.fandom.com/wiki/API_C_TradeSkillUI.GetCraftingOperationInfo
@@ -459,7 +463,12 @@ function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData)
             end
         end
     end
-    local Q3ReagentsOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, recipeData.recraftAllocationGUID)
+    local Q3ReagentsOperationInfo = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        Q3ReagentsOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeData.recipeID, craftingReagentInfoTbl, orderID)
+    else
+        Q3ReagentsOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, recipeData.recraftAllocationGUID)
+    end
     
     local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
     local skillQ3Reagents = Q3ReagentsOperationInfo.baseSkill + Q3ReagentsOperationInfo.bonusSkill
@@ -479,11 +488,18 @@ function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData)
     return percentFactor
 end
 
-function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
+function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData, exportMode)
     local recipeDataNoReagents = CopyTable(recipeData)
 
     -- get operationinfo of recipe with no reagents
-    local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, {}, recipeData.recraftAllocationGUID)
+    local baseOperationInfo = nil
+    local orderID = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        orderID = ProfessionsFrame.OrdersPage.OrderView.order.orderID
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeData.recipeID, {}, orderID)
+    else
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, {}, recipeData.recraftAllocationGUID)
+    end
 
     -- create CraftingReagentInfoTbl from current reagents
     -- https://wowpedia.fandom.com/wiki/API_C_TradeSkillUI.GetCraftingOperationInfo
@@ -500,7 +516,12 @@ function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(
             end
         end
     end
-    local currentOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, recipeData.recraftAllocationGUID)
+    local currentOperationInfo = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        currentOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeData.recipeID, craftingReagentInfoTbl, orderID)
+    else
+        currentOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, recipeData.recraftAllocationGUID)
+    end
     print("Base Operation Info")
     print(baseOperationInfo)
     print("Current Operation Info")
@@ -572,50 +593,7 @@ function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeTy
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeData.recipeID, false)
 	--print("export: reagentSlotSchematics: " .. #schematicInfo.reagentSlotSchematics)
     if not CraftSim.SIMULATION_MODE.isActive then
-        -- -- TODO: possibly protected.. 
-        -- return
-        -- local reagentSlots = ProfessionsFrame.CraftingPage.SchematicForm.reagentSlots[1]
-        -- for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
-        --     local reagents = currentSlot.reagents
-        --     local reagentType = currentSlot.reagentType
-        --     local reagentName = CraftSim.DATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
-        --     local allocations = recipeData.currentTransaction:GetAllocations(slotIndex)
-        --     --allocations:Clear(); -- set all to zero
-        --     if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
-        --         local hasMoreThanOneQuality = reagents[2] ~= nil
-    
-        --         if hasMoreThanOneQuality then
-        --             for reagentIndex, reagent in pairs(reagents) do
-        --                 local allocationForQuality = nil
-        --                 -- check if bestAllocations has a allocation set for this reagent
-        --                 for _, allocation in pairs(bestAllocation.allocations) do
-        --                     for _, qAllocation in pairs(allocation.allocations) do
-        --                         if qAllocation.itemID == reagent.itemID then
-        --                             --print("found qAllocation..")
-        --                             allocationForQuality = qAllocation.allocations
-        --                         end
-        --                     end
-        --                 end
-        --                 if allocationForQuality then
-        --                     --print("Allocate: " .. reagent.itemID .. ": " .. allocationForQuality)
-        --                     allocations:Allocate(reagent, allocationForQuality);
-        --                 end
-        --             end
-        --         else
-        --             local itemCount = GetItemCount(reagents[1].itemID, true, true, true)
-        --             allocations:Allocate(reagents[1], math.min(itemCount, recipeData.reagents[slotIndex].requiredQuantity))
-        --         end
-        --         recipeData.currentTransaction:OverwriteAllocations(slotIndex, allocations);
-        --         recipeData.currentTransaction:SetManuallyAllocated(true);
-        --         reagentSlots[slotIndex]:Update();
-        --     end
-        -- end
-        -- -- this should trigger our modules AND everything blizzard needs to know
-        -- ProfessionsFrame.CraftingPage.SchematicForm:TriggerEvent(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified)
-        -- update frontend with fresh data
-        -- local freshRecipeData = CraftSim.DATAEXPORT:exportRecipeData()
-        -- local freshPriceData = CraftSim.PRICEDATA:GetPriceData(freshRecipeData, freshRecipeData.recipeType)
-        -- CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(freshRecipeData, freshRecipeData.recipeType, freshPriceData)
+
     else
         --print("sim mode allocate..")
         for _, currentInput in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do

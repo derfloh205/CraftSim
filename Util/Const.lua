@@ -13,6 +13,12 @@ CraftSim.CONST.infoBoxSizeY = 400
 -- currently this is just an approximation
 CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
 
+CraftSim.CONST.EXPORT_MODE = {
+    NON_WORK_ORDER = 0,
+    WORK_ORDER = 1,
+    SCAN = 2,
+}
+
 CraftSim.CONST.FRAMES = {
     MATERIALS = 0,
     STAT_WEIGHTS = 1,
@@ -27,6 +33,9 @@ CraftSim.CONST.FRAMES = {
     DEBUG_CONTROL = 10,
     SPEC_SIM = 11,
     CONTROL_PANEL = 12,
+    STAT_WEIGHTS_WORK_ORDER = 13,
+    PROFIT_DETAILS_WORK_ORDER = 14,
+    MATERIALS_WORK_ORDER = 15,
 }
 
 CraftSim.CONST.DEBUG_IDS = {

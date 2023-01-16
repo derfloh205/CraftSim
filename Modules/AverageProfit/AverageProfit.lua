@@ -58,14 +58,14 @@ function CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(modifiedData, 
     }
 end
 
-function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData)
+function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData, exportMode)
 
     local calculationResult = {} 
     local calculationData = {}
     calculationResult.meanProfit, calculationData = CraftSim.CALC:getMeanProfit(recipeData, priceData)
 
     calculationData.meanProfit = calculationResult.meanProfit
-    CraftSim.AVERAGEPROFIT.FRAMES:UpdateExplanation(recipeData, calculationData)
+    CraftSim.AVERAGEPROFIT.FRAMES:UpdateExplanation(recipeData, calculationData, exportMode)
 
     local inspirationResults = CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
     local multicraftResults = CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)
@@ -77,8 +77,8 @@ function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData)
     return calculationResult
 end
 
-function CraftSim.AVERAGEPROFIT:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData)
-	local statweights = CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData)
+function CraftSim.AVERAGEPROFIT:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData, exportMode)
+	local statweights = CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData, exportMode)
 
     if statWeights == CraftSim.CONST.ERROR.NO_PRICE_DATA then
         return CraftSim.CONST.ERROR.NO_PRICE_DATA

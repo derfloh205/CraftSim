@@ -26,7 +26,8 @@ function CraftSim_DEBUG:CompareStatData()
         CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SPECDATA, r, l)
     end
     CraftSim_DEBUG.isMute = true
-    local recipeDataV1 = CraftSim.DATAEXPORT:exportRecipeData()
+    local exportMode = ProfessionsFrame.OrdersPage:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER or CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER
+    local recipeDataV1 = CraftSim.DATAEXPORT:exportRecipeData(CraftSim.MAIN.currentRecipeID, exportMode)
     if not recipeDataV1 then
         CraftSim_DEBUG.isMute = false
         print("No recipe opened", false, true)
