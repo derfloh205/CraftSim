@@ -73,7 +73,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         frame.content.infoText.SameCombination = "Best combination assigned"
         frame.content.infoText:SetText(frame.content.infoText.NoCombinationFound)
     
-        local iconsOffsetY = -30
+        local iconsOffsetY = -25
         local iconsSpacingY = 25
     
         frame.content.reagentFrames = {}
@@ -97,7 +97,7 @@ end
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(parent, hookFrame, y, iconSize)
     local reagentFrame = CreateFrame("frame", nil, parent)
     reagentFrame:SetSize(parent:GetWidth(), iconSize)
-    reagentFrame:SetPoint("TOP", hookFrame, "TOP", 0, y)
+    reagentFrame:SetPoint("TOP", hookFrame, "TOP", 10, y)
     
     local qualityIconSize = 20
     local qualityIconX = 3
