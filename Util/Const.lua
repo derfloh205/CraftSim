@@ -362,7 +362,7 @@ CraftSim.CONST.TEXT = {
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
-    return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy, Enum.Profession.Jewelcrafting}
+    return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy, Enum.Profession.Jewelcrafting, Enum.Profession.Leatherworking}
 end
 
 CraftSim.CONST.ITEM_ID_EXCEPTION_MAPPING = {
