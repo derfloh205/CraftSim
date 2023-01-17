@@ -297,8 +297,8 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
 	BOWS = 2,
 	
 	-- Reagents
-	OPTIONAL_REAGENTS = 18, -- Fang Adornments, Toxified Armor Patch
-	REAGENTS = 6, -- Hides, Scales (Reagents)
+	OPTIONAL_REAGENTS = 18, -- Fang Adornments, Toxified Armor Patch (Optional Reagents)
+	LEATHER = 6, -- Hides, Scales (Reagents)
     },
     INSCRIPTION = {
         INKS = 16, -- "Inscription"
