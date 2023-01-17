@@ -25,10 +25,20 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
         exceptionRecipeIDs = (nodeData.exceptionRecipeIDs ~= nil and CopyTable(nodeData.exceptionRecipeIDs)) or {}
     }
 
-    -- if nodeData.nodeID == 23725 then
-    --     print("nodeData: ???")
-    --     print(nodeData, true)
-    -- end
+    if nodeData.nodeID == 19537 then
+        debugActive = true
+        print("Chemical Synth:")
+        --print("nodeData: ")
+        --print(nodeData, true)
+        print("nodeData Threshold: " .. tostring(nodeData.threshold))
+        print("IDs: ")
+        print(IDs.idMapping, true)
+        print("IDs in nodeData: ")
+        for k, v in pairs(nodeData.idMapping or {}) do
+            print("[" .. tostring(k) .. "]" .. ": ")
+            print(next(v))
+        end
+    end
 
     -- add from childs
     local childNodeIDs = nodeData.childNodeIDs
@@ -80,6 +90,7 @@ function CraftSim.SPEC_DATA:GetIDsFromChildNodes(nodeData, ruleNodes)
 
         return IDs
     end
+    debugActive = false
 
     return IDs
 end

@@ -34,6 +34,8 @@ function CraftSim.NEWS:GET_NEWS()
         a .. "to not update" .. 
         p .. "Fixed racial skill boni being applied two times" .. 
         a .. "when using experimental spec data" .. 
+        p .. "Fixed Chemical Synthesis not being considered in Alchemy" .. 
+        a .. "experimental spec data" ..
         newP("2.0") ..
         P .. "Implemented most modules for " .. c("Work Orders", g) ..
         a .. "Simulation Mode for work orders will follow" .. 

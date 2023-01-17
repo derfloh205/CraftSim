@@ -176,16 +176,16 @@ function CraftSim.ALCHEMY_DATA:GetData()
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
                 }
             },
         },
@@ -195,137 +195,151 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraft = 20,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
                 }
-            },        },
+            },      
+        },
         CHEMICAL_SYNTHESIS_3 = {
             nodeID = 19537,
             threshold = 5,
             skill = 5,
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
-                }       
-
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
+                }
+            },   
         },
         CHEMICAL_SYNTHESIS_4 = {
             nodeID = 19537,
             threshold = 10,
             inspiration = 10,
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
-                }       
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
+                }
+            },    
             },
         CHEMICAL_SYNTHESIS_5 = {
             nodeID = 19537,
             threshold = 15,
             multicraft = 20,
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
-                }       
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
+                }
+            },    
             },
         CHEMICAL_SYNTHESIS_6 = {
             nodeID = 19537,
             threshold = 20,
             craftingspeedBonusFactor = 0.10,
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
-                }       
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
+                }
+            },      
             },
         CHEMICAL_SYNTHESIS_7 = {
             nodeID = 19537,
             threshold = 25,
             multicraft = 20,
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
-                }       
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
+                }
+            },    
             },
         CHEMICAL_SYNTHESIS_8 = {
             nodeID = 19537,
             threshold = 30,
             skill = 5,
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
-                }       
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
+                }
+            },     
             },
         CHEMICAL_SYNTHESIS_9 = {
             nodeID = 19537,
             threshold = 40,
             multicraftExtraItemsFactor = 0.50,
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.REAGENTS
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.FINISHING_REAGENT
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.OPTIONAL_REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.INCENSE] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INCENSE
-                }       
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
+                }
+            },     
             },
         DECAYOLOGY_1 = {
             nodeID = 19536,
