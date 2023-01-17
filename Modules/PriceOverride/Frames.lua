@@ -213,7 +213,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                 else
                     priceOverride, isGlobal = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(recipeID, qualityID)
 
-                    print("found price override for qualityID " .. qualityID .. ": " .. tostring(priceOverride))
+                    print("found price override for qualityID " .. tostring(qualityID) .. ": " .. tostring(priceOverride))
                     if isGear then
                         local itemData = Item:CreateFromItemLink(itemID)  -- this is the itemLink for gear
                         itemLink = itemID
