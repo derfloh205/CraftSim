@@ -699,6 +699,432 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375160, -- Toxified Armor Patch
             },
         },
+        -- Leather Armor Crafting
+        LEATHER_ARMOR_CRAFTING_1 = {
+            childNodeIDs = {"SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1"},
+            nodeID = 28546,
+            equalsSkill = true,
+        },
+        LEATHER_ARMOR_CRAFTING_2 = {
+            childNodeIDs = {"SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1"},
+            nodeID = 28546,
+            threshold = 5,
+            inspiration = 5,
+        },
+        LEATHER_ARMOR_CRAFTING_3 = {
+            childNodeIDs = {"SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1"},
+            nodeID = 28546,
+            threshold = 15,
+            resourcefulness = 5,
+        },
+        LEATHER_ARMOR_CRAFTING_4 = {
+            childNodeIDs = {"SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1"},
+            nodeID = 28546,
+            threshold = 25,
+            inspiration = 5,
+        },
+        LEATHER_ARMOR_CRAFTING_5 = {
+            childNodeIDs = {"SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1"},
+            nodeID = 28546,
+            threshold = 30,
+            inspiration = 15,
+            resourcefulness = 15,
+            craftingspeedBonusFactor = 0.10,
+        },
+        SHAPED_LEATHER_ARMOR_1 = {
+            childNodeIDs = {"CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1"},
+            nodeID = 28545,
+            equalsSkill = true,
+        },
+        SHAPED_LEATHER_ARMOR_2 = {
+            childNodeIDs = {"CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1"},
+            nodeID = 28545,
+            threshold = 5,
+            inspiration = 10,
+        },
+        SHAPED_LEATHER_ARMOR_3 = {
+            childNodeIDs = {"CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1"},
+            nodeID = 28545,
+            threshold = 15,
+            resourcefulness = 10,
+        },
+        SHAPED_LEATHER_ARMOR_4 = {
+            childNodeIDs = {"CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1"},
+            nodeID = 28545,
+            threshold = 25,
+            inspiration = 10,
+        },
+        CHESTPIECES_1 = {
+            nodeID = 28544,
+            equalsSkill = true,
+            exceptionRecipeIDs = {
+                375105, -- (Rare) Pioneer's Leather Tunic
+                375109, -- (Epic) Life-bound Chestpiece
+                375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+                375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            },
+        },
+        CHESTPIECES_2 = {
+            nodeID = 28544,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375105, -- (Rare) Pioneer's Leather Tunic
+                375109, -- (Epic) Life-bound Chestpiece
+                375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+                375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            },
+        },
+        CHESTPIECES_3 = {
+            nodeID = 28544,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375105, -- (Rare) Pioneer's Leather Tunic
+                375109, -- (Epic) Life-bound Chestpiece
+                375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+                375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            },
+        },
+        CHESTPIECES_4 = {
+            nodeID = 28544,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                375105, -- (Rare) Pioneer's Leather Tunic
+                375109, -- (Epic) Life-bound Chestpiece
+                375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+                375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            },
+        },
+        HELMS_1 = {
+            nodeID = 28543,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                395864, -- (Rare) Pioneer's Practiced Cowl
+                375112, -- (Epic) Life-bound Cap
+                375197, -- (Epic Elemental) Flaring Cowl
+                375148, -- (Epic Bestial) Infurious Spirit's Hood
+                375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
+            },
+        },
+        HELMS_2 = {
+            nodeID = 28543,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395864, -- (Rare) Pioneer's Practiced Cowl
+                375112, -- (Epic) Life-bound Cap
+                375197, -- (Epic Elemental) Flaring Cowl
+                375148, -- (Epic Bestial) Infurious Spirit's Hood
+                375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
+            },
+        },
+        HELMS_3 = {
+            nodeID = 28543,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395864, -- (Rare) Pioneer's Practiced Cowl
+                375112, -- (Epic) Life-bound Cap
+                375197, -- (Epic Elemental) Flaring Cowl
+                375148, -- (Epic Bestial) Infurious Spirit's Hood
+                375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
+            },
+        },
+        HELMS_4 = {
+            nodeID = 28543,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                395864, -- (Rare) Pioneer's Practiced Cowl
+                375112, -- (Epic) Life-bound Cap
+                375197, -- (Epic Elemental) Flaring Cowl
+                375148, -- (Epic Bestial) Infurious Spirit's Hood
+                375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
+            },
+        },
+        SHOULDERPADS_1 = {
+            nodeID = 28542,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                395868, -- (Rare) Pioneer's Practiced Shoulderpads
+                375114, -- (Epic) Life-bound Shoulderpads
+                375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            },
+        },
+        SHOULDERPADS_2 = {
+            nodeID = 28542,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395868, -- (Rare) Pioneer's Practiced Shoulderpads
+                375114, -- (Epic) Life-bound Shoulderpads
+                375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            },
+        },
+        SHOULDERPADS_3 = {
+            nodeID = 28542,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395868, -- (Rare) Pioneer's Practiced Shoulderpads
+                375114, -- (Epic) Life-bound Shoulderpads
+                375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            },
+        },
+        SHOULDERPADS_4 = {
+            nodeID = 28542,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                395868, -- (Rare) Pioneer's Practiced Shoulderpads
+                375114, -- (Epic) Life-bound Shoulderpads
+                375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            },
+        },
+        WRISTWRAPS_1 = {
+            nodeID = 28541,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                375104, -- (Rare) Pioneer's Leather Wristguards
+                375116, -- (Epic) Life-bound Bindings
+                375145, -- (Epic Elemental) Old Spirit's Wristwraps
+                375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            },
+        },
+        WRISTWRAPS_2 = {
+            nodeID = 28541,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375104, -- (Rare) Pioneer's Leather Wristguards
+                375116, -- (Epic) Life-bound Bindings
+                375145, -- (Epic Elemental) Old Spirit's Wristwraps
+                375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            },
+        },
+        WRISTWRAPS_3 = {
+            nodeID = 28541,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375104, -- (Rare) Pioneer's Leather Wristguards
+                375116, -- (Epic) Life-bound Bindings
+                375145, -- (Epic Elemental) Old Spirit's Wristwraps
+                375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            },
+        },
+        WRISTWRAPS_4 = {
+            nodeID = 28541,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                375104, -- (Rare) Pioneer's Leather Wristguards
+                375116, -- (Epic) Life-bound Bindings
+                375145, -- (Epic Elemental) Old Spirit's Wristwraps
+                375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            },
+        },
+        EMBROIDERED_LEATHER_ARMOR_1 = {
+            childNodeIDs = {"LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1"},
+            nodeID = 28540,
+            equalsSkill = true,
+        },
+        EMBROIDERED_LEATHER_ARMOR_2 = {
+            childNodeIDs = {"LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1"},
+            nodeID = 28540,
+            threshold = 5,
+            inspiration = 10,
+        },
+        EMBROIDERED_LEATHER_ARMOR_3 = {
+            childNodeIDs = {"LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1"},
+            nodeID = 28540,
+            threshold = 15,
+            resourcefulness = 10,
+        },
+        EMBROIDERED_LEATHER_ARMOR_4 = {
+            childNodeIDs = {"LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1"},
+            nodeID = 28540,
+            threshold = 25,
+            inspiration = 10,
+        },
+        LEGGUARDS_1 = {
+            nodeID = 28539,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                395867, -- (Rare) Pioneer's Practiced Leggins
+                375113, -- (Epic) Life-bound Trousers
+                375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            },
+        },
+        LEGGUARDS_2 = {
+            nodeID = 28539,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395867, -- (Rare) Pioneer's Practiced Leggins
+                375113, -- (Epic) Life-bound Trousers
+                375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            },
+        },
+        LEGGUARDS_3 = {
+            nodeID = 28539,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395867, -- (Rare) Pioneer's Practiced Leggins
+                375113, -- (Epic) Life-bound Trousers
+                375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            },
+        },
+        LEGGUARDS_4 = {
+            nodeID = 28539,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                395867, -- (Rare) Pioneer's Practiced Leggins
+                375113, -- (Epic) Life-bound Trousers
+                375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            },
+        },
+        GLOVES_1 = {
+            nodeID = 28538,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                395865, -- (Rare) Pioneer's Practiced Gloves
+                375111, -- (Epic) Life-bound Gloves
+                375146, -- (Epic Elemental) Snowball Makers
+                375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            },
+        },
+        GLOVES_2 = {
+            nodeID = 28538,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395865, -- (Rare) Pioneer's Practiced Gloves
+                375111, -- (Epic) Life-bound Gloves
+                375146, -- (Epic Elemental) Snowball Makers
+                375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            },
+        },
+        GLOVES_3 = {
+            nodeID = 28538,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395865, -- (Rare) Pioneer's Practiced Gloves
+                375111, -- (Epic) Life-bound Gloves
+                375146, -- (Epic Elemental) Snowball Makers
+                375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            },
+        },
+        GLOVES_4 = {
+            nodeID = 28538,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                395865, -- (Rare) Pioneer's Practiced Gloves
+                375111, -- (Epic) Life-bound Gloves
+                375146, -- (Epic Elemental) Snowball Makers
+                375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            },
+        },
+        LEATHER_BELTS_1 = {
+            nodeID = 28537,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                395863, -- (Rare) Pioneer's Practiced Belt
+                375115, -- (Epic) Life-bound Belt
+                375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+                375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
+            },
+        },
+        LEATHER_BELTS_2 = {
+            nodeID = 28537,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395863, -- (Rare) Pioneer's Practiced Belt
+                375115, -- (Epic) Life-bound Belt
+                375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+                375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
+            },
+        },
+        LEATHER_BELTS_3 = {
+            nodeID = 28537,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395863, -- (Rare) Pioneer's Practiced Belt
+                375115, -- (Epic) Life-bound Belt
+                375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+                375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
+            },
+        },
+        LEATHER_BELTS_4 = {
+            nodeID = 28537,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                395863, -- (Rare) Pioneer's Practiced Belt
+                375115, -- (Epic) Life-bound Belt
+                375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+                375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
+            },
+        },
+        LEATHER_BOOTS_1 = {
+            nodeID = 28536,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                375103, -- (Rare) Pioneer's Leather Boots
+                375110, -- (Epic) Life-bound Boots
+                375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+                375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+                375142, -- (Epic Decayed) Slimy Expulsion Boots
+                375143, -- (Epic Decayed) Toxic Thorn Footwraps
+            },
+        },
+        LEATHER_BOOTS_2 = {
+            nodeID = 28536,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375103, -- (Rare) Pioneer's Leather Boots
+                375110, -- (Epic) Life-bound Boots
+                375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+                375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+                375142, -- (Epic Decayed) Slimy Expulsion Boots
+                375143, -- (Epic Decayed) Toxic Thorn Footwraps
+            },
+        },
+        LEATHER_BOOTS_3 = {
+            nodeID = 28536,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375103, -- (Rare) Pioneer's Leather Boots
+                375110, -- (Epic) Life-bound Boots
+                375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+                375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+                375142, -- (Epic Decayed) Slimy Expulsion Boots
+                375143, -- (Epic Decayed) Toxic Thorn Footwraps
+            },
+        },
+        LEATHER_BOOTS_4 = {
+            nodeID = 28536,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                375103, -- (Rare) Pioneer's Leather Boots
+                375110, -- (Epic) Life-bound Boots
+                375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+                375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+                375142, -- (Epic Decayed) Slimy Expulsion Boots
+                375143, -- (Epic Decayed) Toxic Thorn Footwraps
+            },
+        },
     }
 end
 
