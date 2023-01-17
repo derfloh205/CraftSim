@@ -485,7 +485,7 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 				name = salvageAllocation:GetItemName(),
 				itemLink = salvageAllocation:GetItemLink(),
 				itemID = salvageAllocation:GetItemID(),
-				requiredQuantity = schematicForm.salvageSlot.quantityRequired
+				requiredQuantity = ProfessionsFrame.CraftingPage.SchematicForm.salvageSlot.quantityRequired
 			}
 		end
 	end

@@ -118,6 +118,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         355, 
         CraftSim.CONST.FRAMES.CRAFTING_DETAILS)
 
+        simModeDetailsFrame:Hide()
+
         local offsetY = -20
         local modOffsetX = 5
         local valueOffsetX = -5

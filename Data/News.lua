@@ -22,6 +22,14 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("2.1") ..
+        p .. "Updated the multicraft extra items formula to " ..
+        a .. c("(1+2.5y*bonus) / 2", bb) .. 
+        a .. "instead of " ..
+        a .. c("((1+2.5y) / 2)*bonus", bb) .. 
+        a .. "which leads to slightly less but more" .. 
+        a .. "accurate value from multicraft" ..
+        p .. "Fixed an error during prospecting and other salvage recipes" .. 
         newP("2.0") ..
         P .. "Implemented most modules for " .. c("Work Orders", g) ..
         a .. "Simulation Mode for work orders will follow" .. 

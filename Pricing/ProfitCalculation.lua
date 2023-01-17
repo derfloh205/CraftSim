@@ -43,23 +43,20 @@ end
 function CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedItems, calculationData, inspirationQuality)
     if recipeData.stats.multicraft then
         calculationData.multicraft = {}
-        -- Recipe considers multicraft
-        -- TODO implement multicraft additional item chance/amount based on multicraft tracker data
-        -- For now just use a random value of 1-2.5y additional items at mean
-        local expectedAdditionalItems = (1 + (2.5*recipeData.baseItemAmount)) / 2 
-        -- Also add any additional items factor
-        local specData = recipeData.specNodeData
         local multicraftExtraItemsFactor = 1
 
-        if specData then
+        if recipeData.specNodeData then
             multicraftExtraItemsFactor = 1 + recipeData.stats.multicraft.bonusItemsFactor
         else
             multicraftExtraItemsFactor = recipeData.extraItemFactors.multicraftExtraItemsFactor
         end
+
+        local maxExtraItems = (2.5*recipeData.baseItemAmount) * multicraftExtraItemsFactor
+
+        local expectedAdditionalItems = (1 + maxExtraItems) / 2 
         
-        print("ProfitCalc MC expectedAdditionalItems No ExtraFactor: " .. tostring(expectedAdditionalItems))
-        expectedAdditionalItems = expectedAdditionalItems * multicraftExtraItemsFactor
-        print("ProfitCalc MC expectedAdditionalItems With ExtraFactor: " .. tostring(expectedAdditionalItems))
+        print("ProfitCalc MC expectedAdditionalItems Old: " .. tostring( ((1+(2.5*recipeData.baseItemAmount)) / 2)*multicraftExtraItemsFactor))
+        print("ProfitCalc MC expectedAdditionalItems New: " .. tostring(expectedAdditionalItems))
 
         -- Since multicraft and inspiration can proc together add expected multicraft gain to both qualities
         local multicraftProcsBase = crafts.baseQuality*(recipeData.stats.multicraft.percent / 100)
