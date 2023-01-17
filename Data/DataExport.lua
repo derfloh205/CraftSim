@@ -245,16 +245,16 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 
 	-- skill
 	local baseSkill = professionInfo.skillLevel
-	local racialSkill = CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(recipeData.professionID)
-	print("Player Racial Bonus: " .. tostring(racialSkill))
+	--local racialSkill = CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(recipeData.professionID)
+	--print("Player Racial Bonus: " .. tostring(racialSkill))
 	local itemSkill = professionGearStats.skill
 	local specNodeSkill = specNodeStats.skill
 	local optionalReagentsSkill = optionalReagentsStats.skill
 	local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
 
-	recipeData.stats.skill = baseSkill + racialSkill + itemSkill + specNodeSkill + optionalReagentsSkill + reagentSkillContribution
-	recipeData.stats.skillNoReagents = baseSkill + racialSkill + itemSkill + specNodeSkill + optionalReagentsSkill
-	recipeData.stats.skillNoItems = baseSkill + racialSkill + specNodeSkill + optionalReagentsSkill + reagentSkillContribution
+	recipeData.stats.skill = baseSkill + itemSkill + specNodeSkill + optionalReagentsSkill + reagentSkillContribution
+	recipeData.stats.skillNoReagents = baseSkill + itemSkill + specNodeSkill + optionalReagentsSkill
+	recipeData.stats.skillNoItems = baseSkill + specNodeSkill + optionalReagentsSkill + reagentSkillContribution
 
 	-- inspiration
 	if recipeData.stats.inspiration then
@@ -984,72 +984,72 @@ function CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID, ignoreOverrides)
 	end
 end
 
-function CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(professionID)
-	local _, playerRace = UnitRace("player")
-	print("Player Race: " .. tostring(playerRace))
-	local data = {
-		Gnome = {
-			professionIDs = {Enum.Profession.Engineering},
-			professionBonus = 5,
-		},
-		Draenei = {
-			professionIDs = {Enum.Profession.Jewelcrafting},
-			professionBonus = 5,
-		},
-		Worgen = {
-			professionIDs = {Enum.Profession.Skinning},
-			professionBonus = 5,
-		},
-		LightforgedDraenei = {
-			professionIDs = {Enum.Profession.Blacksmithing},
-			professionBonus = 5,
-		},
-		DarkIronDwarf = {
-			professionIDs = {Enum.Profession.Blacksmithing},
-			professionBonus = 5,
-		},
-		KulTiran = {
-			professionIDs = nil, -- everything
-			professionBonus = 2,
-		},
-		Pandaren = {
-			professionIDs = {Enum.Profession.Cooking},
-			professionBonus = 5,
-		},
-		Tauren = {
-			professionIDs = {Enum.Profession.Herbalism},
-			professionBonus = 5,
-		},
-		BloodElf = {
-			professionIDs = {Enum.Profession.Enchanting},
-			professionBonus = 5,
-		},
-		Goblin = {
-			professionIDs = {Enum.Profession.Alchemy},
-			professionBonus = 5,
-		},
-		Nightborne = {
-			professionIDs = {Enum.Profession.Inscription},
-			professionBonus = 5,
-		},
-		HighmountainTauren = {
-			professionIDs = {Enum.Profession.Mining},
-			professionBonus = 5,
-		}
-	}
+-- function CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(professionID)
+-- 	local _, playerRace = UnitRace("player")
+-- 	print("Player Race: " .. tostring(playerRace))
+-- 	local data = {
+-- 		Gnome = {
+-- 			professionIDs = {Enum.Profession.Engineering},
+-- 			professionBonus = 5,
+-- 		},
+-- 		Draenei = {
+-- 			professionIDs = {Enum.Profession.Jewelcrafting},
+-- 			professionBonus = 5,
+-- 		},
+-- 		Worgen = {
+-- 			professionIDs = {Enum.Profession.Skinning},
+-- 			professionBonus = 5,
+-- 		},
+-- 		LightforgedDraenei = {
+-- 			professionIDs = {Enum.Profession.Blacksmithing},
+-- 			professionBonus = 5,
+-- 		},
+-- 		DarkIronDwarf = {
+-- 			professionIDs = {Enum.Profession.Blacksmithing},
+-- 			professionBonus = 5,
+-- 		},
+-- 		KulTiran = {
+-- 			professionIDs = nil, -- everything
+-- 			professionBonus = 2,
+-- 		},
+-- 		Pandaren = {
+-- 			professionIDs = {Enum.Profession.Cooking},
+-- 			professionBonus = 5,
+-- 		},
+-- 		Tauren = {
+-- 			professionIDs = {Enum.Profession.Herbalism},
+-- 			professionBonus = 5,
+-- 		},
+-- 		BloodElf = {
+-- 			professionIDs = {Enum.Profession.Enchanting},
+-- 			professionBonus = 5,
+-- 		},
+-- 		Goblin = {
+-- 			professionIDs = {Enum.Profession.Alchemy},
+-- 			professionBonus = 5,
+-- 		},
+-- 		Nightborne = {
+-- 			professionIDs = {Enum.Profession.Inscription},
+-- 			professionBonus = 5,
+-- 		},
+-- 		HighmountainTauren = {
+-- 			professionIDs = {Enum.Profession.Mining},
+-- 			professionBonus = 5,
+-- 		}
+-- 	}
 
-	local bonusData = data[playerRace]
-	if not bonusData then
-		return 0
-	end
+-- 	local bonusData = data[playerRace]
+-- 	if not bonusData then
+-- 		return 0
+-- 	end
 
-	if bonusData.professionIDs == nil or tContains(bonusData.professionIDs, professionID) then
-		return bonusData.professionBonus
-	else
-		return 0
-	end
+-- 	if bonusData.professionIDs == nil or tContains(bonusData.professionIDs, professionID) then
+-- 		return bonusData.professionBonus
+-- 	else
+-- 		return 0
+-- 	end
 		
-end
+-- end
 
 function CraftSim.DATAEXPORT:GetExportString()
 	local recipeData = CraftSim.MAIN.currentRecipeData

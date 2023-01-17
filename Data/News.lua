@@ -30,6 +30,10 @@ function CraftSim.NEWS:GET_NEWS()
         a .. "which leads to slightly less but more" .. 
         a .. "accurate value from multicraft" ..
         p .. "Fixed an error during prospecting and other salvage recipes" .. 
+        p .. "Fixed a bug causing the Simulate Top Gear button" ..
+        a .. "to not update" .. 
+        p .. "Fixed racial skill boni being applied two times" .. 
+        a .. "when using experimental spec data" .. 
         newP("2.0") ..
         P .. "Implemented most modules for " .. c("Work Orders", g) ..
         a .. "Simulation Mode for work orders will follow" .. 
