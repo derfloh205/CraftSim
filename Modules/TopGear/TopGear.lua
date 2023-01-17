@@ -350,22 +350,7 @@ function CraftSim.TOPGEAR:DeductCurrentItemStats(recipeData, recipeType)
 end
 
 function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData, exportMode)
-    -- local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
     local isCooking = recipeData.professionID == Enum.Profession.Cooking
-    -- update top gear mode dropdown
-
-    -- local availableModes = CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData, recipeType)
-    -- if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
-    --     CraftSimOptions.topGearMode = availableModes[1]
-    -- end
-    
-    -- CraftSim.FRAME:initializeDropdown(topGearFrame.content.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
-
-    -- cache it
-    CraftSimTopGearSimMode.recipeData = recipeData
-    CraftSimTopGearSimMode.recipeType = recipeType
-    CraftSimTopGearSimMode.priceData = priceData
-
 
     local gearCombos = CraftSim.TOPGEAR:GetProfessionGearCombinations(isCooking)
 
@@ -404,7 +389,7 @@ function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, reci
             CraftSim.TOPGEAR:AddStatDiffByBaseRecipeData(bestSimulation, recipeData)
             CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, CraftSimOptions.topGearMode, isCooking, exportMode)
         else
-            CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, exportMode)
+            CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, false, exportMode)
         end
     elseif CraftSimOptions.topGearMode == CraftSim.CONST.GEAR_SIM_MODES.SKILL then
         local equippedCombo = CraftSim.TOPGEAR:GetEquippedCombo(isCooking)
@@ -453,9 +438,9 @@ function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, reci
             local statChanges = CraftSim.TOPGEAR:GetStatChangesFromGearCombination(combo)
             local modifiedRecipeData = CraftSim.TOPGEAR:GetModifiedRecipeDataByStatChanges(noItemsRecipeData, recipeType, statChanges)
 
-            if modifiedRecipeData.stats[statName].value > bestSimulation.modifiedRecipeData.stats[statName].value
-                or modifiedRecipeData.stats[statName].value == bestSimulation.modifiedRecipeData.stats[statName].value 
-                and CraftSim.TOPGEAR:hasMoreSlotsThan(combo, bestSimulation.combo) then
+            if modifiedRecipeData.stats[statName] and (modifiedRecipeData.stats[statName].value > bestSimulation.modifiedRecipeData.stats[statName].value
+                or modifiedRecipeData.stats[statName].value == bestSimulation.modifiedRecipeData.stats[statName].value
+                and CraftSim.TOPGEAR:hasMoreSlotsThan(combo, bestSimulation.combo)) then
                 bestSimulation = {
                     combo = combo,
                     modifiedRecipeData = modifiedRecipeData,
