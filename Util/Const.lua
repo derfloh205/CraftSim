@@ -201,16 +201,16 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
     LEATHERWORKING = {
         DRUMS = 1655,
         ARMOR_KITS = 1651,
-		LEATHER_ARMOR = 1657,
-		MAIL_ARMOR = 1658,
-		PROFESSION_EQUIPMENT = 1656,
-		WEAPONS = 1648,
-		ELEMENTAL_PATTERNS = 1811,
-		BESTIAL_PATTERNS = 1812,
-		DECAYED_PATTERNS = 1810,
-		REAGENTS = 1654,
-		OPTIONAL_REAGENTS = 1649,
-		TOYS = 1652,
+	LEATHER_ARMOR = 1657,
+	MAIL_ARMOR = 1658,
+	PROFESSION_EQUIPMENT = 1656,
+	WEAPONS = 1648,
+	ELEMENTAL_PATTERNS = 1811,
+	BESTIAL_PATTERNS = 1812,
+	DECAYED_PATTERNS = 1810,
+	REAGENTS = 1654,
+	OPTIONAL_REAGENTS = 1649,
+	TOYS = 1652,
     },
     INSCRIPTION = {
         INKS = 1754
@@ -274,32 +274,31 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
     },
     LEATHERWORKING = {
 	-- Misc
-		OTHER = 8, -- Drums
-		MISC = 14, -- Armor Kits
-		MISCELLANEOUS = 0, -- Witherrot Tome
-		OTHER = 4, -- Toys
+	OTHER = 8, -- Drums
+	MISC = 14, -- Armor Kits
+	MISCELLANEOUS = 0, -- Witherrot Tome
+	OTHER = 4, -- Toys
 	
 	-- Armor
-		LEATHER = 2,
-		MAIL = 3,
+	LEATHER = 2,
+	MAIL = 3,
 	
 	-- Tools
-		ALCHEMY = 2,
-		SKINNING = 10,
-		BLACKSMITHING = 0,
-		HERBALISM = 3,
-		LEATHERWORKING = 1,
-		JEWELCRAFTING = 11,
-		ENGINEERING = 7,
+	ALCHEMY = 2,
+	SKINNING = 10,
+	BLACKSMITHING = 0,
+	HERBALISM = 3,
+	LEATHERWORKING = 1,
+	JEWELCRAFTING = 11,
+	ENGINEERING = 7,
 	
 	-- Weapons
-		CROSSBOWS = 18,
-		BOWS = 2,
+	CROSSBOWS = 18,
+	BOWS = 2,
 	
 	-- Reagents
-		OPTIONAL_REAGENTS = 18, -- Fang Adornments, Toxified Armor Patch
-		REAGENTS = 6, -- Hides, Scales (Reagents)
-	
+	OPTIONAL_REAGENTS = 18, -- Fang Adornments, Toxified Armor Patch
+	REAGENTS = 6, -- Hides, Scales (Reagents)
     },
     INSCRIPTION = {
         INKS = 16, -- "Inscription"
