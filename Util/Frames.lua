@@ -700,6 +700,18 @@ function CraftSim.FRAME:ShowError(errorText, optionalTitle)
     warningFrame.showError(errorText, optionalTitle)
 end
 
+function CraftSim.FRAME:CreateGoldIcon(parent, anchorParent, anchorA, anchorB, anchorX, anchorY)
+    local startLine = "\124T"
+    local endLine = "\124t"
+    local goldCoin = startLine .. "Interface\\Icons\\INV_Misc_Coin_01:16" .. endLine
+
+    local goldIcon = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    goldIcon:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
+    goldIcon:SetText(goldCoin)
+
+    return goldIcon
+end
+
 function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onTextChangedCallback)
     local goldInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
         goldInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
@@ -709,9 +721,9 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
         goldInput:SetText(initialValue)
         goldInput:SetScript("OnEscapePressed", function() goldInput:ClearFocus() end)
         goldInput:SetScript("OnEnterPressed", function() goldInput:ClearFocus() end)
-        goldInput:SetScript("OnTextChanged", function(self) 
+        goldInput:SetScript("OnTextChanged", function(self, userInput) 
             local moneyValue = goldInput.getMoneyValue()
-            onTextChangedCallback(moneyValue)
+            onTextChangedCallback(userInput, moneyValue)
         end)
 
         goldInput.getMoneyValue = function()

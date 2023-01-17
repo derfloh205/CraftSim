@@ -359,6 +359,18 @@ function CraftSim.DATAEXPORT:handleOutputIDs(recipeData, recipeInfo)
 	recipeData.subtypeID = itemData.subclassID or nil
 end
 
+function CraftSim.DATAEXPORT:GetQualityIDFromOptionalReagentItemID(itemID)
+	local optionalReagentEntry = CraftSim.OPTIONAL_REAGENT_DATA[itemID]
+
+	if optionalReagentEntry then
+		return optionalReagentEntry.qualityID
+	else
+		error("Optional Reagent not found in Data: " .. tostring(itemID))
+		return nil
+	end
+
+end
+
 function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(reagentSlots)
 	if not reagentSlots then
 		return {}
@@ -376,6 +388,7 @@ function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(reagent
 			end
 			table.insert(slotsToItemIDs[slotIndex], {
 				itemID = slotReagentData.itemID,
+				qualityID = CraftSim.DATAEXPORT:GetQualityIDFromOptionalReagentItemID(slotReagentData.itemID),
 				dataSlotIndex = dataSlotIndex
 			})
 		end

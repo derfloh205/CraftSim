@@ -87,5 +87,9 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "Shows how your profession specializations affect this recipe\nDISCLAIMER: This shows up only for professions with experimental spec data turned on.",
     "LEFT", frame.content.topGearCB, "RIGHT", 100, 0, "modulesSpecInfo")
 
+    frame.content.priceOverrideCB = createModuleCheckbox("Price Overrides", 
+    "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically.",
+    "TOP", frame.content.specInfoCB, "TOP", 0, -20, "modulesPriceOverride")
+
 
 end

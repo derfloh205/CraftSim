@@ -8,7 +8,7 @@
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
-## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimTooltipData, CraftSimItemCache, CraftSimCollapsedFrames, CraftSimSpecNodeCache
+## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimTooltipData, CraftSimItemCache, CraftSimCollapsedFrames, CraftSimSpecNodeCache, CraftSimPriceOverrides
 
 embeds.xml
 
@@ -24,6 +24,9 @@ Main/CraftSim.lua
 Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
 Pricing/PriceData.lua
+
+Modules/PriceOverride/PriceOverride.lua
+Modules/PriceOverride/Frames.lua
 
 Modules/ControlPanel/ControlPanel.lua
 Modules/ControlPanel/Frames.lua
