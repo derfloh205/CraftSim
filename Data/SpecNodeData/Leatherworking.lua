@@ -1125,6 +1125,428 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375143, -- (Epic Decayed) Toxic Thorn Footwraps
             },
         },
+        -- Mail Armor Crafting
+        MAIL_ARMOR_CRAFTING_1 = {
+            childNodeIDs = {"LARGE_MAIL_1", "INTRICATE_MAIL_1"},
+            nodeID = 28438,
+            equalsSkill = true,
+        },
+        MAIL_ARMOR_CRAFTING_2 = {
+            childNodeIDs = {"LARGE_MAIL_1", "INTRICATE_MAIL_1"},
+            nodeID = 28438,
+            threshold = 5,
+            inspiration = 5,
+        },
+        MAIL_ARMOR_CRAFTING_3 = {
+            childNodeIDs = {"LARGE_MAIL_1", "INTRICATE_MAIL_1"},
+            nodeID = 28438,
+            threshold = 15,
+            resourcefulness = 5,
+        },
+        MAIL_ARMOR_CRAFTING_4 = {
+            childNodeIDs = {"LARGE_MAIL_1", "INTRICATE_MAIL_1"},
+            nodeID = 28438,
+            threshold = 25,
+            inspiration = 5,
+        },
+        MAIL_ARMOR_CRAFTING_5 = {
+            childNodeIDs = {"LARGE_MAIL_1", "INTRICATE_MAIL_1"},
+            nodeID = 28438,
+            threshold = 30,
+            inspiration = 15,
+            resourcefulness = 15,
+            craftingspeedBonusFactor = 0.10,
+        },
+        LARGE_MAIL_1 = {
+            childNodeIDs = {"MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1"},
+            nodeID = 28437,
+            equalsSkill = true,
+        },
+        LARGE_MAIL_2 = {
+            childNodeIDs = {"MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1"},
+            nodeID = 28437,
+            threshold = 5,
+            inspiration = 10,
+        },
+        LARGE_MAIL_3 = {
+            childNodeIDs = {"MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1"},
+            nodeID = 28437,
+            threshold = 15,
+            resourcefulness = 10,
+        },
+        LARGE_MAIL_4 = {
+            childNodeIDs = {"MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1"},
+            nodeID = 28437,
+            threshold = 25,
+            inspiration = 10,
+        },
+        MAIL_SHIRTS_1 = {
+            nodeID = 28436,
+            equalsSkill = true,
+            exceptionRecipeIDs = {
+                375108, -- (Rare) Trailblazer's Scale Vest
+                375117, -- (Epic) Flame-Touched Chainmail
+                375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            },
+        },
+        MAIL_SHIRTS_2 = {
+            nodeID = 28436,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375108, -- (Rare) Trailblazer's Scale Vest
+                375117, -- (Epic) Flame-Touched Chainmail
+                375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            },
+        },
+        MAIL_SHIRTS_3 = {
+            nodeID = 28436,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375108, -- (Rare) Trailblazer's Scale Vest
+                375117, -- (Epic) Flame-Touched Chainmail
+                375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            },
+        },
+        MAIL_SHIRTS_4 = {
+            nodeID = 28436,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                375108, -- (Rare) Trailblazer's Scale Vest
+                375117, -- (Epic) Flame-Touched Chainmail
+                375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            },
+        },
+        MAIL_HELMS_1 = {
+            nodeID = 28434,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                395839, -- (Rare) Trailblazer's Toughened Coif
+                375120, -- (Epic) Flame-Touched Helmet
+                375156, -- (Epic Bestial) Infurious Chainhelm Protector
+                375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            },
+        },
+        MAIL_HELMS_2 = {
+            nodeID = 28434,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395839, -- (Rare) Trailblazer's Toughened Coif
+                375120, -- (Epic) Flame-Touched Helmet
+                375156, -- (Epic Bestial) Infurious Chainhelm Protector
+                375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            },
+        },
+        MAIL_HELMS_3 = {
+            nodeID = 28434,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395839, -- (Rare) Trailblazer's Toughened Coif
+                375120, -- (Epic) Flame-Touched Helmet
+                375156, -- (Epic Bestial) Infurious Chainhelm Protector
+                375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            },
+        },
+        MAIL_HELMS_4 = {
+            nodeID = 28434,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                395839, -- (Rare) Trailblazer's Toughened Coif
+                375120, -- (Epic) Flame-Touched Helmet
+                375156, -- (Epic Bestial) Infurious Chainhelm Protector
+                375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            },
+        },
+        SHOULDERGUARDS_1 = {
+            nodeID = 28429,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                395851, -- (Rare) Trailblazer's Toughened Spikes
+                375122, -- (Epic) Flame-Touched Spaulders
+                375153, -- (Epic Elemental) Ancestor's Dew Drippers
+                375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            },
+        },
+        SHOULDERGUARDS_2 = {
+            nodeID = 28429,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395851, -- (Rare) Trailblazer's Toughened Spikes
+                375122, -- (Epic) Flame-Touched Spaulders
+                375153, -- (Epic Elemental) Ancestor's Dew Drippers
+                375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            },
+        },
+        SHOULDERGUARDS_3 = {
+            nodeID = 28429,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395851, -- (Rare) Trailblazer's Toughened Spikes
+                375122, -- (Epic) Flame-Touched Spaulders
+                375153, -- (Epic Elemental) Ancestor's Dew Drippers
+                375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            },
+        },
+        SHOULDERGUARDS_4 = {
+            nodeID = 28429,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                395851, -- (Rare) Trailblazer's Toughened Spikes
+                375122, -- (Epic) Flame-Touched Spaulders
+                375153, -- (Epic Elemental) Ancestor's Dew Drippers
+                375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            },
+        },
+        BRACERS_1 = {
+            nodeID = 28433,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                375107, -- (Rare) Trailblazer's Scale Bracers
+                375124, -- (Epic) Flame-Touched Cuffs
+                375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            },
+        },
+        BRACERS_2 = {
+            nodeID = 28433,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375107, -- (Rare) Trailblazer's Scale Bracers
+                375124, -- (Epic) Flame-Touched Cuffs
+                375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            },
+        },
+        BRACERS_3 = {
+            nodeID = 28433,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375107, -- (Rare) Trailblazer's Scale Bracers
+                375124, -- (Epic) Flame-Touched Cuffs
+                375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            },
+        },
+        BRACERS_4 = {
+            nodeID = 28433,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                375107, -- (Rare) Trailblazer's Scale Bracers
+                375124, -- (Epic) Flame-Touched Cuffs
+                375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            },
+        },
+        INTRICATE_MAIL_1 = {
+            childNodeIDs = {"GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1"},
+            nodeID = 28432,
+            equalsSkill = true,
+        },
+        INTRICATE_MAIL_2 = {
+            childNodeIDs = {"GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1"},
+            nodeID = 28432,
+            threshold = 5,
+            inspiration = 10,
+        },
+        INTRICATE_MAIL_3 = {
+            childNodeIDs = {"GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1"},
+            nodeID = 28432,
+            threshold = 15,
+            resourcefulness = 10,
+        },
+        INTRICATE_MAIL_4 = {
+            childNodeIDs = {"GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1"},
+            nodeID = 28432,
+            threshold = 25,
+            inspiration = 10,
+        },
+        GREAVES_1 = {
+            nodeID = 28435,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                395847, -- (Rare) Trailblazer's Toughened Legguards
+                375121, -- (Epic) Flame-Touched Legguards
+                375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+                375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            },
+        },
+        GREAVES_2 = {
+            nodeID = 28435,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395847, -- (Rare) Trailblazer's Toughened Legguards
+                375121, -- (Epic) Flame-Touched Legguards
+                375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+                375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            },
+        },
+        GREAVES_3 = {
+            nodeID = 28435,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395847, -- (Rare) Trailblazer's Toughened Legguards
+                375121, -- (Epic) Flame-Touched Legguards
+                375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+                375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            },
+        },
+        GREAVES_4 = {
+            nodeID = 28435,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                395847, -- (Rare) Trailblazer's Toughened Legguards
+                375121, -- (Epic) Flame-Touched Legguards
+                375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+                375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            },
+        },
+        GAUNTLETS_1 = {
+            nodeID = 28431,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                395845, -- (Rare) Trailblazer's Toughened Grips
+                375119, -- (Epic) Flame-Touched Handguards
+                375154, -- (Epic Elemental) Scale Rein Grips
+                375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            },
+        },
+        GAUNTLETS_2 = {
+            nodeID = 28431,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395845, -- (Rare) Trailblazer's Toughened Grips
+                375119, -- (Epic) Flame-Touched Handguards
+                375154, -- (Epic Elemental) Scale Rein Grips
+                375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            },
+        },
+        GAUNTLETS_3 = {
+            nodeID = 28431,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395845, -- (Rare) Trailblazer's Toughened Grips
+                375119, -- (Epic) Flame-Touched Handguards
+                375154, -- (Epic Elemental) Scale Rein Grips
+                375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            },
+        },
+        GAUNTLETS_4 = {
+            nodeID = 28431,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                395845, -- (Rare) Trailblazer's Toughened Grips
+                375119, -- (Epic) Flame-Touched Handguards
+                375154, -- (Epic Elemental) Scale Rein Grips
+                375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            },
+        },
+        MAIL_BELTS_1 = {
+            nodeID = 28428,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                395844, -- (Rare) Trailblazer's Toughened Chainbelt
+                375123, -- (Epic) Flame-Touched Chain
+                375152, -- (Epic Elemental) Wind Spirit's Lasso
+                375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            },
+        },
+        MAIL_BELTS_2 = {
+            nodeID = 28428,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395844, -- (Rare) Trailblazer's Toughened Chainbelt
+                375123, -- (Epic) Flame-Touched Chain
+                375152, -- (Epic Elemental) Wind Spirit's Lasso
+                375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            },
+        },
+        MAIL_BELTS_3 = {
+            nodeID = 28428,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                395844, -- (Rare) Trailblazer's Toughened Chainbelt
+                375123, -- (Epic) Flame-Touched Chain
+                375152, -- (Epic Elemental) Wind Spirit's Lasso
+                375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            },
+        },
+        MAIL_BELTS_4 = {
+            nodeID = 28428,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                395844, -- (Rare) Trailblazer's Toughened Chainbelt
+                375123, -- (Epic) Flame-Touched Chain
+                375152, -- (Epic Elemental) Wind Spirit's Lasso
+                375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            },
+        },
+        MAIL_BOOTS_1 = {
+            nodeID = 28430,
+            equalSkill = true,
+            exceptionRecipeIDs = {
+                375106, -- (Rare) Trailblazer's Scale Boots
+                375118, -- (Epic) Flame-Touched Treads
+                375155, -- (Epic Bestial) Infurious Boots of Reprieve
+                375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+                375151, -- (Epic Decayed) Acidic Hailstone Treads
+                375150, -- (Epic Decayed) Venom-Steeped Stompers
+            },
+        },
+        MAIL_BOOTS_2 = {
+            nodeID = 28430,
+            threshold = 5,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375106, -- (Rare) Trailblazer's Scale Boots
+                375118, -- (Epic) Flame-Touched Treads
+                375155, -- (Epic Bestial) Infurious Boots of Reprieve
+                375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+                375151, -- (Epic Decayed) Acidic Hailstone Treads
+                375150, -- (Epic Decayed) Venom-Steeped Stompers
+            },
+        },
+        MAIL_BOOTS_3 = {
+            nodeID = 28430,
+            threshold = 10,
+            skill = 5,
+            exceptionRecipeIDs = {
+                375106, -- (Rare) Trailblazer's Scale Boots
+                375118, -- (Epic) Flame-Touched Treads
+                375155, -- (Epic Bestial) Infurious Boots of Reprieve
+                375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+                375151, -- (Epic Decayed) Acidic Hailstone Treads
+                375150, -- (Epic Decayed) Venom-Steeped Stompers
+            },
+        },
+        MAIL_BOOTS_4 = {
+            nodeID = 28430,
+            threshold = 15,
+            skill = 10,
+            exceptionRecipeIDs = {
+                375106, -- (Rare) Trailblazer's Scale Boots
+                375118, -- (Epic) Flame-Touched Treads
+                375155, -- (Epic Bestial) Infurious Boots of Reprieve
+                375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+                375151, -- (Epic Decayed) Acidic Hailstone Treads
+                375150, -- (Epic Decayed) Venom-Steeped Stompers
+            },
+        },
     }
 end
 
