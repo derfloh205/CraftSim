@@ -22,6 +22,12 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("3.0") ..
+        P .. "New " .. c("Price Override Module", g) ..
+        a .. "Override prices of " .. c("any materials", bb) .. ", " .. 
+        a .. c("optional and finishing reagents, ", bb) ..
+        a .. "and for " .. c("crafted results", bb) .. " per recipe or for all recipes!" ..
+        s .. "Added " .. c("Close Buttons", bb) .. " to all modules" ..
         newP("2.2") ..
         p .. "Fixed an error with Top Gear stat extraction" .. 
         a .. "from items with no stats" ..

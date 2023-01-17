@@ -39,8 +39,8 @@ CraftSimOptions = CraftSimOptions or {
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
 
-CraftSim.MAIN.currentRecipeInfo = nil
 CraftSim.MAIN.currentRecipeData = nil
+CraftSim.MAIN.currentRecipeID = nil
 
 local function print(text, recursive) -- override
 	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.MAIN, recursive)

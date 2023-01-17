@@ -22,7 +22,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         0, 
         280, 
         250,
-        CraftSim.CONST.FRAMES.MATERIALS)
+        CraftSim.CONST.FRAMES.MATERIALS, false, true, nil, "modulesMaterials")
 
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimMaterialOptimizationWOFrame", 
@@ -35,7 +35,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         0, 
         280, 
         250,
-        CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+        CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER, false, true, nil, "modulesMaterials")
 
     local function createContent(frame)
 

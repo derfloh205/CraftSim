@@ -73,6 +73,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [193943] = {recipeDifficulty = 25, qualityID = 3},
 
     -- Titan Matrix
+    [198048] = {recipeDifficulty = 20}, -- II
     [198056] = {recipeDifficulty = 40}, -- II
     [198058] = {recipeDifficulty = 60}, -- III
     [198059] = {recipeDifficulty = 150}, -- IV

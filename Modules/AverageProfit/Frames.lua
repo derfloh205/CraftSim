@@ -22,7 +22,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         0, 
         320,
         120,
-        CraftSim.CONST.FRAMES.STAT_WEIGHTS)
+        CraftSim.CONST.FRAMES.STAT_WEIGHTS, false, true, nil, "modulesStatWeights")
 
     local frameWorkOrder = CraftSim.FRAME:CreateCraftSimFrame(
     "CraftSimDetailsWOFrame", 
@@ -35,7 +35,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     0, 
     320,
     120,
-    CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
+    CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER, false, true, nil, "modulesStatWeights")
 
     local function createContent(frame, profitDetailsFrameID)
         frame.content.breakdownButton = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")

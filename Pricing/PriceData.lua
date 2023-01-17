@@ -23,25 +23,26 @@ function CraftSim.PRICEDATA:GetReagentCosts(recipeData, getMinimum)
     -- required
     for reagentIndex, reagentInfo in pairs(recipeData.reagents) do
         -- check if soulbound reagent
-        if CraftSim.UTIL:isItemSoulbound(reagentInfo.itemsInfo[1].itemID) then
-            -- well then the price is technically zero
-            table.insert(reagentCosts, 0)
-        else
-            local totalBuyout = 0
-            for _qualityIndex, itemInfo in pairs(reagentInfo.itemsInfo) do
-                local minbuyout = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemInfo.itemID, true)
-                    totalBuyout = totalBuyout +  (minbuyout * itemInfo.allocations)
-                    itemInfo.minBuyout = minbuyout -- used by lowestcostbyqualityID
-            end
-            if totalBuyout == 0 or getMinimum then
-                -- Assuming that the player has 0 of an required item, set the buyout to lowest qID of that item * required
-                -- Or if getMinimum is set override
-                local qualityID = CraftSim.PRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentInfo.itemsInfo)
-                local minbuyout = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentInfo.itemsInfo[qualityID].itemID, true)
-                totalBuyout = minbuyout * reagentInfo.requiredQuantity
-            end
-            table.insert(reagentCosts, totalBuyout)
+        -- if CraftSim.UTIL:isItemSoulbound(reagentInfo.itemsInfo[1].itemID) then
+        --     -- well then the price is technically zero
+        --     -- get it anyway to consider price overrides
+        --     table.insert(reagentCosts, 0)
+
+        -- get soulbound costs also cause of price overrides
+        local totalBuyout = 0
+        for _qualityIndex, itemInfo in pairs(reagentInfo.itemsInfo) do
+            local minbuyout = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemInfo.itemID, true)
+                totalBuyout = totalBuyout +  (minbuyout * itemInfo.allocations)
+                itemInfo.minBuyout = minbuyout -- used by lowestcostbyqualityID
         end
+        if totalBuyout == 0 or getMinimum then
+            -- Assuming that the player has 0 of an required item, set the buyout to lowest qID of that item * required
+            -- Or if getMinimum is set override
+            local qualityID = CraftSim.PRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentInfo.itemsInfo)
+            local minbuyout = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentInfo.itemsInfo[qualityID].itemID, true)
+            totalBuyout = minbuyout * reagentInfo.requiredQuantity
+        end
+        table.insert(reagentCosts, totalBuyout)
     end
     if not CraftSim.SIMULATION_MODE.isActive then
         -- optional & finishing (not when minimum)
@@ -145,13 +146,13 @@ function CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
         salvageReagentPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(recipeData.salvageReagent.itemID, true)
     end
 
-    -- for i = 1, 5, 1 do
-    --     -- if existent, override price by quality
-    --     local overridePrice = CraftSim.PRICEDATA.overrideResultProfits[i]
-    --     if overridePrice ~= nil then
-    --         minBuyoutPerQuality[i] = overridePrice
-    --     end
-    -- end
+    for i = 1, 5, 1 do
+        -- if existent, override price by quality
+        local overridePrice = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(recipeData.recipeID, i) -- mapped by quality for the recipe
+        if overridePrice ~= nil then -- could be valid 0 here
+            minBuyoutPerQuality[i] = overridePrice
+        end
+    end
 
     return {
         salvageReagentPrice = salvageReagentPrice,
@@ -164,6 +165,20 @@ end
 
 -- Wrappers 
 function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent)
+    -- check for overrides
+    if isReagent then
+        -- only applies to reagents here
+        local recipeData = CraftSim.MAIN.currentRecipeData
+
+        if recipeData then
+            local priceOverride = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(recipeData.recipeID, itemID)
+
+            if priceOverride then
+                return priceOverride
+            end
+        end
+    end
+
     if not CraftSim.PRICE_APIS.available then
         return 0
     end

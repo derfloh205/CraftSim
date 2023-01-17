@@ -65,31 +65,31 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     end)
     
     -- 1. Row
-    frame.content.materialSuggestionsCB = createModuleCheckbox("Material Optimization", 
+    frame.content.modulesMaterials = createModuleCheckbox("Material Optimization", 
     "Suggests the cheapest materials to reach the highest quality/inspiration threshold.",
     "TOPLEFT", frame.content, "TOPLEFT", cbBaseOffsetX, cbBaseOffsetY, "modulesMaterials")
 
-    frame.content.averageProfitCB = createModuleCheckbox("Average Profit",
+    frame.content.modulesStatWeights = createModuleCheckbox("Average Profit",
     "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
-    "TOP", frame.content.materialSuggestionsCB, "TOP", 0, -20, "modulesStatWeights")
+    "TOP", frame.content.modulesMaterials, "TOP", 0, -20, "modulesStatWeights")
     
     -- 2. Row
-    frame.content.topGearCB = createModuleCheckbox("Top Gear",
+    frame.content.modulesTopGear = createModuleCheckbox("Top Gear",
     "Shows the best available profession gear combination based on the selected mode",
-    "LEFT", frame.content.materialSuggestionsCB, "RIGHT", 150, 0, "modulesTopGear")
+    "LEFT", frame.content.modulesMaterials, "RIGHT", 150, 0, "modulesTopGear")
 
-    frame.content.costOverviewCB = createModuleCheckbox("Cost Overview", 
+    frame.content.modulesCostOverview = createModuleCheckbox("Cost Overview", 
     "Shows a crafting cost and sell profit overview by resulting quality",
-    "TOP", frame.content.topGearCB, "TOP", 0, -20, "modulesCostOverview")
+    "TOP", frame.content.modulesTopGear, "TOP", 0, -20, "modulesCostOverview")
 
     -- 3. Row
-    frame.content.specInfoCB = createModuleCheckbox("Specialization Info", 
+    frame.content.modulesSpecInfo = createModuleCheckbox("Specialization Info", 
     "Shows how your profession specializations affect this recipe\nDISCLAIMER: This shows up only for professions with experimental spec data turned on.",
-    "LEFT", frame.content.topGearCB, "RIGHT", 100, 0, "modulesSpecInfo")
+    "LEFT", frame.content.modulesTopGear, "RIGHT", 100, 0, "modulesSpecInfo")
 
-    frame.content.priceOverrideCB = createModuleCheckbox("Price Overrides", 
+    frame.content.modulesPriceOverride = createModuleCheckbox("Price Overrides", 
     "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically.",
-    "TOP", frame.content.specInfoCB, "TOP", 0, -20, "modulesPriceOverride")
+    "TOP", frame.content.modulesSpecInfo, "TOP", 0, -20, "modulesPriceOverride")
 
 
 end

@@ -22,7 +22,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         3, 
         250, 
         300,
-        CraftSim.CONST.FRAMES.TOP_GEAR)
+        CraftSim.CONST.FRAMES.TOP_GEAR, false, true, nil, "modulesTopGear")
 
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimSimWOFrame", 
@@ -35,7 +35,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         3, 
         250, 
         300,
-        CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+        CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER, false, true, nil, "modulesTopGear")
 
     local function createContent(frame)
     

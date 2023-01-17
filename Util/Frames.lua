@@ -269,13 +269,19 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     end)
 end
 
-function CraftSim.FRAME:MakeCloseable(frame)
+function CraftSim.FRAME:MakeCloseable(frame, moduleOption)
     frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.closeButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
 	frame.closeButton:SetText("X")
 	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+15, 20)
     frame.closeButton:SetScript("OnClick", function(self) 
         frame:Hide()
+        if moduleOption then
+            CraftSimOptions[moduleOption] = false
+            local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
+
+            controlPanel.content[moduleOption]:SetChecked(false)
+        end
     end)
 end
 
@@ -300,7 +306,7 @@ function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB,
 end
 
 function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, 
-    frameID, scrollable, closeable, frameStrata)
+    frameID, scrollable, closeable, frameStrata, moduleOption)
     local hookFrame = CreateFrame("frame", nil, parent)
     hookFrame:SetPoint(anchorA, anchorFrame, anchorB, offsetX, offsetY)
     local frame = CreateFrame("frame", name, hookFrame, "BackdropTemplate")
@@ -336,7 +342,7 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
     end
 
     if closeable then
-        CraftSim.FRAME:MakeCloseable(frame)
+        CraftSim.FRAME:MakeCloseable(frame, moduleOption)
     end
 
     CraftSim.FRAME:MakeCollapsable(frame, sizeX, sizeY, frameID)

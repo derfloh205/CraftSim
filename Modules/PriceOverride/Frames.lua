@@ -24,7 +24,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         0, 
         sizeX, 
         sizeY,
-        CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+        CraftSim.CONST.FRAMES.PRICE_OVERRIDE, false, true, "DIALOG", "modulesPriceOverride")
 
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimPriceOverrideWOFrame", 
@@ -37,7 +37,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         0, 
         sizeX, 
         sizeY,
-        CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
+        CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER, false, true, "DIALOG", "modulesPriceOverride")
 
     local function createContent(frame)
         -- create tabs for the different kinds of overrides
@@ -58,6 +58,28 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         frame.content.tabs = {materialTab, optionalReagentsTab, finishingReagentsTab, craftedItemsTab}
         CraftSim.FRAME:InitTabSystem(frame.content.tabs)
 
+        frame.content.resetAllButton = CraftSim.FRAME:CreateButton("Reset All", 
+        frame.content, materialTab, "TOPRIGHT", "TOPLEFT", -65, 0, 15, 25, true, function(self)
+            CraftSim.PRICE_OVERRIDE:ResetAll()
+            local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+            local recipeData = CraftSim.MAIN.currentRecipeData
+            if not recipeData then
+                return
+            end
+            CraftSim.MAIN:TriggerModulesErrorSafe(false, recipeData.recipeID, exportMode)
+        end)
+
+        frame.content.resetRecipeButton = CraftSim.FRAME:CreateButton("Reset Recipe", 
+        frame.content, frame.content.resetAllButton, "TOPLEFT", "BOTTOMLEFT", 0, 0, 15, 25, true, function(self)
+            local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+            local recipeData = CraftSim.MAIN.currentRecipeData
+            if not recipeData then
+                return
+            end
+            CraftSim.PRICE_OVERRIDE:ResetRecipe(recipeData.recipeID)
+            CraftSim.MAIN:TriggerModulesErrorSafe(false, recipeData.recipeID, exportMode)
+        end)
+
         local function createOverrideFrame(parent, anchorParent, anchorA, anchorB, anchorX, anchorY, isCraftedItem)
             local overrideFrame = CreateFrame("frame", nil, parent)
             overrideFrame:SetSize(50, 50)
@@ -71,7 +93,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
             -- TODO: quality icon?
 
             overrideFrame.qualityIcon = CraftSim.FRAME:CreateQualityIcon(
-                overrideFrame.icon, 15, 15, overrideFrame.icon, "TOPRIGHT", "TOPRIGHT", 0, 0, 3)
+                overrideFrame.icon, 20, 20, overrideFrame.icon, "TOPRIGHT", "TOPRIGHT", 5, 5, 3)
 
             local function onPriceOverrideChanged(userInput, moneyValue)
                 if not userInput then
@@ -102,14 +124,17 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                     CraftSim.PRICE_OVERRIDE:AddOverrideGlobal(itemID, moneyValue)
                     CraftSim.PRICE_OVERRIDE:RemoveOverrideForRecipe(recipeData.recipeID, itemID)
                 end
+
+                -- reload modules to adapt to price change
+                local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+                CraftSim.MAIN:TriggerModulesErrorSafe(false, recipeData.recipeID, exportMode)
             end
 
             local function recipeCallback(self)
                 if self:GetChecked() then
                     overrideFrame.globalCheckBox:SetChecked(false)
                 end
-
-                onPriceOverrideChanged(false, overrideFrame.input.getMoneyValue())
+                onPriceOverrideChanged(true, overrideFrame.input.getMoneyValue())
             end
 
             local function globalCallback(self)
@@ -117,7 +142,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                     overrideFrame.recipeCheckBox:SetChecked(false)
                 end
 
-                onPriceOverrideChanged(false, overrideFrame.input.getMoneyValue())
+                onPriceOverrideChanged(true, overrideFrame.input.getMoneyValue())
             end
 
             overrideFrame.recipeCheckBox = CraftSim.FRAME:CreateCheckboxCustomCallback("Recipe", "Override price for this recipe", false, recipeCallback, 
@@ -147,6 +172,8 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                     return
                 end
 
+                local priceOverride, isGlobal = nil, nil
+
                 overrideFrame:Show()
 
                 overrideFrame.qualityID = qualityID
@@ -158,23 +185,66 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                 end
 
 
-                local itemLink = nil
-                local itemTexture = nil
-                if not isGear then
-                    local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID)
-                    itemLink = itemData.link
-                    itemTexture = itemData.itemTexture
-                else
-                    local itemData = Item:CreateFromItemLink(itemID)  -- this is the itemLink for gear
-                    -- TODO: what if not loaded?
-                    itemLink = itemID
-                    itemTexture = itemData:GetItemIcon()
+                local function updateIconAndTooltip(itemLink, itemTexture)
+                    overrideFrame.icon:SetScript("OnEnter", function(self) 
+                        local itemName, tooltipLink = GameTooltip:GetItem()
+                        GameTooltip:SetOwner(overrideFrame, "ANCHOR_RIGHT");
+                        if tooltipLink ~= itemLink then
+                            -- to not set it again and hide the tooltip..
+                            GameTooltip:SetHyperlink(itemLink)
+                        end
+                        GameTooltip:Show();
+                    end)
+                    overrideFrame.icon:SetScript("OnLeave", function(self) 
+                        GameTooltip:Hide();
+                    end)
+
+                    overrideFrame.icon:SetNormalTexture(itemTexture or CraftSim.CONST.EMPTY_SLOT_TEXTURE) -- if not loaded
                 end
 
-                overrideFrame.icon:SetNormalTexture(itemTexture)
+                local itemLink = nil
+                local itemTexture = nil
+                if not isCraftedItem then
+                    priceOverride, isGlobal = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(recipeID, itemID)
+                    local itemData = Item:CreateFromItemID(itemID)
+                    itemData:ContinueOnItemLoad(function() 
+                        updateIconAndTooltip(itemData:GetItemLink(), itemData:GetItemIcon())
+                    end)
+                else
+                    priceOverride, isGlobal = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(recipeID, qualityID)
+
+                    print("found price override for qualityID " .. qualityID .. ": " .. tostring(priceOverride))
+                    if isGear then
+                        local itemData = Item:CreateFromItemLink(itemID)  -- this is the itemLink for gear
+                        itemLink = itemID
+                        itemData:ContinueOnItemLoad(function() 
+                            updateIconAndTooltip(itemLink, itemData:GetItemIcon())
+                        end)
+                    else
+                        local itemData = Item:CreateFromItemID(itemID)
+                        itemData:ContinueOnItemLoad(function() 
+                            updateIconAndTooltip(itemData:GetItemLink(), itemData:GetItemIcon())
+                        end)
+                    end
+                end
+                --print("found price override for qualityID " .. tostring(qualityID) .. ": " .. tostring(priceOverride) .. " isGear: " .. tostring(isGear))
+
+                if priceOverride then
+                    overrideFrame.input:SetText(priceOverride / 10000) -- copper to gold
+                    if isGlobal then
+                        overrideFrame.recipeCheckBox:SetChecked(false)
+                        overrideFrame.globalCheckBox:SetChecked(true)
+                    else
+                        overrideFrame.recipeCheckBox:SetChecked(true)
+                        overrideFrame.globalCheckBox:SetChecked(false)
+                    end
+                else
+                    overrideFrame.input:SetText("0")
+                    overrideFrame.recipeCheckBox:SetChecked(false)
+                    overrideFrame.globalCheckBox:SetChecked(false)
+                end
 
                 -- check for saved price overrides
-
                 if not qualityID then
                     overrideFrame.qualityIcon:Hide()
                 else
@@ -182,20 +252,6 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                     overrideFrame.qualityIcon:Show()
                 end
             
-                overrideFrame.icon:SetScript("OnEnter", function(self) 
-                    local itemName, tooltipLink = GameTooltip:GetItem()
-                    GameTooltip:SetOwner(overrideFrame, "ANCHOR_RIGHT");
-                    if tooltipLink ~= itemLink then
-                        -- to not set it again and hide the tooltip..
-                        GameTooltip:SetHyperlink(itemLink)
-                    end
-                    GameTooltip:Show();
-                end)
-                overrideFrame.icon:SetScript("OnLeave", function(self) 
-                    GameTooltip:Hide();
-                end)
-            
-
             end
 
             return overrideFrame

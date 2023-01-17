@@ -449,7 +449,7 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 		-- not ready yet
 		return
 	end
-	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)--CraftSim.MAIN.currentRecipeInfo--or schematicForm:GetRecipeInfo() -- should always be the first
+	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
 
 	-- Can happen when manually called without recipe open
 	if not recipeInfo then
