@@ -3,7 +3,7 @@ addonName, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 13 -- last highest: 13
+CraftSim.CONST.currentInfoVersionID = 16 -- last highest: 16
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -12,6 +12,12 @@ CraftSim.CONST.infoBoxSizeY = 400
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
 -- currently this is just an approximation
 CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
+
+CraftSim.CONST.EXPORT_MODE = {
+    NON_WORK_ORDER = 0,
+    WORK_ORDER = 1,
+    SCAN = 2,
+}
 
 CraftSim.CONST.FRAMES = {
     MATERIALS = 0,
@@ -26,6 +32,12 @@ CraftSim.CONST.FRAMES = {
     DEBUG = 9,
     DEBUG_CONTROL = 10,
     SPEC_SIM = 11,
+    CONTROL_PANEL = 12,
+    STAT_WEIGHTS_WORK_ORDER = 13,
+    PROFIT_DETAILS_WORK_ORDER = 14,
+    MATERIALS_WORK_ORDER = 15,
+    COST_OVERVIEW_WORK_ORDER = 16,
+    TOP_GEAR_WORK_ORDER = 17,
 }
 
 CraftSim.CONST.DEBUG_IDS = {
@@ -189,17 +201,16 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
     LEATHERWORKING = {
         DRUMS = 1655,
         ARMOR_KITS = 1651,
-	LEATHER_ARMOR = 1657,
-	MAIL_ARMOR = 1658,
-	PROFESSION_EQUIPMENT = 1656,
-	WEAPONS = 1648,
-	ELEMENTAL_PATTERNS = 1811,
-	BESTIAL_PATTERNS = 1812,
-	DECAYED_PATTERNS = 1810,
-	REAGENTS = 1654,
-	FINISHING_REAGENTS = 1650,
-	OPTIONAL_REAGENTS = 1649,
-	TOYS = 1652,
+		LEATHER_ARMOR = 1657,
+		MAIL_ARMOR = 1658,
+		PROFESSION_EQUIPMENT = 1656,
+		WEAPONS = 1648,
+		ELEMENTAL_PATTERNS = 1811,
+		BESTIAL_PATTERNS = 1812,
+		DECAYED_PATTERNS = 1810,
+		REAGENTS = 1654,
+		OPTIONAL_REAGENTS = 1649,
+		TOYS = 1652,
     },
     INSCRIPTION = {
         INKS = 1754
@@ -263,32 +274,31 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
     },
     LEATHERWORKING = {
 	-- Misc
-        DRUMS = 8, -- Other
-        ARMOR_KITS = 14, --Misc
-	MISCELLANEOUS = 0,
-	OTHER = 4,
+		OTHER = 8, -- Drums
+		MISC = 14, -- Armor Kits
+		MISCELLANEOUS = 0, -- Witherrot Tome
+		OTHER = 4, -- Toys
 	
 	-- Armor
-	LEATHER = 2,
-	MAIL = 3,
+		LEATHER = 2,
+		MAIL = 3,
 	
 	-- Tools
-	ALCHEMY = 2,
-	SKINNING = 10,
-	BLACKSMITHING = 0,
-	HERBALISM = 3,
-	LEATHERWORKING = 1,
-	JEWELCRAFTING = 11,
-	ENGINEERING = 7,
+		ALCHEMY = 2,
+		SKINNING = 10,
+		BLACKSMITHING = 0,
+		HERBALISM = 3,
+		LEATHERWORKING = 1,
+		JEWELCRAFTING = 11,
+		ENGINEERING = 7,
 	
 	-- Weapons
-	CROSSBOWS = 18,
-	BOWS = 2,
+		CROSSBOWS = 18,
+		BOWS = 2,
 	
 	-- Reagents
-	FINISHING_REAGENTS = 19,
-	OPTIONAL_REAGENTS = 18,
-	REAGENTS = 6, -- Leather (Reagents)
+		OPTIONAL_REAGENTS = 18, -- Fang Adornments, Toxified Armor Patch
+		REAGENTS = 6, -- Hides, Scales (Reagents)
 	
     },
     INSCRIPTION = {
