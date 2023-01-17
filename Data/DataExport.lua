@@ -719,7 +719,7 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 	local extractedStats = GetItemStats(itemLink)
 	local stats = {}
 
-	for statKey, value in pairs(extractedStats) do
+	for statKey, value in pairs(extractedStats or {}) do
 		if CraftSim.CONST.STAT_MAP[statKey] ~= nil then
 			stats[CraftSim.CONST.STAT_MAP[statKey]] = value
 		end

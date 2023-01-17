@@ -22,6 +22,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("2.2") ..
+        p .. "Fixed an error with Top Gear stat extraction" .. 
+        a .. "from items with no stats" ..
         newP("2.1") ..
         p .. "Updated the multicraft extra items formula to " ..
         a .. c("(1+2.5y*bonus) / 2", bb) .. 
