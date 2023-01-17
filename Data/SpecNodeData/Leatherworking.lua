@@ -276,20 +276,22 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.JEWELCRAFTING,
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ENGINEERING
                 },
-                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.WEAPONS] = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.BESTIAL_PATTERNS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS
                 }
             },
-            BONDING_AND_STITCHING_2 = {
+        },
+        BONDING_AND_STITCHING_2 = {
             nodeID = 31181,
             threshold = 0,
-            multicraft = 20
+            multicraft = 20,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS
                 }
             },
-            BONDING_AND_STITCHING_3 = {
+        },
+        BONDING_AND_STITCHING_3 = {
             nodeID = 31181,
             threshold = 5,
             inspiration = 10,
@@ -303,20 +305,22 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.JEWELCRAFTING,
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ENGINEERING
                 },
-                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.WEAPONS] = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.BESTIAL_PATTERNS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS
                 }
             },
-            BONDING_AND_STITCHING_4 = {
+        },
+        BONDING_AND_STITCHING_4 = {
             nodeID = 31181,
             threshold = 10,
-            multicraft = 40
+            multicraft = 40,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS
                 }
             },
-            BONDING_AND_STITCHING_5 = {
+        },
+        BONDING_AND_STITCHING_5 = {
             nodeID = 31181,
             threshold = 15,
             inspiration = 10,
@@ -330,11 +334,12 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.JEWELCRAFTING,
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ENGINEERING
                 },
-                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.WEAPONS] = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.BESTIAL_PATTERNS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS
                 }
             },
-            BONDING_AND_STITCHING_6 = {
+        },
+        BONDING_AND_STITCHING_6 = {
             nodeID = 31181,
             threshold = 20,
             multicraftExtraItemsFactor = 0.50,
@@ -342,6 +347,301 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS
                 }
+            },
+        },
+        CURING_AND_TANNING_1 = {
+            nodeID = 31180,
+            equalsSkill = true,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ARMOR_KITS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS
+                }
+            },
+        },
+        CURING_AND_TANNING_2 = {
+            nodeID = 31180,
+            threshold = 0,
+            multicraft = 20,
+            idMapping = {
+               [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ARMOR_KITS
+                },
+            },
+        },
+        CURING_AND_TANNING_3 = {
+            nodeID = 31180,
+            threshold = 5,
+            inspiration =10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ARMOR_KITS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS
+                }
+            },
+        },
+        CURING_AND_TANNING_4 = {
+            nodeID = 31180,
+            threshold = 10,
+            multicraft = 40,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ARMOR_KITS
+                }
+            },
+        },
+        CURING_AND_TANNING_5 = {
+            nodeID = 31180,
+            threshold = 15,
+            inspiration = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ARMOR_KITS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS
+                }
+            },
+        },
+        CURING_AND_TANNING_6 = {
+            nodeID = 31180,
+            threshold = 20,
+            multicraftExtraItemsFactor = 0.50,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ARMOR_KITS
+                }
+            },
+        },
+        -- Primordial Leatherworking
+        PRIMORDIAL_LEATHERWORKING_1 = {
+            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            nodeID = 31146,
+            equalsSkill = true,
+        },
+        PRIMORDIAL_LEATHERWORKING_2 = {
+            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            nodeID = 31146,
+            threshold = 0,
+            inspiration = 5,
+        },
+        PRIMORDIAL_LEATHERWORKING_3 = {
+            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            nodeID = 31146,
+            threshold = 5,
+            resourcefulness = 5,
+        },
+        PRIMORDIAL_LEATHERWORKING_4 = {
+            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            nodeID = 31146,
+            threshold = 15,
+            inspiration = 5,
+        },
+        PRIMORDIAL_LEATHERWORKING_5 = {
+            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            nodeID = 31146,
+            threshold = 25,
+            resourcefulness = 5,
+        },
+        PRIMORDIAL_LEATHERWORKING_6 = {
+            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            nodeID = 31146,
+            threshold = 35,
+            craftingspeedBonusFactor = 0.15,
+        },
+        ELEMENTAL_MASTERY_1 = {
+            nodeID = 31145,
+            equalSkill = true,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ELEMENTAL_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        ELEMENTAL_MASTERY_2 = {
+            nodeID = 31145,
+            threshold = 5,
+            inspiration = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ELEMENTAL_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        ELEMENTAL_MASTERY_3 = {
+            nodeID = 31145,
+            threshold = 10,
+            skill = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ELEMENTAL_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        ELEMENTAL_MASTERY_4 = {
+            nodeID = 31145,
+            threshold = 15,
+            resourcefulness = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ELEMENTAL_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        ELEMENTAL_MASTERY_5 = {
+            nodeID = 31145,
+            threshold = 20,
+            skill = 5,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ELEMENTAL_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        BESTIAL_PRIMACY_1 = {
+            nodeID = 31144,
+            equalSkill = true,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.BESTIAL_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        BESTIAL_PRIMACY_2 = {
+            nodeID = 31144,
+            threshold = 0,
+            skill = 5,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.BESTIAL_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        BESTIAL_PRIMACY_3 = {
+            nodeID = 31144,
+            threshold = 5,
+            inspiration = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.BESTIAL_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        BESTIAL_PRIMACY_4 = {
+            nodeID = 31144,
+            threshold = 10,
+            skill = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.BESTIAL_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        BESTIAL_PRIMACY_5 = {
+            nodeID = 31144,
+            threshold = 15,
+            resourcefulness = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.BESTIAL_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.BOWS,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        DECAYING_GRASP_1 = {
+            nodeID = 31143,
+            equalSkill = true,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DECAYED_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        DECAYING_GRASP_2 = {
+            nodeID = 31143,
+            threshold = 0,
+            skill = 5,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DECAYED_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        DECAYING_GRASP_3 = {
+            nodeID = 31143,
+            threshold = 5,
+            inspiration = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DECAYED_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        DECAYING_GRASP_4 = {
+            nodeID = 31143,
+            threshold = 10,
+            skill = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DECAYED_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
+            },
+        },
+        DECAYING_GRASP_5 = {
+            nodeID = 31143,
+            threshold = 15,
+            resourcefulness = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DECAYED_PATTERNS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.REAGENTS,
+                },
             },
         },
     }
