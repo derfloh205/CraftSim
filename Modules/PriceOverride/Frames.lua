@@ -40,6 +40,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER, false, true, "DIALOG", "modulesPriceOverride")
 
     local function createContent(frame)
+        frame:Hide()
         -- create tabs for the different kinds of overrides
         -- materials, optional reagents, finishing reagents, crafted items
         local contentOffsetY = -60

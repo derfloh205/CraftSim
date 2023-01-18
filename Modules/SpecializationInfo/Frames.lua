@@ -15,7 +15,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     "CraftSim Specialization Info", 
     ProfessionsFrame.CraftingPage.SchematicForm, 
     CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR), 
-    "TOPLEFT", "TOPRIGHT", -10, 0, 290, 300, CraftSim.CONST.FRAMES.SPEC_INFO, true, true, nil, "modulesSpecInfo")
+    "TOPLEFT", "TOPRIGHT", -10, 0, 310, 300, CraftSim.CONST.FRAMES.SPEC_INFO, true, true, nil, "modulesSpecInfo")
 
     frame:Hide()
 

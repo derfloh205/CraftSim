@@ -26,8 +26,8 @@ function CraftSim.NEWS:GET_NEWS()
         p .. "Added missing data for optional reagent " .. c("Armor Spikes", bb) .. 
         p .. "Reimplemented the result item fetch for non gear recipes" ..
         a .. "to use the ingame api" ..
-        a .. "This now prevents any wrong sorting of qualities for cost overview" .. 
-        a .. "and profit calculation" ..
+        a .. "This now prevents any wrong sorting of qualities for" ..
+        a .. "cost overview and profit calculation" ..
         newP("3.0/3.1") ..
         P .. "New " .. c("Price Override Module", g) ..
         a .. "Override prices of " .. c("any materials", bb) .. ", " .. 
