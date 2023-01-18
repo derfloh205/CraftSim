@@ -285,7 +285,7 @@ CraftSim.SPEC_DATA.BASE_RULE_NODES = function()
     return {
     [Enum.Profession.Blacksmithing] =  {"ARMOR_SMITHING_1", "WEAPON_SMITHING_1", "SPECIALITY_SMITHING_1", "HAMMER_CONTROL_1"},
     [Enum.Profession.Alchemy] = {"POTION_MASTERY_1", "PHIAL_MASTERY_1", "ALCHEMICAL_THEORY_1"},
-    [Enum.Profession.Leatherworking] = {"PH1", "PH2", "PH3", "PH4"},
+    [Enum.Profession.Leatherworking] = {"LEATHERWORKING_DISCIPLINE_1", "LEATHER_ARMOR_CRAFTING_1", "MAIL_ARMOR_CRAFTING_1", "PRIMORDIAL_LEATHERWORKING_1"},
     [Enum.Profession.Jewelcrafting] = {"TOOLSET_MASTER_1", "FACETING_1", "SETTING_1", "ENTERPRISING_1"},
     [Enum.Profession.Enchanting] = {"PH1", "PH2", "PH3", "PH4"},
     [Enum.Profession.Tailoring] = {"PH1", "PH2", "PH3", "PH4"},
@@ -299,6 +299,8 @@ function CraftSim.SPEC_DATA:GetNodes(professionID)
         return CraftSim.ALCHEMY_DATA.NODES()
     elseif professionID == Enum.Profession.Jewelcrafting then
         return CraftSim.JEWELCRAFTING_DATA.NODES()
+    elseif professionID == Enum.Profession.Leatherworking then
+        return CraftSim.LEATHERWORKING_DATA.NODES()
     else
         error("CraftSim Error: No nodes found for profession id: " .. tostring(professionID))
         return {}

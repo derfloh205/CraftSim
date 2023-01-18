@@ -31,10 +31,11 @@ CraftSimOptions = CraftSimOptions or {
 	transparencyCostOverview = 1,
 	transparencySpecInfo = 1,
 
-	-- specData Refactor
+	-- specData
 	blacksmithingEnabled = false,
 	alchemyEnabled = false,
 	jewelcraftingEnabled = false,
+	leatherworkingEnabled = false,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}

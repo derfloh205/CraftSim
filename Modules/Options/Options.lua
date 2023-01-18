@@ -348,11 +348,21 @@ function CraftSim.OPTIONS:Init()
      0, 
      -20)
 
-     local enableSpecDataAlchemyCheckbox = CraftSim.FRAME:CreateCheckbox(" Jewelcrafting SpecData", 
+     local enableSpecDataJewelcraftingCheckbox = CraftSim.FRAME:CreateCheckbox(" Jewelcrafting SpecData", 
      "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
      "jewelcraftingEnabled", 
      ExperimentalTab.content, 
      enableSpecDataAlchemyCheckbox, 
+     "TOP", 
+     "TOP", 
+     0, 
+     -20)
+
+     local enableSpecDataLeatherworkingCheckbox = CraftSim.FRAME:CreateCheckbox(" Leatherworking SpecData (!WIP!)", 
+     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
+     "leatherworkingEnabled", 
+     ExperimentalTab.content, 
+     enableSpecDataJewelcraftingCheckbox, 
      "TOP", 
      "TOP", 
      0, 
