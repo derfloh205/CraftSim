@@ -175,6 +175,12 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 
     [203652] = {},
 
+    -- Blacksmithing
+    [191250] = {recipeDifficulty = 35, qualityID = 1}, -- Armor Spikes
+    [191872] = {recipeDifficulty = 30, qualityID = 2}, 
+    [191873] = {recipeDifficulty = 25, qualityID = 3}, 
+
+
     
 
 

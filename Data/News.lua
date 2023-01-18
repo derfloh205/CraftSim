@@ -22,7 +22,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
-        newP("3.0") ..
+        newP("3.2") ..
+        p .. "Added missing data for optional reagent " .. c("Armor Spikes", bb) .. 
+        newP("3.0/3.1") ..
         P .. "New " .. c("Price Override Module", g) ..
         a .. "Override prices of " .. c("any materials", bb) .. ", " .. 
         a .. c("optional and finishing reagents, ", bb) ..
