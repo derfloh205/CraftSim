@@ -42,6 +42,11 @@ CraftSim.CONST.FRAMES = {
     TOP_GEAR_WORK_ORDER = 17,
     PRICE_OVERRIDE_WORK_ORDER = 18,
     PRICE_OVERRIDE = 19,
+    PROFIT_SCAN = 20,
+}
+
+CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
+    1566, -- Blacksmithing
 }
 
 CraftSim.CONST.DEBUG_IDS = {
@@ -73,21 +78,21 @@ CraftSim.CONST.PROFESSIONTOOL_INV_TYPES = {
     GEAR = "INVTYPE_PROFESSION_GEAR"
 }
 
-CraftSim.CONST.PROFESSION_INV_SLOTS = {{
-    TOOL = "PROF0TOOLSLOT",
-    GEAR0 = "PROF0GEAR0SLOT",
-    GEAR1 = "PROF0GEAR1SLOT"
-    }, 
-    {
-        TOOL = "PROF1TOOLSLOT",
-        GEAR0 = "PROF1GEAR0SLOT",
-        GEAR1 = "PROF1GEAR1SLOT"
-    },
-    {
-        TOOL = "COOKINGTOOLSLOT",
-        GEAR0 = "COOKINGGEAR0SLOT"
-    }
-}
+-- CraftSim.CONST.PROFESSION_INV_SLOTS = {{
+--     TOOL = "PROF0TOOLSLOT",
+--     GEAR0 = "PROF0GEAR0SLOT",
+--     GEAR1 = "PROF0GEAR1SLOT"
+--     }, 
+--     {
+--         TOOL = "PROF1TOOLSLOT",
+--         GEAR0 = "PROF1GEAR0SLOT",
+--         GEAR1 = "PROF1GEAR1SLOT"
+--     },
+--     {
+--         TOOL = "COOKINGTOOLSLOT",
+--         GEAR0 = "COOKINGGEAR0SLOT"
+--     }
+-- }
 
 CraftSim.CONST.STAT_MAP = {
     ITEM_MOD_RESOURCEFULNESS_SHORT = "resourcefulness",

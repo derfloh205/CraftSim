@@ -85,8 +85,8 @@ end
 function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue)
 	UIDropDownMenu_Initialize(dropDown, function(self) 
 		for k, v in pairs(list) do
-            label = v.label
-            value = v.value
+            local label = v.label
+            local value = v.value
 			local info = UIDropDownMenu_CreateInfo()
             --print("init dropdown by data label: " .. tostring(label))
             --print("init dropdown by data value: " .. tostring(value))

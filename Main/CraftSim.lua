@@ -25,6 +25,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesCostOverview = true,
 	modulesSpecInfo = true,
 	modulesPriceOverride = false,
+	modulesProfitScan = false,
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
 	transparencyTopGear = 1,
@@ -194,6 +195,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.SIMULATION_MODE.FRAMES:Init()
 		CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
 		CraftSim.PRICE_OVERRIDE.FRAMES:Init()
+		CraftSim.PROFIT_SCAN.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -356,6 +358,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local showSpecInfo = false
 	local showPriceOverride = false
 
+	-- always on modules
+	local showProfitScan = true
+
 	if recipeData and priceData then
 		--CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
 		-- TODO: on demand
@@ -419,8 +424,14 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
 	showTopGear = showTopGear and CraftSimOptions.modulesTopGear
 	showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
-	showSpecInfo = showSpecInfo and CraftSimOptions.modulesSpecInfo and recipeData and recipeData.specNodeData
+	showSpecInfo = recipeData and showSpecInfo and CraftSimOptions.modulesSpecInfo and recipeData.specNodeData
 	showPriceOverride = showPriceOverride and CraftSimOptions.modulesPriceOverride
+	showProfitScan = showProfitScan and CraftSimOptions.modulesProfitScan
+	
+	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PROFIT_SCAN), showProfitScan)
+	if recipeData and showProfitScan then
+		-- TODO init, or dont?
+	end
 
 	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE), showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER), showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)

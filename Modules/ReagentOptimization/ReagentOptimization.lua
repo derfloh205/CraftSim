@@ -109,6 +109,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
     --               > 0 means the indicated skill bonus is required to reach this BP
     -- At least one entry will be >= 0
 
+    -- should be 0 for scan
     local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData, exportMode) or 0
     local skillWithoutReagentIncrease = recipeData.stats.skillNoReagents
     
@@ -128,7 +129,17 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
         
         local inspirationBonusSkill = 0
         if recipeData.stats.inspiration then
-            inspirationBonusSkill = (CraftSimOptions.materialSuggestionInspirationThreshold and recipeData.stats.inspiration.bonusskill) or 0
+            if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
+                local scanMode = CraftSim.PROFIT_SCAN:GetScanMode()
+                if scanMode == CraftSim.PROFIT_SCAN.SCAN_MODES.OPTIMIZE_G then
+                    inspirationBonusSkill = 0
+                elseif scanMode == CraftSim.PROFIT_SCAN.SCAN_MODES.OPTIMIZE_I then
+                    inspirationBonusSkill = recipeData.stats.inspiration.bonusskill
+                end
+            else
+                inspirationBonusSkill = (CraftSimOptions.materialSuggestionInspirationThreshold and recipeData.stats.inspiration.bonusskill) or 0
+            end
+
             skillBreakpoint = skillBreakpoint - inspirationBonusSkill -- make it easier to reach 
         end
         print("skill BP: " .. skillBreakpoint)
@@ -176,20 +187,24 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
     
     local hasItems = true
     local bestAllocation = results[1]--results[#results]
-    local isSameAllocation = CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
-
-    if bestAllocation and not isSameAllocation then
-        for _, matAllocation in pairs(bestAllocation.allocations) do
-            for qualityIndex, allocation in pairs(matAllocation.allocations) do
-                local hasItemCount = GetItemCount(allocation.itemID, true, true, true)
-                if hasItemCount < allocation.allocations then
-                    hasItems = false
+    local isSameAllocation = false
+    if exportMode ~= CraftSim.CONST.EXPORT_MODE.SCAN then
+        isSameAllocation = CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAllocation)
+        if bestAllocation and not isSameAllocation then
+            for _, matAllocation in pairs(bestAllocation.allocations) do
+                for qualityIndex, allocation in pairs(matAllocation.allocations) do
+                    local hasItemCount = GetItemCount(allocation.itemID, true, true, true)
+                    if hasItemCount < allocation.allocations then
+                        hasItems = false
+                    end
                 end
             end
         end
+        
+        CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation, exportMode)
     end
-    
-    CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, recipeType, priceData, bestAllocation, hasItems, isSameAllocation, exportMode)
+
+    return bestAllocation
 end
 
 function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
@@ -489,8 +504,6 @@ function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData, e
 end
 
 function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData, exportMode)
-    local recipeDataNoReagents = CopyTable(recipeData)
-
     -- get operationinfo of recipe with no reagents
     local baseOperationInfo = nil
     local orderID = nil
@@ -503,23 +516,14 @@ function CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(
 
     -- create CraftingReagentInfoTbl from current reagents
     -- https://wowpedia.fandom.com/wiki/API_C_TradeSkillUI.GetCraftingOperationInfo
-    local craftingReagentInfoTbl = {}
-    for index, reagent in pairs(recipeData.reagents) do
-        if reagent.differentQualities then
-            for _, itemInfo in pairs(reagent.itemsInfo) do
-                local infoEntry = {
-                    itemID = itemInfo.itemID,
-                    quantity = itemInfo.allocations,
-                    dataSlotIndex = 2,
-                }
-                table.insert(craftingReagentInfoTbl, infoEntry)
-            end
-        end
-    end
+    local craftingReagentInfoTbl = CraftSim.DATAEXPORT:ConvertRecipeDataRequiredReagentsToCraftingReagentInfoTbl(recipeData.reagents)
     local currentOperationInfo = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         currentOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeData.recipeID, craftingReagentInfoTbl, orderID)
     else
+        --print("get crafting operation info:")
+        --print(tostring(recipeData.recipeID) .. ", " .. tostring(craftingReagentInfoTbl) .. ", " .. tostring(recipeData.recraftAllocationGUID))
+        --print(craftingReagentInfoTbl, true)
         currentOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, recipeData.recraftAllocationGUID)
     end
     print("Base Operation Info")

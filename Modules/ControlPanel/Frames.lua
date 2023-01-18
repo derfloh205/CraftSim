@@ -14,7 +14,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         0, 
         -8, 
         1120, 
-        80,
+        100,
         CraftSim.CONST.FRAMES.CONTROL_PANEL)
 
     
@@ -38,10 +38,10 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     frame:Hide()
 
     local cbBaseOffsetX = 20
-    local cbBaseOffsetY = -20
+    local cbBaseOffsetY = -35
 
     frame.content.newsButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.newsButton:SetPoint("TOPRIGHT", frame.content, "TOPRIGHT", -50, -15)	
+	frame.content.newsButton:SetPoint("TOPRIGHT", frame.content, "TOPRIGHT", -50, cbBaseOffsetY + 5)	
 	frame.content.newsButton:SetText("News")
 	frame.content.newsButton:SetSize(frame.content.newsButton:GetTextWidth()+15, 25)
     frame.content.newsButton:SetScript("OnClick", function(self) 
@@ -90,6 +90,11 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     frame.content.modulesPriceOverride = createModuleCheckbox("Price Overrides", 
     "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically.",
     "TOP", frame.content.modulesSpecInfo, "TOP", 0, -20, "modulesPriceOverride")
+
+    -- 4. Row
+    frame.content.modulesProfitScan = createModuleCheckbox("Profit Scan",
+    "Module that scans your recipe list for profits",
+    "LEFT", frame.content.modulesTopGear, "RIGHT", 250, 0, "modulesProfitScan")
 
 
 end

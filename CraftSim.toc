@@ -25,6 +25,9 @@ Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
 Pricing/PriceData.lua
 
+Modules/ProfitScan/ProfitScan.lua
+Modules/ProfitScan/Frames.lua
+
 Modules/PriceOverride/PriceOverride.lua
 Modules/PriceOverride/Frames.lua
 

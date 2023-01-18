@@ -238,7 +238,7 @@ function CraftSim.DATAEXPORT:GetStatsFromOptionalReagents(recipeData)
 	return stats
 end
 
-function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
+function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData, exportMode)
 	--print("player stats v2")
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 	local professionGearStats = CraftSim.DATAEXPORT:GetCurrentProfessionItemStats(recipeData.professionID)
@@ -259,7 +259,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	local itemSkill = professionGearStats.skill
 	local specNodeSkill = specNodeStats.skill
 	local optionalReagentsSkill = optionalReagentsStats.skill
-	local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData)
+	local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData, exportMode)
 
 	recipeData.stats.skill = baseSkill + itemSkill + specNodeSkill + optionalReagentsSkill + reagentSkillContribution
 	recipeData.stats.skillNoReagents = baseSkill + itemSkill + specNodeSkill + optionalReagentsSkill
@@ -352,12 +352,12 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
 	print(recipeData.stats.craftingspeed or {})
 end
 
-function CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
+function CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo, exportMode)
 	if not CraftSim.UTIL:IsSpecImplemented(recipeData.professionID) then
 		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeData, operationInfo)
 	else
 		print("Spec is implemented")
-		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData)
+		CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData, exportMode)
 	end
 end
 
@@ -449,13 +449,19 @@ function CraftSim.DATAEXPORT:HandleQualityItemIDsOrderException(recipeData)
 	return exceptionOrder
 end
 
-function CraftSim.DATAEXPORT:GetCurrentRecipeOperationInfoByExportMode(exportMode, recipeID)
+function CraftSim.DATAEXPORT:GetCurrentRecipeOperationInfoByExportMode(exportMode, recipeID, scanReagents)
 	if exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
 		return ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeOperationInfo()
 	elseif exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
 		return ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:GetRecipeOperationInfo()
 	elseif exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
-		return C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}) -- TODO: with what reagent info?
+		if scanReagents then
+			local craftingReagentInfoTbl = CraftSim.DATAEXPORT:ConvertRecipeDataRequiredReagentsToCraftingReagentInfoTbl(scanReagents)
+
+			return C_TradeSkillUI.GetCraftingOperationInfo(recipeID, craftingReagentInfoTbl) 
+		else
+			return C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
+		end
 	end
 end
 
@@ -479,13 +485,12 @@ function CraftSim.DATAEXPORT:GetSchematicReagentSlotsByExportMode(exportMode)
 	end
 end
 
-function CraftSim.DATAEXPORT:GetRequiredReagentItemsInfoByExportMode(reagentData, exportMode, currentTransaction, slotIndex)
+function CraftSim.DATAEXPORT:GetRequiredReagentItemsInfoByExportMode(currentSlot, exportMode, currentTransaction, slotIndex)
 	if exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER or exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
 		local slotAllocations = currentTransaction:GetAllocations(slotIndex)
-		local currentSelected = slotAllocations:Accumulate()
 		local itemsInfo = {}
 		
-		for i, reagent in pairs(reagentData) do
+		for i, reagent in pairs(currentSlot.reagents) do
 			local reagentAllocation = slotAllocations:FindAllocationByReagent(reagent)
 			local allocations = 0
 			if reagentAllocation ~= nil then
@@ -503,15 +508,18 @@ function CraftSim.DATAEXPORT:GetRequiredReagentItemsInfoByExportMode(reagentData
 		-- depends on the type of scan
 		-- check scan module for that
 
-		-- for testing: everything 0
-		-- just everything 0
+		-- set all 0 , will be later set by scan mode
 		local itemsInfo = {}
-		for i, reagent in pairs(reagentData) do
+		for i, reagent in pairs(currentSlot.reagents) do
+			local allocations = 0
+			
 			local itemInfo = {
 				itemID = reagent.itemID,
-				allocations = 0
+				allocations = allocations
 			}
 			table.insert(itemsInfo, itemInfo)
+			local reagentName = CraftSim.DATAEXPORT:GetReagentNameFromReagentData(reagent.itemID)
+			--print("Allocations for Scan: " .. reagentName .. "Q" .. i .. " -> " .. tostring(allocations) .. "/" .. tostring(currentSlot.quantityRequired))
 		end
 		return itemsInfo		
 	end
@@ -547,25 +555,43 @@ function CraftSim.DATAEXPORT:AddOptionalReagentByExportMode(currentSlot, exportM
 	end
 end
 
-function CraftSim.DATAEXPORT:GetCraftingReagentInfoTblByExportMode(exportMode, currentTransaction)
+function CraftSim.DATAEXPORT:GetCraftingReagentInfoTblByExportMode(exportMode, currentTransaction, scanReagents)
 	if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER or exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
 		return currentTransaction:CreateCraftingReagentInfoTbl()
 	elseif exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
-		return {} -- TODO
+		if scanReagents then
+			return CraftSim.DATAEXPORT:ConvertRecipeDataRequiredReagentsToCraftingReagentInfoTbl(scanReagents)
+		else
+			return {}
+		end
 	end
 end
 
-function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
-	local recipeData = {}
+function CraftSim.DATAEXPORT:ConvertRecipeDataRequiredReagentsToCraftingReagentInfoTbl(reagents)
+	local craftingReagentInfoTbl = {}
+    for _, reagent in pairs(reagents) do
+        if reagent.differentQualities then
+            for _, itemInfo in pairs(reagent.itemsInfo) do
+                local infoEntry = {
+                    itemID = itemInfo.itemID,
+                    quantity = itemInfo.allocations,
+                    dataSlotIndex = 2,
+                }
+                table.insert(craftingReagentInfoTbl, infoEntry)
+            end
+        end
+    end
 
-	-- test
-	-- also override recipeID?	
+	return craftingReagentInfoTbl
+end
+
+function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, scanReagents)
+	local recipeData = {}
 
 	CraftSim.UTIL:StartProfiling("DATAEXPORT")
 
 	--local professionInfo = ProfessionsFrame.professionInfo
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-	local expansionName = professionInfo.expansionName
 
 	print("RecipeData Export:", false, true)
 	recipeData.profession = professionInfo.parentProfessionName
@@ -589,7 +615,7 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 	recipeData.recipeType = recipeType
 	
 	
-	local operationInfo = CraftSim.DATAEXPORT:GetCurrentRecipeOperationInfoByExportMode(exportMode, recipeData.recipeID)
+	local operationInfo = CraftSim.DATAEXPORT:GetCurrentRecipeOperationInfoByExportMode(exportMode, recipeData.recipeID, scanReagents)
 	
     if operationInfo == nil or recipeType == CraftSim.CONST.RECIPE_TYPES.GATHERING then
 		print("OperationInfo nil")
@@ -600,6 +626,8 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 	if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER or exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
 		recipeData.isRecraft = currentTransaction:GetRecraftAllocation() ~= nil -- I dont know why but isRecraft is false on recrafts ?
 		recipeData.recraftAllocationGUID = currentTransaction:GetRecraftAllocation()
+	else
+		recipeData.isRecraft = false
 	end
 	print("isRecraft: " .. tostring(recipeData.isRecraft))
 
@@ -674,38 +702,44 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 	local currentOptionalReagent = 1
 	local currentRequiredReagent = 1
 
-	for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
-		local reagents = currentSlot.reagents
-		local reagentType = currentSlot.reagentType
-		local reagentName = CraftSim.DATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
-		--print("SlotIndex: " .. tostring(slotIndex) .. " firstPossibleItem -> " .. tostring(reagentName))
-		-- for now only consider the required reagents
-		if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
-			print(slotIndex .. " -> "..currentSlot.quantityRequired.." required #" .. currentRequiredReagent .. ": " .. tostring(reagentName) .. " Type: " .. tostring(reagentType))
-			local hasMoreThanOneQuality = reagents[2] ~= nil
-
-			if hasMoreThanOneQuality then
-				hasReagentsWithQuality = true
-				recipeData.numReagentsWithQuality = recipeData.numReagentsWithQuality + 1
+	if not scanReagents then
+		for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
+			local reagents = currentSlot.reagents
+			local reagentType = currentSlot.reagentType
+			local reagentName = CraftSim.DATAEXPORT:GetReagentNameFromReagentData(reagents[1].itemID)
+			--print("SlotIndex: " .. tostring(slotIndex) .. " firstPossibleItem -> " .. tostring(reagentName))
+			-- for now only consider the required reagents
+			if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
+				print(slotIndex .. " -> "..currentSlot.quantityRequired.." required #" .. currentRequiredReagent .. ": " .. tostring(reagentName) .. " Type: " .. tostring(reagentType))
+				local hasMoreThanOneQuality = reagents[2] ~= nil
+	
+				if hasMoreThanOneQuality then
+					hasReagentsWithQuality = true
+					recipeData.numReagentsWithQuality = recipeData.numReagentsWithQuality + 1
+				end
+				local reagentEntry = {
+					name = reagentName,
+					requiredQuantity = currentSlot.quantityRequired,
+					differentQualities = hasMoreThanOneQuality,
+					reagentType = currentSlot.reagentType
+				}
+				
+				reagentEntry.itemsInfo = CraftSim.DATAEXPORT:GetRequiredReagentItemsInfoByExportMode(currentSlot, exportMode, currentTransaction, slotIndex)
+				
+				table.insert(recipeData.reagents, reagentEntry)
+	
+				currentRequiredReagent = currentRequiredReagent + 1
+			elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
+				currentOptionalReagent = CraftSim.DATAEXPORT:AddOptionalReagentByExportMode(currentSlot, exportMode, recipeData.optionalReagents, reagentType, schematicReagentSlots, currentOptionalReagent)
+			elseif reagentType == CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT then
+				currentFinishingReagent = CraftSim.DATAEXPORT:AddOptionalReagentByExportMode(currentSlot, exportMode, recipeData.finishingReagents, reagentType, schematicReagentSlots, currentFinishingReagent)
 			end
-			local reagentEntry = {
-				name = reagentName,
-				requiredQuantity = currentSlot.quantityRequired,
-				differentQualities = hasMoreThanOneQuality,
-				reagentType = currentSlot.reagentType
-			}
-			
-			reagentEntry.itemsInfo = CraftSim.DATAEXPORT:GetRequiredReagentItemsInfoByExportMode(reagents, exportMode, currentTransaction, slotIndex)
-			
-			table.insert(recipeData.reagents, reagentEntry)
-
-			currentRequiredReagent = currentRequiredReagent + 1
-		elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
-			currentOptionalReagent = CraftSim.DATAEXPORT:AddOptionalReagentByExportMode(currentSlot, exportMode, recipeData.optionalReagents, reagentType, schematicReagentSlots, currentOptionalReagent)
-		elseif reagentType == CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT then
-			currentFinishingReagent = CraftSim.DATAEXPORT:AddOptionalReagentByExportMode(currentSlot, exportMode, recipeData.finishingReagents, reagentType, schematicReagentSlots, currentFinishingReagent)
 		end
+	else
+		recipeData.reagents = scanReagents
+		-- optionals and such?
 	end
+
 	recipeData.hasReagentsWithQuality = hasReagentsWithQuality
 	print("hasReagentsWithQuality: " .. tostring(recipeData.hasReagentsWithQuality))
 	recipeData.maxQuality = recipeInfo.maxQuality
@@ -737,7 +771,7 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 	if recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
 		-- New Approach: Use the API with a quality override to fetch the result data, 
 		-- to combat blizzards wierd order issues in the qualityItemIDs table
-		local craftingReagentInfoTbl = CraftSim.DATAEXPORT:GetCraftingReagentInfoTblByExportMode(exportMode, currentTransaction)
+		local craftingReagentInfoTbl = CraftSim.DATAEXPORT:GetCraftingReagentInfoTblByExportMode(exportMode, currentTransaction, scanReagents)
 		-- local craftingReagentInfoTbl = currentTransaction:CreateCraftingReagentInfoTbl()
 		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 		recipeData.result.itemIDs = CraftSim.DATAEXPORT:GetDifferentQualityIDsByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, allocationItemGUID)
@@ -753,7 +787,7 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR then
 		recipeData.result.itemID = schematicInfo.outputItemID
 		
-		local craftingReagentInfoTbl = CraftSim.DATAEXPORT:GetCraftingReagentInfoTblByExportMode(exportMode, currentTransaction)
+		local craftingReagentInfoTbl = CraftSim.DATAEXPORT:GetCraftingReagentInfoTblByExportMode(exportMode, currentTransaction, scanReagents)
 		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 		recipeData.result.hyperlink = outputItemData.hyperlink
 		recipeData.result.itemQualityLinks = CraftSim.DATAEXPORT:GetDifferentQualitiesByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, allocationItemGUID)
@@ -791,7 +825,7 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 	end
 
 
-	CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo)
+	CraftSim.DATAEXPORT:handlePlayerProfessionStats(recipeData, operationInfo, exportMode)
 	recipeData.maxReagentSkillIncreaseFactor = CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData, exportMode)
 	print("maxReagentSkillIncreaseFactor: " .. tostring(recipeData.maxReagentSkillIncreaseFactor))
 
