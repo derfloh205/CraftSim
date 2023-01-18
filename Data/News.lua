@@ -22,6 +22,16 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("3.3") ..
+        P .. "Added " .. c("Leatherworking", bb) .. " experimental specialization data" ..
+        a.. "(Thank you " .. c("https://github.com/RosskoCholakov", bb) .. " for your effort!)" ..
+        a .. c("This is not sufficiently tested yet", r) .. 
+        a .. "If you want to help testing it, toggle it on and verify" .. 
+        a .. "if the crafting data/details blizzard shows align with" .. 
+        a .. "CraftSim's shown data/results in Simulation Mode" ..
+        a .. "Single profession spec nodes can be tested by ID" ..
+        a .. "or by rule name (See Data/SpecNodeData/Leatherworking.lua)" ..
+        a .. "in Debug Mode (E.g: CURING_AND_TANNING_1)" ..
         newP("3.2") ..
         p .. "Added missing data for optional reagent " .. c("Armor Spikes", bb) .. 
         p .. "Reimplemented the result item fetch for non gear recipes" ..
@@ -62,44 +72,5 @@ function CraftSim.NEWS:GET_NEWS()
         a .. "it gives easy access to all different modules" ..
         s .. c("Removed", r) .. " the price override feature temporary" .. 
         a .. "This will be reimplemented as a seperate module" .. 
-        a .. "in a future update" .. 
-        newP("1.8.3") ..
-        s .. "Fixed " .. c("Material Suggestion", bb) .. " sometimes suggesting" .. 
-        a .. "too low quality mats." ..
-        a .. "Thanks to " .. c("https://github.com/AkiKonani", bb) .. 
-        a .. "for suggesting a small but effective solution!" .. 
-        newP("1.8.2") ..
-        p .. "Fixed " .. c("Inspiration Bonus Skill", bb) .. " sometimes being too high" .. 
-        a .. "due to rounding differences" .. 
-        newP("1.8.1") ..
-        P .. c("Jewelcrafting", bb) .. " experimental specialization data added" .. 
-        a .. "This makes knowledge point distribution simulation possible!" .. 
-        a .. "If you want to try it out, activate " .. 
-        a .. c("'Jewelcrafting Experimental Data'", bb) .. 
-        a .. "in the CraftSim Options: " .. c("/craftsim", g) ..
-        newP("1.8") ..
-        P .. c("Knowledge Distribution Simulation", g) .. " added for " .. 
-        a .. c("Blacksmithing", bb) .. " and " .. c("Alchemy", bb) .. " (Experimental Data only)" .. 
-        s .. c("Top Gear Simulation", g) .. " is now on demand " ..
-        a .. "due to performance reasons" ..
-        p .. "Added profiling checkpoints to view in " .. c("Debug Mode", bb) .. 
-        p .. "Cache utilization added for some data to increase performance" .. 
-        newP("1.7.8") .. 
-        P .. "koKR (Korean) Localization added" .. 
-        a .. "(Thank you " .. c("github.com/comiluv", bb) .. ")" ..
-        P .. "zhTW (Taiwan) Localization added" .. 
-        a .. "(Thank you " .. c("github.com/Tmv3v", bb) .. ")" ..
-        newP("1.7.7") ..
-        P .. "New News Format!" ..
-        s .. "New " .. c("Export Data", g) .. " command: " .. c("/craftsim export", g) .. 
-        a .."Lets you export the information about a recipe in CSV format!" .. 
-        a .. c("More Info will follow", bb) ..
-        p .. "Fixed " .. c("Stable Fluid Draconium", bb) .. " granting" ..
-        a .. "15% Inspiration on all ranks" ..
-        p .. "Fixed an error when other addons are " ..
-        a .. "hiding the ProfessionsFrame" ..
-        p .. c("Max Reagent Skill Increase", bb) .. " is now always calculated based " ..
-        a .. "on API results." .. 
-        a .. "This is because some non recraft recipes are not " ..
-        a .. "using the standard 25% Recipe Difficulty"
+        a .. "in a future update"
 end

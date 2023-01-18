@@ -3,7 +3,7 @@ addonName, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 19 -- last highest: 18
+CraftSim.CONST.currentInfoVersionID = 20 -- last highest: 19
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -12,6 +12,8 @@ CraftSim.CONST.infoBoxSizeY = 400
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
 -- currently this is just an approximation
 CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
+
+CraftSim.CONST.DISCORD_INVITE_URL = "https://discord.gg/7vqKMgezXR"
 
 CraftSim.CONST.EXPORT_MODE = {
     NON_WORK_ORDER = 0,

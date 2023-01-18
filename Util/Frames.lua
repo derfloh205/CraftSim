@@ -665,8 +665,17 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     UIParent, 
     "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO, true, true)
 
+    frame.content.discordBox = CraftSim.FRAME:CreateInput(
+        nil, frame.content, frame.content, "TOP", "TOP", 30, -20, 200, 30, CraftSim.CONST.DISCORD_INVITE_URL, function() 
+            -- do not let the player remove the discord link.. lol
+            frame.content.discordBox:SetText(CraftSim.CONST.DISCORD_INVITE_URL)
+        end)
+    frame.content.discordBox:SetScale(0.75)
+    frame.content.discordBoxLabel = CraftSim.FRAME:CreateText(
+        "Join the Discord!", frame.content, frame.content.discordBox, "BOTTOM", "TOP", 0, 0, 0.75)
+
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 20, -30)
+    frame.content.infoText:SetPoint("TOP", frame.content.discordBoxLabel, "TOP", 20, -35)
     frame.content.infoText:SetText("No Info")
     frame.content.infoText:SetJustifyH("LEFT")
 
