@@ -26,6 +26,15 @@ function CraftSim.DATAEXPORT:GetDifferentQualitiesByCraftingReagentTbl(recipeID,
 	 return linksByQuality
 end
 
+function CraftSim.DATAEXPORT:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID)
+	local qualityIDs = {}
+	for i = 1, 3, 1 do
+		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeID, craftingReagentInfoTbl, allocationItemGUID, i)
+		table.insert(qualityIDs, outputItemData.itemID)
+	end
+	 return qualityIDs
+end
+
 function CraftSim.DATAEXPORT:AddSupportedRecipeStats(recipeData, operationInfo)
 	local bonusStats = operationInfo.bonusStats
 	recipeData.stats = {}
@@ -655,18 +664,24 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode)
 
 	if recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
 		-- recipe is anything that results in 1-5 different itemids with quality
-		local qualityItemIDs = CopyTable(recipeInfo.qualityItemIDs)
-		table.sort(qualityItemIDs) -- always order to get the qualities in the correct order
-		-- if qualityItemIDs[1] > qualityItemIDs[3] or qualityItemIDs[2] then
-		-- 	print("itemIDs for qualities not in expected order, reordering..: " .. outputItemData.hyperlink)
+		-- local qualityItemIDs = CopyTable(recipeInfo.qualityItemIDs)
+		-- table.sort(qualityItemIDs) -- always order to get the qualities in the correct order
+		-- -- if qualityItemIDs[1] > qualityItemIDs[3] or qualityItemIDs[2] then
+		-- -- 	print("itemIDs for qualities not in expected order, reordering..: " .. outputItemData.hyperlink)
 			
-		-- end
-		recipeData.result.itemIDs = {
-			qualityItemIDs[1],
-			qualityItemIDs[2],
-			qualityItemIDs[3],
-			qualityItemIDs[4],
-			qualityItemIDs[5]}
+		-- -- end
+		-- recipeData.result.itemIDs = {
+		-- 	qualityItemIDs[1],
+		-- 	qualityItemIDs[2],
+		-- 	qualityItemIDs[3],
+		-- 	qualityItemIDs[4],
+		-- 	qualityItemIDs[5]}
+
+		-- New Approach: Use the API with a quality override to fetch the result data, 
+		-- to combat blizzards wierd order issues in the qualityItemIDs table
+		local craftingReagentInfoTbl = currentTransaction:CreateCraftingReagentInfoTbl()
+		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, craftingReagentInfoTbl, allocationItemGUID)
+		recipeData.result.itemIDs = CraftSim.DATAEXPORT:GetDifferentQualityIDsByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, allocationItemGUID)
 		
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.ENCHANT then
 		if not CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID] then
