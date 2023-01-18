@@ -675,7 +675,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         "Join the Discord!", frame.content, frame.content.discordBox, "BOTTOM", "TOP", 0, 0, 0.75)
 
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.infoText:SetPoint("TOP", frame.content.discordBoxLabel, "TOP", 20, -35)
+    frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 10, -45)
     frame.content.infoText:SetText("No Info")
     frame.content.infoText:SetJustifyH("LEFT")
 

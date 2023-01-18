@@ -23,19 +23,25 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         newP("3.3") ..
-        P .. "Added " .. c("Leatherworking", bb) .. " experimental specialization data" ..
-        a.. "(Thank you " .. c("https://github.com/RosskoCholakov", bb) .. " for your effort!)" ..
+        P .. "Added " .. c("Leatherworking", bb) .. 
+        a .. "to experimental specialization data" ..
+        a .. "Thank you " .. c("https://github.com/RosskoCholakov", bb) .. 
+        a .. "for your effort!" ..
         a .. c("This is not sufficiently tested yet", r) .. 
-        a .. "If you want to help testing it, toggle it on and verify" .. 
-        a .. "if the crafting data/details blizzard shows align with" .. 
-        a .. "CraftSim's shown data/results in Simulation Mode" ..
+        a .. "If you want to help testing it, toggle it on" .. 
+        a .. "and verify if the crafting data/details" .. 
+        a .. "blizzard shows align with CraftSim's shown" .. 
+        a .. "data/results in Simulation Mode" ..
         a .. "Single profession spec nodes can be tested by ID" ..
-        a .. "or by rule name (See Data/SpecNodeData/Leatherworking.lua)" ..
+        a .. "or by rule name" ..
+        a .. "(See Data/SpecNodeData/Leatherworking.lua)" ..
         a .. "in Debug Mode (E.g: CURING_AND_TANNING_1)" ..
+        s .. "Added discord invite to the patch notes!" .. 
+        a .. c("Feel free to join :D", g) ..
         newP("3.2") ..
         p .. "Added missing data for optional reagent " .. c("Armor Spikes", bb) .. 
-        p .. "Reimplemented the result item fetch for non gear recipes" ..
-        a .. "to use the ingame api" ..
+        p .. "Reimplemented the result item fetch for" .. 
+        a .. "non gear recipes to use the ingame api" ..
         a .. "This now prevents any wrong sorting of qualities for" ..
         a .. "cost overview and profit calculation" ..
         newP("3.0/3.1") ..
@@ -54,13 +60,14 @@ function CraftSim.NEWS:GET_NEWS()
         a .. c("((1+2.5y) / 2)*bonus", bb) .. 
         a .. "which leads to slightly less but more" .. 
         a .. "accurate value from multicraft" ..
-        p .. "Fixed an error during prospecting and other salvage recipes" .. 
+        p .. "Fixed an error during prospecting and" .. 
+        a .. "other salvage recipes" .. 
         p .. "Fixed a bug causing the Simulate Top Gear button" ..
         a .. "to not update" .. 
         p .. "Fixed racial skill boni being applied two times" .. 
         a .. "when using experimental spec data" .. 
-        p .. "Fixed Chemical Synthesis not being considered in Alchemy" .. 
-        a .. "experimental spec data" ..
+        p .. "Fixed Chemical Synthesis not being considered in" .. 
+        a .. "Alchemy experimental spec data" ..
         newP("2.0") ..
         P .. "Implemented most modules for " .. c("Work Orders", g) ..
         a .. "Simulation Mode for work orders will follow" .. 
