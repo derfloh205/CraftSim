@@ -25,7 +25,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesCostOverview = true,
 	modulesSpecInfo = true,
 	modulesPriceOverride = false,
-	modulesProfitScan = false,
+	modulesRecipeScan = false,
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
 	transparencyTopGear = 1,
@@ -37,6 +37,11 @@ CraftSimOptions = CraftSimOptions or {
 	alchemyEnabled = false,
 	jewelcraftingEnabled = false,
 	leatherworkingEnabled = false,
+
+	-- recipeScan
+	recipeScanIncludeSoulbound = false,
+	recipeScanIncludeGear = false,
+	recipeScanIncludeNotLearned = false,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -195,7 +200,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.SIMULATION_MODE.FRAMES:Init()
 		CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
 		CraftSim.PRICE_OVERRIDE.FRAMES:Init()
-		CraftSim.PROFIT_SCAN.FRAMES:Init()
+		CraftSim.RECIPE_SCAN.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -359,7 +364,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local showPriceOverride = false
 
 	-- always on modules
-	local showProfitScan = true
+	local showRecipeScan = true
 
 	if recipeData and priceData then
 		--CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
@@ -426,10 +431,10 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
 	showSpecInfo = recipeData and showSpecInfo and CraftSimOptions.modulesSpecInfo and recipeData.specNodeData
 	showPriceOverride = showPriceOverride and CraftSimOptions.modulesPriceOverride
-	showProfitScan = showProfitScan and CraftSimOptions.modulesProfitScan
+	showRecipeScan = showRecipeScan and CraftSimOptions.modulesRecipeScan
 	
-	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PROFIT_SCAN), showProfitScan)
-	if recipeData and showProfitScan then
+	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN), showRecipeScan)
+	if recipeData and showRecipeScan then
 		-- TODO init, or dont?
 	end
 

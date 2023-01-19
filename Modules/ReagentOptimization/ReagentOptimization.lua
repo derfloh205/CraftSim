@@ -1,4 +1,4 @@
-addonName, CraftSim = ...
+_, CraftSim = ...
 
 CraftSim.REAGENT_OPTIMIZATION = {}
 
@@ -130,10 +130,10 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
         local inspirationBonusSkill = 0
         if recipeData.stats.inspiration then
             if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
-                local scanMode = CraftSim.PROFIT_SCAN:GetScanMode()
-                if scanMode == CraftSim.PROFIT_SCAN.SCAN_MODES.OPTIMIZE_G then
+                local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
+                if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G then
                     inspirationBonusSkill = 0
-                elseif scanMode == CraftSim.PROFIT_SCAN.SCAN_MODES.OPTIMIZE_I then
+                elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I then
                     inspirationBonusSkill = recipeData.stats.inspiration.bonusskill
                 end
             else

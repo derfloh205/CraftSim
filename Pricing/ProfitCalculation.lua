@@ -1,4 +1,4 @@
-local addonName, CraftSim = ...
+_, CraftSim = ...
 
 CraftSim.CALC = {}
 
@@ -14,7 +14,6 @@ function CraftSim.CALC:handleInspiration(recipeData, priceData, crafts, craftedI
 
     if recipeData.expectedQuality ~= recipeData.maxQuality and recipeData.stats.inspiration ~= nil then
         local qualityThresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty)
-        local qualityUpgradeThreshold = qualityThresholds[recipeData.expectedQuality]
         local skillWithInspiration = recipeData.stats.skill + recipeData.stats.inspiration.bonusskill
         inspirationQuality = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skillWithInspiration)
         inspirationCanUpgrade = recipeData.expectedQuality < inspirationQuality

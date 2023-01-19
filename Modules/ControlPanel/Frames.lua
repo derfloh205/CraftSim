@@ -92,9 +92,9 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "TOP", frame.content.modulesSpecInfo, "TOP", 0, -20, "modulesPriceOverride")
 
     -- 4. Row
-    frame.content.modulesProfitScan = createModuleCheckbox("Profit Scan",
-    "Module that scans your recipe list for profits",
-    "LEFT", frame.content.modulesTopGear, "RIGHT", 250, 0, "modulesProfitScan")
+    frame.content.modulesRecipeScan = createModuleCheckbox("Recipe Scan",
+    "Module that scans your recipe list based on various options",
+    "LEFT", frame.content.modulesTopGear, "RIGHT", 250, 0, "modulesRecipeScan")
 
 
 end

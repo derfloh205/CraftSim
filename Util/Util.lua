@@ -200,6 +200,17 @@ function CraftSim.UTIL:PrintTable(t, debugID, recursive)
     end
 end
 
+function CraftSim.UTIL:Count(t, func)
+    local count = 0
+    for _, v in pairs(t) do
+        if func(v) then
+            count = count + 1
+        end
+    end
+
+    return count
+end
+
 function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     local inputNumber = inputBox:GetNumber()
     local inputText = inputBox:GetText()
