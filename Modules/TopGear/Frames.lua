@@ -126,13 +126,13 @@ function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearCombo, isC
     for _, button in pairs(iconButtons) do
         button:Hide() -- only to consider cooking ...
     end
-    if isCooking then
+    if isCooking and not iconButtonsOverride then
         iconButtons = {iconButtons[2], iconButtons[3]}
     end
 
     for index, iconButton in pairs(iconButtons) do
         iconButton:Show()
-        if not professionGearCombo[index].isEmptySlot then
+        if professionGearCombo[index] and not professionGearCombo[index].isEmptySlot then
             local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(professionGearCombo[index].itemLink) 
             iconButton:SetNormalTexture(itemTexture)
             iconButton:SetScript("OnEnter", function(self) 

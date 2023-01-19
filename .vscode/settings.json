@@ -1,0 +1,32 @@
+{
+    "Lua.diagnostics.globals": [
+        "ProfessionsFrame",
+        "SlashCmdList",
+        "InterfaceOptions_AddCategory",
+        "InterfaceOptionsFrame_OpenToCategory",
+        "UIDropDownMenu_Initialize",
+        "UIDropDownMenu_SetWidth",
+        "UIDropDownMenu_SetText",
+        "ClassTalentFrame",
+        "UIDropDownMenu_AddButton",
+        "PlayerUtil",
+        "UIDropDownMenu_CreateInfo",
+        "DropDownList2Button4",
+        "DropDownList2Button12",
+        "DropDownList2Button5",
+        "DropDownList2Button1NormalText",
+        "BANK_CONTAINER",
+        "NUM_BAG_SLOTS",
+        "NUM_BANKBAGSLOTS",
+        "GameTooltip",
+        "ExportUtil",
+        "DEFAULT_CHAT_FRAME",
+        "EquipmentManager_UnpackLocation",
+        "ProfessionsRecipeSchematicFormMixin",
+        "StaticPopupDialogs",
+        "StaticPopup_Show",
+        "ChatFrame_OnHyperlinkShow",
+        "TooltipDataProcessor",
+        "Auctionator"
+    ]
+}

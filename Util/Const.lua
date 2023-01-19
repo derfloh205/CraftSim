@@ -54,6 +54,7 @@ CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
     1592, -- Inscription
     1591, -- Tailoring
     1595, -- Engineering
+    1585, -- Cooking
 }
 
 CraftSim.CONST.DEBUG_IDS = {
@@ -118,8 +119,6 @@ CraftSim.CONST.EMPTY_SLOT_LINK = "empty"
 CraftSim.CONST.EMPTY_SLOT_TEXTURE = "Interface\\containerframe\\bagsitemslot2x"
 
 CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS = {"TradeSkillMaster", "Auctionator", "RECrystallize"}
-
-CraftSim.CONST.AUCTIONATOR_CALLER_ID = "CraftSim"
 
 CraftSim.CONST.REAGENT_TYPE = {
 	OPTIONAL = 0,

@@ -19,7 +19,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
 
     frame:Hide()
 
-    frame.content.knowledgePointSimulationButton =  CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    frame.content.knowledgePointSimulationButton =  CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
 	frame.content.knowledgePointSimulationButton:SetPoint("TOP", frame.title, "TOP", 0, -20)	
 	frame.content.knowledgePointSimulationButton:SetText("Simulate Knowledge Distribution")
 	frame.content.knowledgePointSimulationButton:SetSize(frame.content.knowledgePointSimulationButton:GetTextWidth()+5, 20)

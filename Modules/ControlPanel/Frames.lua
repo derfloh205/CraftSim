@@ -63,6 +63,14 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     frame.content.optionsButton:SetScript("OnClick", function(self) 
         InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
     end)
+
+    frame.content.resetFramesButton = CreateFrame("Button", "CraftSimResetFramesButton", frame.content, "UIPanelButtonTemplate")
+	frame.content.resetFramesButton:SetPoint("RIGHT", frame.content.optionsButton, "LEFT", 0, 0)	
+	frame.content.resetFramesButton:SetText("Reset Frame Positions")
+	frame.content.resetFramesButton:SetSize(frame.content.resetFramesButton:GetTextWidth() + 20, 25)
+    frame.content.resetFramesButton:SetScript("OnClick", function(self) 
+        CraftSim.FRAME:ResetFrames()
+    end)
     
     -- 1. Row
     frame.content.modulesMaterials = createModuleCheckbox("Material Optimization", 

@@ -55,7 +55,7 @@ local function print(text, recursive) -- override
 end
 
 function CraftSim.MAIN:COMBAT_LOG_EVENT_UNFILTERED(event)
-	local _, subEvent, _, sourceGUID, sourceName = CombatLogGetCurrentEventInfo()
+	local _, subEvent, _, _, sourceName = CombatLogGetCurrentEventInfo()
 	if subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REMOVED" then
 		if ProfessionsFrame:IsVisible() then
 			local playerName = UnitName("player")
@@ -208,9 +208,20 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSim.MAIN:HookToProfessionsFrame()
 		CraftSim.FRAME:HandleAuctionatorOverlaps()
+		CraftSim.MAIN:HandleAuctionatorHooks()
 		CraftSim.ACCOUNTSYNC:Init()
 
 		CraftSim.CONTROL_PANEL.FRAMES:Init()
+	end
+end
+
+function CraftSim.MAIN:HandleAuctionatorHooks()
+---@diagnostic disable-next-line: undefined-global
+	if Auctionator then
+		Auctionator.API.v1.RegisterForDBUpdate(addonName, function() 
+			print("Auctionator DB Update")
+			CraftSim.MAIN:TriggerModulesErrorSafe(false)
+		end)
 	end
 end
 
@@ -304,9 +315,9 @@ end
 
 local debugTest = true
 function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
-	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-	local craftingPage = ProfessionsFrame.CraftingPage
-	local schematicForm = craftingPage.SchematicForm
+	if not ProfessionsFrame:IsVisible() then
+		return
+	end
 
 	local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
@@ -317,8 +328,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	controlPanel:Show()
 
-	local craftingPage = ProfessionsFrame.CraftingPage
-	local schematicForm = craftingPage.SchematicForm
     local recipeInfo =  C_TradeSkillUI.GetRecipeInfo(CraftSim.MAIN.currentRecipeID)
 
 	if not recipeInfo then
@@ -435,9 +444,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showRecipeScan = showRecipeScan and CraftSimOptions.modulesRecipeScan
 	
 	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN), showRecipeScan)
-	if recipeData and showRecipeScan then
-		-- TODO init, or dont?
-	end
 
 	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE), showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER), showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)

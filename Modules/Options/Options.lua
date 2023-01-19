@@ -270,14 +270,6 @@ function CraftSim.OPTIONS:Init()
     0, 
     -20)
 
-    local resetFramesButton = CreateFrame("Button", "CraftSimResetFramesButton", generalTab.content, "UIPanelButtonTemplate")
-	resetFramesButton:SetPoint("TOP", openLastRecipeCheckbox, "TOP", 90, -30)	
-	resetFramesButton:SetText("Reset Frame Positions")
-	resetFramesButton:SetSize(resetFramesButton:GetTextWidth() + 20, 25)
-    resetFramesButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:ResetFrames()
-    end)
-
     local detailedTooltips = CraftSim.FRAME:CreateCheckbox(" Detailed Last Crafting Information", 
     "Show the complete breakdown of your last used material combination in an item tooltip",
     "detailedCraftingInfoTooltip", 

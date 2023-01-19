@@ -17,14 +17,19 @@ function CraftSim.NEWS:GET_NEWS()
     local P = "\n" .. CraftSim.UTIL:GetQualityIconAsText(3, 15, 15) .. " "
     local a = "\n     "
     local function newP(v) return c("\n\n\n                                   --- Version " .. v .. " ---\n\n", l) end
-    -- local tunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(199345, true)
-    -- local frostedTunaData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(200074)
+
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         newP("4.0") ..
         P .. "New Module: " .. c("Recipe Scan", g) .. 
         a .. "Scan all your profession's recipes based on given options" .. 
+        a .. "Sorting and more planned for future updates!" ..
+        s .. c("Auctionator DB", bb) .. " Updates now trigger a module refresh" .. 
+        a .. "This means switching to another recipe and back" .. 
+        a .. "is no longer necessary to refresh the modules" ..
+        p .. "Moved the " .. c("Reset Frames", bb) .. " Button to the Control Panel" ..
+        p .. "Fixed the Simulate Knowledge Button not collapsing correctly" ..
         newP("3.3") ..
         P .. "Added " .. c("Leatherworking", bb) .. 
         a .. "to experimental specialization data" ..
