@@ -42,6 +42,7 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanIncludeSoulbound = false,
 	recipeScanIncludeGear = false,
 	recipeScanIncludeNotLearned = false,
+	recipeScanOptimizeProfessionTools = false,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}

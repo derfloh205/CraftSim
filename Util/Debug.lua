@@ -6,11 +6,17 @@ CraftSim_DEBUG.isMute = false
 
 function CraftSim_DEBUG:PrintRecipeIDs()
     local recipeInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeInfo()
-    local itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
+    local itemID = CraftSim.ENCHANT_RECIPE_DATA[recipeInfo.recipeID]
+    if recipeInfo.isEnchantingRecipe then
+         itemID = CraftSim.ENCHANT_RECIPE_DATA[recipeInfo.recipeID].q1
+    else
+        itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
+    end
     local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType,
     itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType,
     expacID, setID, isCraftingReagent
     = GetItemInfo(itemID) 
+    ---@diagnostic disable-next-line: missing-parameter
     local data = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
 
     print("--")
@@ -19,6 +25,8 @@ function CraftSim_DEBUG:PrintRecipeIDs()
     print("SubType: " .. itemSubType)
     print("Category: " .. data.name)
     print("ID: " .. recipeInfo.categoryID)
+    print("ParentCategoryID: " .. tostring(data.parentCategoryID))
+    print("ParentSectionID: " .. tostring(data.parentSectionID))
 end
 
 function CraftSim_DEBUG:CompareStatData()

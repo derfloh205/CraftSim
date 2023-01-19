@@ -20,7 +20,8 @@ function CraftSim.FRAME:GetFrame(frameID)
     return _G[frameName]
 end
 
-function CraftSim.FRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, sizeY, anchorA, anchorB)
+function CraftSim.FRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, sizeY, anchorA, anchorB, anchorParent)
+    anchorParent = anchorParent or parent
     if anchorA == nil then
         anchorA = "CENTER"
     end
@@ -28,7 +29,7 @@ function CraftSim.FRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, siz
         anchorB = "CENTER"
     end
     local newIcon = CreateFrame("Button", nil, parent, "GameMenuButtonTemplate")
-    newIcon:SetPoint(anchorA, parent, anchorB, offsetX, offsetY)
+    newIcon:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
 	newIcon:SetSize(sizeX, sizeY)
 	newIcon:SetNormalFontObject("GameFontNormalLarge")
 	newIcon:SetHighlightFontObject("GameFontHighlightLarge")

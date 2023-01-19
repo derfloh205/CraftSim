@@ -46,7 +46,14 @@ CraftSim.CONST.FRAMES = {
 }
 
 CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
-    1566, -- Blacksmithing
+    1566, -- Blacksmithing,
+    1582, -- Alchemy
+    1587, -- Leatherworking
+    1593, -- Jewelcrafting
+    1588, -- Enchanting
+    1592, -- Inscription
+    1591, -- Tailoring
+    1595, -- Engineering
 }
 
 CraftSim.CONST.DEBUG_IDS = {

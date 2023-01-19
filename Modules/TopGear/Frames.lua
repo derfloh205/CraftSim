@@ -109,20 +109,25 @@ function CraftSim.TOPGEAR.FRAMES:Init()
     createContent(frameWO)
 end
 
-function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearCombo, isCooking, exportMode)
+function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearCombo, isCooking, exportMode, iconButtonsOverride)
     local topGearFrame = nil
+    local iconButtons
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         print("update combo items work order")
         topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-    else
+        iconButtons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
+    elseif exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
         topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+        iconButtons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
     end
-    local iconButtons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
+
+    iconButtons = iconButtonsOverride or iconButtons
+
     for _, button in pairs(iconButtons) do
         button:Hide() -- only to consider cooking ...
     end
     if isCooking then
-        iconButtons = {topGearFrame.content.toolIcon, topGearFrame.content.gear2Icon}
+        iconButtons = {iconButtons[2], iconButtons[3]}
     end
 
     for index, iconButton in pairs(iconButtons) do
@@ -131,8 +136,12 @@ function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearCombo, isC
             local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(professionGearCombo[index].itemLink) 
             iconButton:SetNormalTexture(itemTexture)
             iconButton:SetScript("OnEnter", function(self) 
-                local itemName, ItemLink = GameTooltip:GetItem()
-                GameTooltip:SetOwner(topGearFrame.content, "ANCHOR_RIGHT");
+                local _, ItemLink = GameTooltip:GetItem()
+                if exportMode ~= CraftSim.CONST.EXPORT_MODE.SCAN then
+                    GameTooltip:SetOwner(topGearFrame.content, "ANCHOR_RIGHT");
+                else
+                    GameTooltip:SetOwner(iconButton, "ANCHOR_RIGHT");
+                end
                 if ItemLink ~= professionGearCombo[index].itemLink then
                     -- to not set it again and hide the tooltip..
                     GameTooltip:SetHyperlink(professionGearCombo[index].itemLink)
@@ -153,7 +162,9 @@ end
 
 function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(bestSimulation, topGearMode, isCooking, exportMode)
     local topGearFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+    if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
+        return
+    elseif exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
     else
         topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
@@ -229,7 +240,9 @@ end
 
 function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, isClear, exportMode)
     local topGearFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+    if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
+        return
+    elseif exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
     else
         topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)

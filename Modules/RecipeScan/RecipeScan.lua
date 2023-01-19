@@ -44,6 +44,9 @@ function CraftSim.RECIPE_SCAN:SetReagentAllocationByScanMode(recipeData, priceDa
             end 
         end
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G or scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I then
+        if not recipeData.hasQualityReagents then
+            return recipeData.reagents -- e.g: Primal Convergence
+        end
         local bestAllocation = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeData.recipeType, priceData, CraftSim.CONST.EXPORT_MODE.SCAN)
         if bestAllocation then
             -- set reagents by best allocation
@@ -92,6 +95,12 @@ function CraftSim.RECIPE_SCAN:UpdateScanPercent(currentProgress, maxProgress)
     end
 end
 
+function CraftSim.RECIPE_SCAN:EndScan()
+    print("scan finished")
+    collectgarbage("collect") -- By Option?
+    CraftSim.RECIPE_SCAN:ToggleScanButton(true)
+end
+
 function CraftSim.RECIPE_SCAN:StartScan()
     
     local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
@@ -110,9 +119,10 @@ function CraftSim.RECIPE_SCAN:StartScan()
         ---@diagnostic disable-next-line: missing-parameter
         local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
         
-        if tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID) and recipeInfo.itemLevel > 1 then
+        if tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID) and (recipeInfo.itemLevel > 1 or recipeInfo.isEnchantingRecipe) then
             if recipeInfo and recipeInfo.supportsCraftingStats and ((isQualityScan and recipeInfo.supportsQualities) or not isQualityScan) then
                 local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
+
                 if 
                     recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and
                     recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION and
@@ -122,6 +132,9 @@ function CraftSim.RECIPE_SCAN:StartScan()
                         if (recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR) then
                             return false
                         end
+                        if not CraftSimOptions.recipeScanIncludeGear and (recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR) then
+                            return false
+                        end
                         local itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
                         local isSoulboundNonGear = CraftSim.UTIL:isItemSoulbound(itemID)
 
@@ -129,11 +142,16 @@ function CraftSim.RECIPE_SCAN:StartScan()
                             return false
                         end
                     end
+
+                    if not CraftSimOptions.recipeScanIncludeGear and (recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR) then
+                        return false
+                    end
                     
                     if not recipeInfo.isRecraft and not recipeInfo.isSalvageRecipe and not recipeInfo.isGatheringRecipe then
                         return true
                     end
                 end
+                return false
             end
         end
         return false
@@ -143,34 +161,57 @@ function CraftSim.RECIPE_SCAN:StartScan()
     local function scanRecipesByInterval()
         local recipeInfo = recipeInfos[currentIndex]
         if not recipeInfo then
-            -- finishedScan
-            print("scan finished")
-            CraftSim.RECIPE_SCAN:ToggleScanButton(true)
+            CraftSim.RECIPE_SCAN:EndScan()
             return
         end
 
         CraftSim.RECIPE_SCAN:UpdateScanPercent(currentIndex, #recipeInfos)
 
         print("recipeID: " .. tostring(recipeInfo.recipeID), false, true)
+        print("recipeName: " .. tostring(recipeInfo.name))
+        print("isEnchant: " .. tostring(recipeInfo.isEnchantingRecipe))
 
-        --print("Scanning RecipeID: " .. tostring(recipeID))
-        -- print("- Learned: " .. tostring(recipeInfo.learned))
-        -- print("- itemLevel: " .. tostring(recipeInfo.itemLevel))
-        -- print("- Name: " .. recipeInfo.name)
         local recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN);
+        if not recipeData then
+            CraftSim.RECIPE_SCAN:EndScan()
+            return
+        end
         local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
         local scanReagents = CraftSim.RECIPE_SCAN:SetReagentAllocationByScanMode(recipeData, priceData)
 
         -- reexport the recipeData, now with the new reagents
         recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN, {scanReagents=scanReagents})
+        if not recipeData then
+            -- finishedScan
+            print("scan finished, no recipe data after recalculation")
+            CraftSim.RECIPE_SCAN:EndScan()
+            return
+        end
         -- refetch price data
         priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
         local meanProfit = CraftSim.CALC:getMeanProfit(recipeData, priceData)
+        local bestSimulation = nil
 
-        --print("- Mean Profit: " .. CraftSim.UTIL:FormatMoney(meanProfit))
+        if CraftSimOptions.recipeScanOptimizeProfessionTools then
+            print("Optimize Gear")
+            bestSimulation = CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeData.recipeType, priceData, CraftSim.CONST.EXPORT_MODE.SCAN)
+            print("- Profit old: " .. CraftSim.UTIL:FormatMoney(meanProfit))
+            if bestSimulation then
+                print("- Found Top Gear")
+                -- use the modified recipe data
+                recipeData = bestSimulation.modifiedRecipeData
+                priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType) -- necessary?
+                -- recalculate profit based on recipeData with best gear
+                meanProfit = CraftSim.CALC:getMeanProfit(recipeData, priceData)
+                print("- Profit Top Gear: " .. CraftSim.UTIL:FormatMoney(meanProfit))
+            else
+                print("- No Better Gear Found")
+            end
+        end
+
 
         local function continueScan()
-            CraftSim.RECIPE_SCAN:AddRecipeToRecipeRow(recipeData, priceData, meanProfit) 
+            CraftSim.RECIPE_SCAN:AddRecipeToRecipeRow(recipeData, priceData, meanProfit, bestSimulation) 
 
             currentIndex = currentIndex + 1
             C_Timer.After(CraftSim.RECIPE_SCAN.scanInterval, scanRecipesByInterval)
