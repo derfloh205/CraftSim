@@ -12,8 +12,8 @@ function CraftSim.PROFIT_SCAN.FRAMES:Init()
         "CENTER", 
         0, 
         0, 
-        280, 
-        250,
+        350, 
+        300,
         CraftSim.CONST.FRAMES.PROFIT_SCAN, false, true, "DIALOG", "modulesProfitScan")
 
     local function createContent(frame)
