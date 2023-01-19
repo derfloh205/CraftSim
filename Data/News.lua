@@ -22,6 +22,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("4.0") ..
+        P .. "New Module: " .. c("Recipe Scan", g) .. 
+        a .. "Scan all your profession's recipes based on given options" .. 
         newP("3.3") ..
         P .. "Added " .. c("Leatherworking", bb) .. 
         a .. "to experimental specialization data" ..
