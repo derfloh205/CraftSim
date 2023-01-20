@@ -491,7 +491,7 @@ function CraftSim.DATAEXPORT:GetRequiredReagentItemsInfoByExportMode(currentSlot
 		local itemsInfo = {}
 		
 		for i, reagent in pairs(currentSlot.reagents) do
-			local reagentAllocation = slotAllocations:FindAllocationByReagent(reagent)
+			local reagentAllocation = (slotAllocations and slotAllocations:FindAllocationByReagent(reagent)) or nil
 			local allocations = 0
 			if reagentAllocation ~= nil then
 				allocations = reagentAllocation:GetQuantity()
