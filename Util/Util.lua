@@ -300,12 +300,33 @@ function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     end
 end
 
+function CraftSim.UTIL:SetDebugPrint(debugID)
+    local function print(text, recursive, l) -- override
+        if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
+            CraftSim_DEBUG:print(text, debugID, recursive, l)
+        else
+            print(text)
+        end
+    end
+
+    return print
+end
+
 function CraftSim.UTIL:CollectGarbageAtThreshold(kbThreshold)
     local kbUsed = collectgarbage("count")
     print("kbUsed" .. tostring(kbUsed))
     if kbUsed >= kbThreshold then
         collectgarbage("collect")
     end
+end
+
+function CraftSim.UTIL:CreateRegistreeForEvents(events)
+    local registree = CreateFrame("Frame", nil)
+    registree:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
+    for _, event in pairs(events) do
+        registree:RegisterEvent(event)
+    end
+    return registree
 end
 
 function CraftSim.UTIL:FilterTable(t, filterFunc)

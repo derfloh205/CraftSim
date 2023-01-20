@@ -25,6 +25,9 @@ Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
 Pricing/PriceData.lua
 
+Modules/CraftLog/CraftLog.lua
+Modules/CraftLog/Frames.lua
+
 Modules/RecipeScan/RecipeScan.lua
 Modules/RecipeScan/Frames.lua
 

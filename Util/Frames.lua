@@ -4,13 +4,13 @@ CraftSim.FRAME = {}
 
 CraftSim.FRAME.frames = {}
 
-local function print(text, recursive, l) -- override
-    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
-    else
-        print(text)
-    end
-end
+-- local function print(text, recursive, l) -- override
+--     if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
+--         CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
+--     else
+--         print(text)
+--     end
+-- end
 
 function CraftSim.FRAME:GetFrame(frameID)
     local frameName = CraftSim.FRAME.frames[frameID]
@@ -529,13 +529,22 @@ function CraftSim.FRAME:InitDebugFrame()
         end
     end
 
+    frame.scrollFrame:HookScript("OnScrollRangeChanged", function() 
+        if CraftSimOptions.debugAutoScroll then
+            frame.scrollFrame:SetVerticalScroll(frame.scrollFrame:GetVerticalScrollRange())
+        end
+    end)
+
     local controlPanel = CraftSim.FRAME:CreateCraftSimFrame("CraftSimDebugControlFrame", "Debug Control", 
     frame, 
     frame, 
     "TOPRIGHT", "TOPLEFT", 10, 0, 300, 400, CraftSim.CONST.FRAMES.DEBUG_CONTROL, true)
 
+    controlPanel.content.autoScrollCB = CraftSim.FRAME:CreateCheckbox("Autoscroll", "Toggle Log Autoscrolling", "debugAutoScroll", controlPanel.content,
+    controlPanel.content, "TOP", "TOP", -100, -10)
+
     controlPanel.content.clearButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
-	controlPanel.content.clearButton:SetPoint("TOP", controlPanel.content, "TOP", 0, -20)	
+	controlPanel.content.clearButton:SetPoint("TOP", controlPanel.content.autoScrollCB, "BOTTOM", 100, 0)	
 	controlPanel.content.clearButton:SetText("Clear")
 	controlPanel.content.clearButton:SetSize(controlPanel.content.clearButton:GetTextWidth()+15, 25)
     controlPanel.content.clearButton:SetScript("OnClick", function(self) 
@@ -543,7 +552,7 @@ function CraftSim.FRAME:InitDebugFrame()
     end)
 
     controlPanel.content.reloadButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
-	controlPanel.content.reloadButton:SetPoint("RIGHT", controlPanel.content.clearButton, "LEFT", 0, 0)	
+	controlPanel.content.reloadButton:SetPoint("RIGHT", controlPanel.content.clearButton, "LEFT", -15, 0)	
 	controlPanel.content.reloadButton:SetText("Reload UI")
 	controlPanel.content.reloadButton:SetSize(controlPanel.content.reloadButton:GetTextWidth()+15, 25)
     controlPanel.content.reloadButton:SetScript("OnClick", function(self) 
