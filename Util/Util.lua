@@ -60,6 +60,28 @@ function CraftSim.UTIL:GetItemIDByLink(hyperlink)
     return tonumber(foundID)
 end
 
+function CraftSim.UTIL:ContinueOnAllItemsLoaded(itemList, callback) 
+		local itemsToLoad = #itemList
+        if itemsToLoad == 0 then
+            callback()
+        end
+		local itemLoaded = function ()
+			itemsToLoad = itemsToLoad - 1
+			CraftSim_DEBUG:print("util: loaded items left: " .. itemsToLoad, CraftSim.CONST.DEBUG_IDS.MAIN)
+	
+			if itemsToLoad <= 0 then
+				CraftSim_DEBUG:print("util: all items loaded, call callback", CraftSim.CONST.DEBUG_IDS.MAIN)
+				callback()
+			end
+		end
+
+		if itemsToLoad >= 1 then
+			for _, itemToLoad in pairs(itemList) do
+				itemToLoad:ContinueOnItemLoad(itemLoaded)
+			end
+		end
+end
+
 function CraftSim.UTIL:EquipItemByLink(link)
 	for bag=BANK_CONTAINER, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
 		for slot=1,C_Container.GetContainerNumSlots(bag) do
@@ -151,8 +173,8 @@ function CraftSim.UTIL:isItemSoulbound(itemID)
     return bindType == CraftSim.CONST.BINDTYPES.SOULBOUND
 end
 
-function CraftSim.UTIL:GetQualityIconAsText(qualityID, sizeX, sizeY)
-    return CreateAtlasMarkup("Professions-Icon-Quality-Tier" .. qualityID, sizeX, sizeY)
+function CraftSim.UTIL:GetQualityIconAsText(qualityID, sizeX, sizeY, offsetX, offsetY)
+    return CreateAtlasMarkup("Professions-Icon-Quality-Tier" .. qualityID, sizeX, sizeY, offsetX, offsetY)
 end
 
 function CraftSim.UTIL:GetRecipeType(recipeInfo) -- the raw info
@@ -399,6 +421,9 @@ function CraftSim.UTIL:ColorizeText(text, color)
     local startLine = "\124"
     local endLine = "\124r"
     return startLine .. color .. text .. endLine
+end
+function CraftSim.UTIL:IconToText(iconPath, height) 
+    return "\124T" .. iconPath .. ":" .. height .. "\124t"
 end
 
 -- from stackoverflow: 

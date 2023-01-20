@@ -104,5 +104,9 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "Module that scans your recipe list based on various options",
     "LEFT", frame.content.modulesTopGear, "RIGHT", 250, 0, "modulesRecipeScan")
 
+    frame.content.modulesCraftResults = createModuleCheckbox("Craft Results", 
+    "Shows CraftSim's version of the Crafting Results",
+    "TOP", frame.content.modulesRecipeScan, "TOP", 0, -20, "modulesCraftResults")
+
 
 end

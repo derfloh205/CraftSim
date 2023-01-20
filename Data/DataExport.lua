@@ -676,15 +676,13 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData
 
 	local schematicReagentSlots = CraftSim.DATAEXPORT:GetSchematicReagentSlotsByExportMode(exportMode)
 
-	if schematicReagentSlots and #schematicReagentSlots == 0 then
+	if schematicReagentSlots and #schematicReagentSlots == 0 and not recipeData.isSalvageRecipe then
 		return
 	end
 
 	-- extract possible optional and finishing and salvage reagents per slot
 	recipeData.possibleOptionalReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schematicInfo.reagentSlotSchematics, CraftSim.CONST.REAGENT_TYPE.OPTIONAL)
 	recipeData.possibleFinishingReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schematicInfo.reagentSlotSchematics, CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT)
-	-- recipeData.possibleOptionalReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(schematicReagentSlots[CraftSim.CONST.REAGENT_TYPE.OPTIONAL])
-	-- recipeData.possibleFinishingReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(schematicReagentSlots[CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT])
 	recipeData.possibleSalvageReagents = C_TradeSkillUI.GetSalvagableItemIDs(recipeData.recipeID) -- thx blizz tbh
 
 	print("possible optional reagents:")
@@ -707,7 +705,7 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData
 	local currentOptionalReagent = 1
 	local currentRequiredReagent = 1
 
-	if not overrideData.scanReagents then
+	if not recipeData.isSalvageRecipe and not overrideData.scanReagents then
 		for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
 			local reagents = currentSlot.reagents
 			local reagentType = currentSlot.reagentType
@@ -740,7 +738,7 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData
 				currentFinishingReagent = CraftSim.DATAEXPORT:AddOptionalReagentByExportMode(currentSlot, exportMode, recipeData.finishingReagents, reagentType, schematicReagentSlots, currentFinishingReagent)
 			end
 		end
-	else
+	elseif not recipeData.isSalvageRecipe then
 		recipeData.reagents = overrideData.scanReagents
 		-- optionals and such?
 	end

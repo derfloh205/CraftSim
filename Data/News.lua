@@ -21,6 +21,11 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("5.0") ..
+        P .. "New Module: " .. c("Craft Results", g) ..
+        a .. "Logs your crafting outputs and shows you the total" .. 
+        a .. "crafted profit for your open recipe or in total" ..
+        a .. "for your current session!" ..
         newP("4.1") ..
         s .. "New Options Tab: " .. c("Profit Calculation", g) ..
         a .. "This tab will include options to make the average profit" ..

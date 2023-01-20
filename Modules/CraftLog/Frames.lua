@@ -1,3 +1,0 @@
-AddonName, CraftSim = ...
-
-CraftSim.CRAFTLOG.FRAMES = {}
