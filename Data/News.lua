@@ -25,10 +25,12 @@ function CraftSim.NEWS:GET_NEWS()
         s .. "New Options Tab: " .. c("Profit Calculation", g) ..
         a .. "This tab will include options to make the average profit" ..
         a .. "calculations more customizeable" ..
-        s .. "New option to ignore the possible minimum of 1 material saved per procc" ..
+        s .. "New option to ignore the possible minimum of" .. 
+        a .. "1 material saved per procc" ..
         a .. "(instead of 30%) for resourcefulness" ..
         p .. "Fixed Optimizing Recipe Scans ignoring Non-Quality Recipes" ..
-        p .. "Fixed Optimizing Recipe Scans sometimes not optimizing materials" .. 
+        p .. "Fixed Optimizing Recipe Scans sometimes" .. 
+        a .. "not optimizing materials" .. 
         p .. "Fixed Recipe Scan skipping Enchanting Recipes" ..
         p .. "Fixed CraftSim producing errors when viewing" .. 
         a .. "another player's profession via link or guild list" ..
