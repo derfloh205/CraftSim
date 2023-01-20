@@ -1,4 +1,4 @@
-addonName, CraftSim = ...
+AddonName, CraftSim = ...
 
 CraftSim.MAIN = CreateFrame("Frame", "CraftSimAddon")
 CraftSim.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
@@ -43,6 +43,9 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanIncludeGear = false,
 	recipeScanIncludeNotLearned = false,
 	recipeScanOptimizeProfessionTools = false,
+
+	-- profit calc
+	profitCalcConsiderSub1MaterialsInRes = false,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -186,7 +189,7 @@ end
 
 local priceApiLoaded = false
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
-	if addon_name == addonName then
+	if addon_name == AddonName then
 		CraftSim.LOCAL:Init()
 
 		CraftSim.FRAME:InitDebugFrame()
@@ -218,7 +221,7 @@ end
 function CraftSim.MAIN:HandleAuctionatorHooks()
 ---@diagnostic disable-next-line: undefined-global
 	if Auctionator then
-		Auctionator.API.v1.RegisterForDBUpdate(addonName, function() 
+		Auctionator.API.v1.RegisterForDBUpdate(AddonName, function() 
 			print("Auctionator DB Update")
 			CraftSim.MAIN:TriggerModulesErrorSafe(false)
 		end)

@@ -1,9 +1,9 @@
-addonName, CraftSim = ...
+AddonName, CraftSim = ...
 
 CraftSim.CONTROL_PANEL.FRAMES = {}
 
 function CraftSim.CONTROL_PANEL.FRAMES:Init()
-    local currentVersion = GetAddOnMetadata(addonName, "Version")
+    local currentVersion = GetAddOnMetadata(AddonName, "Version")
     local frame = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimControlPanelFrame", 
         "CraftSim " .. currentVersion, 

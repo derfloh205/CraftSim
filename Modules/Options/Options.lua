@@ -1,4 +1,4 @@
-addonName, CraftSim = ...
+AddonName, CraftSim = ...
 
 CraftSim.OPTIONS = {}
 
@@ -69,10 +69,20 @@ function CraftSim.OPTIONS:Init()
     ModulesTab.content:SetSize(300, 350)
     ModulesTab.canBeEnabled = true
 
+    local ProfitCalculationTab = CreateFrame("Button", "CraftSimOptionsProfitCalculationTab", CraftSim.OPTIONS.optionsPanel, "UIPanelButtonTemplate")
+    ProfitCalculationTab:SetText("Profit Calculation")
+    ProfitCalculationTab:SetSize(ProfitCalculationTab:GetTextWidth() + tabExtraWidth, 30)
+    ProfitCalculationTab:SetPoint("LEFT", ModulesTab, "RIGHT", 0, 0)
+
+    ProfitCalculationTab.content = CreateFrame("Frame", nil, CraftSim.OPTIONS.optionsPanel)
+    ProfitCalculationTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
+    ProfitCalculationTab.content:SetSize(300, 350)
+    ProfitCalculationTab.canBeEnabled = true
+
     local ExperimentalTab = CreateFrame("Button", "CraftSimOptionsExperimentalTab", CraftSim.OPTIONS.optionsPanel, "UIPanelButtonTemplate")
     ExperimentalTab:SetText("Experimental")
     ExperimentalTab:SetSize(ExperimentalTab:GetTextWidth() + tabExtraWidth, 30)
-    ExperimentalTab:SetPoint("LEFT", ModulesTab, "RIGHT", 0, 0)
+    ExperimentalTab:SetPoint("LEFT", ProfitCalculationTab, "RIGHT", 0, 0)
 
     ExperimentalTab.content = CreateFrame("Frame", nil, CraftSim.OPTIONS.optionsPanel)
     ExperimentalTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
@@ -142,7 +152,7 @@ function CraftSim.OPTIONS:Init()
 
     
 
-    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab, ExperimentalTab})
+    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab, ProfitCalculationTab, ExperimentalTab})
 
     local priceSourceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
@@ -232,32 +242,34 @@ function CraftSim.OPTIONS:Init()
      local skillBreakpointsCheckbox = CraftSim.FRAME:CreateCheckbox(" Offset Skill Breakpoints by 1", 
      "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
      "breakPointOffset", 
-     generalTab.content, 
-     generalTab.content, 
+     ProfitCalculationTab.content, 
+     ProfitCalculationTab.content, 
      "TOP", 
      "TOP", 
      -90, 
-     -80)
+     -20)
 
-    -- local autoVellumCheckBox = CraftSim.FRAME:CreateCheckbox(" Auto Assign Enchanting Vellum", 
-    -- "Always put enchanting vellum as the target enchanting item",
-    -- "autoAssignVellum", 
-    -- generalTab.content, 
-    -- skillBreakpointsCheckbox, 
-    -- "TOP", 
-    -- "TOP", 
-    -- 0, 
-    -- -20)
+     local profitCalcConsiderSub1MaterialsInRes = CraftSim.FRAME:CreateCheckbox(" Resourcefulness: Consider Minimum of 1 Material Saved", 
+     "Resourcefulness saves 30% of a materials quantity on average. However if a material has a required quantity of 1, this value would be below 1.\n" .. 
+     "Some argue that this means the average of such a material is a minimum of 1.\n\nCheck this box if you want to consider that, otherwise those materials will also have an\n" .. 
+     "average of 30% savedCosts",
+     "profitCalcConsiderSub1MaterialsInRes", 
+     ProfitCalculationTab.content, 
+     skillBreakpointsCheckbox, 
+     "TOP", 
+     "TOP", 
+     0, 
+     -20)
 
     local precentProfitCheckbox = CraftSim.FRAME:CreateCheckbox(" Show Profit Percentage", 
     "Show the percentage of profit to crafting costs besides the gold value",
     "showProfitPercentage", 
     generalTab.content, 
-    skillBreakpointsCheckbox, 
+    generalTab.content, 
     "TOP", 
     "TOP", 
-    0, 
-    -20)
+    -90, 
+    -90)
 
 
     local openLastRecipeCheckbox = CraftSim.FRAME:CreateCheckbox(" Remember Last Recipe", 

@@ -1,4 +1,4 @@
-addonName, CraftSim = ...
+AddonName, CraftSim = ...
 
 CraftSim.NEWS = {}
 
@@ -22,6 +22,11 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         newP("4.1") ..
+        s .. "New Options Tab: " .. c("Profit Calculation", g) ..
+        a .. "This tab will include options to make the average profit" ..
+        a .. "calculations more customizeable" ..
+        s .. "New option to ignore the possible minimum of 1 material saved per procc" ..
+        a .. "(instead of 30%) for resourcefulness" ..
         p .. "Fixed CraftSim producing errors when viewing" .. 
         a .. "another player's profession via link or guild list" ..
         newP("4.0") ..

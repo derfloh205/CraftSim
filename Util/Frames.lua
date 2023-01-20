@@ -1,4 +1,4 @@
-addonName, CraftSim = ...
+AddonName, CraftSim = ...
 
 CraftSim.FRAME = {}
 
@@ -658,7 +658,7 @@ function CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
 end
 
 function CraftSim.FRAME:InitOneTimeNoteFrame()
-    local currentVersion = GetAddOnMetadata(addonName, "Version")
+    local currentVersion = GetAddOnMetadata(AddonName, "Version")
 
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimOneTimeNoteFrame", 
     CraftSim.UTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")", CraftSim.CONST.COLORS.GREEN), 

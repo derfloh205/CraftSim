@@ -148,7 +148,7 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, cal
                 if bit == 1 then
                     -- TODO: factor in required quantity ? How to do this with different qualities?
                     -- use the lower quantity = min 1 saved "rule" for non quality materials for now
-                    if totalReagents[materialIndex].differentQualities then
+                    if totalReagents[materialIndex].differentQualities or not CraftSimOptions.profitCalcConsiderSub1MaterialsInRes then
                         -- Save 30% of this material costs plus the specced addition if it was procced
                         materialCost = materialCost * materialAllocations
                         materialCost = materialCost * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * (resourcefulnessExtraItemsFactor or 1)) 

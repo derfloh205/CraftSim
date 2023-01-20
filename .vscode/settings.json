@@ -27,6 +27,7 @@
         "StaticPopup_Show",
         "ChatFrame_OnHyperlinkShow",
         "TooltipDataProcessor",
-        "Auctionator"
+        "Auctionator",
+        "addonName"
     ]
 }
