@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("4.1") ..
+        p .. "Fixed CraftSim producing errors when viewing" .. 
+        a .. "another player's profession via link or guild list" ..
         newP("4.0") ..
         P .. "New Module: " .. c("Recipe Scan", g) .. 
         a .. "Scan all your profession's recipes based on given options" .. 

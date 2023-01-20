@@ -320,8 +320,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	end
 
 	local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
-	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() then
-		-- hide control panel
+	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
+		-- hide control panel and return
 		controlPanel:Hide()
 		return nil
 	end
