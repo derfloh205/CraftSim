@@ -27,6 +27,9 @@ function CraftSim.NEWS:GET_NEWS()
         a .. "calculations more customizeable" ..
         s .. "New option to ignore the possible minimum of 1 material saved per procc" ..
         a .. "(instead of 30%) for resourcefulness" ..
+        p .. "Fixed Optimizing Recipe Scans ignoring Non-Quality Recipes" ..
+        p .. "Fixed Optimizing Recipe Scans sometimes not optimizing materials" .. 
+        p .. "Fixed Recipe Scan skipping Enchanting Recipes" ..
         p .. "Fixed CraftSim producing errors when viewing" .. 
         a .. "another player's profession via link or guild list" ..
         newP("4.0") ..

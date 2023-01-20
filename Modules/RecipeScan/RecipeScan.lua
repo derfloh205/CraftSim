@@ -12,7 +12,7 @@ CraftSim.RECIPE_SCAN.SCAN_MODES = {
     OPTIMIZE_I = "Optimize for Inspiration"}
 
 local function print(text, recursive, l) -- override
-	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.MAIN, recursive, l)
+	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN, recursive, l)
 end
 
 function CraftSim.RECIPE_SCAN:GetScanMode()
@@ -44,9 +44,19 @@ function CraftSim.RECIPE_SCAN:SetReagentAllocationByScanMode(recipeData, priceDa
             end 
         end
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G or scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I then
-        if not recipeData.hasQualityReagents then
+        if not recipeData.hasReagentsWithQuality then
             return recipeData.reagents -- e.g: Primal Convergence
         end
+
+        if recipeData.result.isNoQuality then
+            for i, reagent in pairs(recipeData.reagents) do
+                local cheapestQualityID = CraftSim.PRICEDATA:GetLowestCostQualityIDByItemsInfo(reagent.itemsInfo)
+                reagent.itemsInfo[cheapestQualityID].allocations = reagent.requiredQuantity
+                print("NonQualityRecipe: Return cheapest reagent quality for reagent #" .. tostring(i) .. ": " .. tostring(cheapestQualityID))
+            end
+            return recipeData.reagents
+        end
+        
         local bestAllocation = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeData.recipeType, priceData, CraftSim.CONST.EXPORT_MODE.SCAN)
         if bestAllocation then
             -- set reagents by best allocation
@@ -105,7 +115,6 @@ function CraftSim.RECIPE_SCAN:StartScan()
     
     local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
     print("Scan Mode: " .. tostring(scanMode))
-    local isQualityScan = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G or scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
     local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
     local recipeInfos = CraftSim.UTIL:Map(recipeIDs, function(recipeID) 
         return C_TradeSkillUI.GetRecipeInfo(recipeID)
@@ -118,9 +127,13 @@ function CraftSim.RECIPE_SCAN:StartScan()
         end
         ---@diagnostic disable-next-line: missing-parameter
         local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-        
-        if tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID) and (recipeInfo.itemLevel > 1 or recipeInfo.isEnchantingRecipe) then
-            if recipeInfo and recipeInfo.supportsCraftingStats and ((isQualityScan and recipeInfo.supportsQualities) or not isQualityScan) then
+        local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
+        local isRelevantItemLevel = recipeInfo.itemLevel > 1 
+        if isDragonIsleRecipe and recipeInfo.isEnchantingRecipe then
+            return true
+        end
+        if isDragonIsleRecipe and isRelevantItemLevel then
+            if recipeInfo and recipeInfo.supportsCraftingStats then
                 local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
 
                 if 

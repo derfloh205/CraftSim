@@ -535,7 +535,7 @@ function CraftSim.FRAME:InitDebugFrame()
     "TOPRIGHT", "TOPLEFT", 10, 0, 300, 400, CraftSim.CONST.FRAMES.DEBUG_CONTROL, true)
 
     controlPanel.content.clearButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
-	controlPanel.content.clearButton:SetPoint("TOP", controlPanel.title, "TOP", 0, -20)	
+	controlPanel.content.clearButton:SetPoint("TOP", controlPanel.content, "TOP", 0, -20)	
 	controlPanel.content.clearButton:SetText("Clear")
 	controlPanel.content.clearButton:SetSize(controlPanel.content.clearButton:GetTextWidth()+15, 25)
     controlPanel.content.clearButton:SetScript("OnClick", function(self) 
@@ -576,7 +576,7 @@ function CraftSim.FRAME:InitDebugFrame()
         CraftSim.CACHE:ClearAll()
     end)
 
-    local checkBoxOffsetY = -2
+    local checkBoxOffsetY = 0
     controlPanel.content.checkBoxID_MAIN = CraftSim.FRAME:CreateCheckbox(
         " MAIN", "Enable MAIN Output", "enableDebugID_MAIN", controlPanel.content, controlPanel.content.nodeDebugInput, "TOPLEFT", "TOPLEFT", -5, checkBoxOffsetY - 55)
     
