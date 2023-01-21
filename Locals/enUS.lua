@@ -48,5 +48,14 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.INSPIRATION_SKILL_LABEL] = "Inspiration Skill: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Multicraft: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Resourcefulness: ",
+        [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Resourcefulness Item Bonus: ",
+        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "Material Quality Bonus: ",
+        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "Material Quality Maximum %: ",
+        [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Expected Quality: ",
+        [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Next Quality: ",
+        [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Missing Skill: ",
+        [CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL] = "Missing Skill (Inspiration)",
+        [CraftSim.CONST.TEXT.SKILL_LABEL] = "Skill: ",
+        [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Multicraft Item Bonus: "        
     }
 end
