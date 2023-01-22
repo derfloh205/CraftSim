@@ -899,7 +899,7 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 		for argNum, arg in pairs(line.args) do
 			if arg.stringVal and string.find(arg.stringVal, equipMatchString) then
 				-- here the stringVal looks like "Equip: +6 Blacksmithing Skill"
-				parsedSkill = tonumber(string.match(arg.stringVal, "%+(%d+)"))
+				parsedSkill = tonumber(string.match(arg.stringVal, "(%d+)"))
 			end
 			if arg.stringVal and string.find(arg.stringVal, inspirationIncreaseMatchString) then
 				parsedInspirationSkillBonusPercent = tonumber(string.match(arg.stringVal, "(%d+)%%"))
