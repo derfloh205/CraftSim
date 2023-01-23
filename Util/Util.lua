@@ -233,7 +233,7 @@ function CraftSim.UTIL:Count(t, func)
     return count
 end
 
-function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
+function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative, allowDecimals)
     local inputNumber = inputBox:GetNumber()
     local inputText = inputBox:GetText()
 
@@ -244,6 +244,10 @@ function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     if inputText == "-" then
         -- User is in the process of writing a negative number
         return 0
+    end
+
+    if not allowDecimals and string.match(inputText, ".") then
+        return string.gsub(inputText, ".", "")
     end
 
     if (not allowNegative and inputNumber < 0) or (inputNumber == 0 and inputText ~= "0") then

@@ -4,7 +4,7 @@ CraftSim.PRICE_OVERRIDE.FRAMES = {}
 
 local function print(text, recursive, l) -- override
     if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
+        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE, recursive, l)
     else
         print(text)
     end
@@ -231,7 +231,13 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                 --print("found price override for qualityID " .. tostring(qualityID) .. ": " .. tostring(priceOverride) .. " isGear: " .. tostring(isGear))
 
                 if priceOverride then
-                    overrideFrame.input:SetText(priceOverride / 10000) -- copper to gold
+                    -- only override text if the input field is not currently focused
+                    if not overrideFrame.input:HasFocus() then
+                        overrideFrame.input:SetText(priceOverride / 10000) -- copper to gold
+                        print("Override Input Field: " .. tostring(priceOverride / 10000))
+                    else
+                        print("Do not override input, it has focus")
+                    end
                     if isGlobal then
                         overrideFrame.recipeCheckBox:SetChecked(false)
                         overrideFrame.globalCheckBox:SetChecked(true)
@@ -245,7 +251,6 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                     overrideFrame.globalCheckBox:SetChecked(false)
                 end
 
-                -- check for saved price overrides
                 if not qualityID then
                     overrideFrame.qualityIcon:Hide()
                 else
