@@ -39,7 +39,7 @@ end
 function CraftSim.CRAFT_RESULTS:AddCraftData(craftData, recipeID)
     local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
     CraftSim.CRAFT_RESULTS.sessionData.total.profit = CraftSim.CRAFT_RESULTS.sessionData.total.profit + craftData.profit
-    CraftSim.CRAFT_RESULTS.sessionData.total.craftedItems[craftData.resultLink] = (CraftSim.CRAFT_RESULTS.sessionData.total.craftedItems[craftData.resultLink] or 0) + 1
+    CraftSim.CRAFT_RESULTS.sessionData.total.craftedItems[craftData.resultLink] = (CraftSim.CRAFT_RESULTS.sessionData.total.craftedItems[craftData.resultLink] or 0) + craftData.craftedItems
 
     CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID] = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID] or CopyTable(CraftSim.CRAFT_RESULTS.baseRecipeEntry)
 
