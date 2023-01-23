@@ -148,10 +148,6 @@ function CraftSim.OPTIONS:Init()
     validationInfoItems:SetPoint("TOPLEFT", tsmItemsPriceExpression, "TOPRIGHT",  5, 0)
     validationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
 
-
-
-    
-
     CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab, ProfitCalculationTab, ExperimentalTab})
 
     local priceSourceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
@@ -247,18 +243,6 @@ function CraftSim.OPTIONS:Init()
      "TOP", 
      "TOP", 
      -90, 
-     -20)
-
-     local profitCalcConsiderSub1MaterialsInRes = CraftSim.FRAME:CreateCheckbox(" Resourcefulness: Consider Minimum of 1 Material Saved", 
-     "Resourcefulness saves 30% of a materials quantity on average. However if a material has a required quantity of 1, this value would be below 1.\n" .. 
-     "Some argue that this means the average of such a material is a minimum of 1.\n\nCheck this box if you want to consider that, otherwise those materials will also have an\n" .. 
-     "average of 30% savedCosts",
-     "profitCalcConsiderSub1MaterialsInRes", 
-     ProfitCalculationTab.content, 
-     skillBreakpointsCheckbox, 
-     "TOP", 
-     "TOP", 
-     0, 
      -20)
 
     local precentProfitCheckbox = CraftSim.FRAME:CreateCheckbox(" Show Profit Percentage", 

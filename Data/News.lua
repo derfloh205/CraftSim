@@ -21,6 +21,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("5.2") ..
+        p .. "Resourcefulness now uses a simpler calculation method" ..
         newP("5.1") ..
         P .. c("Craft Results Module", g) .. " redesigned" ..
         a .. "Now with more statistics!" ..

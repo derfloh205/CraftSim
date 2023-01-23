@@ -98,6 +98,9 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplay(priceData, sta
         statweightFrame.content.statText:SetText(statText)
         statweightFrame.content.valueText:SetText(valueText)
     end
+
+    local expectedNumberOfCrafts = CraftSim.CALC:GetExpectedCraftsForConfidence(CraftSim.MAIN.currentRecipeData, priceData)
+
 end
 
 function CraftSim.AVERAGEPROFIT.FRAMES:UpdateExplanation(recipeData, calculationData, exportMode)

@@ -28,6 +28,7 @@
         "ChatFrame_OnHyperlinkShow",
         "TooltipDataProcessor",
         "Auctionator",
-        "addonName"
+        "addonName",
+        "TSM_API"
     ]
 }

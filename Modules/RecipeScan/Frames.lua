@@ -81,7 +81,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
          frame.content.header.learnedTitle = CraftSim.FRAME:CreateText("Learned?", frame.content.header, frame.content.header, "LEFT", "LEFT", 30, 0, nil, nil, {type="H", value="RIGHT"})
          frame.content.header.learnedTitle:SetSize(60, 25)
 
-         frame.content.header.profitTitle = CraftSim.FRAME:CreateText("Profit", frame.content.header, frame.content.header.learnedTitle, "LEFT", "RIGHT", 38, 0, nil, nil, {type="H", value="RIGHT"})
+         frame.content.header.profitTitle = CraftSim.FRAME:CreateText("Ø Profit", frame.content.header, frame.content.header.learnedTitle, "LEFT", "RIGHT", 38, 0, nil, nil, {type="H", value="RIGHT"})
          frame.content.header.profitTitle:SetSize(60, 25)
 
          frame.content.header.inspirationTitle = CraftSim.FRAME:CreateText("Insp%", frame.content.header, frame.content.header.profitTitle, "LEFT", "RIGHT", 20, 0, nil, nil, {type="H", value="RIGHT"})

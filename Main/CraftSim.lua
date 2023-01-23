@@ -49,7 +49,6 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanOptimizeProfessionTools = false,
 
 	-- profit calc
-	profitCalcConsiderSub1MaterialsInRes = false,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}

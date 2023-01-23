@@ -76,6 +76,34 @@ function CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedIt
     end
 end
 
+function CraftSim.CALC:getResourcefulnessSavedCostsV3(recipeData, priceData, calculationData)
+    local specData = recipeData.specNodeData
+    local resourcefulnessExtraItemsFactor = 1
+
+    if specData and recipeData.stats.resourcefulness then
+        resourcefulnessExtraItemsFactor = 1 + recipeData.stats.resourcefulness.bonusItemsFactor
+    elseif recipeData.stats.resourcefulness then
+        resourcefulnessExtraItemsFactor = recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
+    end
+
+    if recipeData.salvageReagent then
+        return (priceData.salvageReagentPrice * recipeData.salvageReagent.requiredQuantity) * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * resourcefulnessExtraItemsFactor) 
+    end
+
+    local savedCosts = 0
+    if recipeData.stats.resourcefulness then
+        local resChance = (recipeData.stats.resourcefulness.percent / 100)
+        savedCosts = CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR * priceData.craftingCostPerCraft * resChance * resourcefulnessExtraItemsFactor
+        print("Saved Costs V3: " .. CraftSim.UTIL:FormatMoney(savedCosts))
+    end
+
+    if calculationData and calculationData.resourcefulness then
+        calculationData.resourcefulness.averageSavedCosts = savedCosts
+    end
+
+    return savedCosts
+end
+
 function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calculationData)
     local specData = recipeData.specNodeData
     local resourcefulnessExtraItemsFactor = 1
@@ -180,59 +208,16 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, cal
         for _, avgSavedCost in pairs(averageSavedCostsByCombination) do
             savedCosts = savedCosts + avgSavedCost
         end
-        -- this is actually too much, cause the average is already based and weighted by the different chances of occurance
-        -- THX to Kroge for pointing that out!
-        --savedCosts = savedCosts / #averageSavedCostsByCombination
     end
+
+    print("Saved Costs By combinations: " .. CraftSim.UTIL:FormatMoney(savedCosts), false, true)
+    print("Saved Costs by CraftingCosts*0.3*resChance: " .. CraftSim.UTIL:FormatMoney(priceData.craftingCostPerCraft*0.3*(recipeData.stats.resourcefulness.percent / 100)))
 
     if calculationData.resourcefulness then
         calculationData.resourcefulness.averageSavedCosts = savedCosts
     end
 
     return savedCosts
-end
-
-function CraftSim.CALC:getResourcefulnessSavedCostsV1(recipeData, priceData)
-    local totalSavedCosts = 0
-    if recipeData.stats.resourcefulness ~= nil then
-        -- Recipe considers resourcefulness
-        -- For each craft save a resource by X% Chance
-        -- -> This means I need to calculate the total amount of allocated reagents (per quality..?) used for all crafts then take X% of it to be saved
-        -- -> Then for all saved resources, sum up the minbuyouts and remove that from the totalCraftingCosts for it to be considered in the meanProfit
-        -- TODO: research how resourcefulness behaves with different allocated qualities
-
-        local totalReagentAllocationsByQuality = {}
-        for reagentIndex, reagentData in pairs(recipeData.reagents) do
-            if reagentData.reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
-                totalReagentAllocationsByQuality[reagentIndex] = CopyTable(reagentData.itemsInfo)
-                    local totalAllocations = 0
-                    for _, itemInfo in pairs(totalReagentAllocationsByQuality[reagentIndex]) do
-                        totalAllocations = totalAllocations + itemInfo.allocations
-                        itemInfo.allocations = itemInfo.allocations
-                    end
-
-                    if totalAllocations == 0 then
-                        -- not enough items, assume maxquantity with lowest price quality
-                        -- TODO: maybe show a warning or smth?
-                        local lowestCostQualityID = CraftSim.PRICEDATA:GetLowestCostQualityIDByItemsInfo(reagentData.itemsInfo)
-                        totalReagentAllocationsByQuality[reagentIndex][lowestCostQualityID].allocations = reagentData.requiredQuantity
-                    end
-            end
-        end
-
-        for reagentIndex, itemsInfo in pairs(totalReagentAllocationsByQuality) do
-            for qualityIndex, itemInfo in pairs(itemsInfo) do
-                local savedItems = itemInfo.allocations * (recipeData.stats.resourcefulness.percent / 100)
-                -- test
-                savedItems = savedItems * CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
-                savedItems = savedItems * recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
-                --
-                totalSavedCosts = totalSavedCosts + priceData.reagentsPriceByQuality[reagentIndex][qualityIndex].minBuyout * savedItems
-            end
-        end
-    end
-
-    return totalSavedCosts
 end
 
 function CraftSim.CALC:getMeanProfit(recipeData, priceData)
@@ -256,7 +241,7 @@ function CraftSim.CALC:getMeanProfit(recipeData, priceData)
     calculationData.inspirationQuality = inspirationQuality
     CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedItems, calculationData, inspirationQuality)
 
-    local totalSavedCosts = CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, calculationData)
+    local totalSavedCosts = CraftSim.CALC:getResourcefulnessSavedCostsV3(recipeData, priceData, calculationData)
 
     local totalCraftingCosts = priceData.craftingCostPerCraft - totalSavedCosts
     local totalWorth = 0
@@ -271,4 +256,103 @@ function CraftSim.CALC:getMeanProfit(recipeData, priceData)
     calculationData.craftingCostPerCraft = totalCraftingCosts
 
     return meanProfit, calculationData
+end
+
+function CraftSim.CALC:GetExpectedCraftsForConfidence(recipeData, priceData)
+
+    -- TODO: other cases
+    -- case: every stats exists
+    if recipeData.stats.inspiration and recipeData.stats.multicraft and recipeData.stats.resourcefulness then
+        local inspChance = recipeData.stats.inspiration.percent / 100
+        local mcChance = recipeData.stats.multicraft.percent / 100
+        local resChance = recipeData.stats.resourcefulness.percent / 100
+        local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCostsV3(recipeData, priceData)
+
+        local multicraftExtraItemsFactor = 1
+
+        if recipeData.specNodeData then
+            multicraftExtraItemsFactor = 1 + recipeData.stats.multicraft.bonusItemsFactor
+        else
+            multicraftExtraItemsFactor = recipeData.extraItemFactors.multicraftExtraItemsFactor
+        end
+
+        local maxExtraItems = (2.5*recipeData.baseItemAmount) * multicraftExtraItemsFactor
+        local expectedAdditionalItems = (1 + maxExtraItems) / 2 
+        local expectedItems = recipeData.baseItemAmount + expectedAdditionalItems
+
+        local skillWithInspiration = recipeData.stats.skill + recipeData.stats.inspiration.bonusskill
+        local qualityWithInspiration = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skillWithInspiration)
+        
+        -- get all possible craft results (for resourcefulness take avg) and their profits
+        -- to build the probability distribution with p(x) = x where x is the profit
+
+        local probabilityDistribution = {}
+
+        print("Build Probability Distribution")
+
+        local bitMax = "111"
+        local numBits = string.len(bitMax)
+        local bitMaxNumber = tonumber(bitMax, 2)
+        local totalCombinations = {}
+        for currentCombination = 0, bitMaxNumber, 1 do
+            local bits = CraftSim.UTIL:toBits(currentCombination, numBits)
+            table.insert(totalCombinations, bits)
+        end 
+
+        for _, combination in pairs(totalCombinations) do
+            local proccs = {
+                false, -- insp
+                false, -- mc
+                false, -- res
+            }
+
+            for i, bit in pairs(combination) do
+                if bit == 1 then
+                    proccs[i] = true
+                end
+            end
+
+            local p_Insp = (proccs[1] and inspChance) or (1-inspChance)
+            local p_MC = (proccs[2] and mcChance) or (1-mcChance)
+            local p_Res = (proccs[3] and resChance) or (1-resChance)
+
+            local combinationChance = p_Insp * p_MC * p_Res
+
+            local craftingCosts = priceData.craftingCostPerCraft - ((proccs[3] and savedCostsByRes) or 0)
+
+            local combinationProfit = 0
+            local resultValue = 0
+
+            -- if insp but not mc
+            if proccs[1] and not proccs[2] then
+                resultValue = priceData.minBuyoutPerQuality[qualityWithInspiration] * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+            -- if mc but not insp
+            elseif not proccs[1] and proccs[2] then
+                resultValue = priceData.minBuyoutPerQuality[recipeData.expectedQuality] * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
+            -- both proccs
+            elseif proccs[1] and proccs[2] then
+                resultValue = priceData.minBuyoutPerQuality[qualityWithInspiration] * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
+            -- no mc and no insp
+            elseif not proccs[1] and not proccs[2] then
+                resultValue = priceData.minBuyoutPerQuality[recipeData.expectedQuality] * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+            end
+            
+            combinationProfit = resultValue - craftingCosts
+            print(table.concat(combination, "") .. ":" .. CraftSim.UTIL:round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            table.insert(probabilityDistribution, {
+                chance = combinationChance,
+                profit = combinationProfit
+            })
+        end
+
+        local probabilitySum = 0
+        local expectedProfit = 0
+        for _, entry in pairs(probabilityDistribution) do
+            probabilitySum = probabilitySum + entry.chance
+            expectedProfit = expectedProfit + (entry.profit*entry.chance)
+        end
+
+        print("Probability Sum: " .. tostring(probabilitySum))
+        print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
+    end
 end
