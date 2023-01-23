@@ -22,7 +22,8 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         newP("5.1") ..
-        P .. c("Craft Results Module", g) .. " Revamp" ..
+        P .. c("Craft Results Module", g) .. " Redesigned" ..
+        a .. "Now with more statistics!" ..
         p .. "The " .. c("Price Override Module", g) .. " now supports decimals" ..
         newP("5.0") ..
         P .. "New Module: " .. c("Craft Results", g) ..

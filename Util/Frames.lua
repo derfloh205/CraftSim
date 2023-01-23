@@ -737,6 +737,21 @@ function CraftSim.FRAME:CreateGoldIcon(parent, anchorParent, anchorA, anchorB, a
     return goldIcon
 end
 
+function CraftSim.FRAME:CreateScrollFrame(parent, offsetTOP, offsetLEFT, offsetRIGHT, offsetBOTTOM)
+    local scrollFrame = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
+    scrollFrame.scrollChild = CreateFrame("frame")
+    local scrollChild = scrollFrame.scrollChild
+    scrollFrame:SetSize(parent:GetWidth() , parent:GetHeight())
+    scrollFrame:SetPoint("TOP", parent, "TOP", 0, offsetTOP)
+    scrollFrame:SetPoint("LEFT", parent, "LEFT", offsetLEFT, 0)
+    scrollFrame:SetPoint("RIGHT", parent, "RIGHT", offsetRIGHT, 0)
+    scrollFrame:SetPoint("BOTTOM", parent, "BOTTOM", 0, offsetBOTTOM)
+    scrollFrame:SetScrollChild(scrollFrame.scrollChild)
+    scrollChild:SetWidth(scrollFrame:GetWidth())
+    scrollChild:SetHeight(1)
+    return scrollFrame, scrollChild
+end
+
 function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onTextChangedCallback)
     local goldInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
         goldInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)

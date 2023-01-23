@@ -14,6 +14,22 @@ CraftSim.CRAFT_RESULTS.sessionData = {
     byRecipe = {},
 }
 
+CraftSim.CRAFT_RESULTS.baseRecipeEntry = {
+    profit = 0, 
+    craftedItems = {}, 
+    statistics = {
+        totalExpectedAverageProfit = 0,
+        crafts = 0,
+        baseItemCount = 0,
+        inspiration = 0,
+        multicraft = 0,
+        multicraftExtraItems = 0,
+        resourcefulness = 0,
+        savedReagents = {},
+        -- and many more?
+    }
+}
+
 local resetData = CopyTable(CraftSim.CRAFT_RESULTS.sessionData)
 
 function CraftSim.CRAFT_RESULTS:ResetData()
@@ -25,21 +41,58 @@ function CraftSim.CRAFT_RESULTS:AddCraftData(craftData, recipeID)
     CraftSim.CRAFT_RESULTS.sessionData.total.profit = CraftSim.CRAFT_RESULTS.sessionData.total.profit + craftData.profit
     CraftSim.CRAFT_RESULTS.sessionData.total.craftedItems[craftData.resultLink] = (CraftSim.CRAFT_RESULTS.sessionData.total.craftedItems[craftData.resultLink] or 0) + 1
 
-    CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID] = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID] or {profit = 0, craftedItems = {}}
+    CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID] = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID] or CopyTable(CraftSim.CRAFT_RESULTS.baseRecipeEntry)
+
+    CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.crafts = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.crafts + 1
+    
+    if not craftData.proccs.multicraft.triggered then
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.baseItemCount = 
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.baseItemCount + craftData.craftedItems
+    end
+
+    if craftData.proccs.inspiration.triggered then
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.inspiration = (CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.inspiration or 0) + 1
+    end
+
+    if not craftData.proccs.multicraft.triggered then
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.baseItemCount = 
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.baseItemCount + craftData.craftedItems
+    else
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.multicraft = (CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.multicraft or 0) + 1
+        
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.multicraftExtraItems = 
+        (CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.multicraftExtraItems or 0) + craftData.proccs.multicraft.extraItems
+
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.baseItemCount = 
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.baseItemCount + craftData.proccs.multicraft.baseItems
+    end
+
+    if craftData.proccs.resourcefulness.triggered then
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.resourcefulness = (CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.resourcefulness or 0) + 1
+        
+        for _, savedReagent in pairs(craftData.proccs.resourcefulness.savedReagents) do
+            local itemID = savedReagent:GetItemID()
+            if not CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.savedReagents[savedReagent:GetItemID()] then
+                CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.savedReagents[savedReagent:GetItemID()] = {
+                    itemID = itemID,
+                    quantity = savedReagent.quantity, 
+                }
+            else
+                CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.savedReagents[savedReagent:GetItemID()].quantity = 
+                CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.savedReagents[savedReagent:GetItemID()].quantity + savedReagent.quantity
+            end
+        end
+    end
 
     CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].profit = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].profit + craftData.profit
+    CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.totalExpectedAverageProfit = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.totalExpectedAverageProfit + craftData.expectedAverageProfit
     CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].craftedItems[craftData.resultLink] = (CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].craftedItems[craftData.resultLink] or 0) + 1
 
 
     -- update frames
     craftResultFrame.content.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(CraftSim.CRAFT_RESULTS.sessionData.total.profit, true))
 
-    -- update only if current VIEWED recipe is the crafted recipe
-    if CraftSim.MAIN.currentRecipeData then
-        if recipeID == CraftSim.MAIN.currentRecipeData.recipeID then
-            craftResultFrame.content.totalProfitPerRecipeValue:SetText(CraftSim.UTIL:FormatMoney(CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].profit, true))
-        end
-    end
+    CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
 end
 
 -- save current craft data
@@ -121,6 +174,7 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
     local craftData = {
         recipeID = recipeData.recipeID,
         profit = 0,
+        expectedAverageProfit = 0,
         quantityImportant = false,
         recipeName = recipeData.recipeName,
         resultLink = craftResult.hyperlink,
@@ -198,6 +252,8 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
     local craftProfit = CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, craftData) 
 
     craftData.profit = craftProfit
+    local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
+    craftData.expectedAverageProfit = CraftSim.CALC:getMeanProfit(recipeData, priceData)
     
     print("Chance for Craft: " .. tostring(CraftSim.UTIL:round(craftData.craftingChance * 100, 1)) .. "%")
 
@@ -250,7 +306,15 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftData)
     ((craftData.proccs.multicraft.triggered and (CraftSim.UTIL:ColorizeText("Multicraft: ", CraftSim.CONST.COLORS.EPIC) .. craftData.proccs.multicraft.extraItems .. "\n")) or "") ..
     ((craftData.proccs.resourcefulness.triggered and (CraftSim.UTIL:ColorizeText("Resources Saved!: \n", CraftSim.CONST.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
 
-    craftResultFrame.content.resultFrame.resultFeed:SetText(currentText .. "\n\n" .. newText)
+    if currentText ~= "" then
+        currentText = currentText .. "\n\n"
+    end
+    -- cut start of currentText if over x lines
+    if craftResultFrame.content.resultFrame.resultFeed:GetNumLines() > 500 then
+        currentText = string.gsub(currentText, ".*\n", 10)
+    end
+    craftResultFrame.content.resultFrame.resultFeed:SetText(currentText .. newText)
 
     CraftSim.CRAFT_RESULTS:AddCraftData(craftData, recipeData.recipeID)
+    CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeData.recipeID)
 end

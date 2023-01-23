@@ -474,7 +474,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		CraftSim.FRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
 	end
 
-	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO), showSpecInfo)
+	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO), showSpecInfo and recipeData and recipeData.specNodeData)
 	if recipeData and showSpecInfo and recipeData.specNodeData then
 		CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
 	end
