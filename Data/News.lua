@@ -22,12 +22,13 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         newP("5.1") ..
-        P .. c("Craft Results Module", g) .. " Redesigned" ..
+        P .. c("Craft Results Module", g) .. " redesigned" ..
         a .. "Now with more statistics!" ..
         p .. "The " .. c("Price Override Module", g) .. " now supports decimals" ..
-        p .. "Fixed Jewelcrafting Experimental Data not showing the first spec" ..
-        p .. "Fixed Alchemy Experimental Data not considering Chemical Synthesis" ..
-        a .. " for some Reagents" ..
+        p .. "Fixed Jewelcrafting Experimental Data" .. 
+        a .. "not showing the first spec" ..
+        p .. "Fixed Alchemy Experimental Data not considering" .. 
+        a .. "Chemical Synthesis for some Reagents" ..
         newP("5.0") ..
         P .. "New Module: " .. c("Craft Results", g) ..
         a .. "Logs your crafting outputs and shows you the total" .. 

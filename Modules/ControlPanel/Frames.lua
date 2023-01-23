@@ -105,7 +105,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "LEFT", frame.content.modulesTopGear, "RIGHT", 250, 0, "modulesRecipeScan")
 
     frame.content.modulesCraftResults = createModuleCheckbox("Craft Results", 
-    "Shows CraftSim's version of the Crafting Results",
+    "Show a crafting log and statistics about your crafts!",
     "TOP", frame.content.modulesRecipeScan, "TOP", 0, -20, "modulesCraftResults")
 
 
