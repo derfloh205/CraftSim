@@ -888,13 +888,15 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 	-- For now there is only inspiration and resourcefulness as enchant?
 	local parsedEnchantingStats = {
 		inspiration = 0,
-		resourcefulness = 0
+		resourcefulness = 0,
+		multicraft = 0,
 	}
 	local equipMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EQUIP_MATCH_STRING)
 	local inspirationIncreaseMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATIONBONUS_SKILL_ITEM_MATCH_STRING)
 	local enchantedMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING)
 	local inspirationMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION)
 	local resourcefulnessMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS)
+	local multicraftMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT)
 	for lineNum, line in pairs(tooltipData.lines) do
 		for argNum, arg in pairs(line.args) do
 			if arg.stringVal and string.find(arg.stringVal, equipMatchString) then
@@ -909,6 +911,8 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 					parsedEnchantingStats.inspiration = tonumber(string.match(arg.stringVal, "%+(%d+)"))
 				elseif string.find(arg.stringVal, resourcefulnessMatchString) then
 					parsedEnchantingStats.resourcefulness = tonumber(string.match(arg.stringVal, "%+(%d+)"))
+				elseif string.find(arg.stringVal, multicraftMatchString) then
+					parsedEnchantingStats.multicraft = tonumber(string.match(arg.stringVal, "%+(%d+)"))
 				end
 			end
 		end
