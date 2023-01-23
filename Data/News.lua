@@ -70,47 +70,5 @@ function CraftSim.NEWS:GET_NEWS()
         a .. "(See Data/SpecNodeData/Leatherworking.lua)" ..
         a .. "in Debug Mode (E.g: CURING_AND_TANNING_1)" ..
         s .. "Added discord invite to the patch notes!" .. 
-        a .. c("Feel free to join :D", g) ..
-        newP("3.2") ..
-        p .. "Added missing data for optional reagent " .. c("Armor Spikes", bb) .. 
-        p .. "Reimplemented the result item fetch for" .. 
-        a .. "non gear recipes to use the ingame api" ..
-        a .. "This now prevents any wrong sorting of qualities for" ..
-        a .. "cost overview and profit calculation" ..
-        newP("3.0/3.1") ..
-        P .. "New " .. c("Price Override Module", g) ..
-        a .. "Override prices of " .. c("any materials", bb) .. ", " .. 
-        a .. c("optional and finishing reagents, ", bb) ..
-        a .. "and for " .. c("crafted results", bb) .. " per recipe or for all recipes!" ..
-        s .. "Added " .. c("Close Buttons", bb) .. " to all modules" ..
-        newP("2.2") ..
-        p .. "Fixed an error with Top Gear stat extraction" .. 
-        a .. "from items with no stats" ..
-        newP("2.1") ..
-        p .. "Updated the multicraft extra items formula to " ..
-        a .. c("(1+2.5y*bonus) / 2", bb) .. 
-        a .. "instead of " ..
-        a .. c("((1+2.5y) / 2)*bonus", bb) .. 
-        a .. "which leads to slightly less but more" .. 
-        a .. "accurate value from multicraft" ..
-        p .. "Fixed an error during prospecting and" .. 
-        a .. "other salvage recipes" .. 
-        p .. "Fixed a bug causing the Simulate Top Gear button" ..
-        a .. "to not update" .. 
-        p .. "Fixed racial skill boni being applied two times" .. 
-        a .. "when using experimental spec data" .. 
-        p .. "Fixed Chemical Synthesis not being considered in" .. 
-        a .. "Alchemy experimental spec data" ..
-        newP("2.0") ..
-        P .. "Implemented most modules for " .. c("Work Orders", g) ..
-        a .. "Simulation Mode for work orders will follow" .. 
-        a .. "in a future update." .. 
-        a .. "Behaviour of the Work Order Modules during recrafting" .. 
-        a .. "is not tested yet" .. 
-        P .. "Introducing the " .. c("CraftSim Control Panel", g) ..
-        a .. "Serving as the main module of CraftSim from now on" .. 
-        a .. "it gives easy access to all different modules" ..
-        s .. c("Removed", r) .. " the price override feature temporary" .. 
-        a .. "This will be reimplemented as a seperate module" .. 
-        a .. "in a future update"
+        a .. c("Feel free to join :D", g)
 end
