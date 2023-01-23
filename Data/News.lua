@@ -25,6 +25,9 @@ function CraftSim.NEWS:GET_NEWS()
         P .. c("Craft Results Module", g) .. " Redesigned" ..
         a .. "Now with more statistics!" ..
         p .. "The " .. c("Price Override Module", g) .. " now supports decimals" ..
+        p .. "Fixed Jewelcrafting Experimental Data not showing the first spec" ..
+        p .. "Fixed Alchemy Experimental Data not considering Chemical Synthesis" ..
+        a .. " for some Reagents" ..
         newP("5.0") ..
         P .. "New Module: " .. c("Craft Results", g) ..
         a .. "Logs your crafting outputs and shows you the total" .. 

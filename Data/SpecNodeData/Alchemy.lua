@@ -176,7 +176,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
@@ -195,7 +195,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraft = 20,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
@@ -214,7 +214,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             skill = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
@@ -233,7 +233,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
@@ -252,7 +252,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraft = 20,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
@@ -271,7 +271,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             craftingspeedBonusFactor = 0.10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
@@ -290,7 +290,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraft = 20,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
@@ -309,7 +309,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             skill = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
@@ -328,7 +328,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             multicraftExtraItemsFactor = 0.50,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENTS
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.FINISHING_REAGENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
