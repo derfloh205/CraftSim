@@ -21,6 +21,10 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("5.3") ..
+        P .. "Added an option to automatically simulate Top Gear" ..
+        s .. "The " .. c("Craft Results Module", g) .. " now buffers" .. 
+        a .. "multiple craft results and assigns them to one craft" ..
         newP("5.2") ..
         p .. "Resourcefulness now uses a simpler calculation method" ..
         newP("5.1") ..

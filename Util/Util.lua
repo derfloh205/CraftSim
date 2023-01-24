@@ -233,6 +233,32 @@ function CraftSim.UTIL:Count(t, func)
     return count
 end
 
+-- crashes wow currently..
+function CraftSim.UTIL:Sort(t, compFunc)
+    local sorted = {}
+    for _, item in pairs(t) do
+        if sorted[1] == nil then
+            table.insert(t, item)
+        else
+            local sortedCopy = CopyTable(sorted)
+            local inserted = false
+            for sortedIndex, sortedItem in pairs(sortedCopy) do
+                if compFunc(item, sortedItem) then
+                    table.insert(sorted, sortedIndex, item)
+                    inserted = true
+                    break
+                end
+            end
+
+            if not inserted then
+                table.insert(sorted, item)
+            end
+        end
+    end
+
+    return sorted
+end
+
 function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     local inputNumber = inputBox:GetNumber()
     local inputText = inputBox:GetText()

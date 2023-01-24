@@ -21,7 +21,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         -5, 
         3, 
         250, 
-        300,
+        320,
         CraftSim.CONST.FRAMES.TOP_GEAR, false, true, nil, "modulesTopGear")
 
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
@@ -34,20 +34,25 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         -5, 
         3, 
         250, 
-        300,
+        320,
         CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER, false, true, nil, "modulesTopGear")
 
     local function createContent(frame)
     
-        local contentOffsetY = -20
-        local iconsOffsetY = 80
+        local contentOffsetY = -40
+        local iconsOffsetY = 90
+        frame.content.autoUpdateCB = CraftSim.FRAME:CreateCheckbox("Automatic", "Automatically simulate Top Gear for your selected mode whenever a recipe updates.\n\nTurning this off may increase performance",
+            "topGearAutoUpdate", frame.content, frame.content, "TOP", "TOP", -40, -33)
+            frame.content.autoUpdateCB:HookScript("OnClick", function() 
+                CraftSim.MAIN:TriggerModulesErrorSafe(false)
+            end)
         frame.content.gear1Icon = CraftSim.FRAME:CreateIcon(frame.content, -45, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
         frame.content.gear2Icon = CraftSim.FRAME:CreateIcon(frame.content,  -0, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
         frame.content.toolIcon = CraftSim.FRAME:CreateIcon(frame.content, 50, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
     
         frame.content.equipButton = CreateFrame("Button", "CraftSimTopGearEquipButton", frame.content, "UIPanelButtonTemplate")
         frame.content.equipButton:SetSize(50, 25)
-        frame.content.equipButton:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 40)	
+        frame.content.equipButton:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 50)	
         frame.content.equipButton:SetText("Equip")
         frame.content.equipButton:SetScript("OnClick", function(self) 
             CraftSim.TOPGEAR:EquipTopGear()

@@ -3,6 +3,12 @@ AddonName, CraftSim = ...
 CraftSim.CRAFT_RESULTS.FRAMES = {}
 
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
+
+    -- only update frontend if its the shown recipeID
+    if not CraftSim.MAIN.currentRecipeData or CraftSim.MAIN.currentRecipeData.recipeID ~= recipeID then
+        return
+    end
+
     local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID] = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID] or CopyTable(CraftSim.CRAFT_RESULTS.baseRecipeEntry)
@@ -22,7 +28,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     statisticsText = statisticsText .. "Expected Ø Profit: " .. expectedAverageProfit .. "\n"
     statisticsText = statisticsText .. "Actual Ø Profit: " .. actualAverageProfit .. "\n"
     statisticsText = statisticsText .. "Actual Profit: " .. actualProfit .. "\n\n"
-    statisticsText = statisticsText .. "Proccs:\n\n"
+    statisticsText = statisticsText .. "Procs:\n\n"
 
     if statistics.inspiration then
         statisticsText = statisticsText .. "Inspiration: " .. statistics.inspiration .. "\n"
@@ -104,7 +110,25 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
         craftedItemsText = craftedItemsText .. count .. " x " .. itemLink .. "\n"
     end
 
-    craftResultFrame.content.craftedItemsFrame.resultFeed:SetText(craftedItemsText)
+    -- -- sort craftedItems by (test) count
+    -- TODO: make it not crash wow 
+    -- craftedItems = CraftSim.UTIL:Sort(craftedItems, function(a, b) 
+    --     return a.quantity > b.quantity
+    -- end)
 
-    -- for recipe.. ?
+    -- add saved reagents
+    local savedReagentsText = ""
+    for _, recipeCraftData in pairs(CraftSim.CRAFT_RESULTS.sessionData.byRecipe) do
+        if next(recipeCraftData.statistics.savedReagents) then
+            if savedReagentsText == "" then
+                savedReagentsText = "\nSaved Reagents:\n"
+            end
+
+            for _, savedReagent in pairs(recipeCraftData.statistics.savedReagents) do
+                savedReagentsText = savedReagentsText ..  savedReagent.quantity .. " x " .. savedReagent.item:GetItemLink() .. "\n"
+            end
+        end
+    end
+    
+    craftResultFrame.content.craftedItemsFrame.resultFeed:SetText(craftedItemsText .. savedReagentsText)
 end

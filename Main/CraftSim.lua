@@ -19,6 +19,7 @@ CraftSimOptions = CraftSimOptions or {
 	syncTarget = nil,
 	openLastRecipe = true,
 	materialSuggestionInspirationThreshold = false,
+	topGearAutoUpdate = false,
 
 	-- modules
 	modulesMaterials = true,
@@ -511,12 +512,16 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	CraftSim.FRAME:ToggleFrame(CraftSimSimFrame, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(CraftSimSimWOFrame, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	if showTopGear then
-		CraftSim.UTIL:StartProfiling("Top Gear")
+	if recipeData and showTopGear then
 		CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(exportMode)
-		local isCooking = recipeData.professionID == Enum.Profession.Cooking
-		CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, true, exportMode)
-		CraftSim.UTIL:StopProfiling("Top Gear")
+		if CraftSimOptions.topGearAutoUpdate then
+			CraftSim.UTIL:StartProfiling("Top Gear")
+			CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeData.recipeType, priceData, exportMode)
+			CraftSim.UTIL:StopProfiling("Top Gear")
+		else
+			local isCooking = recipeData.professionID == Enum.Profession.Cooking
+			CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, true, exportMode)
+		end
 	end
 
 	CraftSim.FRAME:ToggleFrame(CraftSimCostOverviewFrame, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)

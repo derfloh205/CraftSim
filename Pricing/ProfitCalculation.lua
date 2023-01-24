@@ -300,7 +300,7 @@ function CraftSim.CALC:GetExpectedCraftsForConfidence(recipeData, priceData)
         end 
 
         for _, combination in pairs(totalCombinations) do
-            local proccs = {
+            local procs = {
                 false, -- insp
                 false, -- mc
                 false, -- res
@@ -308,32 +308,32 @@ function CraftSim.CALC:GetExpectedCraftsForConfidence(recipeData, priceData)
 
             for i, bit in pairs(combination) do
                 if bit == 1 then
-                    proccs[i] = true
+                    procs[i] = true
                 end
             end
 
-            local p_Insp = (proccs[1] and inspChance) or (1-inspChance)
-            local p_MC = (proccs[2] and mcChance) or (1-mcChance)
-            local p_Res = (proccs[3] and resChance) or (1-resChance)
+            local p_Insp = (procs[1] and inspChance) or (1-inspChance)
+            local p_MC = (procs[2] and mcChance) or (1-mcChance)
+            local p_Res = (procs[3] and resChance) or (1-resChance)
 
             local combinationChance = p_Insp * p_MC * p_Res
 
-            local craftingCosts = priceData.craftingCostPerCraft - ((proccs[3] and savedCostsByRes) or 0)
+            local craftingCosts = priceData.craftingCostPerCraft - ((procs[3] and savedCostsByRes) or 0)
 
             local combinationProfit = 0
             local resultValue = 0
 
             -- if insp but not mc
-            if proccs[1] and not proccs[2] then
+            if procs[1] and not procs[2] then
                 resultValue = priceData.minBuyoutPerQuality[qualityWithInspiration] * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
             -- if mc but not insp
-            elseif not proccs[1] and proccs[2] then
+            elseif not procs[1] and procs[2] then
                 resultValue = priceData.minBuyoutPerQuality[recipeData.expectedQuality] * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
-            -- both proccs
-            elseif proccs[1] and proccs[2] then
+            -- both procs
+            elseif procs[1] and procs[2] then
                 resultValue = priceData.minBuyoutPerQuality[qualityWithInspiration] * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
             -- no mc and no insp
-            elseif not proccs[1] and not proccs[2] then
+            elseif not procs[1] and not procs[2] then
                 resultValue = priceData.minBuyoutPerQuality[recipeData.expectedQuality] * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
             end
             
