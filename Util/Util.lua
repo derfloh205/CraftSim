@@ -238,7 +238,7 @@ function CraftSim.UTIL:Sort(t, compFunc)
     local sorted = {}
     for _, item in pairs(t) do
         if sorted[1] == nil then
-            table.insert(t, item)
+            table.insert(sorted, item)
         else
             local sortedCopy = CopyTable(sorted)
             local inserted = false

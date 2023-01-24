@@ -29,7 +29,8 @@ CraftSimOptions = CraftSimOptions or {
 	modulesSpecInfo = true,
 	modulesPriceOverride = false,
 	modulesRecipeScan = false,
-	modulesCraftResults = true,
+	modulesCraftResults = false,
+	modulesStatistics = false,
 
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
@@ -119,9 +120,6 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.modulesSpecInfo == nil then
 			CraftSimOptions.modulesSpecInfo = true
-		end
-		if CraftSimOptions.modulesCraftResults == nil then
-			CraftSimOptions.modulesCraftResults = true
 		end
 	end
 end
@@ -242,6 +240,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.PRICE_OVERRIDE.FRAMES:Init()
 		CraftSim.RECIPE_SCAN.FRAMES:Init()
 		CraftSim.CRAFT_RESULTS.FRAMES:Init()
+		CraftSim.STATISTICS.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -413,6 +412,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local showSpecInfo = false
 	local showPriceOverride = false
 	local showCraftResults = true
+	local showStatistics = false
 
 	-- always on modules
 	local showRecipeScan = true
@@ -431,6 +431,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			showSpecInfo = true
 			showPriceOverride = true
 			showCraftResults = true
+			showStatistics = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
 			-- show everything
 			showMaterialAllocation = true
@@ -441,6 +442,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			showSpecInfo = true
 			showPriceOverride = true
 			showCraftResults = true
+			showStatistics = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.ENCHANT then
 			showTopGear = true
 			showCostOverview = true
@@ -449,6 +451,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			showSpecInfo = true
 			showPriceOverride = true
 			showCraftResults = true
+			showStatistics = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
 			-- show everything except material allocation and total cost overview
 			showTopGear = true
@@ -458,6 +461,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			showSpecInfo = true
 			showPriceOverride = true
 			showCraftResults = true
+			showStatistics = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
 			-- show crafting costs and highest material allocation
 			showCostOverview = true
@@ -469,6 +473,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			showStatweights = true
 			showPriceOverride = true
 			showCraftResults = true
+			showStatistics = true
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
 			-- show nothing
 		elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GATHERING then
@@ -486,6 +491,14 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showPriceOverride = showPriceOverride and CraftSimOptions.modulesPriceOverride
 	showRecipeScan = showRecipeScan and CraftSimOptions.modulesRecipeScan
 	showCraftResults = showCraftResults and CraftSimOptions.modulesCraftResults
+	showStatistics = showStatistics and CraftSimOptions.modulesStatistics
+
+
+	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STATISTICS), showStatistics)
+
+	if recipeData and showStatistics then
+		CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
+	end
 	
 	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN), showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS), showCraftResults)

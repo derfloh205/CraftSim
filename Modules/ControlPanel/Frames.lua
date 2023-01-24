@@ -108,5 +108,9 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "Show a crafting log and statistics about your crafts!",
     "TOP", frame.content.modulesRecipeScan, "TOP", 0, -20, "modulesCraftResults")
 
+    -- 5. Row
+    frame.content.modulesStatistics = createModuleCheckbox("Statistics", 
+    "Shows crafting and profit statistics of the open recipe",
+    "LEFT", frame.content.modulesRecipeScan, "RIGHT", 100, 0, "modulesStatistics")
 
 end

@@ -2,6 +2,8 @@ AddonName, CraftSim = ...
 
 CraftSim.AVERAGEPROFIT = {}
 
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
+
 local statIncreaseFactor = 5
 
 function CraftSim.AVERAGEPROFIT:GetQualityThresholds(maxQuality, recipeDifficulty, breakPointOffset)
@@ -63,6 +65,10 @@ function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData, expo
     local calculationResult = {} 
     local calculationData = {}
     calculationResult.meanProfit, calculationData = CraftSim.CALC:getMeanProfit(recipeData, priceData)
+    local meanProfitV2, probabilityTable = CraftSim.CALC:getMeanProfitV2(CraftSim.MAIN.currentRecipeData, priceData)
+   -- print("MeanProfitV1: " .. CraftSim.UTIL:FormatMoney(calculationResult.meanProfit, true))
+    print("MeanProfitV2: " .. CraftSim.UTIL:FormatMoney(meanProfitV2, true))    
+
 
     calculationData.meanProfit = calculationResult.meanProfit
     CraftSim.AVERAGEPROFIT.FRAMES:UpdateExplanation(recipeData, calculationData, exportMode)
