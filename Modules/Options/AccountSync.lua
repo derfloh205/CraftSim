@@ -52,19 +52,6 @@ end
 function CraftSim.ACCOUNTSYNC:Init()
     CraftSim.ACCOUNTSYNC:RegisterComm(TOOLTIP_SYNC_PREFIX)
     CraftSim.ACCOUNTSYNC:RegisterComm(OPTIONS_SYNC_PREFIX)
-
-    StaticPopupDialogs["CRAFT_SIM_ACCEPT_TOOLTIP_SYNC"] = {
-        text = "Incoming Craft Sim Account Sync: Do you accept?",
-        button1 = "Yes",
-        button2 = "No",
-        OnAccept = function(self, data1, data2)
-            CraftSim.ACCOUNTSYNC:HandleIncomingSync(data1, data2)
-        end,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-      }
 end
 
 function CraftSim.ACCOUNTSYNC:SynchronizeAccounts()

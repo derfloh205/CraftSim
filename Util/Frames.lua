@@ -612,6 +612,12 @@ function CraftSim.FRAME:InitWarningFrame()
     frame.content.warningText:SetPoint("TOP", frame.content, "TOP", 0, -20)
     frame.content.warningText:SetText("No Warning")
 
+    frame.content.doNotShowAgainButton = CraftSim.FRAME:CreateButton("I know, do not show this again!", frame.content, frame.content, "TOP", "TOP", 0, -200, 15, 25, true,
+    function()
+            StaticPopup_Show("CRAFT_SIM_ACCEPT_NO_PRICESOURCE_WARNING")
+        end
+    )
+
     frame.content.errorBox = CreateFrame("EditBox", nil, frame.content)
     frame.content.errorBox:SetPoint("TOP", frame.content, "TOP", 0, -20)
     frame.content.errorBox:SetText("No Warning")

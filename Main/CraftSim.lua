@@ -194,6 +194,35 @@ function CraftSim.MAIN:HookToEvent()
 	--ProfessionsFrame.OrdersPage.OrderView.OrderDetails:HookScript("OnShow", Update)
 end
 
+function CraftSim.MAIN:InitStaticPopups()
+	StaticPopupDialogs["CRAFT_SIM_ACCEPT_TOOLTIP_SYNC"] = {
+        text = "Incoming Craft Sim Account Sync: Do you accept?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function(self, data1, data2)
+            CraftSim.ACCOUNTSYNC:HandleIncomingSync(data1, data2)
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+      }
+
+	StaticPopupDialogs["CRAFT_SIM_ACCEPT_NO_PRICESOURCE_WARNING"] = {
+	text = "Are you sure you do not want to be reminded to get a price source?",
+	button1 = "Yes",
+	button2 = "No",
+	OnAccept = function(self, data1, data2)
+		CraftSimOptions.doNotRemindPriceSource = true
+		CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING):Hide()
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+	}
+end
+
 local priceApiLoaded = false
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == AddonName then
@@ -223,6 +252,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.ACCOUNTSYNC:Init()
 
 		CraftSim.CONTROL_PANEL.FRAMES:Init()
+		CraftSim.MAIN:InitStaticPopups()
 	end
 end
 
