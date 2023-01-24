@@ -87,8 +87,8 @@ end
 function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 	if CraftSimOptions then
 		CraftSimOptions.tsmPriceKey = nil
-		CraftSimOptions.tsmPriceKeyMaterials = CraftSimOptions.tsmPriceKeyMaterials or "DBRecent"
-		CraftSimOptions.tsmPriceKeyItems = CraftSimOptions.tsmPriceKeyItems or "DBMinbuyout"
+		CraftSimOptions.tsmPriceKeyMaterials = CraftSimOptions.tsmPriceKeyMaterials or CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION
+		CraftSimOptions.tsmPriceKeyItems = CraftSimOptions.tsmPriceKeyItems or CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION
 		CraftSimOptions.topGearMode = CraftSimOptions.topGearMode or "Top Profit"
 		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
 		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false

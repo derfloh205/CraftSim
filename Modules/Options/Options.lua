@@ -112,6 +112,10 @@ function CraftSim.OPTIONS:Init()
         end
     end)
 
+    CraftSim.FRAME:CreateButton("Reset Default", TSMTab.content, tsmMaterialsPriceExpression, "RIGHT", "LEFT", -10, 1, 15, 20, true, function()
+        tsmMaterialsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
+    end)
+
     local tsmExpressionTitleMaterials = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     tsmExpressionTitleMaterials:SetPoint("BOTTOMLEFT", tsmMaterialsPriceExpression, "TOPLEFT",  0, 10)
     tsmExpressionTitleMaterials:SetText("TSM Crafting Materials Price Expression")
@@ -138,6 +142,10 @@ function CraftSim.OPTIONS:Init()
             CraftSimTSMStringValidationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
             CraftSimOptions.tsmPriceKeyItems = tsmItemsPriceExpression:GetText()
         end
+    end)
+
+    CraftSim.FRAME:CreateButton("Reset Default", TSMTab.content, tsmItemsPriceExpression, "RIGHT", "LEFT", -10, 1, 15, 20, true, function()
+        tsmItemsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
     end)
 
     local tsmExpressionTitleItems = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')

@@ -22,6 +22,8 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         newP("5.4") ..
+        p .. c("TSM Price Expressions", bb) .. " can now be reset to the" .. 
+        a .. "default 'first(DBRecent, DBMinbuyout)'" ..
         p .. "Bonus Inspiration from Incense is now considered" .. 
         a .. "when switching to Simulation Mode" ..
         p .. "Added Option to not be reminded to use a price source" ..
