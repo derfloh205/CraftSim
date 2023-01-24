@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("5.4") ..
+        p .. "Bonus Inspiration from Incense is now considered" .. 
+        a .. "when switching to Simulation Mode" ..
         newP("5.3") ..
         P .. "Added an option to automatically simulate Top Gear" ..
         s .. "The " .. c("Craft Results Module", g) .. " now buffers" .. 

@@ -333,6 +333,9 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         CraftSim.SIMULATION_MODE.baseSpecNodeData = CopyTable(CraftSim.SIMULATION_MODE.recipeData.specNodeData) -- to make a reset possible
         print("copied specnode data: " .. tostring(CraftSim.SIMULATION_MODE.baseSpecNodeData))
         CraftSim.SIMULATION_MODE.baseRecipeDifficulty = CraftSim.SIMULATION_MODE.recipeData.baseDifficulty
+
+        -- to subtract the incense buff inspiration if it exists
+        local statsByBuffs = CraftSim.DATAEXPORT:GetStatsFromBuffs(recipeData.buffData)
         
         local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[CraftSim.SIMULATION_MODE.recipeData.professionID]
 
@@ -341,7 +344,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
         
         if CraftSim.SIMULATION_MODE.recipeData.stats.inspiration then
             CraftSim.SIMULATION_MODE.baseInspiration = CopyTable(CraftSim.SIMULATION_MODE.recipeData.stats.inspiration)
-            CraftSim.SIMULATION_MODE.baseInspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value - statsByOptionalInputs.inspiration - specNodeStats.inspiration
+            CraftSim.SIMULATION_MODE.baseInspiration.value = CraftSim.SIMULATION_MODE.baseInspiration.value - statsByOptionalInputs.inspiration - specNodeStats.inspiration - statsByBuffs.inspiration
             --CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs = CraftSim.SIMULATION_MODE.baseInspiration.bonusSkillFactorNoSpecs
             CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents = CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents - statsByOptionalInputs.skill - specNodeStats.skill
         end
