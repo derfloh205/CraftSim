@@ -234,5 +234,6 @@ function CraftSim.RECIPE_SCAN:AddRecipeToRecipeRow(recipeData, priceData, meanPr
     end
     availableRow.meanProfit = meanProfit
     availableRow.offset = totalOffsetY
-	
+	availableRow:SetPoint("TOP", RecipeScanFrame.content.resultFrame, "TOP", 0, totalOffsetY)
+
 end
