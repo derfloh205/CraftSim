@@ -24,6 +24,7 @@ function CraftSim.NEWS:GET_NEWS()
         newP("5.4") ..
         p .. "Bonus Inspiration from Incense is now considered" .. 
         a .. "when switching to Simulation Mode" ..
+        p .. "Added Option to not be reminded to use a price source" ..
         newP("5.3") ..
         P .. "Added an option to automatically simulate Top Gear" ..
         s .. "The " .. c("Craft Results Module", g) .. " now buffers" .. 
