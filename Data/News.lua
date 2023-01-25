@@ -16,7 +16,7 @@ function CraftSim.NEWS:GET_NEWS()
     local s = "\n" .. CraftSim.UTIL:GetQualityIconAsText(2, 15, 15) .. " "
     local P = "\n" .. CraftSim.UTIL:GetQualityIconAsText(3, 15, 15) .. " "
     local a = "\n     "
-    local function newP(v) return c("\n\n\n                                   --- Version " .. v .. " ---\n\n", l) end
+    local function newP(v) return c("\n\n                                   --- Version " .. v .. " ---\n", l) end
 
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
@@ -25,7 +25,7 @@ function CraftSim.NEWS:GET_NEWS()
         s .. "Added a small workaround to make" .. 
         a .. "the CraftSim Modules appear after a" ..
         a .. "fresh login and first time clicking on a profession" ..
-        s .. "New Statistics Panel in the " .. c("Average Profit Module", g) .. 
+        s .. "New " .. c("Statistics Panel", g) .. " in the " .. c("Average Profit Module", g) .. 
         a .. "showing the probability table of the craft and the" .. 
         a .. "confidence to have a positive profit after a certain" .. 
         a .. "number of crafts" ..
@@ -34,7 +34,7 @@ function CraftSim.NEWS:GET_NEWS()
         a .. "for prospecting due to a bug on blizzard's side" ..
         p .. "The Crafted Items List in the " .. 
         a .. c("Craft Results Module", bb) .. " is now sorted by quality" ..
-        p .. "Jewelcrafting Experimental Data:" .. 
+        p .. c("Jewelcrafting Experimental Data:", bb) .. 
         a .. "Primalist Gems are now affected by Faceting and " .. 
         a .. "their respective elemental node" ..
         newP("5.4") ..
