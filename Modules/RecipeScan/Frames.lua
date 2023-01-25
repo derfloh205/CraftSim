@@ -216,13 +216,24 @@ function CraftSim.RECIPE_SCAN:AddRecipeToRecipeRow(recipeData, priceData, meanPr
         availableRow.noTopGearText:SetText(CraftSim.UTIL:ColorizeText("Equipped", CraftSim.CONST.COLORS.GREEN))
     end
 
-    -- update visibility
+    -- update visibility and position
 
     availableRow.isActive = true
-    availableRow:Show()
     local baseOffsetY = -30
     local spacingY = -20
-    local totalOffsetY = baseOffsetY + spacingY*(numActiveFrames - 1)
+    local totalOffsetY = baseOffsetY - spacingY
+    for i = 1, numActiveFrames, 1 do
+        local row = RecipeScanFrame.content.resultRowFrames[i]
+        if row.meanProfit < meanProfit then
+            row.offset = row.offset + spacingY
+            row:SetPoint("TOP", RecipeScanFrame.content.resultFrame, "TOP", 0, row.offset)
+        else
+            totalOffsetY = totalOffsetY + spacingY
+        end
+    end
+    availableRow.meanProfit = meanProfit
+    availableRow.offset = totalOffsetY
+    availableRow:Show()
     availableRow:SetPoint("TOP", RecipeScanFrame.content.resultFrame, "TOP", 0, totalOffsetY)
 
 end
