@@ -256,6 +256,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374467, -- Primalist Air
+            },
             equalsSkill = true,
         },
         AIR_2 = {
@@ -264,6 +267,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.AIR_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
+            },
+            exceptionRecipeIDs = {
+                374467, -- Primalist Air
             },
             threshold = 5,
             skill = 5,
@@ -275,6 +281,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374467, -- Primalist Air
+            },
             threshold = 15,
             skill = 5,
         },
@@ -285,6 +294,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374467, -- Primalist Air
+            },
             threshold = 25,
             skill = 5,
         },
@@ -294,6 +306,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.AIR_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
+            },
+            exceptionRecipeIDs = {
+                374467, -- Primalist Air
             },
             threshold = 35,
             skill = 5,
@@ -306,6 +321,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374468, -- Primalist Earth
+            },
             equalsSkill = true,
         },
         EARTH_2 = {
@@ -314,6 +332,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.EARTH_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
+            },
+            exceptionRecipeIDs = {
+                374468, -- Primalist Earth
             },
             threshold = 5,
             skill = 5,
@@ -325,6 +346,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374468, -- Primalist Earth
+            },
             threshold = 15,
             skill = 5,
         },
@@ -335,6 +359,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374468, -- Primalist Earth
+            },
             threshold = 25,
             skill = 5,
         },
@@ -344,6 +371,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.EARTH_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
+            },
+            exceptionRecipeIDs = {
+                374468, -- Primalist Earth
             },
             threshold = 35,
             skill = 5,
@@ -356,6 +386,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374465, -- Primalist Fire
+            },
             equalsSkill = true,
         },
         FIRE_2 = {
@@ -364,6 +397,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.FIRE_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
+            },
+            exceptionRecipeIDs = {
+                374465, -- Primalist Fire
             },
             threshold = 5,
             skill = 5,
@@ -375,6 +411,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374465, -- Primalist Fire
+            },
             threshold = 15,
             skill = 5,
         },
@@ -384,6 +423,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.FIRE_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
+            },
+            exceptionRecipeIDs = {
+                374465, -- Primalist Fire
             },
             threshold = 25,
             skill = 5,
@@ -395,6 +437,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374465, -- Primalist Fire
+            },
             threshold = 35,
             skill = 5,
         },
@@ -405,6 +450,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374470, -- Primalist Frost
+            },
             equalsSkill = true,
         },
         FROST_2 = {
@@ -413,6 +461,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.FROST_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
+            },
+            exceptionRecipeIDs = {
+                374470, -- Primalist Frost
             },
             threshold = 5,
             skill = 5,
@@ -424,6 +475,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374470, -- Primalist Frost
+            },
             threshold = 15,
             skill = 5,
         },
@@ -434,6 +488,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
             },
+            exceptionRecipeIDs = {
+                374470, -- Primalist Frost
+            },
             threshold = 25,
             skill = 5,
         },
@@ -443,6 +500,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.FROST_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
+            },
+            exceptionRecipeIDs = {
+                374470, -- Primalist Frost
             },
             threshold = 35,
             skill = 5,

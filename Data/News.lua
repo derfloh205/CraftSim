@@ -34,6 +34,9 @@ function CraftSim.NEWS:GET_NEWS()
         a .. "for prospecting due to a bug on blizzard's side" ..
         p .. "The Crafted Items List in the " .. 
         a .. c("Craft Results Module", bb) .. " is now sorted by quality" ..
+        p .. "Jewelcrafting Experimental Data:" .. 
+        a .. "Primalist Gems are now affected by Faceting and " .. 
+        a .. "their respective elemental node" ..
         newP("5.4") ..
         p .. c("TSM Price Expressions", bb) .. " can now be reset to the" .. 
         a .. "default 'first(DBRecent, DBMinbuyout)'" ..
