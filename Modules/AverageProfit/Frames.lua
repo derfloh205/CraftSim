@@ -49,6 +49,9 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
             frame.content.breakdownButton:SetText(isVisible and "Show Explanation" or not isVisible and "Hide Explanation")
         end)
 
+        frame.content.breakdownButton:SetEnabled(false)
+        frame.content.breakdownButton.tooltip = "Test"
+
         if statisticsFrameID then
             frame.content.statisticsButton = CraftSim.FRAME:CreateButton("Show Statistics", frame.content, frame.content.breakdownButton, "LEFT", "RIGHT", 1, 0, 15, 20, true, 
             function() 

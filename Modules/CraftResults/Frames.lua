@@ -105,16 +105,24 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
     -- total items
     local craftedItems = CraftSim.CRAFT_RESULTS.sessionData.total.craftedItems
 
-    local craftedItemsText = ""
-    for itemLink, count in pairs(craftedItems) do
-        craftedItemsText = craftedItemsText .. count .. " x " .. itemLink .. "\n"
+    local items = {}
+    for link, count in pairs(craftedItems) do
+        table.insert(items, {
+            link = link,
+            count = count,
+            item = Item:CreateFromItemLink(link),
+        })
     end
 
-    -- -- sort craftedItems by (test) count
-    -- TODO: make it not crash wow 
-    -- craftedItems = CraftSim.UTIL:Sort(craftedItems, function(a, b) 
-    --     return a.quantity > b.quantity
-    -- end)
+    -- sort craftedItems by .. rareness?
+    items = CraftSim.UTIL:Sort(items, function(a, b) 
+        return a.item:GetItemQuality() > b.item:GetItemQuality()
+    end)
+
+    local craftedItemsText = ""
+    for _, item in pairs(items) do
+        craftedItemsText = craftedItemsText .. item.count .. " x " .. item.link .. "\n"
+    end
 
     -- add saved reagents
     local savedReagentsText = ""

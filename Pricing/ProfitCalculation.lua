@@ -340,6 +340,9 @@ function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
             combinationProfit = resultValue - craftingCosts
             print(table.concat(combination, "") .. ":" .. CraftSim.UTIL:round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
+                inspiration = procs[1],
+                multicraft = procs[2],
+                resourcefulness = procs[3],
                 chance = combinationChance,
                 profit = combinationProfit
             })
@@ -418,6 +421,8 @@ function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
             combinationProfit = resultValue - craftingCosts
             print(table.concat(combination, "") .. ":" .. CraftSim.UTIL:round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
+                multicraft = procs[1],
+                resourcefulness = procs[2],
                 chance = combinationChance,
                 profit = combinationProfit
             })
@@ -493,6 +498,8 @@ function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
             combinationProfit = resultValue - craftingCosts
             print(table.concat(combination, "") .. ":" .. CraftSim.UTIL:round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
+                inspiration = procs[1],
+                resourcefulness = procs[2],
                 chance = combinationChance,
                 profit = combinationProfit
             })
@@ -555,6 +562,7 @@ function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
             combinationProfit = resultValue - craftingCosts
             print(table.concat(combination, "") .. ":" .. CraftSim.UTIL:round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
+                resourcefulness = procs[1],
                 chance = combinationChance,
                 profit = combinationProfit
             })
@@ -571,6 +579,9 @@ function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
         print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
 
         return expectedProfit, probabilityTable
+    elseif not recipeData.stats.resourcefulness then
+        -- before having a salvage item allocated in prospecting e.g.
+        return 0, {}
     end
 
     print(CraftSim.UTIL:ColorizeText("Szenario not implemented yet", CraftSim.CONST.COLORS.RED), false, true)

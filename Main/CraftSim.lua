@@ -125,7 +125,16 @@ end
 
 local hookedEvent = false
 
+local freshLoginRecall = true
 function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
+
+	if freshLoginRecall and isInit then
+		freshLoginRecall = false
+		-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
+		C_Timer.After(0.1, function() 
+			CraftSim.MAIN:TriggerModulesErrorSafe(true)
+		end)
+	end
 	-- local success, errorMsg = pcall(CraftSim.MAIN.TriggerModulesByRecipeType, self, isInit)
 
 	-- if not success then

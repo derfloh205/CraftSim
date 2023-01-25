@@ -233,7 +233,6 @@ function CraftSim.UTIL:Count(t, func)
     return count
 end
 
--- crashes wow currently..
 function CraftSim.UTIL:Sort(t, compFunc)
     local sorted = {}
     for _, item in pairs(t) do

@@ -3,7 +3,7 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 26 -- last highest: 25
+CraftSim.CONST.currentInfoVersionID = 27 -- last highest: 27
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -75,6 +75,7 @@ CraftSim.CONST.DEBUG_IDS = {
     CRAFT_RESULTS = "CRAFT_RESULTS",
     PRICE_OVERRIDE = "PRICE_OVERRIDE",
     AVERAGE_PROFIT = "AVERAGE_PROFIT",
+    STATISTICS = "STATISTICS",
 }
 
 CraftSim.CONST.ERROR = {

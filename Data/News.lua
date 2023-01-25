@@ -22,8 +22,18 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
         newP("5.5") ..
+        s .. "Added a small workaround to make" .. 
+        a .. "the CraftSim Modules appear after a" ..
+        a .. "fresh login and first time clicking on a profession" ..
+        s .. "New Statistics Panel in the " .. c("Average Profit Module", g) .. 
+        a .. "showing the probability table of the craft and the" .. 
+        a .. "confidence to have a positive profit after a certain" .. 
+        a .. "number of crafts" ..
+        s .. "Switched to a statistics based expected profit calculation" ..
         p .. "Fixed Resourcefulness proc being counted multiple times" .. 
         a .. "for prospecting due to a bug on blizzard's side" ..
+        p .. "The Crafted Items List in the " .. 
+        a .. c("Craft Results Module", bb) .. " is now sorted by quality" ..
         newP("5.4") ..
         p .. c("TSM Price Expressions", bb) .. " can now be reset to the" .. 
         a .. "default 'first(DBRecent, DBMinbuyout)'" ..
