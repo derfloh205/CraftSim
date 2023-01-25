@@ -550,7 +550,7 @@ function CraftSim.CALC:getMeanProfit(recipeData, priceData)
 
             local combinationChance = p_Res
 
-            local craftingCosts = priceData.craftingCostPerCraft - ((procs[2] and savedCostsByRes) or 0)
+            local craftingCosts = priceData.craftingCostPerCraft - ((procs[1] and savedCostsByRes) or 0)
 
             local combinationProfit = 0
             local resultValue = 0
