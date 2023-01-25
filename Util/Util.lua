@@ -397,11 +397,23 @@ end
 function CraftSim.UTIL:Find(t, findFunc)
     for k, v in pairs(t) do
         if findFunc(v) then
-            return v
+            return v, k
         end
     end
 
     return false
+end
+
+function CraftSim.UTIL:GetMoneyValuesFromCopper(copperValue, formatString)
+    local gold = CraftSim.UTIL:round(copperValue/10000)
+    local silver = CraftSim.UTIL:round(copperValue/100000)
+    local copper = CraftSim.UTIL:round(copperValue/10000000)
+
+    if not formatString then
+        return gold, silver, copper
+    else
+        return gold .. "g " .. silver .. "s " .. copper .. "c"
+    end
 end
 
 

@@ -11,7 +11,7 @@ local function translateLuaIndex(index)
 end
 
 -- By Liqorice's knapsack solution
-function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData, exportMode)
+function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData, exportMode, UseInspirationOverride)
     -- insert costs
     local reagentCostsByQuality = CraftSim.PRICEDATA:GetReagentsPriceByQuality(recipeData)
 
@@ -131,9 +131,9 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
         if recipeData.stats.inspiration then
             if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
                 local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
-                if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G then
+                if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G and not UseInspirationOverride then
                     inspirationBonusSkill = 0
-                elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I then
+                elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I or UseInspirationOverride then
                     inspirationBonusSkill = recipeData.stats.inspiration.bonusskill
                 end
             else
@@ -652,26 +652,43 @@ function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAlloc
     return true
 end
 
--- TODO: does not work cause allocations are protected..
-function CraftSim.REAGENT_OPTIMIZATION:AutoAssignVellum(recipeData)
-    -- print("vellum auto assign")
-    -- local vellumItemID = 38682
-    -- -- local enchantAllocation = recipeData.currentTransaction:GetEnchantAllocation()
-    -- -- -- if something is already allocated, ignore
-    -- -- if enchantAllocation then
-    -- --     print("ignore cause enchant is allocated")
-    -- --     return
-    -- -- end
-    -- ItemUtil.IteratePlayerInventoryAndEquipment(function(itemLocation)
-    --     if C_Item.GetItemID(itemLocation) == vellumItemID then
+function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentsForScannedRecipeData(recipeData, priceData, UseInspiration) 
+    if not recipeData.hasReagentsWithQuality then
+        return recipeData.reagents -- e.g: Primal Convergence
+    end
 
-    --         local allocations = recipeData.currentTransaction:GetAllocations(slotIndex)
-    --         print("try to set enchant")
-    --         local vellumItem = Item:CreateFromItemGUID(C_Item.GetItemGUID(itemLocation))
-    --         recipeData.currentTransaction:SetEnchantAllocation(vellumItem) -- seems to be protected???
-    --         ProfessionsFrame.CraftingPage.SchematicForm.enchantSlot:SetItem(vellumItem)
-    --         recipeData.currentTransaction:SanitizeTargetAllocations();
-    --         ProfessionsFrame.CraftingPage.SchematicForm:TriggerEvent(ProfessionsRecipeSchematicFormMixin.Event.AllocationsModified);
-    --     end
-    -- end);
+    if recipeData.result.isNoQuality then
+        for i, reagent in pairs(recipeData.reagents) do
+            local cheapestQualityID = CraftSim.PRICEDATA:GetLowestCostQualityIDByItemsInfo(reagent.itemsInfo)
+            reagent.itemsInfo[cheapestQualityID].allocations = reagent.requiredQuantity
+            print("NonQualityRecipe: Return cheapest reagent quality for reagent #" .. tostring(i) .. ": " .. tostring(cheapestQualityID))
+        end
+        return recipeData.reagents
+    end
+    
+    local bestAllocation = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeData.recipeType, priceData, CraftSim.CONST.EXPORT_MODE.SCAN, UseInspiration)
+    print("Found Best Allocation For WhisperScan: ")
+    print(bestAllocation, true)
+    if bestAllocation then
+        for _, reagent in pairs(recipeData.reagents) do
+            if reagent.differentQualities then
+                for _, itemInfo in pairs(reagent.itemsInfo) do
+                    for _, allocation in pairs(bestAllocation.allocations) do
+                        for _, subAllocation in pairs(allocation.allocations) do
+                            if itemInfo.itemID == subAllocation.itemID then
+                                itemInfo.allocations = subAllocation.allocations
+                            end
+                        end
+                    end
+                end
+                -- reagent.itemsInfo[3].allocations = reagent.requiredQuantity
+            else
+                reagent.itemsInfo[1].allocations = reagent.requiredQuantity
+            end 
+        end
+
+        return CopyTable(recipeData.reagents)
+    else
+        print("No best allocation found (should not be possible)")
+    end
 end

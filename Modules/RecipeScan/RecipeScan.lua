@@ -66,14 +66,14 @@ function CraftSim.RECIPE_SCAN:SetReagentAllocationByScanMode(recipeData, priceDa
                 if reagent.differentQualities then
                     for _, itemInfo in pairs(reagent.itemsInfo) do
                         for _, allocation in pairs(bestAllocation.allocations) do
-                            for _, subAllocation in pairs(allocation) do
-                                if itemInfo.itemID == allocation.itemID then
+                            for _, subAllocation in pairs(allocation.allocations) do
+                                if itemInfo.itemID == subAllocation.itemID then
                                     itemInfo.allocations = subAllocation.allocations
                                 end
                             end
                         end
                     end
-                    reagent.itemsInfo[3].allocations = reagent.requiredQuantity
+                    -- reagent.itemsInfo[3].allocations = reagent.requiredQuantity
                 else
                     reagent.itemsInfo[1].allocations = reagent.requiredQuantity
                 end 
@@ -109,6 +109,67 @@ function CraftSim.RECIPE_SCAN:EndScan()
     print("scan finished")
     collectgarbage("collect") -- By Option?
     CraftSim.RECIPE_SCAN:ToggleScanButton(true)
+end
+
+function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
+
+    local itemID = resultItem:GetItemID()
+
+    print("Searching for Recipe with result: " .. tostring(itemID))
+
+    local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
+    local recipeInfos = CraftSim.UTIL:Map(recipeIDs, function(recipeID) 
+        return C_TradeSkillUI.GetRecipeInfo(recipeID)
+    end)
+
+    -- check learned recipes for recipe with this item as result
+    local foundRecipeInfo = CraftSim.UTIL:Find(recipeInfos, function(recipeInfo) 
+        if not recipeInfo.learned then
+            return false
+        end
+        ---@diagnostic disable-next-line: missing-parameter
+        local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
+        local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
+        if isDragonIsleRecipe and recipeInfo.isEnchantingRecipe then
+            local foundEnchant, recipeID = CraftSim.UTIL:Find(CraftSim.ENCHANT_RECIPE_DATA, function (enchantData) 
+                return enchantData.q1 == itemID or enchantData.q2 == itemID or enchantData.q3 == itemID
+            end)
+            if foundEnchant then
+                print("found as enchant")
+                return true
+            end
+        end
+        if isDragonIsleRecipe then
+            if recipeInfo.hyperlink then
+                local outputQ1 = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, {}, nil, 1)
+
+                if outputQ1.itemID == itemID then
+                    return true
+                end
+
+                local outputQ2 = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, {}, nil, 2)
+
+                if outputQ2.itemID == itemID then
+                    return true
+                end
+
+                local outputQ3 = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, {}, nil, 3)
+
+                if outputQ3.itemID == itemID then
+                    return true
+                end
+
+            end
+        end
+        return false
+    end)
+
+    if foundRecipeInfo then
+        print("Found Recipe: " .. foundRecipeInfo.name)
+        return foundRecipeInfo
+    end
+
+    return nil
 end
 
 function CraftSim.RECIPE_SCAN:StartScan()

@@ -25,6 +25,9 @@ Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
 Pricing/PriceData.lua
 
+Modules/CustomerService/CustomerService.lua
+Modules/CustomerService/Frames.lua
+
 Modules/CraftStatistics/CraftStatistics.lua
 Modules/CraftStatistics/Frames.lua
 

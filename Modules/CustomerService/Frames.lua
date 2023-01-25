@@ -1,0 +1,3 @@
+AddonName, CraftSim = ...
+
+CraftSim.CUSTOMER_SERVICE.FRAMES = {}
