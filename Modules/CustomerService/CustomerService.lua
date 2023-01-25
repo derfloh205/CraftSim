@@ -8,8 +8,8 @@ function CraftSim.CUSTOMER_SERVICE:CHAT_MSG_WHISPER(text, playerName,
     languageName, channelName, playerName2, specialFlags, zoneChannelID, 
     channelIndex, channelBaseName, languageID, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
 
-    print("Whisper from " .. tostring(playerName))
-    print("Content:\n" .. tostring(text))
+    --print("Whisper from " .. tostring(playerName))
+    --print("Content:\n" .. tostring(text))
 
     local commands = strsplittable(" ", text)
 
