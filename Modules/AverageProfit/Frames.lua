@@ -37,9 +37,9 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     120,
     CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER, false, true, nil, "modulesStatWeights")
 
-    local function createContent(frame, profitDetailsFrameID)
+    local function createContent(frame, profitDetailsFrameID, statisticsFrameID)
         frame.content.breakdownButton = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-        frame.content.breakdownButton:SetPoint("TOP", frame.title, "TOP", 0, -15)	
+        frame.content.breakdownButton:SetPoint("TOP", frame.title, "TOP", (statisticsFrameID and -60) or 0, -15)	
         frame.content.breakdownButton:SetText("Show Explanation")
         frame.content.breakdownButton:SetSize(frame.content.breakdownButton:GetTextWidth() + 15, 20)
         frame.content.breakdownButton:SetScript("OnClick", function(self)
@@ -48,6 +48,14 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
             CraftSim.FRAME:ToggleFrame(profitDetailsFrame, not isVisible)
             frame.content.breakdownButton:SetText(isVisible and "Show Explanation" or not isVisible and "Hide Explanation")
         end)
+
+        if statisticsFrameID then
+            frame.content.statisticsButton = CraftSim.FRAME:CreateButton("Show Statistics", frame.content, frame.content.breakdownButton, "LEFT", "RIGHT", 1, 0, 15, 20, true, 
+            function() 
+                local statisticsFrame = CraftSim.FRAME:GetFrame(statisticsFrameID)
+                CraftSim.FRAME:ToggleFrame(statisticsFrame, not statisticsFrame:IsVisible())
+            end)
+        end
         
 
         frame.content.statText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -58,7 +66,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         frame:Hide()
     end
 
-    createContent(frameNonWorkOrder, CraftSim.CONST.FRAMES.PROFIT_DETAILS)
+    createContent(frameNonWorkOrder, CraftSim.CONST.FRAMES.PROFIT_DETAILS, CraftSim.CONST.FRAMES.STATISTICS)
     createContent(frameWorkOrder, CraftSim.CONST.FRAMES.PROFIT_DETAILS_WORK_ORDER)
 
     

@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("5.5") ..
+        p .. "Fixed Resourcefulness proc being counted multiple times" .. 
+        a .. "for prospecting due to a bug on blizzard's side" ..
         newP("5.4") ..
         p .. c("TSM Price Expressions", bb) .. " can now be reset to the" .. 
         a .. "default 'first(DBRecent, DBMinbuyout)'" ..

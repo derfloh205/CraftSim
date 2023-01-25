@@ -5,19 +5,21 @@ CraftSim.STATISTICS.FRAMES = {}
 function CraftSim.STATISTICS.FRAMES:Init()
     local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimStatisticsFrame", 
-        "CraftSim Statistics", 
-        ProfessionsFrame.CraftingPage.SchematicForm,
+        "CraftSim Profit Statistics", 
+        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS),
         UIParent, 
         "CENTER", 
         "CENTER", 
         0, 
         0, 
-        350,
-        350,
-        CraftSim.CONST.FRAMES.STATISTICS, false, true, "DIALOG", "modulesStatistics")
+        400,
+        400,
+        CraftSim.CONST.FRAMES.STATISTICS, false, true, "DIALOG")
 
 
     local function createContent(frame)
+
+        frame:Hide()
 
         frame.content.expectedProfitTitle = CraftSim.FRAME:CreateText("Expected Profit (μ)", frame.content, frame.title, "TOP", "TOP", 0, -30)
         frame.content.expectedProfitValue = CraftSim.FRAME:CreateText(CraftSim.UTIL:FormatMoney(0, true), frame.content, frame.content.expectedProfitTitle, "TOP", "BOTTOM", 0, -10)

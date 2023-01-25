@@ -218,14 +218,7 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
             })
         end
 
-        if craftResult.resourcesReturned then
-            craftData.procs.resourcefulness.triggered = true
-            for _, savedReagent in pairs(craftResult.resourcesReturned) do
-                local item = Item:CreateFromItemID(savedReagent.itemID)
-                item.quantity = savedReagent.quantity
-                table.insert(craftData.procs.resourcefulness.savedReagents, item)
-            end
-        end
+        
 
         table.insert(craftData.results, {
             item = craftResult.hyperlink,
@@ -233,7 +226,16 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         })
     end
 
-    -- calculate craftingChance, TODO: make more dynamic
+    -- just take resourcefulness from the first craftResult
+    -- this is because of a blizzard bug where the same proc is listed in every craft result
+    if craftingResults[1].resourcesReturned then
+        craftData.procs.resourcefulness.triggered = true
+        for _, savedReagent in pairs(craftingResults[1].resourcesReturned) do
+            local item = Item:CreateFromItemID(savedReagent.itemID)
+            item.quantity = savedReagent.quantity
+            table.insert(craftData.procs.resourcefulness.savedReagents, item)
+        end
+    end
 
     local inspChance = (recipeData.stats.inspiration and recipeData.stats.inspiration.percent / 100) or 1
     local mcChance = (recipeData.stats.multicraft and recipeData.stats.multicraft.percent / 100) or 1
@@ -248,14 +250,9 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
     end
 
     local totalResChance = 1
-    if resChance < 1 then
-        if not craftData.procs.resourcefulness.triggered then
-            totalResChance = (1-resChance) ^ #recipeData.reagents
-        else
-            local numProcced = #craftData.procs.resourcefulness.savedReagents
-            local numNotProcced = #recipeData.reagents - numProcced
-            totalResChance = (resChance ^ numProcced) * ( (1-resChance) ^ numNotProcced )
-        end
+    if resChance < 1 and craftData.procs.resourcefulness.triggered then
+        local numProcced = #craftData.procs.resourcefulness.savedReagents
+        totalResChance = resChance ^ numProcced
     end
 
     craftData.craftingChance = inspChance*mcChance*totalResChance
