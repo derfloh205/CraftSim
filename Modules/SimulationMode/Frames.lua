@@ -633,6 +633,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
     frame:Hide()
 end
 
+function CraftSim.SIMULATION_MODE.FRAMES:ResetAllNodeModFramesForTab(tab)
+    for _, nodeModFrame in pairs(tab.content.nodeModFrames) do
+        nodeModFrame:Hide()
+        nodeModFrame.showParentLine:Hide()
+    end
+end
+
 function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
     local specNodeData = CraftSim.SIMULATION_MODE.recipeData.specNodeData
 
@@ -668,6 +675,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
         specTab:ResetWidth()
 
         local currentNodeOnLayer = {1, 1, 1}
+
+        CraftSim.SIMULATION_MODE.FRAMES:ResetAllNodeModFramesForTab(specTab)
 
         local function initNode(node, layer, layerCount, parentNodeModFrame)
            
