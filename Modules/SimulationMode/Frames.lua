@@ -676,7 +676,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
 
         local currentNodeOnLayer = {1, 1, 1}
 
-        CraftSim.SIMULATION_MODE.FRAMES:ResetAllNodeModFramesForTab(specTab)
+        
 
         local function initNode(node, layer, layerCount, parentNodeModFrame)
            
@@ -786,6 +786,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
     for i = 1, 4, 1 do
         local specTabName = baseNodeNames[i]
         local specTab = specModFrame.content.specializationTabs[i]
+        CraftSim.SIMULATION_MODE.FRAMES:ResetAllNodeModFramesForTab(specTab)
         if specTabName then
             specTab:Show()
             initTab(i, specTab, specTabName, baseRuleNodes[i])
