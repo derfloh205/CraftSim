@@ -220,7 +220,7 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV2(recipeData, priceData, cal
     return savedCosts
 end
 
-function CraftSim.CALC:getMeanProfit(recipeData, priceData)
+function CraftSim.CALC:getMeanProfitOLD(recipeData, priceData)
     local craftedItems = {
         baseQuality = 0,
         nextQuality = 0
@@ -258,7 +258,7 @@ function CraftSim.CALC:getMeanProfit(recipeData, priceData)
     return meanProfit, calculationData
 end
 
-function CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
+function CraftSim.CALC:getMeanProfit(recipeData, priceData)
 
     -- TODO: other cases
     -- case: every stats exists

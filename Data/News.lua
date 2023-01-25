@@ -37,6 +37,7 @@ function CraftSim.NEWS:GET_NEWS()
         p .. c("Jewelcrafting Experimental Data:", bb) .. 
         a .. "Primalist Gems are now affected by Faceting and " .. 
         a .. "their respective elemental node" ..
+        p .. c("Recipe Scan: ", bb) .. " list is now sorted by profit" ..
         newP("5.4") ..
         p .. c("TSM Price Expressions", bb) .. " can now be reset to the" .. 
         a .. "default 'first(DBRecent, DBMinbuyout)'" ..

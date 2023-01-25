@@ -106,7 +106,7 @@ end
 
 function CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
     local statisticsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STATISTICS)
-    local meanProfit, probabilityTable = CraftSim.CALC:getMeanProfitV2(recipeData, priceData)
+    local meanProfit, probabilityTable = CraftSim.CALC:getMeanProfit(recipeData, priceData) -- TODO, take from statweight frame instead of recalculation
 
     if not probabilityTable then
         return
