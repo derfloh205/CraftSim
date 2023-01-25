@@ -8,7 +8,7 @@
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
-## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimTooltipData, CraftSimItemCache, CraftSimCollapsedFrames, CraftSimSpecNodeCache, CraftSimPriceOverrides
+## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimTooltipData, CraftSimItemCache, CraftSimCollapsedFrames, CraftSimSpecNodeCache, CraftSimPriceOverrides, CraftSimRecipeIDs, CraftSimProfessionInfoCache
 
 embeds.xml
 

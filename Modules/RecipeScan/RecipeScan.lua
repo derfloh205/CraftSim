@@ -111,6 +111,28 @@ function CraftSim.RECIPE_SCAN:EndScan()
     CraftSim.RECIPE_SCAN:ToggleScanButton(true)
 end
 
+function CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)
+    for professionID, recipeIDs in pairs(CraftSimRecipeIDs.data) do
+        if tContains(recipeIDs, recipeID) then
+            return professionID
+        end
+    end
+
+    return nil
+end
+
+function CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCache()
+    local recipeIDs = {}
+
+    for professionID, professionRecipeIDs in pairs(CraftSimRecipeIDs.data) do
+        for _, recipeID in pairs(professionRecipeIDs) do
+            table.insert(recipeIDs, recipeID)
+        end
+    end
+
+    return recipeIDs
+end
+
 function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
 
     local itemID = resultItem:GetItemID()
@@ -118,6 +140,17 @@ function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
     print("Searching for Recipe with result: " .. tostring(itemID))
 
     local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
+
+    if not recipeIDs or #recipeIDs == 0 then
+        recipeIDs = CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCache()
+
+        -- if still not, return nil
+        if not recipeIDs or #recipeIDs == 0 then
+            print("CraftSim: ProfessionRecipes not cached yet")
+            return nil
+        end
+    end
+
     local recipeInfos = CraftSim.UTIL:Map(recipeIDs, function(recipeID) 
         return C_TradeSkillUI.GetRecipeInfo(recipeID)
     end)

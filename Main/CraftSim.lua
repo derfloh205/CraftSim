@@ -135,6 +135,7 @@ function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
 			CraftSim.MAIN:TriggerModulesErrorSafe(true)
 		end)
 	end
+
 	-- local success, errorMsg = pcall(CraftSim.MAIN.TriggerModulesByRecipeType, self, isInit)
 
 	-- if not success then
@@ -176,6 +177,17 @@ function CraftSim.MAIN:HookToEvent()
 			print("Init: " .. tostring(recipeInfo.recipeID))
 			CraftSim.MAIN.currentRecipeID = recipeInfo.recipeID
 			CraftSim.MAIN:TriggerModulesErrorSafe(true)
+
+			local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+			local professionRecipeIDs = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimRecipeIDs, professionInfo.profession)
+			if not professionRecipeIDs then
+				-- TODO: put somewhere other than main
+				local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
+				-- filter out non dragonflight professions???
+				if professionInfo.profession then
+					CraftSim.CACHE:AddCacheEntryByVersion(CraftSimRecipeIDs, professionInfo.profession, recipeIDs)
+				end
+			end
 		else
 			--print("loading recipeInfo..")
 		end
@@ -197,7 +209,7 @@ function CraftSim.MAIN:HookToEvent()
 
 	recipeTab:HookScript("OnClick", Update)
 	craftingOrderTab:HookScript("OnClick", Update)
-	--ProfessionsFrame.OrdersPage.OrderView.OrderDetails:HookScript("OnShow", Update)
+	
 end
 
 function CraftSim.MAIN:InitStaticPopups()
@@ -260,6 +272,8 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 
 		CraftSim.CONTROL_PANEL.FRAMES:Init()
 		CraftSim.MAIN:InitStaticPopups()
+
+		CraftSim.CUSTOMER_SERVICE:HookToHyperlinks()
 	end
 end
 

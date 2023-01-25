@@ -4,6 +4,12 @@ CraftSim.CUSTOMER_SERVICE = CraftSim.UTIL:CreateRegistreeForEvents({"CHAT_MSG_WH
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_SERVICE)
 
+function CraftSim.CUSTOMER_SERVICE:HookToHyperlinks()
+    hooksecurefunc("ChatFrame_OnHyperlinkShow", function(self, link, text, button)
+        print("payload: " .. tostring(link))
+    end)
+end
+
 function CraftSim.CUSTOMER_SERVICE:CHAT_MSG_WHISPER(text, playerName, 
     languageName, channelName, playerName2, specialFlags, zoneChannelID, 
     channelIndex, channelBaseName, languageID, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
@@ -19,6 +25,15 @@ function CraftSim.CUSTOMER_SERVICE:CHAT_MSG_WHISPER(text, playerName,
         print("Triggered Command!")
 
         -- search for first item link in chat message
+        -- local itemLink = LinkUtil.ExtractLink(text)
+        -- if not itemLink then
+        --     print("no link found")
+        -- end
+        -- local isItemLink = LinkUtil.IsLinkType(itemLink, "item")
+        -- if not isItemLink then
+        --     print("found a link but no itemlink")
+        --     return
+        -- end
         local it = string.gmatch(text, "%|H.*%|h")
         local itemString = it()
         if itemString then

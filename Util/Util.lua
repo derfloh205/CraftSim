@@ -389,7 +389,7 @@ end
 function CraftSim.UTIL:Map(t, mapFunc)
     local mapped = {}
     for k, v in pairs(t) do
-        table.insert(mapped, mapFunc(v))
+        table.insert(mapped, mapFunc(v, k))
     end
     return mapped
 end

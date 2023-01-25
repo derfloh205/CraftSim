@@ -12,6 +12,8 @@ end
 
 -- SavedVars
 CraftSimSpecNodeCache = CraftSimSpecNodeCache or {}
+CraftSimRecipeIDs = CraftSimRecipeIDs or {}
+CraftSimProfessionInfoCache = CraftSimProfessionInfoCache or {}
 
 -- session caches
 CraftSim.CACHE.SpecDataStatsByRecipeID = {}
@@ -30,6 +32,8 @@ end
 
 function CraftSim.CACHE:ClearAll()
     CraftSimSpecNodeCache = {}
+    CraftSimRecipeIDs = {}
+    CraftSimProfessionInfoCache = {}
     CraftSim.CACHE.SpecDataStatsByRecipeID = {}
 end
 
