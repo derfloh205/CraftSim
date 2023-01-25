@@ -36,6 +36,64 @@ function CraftSim.CRAFT_RESULTS:ResetData()
     CraftSim.CRAFT_RESULTS.sessionData = CopyTable(resetData)
 end
 
+function CraftSim.CRAFT_RESULTS:ExportCSV() 
+    local sessionData = CraftSim.CRAFT_RESULTS.sessionData
+
+    if not CraftSim.MAIN.currentRecipeData then
+        return
+    end
+    local recipeID = CraftSim.MAIN.currentRecipeData.recipeID
+
+    local recipeCraftData = sessionData.byRecipe[recipeID]
+
+    if not recipeCraftData then
+        return "No Crafting Data for this Recipe yet"
+    end
+
+    local inspiration = (CraftSim.MAIN.currentRecipeData.stats.inspiration and CraftSim.MAIN.currentRecipeData.stats.inspiration.value) or nil
+    local multicraft = (CraftSim.MAIN.currentRecipeData.stats.multicraft and CraftSim.MAIN.currentRecipeData.stats.multicraft.value) or nil
+    local resourcefulness = (CraftSim.MAIN.currentRecipeData.stats.resourcefulness and CraftSim.MAIN.currentRecipeData.stats.resourcefulness.value) or nil
+
+    local resultText = ""
+    local index = 1
+    for link, count in pairs(recipeCraftData.craftedItems) do
+        print("craftedItems, link: " .. tostring(link))
+        resultText = resultText .. "result" .. index .. "," .. CraftSim.UTIL:GetItemIDByLink(link) .. "\n"
+        resultText = resultText .. "result" .. index .. "Count," .. count .. "\n"
+        index = index + 1
+    end
+
+    local savedReagentText = ""
+    index = 1
+    for itemID, savedReagent in pairs(recipeCraftData.statistics.savedReagents) do
+        savedReagentText = savedReagentText .. "savedReagent" .. index .. "," .. itemID .. "\n"
+        savedReagentText = savedReagentText .. "savedReagent" .. index .. "Count," .. savedReagent.quantity .. "\n"
+    end
+
+    local csv =
+    "recipeID," .. recipeID .. "\n" ..
+    "recipeName," .. CraftSim.MAIN.currentRecipeData.recipeName .. "\n" ..
+    "skill," .. CraftSim.MAIN.currentRecipeData.stats.skill .. "\n" ..
+    ((inspiration and "inspirationStat," .. inspiration .. "\n") or "") ..
+    ((inspiration and "inspirationChance," .. CraftSim.MAIN.currentRecipeData.stats.inspiration.percent .. "\n") or "") ..
+    ((inspiration and "inspirationSkillBonus," .. CraftSim.MAIN.currentRecipeData.stats.inspiration.bonusskill .. "\n") or "") ..
+    ((multicraft and "multicraftStat," .. multicraft .. "\n") or "") ..
+    ((multicraft and "multicraftChance," .. CraftSim.MAIN.currentRecipeData.stats.multicraft.percent .. "\n") or "") ..
+    ((resourcefulness and "resourcefulnessStat," .. resourcefulness .. "\n") or "") ..
+    ((resourcefulness and "resourcefulnessChance," .. CraftSim.MAIN.currentRecipeData.stats.resourcefulness.percent .. "\n") or "") ..
+    "profit," ..  recipeCraftData.profit .. "\n" ..
+    "crafts," ..  recipeCraftData.statistics.crafts .. "\n" ..
+    "baseItems," ..  recipeCraftData.statistics.baseItemCount .. "\n" ..
+    "multicraftExtraItems," ..  recipeCraftData.statistics.multicraftExtraItems .. "\n" ..
+    "inspirationProcs," ..  recipeCraftData.statistics.inspiration .. "\n" ..
+    "multicraftProcs," ..  recipeCraftData.statistics.multicraft .. "\n" ..
+    "resourcefulnessProcs," ..  recipeCraftData.statistics.resourcefulness .. "\n" ..
+    resultText ..
+    savedReagentText
+
+    return csv
+end
+
 function CraftSim.CRAFT_RESULTS:AddCraftData(craftData, recipeID)
     local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
     CraftSim.CRAFT_RESULTS.sessionData.total.profit = CraftSim.CRAFT_RESULTS.sessionData.total.profit + craftData.profit

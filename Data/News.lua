@@ -21,6 +21,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("5.5.1") ..
+        p .. "Added an " .. c("Export Recipe Results", g) .. " Button to Crafting Results" ..
         newP("5.5") ..
         s .. "Added a small workaround to make" .. 
         a .. "the CraftSim Modules appear after a" ..

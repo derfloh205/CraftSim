@@ -69,6 +69,12 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
             CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.MAIN.currentRecipeData.recipeID)
         end)
 
+        frame.content.exportButton = CraftSim.FRAME:CreateButton("Export Recipe Results", frame.content, frame.content.clearButton, "TOPLEFT", "BOTTOMLEFT", 
+        0, -10, 15, 25, true, function() 
+            local csvData = CraftSim.CRAFT_RESULTS:ExportCSV()
+            CraftSim.UTIL:KethoEditBox_Show(csvData)
+        end)
+
         -- craft results
         frame.content.scrollFrame, frame.content.resultFrame = CraftSim.FRAME:CreateScrollFrame(frame.content, -50, 20, -350, 250)
 
