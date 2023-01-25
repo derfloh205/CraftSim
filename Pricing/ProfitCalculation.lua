@@ -92,8 +92,7 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV3(recipeData, priceData, cal
 
     local savedCosts = 0
     if recipeData.stats.resourcefulness then
-        local resChance = (recipeData.stats.resourcefulness.percent / 100)
-        savedCosts = CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR * priceData.craftingCostPerCraft * resChance * resourcefulnessExtraItemsFactor
+        savedCosts = CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR * priceData.craftingCostPerCraft * resourcefulnessExtraItemsFactor
         -- print("Saved Costs V3: " .. CraftSim.UTIL:FormatMoney(savedCosts))
     end
 
