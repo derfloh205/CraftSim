@@ -20,12 +20,18 @@ function CraftSim.NEWS:GET_NEWS()
 
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
-        "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        c("                                 ( You are awesome! )", bb) ..
         newP("5.5.3") ..
         p .. "Fixed an error occuring for non experimental data recipes" .. 
         a .. "when parsing spec data" ..
         p .. "Fixed an error occuring when enchanting gear or" ..
         a .. "applying runes or other consumeables" ..
+        p .. "itIT Localization Updates by " .. c("Elitesparkle", bb) ..
+        p .. c("Known Issue:", r) .. " the craft log in the Craft Results" .. 
+        a .. "Module might stop listing crafts after around 100 crafts" .. 
+        a .. "However, the results are still correctly updated." .. 
+        a .. "This seems to be an issue with the max length of texts" .. 
+        a .. "and will be fixed in a future update" ..
         newP("5.5.2") ..
         p .. "Hotfix for RecipeScan" ..
         newP("5.5.1") ..
@@ -71,43 +77,5 @@ function CraftSim.NEWS:GET_NEWS()
         P .. "New Module: " .. c("Craft Results", g) ..
         a .. "Logs your crafting outputs and shows you the total" .. 
         a .. "crafted profit for your open recipe or in total" ..
-        a .. "for your current session!" ..
-        newP("4.1") ..
-        s .. "New Options Tab: " .. c("Profit Calculation", g) ..
-        a .. "This tab will include options to make the average profit" ..
-        a .. "calculations more customizeable" ..
-        s .. "New option to ignore the possible minimum of" .. 
-        a .. "1 material saved per procc" ..
-        a .. "(instead of 30%) for resourcefulness" ..
-        p .. "Fixed Optimizing Recipe Scans ignoring Non-Quality Recipes" ..
-        p .. "Fixed Optimizing Recipe Scans sometimes" .. 
-        a .. "not optimizing materials" .. 
-        p .. "Fixed Recipe Scan skipping Enchanting Recipes" ..
-        p .. "Fixed CraftSim producing errors when viewing" .. 
-        a .. "another player's profession via link or guild list" ..
-        newP("4.0") ..
-        P .. "New Module: " .. c("Recipe Scan", g) .. 
-        a .. "Scan all your profession's recipes based on given options" .. 
-        a .. "Sorting and more planned for future updates!" ..
-        s .. c("Auctionator DB", bb) .. " Updates now trigger a module refresh" .. 
-        a .. "This means switching to another recipe and back" .. 
-        a .. "is no longer necessary to refresh the modules" ..
-        p .. "Moved the " .. c("Reset Frames", bb) .. " Button to the Control Panel" ..
-        p .. "Fixed the Simulate Knowledge Button not collapsing correctly" ..
-        newP("3.3") ..
-        P .. "Added " .. c("Leatherworking", bb) .. 
-        a .. "to experimental specialization data" ..
-        a .. "Thank you " .. c("https://github.com/RosskoCholakov", bb) .. 
-        a .. "for your effort!" ..
-        a .. c("This is not sufficiently tested yet", r) .. 
-        a .. "If you want to help testing it, toggle it on" .. 
-        a .. "and verify if the crafting data/details" .. 
-        a .. "blizzard shows align with CraftSim's shown" .. 
-        a .. "data/results in Simulation Mode" ..
-        a .. "Single profession spec nodes can be tested by ID" ..
-        a .. "or by rule name" ..
-        a .. "(See Data/SpecNodeData/Leatherworking.lua)" ..
-        a .. "in Debug Mode (E.g: CURING_AND_TANNING_1)" ..
-        s .. "Added discord invite to the patch notes!" .. 
-        a .. c("Feel free to join :D", g)
+        a .. "for your current session!" 
 end
