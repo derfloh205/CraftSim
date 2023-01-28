@@ -24,6 +24,8 @@ function CraftSim.NEWS:GET_NEWS()
         newP("5.5.3") ..
         p .. "Fixed an error occuring for non experimental data recipes" .. 
         a .. "when parsing spec data" ..
+        p .. "Fixed an error occuring when enchanting gear or" ..
+        a .. "applying runes or other consumeables" ..
         newP("5.5.2") ..
         p .. "Hotfix for RecipeScan" ..
         newP("5.5.1") ..

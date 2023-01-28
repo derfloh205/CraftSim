@@ -222,11 +222,16 @@ end
 function CraftSim.CRAFT_RESULTS:processCraftResults()
     collectingResults = true
     print("Craft Detected", false, true)
-    --print(craftResult, true)
+    print(currentCraftingResults, true)
     print("Num Craft Results: " .. tostring(#currentCraftingResults))
 
     local craftingResults = CopyTable(currentCraftingResults)
     currentCraftingResults = {}
+
+    if CraftSim.UTIL:Find(craftingResults, function(result) return result.isEnchant end) then
+        print("isEnchant -> ignore")
+        return
+    end
 
     local recipeData = CraftSim.CRAFT_RESULTS.currentRecipeData;
 
@@ -234,6 +239,8 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         print("no recipeData")
         return
     end
+
+    
 
     local craftData = {
         recipeID = recipeData.recipeID,
