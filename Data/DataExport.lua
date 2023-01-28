@@ -173,7 +173,6 @@ function CraftSim.DATAEXPORT:exportBuffData()
 end
 
 function CraftSim.DATAEXPORT:exportSpecNodeData(recipeData)
-	-- local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(recipeData.professionInfo.skillLineID)
 
 	local nodes = CraftSim.SPEC_DATA:GetNodes(recipeData.professionID) or {}

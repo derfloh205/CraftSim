@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         "             ( Show this window any time with " .. c("/craftsim news", g) .. " )" ..
+        newP("5.5.3") ..
+        p .. "Fixed an error occuring for non experimental data recipes" .. 
+        a .. "when parsing spec data" ..
         newP("5.5.2") ..
         p .. "Hotfix for RecipeScan" ..
         newP("5.5.1") ..

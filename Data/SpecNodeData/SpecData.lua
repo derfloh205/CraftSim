@@ -221,8 +221,7 @@ end
 
 -- LEGACY.. remove when other ready
 function CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, ruleNodes)
-    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
-    local configID = C_ProfSpecs.GetConfigIDForSkillLine(skillLineID)
+    local configID = C_ProfSpecs.GetConfigIDForSkillLine(recipeData.professionInfo.skillLineID)
 
     local extraItemFactors = {
         multicraftExtraItemsFactor = 1,
