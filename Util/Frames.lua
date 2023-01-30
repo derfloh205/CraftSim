@@ -306,6 +306,29 @@ function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB,
     return craftSimText
 end
 
+function CraftSim.FRAME:CreateScrollingMessageFrame(parent, anchorParent, anchorA, anchorB, anchorX, anchorY, maxLines, sizeX, sizeY)
+    local scrollingFrame = CreateFrame("ScrollingMessageFrame", nil, parent)
+    scrollingFrame:SetSize(sizeX, sizeY)
+    scrollingFrame:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
+    scrollingFrame:SetFontObject(GameFontHighlight)
+    if maxLines then
+        scrollingFrame:SetMaxLines(maxLines)
+    end
+    scrollingFrame:SetFading(false) -- make optional
+    scrollingFrame:SetJustifyH("LEFT")
+    scrollingFrame:EnableMouseWheel(true)
+
+    scrollingFrame:SetScript("OnMouseWheel", function(self, delta)
+        if delta > 0 then
+          scrollingFrame:ScrollUp()
+        elseif delta < 0 then
+          scrollingFrame:ScrollDown()
+        end
+      end)
+
+    return scrollingFrame
+end
+
 function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, 
     frameID, scrollable, closeable, frameStrata, moduleOption)
     local hookFrame = CreateFrame("frame", nil, parent)

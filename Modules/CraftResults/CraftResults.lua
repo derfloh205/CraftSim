@@ -339,7 +339,7 @@ end
 function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftData)
     local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
-    local currentText = craftResultFrame.content.resultFrame.resultFeed:GetText() or ""
+    --local currentText = craftResultFrame.content.resultFrame.resultFeed:GetText() or ""
 
     local resourcesText = ""
 
@@ -399,14 +399,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftData)
     ((craftData.procs.multicraft.triggered and (CraftSim.UTIL:ColorizeText("Multicraft: ", CraftSim.CONST.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
     ((craftData.procs.resourcefulness.triggered and (CraftSim.UTIL:ColorizeText("Resources Saved!: \n", CraftSim.CONST.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
 
-    if currentText ~= "" then
-        currentText = currentText .. "\n\n"
-    end
-    -- cut start of currentText if over x lines
-    if craftResultFrame.content.resultFrame.resultFeed:GetNumLines() > 500 then
-        currentText = string.gsub(currentText, ".*\n", 10)
-    end
-    craftResultFrame.content.resultFrame.resultFeed:SetText(currentText .. newText)
+    craftResultFrame.content.scrollingMessageFrame:AddMessage("\n" .. newText)
 
     CraftSim.CRAFT_RESULTS:AddCraftData(craftData, recipeData.recipeID)
     CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeData.recipeID)

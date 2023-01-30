@@ -63,7 +63,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
         frame.content.clearButton = CraftSim.FRAME:CreateButton("Reset Data", frame.content, frame.content.totalProfitAllTitle, "TOPLEFT", "BOTTOMLEFT", 
         0, -40, 15, 25, true, function() 
             CraftSim.CRAFT_RESULTS:ResetData()
-            frame.content.resultFrame.resultFeed:SetText("")
+            frame.content.scrollingMessageFrame:Clear()
             frame.content.craftedItemsFrame.resultFeed:SetText("")
             frame.content.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
             CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.MAIN.currentRecipeData.recipeID)
@@ -75,20 +75,14 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
             CraftSim.UTIL:KethoEditBox_Show(csvData)
         end)
 
+        
         -- craft results
-        frame.content.scrollFrame, frame.content.resultFrame = CraftSim.FRAME:CreateScrollFrame(frame.content, -50, 20, -350, 250)
 
-        frame.content.craftsTitle = CraftSim.FRAME:CreateText("Craft Log", frame.content, frame.content.scrollFrame, "BOTTOM", "TOP", 0, 0)
-
-        -- always scroll down on new craft
-        frame.content.scrollFrame:HookScript("OnScrollRangeChanged", function() 
-            frame.content.scrollFrame:SetVerticalScroll(frame.content.scrollFrame:GetVerticalScrollRange())
-        end)
-
-        frame.content.resultFrame.resultFeed = CraftSim.FRAME:CreateText("", frame.content.resultFrame, frame.content.resultFrame, 
-            "TOPLEFT", "TOPLEFT", 10, -10, nil, nil, {type="H", value="LEFT"})
-            frame.content.resultFrame.resultFeed:SetWidth(frame.content.resultFrame:GetWidth() - 5)
-        frame.content.resultFrame.resultFeed:SetText("")
+        frame.content.craftsTitle = CraftSim.FRAME:CreateText("Craft Log", frame.content, frame.content, "TOPLEFT", "TOPLEFT", 155, -40)
+        
+        frame.content.scrollingMessageFrame = CraftSim.FRAME:CreateScrollingMessageFrame(frame.content, frame.content.craftsTitle, 
+        "TOPLEFT", "BOTTOMLEFT", -125, -15, 30, 200, 140)
+        --
 
         frame.content.scrollFrame2, frame.content.craftedItemsFrame = CraftSim.FRAME:CreateScrollFrame(frame.content, -230, 20, -350, 20)
 
