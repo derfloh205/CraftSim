@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
+        newP("5.5.5") ..
+        p .. "Jewelcrafting Experimental Data fix by " .. c("github.com/SanjoSolutions", bb) ..
+        p .. "zhTW Translations added by " .. c("github.com/wxpenpen", bb) ..
         newP("5.5.4") ..
         p .. "The Craft Log of the Craft Results Module now uses" ..
         a .. "the ScrollingMessageFrame template to ensure infinite scrolling" ..
