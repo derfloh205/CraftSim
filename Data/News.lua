@@ -23,6 +23,8 @@ function CraftSim.NEWS:GET_NEWS()
         c("                                 ( You are awesome! )", bb) ..
         newP("5.5.6") ..
         s .. c("Real / Expected Number of Procs Comparison", g) .. " in Craft Results" ..
+        p .. "Fixed Leatherworking Experimental Data not" .. 
+        a .. "recognizing some patterns" .. 
         p .. "Owned number of commodities is now shown in" .. 
         a .. "the " .. c("Cost Overview Module", bb) ..
         newP("5.5.5") ..

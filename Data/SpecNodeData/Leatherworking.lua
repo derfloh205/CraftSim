@@ -292,7 +292,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             multicraft = 20,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OTHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS,
                 },
             },
         },
@@ -321,7 +321,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             multicraft = 40,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OTHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS,
                 },
             },
         },
@@ -350,7 +350,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             multicraftExtraItemsFactor = 0.50,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DRUMS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OTHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.DRUMS,
                 },
             },
         },
@@ -362,7 +362,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MISC,
                 },
 		[CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
                 },
 		[CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS,
@@ -388,7 +388,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MISC,
                 },
 		[CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
                 },
 		[CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS,
@@ -414,7 +414,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MISC,
                 },
 		[CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
                 },
 		[CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS,
@@ -479,7 +479,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		375161, -- Frosted Armor Kit
+		        375161, -- Frosted Armor Kit
             },
         },
         ELEMENTAL_MASTERY_2 = {
@@ -495,7 +495,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		375161, -- Frosted Armor Kit
+		        375161, -- Frosted Armor Kit
             },
         },
         ELEMENTAL_MASTERY_3 = {
@@ -511,7 +511,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		375161, -- Frosted Armor Kit
+		        375161, -- Frosted Armor Kit
             },
         },
         ELEMENTAL_MASTERY_4 = {
@@ -527,7 +527,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		375161, -- Frosted Armor Kit
+		        375161, -- Frosted Armor Kit
             },
         },
         ELEMENTAL_MASTERY_5 = {
@@ -543,7 +543,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		375161, -- Frosted Armor Kit
+		        375161, -- Frosted Armor Kit
             },
         },
         BESTIAL_PRIMACY_1 = {
@@ -560,7 +560,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		375162, -- Fierce Armor Kit
+		        375162, -- Fierce Armor Kit
             },
         },
         BESTIAL_PRIMACY_2 = {
@@ -578,7 +578,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		375162, -- Fierce Armor Kit
+		        375162, -- Fierce Armor Kit
             },
         },
         BESTIAL_PRIMACY_3 = {
@@ -596,7 +596,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		375162, -- Fierce Armor Kit
+		        375162, -- Fierce Armor Kit
             },
         },
         BESTIAL_PRIMACY_4 = {
@@ -614,7 +614,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		375162, -- Fierce Armor Kit
+		        375162, -- Fierce Armor Kit
             },
         },
         BESTIAL_PRIMACY_5 = {
@@ -632,7 +632,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		375162, -- Fierce Armor Kit
+		        375162, -- Fierce Armor Kit
             },
         },
         DECAYING_GRASP_1 = {
@@ -648,7 +648,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		375199, -- Witherrot Tome
+		        375199, -- Witherrot Tome
             },
         },
         DECAYING_GRASP_2 = {
@@ -665,7 +665,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		375199, -- Witherrot Tome
+		        375199, -- Witherrot Tome
             },
         },
         DECAYING_GRASP_3 = {
@@ -682,7 +682,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		375199, -- Witherrot Tome
+		        375199, -- Witherrot Tome
             },
         },
         DECAYING_GRASP_4 = {
@@ -699,7 +699,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		375199, -- Witherrot Tome
+		        375199, -- Witherrot Tome
             },
         },
         DECAYING_GRASP_5 = {
@@ -716,7 +716,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		375199, -- Witherrot Tome
+		        375199, -- Witherrot Tome
             },
         },
         -- Leather Armor Crafting

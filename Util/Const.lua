@@ -298,7 +298,7 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         MISC = 0, -- trinket
     },
     LEATHERWORKING = {
-        OTHER = 8, -- Drums
+        DRUMS = 8, -- Drums
         MISC = 14, -- Armor Kits
         MISCELLANEOUS = 0, -- Witherrot Tome
         OTHER = 4, -- Toys
@@ -322,7 +322,7 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
 
         -- Reagents
         OPTIONAL_REAGENTS = 18, -- Fang Adornments, Toxified Armor Patch (Optional Reagents)
-        LEATHER = 6, -- Hides, Scales (Reagents)
+        LEATHER_REAGENTS = 6, -- Hides, Scales (Reagents)
     },
     INSCRIPTION = {
         INKS = 16, -- "Inscription"
