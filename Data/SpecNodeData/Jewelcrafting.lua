@@ -186,7 +186,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         BRILLIANT_BAUBLING_3 = {
             nodeID = 81118,
             threshold = 10,
-            craftingspeedBonusFactor = 0.10,
+            inspirationBonusSkillFactor = 0.10,
             idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         BRILLIANT_BAUBLING_4 = {
@@ -198,7 +198,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         BRILLIANT_BAUBLING_5 = {
             nodeID = 81118,
             threshold = 20,
-            craftingspeedBonusFactor = 0.10,
+            inspirationBonusSkillFactor = 0.10,
             idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         BRILLIANT_BAUBLING_6 = {
@@ -210,7 +210,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         BRILLIANT_BAUBLING_7 = {
             nodeID = 81118,
             threshold = 30,
-            craftingspeedBonusFactor = 0.25,
+            inspirationBonusSkillFactor = 0.25,
             idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         
