@@ -45,8 +45,9 @@ function CraftSim.COSTOVERVIEW.FRAMES:Fill(craftingCosts, minCraftingCosts, prof
         if profitPerQuality[index] ~= nil then
             local qualityID = currentQuality + index - 1
             if recipeData.result.itemIDs then
+                local itemCount = GetItemCount(recipeData.result.itemIDs[qualityID], true, false, true)
                 local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(recipeData.result.itemIDs[qualityID])
-                profitFrame.itemLinkText:SetText((itemData and itemData.link) or "Loading..")
+                profitFrame.itemLinkText:SetText((itemData and (itemData.link .. " x "..itemCount)) or "Loading..")
             elseif recipeData.result.itemQualityLinks then
                 profitFrame.itemLinkText:SetText(recipeData.result.itemQualityLinks[qualityID] or "Loading..")
             else
