@@ -110,4 +110,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
 
     -- 5. Row
 
+    frame.content.modulesCustomerService = createModuleCheckbox("Customer Service",
+    "Module that offers various options to interact with potential customers",
+    "LEFT", frame.content.modulesRecipeScan, "RIGHT", 90, 0, "modulesCustomerService")
+
 end

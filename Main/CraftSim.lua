@@ -30,6 +30,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesPriceOverride = false,
 	modulesRecipeScan = false,
 	modulesCraftResults = false,
+	modulesCustomerService = false,
 
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
@@ -50,6 +51,17 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanOptimizeProfessionTools = false,
 
 	-- profit calc
+
+	-- customer service module
+	customerServiceAutoReplyCommand = "!craft",
+	customerServiceEnableAutoReply = false,
+	customerServiceAutoReplyFormat =
+			"Highest Result: %gc\n" ..
+            "with Inspiration: %ic (%insp)\n" ..
+            "Crafting Costs: %cc\n" ..
+            "%ccd\n",
+
+	customerServiceAllowAutoResult = true,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -99,6 +111,12 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
 		CraftSimOptions.transparencyCostOverview = CraftSimOptions.transparencyCostOverview or 1
 		CraftSimOptions.transparencySpecInfo = CraftSimOptions.transparencySpecInfo or 1
+		CraftSimOptions.customerServiceAutoReplyCommand = CraftSimOptions.customerServiceAutoReplyCommand or "!craft"
+		CraftSimOptions.customerServiceAutoReplyFormat = CraftSimOptions.customerServiceAutoReplyFormat or
+																		("Highest Result: %gc\n" ..
+																		"with Inspiration: %ic (%insp)\n" ..
+																		"Crafting Costs: %cc\n" ..
+																		"%ccd")
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end
@@ -119,6 +137,9 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.modulesSpecInfo == nil then
 			CraftSimOptions.modulesSpecInfo = true
+		end
+		if CraftSimOptions.customerServiceAllowAutoResult == nil then
+			CraftSimOptions.customerServiceAllowAutoResult = true
 		end
 	end
 end
@@ -245,6 +266,7 @@ local priceApiLoaded = false
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == AddonName then
 		CraftSim.LOCAL:Init()
+		CraftSim.MAIN:handleCraftSimOptionsUpdates()
 
 		CraftSim.FRAME:InitDebugFrame()
 		CraftSim.AVERAGEPROFIT.FRAMES:Init()
@@ -261,19 +283,21 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.RECIPE_SCAN.FRAMES:Init()
 		CraftSim.CRAFT_RESULTS.FRAMES:Init()
 		CraftSim.STATISTICS.FRAMES:Init()
+		CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
-		CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSim.MAIN:HookToProfessionsFrame()
 		CraftSim.FRAME:HandleAuctionatorOverlaps()
 		CraftSim.MAIN:HandleAuctionatorHooks()
 		CraftSim.ACCOUNTSYNC:Init()
+		
 
 		CraftSim.CONTROL_PANEL.FRAMES:Init()
 		CraftSim.MAIN:InitStaticPopups()
 
 		CraftSim.CUSTOMER_SERVICE:HookToHyperlinks()
+		CraftSim.CUSTOMER_SERVICE:InitLinkTransformation()
 	end
 end
 
@@ -433,10 +457,11 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local showSimulationMode = false
 	local showSpecInfo = false
 	local showPriceOverride = false
-	local showCraftResults = true
-
+	
 	-- always on modules
+	local showCraftResults = true
 	local showRecipeScan = true
+	local showCustomerService = true
 
 	if recipeData and priceData then
 		--CraftSim.DATAEXPORT:UpdateTooltipData(recipeData)
@@ -507,9 +532,11 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showPriceOverride = showPriceOverride and CraftSimOptions.modulesPriceOverride
 	showRecipeScan = showRecipeScan and CraftSimOptions.modulesRecipeScan
 	showCraftResults = showCraftResults and CraftSimOptions.modulesCraftResults
+	showCustomerService = showCustomerService and CraftSimOptions.modulesCustomerService
 	
 	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN), showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS), showCraftResults)
+	CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE), showCustomerService)
 
 	if recipeData and showCraftResults then
 		CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeData.recipeID)

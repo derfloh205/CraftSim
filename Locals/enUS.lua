@@ -56,6 +56,11 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Missing Skill: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL] = "Missing Skill (Inspiration)",
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Skill: ",
-        [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Multicraft Item Bonus: "        
+        [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Multicraft Item Bonus: ",
+        -- Customer Service Module
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] = "Each line is a seperate chat message when responsing in a whisper.\n\nYou can use following labels to insert information about the requested item's recipe:\n%gc .. link of the guaranteed result quality\n%ic .. link of the result quality reachable with inspiration\n%insp .. your inspiration chance e.g. 18%\n%mc .. your multicraft chance\n%res .. your resourcefulness chance\n%cc .. the crafting costs\n%ccd .. the detailed costs per reagent used (preferably in its own line)",        
+
     }
+
+
 end

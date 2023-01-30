@@ -820,7 +820,6 @@ function CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB
             numericInput:SetScript("OnTextChanged", onTextChangedCallback)
         end
 
-
     return numericInput
 end
 
