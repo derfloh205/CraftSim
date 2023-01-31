@@ -271,7 +271,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData, exportMod
 		local specNodeBonus = specNodeStats.inspiration
 		local itemBonus = professionGearStats.inspiration
 		local buffBonus = buffStats.inspiration
-		local itemBonusSkillFactor = (professionGearStats.inspirationBonusSkillPercent / 100) -- 15% -> 0.15
+		local itemBonusSkillFactor = professionGearStats.inspirationBonusSkillPercent
 		local specNodeBonusSkillFactor = specNodeStats.inspirationBonusSkillFactor % 1 -- 1.15 -> 0.15
 
 		local optionalReagentsBonusSkillFactor = optionalReagentsStats.inspirationBonusSkillFactor % 1  -- 1.15 -> 0.15
@@ -894,6 +894,11 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 	local extractedStats = GetItemStats(itemLink)
 	local stats = {}
 
+	local itemID = CraftSim.UTIL:GetItemIDByLink(itemLink)
+	if CraftSim.CONST.SPECIAL_TOOL_STATS[itemID] then
+		stats = CraftSim.CONST.SPECIAL_TOOL_STATS[itemID]
+	end
+
 	for statKey, value in pairs(extractedStats or {}) do
 		if CraftSim.CONST.STAT_MAP[statKey] ~= nil then
 			stats[CraftSim.CONST.STAT_MAP[statKey]] = value
@@ -901,7 +906,6 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 	end
 
 	local parsedSkill = 0
-	local parsedInspirationSkillBonusPercent = 0
 	local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
 	-- For now there is only inspiration and resourcefulness as enchant?
 	local parsedEnchantingStats = {
@@ -910,7 +914,6 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 		multicraft = 0,
 	}
 	local equipMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EQUIP_MATCH_STRING)
-	local inspirationIncreaseMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATIONBONUS_SKILL_ITEM_MATCH_STRING)
 	local enchantedMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING)
 	local inspirationMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION)
 	local resourcefulnessMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS)
@@ -920,9 +923,6 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 			if arg.stringVal and string.find(arg.stringVal, equipMatchString) then
 				-- here the stringVal looks like "Equip: +6 Blacksmithing Skill"
 				parsedSkill = tonumber(string.match(arg.stringVal, "(%d+)"))
-			end
-			if arg.stringVal and string.find(arg.stringVal, inspirationIncreaseMatchString) then
-				parsedInspirationSkillBonusPercent = tonumber(string.match(arg.stringVal, "(%d+)%%"))
 			end
 			if arg.stringVal and string.find(arg.stringVal, enchantedMatchString) then
 				if string.find(arg.stringVal, inspirationMatchString) then
@@ -939,7 +939,6 @@ function CraftSim.DATAEXPORT:GetProfessionGearStatsByLink(itemLink)
 	stats.resourcefulness = (stats.resourcefulness or 0) + parsedEnchantingStats.resourcefulness
 
 	stats.skill = parsedSkill
-	stats.inspirationBonusSkillPercent = parsedInspirationSkillBonusPercent
 
 	return stats
 end
@@ -1017,10 +1016,8 @@ function CraftSim.DATAEXPORT:GetCurrentProfessionItemStats(professionID)
 			if itemStats.skill then
 				stats.skill = stats.skill + itemStats.skill
 			end
-
 			if itemStats.inspirationBonusSkillPercent then
-				-- "additive or multiplicative? or dont care cause multiple items cannot have this bonus?"
-				stats.inspirationBonusSkillPercent = stats.inspirationBonusSkillPercent + itemStats.inspirationBonusSkillPercent 
+				stats.inspirationBonusSkillPercent = stats.inspirationBonusSkillPercent + itemStats.inspirationBonusSkillPercent
 			end
 		end
 	end

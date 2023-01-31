@@ -8,10 +8,11 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
     400, 300, CraftSim.CONST.FRAMES.CUSTOMER_SERVICE, false, true, "DIALOG", "modulesCustomerService")
 
     local function createContent(frame)
+        frame:Hide()
         local autoReplyTab = CraftSim.FRAME:CreateTab("Auto Reply", frame.content, frame.title, "TOP", "BOTTOM", -70, -15, true, 300, 250, frame.content, frame.title, 0, -50)
         local autoResultTab = CraftSim.FRAME:CreateTab("Live Preview", frame.content, autoReplyTab, "LEFT", "RIGHT", 0, 0, true, 300, 250, frame.content, frame.title, 0, -50)
 
-        autoReplyTab.content.enableReplyCB = CraftSim.FRAME:CreateCheckbox("Enable Auto Reply", "Enable the automatic answering with the highest possible results and material costs when someone whispers you the command and an item link for an item you can craft!", 
+        autoReplyTab.content.enableReplyCB = CraftSim.FRAME:CreateCheckbox("Enable Auto Reply", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION), 
         "customerServiceEnableAutoReply", autoReplyTab.content, autoReplyTab.content, "TOPLEFT", "TOPLEFT", 10, -10)
 
         autoReplyTab.content.whisperCommandTitle = CraftSim.FRAME:CreateText("Command:", autoReplyTab.content, autoReplyTab.content.enableReplyCB, "TOPLEFT", "BOTTOMLEFT", 0, -10)
@@ -57,7 +58,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         end)
 
         autoResultTab.content.enableConnections = CraftSim.FRAME:CreateCheckbox("Allow Connections", 
-        "Enable live crafting preview connections to you via CraftSim Preview Links.\nAnyone who has CraftSim and clicks the shared link can live connect to your crafting information to check out your crafting abilities", "customerServiceAllowAutoResult", 
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION), "customerServiceAllowAutoResult", 
         autoResultTab.content, autoResultTab.content, "TOPLEFT", "TOPLEFT", 10, -10)
 
         autoResultTab.content.browserInviteInput = CraftSim.FRAME:CreateInput(nil, autoResultTab.content, autoResultTab.content.enableConnections, "TOPLEFT", "BOTTOMLEFT", 0, 0, 150, 25, 

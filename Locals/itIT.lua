@@ -11,7 +11,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Velocità di creazione",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Equipaggia:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Incantato:",
-        [CraftSim.CONST.TEXT.INSPIRATIONBONUS_SKILL_ITEM_MATCH_STRING] = "aumenta la competenza aggiuntiva fornita da Ispirazione",
 
         -- OPTIONAL (Defaulting to EN if not available):
         -- Other Statnames

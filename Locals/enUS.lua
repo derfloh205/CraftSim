@@ -11,7 +11,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Crafting Speed",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Equip:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Enchanted:",
-        [CraftSim.CONST.TEXT.INSPIRATIONBONUS_SKILL_ITEM_MATCH_STRING] = "increases the Skill provided when inspired by",
 
         -- OPTIONAL (Defaulting to EN if not available):
         -- Other Statnames
@@ -58,8 +57,10 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Skill: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Multicraft Item Bonus: ",
         -- Customer Service Module
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION] = "Enable the automatic answering with the highest possible results and material costs when someone whispers you the command and an item link for an item you can craft!",        
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] = "Each line is a seperate chat message when responsing in a whisper.\n\nYou can use following labels to insert information about the requested item's recipe:\n%gc .. link of the guaranteed result quality\n%ic .. link of the result quality reachable with inspiration\n%insp .. your inspiration chance e.g. 18%\n%mc .. your multicraft chance\n%res .. your resourcefulness chance\n%cc .. the crafting costs\n%ccd .. the detailed costs per reagent used (preferably in its own line)",        
-
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION] = "Enable live crafting preview connections to you via CraftSim Preview Links.\nAnyone who has CraftSim and clicks the shared link can live connect to your crafting information to check out your crafting abilities",        
+        
     }
 
 

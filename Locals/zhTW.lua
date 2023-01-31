@@ -11,7 +11,6 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "製造速度",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "裝備：",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "附魔：",
-        [CraftSim.CONST.TEXT.INSPIRATIONBONUS_SKILL_ITEM_MATCH_STRING] = "在製作期間獲得靈感時，提高所提供的的技能",
 
         -- OPTIONAL (Defaulting to EN if not available):
         -- Other Statnames
