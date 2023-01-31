@@ -3,7 +3,7 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 33 -- last patch increase: 5.5.6 - 33
+CraftSim.CONST.currentInfoVersionID = 34 -- last patch increase: 6.0.0 - 34
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -46,6 +46,7 @@ CraftSim.CONST.FRAMES = {
     CRAFT_RESULTS = 21,
     STATISTICS = 22,
     CUSTOMER_SERVICE = 23,
+    LIVE_PREVIEW = 24,
 }
 
 CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
@@ -78,6 +79,7 @@ CraftSim.CONST.DEBUG_IDS = {
     AVERAGE_PROFIT = "AVERAGE_PROFIT",
     STATISTICS = "STATISTICS",
     CUSTOMER_SERVICE = "CUSTOMER_SERVICE",
+    COMM = "COMM",
 }
 
 CraftSim.CONST.ERROR = {

@@ -974,6 +974,7 @@ function CraftSim.DATAEXPORT:GetOutputInfoByRecipeData(recipeData)
 	end 
 
 	return {
+		isNoQuality = recipeData.result.isNoQuality,
 		expected = outputLinkExpected,
 		inspiration = outputLinkInspiration,
 		inspirationPercent = inspirationPercent,

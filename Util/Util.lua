@@ -96,6 +96,67 @@ function CraftSim.UTIL:EquipItemByLink(link)
 	end
 end
 
+function CraftSim.UTIL:IsMyVersionHigher(versionB)
+    local versionA = GetAddOnMetadata(AddonName, "Version") or ""
+    local subVersionsA = strsplittable(".", versionA)
+    local subVersionsB = strsplittable(".", versionB)
+
+    -- TODO: refactor recursively to get rid of this abomination
+    if subVersionsA[1] and subVersionsB[1] then
+        print(subVersionsA[1] .. " < " .. subVersionsB[1] .. "?")
+        if subVersionsA[1] < subVersionsB[1] then
+            return false
+        elseif subVersionsA[1] > subVersionsB[1] then
+            return true
+        end
+
+        if subVersionsA[2] and subVersionsB[2] then
+            print(subVersionsA[2] .. " < " .. subVersionsB[2] .. "?")
+            if subVersionsA[2] < subVersionsB[2] then
+                return false
+            elseif subVersionsA[2] > subVersionsB[2] then
+                return true
+            end
+
+            if subVersionsA[3] and subVersionsB[3] then
+                print(subVersionsA[3] .. " < " .. subVersionsB[3] .. "?")
+                if subVersionsA[3] < subVersionsB[3] then
+                    return false
+                elseif subVersionsA[3] > subVersionsB[3] then
+                    return true
+                end
+
+                if subVersionsA[4] and subVersionsB[4] then
+                    print(subVersionsA[4] .. " < " .. subVersionsB[4] .. "?")
+                    if subVersionsA[4] < subVersionsB[4] then
+                        return false
+                    elseif subVersionsA[4] > subVersionsB[4] then
+                        return true
+                    end
+                else
+                    if subVersionsB[4] then
+                        return false
+                    end
+                end
+            else
+                if subVersionsB[3] then
+                    return false
+                end
+            end
+        else
+            if subVersionsB[2] then
+                return false
+            end
+        end
+    else
+        if subVersionsB[1] then
+            return false
+        end
+    end
+
+    return true
+end
+
 -- thx ketho forum guy
 function CraftSim.UTIL:KethoEditBox_Show(text)
     if not KethoEditBox then

@@ -121,6 +121,10 @@ function CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)
     return nil
 end
 
+function CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCacheByProfessionID(professionID)
+    return CraftSimRecipeIDs.data[professionID]
+end
+
 function CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCache()
     local recipeIDs = {}
 

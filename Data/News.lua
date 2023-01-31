@@ -21,6 +21,14 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
+        newP("6.0.0") ..
+        P .. "New Module: " .. c("Customer Service", g) ..
+        a .. "New Feature: " .. c("Automatic Reply", g) .. " and" ..
+        a .. "New Feature: " .. c("Live Crafting Preview", g) ..
+        a .. "Send someone who has CraftSim an invite link to browse" ..
+        a .. "your recipes and possible results in a live session!" ..
+        a .. "For now it has some basic features and always optimizes for" ..
+        a .. "Inspiration, but many more features will come :)" ..
         newP("5.5.6") ..
         s .. c("Real / Expected Number of Procs Comparison", g) .. " in Craft Results" ..
         p .. "Fixed Leatherworking Experimental Data not" .. 

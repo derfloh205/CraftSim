@@ -2,6 +2,8 @@ AddonName, CraftSim = ...
 
 CraftSim.CUSTOMER_SERVICE.FRAMES = {}
 
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_SERVICE)
+
 function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimCustomerServiceFrame", "CraftSim Customer Service",
     ProfessionsFrame, UIParent, "CENTER", "CENTER", 0, 0, 
@@ -76,4 +78,214 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
     end
 
     createContent(frame)
+end
+
+function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
+    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimLivePreviewFrame", "CraftSim Live Preview", UIParent, UIParent,
+    "CENTER", "CENTER", 0, 0, 500, 400, CraftSim.CONST.FRAMES.LIVE_PREVIEW, false, true, "DIALOG")
+
+    local function createContent(frame)
+        frame:Hide()
+
+        local function onRecipeSelected(_, recipeID)
+            print("Selected RecipeID: " .. tostring(recipeID))
+            CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID) 
+        end
+
+        frame.content.previewTitle = CraftSim.FRAME:CreateText("Crafter's Profession", frame.content, frame.title, "TOP", "BOTTOM", 0, -10)
+
+        frame.content.recipeDropdown = CraftSim.FRAME:initDropdownMenu(nil, frame.content, frame.content.previewTitle, "Learned Recipes", 0, -30, 200, {}, onRecipeSelected, "Select Recipe", true)
+
+        frame.content.craftingCosts = CraftSim.FRAME:CreateText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(0), frame.content, frame.content.recipeDropdown, "TOP", "BOTTOM", 0, -15)
+        
+        frame.content.expectedResultTitle = CraftSim.FRAME:CreateText("Expected Result", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", -80, -10, nil, nil)
+        
+        local resultQualityIconSize = 20
+        frame.content.expectedResultIcon = CraftSim.FRAME:CreateIcon(frame.content, 0, -10, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "TOP", "BOTTOM", frame.content.expectedResultTitle)
+        frame.content.expectedResultQualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content.expectedResultIcon, resultQualityIconSize, resultQualityIconSize, frame.content.expectedResultIcon, "TOPLEFT", "TOPLEFT", -3, 3, 1)
+        
+        frame.content.expectedInspirationPercent = CraftSim.FRAME:CreateText("100% Chance for", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 80, -10, nil, nil)
+        frame.content.expectedInspirationIcon = CraftSim.FRAME:CreateIcon(frame.content, 0, -10, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "TOP", "BOTTOM", frame.content.expectedInspirationPercent)
+        frame.content.expectedInspirationQualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content.expectedInspirationIcon, resultQualityIconSize, resultQualityIconSize, frame.content.expectedInspirationIcon, "TOPLEFT", "TOPLEFT", -3, 3, 1)
+        
+        frame.content.reagentDetailsTitle = CraftSim.FRAME:CreateText("Required Materials", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 0, -80)
+        
+        local function createReagentFrame(anchorA, anchorParent, anchorB, anchorX, anchorY)
+            local iconSize = 30
+            local reagentFrame = CreateFrame("frame", nil, frame.content)
+            reagentFrame:SetSize(iconSize, iconSize)
+            reagentFrame:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
+            
+            reagentFrame.icon = CraftSim.FRAME:CreateIcon(reagentFrame, 0, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "LEFT", reagentFrame)
+            reagentFrame.countTextNoQ = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            
+            reagentFrame.countTextQ1 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, 12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.countTextQ2 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.countTextQ3 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, -12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.SetReagent = function (itemID, isQuality, countq1, countq2, countq3)
+                print("set reagent: " .. tostring(itemID) .. " - " .. tostring(type(itemID)))
+                print("qualities? " .. tostring(isQuality))
+                reagentFrame.icon.SetItem(itemID, frame.content)
+                if not itemID then
+                    reagentFrame:Hide()
+                    return
+                end
+                reagentFrame:Show()
+                local countText = ""
+                if not isQuality then
+                    countText = " x " .. countq1
+                    reagentFrame.countTextNoQ:Show()
+                    reagentFrame.countTextQ1:Hide()
+                    reagentFrame.countTextQ2:Hide()
+                    reagentFrame.countTextQ3:Hide()
+                    reagentFrame.countTextNoQ:SetText(countText)
+                else 
+                    local qualityIconSize = 15
+                    local q1Icon = CraftSim.UTIL:GetQualityIconAsText(1, qualityIconSize, qualityIconSize, 0, 0)
+                    local q2Icon = CraftSim.UTIL:GetQualityIconAsText(2, qualityIconSize, qualityIconSize, 0, 0)
+                    local q3Icon = CraftSim.UTIL:GetQualityIconAsText(3, qualityIconSize, qualityIconSize, 0, 0)
+                    print("quality Icons:")
+                    print(q1Icon)
+                    print(q2Icon)
+                    print(q3Icon)
+                    reagentFrame.countTextNoQ:Hide()
+                    reagentFrame.countTextQ1:SetText(q1Icon .. " x " .. countq1)
+                    reagentFrame.countTextQ2:SetText(q2Icon .. " x " .. countq2)
+                    reagentFrame.countTextQ3:SetText(q3Icon .. " x " .. countq3)
+                    reagentFrame.countTextQ1:Show()
+                    reagentFrame.countTextQ2:Show()
+                    reagentFrame.countTextQ3:Show()
+                end
+            end
+            
+            return reagentFrame
+        end
+        local spacingX = 80
+        local baseX = -45
+        local baseY = -10
+        local spacingY = -40
+        frame.content.reagentFrames = {
+            createReagentFrame("TOPLEFT", frame.content.reagentDetailsTitle, "BOTTOMLEFT", baseX, baseY),
+            createReagentFrame("TOPLEFT", frame.content.reagentDetailsTitle, "BOTTOMLEFT", baseX + spacingX, baseY),
+            createReagentFrame("TOPLEFT", frame.content.reagentDetailsTitle, "BOTTOMLEFT", baseX + spacingX*2, baseY),
+            createReagentFrame("TOPLEFT", frame.content.reagentDetailsTitle, "BOTTOMLEFT", baseX, baseY + spacingY),
+            createReagentFrame("TOPLEFT", frame.content.reagentDetailsTitle, "BOTTOMLEFT", baseX + spacingX, baseY + spacingY),
+            createReagentFrame("TOPLEFT", frame.content.reagentDetailsTitle, "BOTTOMLEFT", baseX + spacingX*2, baseY + spacingY),
+        }
+
+    end
+
+    createContent(frame)
+    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
+end
+
+function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
+    local recipes = payload.recipes
+    local crafter = payload.crafter
+    local professionName = payload.professionName
+    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+
+    previewFrame.professionID = payload.professionID
+    previewFrame.crafter = crafter
+    previewFrame.recipeList = recipes
+
+    -- convert recipes to dropdown data
+    local function convertToDropdownListData(data)
+        local dropDownListData = {}
+        for _, recipeEntry in pairs(data) do
+            table.insert(dropDownListData, {
+                label = recipeEntry.recipeName,
+                value = recipeEntry.recipeID,
+            })
+        end
+        return dropDownListData
+    end
+
+    previewFrame.content.previewTitle:SetText(crafter .. " " .. professionName)
+    for _, reagentFrame in pairs(previewFrame.content.reagentFrames) do
+        reagentFrame:Hide()
+    end
+    previewFrame.content.craftingCosts:Hide()
+    previewFrame.content.expectedResultTitle:Hide()
+    previewFrame.content.expectedResultIcon:Hide()
+    previewFrame.content.expectedInspirationPercent:Hide()
+    previewFrame.content.expectedInspirationIcon:Hide()
+    previewFrame.content.reagentDetailsTitle:Hide()
+    CraftSim.FRAME:initializeDropdownByData(previewFrame.content.recipeDropdown, convertToDropdownListData(recipes), "Select a Recipe")
+
+    previewFrame:Show()
+end
+
+function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
+    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local outputInfo = payload.outputInfo
+    local reagents = payload.reagents
+
+    -- load reagents, then continue
+    local itemsToLoad = {}
+    for _, reagent in pairs(reagents) do
+        for _, itemInfo in pairs(reagent.itemsInfo) do
+            local itemID = tonumber(itemInfo.itemID)
+            local item = Item:CreateFromItemID(itemID)
+            table.insert(itemsToLoad, item)
+            itemInfo.item = item
+        end
+    end
+
+    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
+        if outputInfo.inspirationCanUpgrade then
+            local inspirationText = payload.inspirationPercent .. "%"
+            previewFrame.content.expectedInspirationPercent:SetText(inspirationText .. " Chance for")
+            previewFrame.content.expectedInspirationIcon.SetItem(outputInfo.inspiration, nil, nil, true)
+            previewFrame.content.expectedInspirationQualityIcon.SetQuality(outputInfo.expectedQualityInspiration)
+            previewFrame.content.expectedInspirationIcon:Show()
+            previewFrame.content.expectedInspirationPercent:Show()
+            previewFrame.content.expectedInspirationQualityIcon:Show()
+        else
+            previewFrame.content.expectedInspirationIcon:Hide()
+            previewFrame.content.expectedInspirationPercent:Hide()
+            previewFrame.content.expectedInspirationQualityIcon:Hide()
+        end
+    
+        previewFrame.content.reagentDetailsTitle:Show()
+        previewFrame.content.expectedResultTitle:Show()
+        previewFrame.content.expectedResultIcon:Show()
+        previewFrame.content.expectedResultIcon.SetItem(outputInfo.expected, nil, nil, true)
+        if not outputInfo.isNoQuality then
+            previewFrame.content.expectedResultQualityIcon.SetQuality(outputInfo.expectedQuality)
+            previewFrame.content.expectedResultQualityIcon:Show()
+        else
+            previewFrame.content.expectedResultQualityIcon:Hide()
+        end
+    
+        local craftingCosts = 0
+    
+        for _, reagent in pairs(reagents) do
+            for _, itemInfo in pairs(reagent.itemsInfo) do
+                local reagentCost = tonumber(itemInfo.allocations) + CraftSim.PRICEDATA:GetMinBuyoutByItemID(tonumber(itemInfo.itemID), true)
+                craftingCosts = craftingCosts + reagentCost
+            end
+        end
+
+        for index, reagentFrame in pairs(previewFrame.content.reagentFrames) do
+            local currentReagent = reagents[index]
+            if currentReagent then
+                local itemID = tonumber(currentReagent.itemsInfo[1].itemID)
+                if currentReagent.differentQualities then
+                    reagentFrame.SetReagent(itemID, true,
+                    currentReagent.itemsInfo[1].allocations, 
+                    currentReagent.itemsInfo[2].allocations, 
+                    currentReagent.itemsInfo[3].allocations)
+                else
+                    reagentFrame.SetReagent(itemID, false, currentReagent.itemsInfo[1].allocations)
+                end
+            else
+                reagentFrame.SetReagent(nil)
+            end
+        end
+
+        --previewFrame.content.materialDetails:SetText(materialDetailText)
+        previewFrame.content.craftingCosts:SetText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(craftingCosts))
+        previewFrame.content.craftingCosts:Show()
+    end)
 end

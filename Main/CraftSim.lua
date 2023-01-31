@@ -62,6 +62,7 @@ CraftSimOptions = CraftSimOptions or {
             "%ccd\n",
 
 	customerServiceAllowAutoResult = true,
+	customerServiceActivePreviewIDs = {},
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -111,6 +112,7 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
 		CraftSimOptions.transparencyCostOverview = CraftSimOptions.transparencyCostOverview or 1
 		CraftSimOptions.transparencySpecInfo = CraftSimOptions.transparencySpecInfo or 1
+		CraftSimOptions.customerServiceActivePreviewIDs = CraftSimOptions.customerServiceActivePreviewIDs or {}
 		CraftSimOptions.customerServiceAutoReplyCommand = CraftSimOptions.customerServiceAutoReplyCommand or "!craft"
 		CraftSimOptions.customerServiceAutoReplyFormat = CraftSimOptions.customerServiceAutoReplyFormat or
 																		("Highest Result: %gc\n" ..
@@ -284,6 +286,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.CRAFT_RESULTS.FRAMES:Init()
 		CraftSim.STATISTICS.FRAMES:Init()
 		CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
+		CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -296,8 +299,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.CONTROL_PANEL.FRAMES:Init()
 		CraftSim.MAIN:InitStaticPopups()
 
-		CraftSim.CUSTOMER_SERVICE:HookToHyperlinks()
-		CraftSim.CUSTOMER_SERVICE:InitLinkTransformation()
+		CraftSim.CUSTOMER_SERVICE:Init()
 	end
 end
 

@@ -29,6 +29,7 @@
         "TooltipDataProcessor",
         "Auctionator",
         "addonName",
-        "TSM_API"
+        "TSM_API",
+        "ChatFrame_AddMessageEventFilter"
     ]
 }
