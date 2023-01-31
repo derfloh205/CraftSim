@@ -21,6 +21,10 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
+        newP("6.0.1") ..
+        p .. "Fixed an error due to the Craft Result statistics display" ..
+        p .. "Utilizing ContinueOnItemLoad to lazy load the item links" .. 
+        a .. "in the Cost Overview Module" ..
         newP("6.0.0") ..
         P .. "New Module: " .. c("Customer Service", g) ..
         a .. "New Feature: " .. c("Automatic Reply", g) .. " and" ..

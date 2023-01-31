@@ -39,17 +39,22 @@ function CraftSim.COSTOVERVIEW.FRAMES:Fill(craftingCosts, minCraftingCosts, prof
         costOverviewFrame.content.minCraftingCostsTitle:Show()
     end
 
-    CraftSim.FRAME:ToggleFrame(costOverviewFrame.content.resultProfitsTitle, #profitPerQuality > 0)
+    CraftSim.FRAME:ToggleFrame(costOverviewFrame.content.resultProfitsTitle, #profitPerQuality > 0)    
 
     for index, profitFrame in pairs(costOverviewFrame.content.profitFrames) do
         if profitPerQuality[index] ~= nil then
             local qualityID = currentQuality + index - 1
             if recipeData.result.itemIDs then
                 local itemCount = GetItemCount(recipeData.result.itemIDs[qualityID], true, false, true)
-                local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(recipeData.result.itemIDs[qualityID])
-                profitFrame.itemLinkText:SetText((itemData and (itemData.link .. " x "..itemCount)) or "Loading..")
+                local item = Item:CreateFromItemID(recipeData.result.itemIDs[qualityID])
+                item:ContinueOnItemLoad(function ()
+                    profitFrame.itemLinkText:SetText((item:GetItemLink() and (item:GetItemLink() .. " x "..itemCount)))
+                end)
             elseif recipeData.result.itemQualityLinks then
-                profitFrame.itemLinkText:SetText(recipeData.result.itemQualityLinks[qualityID] or "Loading..")
+                local item = Item:CreateFromItemLink(recipeData.result.itemQualityLinks[qualityID])
+                item:ContinueOnItemLoad(function ()
+                    profitFrame.itemLinkText:SetText((item:GetItemLink() and (item:GetItemLink())))
+                end)
             else
                 -- if no item recipe e.g. show quality icon
                 local qualityText = CraftSim.UTIL:GetQualityIconAsText(qualityID, 20, 20)

@@ -31,7 +31,10 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     statisticsText = statisticsText .. "Procs - Real / Expected:\n\n"
 
     if statistics.inspiration then
-        local expectedProcs = tonumber(CraftSim.UTIL:round((CraftSim.MAIN.currentRecipeData.stats.inspiration.percent / 100) * statistics.crafts, 1))
+        local expectedProcs = 0
+        if CraftSim.MAIN.currentRecipeData.stats.inspiration then
+            expectedProcs = tonumber(CraftSim.UTIL:round((CraftSim.MAIN.currentRecipeData.stats.inspiration.percent / 100) * statistics.crafts, 1)) or 0
+        end
         if statistics.inspiration >= expectedProcs then
             statisticsText = statisticsText .. "Inspiration: " .. CraftSim.UTIL:ColorizeText(statistics.inspiration, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedProcs .. "\n"
         else
@@ -39,23 +42,30 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
         end
     end
     if statistics.multicraft then
-        local expectedProcs = tonumber(CraftSim.UTIL:round((CraftSim.MAIN.currentRecipeData.stats.multicraft.percent / 100) * statistics.crafts, 1))
+        local expectedProcs = 0
+        if CraftSim.MAIN.currentRecipeData.stats.multicraft then
+            expectedProcs = tonumber(CraftSim.UTIL:round((CraftSim.MAIN.currentRecipeData.stats.multicraft.percent / 100) * statistics.crafts, 1)) or 0
+        end
         if statistics.multicraft >= expectedProcs then
             statisticsText = statisticsText .. "Multicraft: " .. CraftSim.UTIL:ColorizeText(statistics.multicraft, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedProcs .. "\n"
         else
             statisticsText = statisticsText .. "Multicraft: " .. CraftSim.UTIL:ColorizeText(statistics.multicraft, CraftSim.CONST.COLORS.RED) .. " / " .. expectedProcs .. "\n"
         end
-        local multicraftExtraItemsFactor = 1
-        if CraftSim.MAIN.currentRecipeData.specNodeData then
-            multicraftExtraItemsFactor = 1 + CraftSim.MAIN.currentRecipeData.stats.multicraft.bonusItemsFactor
-        else
-            multicraftExtraItemsFactor = CraftSim.MAIN.currentRecipeData.extraItemFactors.multicraftExtraItemsFactor
+        local averageExtraItems = 0
+        local expectedAdditionalItems = 0
+        if CraftSim.MAIN.currentRecipeData.stats.multicraft then
+            local multicraftExtraItemsFactor = 1
+            if CraftSim.MAIN.currentRecipeData.specNodeData then
+                multicraftExtraItemsFactor = 1 + CraftSim.MAIN.currentRecipeData.stats.multicraft.bonusItemsFactor
+            else
+                multicraftExtraItemsFactor = CraftSim.MAIN.currentRecipeData.extraItemFactors.multicraftExtraItemsFactor
+            end
+    
+            local maxExtraItems = (2.5*CraftSim.MAIN.currentRecipeData.baseItemAmount) * multicraftExtraItemsFactor
+            expectedAdditionalItems = tonumber(CraftSim.UTIL:round((1 + maxExtraItems) / 2, 2)) or 0
+    
+            averageExtraItems = tonumber(CraftSim.UTIL:round(( statistics.multicraft > 0 and (statistics.multicraftExtraItems / statistics.multicraft)) or 0, 2)) or 0
         end
-
-        local maxExtraItems = (2.5*CraftSim.MAIN.currentRecipeData.baseItemAmount) * multicraftExtraItemsFactor
-        local expectedAdditionalItems = tonumber(CraftSim.UTIL:round((1 + maxExtraItems) / 2, 2))
-
-        local averageExtraItems = tonumber(CraftSim.UTIL:round(( statistics.multicraft > 0 and (statistics.multicraftExtraItems / statistics.multicraft)) or 0, 2))
         if averageExtraItems == 0 then
             statisticsText = statisticsText .. "- Ø Extra Items: " .. averageExtraItems .. " / " .. expectedAdditionalItems .. "\n"
         elseif averageExtraItems >= expectedAdditionalItems then
@@ -65,7 +75,10 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
         end
     end
     if statistics.resourcefulness then
-        local expectedProcs = tonumber(CraftSim.UTIL:round((CraftSim.MAIN.currentRecipeData.stats.multicraft.percent / 100) * statistics.crafts, 1))
+        local expectedProcs = 0
+        if CraftSim.MAIN.currentRecipeData.stats.resourcefulness then
+            expectedProcs = tonumber(CraftSim.UTIL:round((CraftSim.MAIN.currentRecipeData.stats.resourcefulness.percent / 100) * statistics.crafts, 1)) or 0
+        end
         if statistics.resourcefulness >= expectedProcs then
             statisticsText = statisticsText .. "Resourcefulness: " .. CraftSim.UTIL:ColorizeText(statistics.resourcefulness, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedProcs .. "\n"
         else
