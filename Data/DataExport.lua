@@ -454,8 +454,15 @@ function CraftSim.DATAEXPORT:GetCurrentRecipeOperationInfoByExportMode(exportMod
 	elseif exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
 		return ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:GetRecipeOperationInfo()
 	elseif exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
-		if overrideData.scanReagents then
-			local craftingReagentInfoTbl = CraftSim.DATAEXPORT:ConvertRecipeDataRequiredReagentsToCraftingReagentInfoTbl(overrideData.scanReagents)
+		if overrideData then
+			local craftingReagentInfoTbl = CraftSim.DATAEXPORT:ConvertRecipeDataRequiredReagentsToCraftingReagentInfoTbl(overrideData.scanReagents or {})
+
+			for _, reagent in pairs(overrideData.optionalReagents or {}) do
+				table.insert(craftingReagentInfoTbl, reagent)
+			end
+			for _, reagent in pairs(overrideData.finishingReagents or {}) do
+				table.insert(craftingReagentInfoTbl, reagent)
+			end
 
 			return C_TradeSkillUI.GetCraftingOperationInfo(recipeID, craftingReagentInfoTbl) 
 		else
@@ -558,8 +565,15 @@ function CraftSim.DATAEXPORT:GetCraftingReagentInfoTblByExportMode(exportMode, c
 	if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER or exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
 		return currentTransaction:CreateCraftingReagentInfoTbl()
 	elseif exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
-		if overrideData.scanReagents then
-			return CraftSim.DATAEXPORT:ConvertRecipeDataRequiredReagentsToCraftingReagentInfoTbl(overrideData.scanReagents)
+		if overrideData then
+			local craftingReagentInfoTbl = CraftSim.DATAEXPORT:ConvertRecipeDataRequiredReagentsToCraftingReagentInfoTbl(overrideData.scanReagents or {})
+			for _, reagent in pairs(overrideData.optionalReagents or {}) do
+				table.insert(craftingReagentInfoTbl, reagent)
+			end
+			for _, reagent in pairs(overrideData.finishingReagents or {}) do
+				table.insert(craftingReagentInfoTbl, reagent)
+			end
+			return craftingReagentInfoTbl
 		else
 			return {}
 		end
@@ -759,6 +773,14 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData
 	elseif not recipeData.isSalvageRecipe then
 		recipeData.reagents = overrideData.scanReagents
 		-- optionals and such?
+	end
+
+	if overrideData.optionalReagents then
+		recipeData.optionalReagents = overrideData.optionalReagents
+	end
+
+	if overrideData.finishingReagents then
+		recipeData.finishingReagents = overrideData.finishingReagents
 	end
 
 	recipeData.hasReagentsWithQuality = hasReagentsWithQuality

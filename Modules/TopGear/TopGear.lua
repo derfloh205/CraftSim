@@ -349,7 +349,7 @@ function CraftSim.TOPGEAR:DeductCurrentItemStats(recipeData, recipeType)
     return noItemRecipeData
 end
 
-function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData, exportMode)
+function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeType, priceData, exportMode, topGearModeOverride)
     local isCooking = recipeData.professionID == Enum.Profession.Cooking
 
     local gearCombos = CraftSim.TOPGEAR:GetProfessionGearCombinations(isCooking)
@@ -361,7 +361,7 @@ function CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, reci
 
     local noItemsRecipeData = CraftSim.TOPGEAR:DeductCurrentItemStats(recipeData, recipeType)
 
-    local topGearMode = CraftSimOptions.topGearMode
+    local topGearMode = topGearModeOverride or CraftSimOptions.topGearMode
     
     if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
         topGearMode = CraftSim.CONST.GEAR_SIM_MODES.PROFIT

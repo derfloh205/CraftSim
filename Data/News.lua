@@ -21,6 +21,13 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
+        newP("6.1") ..
+        P .. "Auto Reply now can take a third argument <ilvl> to specify the" ..
+        a .. "target item level. It checks which infusion or matrix" ..
+        a .. "it has to use to reach this itemlevel and then sims the recipe" ..
+        a .. "with it in mind" ..
+        p .. "Added a command preview to the Auto Reply Tab in the " .. 
+        a .. "Customer Service Module to show its syntax" ..
         newP("6.0.1") ..
         p .. "Fixed an error due to the Craft Result statistics display" ..
         p .. "Utilizing ContinueOnItemLoad to lazy load the item links" .. 

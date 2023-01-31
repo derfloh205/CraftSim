@@ -260,7 +260,50 @@ function CraftSim.CUSTOMER_SERVICE:CHAT_MSG_WHISPER(text, playerName,
 
     local commands = strsplittable(" ", text)
 
+    local function getInfusionItemByIlvlRangeAndRecipeData(ilvl, recipeData)
+        ilvl = tonumber(ilvl)
+
+        --TODO check if player can even use infusions yet
+
+        local infusions = false
+        local matrix1Included = false
+        local matrices = false
+
+        for _, optionalReagents in pairs(recipeData.possibleOptionalReagents) do
+            for _, reagent in pairs(optionalReagents) do
+                if reagent.itemID == 197921 then
+                    infusions = true
+                    break
+                elseif reagent.itemID == 198048 then
+                    matrix1Included = true
+                elseif reagent.itemID == 198056 then
+                    matrices = true
+                end
+            end
+        end
+
+        if infusions then
+            if ilvl >= 408 then
+                return 198046 -- conc primal infusion
+            elseif ilvl >= 395 then
+                return 197921 -- primal infusion
+            end
+        elseif matrices then
+            if ilvl >= 372 then
+                return 198059 -- TM IV
+            elseif ilvl >= 359 then
+                return 198058 -- TM III
+            elseif ilvl >= 346 then
+                return 198056 -- TM II
+            elseif ilvl >= 333 and matrix1Included then
+                return 198048 -- TM I
+            end
+        end
+        return nil
+    end
+
     if commands[1] and commands[1] == CraftSimOptions.customerServiceAutoReplyCommand then
+        local ilvl = string.match(text, "|r (%d+)")
         print("Triggered Command!")
 
         local it = string.gmatch(text, "%|H.*%|h")
@@ -298,7 +341,21 @@ function CraftSim.CUSTOMER_SERVICE:CHAT_MSG_WHISPER(text, playerName,
                     print("optimized reagents:")
                     print(optimizedReagents, true)
 
-                    recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN, {scanReagents=optimizedReagents})
+                    local optionalReagents = {}
+                    if ilvl then
+                        print("Command3: " .. tostring(ilvl))
+                        local itemID = getInfusionItemByIlvlRangeAndRecipeData(ilvl, recipeData)
+                        if itemID then
+                            table.insert(optionalReagents, {
+                                itemID = itemID,
+                                quantity = 1,
+                                dataSlotIndex = 3, -- optional infusions and matrices
+                                itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID), -- cause price data needs it
+                            })
+                        end
+                    end
+
+                    recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN, {scanReagents=optimizedReagents, optionalReagents=optionalReagents})
                     if not recipeData then
                         print("2 Could not create recipeData for customer request")
                         return
@@ -324,6 +381,18 @@ function CraftSim.CUSTOMER_SERVICE:CHAT_MSG_WHISPER(text, playerName,
                                 table.insert(reagentItems, item)
                             end
                         end
+                    end
+
+                    for _, reagent in pairs(recipeData.optionalReagents) do
+                        local item = Item:CreateFromItemID(reagent.itemID)
+                        item.quantity = reagent.quantity
+                        table.insert(reagentItems, item)
+                    end
+
+                    for _, reagent in pairs(recipeData.finishingReagents) do
+                        local item = Item:CreateFromItemID(reagent.itemID)
+                        item.quantity = reagent.quantity
+                        table.insert(reagentItems, item)
                     end
 
                     CraftSim.UTIL:ContinueOnAllItemsLoaded(reagentItems, function() 

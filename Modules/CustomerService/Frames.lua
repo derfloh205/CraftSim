@@ -22,7 +22,10 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         CraftSimOptions.customerServiceAutoReplyCommand, 
         function() 
             CraftSimOptions.customerServiceAutoReplyCommand = autoReplyTab.content.whisperCommandInput:GetText()
+            autoReplyTab.content.commandPreview:SetText("Example: " .. CraftSimOptions.customerServiceAutoReplyCommand .. " <itemLink> <ilvl>")
         end)
+        autoReplyTab.content.commandPreview = CraftSim.FRAME:CreateText("Example: " .. CraftSimOptions.customerServiceAutoReplyCommand .. " <itemLink> <ilvl>", 
+        autoReplyTab.content, autoReplyTab.content.whisperCommandTitle, "TOPLEFT", "BOTTOMLEFT", 0, -15, nil, nil, {type="H", value="LEFT"})
         autoReplyTab.content.resetDefaults = CraftSim.FRAME:CreateButton("Reset to Defaults", autoReplyTab.content, autoReplyTab.content.whisperCommandInput, "LEFT", "RIGHT", 15, 0, 15, 25, true, function() 
             local defaultFormat = 
             "Highest Result: %gc\n" ..
@@ -38,13 +41,13 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         end)
 
         autoReplyTab.content.messageFormatTitle = CraftSim.FRAME:CreateText("Message Format", 
-        autoReplyTab.content, autoReplyTab.content.whisperCommandInput, "TOPLEFT", "BOTTOMLEFT", 5, -15)
+        autoReplyTab.content, autoReplyTab.content.commandPreview, "TOPLEFT", "BOTTOMLEFT", 80, -15)
 
         autoReplyTab.content.messageFormatHelp = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION), autoReplyTab.content, autoReplyTab.content.messageFormatTitle, "LEFT", "RIGHT", 10, 0)
 
 
         autoReplyTab.content.msgFormatScrollFrame, autoReplyTab.content.msgFrameContent =
-         CraftSim.FRAME:CreateScrollFrame(autoReplyTab.content, -90, 10, -10, 50)
+         CraftSim.FRAME:CreateScrollFrame(autoReplyTab.content, -110, 10, -10, 40)
 
         autoReplyTab.content.msgFrameContent.msgFormatBox = CreateFrame("EditBox", nil, autoReplyTab.content.msgFrameContent)
         autoReplyTab.content.msgFrameContent.msgFormatBox:SetPoint("TOP", autoReplyTab.content.msgFrameContent, "TOP", 0, -5)
