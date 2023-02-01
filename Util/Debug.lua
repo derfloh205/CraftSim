@@ -21,6 +21,7 @@ function CraftSim_DEBUG:PrintRecipeIDs()
 
     print("--")
     print("RecipeID: " .. recipeInfo.recipeID)
+    print("ItemLevel: " .. tostring(recipeInfo.itemLevel))
     print("SubTypeID: " .. subclassID)
     print("SubType: " .. itemSubType)
     print("Category: " .. data.name)

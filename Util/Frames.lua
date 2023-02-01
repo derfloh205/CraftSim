@@ -4,13 +4,7 @@ CraftSim.FRAME = {}
 
 CraftSim.FRAME.frames = {}
 
--- local function print(text, recursive, l) -- override
---     if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
---         CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
---     else
---         print(text)
---     end
--- end
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.FRAMES) 
 
 function CraftSim.FRAME:GetFrame(frameID)
     local frameName = CraftSim.FRAME.frames[frameID]
@@ -116,23 +110,46 @@ function CraftSim.FRAME:initDropdownMenu(frameName, parent, anchorFrame, label, 
 end
 
 function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue)
-	UIDropDownMenu_Initialize(dropDown, function(self) 
-		for k, v in pairs(list) do
-            local label = v.label
-            local value = v.value
-			local info = UIDropDownMenu_CreateInfo()
-            --print("init dropdown by data label: " .. tostring(label))
-            --print("init dropdown by data value: " .. tostring(value))
-			info.func = function(self, arg1, arg2, checked) 
-                UIDropDownMenu_SetText(dropDown, self.value) -- value should contain the selected text..
-                dropDown.clickCallback(dropDown, arg1)
+    local function initMainMenu(self, level, menulist) 
+        local info = UIDropDownMenu_CreateInfo()
+        if level == 1 then
+            for _, v in pairs(list) do
+                local label = v.label
+                local value = v.value
+                local hasSublist = type(value) == 'table'
+                if not hasSublist then
+                    info.func = function(self, arg1, arg2, checked) 
+                        UIDropDownMenu_SetText(dropDown, self.value) -- value should contain the selected text..
+                        dropDown.clickCallback(dropDown, arg1)
+                    end
+                end
+                info.text = label
+                info.arg1 = value
+                info.hasArrow = hasSublist
+                info.menuList = hasSublist and label
+                UIDropDownMenu_AddButton(info)
             end
-			info.text = label
-			info.arg1 = value
-			UIDropDownMenu_AddButton(info)
-		end
-	end)
+        elseif menulist then
+            for _, currentMenulist in pairs(list) do
+                if currentMenulist.label == menulist then
+                    for _, v in pairs(currentMenulist.value) do
+                        local label = v.label
+                        local value = v.value
+                        info.func = function(self, arg1, arg2, checked) 
+                            UIDropDownMenu_SetText(dropDown, self.value) -- value should contain the selected text..
+                            dropDown.clickCallback(dropDown, arg1)
+                            CloseDropDownMenus()
+                        end
+                        info.text = label
+                        info.arg1 = value
+                        UIDropDownMenu_AddButton(info, level)
+                    end
+                end
+            end
+        end
+	end
 
+	UIDropDownMenu_Initialize(dropDown, initMainMenu)
 	UIDropDownMenu_SetText(dropDown, defaultValue)
 end
 

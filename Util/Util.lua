@@ -7,6 +7,20 @@ local multicraftFactor = 0.0009
 local resourcefulnessFactor = 0.00111
 local craftingspeedFactor = 0.002
 
+function CraftSim.UTIL:SetDebugPrint(debugID)
+    local function print(text, recursive, l) -- override
+        if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
+            CraftSim_DEBUG:print(text, debugID, recursive, l)
+        else
+            print(text)
+        end
+    end
+
+    return print
+end
+
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.UTIL) 
+
 function CraftSim.UTIL:GetInspirationStatByPercent(percent) 
     if percent == nil then 
         return 0 
@@ -103,7 +117,6 @@ function CraftSim.UTIL:IsMyVersionHigher(versionB)
 
     -- TODO: refactor recursively to get rid of this abomination
     if subVersionsA[1] and subVersionsB[1] then
-        print(subVersionsA[1] .. " < " .. subVersionsB[1] .. "?")
         if subVersionsA[1] < subVersionsB[1] then
             return false
         elseif subVersionsA[1] > subVersionsB[1] then
@@ -111,7 +124,6 @@ function CraftSim.UTIL:IsMyVersionHigher(versionB)
         end
 
         if subVersionsA[2] and subVersionsB[2] then
-            print(subVersionsA[2] .. " < " .. subVersionsB[2] .. "?")
             if subVersionsA[2] < subVersionsB[2] then
                 return false
             elseif subVersionsA[2] > subVersionsB[2] then
@@ -119,7 +131,6 @@ function CraftSim.UTIL:IsMyVersionHigher(versionB)
             end
 
             if subVersionsA[3] and subVersionsB[3] then
-                print(subVersionsA[3] .. " < " .. subVersionsB[3] .. "?")
                 if subVersionsA[3] < subVersionsB[3] then
                     return false
                 elseif subVersionsA[3] > subVersionsB[3] then
@@ -127,7 +138,6 @@ function CraftSim.UTIL:IsMyVersionHigher(versionB)
                 end
 
                 if subVersionsA[4] and subVersionsB[4] then
-                    print(subVersionsA[4] .. " < " .. subVersionsB[4] .. "?")
                     if subVersionsA[4] < subVersionsB[4] then
                         return false
                     elseif subVersionsA[4] > subVersionsB[4] then
@@ -406,18 +416,6 @@ function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     else
         return minusText .. GetCoinTextureString(absValue, 10) .. percentageText
     end
-end
-
-function CraftSim.UTIL:SetDebugPrint(debugID)
-    local function print(text, recursive, l) -- override
-        if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-            CraftSim_DEBUG:print(text, debugID, recursive, l)
-        else
-            print(text)
-        end
-    end
-
-    return print
 end
 
 function CraftSim.UTIL:CollectGarbageAtThreshold(kbThreshold)

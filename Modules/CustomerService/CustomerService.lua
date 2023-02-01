@@ -71,8 +71,8 @@ function CraftSim.CUSTOMER_SERVICE:SendPreviewRequest(crafter, previewID, profes
         addonVersion = GetAddOnMetadata(AddonName, "Version"),
     }
     print("SendPreviewRequest " .. tostring(crafter))
-    print("Payload: ")
-    print(requestData, true)
+    -- print("Payload: ")
+    -- print(requestData, true)
     CraftSim.COMM:SendData(PREVIEW_REQUEST_PREFIX, requestData, "WHISPER", crafter)
 end
 
@@ -117,7 +117,8 @@ function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
             local isRelevantItemLevel = recipeInfo.itemLevel > 1 
             if isDragonIsleRecipe and isRelevantItemLevel then
                 local iconAsText = CraftSim.UTIL:IconToText(recipeInfo.icon, 20)
-                table.insert(response.recipes, {
+                response.recipes[recipeCategoryInfo.name] = response.recipes[recipeCategoryInfo.name] or {}
+                table.insert(response.recipes[recipeCategoryInfo.name], {
                     recipeID=recipeID,
                     recipeName= iconAsText .. " " .. recipeInfo.name
                 })

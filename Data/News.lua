@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
+        newP("6.2") ..
+        p .. "The " .. c("Live Preview", g) .. " Feature now has its recipe list sorted" ..
+        a .. "into categories to reduce the dropdown height" ..
         newP("6.1") ..
         P .. "Auto Reply now can take a third argument <ilvl> to specify the" ..
         a .. "target item level. It checks which infusion or matrix" ..

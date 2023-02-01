@@ -195,11 +195,20 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     -- convert recipes to dropdown data
     local function convertToDropdownListData(data)
         local dropDownListData = {}
-        for _, recipeEntry in pairs(data) do
-            table.insert(dropDownListData, {
-                label = recipeEntry.recipeName,
-                value = recipeEntry.recipeID,
-            })
+        for categoryName, recipes in pairs(data) do
+            local dropdownEntry = {
+                label = categoryName,
+                value = {},
+            }
+            for _, recipeEntry in pairs(recipes) do
+                table.insert(dropdownEntry.value, {
+                    label = recipeEntry.recipeName,
+                    value = recipeEntry.recipeID,
+                })
+            end
+
+            table.insert(dropDownListData, dropdownEntry)
+            
         end
         return dropDownListData
     end
@@ -214,6 +223,8 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     previewFrame.content.expectedInspirationPercent:Hide()
     previewFrame.content.expectedInspirationIcon:Hide()
     previewFrame.content.reagentDetailsTitle:Hide()
+    print("converted List data: ")
+    print(convertToDropdownListData(recipes), true)
     CraftSim.FRAME:initializeDropdownByData(previewFrame.content.recipeDropdown, convertToDropdownListData(recipes), "Select a Recipe")
 
     previewFrame:Show()
@@ -287,7 +298,6 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
             end
         end
 
-        --previewFrame.content.materialDetails:SetText(materialDetailText)
         previewFrame.content.craftingCosts:SetText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(craftingCosts))
         previewFrame.content.craftingCosts:Show()
     end)
