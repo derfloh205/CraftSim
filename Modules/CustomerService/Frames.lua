@@ -85,21 +85,63 @@ end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimLivePreviewFrame", "CraftSim Live Preview", UIParent, UIParent,
-    "CENTER", "CENTER", 0, 0, 500, 400, CraftSim.CONST.FRAMES.LIVE_PREVIEW, false, true, "DIALOG")
+    "CENTER", "CENTER", 0, 0, 500, 500, CraftSim.CONST.FRAMES.LIVE_PREVIEW, false, true, "DIALOG")
 
     local function createContent(frame)
         frame:Hide()
 
         local function onRecipeSelected(_, recipeID)
             print("Selected RecipeID: " .. tostring(recipeID))
-            CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID) 
+            frame.currentRecipeID = recipeID
+            CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, true) 
         end
 
         frame.content.previewTitle = CraftSim.FRAME:CreateText("Crafter's Profession", frame.content, frame.title, "TOP", "BOTTOM", 0, -10)
 
         frame.content.recipeDropdown = CraftSim.FRAME:initDropdownMenu(nil, frame.content, frame.content.previewTitle, "Learned Recipes", 0, -30, 200, {}, onRecipeSelected, "Select Recipe", true)
 
-        frame.content.craftingCosts = CraftSim.FRAME:CreateText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(0), frame.content, frame.content.recipeDropdown, "TOP", "BOTTOM", 0, -15)
+        local function onOptionalReagentSelected(dropdown, itemID) 
+            dropdown.selectedID = itemID
+            print("selected optional Reagent: " .. tostring(itemID))
+            CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(frame.currentRecipeID) 
+        end
+        local dropdownWidth = 120
+        local dropdownOffsetX = 70
+        local dropdownBaseY = 0
+        local dropdownSpacingY = -40
+        frame.content.optionalDropdownGroup = CreateFrame("frame", nil, frame.content)
+        frame.content.optionalDropdownGroup:SetSize(dropdownWidth*2 + dropdownOffsetX, -1*dropdownBaseY + -1*dropdownSpacingY*2 + 25)
+        frame.content.optionalDropdownGroup:SetPoint("TOP", frame.content.recipeDropdown, "BOTTOM", 0, -10)
+
+        frame.content.optionalDropdownGroup.SetCollapsed = function(collapsed)
+            if collapsed then
+                frame.content.optionalDropdownGroup:Hide()
+                frame.content.optionalDropdownGroup:SetSize(0, 0)
+            else
+                frame.content.optionalDropdownGroup:SetSize(dropdownWidth*2 + dropdownOffsetX, -1*dropdownBaseY + -1*dropdownSpacingY*2 + 10)
+                frame.content.optionalDropdownGroup:Show()
+            end
+        end
+
+        frame.content.optionalDropdownGroup.SetCollapsed(true)
+        frame.content.optionalDropdownGroup:Hide()
+
+        local function CreateReagentInputDropdown(label, anchorX, anchorY)
+            local optionalReagentDropdown = CraftSim.FRAME:initDropdownMenu(nil, frame.content.optionalDropdownGroup, frame.content.optionalDropdownGroup, label, anchorX, anchorY, dropdownWidth, {}, onOptionalReagentSelected)
+            return optionalReagentDropdown
+        end
+
+        
+        frame.content.optionalDropdowns = {
+            CreateReagentInputDropdown("Optional 1", - dropdownOffsetX, dropdownBaseY),
+            CreateReagentInputDropdown("Optional 2", - dropdownOffsetX, dropdownBaseY + dropdownSpacingY),
+            CreateReagentInputDropdown("Optional 3", - dropdownOffsetX, dropdownBaseY + dropdownSpacingY*2),
+
+            CreateReagentInputDropdown("Finishing 1", dropdownOffsetX, dropdownBaseY),
+            CreateReagentInputDropdown("Finishing 2", dropdownOffsetX, dropdownBaseY + dropdownSpacingY),
+        } 
+        
+        frame.content.craftingCosts = CraftSim.FRAME:CreateText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(0), frame.content, frame.content.optionalDropdownGroup, "TOP", "BOTTOM", 0, -10)
         
         frame.content.expectedResultTitle = CraftSim.FRAME:CreateText("Expected Result", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", -80, -10, nil, nil)
         
@@ -223,8 +265,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     previewFrame.content.expectedInspirationPercent:Hide()
     previewFrame.content.expectedInspirationIcon:Hide()
     previewFrame.content.reagentDetailsTitle:Hide()
-    print("converted List data: ")
-    print(convertToDropdownListData(recipes), true)
+    previewFrame.content.optionalDropdownGroup:Hide()
     CraftSim.FRAME:initializeDropdownByData(previewFrame.content.recipeDropdown, convertToDropdownListData(recipes), "Select a Recipe")
 
     previewFrame:Show()
@@ -234,6 +275,9 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
     local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
     local outputInfo = payload.outputInfo
     local reagents = payload.reagents
+    local optionalReagents = payload.optionalReagents
+    local finishingReagents = payload.finishingReagents
+
 
     -- load reagents, then continue
     local itemsToLoad = {}
@@ -296,6 +340,52 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
             else
                 reagentFrame.SetReagent(nil)
             end
+        end
+
+        if payload.isInit then
+            previewFrame.currentOptionalReagents = payload.optionalReagents
+            previewFrame.currentFinishingReagents = payload.finishingReagents
+            previewFrame.content.optionalDropdownGroup.SetCollapsed(#optionalReagents + #finishingReagents == 0)
+    
+            local function convertReagentListToDropdownListData(reagentList)
+                local dropDownListData = {{label = "None", value = nil}}
+                for _, reagent in pairs(reagentList) do
+                    local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(reagent.itemID)
+                    table.insert(dropDownListData, {
+                        label = itemData.link or "Loading...",
+                        value = reagent.itemID,
+                    })
+                end
+                return dropDownListData
+            end
+    
+            local dropdownIndex = 1
+            for i = 1, 5, 1 do
+                local dropdown = previewFrame.content.optionalDropdowns[i]
+                local reagentList = {}
+                if i < 4 then
+                    reagentList = optionalReagents[i]
+                else
+                    reagentList = finishingReagents[i-3]
+                end
+    
+                if reagentList then
+                    dropdown:Show()
+                    if not reagentList[1].locked then
+                        local dropdownListData = convertReagentListToDropdownListData(reagentList)
+                        CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None")
+                    else
+                        CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.UTIL:ColorizeText("Locked", CraftSim.CONST.COLORS.RED))
+                        dropdown.selectedID = nil
+                    end
+                else
+                    dropdown:Hide()
+                end
+    
+                dropdownIndex = dropdownIndex + 1
+            end
+        else
+
         end
 
         previewFrame.content.craftingCosts:SetText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(craftingCosts))

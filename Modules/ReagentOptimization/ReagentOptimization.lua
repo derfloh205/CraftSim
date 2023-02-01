@@ -652,7 +652,7 @@ function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestAlloc
     return true
 end
 
-function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentsForScannedRecipeData(recipeData, priceData, UseInspiration) 
+function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentsForScannedRecipeData(recipeData, priceData, UseInspiration, overrideData) 
     if not recipeData.hasReagentsWithQuality then
         return recipeData.reagents -- e.g: Primal Convergence
     end

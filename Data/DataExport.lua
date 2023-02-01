@@ -379,7 +379,7 @@ function CraftSim.DATAEXPORT:GetQualityIDFromOptionalReagentItemID(itemID)
 
 end
 
-function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schematicSlots, reagentType)
+function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schematicSlots, reagentType, recipeID, skillLineID)
 	if not schematicSlots then
 		return {}
 	end
@@ -391,6 +391,22 @@ function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schem
 		local button = slotData
 		local reagents = slotData.reagents
 		local dataSlotIndex = slotData.dataSlotIndex
+
+		print(CraftSim.UTIL:ColorizeText("schematicSlot", CraftSim.CONST.COLORS.LEGENDARY), false, true)
+		print(slotData, true)
+
+		local locked = false
+		local lockedReason = ""
+		if slotData.slotInfo and slotData.slotInfo.mcrSlotID then
+			locked, lockedReason = C_TradeSkillUI.GetReagentSlotStatus(slotData.slotInfo.mcrSlotID, recipeID, skillLineID)
+	
+			if locked then
+				print(CraftSim.UTIL:ColorizeText("locked", CraftSim.CONST.COLORS.RED))
+				print("reason: " .. tostring(lockedReason))
+			else
+				print(CraftSim.UTIL:ColorizeText("not locked", CraftSim.CONST.COLORS.GREEN))
+			end
+		end
 
 		if reagentType == slotData.reagentType then
 			-- count up for the different data slot indices
@@ -405,47 +421,15 @@ function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schem
 				table.insert(slotsToItemIDs[currentRelevantSlot], {
 					itemID = slotReagentData.itemID,
 					qualityID = CraftSim.DATAEXPORT:GetQualityIDFromOptionalReagentItemID(slotReagentData.itemID),
-					dataSlotIndex = dataSlotIndex
+					dataSlotIndex = dataSlotIndex,
+					locked = locked,
+					lockedReason = lockedReason,
 				})
 			end
 		end
 	end
 
 	return slotsToItemIDs
-end
-
--- DEPRICATED
--- function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlots(reagentSlots)
--- 	if not reagentSlots then
--- 		return {}
--- 	end
--- 	-- could be more than 1 slot for optional and finishing, but is one slot strictly for salvaging
--- 	local slotsToItemIDs = {}
--- 	for slotIndex, slotData in pairs(reagentSlots) do
--- 		local button = slotData
--- 		local reagents = slotData.reagentSlotSchematic.reagents
--- 		local dataSlotIndex = slotData.reagentSlotSchematic.dataSlotIndex
-
--- 		for _, slotReagentData in pairs(reagents) do
--- 			if slotsToItemIDs[slotIndex] == nil then
--- 				slotsToItemIDs[slotIndex] = {}
--- 			end
--- 			table.insert(slotsToItemIDs[slotIndex], {
--- 				itemID = slotReagentData.itemID,
--- 				qualityID = CraftSim.DATAEXPORT:GetQualityIDFromOptionalReagentItemID(slotReagentData.itemID),
--- 				dataSlotIndex = dataSlotIndex
--- 			})
--- 		end
--- 	end
-
--- 	return slotsToItemIDs
--- end
-
--- UNUSED YET UNTIL NEEDED
-function CraftSim.DATAEXPORT:HandleQualityItemIDsOrderException(recipeData)
-	local exceptionOrder = CraftSim.CONST.EXCEPTION_ORDER_ITEM_IDS[recipeData.recipeID]
-	recipeData.result.itemIDs = exceptionOrder
-	return exceptionOrder
 end
 
 function CraftSim.DATAEXPORT:GetCurrentRecipeOperationInfoByExportMode(exportMode, recipeID, overrideData)
@@ -456,14 +440,17 @@ function CraftSim.DATAEXPORT:GetCurrentRecipeOperationInfoByExportMode(exportMod
 	elseif exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
 		if overrideData then
 			local craftingReagentInfoTbl = CraftSim.DATAEXPORT:ConvertRecipeDataRequiredReagentsToCraftingReagentInfoTbl(overrideData.scanReagents or {})
-
+			print("whatsmyoverridedata? ")
+			print(overrideData, true)
 			for _, reagent in pairs(overrideData.optionalReagents or {}) do
+				print("inserting optional from override: " .. tostring(reagent))
 				table.insert(craftingReagentInfoTbl, reagent)
 			end
 			for _, reagent in pairs(overrideData.finishingReagents or {}) do
 				table.insert(craftingReagentInfoTbl, reagent)
 			end
-
+			print("craftingreagentinfotableByOverride: ")
+			print(craftingReagentInfoTbl, true)
 			return C_TradeSkillUI.GetCraftingOperationInfo(recipeID, craftingReagentInfoTbl) 
 		else
 			return C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
@@ -713,8 +700,8 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData
 	end
 
 	-- extract possible optional and finishing and salvage reagents per slot
-	recipeData.possibleOptionalReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schematicInfo.reagentSlotSchematics, CraftSim.CONST.REAGENT_TYPE.OPTIONAL)
-	recipeData.possibleFinishingReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schematicInfo.reagentSlotSchematics, CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT)
+	recipeData.possibleOptionalReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schematicInfo.reagentSlotSchematics, CraftSim.CONST.REAGENT_TYPE.OPTIONAL, recipeData.recipeID, recipeData.professionInfo.skillLineID)
+	recipeData.possibleFinishingReagents = CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schematicInfo.reagentSlotSchematics, CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT, recipeData.recipeID, recipeData.professionInfo.skillLineID)
 	recipeData.possibleSalvageReagents = C_TradeSkillUI.GetSalvagableItemIDs(recipeData.recipeID) -- thx blizz tbh
 
 	print("possible optional reagents:")
@@ -771,16 +758,15 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData
 			end
 		end
 	elseif not recipeData.isSalvageRecipe then
-		recipeData.reagents = overrideData.scanReagents
-		-- optionals and such?
+		recipeData.reagents = CopyTable(overrideData.scanReagents)
 	end
 
 	if overrideData.optionalReagents then
-		recipeData.optionalReagents = overrideData.optionalReagents
+		recipeData.optionalReagents = CopyTable(overrideData.optionalReagents)
 	end
 
 	if overrideData.finishingReagents then
-		recipeData.finishingReagents = overrideData.finishingReagents
+		recipeData.finishingReagents = CopyTable(overrideData.finishingReagents)
 	end
 
 	recipeData.hasReagentsWithQuality = hasReagentsWithQuality

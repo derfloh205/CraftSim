@@ -31,6 +31,7 @@
         "addonName",
         "TSM_API",
         "ChatFrame_AddMessageEventFilter",
-        "CloseDropDownMenus"
+        "CloseDropDownMenus",
+        "UIDropDownMenu_SetEnabled"
     ]
 }

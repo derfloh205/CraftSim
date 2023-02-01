@@ -22,6 +22,7 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
         newP("6.2") ..
+        P .. "Optional and Finishing Reagents are now available in the " .. c("Live Preview", g) ..
         p .. "The " .. c("Live Preview", g) .. " Feature now has its recipe list sorted" ..
         a .. "into categories to reduce the dropdown height" ..
         newP("6.1") ..
