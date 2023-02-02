@@ -194,22 +194,35 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, r
         end
         materialFrame.content.allocateButton:SetSize(materialFrame.content.allocateButton:GetTextWidth() + 15, 25)
     end
-    materialFrame.content.qualityIcon.SetQuality(bestAllocation.qualityReached)
-    for frameIndex = 1, 5, 1 do
-        local allocation = bestAllocation.allocations[frameIndex]
-        if allocation ~= nil then
-            local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(allocation.allocations[1].itemID) 
-            materialFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
-            materialFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
-            materialFrame.content.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
-            materialFrame.content.reagentFrames.rows[frameIndex].q1text:SetText(allocation.allocations[1].allocations)
-            materialFrame.content.reagentFrames.rows[frameIndex].q2text:SetText(allocation.allocations[2].allocations)
-            materialFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(allocation.allocations[3].allocations)
-
-            materialFrame.content.reagentFrames.rows[frameIndex]:Show()
-        else
-            materialFrame.content.reagentFrames.rows[frameIndex]:Hide()
+    local itemsToLoad = {}
+    foreach(bestAllocation.allocations, function (_, allocation)
+        if allocation then
+            local item = Item:CreateFromItemID(allocation.allocations[1].itemID)
+            table.insert(itemsToLoad, item)
         end
+    end)
+    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function() 
+        materialFrame.content.qualityIcon.SetQuality(bestAllocation.qualityReached)
+        for frameIndex = 1, 5, 1 do
+            local allocation = bestAllocation.allocations[frameIndex]
+            if allocation ~= nil then
+                --local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(allocation.allocations[1].itemID) 
+                local item = CraftSim.UTIL:Find(itemsToLoad, function (item) return item:GetItemID() == allocation.allocations[1].itemID end)
+                if item then
+                    local itemTexture = item:GetItemIcon()
+                    materialFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
+                    materialFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
+                    materialFrame.content.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
+                    materialFrame.content.reagentFrames.rows[frameIndex].q1text:SetText(allocation.allocations[1].allocations)
+                    materialFrame.content.reagentFrames.rows[frameIndex].q2text:SetText(allocation.allocations[2].allocations)
+                    materialFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(allocation.allocations[3].allocations)
         
-    end
+                    materialFrame.content.reagentFrames.rows[frameIndex]:Show()
+                end
+            else
+                materialFrame.content.reagentFrames.rows[frameIndex]:Hide()
+            end
+            
+        end
+    end)
 end
