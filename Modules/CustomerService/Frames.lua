@@ -356,9 +356,11 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
     
         local craftingCosts = 0
     
-        for _, reagent in pairs(reagents) do
+        for i, reagent in pairs(reagents) do
             for _, itemInfo in pairs(reagent.itemsInfo) do
-                local reagentCost = tonumber(itemInfo.allocations) + CraftSim.PRICEDATA:GetMinBuyoutByItemID(tonumber(itemInfo.itemID), true)
+                local reagentCost = tonumber(itemInfo.allocations) * CraftSim.PRICEDATA:GetMinBuyoutByItemID(tonumber(itemInfo.itemID), true)
+                print("reagentCost #" .. i .. ": " .. CraftSim.UTIL:FormatMoney(reagentCost))
+                print(tonumber(itemInfo.allocations) .. " x " .. CraftSim.PRICEDATA:GetMinBuyoutByItemID(tonumber(itemInfo.itemID), true))
                 craftingCosts = craftingCosts + reagentCost
             end
         end
