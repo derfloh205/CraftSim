@@ -238,10 +238,12 @@ function CraftSim.SPEC_DATA:GetExtraItemFactors(recipeData, ruleNodes)
         local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodesCached(nodeData, ruleNodes)
         local nodeRank = nodeInfo.activeRank
         local nodeAffectsRecipe = nodeRank > 0 and CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
-        if nodeAffectsRecipe then
-            -- they stack additively
-            extraItemFactors.multicraftExtraItemsFactor = extraItemFactors.multicraftExtraItemsFactor + (nodeData.multicraftExtraItemsFactor or 0)
-            extraItemFactors.resourcefulnessExtraItemsFactor = extraItemFactors.resourcefulnessExtraItemsFactor + (nodeData.resourcefulnessExtraItemsFactor or 0)
+        if nodeAffectsRecipe and nodeData.threshold then
+            if nodeRank >= nodeData.threshold then
+                -- they stack additively
+                extraItemFactors.multicraftExtraItemsFactor = extraItemFactors.multicraftExtraItemsFactor + (nodeData.multicraftExtraItemsFactor or 0)
+                extraItemFactors.resourcefulnessExtraItemsFactor = extraItemFactors.resourcefulnessExtraItemsFactor + (nodeData.resourcefulnessExtraItemsFactor or 0)
+            end
         end
     end
 

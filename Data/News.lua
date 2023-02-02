@@ -21,7 +21,7 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
-        newP("6.2") ..
+        newP("6.2.1") ..
         P .. "Optional and Finishing Reagents are now available in the " ..
         a .. c("Live Preview", g) .. " and its recipe list is now sorted" ..
         a .. "into categories to reduce the dropdown height" ..
@@ -38,6 +38,8 @@ function CraftSim.NEWS:GET_NEWS()
         a .. "cost overview and price override" ..
         a .. c("Known Issue: ", r) .. "RecipeScan not working when used while" .. 
         a .. "viewing non dragon flight recipes" ..
+        p .. "Fixed resourcefulness and multicraft item boni bug" .. 
+        a .. "for non experimental data" ..
         newP("6.1") ..
         P .. "Auto Reply now can take a third argument <ilvl> to specify the" ..
         a .. "target item level. It checks which infusion or matrix" ..
