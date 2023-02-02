@@ -51,14 +51,10 @@ function CraftSim.CUSTOMER_SERVICE:OnPreviewLinkClicked(payload, text, button)
     local professionName = splitData[4]
     local previewID = splitData[5]
 
-    -- fix #57
     if header ~= "CraftSimLivePreview" then
         return
     end
 
-    -- TODO: Send initial request to get possible recipes (id + names) of learned!
-    -- TODO: open crafting preview and populate dropdown and other fields
-    -- TODO: set some local property to the crafter to continuosly send data to and receive
     -- TODO: if any request fails / times out show some small warning indicator (offline or in loading screen)
 
     print("Requesting Live Preview: " .. tostring(crafter) .. " professionID: " .. tostring(professionID))
