@@ -799,7 +799,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO, true, true)
 
     frame.content.discordBox = CraftSim.FRAME:CreateInput(
-        nil, frame.content, frame.content, "TOP", "TOP", 30, -20, 200, 30, CraftSim.CONST.DISCORD_INVITE_URL, function() 
+        nil, frame.content, frame.content, "TOP", "TOP", 0, -20, 200, 30, CraftSim.CONST.DISCORD_INVITE_URL, function() 
             -- do not let the player remove the discord link.. lol
             frame.content.discordBox:SetText(CraftSim.CONST.DISCORD_INVITE_URL)
         end)

@@ -25,8 +25,8 @@ function CraftSim.NEWS:GET_NEWS()
         P .. "Optional and Finishing Reagents are now available in the " ..
         a .. c("Live Preview", g) .. " and its recipe list is now sorted" ..
         a .. "into categories to reduce the dropdown height" ..
-        s .. "Reagent Dropdowns now show a tooltip of the optional reagent" .. 
-        a .. "and how many you own" ..
+        s .. "Reagent Dropdowns now show a tooltip of" .. 
+        a .. "the optional reagent and how many you own" ..
         p .. "Fixed the " .. c("Material Optimization", bb) .. " not considering the" ..
         a .. "skill modifier in simulation mode" ..
         p .. "Postload reagent icons in Material Optimizations" ..
