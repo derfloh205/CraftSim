@@ -27,6 +27,8 @@ function CraftSim.NEWS:GET_NEWS()
         a .. "into categories to reduce the dropdown height" ..
         s .. "Reagent Dropdowns now show a tooltip of" .. 
         a .. "the optional reagent and how many you own" ..
+        p .. "Added a small loading text in Live Preview to" ..
+        a .. "show that data is currently requested from the crafter" ..
         p .. "Fixed the " .. c("Material Optimization", bb) .. " not considering the" ..
         a .. "skill modifier in simulation mode" ..
         p .. "Postload reagent icons in Material Optimizations" ..

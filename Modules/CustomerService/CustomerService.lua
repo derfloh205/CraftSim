@@ -66,6 +66,7 @@ function CraftSim.CUSTOMER_SERVICE:OnPreviewLinkClicked(payload, text, button)
 
     --CraftSim.CUSTOMER_SERVICE.FRAMES:ShowLivePreview()
     CraftSim.CUSTOMER_SERVICE:SendPreviewRequest(crafter, previewID, professionID, professionName)
+    CraftSim.CUSTOMER_SERVICE:StartLivePreviewUpdating()
 end
 
 function CraftSim.CUSTOMER_SERVICE:SendPreviewRequest(crafter, previewID, professionID, professionName)
@@ -153,6 +154,7 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeListResponse(payload)
     end
 
     CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
+    CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
 end
 
 function CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, isInit)
@@ -181,6 +183,7 @@ function CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, isInit)
         print("numOptionals: " .. #optionalReagents)
     end
     CraftSim.COMM:SendData(PREVIEW_REQUEST_RECIPE_UPDATE, requestData, "WHISPER", previewFrame.crafter)
+    CraftSim.CUSTOMER_SERVICE:StartLivePreviewUpdating()
 end
 
 function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateRequest(payload)
@@ -220,6 +223,7 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateResponse(payload)
     print(payload.outputInfo, true)
 
     CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
+    CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
 end
 
 -- On the recipient side, decode the string and transform it into a clickable link
@@ -498,5 +502,15 @@ function CraftSim.CUSTOMER_SERVICE:CHAT_MSG_WHISPER(text, playerName,
             end
         end
     end
+end
+
+function CraftSim.CUSTOMER_SERVICE:StartLivePreviewUpdating()
+    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    previewFrame.content.StartUpdate()
+end
+
+function CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
+    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    previewFrame.content.StopUpdate()
 end
 

@@ -100,6 +100,32 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
 
         frame.content.recipeDropdown = CraftSim.FRAME:initDropdownMenu(nil, frame.content, frame.content.previewTitle, "Learned Recipes", 0, -30, 200, {}, onRecipeSelected, "Select Recipe", true)
 
+        local requestingUpdate = "Requesting Update"
+        frame.content.loadingText = CraftSim.FRAME:CreateText(requestingUpdate, frame.content, frame.content.recipeDropdown, "LEFT", "RIGHT", -20, 5, 0.8, nil, {type="H", value="LEFT"})
+        frame.content.isUpdating = false
+        frame.content.StartUpdate = function()
+            frame.content.isUpdating = true
+            frame.content.loadingText:Show()
+            frame.content.loadingText:SetText(requestingUpdate)
+            local function updateText()
+                if frame.content.isUpdating then
+                    local _, numPoints = string.gsub(frame.content.loadingText:GetText(), "%.", "")
+                    if numPoints < 5 then
+                        frame.content.loadingText:SetText(frame.content.loadingText:GetText() .. ".")
+                    else
+                        frame.content.loadingText:SetText(requestingUpdate)
+                    end
+                    C_Timer.After(0.2, updateText)                   
+                end
+            end
+
+            updateText()
+        end
+
+        frame.content.StopUpdate = function ()
+            frame.content.isUpdating = false
+            frame.content.loadingText:Hide()
+        end
         local function onOptionalReagentSelected(dropdown, itemID) 
             dropdown.selectedID = itemID
             print("selected optional Reagent: " .. tostring(itemID))
