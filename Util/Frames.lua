@@ -654,10 +654,10 @@ function CraftSim.FRAME:InitDebugFrame()
     local controlPanel = CraftSim.FRAME:CreateCraftSimFrame("CraftSimDebugControlFrame", "Debug Control", 
     frame, 
     frame, 
-    "TOPRIGHT", "TOPLEFT", 10, 0, 300, 400, CraftSim.CONST.FRAMES.DEBUG_CONTROL, true)
+    "TOPRIGHT", "TOPLEFT", 10, 0, 300, 400, CraftSim.CONST.FRAMES.DEBUG_CONTROL)
 
     controlPanel.content.autoScrollCB = CraftSim.FRAME:CreateCheckbox("Autoscroll", "Toggle Log Autoscrolling", "debugAutoScroll", controlPanel.content,
-    controlPanel.content, "TOP", "TOP", -100, -10)
+    controlPanel.content, "TOP", "TOP", -120, -30)
 
     controlPanel.content.clearButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
 	controlPanel.content.clearButton:SetPoint("TOP", controlPanel.content.autoScrollCB, "BOTTOM", 100, 0)	
@@ -701,16 +701,17 @@ function CraftSim.FRAME:InitDebugFrame()
         CraftSim.CACHE:ClearAll()
     end)
 
+    controlPanel.content.debugIDScrollFrame, controlPanel.content.debugIDSFrame = CraftSim.FRAME:CreateScrollFrame(controlPanel.content, -130, 10, -40, 20)
     local checkBoxOffsetY = 0
-    controlPanel.content.checkBoxID_MAIN = CraftSim.FRAME:CreateCheckbox(
-        " MAIN", "Enable MAIN Output", "enableDebugID_MAIN", controlPanel.content, controlPanel.content.nodeDebugInput, "TOPLEFT", "TOPLEFT", -5, checkBoxOffsetY - 55)
+    controlPanel.content.debugIDSFrame.checkBoxID_MAIN = CraftSim.FRAME:CreateCheckbox(
+        " MAIN", "Enable MAIN Output", "enableDebugID_MAIN", controlPanel.content.debugIDSFrame, controlPanel.content.debugIDSFrame, "TOPLEFT", "TOPLEFT", 5, 0)
     
-    local lastHook = controlPanel.content.checkBoxID_MAIN
+    local lastHook = controlPanel.content.debugIDSFrame.checkBoxID_MAIN
     for _, debugID in pairs(CraftSim.CONST.DEBUG_IDS) do
         if debugID ~= CraftSim.CONST.DEBUG_IDS.MAIN then
-            controlPanel.content["checkboxID_" .. debugID] = CraftSim.FRAME:CreateCheckbox(
-        " " .. debugID, "Enable "..debugID.." Output", "enableDebugID_" .. debugID, controlPanel.content, lastHook, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
-        lastHook = controlPanel.content["checkboxID_" .. debugID]
+            controlPanel.content.debugIDSFrame["checkboxID_" .. debugID] = CraftSim.FRAME:CreateCheckbox(
+        " " .. debugID, "Enable "..debugID.." Output", "enableDebugID_" .. debugID, controlPanel.content.debugIDSFrame, lastHook, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
+        lastHook = controlPanel.content.debugIDSFrame["checkboxID_" .. debugID]
         end
     end
 
