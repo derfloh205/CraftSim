@@ -322,7 +322,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData, exportMod
 
 		recipeData.stats.resourcefulness.value = buffStats.resourcefulness + itemBonus + specNodeBonus
 		recipeData.stats.resourcefulness.percent = CraftSim.UTIL:GetResourcefulnessPercentByStat(recipeData.stats.resourcefulness.value) * 100
-		recipeData.stats.resourcefulness.bonusItemsFactor = specNodeBonusItemsFactor * finishingReagentsBonusItemsFactor
+		recipeData.stats.resourcefulness.bonusItemsFactor = specNodeBonusItemsFactor + finishingReagentsBonusItemsFactor
 		recipeData.stats.resourcefulness.bonusItemsFactorNoSpecs = 0
 	end
 

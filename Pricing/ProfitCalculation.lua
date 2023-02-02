@@ -86,6 +86,7 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV3(recipeData, priceData, cal
         resourcefulnessExtraItemsFactor = recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
     end
 
+    print("resourcefulnessExtraItemsFactor: " .. tostring(resourcefulnessExtraItemsFactor), false, true)
     if recipeData.salvageReagent then
         return (priceData.salvageReagentPrice * recipeData.salvageReagent.requiredQuantity) * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR  * resourcefulnessExtraItemsFactor) 
     end
