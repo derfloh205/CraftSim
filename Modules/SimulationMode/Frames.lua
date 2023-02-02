@@ -877,7 +877,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns()
     for slotIndex, reagentList in pairs(possibleOptionalReagents) do
         local currentDropdown = CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames[dropdownIndex]
         local dropdownlist = convertReagentListToDropdownListData(reagentList)
-        CraftSim.FRAME:initializeDropdownByData(currentDropdown, dropdownlist, nil)
+        CraftSim.FRAME:initializeDropdownByData(currentDropdown, dropdownlist, nil, true, true)
         currentDropdown:Show()
         currentDropdown.slotIndex = slotIndex
         currentDropdown.isOptional = true
@@ -899,7 +899,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns()
         local dropdownlist = convertReagentListToDropdownListData(reagentList)
         print("DropdownList")
         print(dropdownlist, true)
-        CraftSim.FRAME:initializeDropdownByData(currentDropdown, dropdownlist, nil)
+        CraftSim.FRAME:initializeDropdownByData(currentDropdown, dropdownlist, nil, true, true)
         currentDropdown:Show()
         currentDropdown.slotIndex = slotIndex
         currentDropdown.isFinishing = true

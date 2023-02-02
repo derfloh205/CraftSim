@@ -109,7 +109,38 @@ function CraftSim.FRAME:initDropdownMenu(frameName, parent, anchorFrame, label, 
     return dropDown
 end
 
-function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue)
+-- anchor: e.g. "ANCHOR_RIGHT"
+-- if itemLink is nil it removes the tooltip
+function CraftSim.FRAME:SetItemTooltip(frame, itemLink, owner, anchor)
+    local function onEnter()
+        local _, ItemLink = GameTooltip:GetItem()
+        GameTooltip:SetOwner(owner, anchor);
+
+        if ItemLink ~= itemLink then
+            -- to not set it again and hide the tooltip..
+            GameTooltip:SetHyperlink(itemLink)
+        end
+        GameTooltip:Show();
+    end
+    local function onLeave()
+        GameTooltip:Hide();
+    end
+    if itemLink then
+        frame:SetScript("OnEnter", onEnter)
+        frame:SetScript("OnLeave", onLeave)
+    else
+        frame:SetScript("OnEnter", nil)
+        frame:SetScript("OnLeave", nil)
+
+    end
+end
+
+--- @param showCount? boolean if enabled, item tooltips show how many the player possesses
+--- @param showItemTooltips? boolean requires the label to be an itemLink
+--- @param concatCallback? function takes one argument which is the itemlink and returns a string that is added to the items tooltip
+function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue, showItemTooltips, showCount, concatCallback)
+    print("Init Dropdown By Data", false, true)
+    print("showItemTooltips: " .. tostring(showItemTooltips))
     local function initMainMenu(self, level, menulist) 
         local info = UIDropDownMenu_CreateInfo()
         if level == 1 then
@@ -127,6 +158,16 @@ function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue)
                 info.arg1 = value
                 info.hasArrow = hasSublist
                 info.menuList = hasSublist and label
+                if showItemTooltips then
+                    print("initializeDropdownByData: Set Item Tooltip: " .. tostring(label), false, true)
+                    info.tooltipText = CraftSim.UTIL:GetItemTooltipText(label, showCount)
+                    -- cut first line as it is the name of the item
+                    info.tooltipTitle, info.tooltipText = string.match(info.tooltipText, "^(.-)\n(.*)$")
+                    if concatCallback then
+                    info.tooltipTitle = info.tooltipTitle .. "\n" .. tostring(concatCallback(label))
+                    end
+                    info.tooltipOnButton = true
+                end
                 UIDropDownMenu_AddButton(info)
             end
         elseif menulist then
@@ -149,7 +190,7 @@ function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue)
         end
 	end
 
-	UIDropDownMenu_Initialize(dropDown, initMainMenu)
+	UIDropDownMenu_Initialize(dropDown, initMainMenu, "DROPDOWN_MENU_LEVEL")
 	UIDropDownMenu_SetText(dropDown, defaultValue)
 end
 

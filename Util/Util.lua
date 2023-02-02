@@ -445,12 +445,50 @@ function CraftSim.UTIL:FilterTable(t, filterFunc)
     return filtered
 end
 
-function CraftSim.UTIL:Map(t, mapFunc)
+-- options: subTable, isTableList
+-- subTable: a subproperty that is a table that is to be mapped instead of the table itself
+-- isTableList: if the table only consists of other tables, map each subTable instead
+function CraftSim.UTIL:Map(t, mapFunc, options)
+    options = options or {}
     local mapped = {}
-    for k, v in pairs(t) do
-        table.insert(mapped, mapFunc(v, k))
+    if not options.subTable then
+        for k, v in pairs(t) do
+            if options.isTableList then
+                if type(v) ~= "table" then
+                    error("UTIL.Map: t contains a nontable element")
+                end
+                for subK, subV in pairs(v) do
+                    local mappedValue = mapFunc(subV, subK)
+                    if not mappedValue then
+                        error("UTIL.Map: Did you forget to return in mapFunc?")
+                    end
+                    table.insert(mapped, mappedValue)
+                end
+            else
+                local mappedValue = mapFunc(v, k)
+                if not mappedValue then
+                    error("UTIL.Map: Did you forget to return in mapFunc?")
+                end
+                table.insert(mapped, mappedValue)
+            end
+        end
+        return mapped
+    else
+        for k, v in pairs(t) do
+            if not v[options.subTable] or type(v[options.subTable]) ~= "table" then
+                print("Mapping Error: given options.subTable is not existing or no table: " .. tostring(v[options.subTable]))
+            else
+                for subK, subV in pairs(v[options.subTable]) do
+                    local mappedValue = mapFunc(subV, subK)
+                    if not mappedValue then
+                        error("UTIL.Map: Did you forget to return in mapFunc?")
+                    end
+                    table.insert(mapped, mappedValue)
+                end
+            end
+        end
+        return mapped
     end
-    return mapped
 end
 
 function CraftSim.UTIL:Find(t, findFunc)
@@ -461,6 +499,17 @@ function CraftSim.UTIL:Find(t, findFunc)
     end
 
     return false
+end
+
+-- to concat lists together (behaviour unpredictable with tables that have strings or not ordered numbers as indices)
+function CraftSim.UTIL:Concat(tableList)
+    local finalList = {}
+    for _, currentTable in pairs(tableList) do
+        for _, item in pairs(currentTable) do
+            table.insert(finalList, item)
+        end
+    end
+    return finalList
 end
 
 function CraftSim.UTIL:GetMoneyValuesFromCopper(copperValue, formatString)
@@ -552,5 +601,39 @@ function CraftSim.UTIL:StopProfiling(label)
     local diff = time - profilings[label]
     profilings[label] = nil
     CraftSim_DEBUG:print("Elapsed Time for " .. label .. ": " .. CraftSim.UTIL:round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+end
+
+function CraftSim.UTIL:GetItemTooltipText(itemLink, showCount)
+    local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
+
+    if not tooltipData then
+        return ""
+    end
+
+    local tooltipText = ""
+    for _, line in pairs(tooltipData.lines) do
+        local lineText = ""
+        for _, arg in pairs(line.args) do
+            if arg.stringVal then
+                lineText = lineText .. arg.stringVal
+            end
+        end
+        tooltipText = tooltipText .. lineText .. "\n"
+    end
+
+    if showCount then
+        local itemCountInventory = GetItemCount(itemLink, false, false, true)
+        local itemCountTotal = GetItemCount(itemLink, true, false, true)
+        local itemCountBank = itemCountTotal - itemCountInventory
+        tooltipText = tooltipText .. "\n" .. "Owned: " .. itemCountTotal
+        if itemCountInventory > 0 then
+            tooltipText = tooltipText .. "\n" .. "- Inventory: " .. itemCountInventory
+        end
+        if itemCountBank > 0 then
+            tooltipText = tooltipText .. "\n" .. "- Bank: " .. itemCountBank
+        end
+    end
+
+    return tooltipText
 end
 

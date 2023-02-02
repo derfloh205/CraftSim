@@ -279,16 +279,28 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
     local finishingReagents = payload.finishingReagents
 
 
-    -- load reagents, then continue
+    -- load reagents and optionalReagents, then continue
     local itemsToLoad = {}
-    for _, reagent in pairs(reagents) do
-        for _, itemInfo in pairs(reagent.itemsInfo) do
-            local itemID = tonumber(itemInfo.itemID)
-            local item = Item:CreateFromItemID(itemID)
+    CraftSim.UTIL:Concat({
+        CraftSim.UTIL:Map(reagents, function (itemInfo)
+            local item = Item:CreateFromItemID(itemInfo.itemID)
             table.insert(itemsToLoad, item)
             itemInfo.item = item
-        end
-    end
+            return item
+        end, {subTable="itemsInfo"}),
+        CraftSim.UTIL:Map(optionalReagents, function (reagent)
+            local item = Item:CreateFromItemID(reagent.itemID)
+            table.insert(itemsToLoad, item)
+            reagent.item = item
+            return item
+        end, {isTableList=true}),
+        CraftSim.UTIL:Map(finishingReagents, function (reagent)
+            local item = Item:CreateFromItemID(reagent.itemID)
+            table.insert(itemsToLoad, item)
+            reagent.item = item
+            return item
+        end, {isTableList=true})
+    })
 
     CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
         if outputInfo.inspirationCanUpgrade then
@@ -325,6 +337,13 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
             end
         end
 
+        for _, dropdown in pairs(previewFrame.content.optionalDropdowns) do
+            if dropdown.selectedID then
+                local reagentCost = CraftSim.PRICEDATA:GetMinBuyoutByItemID(dropdown.selectedID, true)
+                craftingCosts = craftingCosts + reagentCost
+            end
+        end
+
         for index, reagentFrame in pairs(previewFrame.content.reagentFrames) do
             local currentReagent = reagents[index]
             if currentReagent then
@@ -347,12 +366,11 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
             previewFrame.currentFinishingReagents = payload.finishingReagents
             previewFrame.content.optionalDropdownGroup.SetCollapsed(#optionalReagents + #finishingReagents == 0)
     
-            local function convertReagentListToDropdownListData(reagentList)
+            local function convertOptionalReagentsToDropdownListData(reagentList)
                 local dropDownListData = {{label = "None", value = nil}}
                 for _, reagent in pairs(reagentList) do
-                    local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(reagent.itemID)
                     table.insert(dropDownListData, {
-                        label = itemData.link or "Loading...",
+                        label = reagent.item:GetItemLink(),
                         value = reagent.itemID,
                     })
                 end
@@ -372,8 +390,8 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
                 if reagentList then
                     dropdown:Show()
                     if not reagentList[1].locked then
-                        local dropdownListData = convertReagentListToDropdownListData(reagentList)
-                        CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None")
+                        local dropdownListData = convertOptionalReagentsToDropdownListData(reagentList)
+                        CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true, true)
                     else
                         CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.UTIL:ColorizeText("Locked", CraftSim.CONST.COLORS.RED))
                         dropdown.selectedID = nil

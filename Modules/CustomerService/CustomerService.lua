@@ -149,8 +149,8 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeListResponse(payload)
         print("Available Recipes: " .. tostring(#payload.recipes))
     else
         print("No recipes received!")
+        return
     end
-    print(payload.recipes, true)
 
     CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
 end
@@ -238,9 +238,15 @@ local function getCraftReagentInfoTblEntryFromOptionalsByItemID(recipeData, item
 
     for _, slot in pairs(recipeData.possibleOptionalReagents) do
         optionalReagent = CraftSim.UTIL:Find(slot, function(r) return r.itemID == itemID end)
+        if optionalReagent then
+            break
+        end
     end
     for _, slot in pairs(recipeData.possibleFinishingReagents) do
         finishingReagent = CraftSim.UTIL:Find(slot, function(r) return r.itemID == itemID end)
+        if finishingReagent then
+            break
+        end
     end
 
     local reagent = optionalReagent or finishingReagent
