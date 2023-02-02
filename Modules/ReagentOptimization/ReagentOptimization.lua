@@ -112,7 +112,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, rec
     -- should be 0 for scan
     local reagentSkillContribution = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(recipeData, exportMode) or 0
     local skillWithoutReagentIncrease = recipeData.stats.skillNoReagents
-    
+    print("in Simulation Mode: " .. tostring(recipeData.isSimModeData ~= nil))
     print("skill total: " .. tostring(recipeData.stats.skill))
     print("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
     print("reagentSkillContribution: " .. tostring(reagentSkillContribution))

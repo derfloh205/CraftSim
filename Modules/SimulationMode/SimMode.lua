@@ -195,7 +195,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimModeRecipeDataByInputs()
     -- update skill by input modifier and reagent skill increase
     local skillMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true)
     CraftSim.SIMULATION_MODE.recipeData.stats.skill = CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents + reagentSkillIncrease + skillMod + statsByOptionalInputs.skill + (specNodeStats and specNodeStats.skill or 0)
-    CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents = CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents + statsByOptionalInputs.skill + (specNodeStats and specNodeStats.skill or 0)
+    CraftSim.SIMULATION_MODE.recipeData.stats.skillNoReagents = CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents + skillMod + statsByOptionalInputs.skill + (specNodeStats and specNodeStats.skill or 0)
 
     -- update difficulty based on input
     local recipeDifficultyMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput, true)

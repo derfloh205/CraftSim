@@ -22,10 +22,13 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
         newP("6.2") ..
-        P .. "Optional and Finishing Reagents are now available in the " .. c("Live Preview", g) ..
-        a .. "and the " .. c("Live Preview", g) .. " Feature now has its recipe list sorted" ..
+        P .. "Optional and Finishing Reagents are now available in the " ..
+        a .. c("Live Preview", g) .. " and its recipe list is now sorted" ..
         a .. "into categories to reduce the dropdown height" ..
-        s .. "Reagent Dropdowns now show a tooltip of the optional reagent and how many you own" ..
+        s .. "Reagent Dropdowns now show a tooltip of the optional reagent" .. 
+        a .. "and how many you own" ..
+        p .. "Fixed the " .. c("Material Optimization", bb) .. " not considering the" ..
+        a .. "skill modifier in simulation mode" ..
         newP("6.1") ..
         P .. "Auto Reply now can take a third argument <ilvl> to specify the" ..
         a .. "target item level. It checks which infusion or matrix" ..
