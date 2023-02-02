@@ -34,6 +34,10 @@ function CraftSim.NEWS:GET_NEWS()
         p .. "Postload reagent icons in Material Optimizations" ..
         p .. "Fixed link intercept triggering for all links and not just " ..
         a .. "for the live preview invite link (thx " .. c("https://github.com/comiluv", bb) ..
+        p .. "Added partial support for old world recipes for" .. 
+        a .. "cost overview and price override" ..
+        a .. c("Known Issue: ", r) .. "RecipeScan not working when used while" .. 
+        a .. "viewing non dragon flight recipes" ..
         newP("6.1") ..
         P .. "Auto Reply now can take a third argument <ilvl> to specify the" ..
         a .. "target item level. It checks which infusion or matrix" ..

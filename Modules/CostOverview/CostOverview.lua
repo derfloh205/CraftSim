@@ -2,18 +2,23 @@ AddonName, CraftSim = ...
 
 CraftSim.COSTOVERVIEW = {}
 
-function CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, priceData, craftingCostsOnly, exportMode)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OVERVIEW)
+
+function CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, priceData, exportMode)
     -- calculate profit for qualities from current until max
     local profitByNextQualities = {}
-    if not craftingCostsOnly then
-        --for i = recipeData.expectedQuality, recipeData.maxQuality, 1 do
-        for i = 1, recipeData.maxQuality, 1 do
-            local currRecipeData = CopyTable(recipeData)
-            currRecipeData.expectedQuality = i
-            local priceForQuality = priceData.minBuyoutPerQuality[i] or 0
-            local meanProfitCurrentQuality = (priceForQuality * recipeData.baseItemAmount) * CraftSim.CONST.AUCTION_HOUSE_CUT - priceData.craftingCostPerCraft
-            table.insert(profitByNextQualities, meanProfitCurrentQuality)
-        end
+    if recipeData.supportsCraftingStats then
+            --for i = recipeData.expectedQuality, recipeData.maxQuality, 1 do
+            local numQualityItems = math.max(recipeData.maxQuality, 1)
+            for i = 1, numQualityItems, 1 do
+                local priceForQuality = priceData.minBuyoutPerQuality[i] or 0
+                local meanProfitCurrentQuality = (priceForQuality * recipeData.baseItemAmount) * CraftSim.CONST.AUCTION_HOUSE_CUT - priceData.craftingCostPerCraft
+                table.insert(profitByNextQualities, meanProfitCurrentQuality)
+            end
+    else
+        local priceForItem = priceData.minBuyoutPerQuality[1] or 0
+        local meanProfitCurrentQuality = (priceForItem * recipeData.baseItemAmount) * CraftSim.CONST.AUCTION_HOUSE_CUT - priceData.craftingCostPerCraft
+        table.insert(profitByNextQualities, meanProfitCurrentQuality)
     end
 
     CraftSim.COSTOVERVIEW.FRAMES:Fill(priceData.craftingCostPerCraft, priceData.minimumCostPerCraft, profitByNextQualities, 1, exportMode) --recipeData.expectedQuality)

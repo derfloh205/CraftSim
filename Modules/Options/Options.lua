@@ -354,7 +354,7 @@ function CraftSim.OPTIONS:Init()
      0, 
      -20)
 
-     local enableSpecDataLeatherworkingCheckbox = CraftSim.FRAME:CreateCheckbox(" Leatherworking SpecData (!WIP!)", 
+     local enableSpecDataLeatherworkingCheckbox = CraftSim.FRAME:CreateCheckbox(" Leatherworking SpecData", 
      "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
      "leatherworkingEnabled", 
      ExperimentalTab.content, 

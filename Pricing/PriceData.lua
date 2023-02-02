@@ -130,7 +130,7 @@ function CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
         end
     elseif recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
         -- nothing.. we only want the reagentspriceby quality and the crafting costs
-    elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE then
+    elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
         local currentMinbuyout = CraftSim.PRICEDATA:GetMinBuyoutByItemID(recipeData.result.itemID)
         table.insert(minBuyoutPerQuality, currentMinbuyout)
     elseif recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE or recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.ENCHANT then

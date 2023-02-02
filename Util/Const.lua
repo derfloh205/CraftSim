@@ -81,6 +81,7 @@ CraftSim.CONST.DEBUG_IDS = {
     CUSTOMER_SERVICE = "CUSTOMER_SERVICE",
     COMM = "COMM",
     UTIL = "UTIL",
+    COST_OVERVIEW = "COST_OVERVIEW",
 }
 
 CraftSim.CONST.ERROR = {
@@ -151,7 +152,7 @@ CraftSim.CONST.RECIPE_TYPES = {
     NO_QUALITY_SINGLE = 3, -- like repair hammer
     MULTIPLE = 4, -- like potions..
     SINGLE = 5, -- like omnium draconis
-    NO_CRAFT_OPERATION = 6, -- like reclaim from alchemy
+    NO_CRAFT_OPERATION = 6, -- like reclaim from alchemy or old world stuff
     GATHERING = 7,
     NO_ITEM = 8, -- like phial experimentation
     ENCHANT = 9,
