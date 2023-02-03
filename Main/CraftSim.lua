@@ -51,6 +51,7 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanOptimizeProfessionTools = false,
 
 	-- profit calc
+	enableHSV = true,
 
 	-- customer service module
 	customerServiceAutoReplyCommand = "!craft",
@@ -142,6 +143,9 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.customerServiceAllowAutoResult == nil then
 			CraftSimOptions.customerServiceAllowAutoResult = true
+		end
+		if CraftSimOptions.enableHSV == nil then
+			CraftSimOptions.enableHSV = true
 		end
 	end
 end

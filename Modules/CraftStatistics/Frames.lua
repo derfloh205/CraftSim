@@ -14,7 +14,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
         "CENTER", 
         0, 
         0, 
-        600,
+        700,
         400,
         CraftSim.CONST.FRAMES.STATISTICS, false, true, "DIALOG")
 
@@ -40,9 +40,16 @@ function CraftSim.STATISTICS.FRAMES:Init()
         "Resourcefulness", 
         frame.content, frame.content.probabilityTableHeaderMulticraft, "LEFT", "RIGHT", 10, 0, nil, nil)
 
+        frame.content.probabilityTableHeaderHSV = CraftSim.FRAME:CreateText(
+        "HSV", 
+        frame.content, frame.content.probabilityTableHeaderResourcefulness, "LEFT", "RIGHT", 10, 0, nil, nil)
+
+        frame.content.probabilityTableHeaderHSV.helperIcon = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.HSV_EXPLANATION), 
+            frame.content, frame.content.probabilityTableHeaderHSV, "BOTTOM", "TOP", 0, 10)
+
         frame.content.probabilityTableHeaderProfit = CraftSim.FRAME:CreateText(
         "Expected Profit", 
-        frame.content, frame.content.probabilityTableHeaderResourcefulness, "LEFT", "RIGHT", 10, 0, nil, nil)
+        frame.content, frame.content.probabilityTableHeaderHSV, "LEFT", "RIGHT", 10, 0, nil, nil)
 
         frame.content.probabilityTableFrame.tableRows = {}
         local function createTableRow(offsetX, offsetY)
@@ -55,27 +62,37 @@ function CraftSim.STATISTICS.FRAMES:Init()
             row, row, "TOPLEFT", "TOPLEFT", 5, 0, nil, nil, {type="H", value="RIGHT"})
             row.chance:SetSize(50, 25)
 
+            local boolRowWidth = 20
+
             row.inspiration = CraftSim.FRAME:CreateText(
             "T", 
             row, row.chance, "LEFT", "RIGHT", 42, 0, nil, nil)
+            row.inspiration:SetSize(boolRowWidth, 25)
 
             row.multicraft = CraftSim.FRAME:CreateText(
             "T", 
-            row, row.inspiration, "LEFT", "RIGHT", 70, 0, nil, nil)
+            row, row.inspiration, "LEFT", "RIGHT", 55, 0, nil, nil)
+            row.multicraft:SetSize(boolRowWidth, 25)
 
             row.resourcefulness = CraftSim.FRAME:CreateText(
             "T", 
-            row, row.multicraft, "LEFT", "RIGHT", 85, 0, nil, nil)
+            row, row.multicraft, "LEFT", "RIGHT", 75, 0, nil, nil)
+            row.resourcefulness:SetSize(boolRowWidth, 25)
+
+            row.hsv = CraftSim.FRAME:CreateText(
+            "T", 
+            row, row.resourcefulness, "LEFT", "RIGHT", 55, 0, nil, nil)
+            row.hsv:SetSize(boolRowWidth, 25)
 
             row.profit = CraftSim.FRAME:CreateText(
             CraftSim.UTIL:FormatMoney(10000000, true), 
-            row, row.resourcefulness, "LEFT", "RIGHT", 60, 0, nil, nil, {type="H", value="LEFT"})
+            row, row.hsv, "LEFT", "RIGHT", 15, 0, nil, nil, {type="H", value="LEFT"})
             row.profit:SetSize(200, 25)
 
             return row
         end
 
-        local numRows = 8
+        local numRows = 16
         local rowOffsetY = -20
         local rowOffsetX = 0
 
@@ -154,6 +171,12 @@ function CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
                     row.resourcefulness:SetText(probabilityEntry.resourcefulness and check or cross)
                 else
                     row.resourcefulness:SetText(isNot)
+                end
+
+                if probabilityEntry.hsv ~= nil then
+                    row.hsv:SetText(probabilityEntry.hsv and check or cross)
+                else
+                    row.hsv:SetText(isNot)
                 end
                 
                 row.chance:SetText(CraftSim.UTIL:round(probabilityEntry.chance*100, 2) .. "%")

@@ -244,7 +244,7 @@ local function showhsvInfo(recipeData, craftResult)
         print("- playerSkill: " .. tostring(playerSkill))
         print("- craftSkill: " .. tostring(hsvSkill))
         print("- hsvSkill: " .. tostring(skillDiff))
-        print("- % of difficulty: " .. relativeToDifficulty .. "%")
+        print("- % of difficulty: " .. tostring(relativeToDifficulty) .. "%")
 
     end
 end
@@ -270,10 +270,7 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         return
     end
 
-
-    showhsvInfo(recipeData, craftingResults[1])
-
-    
+    --showhsvInfo(recipeData, craftingResults[1])
 
     local craftData = {
         recipeID = recipeData.recipeID,

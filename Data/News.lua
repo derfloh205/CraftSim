@@ -22,6 +22,8 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
         newP("6.3") ..
+        P .. "Profit Calculation now considers the " .. c("Hidden Skill Value", l) .. " (HSV)" ..
+        a .. "It's consideration can be toggled off in the options" ..
         p .. c("Jewelcrafting Experimental Data", bb) .. " fixes" ..
         p .. c("Recipe Scan", bb) .. " now includes shovels and similar items" ..
         newP("6.2.3") ..

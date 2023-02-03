@@ -253,6 +253,16 @@ function CraftSim.OPTIONS:Init()
      -90, 
      -20)
 
+     local enableHSVCheckbox = CraftSim.FRAME:CreateCheckbox(" Enable HSV Consideration in Profit Calculation", 
+     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.HSV_EXPLANATION),
+     "enableHSV", 
+     ProfitCalculationTab.content, 
+     skillBreakpointsCheckbox, 
+     "TOPLEFT", 
+     "BOTTOMLEFT", 
+     0, 
+     0)
+
     local precentProfitCheckbox = CraftSim.FRAME:CreateCheckbox(" Show Profit Percentage", 
     "Show the percentage of profit to crafting costs besides the gold value",
     "showProfitPercentage", 
