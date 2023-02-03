@@ -219,11 +219,41 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
     end
 end
 
+local function showhsvInfo(recipeData, craftResult)
+    
+    if recipeData.maxQuality and recipeData.expectedQuality < recipeData.maxQuality then
+        local currentQualityProgress = recipeData.operationInfo.quality % 1
+        local craftQualityProgress = craftResult.qualityProgress
+        
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeData.baseDifficulty)
+        local lowerThreshold = thresholds[recipeData.expectedQuality-1] or 0
+        local upperThreshold = thresholds[recipeData.expectedQuality]
+        local diff = upperThreshold - lowerThreshold
+        local playerSkill = lowerThreshold + (diff*currentQualityProgress)
+        local hsvSkill = lowerThreshold + (diff*craftQualityProgress)
+        local skillDiff = hsvSkill - playerSkill
+        local relativeToDifficulty = skillDiff / (recipeData.baseDifficulty / 100)
+
+        if craftResult.isCrit then
+            print("HSV (INSP):")
+        else
+            print("HSV:")
+        end
+        print("- currentQualityProgress: " .. tostring(currentQualityProgress))
+        print("- craftQualityProgress: " .. tostring(craftQualityProgress))
+        print("- playerSkill: " .. tostring(playerSkill))
+        print("- craftSkill: " .. tostring(hsvSkill))
+        print("- hsvSkill: " .. tostring(skillDiff))
+        print("- % of difficulty: " .. relativeToDifficulty .. "%")
+
+    end
+end
+
 function CraftSim.CRAFT_RESULTS:processCraftResults()
     collectingResults = true
     print("Craft Detected", false, true)
-    print(currentCraftingResults, true)
-    print("Num Craft Results: " .. tostring(#currentCraftingResults))
+    -- print(currentCraftingResults, true)
+    -- print("Num Craft Results: " .. tostring(#currentCraftingResults))
 
     local craftingResults = CopyTable(currentCraftingResults)
     currentCraftingResults = {}
@@ -239,6 +269,9 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         print("no recipeData")
         return
     end
+
+
+    showhsvInfo(recipeData, craftingResults[1])
 
     
 
@@ -328,7 +361,7 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
     local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
     craftData.expectedAverageProfit = CraftSim.CALC:getMeanProfit(recipeData, priceData)
     
-    print("Chance for Craft: " .. tostring(CraftSim.UTIL:round(craftData.craftingChance * 100, 1)) .. "%")
+    --print("Chance for Craft: " .. tostring(CraftSim.UTIL:round(craftData.craftingChance * 100, 1)) .. "%")
 
     CraftSim.UTIL:ContinueOnAllItemsLoaded(craftData.procs.resourcefulness.savedReagents, function ()
         CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftData)
