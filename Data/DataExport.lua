@@ -391,24 +391,16 @@ function CraftSim.DATAEXPORT:exportAvailableSlotReagentsFromReagentSlotsV2(schem
 	local currentRelevantSlot = 0
 	local lastDataSlotIndex = -1
 	for slotIndex, slotData in pairs(schematicSlots) do
-		local button = slotData
 		local reagents = slotData.reagents
 		local dataSlotIndex = slotData.dataSlotIndex
 
-		print(CraftSim.UTIL:ColorizeText("schematicSlot", CraftSim.CONST.COLORS.LEGENDARY), false, true)
-		print(slotData, true)
+		-- print(CraftSim.UTIL:ColorizeText("schematicSlot", CraftSim.CONST.COLORS.LEGENDARY), false, true)
+		-- print(slotData, true)
 
 		local locked = false
 		local lockedReason = ""
 		if slotData.slotInfo and slotData.slotInfo.mcrSlotID then
 			locked, lockedReason = C_TradeSkillUI.GetReagentSlotStatus(slotData.slotInfo.mcrSlotID, recipeID, skillLineID)
-	
-			if locked then
-				print(CraftSim.UTIL:ColorizeText("locked", CraftSim.CONST.COLORS.RED))
-				print("reason: " .. tostring(lockedReason))
-			else
-				print(CraftSim.UTIL:ColorizeText("not locked", CraftSim.CONST.COLORS.GREEN))
-			end
 		end
 
 		if reagentType == slotData.reagentType then
@@ -666,7 +658,6 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData
 
 	recipeData.expectedQuality = operationInfo and operationInfo.craftingQuality
 	recipeData.operationInfo = operationInfo
-	print("expectedQuality: " .. tostring(recipeData.expectedQuality))
 	print("expectedQuality: " .. tostring(recipeData.expectedQuality))
 
 	recipeData.isEnchantingRecipe = recipeInfo.isEnchantingRecipe

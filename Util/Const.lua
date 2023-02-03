@@ -61,6 +61,18 @@ CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
     1585, -- Cooking
 }
 
+CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS = {
+    1688, 1522, -- Blacksmithing
+    1687, 1525, -- Alchemy
+    1693, -- Leatherworking
+    1686, -- Jewelcrafting
+    1690, 1527, -- Enchanting
+    1692, -- Inscription
+    1696, 1532, -- Tailoring
+    1691, 1528, -- Engineering
+    1526, -- Cooking
+}
+
 CraftSim.CONST.DEBUG_IDS = {
     MAIN = "MAIN",
     SPECDATA = "SPECDATA",

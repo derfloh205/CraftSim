@@ -223,14 +223,16 @@ function CraftSim.RECIPE_SCAN:StartScan()
         if not CraftSimOptions.recipeScanIncludeNotLearned and not recipeInfo.learned then
             return false
         end
+        if tContains(CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS, recipeInfo.categoryID) then
+            return false
+        end
         ---@diagnostic disable-next-line: missing-parameter
         local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
         local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
-        local isRelevantItemLevel = recipeInfo.itemLevel > 1 
         if isDragonIsleRecipe and recipeInfo.isEnchantingRecipe then
             return true
         end
-        if isDragonIsleRecipe and isRelevantItemLevel then
+        if isDragonIsleRecipe then
             if recipeInfo and recipeInfo.supportsCraftingStats then
                 local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
 

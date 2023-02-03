@@ -4,9 +4,16 @@ CraftSim_DEBUG = {}
 
 CraftSim_DEBUG.isMute = false
 
-function CraftSim_DEBUG:PrintRecipeIDs()
-    local recipeInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeInfo()
-    local itemID = CraftSim.ENCHANT_RECIPE_DATA[recipeInfo.recipeID]
+function CraftSim_DEBUG:PrintRecipeIDs(recipeID)
+    recipeID = recipeID or CraftSim.MAIN.currentRecipeData.recipeID
+    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+
+    if not recipeInfo then
+        print("No RecipeInfo found")
+        return
+    end
+
+    local itemID = nil
     if recipeInfo.isEnchantingRecipe then
          itemID = CraftSim.ENCHANT_RECIPE_DATA[recipeInfo.recipeID].q1
     else
