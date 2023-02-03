@@ -971,6 +971,10 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 -- prisms
                 374525,
                 374518,
+                -- items crafted with fractured glass
+                374478, -- Frameless Lense
+                392697, -- Empty Sould Cage
+                374477, -- Draconic Vial
             },
             equalsSkill = true,
         },
@@ -985,6 +989,10 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 -- prisms
                 374525,
                 374518,
+                -- items crafted with fractured glass
+                374478, -- Frameless Lense
+                392697, -- Empty Sould Cage
+                374477, -- Draconic Vial
             },
             threshold = 5,
             multicraft = 10,
@@ -1000,6 +1008,10 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 -- prisms
                 374525,
                 374518,
+                -- items crafted with fractured glass
+                374478, -- Frameless Lense
+                392697, -- Empty Sould Cage
+                374477, -- Draconic Vial
             },
             threshold = 15,
             resourcefulness = 5,
@@ -1015,6 +1027,10 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 -- prisms
                 374525,
                 374518,
+                -- items crafted with fractured glass
+                374478, -- Frameless Lense
+                392697, -- Empty Sould Cage
+                374477, -- Draconic Vial
             },
             threshold = 30,
             resourcefulness = 5,
@@ -1030,6 +1046,10 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 -- prisms
                 374525,
                 374518,
+                -- items crafted with fractured glass
+                374478, -- Frameless Lense
+                392697, -- Empty Sould Cage
+                374477, -- Draconic Vial
             },
             threshold = 40,
             multicraft = 10, 

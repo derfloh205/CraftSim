@@ -21,6 +21,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
+        newP("6.3") ..
+        p .. c("Jewelcrafting Experimental Data", bb) .. " fixes" ..
         newP("6.2.3") ..
         P .. "Optional and Finishing Reagents are now available in the " ..
         a .. c("Live Preview", g) .. " and its recipe list is now sorted" ..
