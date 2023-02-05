@@ -265,7 +265,7 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
 
     local recipeData = CraftSim.CRAFT_RESULTS.currentRecipeData;
 
-    if not recipeData then
+    if not (recipeData and recipeData.stats) then
         print("no recipeData")
         return
     end
