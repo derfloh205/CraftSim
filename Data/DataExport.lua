@@ -154,6 +154,7 @@ function CraftSim.DATAEXPORT:GetStatsFromBuffs(buffData)
     }
 
 	stats.inspiration = buffData.inspirationIncense or 0
+	stats.inspiration = buffData.alchemicallyInspired or 0
 	stats.craftingspeedBonusFactor = 1 + ( (buffData.quickPhial or 0) / 100)
 	
     return stats
@@ -162,15 +163,18 @@ end
 function CraftSim.DATAEXPORT:exportBuffData()
 	local buffData = {
 		inspirationIncense = false,
-		quickPhial = false
+		quickPhial = false,
+		alchemicallyInspired = false,
 	}
 	
 	-- check for buffs
 	local inspirationIncense = C_UnitAuras.GetPlayerAuraBySpellID(CraftSim.CONST.BUFF_IDS.INSPIRATION_INCENSE)
 	local quickPhial = C_UnitAuras.GetPlayerAuraBySpellID(CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS)
+	local alchemicallyInspired = C_UnitAuras.GetPlayerAuraBySpellID(CraftSim.CONST.BUFF_IDS.ALCHEMICALLY_INSPIRED)
 
 	buffData.inspirationIncense = inspirationIncense and 20 -- gives 20 inspiration
 	buffData.quickPhial = quickPhial and quickPhial.points[1] -- points gives us the % as integer
+	buffData.alchemicallyInspired = alchemicallyInspired and 20 -- gives 20 inspiration
 
 	return buffData
 end

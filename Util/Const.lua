@@ -3,7 +3,7 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 40 -- last patch increase: 6.3 - 40
+CraftSim.CONST.currentInfoVersionID = 41 -- last patch increase: 6.4 - 41
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -352,6 +352,7 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
 CraftSim.CONST.BUFF_IDS = {
     INSPIRATION_INCENSE = 371234,
     PHIAL_OF_QUICK_HANDS = 393665,
+    ALCHEMICALLY_INSPIRED = 382093,
 }
 
 CraftSim.CONST.LOCALES = {
