@@ -21,6 +21,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
+        newP("6.5") ..
+        s .. "Profit Statistics: Chance of profit > 0 per number of crafts reworked" ..
+        a .. "using an approximation of the Cumulative Distribution Function (CDF)" ..
         newP("6.4.1") ..
         s .. "The " .. c("Hidden Skill Value ", l) .. "(HSV) now considers cases where skill" ..
         a .. "from inspiration + hsv can yield you the next quality" ..

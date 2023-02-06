@@ -114,6 +114,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
             end
             CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
         end)
+        frame.content.cdfExplanation = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION), frame.content, frame.content.numCraftsInput, "RIGHT", "LEFT", -10, 1)
         frame.content.craftsTextBottom = CraftSim.FRAME:CreateText("Crafts: ", frame.content, frame.content.numCraftsInput, "LEFT", "RIGHT", 20, 0)
         frame.content.probabilityValue = CraftSim.FRAME:CreateText("0%", frame.content, frame.content.craftsTextBottom, "LEFT", "RIGHT", 1, 0, nil, nil, {type="H", value="LEFT"})
     end
@@ -134,13 +135,6 @@ function CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
     end)
 
     local numCrafts = CraftSim.UTIL:ValidateNumberInput(statisticsFrame.content.numCraftsInput, false)
-
-    local MAX_N = 1000
-
-    if numCrafts > MAX_N then
-        numCrafts = MAX_N
-        statisticsFrame.content.numCraftsInput:SetText(MAX_N)
-    end
 
     local probabilityRows = statisticsFrame.content.probabilityTableFrame.tableRows
     for index, row in pairs(probabilityRows) do
@@ -185,7 +179,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
         end
     end
 
-    local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
+    local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCraftsV2(probabilityTable, numCrafts)
 
     statisticsFrame.content.expectedProfitValue:SetText(CraftSim.UTIL:FormatMoney(meanProfit, true))
     local roundedProfit = CraftSim.UTIL:round(probabilityPositive * 100, 5)

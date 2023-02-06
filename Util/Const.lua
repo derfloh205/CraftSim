@@ -3,7 +3,7 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 41 -- last patch increase: 6.4 - 41
+CraftSim.CONST.currentInfoVersionID = 42 -- last patch increase: 6.5 - 42
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -423,6 +423,7 @@ CraftSim.CONST.TEXT = {
     CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION = 46,
     HSV_EXPLANATION = 47,
     CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION = 48,
+    STATISTICS_CDF_EXPLANATION = 49,
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 

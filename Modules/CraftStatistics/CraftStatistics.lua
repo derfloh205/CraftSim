@@ -2,91 +2,88 @@ _, CraftSim = ...
 
 CraftSim.STATISTICS = {}
 
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
 
-function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
+-- https://math.stackexchange.com/questions/888165/abramowitz-and-stegun-approximation-for-cumulative-normal-distribution
+function CraftSim.STATISTICS:CDF(q, mu, sd)
+    local function Phi ( z )
+        local pdfx = 1/(math.sqrt(2*math.pi)) * math.exp ( -z*z/2 )
+        local t = 1 / (1+0.2316419*z)
+        return ( 1 - pdfx*(0.319381530*t - 0.356563782*t^2
+                    + 1.781477937*t^3 - 1.821255978*t^4 + 1.330274429*t^5) )
+    end
 
-    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
+    local zValue = (q - mu) / sd
 
-    print("Probability of positive profit: ", false, true)
+    local phi_Z = Phi(zValue)
+    if phi_Z <= 0.0001 then -- catch the case of it returning wierd stuff
+        return 1
+    elseif phi_Z >= 1 then
+        return 0
+    end
+    return phi_Z
+end
 
-    local chancePositive = 0
-    local averagePositiveProfit = 0
+function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCraftsV2(probabilityTable, numCrafts)
+    local meanOneCraft = 0
 
-    local chanceNegative = 0
-    local averageNegativeProfit = 0
+    probabilityTable = CraftSim.UTIL:FilterTable(probabilityTable, function (entry)
+        return entry.chance > 0
+    end)
 
-    local numPositives = 0
-    local numNegatives = 0
-    for _, entry in pairs(probabilityTable) do
-        if entry.profit > 0 then
-            chancePositive = chancePositive + entry.chance
-            averagePositiveProfit = averagePositiveProfit + entry.profit
-            numPositives = numPositives + 1
-        else
-            chanceNegative = chanceNegative + entry.chance
-            averageNegativeProfit = averageNegativeProfit + entry.profit
-            numNegatives = numNegatives + 1
+    local allNegative = true
+    local allPositive = true
+    for _, probability in pairs(probabilityTable) do
+        meanOneCraft = meanOneCraft + (probability.profit * probability.chance)
+        if probability.profit > 0 then
+            allNegative = false
+        end
+        if probability.profit <= 0 then
+            allPositive = false
         end
     end
-    if numPositives == 0 then
-        -- no chance of having any positive profit
-        print("No chance of having any positive profit")
-        return 0
-    elseif numNegatives == 0 then
-        -- no chance of having any negative profit
-        print("No chance of having any negative profit")
+
+    if allPositive then
         return 1
     end
-    averagePositiveProfit = averagePositiveProfit / numPositives
-    averageNegativeProfit = averageNegativeProfit / numNegatives
 
-    print("Chance for positive Profit: " .. CraftSim.UTIL:round(chancePositive*100) .. "% -> " .. CraftSim.UTIL:FormatMoney(averagePositiveProfit, true))
-    print("Chance for negative Profit: " .. CraftSim.UTIL:round(chanceNegative*100) .. "% -> " .. CraftSim.UTIL:FormatMoney(averageNegativeProfit, true))
-
-    -- after numCrafts, how many positive crafts do I need to have a profit > 0 ?
-
-    -- 0 < x*averageNegativeProfit + y*averagePositiveProfit
-
-    -- solve iteratively?
-    local numSuccesses = 0
-    local endProfit = -1
-    while endProfit < 0 do
-        numSuccesses = numSuccesses + 1
-        endProfit = averageNegativeProfit*(numCrafts - numSuccesses) + averagePositiveProfit*numSuccesses
-
-
-        -- if numSuccesses > numCrafts then
-        --     print("should not happen.. cannot get positive event after numCrafts * positive profit??")
-        --     break
-        -- end
+    if allNegative then
+        return 0
     end
 
-    -- if numSuccess == numCrafts, we need full successes to have a positive end profit
+    
 
-    print("At least " .. numSuccesses .. " / " .. numCrafts .. " need to be a success to have a profit > 0")
+    local standardDeviation = 0
 
-    -- now solve the chance of this occuring with binomial probability
-    -- https://statisticsbyjim.com/probability/binomial-distribution/
-
-    local function factorial(n)
-        if (n == 0) then
-            return 1
-        else
-            return n * factorial(n - 1)
-        end
+    for _, probability in pairs(probabilityTable) do
+        standardDeviation = standardDeviation + (probability.profit - meanOneCraft)^2
     end
 
-    -- to get the cumulative binomial, sum up the chances of all possible successes from numSuccess to numCrafts
+    standardDeviation = standardDeviation / #probabilityTable
 
-    local cumulativeBinomialChance = 0
-    for i = numSuccesses, numCrafts, 1 do
-        local numCombinations = factorial(numCrafts) / (factorial(i) * factorial(numCrafts - i))
-        local binomialChance = numCombinations * (chancePositive ^ i) * ((1 - chancePositive) ^ (numCrafts - i))
-        cumulativeBinomialChance = cumulativeBinomialChance + binomialChance
-    end
+    standardDeviation = math.sqrt(standardDeviation)
+    local standardDeviationNumCrafts = math.sqrt(numCrafts) * standardDeviation
+    local meanNumCrafts = meanOneCraft*numCrafts
 
-    print("Chance of having a positive Profit after " .. numCrafts .. " Crafts: " .. CraftSim.UTIL:round(cumulativeBinomialChance*100, 2) .. "%")
-    print("not rounded: " .. cumulativeBinomialChance)
+    print("mean (profit) of 1 craft: " .. CraftSim.UTIL:FormatMoney(meanOneCraft, true))
+    print("mean (profit) of "..numCrafts.." crafts: " .. CraftSim.UTIL:FormatMoney(meanNumCrafts, true))
+    print("standardDeviation 1 craft: " .. CraftSim.UTIL:FormatMoney(standardDeviation, true))
+    print("standardDeviation "..numCrafts.." crafts: " .. CraftSim.UTIL:FormatMoney(standardDeviationNumCrafts, true))
 
-    return cumulativeBinomialChance
+
+    -- CDF:
+    -- test override:
+    --meanNumCrafts = 5
+    --standardDeviationNumCrafts = 1
+    
+    print("CDF of: " .. tostring(meanNumCrafts) .. ", " .. tostring(standardDeviationNumCrafts))
+    local cdfResult = CraftSim.STATISTICS:CDF(0, meanNumCrafts, standardDeviationNumCrafts)
+    print("result: " .. tostring(cdfResult))
+
+    -- get probability of x or higher:
+    local chanceOfHavingHigher = 1 - cdfResult
+
+    print("chance for profit > 0 after crafts: " .. tostring(chanceOfHavingHigher))
+
+    return chanceOfHavingHigher
 end
