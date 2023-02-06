@@ -3,6 +3,7 @@ AddonName, CraftSim = ...
 CraftSim.LOCAL_EN = {}
 
 function CraftSim.LOCAL_EN:GetData()
+    local f = CraftSim.UTIL:GetFormatter()
     return {
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Inspiration",
@@ -65,5 +66,28 @@ function CraftSim.LOCAL_EN:GetData()
         
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] = "This is calculated by using the 'abramowitz and stegun' approximation (1985) of the CDF (Cumulative Distribution Function)\n\nYou will notice that its always around 50% for 1 craft.\nThis is because 0 is most of the time close to the average profit.\nAnd the chance of getting the mean of the CDF is always 50%.\n\nHowever, the rate of change can be very different between recipes.\nIf it is more likely to have a positive profit than a negative one, it will steadly increase.\nThis is of course also true for the other direction.",
-        }
+        [CraftSim.CONST.TEXT.PROFIT_EXPLANATION] = 
+        f.r("Warning: ") .. " Math ahead!\n\n" ..
+        "When you craft something you have different chances for different outcomes based on your crafting stats.\n" ..
+        "And in statistics this is called a " .. f.l("Probability Distribution.\n") .. 
+        "However, you will notice that the different chances of your procs do not sum up to one\n" ..
+        "(Which is required for such a distribution as it means you got a 100% chance that anything can happen)\n\n" ..
+        "This is because procs like " .. f.bb("Inspiration ") .. "and" .. f.bb(" Multicraft") .. " can happen " .. f.g("at the same time.\n") ..
+        "So we first need to convert our proc chances to a " .. f.l("Probability Distribution ") .. " with chances\n" .. 
+        "summing to 100% (Which would mean that every case is covered)\n" ..
+        "And for this we would need to calculate " .. f.l("every") .. " possible outcome of a craft\n\n" ..
+        "Like: \n" ..
+        f.p .. "What if " .. f.bb("nothing") .. " procs?" ..
+        f.p .. "What if " .. f.bb("everything") .. " procs?" ..
+        f.p .. "What if only " .. f.bb("Inspiration") .. " and " .. f.bb("Multicraft") .. " procs?" ..
+        f.p .. "And so on..\n\n" ..
+        "For a recipe that considers all three procs, that would be 2 to the power of 3 outcome possibilities, which is a neat 8.\n" ..
+        "To get the chance of only " .. f.bb("Inspiration") .. " occuring, we have to consider all other procs!\n" ..
+        "The chance to proc " .. f.l("only") .. f.bb(" Inspiration ") .. "is actually the chance to proc " .. f.bb("Inspiration\n") ..
+        "But to " .. f.l("not ") .. "proc " .. f.bb("Multicraft") .. " or " .. f.bb("Resourcefulness.\n") ..
+        "And Math tells us that the chance of something not occuring is 1 minus the chance of it occuring.\n" ..
+        "So the chance to proc only " .. f.bb("Inspiration ") .. "is actually " .. f.g("inspirationChance * (1-multicraftChance) * (1-resourcefulnessChance)\n")
+        ,
+            
+    }
 end

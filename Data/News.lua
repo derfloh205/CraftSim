@@ -4,109 +4,28 @@ CraftSim.NEWS = {}
 
 function CraftSim.NEWS:GET_NEWS()
     -- minimize names to make manual formatting easier :p
-    local b = CraftSim.CONST.COLORS.DARK_BLUE
-    local bb = CraftSim.CONST.COLORS.BRIGHT_BLUE
-    local g = CraftSim.CONST.COLORS.GREEN
-    local r = CraftSim.CONST.COLORS.RED
-    local l = CraftSim.CONST.COLORS.LEGENDARY
-    local c = function(text, color) 
-        return CraftSim.UTIL:ColorizeText(text, color)
-    end
-    local p = "\n" .. CraftSim.UTIL:GetQualityIconAsText(1, 15, 15) .. " "
-    local s = "\n" .. CraftSim.UTIL:GetQualityIconAsText(2, 15, 15) .. " "
-    local P = "\n" .. CraftSim.UTIL:GetQualityIconAsText(3, 15, 15) .. " "
-    local a = "\n     "
-    local function newP(v) return c("\n\n                                   --- Version " .. v .. " ---\n", l) end
+    local f = CraftSim.UTIL:GetFormatter()
+    local function newP(v) return f.l("\n\n                                   --- Version " .. v .. " ---\n") end
 
     return 
-        c("                   Hello and thank you for using CraftSim!\n", bb) .. 
-        c("                                 ( You are awesome! )", bb) ..
+        f.bb("                   Hello and thank you for using CraftSim!\n") .. 
+        f.bb("                                 ( You are awesome! )") ..
         newP("6.5.1") ..
-        s .. "Profit Statistics: Chance of profit > 0" .. 
-        a .. "per number of crafts reworked" ..
-        a .. "It is now using an approximation of the" .. 
-        a .. "Cumulative Distribution Function (CDF)" ..
+        f.s .. "Profit Statistics: Chance of profit > 0" .. 
+        f.a .. "per number of crafts reworked" ..
+        f.a .. "It is now using an approximation of the" .. 
+        f.a .. "Cumulative Distribution Function (CDF)" ..
         newP("6.4.1") ..
-        s .. "The " .. c("Hidden Skill Value ", l) .. "(HSV) now considers cases where skill" ..
-        a .. "from inspiration + hsv can yield you the next quality" ..
-        p .. "Experimental Data should now also consider" .. 
-        a .. "the buff " .. c("Alchemically Inspired", bb) ..
-        p .. "Fixed an error when crafting non-stat recipes" .. 
-        a .. "(e.g. old world recipes)" ..
-        p .. "Live Preview now includes a checkbox to" .. 
-        a .. "switch optimization modes (Guaranteed & Inspiration)" ..
-        p .. "Live Preview update requests now time out after 5 seconds" ..
-        p .. "The " .. c("Auto Reply",bb) .. " Feature will be " .. c("removed ", r) .. "soon" ..
-        a .. "It will be replaced by an on demand recipe info whisper" ..
-        p .. "Fixed experimental data double counting incense inspiration" ..
-        newP("6.3") ..
-        P .. "Profit Calculation now considers the " .. c("Hidden Skill Value", l) .. " (HSV)" ..
-        a .. "It's consideration can be toggled off in the options" ..
-        p .. c("Jewelcrafting Experimental Data", bb) .. " fixes" ..
-        p .. c("Recipe Scan", bb) .. " now includes shovels and similar items" ..
-        newP("6.2.3") ..
-        P .. "Optional and Finishing Reagents are now available in the " ..
-        a .. c("Live Preview", g) .. " and its recipe list is now sorted" ..
-        a .. "into categories to reduce the dropdown height" ..
-        s .. "Reagent Dropdowns now show a tooltip of" .. 
-        a .. "the optional reagent and how many you own" ..
-        p .. "Added a small loading text in Live Preview to" ..
-        a .. "show that data is currently requested from the crafter" ..
-        p .. "Fixed the " .. c("Material Optimization", bb) .. " not considering the" ..
-        a .. "skill modifier in simulation mode" ..
-        p .. "Postload reagent icons in Material Optimizations" ..
-        p .. "Fixed link intercept triggering for all links and not just " ..
-        a .. "for the live preview invite link (thx " .. c("https://github.com/comiluv", bb) ..
-        p .. "Added partial support for old world recipes for" .. 
-        a .. "cost overview and price override" ..
-        a .. c("Known Issue: ", r) .. "RecipeScan not working when used while" .. 
-        a .. "viewing non dragon flight recipes" ..
-        p .. "Fixed resourcefulness and multicraft item boni bug" .. 
-        p .. "Fixed Live Preview Crafting Costs" ..
-        newP("6.1") ..
-        P .. "Auto Reply now can take a third argument <ilvl> to specify the" ..
-        a .. "target item level. It checks which infusion or matrix" ..
-        a .. "it has to use to reach this itemlevel and then sims the recipe" ..
-        a .. "with it in mind" ..
-        p .. "Added a command preview to the Auto Reply Tab in the " .. 
-        a .. "Customer Service Module to show its syntax" ..
-        newP("6.0.1") ..
-        p .. "Fixed an error due to the Craft Result statistics display" ..
-        p .. "Utilizing ContinueOnItemLoad to lazy load the item links" .. 
-        a .. "in the Cost Overview Module" ..
-        newP("6.0.0") ..
-        P .. "New Module: " .. c("Customer Service", g) ..
-        a .. "New Feature: " .. c("Automatic Reply", g) .. " and" ..
-        a .. "New Feature: " .. c("Live Crafting Preview", g) ..
-        a .. "Send someone who has CraftSim an invite link to browse" ..
-        a .. "your recipes and possible results in a live session!" ..
-        a .. "For now it has some basic features and always optimizes for" ..
-        a .. "Inspiration, but many more features will come :)" ..
-        newP("5.5.6") ..
-        s .. c("Real / Expected Number of Procs Comparison", g) .. " in Craft Results" ..
-        p .. "Fixed Leatherworking Experimental Data not" .. 
-        a .. "recognizing some patterns" .. 
-        p .. "Owned number of commodities is now shown in" .. 
-        a .. "the " .. c("Cost Overview Module", bb) ..
-        newP("5.5.5") ..
-        p .. "Jewelcrafting Experimental Data fix by " .. c("github.com/SanjoSolutions", bb) ..
-        p .. "zhTW Translations added by " .. c("github.com/wxpenpen", bb) ..
-        newP("5.5.4") ..
-        p .. "The Craft Log of the Craft Results Module now uses" ..
-        a .. "the ScrollingMessageFrame template to ensure infinite scrolling" ..
-        newP("5.5.3") ..
-        p .. "Fixed an error occuring for non experimental data recipes" .. 
-        a .. "when parsing spec data" ..
-        p .. "Fixed an error occuring when enchanting gear or" ..
-        a .. "applying runes or other consumeables" ..
-        p .. "itIT Localization Updates by " .. c("Elitesparkle", bb) ..
-        p .. c("Known Issue:", r) .. " the craft log in the Craft Results" .. 
-        a .. "Module might stop listing crafts after around 100 crafts" .. 
-        a .. "However, the results are still correctly updated." .. 
-        a .. "This seems to be an issue with the max length of texts" .. 
-        a .. "and will be fixed in a future update" ..
-        newP("5.5.2") ..
-        p .. "Hotfix for RecipeScan" ..
-        newP("5.5.1") ..
-        p .. "Added an " .. c("Export Recipe Results", g) .. " Button to Crafting Results"
+        f.s .. "The " .. f.l("Hidden Skill Value ") .. "(HSV) now considers cases where skill" ..
+        f.a .. "from inspiration + hsv can yield you the next quality" ..
+        f.p .. "Experimental Data should now also consider" .. 
+        f.a .. "the buff " .. f.bb("Alchemically Inspired") ..
+        f.p .. "Fixed an error when crafting non-stat recipes" .. 
+        f.a .. "(e.g. old world recipes)" ..
+        f.p .. "Live Preview now includes a checkbox to" .. 
+        f.a .. "switch optimization modes (Guaranteed & Inspiration)" ..
+        f.p .. "Live Preview update requests now time out after 5 seconds" ..
+        f.p .. "The " .. f.bb("Auto Reply") .. " Feature will be " .. f.r("removed ") .. "soon" ..
+        f.a .. "It will be replaced by an on demand recipe info whisper" ..
+        f.p .. "Fixed experimental data double counting incense inspiration"
 end

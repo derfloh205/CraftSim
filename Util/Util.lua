@@ -639,3 +639,51 @@ function CraftSim.UTIL:GetItemTooltipText(itemLink, showCount)
     return tooltipText
 end
 
+function CraftSim.UTIL:GetFormatter()
+    local b = CraftSim.CONST.COLORS.DARK_BLUE
+    local bb = CraftSim.CONST.COLORS.BRIGHT_BLUE
+    local g = CraftSim.CONST.COLORS.GREEN
+    local r = CraftSim.CONST.COLORS.RED
+    local l = CraftSim.CONST.COLORS.LEGENDARY
+    local c = function(text, color) 
+        return CraftSim.UTIL:ColorizeText(text, color)
+    end
+    local p = "\n" .. CraftSim.UTIL:GetQualityIconAsText(1, 15, 15) .. " "
+    local s = "\n" .. CraftSim.UTIL:GetQualityIconAsText(2, 15, 15) .. " "
+    local P = "\n" .. CraftSim.UTIL:GetQualityIconAsText(3, 15, 15) .. " "
+    local a = "\n     "
+
+    local formatter = {}
+    formatter.b = function (text)
+        return c(text, b)
+    end
+    formatter.bb = function (text)
+        return c(text, bb)
+    end
+    formatter.g = function (text)
+        return c(text, g)
+    end
+    formatter.r = function (text)
+        return c(text, r)
+    end
+    formatter.l = function (text)
+        return c(text, l)
+    end
+    formatter.p = p
+    formatter.s = s
+    formatter.P = P
+    formatter.a = a
+    formatter.m = function (m)
+        return CraftSim.UTIL:FormatMoney(m, true)
+    end
+    formatter.mw = function (m)
+        return CraftSim.UTIL:FormatMoney(m)
+    end
+
+    formatter.i = function (i, h)
+        return CraftSim.UTIL:IconToText(i, h)
+    end
+
+    return formatter
+end
+
