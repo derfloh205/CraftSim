@@ -153,8 +153,8 @@ function CraftSim.DATAEXPORT:GetStatsFromBuffs(buffData)
         skill = 0
     }
 
-	stats.inspiration = buffData.inspirationIncense or 0
-	stats.inspiration = buffData.alchemicallyInspired or 0
+	stats.inspiration = stats.inspiration + (buffData.inspirationIncense or 0)
+	stats.inspiration = stats.inspiration + (buffData.alchemicallyInspired or 0)
 	stats.craftingspeedBonusFactor = 1 + ( (buffData.quickPhial or 0) / 100)
 	
     return stats
@@ -255,7 +255,10 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData, exportMod
 	local buffStats = CraftSim.DATAEXPORT:GetStatsFromBuffs(recipeData.buffData)
 	local optionalReagentsStats = CraftSim.DATAEXPORT:GetStatsFromOptionalReagents(recipeData)
 
-	print("Stats from Specialization: ")
+	print("stats from buffs:", false, true)
+	print(buffStats)
+
+	print("Stats from Specialization: ", false, true)
 	print(specNodeStats)
 
 	-- skill
@@ -295,7 +298,7 @@ function CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeData, exportMod
 			end
 		end
 
-		recipeData.stats.inspiration.value = buffStats.inspiration + itemBonus + specNodeBonus + buffBonus + baseInspiration
+		recipeData.stats.inspiration.value = itemBonus + specNodeBonus + buffBonus + baseInspiration
 		recipeData.stats.inspiration.percent = CraftSim.UTIL:GetInspirationPercentByStat(recipeData.stats.inspiration.value) * 100
 		recipeData.stats.inspiration.bonusskill = baseBonusSkill * (1 + totalBonusSkillFactor)
 		recipeData.stats.inspiration.baseBonusSkill = baseBonusSkill
