@@ -22,6 +22,8 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
         newP("6.4") ..
+        s .. "The " .. c("Hidden Skill Value ", l) .. "(HSV) now considers cases where skill" ..
+        a .. "from inspiration + hsv can yield you the next quality" ..
         p .. "Experimental Data should now also consider" .. 
         a .. "the buff " .. c("Alchemically Inspired", bb) ..
         p .. "Fixed an error when crafting non-stat recipes" .. 
@@ -29,6 +31,8 @@ function CraftSim.NEWS:GET_NEWS()
         p .. "Live Preview now includes a checkbox to" .. 
         a .. "switch optimization modes (Guaranteed & Inspiration)" ..
         p .. "Live Preview update requests now time out after 5 seconds" ..
+        p .. "The " .. c("Auto Reply",bb) .. " Feature will be " .. c("removed ", r) .. "soon" ..
+        a .. "It will be replaced by an on demand recipe info whisper" ..
         newP("6.3") ..
         P .. "Profit Calculation now considers the " .. c("Hidden Skill Value", l) .. " (HSV)" ..
         a .. "It's consideration can be toggled off in the options" ..
