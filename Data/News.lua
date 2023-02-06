@@ -26,6 +26,9 @@ function CraftSim.NEWS:GET_NEWS()
         a .. "the buff " .. c("Alchemically Inspired", bb) ..
         p .. "Fixed an error when crafting non-stat recipes" .. 
         a .. "(e.g. old world recipes)" ..
+        p .. "Live Preview now includes a checkbox to" .. 
+        a .. "switch optimization modes (Guaranteed & Inspiration)" ..
+        p .. "Live Preview update requests now time out after 5 seconds" ..
         newP("6.3") ..
         P .. "Profit Calculation now considers the " .. c("Hidden Skill Value", l) .. " (HSV)" ..
         a .. "It's consideration can be toggled off in the options" ..

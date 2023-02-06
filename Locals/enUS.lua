@@ -61,7 +61,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] = "Each line is a seperate chat message when responsing in a whisper.\n\nYou can use following labels to insert information about the requested item's recipe:\n%gc .. link of the guaranteed result quality\n%ic .. link of the result quality reachable with inspiration\n%insp .. your inspiration chance e.g. 18%\n%mc .. your multicraft chance\n%res .. your resourcefulness chance\n%cc .. the crafting costs\n%ccd .. the detailed costs per reagent used (preferably in its own line)",        
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION] = "Enable live crafting preview connections to you via CraftSim Preview Links.\nAnyone who has CraftSim and clicks the shared link can live connect to your crafting information to check out your crafting abilities",        
         [CraftSim.CONST.TEXT.HSV_EXPLANATION] = "HSV stands for 'Hidden Skill Value' and is a hidden skill increase between 0 to 5% of your recipe difficulty whenever you craft something.\n\nThis hidden skill value can bring you to the next quality similar to inspiration.\n\nHowever, the closer you are to the next quality the higher is the chance!\n\nIf you dont want to consider HSV, you can toggle it off in the Profit Calculation Settings.",        
-        
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION] = "Check for the highest guaranteed quality the crafter can craft this recipe. And optimize for lowest crafting costs.\n\nIf toggled off. The highest reachable quality with inspiration will be optimized for crafting costs.",        
     }
 
 

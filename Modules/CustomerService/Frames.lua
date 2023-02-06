@@ -1,6 +1,7 @@
 AddonName, CraftSim = ...
 
 CraftSim.CUSTOMER_SERVICE.FRAMES = {}
+CraftSim.CUSTOMER_SERVICE.timeoutSeconds = 5
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_SERVICE)
 
@@ -103,7 +104,17 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         local requestingUpdate = "Requesting Update"
         frame.content.loadingText = CraftSim.FRAME:CreateText(requestingUpdate, frame.content, frame.content.recipeDropdown, "LEFT", "RIGHT", -20, 5, 0.8, nil, {type="H", value="LEFT"})
         frame.content.isUpdating = false
+        frame.content.updates = {}
+        local function checkForTimeOut(updateID)
+            if tContains(frame.content.updates, updateID) then
+                frame.content.loadingText:SetText(CraftSim.UTIL:ColorizeText("Timeout (Player Offline?)", CraftSim.CONST.COLORS.RED))
+                frame.content.StopUpdate(true)
+            end
+        end
         frame.content.StartUpdate = function()
+            local updateID = CraftSim.UTIL:round(debugprofilestop())
+            table.insert(frame.content.updates, updateID)
+            frame.SetEnabled(false)
             frame.content.isUpdating = true
             frame.content.loadingText:Show()
             frame.content.loadingText:SetText(requestingUpdate)
@@ -120,24 +131,36 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             end
 
             updateText()
+            C_Timer.After(CraftSim.CUSTOMER_SERVICE.timeoutSeconds, function() checkForTimeOut(updateID) end)
         end
 
-        frame.content.StopUpdate = function ()
+        frame.content.StopUpdate = function (timedOut)
             frame.content.isUpdating = false
-            frame.content.loadingText:Hide()
+            if not timedOut then
+                frame.content.loadingText:Hide()
+            end
+            frame.SetEnabled(true)
+            frame.content.updates = {}
         end
         local function onOptionalReagentSelected(dropdown, itemID) 
             dropdown.selectedID = itemID
             print("selected optional Reagent: " .. tostring(itemID))
             CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(frame.currentRecipeID) 
         end
+
+        local function onCheckboxChecked()
+            CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(frame.currentRecipeID)
+        end
+
+        frame.content.guaranteeCB = CraftSim.FRAME:CreateCheckboxCustomCallback("Highest Guaranteed", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION),
+        false, onCheckboxChecked, frame.content, frame.content.recipeDropdown, "TOPLEFT", "BOTTOMLEFT", 17, 0)
         local dropdownWidth = 120
         local dropdownOffsetX = 70
         local dropdownBaseY = 0
         local dropdownSpacingY = -40
         frame.content.optionalDropdownGroup = CreateFrame("frame", nil, frame.content)
         frame.content.optionalDropdownGroup:SetSize(dropdownWidth*2 + dropdownOffsetX, -1*dropdownBaseY + -1*dropdownSpacingY*2 + 25)
-        frame.content.optionalDropdownGroup:SetPoint("TOP", frame.content.recipeDropdown, "BOTTOM", 0, -10)
+        frame.content.optionalDropdownGroup:SetPoint("TOP", frame.content.recipeDropdown, "BOTTOM", 0, -35)
 
         frame.content.optionalDropdownGroup.SetCollapsed = function(collapsed)
             if collapsed then
@@ -167,7 +190,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             CreateReagentInputDropdown("Finishing 2", dropdownOffsetX, dropdownBaseY + dropdownSpacingY),
         } 
         
-        frame.content.craftingCosts = CraftSim.FRAME:CreateText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(0), frame.content, frame.content.optionalDropdownGroup, "TOP", "BOTTOM", 0, -10)
+        frame.content.craftingCosts = CraftSim.FRAME:CreateText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(0), frame.content, frame.content.optionalDropdownGroup, "TOP", "BOTTOM", 0, -20)
         
         frame.content.expectedResultTitle = CraftSim.FRAME:CreateText("Expected Result", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", -80, -10, nil, nil)
         
@@ -244,6 +267,19 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             createReagentFrame("TOPLEFT", frame.content.reagentDetailsTitle, "BOTTOMLEFT", baseX + spacingX*2, baseY + spacingY),
         }
 
+        frame.SetEnabled = function(value)
+            print("enable frames: " .. tostring(value)) 
+            -- disable/enable all childs
+            local toggleDropdown = (value and UIDropDownMenu_EnableDropDown) or UIDropDownMenu_DisableDropDown
+            toggleDropdown(frame.content.recipeDropdown)
+            frame.content.guaranteeCB:SetEnabled(value)
+
+            for _, dropdown in pairs(frame.content.optionalDropdowns) do
+                toggleDropdown(dropdown)
+            end
+
+        end
+
     end
 
     createContent(frame)
@@ -292,6 +328,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     previewFrame.content.expectedInspirationIcon:Hide()
     previewFrame.content.reagentDetailsTitle:Hide()
     previewFrame.content.optionalDropdownGroup:Hide()
+    previewFrame.content.guaranteeCB:Hide()
     CraftSim.FRAME:initializeDropdownByData(previewFrame.content.recipeDropdown, convertToDropdownListData(recipes), "Select a Recipe")
 
     previewFrame:Show()
@@ -343,6 +380,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
             previewFrame.content.expectedInspirationQualityIcon:Hide()
         end
     
+        
         previewFrame.content.reagentDetailsTitle:Show()
         previewFrame.content.expectedResultTitle:Show()
         previewFrame.content.expectedResultIcon:Show()
@@ -350,8 +388,10 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
         if not outputInfo.isNoQuality then
             previewFrame.content.expectedResultQualityIcon.SetQuality(outputInfo.expectedQuality)
             previewFrame.content.expectedResultQualityIcon:Show()
+            previewFrame.content.guaranteeCB:Show()
         else
             previewFrame.content.expectedResultQualityIcon:Hide()
+            previewFrame.content.guaranteeCB:Hide()
         end
     
         local craftingCosts = 0

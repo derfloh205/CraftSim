@@ -873,7 +873,10 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData
 
 
 
-	CraftSim.MAIN.currentRecipeData = recipeData
+	-- only set when no scan?
+	if exportMode ~= CraftSim.CONST.EXPORT_MODE.SCAN then
+		CraftSim.MAIN.currentRecipeData = recipeData
+	end
 
 
 	recipeData.ContinueOnResultItemsLoaded = function (AllItemsLoadedCallback)

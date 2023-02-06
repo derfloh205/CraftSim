@@ -113,18 +113,22 @@ function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
 
     for _, recipeID in pairs(professionRecipeIDs) do
         local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
-        if recipeInfo and recipeInfo.learned then
-            ---@diagnostic disable-next-line: missing-parameter
-            local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-            local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
-            local isRelevantItemLevel = recipeInfo.itemLevel > 1 
-            if isDragonIsleRecipe and isRelevantItemLevel then
-                local iconAsText = CraftSim.UTIL:IconToText(recipeInfo.icon, 20)
-                response.recipes[recipeCategoryInfo.name] = response.recipes[recipeCategoryInfo.name] or {}
-                table.insert(response.recipes[recipeCategoryInfo.name], {
-                    recipeID=recipeID,
-                    recipeName= iconAsText .. " " .. recipeInfo.name
-                })
+        
+        if recipeInfo and recipeInfo.learned and recipeInfo.supportsCraftingStats then
+            local isQuestRecipe = tContains(CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS, recipeInfo.categoryID)
+            if not isQuestRecipe then
+                ---@diagnostic disable-next-line: missing-parameter
+                local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
+                local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
+                local isRelevantItemLevel = recipeInfo.itemLevel > 1 
+                if isDragonIsleRecipe and isRelevantItemLevel then
+                    local iconAsText = CraftSim.UTIL:IconToText(recipeInfo.icon, 20)
+                    response.recipes[recipeCategoryInfo.name] = response.recipes[recipeCategoryInfo.name] or {}
+                    table.insert(response.recipes[recipeCategoryInfo.name], {
+                        recipeID=recipeID,
+                        recipeName= iconAsText .. " " .. recipeInfo.name
+                    })
+                end
             end
         end
     end
@@ -165,6 +169,8 @@ function CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, isInit)
         end
     end
 
+    local highestGuaranteed = previewFrame.content.guaranteeCB:GetChecked()
+
     
     local requestData = {
         recipeID = recipeID,
@@ -172,6 +178,7 @@ function CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, isInit)
         customer = GetUnitName("player", true),
         isInit = isInit,
         optionalReagents = optionalReagents,
+        highestGuaranteed = highestGuaranteed,
     }
     
     print("SendRecipeUpdateRequest", false, true)
@@ -186,10 +193,11 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateRequest(payload)
     local recipeID = payload.recipeID
     local professionID = payload.professionID
     local customer = payload.customer
+    local highestGuaranteed = payload.highestGuaranteed
 
     print("OnRecipeUpdateRequest")
 
-    local optimizedRecipe = CraftSim.CUSTOMER_SERVICE:OptimizeRecipe(recipeID, payload.optionalReagents)
+    local optimizedRecipe = CraftSim.CUSTOMER_SERVICE:OptimizeRecipe(recipeID, payload.optionalReagents, highestGuaranteed)
 
     if not optimizedRecipe then
         return
@@ -259,7 +267,7 @@ local function getCraftReagentInfoTblEntryFromOptionalsByItemID(recipeData, item
     return reagent
 end
 
-function CraftSim.CUSTOMER_SERVICE:OptimizeRecipe(recipeID, optionalReagents)
+function CraftSim.CUSTOMER_SERVICE:OptimizeRecipe(recipeID, optionalReagents, optimizeForGuaranteed)
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
     if not recipeInfo then
         print("Could not fetch recipeInfo for recipe: " .. tostring(recipeID))
@@ -293,7 +301,7 @@ function CraftSim.CUSTOMER_SERVICE:OptimizeRecipe(recipeID, optionalReagents)
         print("Could not create priceData for recipe optimization")
         return
     end
-    local optimizedReagents = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentsForScannedRecipeData(recipeData, priceData, true) 
+    local optimizedReagents = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentsForScannedRecipeData(recipeData, priceData, not optimizeForGuaranteed) 
 
     recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN, {scanReagents=optimizedReagents, optionalReagents=mappedOptionalReagents})
     if not recipeData then
