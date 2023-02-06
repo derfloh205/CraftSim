@@ -293,6 +293,13 @@ end
 
 function CraftSim.CALC:getMeanProfit(recipeData, priceData)
 
+    if not recipeData.stats then
+        local resultValue = ((priceData.minBuyoutPerQuality[1] or 0) * recipeData.baseItemAmount) * CraftSim.CONST.AUCTION_HOUSE_CUT
+        local profit = resultValue - priceData.craftingCostPerCraft
+
+        local probabilityTable = {{chance=1, profit=profit}}
+        return profit, probabilityTable
+    end
     -- case: every stats exists
     if recipeData.stats.inspiration and recipeData.stats.multicraft and recipeData.stats.resourcefulness then
         local inspChance = recipeData.stats.inspiration.percent / 100

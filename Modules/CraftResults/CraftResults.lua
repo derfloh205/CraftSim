@@ -276,7 +276,6 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         recipeID = recipeData.recipeID,
         profit = 0,
         expectedAverageProfit = 0,
-        quantityImportant = false,
         recipeName = recipeData.recipeName,
         results = {},
         expectedQuality = recipeData.expectedQuality,
@@ -296,15 +295,13 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         },
     }
 
-    craftData.quantityImportant = recipeData.stats.multicraft or recipeData.baseItemAmount > 1
-
     for _, craftResult in pairs(craftingResults) do
 
         if craftResult.isCrit then
             craftData.procs.inspiration.triggered = true
         end
 
-        if craftResult.multicraft > 0 then
+        if craftResult.multicraft and craftResult.multicraft > 0 then
             craftData.procs.multicraft.triggered = true
             table.insert(craftData.procs.multicraft.procItems, {
                 item = craftResult.hyperlink,
@@ -332,9 +329,9 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         end
     end
 
-    local inspChance = (recipeData.stats.inspiration and recipeData.stats.inspiration.percent / 100) or 1
-    local mcChance = (recipeData.stats.multicraft and recipeData.stats.multicraft.percent / 100) or 1
-    local resChance = (recipeData.stats.resourcefulness and recipeData.stats.resourcefulness.percent / 100) or 1
+    local inspChance = ((recipeData.stats and recipeData.stats.inspiration) and recipeData.stats.inspiration.percent / 100) or 1
+    local mcChance = ((recipeData.stats and recipeData.stats.multicraft) and recipeData.stats.multicraft.percent / 100) or 1
+    local resChance = ((recipeData.stats and recipeData.stats.resourcefulness) and recipeData.stats.resourcefulness.percent / 100) or 1
 
     if inspChance < 1 then
         inspChance = (craftData.procs.inspiration.triggered and inspChance) or (1-inspChance)
@@ -369,8 +366,6 @@ end
 function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftData)
     local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
-    --local currentText = craftResultFrame.content.resultFrame.resultFeed:GetText() or ""
-
     local resourcesText = ""
 
     if craftData.procs.resourcefulness.triggered then
@@ -396,7 +391,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftData)
     local profitText = CraftSim.UTIL:FormatMoney(roundedProfit, true)
     local chanceText = ""
 
-    if not recipeData.isSalvageRecipe then
+    if not recipeData.isSalvageRecipe and recipeData.stats then
        chanceText = "Chance: " .. CraftSim.UTIL:round(craftData.craftingChance*100, 1) .. "%\n" 
     end
 

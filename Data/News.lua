@@ -22,7 +22,10 @@ function CraftSim.NEWS:GET_NEWS()
         c("                   Hello and thank you for using CraftSim!\n", bb) .. 
         c("                                 ( You are awesome! )", bb) ..
         newP("6.4") ..
-        p .. "Experimental Data should now also consider being" .. c("Alchemically Inspired", bb) ..
+        p .. "Experimental Data should now also consider" .. 
+        a .. "the buff " .. c("Alchemically Inspired", bb) ..
+        p .. "Fixed an error when crafting non-stat recipes" .. 
+        a .. "(e.g. old world recipes)" ..
         newP("6.3") ..
         P .. "Profit Calculation now considers the " .. c("Hidden Skill Value", l) .. " (HSV)" ..
         a .. "It's consideration can be toggled off in the options" ..
