@@ -192,8 +192,7 @@ function CraftSim.RECIPE_SCAN:AddRecipeToRecipeRow(recipeData, priceData, meanPr
     local profitText = CraftSim.UTIL:FormatMoney(CraftSim.UTIL:round(meanProfit / 10000) * 10000, true, priceData.craftingCostPerCraft) -- round to gold
     availableRow.profitText:SetText(profitText)
 
-    availableRow.learnedText:SetText((recipeData.learned and CraftSim.UTIL:ColorizeText("T", CraftSim.CONST.COLORS.GREEN)) or 
-                                                            CraftSim.UTIL:ColorizeText("F", CraftSim.CONST.COLORS.RED))
+    availableRow.learnedText:SetText((recipeData.learned and CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125)) or CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125))
 
     if not CraftSimOptions.recipeScanOptimizeProfessionTools then
         availableRow.tool1Icon:Hide()

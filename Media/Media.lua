@@ -25,6 +25,6 @@ end
 
 CraftSim.MEDIA.IMAGES = {
     EXPECTED_VALUE = {file="expectedValue.blp",dimensions={x=128,y=32}},
-    FALSE = {file="false.blp",dimensions={x=16,y=16}},
-    TRUE = {file="true.blp",dimensions={x=16,y=16}},
+    FALSE = {file="false.blp",dimensions={x=128,y=128}},
+    TRUE = {file="true.blp",dimensions={x=128,y=128}},
 }
