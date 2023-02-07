@@ -569,8 +569,12 @@ function CraftSim.UTIL:ColorizeText(text, color)
     local endLine = "\124r"
     return startLine .. color .. text .. endLine
 end
-function CraftSim.UTIL:IconToText(iconPath, height) 
-    return "\124T" .. iconPath .. ":" .. height .. "\124t"
+function CraftSim.UTIL:IconToText(iconPath, height, width) 
+    if not width then
+        return "\124T" .. iconPath .. ":" .. height .. "\124t"
+    else
+        return "\124T" .. iconPath .. ":" .. height .. ":" .. width .. "\124t"
+    end
 end
 
 -- from stackoverflow: 
@@ -680,8 +684,12 @@ function CraftSim.UTIL:GetFormatter()
         return CraftSim.UTIL:FormatMoney(m)
     end
 
-    formatter.i = function (i, h)
-        return CraftSim.UTIL:IconToText(i, h)
+    formatter.i = function (i, h, w)
+        return CraftSim.UTIL:IconToText(i, h, w)
+    end
+
+    formatter.cm = function(i, s) 
+        return CraftSim.MEDIA:GetAsTextIcon(i, s)
     end
 
     return formatter

@@ -86,7 +86,14 @@ function CraftSim.LOCAL_EN:GetData()
         "The chance to proc " .. f.l("only") .. f.bb(" Inspiration ") .. "is actually the chance to proc " .. f.bb("Inspiration\n") ..
         "But to " .. f.l("not ") .. "proc " .. f.bb("Multicraft") .. " or " .. f.bb("Resourcefulness.\n") ..
         "And Math tells us that the chance of something not occuring is 1 minus the chance of it occuring.\n" ..
-        "So the chance to proc only " .. f.bb("Inspiration ") .. "is actually " .. f.g("inspirationChance * (1-multicraftChance) * (1-resourcefulnessChance)\n")
+        "So the chance to proc only " .. f.bb("Inspiration ") .. "is actually " .. f.g("inspirationChance * (1-multicraftChance) * (1-resourcefulnessChance)\n\n") ..
+        "After calculating each possibility in that way the individual chances indeed sum up to one!\n" .. 
+        "Which means we can now apply statistical formulas. The most interesting one in our case is the " .. f.bb("Expected Value") .. "\n" ..
+        "Which is, as the name suggests, the value we can expect to get on average, or in our case, the " .. f.bb(" expected profit for a craft!\n") ..
+        "\n" .. f.cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
+        "This tells us that the expected value " .. f.l("E") .. " of a probability distribution " .. f.l("X") .. " is the sum of all its values multiplied by their chance.\n" ..
+        "So if we have one " .. f.bb("case A with chance 30%") .. " and profit " .. f.m(-100*10000) .. " and a " .. f.bb("case B with chance 70%") .." and profit " .. f.m(300*10000) .. " then the expected profit of that is\n" ..
+        f.bb("\nE(X) = -100*0.3 + 300*0.7\n") .. "which is " .. f.m((-100*0.3 + 300*0.7)*10000)
         ,
             
     }
