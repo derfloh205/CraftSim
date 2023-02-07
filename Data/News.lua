@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("6.8") ..
+        f.P .. "Added an initial version of a " .. f.l("CraftSim API") ..
         newP("6.7.2") ..
         f.P .. f.bb("HSV Consideration Explanation") .. " added" ..
         f.s .. "New Options Tab: " .. f.g("Crafting") ..
