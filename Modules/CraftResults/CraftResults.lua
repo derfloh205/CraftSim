@@ -19,6 +19,7 @@ CraftSim.CRAFT_RESULTS.baseRecipeEntry = {
     craftedItems = {}, 
     statistics = {
         totalExpectedAverageProfit = 0,
+        totalExpectedAverageSavedCosts = 0,
         crafts = 0,
         baseItemCount = 0,
         inspiration = 0,
@@ -26,6 +27,7 @@ CraftSim.CRAFT_RESULTS.baseRecipeEntry = {
         multicraftExtraItems = 0,
         resourcefulness = 0,
         savedReagents = {},
+        totalSavedCosts = 0,
         -- and many more?
     }
 }
@@ -126,7 +128,8 @@ function CraftSim.CRAFT_RESULTS:AddCraftData(craftData, recipeID)
 
     if craftData.procs.resourcefulness.triggered then
         CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.resourcefulness = (CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.resourcefulness or 0) + 1
-        
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.totalSavedCosts = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.totalSavedCosts + craftData.procs.resourcefulness.totalSavedCosts
+        CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.totalExpectedAverageSavedCosts = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.totalExpectedAverageSavedCosts + craftData.expectedAverageSavedCosts
         for _, savedReagent in pairs(craftData.procs.resourcefulness.savedReagents) do
             local itemID = savedReagent:GetItemID()
             if not CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.savedReagents[savedReagent:GetItemID()] then
@@ -269,13 +272,14 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         print("no recipeData")
         return
     end
-
+    
     --showhsvInfo(recipeData, craftingResults[1])
 
     local craftData = {
         recipeID = recipeData.recipeID,
         profit = 0,
         expectedAverageProfit = 0,
+        expectedAverageSavedCosts = 0,
         recipeName = recipeData.recipeName,
         results = {},
         expectedQuality = recipeData.expectedQuality,
@@ -290,17 +294,18 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
             },
             resourcefulness = {
                 triggered = false,
-                savedReagents = {}
+                savedReagents = {},
+                totalSavedCosts = 0,
             },
         },
     }
-
+    
     for _, craftResult in pairs(craftingResults) do
-
+        
         if craftResult.isCrit then
             craftData.procs.inspiration.triggered = true
         end
-
+        
         if craftResult.multicraft and craftResult.multicraft > 0 then
             craftData.procs.multicraft.triggered = true
             table.insert(craftData.procs.multicraft.procItems, {
@@ -309,29 +314,37 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
                 extraItems = craftResult.multicraft,
             })
         end
-
         
-
+        
+        
         table.insert(craftData.results, {
             item = craftResult.hyperlink,
             quantity = craftResult.quantity
         })
     end
+    
+    local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
 
     -- just take resourcefulness from the first craftResult
     -- this is because of a blizzard bug where the same proc is listed in every craft result
     if craftingResults[1].resourcesReturned then
+        local savedCosts = 0
         craftData.procs.resourcefulness.triggered = true
         for _, savedReagent in pairs(craftingResults[1].resourcesReturned) do
             local item = Item:CreateFromItemID(savedReagent.itemID)
             item.quantity = savedReagent.quantity
             table.insert(craftData.procs.resourcefulness.savedReagents, item)
+            savedCosts = savedCosts + (item.quantity * CraftSim.PRICEDATA:GetMinBuyoutByItemID(savedReagent.itemID, true))
         end
+        craftData.procs.resourcefulness.totalSavedCosts = savedCosts
     end
 
+    
     local inspChance = ((recipeData.stats and recipeData.stats.inspiration) and recipeData.stats.inspiration.percent / 100) or 1
     local mcChance = ((recipeData.stats and recipeData.stats.multicraft) and recipeData.stats.multicraft.percent / 100) or 1
     local resChance = ((recipeData.stats and recipeData.stats.resourcefulness) and recipeData.stats.resourcefulness.percent / 100) or 1
+    
+    craftData.expectedAverageSavedCosts = (recipeData.supportsCraftingStats and CraftSim.CALC:getResourcefulnessSavedCostsV3(recipeData, priceData)*resChance) or 0
 
     if inspChance < 1 then
         inspChance = (craftData.procs.inspiration.triggered and inspChance) or (1-inspChance)
@@ -352,7 +365,6 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
     local craftProfit = CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, craftData) 
 
     craftData.profit = craftProfit
-    local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
     craftData.expectedAverageProfit = CraftSim.CALC:getMeanProfit(recipeData, priceData)
     
     --print("Chance for Craft: " .. tostring(CraftSim.UTIL:round(craftData.craftingChance * 100, 1)) .. "%")

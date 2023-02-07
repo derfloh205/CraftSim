@@ -76,7 +76,7 @@ function CraftSim.CALC:handleMulticraft(recipeData, priceData, crafts, craftedIt
     end
 end
 
-function CraftSim.CALC:getResourcefulnessSavedCostsV3(recipeData, priceData, calculationData)
+function CraftSim.CALC:getResourcefulnessSavedCostsV3(recipeData, priceData)
     local specData = recipeData.specNodeData
     local resourcefulnessExtraItemsFactor = 1
 
@@ -93,12 +93,7 @@ function CraftSim.CALC:getResourcefulnessSavedCostsV3(recipeData, priceData, cal
 
     local savedCosts = 0
     if recipeData.stats.resourcefulness then
-        savedCosts = CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR * priceData.craftingCostPerCraft * resourcefulnessExtraItemsFactor
-        -- print("Saved Costs V3: " .. CraftSim.UTIL:FormatMoney(savedCosts))
-    end
-
-    if calculationData and calculationData.resourcefulness then
-        calculationData.resourcefulness.averageSavedCosts = savedCosts
+        savedCosts = priceData.craftingCostPerCraft * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR * resourcefulnessExtraItemsFactor)
     end
 
     return savedCosts

@@ -10,8 +10,13 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
-        newP("6.7") ..
+        newP("6.7.1") ..
         f.P .. f.bb("HSV Consideration Explanation") .. " added" ..
+        f.p .. f.bb("Craft Results") .. " now show resourcefulness real saved costs" ..
+        f.a .. "and expected saved costs instead of the number of procs" ..
+        f.a .. "This is because there are 'hidden' procs that do not" .. 
+        f.a .. "save anything and screw up the expected numbers." ..
+        f.a .. "However they are considered in the calculations" ..
         newP("6.6") ..
         f.P .. f.bb("Basic Profit Explanation ") .. "added. (More Infos soon to come)" ..
         f.p .. "Added a system for custom icons/images in CraftSim" ..

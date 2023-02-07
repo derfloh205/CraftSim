@@ -2,6 +2,8 @@ AddonName, CraftSim = ...
 
 CraftSim.CRAFT_RESULTS.FRAMES = {}
 
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
+
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
 
     -- only update frontend if its the shown recipeID
@@ -76,14 +78,24 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
             end
         end
         if statistics.resourcefulness then
-            local expectedProcs = 0
-            if CraftSim.MAIN.currentRecipeData.stats.resourcefulness then
-                expectedProcs = tonumber(CraftSim.UTIL:round((CraftSim.MAIN.currentRecipeData.stats.resourcefulness.percent / 100) * statistics.crafts, 1)) or 0
+            local averageSavedCosts = 0
+            local expectedAverageSavedCosts = 0
+            if statistics.crafts > 0 then
+                averageSavedCosts = CraftSim.UTIL:round((statistics.totalSavedCosts / statistics.crafts)/10000) * 10000
+                expectedAverageSavedCosts = CraftSim.UTIL:round((statistics.totalExpectedAverageSavedCosts / statistics.crafts)/10000) * 10000
             end
-            if statistics.resourcefulness >= expectedProcs then
-                statisticsText = statisticsText .. "Resourcefulness: " .. CraftSim.UTIL:ColorizeText(statistics.resourcefulness, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedProcs .. "\n"
+
+            print("Expected Saved Costs: " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts))
+            print("Real Saved Costs: " .. CraftSim.UTIL:FormatMoney(averageSavedCosts))
+
+            if averageSavedCosts == 0 then
+                statisticsText = statisticsText .. "Resourcefulness Procs: " .. CraftSim.UTIL:ColorizeText(statistics.resourcefulness, CraftSim.CONST.COLORS.GREEN)
+            elseif averageSavedCosts >= expectedAverageSavedCosts then
+                statisticsText = statisticsText .. "Resourcefulness Procs: " .. CraftSim.UTIL:ColorizeText(statistics.resourcefulness, CraftSim.CONST.COLORS.GREEN) .. "\n" ..
+                                    "- Ø Saved Costs: " .. CraftSim.UTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts), CraftSim.CONST.COLORS.GREEN) .. " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
             else
-                statisticsText = statisticsText .. "Resourcefulness: " .. CraftSim.UTIL:ColorizeText(statistics.resourcefulness, CraftSim.CONST.COLORS.RED) .. " / " .. expectedProcs .. "\n"
+                statisticsText = statisticsText .. "Resourcefulness Procs: " .. CraftSim.UTIL:ColorizeText(statistics.resourcefulness, CraftSim.CONST.COLORS.GREEN) .. "\n" ..
+                                    "- Ø Saved Costs: " .. CraftSim.UTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts), CraftSim.CONST.COLORS.RED) .. " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
             end
         end
     else
