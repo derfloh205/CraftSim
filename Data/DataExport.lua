@@ -839,7 +839,7 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData
 		end
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
 		-- Probably something like transmuting air reagent that creates non equip stuff without qualities
-		recipeData.result.itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
+		recipeData.result.itemID = (recipeInfo.hyperlink and CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)) or nil
 		recipeData.result.isNoQuality = true	
 		table.insert(recipeData.result.resultItems, Item:CreateFromItemID(recipeData.result.itemID))
 	elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then

@@ -12,6 +12,9 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                                 ( You are awesome! )") ..
         newP("6.7.2") ..
         f.P .. f.bb("HSV Consideration Explanation") .. " added" ..
+        f.s .. "New Options Tab: " .. f.g("Crafting") ..
+        f.a .. "Coming with a new option to automatically clear" .. 
+        f.a .. "your RAM after a specified number of crafts" ..
         f.p .. f.bb("Craft Results") .. " now show resourcefulness real saved costs" ..
         f.a .. "and expected saved costs instead of the number of procs" ..
         f.a .. "This is because there are 'hidden' procs that do not" .. 

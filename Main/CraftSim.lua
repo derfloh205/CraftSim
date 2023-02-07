@@ -64,6 +64,10 @@ CraftSimOptions = CraftSimOptions or {
 
 	customerServiceAllowAutoResult = true,
 	customerServiceActivePreviewIDs = {},
+
+	-- crafting options
+	craftGarbageCollectEnabled = true,
+	craftGarbageCollectCrafts = 500,
 }
 
 CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
@@ -116,10 +120,11 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.customerServiceActivePreviewIDs = CraftSimOptions.customerServiceActivePreviewIDs or {}
 		CraftSimOptions.customerServiceAutoReplyCommand = CraftSimOptions.customerServiceAutoReplyCommand or "!craft"
 		CraftSimOptions.customerServiceAutoReplyFormat = CraftSimOptions.customerServiceAutoReplyFormat or
-																		("Highest Result: %gc\n" ..
-																		"with Inspiration: %ic (%insp)\n" ..
-																		"Crafting Costs: %cc\n" ..
-																		"%ccd")
+		("Highest Result: %gc\n" ..
+		"with Inspiration: %ic (%insp)\n" ..
+		"Crafting Costs: %cc\n" ..
+		"%ccd")
+		CraftSimOptions.craftGarbageCollectCrafts = CraftSimOptions.craftGarbageCollectCrafts or 500
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end
@@ -146,6 +151,9 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.enableHSV == nil then
 			CraftSimOptions.enableHSV = true
+		end
+		if CraftSimOptions.craftGarbageCollectEnabled == nil then
+			CraftSimOptions.craftGarbageCollectEnabled = true
 		end
 	end
 end

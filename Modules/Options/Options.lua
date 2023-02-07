@@ -89,6 +89,9 @@ function CraftSim.OPTIONS:Init()
     ExperimentalTab.content:SetSize(300, 350)
     ExperimentalTab.canBeEnabled = true
 
+    local CraftingTab = CraftSim.FRAME:CreateTab("Crafting", CraftSim.OPTIONS.optionsPanel, 
+        ExperimentalTab, "LEFT", "RIGHT", 0, 0, true, 300, 350, CraftSim.OPTIONS.optionsPanel, CraftSim.OPTIONS.optionsPanel, 0, contentPanelsOffsetY)
+
     local expressionSizeX = 300
     local expressionSizeY = 50
 
@@ -156,7 +159,7 @@ function CraftSim.OPTIONS:Init()
     validationInfoItems:SetPoint("TOPLEFT", tsmItemsPriceExpression, "TOPRIGHT",  5, 0)
     validationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
 
-    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab, ProfitCalculationTab, ExperimentalTab})
+    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab, ProfitCalculationTab, ExperimentalTab, CraftingTab})
 
     local priceSourceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
@@ -373,6 +376,25 @@ function CraftSim.OPTIONS:Init()
      "TOP", 
      0, 
      -20)
+
+     local enableGarbageCollectWhenCraftingCB = CraftSim.FRAME:CreateCheckbox(" Enable RAM cleanup while crafting", 
+        "When enabled, CraftSim will clear your RAM every specified number of crafts from unused data to prevent memory from building up.\nMemory Build Up can also happen because of other addons and is not CraftSim specific.\nA cleanup will affect the whole WoW RAM Usage.",
+    "craftGarbageCollectEnabled",
+    CraftingTab.content, 
+    CraftingTab.content,
+    "TOP", 
+    "TOP", 
+    -90, 
+    -50)
+
+    local garbageCollectCraftsInput = CraftSim.FRAME:CreateInput("CraftSimGarbageCollectCraftsInput", CraftingTab.content, enableGarbageCollectWhenCraftingCB, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25, 
+        CraftSimOptions.craftGarbageCollectCrafts, 
+        function ()
+            local number = CraftSim.UTIL:ValidateNumberInput(CraftSimGarbageCollectCraftsInput, false)
+            CraftSimOptions.craftGarbageCollectCrafts = number
+        end)
+
+    CraftSim.FRAME:CreateText("Crafts", CraftingTab.content, garbageCollectCraftsInput, "LEFT", "RIGHT", 5, 0)
     
 	InterfaceOptions_AddCategory(self.optionsPanel)
 end

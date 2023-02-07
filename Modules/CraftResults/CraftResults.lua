@@ -10,6 +10,7 @@ CraftSim.CRAFT_RESULTS.sessionData = {
     total = {
         profit = 0,
         craftedItems = {},
+        crafts = 0,
     },
     byRecipe = {},
 }
@@ -106,6 +107,14 @@ function CraftSim.CRAFT_RESULTS:AddCraftData(craftData, recipeID)
     CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID] = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID] or CopyTable(CraftSim.CRAFT_RESULTS.baseRecipeEntry)
 
     CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.crafts = CraftSim.CRAFT_RESULTS.sessionData.byRecipe[recipeID].statistics.crafts + 1
+    CraftSim.CRAFT_RESULTS.sessionData.total.crafts = CraftSim.CRAFT_RESULTS.sessionData.total.crafts + 1
+
+    if CraftSimOptions.craftGarbageCollectEnabled and CraftSimOptions.craftGarbageCollectCrafts > 0 then
+        if CraftSim.CRAFT_RESULTS.sessionData.total.crafts % CraftSimOptions.craftGarbageCollectCrafts == 0 then
+            print("Collecting Garbage..")
+            collectgarbage()
+        end
+    end
 
 
     if craftData.procs.inspiration.triggered then
@@ -272,8 +281,6 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         print("no recipeData")
         return
     end
-    
-    --showhsvInfo(recipeData, craftingResults[1])
 
     local craftData = {
         recipeID = recipeData.recipeID,
