@@ -148,11 +148,11 @@ function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
 
         frame:Hide()
         frame.content.profitExplanationTab = CraftSim.FRAME:CreateTab("Basic Profit Calculation", frame.content, frame.title, "TOP", "BOTTOM", -50, -15, true, 900, 500, frame.content, frame.title, 0, -50)
-        frame.content.hsvExplanationTab = CraftSim.FRAME:CreateTab("HSV and more", frame.content, frame.content.profitExplanationTab, "LEFT", "RIGHT", 0, 0, true, 900, 500, frame.content, frame.title, 0, -50)
+        frame.content.hsvExplanationTab = CraftSim.FRAME:CreateTab("HSV Consideration", frame.content, frame.content.profitExplanationTab, "LEFT", "RIGHT", 0, 0, true, 900, 500, frame.content, frame.title, 0, -50)
         frame.content.profitExplanationTab.content.description = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PROFIT_EXPLANATION), 
-        frame.content.profitExplanationTab.content, frame.content.profitExplanationTab.content, "TOP", "TOP", 0, -20, nil, nil, {type="H", value="LEFT"})
+        frame.content.profitExplanationTab.content, frame.content.profitExplanationTab.content, "TOPLEFT", "TOPLEFT", 0, -20, nil, nil, {type="H", value="LEFT"})
         frame.content.hsvExplanationTab.content.description = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PROFIT_EXPLANATION_HSV), 
-        frame.content.hsvExplanationTab.content, frame.content.hsvExplanationTab.content, "TOP", "TOP", 0, -20, nil, nil, {type="H", value="LEFT"})
+        frame.content.hsvExplanationTab.content, frame.content.hsvExplanationTab.content, "TOPLEFT", "TOPLEFT", 0, -20, nil, nil, {type="H", value="LEFT"})
 
         CraftSim.FRAME:InitTabSystem({frame.content.profitExplanationTab, frame.content.hsvExplanationTab})
     end

@@ -258,7 +258,6 @@ function CraftSim.CALC:getMeanProfitOLD(recipeData, priceData)
     return meanProfit, calculationData
 end
 
--- TODO how to behave on max quality?
 function CraftSim.CALC:getHSVChance(recipeData) 
     if CraftSimOptions.enableHSV and recipeData.maxQuality and recipeData.expectedQuality < recipeData.maxQuality then
         local currentQualityProgress = recipeData.operationInfo.quality % 1

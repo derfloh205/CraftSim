@@ -96,7 +96,33 @@ function CraftSim.LOCAL_EN:GetData()
         f.bb("\nE(X) = -100*0.3 + 300*0.7  ") .. "which is " .. f.m((-100*0.3 + 300*0.7)*10000) .. "\n" ..
         "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
         ,
-        [CraftSim.CONST.TEXT.PROFIT_EXPLANATION_HSV] = "~ Work in progress ~",
+        [CraftSim.CONST.TEXT.PROFIT_EXPLANATION_HSV] = 
+        "The " .. f.l("Hidden Skill Value (HSV)") .. " is an additional random factor that occurs everytime you craft something. It is not mentioned anywhere in the game.\n" ..
+        "However you can observe a visualization of the proc: When you craft something the " .. f.bb("Quality Meter") .. "\nfills up to a certain point. And this can 'shoot' quite a bit over your current shown skill.\n" ..
+        "\n" .. f.cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
+        "This extra skill is always between 0% and 5% of your " .. f.bb("Base Recipe Difficulty") .. ".\nMeaning if you have a recipe with 400 difficulty. You can get up to 20 Skill.\n" ..
+        "And tests tell us that this is " .. f.bb("normally distributed") .. ". Meaning every percent value has the same chance.\n" ..
+        f.l("HSV") .. " can influence profits heavily when close to a quality! In CraftSim it is treated as an additional proc, like " .. f.bb("Inspiration") .. " or " .. f.bb("Multicraft.\n") ..
+        "However, its effect is depending on your current skill, the recipe difficulty, and the skill you need to reach the next quality.\n" ..
+        "So CraftSim calculates the " .. f.bb("missing skill") .. " to reach the next quality and converts it to " .. f.bb("percent relative to the recipe difficulty\n\n") ..
+        "So for a recipe with 400 difficulty:if you have 190 Skill, and need 200 to reach the next quality, the missing skill would be 10\n" .. 
+        "To get this value in percent relative to the difficulty you can calculate it like this: " .. f.bb("10 / (400 / 100)") .. " which is " .. f.bb("2.5%\n\n") ..
+        "Then we need to remember that the " .. f.l("HSV") .. " can give us anywhere between 0 and 5 percent.\n" ..
+        "So we need to calculate the " .. f.bb("chance of getting 2.5 or more") .. " when getting a random number between 0 and 5\n" .. 
+        "to know the chance of " .. f.l("HSV") .. " giving us a higher quality.\n\n" ..
+        "Statistics tell us that such a uniform chance to receive something between two boundaries is called a " .. f.l("Continuous Uniform Probability Distribution\n") ..
+        "And thus there is a formula which yields exactly what we need:\n\n" ..
+        f.bb("(upperBound - X) / (upperBound - lowerBound)") .. "\nwhere\n" ..
+        f.bb("upperBound") .. " is 5\n" ..
+        f.bb("lowerBound") .. " is 0\n" ..
+        "and " .. f.bb("X") .. " is the desired value where we want equal or more from. In this case 2.5\n" ..
+        "In this case we are right in the middle of the " .. f.l("HSV 'Area'") .. " so that we have a chance of\n\n" ..
+        f.bb("(5 - 2.5) / (5 - 0) = 0.5") .. " aka 50% to get to next quality by " .. f.l("HSV") .. " alone.\n" ..
+        "If we would have more missing skill we would have less chance and the other way round!\n" ..
+        "Also, if you are missing skill of 5% or more the chance is 0 or negative, meaning it is not possible that " .. f.l("HSV") .. " alone triggers an upgrade.\n\n" ..
+        "However, it is possible that you also reach the next quality when " .. f.bb("Inspiration") .. " and " .. f.l("HSV") .. " occur together and\n" .. 
+        "the skill from " .. f.bb("Inspiration") .. " plus the skill from " .. f.l("HSV") .. " give you enough skill to reach the next quality! This is also considered by CraftSim."
+        ,
             
     }
 end

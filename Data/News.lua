@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("6.7") ..
+        f.P .. f.bb("HSV Consideration Explanation") .. " added" ..
         newP("6.6") ..
         f.P .. f.bb("Basic Profit Explanation ") .. "added. (More Infos soon to come)" ..
         f.p .. "Added a system for custom icons/images in CraftSim" ..
