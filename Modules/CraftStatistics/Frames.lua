@@ -65,22 +65,22 @@ function CraftSim.STATISTICS.FRAMES:Init()
             local boolRowWidth = 20
 
             row.inspiration = CraftSim.FRAME:CreateText(
-            "T", 
+            CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), 
             row, row.chance, "LEFT", "RIGHT", 42, 0, nil, nil)
             row.inspiration:SetSize(boolRowWidth, 25)
 
             row.multicraft = CraftSim.FRAME:CreateText(
-            "T", 
+            CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125),  
             row, row.inspiration, "LEFT", "RIGHT", 55, 0, nil, nil)
             row.multicraft:SetSize(boolRowWidth, 25)
 
             row.resourcefulness = CraftSim.FRAME:CreateText(
-            "T", 
+            CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125),  
             row, row.multicraft, "LEFT", "RIGHT", 75, 0, nil, nil)
             row.resourcefulness:SetSize(boolRowWidth, 25)
 
             row.hsv = CraftSim.FRAME:CreateText(
-            "T", 
+            CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125),  
             row, row.resourcefulness, "LEFT", "RIGHT", 55, 0, nil, nil)
             row.hsv:SetSize(boolRowWidth, 25)
 
@@ -146,8 +146,8 @@ function CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
                 row:Hide()
             else
                 row:Show()
-                local check = CraftSim.UTIL:ColorizeText("T", CraftSim.CONST.COLORS.GREEN)
-                local cross = CraftSim.UTIL:ColorizeText("X", CraftSim.CONST.COLORS.RED)
+                local check = CraftSim.UTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.CONST.COLORS.GREEN)
+                local cross = CraftSim.UTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.CONST.COLORS.RED)
                 local isNot = CraftSim.UTIL:ColorizeText("-", CraftSim.CONST.COLORS.GREY)
                 if probabilityEntry.inspiration ~= nil then
                     row.inspiration:SetText(probabilityEntry.inspiration and check or cross)

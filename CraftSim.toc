@@ -4,7 +4,7 @@
 ## Title: CraftSim
 ## Notes: Calculates profession statweights and displays them per recipe
 ## Author: genju
-## Version: 6.5.1
+## Version: 6.6
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519

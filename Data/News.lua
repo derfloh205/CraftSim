@@ -10,6 +10,11 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("6.6") ..
+        f.P .. f.bb("Basic Profit Explanation ") .. "added. (More Infos soon to come)" ..
+        f.p .. "Added a system for custom icons/images in CraftSim" ..
+        f.a .. "and used this to rework the checkmarks/crosses" .. 
+        f.a .. "in the Recipe Scan and Statistics Frame" ..
         newP("6.5.1") ..
         f.s .. "Profit Statistics: Chance of profit > 0" .. 
         f.a .. "per number of crafts reworked" ..

@@ -93,8 +93,10 @@ function CraftSim.LOCAL_EN:GetData()
         "\n" .. f.cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
         "This tells us that the expected value " .. f.l("E") .. " of a probability distribution " .. f.l("X") .. " is the sum of all its values multiplied by their chance.\n" ..
         "So if we have one " .. f.bb("case A with chance 30%") .. " and profit " .. f.m(-100*10000) .. " and a " .. f.bb("case B with chance 70%") .." and profit " .. f.m(300*10000) .. " then the expected profit of that is\n" ..
-        f.bb("\nE(X) = -100*0.3 + 300*0.7\n") .. "which is " .. f.m((-100*0.3 + 300*0.7)*10000)
+        f.bb("\nE(X) = -100*0.3 + 300*0.7  ") .. "which is " .. f.m((-100*0.3 + 300*0.7)*10000) .. "\n" ..
+        "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
         ,
+        [CraftSim.CONST.TEXT.PROFIT_EXPLANATION_HSV] = "~ Work in progress ~",
             
     }
 end
