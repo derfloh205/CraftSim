@@ -587,13 +587,49 @@ function CraftSim.DATAEXPORT:ConvertRecipeDataRequiredReagentsToCraftingReagentI
 	return craftingReagentInfoTbl
 end
 
+function CraftSim.DATAEXPORT:GetProfessionInfoFromCache(recipeID)
+	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+
+	if not professionInfo or not professionInfo.profession then
+		-- try to get from cache
+		local professionID = CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)
+
+		if professionID then
+			professionInfo = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimProfessionInfoCache, professionID)
+
+			if not professionInfo then
+				return
+			end
+		end
+	else
+		if professionInfo.profession then
+			professionInfo.professionID = professionInfo.profession
+			professionInfo.skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+			CraftSim.CACHE:AddCacheEntryByVersion(CraftSimProfessionInfoCache, professionInfo.professionID, professionInfo)
+		else
+			print("ProfessionData without professionID")
+			return nil
+		end
+	end
+
+	return professionInfo
+end
+
+function CraftSim.DATAEXPORT:exportRecipeDataV2(recipeID, exportMode, overrideData)
+	--[[
+	1.) Extract basic info about the recipe	from recipeInfo (can I just take recipeInfo?)
+	2.) Get player stats (with override possibilities for gear, specdata and such?)
+	2.) Get Required Reagents / Optional Reagents / Finishing Reagents
+	3.) Process recipe results based on reagents and stats (operationInfo utilization)
+	--]]
+end
+
 function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData)
 	local recipeData = {}
 	overrideData = overrideData or {}
 
 	CraftSim.UTIL:StartProfiling("DATAEXPORT")
 
-	--local professionInfo = ProfessionsFrame.professionInfo
 	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 
 	if not professionInfo or not professionInfo.profession then
@@ -614,6 +650,8 @@ function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData
 			professionInfo.skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
 			CraftSim.CACHE:AddCacheEntryByVersion(CraftSimProfessionInfoCache, recipeData.professionID, professionInfo)
 		end
+
+		print(CraftSim.UTIL:ColorizeText("ProfessionInfo but no ID", CraftSim.CONST.COLORS.RED))
 	end
 
 	print("RecipeData Export:", false, true)
@@ -1215,73 +1253,6 @@ function CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID, ignoreOverrides)
 		return itemData
 	end
 end
-
--- function CraftSim.DATAEXPORT:GetRacialProfessionSkillBonus(professionID)
--- 	local _, playerRace = UnitRace("player")
--- 	print("Player Race: " .. tostring(playerRace))
--- 	local data = {
--- 		Gnome = {
--- 			professionIDs = {Enum.Profession.Engineering},
--- 			professionBonus = 5,
--- 		},
--- 		Draenei = {
--- 			professionIDs = {Enum.Profession.Jewelcrafting},
--- 			professionBonus = 5,
--- 		},
--- 		Worgen = {
--- 			professionIDs = {Enum.Profession.Skinning},
--- 			professionBonus = 5,
--- 		},
--- 		LightforgedDraenei = {
--- 			professionIDs = {Enum.Profession.Blacksmithing},
--- 			professionBonus = 5,
--- 		},
--- 		DarkIronDwarf = {
--- 			professionIDs = {Enum.Profession.Blacksmithing},
--- 			professionBonus = 5,
--- 		},
--- 		KulTiran = {
--- 			professionIDs = nil, -- everything
--- 			professionBonus = 2,
--- 		},
--- 		Pandaren = {
--- 			professionIDs = {Enum.Profession.Cooking},
--- 			professionBonus = 5,
--- 		},
--- 		Tauren = {
--- 			professionIDs = {Enum.Profession.Herbalism},
--- 			professionBonus = 5,
--- 		},
--- 		BloodElf = {
--- 			professionIDs = {Enum.Profession.Enchanting},
--- 			professionBonus = 5,
--- 		},
--- 		Goblin = {
--- 			professionIDs = {Enum.Profession.Alchemy},
--- 			professionBonus = 5,
--- 		},
--- 		Nightborne = {
--- 			professionIDs = {Enum.Profession.Inscription},
--- 			professionBonus = 5,
--- 		},
--- 		HighmountainTauren = {
--- 			professionIDs = {Enum.Profession.Mining},
--- 			professionBonus = 5,
--- 		}
--- 	}
-
--- 	local bonusData = data[playerRace]
--- 	if not bonusData then
--- 		return 0
--- 	end
-
--- 	if bonusData.professionIDs == nil or tContains(bonusData.professionIDs, professionID) then
--- 		return bonusData.professionBonus
--- 	else
--- 		return 0
--- 	end
-		
--- end
 
 function CraftSim.DATAEXPORT:GetExportString()
 	local recipeData = CraftSim.MAIN.currentRecipeData

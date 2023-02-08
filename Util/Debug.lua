@@ -51,7 +51,7 @@ function CraftSim_DEBUG:CompareStatData()
     end
     local recipeDataV2 = CopyTable(recipeDataV1)
     local statsUI =  CraftSim.DATAEXPORT:handlePlayerProfessionStatsV1(recipeDataV1, recipeDataV1.operationInfo)
-    local statsBuildUp =  CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeDataV1, recipeDataV1.operationInfo)
+    local statsBuildUp =  CraftSim.DATAEXPORT:handlePlayerProfessionStatsV2(recipeDataV2, recipeDataV2.operationInfo)
 
     CraftSim_DEBUG.isMute = false
     print("Stat Compare - UI / Specdata:", false, true)
@@ -125,14 +125,21 @@ function CraftSim_DEBUG:CheckSpecNode(nodeID)
     print(statsFromData, CraftSim.CONST.DEBUG_IDS.SPECDATA, true)
 end
 
-function CraftSim_DEBUG:print(debugOutput, debugID, recursive, printLabel)
+function CraftSim_DEBUG:print(debugOutput, debugID, recursive, printLabel, level)
     
     if CraftSimOptions["enableDebugID_" .. debugID] and not CraftSim_DEBUG.isMute then
         if type(debugOutput) == "table" then
-            CraftSim.UTIL:PrintTable(debugOutput, debugID, recursive)
+            CraftSim.UTIL:PrintTable(debugOutput, debugID, recursive, level)
         else
             local debugFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG)
             debugFrame.addDebug(debugOutput, debugID, printLabel)
         end
     end
+end
+
+function CraftSim_DEBUG:testExportV2(recipeID)
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+    local recipeData = CraftSim.RecipeData(recipeID)
+    print(recipeData, true)
+
 end

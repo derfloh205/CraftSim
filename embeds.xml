@@ -5,4 +5,5 @@
   <Include file="Libs\AceComm-3.0\AceComm-3.0.xml"/>
   <Include file="Libs\AceSerializer-3.0\AceSerializer-3.0.xml"/>
   <Include file="Libs\LibCompress\lib.xml"/>
+  <Include file="Libs\classic.lua"/>
 </Ui>

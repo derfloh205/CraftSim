@@ -95,6 +95,7 @@ CraftSim.CONST.DEBUG_IDS = {
     UTIL = "UTIL",
     COST_OVERVIEW = "COST_OVERVIEW",
     MEDIA = "MEDIA",
+    EXPORT_V2 = "EXPORT_V2",
 }
 
 CraftSim.CONST.ERROR = {

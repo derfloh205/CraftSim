@@ -8,7 +8,7 @@
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
-## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimTooltipData, CraftSimItemCache, CraftSimCollapsedFrames, CraftSimSpecNodeCache, CraftSimPriceOverrides, CraftSimRecipeIDs, CraftSimProfessionInfoCache
+## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimTooltipData, CraftSimItemCache, CraftSimCollapsedFrames, CraftSimSpecNodeCache, CraftSimPriceOverrides, CraftSimRecipeIDs, CraftSimProfessionInfoCache, CraftSimProfessionSkillLineIDCache
 
 embeds.xml
 
@@ -93,3 +93,9 @@ Data/SpecNodeData/Inscription.lua
 Data/SpecNodeData/Jewelcrafting.lua
 Data/SpecNodeData/Leatherworking.lua
 Data/SpecNodeData/Tailoring.lua
+
+Data/Classes/ProfessionData.lua
+Data/Classes/RecipeData.lua
+Data/Classes/ReagentData.lua
+Data/Classes/Reagent.lua
+Data/Classes/ReagentItem.lua

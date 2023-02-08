@@ -14,6 +14,7 @@ end
 CraftSimSpecNodeCache = CraftSimSpecNodeCache or {}
 CraftSimRecipeIDs = CraftSimRecipeIDs or {}
 CraftSimProfessionInfoCache = CraftSimProfessionInfoCache or {}
+CraftSimProfessionSkillLineIDCache = CraftSimProfessionSkillLineIDCache or {}
 
 -- session caches
 CraftSim.CACHE.SpecDataStatsByRecipeID = {}
@@ -35,6 +36,7 @@ function CraftSim.CACHE:ClearAll()
     CraftSimRecipeIDs = {}
     CraftSimProfessionInfoCache = {}
     CraftSim.CACHE.SpecDataStatsByRecipeID = {}
+    CraftSimProfessionSkillLineIDCache = {}
 end
 
 function CraftSim.CACHE:GetCacheEntryByVersion(cache, entryID)

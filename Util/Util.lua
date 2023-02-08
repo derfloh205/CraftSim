@@ -8,9 +8,9 @@ local resourcefulnessFactor = 0.00111
 local craftingspeedFactor = 0.002
 
 function CraftSim.UTIL:SetDebugPrint(debugID)
-    local function print(text, recursive, l) -- override
+    local function print(text, recursive, l, level)
         if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-            CraftSim_DEBUG:print(text, debugID, recursive, l)
+            CraftSim_DEBUG:print(text, debugID, recursive, l, level)
         else
             print(text)
         end
@@ -283,13 +283,22 @@ end
 
 
 -- for debug purposes
-function CraftSim.UTIL:PrintTable(t, debugID, recursive)
+function CraftSim.UTIL:PrintTable(t, debugID, recursive, level)
+    level = level or 0
+    local levelString = ""
+    for i = 1, level, 1 do
+        levelString = levelString .. "-"
+    end
+
     for k, v in pairs(t) do
-        if not recursive or type(v) ~= "table" then
-            CraftSim_DEBUG:print(tostring(k) .. ": " .. tostring(v), debugID, false)
+        if type(v) == 'function' then
+            CraftSim_DEBUG:print(levelString .. tostring(k) .. ": function", debugID, false)
+        elseif not recursive or type(v) ~= "table" then
+            CraftSim_DEBUG:print(levelString .. tostring(k) .. ": " .. tostring(v), debugID, false)
         elseif type(v) == "table" then
-            CraftSim_DEBUG:print(tostring(k) .. ": ", debugID, false)
-            CraftSim.UTIL:PrintTable(v, debugID, recursive)
+
+            CraftSim_DEBUG:print(levelString .. tostring(k) .. ": ", debugID, false)
+            CraftSim.UTIL:PrintTable(v, debugID, recursive, level + 1)
         end
 
     end
