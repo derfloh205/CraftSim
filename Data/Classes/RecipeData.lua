@@ -10,6 +10,8 @@ _, CraftSim = ...
 ---@field supportsCraftingStats? boolean,
 ---@field professionData? CraftSim.ProfessionData
 ---@field reagentData CraftSim.ReagentData
+---@field professionStats? CraftSim.ProfessionStats
+---@field professionGear CraftSim.ProfessionGear
 
 CraftSim.RecipeData = CraftSim.Object:extend()
 
@@ -46,6 +48,16 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     -- fetch possible required/optional/finishing reagents, if possible categorize by quality?
 
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
-
     self.reagentData = CraftSim.ReagentData(schematicInfo)
+
+    self.professionStats = CraftSim.ProfessionStats(recipeID)
+
+    -- TODO:
+    --self.professionGear = 
+
+    -- TODO: subtract gear stats from professionStats so that professionStats are always the base stats without gear? so that GetFinalStats fetch can add them
+    -- This makes it so that a change in professionGear also affects the stats automatically then using GetResult !!!
+
+    print("professionstats:")
+    print(self.professionStats, true)
 end

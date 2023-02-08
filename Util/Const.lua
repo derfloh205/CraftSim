@@ -9,6 +9,13 @@ CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
 ----------------
 
+CraftSim.CONST.PERCENT_MODS = {
+    INSPIRATION = 0.001,
+    MULTICRAFT = 0.0009,
+    RESOURCEFULNESS = 0.00111,
+    CRAFTINGSPEED = 0.002,
+}
+
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
 -- currently this is just an approximation
 CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30

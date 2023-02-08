@@ -140,6 +140,28 @@ end
 function CraftSim_DEBUG:testExportV2(recipeID)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
     local recipeData = CraftSim.RecipeData(recipeID)
-    print(recipeData, true)
+    --print(recipeData, true)
+
+    -- TODO: ProfessionStats Class 
+    --       -> contains initially all base stats for the recipe
+    --       -> other modifiers are only used when GetFinalProfessionStats or smth like this is called
+    -- TODO: PlayerStatMod Class
+    --       -> contains modifiers set by e.g. simulation mode or stat weight algorithm to modify the stats
+    -- TODO: PlayerBuffs Class
+    --       -> contains infos about relevant crafting buffs
+    -- TODO: UpdateProfessionStats
+    --       -> update player stats based on reagents and Toolset
+    -- TODO: SpecializationData Class
+    --       -> contains spec node data
+    -- TODO: SetReagents/SetOptionalReagents/SetFinishingReagents -> sets the quantity of the given itemIDs accordingly
+    -- TODO: Toolset Class -> the used toolcombination for the processing of the result
+    -- TODO: RecipeResult Class that contains operationInfo stuff, the resulting items
+    -- TODO: UpdateResult -> updates the recipe result based on stats and reagents
+
+
+    -- TODO: integrate into main module flow.. in parallel!
+    -- TODO: or use for scans/api first
+
+    print(recipeData.professionStats, true)
 
 end

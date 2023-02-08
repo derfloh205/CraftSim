@@ -99,3 +99,5 @@ Data/Classes/RecipeData.lua
 Data/Classes/ReagentData.lua
 Data/Classes/Reagent.lua
 Data/Classes/ReagentItem.lua
+Data/Classes/ProfessionStats.lua
+Data/Classes/ProfessionStat.lua

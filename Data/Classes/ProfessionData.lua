@@ -3,6 +3,9 @@ _, CraftSim = ...
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
 
 ---@class CraftSim.ProfessionData
+---@field professionInfo ProfessionInfo
+---@field skillLineID number
+---@field isLoaded boolean
 
 CraftSim.ProfessionData = CraftSim.Object:extend()
 
