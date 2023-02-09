@@ -53,6 +53,7 @@ function CraftSim.OptionalReagentSlot:Debug()
         "dataSlotIndex: " .. tostring(self.dataSlotIndex),
         "locked: " .. tostring(self.locked),
         "lockedReason: " .. tostring(self.lockedReason),
+        "activeReagent: " .. ((self.activeReagent and (self.activeReagent.item:GetItemLink() or self.activeReagent.item:GetItemID()) or "None")),
         "possibleReagents: ",
     }
 

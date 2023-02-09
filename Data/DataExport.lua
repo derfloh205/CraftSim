@@ -502,7 +502,6 @@ function CraftSim.DATAEXPORT:GetRequiredReagentItemsInfoByExportMode(currentSlot
 			table.insert(itemsInfo, itemInfo)
 		end
 		return itemsInfo
-	elseif exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
 	elseif exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
 		-- depends on the type of scan
 		-- check scan module for that

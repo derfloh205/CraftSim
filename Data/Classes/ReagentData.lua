@@ -5,6 +5,7 @@ _, CraftSim = ...
 ---@field requiredReagents CraftSim.Reagent[]
 ---@field optionalReagentSlots CraftSim.OptionalReagentSlot[]
 ---@field finishingReagentSlots CraftSim.OptionalReagentSlot[]
+---@field salvageReagentSlot CraftSim.SalvageReagentSlot
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
 
@@ -15,6 +16,7 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
     self.requiredReagents = {}
     self.optionalReagentSlots = {}
     self.finishingReagentSlots = {}
+    self.salvageReagentSlot = CraftSim.SalvageReagentSlot(self.recipeData)
 
     for index, reagentSlotSchematic in pairs(schematicInfo.reagentSlotSchematics) do
         local reagentType = reagentSlotSchematic.reagentType
@@ -99,7 +101,6 @@ function CraftSim.ReagentData:Debug()
     for i, slot in pairs(self.finishingReagentSlots) do
         debugLines = CraftSim.UTIL:Concat({debugLines, slot:Debug()})
     end
-
 
     return debugLines
 end

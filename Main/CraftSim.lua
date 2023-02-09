@@ -440,11 +440,19 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	print("Export Mode: " .. tostring(exportMode))
 
 	local recipeData = nil 
+	local recipeDataV2 = nil
 	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
 		recipeData = CraftSim.SIMULATION_MODE.recipeData
 		CraftSim.MAIN.currentRecipeData = CraftSim.SIMULATION_MODE.recipeData
+		
 	else
 		recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, exportMode)
+
+		recipeDataV2 = CraftSim.RecipeData(recipeInfo.recipeID, false) -- TODO: isRecraft?
+
+		-- Set Reagents based on visibleFrame		
+		recipeDataV2:SetAllReagentsBySchematicForm()
+		CraftSim_DEBUG:print(recipeDataV2.reagentData, CraftSim.CONST.DEBUG_IDS.EXPORT_V2, true, true)
 	end
 
 	if debugTest then

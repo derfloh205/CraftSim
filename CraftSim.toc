@@ -106,3 +106,4 @@ Data/Classes/ProfessionGear.lua
 Data/Classes/ResultData.lua
 Data/Classes/OptionalReagentSlot.lua
 Data/Classes/OptionalReagent.lua
+Data/Classes/SalvageReagentSlot.lua

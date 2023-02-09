@@ -12,6 +12,11 @@ function CraftSim.ProfessionGear:new()
 end
 
 function CraftSim.ProfessionGear:SetItem(itemLink)
+
+	if not itemLink then
+		return
+	end
+
     self.item = Item:CreateFromItemLink(itemLink)
 
     -- parse stats

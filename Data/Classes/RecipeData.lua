@@ -48,16 +48,16 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
 	end
     
     self.recipeID = recipeID
-    self.isRecraft = isRecraft ~= nil
+    self.isRecraft = isRecraft or false
     self.recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
-    self.learned = recipeInfo.learned
+    self.learned = recipeInfo.learned or false
 	self.numSkillUps = recipeInfo.numSkillUps
 	self.recipeIcon = recipeInfo.icon
 	self.recipeName = recipeInfo.name
-	self.supportsQualities = recipeInfo.supportsQualities
-	self.supportsCraftingStats = recipeInfo.supportsCraftingStats
-    self.isEnchantingRecipe = recipeInfo.isEnchantingRecipe
-    self.isSalvageRecipe = recipeInfo.isSalvageRecipe
+	self.supportsQualities = recipeInfo.supportsQualities or false
+	self.supportsCraftingStats = recipeInfo.supportsCraftingStats or false
+    self.isEnchantingRecipe = recipeInfo.isEnchantingRecipe or false
+    self.isSalvageRecipe = recipeInfo.isSalvageRecipe or false
     self.allocationItemGUID = nil
     self.maxQuality = recipeInfo.maxQuality
     self.isGear = recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil
@@ -121,6 +121,90 @@ function CraftSim.RecipeData:SetReagents(reagentList)
             error("CraftSim: RecipeData SetReagents Error: total set quantity > requiredQuantity -> " .. totalQuantity .. " / " .. reagent.requiredQuantity)
         end
     end
+end
+
+---@param itemID number
+function CraftSim.RecipeData:SetSalvageItem(itemID)
+    if self.isSalvageRecipe then
+        self.reagentData.salvageReagentSlot:SetItem(itemID)
+    else
+        error("CraftSim Error: Trying to set salvage item on non salvage recipe")
+    end
+end
+
+function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
+    local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
+    local schematicForm = nil
+    if ProfessionsFrame.CraftingPage.SchematicForm:IsVisible() then
+        -- No Work Order
+        schematicForm = ProfessionsFrame.CraftingPage.SchematicForm
+    elseif ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:IsVisible() then
+        schematicForm = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm
+    end
+
+    local reagentSlots = schematicForm.reagentSlots
+    local currentTransaction = schematicForm:GetTransaction()
+
+    local currentOptionalReagent = 1
+	local currentFinishingReagent = 1
+
+    for slotIndex, currentSlot in pairs(schematicInfo.reagentSlotSchematics) do
+        local reagentType = currentSlot.reagentType
+        if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
+            local slotAllocations = currentTransaction:GetAllocations(slotIndex)
+            
+            for i, reagent in pairs(currentSlot.reagents) do
+                local reagentAllocation = (slotAllocations and slotAllocations:FindAllocationByReagent(reagent)) or nil
+                local allocations = 0
+                if reagentAllocation ~= nil then
+                    allocations = reagentAllocation:GetQuantity()
+                end
+                local craftSimReagentItem = nil
+                for _, craftSimReagent in pairs(self.reagentData.requiredReagents) do
+                    craftSimReagentItem = CraftSim.UTIL:Find(craftSimReagent.items, function(cr) return cr.item:GetItemID() == reagent.itemID end)
+                    if craftSimReagentItem then
+                        break
+                    end
+                end
+                if not craftSimReagentItem then
+                    error("Error: Open Recipe Reagent not included in recipeData")
+                end
+                craftSimReagentItem.quantity = allocations
+            end
+            
+        elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
+            if reagentSlots[reagentType] ~= nil then
+                local optionalSlots = reagentSlots[reagentType][currentOptionalReagent]
+                if not optionalSlots then
+                    return
+                end
+                local button = optionalSlots.Button
+                local allocatedItemID = button:GetItemID()
+                if allocatedItemID then
+                    self:SetOptionalReagent(allocatedItemID)
+                end
+                
+                currentOptionalReagent = currentOptionalReagent + 1
+            end
+
+        elseif reagentType == CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT then
+            if reagentSlots[reagentType] ~= nil then
+                local optionalSlots = reagentSlots[reagentType][currentFinishingReagent]
+                if not optionalSlots then
+                    return
+                end
+                local button = optionalSlots.Button
+                local allocatedItemID = button:GetItemID()
+                if allocatedItemID then
+                    self:SetOptionalReagent(allocatedItemID)
+                end
+                
+                currentFinishingReagent = currentFinishingReagent + 1
+            end
+        end
+    end
+
+
 end
 
 ---@param itemID number
