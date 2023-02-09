@@ -17,9 +17,13 @@ end
 
 
 
-function CraftSim.DATAEXPORT:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID)
+function CraftSim.DATAEXPORT:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID, maxQuality)
 	local linksByQuality = {}
-	for i = 4, 8, 1 do
+	local max = 8
+	if maxQuality then
+		max = 3 + maxQuality
+	end
+	for i = 4, max, 1 do
 		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeID, craftingReagentInfoTbl, allocationItemGUID, i)
 		table.insert(linksByQuality, outputItemData.hyperlink)
 	end
@@ -613,15 +617,6 @@ function CraftSim.DATAEXPORT:GetProfessionInfoFromCache(recipeID)
 	end
 
 	return professionInfo
-end
-
-function CraftSim.DATAEXPORT:exportRecipeDataV2(recipeID, exportMode, overrideData)
-	--[[
-	1.) Extract basic info about the recipe	from recipeInfo (can I just take recipeInfo?)
-	2.) Get player stats (with override possibilities for gear, specdata and such?)
-	2.) Get Required Reagents / Optional Reagents / Finishing Reagents
-	3.) Process recipe results based on reagents and stats (operationInfo utilization)
-	--]]
 end
 
 function CraftSim.DATAEXPORT:exportRecipeData(recipeID, exportMode, overrideData)

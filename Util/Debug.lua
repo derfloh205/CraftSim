@@ -162,6 +162,37 @@ function CraftSim_DEBUG:testExportV2(recipeID)
     -- TODO: integrate into main module flow.. in parallel!
     -- TODO: or use for scans/api first
 
-    print(recipeData.professionStats, true)
+    -- test set reagents
+    
+    local reagentList = { -- draconium ore q1 q2 q3
+        {
+            itemID = 189143,
+            quantity = 0,
+        },
+        {
+            itemID = 188658,
+            quantity = 0,
+        },
+        {
+            itemID = 190311,
+            quantity = 0,
+        },
+        { -- khaz ore q3
+            itemID = 190314,
+            quantity = 0,
+        },
+    }
 
+    recipeData:SetReagents(reagentList)
+    print("Reagent Data:")
+    print(recipeData.reagentData)
+    recipeData:SetOptionalReagent(191513) -- stable fluid draconium Q3 = 25% more inspiration skill
+    recipeData:UpdateProfessionStats()
+    recipeData.resultData:Update()
+
+    print("ResultData: ")
+    print(recipeData.resultData)
+
+    print("Skill: " .. recipeData.professionStats.skill.value)
+    print("Inspiration Skill: " .. recipeData.professionStats.inspiration.extraValue)
 end

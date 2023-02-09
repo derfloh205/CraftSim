@@ -454,9 +454,9 @@ function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData, e
     local orderID = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         orderID = ProfessionsFrame.OrdersPage.OrderView.order.orderID
-        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeData.recipeID, {}, orderID)
+        operationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeData.recipeID, {}, orderID)
     else
-        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, {}, recipeData.recraftAllocationGUID)
+        operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, {}, recipeData.recraftAllocationGUID)
     end
 
     -- create CraftingReagentInfoTbl with max q3 reagents
@@ -485,7 +485,7 @@ function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData, e
         Q3ReagentsOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, recipeData.recraftAllocationGUID)
     end
     
-    local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
+    local baseSkill = operationInfo.baseSkill + operationInfo.bonusSkill
     local skillQ3Reagents = Q3ReagentsOperationInfo.baseSkill + Q3ReagentsOperationInfo.bonusSkill
 
     local reagentQualityIncrease = skillQ3Reagents - baseSkill

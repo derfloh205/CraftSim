@@ -24,3 +24,21 @@ function CraftSim.Reagent:new(reagentSlotSchematic)
         table.insert(self.items, reagentItem)
     end
 end
+
+---@return CraftingReagentInfo[]
+function CraftSim.Reagent:GetCraftingReagentInfos()
+    local craftingReagentInfos = {}
+
+    if not self.hasQuality then
+        return {} -- if we would add such reagents to an operationInfo call, it will return nil..
+    end
+    for _, reagentItem in pairs(self.items) do
+        table.insert(craftingReagentInfos, {
+            itemID = reagentItem.item:GetItemID(),
+            quantity = reagentItem.quantity,
+            dataSlotIndex = self.dataSlotIndex
+        })
+    end
+
+    return craftingReagentInfos
+end

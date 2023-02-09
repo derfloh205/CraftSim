@@ -101,3 +101,8 @@ Data/Classes/Reagent.lua
 Data/Classes/ReagentItem.lua
 Data/Classes/ProfessionStats.lua
 Data/Classes/ProfessionStat.lua
+Data/Classes/ProfessionGearSet.lua
+Data/Classes/ProfessionGear.lua
+Data/Classes/ResultData.lua
+Data/Classes/OptionalReagentSlot.lua
+Data/Classes/OptionalReagent.lua

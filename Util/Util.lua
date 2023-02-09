@@ -290,13 +290,19 @@ function CraftSim.UTIL:PrintTable(t, debugID, recursive, level)
         levelString = levelString .. "-"
     end
 
+    if t.Debug then
+        for _, line in pairs(t:Debug()) do
+            CraftSim_DEBUG:print(levelString .. tostring(line), debugID, false)
+        end
+        return
+    end
+
     for k, v in pairs(t) do
         if type(v) == 'function' then
             CraftSim_DEBUG:print(levelString .. tostring(k) .. ": function", debugID, false)
         elseif not recursive or type(v) ~= "table" then
             CraftSim_DEBUG:print(levelString .. tostring(k) .. ": " .. tostring(v), debugID, false)
         elseif type(v) == "table" then
-
             CraftSim_DEBUG:print(levelString .. tostring(k) .. ": ", debugID, false)
             CraftSim.UTIL:PrintTable(v, debugID, recursive, level + 1)
         end

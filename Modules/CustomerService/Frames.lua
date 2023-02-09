@@ -344,7 +344,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
 
     -- load reagents and optionalReagents, then continue
     local itemsToLoad = {}
-    CraftSim.UTIL:Concat({
+    CraftSim.UTIL:Concat({ -- wtf ? TODO: remove concat?
         CraftSim.UTIL:Map(reagents, function (itemInfo)
             local item = Item:CreateFromItemID(itemInfo.itemID)
             table.insert(itemsToLoad, item)
