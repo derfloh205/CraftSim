@@ -44,6 +44,11 @@ function CraftSim.SpecializationData:new(recipeData)
             nodeData.idMapping:Merge(childNodeData.idMapping)
         end
 
+        nodeData:UpdateAffectance()
+        nodeData:UpdateProfessionStats()
+
+        self.professionStats:add(nodeData.professionStats)
+
         return nodeData
     end
 
@@ -63,6 +68,13 @@ function CraftSim.SpecializationData:Debug()
 
         debugLines = CraftSim.UTIL:Concat({debugLines, lines})
     end
+
+    table.insert(debugLines, "Stats from Specializations:")
+
+    local lines = self.professionStats:Debug()
+    lines = CraftSim.UTIL:Map(lines, function(line) return "-" .. line end)
+
+    debugLines = CraftSim.UTIL:Concat({debugLines, lines})
 
     return debugLines
 end

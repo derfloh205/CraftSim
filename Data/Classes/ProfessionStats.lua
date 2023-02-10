@@ -7,6 +7,8 @@ _, CraftSim = ...
 ---@field multicraft CraftSim.ProfessionStat
 ---@field resourcefulness CraftSim.ProfessionStat
 ---@field craftingspeed CraftSim.ProfessionStat
+---@field phialExperimentationFactor CraftSim.ProfessionStat
+---@field potionExperimentationFactor CraftSim.ProfessionStat
 
 CraftSim.ProfessionStats = CraftSim.Object:extend()
 
@@ -19,6 +21,10 @@ function CraftSim.ProfessionStats:new()
     self.multicraft = CraftSim.ProfessionStat("multicraft", 0, CraftSim.CONST.PERCENT_MODS.MULTICRAFT)
     self.resourcefulness = CraftSim.ProfessionStat("resourcefulness", 0, CraftSim.CONST.PERCENT_MODS.RESOURCEFULNESS)
     self.craftingspeed = CraftSim.ProfessionStat("craftingspeed", 0, CraftSim.CONST.PERCENT_MODS.CRAFTINGSPEED)
+
+	-- alchemy specific
+    self.phialExperimentationFactor = CraftSim.ProfessionStat("phialExperimentationFactor")
+    self.potionExperimentationFactor = CraftSim.ProfessionStat("potionExperimentationFactor")
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -56,7 +62,7 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 end
 
 function CraftSim.ProfessionStats:GetStatList()
-	return {self.recipeDifficulty, self.inspiration, self.multicraft, self.resourcefulness, self.craftingspeed}
+	return {self.recipeDifficulty, self.skill, self.inspiration, self.multicraft, self.resourcefulness, self.craftingspeed, self.phialExperimentationFactor, self.potionExperimentationFactor}
 end
 
 ---@params professionStatsA CraftSim.ProfessionStats
@@ -96,12 +102,24 @@ function CraftSim.ProfessionStats:Clear()
 end
 
 function CraftSim.ProfessionStats:Debug()
-	return {
+	local debugLines = {
 		"RecipeDifficulty: " .. self.recipeDifficulty.value,
 		"Skill: " .. self.skill.value,
 		"Inspiration: " .. self.inspiration.value .. " (".. self.inspiration:GetPercent()*100 .."%) " .. self.inspiration.percentMod,
+		"Inspiration Bonus Skill: " .. self.inspiration:GetExtraValueByFactor() .. " (".. self.inspiration.extraValue .." * ".. self.inspiration:GetExtraFactor(true) ..")",
 		"Multicraft: " .. self.multicraft.value .. " (".. self.multicraft:GetPercent()*100 .."%)",
+		"Multicraft Factor: " .. self.multicraft.extraFactor,
 		"Resourcefulness: " .. self.resourcefulness.value .. " (".. self.resourcefulness:GetPercent()*100 .."%)",
+		"Resourcefulness Factor: " .. self.resourcefulness.extraFactor,
 		"CraftingSpeed: " .. self.craftingspeed.value .. " (".. self.craftingspeed:GetPercent()*100 .."%)",
 	}
+
+	if self.phialExperimentationFactor.extraFactor > 0 then
+		table.insert(debugLines, "Phial Experimentation: " .. tostring(self.phialExperimentationFactor.extraFactor))
+	end
+	if self.potionExperimentationFactor.extraFactor > 0 then
+		table.insert(debugLines, "Potion Experimentation: " .. tostring(self.potionExperimentationFactor.extraFactor))
+	end
+
+	return debugLines
 end

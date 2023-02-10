@@ -50,3 +50,8 @@ function CraftSim.ProfessionStat:Clear()
     self.extraFactor = 0
     self.extraValue = 0
 end
+
+-- Used by Inspiration only
+function CraftSim.ProfessionStat:GetExtraValueByFactor()
+    return self.extraValue*(1+self.extraFactor)
+end

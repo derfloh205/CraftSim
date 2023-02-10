@@ -21,14 +21,11 @@ function CraftSim.ResultData:new(recipeData)
     self.canUpgradeQuality = false
     self.expectedQuality = 1
 
-    self:Update()
+    self:UpdatePossibleResultItems()
 end
 
---TODO
--- update result data by professionstats, reagents, optionalReagents and professionStatMod
--- function CraftSim.ResultData:SimulatedUpdate()
-
-function CraftSim.ResultData:Update()
+--- Updates based on reagentData
+function CraftSim.ResultData:UpdatePossibleResultItems()
     local recipeData = self.recipeData
 
     -- TODO: only need to update possible list for gear as everything else is static
@@ -60,6 +57,15 @@ function CraftSim.ResultData:Update()
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
     end
+end
+
+--TODO
+-- update result data by professionstats, reagents, optionalReagents and professionStatMod
+-- function CraftSim.ResultData:SimulatedUpdate()
+
+--- Updates based on professionStats and reagentData
+function CraftSim.ResultData:Update()
+    local recipeData = self.recipeData   
 
     -- based on stats predict the resulting items if there are any
 
@@ -68,6 +74,7 @@ function CraftSim.ResultData:Update()
         return
     end
 
+    local craftingReagentInfoTbl = recipeData.reagentData:GetCraftingReagentInfoTbl()
     local professionStats = self.recipeData.professionStats
     local updatedOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, self.recipeData.allocationItemGUID)
 

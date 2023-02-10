@@ -1,6 +1,7 @@
 _, CraftSim = ...
 
 ---@class CraftSim.IDMapping
+---@field recipeData CraftSim.RecipeData
 ---@field categories CraftSim.IDCategory[]
 ---@field exceptionRecipeIDs number[]
 
@@ -10,8 +11,8 @@ CraftSim.IDMapping = CraftSim.Object:extend()
 
 ---@param idMappingData table
 ---@param exceptionRecipeIDs number[]
-function CraftSim.IDMapping:new(idMappingData, exceptionRecipeIDs)
-
+function CraftSim.IDMapping:new(recipeData, idMappingData, exceptionRecipeIDs)
+    self.recipeData = recipeData
     self.categories = {}
     self.exceptionRecipeIDs = exceptionRecipeIDs or {}
 
@@ -53,4 +54,31 @@ function CraftSim.IDMapping:Debug()
         table.insert(debugLines, "-E: " .. tostring(recipeID))
     end
     return debugLines
+end
+
+function CraftSim.IDMapping:AffectsRecipe()
+    local recipeData = self.recipeData
+
+    -- an exception always matches
+    if tContains(self.exceptionRecipeIDs, recipeData.recipeID) then
+        return true
+    end
+    -- if it matches all categories it matches all items
+    if CraftSim.UTIL:Find(self.categories, function(c) return c.categoryID == CraftSim.CONST.RECIPE_CATEGORIES.ALL end) then
+        return true
+    end
+    
+    -- for all categories check if its subtypes contain the recipesubtype or all
+    -- if the specific categoryID to subtypeIDs combination matches it matches
+    for _, idCategory in pairs(self.categories) do
+        if recipeData.categoryID == idCategory.categoryID then
+            if tContains(idCategory.subtypeIDs, CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL) then
+                return true
+            elseif tContains(idCategory.subtypeIDs, recipeData.subtypeID) then
+                return true
+            end
+        end
+    end
+
+    return false
 end

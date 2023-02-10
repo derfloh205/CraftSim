@@ -2,6 +2,8 @@ _, CraftSim = ...
 
 ---@class CraftSim.RecipeData
 ---@field recipeID number 
+---@field categoryID number
+---@field subtypeID number
 ---@field recipeType number
 ---@field learned boolean
 ---@field numSkillUps? number
@@ -51,6 +53,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
 	end
     
     self.recipeID = recipeID
+    self.categoryID = recipeInfo.categoryID
     self.isRecraft = isRecraft or false
     self.recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
     self.learned = recipeInfo.learned or false
@@ -88,19 +91,27 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     self.professionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
     self.professionGearSet:LoadCurrentEquippedSet()
 
-    self.specializationData = CraftSim.SpecializationData(self)
-
+    
     local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
-
+    
     self.baseProfessionStats = CraftSim.ProfessionStats()
     self.professionStats = CraftSim.ProfessionStats()
-
+    
     self.baseProfessionStats:SetStatsByOperationInfo(self, baseOperationInfo)
     self.professionStats:SetStatsByOperationInfo(self, baseOperationInfo)
-
+    
     self.baseProfessionStats:subtract(self.professionGearSet.professionStats)
-
+    
     self.resultData = CraftSim.ResultData(self)
+
+    if #self.resultData.itemsByQuality > 0 then
+        local subclassID = select(7, GetItemInfoInstant(self.resultData.itemsByQuality[1]:GetItemID()))
+        self.subtypeID = subclassID
+    end
+
+    self.specializationData = CraftSim.SpecializationData(self)
+
+    self.resultData:Update()
 
     self.priceData = CraftSim.PriceData(self)
 end
