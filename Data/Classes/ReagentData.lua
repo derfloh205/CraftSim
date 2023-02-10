@@ -102,5 +102,8 @@ function CraftSim.ReagentData:Debug()
         debugLines = CraftSim.UTIL:Concat({debugLines, slot:Debug()})
     end
 
+    table.insert(debugLines, "Salvage Reagent Slot: " .. tostring(#self.salvageReagentSlot.possibleItems))
+    debugLines = CraftSim.UTIL:Concat({debugLines, self.salvageReagentSlot:Debug()})
+
     return debugLines
 end

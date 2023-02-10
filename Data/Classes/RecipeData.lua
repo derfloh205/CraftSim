@@ -70,10 +70,14 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     -- fetch possible required/optional/finishing reagents, if possible categorize by quality?
 
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
+    if not schematicInfo then
+        print("No RecipeData created: SchematicInfo not found")
+        return
+    end
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
 
     self.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
-    self.isSoulbound = CraftSim.UTIL:isItemSoulbound(schematicInfo.outputItemID)
+    self.isSoulbound = (schematicInfo.outputItemID and CraftSim.UTIL:isItemSoulbound(schematicInfo.outputItemID)) or false
 
     print("Set fresh reagentdata")
     print(self.reagentData)
@@ -134,16 +138,24 @@ end
 
 function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
-    local schematicForm = nil
-    if ProfessionsFrame.CraftingPage.SchematicForm:IsVisible() then
-        -- No Work Order
-        schematicForm = ProfessionsFrame.CraftingPage.SchematicForm
-    elseif ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:IsVisible() then
-        schematicForm = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm
-    end
-
+    local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+    
     local reagentSlots = schematicForm.reagentSlots
     local currentTransaction = schematicForm:GetTransaction()
+
+    if self.isRecraft then
+        self.allocationItemGUID = currentTransaction:GetRecraftAllocation()
+    end
+
+    if self.isSalvageRecipe then
+        local salvageAllocation = currentTransaction:GetSalvageAllocation()
+		if salvageAllocation and schematicForm.salvageSlot then
+            self.reagentData.salvageReagentSlot:SetItem(salvageAllocation:GetItemID())
+            self.reagentData.salvageReagentSlot.requiredQuantity = schematicForm.salvageSlot.quantityRequired
+        elseif not schematicForm.salvageSlot then
+            error("CraftSim RecipeData Error: Salvage Recipe without salvageSlot")
+        end
+    end
 
     local currentOptionalReagent = 1
 	local currentFinishingReagent = 1

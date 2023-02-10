@@ -710,3 +710,11 @@ function CraftSim.UTIL:GetFormatter()
     return formatter
 end
 
+function CraftSim.UTIL:GetSchematicFormByVisibility()
+    if ProfessionsFrame.CraftingPage.SchematicForm:IsVisible() then
+        return ProfessionsFrame.CraftingPage.SchematicForm
+    elseif ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:IsVisible() then
+        return ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm
+    end
+end
+

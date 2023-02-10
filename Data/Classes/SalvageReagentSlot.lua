@@ -3,6 +3,7 @@ _, CraftSim = ...
 ---@class CraftSim.SalvageReagentSlot
 ---@field possibleItems ItemMixin[]
 ---@field activeItem? ItemMixin
+---@field requiredQuantity number
 
 CraftSim.SalvageReagentSlot = CraftSim.Object:extend()
 
@@ -11,6 +12,7 @@ function CraftSim.SalvageReagentSlot:new(recipeData)
     local itemIDs = C_TradeSkillUI.GetSalvagableItemIDs(recipeData.recipeID)
     if itemIDs then
         self.possibleItems = CraftSim.UTIL:Map(itemIDs, function(itemID) return Item:CreateFromItemID(itemID) end)
+        self.requiredQuantity = 0
     end
 end
 
@@ -22,4 +24,17 @@ function CraftSim.SalvageReagentSlot:SetItem(itemID)
     end
 
     self.activeItem = item
+end
+
+function CraftSim.SalvageReagentSlot:Debug()
+    local debugLines = {
+        'activeItem: ' .. (self.activeItem and (self.activeItem:GetItemLink() or self.activeItem:GetItemID()) or "None"),
+        'Possible Salvage Items: ',
+    }
+
+    for _, item in pairs(self.possibleItems) do
+        table.insert(debugLines, "-" .. (item:GetItemLink() or item:GetItemID()))
+    end
+
+    return debugLines
 end

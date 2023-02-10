@@ -171,12 +171,6 @@ function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
 		end)
 	end
 
-	-- local success, errorMsg = pcall(CraftSim.MAIN.TriggerModulesByRecipeType, self, isInit)
-
-	-- if not success then
-	-- 	CraftSim.FRAME:ShowError(tostring(errorMsg), "CraftSim Error")
-	-- 	print(CraftSim.UTIL:ColorizeText(tostring(errorMsg), CraftSim.CONST.COLORS.RED), CraftSim.CONST.DEBUG_IDS.ERROR)
-	-- end
 	CraftSim.UTIL:StartProfiling("MODULES UPDATE")
 	CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.UTIL:StopProfiling("MODULES UPDATE")
@@ -446,13 +440,31 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		CraftSim.MAIN.currentRecipeData = CraftSim.SIMULATION_MODE.recipeData
 		
 	else
-		recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, exportMode)
+		if CraftSim.CONST.FEATURE_TOGGLES.OOP_REFACTOR then
+			local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
 
-		recipeDataV2 = CraftSim.RecipeData(recipeInfo.recipeID, false) -- TODO: isRecraft?
+			if not schematicForm then
+				print("CraftSim MAIN: No SchematicForm Visible")
+				return
+			end
+			-- set recraft based on visibility
+			local currentTransaction = schematicForm:GetTransaction()
+			if not currentTransaction then
+				print("CraftSim MAIN: SchematicForm without transaction!")
+				return
+			end
+			local isRecraft = currentTransaction:GetRecraftAllocation() ~= nil 
 
-		-- Set Reagents based on visibleFrame		
-		recipeDataV2:SetAllReagentsBySchematicForm()
-		CraftSim_DEBUG:print(recipeDataV2.reagentData, CraftSim.CONST.DEBUG_IDS.EXPORT_V2, true, true)
+			recipeData = CraftSim.RecipeData(recipeInfo.recipeID, isRecraft) -- TODO: isRecraft?
+
+			if recipeData then
+				-- Set Reagents based on visibleFrame		
+				recipeData:SetAllReagentsBySchematicForm()
+				CraftSim_DEBUG:print(recipeData.reagentData, CraftSim.CONST.DEBUG_IDS.EXPORT_V2, true, true)
+			end
+		else
+			recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, exportMode)
+		end
 	end
 
 	if debugTest then

@@ -28,11 +28,8 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
     end
 
     self.professionStats.inspiration.value = extractedStats.ITEM_MOD_INSPIRATION_SHORT or 0
-
     self.professionStats.multicraft.value = extractedStats.ITEM_MOD_MULTICRAFT_SHORT or 0
-
     self.professionStats.resourcefulness.value = extractedStats.ITEM_MOD_RESOURCEFULNESS_SHORT or 0
-
     self.professionStats.craftingspeed.value = extractedStats.ITEM_MOD_CRAFTING_SPEED_SHORT or 0
 
 	local itemID = self.item:GetItemID()

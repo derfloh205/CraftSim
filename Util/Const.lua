@@ -9,6 +9,10 @@ CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
 ----------------
 
+CraftSim.CONST.FEATURE_TOGGLES = {
+    OOP_REFACTOR = true
+}
+
 CraftSim.CONST.PERCENT_MODS = {
     INSPIRATION = 0.001,
     MULTICRAFT = 0.0009,
