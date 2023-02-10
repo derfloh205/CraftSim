@@ -460,6 +460,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 				recipeData:SetAllReagentsBySchematicForm()
 				recipeData:Update()
 
+				print(recipeData.specializationData)
+
 				CraftSim_DEBUG:print(recipeData.reagentData, CraftSim.CONST.DEBUG_IDS.EXPORT_V2, true, true)
 				CraftSim.MAIN.currentRecipeData = recipeData
 			end

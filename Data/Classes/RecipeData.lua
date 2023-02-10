@@ -88,6 +88,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     self.professionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
     self.professionGearSet:LoadCurrentEquippedSet()
 
+    self.specializationData = CraftSim.SpecializationData(self)
+
     local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
 
     self.baseProfessionStats = CraftSim.ProfessionStats()

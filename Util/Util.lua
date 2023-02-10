@@ -313,7 +313,9 @@ end
 function CraftSim.UTIL:Count(t, func)
     local count = 0
     for _, v in pairs(t) do
-        if func(v) then
+        if func and func(v) then
+            count = count + 1
+        elseif not func then
             count = count + 1
         end
     end
@@ -505,6 +507,18 @@ function CraftSim.UTIL:Map(t, mapFunc, options)
         end
         return mapped
     end
+end
+
+function CraftSim.UTIL:ToSet(t)
+    local set = {}
+
+    for k, v in pairs(t) do
+        if not tContains(set, v) then
+            table.insert(set, v)
+        end
+    end
+
+    return set
 end
 
 function CraftSim.UTIL:Find(t, findFunc)
