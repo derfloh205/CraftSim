@@ -104,16 +104,6 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplay(priceData, sta
     end
 end
 
-function CraftSim.AVERAGEPROFIT.FRAMES:UpdateExplanation(recipeData, calculationData, exportMode)
-    local profitDetailsFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        profitDetailsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PROFIT_DETAILS_WORK_ORDER)
-    else
-        profitDetailsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PROFIT_DETAILS)
-    end
-    
-end
-
 function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
     local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimProfitDetailsFrame", 

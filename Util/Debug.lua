@@ -195,4 +195,8 @@ function CraftSim_DEBUG:testExportV2(recipeID)
 
     print("Skill: " .. recipeData.professionStats.skill.value)
     print("Inspiration Skill: " .. recipeData.professionStats.inspiration.extraValue)
+
+    recipeData.priceData:Update()
+
+    print(recipeData.priceData)
 end

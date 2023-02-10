@@ -16,6 +16,7 @@ _, CraftSim = ...
 ---@field isGear boolean
 ---@field isSoulbound boolean
 ---@field isEnchantingRecipe boolean
+---@field isSalvageRecipe boolean
 ---@field baseItemAmount number
 ---@field maxQuality number
 ---@field allocationItemGUID? string
@@ -24,6 +25,7 @@ _, CraftSim = ...
 ---@field professionGearSet CraftSim.ProfessionGearSet
 ---@field professionStats CraftSim.ProfessionStats The ProfessionStats of that recipe considering gear, reagents, buffs.. etc
 ---@field baseProfessionStats CraftSim.ProfessionStats The ProfessionStats of that recipe without gear or reagents
+---@field priceData CraftSim.PriceData
 ---@field resultData CraftSim.ResultData
 
 CraftSim.RecipeData = CraftSim.Object:extend()
@@ -97,11 +99,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
 
     self.resultData = CraftSim.ResultData(self)
 
-    -- print("baseProfessionStats:")
-    -- print(self.baseProfessionStats, true, false, 1)
-
-    -- print("professionStats:")
-    -- print(self.professionStats, true, false, 1)
+    self.priceData = CraftSim.PriceData(self)
 end
 
 ---@class CraftSim.ReagentListItem
@@ -236,4 +234,11 @@ function CraftSim.RecipeData:UpdateProfessionStats()
 
     -- but what would that mean for simulationmode....?
     self.professionStats:SetStatsByOperationInfo(self, updatedOperationInfo)
+end
+
+--- Updates professionStats based on reagentData and professionGearSet -> Then updates resultData based on professionStats -> Then updates priceData based on resultData
+function CraftSim.RecipeData:Update()
+    self:UpdateProfessionStats()
+    self.resultData:Update()
+    self.priceData:Update()
 end

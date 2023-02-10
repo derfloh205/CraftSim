@@ -10,7 +10,7 @@ CraftSim.CONST.infoBoxSizeY = 400
 ----------------
 
 CraftSim.CONST.FEATURE_TOGGLES = {
-    OOP_REFACTOR = true
+    OOP = "OOP",
 }
 
 CraftSim.CONST.PERCENT_MODS = {
@@ -106,7 +106,9 @@ CraftSim.CONST.DEBUG_IDS = {
     UTIL = "UTIL",
     COST_OVERVIEW = "COST_OVERVIEW",
     MEDIA = "MEDIA",
+    -- OOP_REFACTOR
     EXPORT_V2 = "EXPORT_V2",
+    AVERAGE_PROFIT_OOP = "AVERAGE_PROFIT_OOP",
 }
 
 CraftSim.CONST.ERROR = {

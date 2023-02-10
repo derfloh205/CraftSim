@@ -714,6 +714,20 @@ function CraftSim.FRAME:InitDebugFrame()
         lastHook = controlPanel.content.debugIDSFrame["checkboxID_" .. debugID]
         end
     end
+    local featureToggleTitle = CraftSim.FRAME:CreateText("Feature Toggles:", controlPanel.content.debugIDSFrame, lastHook, "TOPLEFT", "BOTTOMLEFT", 0, -10)
+
+    local lastHook = featureToggleTitle
+
+    for _, featureToggleID in pairs(CraftSim.CONST.FEATURE_TOGGLES) do
+        controlPanel.content.debugIDSFrame["checkboxID_" .. featureToggleID] = CraftSim.FRAME:CreateCheckbox(
+        " " .. featureToggleID, "Enable "..featureToggleID.." Output", "enablefeatureToggleID_" .. featureToggleID, controlPanel.content.debugIDSFrame, lastHook, "TOPLEFT", "BOTTOMLEFT", 0, checkBoxOffsetY)
+        lastHook = controlPanel.content.debugIDSFrame["checkboxID_" .. featureToggleID]
+
+        controlPanel.content.debugIDSFrame["checkboxID_" .. featureToggleID]:HookScript("OnClick", function ()
+            CraftSim.MAIN:TriggerModulesErrorSafe()
+        end)
+    end
+
 
     CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
 end

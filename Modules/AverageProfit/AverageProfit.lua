@@ -63,8 +63,7 @@ end
 function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData, exportMode)
 
     local calculationResult = {} 
-    local calculationData = {}
-    calculationResult.meanProfit, calculationData = CraftSim.CALC:getMeanProfitOLD(recipeData, priceData)
+    calculationResult.meanProfit = CraftSim.CALC:getMeanProfitOLD(recipeData, priceData)
     local meanProfitV2 = CraftSim.CALC:getMeanProfit(CraftSim.MAIN.currentRecipeData, priceData)
    -- print("MeanProfitV1: " .. CraftSim.UTIL:FormatMoney(calculationResult.meanProfit, true))
     print("MeanProfitV2: " .. CraftSim.UTIL:FormatMoney(meanProfitV2, true))    
@@ -72,8 +71,6 @@ function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData, expo
     calculationResult.meanProfit = meanProfitV2 or calculationResult.meanProfit
 
 
-    calculationData.meanProfit = calculationResult.meanProfit
-    CraftSim.AVERAGEPROFIT.FRAMES:UpdateExplanation(recipeData, calculationData, exportMode)
 
     local inspirationResults = CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
     local multicraftResults = CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)
@@ -106,4 +103,40 @@ function CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skill, bre
     end
 
     return expectedQuality
+end
+
+-- OOP Refactor
+
+---@param recipeData CraftSim.RecipeData
+---@param skill number
+function CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkillOOP(recipeData, skill)
+    local expectedQuality = 1
+    local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeData.professionStats.recipeDifficulty.value, CraftSimOptions.breakPointOffset)
+
+    for _, threshold in pairs(thresholds) do
+        if skill >= threshold then
+            expectedQuality = expectedQuality + 1
+        end
+    end
+
+    return expectedQuality
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.AVERAGEPROFIT:CalculateStatWeightsOOP(recipeData)
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT_OOP)
+    local calculationResult = {} 
+    calculationResult.meanProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)
+
+    print("MeanProfitOOP: " .. CraftSim.UTIL:FormatMoney(calculationResult.meanProfit, true))    
+
+
+    -- local inspirationResults = CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
+    -- local multicraftResults = CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)
+    -- local resourcefulnessResults = CraftSim.AVERAGEPROFIT:getResourcefulnessWeight(recipeData, priceData, calculationResult.meanProfit)
+    -- calculationResult.inspiration = inspirationResults and inspirationResults.statWeight or 0
+    -- calculationResult.multicraft = multicraftResults and multicraftResults.statWeight or 0
+    -- calculationResult.resourcefulness = resourcefulnessResults and resourcefulnessResults.statWeight or 0
+
+    return calculationResult
 end

@@ -19,9 +19,22 @@ function CraftSim.ProfessionStat:new(name, value, percentMod)
     self.extraValue = 0
 end
 
-function CraftSim.ProfessionStat:GetPercent()
+---@param multiplicative boolean e.g. False: 0.5 or True: 1.5
+function CraftSim.ProfessionStat:GetExtraFactor(multiplicative)
+    if not multiplicative then
+        return self.extraFactor
+    else
+        return self.extraFactor + 1
+    end
+end
+
+function CraftSim.ProfessionStat:GetPercent(decimal)
     if self.percentMod then
-        return self.value * self.percentMod
+        if not decimal then
+            return self.value * self.percentMod
+        else
+            return (self.value * self.percentMod) / 100
+        end
     else
         error("CraftSim ProfessionStat: No Percent Mod set: " .. tostring(self.name))
     end

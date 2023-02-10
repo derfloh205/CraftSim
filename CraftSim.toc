@@ -96,6 +96,7 @@ Data/SpecNodeData/Tailoring.lua
 
 Data/Classes/ProfessionData.lua
 Data/Classes/RecipeData.lua
+Data/Classes/PriceData.lua
 Data/Classes/ReagentData.lua
 Data/Classes/Reagent.lua
 Data/Classes/ReagentItem.lua
