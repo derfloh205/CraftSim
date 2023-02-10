@@ -483,10 +483,9 @@ function CraftSim.UTIL:Map(t, mapFunc, options)
                 end
             else
                 local mappedValue = mapFunc(v, k)
-                if not mappedValue then
-                    error("UTIL.Map: Did you forget to return in mapFunc?")
+                if mappedValue then
+                    table.insert(mapped, mappedValue)
                 end
-                table.insert(mapped, mappedValue)
             end
         end
         return mapped

@@ -48,12 +48,16 @@ function CraftSim.ResultData:Update()
         for _, itemID in pairs(itemIDs) do
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
-    else -- for no quality it will be one item, for gear it will be the correct link, for all other it will also be the correct items, for no items it will have nil in lists
-        
+    elseif recipeData.isGear then
         local itemLinks = CraftSim.DATAEXPORT:GetDifferentQualitiesByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, recipeData.allocationItemGUID, recipeData.maxQuality)
     
         for _, itemLink in pairs(itemLinks) do
             table.insert(self.itemsByQuality, Item:CreateFromItemLink(itemLink))
+        end
+    else 
+        local itemIDs = CraftSim.DATAEXPORT:GetDifferentQualityIDsByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, recipeData.allocationItemGUID)
+        for _, itemID in pairs(itemIDs) do
+            table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
     end
 

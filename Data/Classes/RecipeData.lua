@@ -26,6 +26,7 @@ _, CraftSim = ...
 ---@field professionStats CraftSim.ProfessionStats The ProfessionStats of that recipe considering gear, reagents, buffs.. etc
 ---@field baseProfessionStats CraftSim.ProfessionStats The ProfessionStats of that recipe without gear or reagents
 ---@field priceData CraftSim.PriceData
+---@field specializationData CraftSim.SpecializationData
 ---@field resultData CraftSim.ResultData
 
 CraftSim.RecipeData = CraftSim.Object:extend()

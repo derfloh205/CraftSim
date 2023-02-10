@@ -128,6 +128,8 @@ function CraftSim.AVERAGEPROFIT:CalculateStatWeightsOOP(recipeData)
     local calculationResult = {} 
     calculationResult.meanProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)
 
+    print(recipeData.priceData)
+
     print("MeanProfitOOP: " .. CraftSim.UTIL:FormatMoney(calculationResult.meanProfit, true))    
 
 

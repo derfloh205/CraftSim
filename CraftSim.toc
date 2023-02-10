@@ -108,3 +108,8 @@ Data/Classes/ResultData.lua
 Data/Classes/OptionalReagentSlot.lua
 Data/Classes/OptionalReagent.lua
 Data/Classes/SalvageReagentSlot.lua
+Data/Classes/SpecializationData.lua
+Data/Classes/NodeData.lua
+Data/Classes/NodeRule.lua
+Data/Classes/IDMapping.lua
+Data/Classes/IDCategory.lua
