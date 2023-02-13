@@ -2,13 +2,7 @@ AddonName, CraftSim = ...
 
 CraftSim.PRICE_OVERRIDE.FRAMES = {}
 
-local function print(text, recursive, l) -- override
-    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE, recursive, l)
-    else
-        print(text)
-    end
-end
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE)
 
 function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
     local sizeX = 800
@@ -396,6 +390,83 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateFrames(recipeData, exportMode)
             })
         end
     end
+
+    updateOverrideFramesByItemList(1, requiredReagents)
+    updateOverrideFramesByItemList(2, optionalReagents)
+    updateOverrideFramesByItemList(3, finishingReagents)
+    updateOverrideFramesByItemList(4, craftedItems)
+
+
+end
+
+-- OOP Refactor
+
+---@param recipeData CraftSim.RecipeData
+---@param exportMode number
+function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayOOP(recipeData, exportMode)
+    local priceOverrideFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
+    else
+        priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+    end
+
+    local function updateOverrideFramesByItemList(tabNr, itemList)
+        local overrideFrames = priceOverrideFrame.content.tabs[tabNr].content.overrideFrames
+
+        for index, overrideFrame in pairs(overrideFrames) do
+            local overrideItemData = itemList[index]
+    
+            if overrideItemData then
+                if overrideItemData.isGear then
+                    --print("set item #" .. tostring(index) .. " -> " .. tostring(overrideItemData.itemLink))
+                    overrideFrame.SetItem(overrideItemData.itemLink, recipeData.recipeID, overrideItemData.qualityID, true)
+                else
+                    overrideFrame.SetItem(overrideItemData.itemID, recipeData.recipeID, overrideItemData.qualityID)
+                end
+            else
+                overrideFrame.SetItem(nil)
+            end
+        end
+    end
+    
+    local requiredReagents = {}
+
+    table.foreach(recipeData.reagentData.requiredReagents, function (_, reagent)
+        table.foreach(reagent.items, function (_, reagentItem)
+            table.insert(requiredReagents, {
+                itemID = reagentItem.item:GetItemID(),
+                qualityID = reagentItem.qualityID,
+            })
+        end)
+    end)
+
+    local optionalReagents = {}
+    local finishingReagents = {}
+    table.foreach(recipeData.reagentData.optionalReagentSlots, function(_, slot) optionalReagents = CraftSim.UTIL:Concat({optionalReagents, slot.possibleReagents}) end)
+    table.foreach(recipeData.reagentData.finishingReagentSlots, function(_, slot) finishingReagents = CraftSim.UTIL:Concat({finishingReagents, slot.possibleReagents}) end)
+    optionalReagents = CraftSim.UTIL:Map(optionalReagents, function(optionalReagent) 
+        return {
+            itemID = optionalReagent.item:GetItemID(),
+            qualityID = optionalReagent.qualityID
+        }
+    end)
+    finishingReagents = CraftSim.UTIL:Map(finishingReagents, function(finishingReagent) 
+        return {
+            itemID = finishingReagent.item:GetItemID(),
+            qualityID = finishingReagent.qualityID
+        }
+    end)
+
+    local craftedItems = {}
+    table.foreach(recipeData.resultData.itemsByQuality, function (index, item)
+        table.insert(craftedItems, {
+            itemLink = item:GetItemLink(),
+            isGear = recipeData.isGear,
+            qualityID = index,
+            itemID = item:GetItemID()
+        })
+    end)
 
     updateOverrideFramesByItemList(1, requiredReagents)
     updateOverrideFramesByItemList(2, optionalReagents)

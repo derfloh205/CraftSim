@@ -547,6 +547,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		end
 
 		showCostOverview = true
+		showPriceOverride = true
 	end
 
 
@@ -676,6 +677,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		-- Price Override Module
 		CraftSim.FRAME:ToggleFrame(priceOverrideFrame, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 		CraftSim.FRAME:ToggleFrame(priceOverrideFrameWO, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+		if recipeData and showPriceOverride then
+			CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayOOP(recipeData, exportMode)
+		end
 
 		-- SpecInfo Module
 		CraftSim.FRAME:ToggleFrame(specInfoFrame, showSpecInfo and recipeData and recipeData.specNodeData)
