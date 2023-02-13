@@ -113,8 +113,11 @@ end
 
 function CraftSim.ReagentData:GetMaxSkillFactor()
     local maxQualityReagentsCraftingTbl = CraftSim.UTIL:Map(self.requiredReagents, function(rr) 
-        return  rr:GetCraftingReagentInfoByQuality(3)
+        return rr:GetCraftingReagentInfoByQuality(3, true)
     end)
+
+    print("max quality reagents crafting tbl:")
+    print(maxQualityReagentsCraftingTbl, true)
 
     local recipeID = self.recipeData.recipeID
     local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)

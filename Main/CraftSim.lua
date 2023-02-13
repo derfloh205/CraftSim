@@ -548,6 +548,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 		showCostOverview = true
 		showPriceOverride = true
+		showMaterialAllocation = true
 	end
 
 
@@ -681,12 +682,17 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayOOP(recipeData, exportMode)
 		end
 
-		-- SpecInfo Module
-		CraftSim.FRAME:ToggleFrame(specInfoFrame, showSpecInfo and recipeData and recipeData.specNodeData)
-
 		-- Material Optimization Module
 		CraftSim.FRAME:ToggleFrame(materialOptimizationFrame, showMaterialAllocation and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 		CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialAllocation and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+		if recipeData and showMaterialAllocation then
+			CraftSim.UTIL:StartProfiling("Reagent Optimization")
+			CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, exportMode)
+			CraftSim.UTIL:StopProfiling("Reagent Optimization")
+		end
+
+		-- SpecInfo Module
+		CraftSim.FRAME:ToggleFrame(specInfoFrame, showSpecInfo and recipeData and recipeData.specNodeData)
 
 		-- Top Gear Module
 		CraftSim.FRAME:ToggleFrame(topgearFrame, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)

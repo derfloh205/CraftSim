@@ -4,7 +4,7 @@ CraftSim.COSTOVERVIEW.FRAMES = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OVERVIEW)
 
-function CraftSim.COSTOVERVIEW.FRAMES:Fill(craftingCosts, profitPerQuality, currentQuality, exportMode)
+function CraftSim.COSTOVERVIEW.FRAMES:Fill(craftingCosts, minCraftingCosts, profitPerQuality, currentQuality, exportMode)
     local costOverviewFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)

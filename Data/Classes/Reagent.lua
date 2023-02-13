@@ -31,14 +31,18 @@ end
 ---@param qualityID number
 ---@param maxQuantity? boolean
 ---@param customQuantity? number
----@return CraftingReagentInfo
+---@return CraftingReagentInfo?
 function CraftSim.Reagent:GetCraftingReagentInfoByQuality(qualityID, maxQuantity, customQuantity)
     maxQuantity = maxQuantity or false
+
+    if not self.hasQuality then
+        return nil
+    end
 
     local qualityReagentItem = CraftSim.UTIL:Find(self.items, function(i) return i.qualityID == qualityID end)
 
     if not qualityReagentItem then
-        return {}
+        return nil
     end
 
     local quantity = qualityReagentItem.quantity
@@ -84,4 +88,22 @@ function CraftSim.Reagent:Copy()
     copy.items = CraftSim.UTIL:Map(self.items, function(i) return i:Copy() end)
 
     return copy
+end
+
+function CraftSim.Reagent:Debug()
+    local debugLines = {
+        "hasQuality: " .. tostring(self.hasQuality),
+        "requiredQuantity: " .. tostring(self.requiredQuantity),
+        "dataSlotIndex: " .. tostring(self.dataSlotIndex),
+    }
+
+    if self.hasQuality then
+        table.foreach(self.items, function (_, reagentItem)
+            debugLines = CraftSim.UTIL:Concat({debugLines, reagentItem:Debug()})
+        end)
+    else
+        debugLines = CraftSim.UTIL:Concat({debugLines, self.items[1]:Debug()})
+    end
+
+    return debugLines
 end

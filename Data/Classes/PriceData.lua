@@ -5,6 +5,7 @@ _, CraftSim = ...
 ---@field qualityPriceList number[]
 ---@field craftingCosts number
 ---@field craftingCostsRequired number
+---@field craftingCostsFixed number -- the crafting costs without any reagents of quality
 
 CraftSim.PriceData = CraftSim.Object:extend()
 
@@ -24,6 +25,7 @@ function CraftSim.PriceData:Update()
 
     self.craftingCosts = 0
     self.craftingCostsRequired = 0
+    self.craftingCostsFixed = 0
     self.qualityPriceList = {}
 
     print("Calculating Crafting Costs: ", false, true)
@@ -64,10 +66,10 @@ function CraftSim.PriceData:Update()
                     self.craftingCosts = self.craftingCosts + totalPrice
                 end
             else
-                local quantity = math.max(reagent.items[1].quantity, reagent.requiredQuantity)
                 local itemID = reagent.items[1].item:GetItemID()
                 local itemPrice = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(self.recipeData.recipeID, itemID) or CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true)
-                self.craftingCosts = self.craftingCosts + itemPrice * quantity
+                self.craftingCosts = self.craftingCosts + itemPrice * reagent.requiredQuantity
+                self.craftingCostsFixed = self.craftingCostsFixed + itemPrice * reagent.requiredQuantity -- always max
             end
         end
 
@@ -110,6 +112,7 @@ function CraftSim.PriceData:Copy(recipeData)
     local copy = CraftSim.PriceData(recipeData)
     copy.qualityPriceList = CraftSim.UTIL:Map(self.qualityPriceList, function(n) return n end)
     copy.craftingCosts = self.craftingCosts
+    copy.craftingCostsFixed = self.craftingCostsFixed
     copy.craftingCostsRequired = self.craftingCostsRequired
     return copy
 end

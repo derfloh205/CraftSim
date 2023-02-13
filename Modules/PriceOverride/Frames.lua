@@ -436,7 +436,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayOOP(recipeData, exportMode)
         table.foreach(reagent.items, function (_, reagentItem)
             table.insert(requiredReagents, {
                 itemID = reagentItem.item:GetItemID(),
-                qualityID = reagentItem.qualityID,
+                qualityID = reagentItem.qualityID,  
             })
         end)
     end)

@@ -2,13 +2,7 @@ AddonName, CraftSim = ...
 
 CraftSim.REAGENT_OPTIMIZATION.FRAMES = {}
 
-local function print(text, recursive, l) -- override
-    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
-    else
-        print(text)
-    end
-end
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
 
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
@@ -182,6 +176,92 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, r
                     bestQBox:Click()
                 end
                 CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, recipeType, priceData, bestAllocation)
+            end)
+        else
+            materialFrame.content.allocateText:Show()
+            materialFrame.content.allocateButton:Hide()
+            if hasItems then
+                materialFrame.content.allocateText:SetText(CraftSim.UTIL:ColorizeText("Materials available", CraftSim.CONST.COLORS.GREEN))
+            else
+                materialFrame.content.allocateText:SetText(CraftSim.UTIL:ColorizeText("Materials missing", CraftSim.CONST.COLORS.RED))
+            end
+        end
+        materialFrame.content.allocateButton:SetSize(materialFrame.content.allocateButton:GetTextWidth() + 15, 25)
+    end
+    local itemsToLoad = {}
+    foreach(bestAllocation.allocations, function (_, allocation)
+        if allocation then
+            local item = Item:CreateFromItemID(allocation.allocations[1].itemID)
+            table.insert(itemsToLoad, item)
+        end
+    end)
+    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function() 
+        materialFrame.content.qualityIcon.SetQuality(bestAllocation.qualityReached)
+        for frameIndex = 1, 5, 1 do
+            local allocation = bestAllocation.allocations[frameIndex]
+            if allocation ~= nil then
+                --local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(allocation.allocations[1].itemID) 
+                local item = CraftSim.UTIL:Find(itemsToLoad, function (item) return item:GetItemID() == allocation.allocations[1].itemID end)
+                if item then
+                    local itemTexture = item:GetItemIcon()
+                    materialFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
+                    materialFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
+                    materialFrame.content.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
+                    materialFrame.content.reagentFrames.rows[frameIndex].q1text:SetText(allocation.allocations[1].allocations)
+                    materialFrame.content.reagentFrames.rows[frameIndex].q2text:SetText(allocation.allocations[2].allocations)
+                    materialFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(allocation.allocations[3].allocations)
+        
+                    materialFrame.content.reagentFrames.rows[frameIndex]:Show()
+                end
+            else
+                materialFrame.content.reagentFrames.rows[frameIndex]:Hide()
+            end
+            
+        end
+    end)
+end
+
+function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, bestAllocation, hasItems, isSameAllocation, exportMode)
+    local materialFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+    else
+        materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
+    end
+    hasItems = hasItems or CraftSim.SIMULATION_MODE.isActive
+    if bestAllocation == nil or isSameAllocation then
+        materialFrame.content.infoText:Show()
+        if isSameAllocation then
+            materialFrame.content.infoText:SetText(materialFrame.content.infoText.SameCombination)
+        else
+            materialFrame.content.infoText:SetText(materialFrame.content.infoText.NoCombinationFound)
+        end
+
+        materialFrame.content.qualityIcon:Hide()
+        materialFrame.content.qualityText:Hide()
+        materialFrame.content.allocateButton:Hide()
+
+        for i = 1, 5, 1 do
+            materialFrame.content.reagentFrames.rows[i]:Hide()
+        end
+
+        return
+    else
+        materialFrame.content.allocateText:Hide()
+        materialFrame.content.infoText:Hide()
+        materialFrame.content.qualityIcon:Show()
+        materialFrame.content.qualityText:Show()
+        materialFrame.content.allocateButton:Show()
+        materialFrame.content.allocateButton:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
+        if CraftSim.SIMULATION_MODE.isActive then
+            materialFrame.content.allocateButton:SetText("Assign")
+            materialFrame.content.allocateButton:SetScript("OnClick", function(self) 
+                -- uncheck best quality box if checked
+                local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
+                if bestQBox:GetChecked() then
+                    bestQBox:Click()
+                end
+                CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocationOOP(recipeData, bestAllocation)
             end)
         else
             materialFrame.content.allocateText:Show()

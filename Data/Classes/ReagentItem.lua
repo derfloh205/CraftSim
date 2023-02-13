@@ -19,3 +19,9 @@ function CraftSim.ReagentItem:Copy()
 
     return copy
 end
+
+function CraftSim.ReagentItem:Debug()
+    return {
+        tostring(((self.item and (self.item:GetItemLink() or self.item:GetItemID())) or "None") .. " x " .. self.quantity),
+    }
+end
