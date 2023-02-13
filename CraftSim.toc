@@ -114,3 +114,4 @@ Data/Classes/NodeRule.lua
 Data/Classes/IDMapping.lua
 Data/Classes/IDCategory.lua
 Data/Classes/Statweights.lua
+Data/Classes/ReagentOptimizationResult.lua

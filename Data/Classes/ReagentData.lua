@@ -163,6 +163,27 @@ function CraftSim.ReagentData:GetSkillFromRequiredReagents()
     return 0
 end
 
+function CraftSim.ReagentData:EqualsQualityReagents(reagents)
+    -- order can be different?
+    for _, reagent in pairs(self.requiredReagents) do
+        if reagent.hasQuality then
+            for _, reagentItem in pairs(reagent.items) do
+                local foundReagent = nil
+                for _, bestReagent in pairs(reagents) do
+                    foundReagent = CraftSim.UTIL:Find(bestReagent.items, function(r) return r.item:GetItemID() == reagentItem.item:GetItemID() end)
+                    if foundReagent then
+                        if reagentItem.quantity ~= foundReagent.quantity then
+                            return false
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return true
+end
+
 function CraftSim.ReagentData:Debug()
     local debugLines = {}
     for _, reagent in pairs(self.requiredReagents) do

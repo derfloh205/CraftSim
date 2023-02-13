@@ -691,8 +691,13 @@ end
 
 -- OOP Refactor
 
-function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsackOOP(ks, BPs)
-    --print("Starting optimization...")
+---@param ks table
+---@param BPs table
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.ReagentOptimizationResult[] results
+function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsackOOP(ks, BPs, recipeData)
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION_OOP)
+    print("optimizeKnapsackOOP...")
     local numMaterials, i, j, k, maxWeight
 
     numMaterials = #ks or 1 -- should be ks -1 or 1 and behave like UBound(ks, 1)
@@ -846,25 +851,9 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsackOOP(ks, BPs)
         end
     end
 
-    -- print("outArr:")
-    -- print(outArr)
+    local results = CraftSim.UTIL:Map(outResult, function(result) return CraftSim.ReagentOptimizationResult(recipeData, result) end)
 
-    print("results: ")
-    for _, itemAllocation in pairs(outResult) do
-        print("Reachable quality: " .. itemAllocation.qualityReached)
-
-        for _, matAllocation in pairs(itemAllocation.allocations) do
-            print("- name: " .. matAllocation.itemName)
-
-            local qText = "--"
-            for qualityIndex, allocation in pairs(matAllocation.allocations) do
-                qText = qText .. "q" .. qualityIndex .. ": " .. allocation.allocations .. " | "
-            end
-            print(qText)
-        end
-    end
-
-    return outResult
+    return results
 end
 
 function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocationOOP(recipeData, bestAllocation)
@@ -901,26 +890,14 @@ function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocationOOP(recipeData, bestA
 	
 end
 
-function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocationOOP(recipeData, bestAllocation)
-    if not bestAllocation then
+function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocationOOP(recipeData, bestResult)
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION_OOP)
+
+    if not bestResult then
         return false
     end
-    -- TODO think about an alternative for this abomination..
-    table.foreach(recipeData.reagentData.requiredReagents, function (_, reagent)
-        table.foreach(reagent.items, function (_, reagentItem)
-            table.foreach(bestAllocation.allocations, function (_, allocation)
-                table.foreach(allocation.allocations, function (_, qAllocation)
-                    if qAllocation.itemID == reagentItem.item:GetItemID() then
-                        if qAllocation.allocations ~= reagentItem.quantity then
-                            return false
-                        end
-                    end
-                end)
-            end)
-        end)
-    end)
 
-    return true
+    return recipeData.reagentData:EqualsQualityReagents(bestResult.reagents)
 end
 
 function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbsOOP(ksItem)
@@ -977,8 +954,6 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, 
     --     reagent.itemsInfo = reagentCostsByQuality[index] -- ?!?!?
     -- end
 
-    local recipeFixedCost = recipeData.priceData.craftingCostsFixed
-
     -- Create Knapsacks for required reagents with different Qualities
     local requiredReagents = CraftSim.UTIL:FilterTable(recipeData.reagentData.requiredReagents, function (reagent)
         return reagent.hasQuality
@@ -1020,8 +995,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, 
             crumb = {}
         }
 
-        print("Created KS Item with reagents:")
-        print(ksItem.reagent)
+        
 
         --print("mWeight of " .. reagent.name .. " is " .. ksItem.mWeight)
         --print("mWeight[index] / weightGCD -> " .. mWeight[index] .. " / " .. weightGCD .. " = " .. mWeight[index] / weightGCD)
@@ -1130,32 +1104,21 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, 
 
 
     -- Optimize Knapsack
-    local results = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsackOOP(ksItems, arrayBP)  
+    local results = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsackOOP(ksItems, arrayBP, recipeData)  
 
     -- remove any result that maps to the expected quality without reagent increase
     -- NEW: any that is below! Same is fine
     local results = CraftSim.UTIL:FilterTable(results, function(result) 
-        return result.qualityReached >= expectedQualityWithoutReagents
+        return result.qualityID >= expectedQualityWithoutReagents
     end)
     
-    local hasItems = true
-    local bestAllocation = results[1]--results[#results]
-    local isSameAllocation = false
+    local bestResult = results[1]--results[#results]
+    
     if exportMode ~= CraftSim.CONST.EXPORT_MODE.SCAN then
-        isSameAllocation = CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocationOOP(recipeData, bestAllocation)
-        if bestAllocation and not isSameAllocation then
-            for _, matAllocation in pairs(bestAllocation.allocations) do
-                for qualityIndex, allocation in pairs(matAllocation.allocations) do
-                    local hasItemCount = GetItemCount(allocation.itemID, true, true, true)
-                    if hasItemCount < allocation.allocations then
-                        hasItems = false
-                    end
-                end
-            end
-        end
+        local isSameAllocation = CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocationOOP(recipeData, bestResult)
         
-        CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, bestAllocation, hasItems, isSameAllocation, exportMode)
+        CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, bestResult, isSameAllocation, exportMode)
     end
 
-    return bestAllocation
+    return bestResult
 end

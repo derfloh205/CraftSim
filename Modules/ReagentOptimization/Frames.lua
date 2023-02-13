@@ -221,15 +221,24 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, r
     end)
 end
 
-function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, bestAllocation, hasItems, isSameAllocation, exportMode)
+
+---@param recipeData CraftSim.RecipeData
+---@param bestResult CraftSim.ReagentOptimizationResult
+---@param isSameAllocation boolean
+---@param exportMode number
+function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, bestResult, isSameAllocation, exportMode)
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION_OOP)
+
     local materialFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
     else
         materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
     end
-    hasItems = hasItems or CraftSim.SIMULATION_MODE.isActive
-    if bestAllocation == nil or isSameAllocation then
+    local hasItems = CraftSim.SIMULATION_MODE.isActive or bestResult:HasItems()
+    print("bestAllocation: " .. tostring(bestResult))
+    print("isSameAllocation: " .. tostring(isSameAllocation))
+    if bestResult == nil or isSameAllocation then
         materialFrame.content.infoText:Show()
         if isSameAllocation then
             materialFrame.content.infoText:SetText(materialFrame.content.infoText.SameCombination)
@@ -261,7 +270,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData
                 if bestQBox:GetChecked() then
                     bestQBox:Click()
                 end
-                CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocationOOP(recipeData, bestAllocation)
+                CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocationOOP(recipeData, bestResult)
             end)
         else
             materialFrame.content.allocateText:Show()
@@ -274,35 +283,29 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData
         end
         materialFrame.content.allocateButton:SetSize(materialFrame.content.allocateButton:GetTextWidth() + 15, 25)
     end
-    local itemsToLoad = {}
-    foreach(bestAllocation.allocations, function (_, allocation)
-        if allocation then
-            local item = Item:CreateFromItemID(allocation.allocations[1].itemID)
-            table.insert(itemsToLoad, item)
+
+    materialFrame.content.qualityIcon.SetQuality(bestResult.qualityID)
+    for frameIndex = 1, 5, 1 do
+        local reagent = bestResult.reagents[frameIndex]
+        if reagent then
+            local q1Item = reagent.items[1]
+            local q2Item = reagent.items[2]
+            local q3Item = reagent.items[3]
+
+            CraftSim.UTIL:ContinueOnAllItemsLoaded({q1Item.item, q2Item.item, q3Item.item}, function ()
+                local itemTexture = q1Item.item:GetItemIcon()
+                materialFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
+                materialFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
+                materialFrame.content.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
+                materialFrame.content.reagentFrames.rows[frameIndex].q1text:SetText(q1Item.quantity)
+                materialFrame.content.reagentFrames.rows[frameIndex].q2text:SetText(q2Item.quantity)
+                materialFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(q3Item.quantity)
+    
+                materialFrame.content.reagentFrames.rows[frameIndex]:Show()
+            end)
+
+        else
+            materialFrame.content.reagentFrames.rows[frameIndex]:Hide()
         end
-    end)
-    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function() 
-        materialFrame.content.qualityIcon.SetQuality(bestAllocation.qualityReached)
-        for frameIndex = 1, 5, 1 do
-            local allocation = bestAllocation.allocations[frameIndex]
-            if allocation ~= nil then
-                --local _, _, _, _, _, _, _, _, _, itemTexture = GetItemInfo(allocation.allocations[1].itemID) 
-                local item = CraftSim.UTIL:Find(itemsToLoad, function (item) return item:GetItemID() == allocation.allocations[1].itemID end)
-                if item then
-                    local itemTexture = item:GetItemIcon()
-                    materialFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
-                    materialFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
-                    materialFrame.content.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
-                    materialFrame.content.reagentFrames.rows[frameIndex].q1text:SetText(allocation.allocations[1].allocations)
-                    materialFrame.content.reagentFrames.rows[frameIndex].q2text:SetText(allocation.allocations[2].allocations)
-                    materialFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(allocation.allocations[3].allocations)
-        
-                    materialFrame.content.reagentFrames.rows[frameIndex]:Show()
-                end
-            else
-                materialFrame.content.reagentFrames.rows[frameIndex]:Hide()
-            end
-            
-        end
-    end)
+    end
 end

@@ -25,3 +25,16 @@ function CraftSim.ReagentItem:Debug()
         tostring(((self.item and (self.item:GetItemLink() or self.item:GetItemID())) or "None") .. " x " .. self.quantity),
     }
 end
+
+function CraftSim.ReagentItem:Clear()
+    self.quantity = 0
+end
+
+function CraftSim.ReagentItem:HasItem()
+    if not self.item then
+        return false
+    end
+    local itemCount = GetItemCount(self.item:GetItemID(), true, true, true)
+
+    return itemCount >= self.quantity
+end

@@ -107,3 +107,20 @@ function CraftSim.Reagent:Debug()
 
     return debugLines
 end
+
+function CraftSim.Reagent:Clear()
+    table.foreach(self.items, function (_, reagentItem)
+        reagentItem:Clear()
+    end)
+end
+
+function CraftSim.Reagent:HasItems()
+    for _, reagentItem in pairs(self.items) do
+        local hasItems = reagentItem:HasItem()
+        if not hasItems then
+            return false
+        end
+    end
+
+    return true
+end
