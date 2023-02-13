@@ -146,3 +146,7 @@ function CraftSim.ResultData:Debug()
         }
     })
 end
+
+function CraftSim.ResultData:Copy(recipeData)
+    return  CraftSim.ResultData(recipeData)
+end

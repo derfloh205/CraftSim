@@ -27,8 +27,8 @@ _, CraftSim = ...
 ---@field professionGearSet CraftSim.ProfessionGearSet
 ---@field professionStats CraftSim.ProfessionStats The ProfessionStats of that recipe considering gear, reagents, buffs.. etc
 ---@field baseProfessionStats CraftSim.ProfessionStats The ProfessionStats of that recipe without gear or reagents
+---@field professionStatModifiers CraftSim.ProfessionStats Will add/subtract to final stats (Used in Simulation Mode, usually 0)
 ---@field priceData CraftSim.PriceData
----@field specializationData CraftSim.SpecializationData
 ---@field resultData CraftSim.ResultData
 
 CraftSim.RecipeData = CraftSim.Object:extend()
@@ -89,18 +89,22 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     print(self.reagentData)
 
     self.professionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
-    self.professionGearSet:LoadCurrentEquippedSet()
-
     
     local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
     
     self.baseProfessionStats = CraftSim.ProfessionStats()
     self.professionStats = CraftSim.ProfessionStats()
+    self.professionStatModifiers = CraftSim.ProfessionStats()
     
     self.baseProfessionStats:SetStatsByOperationInfo(self, baseOperationInfo)
     self.professionStats:SetStatsByOperationInfo(self, baseOperationInfo)
+
+    -- subtract stats from current set to get base stats
+    local equippedProfessionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
+    equippedProfessionGearSet:LoadCurrentEquippedSet()
     
-    self.baseProfessionStats:subtract(self.professionGearSet.professionStats)
+    self.baseProfessionStats:subtract(equippedProfessionGearSet.professionStats)
+    self.professionStats:subtract(equippedProfessionGearSet.professionStats)
     
     self.resultData = CraftSim.ResultData(self)
 
@@ -108,8 +112,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
         local subclassID = select(7, GetItemInfoInstant(self.resultData.itemsByQuality[1]:GetItemID()))
         self.subtypeID = subclassID
     end
-
-    self.specializationData = CraftSim.SpecializationData(self)
 
     self.resultData:Update()
 
@@ -146,6 +148,10 @@ function CraftSim.RecipeData:SetSalvageItem(itemID)
     else
         error("CraftSim Error: Trying to set salvage item on non salvage recipe")
     end
+end
+
+function CraftSim.RecipeData:SetEquippedProfessionGearSet()
+    self.professionGearSet:LoadCurrentEquippedSet()
 end
 
 function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
@@ -227,8 +233,6 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
             end
         end
     end
-
-
 end
 
 ---@param itemID number
@@ -236,18 +240,23 @@ function CraftSim.RecipeData:SetOptionalReagent(itemID)
     self.reagentData:SetOptionalReagent(itemID)
 end
 
--- Update the professionStats property of the RecipeData according to set reagents and gearSet
+-- Update the professionStats property of the RecipeData according to set reagents and gearSet (and any stat modifiers)
 function CraftSim.RecipeData:UpdateProfessionStats()
-    local craftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
+    local skillRequiredReagents = self.reagentData:GetSkillFromRequiredReagents()
+    local optionalStats = self.reagentData:GetProfessionStatsByOptionals()
+    local itemStats = self.professionGearSet.professionStats
 
-    local updatedOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, craftingReagentInfoTbl, self.allocationItemGUID)
+    self.professionStats:Clear()
 
-    
-    -- TODO: Check if it makes sense to just parse all stats again?
-    -- this would also set the recipeDifficulty based on the operationInfo and other things based on optional reagents..
+    self.professionStats:add(self.baseProfessionStats)
 
-    -- but what would that mean for simulationmode....?
-    self.professionStats:SetStatsByOperationInfo(self, updatedOperationInfo)
+    self.professionStats.skill:addValue(skillRequiredReagents)
+
+    self.professionStats:add(optionalStats)
+    self.professionStats:add(itemStats)
+
+    -- finally add any custom modifiers
+    self.professionStats:add(self.professionStatModifiers)
 end
 
 --- Updates professionStats based on reagentData and professionGearSet -> Then updates resultData based on professionStats -> Then updates priceData based on resultData
@@ -255,4 +264,18 @@ function CraftSim.RecipeData:Update()
     self:UpdateProfessionStats()
     self.resultData:Update()
     self.priceData:Update()
+end
+
+--- We need copy constructors or CopyTable will run into references of recipeData
+---@return CraftSim.RecipeData recipeDataCopy
+function CraftSim.RecipeData:Copy()
+    local copy = CraftSim.RecipeData(self.recipeID, self.isRecraft)
+    copy.reagentData = self.reagentData:Copy(copy)
+    copy.professionGearSet = self.professionGearSet:Copy()
+    copy.professionStats = self.professionStats:Copy()
+    copy.baseProfessionStats = self.baseProfessionStats:Copy()
+    copy.professionStatModifiers = self.professionStatModifiers:Copy()
+    copy.priceData = self.priceData:Copy(copy) -- Is this needed or covered by constructor?
+    copy.resultData = self.resultData:Copy(copy) -- Is this needed or covered by constructor?
+    return copy
 end

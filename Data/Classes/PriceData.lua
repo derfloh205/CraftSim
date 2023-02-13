@@ -106,3 +106,10 @@ function CraftSim.PriceData:Debug()
 
     return debugLines
 end
+
+function CraftSim.PriceData:Copy(recipeData)
+    local copy = CraftSim.PriceData(recipeData)
+    copy.qualityPriceList = CraftSim.UTIL:Map(self.qualityPriceList, function(n) return n end)
+    copy.craftingCosts = self.craftingCosts
+    return copy
+end

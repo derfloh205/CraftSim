@@ -442,10 +442,6 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs)
 end
 
 function CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(recipeData, exportMode)
-
-    
-
-
     -- For recrafts we need to calculate it
 
     local recipeDataNoReagents = CopyTable(recipeData)

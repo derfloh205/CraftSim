@@ -55,3 +55,28 @@ end
 function CraftSim.ProfessionStat:GetExtraValueByFactor()
     return self.extraValue*(1+self.extraFactor)
 end
+
+---@param value number
+function CraftSim.ProfessionStat:addValue(value)
+    self.value = self.value + value
+end
+---@param factor number
+function CraftSim.ProfessionStat:addFactor(factor)
+    self.extraFactor = self.extraFactor + factor
+end
+---@param extraValue number
+function CraftSim.ProfessionStat:addExtraValue(extraValue)
+    self.extraValue = self.extraValue + extraValue
+end
+---@param value number
+function CraftSim.ProfessionStat:subtractValue(value)
+    self.value = self.value - value
+end
+---@param factor number
+function CraftSim.ProfessionStat:subtractFactor(factor)
+    self.extraFactor = self.extraFactor - factor
+end
+---@param extraValue number
+function CraftSim.ProfessionStat:subtractExtraValue(extraValue)
+    self.extraValue = self.extraValue - extraValue
+end

@@ -456,14 +456,17 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			recipeData = CraftSim.RecipeData(recipeInfo.recipeID, isRecraft)
 
 			if recipeData then
-				-- Set Reagents based on visibleFrame		
+				-- Set Reagents based on visibleFrame and load equipped profession gear set
 				recipeData:SetAllReagentsBySchematicForm()
+				recipeData:SetEquippedProfessionGearSet()
 				recipeData:Update()
 
 				print(recipeData.specializationData)
 
 				CraftSim_DEBUG:print(recipeData.reagentData, CraftSim.CONST.DEBUG_IDS.EXPORT_V2, true, true)
 				CraftSim.MAIN.currentRecipeData = recipeData
+
+				local test = recipeData:Copy()
 			end
 		else
 			recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, exportMode)

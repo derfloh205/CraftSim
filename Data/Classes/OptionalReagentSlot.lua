@@ -13,6 +13,9 @@ CraftSim.OptionalReagentSlot = CraftSim.Object:extend()
 ---@param reagentSlotSchematic CraftingReagentSlotSchematic
 function CraftSim.OptionalReagentSlot:new(recipeData, reagentSlotSchematic)
     self.recipeData = recipeData
+    if not reagentSlotSchematic then
+        return
+    end
     self.dataSlotIndex = reagentSlotSchematic.dataSlotIndex
     self.possibleReagents = {}
 
@@ -62,4 +65,20 @@ function CraftSim.OptionalReagentSlot:Debug()
     end
 
     return debugLines
+end
+
+function CraftSim.OptionalReagentSlot:Copy(recipeData)
+
+    local copy = CraftSim.OptionalReagentSlot(recipeData)
+    copy.possibleReagents = CraftSim.UTIL:Map(self.possibleReagents, function(r) return r:Copy() end)
+    if self.activeReagent then
+        copy.activeReagent = CraftSim.UTIL:Find(copy.possibleReagents, function(r) return r.item:GetItemID() == self.activeReagent.item:GetItemID() end)
+    end
+
+    copy.slotText = self.slotText
+    copy.dataSlotIndex = self.dataSlotIndex
+    copy.locked = self.locked
+    copy.lockedReason = self.lockedReason
+
+    return copy
 end

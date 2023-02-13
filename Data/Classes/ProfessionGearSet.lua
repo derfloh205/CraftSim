@@ -52,3 +52,17 @@ function CraftSim.ProfessionGearSet:UpdateProfessionStats()
     end
 end
 
+function CraftSim.ProfessionGearSet:Copy()
+    local copy = CraftSim.ProfessionGearSet(self.professionID)
+    copy.professionStats = self.professionStats:Copy()
+    if self.gear1 then
+        copy.gear1 = self.gear1:Copy()
+    end
+    copy.gear2 = self.gear2:Copy()
+    copy.tool = self.tool:Copy()
+
+    copy:UpdateProfessionStats()
+
+    return copy
+end
+

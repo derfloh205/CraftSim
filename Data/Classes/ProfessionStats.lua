@@ -74,8 +74,8 @@ function CraftSim.ProfessionStats:subtract(professionStatsB)
 
 	for index, professionStatA in pairs(statsA) do
 		local professionStatB = statsB[index]
-		professionStatA.value = professionStatA.value - professionStatB.value
-		professionStatA.extraFactor = professionStatA.extraFactor - professionStatB.extraFactor
+		professionStatA:subtractValue(professionStatB.value)
+		professionStatA:subtractFactor(professionStatB.extraFactor)
 	end
 end
 
@@ -88,8 +88,8 @@ function CraftSim.ProfessionStats:add(professionStatsB)
 
 	for index, professionStatA in pairs(statsA) do
 		local professionStatB = statsB[index]
-		professionStatA.value = professionStatA.value + professionStatB.value
-		professionStatA.extraFactor = professionStatA.extraFactor + professionStatB.extraFactor
+		professionStatA:addValue(professionStatB.value)
+		professionStatA:addFactor(professionStatB.extraFactor)
 	end
 end
 
@@ -122,4 +122,11 @@ function CraftSim.ProfessionStats:Debug()
 	end
 
 	return debugLines
+end
+
+function CraftSim.ProfessionStats:Copy()
+	local copy = CraftSim.ProfessionStats()
+	copy:add(self)
+
+	return copy
 end
