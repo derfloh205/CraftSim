@@ -461,12 +461,10 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 				recipeData:SetEquippedProfessionGearSet()
 				recipeData:Update()
 
-				print(recipeData.specializationData)
+				print(recipeData.professionStats)
 
 				CraftSim_DEBUG:print(recipeData.reagentData, CraftSim.CONST.DEBUG_IDS.EXPORT_V2, true, true)
 				CraftSim.MAIN.currentRecipeData = recipeData
-
-				local test = recipeData:Copy()
 			end
 		else
 			recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, exportMode)
@@ -476,7 +474,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local recipeType = nil 
 	local priceData = nil
 
-	
     local showMaterialAllocation = false
     local showStatweights = false
     local showTopGear = false
@@ -545,7 +542,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			end
 		end
 	else
-
+		if recipeData.supportsCraftingStats then
+			showStatweights = true
+		end
 	end
 
 
@@ -651,21 +650,17 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		end
 	else -- OOP Refactor
 
-		if recipeData.supportsCraftingStats then
-			showStatweights = true
-		end
-
 		-- AverageProfit Module
 		CraftSim.FRAME:ToggleFrame(averageProfitFrame, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 		CraftSim.FRAME:ToggleFrame(averageProfitFrameWO, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if showStatweights then
+		if recipeData and showStatweights then
 			local statWeights = CraftSim.AVERAGEPROFIT:CalculateStatWeightsOOP(recipeData)
 
-			-- local statWeights = CraftSim.AVERAGEPROFIT:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData, exportMode)
-			-- if statWeights ~= CraftSim.CONST.ERROR.NO_PRICE_DATA then
-			-- 	CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplay(priceData, statWeights, exportMode)
-			-- 	CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
-			-- end
+			if statWeights then
+				CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplayOOP(statWeights, recipeData.priceData.craftingCosts, exportMode)
+			end
+
+			-- CraftSim.STATISTICS.FRAMES:UpdateStatisticsOOP(recipeData)
 		end
 
 		-- Price Override Module

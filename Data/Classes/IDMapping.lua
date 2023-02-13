@@ -59,6 +59,10 @@ end
 function CraftSim.IDMapping:AffectsRecipe()
     local recipeData = self.recipeData
 
+    -- print("ID Mapping affect?")
+    -- print("categoryID: " .. tostring(recipeData.categoryID))
+    -- print("subtypeID: " .. tostring(recipeData.subtypeID))
+
     -- an exception always matches
     if tContains(self.exceptionRecipeIDs, recipeData.recipeID) then
         return true

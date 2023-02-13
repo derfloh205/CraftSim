@@ -57,6 +57,16 @@ function CraftSim.SpecializationData:new(recipeData)
     end
 end
 
+function CraftSim.SpecializationData:GetExtraFactors()
+    local extraFactors = CraftSim.ProfessionStats()
+
+    extraFactors.inspiration.extraFactor = self.professionStats.inspiration.extraFactor
+    extraFactors.multicraft.extraFactor = self.professionStats.multicraft.extraFactor
+    extraFactors.resourcefulness.extraFactor = self.professionStats.resourcefulness.extraFactor
+
+    return extraFactors
+end
+
 function CraftSim.SpecializationData:Debug()
     local debugLines = {}
 

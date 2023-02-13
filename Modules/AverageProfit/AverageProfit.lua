@@ -108,6 +108,62 @@ end
 -- OOP Refactor
 
 ---@param recipeData CraftSim.RecipeData
+---@param baseMeanProfit number
+function CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedDataOOP(recipeData, baseMeanProfit)
+    recipeData:Update()
+    local meanProfitModified = CraftSim.CALC:GetMeanProfitOOP(recipeData)
+    local profitDiff = meanProfitModified - baseMeanProfit
+    local statWeight = profitDiff / statIncreaseFactor
+
+    return statWeight
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param baseMeanProfit number
+---@return number statWeight
+function CraftSim.AVERAGEPROFIT:getInspirationWeightOOP(recipeData, baseMeanProfit)
+    if not recipeData.supportsInspiration then
+        return 0
+    end
+    -- increase modifier
+    recipeData.professionStatModifiers.inspiration:addValue(statIncreaseFactor)
+    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedDataOOP(recipeData, baseMeanProfit)
+    -- revert change (probably more performant than just to copy the whole thing)
+    recipeData.professionStatModifiers.inspiration:subtractValue(statIncreaseFactor)
+    return statWeight
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param baseMeanProfit number
+---@return number statWeight
+function CraftSim.AVERAGEPROFIT:getMulticraftWeightOOP(recipeData, baseMeanProfit)
+    if not recipeData.supportsMulticraft then
+        return 0
+    end
+    -- increase modifier
+    recipeData.professionStatModifiers.multicraft:addValue(statIncreaseFactor)
+    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedDataOOP(recipeData, baseMeanProfit)
+    -- revert change (probably more performant than just to copy the whole thing)
+    recipeData.professionStatModifiers.multicraft:subtractValue(statIncreaseFactor)
+    return statWeight
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param baseMeanProfit number
+---@return number statWeight
+function CraftSim.AVERAGEPROFIT:getResourcefulnessWeightOOP(recipeData, baseMeanProfit)
+    if not recipeData.supportsResourcefulness then
+        return 0
+    end
+    -- increase modifier
+    recipeData.professionStatModifiers.resourcefulness:addValue(statIncreaseFactor)
+    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedDataOOP(recipeData, baseMeanProfit)
+    -- revert change (probably more performant than just to copy the whole thing)
+    recipeData.professionStatModifiers.resourcefulness:subtractValue(statIncreaseFactor)
+    return statWeight
+end
+
+---@param recipeData CraftSim.RecipeData
 ---@param skill number
 function CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkillOOP(recipeData, skill)
     local expectedQuality = 1
@@ -123,22 +179,17 @@ function CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkillOOP(recipeData, skill)
 end
 
 ---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Statweights statweightResult
 function CraftSim.AVERAGEPROFIT:CalculateStatWeightsOOP(recipeData)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT_OOP)
-    local calculationResult = {} 
-    calculationResult.meanProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)
 
-    print(recipeData.priceData)
+    local averageProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)
 
-    print("MeanProfitOOP: " .. CraftSim.UTIL:FormatMoney(calculationResult.meanProfit, true))    
+    local inspirationWeight = CraftSim.AVERAGEPROFIT:getInspirationWeightOOP(recipeData, averageProfit)
+    local multicraftWeight = CraftSim.AVERAGEPROFIT:getMulticraftWeightOOP(recipeData, averageProfit)
+    local resourcefulnessWeight = CraftSim.AVERAGEPROFIT:getResourcefulnessWeightOOP(recipeData, averageProfit)
 
+    recipeData:Update() -- revert
 
-    -- local inspirationResults = CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
-    -- local multicraftResults = CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)
-    -- local resourcefulnessResults = CraftSim.AVERAGEPROFIT:getResourcefulnessWeight(recipeData, priceData, calculationResult.meanProfit)
-    -- calculationResult.inspiration = inspirationResults and inspirationResults.statWeight or 0
-    -- calculationResult.multicraft = multicraftResults and multicraftResults.statWeight or 0
-    -- calculationResult.resourcefulness = resourcefulnessResults and resourcefulnessResults.statWeight or 0
-
-    return calculationResult
+    return CraftSim.Statweights(averageProfit, inspirationWeight, multicraftWeight, resourcefulnessWeight)
 end

@@ -31,9 +31,9 @@ end
 function CraftSim.ProfessionStat:GetPercent(decimal)
     if self.percentMod then
         if not decimal then
-            return self.value * self.percentMod
+            return self.value * self.percentMod * 100
         else
-            return (self.value * self.percentMod) / 100
+            return self.value * self.percentMod
         end
     else
         error("CraftSim ProfessionStat: No Percent Mod set: " .. tostring(self.name))

@@ -148,5 +148,6 @@ function CraftSim.ResultData:Debug()
 end
 
 function CraftSim.ResultData:Copy(recipeData)
-    return  CraftSim.ResultData(recipeData)
+    local copy = CraftSim.ResultData(recipeData)
+    return  copy
 end

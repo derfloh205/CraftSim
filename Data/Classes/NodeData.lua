@@ -48,14 +48,6 @@ function CraftSim.NodeData:Debug()
         "rank: " .. tostring(self.rank) .. " / " .. tostring(self.maxRank),
     }
 
-    -- if CraftSim.UTIL:Count(self.idMapping.categories) > 0 then
-    --     table.insert(debugLines, "IDMapping:")
-
-    --     local lines = self.idMapping:Debug()
-    --     lines = CraftSim.UTIL:Map(lines, function(line) return "-" .. line end)
-    --     debugLines = CraftSim.UTIL:Concat({debugLines, lines})
-    -- end
-
     for _, childNode in pairs(self.childNodes) do
         local lines = childNode:Debug()
         lines = CraftSim.UTIL:Map(lines, function(line) return "-" .. line end)

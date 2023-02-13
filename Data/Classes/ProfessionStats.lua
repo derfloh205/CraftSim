@@ -61,6 +61,16 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 	end
 end
 
+---@param baseRecipeDifficulty number
+---@param maxQuality number
+function CraftSim.ProfessionStats:SetInspirationBaseBonusSkill(baseRecipeDifficulty, maxQuality)
+	if maxQuality == 3 then
+		self.inspiration.extraValue = baseRecipeDifficulty * (1/3)
+	elseif maxQuality == 5 then
+		self.inspiration.extraValue = baseRecipeDifficulty * (1/6)
+	end
+end
+
 function CraftSim.ProfessionStats:GetStatList()
 	return {self.recipeDifficulty, self.skill, self.inspiration, self.multicraft, self.resourcefulness, self.craftingspeed, self.phialExperimentationFactor, self.potionExperimentationFactor}
 end
@@ -101,17 +111,25 @@ function CraftSim.ProfessionStats:Clear()
 	end
 end
 
+function CraftSim.ProfessionStats:ClearFactors()
+	local statList = self:GetStatList()
+
+	for _, stat in pairs(statList) do
+		stat.extraFactor = 0
+	end
+end
+
 function CraftSim.ProfessionStats:Debug()
 	local debugLines = {
 		"RecipeDifficulty: " .. self.recipeDifficulty.value,
 		"Skill: " .. self.skill.value,
-		"Inspiration: " .. self.inspiration.value .. " (".. self.inspiration:GetPercent()*100 .."%) " .. self.inspiration.percentMod,
+		"Inspiration: " .. self.inspiration.value .. " (".. self.inspiration:GetPercent() .."%) " .. self.inspiration.percentMod,
 		"Inspiration Bonus Skill: " .. self.inspiration:GetExtraValueByFactor() .. " (".. self.inspiration.extraValue .." * ".. self.inspiration:GetExtraFactor(true) ..")",
-		"Multicraft: " .. self.multicraft.value .. " (".. self.multicraft:GetPercent()*100 .."%)",
+		"Multicraft: " .. self.multicraft.value .. " (".. self.multicraft:GetPercent() .."%)",
 		"Multicraft Factor: " .. self.multicraft.extraFactor,
-		"Resourcefulness: " .. self.resourcefulness.value .. " (".. self.resourcefulness:GetPercent()*100 .."%)",
+		"Resourcefulness: " .. self.resourcefulness.value .. " (".. self.resourcefulness:GetPercent() .."%)",
 		"Resourcefulness Factor: " .. self.resourcefulness.extraFactor,
-		"CraftingSpeed: " .. self.craftingspeed.value .. " (".. self.craftingspeed:GetPercent()*100 .."%)",
+		"CraftingSpeed: " .. self.craftingspeed.value .. " (".. self.craftingspeed:GetPercent() .."%)",
 	}
 
 	if self.phialExperimentationFactor.extraFactor > 0 then

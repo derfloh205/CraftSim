@@ -4,6 +4,7 @@ _, CraftSim = ...
 ---@field recipeData CraftSim.RecipeData
 ---@field qualityPriceList number[]
 ---@field craftingCosts number
+---@field craftingCostsRequired number
 
 CraftSim.PriceData = CraftSim.Object:extend()
 
@@ -22,6 +23,7 @@ function CraftSim.PriceData:Update()
     local reagentData = self.recipeData.reagentData
 
     self.craftingCosts = 0
+    self.craftingCostsRequired = 0
     self.qualityPriceList = {}
 
     print("Calculating Crafting Costs: ", false, true)
@@ -31,6 +33,7 @@ function CraftSim.PriceData:Update()
             local itemID = reagentData.salvageReagentSlot.activeItem:GetItemID()
             local itemPrice = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(self.recipeData.recipeID, itemID) or CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true)
             self.craftingCosts = self.craftingCosts + itemPrice * reagentData.salvageReagentSlot.requiredQuantity
+            self.craftingCostsRequired = self.craftingCosts
         end
     else
         print("Summing reagents:")
@@ -68,6 +71,8 @@ function CraftSim.PriceData:Update()
             end
         end
 
+        self.craftingCostsRequired = self.craftingCosts
+
         -- optionals and finishing
         local activeOptionalReagents = CraftSim.UTIL:Concat({
                 CraftSim.UTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeItem end),
@@ -82,14 +87,8 @@ function CraftSim.PriceData:Update()
         end
     end
 
-    print("resultData:")
-    print(resultData)
-
     for i, item in pairs(resultData.itemsByQuality) do
         local itemPrice = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(self.recipeData.recipeID, i) or CraftSim.PRICEDATA:GetMinBuyoutByItemLink(item:GetItemLink())
-        print("override: " .. tostring(CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(self.recipeData.recipeID, i)))
-        print("not override: " .. tostring(CraftSim.PRICEDATA:GetMinBuyoutByItemLink(item:GetItemLink())))
-        print("Price for Item: " .. item:GetItemLink() .. " " .. item:GetItemID() .. " -> " .. CraftSim.UTIL:FormatMoney(itemPrice))
         table.insert(self.qualityPriceList, itemPrice)
     end
 end
@@ -111,5 +110,6 @@ function CraftSim.PriceData:Copy(recipeData)
     local copy = CraftSim.PriceData(recipeData)
     copy.qualityPriceList = CraftSim.UTIL:Map(self.qualityPriceList, function(n) return n end)
     copy.craftingCosts = self.craftingCosts
+    copy.craftingCostsRequired = self.craftingCostsRequired
     return copy
 end

@@ -1064,7 +1064,7 @@ function CraftSim.CALC:getResourcefulnessSavedCostsOOP(recipeData)
 
     local savedCosts = 0
     if recipeData.supportsResourcefulness then
-        savedCosts = priceData.craftingCosts * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR * extraSavedItemsFactor)
+        savedCosts = priceData.craftingCostsRequired * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR * extraSavedItemsFactor)
     end
 
     return savedCosts
@@ -1130,16 +1130,29 @@ function CraftSim.CALC:GetMeanProfitOOP(recipeData)
         local hsvChance, withInspirationOnly = CraftSim.CALC:getHSVChanceOOP(recipeData)
         local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCostsOOP(recipeData)
 
-        print("HSV Upgrade Chance: " .. CraftSim.UTIL:round(hsvChance*100, 2) .. "%")
+        print("Chances:")
+        print("inspChance: " .. inspChance)
+        print("mcChance: " .. mcChance)
+        print("resChance: " .. resChance)
+        print("hsvChance: " .. hsvChance)
+
+        print("SavedCostsRes: " .. CraftSim.UTIL:FormatMoney(savedCostsByRes))
 
         local maxExtraItems = (2.5*recipeData.baseItemAmount) * professionStats.multicraft:GetExtraFactor(true)
         local expectedAdditionalItems = (1 + maxExtraItems) / 2 
         local expectedItems = recipeData.baseItemAmount + expectedAdditionalItems
 
-        local skillWithInspiration = professionStats.skill.value + professionStats.inspiration.extraValue
+        print("Inspiration Extra Factor:" .. professionStats.inspiration.extraFactor)
+        print("Inspiration Extra Value:" .. professionStats.inspiration.extraValue)
+        print("Inspiration Extra Value By Factor:" .. professionStats.inspiration:GetExtraValueByFactor())
+
+        local skillWithInspiration = professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor()
+        print("skill: " .. professionStats.skill.value)
+        print("skillWithInspiration: " .. skillWithInspiration)
         local qualityWithInspiration = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkillOOP(recipeData, skillWithInspiration)
         local qualityWithHSV = math.min(recipeData.resultData.expectedQuality + 1, recipeData.maxQuality)
 
+        print("expectedQuality: " .. recipeData.resultData.expectedQuality)
         print("qualityWithHSV: " .. tostring(qualityWithHSV))
         print("qualityWithInspiration: " .. tostring(qualityWithInspiration))
 
@@ -1148,7 +1161,7 @@ function CraftSim.CALC:GetMeanProfitOOP(recipeData)
 
         local probabilityTable = {}
 
-        print("Build Probability Table (INSP, MC, RES, HSV)")
+        print("Build Probability Table (INSP, MC, HSV, RES)")
 
         local bitMax = "1111"
         local numBits = string.len(bitMax)

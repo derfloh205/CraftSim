@@ -104,6 +104,44 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplay(priceData, sta
     end
 end
 
+---@param statWeights CraftSim.Statweights
+---@param exportMode number
+function CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplayOOP(statWeights, craftingCosts, exportMode)
+    local statweightFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        statweightFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
+    else
+        statweightFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS)
+    end
+    if statWeights == nil then
+        statweightFrame.content.statText:SetText("")
+        statweightFrame.content.valueText:SetText("")
+    else
+        local statText = ""
+        local valueText = ""
+
+        if statWeights.averageProfit then
+            statText = statText .. "Ø Profit / Craft:" .. "\n"
+            local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
+            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.averageProfit, true, relativeValue) .. "\n"
+        end
+        if statWeights.inspirationWeight then
+            statText = statText .. "Inspiration:" .. "\n"
+            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.inspirationWeight) .. "\n"
+        end
+        if statWeights.multicraftWeight then
+            statText = statText .. "Multicraft:" .. "\n"
+            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.multicraftWeight) .. "\n"
+        end
+        if statWeights.resourcefulnessWeight then
+            statText = statText .. "Resourcefulness:"
+            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.resourcefulnessWeight)
+        end
+        statweightFrame.content.statText:SetText(statText)
+        statweightFrame.content.valueText:SetText(valueText)
+    end
+end
+
 function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
     local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimProfitDetailsFrame", 

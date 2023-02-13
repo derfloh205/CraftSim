@@ -24,6 +24,7 @@ _, CraftSim = ...
 ---@field allocationItemGUID? string
 ---@field professionData CraftSim.ProfessionData
 ---@field reagentData CraftSim.ReagentData
+---@field specializationData CraftSim.SpecializationData
 ---@field professionGearSet CraftSim.ProfessionGearSet
 ---@field professionStats CraftSim.ProfessionStats The ProfessionStats of that recipe considering gear, reagents, buffs.. etc
 ---@field baseProfessionStats CraftSim.ProfessionStats The ProfessionStats of that recipe without gear or reagents
@@ -54,6 +55,12 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     
     self.recipeID = recipeID
     self.categoryID = recipeInfo.categoryID
+
+    if recipeInfo.hyperlink then
+        local subclassID = select(7, GetItemInfoInstant(recipeInfo.hyperlink))
+        self.subtypeID = subclassID
+    end
+    
     self.isRecraft = isRecraft or false
     self.recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
     self.learned = recipeInfo.learned or false
@@ -75,6 +82,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
 
     -- fetch possible required/optional/finishing reagents, if possible categorize by quality?
 
+    self.specializationData = CraftSim.SpecializationData(self)
+
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
     if not schematicInfo then
         print("No RecipeData created: SchematicInfo not found")
@@ -85,9 +94,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     self.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
     self.isSoulbound = (schematicInfo.outputItemID and CraftSim.UTIL:isItemSoulbound(schematicInfo.outputItemID)) or false
 
-    print("Set fresh reagentdata")
-    print(self.reagentData)
-
     self.professionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
     
     local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
@@ -97,22 +103,21 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     self.professionStatModifiers = CraftSim.ProfessionStats()
     
     self.baseProfessionStats:SetStatsByOperationInfo(self, baseOperationInfo)
-    self.professionStats:SetStatsByOperationInfo(self, baseOperationInfo)
+
+    self.baseProfessionStats:SetInspirationBaseBonusSkill(self.baseProfessionStats.recipeDifficulty.value, self.maxQuality)
 
     -- subtract stats from current set to get base stats
     local equippedProfessionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
     equippedProfessionGearSet:LoadCurrentEquippedSet()
     
     self.baseProfessionStats:subtract(equippedProfessionGearSet.professionStats)
-    self.professionStats:subtract(equippedProfessionGearSet.professionStats)
+    -- As we dont know in this case what the factors are without gear and reagents and such
+    -- we set them to 0 and let them accumulate in UpdateProfessionStats
+    self.baseProfessionStats:ClearFactors()
+
+    self:UpdateProfessionStats()
     
     self.resultData = CraftSim.ResultData(self)
-
-    if #self.resultData.itemsByQuality > 0 then
-        local subclassID = select(7, GetItemInfoInstant(self.resultData.itemsByQuality[1]:GetItemID()))
-        self.subtypeID = subclassID
-    end
-
     self.resultData:Update()
 
     self.priceData = CraftSim.PriceData(self)
@@ -245,15 +250,29 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     local skillRequiredReagents = self.reagentData:GetSkillFromRequiredReagents()
     local optionalStats = self.reagentData:GetProfessionStatsByOptionals()
     local itemStats = self.professionGearSet.professionStats
+    local specExtraFactors = self.specializationData:GetExtraFactors()
 
     self.professionStats:Clear()
+
+    -- Dont forget to set this.. cause it is ignored by add/subtract
+    self.professionStats:SetInspirationBaseBonusSkill(self.baseProfessionStats.recipeDifficulty.value, self.maxQuality)
 
     self.professionStats:add(self.baseProfessionStats)
 
     self.professionStats.skill:addValue(skillRequiredReagents)
 
     self.professionStats:add(optionalStats)
+
+    print("stats before item add")
+    print(self.professionStats)
+
     self.professionStats:add(itemStats)
+
+    print("stats before add spec, after item add")
+    print(self.professionStats)
+    self.professionStats:add(specExtraFactors)
+    print("stats after add spec")
+    print(self.professionStats)
 
     -- finally add any custom modifiers
     self.professionStats:add(self.professionStatModifiers)
@@ -277,5 +296,8 @@ function CraftSim.RecipeData:Copy()
     copy.professionStatModifiers = self.professionStatModifiers:Copy()
     copy.priceData = self.priceData:Copy(copy) -- Is this needed or covered by constructor?
     copy.resultData = self.resultData:Copy(copy) -- Is this needed or covered by constructor?
+    -- copy spec data or already handled in constructor?
+
+    copy:Update()
     return copy
 end
