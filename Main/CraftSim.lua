@@ -660,7 +660,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 				CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplayOOP(statWeights, recipeData.priceData.craftingCosts, exportMode)
 			end
 
-			-- CraftSim.STATISTICS.FRAMES:UpdateStatisticsOOP(recipeData)
+			CraftSim.STATISTICS.FRAMES:UpdateStatisticsOOP(recipeData)
 		end
 
 		-- Price Override Module
