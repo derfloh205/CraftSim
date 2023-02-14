@@ -4,6 +4,9 @@ _, CraftSim = ...
 ---@field recipeData CraftSim.RecipeData
 ---@field itemsByQuality ItemMixin[]
 ---@field expectedQuality number
+---@field expectedQualityInspiration number
+---@field expectedQualityHSV number
+---@field expectedQualityInspirationHSV number
 ---@field expectedQualityUpgrade number
 ---@field expectedItem? ItemMixin
 ---@field canUpgradeQuality boolean
@@ -22,6 +25,9 @@ function CraftSim.ResultData:new(recipeData)
     self.canUpgradeQuality = false
     self.expectedQuality = 1
     self.expectedQualityUpgrade = 1
+    self.expectedQualityInspiration = 1
+    self.expectedQualityHSV = 1
+    self.expectedQualityInspirationHSV = 1
 
     self:UpdatePossibleResultItems()
 end
@@ -120,6 +126,9 @@ function CraftSim.ResultData:Update()
     local qualityInspirationHSV = expectedQualityBySkill(skillInspirationHSV, recipeData.maxQuality, professionStats.recipeDifficulty.value)
 
     self.expectedQualityUpgrade = math.max(self.expectedQuality, qualityInspiration, qualityHSV, qualityInspirationHSV)
+    self.expectedQualityInspiration = qualityInspiration
+    self.expectedQualityHSV = qualityHSV
+    self.expectedQualityInspirationHSV = qualityInspirationHSV
 
     if 
         self.expectedQuality < qualityInspiration or 
@@ -143,6 +152,9 @@ function CraftSim.ResultData:Debug()
         {
             "expectedQuality: " .. tostring(self.expectedQuality),
             "expectedQualityUpgrade: " .. tostring(self.expectedQualityUpgrade),
+            "expectedQualityInspiration: " .. tostring(self.expectedQualityInspiration),
+            "expectedQualityHSV: " .. tostring(self.expectedQualityHSV),
+            "expectedQualityInspirationHSV: " .. tostring(self.expectedQualityInspirationHSV),
             "expectedItem: " .. tostring(self.expectedItem and self.expectedItem:GetItemLink()),
             "canUpgradeQuality: " .. tostring(self.canUpgradeQuality),
             "expectedItemInspiration: " .. tostring(self.expectedItemInspiration and self.expectedItemInspiration:GetItemLink()),

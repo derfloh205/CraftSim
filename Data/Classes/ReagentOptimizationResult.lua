@@ -52,6 +52,18 @@ function CraftSim.ReagentOptimizationResult:HasItems()
     return true
 end
 
+---@return CraftSim.ReagentListItem[]
+function CraftSim.ReagentOptimizationResult:GetReagentItemList()
+    local reagentItemList = {}
+    for _, reagent in pairs(self.reagents) do
+        if reagent.hasQuality then -- should here but why not check
+            reagentItemList = CraftSim.UTIL:Concat({reagentItemList, reagent:GetReagentItemList()})
+        end
+    end
+
+    return reagentItemList
+end
+
 function CraftSim.ReagentOptimizationResult:Debug()
     local debugLines = {
         "qualityID: " .. tostring(self.qualityID),

@@ -184,6 +184,25 @@ function CraftSim.ReagentData:EqualsQualityReagents(reagents)
     return true
 end
 
+---@param qualityID number
+function CraftSim.ReagentData:SetReagentsMaxByQuality(qualityID)
+    if not qualityID or qualityID < 1 or qualityID > 3 then
+        error("CraftSim.ReagentData:SetReagentsMaxByQuality(qualityID) -> qualityID has to be between 1 and 3")
+    end
+    table.foreach(self.requiredReagents, function (_, reagent)
+        if reagent.hasQuality then
+            reagent:Clear()
+            reagent.items[qualityID].quantity = reagent.requiredQuantity
+        end
+    end)
+end
+
+---@param optimizationResult CraftSim.ReagentOptimizationResult
+function CraftSim.ReagentData:SetReagentsByOptimizationResult(optimizationResult)
+    local reagentItemList = optimizationResult:GetReagentItemList()
+    self.recipeData:SetReagents(reagentItemList)
+end
+
 function CraftSim.ReagentData:Debug()
     local debugLines = {}
     for _, reagent in pairs(self.requiredReagents) do

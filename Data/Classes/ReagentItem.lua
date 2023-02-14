@@ -13,6 +13,14 @@ function CraftSim.ReagentItem:new(itemID, qualityID)
     self.item = Item:CreateFromItemID(itemID)
 end
 
+---@return CraftSim.ReagentListItem
+function CraftSim.ReagentItem:GetAsReagentListItem()
+    return {
+        itemID = self.item:GetItemID(),
+        quantity = self.quantity,
+    }
+end
+
 function CraftSim.ReagentItem:Copy()
     local copy = CraftSim.ReagentItem(self.item:GetItemID(), self.qualityID)
     copy.quantity = self.quantity

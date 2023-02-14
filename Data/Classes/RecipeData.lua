@@ -121,6 +121,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     self.resultData:Update()
 
     self.priceData = CraftSim.PriceData(self)
+    self.priceData:Update()
 end
 
 ---@class CraftSim.ReagentListItem

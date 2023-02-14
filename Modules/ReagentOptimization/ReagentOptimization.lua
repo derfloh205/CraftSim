@@ -944,6 +944,10 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbsOOP(ksItem)
 end
 
 -- By Liqorice's knapsack solution
+---@param recipeData CraftSim.RecipeData
+---@param exportMode number
+---@param UseInspirationOverride? boolean
+---@return CraftSim.ReagentOptimizationResult
 function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, exportMode, UseInspirationOverride)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION_OOP)
     -- insert costs

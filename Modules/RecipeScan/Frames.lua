@@ -236,3 +236,89 @@ function CraftSim.RECIPE_SCAN:AddRecipeToRecipeRow(recipeData, priceData, meanPr
     availableRow:SetPoint("TOP", RecipeScanFrame.content.resultFrame, "TOP", 0, totalOffsetY)
 
 end
+
+-- OOP Refactor
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRowOOP(recipeData)
+    local RecipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+    -- get first non active row
+    local availableRow = CraftSim.UTIL:Find(RecipeScanFrame.content.resultRowFrames, function(frame) return not frame.isActive end)
+    local numActiveFrames = CraftSim.UTIL:Count(RecipeScanFrame.content.resultRowFrames, function(frame) return frame.isActive end)
+
+    if not availableRow or numActiveFrames == #RecipeScanFrame.content.resultRowFrames then
+        -- too few rows.. create dynamically
+        local newRow = RecipeScanFrame.content.resultFrame.createResultRowFrame()
+        table.insert(RecipeScanFrame.content.resultRowFrames, newRow)
+        availableRow = newRow
+    end
+
+    -- fill content TODO: include HSV results?
+    availableRow.recipeID = recipeData.recipeID
+    local resultData = recipeData.resultData
+    if resultData.expectedQualityInspiration > resultData.expectedQuality then
+        availableRow.recipeResultText:SetText(resultData.expectedItemInspiration:GetItemLink())
+        local inspirationPercent = CraftSim.UTIL:round(recipeData.professionStats.inspiration:GetPercent())
+        availableRow.inspirationChanceText:SetText(CraftSim.UTIL:ColorizeText(inspirationPercent .. "%", CraftSim.CONST.COLORS.GREEN))
+    else
+        availableRow.recipeResultText:SetText(resultData.expectedItem:GetItemLink())
+        if resultData.expectedQuality == recipeData.maxQuality then
+            availableRow.inspirationChanceText:SetText(CraftSim.UTIL:ColorizeText("max", CraftSim.CONST.COLORS.GREEN))
+        else
+            if not recipeData.supportsInspiration then
+                availableRow.inspirationChanceText:SetText("-")
+            else
+                availableRow.inspirationChanceText:SetText(CraftSim.UTIL:ColorizeText("0%", CraftSim.CONST.COLORS.RED))
+            end
+        end
+    end
+
+    local averageProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)
+
+    local profitText = CraftSim.UTIL:FormatMoney(CraftSim.UTIL:round(averageProfit / 10000) * 10000, true, recipeData.priceData.craftingCosts) -- round to gold
+    availableRow.profitText:SetText(profitText)
+
+    availableRow.learnedText:SetText((recipeData.learned and CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125)) or CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125))
+    
+    if not CraftSimOptions.recipeScanOptimizeProfessionTools then
+        availableRow.tool1Icon:Hide()
+        availableRow.tool2Icon:Hide()
+        availableRow.tool3Icon:Hide()
+        availableRow.noTopGearText:Show()
+        availableRow.noTopGearText:SetText("-")
+    elseif not recipeData.professionGearSet:IsEquipped() then
+        CraftSim.TOPGEAR.FRAMES:UpdateCombinationIconsOOP(recipeData.professionGearSet, CraftSim.CONST.EXPORT_MODE.SCAN, {
+            availableRow.tool1Icon,
+            availableRow.tool2Icon,
+            availableRow.tool3Icon,
+        })
+        availableRow.noTopGearText:Hide()
+    else
+        availableRow.tool1Icon:Hide()
+        availableRow.tool2Icon:Hide()
+        availableRow.tool3Icon:Hide()
+        availableRow.noTopGearText:Show()
+        availableRow.noTopGearText:SetText(CraftSim.UTIL:ColorizeText("Equipped", CraftSim.CONST.COLORS.GREEN))
+    end
+
+    -- update visibility and position
+
+    availableRow.isActive = true
+    local baseOffsetY = -30
+    local spacingY = -20
+    local totalOffsetY = baseOffsetY - spacingY
+    for i = 1, numActiveFrames, 1 do
+        local row = RecipeScanFrame.content.resultRowFrames[i]
+        if row.meanProfit < averageProfit then
+            row.offset = row.offset + spacingY
+            row:SetPoint("TOP", RecipeScanFrame.content.resultFrame, "TOP", 0, row.offset)
+        else
+            totalOffsetY = totalOffsetY + spacingY
+        end
+    end
+    availableRow.meanProfit = averageProfit
+    availableRow.offset = totalOffsetY
+    availableRow:Show()
+    availableRow:SetPoint("TOP", RecipeScanFrame.content.resultFrame, "TOP", 0, totalOffsetY)
+
+end

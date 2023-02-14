@@ -335,7 +335,87 @@ function CraftSim.RECIPE_SCAN:StartScan()
         end
     end
 
+    local function scanRecipesByIntervalOOP()
+        local recipeInfo = recipeInfos[currentIndex]
+        if not recipeInfo then
+            CraftSim.RECIPE_SCAN:EndScan()
+            return
+        end
+
+        CraftSim.RECIPE_SCAN:UpdateScanPercent(currentIndex, #recipeInfos)
+
+        print("recipeID: " .. tostring(recipeInfo.recipeID), false, true)
+        print("recipeName: " .. tostring(recipeInfo.name))
+        print("isEnchant: " .. tostring(recipeInfo.isEnchantingRecipe))
+
+        local recipeData = CraftSim.RecipeData(recipeInfo.recipeID);
+        if not recipeData then
+            CraftSim.RECIPE_SCAN:EndScan()
+            return
+        end
+
+        --optimize top gear first cause optimized reagents might change depending on the gear
+        if CraftSimOptions.recipeScanOptimizeProfessionTools then
+            -- for any optimization, optimize for highest skill ( for now )
+            CraftSim.UTIL:StartProfiling("Optimize Top Gear: SCAN")
+            local topGearList = CraftSim.TOPGEAR:OptimizeTopGear(recipeData, CraftSim.CONST.GEAR_SIM_MODES.SKILL) 
+            local topResult = topGearList[1]
+            
+            if topResult then
+                recipeData.professionGearSet = topResult.professionGearSet
+                
+                recipeData:Update()
+            end
+            CraftSim.UTIL:StopProfiling("Optimize Top Gear: SCAN")
+        end
+
+        CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
+
+        recipeData:Update()
+
+
+        local function continueScan()
+            CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRowOOP(recipeData) 
+
+            currentIndex = currentIndex + 1
+            C_Timer.After(CraftSim.RECIPE_SCAN.scanInterval, scanRecipesByIntervalOOP)
+        end
+        -- so we can display them smoothly
+        -- TODO: should we also wait for the reagents to load?
+        CraftSim.UTIL:ContinueOnAllItemsLoaded(recipeData.resultData.itemsByQuality, continueScan)
+    end
+
     CraftSim.RECIPE_SCAN:ToggleScanButton(false)
     CraftSim.RECIPE_SCAN:ResetResults()
-    scanRecipesByInterval()
+    if CraftSimOptions.enablefeatureToggleID_OOP then
+        scanRecipesByIntervalOOP()
+    else
+        scanRecipesByInterval()
+    end
+end
+
+
+-- OOP Refactor
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
+    local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
+
+    if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q1 then
+        recipeData.reagentData:SetReagentsMaxByQuality(1)
+    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q2 then
+        recipeData.reagentData:SetReagentsMaxByQuality(2)
+    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3 then
+        recipeData.reagentData:SetReagentsMaxByQuality(3)
+    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G or scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I then
+        if not recipeData.hasReagentsWithQuality then -- ??
+            -- ??
+            return
+        end
+
+        local inspirationOverride = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
+        local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, CraftSim.CONST.EXPORT_MODE.SCAN, inspirationOverride)
+        
+        recipeData.reagentData:SetReagentsByOptimizationResult(optimizationResult)
+    end
 end

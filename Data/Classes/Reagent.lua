@@ -78,6 +78,16 @@ function CraftSim.Reagent:GetCraftingReagentInfos()
     return craftingReagentInfos
 end
 
+---@return CraftSim.ReagentListItem[]
+function CraftSim.Reagent:GetReagentItemList()
+    local reagentItemList = {}
+    for _, item in pairs(self.items) do
+        table.insert(reagentItemList, item:GetAsReagentListItem())
+    end
+
+    return reagentItemList
+end
+
 function CraftSim.Reagent:Copy()
     local copy = CraftSim.Reagent()
 

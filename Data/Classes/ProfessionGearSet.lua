@@ -117,6 +117,13 @@ function CraftSim.ProfessionGearSet:Equals(professionGearSet)
     end
 end
 
+function CraftSim.ProfessionGearSet:IsEquipped()
+    local equippedSet = CraftSim.ProfessionGearSet(self.professionID)
+    equippedSet:LoadCurrentEquippedSet()
+
+    return self:Equals(equippedSet)
+end
+
 function CraftSim.ProfessionGearSet:Equip()
     CraftSim.TOPGEAR.IsEquipping = true
     CraftSim.TOPGEAR:UnequipProfessionItems(self.professionID)
