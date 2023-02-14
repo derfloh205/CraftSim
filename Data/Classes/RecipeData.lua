@@ -19,6 +19,7 @@ _, CraftSim = ...
 ---@field isSoulbound boolean
 ---@field isEnchantingRecipe boolean
 ---@field isSalvageRecipe boolean
+---@field isCooking boolean
 ---@field baseItemAmount number
 ---@field maxQuality number
 ---@field allocationItemGUID? string
@@ -70,6 +71,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
 	self.supportsQualities = recipeInfo.supportsQualities or false
 	self.supportsCraftingStats = recipeInfo.supportsCraftingStats or false
     self.isEnchantingRecipe = recipeInfo.isEnchantingRecipe or false
+    self.isCooking = self.professionData.professionInfo.profession == Enum.Profession.Cooking
     self.isSalvageRecipe = recipeInfo.isSalvageRecipe or false
     self.allocationItemGUID = nil
     self.maxQuality = recipeInfo.maxQuality

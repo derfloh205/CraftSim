@@ -803,7 +803,6 @@ end
 ---@return CraftSim.ProfessionGearSet[] topGearSets
 function CraftSim.TOPGEAR:GetProfessionGearCombinationsOOP(recipeData)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.TOPGEAR_OOP)
-    local isCooking = recipeData.professionData.professionInfo.profession == Enum.Profession.Cooking
     local equippedGear = CraftSim.ProfessionGearSet(recipeData.professionData.professionInfo.profession)
     equippedGear:LoadCurrentEquippedSet()
     local inventoryGear =  CraftSim.TOPGEAR:GetProfessionGearFromInventoryOOP(recipeData)
@@ -837,7 +836,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinationsOOP(recipeData)
     -- if cooking we do not need to make any combinations cause we only have one gear slot
     local gearSlotCombos = {}
 
-    if not isCooking then
+    if not recipeData.isCooking then
         for _, professionGearA in pairs(gearSlotItems) do
             for _, professionGearB in pairs(gearSlotItems) do
                 local emptyA = professionGearA == CraftSim.TOPGEAR.EMPTY_SLOT
@@ -860,7 +859,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinationsOOP(recipeData)
     -- if cooking just combine 1 gear with tool
     local totalCombos = {}
 
-    if not isCooking then
+    if not recipeData.isCooking then
         for _, combo in pairs(gearSlotCombos) do
             for _, tool in pairs(toolSlotItems) do
                 table.insert(totalCombos, {tool, combo[1], combo[2]})
@@ -875,7 +874,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinationsOOP(recipeData)
     end
     
 
-    local uniqueCombos = CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutationsOOP(totalCombos, isCooking)
+    local uniqueCombos = CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutationsOOP(totalCombos, recipeData.isCooking)
 
     local function convertToProfessionGearSet(combos)
         return CraftSim.UTIL:Map(combos, function (combo)
@@ -883,7 +882,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinationsOOP(recipeData)
             local tool = combo[1]
             local gear1 = combo[2]
             local gear2 = combo[3]
-            if isCooking then
+            if recipeData.isCooking then
                 if tool ~= CraftSim.TOPGEAR.EMPTY_SLOT then
                     professionGearSet.tool = tool
                 end
@@ -910,7 +909,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinationsOOP(recipeData)
 
     -- Remove invalid combos (with two gear items that share the same unique equipped restriction)
     -- only needed if not cooking
-    if not isCooking then
+    if not recipeData.isCooking then
         local validCombos = CraftSim.TOPGEAR:GetValidCombosFromUniqueCombosOOP(uniqueCombos)
         return convertToProfessionGearSet(validCombos)
     else
@@ -1015,6 +1014,6 @@ function CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
         print(results[1].relativeStats)
         CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplayOOP(results, CraftSimOptions.topGearMode, exportMode)
     else
-        CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData.professionGearSet.isCooking, false, exportMode)
+        CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData.isCooking, false, exportMode)
     end
 end
