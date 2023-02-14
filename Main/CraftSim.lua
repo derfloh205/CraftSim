@@ -474,7 +474,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local recipeType = nil 
 	local priceData = nil
 
-    local showMaterialAllocation = false
+    local showMaterialOptimization = false
     local showStatweights = false
     local showTopGear = false
     local showCostOverview = false
@@ -493,7 +493,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		if recipeData and priceData then
 			if recipeData.isRecraft then
 				-- show everything
-				showMaterialAllocation = true
+				showMaterialOptimization = true
 				showTopGear = true
 				showCostOverview = true
 				showStatweights = true
@@ -502,7 +502,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 				showPriceOverride = true
 			elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
 				-- show everything
-				showMaterialAllocation = true
+				showMaterialOptimization = true
 				showTopGear = true
 				showCostOverview = true
 				showStatweights = true
@@ -527,7 +527,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			elseif recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
 				-- show crafting costs and highest material allocation
 				showCostOverview = true
-				showMaterialAllocation = true
+				showMaterialOptimization = true
 				-- also show top gear cause we have different modes now
 				showTopGear = true
 				showSimulationMode = true
@@ -544,16 +544,19 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	else
 		if recipeData.supportsCraftingStats then
 			showStatweights = true
+			showTopGear = true
+		end
+
+		if recipeData.hasReagentsWithQuality then
+			showMaterialOptimization = true
 		end
 
 		showCostOverview = true
 		showPriceOverride = true
-		showMaterialAllocation = true
-		showTopGear = true
 	end
 
 
-	showMaterialAllocation = showMaterialAllocation and CraftSimOptions.modulesMaterials 
+	showMaterialOptimization = showMaterialOptimization and CraftSimOptions.modulesMaterials 
 	-- temporary disable for recipes with only one required qualitity reagent
 	--showMaterialAllocation = showMaterialAllocation and recipeData and recipeData.numReagentsWithQuality > 1
 	showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
@@ -615,10 +618,10 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 		end
 	
-		showMaterialAllocation = showMaterialAllocation and recipeData.hasReagentsWithQuality
-		CraftSim.FRAME:ToggleFrame(materialOptimizationFrame, showMaterialAllocation and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialAllocation and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if showMaterialAllocation then
+		showMaterialOptimization = showMaterialOptimization and recipeData.hasReagentsWithQuality
+		CraftSim.FRAME:ToggleFrame(materialOptimizationFrame, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+		CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+		if showMaterialOptimization then
 			CraftSim.UTIL:StartProfiling("Reagent Optimization")
 			CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData, exportMode)
 			CraftSim.UTIL:StopProfiling("Reagent Optimization")
@@ -684,9 +687,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		end
 
 		-- Material Optimization Module
-		CraftSim.FRAME:ToggleFrame(materialOptimizationFrame, showMaterialAllocation and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialAllocation and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if recipeData and showMaterialAllocation then
+		CraftSim.FRAME:ToggleFrame(materialOptimizationFrame, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+		CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+		if recipeData and showMaterialOptimization then
 			CraftSim.UTIL:StartProfiling("Reagent Optimization")
 			CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, exportMode)
 			CraftSim.UTIL:StopProfiling("Reagent Optimization")

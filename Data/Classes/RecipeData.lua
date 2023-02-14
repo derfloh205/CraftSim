@@ -9,6 +9,7 @@ _, CraftSim = ...
 ---@field numSkillUps? number
 ---@field recipeIcon? string
 ---@field recipeName? string
+---@field hasQualityReagents boolean
 ---@field supportsQualities boolean
 ---@field supportsCraftingStats boolean
 ---@field supportsInspiration boolean
@@ -84,7 +85,9 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
 
     -- fetch possible required/optional/finishing reagents, if possible categorize by quality?
 
-    self.specializationData = CraftSim.SpecializationData(self)
+    if not self.isCooking then
+        self.specializationData = CraftSim.SpecializationData(self)
+    end
 
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
     if not schematicInfo then
@@ -92,6 +95,12 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
         return
     end
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
+
+    local qualityReagents = CraftSim.UTIL:Count(self.reagentData.requiredReagents, function (reagent)
+        return reagent.hasQuality
+    end)
+
+    self.hasQualityReagents = qualityReagents > 0
 
     self.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
     self.isSoulbound = (schematicInfo.outputItemID and CraftSim.UTIL:isItemSoulbound(schematicInfo.outputItemID)) or false
@@ -253,8 +262,7 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     local skillRequiredReagents = self.reagentData:GetSkillFromRequiredReagents()
     local optionalStats = self.reagentData:GetProfessionStatsByOptionals()
     local itemStats = self.professionGearSet.professionStats
-    local specExtraFactors = self.specializationData:GetExtraFactors()
-
+    
     self.professionStats:Clear()
 
     -- Dont forget to set this.. cause it is ignored by add/subtract
@@ -273,7 +281,10 @@ function CraftSim.RecipeData:UpdateProfessionStats()
 
     print("stats before add spec, after item add")
     print(self.professionStats)
-    self.professionStats:add(specExtraFactors)
+    if not self.isCooking then
+        local specExtraFactors = self.specializationData:GetExtraFactors()
+        self.professionStats:add(specExtraFactors)
+    end
     print("stats after add spec")
     print(self.professionStats)
 

@@ -947,21 +947,23 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
 ---@param UseInspirationOverride? boolean
----@return CraftSim.ReagentOptimizationResult
+---@return CraftSim.ReagentOptimizationResult?
 function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, exportMode, UseInspirationOverride)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION_OOP)
-    -- insert costs
-    -- local reagentCostsByQuality = CraftSim.PRICEDATA:GetReagentsPriceByQuality(recipeData) -- ?!?!?
+    
+    if not recipeData.hasQualityReagents then
+        return nil
+    end
 
-    -- -- insert
-    -- for index, reagent in pairs(recipeData.reagents) do
-    --     reagent.itemsInfo = reagentCostsByQuality[index] -- ?!?!?
-    -- end
+    if not recipeData.supportsQualities then
+        -- TODO: return cheapest quality for each reagent
+    end
 
     -- Create Knapsacks for required reagents with different Qualities
     local requiredReagents = CraftSim.UTIL:FilterTable(recipeData.reagentData.requiredReagents, function (reagent)
         return reagent.hasQuality
     end)
+
 
     local mWeight = {}
     -- init
@@ -998,8 +1000,6 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, 
             mWeight = mWeight[index] / weightGCD,
             crumb = {}
         }
-
-        
 
         --print("mWeight of " .. reagent.name .. " is " .. ksItem.mWeight)
         --print("mWeight[index] / weightGCD -> " .. mWeight[index] .. " / " .. weightGCD .. " = " .. mWeight[index] / weightGCD)

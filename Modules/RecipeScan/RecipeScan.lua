@@ -409,8 +409,7 @@ function CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3 then
         recipeData.reagentData:SetReagentsMaxByQuality(3)
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G or scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I then
-        if not recipeData.hasReagentsWithQuality then -- ??
-            -- ??
+        if not recipeData.hasQualityReagents then
             return
         end
 
