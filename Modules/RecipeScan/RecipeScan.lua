@@ -209,6 +209,57 @@ function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
     return nil
 end
 
+function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
+    if not CraftSimOptions.recipeScanIncludeNotLearned and not recipeInfo.learned then
+        return false
+    end
+    if tContains(CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS, recipeInfo.categoryID) then
+        return false
+    end
+    ---@diagnostic disable-next-line: missing-parameter
+    local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
+    local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
+    if isDragonIsleRecipe and recipeInfo.isEnchantingRecipe then
+        return true
+    end
+    if isDragonIsleRecipe then
+        if recipeInfo and recipeInfo.supportsCraftingStats then
+            local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
+
+            if 
+                recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and
+                recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION and
+                recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING
+            then
+                if not CraftSimOptions.recipeScanIncludeSoulbound then
+                    if (recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR) then
+                        return false
+                    end
+                    if not CraftSimOptions.recipeScanIncludeGear and (recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR) then
+                        return false
+                    end
+                    local itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
+                    local isSoulboundNonGear = CraftSim.UTIL:isItemSoulbound(itemID)
+
+                    if isSoulboundNonGear then
+                        return false
+                    end
+                end
+
+                if not CraftSimOptions.recipeScanIncludeGear and (recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR) then
+                    return false
+                end
+                
+                if not recipeInfo.isRecraft and not recipeInfo.isSalvageRecipe and not recipeInfo.isGatheringRecipe then
+                    return true
+                end
+            end
+            return false
+        end
+    end
+    return false
+end
+
 function CraftSim.RECIPE_SCAN:StartScan()
     
     local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
@@ -217,59 +268,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
     local recipeInfos = CraftSim.UTIL:Map(recipeIDs, function(recipeID) 
         return C_TradeSkillUI.GetRecipeInfo(recipeID)
     end)
-    -- filter relevant dragon isles recipes
-    print("start filter")
-    recipeInfos = CraftSim.UTIL:FilterTable(recipeInfos, function(recipeInfo) 
-        if not CraftSimOptions.recipeScanIncludeNotLearned and not recipeInfo.learned then
-            return false
-        end
-        if tContains(CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS, recipeInfo.categoryID) then
-            return false
-        end
-        ---@diagnostic disable-next-line: missing-parameter
-        local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-        local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
-        if isDragonIsleRecipe and recipeInfo.isEnchantingRecipe then
-            return true
-        end
-        if isDragonIsleRecipe then
-            if recipeInfo and recipeInfo.supportsCraftingStats then
-                local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
-
-                if 
-                    recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and
-                    recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION and
-                    recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING
-                then
-                    if not CraftSimOptions.recipeScanIncludeSoulbound then
-                        if (recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR) then
-                            return false
-                        end
-                        if not CraftSimOptions.recipeScanIncludeGear and (recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR) then
-                            return false
-                        end
-                        local itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
-                        local isSoulboundNonGear = CraftSim.UTIL:isItemSoulbound(itemID)
-
-                        if isSoulboundNonGear then
-                            return false
-                        end
-                    end
-
-                    if not CraftSimOptions.recipeScanIncludeGear and (recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR) then
-                        return false
-                    end
-                    
-                    if not recipeInfo.isRecraft and not recipeInfo.isSalvageRecipe and not recipeInfo.isGatheringRecipe then
-                        return true
-                    end
-                end
-                return false
-            end
-        end
-        return false
-    end)
-    print("end filter")
+    recipeInfos = CraftSim.UTIL:FilterTable(recipeInfos, CraftSim.RECIPE_SCAN.FilterRecipes)
     local currentIndex = 1
     local function scanRecipesByInterval()
         local recipeInfo = recipeInfos[currentIndex]
