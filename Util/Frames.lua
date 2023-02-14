@@ -68,7 +68,7 @@ function CraftSim.FRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
         statDiff = 0
     end
     local sign = "+"
-    if statDiff < 0 then
+    if statDiff <= 0 then
         sign = ""
     end
     if suffix == nil then

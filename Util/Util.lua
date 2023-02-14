@@ -329,9 +329,9 @@ function CraftSim.UTIL:Sort(t, compFunc)
         if sorted[1] == nil then
             table.insert(sorted, item)
         else
-            local sortedCopy = CopyTable(sorted)
+            -- local sortedCopy = CraftSim.UTIL:Concat({sorted}) -- we dont want a deepcopy
             local inserted = false
-            for sortedIndex, sortedItem in pairs(sortedCopy) do
+            for sortedIndex, sortedItem in pairs(sorted) do
                 if compFunc(item, sortedItem) then
                     table.insert(sorted, sortedIndex, item)
                     inserted = true

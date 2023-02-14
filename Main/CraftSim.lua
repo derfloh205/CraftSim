@@ -549,6 +549,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		showCostOverview = true
 		showPriceOverride = true
 		showMaterialAllocation = true
+		showTopGear = true
 	end
 
 
@@ -691,12 +692,24 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			CraftSim.UTIL:StopProfiling("Reagent Optimization")
 		end
 
-		-- SpecInfo Module
-		CraftSim.FRAME:ToggleFrame(specInfoFrame, showSpecInfo and recipeData and recipeData.specNodeData)
-
 		-- Top Gear Module
 		CraftSim.FRAME:ToggleFrame(topgearFrame, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 		CraftSim.FRAME:ToggleFrame(topgearFrameWO, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+		if recipeData and showTopGear then
+			CraftSim.TOPGEAR.FRAMES:UpdateModeDropdownOOP(recipeData, exportMode)
+			if CraftSimOptions.topGearAutoUpdate then
+				CraftSim.UTIL:StartProfiling("Top Gear")
+				CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
+				CraftSim.UTIL:StopProfiling("Top Gear")
+			else
+				local isCooking = recipeData.professionID == Enum.Profession.Cooking
+				CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, true, exportMode)
+			end
+		end
+
+		-- SpecInfo Module
+		CraftSim.FRAME:ToggleFrame(specInfoFrame, showSpecInfo and recipeData and recipeData.specNodeData)
+
 
 	end
 	

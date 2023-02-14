@@ -4,6 +4,7 @@ _, CraftSim = ...
 ---@field recipeData CraftSim.RecipeData
 ---@field itemsByQuality ItemMixin[]
 ---@field expectedQuality number
+---@field expectedQualityUpgrade number
 ---@field expectedItem? ItemMixin
 ---@field canUpgradeQuality boolean
 ---@field expectedItemInspiration? ItemMixin
@@ -20,6 +21,7 @@ function CraftSim.ResultData:new(recipeData)
     self.itemsByQuality = {}
     self.canUpgradeQuality = false
     self.expectedQuality = 1
+    self.expectedQualityUpgrade = 1
 
     self:UpdatePossibleResultItems()
 end
@@ -117,6 +119,8 @@ function CraftSim.ResultData:Update()
     local qualityHSV = expectedQualityBySkill(skillHSV, recipeData.maxQuality, professionStats.recipeDifficulty.value)
     local qualityInspirationHSV = expectedQualityBySkill(skillInspirationHSV, recipeData.maxQuality, professionStats.recipeDifficulty.value)
 
+    self.expectedQualityUpgrade = math.max(self.expectedQuality, qualityInspiration, qualityHSV, qualityInspirationHSV)
+
     if 
         self.expectedQuality < qualityInspiration or 
         self.expectedQuality < qualityHSV or 
@@ -138,6 +142,7 @@ function CraftSim.ResultData:Debug()
     return CraftSim.UTIL:Concat({debugLines, 
         {
             "expectedQuality: " .. tostring(self.expectedQuality),
+            "expectedQualityUpgrade: " .. tostring(self.expectedQualityUpgrade),
             "expectedItem: " .. tostring(self.expectedItem and self.expectedItem:GetItemLink()),
             "canUpgradeQuality: " .. tostring(self.canUpgradeQuality),
             "expectedItemInspiration: " .. tostring(self.expectedItemInspiration and self.expectedItemInspiration:GetItemLink()),

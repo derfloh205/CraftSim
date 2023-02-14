@@ -11,6 +11,15 @@ function CraftSim.ProfessionGear:new()
     self.professionStats = CraftSim.ProfessionStats()
 end
 
+function CraftSim.ProfessionGear:Equals(professionGear)
+	if not self.item and not professionGear.item then
+		return true
+	elseif not self.item or not professionGear.item then
+		return false
+	end
+	return self.item:GetItemLink() == professionGear.item:GetItemLink()
+end
+
 function CraftSim.ProfessionGear:SetItem(itemLink)
 
 	if not itemLink then
@@ -97,4 +106,12 @@ function CraftSim.ProfessionGear:Copy()
 	end
 
 	return copy
+end
+
+function CraftSim.ProfessionGear:Debug()
+	if not self.item then
+		return {"None"}
+	else
+		return {self.item:GetItemLink() or self.item:GetItemID()}
+	end
 end
