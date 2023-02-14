@@ -336,6 +336,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
     end
 
     local function scanRecipesByIntervalOOP()
+        CraftSim.UTIL:StartProfiling("Single Recipe Scan OOP")
         local recipeInfo = recipeInfos[currentIndex]
         if not recipeInfo then
             CraftSim.RECIPE_SCAN:EndScan()
@@ -375,6 +376,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
 
 
         local function continueScan()
+            CraftSim.UTIL:StopProfiling("Single Recipe Scan OOP")
             CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRowOOP(recipeData) 
 
             currentIndex = currentIndex + 1
