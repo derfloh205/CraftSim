@@ -945,10 +945,9 @@ end
 
 -- By Liqorice's knapsack solution
 ---@param recipeData CraftSim.RecipeData
----@param exportMode number
----@param UseInspirationOverride? boolean
+---@param optimizeInspiration? boolean
 ---@return CraftSim.ReagentOptimizationResult?
-function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, exportMode, UseInspirationOverride)
+function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, optimizeInspiration)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION_OOP)
     
     if not recipeData.hasQualityReagents then
@@ -959,9 +958,11 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, 
         -- TODO: return cheapest quality for each reagent
         local result = CraftSim.ReagentOptimizationResult(recipeData)
         table.foreach(recipeData.reagentData.requiredReagents, function (_, reagent)
-            local resultReagent = reagent:Copy()
-            resultReagent:SetCheapestQualityMax()
-            table.insert(result.reagents, resultReagent)
+            if reagent.hasQuality then
+                local resultReagent = reagent:Copy()
+                resultReagent:SetCheapestQualityMax()
+                table.insert(result.reagents, resultReagent)
+            end
         end)
         return result
     end
@@ -1069,13 +1070,8 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, 
         
         local inspirationBonusSkill = 0
         if recipeData.supportsInspiration then
-            if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
-                local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
-                if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G and not UseInspirationOverride then
-                    inspirationBonusSkill = 0
-                elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I or UseInspirationOverride then
-                    inspirationBonusSkill = recipeData.professionStats.inspiration:GetExtraValueByFactor()
-                end
+            if optimizeInspiration then
+                inspirationBonusSkill = recipeData.professionStats.inspiration:GetExtraValueByFactor()
             else
                 inspirationBonusSkill = (CraftSimOptions.materialSuggestionInspirationThreshold and recipeData.professionStats.inspiration:GetExtraValueByFactor()) or 0
             end
@@ -1124,12 +1120,6 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, 
     end)
     
     local bestResult = results[1]--results[#results]
-    
-    if exportMode ~= CraftSim.CONST.EXPORT_MODE.SCAN then
-        local isSameAllocation = CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocationOOP(recipeData, bestResult)
-        
-        CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, bestResult, isSameAllocation, exportMode)
-    end
 
     return bestResult
 end

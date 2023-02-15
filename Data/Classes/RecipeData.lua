@@ -315,3 +315,34 @@ function CraftSim.RecipeData:Copy()
     copy:Update()
     return copy
 end
+
+--- Optimizes the recipeData's reagents for highest quality / cheapest reagents. Dont forget to :Update() afterwards!
+---@param optimizeInspiration boolean
+function CraftSim.RecipeData:OptimizeReagents(optimizeInspiration)
+    local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(self, optimizeInspiration)
+    self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
+end
+
+---Optimizes the recipeData's professionGearSet by the given mode. Dont forget to :Update() afterwards!
+---@param topGearMode string
+---@return boolean updated if true, professionGearSet was changed
+function CraftSim.RecipeData:OptimizeGear(topGearMode)
+    local optimizedGear = CraftSim.TOPGEAR:OptimizeTopGear(self, topGearMode)
+    local bestResult = optimizedGear[1]
+    if bestResult then
+        if not bestResult.professionGearSet:IsEquipped() then
+            self.professionGearSet = bestResult.professionGearSet
+            return true
+        end
+    end
+
+    return false
+end
+
+---Returns the average profit and the probability table of the recipe. Dont forget to :Update() beforehand!
+---@return number averageProfit
+---@return table probabilityTable
+function CraftSim.RecipeData:GetAverageProfit()
+    local averageProfit, probabilityTable = CraftSim.CALC:GetMeanProfitOOP(self)
+    return averageProfit, probabilityTable
+end

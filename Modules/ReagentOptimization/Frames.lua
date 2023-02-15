@@ -223,11 +223,11 @@ end
 
 
 ---@param recipeData CraftSim.RecipeData
----@param bestResult CraftSim.ReagentOptimizationResult
----@param isSameAllocation boolean
+---@param optimizationResult? CraftSim.ReagentOptimizationResult
 ---@param exportMode number
-function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, bestResult, isSameAllocation, exportMode)
+function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, optimizationResult, exportMode)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION_OOP)
+
 
     local materialFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
@@ -235,10 +235,12 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData
     else
         materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
     end
-    local hasItems = CraftSim.SIMULATION_MODE.isActive or bestResult:HasItems()
-    print("bestAllocation: " .. tostring(bestResult))
+
+    local isSameAllocation = (optimizationResult and optimizationResult:IsAllocated(recipeData)) or false
+    
+    print("bestAllocation: " .. tostring(optimizationResult))
     print("isSameAllocation: " .. tostring(isSameAllocation))
-    if bestResult == nil or isSameAllocation then
+    if optimizationResult == nil or isSameAllocation then
         materialFrame.content.infoText:Show()
         if isSameAllocation then
             materialFrame.content.infoText:SetText(materialFrame.content.infoText.SameCombination)
@@ -256,6 +258,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData
 
         return
     else
+        local hasItems = CraftSim.SIMULATION_MODE.isActive or optimizationResult:HasItems()
         materialFrame.content.allocateText:Hide()
         materialFrame.content.infoText:Hide()
         materialFrame.content.qualityIcon:Show()
@@ -270,7 +273,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData
                 if bestQBox:GetChecked() then
                     bestQBox:Click()
                 end
-                CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocationOOP(recipeData, bestResult)
+                CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocationOOP(recipeData, optimizationResult)
             end)
         else
             materialFrame.content.allocateText:Show()
@@ -284,9 +287,18 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData
         materialFrame.content.allocateButton:SetSize(materialFrame.content.allocateButton:GetTextWidth() + 15, 25)
     end
 
-    materialFrame.content.qualityIcon.SetQuality(bestResult.qualityID)
+    if optimizationResult.qualityID and optimizationResult.qualityID > 0 then
+        materialFrame.content.qualityIcon.SetQuality(optimizationResult.qualityID)
+        materialFrame.content.qualityIcon:Show()
+        materialFrame.content.qualityText:SetText("Reachable Quality: ")
+        materialFrame.content.inspirationCheck:Show()
+    else
+        materialFrame.content.qualityIcon:Hide()
+        materialFrame.content.qualityText:SetText("Cheapest Materials")
+        materialFrame.content.inspirationCheck:Hide()
+    end
     for frameIndex = 1, 5, 1 do
-        local reagent = bestResult.reagents[frameIndex]
+        local reagent = optimizationResult.reagents[frameIndex]
         if reagent then
             local q1Item = reagent.items[1]
             local q2Item = reagent.items[2]

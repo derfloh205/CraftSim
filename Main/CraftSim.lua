@@ -547,7 +547,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			showTopGear = true
 		end
 
-		if recipeData.hasReagentsWithQuality then
+		if recipeData.hasQualityReagents then
 			showMaterialOptimization = true
 		end
 
@@ -694,7 +694,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 		if recipeData and showMaterialOptimization then
 			CraftSim.UTIL:StartProfiling("Reagent Optimization")
-			CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, exportMode)
+			local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, CraftSimOptions.materialSuggestionInspirationThreshold)
+			CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, optimizationResult, exportMode)
 			CraftSim.UTIL:StopProfiling("Reagent Optimization")
 		end
 

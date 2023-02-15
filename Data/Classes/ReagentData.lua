@@ -211,8 +211,11 @@ function CraftSim.ReagentData:SetReagentsMaxByQuality(qualityID)
     end)
 end
 
----@param optimizationResult CraftSim.ReagentOptimizationResult
+---@param optimizationResult? CraftSim.ReagentOptimizationResult
 function CraftSim.ReagentData:SetReagentsByOptimizationResult(optimizationResult)
+    if not optimizationResult then
+        return
+    end
     local reagentItemList = optimizationResult:GetReagentItemList()
     self.recipeData:SetReagents(reagentItemList)
 end

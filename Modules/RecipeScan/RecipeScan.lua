@@ -358,12 +358,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
         if CraftSimOptions.recipeScanOptimizeProfessionTools then
             -- for any optimization, optimize for highest skill ( for now )
             CraftSim.UTIL:StartProfiling("Optimize Top Gear: SCAN")
-            local topGearList = CraftSim.TOPGEAR:OptimizeTopGear(recipeData, CraftSim.CONST.GEAR_SIM_MODES.SKILL) 
-            local topResult = topGearList[1]
-            
-            if topResult then
-                recipeData.professionGearSet = topResult.professionGearSet
-                
+            if recipeData:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.SKILL) then
                 recipeData:Update()
             end
             CraftSim.UTIL:StopProfiling("Optimize Top Gear: SCAN")
@@ -372,7 +367,6 @@ function CraftSim.RECIPE_SCAN:StartScan()
         CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
 
         recipeData:Update()
-
 
         local function continueScan()
             CraftSim.UTIL:StopProfiling("Single Recipe Scan OOP")
@@ -409,13 +403,7 @@ function CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3 then
         recipeData.reagentData:SetReagentsMaxByQuality(3)
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G or scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I then
-        if not recipeData.hasQualityReagents then
-            return
-        end
-
-        local inspirationOverride = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
-        local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, CraftSim.CONST.EXPORT_MODE.SCAN, inspirationOverride)
-        
-        recipeData.reagentData:SetReagentsByOptimizationResult(optimizationResult)
+        local optimizeInspiration = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
+        recipeData:OptimizeReagents(optimizeInspiration)
     end
 end
