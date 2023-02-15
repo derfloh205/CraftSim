@@ -100,3 +100,16 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
     print("craftRecipeData:")
     print(craftRecipeData)
 end
+
+function CraftSim.CraftSessionData:GetJSON(intend)
+    intend = intend or 0
+    local jb = CraftSim.JSONBuilder(intend)
+    jb:Begin()
+    jb:Add("totalProfit", self.totalProfit)
+    jb:Add("numCrafts", self.numCrafts)
+    jb:AddList("totalItems", self.totalItems)
+    jb:AddList("totalSavedReagents", self.totalSavedReagents)
+    jb:AddList("craftRecipeData", self.craftRecipeData, true)
+    jb:End()
+    return jb.json
+end

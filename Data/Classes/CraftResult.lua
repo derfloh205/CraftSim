@@ -115,3 +115,22 @@ function CraftSim.CraftResult:Debug()
 
     return debugLines
 end
+
+function CraftSim.CraftResult:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("recipeID", self.recipeID)
+    jb:Add("profit", self.profit)
+    jb:Add("expectedAverageProfit", self.expectedAverageProfit)
+    jb:Add("expectedAverageSavedCosts", self.expectedAverageSavedCosts)
+    jb:Add("expectedQuality", self.expectedQuality)
+    jb:Add("craftingChance", self.craftingChance)
+    jb:Add("triggeredInspiration", self.triggeredInspiration)
+    jb:Add("triggeredMulticraft", self.triggeredMulticraft)
+    jb:Add("triggeredResourcefulness", self.triggeredResourcefulness)
+    jb:AddList("craftResultItems", self.craftResultItems)
+    jb:AddList("savedReagents", self.savedReagents, true)
+    jb:End()
+    return jb.json
+end

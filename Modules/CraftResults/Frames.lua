@@ -123,17 +123,27 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
 
         frame.content.clearButton = CraftSim.FRAME:CreateButton("Reset Data", frame.content, frame.content.totalProfitAllTitle, "TOPLEFT", "BOTTOMLEFT", 
         0, -40, 15, 25, true, function() 
-            CraftSim.CRAFT_RESULTS:ResetData()
             frame.content.scrollingMessageFrame:Clear()
             frame.content.craftedItemsFrame.resultFeed:SetText("")
             frame.content.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
-            CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.MAIN.currentRecipeData.recipeID)
+            if CraftSimOptions.enablefeatureToggleID_OOP then
+                CraftSim.CRAFT_RESULTS:ResetDataOOP()
+                CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(CraftSim.MAIN.currentRecipeData.recipeID)
+            else
+                CraftSim.CRAFT_RESULTS:ResetData()
+                CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.MAIN.currentRecipeData.recipeID)
+            end
         end)
 
-        frame.content.exportButton = CraftSim.FRAME:CreateButton("Export Recipe Results", frame.content, frame.content.clearButton, "TOPLEFT", "BOTTOMLEFT", 
+        frame.content.exportButton = CraftSim.FRAME:CreateButton("Export JSON", frame.content, frame.content.clearButton, "TOPLEFT", "BOTTOMLEFT", 
         0, -10, 15, 25, true, function() 
-            local csvData = CraftSim.CRAFT_RESULTS:ExportCSV()
-            CraftSim.UTIL:KethoEditBox_Show(csvData)
+            if CraftSimOptions.enablefeatureToggleID_OOP then
+                local csvData = CraftSim.CRAFT_RESULTS:ExportJSON()
+                CraftSim.UTIL:KethoEditBox_Show(csvData)
+            else
+                local csvData = CraftSim.CRAFT_RESULTS:ExportCSV()
+                CraftSim.UTIL:KethoEditBox_Show(csvData)
+            end
         end)
 
         

@@ -94,6 +94,25 @@ function CraftSim.CraftRecipeData:Debug()
         "totalSavedCosts: " .. CraftSim.UTIL:FormatMoney(self.totalSavedCosts),
         "totalExpectedSavedCosts: " .. CraftSim.UTIL:FormatMoney(self.totalExpectedSavedCosts),
     }
-
     return debugLines
+end
+
+function CraftSim.CraftRecipeData:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("recipeID", self.recipeID)
+    jb:Add("numCrafts", self.numCrafts)
+    jb:Add("totalProfit", self.totalProfit)
+    jb:Add("totalExpectedProfit", self.totalExpectedProfit)
+    jb:Add("numInspiration", self.numInspiration)
+    jb:Add("numMulticraft", self.numMulticraft)
+    jb:Add("numMulticraftExtraItems", self.numMulticraftExtraItems)
+    jb:Add("numResourcefulness", self.numResourcefulness)
+    jb:Add("totalSavedCosts", self.totalSavedCosts)
+    jb:AddList("totalItems", self.totalItems)
+    jb:AddList("totalSavedReagents", self.totalSavedReagents)
+    jb:AddList("craftResults", self.craftResults, true)
+    jb:End()
+    return jb.json
 end

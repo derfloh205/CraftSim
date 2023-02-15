@@ -554,6 +554,9 @@ function CraftSim.UTIL:GetMoneyValuesFromCopper(copperValue, formatString)
     end
 end
 
+function CraftSim.UTIL:GetItemStringFromLink(itemLink)
+    return select(3, strfind(itemLink, "|H(.+)|h%["))
+end
 
 function CraftSim.UTIL:FoldTable(t, foldFunction, startAtZero)
     local foldedValue = nil

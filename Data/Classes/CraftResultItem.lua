@@ -27,3 +27,16 @@ function CraftSim.CraftResultItem:Debug()
     end
     return debugLines 
 end
+
+function CraftSim.CraftResultItem:GetJSON(intent)
+    intent = intent or 0
+    local jb = CraftSim.JSONBuilder(intent)
+    jb:Begin()
+    jb:Add("itemID", self.item:GetItemID())
+    jb:Add("itemString", CraftSim.UTIL:GetItemStringFromLink(self.item:GetItemLink()))
+    jb:Add("qualityID", self.qualityID)
+    jb:Add("quantity", self.quantity - self.quantityMulticraft)
+    jb:Add("quantityMulticraft", self.quantityMulticraft, true)
+    jb:End()
+    return jb.json
+end

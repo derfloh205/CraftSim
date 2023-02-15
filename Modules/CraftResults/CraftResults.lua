@@ -475,6 +475,20 @@ end
 
 -- OOP Refactor
 
+function CraftSim.CRAFT_RESULTS:ExportJSON() 
+    local sessionData = CraftSim.CRAFT_RESULTS.currentSessionData
+
+    if not CraftSim.MAIN.currentRecipeData then
+        return
+    end
+
+    return sessionData:GetJSON()
+end
+
+function CraftSim.CRAFT_RESULTS:ResetDataOOP()
+    CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CraftSessionData()
+end
+
 ---Saves the currentCraftData
 ---@param craftResult CraftSim.CraftResult
 function CraftSim.CRAFT_RESULTS:AddCraftDataOOP(craftResult)

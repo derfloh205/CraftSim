@@ -122,3 +122,4 @@ Data/Classes/CraftResultSavedReagent.lua
 Data/Classes/CraftResultSavedReagent.lua
 Data/Classes/CraftSessionData.lua
 Data/Classes/CraftRecipeData.lua
+Data/Classes/JSONBuilder.lua

@@ -21,3 +21,16 @@ function CraftSim.CraftResultSavedReagent:Debug()
         "Saved Costs: " .. CraftSim.UTIL:FormatMoney(self.savedCosts),
     }
 end
+
+function CraftSim.CraftResultSavedReagent:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("itemID", self.item:GetItemID())
+    jb:Add("itemString", CraftSim.UTIL:GetItemStringFromLink(self.item:GetItemLink() or ""))
+    jb:Add("qualityID", self.qualityID)
+    jb:Add("quantity", self.quantity)
+    jb:Add("savedCosts", self.savedCosts, true)
+    jb:End()
+    return jb.json
+end
