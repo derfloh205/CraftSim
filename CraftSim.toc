@@ -116,3 +116,6 @@ Data/Classes/IDCategory.lua
 Data/Classes/Statweights.lua
 Data/Classes/ReagentOptimizationResult.lua
 Data/Classes/TopGearResult.lua
+Data/Classes/CraftResult.lua
+Data/Classes/CraftResultItem.lua
+Data/Classes/CraftResultSavedReagent.lua

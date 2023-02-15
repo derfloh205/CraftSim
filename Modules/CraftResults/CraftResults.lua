@@ -173,23 +173,41 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_CRAFT_BEGIN(spellID)
     -- new craft begins if we do not have saved any recipe data yet
     -- or if the current cached data does not match the recipeid
 
-    if CraftSim.MAIN.currentRecipeData and CraftSim.MAIN.currentRecipeData.recipeID == spellID then
-        -- if prospecting or other salvage item, only use the current recipedata if we have a salvage reagent, otherwise use saved one
-        if CraftSim.MAIN.currentRecipeData.isSalvageRecipe and CraftSim.MAIN.currentRecipeData.salvageReagent then
-            print("Use RecipeData of Salvage")
-            CraftSim.CRAFT_RESULTS.currentRecipeData = CraftSim.MAIN.currentRecipeData
-        elseif not CraftSim.MAIN.currentRecipeData.isSalvageRecipe then
-            print("Use RecipeData")
-            CraftSim.CRAFT_RESULTS.currentRecipeData = CraftSim.MAIN.currentRecipeData
+    if CraftSimOptions.enablefeatureToggleID_OOP then
+        if CraftSim.MAIN.currentRecipeData and CraftSim.MAIN.currentRecipeData.recipeID == spellID then
+            -- if prospecting or other salvage item, only use the current recipedata if we have a salvage reagent, otherwise use saved one
+            if CraftSim.MAIN.currentRecipeData.isSalvageRecipe and CraftSim.MAIN.currentRecipeData.reagentData.salvageSlot.activeItem then
+                print("Use RecipeData of Salvage")
+                CraftSim.CRAFT_RESULTS.currentRecipeData = CraftSim.MAIN.currentRecipeData
+            elseif not CraftSim.MAIN.currentRecipeData.isSalvageRecipe then
+                print("Use RecipeData")
+                CraftSim.CRAFT_RESULTS.currentRecipeData = CraftSim.MAIN.currentRecipeData
+            else
+                print("Use RecipeData of last Salvage, cause not reagent found")
+            end
+        elseif CraftSim.MAIN.currentRecipeData then
+            print("RecipeID does not match, take saved one")
         else
-            print("Use RecipeData of last Salvage, cause not reagent found")
+            print("No RecipeData to match current craft")
         end
-    elseif CraftSim.MAIN.currentRecipeData then
-        print("RecipeID does not match, take saved one")
     else
-        print("No RecipeData to match current craft")
+        if CraftSim.MAIN.currentRecipeData and CraftSim.MAIN.currentRecipeData.recipeID == spellID then
+            -- if prospecting or other salvage item, only use the current recipedata if we have a salvage reagent, otherwise use saved one
+            if CraftSim.MAIN.currentRecipeData.isSalvageRecipe and CraftSim.MAIN.currentRecipeData.salvageReagent then
+                print("Use RecipeData of Salvage")
+                CraftSim.CRAFT_RESULTS.currentRecipeData = CraftSim.MAIN.currentRecipeData
+            elseif not CraftSim.MAIN.currentRecipeData.isSalvageRecipe then
+                print("Use RecipeData")
+                CraftSim.CRAFT_RESULTS.currentRecipeData = CraftSim.MAIN.currentRecipeData
+            else
+                print("Use RecipeData of last Salvage, cause not reagent found")
+            end
+        elseif CraftSim.MAIN.currentRecipeData then
+            print("RecipeID does not match, take saved one")
+        else
+            print("No RecipeData to match current craft")
+        end
     end
-
 end
 
 function CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, craftData) 
@@ -226,7 +244,11 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
     if collectingResults then
         collectingResults = false
         C_Timer.After(0.1, function() 
-            CraftSim.CRAFT_RESULTS:processCraftResults()
+            if CraftSimOptions.enablefeatureToggleID_OOP then
+                CraftSim.CRAFT_RESULTS:processCraftResultsOOP()
+            else
+                CraftSim.CRAFT_RESULTS:processCraftResults()
+            end
         end)
     end
 end
@@ -447,4 +469,61 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftData)
 
     CraftSim.CRAFT_RESULTS:AddCraftData(craftData, recipeData.recipeID)
     CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeData.recipeID)
+end
+
+-- OOP Refactor
+
+
+---@param recipeData CraftSim.RecipeData
+---@param craftResult CraftSim.CraftResult
+---@return number
+function CraftSim.CRAFT_RESULTS:GetProfitForCraftOOP(recipeData, craftResult) 
+    local craftingCosts = recipeData.priceData.craftingCosts
+
+    local savedCosts = 0
+    table.foreach(craftResult.savedReagents, function (_, craftResultSavedReagent)
+        savedCosts = savedCosts + craftResultSavedReagent.savedCosts
+    end)
+
+    local resultValue = 0
+    for _, craftResultItem in pairs(craftResult.craftResultItems) do
+        local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
+        resultValue = resultValue + (CraftSim.PRICEDATA:GetMinBuyoutByItemLink(craftResultItem.item:GetItemLink()) or 0) * quantity
+    end
+
+    local craftProfit = (resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - (craftingCosts - savedCosts)
+
+    return craftProfit
+end
+
+function CraftSim.CRAFT_RESULTS:processCraftResultsOOP()
+    collectingResults = true
+    print("Craft Detected", false, true)
+    -- print(currentCraftingResults, true)
+    -- print("Num Craft Results: " .. tostring(#currentCraftingResults))
+
+    local CraftingItemResultData = CopyTable(currentCraftingResults)
+    currentCraftingResults = {}
+
+    if CraftSim.UTIL:Find(CraftingItemResultData, function(result) return result.isEnchant end) then
+        print("isEnchant -> ignore")
+        return
+    end
+
+    local recipeData = CraftSim.CRAFT_RESULTS.currentRecipeData;
+
+    if not recipeData then
+        print("no recipeData")
+        return
+    end
+
+    local craftResult = CraftSim.CraftResult(recipeData, CraftingItemResultData)
+
+    print("Craft Result: ")
+    print(craftResult)
+    
+    
+    -- CraftSim.UTIL:ContinueOnAllItemsLoaded(craftResult.savedReagents, function ()
+    --     CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftData)
+    -- end) 
 end

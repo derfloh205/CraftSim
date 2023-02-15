@@ -53,6 +53,20 @@ function CraftSim.ReagentData:GetProfessionStatsByOptionals()
     return totalStats
 end
 
+---@param itemID number
+function CraftSim.ReagentData:GetReagentQualityIDByItemID(itemID)
+    local qualityID = 0
+    for _, reagent in pairs(self.requiredReagents) do
+        local reagentItem = CraftSim.UTIL:Find(reagent.items, function (reagentItem)
+            return reagentItem.item:GetItemID() == itemID
+        end)
+        if reagentItem then
+            return reagentItem.qualityID
+        end
+    end
+    return qualityID
+end
+
 ---@return CraftingReagentInfo[]
 function CraftSim.ReagentData:GetCraftingReagentInfoTbl()
 
