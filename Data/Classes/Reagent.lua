@@ -134,3 +134,25 @@ function CraftSim.Reagent:HasItems()
 
     return true
 end
+
+function CraftSim.Reagent:SetCheapestQualityMax()
+    if self.hasQuality then
+        local itemPriceQ1 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[1].item:GetItemID(), true)
+        local itemPriceQ2 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[2].item:GetItemID(), true)
+        local itemPriceQ3 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[3].item:GetItemID(), true)
+
+        local cheapest = math.min(itemPriceQ1, itemPriceQ2, itemPriceQ3)
+
+        self:Clear()
+
+        if itemPriceQ1 == cheapest then
+            self.items[1].quantity = self.requiredQuantity
+        elseif itemPriceQ2 == cheapest then
+            self.items[2].quantity = self.requiredQuantity
+        elseif itemPriceQ3 == cheapest then
+            self.items[3].quantity = self.requiredQuantity
+        end
+    else
+        self.items[1].quantity = self.requiredQuantity
+    end
+end

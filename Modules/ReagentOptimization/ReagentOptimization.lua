@@ -957,6 +957,13 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, 
 
     if not recipeData.supportsQualities then
         -- TODO: return cheapest quality for each reagent
+        local result = CraftSim.ReagentOptimizationResult(recipeData)
+        table.foreach(recipeData.reagentData.requiredReagents, function (_, reagent)
+            local resultReagent = reagent:Copy()
+            resultReagent:SetCheapestQualityMax()
+            table.insert(result.reagents, resultReagent)
+        end)
+        return result
     end
 
     -- Create Knapsacks for required reagents with different Qualities

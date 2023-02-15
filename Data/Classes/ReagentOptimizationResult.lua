@@ -10,32 +10,38 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIM
 CraftSim.ReagentOptimizationResult = CraftSim.Object:extend()
 
 function CraftSim.ReagentOptimizationResult:new(recipeData, knapsackResult)
-    self.qualityID = knapsackResult.qualityReached
-    self.craftingCosts = knapsackResult.minValue + recipeData.priceData.craftingCostsFixed
-
-    local reagentItems = {}
-    self.reagents = CraftSim.UTIL:Map(recipeData.reagentData.requiredReagents, function(reagent) 
-        if reagent.hasQuality then
-            local copy = reagent:Copy()
-            copy:Clear()
+    if knapsackResult then
+        self.qualityID = knapsackResult.qualityReached
+        self.craftingCosts = knapsackResult.minValue + recipeData.priceData.craftingCostsFixed
     
-            table.foreach(copy.items, function (_, reagentItem)
-                table.insert(reagentItems, reagentItem)
-            end)
+        local reagentItems = {}
+        self.reagents = CraftSim.UTIL:Map(recipeData.reagentData.requiredReagents, function(reagent) 
+            if reagent.hasQuality then
+                local copy = reagent:Copy()
+                copy:Clear()
+        
+                table.foreach(copy.items, function (_, reagentItem)
+                    table.insert(reagentItems, reagentItem)
+                end)
+        
+                return copy
+            end
+        end)
     
-            return copy
+        -- map knapsackResult to reagents
+        for _, matAllocation in pairs(knapsackResult.allocations) do
+            for _, allocation in pairs(matAllocation.allocations) do
+                local itemID = allocation.itemID
+                local quantity = allocation.allocations
+                
+                local reagentItem = CraftSim.UTIL:Find(reagentItems, function(ri) return ri.item:GetItemID() == itemID end)
+                reagentItem.quantity = quantity
+            end
         end
-    end)
-
-    -- map knapsackResult to reagents
-    for _, matAllocation in pairs(knapsackResult.allocations) do
-        for _, allocation in pairs(matAllocation.allocations) do
-            local itemID = allocation.itemID
-            local quantity = allocation.allocations
-            
-            local reagentItem = CraftSim.UTIL:Find(reagentItems, function(ri) return ri.item:GetItemID() == itemID end)
-            reagentItem.quantity = quantity
-        end
+    else
+        self.qualityID = recipeData.maxQuality
+        self.craftingCosts = 0
+        self.reagents = {}
     end
 end
 
