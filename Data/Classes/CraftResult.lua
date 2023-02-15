@@ -5,6 +5,7 @@ _, CraftSim = ...
 ---@field recipeName number
 ---@field profit number
 ---@field expectedAverageProfit number
+---@field savedCosts number
 ---@field expectedAverageSavedCosts number
 ---@field craftResultItems CraftSim.CraftResultItem[]
 ---@field expectedQuality number
@@ -18,6 +19,7 @@ CraftSim.CraftResult = CraftSim.Object:extend()
 
 ---@param craftingItemResultData CraftingItemResultData[]
 function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
+    self.recipeID = recipeData.recipeID
     self.craftResultItems = {}
     self.savedReagents = {}
     self.expectedQuality = recipeData.resultData.expectedQuality
@@ -40,10 +42,13 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
 
     -- just take resourcefulness from the first craftResult
     -- this is because of a blizzard bug where the same proc is listed in every craft result
+    self.savedCosts = 0
     if craftingItemResultData[1].resourcesReturned then
         self.triggeredResourcefulness = true
         for _, craftingResourceReturnInfo in pairs(craftingItemResultData[1].resourcesReturned) do
-            table.insert(self.savedReagents, CraftSim.CraftResultSavedReagent(recipeData, craftingResourceReturnInfo.itemID, craftingResourceReturnInfo.quantity))
+            local craftResultSavedReagent = CraftSim.CraftResultSavedReagent(recipeData, craftingResourceReturnInfo.itemID, craftingResourceReturnInfo.quantity)
+            self.savedCosts = self.savedCosts + craftResultSavedReagent.savedCosts
+            table.insert(self.savedReagents, craftResultSavedReagent)
         end
     end
 
@@ -79,6 +84,7 @@ end
 
 function CraftSim.CraftResult:Debug()
     local debugLines = {
+        "recipeID: " .. tostring(self.recipeID),
         "profit: " .. CraftSim.UTIL:FormatMoney(self.profit, true),
         "expectedAverageProfit: " .. CraftSim.UTIL:FormatMoney(self.expectedAverageProfit, true),
         "expectedAverageSavedCosts: " .. CraftSim.UTIL:FormatMoney(self.expectedAverageSavedCosts, true),

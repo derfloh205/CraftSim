@@ -528,7 +528,7 @@ function CraftSim.UTIL:Find(t, findFunc)
         end
     end
 
-    return false
+    return nil
 end
 
 -- to concat lists together (behaviour unpredictable with tables that have strings or not ordered numbers as indices)

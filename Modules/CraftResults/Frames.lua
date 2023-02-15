@@ -201,3 +201,133 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
     
     craftResultFrame.content.craftedItemsFrame.resultFeed:SetText(craftedItemsText .. savedReagentsText)
 end
+
+-- OOP Refactor
+
+function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(recipeID)
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
+    print("Update RecipeData OOP: " .. tostring(recipeID))
+    -- only update frontend if its the shown recipeID
+    if not CraftSim.MAIN.currentRecipeData or CraftSim.MAIN.currentRecipeData.recipeID ~= recipeID then
+        return
+    end
+
+    local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+
+    local craftSessionData = CraftSim.CRAFT_RESULTS.currentSessionData 
+    if not craftSessionData then
+        print("create new craft session data")
+        craftSessionData = CraftSim.CraftSessionData()
+        CraftSim.CRAFT_RESULTS.currentSessionData  = craftSessionData
+    else
+        print("Reuse sessionData")
+    end
+    local craftRecipeData = craftSessionData:GetCraftRecipeData(recipeID)
+    if not craftRecipeData then
+        print("create new recipedata")
+        craftRecipeData = CraftSim.CraftRecipeData(recipeID)
+        table.insert(craftSessionData.craftRecipeData, craftRecipeData)
+    else
+        print("Reuse recipedata")
+        print(craftRecipeData)
+    end
+
+    -- statistics
+    local statisticsText = ""
+    local expectedAverageProfit = CraftSim.UTIL:FormatMoney(0, true)
+    local actualAverageProfit = CraftSim.UTIL:FormatMoney(0, true)
+    if craftRecipeData.numCrafts > 0 then
+        expectedAverageProfit = CraftSim.UTIL:FormatMoney((craftRecipeData.totalExpectedProfit / craftRecipeData.numCrafts) or 0, true)
+        actualAverageProfit = CraftSim.UTIL:FormatMoney((craftRecipeData.totalProfit / craftRecipeData.numCrafts) or 0, true)
+    end
+    local actualProfit = CraftSim.UTIL:FormatMoney(craftRecipeData.totalProfit, true)
+    statisticsText = statisticsText .. "Crafts: " .. craftRecipeData.numCrafts .. "\n\n"
+    
+    if CraftSim.MAIN.currentRecipeData.supportsCraftingStats then
+        statisticsText = statisticsText .. "Expected Ø Profit: " .. expectedAverageProfit .. "\n"
+        statisticsText = statisticsText .. "Real Ø Profit: " .. actualAverageProfit .. "\n"
+        statisticsText = statisticsText .. "Real Profit: " .. actualProfit .. "\n\n"
+        statisticsText = statisticsText .. "Procs - Real / Expected:\n\n"
+        if craftRecipeData.supportsInspiration then
+            local expectedProcs = tonumber(CraftSim.UTIL:round(CraftSim.MAIN.currentRecipeData.professionStats.inspiration:GetPercent(true) * craftRecipeData.numCrafts, 1)) or 0
+            if craftRecipeData.numInspiration >= expectedProcs then
+                statisticsText = statisticsText .. "Inspiration: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numInspiration, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedProcs .. "\n"
+            else
+                statisticsText = statisticsText .. "Inspiration: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numInspiration, CraftSim.CONST.COLORS.RED) .. " / " .. expectedProcs .. "\n"
+            end
+        end
+        if craftRecipeData.supportsMulticraft then
+            local expectedProcs =  tonumber(CraftSim.UTIL:round(CraftSim.MAIN.currentRecipeData.professionStats.multicraft:GetPercent(true) * craftRecipeData.numCrafts, 1)) or 0
+            if craftRecipeData.numMulticraft >= expectedProcs then
+                statisticsText = statisticsText .. "Multicraft: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedProcs .. "\n"
+            else
+                statisticsText = statisticsText .. "Multicraft: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.CONST.COLORS.RED) .. " / " .. expectedProcs .. "\n"
+            end
+            local averageExtraItems = 0
+            local expectedAdditionalItems = 0
+            local multicraftExtraItemsFactor = CraftSim.MAIN.currentRecipeData.professionStats.multicraft:GetExtraFactor(true)
+    
+            local maxExtraItems = (2.5*CraftSim.MAIN.currentRecipeData.baseItemAmount) * multicraftExtraItemsFactor
+            expectedAdditionalItems = tonumber(CraftSim.UTIL:round((1 + maxExtraItems) / 2, 2)) or 0
+    
+            averageExtraItems = tonumber(CraftSim.UTIL:round(( craftRecipeData.numMulticraft > 0 and (craftRecipeData.multicraftExtraItems / craftRecipeData.numMulticraft)) or 0, 2)) or 0
+            if averageExtraItems == 0 then
+                statisticsText = statisticsText .. "- Ø Extra Items: " .. averageExtraItems .. " / " .. expectedAdditionalItems .. "\n"
+            elseif averageExtraItems >= expectedAdditionalItems then
+                statisticsText = statisticsText .. "- Ø Extra Items: " .. CraftSim.UTIL:ColorizeText(averageExtraItems, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedAdditionalItems .. "\n"
+            else
+                statisticsText = statisticsText .. "- Ø Extra Items: " .. CraftSim.UTIL:ColorizeText(averageExtraItems, CraftSim.CONST.COLORS.RED) .. " / " .. expectedAdditionalItems .. "\n"
+            end
+        end
+        if CraftSim.MAIN.currentRecipeData.supportsResourcefulness then
+            local averageSavedCosts = 0
+            local expectedAverageSavedCosts = 0
+            if craftRecipeData.numCrafts > 0 then
+                averageSavedCosts = CraftSim.UTIL:round((craftRecipeData.totalSavedCosts / craftRecipeData.numCrafts)/10000) * 10000 --roundToGold
+                expectedAverageSavedCosts = CraftSim.UTIL:round((craftRecipeData.totalExpectedSavedCosts / craftRecipeData.numCrafts)/10000) * 10000
+            end
+
+            if averageSavedCosts == 0 then
+                statisticsText = statisticsText .. "Resourcefulness Procs: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.CONST.COLORS.GREEN)
+            elseif averageSavedCosts >= expectedAverageSavedCosts then
+                statisticsText = statisticsText .. "Resourcefulness Procs: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.CONST.COLORS.GREEN) .. "\n" ..
+                                    "- Ø Saved Costs: " .. CraftSim.UTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts), CraftSim.CONST.COLORS.GREEN) .. " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
+            else
+                statisticsText = statisticsText .. "Resourcefulness Procs: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.CONST.COLORS.GREEN) .. "\n" ..
+                                    "- Ø Saved Costs: " .. CraftSim.UTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts), CraftSim.CONST.COLORS.RED) .. " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
+            end
+        end
+    else
+        statisticsText = statisticsText .. "Profit: " .. actualProfit .. "\n\n"
+    end
+
+
+    craftResultFrame.content.statisticsText:SetText(statisticsText)
+end
+
+function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemListOOP()
+    local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    -- total items
+    local craftResultItems = CraftSim.CRAFT_RESULTS.currentSessionData.totalItems
+
+    -- sort craftedItems by .. rareness?
+    craftResultItems = CraftSim.UTIL:Sort(craftResultItems, function(a, b) 
+        return a.item:GetItemQuality() > b.item:GetItemQuality()
+    end)
+
+    local craftedItemsText = ""
+    for _, craftResultItem in pairs(craftResultItems) do
+        craftedItemsText = craftedItemsText .. craftResultItem.quantity .. " x " .. craftResultItem.item:GetItemLink() .. "\n"
+    end
+
+    -- add saved reagents
+    local savedReagentsText = ""
+    if #CraftSim.CRAFT_RESULTS.currentSessionData.totalSavedReagents > 0 then
+        savedReagentsText = "\nSaved Reagents:\n"
+        for _, savedReagent in pairs(CraftSim.CRAFT_RESULTS.currentSessionData.totalSavedReagents) do
+            savedReagentsText = savedReagentsText ..  savedReagent.quantity .. " x " .. savedReagent.item:GetItemLink() .. "\n"
+        end
+    end
+    
+    craftResultFrame.content.craftedItemsFrame.resultFeed:SetText(craftedItemsText .. savedReagentsText)
+end

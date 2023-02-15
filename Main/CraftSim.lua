@@ -657,6 +657,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, priceData, exportMode)
 		end
 	else -- OOP Refactor
+		if recipeData and showCraftResults then
+			CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(recipeData.recipeID)
+		end
 
 		-- AverageProfit Module
 		CraftSim.FRAME:ToggleFrame(averageProfitFrame, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)

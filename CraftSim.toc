@@ -119,3 +119,6 @@ Data/Classes/TopGearResult.lua
 Data/Classes/CraftResult.lua
 Data/Classes/CraftResultItem.lua
 Data/Classes/CraftResultSavedReagent.lua
+Data/Classes/CraftResultSavedReagent.lua
+Data/Classes/CraftSessionData.lua
+Data/Classes/CraftRecipeData.lua

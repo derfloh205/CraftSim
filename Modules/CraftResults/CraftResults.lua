@@ -33,6 +33,8 @@ CraftSim.CRAFT_RESULTS.baseRecipeEntry = {
     }
 }
 
+CraftSim.CRAFT_RESULTS.currentSessionData = nil
+
 local resetData = CopyTable(CraftSim.CRAFT_RESULTS.sessionData)
 
 function CraftSim.CRAFT_RESULTS:ResetData()
@@ -473,6 +475,28 @@ end
 
 -- OOP Refactor
 
+---Saves the currentCraftData
+---@param craftResult CraftSim.CraftResult
+function CraftSim.CRAFT_RESULTS:AddCraftDataOOP(craftResult)
+    local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+
+    print("AddCraftDataOOP:", false, true)
+    CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CRAFT_RESULTS.currentSessionData
+    if not CraftSim.CRAFT_RESULTS.currentSessionData then
+        print("AddCraftDataOOP: Create new SessionData")
+        CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CraftSessionData()
+    else
+        print("AddCraftDataOOP: Reuse session data")
+    end
+
+    CraftSim.CRAFT_RESULTS.currentSessionData:AddCraftResult(craftResult)
+
+    -- update frames
+    craftResultFrame.content.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(CraftSim.CRAFT_RESULTS.currentSessionData.totalProfit, true))
+
+    CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemListOOP()
+end
+
 ---Adds Results to the UI
 ---@param recipeData CraftSim.RecipeData
 ---@param craftResult CraftSim.CraftResult
@@ -525,8 +549,8 @@ function CraftSim.CRAFT_RESULTS:AddResultOOP(recipeData, craftResult)
 
     craftResultFrame.content.scrollingMessageFrame:AddMessage("\n" .. newText)
 
-    -- CraftSim.CRAFT_RESULTS:AddCraftDataOOP(craftResult)
-    -- CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(craftResult)
+    CraftSim.CRAFT_RESULTS:AddCraftDataOOP(craftResult)
+    CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(craftResult.recipeID)
 end
 
 ---@param recipeData CraftSim.RecipeData
