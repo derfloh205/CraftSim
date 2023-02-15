@@ -473,6 +473,61 @@ end
 
 -- OOP Refactor
 
+---Adds Results to the UI
+---@param recipeData CraftSim.RecipeData
+---@param craftResult CraftSim.CraftResult
+function CraftSim.CRAFT_RESULTS:AddResultOOP(recipeData, craftResult)
+    local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+
+    local resourcesText = ""
+
+    if craftResult.triggeredResourcefulness then
+        for _, savedReagent in pairs(craftResult.savedReagents) do
+            local qualityID = savedReagent.qualityID
+            local iconAsText = CraftSim.UTIL:IconToText(savedReagent.item:GetItemIcon(), 25)
+            local qualityAsText = (qualityID > 0 and CraftSim.UTIL:GetQualityIconAsText(qualityID, 20, 20)) or ""
+            resourcesText = resourcesText .. "\n" .. iconAsText .. " " .. savedReagent.quantity .. " ".. qualityAsText
+        end
+    end
+
+    local roundedProfit = CraftSim.UTIL:round(craftResult.profit*10000) / 10000
+    local profitText = CraftSim.UTIL:FormatMoney(roundedProfit, true)
+    local chanceText = ""
+
+    if not recipeData.isSalvageRecipe and recipeData.supportsCraftingStats then
+       chanceText = "Chance: " .. CraftSim.UTIL:round(craftResult.craftingChance*100, 1) .. "%\n" 
+    end
+
+    local resultsText = ""
+    if #craftResult.craftResultItems > 0 then
+        for _, craftResultItem in pairs(craftResult.craftResultItems) do
+            local quantity = craftResultItem.quantity - craftResultItem.quantityMulticraft
+            resultsText = resultsText .. quantity .. " x " .. (craftResultItem.item:GetItemLink() or recipeData.recipeName) .. "\n"
+        end
+    else
+        resultsText = resultsText .. recipeData.recipeName .. "\n"
+    end
+
+    local multicraftExtraItemsText = ""
+    for _, craftResultItem in pairs(craftResult.craftResultItems) do
+        if craftResultItem.quantityMulticraft > 0 then
+            multicraftExtraItemsText = multicraftExtraItemsText .. craftResultItem.quantityMulticraft .. " x " .. craftResultItem.item:GetItemLink() .. "\n"
+        end
+    end
+
+    local newText =
+    resultsText ..
+    "Profit: " .. profitText .. "\n" ..
+    chanceText ..
+    ((craftResult.triggeredInspiration and CraftSim.UTIL:ColorizeText("Inspired!\n", CraftSim.CONST.COLORS.LEGENDARY)) or "") ..
+    ((craftResult.triggeredMulticraft and (CraftSim.UTIL:ColorizeText("Multicraft: ", CraftSim.CONST.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
+    ((craftResult.triggeredResourcefulness and (CraftSim.UTIL:ColorizeText("Resources Saved!: \n", CraftSim.CONST.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
+
+    craftResultFrame.content.scrollingMessageFrame:AddMessage("\n" .. newText)
+
+    -- CraftSim.CRAFT_RESULTS:AddCraftDataOOP(craftResult)
+    -- CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(craftResult)
+end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param craftResult CraftSim.CraftResult
@@ -522,8 +577,10 @@ function CraftSim.CRAFT_RESULTS:processCraftResultsOOP()
     print("Craft Result: ")
     print(craftResult)
     
-    
-    -- CraftSim.UTIL:ContinueOnAllItemsLoaded(craftResult.savedReagents, function ()
-    --     CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftData)
-    -- end) 
+    local itemsToLoad = CraftSim.UTIL:Map(craftResult.savedReagents, function (savedReagent)
+        return savedReagent.item
+    end)
+    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
+        CraftSim.CRAFT_RESULTS:AddResultOOP(recipeData, craftResult)
+    end) 
 end
