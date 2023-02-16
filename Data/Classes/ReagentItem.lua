@@ -46,3 +46,24 @@ function CraftSim.ReagentItem:HasItem()
 
     return itemCount >= self.quantity
 end
+
+---@class CraftSim.ReagentItem.Serialized
+---@field qualityID number
+---@field quantity number
+---@field itemID number
+
+function CraftSim.ReagentItem:Serialize()
+    local serizalized = {}
+    serizalized.qualityID = self.qualityID
+    serizalized.quantity = self.quantity
+    serizalized.itemID = self.item:GetItemID()
+    return serizalized
+end
+
+--- STATIC
+---@param serializedReagentItem CraftSim.ReagentItem.Serialized
+function CraftSim.ReagentItem:Deserialize(serializedReagentItem)
+    local deserialized = CraftSim.ReagentItem(tonumber(serializedReagentItem.itemID), tonumber(serializedReagentItem.qualityID))
+    deserialized.quantity = tonumber(serializedReagentItem.quantity)
+    return deserialized
+end

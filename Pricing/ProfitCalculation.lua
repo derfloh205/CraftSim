@@ -1070,6 +1070,10 @@ function CraftSim.CALC:getResourcefulnessSavedCostsOOP(recipeData)
     return savedCosts
 end
 
+---Returns the chance to receive an upgrade with hsv
+---@param recipeData CraftSim.RecipeData
+---@return number hsvChance -- not in decimal!
+---@return boolean withInspirationOnly -- only if it procs together with inspiration, the inspiration chance has to be factored in afterwards
 function CraftSim.CALC:getHSVChanceOOP(recipeData) 
     if CraftSimOptions.enableHSV and recipeData.maxQuality and recipeData.resultData.expectedQuality < recipeData.maxQuality then
         

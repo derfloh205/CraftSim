@@ -362,7 +362,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
             local optimizeG = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G
             local optimizeI = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
             if optimizeG or optimizeI then
-                recipeData:OptimizeAll(optimizeI)
+                recipeData:OptimizeProfit(optimizeI)
             else
                 CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
                 recipeData:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.PROFIT)

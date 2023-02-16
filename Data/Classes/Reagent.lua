@@ -1,5 +1,4 @@
 _, CraftSim = ...
-
 ---@class CraftSim.Reagent
 ---@field hasQuality boolean
 ---@field requiredQuantity number
@@ -155,4 +154,37 @@ function CraftSim.Reagent:SetCheapestQualityMax()
     else
         self.items[1].quantity = self.requiredQuantity
     end
+end
+
+
+
+---@class CraftSim.Reagent.Serialized
+---@field hasQuality boolean
+---@field requiredQuantity number
+---@field dataSlotIndex number
+---@field items CraftSim.ReagentItem.Serialized[]
+
+function CraftSim.Reagent:Serialize()
+    local serialized = {}
+    serialized.hasQuality = self.hasQuality
+    serialized.requiredQuantity = self.requiredQuantity
+    serialized.dataSlotIndex = self.dataSlotIndex
+    serialized.items = CraftSim.UTIL:Map(self.items, function (reagentItem)
+        return reagentItem:Serialize()
+    end)
+    return serialized
+end
+
+---STATIC: Deserializes a serialized reagent into a reagent
+---@param serializedReagent CraftSim.Reagent.Serialized
+---@return CraftSim.Reagent
+function CraftSim.Reagent:Deserialize(serializedReagent)
+    local reagent = CraftSim.Reagent()
+    reagent.hasQuality = not not serializedReagent.hasQuality
+    reagent.requiredQuantity = tonumber(serializedReagent.requiredQuantity)
+    reagent.dataSlotIndex = tonumber(serializedReagent.dataSlotIndex)
+    reagent.items = CraftSim.UTIL:Map(serializedReagent.items, function (serializedReagentItem)
+        return CraftSim.ReagentItem:Deserialize(serializedReagentItem)
+    end)
+    return reagent
 end

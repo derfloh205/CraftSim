@@ -40,3 +40,23 @@ function CraftSim.OptionalReagent:Copy()
     local copy = CraftSim.OptionalReagent({itemID = self.item:GetItemID()})
     return copy
 end
+
+---@class CraftSim.OptionalReagent.Serialized
+---@field qualityID number
+---@field itemID number
+
+function CraftSim.OptionalReagent:Serialize()
+    local serialized = {}
+    serialized.qualityID = self.qualityID
+    serialized.itemID = self.item:GetItemID()
+    return serialized
+end
+
+---STATIC: Deserializes an optionalReagent
+---@param serializedOptionalReagent CraftSim.OptionalReagent.Serialized
+---@return CraftSim.OptionalReagent
+function CraftSim.OptionalReagent:Deserialize(serializedOptionalReagent)
+    serializedOptionalReagent.itemID = tonumber(serializedOptionalReagent.itemID) or 0
+    serializedOptionalReagent.qualityID = tonumber(serializedOptionalReagent.qualityID) or 0
+    return CraftSim.OptionalReagent(serializedOptionalReagent) -- as it builds from itemID only its fine
+end

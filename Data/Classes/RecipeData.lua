@@ -257,6 +257,14 @@ function CraftSim.RecipeData:SetOptionalReagent(itemID)
     self.reagentData:SetOptionalReagent(itemID)
 end
 
+---@param itemIDList number[]
+function CraftSim.RecipeData:SetOptionalReagents(itemIDList)
+    table.foreach(itemIDList, function (_, itemID)
+        self:SetOptionalReagent(itemID)
+    end)
+    self:Update()
+end
+
 -- Update the professionStats property of the RecipeData according to set reagents and gearSet (and any stat modifiers)
 function CraftSim.RecipeData:UpdateProfessionStats()
     local skillRequiredReagents = self.reagentData:GetSkillFromRequiredReagents()
@@ -345,11 +353,18 @@ function CraftSim.RecipeData:GetAverageProfit()
     return averageProfit, probabilityTable
 end
 
----Optimizes the recipeData's professionGearSet for highest skill, then the reagents, the the gear set for highest profit
+---Optimizes the recipeData's reagents and gear for highest profit
 ---@param optimizeInspiration boolean
-function CraftSim.RecipeData:OptimizeAll(optimizeInspiration)
+function CraftSim.RecipeData:OptimizeProfit(optimizeInspiration)
     self:OptimizeReagents(optimizeInspiration)
     self:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.PROFIT)
     -- need another because it could be that the optimized gear makes it possible to use cheaper reagents
     self:OptimizeReagents(optimizeInspiration) 
+end
+
+---Optimizes the recipeData's reagents and gear for highest quality
+---@param optimizeInspiration boolean
+function CraftSim.RecipeData:OptimizeQuality(optimizeInspiration)
+    self:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.SKILL)
+    self:OptimizeReagents(optimizeInspiration)
 end

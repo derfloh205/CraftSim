@@ -336,145 +336,120 @@ end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
     local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
-    local outputInfo = payload.outputInfo
+    local resultData = payload.resultData
     local reagents = payload.reagents
     local optionalReagents = payload.optionalReagents
     local finishingReagents = payload.finishingReagents
+    local supportsQualities = payload.supportsQualities
 
+    if resultData.canUpgradeQuality then
+        local upgradeChanceText = payload.upgradeChance .. "%"
+        previewFrame.content.expectedInspirationPercent:SetText(upgradeChanceText .. " Chance for")
+        previewFrame.content.expectedInspirationIcon.SetItem(resultData.expectedItemUpgrade:GetItemLink(), nil, nil, true)
+        previewFrame.content.expectedInspirationQualityIcon.SetQuality(resultData.expectedQualityUpgrade)
+        previewFrame.content.expectedInspirationIcon:Show()
+        previewFrame.content.expectedInspirationPercent:Show()
+        previewFrame.content.expectedInspirationQualityIcon:Show()
+    else
+        previewFrame.content.expectedInspirationIcon:Hide()
+        previewFrame.content.expectedInspirationPercent:Hide()
+        previewFrame.content.expectedInspirationQualityIcon:Hide()
+    end
+    
+    previewFrame.content.reagentDetailsTitle:Show()
+    previewFrame.content.expectedResultTitle:Show()
+    previewFrame.content.expectedResultIcon:Show()
+    previewFrame.content.expectedResultIcon.SetItem(resultData.expectedItem:GetItemLink(), nil, nil, true)
+    if supportsQualities then
+        previewFrame.content.expectedResultQualityIcon.SetQuality(resultData.expectedQuality)
+        previewFrame.content.expectedResultQualityIcon:Show()
+        previewFrame.content.guaranteeCB:Show()
+    else
+        previewFrame.content.expectedResultQualityIcon:Hide()
+        previewFrame.content.guaranteeCB:Hide()
+    end
 
-    -- load reagents and optionalReagents, then continue
-    local itemsToLoad = {}
-    CraftSim.UTIL:Concat({ -- wtf ? TODO: remove concat?
-        CraftSim.UTIL:Map(reagents, function (itemInfo)
-            local item = Item:CreateFromItemID(itemInfo.itemID)
-            table.insert(itemsToLoad, item)
-            itemInfo.item = item
-            return item
-        end, {subTable="itemsInfo"}),
-        CraftSim.UTIL:Map(optionalReagents, function (reagent)
-            local item = Item:CreateFromItemID(reagent.itemID)
-            table.insert(itemsToLoad, item)
-            reagent.item = item
-            return item
-        end, {isTableList=true}),
-        CraftSim.UTIL:Map(finishingReagents, function (reagent)
-            local item = Item:CreateFromItemID(reagent.itemID)
-            table.insert(itemsToLoad, item)
-            reagent.item = item
-            return item
-        end, {isTableList=true})
-    })
+    local craftingCosts = 0
 
-    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
-        if outputInfo.inspirationCanUpgrade then
-            local inspirationText = payload.inspirationPercent .. "%"
-            previewFrame.content.expectedInspirationPercent:SetText(inspirationText .. " Chance for")
-            previewFrame.content.expectedInspirationIcon.SetItem(outputInfo.inspiration, nil, nil, true)
-            previewFrame.content.expectedInspirationQualityIcon.SetQuality(outputInfo.expectedQualityInspiration)
-            previewFrame.content.expectedInspirationIcon:Show()
-            previewFrame.content.expectedInspirationPercent:Show()
-            previewFrame.content.expectedInspirationQualityIcon:Show()
-        else
-            previewFrame.content.expectedInspirationIcon:Hide()
-            previewFrame.content.expectedInspirationPercent:Hide()
-            previewFrame.content.expectedInspirationQualityIcon:Hide()
+    for i, reagent in pairs(reagents) do
+        for _, reagentItem in pairs(reagent.items) do
+            local reagentCost = reagentItem.quantity * CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true)
+            print("reagentCost #" .. i .. ": " .. CraftSim.UTIL:FormatMoney(reagentCost))
+            print(reagentItem.quantity .. " x " .. CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true))
+            craftingCosts = craftingCosts + reagentCost
         end
-    
-        
-        previewFrame.content.reagentDetailsTitle:Show()
-        previewFrame.content.expectedResultTitle:Show()
-        previewFrame.content.expectedResultIcon:Show()
-        previewFrame.content.expectedResultIcon.SetItem(outputInfo.expected, nil, nil, true)
-        if not outputInfo.isNoQuality then
-            previewFrame.content.expectedResultQualityIcon.SetQuality(outputInfo.expectedQuality)
-            previewFrame.content.expectedResultQualityIcon:Show()
-            previewFrame.content.guaranteeCB:Show()
-        else
-            previewFrame.content.expectedResultQualityIcon:Hide()
-            previewFrame.content.guaranteeCB:Hide()
+    end
+
+    for _, dropdown in pairs(previewFrame.content.optionalDropdowns) do
+        if dropdown.selectedID then
+            local reagentCost = CraftSim.PRICEDATA:GetMinBuyoutByItemID(dropdown.selectedID, true)
+            craftingCosts = craftingCosts + reagentCost
         end
-    
-        local craftingCosts = 0
-    
-        for i, reagent in pairs(reagents) do
-            for _, itemInfo in pairs(reagent.itemsInfo) do
-                local reagentCost = tonumber(itemInfo.allocations) * CraftSim.PRICEDATA:GetMinBuyoutByItemID(tonumber(itemInfo.itemID), true)
-                print("reagentCost #" .. i .. ": " .. CraftSim.UTIL:FormatMoney(reagentCost))
-                print(tonumber(itemInfo.allocations) .. " x " .. CraftSim.PRICEDATA:GetMinBuyoutByItemID(tonumber(itemInfo.itemID), true))
-                craftingCosts = craftingCosts + reagentCost
+    end
+
+    for index, reagentFrame in pairs(previewFrame.content.reagentFrames) do
+        local currentReagent = reagents[index]
+        if currentReagent then
+            local itemID = tonumber(currentReagent.items[1].item:GetItemID())
+            if currentReagent.hasQuality then
+                reagentFrame.SetReagent(itemID, true,
+                currentReagent.items[1].quantity, 
+                currentReagent.items[2].quantity, 
+                currentReagent.items[3].quantity)
+            else
+                reagentFrame.SetReagent(itemID, false, currentReagent.items[1].quantity)
             end
+        else
+            reagentFrame.SetReagent(nil)
         end
+    end
 
-        for _, dropdown in pairs(previewFrame.content.optionalDropdowns) do
-            if dropdown.selectedID then
-                local reagentCost = CraftSim.PRICEDATA:GetMinBuyoutByItemID(dropdown.selectedID, true)
-                craftingCosts = craftingCosts + reagentCost
+    if payload.isInit then
+        previewFrame.currentOptionalReagentSlots = optionalReagents
+        previewFrame.currentFinishingReagentSlots = finishingReagents
+        previewFrame.content.optionalDropdownGroup.SetCollapsed(#optionalReagents + #finishingReagents == 0)
+
+        ---@param optionalReagentList CraftSim.OptionalReagent[]
+        local function convertOptionalReagentsToDropdownListData(optionalReagentList)
+            local dropDownListData = {{label = "None", value = nil}}
+            for _, optionalReagent in pairs(optionalReagentList) do
+                table.insert(dropDownListData, {
+                    label = optionalReagent.item:GetItemLink(),
+                    value = optionalReagent.item:GetItemID(),
+                })
             end
+            return dropDownListData
         end
 
-        for index, reagentFrame in pairs(previewFrame.content.reagentFrames) do
-            local currentReagent = reagents[index]
-            if currentReagent then
-                local itemID = tonumber(currentReagent.itemsInfo[1].itemID)
-                if currentReagent.differentQualities then
-                    reagentFrame.SetReagent(itemID, true,
-                    currentReagent.itemsInfo[1].allocations, 
-                    currentReagent.itemsInfo[2].allocations, 
-                    currentReagent.itemsInfo[3].allocations)
+        local dropdownIndex = 1
+        for i = 1, 5, 1 do
+            local dropdown = previewFrame.content.optionalDropdowns[i]
+            local optionalReagentSlot = nil
+            if i < 4 then
+                optionalReagentSlot = optionalReagents[i]
+            else
+                optionalReagentSlot = finishingReagents[i-3]
+            end
+
+            if optionalReagentSlot then
+                dropdown:Show()
+                if not optionalReagentSlot.locked then
+                    local dropdownListData = convertOptionalReagentsToDropdownListData(optionalReagentSlot.possibleReagents)
+                    CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true, true)
                 else
-                    reagentFrame.SetReagent(itemID, false, currentReagent.itemsInfo[1].allocations)
+                    CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.UTIL:ColorizeText("Locked", CraftSim.CONST.COLORS.RED))
+                    dropdown.selectedID = nil
                 end
             else
-                reagentFrame.SetReagent(nil)
+                dropdown:Hide()
             end
+
+            dropdownIndex = dropdownIndex + 1
         end
+    else
 
-        if payload.isInit then
-            previewFrame.currentOptionalReagents = payload.optionalReagents
-            previewFrame.currentFinishingReagents = payload.finishingReagents
-            previewFrame.content.optionalDropdownGroup.SetCollapsed(#optionalReagents + #finishingReagents == 0)
-    
-            local function convertOptionalReagentsToDropdownListData(reagentList)
-                local dropDownListData = {{label = "None", value = nil}}
-                for _, reagent in pairs(reagentList) do
-                    table.insert(dropDownListData, {
-                        label = reagent.item:GetItemLink(),
-                        value = reagent.itemID,
-                    })
-                end
-                return dropDownListData
-            end
-    
-            local dropdownIndex = 1
-            for i = 1, 5, 1 do
-                local dropdown = previewFrame.content.optionalDropdowns[i]
-                local reagentList = {}
-                if i < 4 then
-                    reagentList = optionalReagents[i]
-                else
-                    reagentList = finishingReagents[i-3]
-                end
-    
-                if reagentList then
-                    dropdown:Show()
-                    if not reagentList[1].locked then
-                        local dropdownListData = convertOptionalReagentsToDropdownListData(reagentList)
-                        CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true, true)
-                    else
-                        CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.UTIL:ColorizeText("Locked", CraftSim.CONST.COLORS.RED))
-                        dropdown.selectedID = nil
-                    end
-                else
-                    dropdown:Hide()
-                end
-    
-                dropdownIndex = dropdownIndex + 1
-            end
-        else
+    end
 
-        end
-
-        previewFrame.content.craftingCosts:SetText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(craftingCosts))
-        previewFrame.content.craftingCosts:Show()
-    end)
+    previewFrame.content.craftingCosts:SetText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(craftingCosts))
+    previewFrame.content.craftingCosts:Show()
 end

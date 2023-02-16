@@ -12,8 +12,8 @@ CraftSim.OptionalReagentSlot = CraftSim.Object:extend()
 
 ---@param reagentSlotSchematic CraftingReagentSlotSchematic
 function CraftSim.OptionalReagentSlot:new(recipeData, reagentSlotSchematic)
-    self.recipeData = recipeData
-    if not reagentSlotSchematic then
+    -- self.recipeData = recipeData
+    if not recipeData or not reagentSlotSchematic then
         return
     end
     self.dataSlotIndex = reagentSlotSchematic.dataSlotIndex
@@ -81,4 +81,40 @@ function CraftSim.OptionalReagentSlot:Copy(recipeData)
     copy.lockedReason = self.lockedReason
 
     return copy
+end
+
+---@class CraftSim.OptionalReagentSlot.Serialized
+---@field possibleReagents CraftSim.OptionalReagent.Serialized[]
+---@field slotText string
+---@field dataSlotIndex number
+---@field locked boolean
+---@field lockedReason? string
+
+---Serializes the optionalReagentSlot for sending via the addon channel
+---@return CraftSim.OptionalReagentSlot.Serialized
+function CraftSim.OptionalReagentSlot:Serialize()
+    local serialized = {}
+    serialized.slotText = self.slotText
+    serialized.dataSlotIndex = self.dataSlotIndex
+    serialized.locked = self.locked
+    serialized.lockedReason = self.lockedReason
+    serialized.possibleReagents = CraftSim.UTIL:Map(self.possibleReagents, function (optionalReagent)
+        return optionalReagent:Serialize()
+    end)
+    return serialized
+end
+
+---Deserializes the optionalReagentSlot
+---@param serializedOptionalReagentSlot CraftSim.OptionalReagentSlot.Serialized
+---@return CraftSim.OptionalReagentSlot
+function CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot)
+    local deserialized = CraftSim.OptionalReagentSlot()
+    deserialized.slotText = serializedOptionalReagentSlot.slotText
+    deserialized.dataSlotIndex = tonumber(serializedOptionalReagentSlot.dataSlotIndex)
+    deserialized.locked = not not serializedOptionalReagentSlot.locked -- is this enough to deserialize a boolean? or do I need to parse a string?
+    deserialized.lockedReason = serializedOptionalReagentSlot.lockedReason
+    deserialized.possibleReagents = CraftSim.UTIL:Map(serializedOptionalReagentSlot.possibleReagents, function (serializedOptionalReagent)
+        return CraftSim.OptionalReagent:Deserialize(serializedOptionalReagent)
+    end)
+    return deserialized
 end

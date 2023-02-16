@@ -32,8 +32,9 @@ function CraftSim.CUSTOMER_SERVICE:GeneratePreviewInviteLink()
     if not recipeData then
         return
     end
+    local professionID = recipeData.professionData.professionInfo.profession
     local timeID = CraftSim.UTIL:round(debugprofilestop())
-    local inviteLink = "CraftSimLivePreview:" .. GetUnitName("player", true) .. ":" .. recipeData.professionID .. ":" .. recipeData.professionInfo.parentProfessionName .. ":" .. timeID
+    local inviteLink = "CraftSimLivePreview:" .. GetUnitName("player", true) .. ":" .. professionID .. ":" .. recipeData.professionData.professionInfo.parentProfessionName .. ":" .. timeID
     table.insert(CraftSimOptions.customerServiceActivePreviewIDs, timeID)
     return inviteLink
 end
@@ -191,29 +192,59 @@ end
 
 function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateRequest(payload)
     local recipeID = payload.recipeID
-    local professionID = payload.professionID
     local customer = payload.customer
-    local highestGuaranteed = payload.highestGuaranteed
+    local optimizeInspiration = not payload.highestGuaranteed
+    local optionalReagents = payload.optionalReagents
 
     print("OnRecipeUpdateRequest")
 
-    local optimizedRecipe = CraftSim.CUSTOMER_SERVICE:OptimizeRecipe(recipeID, payload.optionalReagents, highestGuaranteed)
+    -- Optimize for highest reachable quality
+    local recipeData = CraftSim.RecipeData(recipeID, false)
 
-    if not optimizedRecipe then
+    if not recipeData then
         return
     end
+    if optionalReagents then
+        recipeData:SetOptionalReagents(optionalReagents)
+    end
+    recipeData:OptimizeQuality(optimizeInspiration)
 
-    local inspPercent = (optimizedRecipe.recipeData.stats.inspiration and optimizedRecipe.recipeData.stats.inspiration.percent) or nil
+    print("result:")
+    print(recipeData.resultData, true)
+
+
+    -- TODO: make it its own method/function
+    local inspPercent = (recipeData.supportsInspiration and recipeData.professionStats.inspiration:GetPercent()) or nil
+    local hsvChance, withInspiration = CraftSim.CALC:getHSVChanceOOP(recipeData)
+    hsvChance = hsvChance / 100
+    local upgradeChance = 0
+    if hsvChance == 0 and recipeData.supportsInspiration then
+        upgradeChance = inspPercent
+    elseif recipeData.supportsInspiration then
+        if withInspiration then
+            local inspChance = inspPercent / 100
+            upgradeChance = inspChance * hsvChance * 100
+        else
+            -- either one upgrades
+            local inspChance = inspPercent / 100
+            print("inspChance: " .. inspChance)
+            print("hsvChance: " .. hsvChance)
+            upgradeChance = ((inspChance * hsvChance) + ((1-inspChance) * hsvChance) + (inspChance * (1-hsvChance))) * 100
+        end
+    end 
+
+    upgradeChance = CraftSim.UTIL:round(upgradeChance, 2)
 
     -- for now use pricedata from customer (so the crafter cannot scam with price overrides)
     local responseData = {
         recipeID = recipeID,
-        recipeIcon = optimizedRecipe.recipeData.recipeIcon,
-        inspirationPercent = inspPercent,
-        reagents = optimizedRecipe.recipeData.reagents,
-        optionalReagents = optimizedRecipe.recipeData.possibleOptionalReagents,
-        finishingReagents = optimizedRecipe.recipeData.possibleFinishingReagents,
-        outputInfo = optimizedRecipe.outputInfo,
+        recipeIcon = recipeData.recipeIcon,
+        supportsQualities = recipeData.supportsQualities,
+        upgradeChance = upgradeChance,
+        reagents = recipeData.reagentData:SerializeReagents(),
+        optionalReagents = recipeData.reagentData:SerializeOptionalReagentSlots(),
+        finishingReagents = recipeData.reagentData:SerializeFinishingReagentSlots(),
+        resultData = recipeData.resultData:Serialize(),
         isInit = payload.isInit,
     }
 
@@ -223,11 +254,25 @@ end
 function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateResponse(payload)
     print("OnRecipeUpdateResponse")
 
-    print("received output info")
-    print(payload.outputInfo, true)
+    print("received serialized data, deserialize and continue..")
 
-    CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
-    CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
+    payload.reagents = CraftSim.UTIL:Map(payload.reagents, function(serializedReagent) return CraftSim.Reagent:Deserialize(serializedReagent) end)
+    payload.optionalReagents = CraftSim.UTIL:Map(payload.optionalReagents, function(serializedOptionalReagentSlot) return CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot) end)
+    payload.finishingReagents = CraftSim.UTIL:Map(payload.finishingReagents, function(serializedOptionalReagentSlot) return CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot) end)
+    payload.resultData = CraftSim.ResultData:Deserialize(payload.resultData)
+
+    local itemsToLoad = CraftSim.UTIL:Map(payload.reagents, function(reagent) return reagent.item end)
+    table.foreach(CraftSim.UTIL:Concat({payload.optionalReagents, payload.finishingReagents}), function(_, slot)
+        itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, CraftSim.UTIL:Map(slot.possibleReagents, function(optionalReagent) return optionalReagent.item end)})
+    end)
+
+    itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, payload.resultData.itemsByQuality})
+
+    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
+        CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
+        CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
+    end)
+
 end
 
 -- On the recipient side, decode the string and transform it into a clickable link

@@ -1,5 +1,7 @@
 _, CraftSim = ...
 
+
+
 ---@class CraftSim.ReagentData
 ---@field recipeData CraftSim.RecipeData
 ---@field requiredReagents CraftSim.Reagent[]
@@ -35,6 +37,27 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
         end
     end
 end
+
+---Serializes the required reagents list for sending via the addon channel
+---@return CraftSim.Reagent.Serialized[]
+function CraftSim.ReagentData:SerializeReagents()
+    return CraftSim.UTIL:Map(self.requiredReagents, function (reagent)
+        return reagent:Serialize()
+    end)
+end
+
+function CraftSim.ReagentData:SerializeOptionalReagentSlots()
+    return CraftSim.UTIL:Map(self.optionalReagentSlots, function (slot)
+        return slot:Serialize()
+    end)
+end
+
+function CraftSim.ReagentData:SerializeFinishingReagentSlots()
+    return CraftSim.UTIL:Map(self.finishingReagentSlots, function (slot)
+        return slot:Serialize()
+    end)
+end
+
 
 function CraftSim.ReagentData:GetProfessionStatsByOptionals()
     local totalStats = CraftSim.ProfessionStats()
