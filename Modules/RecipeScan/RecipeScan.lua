@@ -349,6 +349,8 @@ function CraftSim.RECIPE_SCAN:StartScan()
         print("isEnchant: " .. tostring(recipeInfo.isEnchantingRecipe))
 
         local recipeData = CraftSim.RecipeData(recipeInfo.recipeID);
+        recipeData.professionGearSet:LoadCurrentEquippedSet()
+        recipeData:Update()
         if not recipeData then
             CraftSim.RECIPE_SCAN:EndScan()
             return
@@ -359,7 +361,11 @@ function CraftSim.RECIPE_SCAN:StartScan()
             -- for any optimization, optimize for highest skill ( for now )
             CraftSim.UTIL:StartProfiling("Optimize Top Gear: SCAN")
             if recipeData:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.SKILL) then
+                print("RecipeScan Optimize Gear: Could Optimize")
                 recipeData:Update()
+                
+            else
+                print("RecipeScan Optimize Gear: No Optimize needed")
             end
             CraftSim.UTIL:StopProfiling("Optimize Top Gear: SCAN")
         end

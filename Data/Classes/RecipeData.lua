@@ -330,7 +330,7 @@ function CraftSim.RecipeData:OptimizeGear(topGearMode)
     local optimizedGear = CraftSim.TOPGEAR:OptimizeTopGear(self, topGearMode)
     local bestResult = optimizedGear[1]
     if bestResult then
-        if not bestResult.professionGearSet:IsEquipped() then
+        if not bestResult.professionGearSet:Equals(self.professionGearSet) then
             self.professionGearSet = bestResult.professionGearSet
             return true
         end

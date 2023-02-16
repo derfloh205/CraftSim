@@ -6,6 +6,8 @@ local PROFIT_ROW_WIDTH  = 120
 local INSPIRATION_ROW_WIDTH = 55
 local LEARNED_ROW_WIDTH = 35
 
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
+
 function CraftSim.RECIPE_SCAN.FRAMES:Init()
     local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimRecipeScan", 
@@ -241,6 +243,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRowOOP(recipeData)
+    
     local RecipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
     -- get first non active row
     local availableRow = CraftSim.UTIL:Find(RecipeScanFrame.content.resultRowFrames, function(frame) return not frame.isActive end)
@@ -287,6 +290,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRowOOP(recipeData)
         availableRow.noTopGearText:Show()
         availableRow.noTopGearText:SetText("-")
     elseif not recipeData.professionGearSet:IsEquipped() then
+        print("RecipeScan Frames: update combination icons cause not equipped")
         CraftSim.TOPGEAR.FRAMES:UpdateCombinationIconsOOP(recipeData.professionGearSet, CraftSim.CONST.EXPORT_MODE.SCAN, {
             availableRow.tool1Icon,
             availableRow.tool2Icon,
@@ -294,6 +298,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRowOOP(recipeData)
         })
         availableRow.noTopGearText:Hide()
     else
+        print("RecipeScan Frames: gear is equipped")
         availableRow.tool1Icon:Hide()
         availableRow.tool2Icon:Hide()
         availableRow.tool3Icon:Hide()
