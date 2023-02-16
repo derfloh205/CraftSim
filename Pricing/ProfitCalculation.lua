@@ -1078,7 +1078,8 @@ function CraftSim.CALC:getHSVChanceOOP(recipeData)
     if CraftSimOptions.enableHSV and recipeData.maxQuality and recipeData.resultData.expectedQuality < recipeData.maxQuality then
         
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
-        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, baseRecipeDifficulty)
+        local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty)
         local upperThreshold = thresholds[recipeData.resultData.expectedQuality]
 
         local playerSkill = recipeData.professionStats.skill.value

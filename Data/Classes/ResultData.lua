@@ -136,6 +136,8 @@ function CraftSim.ResultData:Update()
 
     if self.expectedQuality < self.expectedQualityUpgrade then
         self.canUpgradeQuality = true
+    else
+        self.canUpgradeQuality = false
     end
 
     self.expectedItemInspiration = self.itemsByQuality[qualityInspiration]
