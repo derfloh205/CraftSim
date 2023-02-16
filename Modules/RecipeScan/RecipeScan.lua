@@ -358,21 +358,21 @@ function CraftSim.RECIPE_SCAN:StartScan()
 
         --optimize top gear first cause optimized reagents might change depending on the gear
         if CraftSimOptions.recipeScanOptimizeProfessionTools then
-            -- for any optimization, optimize for highest skill ( for now )
-            CraftSim.UTIL:StartProfiling("Optimize Top Gear: SCAN")
-            if recipeData:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.SKILL) then
-                print("RecipeScan Optimize Gear: Could Optimize")
-                recipeData:Update()
-                
+            CraftSim.UTIL:StartProfiling("Optimize ALL: SCAN")
+            local optimizeG = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G
+            local optimizeI = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
+            if optimizeG or optimizeI then
+                recipeData:OptimizeAll(optimizeI)
             else
-                print("RecipeScan Optimize Gear: No Optimize needed")
+                CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
+                recipeData:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.PROFIT)
             end
-            CraftSim.UTIL:StopProfiling("Optimize Top Gear: SCAN")
+            CraftSim.UTIL:StopProfiling("Optimize ALL: SCAN")
+        else
+            CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
         end
 
-        CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
 
-        recipeData:Update()
 
         local function continueScan()
             CraftSim.UTIL:StopProfiling("Single Recipe Scan OOP")

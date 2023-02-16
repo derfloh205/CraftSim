@@ -316,33 +316,40 @@ function CraftSim.RecipeData:Copy()
     return copy
 end
 
---- Optimizes the recipeData's reagents for highest quality / cheapest reagents. Dont forget to :Update() afterwards!
+--- Optimizes the recipeData's reagents for highest quality / cheapest reagents.
 ---@param optimizeInspiration boolean
 function CraftSim.RecipeData:OptimizeReagents(optimizeInspiration)
     local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(self, optimizeInspiration)
     self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
+    self:Update() -- TODO: only update if reagents have changed
 end
 
----Optimizes the recipeData's professionGearSet by the given mode. Dont forget to :Update() afterwards!
+---Optimizes the recipeData's professionGearSet by the given mode.
 ---@param topGearMode string
----@return boolean updated if true, professionGearSet was changed
 function CraftSim.RecipeData:OptimizeGear(topGearMode)
     local optimizedGear = CraftSim.TOPGEAR:OptimizeTopGear(self, topGearMode)
     local bestResult = optimizedGear[1]
     if bestResult then
         if not bestResult.professionGearSet:Equals(self.professionGearSet) then
             self.professionGearSet = bestResult.professionGearSet
-            return true
+            self:Update()
         end
     end
-
-    return false
 end
 
----Returns the average profit and the probability table of the recipe. Dont forget to :Update() beforehand!
+---Returns the average profit and the probability table of the recipe. Make sure the recipeData's results are updated beforehand
 ---@return number averageProfit
 ---@return table probabilityTable
 function CraftSim.RecipeData:GetAverageProfit()
     local averageProfit, probabilityTable = CraftSim.CALC:GetMeanProfitOOP(self)
     return averageProfit, probabilityTable
+end
+
+---Optimizes the recipeData's professionGearSet for highest skill, then the reagents, the the gear set for highest profit
+---@param optimizeInspiration boolean
+function CraftSim.RecipeData:OptimizeAll(optimizeInspiration)
+    self:OptimizeReagents(optimizeInspiration)
+    self:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.PROFIT)
+    -- need another because it could be that the optimized gear makes it possible to use cheaper reagents
+    self:OptimizeReagents(optimizeInspiration) 
 end
