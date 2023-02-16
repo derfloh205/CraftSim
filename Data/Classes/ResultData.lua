@@ -86,26 +86,6 @@ function CraftSim.ResultData:Update()
         return
     end
 
-    local craftingReagentInfoTbl = recipeData.reagentData:GetCraftingReagentInfoTbl()
-    local professionStats = self.recipeData.professionStats
-    local updatedOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeData.recipeID, craftingReagentInfoTbl, self.recipeData.allocationItemGUID)
-
-    if not updatedOperationInfo then
-        print("Could not update resultData: No OperationInfo")
-        return
-    end
-
-    self.expectedQuality = updatedOperationInfo.craftingQuality
-    self.expectedItem = self.itemsByQuality[self.expectedQuality]
-
-    if self.expectedQuality == self.recipeData.maxQuality then
-        return
-    end
-
-    if not recipeData.supportsQualities or not recipeData.supportsInspiration then
-        return
-    end
-
     -- TODO: new util function? V2 ?
     local function expectedQualityBySkill(skill, maxQuality, recipeDifficulty)
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(maxQuality, recipeDifficulty, CraftSimOptions.breakPointOffset)
@@ -119,6 +99,21 @@ function CraftSim.ResultData:Update()
 
         return expectedQuality
     end
+
+    local professionStats = self.recipeData.professionStats
+
+    self.expectedItem = self.itemsByQuality[self.expectedQuality]
+    
+    if self.expectedQuality == self.recipeData.maxQuality then
+        return
+    end
+
+    if not recipeData.supportsQualities or not recipeData.supportsInspiration then
+        return
+    end
+
+    self.expectedQuality = expectedQualityBySkill(professionStats.skill.value, recipeData.maxQuality, professionStats.recipeDifficulty.value)
+    self.expectedItem = self.itemsByQuality[self.expectedQuality]
 
     local skillInspiration = professionStats.skill.value + professionStats.inspiration.extraValue
     local maxHSVSkill = professionStats.recipeDifficulty.value * 0.05
