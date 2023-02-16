@@ -9,6 +9,7 @@ _, CraftSim = ...
 ---@field numSkillUps? number
 ---@field recipeIcon? string
 ---@field recipeName? string
+---@field isSimulationModeData boolean
 ---@field hasQualityReagents boolean
 ---@field supportsQualities boolean
 ---@field supportsCraftingStats boolean
@@ -64,7 +65,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     end
     
     self.isRecraft = isRecraft or false
-    self.recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
+    self.isSimulationModeData = false
+    self.recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo) -- TODO: remove
     self.learned = recipeInfo.learned or false
 	self.numSkillUps = recipeInfo.numSkillUps
 	self.recipeIcon = recipeInfo.icon

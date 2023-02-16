@@ -423,7 +423,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
     local recipeInfo =  C_TradeSkillUI.GetRecipeInfo(CraftSim.MAIN.currentRecipeID)
 
-	if not recipeInfo then
+	if not recipeInfo or recipeInfo.isGatheringRecipe then
 		--print("no recipeInfo found.. try again soon?")
 		return
 	end
@@ -553,6 +553,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 		showCostOverview = true
 		showPriceOverride = true
+		showSimulationMode = true
+		showSpecInfo = true
 	end
 
 
@@ -661,6 +663,17 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(recipeData.recipeID)
 		end
 
+		-- Simulation Mode
+		showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
+		CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.toggleButton, showSimulationMode)
+		CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibilityOOP() -- show sim mode frames depending if active or not
+		if CraftSim.SIMULATION_MODE.isActive and recipeData then
+			-- update simulationframe recipedata by inputs and the frontend
+			-- since recipeData is a reference here to the recipeData in the simulationmode, 
+			-- the recipeData that is used in the below modules should also be the modified one!
+			--CraftSim.SIMULATION_MODE:UpdateSimulationModeOOP()
+		end
+
 		-- AverageProfit Module
 		CraftSim.FRAME:ToggleFrame(averageProfitFrame, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 		CraftSim.FRAME:ToggleFrame(averageProfitFrameWO, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
@@ -715,8 +728,10 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		end
 
 		-- SpecInfo Module
-		CraftSim.FRAME:ToggleFrame(specInfoFrame, showSpecInfo and recipeData and recipeData.specNodeData)
-
+		CraftSim.FRAME:ToggleFrame(specInfoFrame, showSpecInfo and recipeData)
+		if recipeData and showSpecInfo then
+			CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfoOOP(recipeData)
+		end
 
 	end
 	

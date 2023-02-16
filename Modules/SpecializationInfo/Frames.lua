@@ -183,3 +183,39 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
         end
     end
 end
+
+-- OOP Refactor
+
+function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfoOOP(recipeData)
+    local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
+
+    local affectedNodeDataList = CraftSim.UTIL:FilterTable(recipeData.specializationData.nodeData, function(nodeData) return nodeData.affectsRecipe end)
+
+    print("Affecting Nodes: " .. tostring(#affectedNodeDataList))
+    if #affectedNodeDataList > #specInfoFrame.content.nodeLines then
+        error("You need more nodeLines: " .. #affectedNodeDataList .. " / " .. #specInfoFrame.content.nodeLines)
+    end
+    for nodeLineIndex, nodeLine in pairs(specInfoFrame.content.nodeLines) do
+        local affectedNodeData = affectedNodeDataList[nodeLineIndex]
+        if affectedNodeData and affectedNodeData.active then
+            nodeLine.nodeName:SetText(affectedNodeData.nodeName .. " (" .. tostring(affectedNodeData.rank) .. "/" .. tostring(affectedNodeData.maxRank) .. ")")
+
+            local nodeProfessionStats = affectedNodeData.professionStats
+
+            local tooltipText = "This node grants you following stats for this recipe:\n\n"
+
+            tooltipText = tooltipText .. nodeProfessionStats:GetTooltipText()
+
+            nodeLine.statTooltip.SetTooltipText(tooltipText)
+            nodeLine.statTooltip:Show()
+            nodeLine:Show()
+        elseif affectedNodeData and not affectedNodeData.active then
+            local greyText = CraftSim.UTIL:ColorizeText(affectedNodeData.nodeName .. " (-/" .. tostring(affectedNodeData.maxRank) .. ")", CraftSim.CONST.COLORS.GREY)
+            nodeLine.nodeName:SetText(greyText)
+            nodeLine.statTooltip:Hide()
+            nodeLine:Show()
+        else
+            nodeLine:Hide()
+        end
+    end
+end

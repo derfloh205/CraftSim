@@ -19,6 +19,9 @@ CraftSim.NodeData = CraftSim.Object:extend()
 
 ---@param nodeRulesData table[]
 function CraftSim.NodeData:new(recipeData, nodeRulesData, parentNode)
+    if not recipeData then
+        return
+    end
     self.recipeData = recipeData
     self.parentNode = parentNode
     self.nodeID = nodeRulesData[1].nodeID
@@ -41,7 +44,7 @@ end
 
 function CraftSim.NodeData:Debug()
     local debugLines = {
-        "nodeNameID: " .. tostring(self.nodeName),
+        "nodeName: " .. tostring(self.nodeName),
         "nodeID: " .. tostring(self.nodeID),
         "affectsRecipe: " .. tostring(self.affectsRecipe),
         "active: " .. tostring(self.active),
@@ -69,10 +72,10 @@ function CraftSim.NodeData:UpdateProfessionStats()
     self.professionStats:Clear()
 
     for _, nodeRule in pairs(self.nodeRules) do
+        nodeRule:UpdateProfessionStatsByRank(self.rank)
         if self.rank >= nodeRule.threshold then
             
             self.professionStats:add(nodeRule.professionStats)
-
         end
     end
 end

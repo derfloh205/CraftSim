@@ -15,13 +15,7 @@ CraftSim.SIMULATION_MODE.baseResourcefulness = nil
 
 CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents = nil
 
-local function print(text, recursive, l) -- override
-    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE, recursive, l)
-    else
-        print(text)
-    end
-end
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE)
 
 function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
     if not userInput or not CraftSim.SIMULATION_MODE.recipeData then
@@ -368,6 +362,27 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
 
     -- update simulation recipe data and frontend
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()
+
+    -- recalculate modules
+    CraftSim.MAIN:TriggerModulesErrorSafe()
+end
+
+
+-- OOP Refactor
+
+function CraftSim.SIMULATION_MODE:InitializeSimulationModeOOP(recipeData)
+    CraftSim.SIMULATION_MODE.recipeData = recipeData
+
+    -- dont have to do a thing...?
+    
+    -- update frame visiblity and initialize the input fields
+    CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibilityOOP()
+    CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFramesOOP(CraftSim.SIMULATION_MODE.recipeData)
+    CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdownsOOP(CraftSim.SIMULATION_MODE.recipeData)
+    CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecDataOOP(CraftSim.SIMULATION_MODE.recipeData)
+
+    -- -- update simulation recipe data and frontend
+    -- CraftSim.SIMULATION_MODE:UpdateSimulationModeOOP()
 
     -- recalculate modules
     CraftSim.MAIN:TriggerModulesErrorSafe()

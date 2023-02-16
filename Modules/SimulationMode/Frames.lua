@@ -2,13 +2,7 @@ AddonName, CraftSim = ...
 
 CraftSim.SIMULATION_MODE.FRAMES = {}
 
-local function print(text, recursive, l) -- override
-    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE, recursive, l)
-    else
-        print(text)
-    end
-end
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE)
 
 function CraftSim.SIMULATION_MODE.FRAMES:Init()
     -- CHECK BUTTON
@@ -19,7 +13,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             bestQBox:Click()
         end
         if CraftSim.SIMULATION_MODE.isActive then
-            CraftSim.SIMULATION_MODE:InitializeSimulationMode(CraftSim.MAIN.currentRecipeData)
+            CraftSim.SIMULATION_MODE:InitializeSimulationModeOOP(CraftSim.MAIN.currentRecipeData)
         end
 
         CraftSim.MAIN:TriggerModulesErrorSafe()
@@ -1149,6 +1143,302 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
                 qualityFrame.skipQualityMissingSkillInspirationValue:SetText(missinSkillText)
                 qualityFrame.skipQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. skipQualityIconText)
             end
+        end
+    end
+end
+
+
+-- OOP Refactor
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecDataOOP(recipeData)
+    local specializationData = recipeData.specializationData
+    
+    if not specializationData then
+        return
+    end
+    print("Init Spec Data:", false, true)
+    
+    local specModFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+    -- save copy of original in frame
+    specModFrame.originalSpecializationData = specializationData:Copy()
+    specModFrame.content.activeNodeModFrames = {}
+
+    -- init tabs
+    ---@param tabNr number
+    ---@param specTab any
+    ---@param specTabName string
+    ---@param baseNodeData CraftSim.NodeData
+    local function initTab(tabNr, specTab, specTabName, baseNodeData, numNodesPerLayer) 
+        specTab:SetText(specTabName)
+        specTab:ResetWidth()
+
+        local currentNodeOnLayer = {1, 1, 1}
+
+        local function initNode(nodeData, layer, layerCount, parentNodeModFrame)
+           
+            print("init node: " .. tostring(nodeData.nodeName))
+            local nodesOnLayer = layerCount[layer]
+            print("getnodemodframes: " .. tabNr .. "," .. layer .. "," .. nodesOnLayer)
+            local nodeModFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(tabNr, layer, nodesOnLayer)
+            --print("found nodemodframes on this layer: " .. tostring(#nodeModFrames) .. " expected: " .. tostring(layerCount[layer]))
+            print("current node on layer: " .. tostring(currentNodeOnLayer[layer]))
+            local nodeModFrame = nodeModFrames[currentNodeOnLayer[layer]]
+            print("debugID: " .. tostring(nodeModFrame.debugID))
+            -- make name break and smaller
+            local adaptedName = string.gsub(nodeData.nodeName, " ", "\n", 1)
+            nodeModFrame.nodeName:SetText(adaptedName)
+            -- Fill relevant data for nodeModFrame
+            nodeModFrame.nodeID = nodeData.nodeID
+            nodeModFrame.nodeProgressBar.maxValue = nodeData.maxRank
+            nodeModFrame.input:SetText(nodeData.rank)
+
+            table.insert(specModFrame.content.activeNodeModFrames, nodeModFrame) -- for later easier reference
+
+            -- init the threshold display
+            local thresholdLabels = {}
+            local nodeRules = nodeData.nodeRules
+            for _, nodeRule in pairs(nodeRules) do
+                if nodeRule.threshold and not nodeRule.threshold == -42 then
+                    local professionStats = nodeRule.professionStats
+                    local label = ""
+                    if professionStats.skill.value > 0 then
+                        label = label .. "SK+" .. professionStats.skill.value .. " "
+                    end
+                    if professionStats.inspiration.value > 0 then
+                        label = label .. "IN+" .. professionStats.inspiration.value .. " "
+                    end
+                    if professionStats.inspiration.extraFactor > 0 then
+                        label = label .. "ISK+" .. (professionStats.inspiration.extraFactor*100) .. "% "
+                    end
+                    if professionStats.multicraft.value > 0 then
+                        label = label .. "MC+" .. professionStats.multicraft.value .. " "
+                    end
+                    if professionStats.multicraft.extraFactor > 0 then
+                        label = label .. "MCI+" .. (professionStats.multicraft.extraFactor*100) .. "% "
+                    end
+                    if professionStats.resourcefulness.value > 0 then
+                        label = label .. "R+" .. professionStats.resourcefulness.value .. " "
+                    end
+                    if professionStats.resourcefulness.extraFactor > 0 then
+                        label = label .. "RI+" .. (professionStats.resourcefulness.extraFactor*100) .. "% "
+                    end
+                    if professionStats.craftingspeed.extraFactor > 0 then
+                        label = label .. "CS+" .. (professionStats.craftingspeed.extraFactor*100) .. "% "
+                    end
+                    if professionStats.potionExperimentationFactor.extraFactor > 0 then
+                        label = label .. "PB+" .. (professionStats.potionExperimentationFactor.extraFactor*100) .. "% "
+                    end
+                    if professionStats.phialExperimentationFactor.extraFactor > 0 then
+                        label = label .. "PB+" .. (professionStats.phialExperimentationFactor.extraFactor*100) .. "% "
+                    end
+    
+                    table.insert(thresholdLabels, {
+                        label = label,
+                        threshold = nodeRule.threshold
+                    })
+                end
+            end
+            print("thresholds:")
+            print(thresholdLabels, true)
+            nodeModFrame.InitThresholds(nodeData.maxRank , thresholdLabels)
+            -- adapt to set values
+            nodeModFrame.nodeProgressBar.UpdateValueByInput()
+            nodeModFrame.updateThresholdsByValue()
+            --
+            nodeModFrame:Show()
+            if parentNodeModFrame then
+                nodeModFrame.SetParentNode(parentNodeModFrame)
+            end
+
+            for _, childNodeData in pairs(nodeData.childNodes or {}) do
+                initNode(childNodeData, layer + 1, layerCount, nodeModFrame)
+            end
+
+            currentNodeOnLayer[layer] = currentNodeOnLayer[layer] + 1
+        end
+
+        -- init nodes recursively
+        initNode(baseNodeData, 1, numNodesPerLayer) 
+    end
+
+    local baseNodeNames = CraftSim.UTIL:Map(specializationData.baseNodeData, function(baseNodeData) return baseNodeData.nodeName end)
+
+    for i = 1, 4, 1 do
+        local specTabName = baseNodeNames[i]
+        local specTab = specModFrame.content.specializationTabs[i]
+        CraftSim.SIMULATION_MODE.FRAMES:ResetAllNodeModFramesForTab(specTab)
+        if specTabName then
+            specTab:Show()
+            initTab(i, specTab, specTabName, specializationData.baseNodeData[i], specializationData.numNodesPerLayer[i])
+        else
+            specTab:Hide()
+        end
+    end
+
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdownsOOP(recipeData)
+    local optionalReagentSlots = recipeData.reagentData.optionalReagentSlots
+    local finishingReagentSlots = recipeData.reagentData.finishingReagentSlots
+
+    local function convertReagentListToDropdownListData(optionalReagentsList)
+        local dropDownListData = {{label = "None", value = nil}}
+        for _, optionalReagent in pairs(optionalReagentsList) do
+            table.insert(dropDownListData, {
+                label = optionalReagent.item:GetItemLink(),
+                value = optionalReagent.item:GetItemID(),
+            })
+        end
+        return dropDownListData
+    end
+
+    -- init dropdowns
+    for index, dropdown in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames) do
+        dropdown.isOptional = false
+        dropdown.isFinishing = false
+        dropdown.slotIndex = nil
+        dropdown.selectedItemID = nil
+        dropdown:Hide()
+    end
+
+    local dropdownIndex = 1
+
+    -- optionals
+    for slotIndex, optionalReagentSlot in pairs(optionalReagentSlots) do
+        local currentDropdown = CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames[dropdownIndex]
+        local dropdownlist = convertReagentListToDropdownListData(optionalReagentSlot.possibleReagents)
+        CraftSim.FRAME:initializeDropdownByData(currentDropdown, dropdownlist, nil, true, true)
+        currentDropdown:Show()
+        currentDropdown.slotIndex = slotIndex
+        currentDropdown.isOptional = true
+        currentDropdown.SetLabel("Optional #" .. slotIndex)
+        dropdownIndex = dropdownIndex + 1
+        currentDropdown.selectedItemID = optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item:GetItemID()
+        if currentDropdown.selectedItemID then
+            UIDropDownMenu_SetText(currentDropdown, optionalReagentSlot.activeReagent.item:GetItemLink())
+        else
+            UIDropDownMenu_SetText(currentDropdown, "None")
+        end
+    end
+    -- finishing
+    for slotIndex, optionalReagentSlot in pairs(finishingReagentSlots) do
+        local currentDropdown = CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames[dropdownIndex]
+        local dropdownlist = convertReagentListToDropdownListData(optionalReagentSlot.possibleReagents)
+        CraftSim.FRAME:initializeDropdownByData(currentDropdown, dropdownlist, nil, true, true)
+        currentDropdown:Show()
+        currentDropdown.slotIndex = slotIndex
+        currentDropdown.isFinishing = true
+        currentDropdown.SetLabel("Finishing #" .. slotIndex)
+        dropdownIndex = dropdownIndex + 1
+        currentDropdown.selectedItemID = optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item:GetItemID()
+        if currentDropdown.selectedItemID then
+            UIDropDownMenu_SetText(currentDropdown, optionalReagentSlot.activeReagent.item:GetItemLink())
+        else
+            UIDropDownMenu_SetText(currentDropdown, "None")
+        end
+    end
+end
+
+function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibilityOOP()
+    local recipeData = CraftSim.MAIN.currentRecipeData
+    if not recipeData then
+        return -- In what case is this nil?
+    end
+
+
+    print("Update Visibility: hasQualityReagents " .. tostring(recipeData.hasQualityReagents))
+
+    -- frame visiblities
+    CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive)
+
+    local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
+    specInfoFrame.content.knowledgePointSimulationButton:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
+    if not CraftSim.SIMULATION_MODE.isActive then
+        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM):Hide()
+    end
+    --specInfoFrame.content.knowledgePointSimulationButton:Hide() -- TODO: REMOVE WHEN READY
+    -- only if recipe has optionalReagents
+    local hasOptionalReagents = recipeData.reagentData:HasOptionalReagents()
+    CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
+    local hasQualityReagents = recipeData.hasQualityReagents
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.quality1Button, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.quality2Button, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.quality3Button, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.qualityIcon1, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.qualityIcon2, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.qualityIcon3, hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.clearAllocationsButton, hasQualityReagents)
+
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.reagentOverwriteFrame, CraftSim.SIMULATION_MODE.isActive)
+
+    if not CraftSim.SIMULATION_MODE.isActive then
+        -- only hide, they will be shown automatically if available
+        for _, dropdown in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames) do
+            CraftSim.FRAME:ToggleFrame(dropdown, false)
+        end
+    end
+    
+
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame, CraftSim.SIMULATION_MODE.isActive)
+
+    local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
+    CraftSim.FRAME:ToggleFrame(bestQBox, not CraftSim.SIMULATION_MODE.isActive)
+    
+    -- also toggle the blizzard create all buttons and so on so that a user does not get the idea to press create when in sim mode..
+    CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.CreateAllButton, not CraftSim.SIMULATION_MODE.isActive)
+    CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.CreateMultipleInputBox, not CraftSim.SIMULATION_MODE.isActive)
+    CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.CreateButton, not CraftSim.SIMULATION_MODE.isActive)
+end
+---@param recipeData CraftSim.RecipeData
+function CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFramesOOP(recipeData)
+    -- set non quality reagents to max allocations
+
+    -- filter out non quality reagents
+    local qualityReagents = CraftSim.UTIL:FilterTable(recipeData.reagentData.requiredReagents, function(reagent) 
+        return reagent.hasQuality
+    end)
+    -- reagent overwrites
+    for index, inputFrame in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
+        local qualityReagent = qualityReagents and qualityReagents[index] or nil
+
+        CraftSim.FRAME:ToggleFrame(inputFrame, CraftSim.SIMULATION_MODE.isActive and qualityReagent)
+
+        if qualityReagent then
+            inputFrame.requiredQuantity:SetText("/ " .. qualityReagent.requiredQuantity)
+            -- CraftSim.FRAME:ToggleFrame(inputFrame.inputq2, reagentData.differentQualities)
+            -- CraftSim.FRAME:ToggleFrame(inputFrame.inputq3, reagentData.differentQualities)
+            inputFrame.inputq1.itemID = qualityReagent.items[1].item:GetItemID()
+            inputFrame.inputq1:SetText(qualityReagent.items[1].quantity)
+            inputFrame.inputq2.itemID = qualityReagent.items[2].item:GetItemID()
+            inputFrame.inputq2:SetText(qualityReagent.items[2].quantity)
+            inputFrame.inputq3.itemID = qualityReagent.items[3].item:GetItemID()
+            inputFrame.inputq3:SetText(qualityReagent.items[3].quantity)
+
+            inputFrame.isActive = true
+            local item = qualityReagent.items[1].item
+            item:ContinueOnItemLoad(function ()
+                
+                inputFrame.icon:SetNormalTexture(item:GetItemIcon())
+                inputFrame.icon:SetScript("OnEnter", function(self) 
+                    local itemName, ItemLink = GameTooltip:GetItem()
+                    GameTooltip:SetOwner(inputFrame, "ANCHOR_RIGHT");
+                    if ItemLink ~= item:GetItemLink() then
+                        -- to not set it again and hide the tooltip..
+                        GameTooltip:SetHyperlink(item:GetItemLink())
+                    end
+                    GameTooltip:Show();
+                end)
+                inputFrame.icon:SetScript("OnLeave", function(self) 
+                    GameTooltip:Hide();
+                end)
+            end)
+
+        else
+            inputFrame.icon:SetScript("OnEnter", nil)
+            inputFrame.icon:SetScript("OnLeave", nil)
+            inputFrame.isActive = false
         end
     end
 end

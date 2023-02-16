@@ -4,6 +4,7 @@ _, CraftSim = ...
 ---@field recipeData CraftSim.RecipeData
 ---@field nodeData CraftSim.NodeData[]
 ---@field baseNodeData CraftSim.NodeData[]
+---@field numNodesPerLayer number[][]
 ---@field professionStats CraftSim.ProfessionStats
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA_OOP)
@@ -12,11 +13,16 @@ CraftSim.SpecializationData = CraftSim.Object:extend()
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.SpecializationData:new(recipeData)
+    if not recipeData then
+        return
+    end
     self.recipeData = recipeData
     self.professionStats = CraftSim.ProfessionStats()
     self.baseNodeData = {}
     self.nodeData = {}
+    self.numNodesPerLayer = {}
 
+    local nodeNameData = CraftSim.SPEC_DATA:GetNodes(recipeData.professionData.professionInfo.profession)
     local professionRuleNodes = CraftSim.SPEC_DATA:RULE_NODES()[recipeData.professionData.professionInfo.profession]
     local baseRuleNodes = CraftSim.SPEC_DATA:BASE_RULE_NODES()[recipeData.professionData.professionInfo.profession]
 
@@ -29,17 +35,16 @@ function CraftSim.SpecializationData:new(recipeData)
     -- Should contain the ids of the base nodes now
     -- parse data into objects recursively
 
-    local function parseNode(nodeID, parentNodeData)
+    local baseNodeIndex = 1
+    local function parseNode(nodeID, parentNodeData, layer)
         local ruleNodes = CraftSim.UTIL:FilterTable(professionRuleNodes, function (n) return n.nodeID == nodeID end)
-        local _, nodeNameID = CraftSim.UTIL:Find(professionRuleNodes, function(n) return n.nodeID == nodeID end)
-        local nodeName = string.sub(nodeNameID, 1, string.find(nodeNameID, "_(%d+)") - 1)
         local nodeData = CraftSim.NodeData(self.recipeData, ruleNodes, parentNodeData)
-        nodeData.nodeName = nodeName
+        nodeData.nodeName = CraftSim.UTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
         local childNodeNameIDs = ruleNodes[1].childNodeIDs
 
         for _, childNodeNameID in pairs(childNodeNameIDs or {}) do
             local childNodeID = professionRuleNodes[childNodeNameID].nodeID
-            local childNodeData = parseNode(childNodeID, nodeData)
+            local childNodeData = parseNode(childNodeID, nodeData, layer + 1)
             table.insert(nodeData.childNodes, childNodeData)
             nodeData.idMapping:Merge(childNodeData.idMapping)
         end
@@ -49,11 +54,15 @@ function CraftSim.SpecializationData:new(recipeData)
 
         self.professionStats:add(nodeData.professionStats)
 
+        self.numNodesPerLayer[baseNodeIndex] = (self.numNodesPerLayer[baseNodeIndex] or {})
+        self.numNodesPerLayer[baseNodeIndex][layer] = (self.numNodesPerLayer[baseNodeIndex][layer] or 0) + 1
+
         return nodeData
     end
 
     for _, nodeID in pairs(baseRuleNodeIDs) do
-        table.insert(self.baseNodeData, parseNode(nodeID, nil))
+        table.insert(self.baseNodeData, parseNode(nodeID, nil, 1))
+        baseNodeIndex = baseNodeIndex + 1
     end
 end
 
@@ -87,4 +96,21 @@ function CraftSim.SpecializationData:Debug()
     debugLines = CraftSim.UTIL:Concat({debugLines, lines})
 
     return debugLines
+end
+
+---@return CraftSim.SpecializationData
+function CraftSim.SpecializationData:Copy()
+    -- create a new based on same recipeData, then adapt nodeRanks
+    local copy = CraftSim.SpecializationData(self.recipeData)
+
+    copy.professionStats:Clear()
+
+    for nodeIndex, nodeDataB in pairs(self.nodeData) do
+        local nodeDataA = copy.nodeData[nodeIndex]
+        nodeDataA.rank = nodeDataB.rank
+        nodeDataA:UpdateProfessionStats()
+        copy.professionStats:add(nodeDataA.professionStats)
+    end
+    
+    return copy
 end

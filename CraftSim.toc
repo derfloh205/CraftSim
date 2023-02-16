@@ -53,7 +53,7 @@ Modules/SpecializationInfo/Frames.lua
 Modules/Options/Options.lua
 Modules/Options/AccountSync.lua
 
-Modules/SimulationMode/SimMode.lua
+Modules/SimulationMode/SimulationMode.lua
 Modules/SimulationMode/Frames.lua
 
 Modules/AverageProfit/AverageProfit.lua

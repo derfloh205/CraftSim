@@ -142,6 +142,20 @@ function CraftSim.ProfessionStats:Debug()
 	return debugLines
 end
 
+function CraftSim.ProfessionStats:GetTooltipText()
+	local text = 
+		((self.skill.value > 0 and ("Skill: " .. self.skill.value .. "\n")) or "") ..
+		((self.inspiration.value > 0 and ("Inspiration: " .. self.inspiration.value .. "\n")) or "") ..
+		((self.inspiration.extraFactor > 0 and ("Inspiration Bonus Skill: " .. self.inspiration.extraFactor*100 .. "%" .. "\n")) or "") ..
+		((self.multicraft.value > 0 and ("Multicraft: " .. self.multicraft.value .. "\n")) or "") ..
+		((self.multicraft.extraFactor > 0 and ("Multicraft Extra Items: " .. self.multicraft.extraFactor*100 .. "%" .. "\n")) or "") ..
+		((self.resourcefulness.value > 0 and ("Resourcefulness: " .. self.resourcefulness.value .. "\n")) or "") ..
+		((self.resourcefulness.extraFactor > 0 and ("Resourcefulness Extra Items: " .. self.resourcefulness.extraFactor*100 .. "%" .. "\n")) or "") ..
+		((self.craftingspeed.value > 0 and ("Craftingspeed: " .. self.craftingspeed.value .. "\n")) or "") ..
+		((self.craftingspeed.extraFactor > 0 and ("Craftingspeed %: " .. self.craftingspeed.extraFactor*100 .. "%" .. "\n")) or "")
+	return text
+end
+
 function CraftSim.ProfessionStats:Copy()
 	local copy = CraftSim.ProfessionStats()
 	copy:add(self)

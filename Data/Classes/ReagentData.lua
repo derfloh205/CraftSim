@@ -148,6 +148,15 @@ function CraftSim.ReagentData:ClearOptionalReagents()
     end
 end
 
+---Wether the recipe has slots for optional or finishing reagents
+function CraftSim.ReagentData:HasOptionalReagents()
+    if self.optionalReagentSlots[1] or self.finishingReagentSlots[1] then
+        return true
+    end
+
+    return false
+end
+
 function CraftSim.ReagentData:GetMaxSkillFactor()
     local maxQualityReagentsCraftingTbl = CraftSim.UTIL:Map(self.requiredReagents, function(rr) 
         return rr:GetCraftingReagentInfoByQuality(3, true)
