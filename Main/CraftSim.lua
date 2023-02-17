@@ -417,8 +417,38 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
     local recipeInfo =  C_TradeSkillUI.GetRecipeInfo(CraftSim.MAIN.currentRecipeID)
 
+	local recipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+	local craftResultsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+	local customerServiceFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
+	local priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+	local priceOverrideFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
+	local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
+	local averageProfitFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS)
+	local averageProfitFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
+	local topgearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+	local topgearFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+	local costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
+	local costOverviewFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
+	local materialOptimizationFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
+	local materialOptimizationFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+
 	if not recipeInfo or recipeInfo.isGatheringRecipe then
-		--print("no recipeInfo found.. try again soon?")
+		-- hide all modules
+		recipeScanFrame:Hide()
+		craftResultsFrame:Hide()
+		customerServiceFrame:Hide()
+		priceOverrideFrame:Hide()
+		priceOverrideFrameWO:Hide()
+		specInfoFrame:Hide()
+		averageProfitFrame:Hide()
+		averageProfitFrameWO:Hide()
+		topgearFrame:Hide()
+		topgearFrameWO:Hide()
+		costOverviewFrame:Hide()
+		costOverviewFrameWO:Hide()
+		materialOptimizationFrame:Hide()
+		materialOptimizationFrameWO:Hide()
+		CraftSim.SIMULATION_MODE.toggleButton:Hide()
 		return
 	end
 
@@ -498,21 +528,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showRecipeScan = showRecipeScan and CraftSimOptions.modulesRecipeScan
 	showCraftResults = showCraftResults and CraftSimOptions.modulesCraftResults
 	showCustomerService = showCustomerService and CraftSimOptions.modulesCustomerService
-
-	local recipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
-	local craftResultsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
-	local customerServiceFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
-	local priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
-	local priceOverrideFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
-	local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
-	local averageProfitFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS)
-	local averageProfitFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
-	local topgearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
-	local topgearFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
-	local costOverviewFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
-	local materialOptimizationFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
-	local materialOptimizationFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
 
 	CraftSim.FRAME:ToggleFrame(recipeScanFrame, showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
