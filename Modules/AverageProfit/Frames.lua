@@ -68,45 +68,9 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     
 end
 
-function CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplay(priceData, statWeights, exportMode)
-    local statweightFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        statweightFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
-    else
-        statweightFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS)
-    end
-    if statWeights == nil then
-        statweightFrame.content.statText:SetText("")
-        statweightFrame.content.valueText:SetText("")
-    else
-        local statText = ""
-        local valueText = ""
-
-        if statWeights.meanProfit then
-            statText = statText .. "Ø Profit / Craft:" .. "\n"
-            local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCostPerCraft or nil
-            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.meanProfit, true, relativeValue) .. "\n"
-        end
-        if statWeights.inspiration then
-            statText = statText .. "Inspiration:" .. "\n"
-            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.inspiration) .. "\n"
-        end
-        if statWeights.multicraft then
-            statText = statText .. "Multicraft:" .. "\n"
-            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.multicraft) .. "\n"
-        end
-        if statWeights.resourcefulness then
-            statText = statText .. "Resourcefulness:"
-            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.resourcefulness)
-        end
-        statweightFrame.content.statText:SetText(statText)
-        statweightFrame.content.valueText:SetText(valueText)
-    end
-end
-
 ---@param statWeights CraftSim.Statweights
 ---@param exportMode number
-function CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplayOOP(statWeights, craftingCosts, exportMode)
+function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts, exportMode)
     local statweightFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         statweightFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)

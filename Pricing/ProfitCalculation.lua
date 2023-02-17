@@ -103,7 +103,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         local skillWithInspiration = professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor()
         print("skill: " .. professionStats.skill.value)
         print("skillWithInspiration: " .. skillWithInspiration)
-        local qualityWithInspiration = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkillOOP(recipeData, skillWithInspiration)
+        local qualityWithInspiration = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skillWithInspiration)
         local qualityWithHSV = math.min(recipeData.resultData.expectedQuality + 1, recipeData.maxQuality)
 
         print("expectedQuality: " .. recipeData.resultData.expectedQuality)
@@ -317,7 +317,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
 
         local skillWithInspiration = professionStats.skill.value + professionStats.inspiration.extraValue
-        local qualityWithInspiration = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkillOOP(recipeData, skillWithInspiration)
+        local qualityWithInspiration = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skillWithInspiration)
         local qualityWithHSV = math.min(recipeData.resultData.expectedQuality + 1, recipeData.maxQuality)
         
         -- get all possible craft results (for resourcefulness take avg) and their profits

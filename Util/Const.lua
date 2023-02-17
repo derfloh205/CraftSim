@@ -105,7 +105,6 @@ CraftSim.CONST.DEBUG_IDS = {
     UTIL = "UTIL",
     COST_OVERVIEW = "COST_OVERVIEW",
     MEDIA = "MEDIA",
-    -- OOP_REFACTOR
     TOP_GEAR = "TOP_GEAR",
 }
 

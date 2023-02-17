@@ -383,12 +383,12 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
     -- should be 0 for scan
     local reagentSkillContribution = recipeData.reagentData:GetSkillFromRequiredReagents()
     local skillWithoutReagentIncrease = recipeData.professionStats.skill.value - reagentSkillContribution
-    print("in Simulation Mode: " .. tostring(recipeData.isSimModeData ~= nil))
+    print("in Simulation Mode: " .. tostring(recipeData.isSimulationModeData ~= nil))
     print("skill total: " .. tostring(recipeData.professionStats.skill.value))
     print("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
     print("reagentSkillContribution: " .. tostring(reagentSkillContribution))
 
-    local expectedQualityWithoutReagents = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkillOOP(recipeData, skillWithoutReagentIncrease)
+    local expectedQualityWithoutReagents = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skillWithoutReagentIncrease)
 
     for i = 0, numBP - 1, 1 do
         --print("checking BP: " .. tostring(craftingDifficultyBP[i]))

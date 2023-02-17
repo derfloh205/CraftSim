@@ -31,7 +31,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param baseMeanProfit number
 ---@return number statWeight
-function CraftSim.AVERAGEPROFIT:getInspirationWeightOOP(recipeData, baseMeanProfit)
+function CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, baseMeanProfit)
     if not recipeData.supportsInspiration then
         return 0
     end
@@ -46,7 +46,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param baseMeanProfit number
 ---@return number statWeight
-function CraftSim.AVERAGEPROFIT:getMulticraftWeightOOP(recipeData, baseMeanProfit)
+function CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, baseMeanProfit)
     if not recipeData.supportsMulticraft then
         return 0
     end
@@ -61,7 +61,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param baseMeanProfit number
 ---@return number statWeight
-function CraftSim.AVERAGEPROFIT:getResourcefulnessWeightOOP(recipeData, baseMeanProfit)
+function CraftSim.AVERAGEPROFIT:getResourcefulnessWeight(recipeData, baseMeanProfit)
     if not recipeData.supportsResourcefulness then
         return 0
     end
@@ -75,7 +75,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param skill number
-function CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkillOOP(recipeData, skill)
+function CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skill)
     local expectedQuality = 1
     local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeData.professionStats.recipeDifficulty.value, CraftSimOptions.breakPointOffset)
 
@@ -95,9 +95,9 @@ function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
 
     local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
 
-    local inspirationWeight = CraftSim.AVERAGEPROFIT:getInspirationWeightOOP(recipeData, averageProfit)
-    local multicraftWeight = CraftSim.AVERAGEPROFIT:getMulticraftWeightOOP(recipeData, averageProfit)
-    local resourcefulnessWeight = CraftSim.AVERAGEPROFIT:getResourcefulnessWeightOOP(recipeData, averageProfit)
+    local inspirationWeight = CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, averageProfit)
+    local multicraftWeight = CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, averageProfit)
+    local resourcefulnessWeight = CraftSim.AVERAGEPROFIT:getResourcefulnessWeight(recipeData, averageProfit)
 
     recipeData:Update() -- revert
 
