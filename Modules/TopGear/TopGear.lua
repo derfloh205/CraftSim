@@ -923,11 +923,6 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
     topGearMode = topGearMode or CraftSim.CONST.GEAR_SIM_MODES.PROFIT
     local combinations = CraftSim.TOPGEAR:GetProfessionGearCombinationsOOP(recipeData)
 
-    -- print("All Combinations:")
-    -- print(combinations, true)
-
-    -- local recipeData = recipeData:Copy() -- to prevent that any button click or anything TODO: needed? as this is all in one frame..
-
     local previousGear = recipeData.professionGearSet
     local averageProfitPreviousGear = CraftSim.CALC:GetMeanProfitOOP(recipeData)
 
@@ -956,7 +951,9 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
             return resultA.averageProfit > resultB.averageProfit
         end)
         results = CraftSim.UTIL:FilterTable(results, function (result)
-            return result.relativeProfit > 0
+            -- should have at least 1 copper profit (and not some small decimal)
+            local gold, silver, copper = CraftSim.UTIL:GetMoneyValuesFromCopper(result.relativeProfit)
+            return (gold + silver + copper) > 0
         end)
     elseif topGearMode == CraftSim.CONST.GEAR_SIM_MODES.INSPIRATION then
         print("Top Gear Mode: Inspiration")
@@ -1009,9 +1006,9 @@ function CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
 
     local hasResults = #results > 0
     
-    print("best results relative stats")
     if hasResults and not recipeData.professionGearSet:Equals(results[1].professionGearSet) then
-        print(results[1].relativeStats)
+        print("best result")
+        print(results[1])
         CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplayOOP(results, CraftSimOptions.topGearMode, exportMode)
     else
         CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData.isCooking, false, exportMode)

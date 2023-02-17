@@ -542,13 +542,19 @@ function CraftSim.UTIL:Concat(tableList)
     return finalList
 end
 
+---Returns the given copper value as gold, silver and copper seperated, as string formated or as numbers
+---@param copperValue any
+---@param formatString any
+---@return string | number
+---@return number?
+---@return number?
 function CraftSim.UTIL:GetMoneyValuesFromCopper(copperValue, formatString)
     local gold = CraftSim.UTIL:round(copperValue/10000)
     local silver = CraftSim.UTIL:round(copperValue/100000)
     local copper = CraftSim.UTIL:round(copperValue/10000000)
 
     if not formatString then
-        return gold, silver, copper
+        return tonumber(gold) or 0, tonumber(silver) or 0, tonumber(copper) or 0
     else
         return gold .. "g " .. silver .. "s " .. copper .. "c"
     end

@@ -23,6 +23,7 @@ function CraftSim.TopGearResult:Debug()
     local debugLines = {
         "Average Profit: " .. CraftSim.UTIL:FormatMoney(self.averageProfit, true),
         "Relative Profit: " .. CraftSim.UTIL:FormatMoney(self.relativeProfit, true),
+        "Relative Profit Exact: " .. self.relativeProfit,
         "ExpectedQuality: " .. self.expectedQuality,
         "ExpectedQualityUpgrade: " .. self.expectedQualityUpgrade,
         "Profession Gear Set:"
