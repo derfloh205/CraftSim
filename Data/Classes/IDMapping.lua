@@ -5,7 +5,7 @@ _, CraftSim = ...
 ---@field categories CraftSim.IDCategory[]
 ---@field exceptionRecipeIDs number[]
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA_OOP)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 CraftSim.IDMapping = CraftSim.Object:extend()
 

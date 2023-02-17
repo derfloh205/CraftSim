@@ -8,7 +8,7 @@ _, CraftSim = ...
 ---@field numNodesPerLayer number[][]
 ---@field professionStats CraftSim.ProfessionStats
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA_OOP)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 CraftSim.SpecializationData = CraftSim.Object:extend()
 

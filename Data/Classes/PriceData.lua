@@ -9,7 +9,7 @@ _, CraftSim = ...
 
 CraftSim.PriceData = CraftSim.Object:extend()
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT_OOP)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.PriceData:new(recipeData)

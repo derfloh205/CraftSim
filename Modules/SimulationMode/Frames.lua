@@ -822,7 +822,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
 end
 
 function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
-    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA_OOP)
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
     local specializationData = CraftSim.SIMULATION_MODE.specializationData
     
     if not specializationData then

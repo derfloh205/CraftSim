@@ -5,7 +5,7 @@ _, CraftSim = ...
 ---@field qualityID number
 ---@field craftingCosts number -- required + fixed costs
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION_OOP)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
 
 CraftSim.ReagentOptimizationResult = CraftSim.Object:extend()
 
