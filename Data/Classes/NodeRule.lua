@@ -78,3 +78,20 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank()
     end
 
 end
+
+function CraftSim.NodeRule:Debug()
+    local debugLines = {
+        "nodeID: " .. tostring(self.nodeData.nodeID),
+        "threshold: " .. tostring(self.threshold),
+        "equalsSkill: " .. tostring(self.equalsSkill),
+        "equalsMulticraft: " .. tostring(self.equalsMulticraft),
+        "equalsInspiration: " .. tostring(self.equalsInspiration),
+        "equalsResourcefulness: " .. tostring(self.equalsResourcefulness),
+        "equalsCraftingspeed: " .. tostring(self.equalsCraftingspeed),
+        "equalsResourcefulnessExtraItemsFactor: " .. tostring(self.equalsResourcefulnessExtraItemsFactor),
+    }
+    local statLines = self.professionStats:Debug()
+    statLines = CraftSim.UTIL:Map(statLines, function(line) return "-" .. line end)
+    debugLines = CraftSim.UTIL:Concat({debugLines, statLines})
+    return debugLines
+end

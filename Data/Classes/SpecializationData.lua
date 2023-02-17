@@ -57,6 +57,8 @@ function CraftSim.SpecializationData:new(recipeData)
         self.numNodesPerLayer[baseNodeIndex] = (self.numNodesPerLayer[baseNodeIndex] or {})
         self.numNodesPerLayer[baseNodeIndex][layer] = (self.numNodesPerLayer[baseNodeIndex][layer] or 0) + 1
 
+        table.insert(self.nodeData, nodeData)
+
         return nodeData
     end
 

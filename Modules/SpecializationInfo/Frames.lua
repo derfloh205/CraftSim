@@ -2,13 +2,7 @@ AddonName, CraftSim = ...
 
 CraftSim.SPECIALIZATION_INFO.FRAMES = {}
 
-local function print(text, recursive, l) -- override
-    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
-    else
-        print(text)
-    end
-end
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA_OOP)
 
 function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimSpecInfoFrame", 
@@ -189,9 +183,10 @@ end
 function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfoOOP(recipeData)
     local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
 
-    local affectedNodeDataList = CraftSim.UTIL:FilterTable(recipeData.specializationData.nodeData, function(nodeData) return nodeData.affectsRecipe end)
+    local affectedNodeDataList = CraftSim.UTIL:FilterTable(recipeData.specializationData.nodeData, function(nodeData) 
+        return nodeData.affectsRecipe 
+    end)
 
-    print("Affecting Nodes: " .. tostring(#affectedNodeDataList))
     if #affectedNodeDataList > #specInfoFrame.content.nodeLines then
         error("You need more nodeLines: " .. #affectedNodeDataList .. " / " .. #specInfoFrame.content.nodeLines)
     end

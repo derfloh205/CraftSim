@@ -41,7 +41,11 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     reagentOverwriteFrame.quality1Button:SetText("->")
     reagentOverwriteFrame.quality1Button:SetSize(reagentOverwriteFrame.qualityIcon1:GetSize())
     reagentOverwriteFrame.quality1Button:SetScript("OnClick", function(self) 
-        CraftSim.SIMULATION_MODE:AllocateAllByQuality(1)
+        if CraftSimOptions.enablefeatureToggleID_OOP then
+            CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(1)
+        else
+            CraftSim.SIMULATION_MODE:AllocateAllByQuality(1)
+        end
     end)
     reagentOverwriteFrame.qualityIcon2 = CraftSim.FRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX+inputOffsetX - 15, 15, 2)
     reagentOverwriteFrame.quality2Button = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
@@ -49,7 +53,11 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     reagentOverwriteFrame.quality2Button:SetText("->")
     reagentOverwriteFrame.quality2Button:SetSize(reagentOverwriteFrame.qualityIcon2:GetSize())
     reagentOverwriteFrame.quality2Button:SetScript("OnClick", function(self) 
-        CraftSim.SIMULATION_MODE:AllocateAllByQuality(2)
+        if CraftSimOptions.enablefeatureToggleID_OOP then
+            CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(2)
+        else
+            CraftSim.SIMULATION_MODE:AllocateAllByQuality(2)
+        end
     end)
     reagentOverwriteFrame.qualityIcon3 = CraftSim.FRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX+inputOffsetX*2 - 15, 15, 3)
     reagentOverwriteFrame.quality3Button = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
@@ -57,7 +65,11 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     reagentOverwriteFrame.quality3Button:SetText("->")
     reagentOverwriteFrame.quality3Button:SetSize(reagentOverwriteFrame.qualityIcon3:GetSize())
     reagentOverwriteFrame.quality3Button:SetScript("OnClick", function(self) 
-        CraftSim.SIMULATION_MODE:AllocateAllByQuality(3)
+        if CraftSimOptions.enablefeatureToggleID_OOP then
+            CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(3)
+        else
+            CraftSim.SIMULATION_MODE:AllocateAllByQuality(3)
+        end
     end)
 
     reagentOverwriteFrame.clearAllocationsButton = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
@@ -65,7 +77,12 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     reagentOverwriteFrame.clearAllocationsButton:SetText("Clear")
     reagentOverwriteFrame.clearAllocationsButton:SetSize(reagentOverwriteFrame.clearAllocationsButton:GetTextWidth(), 20)
     reagentOverwriteFrame.clearAllocationsButton:SetScript("OnClick", function(self) 
-        CraftSim.SIMULATION_MODE:AllocateAllByQuality(0) -- Clear
+        -- Clear
+        if CraftSimOptions.enablefeatureToggleID_OOP then
+            CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(0)
+        else
+            CraftSim.SIMULATION_MODE:AllocateAllByQuality(0)
+        end
     end)
 
     reagentOverwriteFrame.reagentOverwriteInputs = {}
@@ -84,8 +101,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     local function CreateReagentInputDropdown(offsetY)
         local optionalReagentDropdown = CraftSim.FRAME:initDropdownMenu(nil, reagentOverwriteFrame, ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "Optional", -20, offsetY + 3, 120, {"Placeholder"}, function(self, arg1) 
             self.selectedItemID = arg1
-            CraftSim.SIMULATION_MODE:UpdateSimulationMode()
-            CraftSim.MAIN:TriggerModulesErrorSafe()
+            if CraftSimOptions.enablefeatureToggleID_OOP then
+                -- no need to update here cause it will be updated via modules update anyway?
+                CraftSim.MAIN:TriggerModulesErrorSafe()
+            else
+                CraftSim.SIMULATION_MODE:UpdateSimulationMode()
+                CraftSim.MAIN:TriggerModulesErrorSafe()
+            end
         end, "None")
         return optionalReagentDropdown
     end
@@ -130,7 +152,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
 
         simModeDetailsFrame.content.recipeDifficultyMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeRecipeDifficultyModInput", simModeDetailsFrame.content, simModeDetailsFrame.content, 
-            "TOPRIGHT", "TOPRIGHT", modOffsetX - 30, offsetY - 20 + 3.5, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
+            "TOPRIGHT", "TOPRIGHT", modOffsetX - 30, offsetY - 20 + 3.5, 30, 20, 0, true, 
+            function(self, userInput)
+                if CraftSimOptions.enablefeatureToggleID_OOP then
+                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
+                else
+                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+                end
+            end)
 
         simModeDetailsFrame.content.recipeDifficultyMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY
 
@@ -148,7 +177,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
 
         simModeDetailsFrame.content.inspirationMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeInspirationModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.recipeDifficultyMod, 
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
+            function(self, userInput)
+                if CraftSimOptions.enablefeatureToggleID_OOP then
+                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
+                else
+                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+                end
+            end)
         simModeDetailsFrame.content.inspirationMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION
 
         simModeDetailsFrame.content.inspirationValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
@@ -165,7 +201,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
 
         simModeDetailsFrame.content.inspirationSkillMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeInspirationSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationMod, 
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
+            function(self, userInput)
+                if CraftSimOptions.enablefeatureToggleID_OOP then
+                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
+                else
+                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+                end
+            end)
         simModeDetailsFrame.content.inspirationSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION_SKILL
 
         simModeDetailsFrame.content.inspirationSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
@@ -182,7 +225,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
 
         simModeDetailsFrame.content.multicraftMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeMulticraftModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationSkillMod, 
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
+            function(self, userInput)
+                if CraftSimOptions.enablefeatureToggleID_OOP then
+                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
+                else
+                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+                end
+            end)
         simModeDetailsFrame.content.multicraftMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT
 
         simModeDetailsFrame.content.multicraftValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
@@ -208,7 +258,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
 
         simModeDetailsFrame.content.resourcefulnessMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeResourcefulnessModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.multicraftMod, 
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, 
+            function(self, userInput)
+                if CraftSimOptions.enablefeatureToggleID_OOP then
+                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
+                else
+                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+                end
+            end)
         simModeDetailsFrame.content.resourcefulnessMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS
 
         simModeDetailsFrame.content.resourcefulnessValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
@@ -232,7 +289,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
 
         simModeDetailsFrame.content.baseSkillMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessMod, 
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, CraftSim.SIMULATION_MODE.OnStatModifierChanged)
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, 
+            function(self, userInput)
+                if CraftSimOptions.enablefeatureToggleID_OOP then
+                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
+                else
+                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+                end
+            end)
         simModeDetailsFrame.content.baseSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL
 
         simModeDetailsFrame.content.baseSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
@@ -829,7 +893,14 @@ end
 function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteInput(overwriteInputFrame, offsetX, qualityID)
     local inputWidth = 30
     local inputBox = CraftSim.FRAME:CreateNumericInput(
-        nil, overwriteInputFrame, overwriteInputFrame.icon, "LEFT", "RIGHT", offsetX, 0, inputWidth, 20, 0, false, CraftSim.SIMULATION_MODE.OnInputAllocationChanged)
+        nil, overwriteInputFrame, overwriteInputFrame.icon, "LEFT", "RIGHT", offsetX, 0, inputWidth, 20, 0, false, 
+        function (input, userInput)
+            if CraftSimOptions.enablefeatureToggleID_OOP then
+                CraftSim.SIMULATION_MODE:OnInputAllocationChangedOOP(input, userInput)
+            else
+                CraftSim.SIMULATION_MODE:OnInputAllocationChanged(userInput)
+            end
+        end)
     inputBox.qualityID = qualityID
     return inputBox
 end
@@ -1150,8 +1221,132 @@ end
 
 -- OOP Refactor
 
+function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanelOOP()
+    local recipeData = CraftSim.SIMULATION_MODE.recipeData
+    if not recipeData then
+        return
+    end
+
+    local baseProfessionStats = recipeData.baseProfessionStats
+    local professionStats = recipeData.professionStats
+    local professionStatsMod = recipeData.professionStatModifiers
+
+    -- stat details
+    local reagentSkillIncrease = recipeData.reagentData:GetSkillFromRequiredReagents()
+    local skillNoReagents = professionStats.skill.value - reagentSkillIncrease
+    local professionStatsOptionals = recipeData.reagentData:GetProfessionStatsByOptionals()
+    local fullRecipeDifficulty = recipeData.professionStats.recipeDifficulty.value
+    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.recipeDifficultyValue:SetText(CraftSim.UTIL:round(fullRecipeDifficulty, 1) .. " (" .. baseProfessionStats.recipeDifficulty.value .. "+" .. professionStatsOptionals.recipeDifficulty.value .. "+" .. professionStatsMod.recipeDifficulty.value  .. ")")
+    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.baseSkillValue:SetText(CraftSim.UTIL:round(professionStats.skill.value, 1) .. " (" .. CraftSim.UTIL:round(skillNoReagents, 1) .. "+" .. CraftSim.UTIL:round(reagentSkillIncrease, 1) .. "+" .. professionStatsMod.skill.value ..")")
+    local maxSkillFactor = recipeData.reagentData:GetMaxSkillFactor()
+    local maxReagentSkillIncrease = baseProfessionStats.recipeDifficulty.value * maxSkillFactor
+    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSim.UTIL:round(reagentSkillIncrease, 0) .. " / " .. CraftSim.UTIL:round(maxReagentSkillIncrease, 0))
+    CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.reagentMaxFactorValue:SetText(CraftSim.UTIL:round(maxSkillFactor*100, 1) .. " %")
+
+
+    -- Inspiration Display
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationTitle, recipeData.supportsInspiration)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationTitle.helper, recipeData.supportsInspiration)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationValue, recipeData.supportsInspiration)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationMod, recipeData.supportsInspiration)
+    if recipeData.supportsInspiration then
+        local baseInspiration = professionStats.inspiration.value - professionStatsMod.inspiration.value
+        local percentText = CraftSim.UTIL:round(professionStats.inspiration:GetPercent(), 1) .. "%"
+        CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationValue:SetText(professionStats.inspiration.value .. " (" .. baseInspiration .."+"..professionStatsMod.inspiration.value .. ") " .. percentText)
+    end
+
+    -- Inspiration Skill Display
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationSkillTitle, recipeData.supportsInspiration)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationSkillTitle.helper, recipeData.supportsInspiration)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationSkillValue, recipeData.supportsInspiration)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationSkillMod, recipeData.supportsInspiration)
+    if recipeData.supportsInspiration then
+        local baseInspirationSkill = professionStats.inspiration.extraValue
+        CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.inspirationSkillValue:SetText(CraftSim.UTIL:round(professionStats.inspiration:GetExtraValueByFactor(), 1) .. " (" .. CraftSim.UTIL:round(baseInspirationSkill, 1) ..
+        "*" .. CraftSim.UTIL:round(1+professionStats.inspiration.extraFactor, 2) .."+"..professionStatsMod.inspiration.extraValueAfterFactor .. ")")
+    end
+
+    -- Multicraft Display
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftTitle, recipeData.supportsMulticraft)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftTitle.helper, recipeData.supportsMulticraft)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftValue, recipeData.supportsMulticraft)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftMod, recipeData.supportsMulticraft)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftBonusTitle, recipeData.supportsMulticraft)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftBonusValue, recipeData.supportsMulticraft)
+    if recipeData.supportsMulticraft then
+        local baseMulticraft = professionStats.multicraft.value - professionStatsMod.multicraft.value
+        local percentText = CraftSim.UTIL:round(professionStats.multicraft:GetPercent(), 1) .. "%"
+        CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftValue:SetText(professionStats.multicraft.value .. " (" .. baseMulticraft .."+"..professionStatsMod.multicraft.value .. ") " .. percentText)
+
+        CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.multicraftBonusValue:SetText(professionStats.multicraft.extraFactor*100 .. "%")
+    end
+    
+    -- Resourcefulness Display
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessTitle, recipeData.supportsResourcefulness)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessTitle.helper, recipeData.supportsResourcefulness)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessValue, recipeData.supportsResourcefulness)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessMod, recipeData.supportsResourcefulness)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessBonusTitle, recipeData.supportsResourcefulness)
+    CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessBonusValue, recipeData.supportsResourcefulness)
+    if recipeData.supportsResourcefulness then
+        local baseResourcefulness = professionStats.resourcefulness.value - professionStatsMod.resourcefulness.value
+        local percentText = CraftSim.UTIL:round(professionStats.resourcefulness:GetPercent(), 1) .. "%"
+        CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessValue:SetText(professionStats.resourcefulness.value .. " (" .. baseResourcefulness .."+"..professionStatsMod.resourcefulness.value .. ") " .. percentText)
+        
+        CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.resourcefulnessBonusValue:SetText(professionStats.resourcefulness.extraFactor*100 .. "%")
+    end
+
+    local qualityFrame = CraftSim.SIMULATION_MODE.craftingDetailsFrame.content.qualityFrame
+    CraftSim.FRAME:ToggleFrame(qualityFrame, recipeData.supportsQualities)
+    if recipeData.supportsQualities then
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, baseProfessionStats.recipeDifficulty.value, CraftSimOptions.breakPointOffset)
+        qualityFrame.currentQualityIcon.SetQuality(recipeData.resultData.expectedQuality)
+        qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[recipeData.resultData.expectedQuality - 1] or 0))
+        
+        local hasNextQuality = recipeData.resultData.expectedQuality < recipeData.maxQuality
+        local canSkipQuality = recipeData.resultData.expectedQuality < (recipeData.maxQuality - 1)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityIcon, hasNextQuality)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityThreshold, hasNextQuality)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityTitle, hasNextQuality)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillTitle, hasNextQuality)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillInspiration, hasNextQuality)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillValue, hasNextQuality)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillInspirationValue, hasNextQuality)
+
+        CraftSim.FRAME:ToggleFrame(qualityFrame.skipQualityMissingSkillInspiration, canSkipQuality)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.skipQualityMissingSkillInspirationValue, canSkipQuality)
+        if hasNextQuality then
+            local nextQualityThreshold = thresholds[recipeData.resultData.expectedQuality]
+            local missingSkill = nextQualityThreshold - professionStats.skill.value
+            local missingSkillInspiration = nextQualityThreshold - (professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor())
+            missingSkill = missingSkill > 0 and missingSkill or 0
+            missingSkillInspiration = missingSkillInspiration > 0 and missingSkillInspiration or 0
+            qualityFrame.nextQualityMissingSkillValue:SetText(CraftSim.UTIL:round(missingSkill, 1))
+            local missingSkillText = CraftSim.UTIL:ColorizeText(CraftSim.UTIL:round(missingSkillInspiration, 1), 
+            missingSkillInspiration == 0 and CraftSim.CONST.COLORS.GREEN or CraftSim.CONST.COLORS.RED)
+            local nextQualityIconText = CraftSim.UTIL:GetQualityIconAsText(recipeData.resultData.expectedQuality + 1, 20, 20)
+            qualityFrame.nextQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. nextQualityIconText)
+            qualityFrame.nextQualityMissingSkillInspirationValue:SetText(missingSkillText)
+            qualityFrame.nextQualityIcon.SetQuality(recipeData.resultData.expectedQuality + 1)
+            qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[recipeData.resultData.expectedQuality])
+            
+            if canSkipQuality then
+                local skipQualityIconText = CraftSim.UTIL:GetQualityIconAsText(recipeData.resultData.expectedQuality + 2, 20, 20)
+                local skipQualityThreshold = thresholds[recipeData.resultData.expectedQuality + 1]
+                local missingSkillInspirationSkip = skipQualityThreshold - (professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor())
+                missingSkillInspirationSkip = missingSkillInspirationSkip > 0 and missingSkillInspirationSkip or 0
+                local missinSkillText = CraftSim.UTIL:ColorizeText(CraftSim.UTIL:round(missingSkillInspirationSkip, 1), 
+                missingSkillInspirationSkip == 0 and CraftSim.CONST.COLORS.GREEN or CraftSim.CONST.COLORS.RED)
+                qualityFrame.skipQualityMissingSkillInspirationValue:SetText(missinSkillText)
+                qualityFrame.skipQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. skipQualityIconText)
+            end
+        end
+    end
+end
+
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecDataOOP(recipeData)
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA_OOP)
     local specializationData = recipeData.specializationData
     
     if not specializationData then
@@ -1199,7 +1394,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecDataOOP(recipeData)
             local thresholdLabels = {}
             local nodeRules = nodeData.nodeRules
             for _, nodeRule in pairs(nodeRules) do
-                if nodeRule.threshold and not nodeRule.threshold == -42 then
+                if nodeRule.threshold and not (nodeRule.threshold == -42) then
                     local professionStats = nodeRule.professionStats
                     local label = ""
                     if professionStats.skill.value > 0 then
@@ -1239,7 +1434,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecDataOOP(recipeData)
                     })
                 end
             end
-            print("thresholds:")
+            print("thresholdLabels:")
             print(thresholdLabels, true)
             nodeModFrame.InitThresholds(nodeData.maxRank , thresholdLabels)
             -- adapt to set values
@@ -1410,10 +1605,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFramesOOP(recipeDat
             -- CraftSim.FRAME:ToggleFrame(inputFrame.inputq2, reagentData.differentQualities)
             -- CraftSim.FRAME:ToggleFrame(inputFrame.inputq3, reagentData.differentQualities)
             inputFrame.inputq1.itemID = qualityReagent.items[1].item:GetItemID()
+            inputFrame.inputq1.requiredQuantityValue = qualityReagent.requiredQuantity
             inputFrame.inputq1:SetText(qualityReagent.items[1].quantity)
             inputFrame.inputq2.itemID = qualityReagent.items[2].item:GetItemID()
+            inputFrame.inputq2.requiredQuantityValue = qualityReagent.requiredQuantity
             inputFrame.inputq2:SetText(qualityReagent.items[2].quantity)
             inputFrame.inputq3.itemID = qualityReagent.items[3].item:GetItemID()
+            inputFrame.inputq3.requiredQuantityValue = qualityReagent.requiredQuantity
             inputFrame.inputq3:SetText(qualityReagent.items[3].quantity)
 
             inputFrame.isActive = true

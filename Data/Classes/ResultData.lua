@@ -103,10 +103,6 @@ function CraftSim.ResultData:Update()
     local professionStats = self.recipeData.professionStats
 
     self.expectedItem = self.itemsByQuality[self.expectedQuality]
-    
-    if self.expectedQuality == self.recipeData.maxQuality then
-        return
-    end
 
     if not recipeData.supportsQualities or not recipeData.supportsInspiration then
         return

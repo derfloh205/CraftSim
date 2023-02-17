@@ -100,6 +100,7 @@ Data/Classes/PriceData.lua
 Data/Classes/ReagentData.lua
 Data/Classes/Reagent.lua
 Data/Classes/ReagentItem.lua
+Data/Classes/ReagentListItem.lua
 Data/Classes/ProfessionStats.lua
 Data/Classes/ProfessionStat.lua
 Data/Classes/ProfessionGearSet.lua

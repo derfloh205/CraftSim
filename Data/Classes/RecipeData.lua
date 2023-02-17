@@ -137,10 +137,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     self.priceData:Update()
 end
 
----@class CraftSim.ReagentListItem
----@field itemID number
----@field quantity number
-
 ---@param reagentList CraftSim.ReagentListItem[]
 function CraftSim.RecipeData:SetReagents(reagentList)
     -- go through required reagents and set quantity accordingly
@@ -300,6 +296,7 @@ function CraftSim.RecipeData:UpdateProfessionStats()
 
     -- finally add any custom modifiers
     self.professionStats:add(self.professionStatModifiers)
+    -- its the only one which uses "extraValueAfterFactor"
 end
 
 --- Updates professionStats based on reagentData and professionGearSet -> Then updates resultData based on professionStats -> Then updates priceData based on resultData

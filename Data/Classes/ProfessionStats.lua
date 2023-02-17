@@ -86,6 +86,7 @@ function CraftSim.ProfessionStats:subtract(professionStatsB)
 		local professionStatB = statsB[index]
 		professionStatA:subtractValue(professionStatB.value)
 		professionStatA:subtractFactor(professionStatB.extraFactor)
+		professionStatA:subtractExtraValueAfterFactor(professionStatB.extraValueAfterFactor)
 	end
 end
 
@@ -100,6 +101,7 @@ function CraftSim.ProfessionStats:add(professionStatsB)
 		local professionStatB = statsB[index]
 		professionStatA:addValue(professionStatB.value)
 		professionStatA:addFactor(professionStatB.extraFactor)
+		professionStatA:addExtraValueAfterFactor(professionStatB.extraValueAfterFactor)
 	end
 end
 
@@ -124,7 +126,7 @@ function CraftSim.ProfessionStats:Debug()
 		"RecipeDifficulty: " .. self.recipeDifficulty.value,
 		"Skill: " .. self.skill.value,
 		"Inspiration: " .. self.inspiration.value .. " (".. self.inspiration:GetPercent() .."%) " .. self.inspiration.percentMod,
-		"Inspiration Bonus Skill: " .. self.inspiration:GetExtraValueByFactor() .. " (".. self.inspiration.extraValue .." * ".. self.inspiration:GetExtraFactor(true) ..")",
+		"Inspiration Bonus Skill: " .. self.inspiration:GetExtraValueByFactor() .. " (".. self.inspiration.extraValue .." * ".. self.inspiration:GetExtraFactor(true) .. "+" .. self.inspiration.extraValueAfterFactor ..")",
 		"Multicraft: " .. self.multicraft.value .. " (".. self.multicraft:GetPercent() .."%)",
 		"Multicraft Factor: " .. self.multicraft.extraFactor,
 		"Resourcefulness: " .. self.resourcefulness.value .. " (".. self.resourcefulness:GetPercent() .."%)",

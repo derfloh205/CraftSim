@@ -671,7 +671,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			-- update simulationframe recipedata by inputs and the frontend
 			-- since recipeData is a reference here to the recipeData in the simulationmode, 
 			-- the recipeData that is used in the below modules should also be the modified one!
-			--CraftSim.SIMULATION_MODE:UpdateSimulationModeOOP()
+			CraftSim.SIMULATION_MODE:UpdateSimulationModeOOP()
 		end
 
 		-- AverageProfit Module
