@@ -9,7 +9,7 @@ _, CraftSim = ...
 ---@field finishingReagentSlots CraftSim.OptionalReagentSlot[]
 ---@field salvageReagentSlot CraftSim.SalvageReagentSlot
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 CraftSim.ReagentData = CraftSim.Object:extend()
 

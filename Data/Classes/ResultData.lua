@@ -15,7 +15,7 @@ _, CraftSim = ...
 ---@field expectedItemHSV? ItemMixin
 ---@field expectedItemInspirationHSV? ItemMixin
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 CraftSim.ResultData = CraftSim.Object:extend()
 

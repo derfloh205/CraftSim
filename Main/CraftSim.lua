@@ -453,9 +453,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			recipeData:SetEquippedProfessionGearSet()
 			recipeData:Update()
 
-			print(recipeData.professionStats)
-
-			CraftSim_DEBUG:print(recipeData.reagentData, CraftSim.CONST.DEBUG_IDS.EXPORT_V2, true, true)
 			CraftSim.MAIN.currentRecipeData = recipeData
 		end
 	end

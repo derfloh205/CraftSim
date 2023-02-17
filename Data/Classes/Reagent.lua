@@ -5,7 +5,7 @@ _, CraftSim = ...
 ---@field dataSlotIndex number
 ---@field items CraftSim.ReagentItem[]
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 CraftSim.Reagent = CraftSim.Object:extend()
 

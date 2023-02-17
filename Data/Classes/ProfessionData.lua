@@ -1,6 +1,6 @@
 _, CraftSim = ...
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 ---@class CraftSim.ProfessionData
 ---@field professionInfo ProfessionInfo

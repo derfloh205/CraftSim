@@ -126,7 +126,6 @@ function CraftSim_DEBUG:CheckSpecNode(nodeID)
 end
 
 function CraftSim_DEBUG:print(debugOutput, debugID, recursive, printLabel, level)
-    
     if CraftSimOptions["enableDebugID_" .. debugID] and not CraftSim_DEBUG.isMute then
         if type(debugOutput) == "table" then
             CraftSim.UTIL:PrintTable(debugOutput, debugID, recursive, level)
@@ -137,32 +136,11 @@ function CraftSim_DEBUG:print(debugOutput, debugID, recursive, printLabel, level
     end
 end
 
-function CraftSim_DEBUG:testExportV2(recipeID)
-    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+---This is an example for the usage of CraftSim's recipeData Object. It will most like
+---@param recipeID any
+function CraftSim_DEBUG:exampleAPIUsage(recipeID)
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
     local recipeData = CraftSim.RecipeData(recipeID)
-    --print(recipeData, true)
-
-    -- TODO: ProfessionStats Class 
-    --       -> contains initially all base stats for the recipe
-    --       -> other modifiers are only used when GetFinalProfessionStats or smth like this is called
-    -- TODO: PlayerStatMod Class
-    --       -> contains modifiers set by e.g. simulation mode or stat weight algorithm to modify the stats
-    -- TODO: PlayerBuffs Class
-    --       -> contains infos about relevant crafting buffs
-    -- TODO: UpdateProfessionStats
-    --       -> update player stats based on reagents and Toolset
-    -- TODO: SpecializationData Class
-    --       -> contains spec node data
-    -- TODO: SetReagents/SetOptionalReagents/SetFinishingReagents -> sets the quantity of the given itemIDs accordingly
-    -- TODO: Toolset Class -> the used toolcombination for the processing of the result
-    -- TODO: RecipeResult Class that contains operationInfo stuff, the resulting items
-    -- TODO: UpdateResult -> updates the recipe result based on stats and reagents
-
-
-    -- TODO: integrate into main module flow.. in parallel!
-    -- TODO: or use for scans/api first
-
-    -- test set reagents
     
     local reagentList = { -- draconium ore q1 q2 q3
         {

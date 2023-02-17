@@ -10,7 +10,7 @@ _, CraftSim = ...
 
 CraftSim.ProfessionStat = CraftSim.Object:extend()
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 function CraftSim.ProfessionStat:new(name, value, percentMod)
     self.name = name

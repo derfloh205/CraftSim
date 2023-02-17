@@ -5,7 +5,7 @@ _, CraftSim = ...
 ---@field professionStats CraftSim.ProfessionStats
 
 CraftSim.ProfessionGear = CraftSim.Object:extend()
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 function CraftSim.ProfessionGear:new()
     self.professionStats = CraftSim.ProfessionStats()

@@ -12,7 +12,7 @@ _, CraftSim = ...
 
 CraftSim.ProfessionStats = CraftSim.Object:extend()
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 function CraftSim.ProfessionStats:new()
     self.recipeDifficulty = CraftSim.ProfessionStat("recipedifficulty")

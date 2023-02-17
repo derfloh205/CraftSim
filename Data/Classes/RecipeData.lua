@@ -37,7 +37,7 @@ _, CraftSim = ...
 
 CraftSim.RecipeData = CraftSim.Object:extend()
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 ---@return CraftSim.RecipeData?
 function CraftSim.RecipeData:new(recipeID, isRecraft)
