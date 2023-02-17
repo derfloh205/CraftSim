@@ -410,7 +410,11 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
 
     frame.content.resetButton = CraftSim.FRAME:CreateButton("Reset", 
     frame.content, spec4, "LEFT", "RIGHT", 40, 0, 15, 25, true, function(self) 
-        CraftSim.SIMULATION_MODE:ResetSpecData()
+        if CraftSimOptions.enablefeatureToggleID_OOP then
+            CraftSim.SIMULATION_MODE:ResetSpecDataOOP()
+        else
+            CraftSim.SIMULATION_MODE:ResetSpecData()
+        end
     end)
 
     frame.content.legendText = CraftSim.FRAME:CreateText(
@@ -538,19 +542,31 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
         local plusButtonSizeY = 15
         nodeModFrame.input = CraftSim.FRAME:CreateNumericInput(
             nil, nodeModFrame, nodeModFrame, "BOTTOM", "BOTTOM", offsetX + 5, offsetY - 30, 20, 20, 0, true, function(self, userInput) 
-                CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
+                if CraftSimOptions.enablefeatureToggleID_OOP then
+                    CraftSim.SIMULATION_MODE:OnSpecModifiedOOP(userInput, nodeModFrame)
+                else
+                    CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
+                end
             end)
         nodeModFrame.plusFiveButton = CraftSim.FRAME:CreateButton(
             "+5", nodeModFrame, nodeModFrame.input, "LEFT", "RIGHT", 10, 0, plusButtonSizeX, plusButtonSizeY, true, function(self) 
                 local currentNumber = nodeModFrame.input:GetNumber()
                 nodeModFrame.input:SetText(currentNumber + 5)
-                CraftSim.SIMULATION_MODE:OnSpecModified(true, nodeModFrame)
+                if CraftSimOptions.enablefeatureToggleID_OOP then
+                    CraftSim.SIMULATION_MODE:OnSpecModifiedOOP(true, nodeModFrame)
+                else
+                    CraftSim.SIMULATION_MODE:OnSpecModified(true, nodeModFrame)
+                end
             end)
         nodeModFrame.minusFiveButton = CraftSim.FRAME:CreateButton(
         "-5", nodeModFrame, nodeModFrame.input, "RIGHT", "LEFT", -7, 0, plusButtonSizeX, plusButtonSizeY, true, function(self) 
             local currentNumber = nodeModFrame.input:GetNumber()
             nodeModFrame.input:SetText(currentNumber - 5)
-            CraftSim.SIMULATION_MODE:OnSpecModified(true, nodeModFrame)
+            if CraftSimOptions.enablefeatureToggleID_OOP then
+                    CraftSim.SIMULATION_MODE:OnSpecModifiedOOP(true, nodeModFrame)
+                else
+                    CraftSim.SIMULATION_MODE:OnSpecModified(true, nodeModFrame)
+                end
         end)
 
         -- all possible thresholds in steps of 5 (Max ?) with 50 max ranks and 0 included its 11
@@ -1344,10 +1360,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanelOOP()
     end
 end
 
----@param recipeData CraftSim.RecipeData
-function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecDataOOP(recipeData)
+function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecDataOOP()
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA_OOP)
-    local specializationData = recipeData.specializationData
+    local specializationData = CraftSim.SIMULATION_MODE.specializationData
     
     if not specializationData then
         return
@@ -1356,7 +1371,6 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecDataOOP(recipeData)
     
     local specModFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
     -- save copy of original in frame
-    specModFrame.originalSpecializationData = specializationData:Copy()
     specModFrame.content.activeNodeModFrames = {}
 
     -- init tabs
