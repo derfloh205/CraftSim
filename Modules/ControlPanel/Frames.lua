@@ -92,7 +92,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
 
     -- 3. Row
     frame.content.modulesSpecInfo = createModuleCheckbox("Specialization Info", 
-    "Shows how your profession specializations affect this recipe\nDISCLAIMER: This shows up only for professions with experimental spec data turned on.",
+    "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
     "LEFT", frame.content.modulesTopGear, "RIGHT", 100, 0, "modulesSpecInfo")
 
     frame.content.modulesPriceOverride = createModuleCheckbox("Price Overrides", 

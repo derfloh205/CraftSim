@@ -178,7 +178,7 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_CRAFT_BEGIN(spellID)
     if CraftSimOptions.enablefeatureToggleID_OOP then
         if CraftSim.MAIN.currentRecipeData and CraftSim.MAIN.currentRecipeData.recipeID == spellID then
             -- if prospecting or other salvage item, only use the current recipedata if we have a salvage reagent, otherwise use saved one
-            if CraftSim.MAIN.currentRecipeData.isSalvageRecipe and CraftSim.MAIN.currentRecipeData.reagentData.salvageSlot.activeItem then
+            if CraftSim.MAIN.currentRecipeData.isSalvageRecipe and CraftSim.MAIN.currentRecipeData.reagentData.salvageReagentSlot.activeItem then
                 print("Use RecipeData of Salvage")
                 CraftSim.CRAFT_RESULTS.currentRecipeData = CraftSim.MAIN.currentRecipeData
             elseif not CraftSim.MAIN.currentRecipeData.isSalvageRecipe then

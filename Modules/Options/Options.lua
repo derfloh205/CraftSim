@@ -79,18 +79,8 @@ function CraftSim.OPTIONS:Init()
     ProfitCalculationTab.content:SetSize(300, 350)
     ProfitCalculationTab.canBeEnabled = true
 
-    local ExperimentalTab = CreateFrame("Button", "CraftSimOptionsExperimentalTab", CraftSim.OPTIONS.optionsPanel, "UIPanelButtonTemplate")
-    ExperimentalTab:SetText("Experimental")
-    ExperimentalTab:SetSize(ExperimentalTab:GetTextWidth() + tabExtraWidth, 30)
-    ExperimentalTab:SetPoint("LEFT", ProfitCalculationTab, "RIGHT", 0, 0)
-
-    ExperimentalTab.content = CreateFrame("Frame", nil, CraftSim.OPTIONS.optionsPanel)
-    ExperimentalTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
-    ExperimentalTab.content:SetSize(300, 350)
-    ExperimentalTab.canBeEnabled = true
-
     local CraftingTab = CraftSim.FRAME:CreateTab("Crafting", CraftSim.OPTIONS.optionsPanel, 
-        ExperimentalTab, "LEFT", "RIGHT", 0, 0, true, 300, 350, CraftSim.OPTIONS.optionsPanel, CraftSim.OPTIONS.optionsPanel, 0, contentPanelsOffsetY)
+    ProfitCalculationTab, "LEFT", "RIGHT", 0, 0, true, 300, 350, CraftSim.OPTIONS.optionsPanel, CraftSim.OPTIONS.optionsPanel, 0, contentPanelsOffsetY)
 
     local expressionSizeX = 300
     local expressionSizeY = 50
@@ -159,7 +149,7 @@ function CraftSim.OPTIONS:Init()
     validationInfoItems:SetPoint("TOPLEFT", tsmItemsPriceExpression, "TOPRIGHT",  5, 0)
     validationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
 
-    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab, ProfitCalculationTab, ExperimentalTab, CraftingTab})
+    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab, ProfitCalculationTab, CraftingTab})
 
     local priceSourceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
@@ -336,46 +326,6 @@ function CraftSim.OPTIONS:Init()
     local supportedPriceSources = generalTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -200)
     supportedPriceSources:SetText("Supported Price Sources:\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
-
-    local enableSpecDataBlacksmithingCheckbox = CraftSim.FRAME:CreateCheckbox(" Blacksmithing SpecData", 
-     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
-     "blacksmithingEnabled", 
-     ExperimentalTab.content, 
-     ExperimentalTab.content, 
-     "TOP", 
-     "TOP", 
-     -90, 
-     -50)
-
-     local enableSpecDataAlchemyCheckbox = CraftSim.FRAME:CreateCheckbox(" Alchemy SpecData", 
-     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
-     "alchemyEnabled", 
-     ExperimentalTab.content, 
-     enableSpecDataBlacksmithingCheckbox, 
-     "TOP", 
-     "TOP", 
-     0, 
-     -20)
-
-     local enableSpecDataJewelcraftingCheckbox = CraftSim.FRAME:CreateCheckbox(" Jewelcrafting SpecData", 
-     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
-     "jewelcraftingEnabled", 
-     ExperimentalTab.content, 
-     enableSpecDataAlchemyCheckbox, 
-     "TOP", 
-     "TOP", 
-     0, 
-     -20)
-
-     local enableSpecDataLeatherworkingCheckbox = CraftSim.FRAME:CreateCheckbox(" Leatherworking SpecData", 
-     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
-     "leatherworkingEnabled", 
-     ExperimentalTab.content, 
-     enableSpecDataJewelcraftingCheckbox, 
-     "TOP", 
-     "TOP", 
-     0, 
-     -20)
 
      local enableGarbageCollectWhenCraftingCB = CraftSim.FRAME:CreateCheckbox(" Enable RAM cleanup while crafting", 
         "When enabled, CraftSim will clear your RAM every specified number of crafts from unused data to prevent memory from building up.\nMemory Build Up can also happen because of other addons and is not CraftSim specific.\nA cleanup will affect the whole WoW RAM Usage.",

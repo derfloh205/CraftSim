@@ -2,6 +2,7 @@ _, CraftSim = ...
 
 ---@class CraftSim.SpecializationData
 ---@field recipeData CraftSim.RecipeData
+---@field isImplemented boolean
 ---@field nodeData CraftSim.NodeData[]
 ---@field baseNodeData CraftSim.NodeData[]
 ---@field numNodesPerLayer number[][]
@@ -22,12 +23,22 @@ function CraftSim.SpecializationData:new(recipeData)
     self.nodeData = {}
     self.numNodesPerLayer = {}
 
+    self.isImplemented = CraftSim.UTIL:IsSpecImplemented(recipeData.professionData.professionInfo.profession)
+
+    if not self.isImplemented then
+        return
+    end
+
     local nodeNameData = CraftSim.SPEC_DATA:GetNodes(recipeData.professionData.professionInfo.profession)
     local professionRuleNodes = CraftSim.SPEC_DATA:RULE_NODES()[recipeData.professionData.professionInfo.profession]
     local baseRuleNodes = CraftSim.SPEC_DATA:BASE_RULE_NODES()[recipeData.professionData.professionInfo.profession]
 
+
     local baseRuleNodeIDs = CraftSim.UTIL:Map(baseRuleNodes, function (nameID)
-        return professionRuleNodes[nameID].nodeID
+        local ruleNode = professionRuleNodes[nameID]
+        if ruleNode then
+            return ruleNode.nodeID
+        end
     end)
 
     baseRuleNodeIDs = CraftSim.UTIL:ToSet(baseRuleNodeIDs)

@@ -13,6 +13,11 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
 
     frame:Hide()
 
+    frame.content.notImplementedText = CraftSim.FRAME:CreateText(CraftSim.UTIL:ColorizeText("This profession's specialization data\nis not mapped yet!\nIf you want to help, feel free to ask\nin the discord!", CraftSim.CONST.COLORS.LEGENDARY),
+    frame.content, frame.content, "TOP", "TOP", -25, -100)
+
+    frame.content.notImplementedText:Hide()
+
     frame.content.knowledgePointSimulationButton =  CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
 	frame.content.knowledgePointSimulationButton:SetPoint("TOP", frame.title, "TOP", 0, -20)	
 	frame.content.knowledgePointSimulationButton:SetText("Simulate Knowledge Distribution")
@@ -184,6 +189,17 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfoOOP(recipeData)
     local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
 
     local specializationData = recipeData.specializationData
+
+    if not specializationData.isImplemented then
+        table.foreach(specInfoFrame.content.nodeLines, function (_, nodeLine)
+            nodeLine:Hide()
+        end)
+        specInfoFrame.content.notImplementedText:Show()
+        specInfoFrame.content.knowledgePointSimulationButton:Hide()
+        return
+    end
+    specInfoFrame.content.knowledgePointSimulationButton:Show()
+    specInfoFrame.content.notImplementedText:Hide()
 
     if CraftSim.SIMULATION_MODE.isActive then
         specializationData = CraftSim.SIMULATION_MODE.specializationData
