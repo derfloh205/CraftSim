@@ -11,9 +11,15 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("7.0") ..
-        f.P .. "Refactored the " .. f.l("whole") .. " backend code of the addon" ..
-        f.a .. "This make newer modules and features " .. f.g("much easier to develop!") ..
-        f.a .. "Also enables easy to use " .. f.g("ingame API functions") .. " for CraftSim" ..
+        f.P .. f.g("Refactored ") .. f.l("ALL") .. " of CraftSim's Backend" ..
+        f.a .. "to an " .. f.bb("Object Orientated") .. " Design." .. 
+        f.a .. "This makes newer modules and features " .. f.g("much easier to develop!") ..
+        f.a .. "Also enables easy to use " .. f.g("ingame API functions") .. " for CraftSim." ..
+        f.s .. "Disabled the " .. f.bb("Tooltip") .. " and " .. f.bb("Account Sync") .. " Features until reworked." ..
+        f.s .. f.r("Removed") .. " Experimental Data Toggle." .. 
+        f.a .. "Profession Stats are now always fetched from the ingame API!" ..
+        f.a .. "Manually mapped specialization data is now only used" .. 
+        f.a .. "for the " .. f.bb("Specialization Info Module") ..
         newP("6.7.2") ..
         f.P .. f.bb("HSV Consideration Explanation") .. " added" ..
         f.s .. "New Options Tab: " .. f.g("Crafting") ..
