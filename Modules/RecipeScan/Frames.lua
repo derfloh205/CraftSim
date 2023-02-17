@@ -200,7 +200,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
         availableRow.noTopGearText:SetText("-")
     elseif not recipeData.professionGearSet:IsEquipped() then
         print("RecipeScan Frames: update combination icons cause not equipped")
-        CraftSim.TOPGEAR.FRAMES:UpdateCombinationIconsOOP(recipeData.professionGearSet, CraftSim.CONST.EXPORT_MODE.SCAN, {
+        CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(recipeData.professionGearSet, CraftSim.CONST.EXPORT_MODE.SCAN, {
             availableRow.tool1Icon,
             availableRow.tool2Icon,
             availableRow.tool3Icon,

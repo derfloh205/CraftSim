@@ -2,7 +2,7 @@ AddonName, CraftSim = ...
 
 CraftSim.SPECIALIZATION_INFO.FRAMES = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA_OOP)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimSpecInfoFrame", 
@@ -55,9 +55,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     end
 end
 
--- OOP Refactor
-
-function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfoOOP(recipeData)
+function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
     local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
 
     local specializationData = recipeData.specializationData
