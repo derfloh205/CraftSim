@@ -36,11 +36,13 @@ function CraftSim.OPTIONS:Init()
     tooltipTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
     tooltipTab.content:SetSize(300, 350)
     tooltipTab.canBeEnabled = true
+    tooltipTab:Hide()
+    tooltipTab.content:Hide()
 
     local TSMTab = CreateFrame("Button", "CraftSimOptionsTSMTab", CraftSim.OPTIONS.optionsPanel, "UIPanelButtonTemplate")
     TSMTab:SetText("TSM")
     TSMTab:SetSize(TSMTab:GetTextWidth() + tabExtraWidth, 30)
-    TSMTab:SetPoint("LEFT", tooltipTab, "RIGHT", 0, 0)
+    TSMTab:SetPoint("LEFT", generalTab, "RIGHT", 0, 0)
 
     TSMTab.content = CreateFrame("Frame", nil, CraftSim.OPTIONS.optionsPanel)
     TSMTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
@@ -58,11 +60,13 @@ function CraftSim.OPTIONS:Init()
     AccountSyncTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
     AccountSyncTab.content:SetSize(300, 350)
     AccountSyncTab.canBeEnabled = true
+    AccountSyncTab:Hide()
+    AccountSyncTab.content:Hide()
 
     local ModulesTab = CreateFrame("Button", "CraftSimOptionsModulesTab", CraftSim.OPTIONS.optionsPanel, "UIPanelButtonTemplate")
     ModulesTab:SetText("Modules")
     ModulesTab:SetSize(ModulesTab:GetTextWidth() + tabExtraWidth, 30)
-    ModulesTab:SetPoint("LEFT", AccountSyncTab, "RIGHT", 0, 0)
+    ModulesTab:SetPoint("LEFT", TSMTab, "RIGHT", 0, 0)
 
     ModulesTab.content = CreateFrame("Frame", nil, CraftSim.OPTIONS.optionsPanel)
     ModulesTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
@@ -149,7 +153,7 @@ function CraftSim.OPTIONS:Init()
     validationInfoItems:SetPoint("TOPLEFT", tsmItemsPriceExpression, "TOPRIGHT",  5, 0)
     validationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
 
-    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab, ProfitCalculationTab, CraftingTab})
+    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, ModulesTab, ProfitCalculationTab, CraftingTab}) -- AccountSyncTab
 
     local priceSourceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
@@ -244,7 +248,7 @@ function CraftSim.OPTIONS:Init()
      "TOP", 
      "TOP", 
      -90, 
-     -20)
+     -50)
 
      local enableHSVCheckbox = CraftSim.FRAME:CreateCheckbox(" Enable HSV Consideration in Profit Calculation", 
      CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.HSV_EXPLANATION),
@@ -307,16 +311,16 @@ function CraftSim.OPTIONS:Init()
     sendingProgress:SetPoint("LEFT", characterNameInput, "RIGHT", 5, 0)
     sendingProgress:SetText("")
 
-    local accountSyncButton = CreateFrame("Button", "CraftSimACCOUNTSYNCButton", AccountSyncTab.content, "UIPanelButtonTemplate")
-	accountSyncButton:SetPoint("TOPRIGHT", characterNameInput, "TOPRIGHT", 0, -30)	
-	accountSyncButton:SetText("Synchronize Tooltip Data")
-	accountSyncButton:SetSize(accountSyncButton:GetTextWidth() + 20, 25)
-    accountSyncButton:SetScript("OnClick", function(self) 
-        CraftSim.ACCOUNTSYNC:SynchronizeAccounts()
-    end)
+    -- local accountSyncButton = CreateFrame("Button", "CraftSimACCOUNTSYNCButton", AccountSyncTab.content, "UIPanelButtonTemplate")
+	-- accountSyncButton:SetPoint("TOPRIGHT", characterNameInput, "TOPRIGHT", 0, -30)	
+	-- accountSyncButton:SetText("Synchronize Tooltip Data")
+	-- accountSyncButton:SetSize(accountSyncButton:GetTextWidth() + 20, 25)
+    -- accountSyncButton:SetScript("OnClick", function(self) 
+    --     CraftSim.ACCOUNTSYNC:SynchronizeAccounts()
+    -- end)
 
     local optionsSyncButton = CreateFrame("Button", "CraftSimOptionsSyncButton", AccountSyncTab.content, "UIPanelButtonTemplate")
-	optionsSyncButton:SetPoint("TOPRIGHT", accountSyncButton, "TOPRIGHT", 0, -30)	
+	optionsSyncButton:SetPoint("TOPRIGHT", characterNameInput, "TOPRIGHT", 0, -30)	
 	optionsSyncButton:SetText("Synchronize Options")
 	optionsSyncButton:SetSize(optionsSyncButton:GetTextWidth() + 20, 25)
     optionsSyncButton:SetScript("OnClick", function(self) 

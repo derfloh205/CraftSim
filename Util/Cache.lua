@@ -11,7 +11,6 @@ local function print(text, recursive, l) -- override
 end
 
 -- SavedVars
-CraftSimSpecNodeCache = CraftSimSpecNodeCache or {}
 CraftSimRecipeIDs = CraftSimRecipeIDs or {}
 CraftSimProfessionInfoCache = CraftSimProfessionInfoCache or {}
 CraftSimProfessionSkillLineIDCache = CraftSimProfessionSkillLineIDCache or {}
@@ -32,7 +31,6 @@ function CraftSim.CACHE:ClearCache(cache)
 end
 
 function CraftSim.CACHE:ClearAll()
-    CraftSimSpecNodeCache = {}
     CraftSimRecipeIDs = {}
     CraftSimProfessionInfoCache = {}
     CraftSim.CACHE.SpecDataStatsByRecipeID = {}

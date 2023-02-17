@@ -2,9 +2,6 @@ AddonName, CraftSim = ...
 
 CraftSim.DATAEXPORT = {}
 
-CraftSimTooltipData = CraftSimTooltipData or {}
-CraftSimItemCache = CraftSimItemCache or {}
-
 LibCompress = LibStub:GetLibrary("LibCompress")
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
