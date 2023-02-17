@@ -24,7 +24,7 @@ function CraftSim.STATISTICS:CDF(q, mu, sd)
     return phi_Z
 end
 
-function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCraftsV2(probabilityTable, numCrafts)
+function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
     local meanOneCraft = 0
 
     probabilityTable = CraftSim.UTIL:FilterTable(probabilityTable, function (entry)

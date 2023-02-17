@@ -326,7 +326,7 @@ end
 --- Optimizes the recipeData's reagents for highest quality / cheapest reagents.
 ---@param optimizeInspiration boolean
 function CraftSim.RecipeData:OptimizeReagents(optimizeInspiration)
-    local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(self, optimizeInspiration)
+    local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, optimizeInspiration)
     self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
     self:Update() -- TODO: only update if reagents have changed
 end

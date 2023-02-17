@@ -46,5 +46,5 @@ function CraftSim.COSTOVERVIEW:CalculateCostOverviewOOP(recipeData, exportMode)
     end
 
     -- TODO: refactor the mincraftingcosts thingy, currently just set it always to same
-    CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplayOOP(recipeData, profitByNextQualities, 1, exportMode)
+    CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplay(recipeData, profitByNextQualities, 1, exportMode)
 end

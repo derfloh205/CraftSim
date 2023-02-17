@@ -175,7 +175,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
         end
     end
 
-    local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCraftsV2(probabilityTable, numCrafts)
+    local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
 
     statisticsFrame.content.expectedProfitValue:SetText(CraftSim.UTIL:FormatMoney(meanProfit, true))
     local roundedProfit = CraftSim.UTIL:round(probabilityPositive * 100, 5)
@@ -247,7 +247,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateStatisticsOOP(recipeData)
         end
     end
 
-    local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCraftsV2(probabilityTable, numCrafts)
+    local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
 
     statisticsFrame.content.expectedProfitValue:SetText(CraftSim.UTIL:FormatMoney(meanProfit, true))
     local roundedProfit = CraftSim.UTIL:round(probabilityPositive * 100, 5)

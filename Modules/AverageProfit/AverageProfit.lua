@@ -17,59 +17,6 @@ function CraftSim.AVERAGEPROFIT:GetQualityThresholds(maxQuality, recipeDifficult
     end
 end
 
-function CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, priceData, baseMeanProfit)
-    if recipeData.stats.inspiration == nil then
-        --print("recipe cannot proc inspiration")
-        return nil
-    end
-    local modifiedData = CopyTable(recipeData)
-    modifiedData.stats.inspiration.percent = modifiedData.stats.inspiration.percent + (CraftSim.UTIL:GetInspirationPercentByStat(statIncreaseFactor) * 100)
-    return CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
-end
-
-function CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, priceData, baseMeanProfit)
-    if recipeData.stats.multicraft == nil then
-        --print("recipe cannot proc multicraft")
-        return nil
-    end
-    local modifiedData = CopyTable(recipeData)
-    modifiedData.stats.multicraft.percent = modifiedData.stats.multicraft.percent + (CraftSim.UTIL:GetMulticraftPercentByStat(statIncreaseFactor) * 100)
-    
-    return CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
-end
-
-function CraftSim.AVERAGEPROFIT:getResourcefulnessWeight(recipeData, priceData, baseMeanProfit)
-    if recipeData.stats.resourcefulness == nil then
-        --print("recipe cannot proc resourcefulness")
-        return nil
-    end
-    local modifiedData = CopyTable(recipeData)
-    modifiedData.stats.resourcefulness.percent = modifiedData.stats.resourcefulness.percent + (CraftSim.UTIL:GetResourcefulnessPercentByStat(statIncreaseFactor) * 100)
-    return CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
-end
-
-function CraftSim.AVERAGEPROFIT:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData, exportMode)
-	local statweights = CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData, exportMode)
-
-    if statWeights == CraftSim.CONST.ERROR.NO_PRICE_DATA then
-        return CraftSim.CONST.ERROR.NO_PRICE_DATA
-    end
-
-	return statweights
-end
-
-function CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skill, breakPointOffset)
-    local expectedQuality = 1
-    local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeData.recipeDifficulty, breakPointOffset)
-
-    for _, threshold in pairs(thresholds) do
-        if skill >= threshold then
-            expectedQuality = expectedQuality + 1
-        end
-    end
-
-    return expectedQuality
-end
 
 -- OOP Refactor
 

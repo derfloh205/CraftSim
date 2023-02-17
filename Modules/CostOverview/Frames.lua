@@ -4,74 +4,7 @@ CraftSim.COSTOVERVIEW.FRAMES = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OVERVIEW)
 
-function CraftSim.COSTOVERVIEW.FRAMES:Fill(craftingCosts, minCraftingCosts, profitPerQuality, currentQuality, exportMode)
-    local costOverviewFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
-    else
-        costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
-    end
-    local recipeData = nil
-    -- main should be sim mode data here anyway? TODO: check if the condition can be removed
-    if CraftSim.SIMULATION_MODE.isActive then
-        recipeData = CraftSim.SIMULATION_MODE.recipeData
-    else
-        recipeData = CraftSim.MAIN.currentRecipeData
-    end
-
-    if not recipeData then return end
-
-    if craftingCosts == minCraftingCosts then
-        costOverviewFrame.content.craftingCosts:SetText(CraftSim.UTIL:FormatMoney(craftingCosts))
-        costOverviewFrame.content.craftingCostsTitle.SwitchAnchor(costOverviewFrame.title)
-        costOverviewFrame.content.minCraftingCosts:Hide()
-        costOverviewFrame.content.minCraftingCostsTitle:Hide()
-    else
-        costOverviewFrame.content.craftingCosts:SetText(CraftSim.UTIL:FormatMoney(craftingCosts))
-        costOverviewFrame.content.minCraftingCosts:SetText(CraftSim.UTIL:FormatMoney(minCraftingCosts))
-        costOverviewFrame.content.craftingCostsTitle.SwitchAnchor(costOverviewFrame.content.minCraftingCosts)
-        costOverviewFrame.content.minCraftingCosts:Show()
-        costOverviewFrame.content.minCraftingCostsTitle:Show()
-    end
-
-    print("#profitPerQuality: " .. tostring(#profitPerQuality))
-    CraftSim.FRAME:ToggleFrame(costOverviewFrame.content.resultProfitsTitle, #profitPerQuality > 0)    
-
-    for index, profitFrame in pairs(costOverviewFrame.content.profitFrames) do
-        if profitPerQuality[index] ~= nil then
-            local qualityID = currentQuality + index - 1
-            if recipeData.result.itemIDs then
-                local itemCount = GetItemCount(recipeData.result.itemIDs[qualityID], true, false, true)
-                local item = Item:CreateFromItemID(recipeData.result.itemIDs[qualityID])
-                item:ContinueOnItemLoad(function ()
-                    profitFrame.itemLinkText:SetText((item:GetItemLink() .. " x "..itemCount))
-                end)
-            elseif recipeData.result.itemQualityLinks then
-                local item = Item:CreateFromItemLink(recipeData.result.itemQualityLinks[qualityID])
-                item:ContinueOnItemLoad(function ()
-                    profitFrame.itemLinkText:SetText((item:GetItemLink()))
-                end)
-            elseif recipeData.result.itemID then
-                local item = Item:CreateFromItemID(recipeData.result.itemID)
-                item:ContinueOnItemLoad(function ()
-                    profitFrame.itemLinkText:SetText((item:GetItemLink()))
-                end)
-            else
-                -- if no item recipe e.g. show quality icon
-                local qualityText = CraftSim.UTIL:GetQualityIconAsText(qualityID, 20, 20)
-                profitFrame.itemLinkText:SetText(qualityText)
-            end
-            profitFrame.qualityID = qualityID
-            local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
-            profitFrame.text:SetText(CraftSim.UTIL:FormatMoney(profitPerQuality[index], true, relativeValue))
-            profitFrame:Show()
-        else
-            profitFrame:Hide()
-        end
-    end
-end
-
-function CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplayOOP(recipeData, profitPerQuality, currentQuality, exportMode)
+function CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplay(recipeData, profitPerQuality, currentQuality, exportMode)
     local costOverviewFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)

@@ -561,7 +561,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(priceOverrideFrame, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(priceOverrideFrameWO, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showPriceOverride then
-		CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayOOP(recipeData, exportMode)
+		CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)
 	end
 
 	-- Material Optimization Module
@@ -569,7 +569,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showMaterialOptimization then
 		CraftSim.UTIL:StartProfiling("Reagent Optimization")
-		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, CraftSimOptions.materialSuggestionInspirationThreshold)
+		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, CraftSimOptions.materialSuggestionInspirationThreshold)
 		CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, optimizationResult, exportMode)
 		CraftSim.UTIL:StopProfiling("Reagent Optimization")
 	end
