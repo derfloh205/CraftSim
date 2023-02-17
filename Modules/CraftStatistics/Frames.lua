@@ -108,15 +108,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
             if not recipeData then
                 return
             end
-            if CraftSimOptions.enablefeatureToggleID_OOP then
-                CraftSim.STATISTICS.FRAMES:UpdateStatisticsOOP(recipeData)
-            else
-                local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
-                if not priceData then
-                    return
-                end
-                CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
-            end
+            CraftSim.STATISTICS.FRAMES:UpdateStatisticsOOP(recipeData)
         end)
         frame.content.cdfExplanation = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION), frame.content, frame.content.numCraftsInput, "RIGHT", "LEFT", -10, 1)
         frame.content.craftsTextBottom = CraftSim.FRAME:CreateText("Crafts: ", frame.content, frame.content.numCraftsInput, "LEFT", "RIGHT", 20, 0)

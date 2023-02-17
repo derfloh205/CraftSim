@@ -126,24 +126,14 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
             frame.content.scrollingMessageFrame:Clear()
             frame.content.craftedItemsFrame.resultFeed:SetText("")
             frame.content.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
-            if CraftSimOptions.enablefeatureToggleID_OOP then
-                CraftSim.CRAFT_RESULTS:ResetDataOOP()
-                CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(CraftSim.MAIN.currentRecipeData.recipeID)
-            else
-                CraftSim.CRAFT_RESULTS:ResetData()
-                CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.MAIN.currentRecipeData.recipeID)
-            end
+            CraftSim.CRAFT_RESULTS:ResetDataOOP()
+            CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(CraftSim.MAIN.currentRecipeData.recipeID)
         end)
 
         frame.content.exportButton = CraftSim.FRAME:CreateButton("Export JSON", frame.content, frame.content.clearButton, "TOPLEFT", "BOTTOMLEFT", 
         0, -10, 15, 25, true, function() 
-            if CraftSimOptions.enablefeatureToggleID_OOP then
-                local csvData = CraftSim.CRAFT_RESULTS:ExportJSON()
-                CraftSim.UTIL:KethoEditBox_Show(csvData)
-            else
-                local csvData = CraftSim.CRAFT_RESULTS:ExportCSV()
-                CraftSim.UTIL:KethoEditBox_Show(csvData)
-            end
+            local json = CraftSim.CRAFT_RESULTS:ExportJSON()
+            CraftSim.UTIL:KethoEditBox_Show(json)
         end)
 
         

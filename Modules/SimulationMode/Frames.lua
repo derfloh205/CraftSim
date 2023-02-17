@@ -41,11 +41,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     reagentOverwriteFrame.quality1Button:SetText("->")
     reagentOverwriteFrame.quality1Button:SetSize(reagentOverwriteFrame.qualityIcon1:GetSize())
     reagentOverwriteFrame.quality1Button:SetScript("OnClick", function(self) 
-        if CraftSimOptions.enablefeatureToggleID_OOP then
-            CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(1)
-        else
-            CraftSim.SIMULATION_MODE:AllocateAllByQuality(1)
-        end
+        CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(1)
     end)
     reagentOverwriteFrame.qualityIcon2 = CraftSim.FRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX+inputOffsetX - 15, 15, 2)
     reagentOverwriteFrame.quality2Button = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
@@ -53,11 +49,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     reagentOverwriteFrame.quality2Button:SetText("->")
     reagentOverwriteFrame.quality2Button:SetSize(reagentOverwriteFrame.qualityIcon2:GetSize())
     reagentOverwriteFrame.quality2Button:SetScript("OnClick", function(self) 
-        if CraftSimOptions.enablefeatureToggleID_OOP then
-            CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(2)
-        else
-            CraftSim.SIMULATION_MODE:AllocateAllByQuality(2)
-        end
+        CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(2)
     end)
     reagentOverwriteFrame.qualityIcon3 = CraftSim.FRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX+inputOffsetX*2 - 15, 15, 3)
     reagentOverwriteFrame.quality3Button = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
@@ -65,11 +57,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     reagentOverwriteFrame.quality3Button:SetText("->")
     reagentOverwriteFrame.quality3Button:SetSize(reagentOverwriteFrame.qualityIcon3:GetSize())
     reagentOverwriteFrame.quality3Button:SetScript("OnClick", function(self) 
-        if CraftSimOptions.enablefeatureToggleID_OOP then
-            CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(3)
-        else
-            CraftSim.SIMULATION_MODE:AllocateAllByQuality(3)
-        end
+        CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(3)
     end)
 
     reagentOverwriteFrame.clearAllocationsButton = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
@@ -78,11 +66,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     reagentOverwriteFrame.clearAllocationsButton:SetSize(reagentOverwriteFrame.clearAllocationsButton:GetTextWidth(), 20)
     reagentOverwriteFrame.clearAllocationsButton:SetScript("OnClick", function(self) 
         -- Clear
-        if CraftSimOptions.enablefeatureToggleID_OOP then
-            CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(0)
-        else
-            CraftSim.SIMULATION_MODE:AllocateAllByQuality(0)
-        end
+        CraftSim.SIMULATION_MODE:AllocateAllByQualityOOP(0)
     end)
 
     reagentOverwriteFrame.reagentOverwriteInputs = {}
@@ -101,13 +85,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     local function CreateReagentInputDropdown(offsetY)
         local optionalReagentDropdown = CraftSim.FRAME:initDropdownMenu(nil, reagentOverwriteFrame, ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "Optional", -20, offsetY + 3, 120, {"Placeholder"}, function(self, arg1) 
             self.selectedItemID = arg1
-            if CraftSimOptions.enablefeatureToggleID_OOP then
-                -- no need to update here cause it will be updated via modules update anyway?
-                CraftSim.MAIN:TriggerModulesErrorSafe()
-            else
-                CraftSim.SIMULATION_MODE:UpdateSimulationMode()
-                CraftSim.MAIN:TriggerModulesErrorSafe()
-            end
+            CraftSim.MAIN:TriggerModulesErrorSafe()
         end, "None")
         return optionalReagentDropdown
     end
@@ -153,12 +131,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         simModeDetailsFrame.content.recipeDifficultyMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeRecipeDifficultyModInput", simModeDetailsFrame.content, simModeDetailsFrame.content, 
             "TOPRIGHT", "TOPRIGHT", modOffsetX - 30, offsetY - 20 + 3.5, 30, 20, 0, true, 
-            function(self, userInput)
-                if CraftSimOptions.enablefeatureToggleID_OOP then
-                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
-                else
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
             end)
 
         simModeDetailsFrame.content.recipeDifficultyMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY
@@ -178,12 +152,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         simModeDetailsFrame.content.inspirationMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeInspirationModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.recipeDifficultyMod, 
             "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
-            function(self, userInput)
-                if CraftSimOptions.enablefeatureToggleID_OOP then
-                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
-                else
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
             end)
         simModeDetailsFrame.content.inspirationMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION
 
@@ -202,12 +172,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         simModeDetailsFrame.content.inspirationSkillMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeInspirationSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationMod, 
             "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
-            function(self, userInput)
-                if CraftSimOptions.enablefeatureToggleID_OOP then
-                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
-                else
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
             end)
         simModeDetailsFrame.content.inspirationSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION_SKILL
 
@@ -226,12 +192,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         simModeDetailsFrame.content.multicraftMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeMulticraftModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationSkillMod, 
             "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
-            function(self, userInput)
-                if CraftSimOptions.enablefeatureToggleID_OOP then
-                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
-                else
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
             end)
         simModeDetailsFrame.content.multicraftMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT
 
@@ -259,12 +221,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         simModeDetailsFrame.content.resourcefulnessMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeResourcefulnessModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.multicraftMod, 
             "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, 
-            function(self, userInput)
-                if CraftSimOptions.enablefeatureToggleID_OOP then
-                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
-                else
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
             end)
         simModeDetailsFrame.content.resourcefulnessMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS
 
@@ -290,12 +248,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         simModeDetailsFrame.content.baseSkillMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessMod, 
             "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, 
-            function(self, userInput)
-                if CraftSimOptions.enablefeatureToggleID_OOP then
-                    CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
-                else
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChangedOOP(userInput)
             end)
         simModeDetailsFrame.content.baseSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL
 
@@ -409,12 +363,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
     CraftSim.FRAME:InitTabSystem(frame.content.specializationTabs)
 
     frame.content.resetButton = CraftSim.FRAME:CreateButton("Reset", 
-    frame.content, spec4, "LEFT", "RIGHT", 40, 0, 15, 25, true, function(self) 
-        if CraftSimOptions.enablefeatureToggleID_OOP then
-            CraftSim.SIMULATION_MODE:ResetSpecDataOOP()
-        else
-            CraftSim.SIMULATION_MODE:ResetSpecData()
-        end
+    frame.content, spec4, "LEFT", "RIGHT", 40, 0, 15, 25, true, function() 
+        CraftSim.SIMULATION_MODE:ResetSpecDataOOP()
     end)
 
     frame.content.legendText = CraftSim.FRAME:CreateText(
@@ -542,31 +492,19 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
         local plusButtonSizeY = 15
         nodeModFrame.input = CraftSim.FRAME:CreateNumericInput(
             nil, nodeModFrame, nodeModFrame, "BOTTOM", "BOTTOM", offsetX + 5, offsetY - 30, 20, 20, 0, true, function(self, userInput) 
-                if CraftSimOptions.enablefeatureToggleID_OOP then
-                    CraftSim.SIMULATION_MODE:OnSpecModifiedOOP(userInput, nodeModFrame)
-                else
-                    CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
-                end
+                CraftSim.SIMULATION_MODE:OnSpecModifiedOOP(userInput, nodeModFrame)
             end)
         nodeModFrame.plusFiveButton = CraftSim.FRAME:CreateButton(
             "+5", nodeModFrame, nodeModFrame.input, "LEFT", "RIGHT", 10, 0, plusButtonSizeX, plusButtonSizeY, true, function(self) 
                 local currentNumber = nodeModFrame.input:GetNumber()
                 nodeModFrame.input:SetText(currentNumber + 5)
-                if CraftSimOptions.enablefeatureToggleID_OOP then
-                    CraftSim.SIMULATION_MODE:OnSpecModifiedOOP(true, nodeModFrame)
-                else
-                    CraftSim.SIMULATION_MODE:OnSpecModified(true, nodeModFrame)
-                end
+                CraftSim.SIMULATION_MODE:OnSpecModifiedOOP(true, nodeModFrame)
             end)
         nodeModFrame.minusFiveButton = CraftSim.FRAME:CreateButton(
         "-5", nodeModFrame, nodeModFrame.input, "RIGHT", "LEFT", -7, 0, plusButtonSizeX, plusButtonSizeY, true, function(self) 
             local currentNumber = nodeModFrame.input:GetNumber()
             nodeModFrame.input:SetText(currentNumber - 5)
-            if CraftSimOptions.enablefeatureToggleID_OOP then
-                    CraftSim.SIMULATION_MODE:OnSpecModifiedOOP(true, nodeModFrame)
-                else
-                    CraftSim.SIMULATION_MODE:OnSpecModified(true, nodeModFrame)
-                end
+            CraftSim.SIMULATION_MODE:OnSpecModifiedOOP(true, nodeModFrame)
         end)
 
         -- all possible thresholds in steps of 5 (Max ?) with 50 max ranks and 0 included its 11
@@ -911,11 +849,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteInput(overwriteIn
     local inputBox = CraftSim.FRAME:CreateNumericInput(
         nil, overwriteInputFrame, overwriteInputFrame.icon, "LEFT", "RIGHT", offsetX, 0, inputWidth, 20, 0, false, 
         function (input, userInput)
-            if CraftSimOptions.enablefeatureToggleID_OOP then
-                CraftSim.SIMULATION_MODE:OnInputAllocationChangedOOP(input, userInput)
-            else
-                CraftSim.SIMULATION_MODE:OnInputAllocationChanged(userInput)
-            end
+            CraftSim.SIMULATION_MODE:OnInputAllocationChangedOOP(input, userInput)
         end)
     inputBox.qualityID = qualityID
     return inputBox

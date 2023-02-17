@@ -388,11 +388,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
 
     CraftSim.RECIPE_SCAN:ToggleScanButton(false)
     CraftSim.RECIPE_SCAN:ResetResults()
-    if CraftSimOptions.enablefeatureToggleID_OOP then
-        scanRecipesByIntervalOOP()
-    else
-        scanRecipesByInterval()
-    end
+    scanRecipesByIntervalOOP()
 end
 
 

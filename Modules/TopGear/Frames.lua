@@ -63,13 +63,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         frame.content.simModeDropdown = 
         CraftSim.FRAME:initDropdownMenu("CraftSimTopGearSimMode", frame.content, frame.title, "", 0, contentOffsetY, 120, {"Placeholder"}, function(arg1) 
             CraftSimOptions.topGearMode = arg1
-            if CraftSimOptions.enablefeatureToggleID_OOP then
-                CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MAIN.currentRecipeData)
-            else
-                local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-                local priceData = CraftSim.PRICEDATA:GetPriceData(CraftSim.MAIN.currentRecipeData, CraftSim.MAIN.currentRecipeData.recipeType)
-                CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(CraftSim.MAIN.currentRecipeData, CraftSim.MAIN.currentRecipeData.recipeType, priceData, exportMode)
-            end
+            CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MAIN.currentRecipeData)
         end, "Placeholder")
         frame.content.profitText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         frame.content.profitText:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 10)

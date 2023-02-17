@@ -10,7 +10,6 @@ CraftSim.CONST.infoBoxSizeY = 400
 ----------------
 
 CraftSim.CONST.FEATURE_TOGGLES = {
-    OOP = "OOP",
 }
 
 CraftSim.CONST.PERCENT_MODS = {

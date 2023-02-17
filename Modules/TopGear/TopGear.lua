@@ -567,29 +567,15 @@ function CraftSim.TOPGEAR:UnequipProfessionItems(professionID)
 end
 
 function CraftSim.TOPGEAR:EquipTopGear()
-    if CraftSimOptions.enablefeatureToggleID_OOP then
-        local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-        local topGearFrame = nil
-        if exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
-            topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
-        else
-            topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-        end
-        if topGearFrame.currentTopResult then
-            topGearFrame.currentTopResult.professionGearSet:Equip()
-        end
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    local topGearFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
+        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
     else
-        local topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
-        CraftSim.TOPGEAR.IsEquipping = true
-        local combo = topGearFrame.currentCombo
-        if combo == nil then
-            --print("no combo yet")
-            return
-        end
-        -- first unequip everything
-        CraftSim.TOPGEAR:UnequipProfessionItems(CraftSim.MAIN.currentRecipeData.professionID)
-        -- then wait a sec to let it unequip TODO: (maybe wait for specific event for each eqipped item to combat lag?)
-        C_Timer.After(1, CraftSim.TOPGEAR.EquipBestCombo)
+        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+    end
+    if topGearFrame.currentTopResult then
+        topGearFrame.currentTopResult.professionGearSet:Equip()
     end
 end
 

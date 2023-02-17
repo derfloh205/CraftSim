@@ -430,38 +430,33 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
 		recipeData = CraftSim.SIMULATION_MODE.recipeData
 		CraftSim.MAIN.currentRecipeData = CraftSim.SIMULATION_MODE.recipeData
-		
 	else
-		if CraftSimOptions.enablefeatureToggleID_OOP then
-			local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+		local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
 
-			if not schematicForm then
-				print("CraftSim MAIN: No SchematicForm Visible")
-				return
-			end
-			-- set recraft based on visibility
-			local currentTransaction = schematicForm:GetTransaction()
-			if not currentTransaction then
-				print("CraftSim MAIN: SchematicForm without transaction!")
-				return
-			end
-			local isRecraft = currentTransaction:GetRecraftAllocation() ~= nil 
+		if not schematicForm then
+			print("CraftSim MAIN: No SchematicForm Visible")
+			return
+		end
+		-- set recraft based on visibility
+		local currentTransaction = schematicForm:GetTransaction()
+		if not currentTransaction then
+			print("CraftSim MAIN: SchematicForm without transaction!")
+			return
+		end
+		local isRecraft = currentTransaction:GetRecraftAllocation() ~= nil 
 
-			recipeData = CraftSim.RecipeData(recipeInfo.recipeID, isRecraft)
+		recipeData = CraftSim.RecipeData(recipeInfo.recipeID, isRecraft)
 
-			if recipeData then
-				-- Set Reagents based on visibleFrame and load equipped profession gear set
-				recipeData:SetAllReagentsBySchematicForm()
-				recipeData:SetEquippedProfessionGearSet()
-				recipeData:Update()
+		if recipeData then
+			-- Set Reagents based on visibleFrame and load equipped profession gear set
+			recipeData:SetAllReagentsBySchematicForm()
+			recipeData:SetEquippedProfessionGearSet()
+			recipeData:Update()
 
-				print(recipeData.professionStats)
+			print(recipeData.professionStats)
 
-				CraftSim_DEBUG:print(recipeData.reagentData, CraftSim.CONST.DEBUG_IDS.EXPORT_V2, true, true)
-				CraftSim.MAIN.currentRecipeData = recipeData
-			end
-		else
-			recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, exportMode)
+			CraftSim_DEBUG:print(recipeData.reagentData, CraftSim.CONST.DEBUG_IDS.EXPORT_V2, true, true)
+			CraftSim.MAIN.currentRecipeData = recipeData
 		end
 	end
 
@@ -481,80 +476,23 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local showRecipeScan = true
 	local showCustomerService = true
 
-	if not CraftSimOptions.enablefeatureToggleID_OOP then
-		recipeType = recipeData and recipeData.recipeType
-		priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeType)
-		if recipeData and priceData then
-			if recipeData.isRecraft then
-				-- show everything
-				showMaterialOptimization = true
-				showTopGear = true
-				showCostOverview = true
-				showStatweights = true
-				showSimulationMode = true
-				showSpecInfo = true
-				showPriceOverride = true
-			elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.SINGLE then
-				-- show everything
-				showMaterialOptimization = true
-				showTopGear = true
-				showCostOverview = true
-				showStatweights = true
-				showSimulationMode = true
-				showSpecInfo = true
-				showPriceOverride = true
-			elseif recipeType == CraftSim.CONST.RECIPE_TYPES.ENCHANT then
-				showTopGear = true
-				showCostOverview = true
-				showStatweights = true
-				showSimulationMode = true
-				showSpecInfo = true
-				showPriceOverride = true
-			elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE then
-				-- show everything except material allocation and total cost overview
-				showTopGear = true
-				showCostOverview = true
-				showStatweights = true
-				showSimulationMode = true
-				showSpecInfo = true
-				showPriceOverride = true
-			elseif recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.NO_ITEM then
-				-- show crafting costs and highest material allocation
-				showCostOverview = true
-				showMaterialOptimization = true
-				-- also show top gear cause we have different modes now
-				showTopGear = true
-				showSimulationMode = true
-				showSpecInfo = true
-				showStatweights = true
-				showPriceOverride = true
-			elseif recipeType == CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
-				showCostOverview = true
-				showPriceOverride = true
-			elseif recipeType == CraftSim.CONST.RECIPE_TYPES.GATHERING then
-				-- show nothing maybe later some top gear for gathering
-			end
-		end
-	else
-		if recipeData.supportsCraftingStats then
-			showStatweights = true
-			showTopGear = true
-		end
-
-		if recipeData.hasQualityReagents then
-			showMaterialOptimization = true
-		end
-
-		showCostOverview = true
-		showPriceOverride = true
-		showSimulationMode = true
-		showSpecInfo = true
+	
+	if recipeData.supportsCraftingStats then
+		showStatweights = true
+		showTopGear = true
 	end
+
+	if recipeData.hasQualityReagents then
+		showMaterialOptimization = true
+	end
+
+	showCostOverview = true
+	showPriceOverride = true
+	showSimulationMode = true
+	showSpecInfo = true
 
 
 	showMaterialOptimization = showMaterialOptimization and CraftSimOptions.modulesMaterials 
-	-- temporary disable for recipes with only one required qualitity reagent
-	--showMaterialAllocation = showMaterialAllocation and recipeData and recipeData.numReagentsWithQuality > 1
 	showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
 	showTopGear = showTopGear and CraftSimOptions.modulesTopGear
 	showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
@@ -583,150 +521,77 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
 	CraftSim.FRAME:ToggleFrame(customerServiceFrame, showCustomerService)
 
-	if not CraftSimOptions.enablefeatureToggleID_OOP then
-		if recipeData and showCraftResults then
-			CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeData.recipeID)
-		end
-	
-		CraftSim.FRAME:ToggleFrame(priceOverrideFrame, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(priceOverrideFrameWO, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if recipeData and showPriceOverride then
-			CraftSim.PRICE_OVERRIDE.FRAMES:UpdateFrames(recipeData, exportMode)
-		end
-	
-		if recipeData and recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING and recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
-			CraftSim.FRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
-		end
-	
-		CraftSim.FRAME:ToggleFrame(specInfoFrame, showSpecInfo and recipeData and recipeData.specNodeData)
-		if recipeData and showSpecInfo and recipeData.specNodeData then
-			CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
-		end
-	
-		-- do not show simulation possibility on salvaging for now
-		showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
-		CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.toggleButton, showSimulationMode)
-		CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility() -- show sim mode frames depending if active or not
-		if CraftSim.SIMULATION_MODE.isActive and recipeData then -- recipeData could still be nil here if e.g. in a gathering recipe
-			-- update simulationframe recipedata by inputs and the frontend
-			-- since recipeData is a reference here to the recipeData in the simulationmode, 
-			-- the recipeData that is used in the below modules should also be the modified one!
-			CraftSim.SIMULATION_MODE:UpdateSimulationMode()
-		end
-	
-		showMaterialOptimization = showMaterialOptimization and recipeData.hasReagentsWithQuality
-		CraftSim.FRAME:ToggleFrame(materialOptimizationFrame, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if showMaterialOptimization then
-			CraftSim.UTIL:StartProfiling("Reagent Optimization")
-			CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, recipeType, priceData, exportMode)
-			CraftSim.UTIL:StopProfiling("Reagent Optimization")
-		end
-	
-		CraftSim.FRAME:ToggleFrame(averageProfitFrame, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(averageProfitFrameWO, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if showStatweights then
-			local statWeights = CraftSim.AVERAGEPROFIT:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData, exportMode)
-			if statWeights ~= CraftSim.CONST.ERROR.NO_PRICE_DATA then
-				CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplay(priceData, statWeights, exportMode)
-				CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
-			end
-		end
-	
-		CraftSim.FRAME:ToggleFrame(topgearFrame, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(topgearFrameWO, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if recipeData and showTopGear then
-			CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(exportMode)
-			if CraftSimOptions.topGearAutoUpdate then
-				CraftSim.UTIL:StartProfiling("Top Gear")
-				CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeData.recipeType, priceData, exportMode)
-				CraftSim.UTIL:StopProfiling("Top Gear")
-			else
-				local isCooking = recipeData.professionID == Enum.Profession.Cooking
-				CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, true, exportMode)
-			end
-		end
-	
-		CraftSim.FRAME:ToggleFrame(costOverviewFrame, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(costOverviewFrameWO, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if showCostOverview then
-			CraftSim.COSTOVERVIEW:CalculateCostOverview(recipeData, recipeType, priceData, exportMode)
-		end
-	else -- OOP Refactor
-		if recipeData and showCraftResults then
-			CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(recipeData.recipeID)
-		end
-
-		-- Simulation Mode
-		showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
-		CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.toggleButton, showSimulationMode)
-		CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibilityOOP() -- show sim mode frames depending if active or not
-		if CraftSim.SIMULATION_MODE.isActive and recipeData then
-			-- update simulationframe recipedata by inputs and the frontend
-			-- since recipeData is a reference here to the recipeData in the simulationmode, 
-			-- the recipeData that is used in the below modules should also be the modified one!
-			CraftSim.SIMULATION_MODE:UpdateSimulationModeOOP()
-		end
-
-		-- AverageProfit Module
-		CraftSim.FRAME:ToggleFrame(averageProfitFrame, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(averageProfitFrameWO, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if recipeData and showStatweights then
-			local statWeights = CraftSim.AVERAGEPROFIT:CalculateStatWeightsOOP(recipeData)
-
-			if statWeights then
-				CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplayOOP(statWeights, recipeData.priceData.craftingCosts, exportMode)
-			end
-
-			CraftSim.STATISTICS.FRAMES:UpdateStatisticsOOP(recipeData)
-		end
-
-		-- Cost Overview Module
-		CraftSim.FRAME:ToggleFrame(costOverviewFrame, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(costOverviewFrameWO, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if recipeData and showCostOverview then
-			CraftSim.COSTOVERVIEW:CalculateCostOverviewOOP(recipeData, exportMode)
-		end
-
-
-		-- Price Override Module
-		CraftSim.FRAME:ToggleFrame(priceOverrideFrame, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(priceOverrideFrameWO, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if recipeData and showPriceOverride then
-			CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayOOP(recipeData, exportMode)
-		end
-
-		-- Material Optimization Module
-		CraftSim.FRAME:ToggleFrame(materialOptimizationFrame, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if recipeData and showMaterialOptimization then
-			CraftSim.UTIL:StartProfiling("Reagent Optimization")
-			local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, CraftSimOptions.materialSuggestionInspirationThreshold)
-			CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, optimizationResult, exportMode)
-			CraftSim.UTIL:StopProfiling("Reagent Optimization")
-		end
-
-		-- Top Gear Module
-		CraftSim.FRAME:ToggleFrame(topgearFrame, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-		CraftSim.FRAME:ToggleFrame(topgearFrameWO, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-		if recipeData and showTopGear then
-			CraftSim.TOPGEAR.FRAMES:UpdateModeDropdownOOP(recipeData, exportMode)
-			if CraftSimOptions.topGearAutoUpdate then
-				CraftSim.UTIL:StartProfiling("Top Gear")
-				CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
-				CraftSim.UTIL:StopProfiling("Top Gear")
-			else
-				local isCooking = recipeData.professionID == Enum.Profession.Cooking
-				CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, true, exportMode)
-			end
-		end
-
-		-- SpecInfo Module
-		CraftSim.FRAME:ToggleFrame(specInfoFrame, showSpecInfo and recipeData)
-		if recipeData and showSpecInfo then
-			CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfoOOP(recipeData)
-		end
-
+	if recipeData and showCraftResults then
+		CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(recipeData.recipeID)
 	end
-	
+
+	-- Simulation Mode
+	showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
+	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.toggleButton, showSimulationMode)
+	CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibilityOOP() -- show sim mode frames depending if active or not
+	if CraftSim.SIMULATION_MODE.isActive and recipeData then
+		-- update simulationframe recipedata by inputs and the frontend
+		-- since recipeData is a reference here to the recipeData in the simulationmode, 
+		-- the recipeData that is used in the below modules should also be the modified one!
+		CraftSim.SIMULATION_MODE:UpdateSimulationModeOOP()
+	end
+
+	-- AverageProfit Module
+	CraftSim.FRAME:ToggleFrame(averageProfitFrame, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(averageProfitFrameWO, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showStatweights then
+		local statWeights = CraftSim.AVERAGEPROFIT:CalculateStatWeightsOOP(recipeData)
+
+		if statWeights then
+			CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplayOOP(statWeights, recipeData.priceData.craftingCosts, exportMode)
+		end
+
+		CraftSim.STATISTICS.FRAMES:UpdateStatisticsOOP(recipeData)
+	end
+
+	-- Cost Overview Module
+	CraftSim.FRAME:ToggleFrame(costOverviewFrame, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(costOverviewFrameWO, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showCostOverview then
+		CraftSim.COSTOVERVIEW:CalculateCostOverviewOOP(recipeData, exportMode)
+	end
+
+
+	-- Price Override Module
+	CraftSim.FRAME:ToggleFrame(priceOverrideFrame, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(priceOverrideFrameWO, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showPriceOverride then
+		CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayOOP(recipeData, exportMode)
+	end
+
+	-- Material Optimization Module
+	CraftSim.FRAME:ToggleFrame(materialOptimizationFrame, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showMaterialOptimization then
+		CraftSim.UTIL:StartProfiling("Reagent Optimization")
+		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocationOOP(recipeData, CraftSimOptions.materialSuggestionInspirationThreshold)
+		CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, optimizationResult, exportMode)
+		CraftSim.UTIL:StopProfiling("Reagent Optimization")
+	end
+
+	-- Top Gear Module
+	CraftSim.FRAME:ToggleFrame(topgearFrame, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(topgearFrameWO, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showTopGear then
+		CraftSim.TOPGEAR.FRAMES:UpdateModeDropdownOOP(recipeData, exportMode)
+		if CraftSimOptions.topGearAutoUpdate then
+			CraftSim.UTIL:StartProfiling("Top Gear")
+			CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
+			CraftSim.UTIL:StopProfiling("Top Gear")
+		else
+			local isCooking = recipeData.professionID == Enum.Profession.Cooking
+			CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(isCooking, true, exportMode)
+		end
+	end
+
+	-- SpecInfo Module
+	CraftSim.FRAME:ToggleFrame(specInfoFrame, showSpecInfo and recipeData)
+	if recipeData and showSpecInfo then
+		CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfoOOP(recipeData)
+	end	
 end
