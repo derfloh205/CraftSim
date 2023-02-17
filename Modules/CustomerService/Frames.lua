@@ -12,9 +12,10 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 
     local function createContent(frame)
         frame:Hide()
-        local autoReplyTab = CraftSim.FRAME:CreateTab("Auto Reply", frame.content, frame.title, "TOP", "BOTTOM", -70, -15, true, 300, 250, frame.content, frame.title, 0, -50)
-        local autoResultTab = CraftSim.FRAME:CreateTab("Live Preview", frame.content, autoReplyTab, "LEFT", "RIGHT", 0, 0, true, 300, 250, frame.content, frame.title, 0, -50)
-
+        local autoResultTab = CraftSim.FRAME:CreateTab("Live Preview", frame.content, frame.title, "TOP", "BOTTOM", -90, -15, true, 300, 250, frame.content, frame.title, 0, -50)
+        local autoReplyTab = CraftSim.FRAME:CreateTab("Recipe Whisper", frame.content, autoResultTab, "LEFT", "RIGHT", 0, 0, false, 300, 250, frame.content, frame.title, 0, -50)
+        autoReplyTab.content:Hide()
+        autoReplyTab:Hide()
         autoReplyTab.content.enableReplyCB = CraftSim.FRAME:CreateCheckbox("Enable Auto Reply", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION), 
         "customerServiceEnableAutoReply", autoReplyTab.content, autoReplyTab.content, "TOPLEFT", "TOPLEFT", 10, -10)
 
@@ -77,7 +78,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
             CraftSim.CUSTOMER_SERVICE:WhisperInvite(whisperTarget)
         end)
         
-        frame.tabs = {autoReplyTab, autoResultTab}
+        frame.tabs = {autoResultTab} -- autoReplyTab
         CraftSim.FRAME:InitTabSystem(frame.tabs)
     end
 

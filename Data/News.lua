@@ -15,7 +15,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "to an " .. f.bb("Object Orientated") .. " Design." .. 
         f.a .. "This makes newer modules and features " .. f.g("much easier to develop!") ..
         f.a .. "Also enables easy to use " .. f.g("ingame API functions") .. " for CraftSim." ..
-        f.s .. "Disabled the " .. f.bb("Tooltip") .. " and " .. f.bb("Account Sync") .. " Features until reworked." ..
+        f.s .. f.r("Disabled") .. " the " .. f.bb("Tooltip, Auto Reply") .. " and " .. f.bb("Account Sync") .. " Features until reworked." ..
         f.s .. f.r("Removed") .. " Experimental Data Toggle." .. 
         f.a .. "Profession Stats are now always fetched from the ingame API!" ..
         f.a .. "Manually mapped specialization data is now only used" .. 
