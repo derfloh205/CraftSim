@@ -78,6 +78,14 @@ function CraftSim.SpecializationData:GetExtraFactors()
     return extraFactors
 end
 
+function CraftSim.SpecializationData:UpdateProfessionStats()
+    self.professionStats:Clear()
+    for _, nodeData in pairs(self.nodeData) do
+        nodeData:UpdateProfessionStats()
+        self.professionStats:add(nodeData.professionStats)
+    end
+end
+
 function CraftSim.SpecializationData:Debug()
     local debugLines = {}
 
@@ -110,6 +118,7 @@ function CraftSim.SpecializationData:Copy()
     for nodeIndex, nodeDataB in pairs(self.nodeData) do
         local nodeDataA = copy.nodeData[nodeIndex]
         nodeDataA.rank = nodeDataB.rank
+        nodeDataA.active = nodeDataB.active
         nodeDataA:UpdateProfessionStats()
         copy.professionStats:add(nodeDataA.professionStats)
     end
