@@ -348,7 +348,7 @@ end
 ---@return number averageProfit
 ---@return table probabilityTable
 function CraftSim.RecipeData:GetAverageProfit()
-    local averageProfit, probabilityTable = CraftSim.CALC:GetMeanProfitOOP(self)
+    local averageProfit, probabilityTable = CraftSim.CALC:GetAverageProfit(self)
     return averageProfit, probabilityTable
 end
 

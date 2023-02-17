@@ -185,7 +185,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
         end
     end
 
-    local averageProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)
+    local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
 
     local profitText = CraftSim.UTIL:FormatMoney(CraftSim.UTIL:round(averageProfit / 10000) * 10000, true, recipeData.priceData.craftingCosts) -- round to gold
     availableRow.profitText:SetText(profitText)

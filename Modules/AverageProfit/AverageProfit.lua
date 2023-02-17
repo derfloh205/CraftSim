@@ -17,14 +17,11 @@ function CraftSim.AVERAGEPROFIT:GetQualityThresholds(maxQuality, recipeDifficult
     end
 end
 
-
--- OOP Refactor
-
 ---@param recipeData CraftSim.RecipeData
 ---@param baseMeanProfit number
 function CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseMeanProfit)
     recipeData:Update()
-    local meanProfitModified = CraftSim.CALC:GetMeanProfitOOP(recipeData)
+    local meanProfitModified = CraftSim.CALC:GetAverageProfit(recipeData)
     local profitDiff = meanProfitModified - baseMeanProfit
     local statWeight = profitDiff / statIncreaseFactor
 
@@ -96,7 +93,7 @@ end
 function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT_OOP)
 
-    local averageProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)
+    local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
 
     local inspirationWeight = CraftSim.AVERAGEPROFIT:getInspirationWeightOOP(recipeData, averageProfit)
     local multicraftWeight = CraftSim.AVERAGEPROFIT:getMulticraftWeightOOP(recipeData, averageProfit)

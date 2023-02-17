@@ -79,7 +79,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     local craftProfit = CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, self) 
 
     self.profit = craftProfit
-    self.expectedAverageProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)
+    self.expectedAverageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
 end
 
 function CraftSim.CraftResult:Debug()

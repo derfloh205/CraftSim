@@ -299,8 +299,6 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
     createContent(frameWO)
 end
 
--- OOP Refactor
-
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
 function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)

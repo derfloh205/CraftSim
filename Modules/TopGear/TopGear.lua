@@ -293,13 +293,13 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
     local combinations = CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
 
     local previousGear = recipeData.professionGearSet
-    local averageProfitPreviousGear = CraftSim.CALC:GetMeanProfitOOP(recipeData)
+    local averageProfitPreviousGear = CraftSim.CALC:GetAverageProfit(recipeData)
 
     -- convert to top gear results
     local results = CraftSim.UTIL:Map(combinations, function(professionGearSet)
         recipeData.professionGearSet = professionGearSet
         recipeData:Update()
-        local averageProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)
+        local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
         local relativeProfit = averageProfit - averageProfitPreviousGear
         local relativeStats = professionGearSet.professionStats:Copy()
         local expectedQuality = recipeData.resultData.expectedQuality

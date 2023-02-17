@@ -66,7 +66,7 @@ end
 ---@params recipeData CraftSim.RecipeData
 ---@return number meanProfit
 ---@return table probabilityTable
-function CraftSim.CALC:GetMeanProfitOOP(recipeData)
+function CraftSim.CALC:GetAverageProfit(recipeData)
     local priceData = recipeData.priceData
     local professionStats = recipeData.professionStats
     if not recipeData.supportsCraftingStats then
