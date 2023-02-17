@@ -528,12 +528,12 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	-- Simulation Mode
 	showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
 	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.toggleButton, showSimulationMode)
-	CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibilityOOP() -- show sim mode frames depending if active or not
+	CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility() -- show sim mode frames depending if active or not
 	if CraftSim.SIMULATION_MODE.isActive and recipeData then
 		-- update simulationframe recipedata by inputs and the frontend
 		-- since recipeData is a reference here to the recipeData in the simulationmode, 
 		-- the recipeData that is used in the below modules should also be the modified one!
-		CraftSim.SIMULATION_MODE:UpdateSimulationModeOOP()
+		CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 	end
 
 	-- AverageProfit Module
