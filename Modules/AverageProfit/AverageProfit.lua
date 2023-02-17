@@ -48,40 +48,6 @@ function CraftSim.AVERAGEPROFIT:getResourcefulnessWeight(recipeData, priceData, 
     return CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
 end
 
-function CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(modifiedData, priceData, baseMeanProfit)
-    local meanProfitModified = CraftSim.CALC:getMeanProfit(modifiedData, priceData)
-    local profitDiff = meanProfitModified - baseMeanProfit
-    local statWeight = profitDiff / statIncreaseFactor
-
-    return {
-        statWeight = statWeight,
-        profitDiff = profitDiff,
-        meanProfit = meanProfitModified
-    }
-end
-
-function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData, exportMode)
-
-    local calculationResult = {} 
-    calculationResult.meanProfit = CraftSim.CALC:getMeanProfitOLD(recipeData, priceData)
-    local meanProfitV2 = CraftSim.CALC:getMeanProfit(CraftSim.MAIN.currentRecipeData, priceData)
-   -- print("MeanProfitV1: " .. CraftSim.UTIL:FormatMoney(calculationResult.meanProfit, true))
-    print("MeanProfitV2: " .. CraftSim.UTIL:FormatMoney(meanProfitV2, true))    
-
-    calculationResult.meanProfit = meanProfitV2 or calculationResult.meanProfit
-
-
-
-    local inspirationResults = CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, priceData, calculationResult.meanProfit)
-    local multicraftResults = CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, priceData, calculationResult.meanProfit)
-    local resourcefulnessResults = CraftSim.AVERAGEPROFIT:getResourcefulnessWeight(recipeData, priceData, calculationResult.meanProfit)
-    calculationResult.inspiration = inspirationResults and inspirationResults.statWeight or 0
-    calculationResult.multicraft = multicraftResults and multicraftResults.statWeight or 0
-    calculationResult.resourcefulness = resourcefulnessResults and resourcefulnessResults.statWeight or 0
-
-    return calculationResult
-end
-
 function CraftSim.AVERAGEPROFIT:getProfessionStatWeightsForCurrentRecipe(recipeData, priceData, exportMode)
 	local statweights = CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData, priceData, exportMode)
 
@@ -109,7 +75,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param baseMeanProfit number
-function CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedDataOOP(recipeData, baseMeanProfit)
+function CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseMeanProfit)
     recipeData:Update()
     local meanProfitModified = CraftSim.CALC:GetMeanProfitOOP(recipeData)
     local profitDiff = meanProfitModified - baseMeanProfit
@@ -127,7 +93,7 @@ function CraftSim.AVERAGEPROFIT:getInspirationWeightOOP(recipeData, baseMeanProf
     end
     -- increase modifier
     recipeData.professionStatModifiers.inspiration:addValue(statIncreaseFactor)
-    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedDataOOP(recipeData, baseMeanProfit)
+    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseMeanProfit)
     -- revert change (probably more performant than just to copy the whole thing)
     recipeData.professionStatModifiers.inspiration:subtractValue(statIncreaseFactor)
     return statWeight
@@ -142,7 +108,7 @@ function CraftSim.AVERAGEPROFIT:getMulticraftWeightOOP(recipeData, baseMeanProfi
     end
     -- increase modifier
     recipeData.professionStatModifiers.multicraft:addValue(statIncreaseFactor)
-    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedDataOOP(recipeData, baseMeanProfit)
+    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseMeanProfit)
     -- revert change (probably more performant than just to copy the whole thing)
     recipeData.professionStatModifiers.multicraft:subtractValue(statIncreaseFactor)
     return statWeight
@@ -157,7 +123,7 @@ function CraftSim.AVERAGEPROFIT:getResourcefulnessWeightOOP(recipeData, baseMean
     end
     -- increase modifier
     recipeData.professionStatModifiers.resourcefulness:addValue(statIncreaseFactor)
-    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedDataOOP(recipeData, baseMeanProfit)
+    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseMeanProfit)
     -- revert change (probably more performant than just to copy the whole thing)
     recipeData.professionStatModifiers.resourcefulness:subtractValue(statIncreaseFactor)
     return statWeight
@@ -180,7 +146,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Statweights statweightResult
-function CraftSim.AVERAGEPROFIT:CalculateStatWeightsOOP(recipeData)
+function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT_OOP)
 
     local averageProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)

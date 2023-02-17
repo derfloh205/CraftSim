@@ -522,7 +522,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(customerServiceFrame, showCustomerService)
 
 	if recipeData and showCraftResults then
-		CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeDataOOP(recipeData.recipeID)
+		CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeData.recipeID)
 	end
 
 	-- Simulation Mode
@@ -540,7 +540,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(averageProfitFrame, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(averageProfitFrameWO, showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showStatweights then
-		local statWeights = CraftSim.AVERAGEPROFIT:CalculateStatWeightsOOP(recipeData)
+		local statWeights = CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
 
 		if statWeights then
 			CraftSim.AVERAGEPROFIT.FRAMES:UpdateAverageProfitDisplayOOP(statWeights, recipeData.priceData.craftingCosts, exportMode)

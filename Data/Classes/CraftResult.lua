@@ -56,7 +56,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     local mcChance = ((recipeData.supportsCraftingStats and recipeData.supportsMulticraft) and recipeData.professionStats.multicraft:GetPercent(true)) or 1
     local resChance = ((recipeData.supportsCraftingStats and recipeData.supportsResourcefulness) and recipeData.professionStats.resourcefulness:GetPercent(true)) or 1
     
-    self.expectedAverageSavedCosts = (recipeData.supportsCraftingStats and CraftSim.CALC:getResourcefulnessSavedCostsOOP(recipeData)*resChance) or 0
+    self.expectedAverageSavedCosts = (recipeData.supportsCraftingStats and CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)*resChance) or 0
 
     if inspChance < 1 then
         inspChance = (self.triggeredInspiration and inspChance) or (1-inspChance)
@@ -76,7 +76,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
 
     self.craftingChance = inspChance*mcChance*totalResChance
 
-    local craftProfit = CraftSim.CRAFT_RESULTS:GetProfitForCraftOOP(recipeData, self) 
+    local craftProfit = CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, self) 
 
     self.profit = craftProfit
     self.expectedAverageProfit = CraftSim.CALC:GetMeanProfitOOP(recipeData)
