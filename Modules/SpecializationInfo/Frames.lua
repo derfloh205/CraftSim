@@ -183,7 +183,13 @@ end
 function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfoOOP(recipeData)
     local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
 
-    local affectedNodeDataList = CraftSim.UTIL:FilterTable(recipeData.specializationData.nodeData, function(nodeData) 
+    local specializationData = recipeData.specializationData
+
+    if CraftSim.SIMULATION_MODE.isActive then
+        specializationData = CraftSim.SIMULATION_MODE.specializationData
+    end
+
+    local affectedNodeDataList = CraftSim.UTIL:FilterTable(specializationData.nodeData, function(nodeData) 
         return nodeData.affectsRecipe 
     end)
 
