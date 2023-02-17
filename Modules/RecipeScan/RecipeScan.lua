@@ -11,9 +11,7 @@ CraftSim.RECIPE_SCAN.SCAN_MODES = {
     OPTIMIZE_G = "Optimize for Guaranteed", 
     OPTIMIZE_I = "Optimize for Inspiration"}
 
-local function print(text, recursive, l) -- override
-	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN, recursive, l)
-end
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
 function CraftSim.RECIPE_SCAN:GetScanMode()
     local RecipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
@@ -204,72 +202,9 @@ function CraftSim.RECIPE_SCAN:StartScan()
     end)
     recipeInfos = CraftSim.UTIL:FilterTable(recipeInfos, CraftSim.RECIPE_SCAN.FilterRecipes)
     local currentIndex = 1
+
     local function scanRecipesByInterval()
-        local recipeInfo = recipeInfos[currentIndex]
-        if not recipeInfo then
-            CraftSim.RECIPE_SCAN:EndScan()
-            return
-        end
-
-        CraftSim.RECIPE_SCAN:UpdateScanPercent(currentIndex, #recipeInfos)
-
-        print("recipeID: " .. tostring(recipeInfo.recipeID), false, true)
-        print("recipeName: " .. tostring(recipeInfo.name))
-        print("isEnchant: " .. tostring(recipeInfo.isEnchantingRecipe))
-
-        local recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN);
-        if not recipeData then
-            CraftSim.RECIPE_SCAN:EndScan()
-            return
-        end
-        local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
-        local scanReagents = CraftSim.RECIPE_SCAN:SetReagentAllocationByScanMode(recipeData, priceData)
-
-        -- reexport the recipeData, now with the new reagents
-        recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN, {scanReagents=scanReagents})
-        if not recipeData then
-            -- finishedScan
-            print("scan finished, no recipe data after recalculation")
-            CraftSim.RECIPE_SCAN:EndScan()
-            return
-        end
-        -- refetch price data
-        priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
-        local meanProfit = CraftSim.CALC:getMeanProfit(recipeData, priceData)
-        local bestSimulation = nil
-
-        if CraftSimOptions.recipeScanOptimizeProfessionTools then
-            print("Optimize Gear")
-            bestSimulation = CraftSim.TOPGEAR:SimulateBestProfessionGearCombination(recipeData, recipeData.recipeType, priceData, CraftSim.CONST.EXPORT_MODE.SCAN)
-            print("- Profit old: " .. CraftSim.UTIL:FormatMoney(meanProfit))
-            if bestSimulation then
-                print("- Found Top Gear")
-                -- use the modified recipe data
-                recipeData = bestSimulation.modifiedRecipeData
-                priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType) -- necessary?
-                -- recalculate profit based on recipeData with best gear
-                meanProfit = CraftSim.CALC:getMeanProfit(recipeData, priceData)
-                print("- Profit Top Gear: " .. CraftSim.UTIL:FormatMoney(meanProfit))
-            else
-                print("- No Better Gear Found")
-            end
-        end
-
-
-        local function continueScan()
-            CraftSim.RECIPE_SCAN:AddRecipeToRecipeRow(recipeData, priceData, meanProfit, bestSimulation) 
-
-            currentIndex = currentIndex + 1
-            C_Timer.After(CraftSim.RECIPE_SCAN.scanInterval, scanRecipesByInterval)
-        end
-
-        if recipeData then
-            recipeData.ContinueOnResultItemsLoaded(continueScan)
-        end
-    end
-
-    local function scanRecipesByIntervalOOP()
-        CraftSim.UTIL:StartProfiling("Single Recipe Scan OOP")
+        CraftSim.UTIL:StartProfiling("Single Recipe Scan")
         local recipeInfo = recipeInfos[currentIndex]
         if not recipeInfo then
             CraftSim.RECIPE_SCAN:EndScan()
@@ -298,22 +233,22 @@ function CraftSim.RECIPE_SCAN:StartScan()
             if optimizeG or optimizeI then
                 recipeData:OptimizeProfit(optimizeI)
             else
-                CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
+                CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
                 recipeData:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.PROFIT)
             end
             CraftSim.UTIL:StopProfiling("Optimize ALL: SCAN")
         else
-            CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
+            CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
         end
 
 
 
         local function continueScan()
-            CraftSim.UTIL:StopProfiling("Single Recipe Scan OOP")
-            CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRowOOP(recipeData) 
+            CraftSim.UTIL:StopProfiling("Single Recipe Scan")
+            CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData) 
 
             currentIndex = currentIndex + 1
-            C_Timer.After(CraftSim.RECIPE_SCAN.scanInterval, scanRecipesByIntervalOOP)
+            C_Timer.After(CraftSim.RECIPE_SCAN.scanInterval, scanRecipesByInterval)
         end
         -- so we can display them smoothly
         -- TODO: should we also wait for the reagents to load?
@@ -322,14 +257,11 @@ function CraftSim.RECIPE_SCAN:StartScan()
 
     CraftSim.RECIPE_SCAN:ToggleScanButton(false)
     CraftSim.RECIPE_SCAN:ResetResults()
-    scanRecipesByIntervalOOP()
+    scanRecipesByInterval()
 end
 
-
--- OOP Refactor
-
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.RECIPE_SCAN:SetReagentsByScanModeOOP(recipeData)
+function CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
     local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
 
     if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q1 then

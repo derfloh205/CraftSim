@@ -570,7 +570,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	if recipeData and showMaterialOptimization then
 		CraftSim.UTIL:StartProfiling("Reagent Optimization")
 		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, CraftSimOptions.materialSuggestionInspirationThreshold)
-		CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplayOOP(recipeData, optimizationResult, exportMode)
+		CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, optimizationResult, exportMode)
 		CraftSim.UTIL:StopProfiling("Reagent Optimization")
 	end
 
