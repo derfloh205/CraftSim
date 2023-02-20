@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("7.2.0") ..
+        f.p .. "Wording fixes for Recipe Whisper formatting help text" ..
         newP("7.1.0") ..
         f.P .. "New Feature " .. f.g("Customer Service - Recipe Whisper") ..
         f.a .. "A on demand whisper to a target character containing" .. 
