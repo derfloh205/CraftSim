@@ -103,7 +103,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
         statisticsText = statisticsText .. "Real Ø Profit: " .. actualAverageProfit .. "\n"
         statisticsText = statisticsText .. "Real Profit: " .. actualProfit .. "\n\n"
         statisticsText = statisticsText .. "Procs - Real / Expected:\n\n"
-        if craftRecipeData.supportsInspiration then
+        if CraftSim.MAIN.currentRecipeData.supportsInspiration then
             local expectedProcs = tonumber(CraftSim.UTIL:round(CraftSim.MAIN.currentRecipeData.professionStats.inspiration:GetPercent(true) * craftRecipeData.numCrafts, 1)) or 0
             if craftRecipeData.numInspiration >= expectedProcs then
                 statisticsText = statisticsText .. "Inspiration: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numInspiration, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedProcs .. "\n"
@@ -111,7 +111,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
                 statisticsText = statisticsText .. "Inspiration: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numInspiration, CraftSim.CONST.COLORS.RED) .. " / " .. expectedProcs .. "\n"
             end
         end
-        if craftRecipeData.supportsMulticraft then
+        if CraftSim.MAIN.currentRecipeData.supportsMulticraft then
             local expectedProcs =  tonumber(CraftSim.UTIL:round(CraftSim.MAIN.currentRecipeData.professionStats.multicraft:GetPercent(true) * craftRecipeData.numCrafts, 1)) or 0
             if craftRecipeData.numMulticraft >= expectedProcs then
                 statisticsText = statisticsText .. "Multicraft: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedProcs .. "\n"

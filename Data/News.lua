@@ -10,7 +10,10 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
-        newP("7.0") ..
+        newP("7.1.0") ..
+        f.p .. "Fixed Craft Results not showing real/expected" ..
+        f.a .. "for inspiration and multicraft" ..
+        newP("7.0.0") ..
         f.P .. f.g("Refactored ") .. f.l("ALL") .. " of CraftSim's Backend" ..
         f.a .. "to an " .. f.bb("Object Orientated") .. " Design." .. 
         f.a .. "This makes newer modules and features " .. f.g("much easier to develop!") ..
