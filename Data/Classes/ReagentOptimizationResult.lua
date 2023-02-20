@@ -84,5 +84,5 @@ function CraftSim.ReagentOptimizationResult:Debug()
 end
 
 function CraftSim.ReagentOptimizationResult:IsAllocated(recipeData)
-    CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, self)
+    return CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, self)
 end

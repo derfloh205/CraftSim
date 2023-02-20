@@ -224,24 +224,31 @@ function CraftSim.ReagentData:GetSkillFromRequiredReagents()
     return 0
 end
 
+---@param reagents CraftSim.Reagent[]
 function CraftSim.ReagentData:EqualsQualityReagents(reagents)
+    print("EqualsQualityReagents ?")
+    print(reagents, true)
     -- order can be different?
-    for _, reagent in pairs(self.requiredReagents) do
-        if reagent.hasQuality then
-            for _, reagentItem in pairs(reagent.items) do
-                local foundReagent = nil
-                for _, bestReagent in pairs(reagents) do
-                    foundReagent = CraftSim.UTIL:Find(bestReagent.items, function(r) return r.item:GetItemID() == reagentItem.item:GetItemID() end)
-                    if foundReagent then
-                        if reagentItem.quantity ~= foundReagent.quantity then
-                            return false
-                        end
-                    end
-                end
+    local qualityReagents = CraftSim.UTIL:FilterTable(self.requiredReagents, function(reagent) return reagent.hasQuality end)
+    for index, reagentA in pairs(qualityReagents) do
+        local reagentB = reagents[index]
+        for itemIndex, reagentItemA in pairs(reagentA.items) do
+            local reagentItemB = reagentB.items[itemIndex]
+
+            print("compare items: " .. tostring(reagentItemA.item:GetItemLink()) .. " - " .. tostring(reagentItemB.item:GetItemLink()))
+            print("quantities: " .. tostring(reagentItemA.quantity) .. " - " .. tostring(reagentItemB.quantity))
+
+            if reagentItemA.item:GetItemID() ~= reagentItemB.item:GetItemID() then
+                print("different itemids...")
+                return false
+            elseif reagentItemA.quantity ~= reagentItemB.quantity then
+                print("different quantities")
+                return false
             end
         end
     end
 
+    print("equals!")
     return true
 end
 

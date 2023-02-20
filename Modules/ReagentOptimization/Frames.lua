@@ -147,10 +147,11 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
         materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
     end
 
-    local isSameAllocation = (optimizationResult and optimizationResult:IsAllocated(recipeData)) or false
+    local isSameAllocation = false
+    if optimizationResult then
+        isSameAllocation = optimizationResult:IsAllocated(recipeData)
+    end
     
-    print("bestAllocation: " .. tostring(optimizationResult))
-    print("isSameAllocation: " .. tostring(isSameAllocation))
     if optimizationResult == nil or isSameAllocation then
         materialFrame.content.infoText:Show()
         if isSameAllocation then
@@ -184,7 +185,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
                 if bestQBox:GetChecked() then
                     bestQBox:Click()
                 end
-                CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, optimizationResult)
+                CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(optimizationResult)
             end)
         else
             materialFrame.content.allocateText:Show()

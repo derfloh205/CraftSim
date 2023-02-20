@@ -190,45 +190,34 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     return results
 end
 
-function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(recipeData, bestAllocation)
-    if not CraftSim.SIMULATION_MODE.isActive then
+---@param optimizationResult CraftSim.ReagentOptimizationResult
+function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(optimizationResult)
+    if CraftSim.SIMULATION_MODE.isActive then
+        for reagentIndex, currentInput in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
+            local reagent = optimizationResult.reagents[reagentIndex]
 
-        for _, currentInput in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
-            local reagentIndex = currentInput.inputq1.reagentIndex
-            local reagent = recipeData.reagentData.requiredReagents[reagentIndex]
-
-            if currentInput.isActive and reagent.hasQuality then
-                for i = 1, 3, 1 do
-                    local allocationForQuality = nil
-                    -- check if bestAllocations has a allocation set for this reagent
-                    for _, allocation in pairs(bestAllocation.allocations) do
-                        for _, qAllocation in pairs(allocation.allocations) do
-                            if qAllocation.itemID == reagent.items[i].item:GetItemID() then
-                                --print("found qAllocation..")
-                                allocationForQuality = qAllocation.allocations
-                            end
-                        end
-                    end
-                    if allocationForQuality then
-                        reagent.items[i].quantity = allocationForQuality
-                        currentInput["inputq" .. i]:SetText(allocationForQuality)
+            if reagent then
+                if currentInput.isActive and reagent.hasQuality then
+                    for i, reagentItem in pairs(reagent.items) do
+                        currentInput["inputq" .. i]:SetText(reagentItem.quantity)
                     end
                 end
             end
         end
 
-        recipeData:Update()
+        --recipeData:Update()
     
         CraftSim.MAIN:TriggerModulesErrorSafe()
     end
-	
 end
 
+---@param recipeData CraftSim.RecipeData
+---@param bestResult CraftSim.ReagentOptimizationResult
 function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestResult)
     if not bestResult then
         return false
     end
-
+    print("Is current allocation", false, true)
     return recipeData.reagentData:EqualsQualityReagents(bestResult.reagents)
 end
 
