@@ -22,6 +22,7 @@ Util/Tooltip.lua
 Util/Frames.lua
 Util/Cache.lua
 Util/Comm.lua
+Util/API.lua
 
 Main/CraftSim.lua
 
