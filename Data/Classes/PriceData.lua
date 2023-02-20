@@ -77,11 +77,13 @@ function CraftSim.PriceData:Update()
 
         -- optionals and finishing
         local activeOptionalReagents = CraftSim.UTIL:Concat({
-                CraftSim.UTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeItem end),
-                CraftSim.UTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeItem end),
+                CraftSim.UTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeReagent end),
+                CraftSim.UTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeReagent end),
             })
+        print("num active optionals: " .. #activeOptionalReagents)
         for _, activeOptionalReagent in pairs(activeOptionalReagents) do
             if activeOptionalReagent then
+                print("added optional reagent to crafting cost: " .. tostring(activeOptionalReagent.item:GetItemLink()))
                 local itemID = activeOptionalReagent.item:GetItemID()
                 local itemPrice = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(self.recipeData.recipeID, itemID) or CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true)
                 self.craftingCosts = self.craftingCosts + itemPrice
