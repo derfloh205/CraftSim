@@ -45,7 +45,7 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanOptimizeProfessionTools = false,
 
 	-- profit calc
-	enableHSV = true,
+	customMulticraftConstant = CraftSim.CONST.MULTICRAFT_CONSTANT,
 
 	-- customer service module
 	customerServiceRecipeWhisperFormat =
@@ -116,6 +116,8 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		"Crafting Costs: %cc\n" ..
 		"%ccd")
 		CraftSimOptions.craftGarbageCollectCrafts = CraftSimOptions.craftGarbageCollectCrafts or 500
+		CraftSimOptions.customMulticraftConstant = CraftSimOptions.customMulticraftConstant or CraftSim.CONST.MULTICRAFT_CONSTANT
+		CraftSimOptions.customResourcefulnessConstant = CraftSimOptions.customResourcefulnessConstant or CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end
@@ -139,9 +141,6 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.customerServiceAllowAutoResult == nil then
 			CraftSimOptions.customerServiceAllowAutoResult = true
-		end
-		if CraftSimOptions.enableHSV == nil then
-			CraftSimOptions.enableHSV = true
 		end
 		if CraftSimOptions.craftGarbageCollectEnabled == nil then
 			CraftSimOptions.craftGarbageCollectEnabled = true

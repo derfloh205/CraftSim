@@ -250,16 +250,27 @@ function CraftSim.OPTIONS:Init()
      -90, 
      -50)
 
-     local enableHSVCheckbox = CraftSim.FRAME:CreateCheckbox(" Enable HSV Consideration in Profit Calculation", 
-     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.HSV_EXPLANATION),
-     "enableHSV", 
-     ProfitCalculationTab.content, 
-     skillBreakpointsCheckbox, 
-     "TOPLEFT", 
-     "BOTTOMLEFT", 
-     0, 
-     0)
+    local customMulticraftConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputMulticraftConstant", ProfitCalculationTab.content, skillBreakpointsCheckbox, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25, 
+        CraftSimOptions.customMulticraftConstant, 
+        function ()
+            CraftSimOptions.customMulticraftConstant = CraftSimOptionsInputMulticraftConstant:GetText()
+        end)
 
+    CraftSim.FRAME:CreateText("Multicraft Constant", ProfitCalculationTab.content, customMulticraftConstantInput, "LEFT", "RIGHT", 5, 0)
+
+    CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_CONSTANT_EXPLANATION), ProfitCalculationTab.content, customMulticraftConstantInput, "RIGHT", "LEFT", -5, 0)
+
+    local customResourcefulnessConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputResourcefulnessConstant", ProfitCalculationTab.content, customMulticraftConstantInput, "TOPLEFT", "BOTTOMLEFT", 0, -10, 100, 25, 
+    CraftSimOptions.customResourcefulnessConstant, 
+    function ()
+        CraftSimOptions.customResourcefulnessConstant = CraftSimOptionsInputResourcefulnessConstant:GetText()
+    end)
+
+    CraftSim.FRAME:CreateText("Resourcefulness Constant", ProfitCalculationTab.content, customResourcefulnessConstantInput, "LEFT", "RIGHT", 5, 0)
+
+    CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_CONSTANT_EXPLANATION), ProfitCalculationTab.content, customResourcefulnessConstantInput, "RIGHT", "LEFT", -5, 0)
+
+    
     local precentProfitCheckbox = CraftSim.FRAME:CreateCheckbox(" Show Profit Percentage", 
     "Show the percentage of profit to crafting costs besides the gold value",
     "showProfitPercentage", 

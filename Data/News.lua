@@ -11,6 +11,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("7.2.0") ..
+        f.P .. f.g("New Options") .. " to modify the " .. f.bb("Multicraft") .. " and " .. f.bb("Resourcefulness") ..
+        f.a .. "constants used in profit calculation" ..
         f.p .. "Wording fixes for Recipe Whisper formatting help text" ..
         newP("7.1.0") ..
         f.P .. "New Feature " .. f.g("Customer Service - Recipe Whisper") ..

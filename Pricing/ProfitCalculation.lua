@@ -13,7 +13,7 @@ function CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
 
     local savedCosts = 0
     if recipeData.supportsResourcefulness then
-        savedCosts = priceData.craftingCostsRequired * (CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR * extraSavedItemsFactor)
+        savedCosts = priceData.craftingCostsRequired * (CraftSimOptions.customResourcefulnessConstant * extraSavedItemsFactor)
     end
 
     return savedCosts
@@ -24,7 +24,7 @@ end
 ---@return number hsvChance -- not in decimal!
 ---@return boolean withInspirationOnly -- only if it procs together with inspiration, the inspiration chance has to be factored in afterwards
 function CraftSim.CALC:getHSVChance(recipeData) 
-    if CraftSimOptions.enableHSV and recipeData.maxQuality and recipeData.resultData.expectedQuality < recipeData.maxQuality then
+    if recipeData.maxQuality and recipeData.resultData.expectedQuality < recipeData.maxQuality then
         
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
@@ -92,7 +92,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
 
         print("SavedCostsRes: " .. CraftSim.UTIL:FormatMoney(savedCostsByRes))
 
-        local maxExtraItems = (2.5*recipeData.baseItemAmount) * professionStats.multicraft:GetExtraFactor(true)
+        local maxExtraItems = (CraftSimOptions.customMulticraftConstant*recipeData.baseItemAmount) * professionStats.multicraft:GetExtraFactor(true)
         local expectedAdditionalItems = (1 + maxExtraItems) / 2 
         local expectedItems = recipeData.baseItemAmount + expectedAdditionalItems
 
@@ -243,7 +243,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         local resChance = professionStats.resourcefulness:GetPercent(true)
         local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
 
-        local maxExtraItems = (2.5*recipeData.baseItemAmount) * professionStats.multicraft:GetExtraFactor(true)
+        local maxExtraItems = (CraftSimOptions.customMulticraftConstant*recipeData.baseItemAmount) * professionStats.multicraft:GetExtraFactor(true)
         local expectedAdditionalItems = (1 + maxExtraItems) / 2 
         local expectedItems = recipeData.baseItemAmount + expectedAdditionalItems
 

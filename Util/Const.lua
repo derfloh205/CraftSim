@@ -22,6 +22,7 @@ CraftSim.CONST.PERCENT_MODS = {
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
 -- currently this is just an approximation
 CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
+CraftSim.CONST.MULTICRAFT_CONSTANT = 2.5
 
 CraftSim.CONST.DISCORD_INVITE_URL = "https://discord.gg/7vqKMgezXR"
 
@@ -438,6 +439,8 @@ CraftSim.CONST.TEXT = {
     STATISTICS_CDF_EXPLANATION = 49,
     PROFIT_EXPLANATION = 50,
     PROFIT_EXPLANATION_HSV = 51,
+    MULTICRAFT_CONSTANT_EXPLANATION = 52,
+    RESOURCEFULNESS_CONSTANT_EXPLANATION = 53,
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
