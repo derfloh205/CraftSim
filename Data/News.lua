@@ -12,12 +12,13 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                                 ( You are awesome! )") ..
         newP("7.1.0") ..
         f.P .. "New Feature " .. f.g("Customer Service - Recipe Whisper") ..
-        f.a .. "A on demand whisper to a target character containing various info" .. 
-        f.a .. "about your currently open recipe." ..
-        f.a .. "Automatically adds a small disclaimer at the end if any stats were" .. 
-        f.a .. "manually increased or decreased in " .. f.bb("Simulation Mode") ..
+        f.a .. "A on demand whisper to a target character containing" .. 
+        f.a .. "various information about your currently open recipe." ..
+        f.a .. "Automatically adds a small disclaimer at the end if any" .. 
+        f.a .. "stats were modified in " .. f.bb("Simulation Mode") ..
         f.p .. "Fixed " .. f.bb("Craft Results") .. " not showing real/expected" ..
         f.a .. "for inspiration and multicraft" ..
+        f.p .. "Fixed " .. f.bb("Reagent Optimization Module") .. " Assign Button" ..
         newP("7.0.0") ..
         f.P .. f.g("Refactored ") .. f.l("ALL") .. " of CraftSim's Backend" ..
         f.a .. "to an " .. f.bb("Object Orientated") .. " Design." .. 
