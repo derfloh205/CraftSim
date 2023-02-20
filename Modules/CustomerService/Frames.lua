@@ -31,7 +31,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 
         recipeWhisperTab.content.msgFrameContent.msgFormatBox = CreateFrame("EditBox", nil, recipeWhisperTab.content.msgFrameContent)
         recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetPoint("TOP", recipeWhisperTab.content.msgFrameContent, "TOP", 0, -5)
-        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(CraftSimOptions.customerServiceAutoReplyFormat)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(CraftSimOptions.customerServiceRecipeWhisperFormat)
         recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetWidth(recipeWhisperTab.content.msgFrameContent:GetWidth() - 15)
         recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetHeight(20)
         recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetMultiLine(true)
