@@ -28,6 +28,7 @@ _, CraftSim = ...
 ---@field professionData CraftSim.ProfessionData
 ---@field reagentData CraftSim.ReagentData
 ---@field specializationData CraftSim.SpecializationData
+---@field buffData CraftSim.BuffData
 ---@field professionGearSet CraftSim.ProfessionGearSet
 ---@field professionStats CraftSim.ProfessionStats The ProfessionStats of that recipe considering gear, reagents, buffs.. etc
 ---@field baseProfessionStats CraftSim.ProfessionStats The ProfessionStats of that recipe without gear or reagents
@@ -96,6 +97,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
         print("No RecipeData created: SchematicInfo not found")
         return
     end
+    self.buffData = CraftSim.BuffData()
+    self.buffData:Update()
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
 
     local qualityReagents = CraftSim.UTIL:Count(self.reagentData.requiredReagents, function (reagent)
@@ -124,6 +127,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
     equippedProfessionGearSet:LoadCurrentEquippedSet()
     
     self.baseProfessionStats:subtract(equippedProfessionGearSet.professionStats)
+    self.baseProfessionStats:subtract(self.buffData.professionStats)
     -- As we dont know in this case what the factors are without gear and reagents and such
     -- we set them to 0 and let them accumulate in UpdateProfessionStats
     self.baseProfessionStats:ClearFactors()
@@ -268,6 +272,7 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     local skillRequiredReagents = self.reagentData:GetSkillFromRequiredReagents()
     local optionalStats = self.reagentData:GetProfessionStatsByOptionals()
     local itemStats = self.professionGearSet.professionStats
+    local buffStats = self.buffData.professionStats
     
     self.professionStats:Clear()
 
@@ -276,23 +281,18 @@ function CraftSim.RecipeData:UpdateProfessionStats()
 
     self.professionStats:add(self.baseProfessionStats)
 
+    self.professionStats:add(buffStats)
+
     self.professionStats.skill:addValue(skillRequiredReagents)
 
     self.professionStats:add(optionalStats)
 
-    print("stats before item add")
-    print(self.professionStats)
-
     self.professionStats:add(itemStats)
 
-    print("stats before add spec, after item add")
-    print(self.professionStats)
     if not self.isCooking then
         local specExtraFactors = self.specializationData:GetExtraFactors()
         self.professionStats:add(specExtraFactors)
     end
-    print("stats after add spec")
-    print(self.professionStats)
 
     -- finally add any custom modifiers
     self.professionStats:add(self.professionStatModifiers)
