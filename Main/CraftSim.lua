@@ -481,14 +481,10 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			-- Set Reagents based on visibleFrame and load equipped profession gear set
 			recipeData:SetAllReagentsBySchematicForm()
 			recipeData:SetEquippedProfessionGearSet()
-			recipeData:Update()
 
 			CraftSim.MAIN.currentRecipeData = recipeData
 		end
 	end
-
-	local recipeType = nil 
-	local priceData = nil
 
     local showMaterialOptimization = false
     local showStatweights = false

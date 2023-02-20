@@ -171,11 +171,16 @@ end
 
 function CraftSim.RecipeData:SetEquippedProfessionGearSet()
     self.professionGearSet:LoadCurrentEquippedSet()
+    self:Update()
 end
 
 function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
     local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+
+    if not schematicForm then
+        return
+    end
     
     local reagentSlots = schematicForm.reagentSlots
     local currentTransaction = schematicForm:GetTransaction()

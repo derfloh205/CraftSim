@@ -22,7 +22,7 @@ Automatically calls Update()
 
 Calculates the average profit based on professionGearSet, reagentData, resultData and professionStats. 
 
-It has two return values. The first is the average profit and the second is a table containing the 'Proc to Profit' probability distribution of the recipe.
+It has two return values. The first is the average profit in copper and the second is a table containing the 'Proc to Profit' probability distribution of the recipe.
 
 ### recipeData:OptimizeQuality(optimizeInspiration?: boolean)
 
@@ -49,6 +49,10 @@ Optimizes the quality based required reagents for highest achievable quality wit
 *optimizeInspiration* can be set to optimize for reaching the highest possible inspiration breakpoint.
 Automatically calls Update()
 
+### recipeData:SetAllReagentsBySchematicForm()
+
+This sets all required and optional reagents based on the set reagents in the visible default blizzard crafting GUI.
+
 ### recipeData:SetOptionalReagents(itemIDList: number[])
 
 Takes a list of itemIDs of optional reagents which will, if available, be set as active in the reagentData.
@@ -66,4 +70,15 @@ Takes a list of *ReagentListItem* objects to set the required reagents of the re
 
 ### recipeData:SetEquippedProfessionGearSet()
 
-Sets the recipeData's professionGearSet to the currently equipped profession gear for this recipe's profession
+Sets the recipeData's professionGearSet to the currently equipped profession gear for this recipe's profession.
+Automatically calls Update()
+
+
+### Example
+
+An example that uses CraftSim's API to fetch a recipeData object, optimizes gear and reagents for profit (using inspiration breakpoints) and then prints the resulting profit
+
+    local recipeData = CraftSimAPI:GetRecipeData(367713)
+    recipeData:OptimizeProfit(true)
+    local averageProfit = recipeData:GetAverageProfit()
+    print(averageProfit)
