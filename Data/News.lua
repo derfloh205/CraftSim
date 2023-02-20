@@ -15,12 +15,14 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "to an " .. f.bb("Object Orientated") .. " Design." .. 
         f.a .. "This makes newer modules and features " .. f.g("much easier to develop!") ..
         f.a .. "Also enables easy to use " .. f.g("ingame API functions") .. " for CraftSim." ..
+        f.P .. f.g("API") .. " added to fetch CraftSim's new " .. f.g("RecipeData") .. " object." ..
+        f.a .. "Also added an " .. f.bb("API_README.md") ..
         f.s .. f.r("Disabled") .. " the " .. f.bb("Tooltip, Auto Reply") .. 
         f.a .. " and " .. f.bb("Account Sync") .. " Features until reworked." ..
         f.s .. f.r("Removed") .. " Experimental Data Toggle." .. 
         f.a .. "Profession Stats are now always fetched from the ingame API!" ..
         f.a .. "Manually mapped specialization data is now only used" .. 
-        f.a .. "for the " .. f.bb("Specialization Info Module") ..
+        f.a .. "for the " .. f.bb("Specialization Info Module") .. " and " .. f.bb("Knowledge Simulation") ..
         newP("6.7.2") ..
         f.P .. f.bb("HSV Consideration Explanation") .. " added" ..
         f.s .. "New Options Tab: " .. f.g("Crafting") ..
