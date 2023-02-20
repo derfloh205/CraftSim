@@ -122,10 +122,10 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
             local expectedAdditionalItems = 0
             local multicraftExtraItemsFactor = CraftSim.MAIN.currentRecipeData.professionStats.multicraft:GetExtraFactor(true)
     
-            local maxExtraItems = (2.5*CraftSim.MAIN.currentRecipeData.baseItemAmount) * multicraftExtraItemsFactor
+            local maxExtraItems = (CraftSimOptions.customMulticraftConstant*CraftSim.MAIN.currentRecipeData.baseItemAmount) * multicraftExtraItemsFactor
             expectedAdditionalItems = tonumber(CraftSim.UTIL:round((1 + maxExtraItems) / 2, 2)) or 0
     
-            averageExtraItems = tonumber(CraftSim.UTIL:round(( craftRecipeData.numMulticraft > 0 and (craftRecipeData.multicraftExtraItems / craftRecipeData.numMulticraft)) or 0, 2)) or 0
+            averageExtraItems = tonumber(CraftSim.UTIL:round(( craftRecipeData.numMulticraft > 0 and (craftRecipeData.numMulticraftExtraItems / craftRecipeData.numMulticraft)) or 0, 2)) or 0
             if averageExtraItems == 0 then
                 statisticsText = statisticsText .. "- Ø Extra Items: " .. averageExtraItems .. " / " .. expectedAdditionalItems .. "\n"
             elseif averageExtraItems >= expectedAdditionalItems then
