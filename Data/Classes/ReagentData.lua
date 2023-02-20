@@ -125,6 +125,21 @@ function CraftSim.ReagentData:GetRequiredCraftingReagentInfoTbl()
     return craftingReagentInfoTbl
 end
 
+---@return CraftSim.OptionalReagent[] activeReagents
+function CraftSim.ReagentData:GetActiveOptionalReagents()
+    local activeReagents = {}
+
+    local allSlots = CraftSim.UTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})
+
+    table.foreach(allSlots, function (_, slot)
+        if slot.activeReagent then
+            table.insert(activeReagents, slot.activeReagent)
+        end
+    end)
+
+    return activeReagents
+end
+
 ---@param itemID number
 function CraftSim.ReagentData:SetOptionalReagent(itemID)
     for _, slot in pairs(CraftSim.UTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do

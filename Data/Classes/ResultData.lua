@@ -11,6 +11,9 @@ _, CraftSim = ...
 ---@field expectedItem? ItemMixin
 ---@field expectedItemUpgrade? ItemMixin
 ---@field canUpgradeQuality boolean
+---@field canUpgradeInspiration boolean
+---@field canUpgradeHSV boolean
+---@field canUpgradeInspirationHSV boolean
 ---@field expectedItemInspiration? ItemMixin
 ---@field expectedItemHSV? ItemMixin
 ---@field expectedItemInspirationHSV? ItemMixin
@@ -27,6 +30,9 @@ function CraftSim.ResultData:new(recipeData)
     self.recipeData = recipeData
     self.itemsByQuality = {}
     self.canUpgradeQuality = false
+    self.canUpgradeInspiration = false
+    self.canUpgradeHSV = false
+    self.canUpgradeInspirationHSV = false
     self.expectedQuality = 1
     self.expectedQualityUpgrade = 1
     self.expectedQualityInspiration = 1
@@ -125,11 +131,10 @@ function CraftSim.ResultData:Update()
     self.expectedQualityHSV = qualityHSV
     self.expectedQualityInspirationHSV = qualityInspirationHSV
 
-    if self.expectedQuality < self.expectedQualityUpgrade then
-        self.canUpgradeQuality = true
-    else
-        self.canUpgradeQuality = false
-    end
+    self.canUpgradeQuality = self.expectedQuality < self.expectedQualityUpgrade
+    self.canUpgradeInspiration = self.expectedQuality < self.expectedQualityInspiration
+    self.canUpgradeHSV = self.expectedQuality < self.expectedQualityHSV
+    self.canUpgradeInspirationHSV = self.expectedQuality < self.expectedQualityInspirationHSV
 
     self.expectedItemInspiration = self.itemsByQuality[qualityInspiration]
     self.expectedItemHSV = self.itemsByQuality[qualityHSV]

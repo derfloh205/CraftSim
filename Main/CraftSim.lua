@@ -48,9 +48,7 @@ CraftSimOptions = CraftSimOptions or {
 	enableHSV = true,
 
 	-- customer service module
-	customerServiceAutoReplyCommand = "!craft",
-	customerServiceEnableAutoReply = false,
-	customerServiceAutoReplyFormat =
+	customerServiceRecipeWhisperFormat =
 			"Highest Result: %gc\n" ..
             "with Inspiration: %ic (%insp)\n" ..
             "Crafting Costs: %cc\n" ..
@@ -112,8 +110,7 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.transparencyCostOverview = CraftSimOptions.transparencyCostOverview or 1
 		CraftSimOptions.transparencySpecInfo = CraftSimOptions.transparencySpecInfo or 1
 		CraftSimOptions.customerServiceActivePreviewIDs = CraftSimOptions.customerServiceActivePreviewIDs or {}
-		CraftSimOptions.customerServiceAutoReplyCommand = CraftSimOptions.customerServiceAutoReplyCommand or "!craft"
-		CraftSimOptions.customerServiceAutoReplyFormat = CraftSimOptions.customerServiceAutoReplyFormat or
+		CraftSimOptions.customerServiceRecipeWhisperFormat = CraftSimOptions.customerServiceRecipeWhisperFormat or
 		("Highest Result: %gc\n" ..
 		"with Inspiration: %ic (%insp)\n" ..
 		"Crafting Costs: %cc\n" ..

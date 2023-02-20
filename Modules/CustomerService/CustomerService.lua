@@ -285,6 +285,7 @@ function CraftSim.CUSTOMER_SERVICE:TransformLink(event, message, sender, ...)
     end
 end
 
+-- depricated
 function CraftSim.CUSTOMER_SERVICE:CHAT_MSG_WHISPER(text, playerName, 
     languageName, channelName, playerName2, specialFlags, zoneChannelID, 
     channelIndex, channelBaseName, languageID, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
@@ -477,5 +478,81 @@ end
 function CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
     local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
     previewFrame.content.StopUpdate()
+end
+
+function CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
+    local recipeData = CraftSim.MAIN.currentRecipeData
+
+    if not recipeData then
+        return
+    end
+
+    local resultData = recipeData.resultData
+    local priceData = recipeData.priceData
+    local professionStats = recipeData.professionStats
+
+    local optionalReagents = recipeData.reagentData:GetActiveOptionalReagents()
+    local requiredReagents = recipeData.reagentData.requiredReagents
+
+    -- replace formattext with values
+    local responseText = CraftSimOptions.customerServiceRecipeWhisperFormat
+                    
+    local inspStat = (recipeData.supportsInspiration and (professionStats.inspiration:GetPercent() .. "%%")) or "-"
+    local mcStat = (recipeData.supportsMulticraft and (professionStats.multicraft:GetPercent() .. "%%")) or "-"
+    local resStat = (recipeData.supportsResourcefulness and (professionStats.resourcefulness:GetPercent() .. "%%")) or "-"
+
+    local craftingCostsFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(priceData.craftingCosts, true)
+
+    local detailedCraftingCostText = ""
+    local reagentListText = ""
+    local optionalReagentListText = ""
+
+    table.foreach(requiredReagents, function (_, reagent)
+        table.foreach(reagent.items, function (_, reagentItem)
+            if reagentItem.quantity > 0 then
+                local itemPrice = (CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true) or 0) * reagentItem.quantity
+                local itemPriceFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(CraftSim.UTIL:round(itemPrice*10000)/10000, true)
+                detailedCraftingCostText = detailedCraftingCostText .. reagentItem.item:GetItemLink() .. " x " .. reagentItem.quantity .. " (~" .. itemPriceFormatted .. ")" .. "\n"
+                reagentListText = reagentListText .. reagentItem.item:GetItemLink() .. " x " .. reagentItem.quantity .. "\n"
+            end
+        end)
+    end)
+
+    table.foreach(optionalReagents, function (_, optionalReagent)
+        local itemPrice = (CraftSim.PRICEDATA:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(), true) or 0)
+        local itemPriceFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(CraftSim.UTIL:round(itemPrice*10000)/10000, true)
+        detailedCraftingCostText = detailedCraftingCostText .. optionalReagent.item:GetItemLink() .. " x 1 (~" .. itemPriceFormatted .. ")" .. "\n"
+        optionalReagentListText = optionalReagentListText .. optionalReagent.item:GetItemLink() .. " x 1\n"
+    end)
+
+    
+    responseText = string.gsub(responseText or "", "%%gc", resultData.expectedItem:GetItemLink())
+    responseText = string.gsub(responseText or "", "%%ic", (resultData.canUpgradeInspiration and resultData.expectedItemInspiration:GetItemLink()) or "-")
+
+    responseText = string.gsub(responseText or "", "%%insp", (resultData.canUpgradeInspiration and inspStat) or "-")
+
+    responseText = string.gsub(responseText or "", "%%mc", mcStat)
+    responseText = string.gsub(responseText or "", "%%res", resStat)
+    responseText = string.gsub(responseText or "", "%%ccd", detailedCraftingCostText) -- order is important or the %cc of %ccd will be replaced
+    responseText = string.gsub(responseText or "", "%%cc", craftingCostsFormatted)
+    responseText = string.gsub(responseText or "", "%%orl", optionalReagentListText)
+    responseText = string.gsub(responseText or "", "%%rl", reagentListText)
+
+    local responseLines = strsplittable("\n", responseText or "")
+
+    local modifiedStatsText = recipeData.professionStatModifiers:GetTooltipText()
+
+    if modifiedStatsText ~= "" then
+        local modifiedLines = strsplittable("\n", modifiedStatsText)
+        table.insert(responseLines, "Some profession stats were manually increased/decreased:")
+        table.foreach(modifiedLines, function (_, line)
+            table.insert(responseLines, line)
+        end)
+    end
+
+    for _, answerLine in pairs(responseLines) do
+        SendChatMessage(answerLine, "WHISPER", nil, whisperTarget)
+    end
+
 end
 

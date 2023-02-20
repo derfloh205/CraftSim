@@ -12,56 +12,49 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 
     local function createContent(frame)
         frame:Hide()
-        local autoResultTab = CraftSim.FRAME:CreateTab("Live Preview", frame.content, frame.title, "TOP", "BOTTOM", -90, -15, true, 300, 250, frame.content, frame.title, 0, -50)
-        local autoReplyTab = CraftSim.FRAME:CreateTab("Recipe Whisper", frame.content, autoResultTab, "LEFT", "RIGHT", 0, 0, false, 300, 250, frame.content, frame.title, 0, -50)
-        autoReplyTab.content:Hide()
-        autoReplyTab:Hide()
-        autoReplyTab.content.enableReplyCB = CraftSim.FRAME:CreateCheckbox("Enable Auto Reply", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION), 
-        "customerServiceEnableAutoReply", autoReplyTab.content, autoReplyTab.content, "TOPLEFT", "TOPLEFT", 10, -10)
+        local recipeWhisperTab = CraftSim.FRAME:CreateTab("Recipe Whisper", frame.content, frame.title, "TOP", "BOTTOM", -90, -15, true, 300, 250, frame.content, frame.title, 0, -50)
+        local autoResultTab = CraftSim.FRAME:CreateTab("Live Preview", frame.content, recipeWhisperTab, "LEFT", "RIGHT", 0, 0, true, 300, 250, frame.content, frame.title, 0, -50)
 
-        autoReplyTab.content.whisperCommandTitle = CraftSim.FRAME:CreateText("Command:", autoReplyTab.content, autoReplyTab.content.enableReplyCB, "TOPLEFT", "BOTTOMLEFT", 0, -10)
-        autoReplyTab.content.whisperCommandInput = CraftSim.FRAME:CreateInput(nil, autoReplyTab.content, autoReplyTab.content.whisperCommandTitle, "LEFT", "RIGHT", 5, 0, 100, 25, 
-        CraftSimOptions.customerServiceAutoReplyCommand, 
+        recipeWhisperTab.content.customerCharacterInput = CraftSim.FRAME:CreateInput(nil, recipeWhisperTab.content, recipeWhisperTab.content, "TOPLEFT", "TOPLEFT", 10, -30, 150, 25, 
+        "", 
         function() 
-            CraftSimOptions.customerServiceAutoReplyCommand = autoReplyTab.content.whisperCommandInput:GetText()
-            autoReplyTab.content.commandPreview:SetText("Example: " .. CraftSimOptions.customerServiceAutoReplyCommand .. " <itemLink> <ilvl>")
         end)
-        autoReplyTab.content.commandPreview = CraftSim.FRAME:CreateText("Example: " .. CraftSimOptions.customerServiceAutoReplyCommand .. " <itemLink> <ilvl>", 
-        autoReplyTab.content, autoReplyTab.content.whisperCommandTitle, "TOPLEFT", "BOTTOMLEFT", 0, -15, nil, nil, {type="H", value="LEFT"})
-        autoReplyTab.content.resetDefaults = CraftSim.FRAME:CreateButton("Reset to Defaults", autoReplyTab.content, autoReplyTab.content.whisperCommandInput, "LEFT", "RIGHT", 15, 0, 15, 25, true, function() 
+
+        recipeWhisperTab.content.whisperButton = CraftSim.FRAME:CreateButton("Whisper", recipeWhisperTab.content, recipeWhisperTab.content.customerCharacterInput, "LEFT", "RIGHT", 10, 0, 15, 25, true,
+        function ()
+            local whisperTarget = recipeWhisperTab.content.customerCharacterInput:GetText()
+            CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
+        end)
+
+        recipeWhisperTab.content.msgFormatScrollFrame, recipeWhisperTab.content.msgFrameContent =
+         CraftSim.FRAME:CreateScrollFrame(recipeWhisperTab.content, -90, 10, -10, 40)
+
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox = CreateFrame("EditBox", nil, recipeWhisperTab.content.msgFrameContent)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetPoint("TOP", recipeWhisperTab.content.msgFrameContent, "TOP", 0, -5)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(CraftSimOptions.customerServiceAutoReplyFormat)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetWidth(recipeWhisperTab.content.msgFrameContent:GetWidth() - 15)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetHeight(20)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetMultiLine(true)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetAutoFocus(false)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetFontObject("ChatFontNormal")
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetScript("OnEscapePressed", function() recipeWhisperTab.content.msgFrameContent.msgFormatBox:ClearFocus() end)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetScript("OnTextChanged", function() 
+            CraftSimOptions.customerServiceRecipeWhisperFormat = recipeWhisperTab.content.msgFrameContent.msgFormatBox:GetText()
+        end)
+
+        recipeWhisperTab.content.messageFormatTitle = CraftSim.FRAME:CreateText("Message Format", 
+        recipeWhisperTab.content, recipeWhisperTab.content.msgFormatScrollFrame, "BOTTOMLEFT", "TOPLEFT", 8, 5)
+
+        recipeWhisperTab.content.messageFormatHelp = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION), recipeWhisperTab.content, recipeWhisperTab.content.messageFormatTitle, "LEFT", "RIGHT", 10, 0)
+
+        recipeWhisperTab.content.resetDefaults = CraftSim.FRAME:CreateButton("Reset to Defaults", recipeWhisperTab.content, recipeWhisperTab.content.messageFormatHelp, "LEFT", "RIGHT", 10, 0, 15, 25, true, function() 
             local defaultFormat = 
             "Highest Result: %gc\n" ..
             "with Inspiration: %ic (%insp)\n" ..
             "Crafting Costs: %cc\n" ..
             "%ccd"
-            local defaultCommand = "!craft"
-            CraftSimOptions.customerServiceAutoReplyFormat = defaultFormat
-            autoReplyTab.content.msgFrameContent.msgFormatBox:SetText(defaultFormat)
-
-            autoReplyTab.content.whisperCommandInput:SetText(defaultCommand)
-            CraftSimOptions.customerServiceAutoReplyCommand = defaultCommand
-        end)
-
-        autoReplyTab.content.messageFormatTitle = CraftSim.FRAME:CreateText("Message Format", 
-        autoReplyTab.content, autoReplyTab.content.commandPreview, "TOPLEFT", "BOTTOMLEFT", 80, -15)
-
-        autoReplyTab.content.messageFormatHelp = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION), autoReplyTab.content, autoReplyTab.content.messageFormatTitle, "LEFT", "RIGHT", 10, 0)
-
-
-        autoReplyTab.content.msgFormatScrollFrame, autoReplyTab.content.msgFrameContent =
-         CraftSim.FRAME:CreateScrollFrame(autoReplyTab.content, -110, 10, -10, 40)
-
-        autoReplyTab.content.msgFrameContent.msgFormatBox = CreateFrame("EditBox", nil, autoReplyTab.content.msgFrameContent)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetPoint("TOP", autoReplyTab.content.msgFrameContent, "TOP", 0, -5)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetText(CraftSimOptions.customerServiceAutoReplyFormat)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetWidth(autoReplyTab.content.msgFrameContent:GetWidth() - 15)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetHeight(20)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetMultiLine(true)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetAutoFocus(false)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetFontObject("ChatFontNormal")
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetScript("OnEscapePressed", function() autoReplyTab.content.msgFrameContent.msgFormatBox:ClearFocus() end)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetScript("OnTextChanged", function() 
-            CraftSimOptions.customerServiceAutoReplyFormat = autoReplyTab.content.msgFrameContent.msgFormatBox:GetText()
+            CraftSimOptions.customerServiceRecipeWhisperFormat = defaultFormat
+            recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(defaultFormat)
         end)
 
         autoResultTab.content.enableConnections = CraftSim.FRAME:CreateCheckbox("Allow Connections", 
@@ -78,7 +71,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
             CraftSim.CUSTOMER_SERVICE:WhisperInvite(whisperTarget)
         end)
         
-        frame.tabs = {autoResultTab} -- autoReplyTab
+        frame.tabs = {recipeWhisperTab, autoResultTab}
         CraftSim.FRAME:InitTabSystem(frame.tabs)
     end
 
