@@ -586,7 +586,6 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 374499,
                 394621,
                 374495,
-                374496,
                 374494
             },
             equalsSkill = true,
@@ -599,7 +598,6 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 374499,
                 394621,
                 374495,
-                374496,
                 374494
             },
             threshold = 5,
@@ -613,7 +611,6 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 374499,
                 394621,
                 374495,
-                374496,
                 374494
             },
             threshold = 10,
@@ -627,7 +624,6 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 374499,
                 394621,
                 374495,
-                374496,
                 374494
             },
             threshold = 20,
@@ -641,7 +637,6 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 374499,
                 394621,
                 374495,
-                374496,
                 374494
             },
             threshold = 25,
@@ -652,8 +647,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             exceptionRecipeIDs = {
                 -- rings
                 374498,
-                374479,
+                374497,
                 376233,
+                374496
             },
             equalsSkill = true,
         },
@@ -662,8 +658,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             exceptionRecipeIDs = {
                 -- rings
                 374498,
-                374479,
+                374497,
                 376233,
+                374496
             },
             threshold = 5,
             skill = 5,
@@ -674,8 +671,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             exceptionRecipeIDs = {
                 -- rings
                 374498,
-                374479,
+                374497,
                 376233,
+                374496
             },
             threshold = 10,
             skill = 5,
@@ -685,8 +683,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             exceptionRecipeIDs = {
                 -- rings
                 374498,
-                374479,
+                374497,
                 376233,
+                374496
             },
             threshold = 20,
             skill = 5,
@@ -696,8 +695,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             exceptionRecipeIDs = {
                 -- rings
                 374498,
-                374479,
+                374497,
                 376233,
+                374496
             },
             threshold = 25,
             inspiration = 10,
