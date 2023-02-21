@@ -600,7 +600,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(priceOverrideFrame, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(priceOverrideFrameWO, showPriceOverride and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showPriceOverride then
-		CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)
+		CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayV2(recipeData, exportMode)
 	end
 
 	-- Material Optimization Module

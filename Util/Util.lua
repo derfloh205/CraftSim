@@ -560,6 +560,11 @@ function CraftSim.UTIL:GetItemStringFromLink(itemLink)
     return select(3, strfind(itemLink, "|H(.+)|h%["))
 end
 
+function CraftSim.UTIL:GetQualityIDFromLink(itemLink)
+    local qualityID = string.match(itemLink, "Quality%-Tier(%d+)")
+    return tonumber(qualityID)
+end
+
 function CraftSim.UTIL:FoldTable(t, foldFunction, startAtZero)
     local foldedValue = nil
     if #t < 2 and not startAtZero then

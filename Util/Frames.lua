@@ -28,6 +28,16 @@ function CraftSim.FRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, siz
 	newIcon:SetNormalFontObject("GameFontNormalLarge")
 	newIcon:SetHighlightFontObject("GameFontHighlightLarge")
 	newIcon:SetNormalTexture(texture)
+    newIcon.qualityIcon = CraftSim.FRAME:CreateQualityIcon(newIcon, sizeX*0.60, sizeY*0.60, newIcon, "TOPLEFT", "TOPLEFT", -sizeX*0.15, sizeY*0.15, 1)
+    newIcon.qualityIcon:Hide()
+    newIcon.SetQuality = function(qualityID) 
+        if qualityID then
+            newIcon.qualityIcon.SetQuality(qualityID)
+            newIcon.qualityIcon:Show()
+        else
+            newIcon.qualityIcon:Hide()
+        end
+    end
 
     newIcon.SetItem = function(itemIDOrLink, tooltipOwner, tooltipAnchor, byLink)
         if itemIDOrLink then
