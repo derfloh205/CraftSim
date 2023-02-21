@@ -13,6 +13,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         local frames = {}
         -- CHECK BUTTON
         local clickCallback = function(self) 
+            print("sim mode click callback")
             CraftSim.SIMULATION_MODE.isActive = self:GetChecked()
             local bestQBox = schematicForm.AllocateBestQualityCheckBox
             if bestQBox:GetChecked() and CraftSim.SIMULATION_MODE.isActive then
@@ -28,7 +29,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             " Simulation Mode", "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions", false, clickCallback, 
             schematicForm, schematicForm.Details, "BOTTOM", "TOP", -65, 0)
         
-            frames.toggleButton:Hide()
+        frames.toggleButton:Hide()
     
         -- REAGENT OVERWRITE FRAMES
         local reagentOverwriteFrame = CreateFrame("frame", nil, schematicForm)

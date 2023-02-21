@@ -209,7 +209,8 @@ function CraftSim.MAIN:HookToEvent()
 				end
 			end
 		else
-			--print("loading recipeInfo..")
+			print("Hide all frames recipeInfo nil")
+			CraftSim.MAIN:HideAllFrames()
 		end
 	end
 
@@ -398,6 +399,46 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 	CraftSim.FRAME:ShowOneTimeInfo()
 end
 
+function CraftSim.MAIN:HideAllFrames(keepControlPanel)
+	local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
+	local recipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+	local craftResultsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+	local customerServiceFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
+	local priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+	local priceOverrideFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
+	local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
+	local averageProfitFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS)
+	local averageProfitFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
+	local topgearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+	local topgearFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+	local costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
+	local costOverviewFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
+	local materialOptimizationFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
+	local materialOptimizationFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+	-- hide control panel and return
+	if not keepControlPanel then
+		controlPanel:Hide()
+	end
+	-- hide all modules
+	recipeScanFrame:Hide()
+	craftResultsFrame:Hide()
+	customerServiceFrame:Hide()
+	priceOverrideFrame:Hide()
+	priceOverrideFrameWO:Hide()
+	specInfoFrame:Hide()
+	averageProfitFrame:Hide()
+	averageProfitFrameWO:Hide()
+	topgearFrame:Hide()
+	topgearFrameWO:Hide()
+	costOverviewFrame:Hide()
+	costOverviewFrameWO:Hide()
+	materialOptimizationFrame:Hide()
+	materialOptimizationFrameWO:Hide()
+	-- hide sim mode toggle button
+	CraftSim.SIMULATION_MODE.FRAMES.WORKORDER.toggleButton:Hide()
+	CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton:Hide()
+end
+
 function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	if not ProfessionsFrame:IsVisible() then
 		return
@@ -420,25 +461,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
-		-- hide control panel and return
-		controlPanel:Hide()
-		-- hide all modules
-		recipeScanFrame:Hide()
-		craftResultsFrame:Hide()
-		customerServiceFrame:Hide()
-		priceOverrideFrame:Hide()
-		priceOverrideFrameWO:Hide()
-		specInfoFrame:Hide()
-		averageProfitFrame:Hide()
-		averageProfitFrameWO:Hide()
-		topgearFrame:Hide()
-		topgearFrameWO:Hide()
-		costOverviewFrame:Hide()
-		costOverviewFrameWO:Hide()
-		materialOptimizationFrame:Hide()
-		materialOptimizationFrameWO:Hide()
-		CraftSim.SIMULATION_MODE.toggleButton:Hide()
-		return nil
+		CraftSim.MAIN:HideAllFrames()
+		return
 	end
 
 	controlPanel:Show()
@@ -446,22 +470,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
     local recipeInfo =  C_TradeSkillUI.GetRecipeInfo(CraftSim.MAIN.currentRecipeID)
 
 	if not recipeInfo or recipeInfo.isGatheringRecipe then
+		print("gathering recipe: hide frames")
 		-- hide all modules
-		recipeScanFrame:Hide()
-		craftResultsFrame:Hide()
-		customerServiceFrame:Hide()
-		priceOverrideFrame:Hide()
-		priceOverrideFrameWO:Hide()
-		specInfoFrame:Hide()
-		averageProfitFrame:Hide()
-		averageProfitFrameWO:Hide()
-		topgearFrame:Hide()
-		topgearFrameWO:Hide()
-		costOverviewFrame:Hide()
-		costOverviewFrameWO:Hide()
-		materialOptimizationFrame:Hide()
-		materialOptimizationFrameWO:Hide()
-		CraftSim.SIMULATION_MODE.toggleButton:Hide()
+		CraftSim.MAIN:HideAllFrames(true)
 		return
 	end
 
