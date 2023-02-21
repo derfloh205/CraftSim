@@ -313,7 +313,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
     elseif recipeData.supportsInspiration and not recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
         local inspChance = professionStats.inspiration:GetPercent(true)
         local hsvChance, withInspirationOnly = CraftSim.CALC:getHSVChance(recipeData)
-        local resChance = professionStats.resourcefulness:GetExtraFactor(true)
+        local resChance = professionStats.resourcefulness:GetPercent(true)
         local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
 
         local skillWithInspiration = professionStats.skill.value + professionStats.inspiration.extraValue
