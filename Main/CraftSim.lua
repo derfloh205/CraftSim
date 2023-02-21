@@ -520,12 +520,14 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	if recipeData.hasQualityReagents then
 		showMaterialOptimization = true
 	end
-		
+	
+	if not recipeData.isCooking then
+		showSpecInfo = true
+	end
 	showSimulationMode = not recipeData.isOldWorldRecipe
 
 	showCostOverview = true
 	showPriceOverride = true
-	showSpecInfo = true
 
 
 	showMaterialOptimization = showMaterialOptimization and CraftSimOptions.modulesMaterials 
