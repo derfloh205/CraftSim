@@ -16,8 +16,12 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "but with " .. f.bb("Inspiration") .. " and " .. f.bb("Resourcefulness") ..
         f.p .. "Reintroduced item count in " .. f.bb("Cost Overview") .. 
         f.p .. "Added Nitro Boosts and Goblin Glider Kit to enchant data" ..
-        f.p .. "Fixed " .. f.bb("Extravagancies") .. " Alchemy node shown" .. 
+        f.p .. "Fixed " .. f.bb("Extravagancies") .. " Jewelcrafting node shown" .. 
         f.a .. "for glassware reagents" ..
+        f.p .. "Fixed ring/necklace Jewelcrafting nodes" ..
+        f.a .. "(Thx " .. f.bb("https://github.com/domi1294") ..
+        f.p .. "Fixed Simulation Mode using base recipe difficulty for" .. 
+        f.a .. "threshold calculation instead of updated one" ..
         newP("7.2.2") ..
         f.p .. "Hotfix customer service recipe whisper and crafting costs" ..
         f.p .. "Hotfix Craft Results multicraft error" ..
