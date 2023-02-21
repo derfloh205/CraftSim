@@ -383,8 +383,10 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 		elseif command == "debug" then
 			CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
 		elseif command == "export" then
-			local exportString = CraftSim.DATAEXPORT:GetExportString()
-			CraftSim.UTIL:KethoEditBox_Show(exportString)
+			if CraftSim.MAIN.currentRecipeData then
+				local json = CraftSim.MAIN.currentRecipeData:GetJSON()
+				CraftSim.UTIL:KethoEditBox_Show(json)
+			end
 		else 
 			-- open options if any other command or no command is given
 			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)

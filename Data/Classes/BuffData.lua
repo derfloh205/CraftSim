@@ -52,3 +52,16 @@ function CraftSim.BuffData:Debug()
 
     return debugLines
 end
+
+
+function CraftSim.BuffData:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("professionStats", self.professionStats)
+    jb:Add("incenseActive", self.incenseActive)
+    jb:Add("alchemicallyInspiredActive", self.alchemicallyInspiredActive)
+    jb:Add("quickHandsActive", self.quickHandsActive, true)
+    jb:End()
+    return jb.json
+end

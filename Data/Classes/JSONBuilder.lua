@@ -40,7 +40,8 @@ function CraftSim.JSONBuilder:AddList(name, list, last)
           if type(listItem) == 'table' and listItem.GetJSON then
               jsonList = jsonList .. self:GetIndent(2) .. listItem:GetJSON(self.indent + 3) .. subSep
           else
-              jsonList = jsonList .. self:GetIndent(2) .. tostring(listItem) .. subSep
+               local strEncase = (type(listItem) == 'string' and "\"") or ""
+              jsonList = jsonList .. self:GetIndent(2) .. strEncase .. tostring(listItem) .. strEncase ..subSep
           end
       end
   
@@ -52,5 +53,18 @@ end
 function CraftSim.JSONBuilder:Add(name, data, last)
    local strEncase = (type(data) == 'string' and "\"") or ""
    local sep = (not last and ",\n") or ""
-   self.json = self.json .. self:GetIndent(1) .. "\"" .. name .. "\": " .. strEncase .. tostring(data) .. strEncase .. sep
+   if type(data) == 'table' and data.GetJSON then
+      self.json = self.json .. self:GetIndent(1) .. "\"" .. name .. "\": " .. strEncase .. data:GetJSON(self.indent + 1) .. strEncase .. sep
+   elseif type(data) == 'table' then
+      self.json = self.json .. self:GetIndent(1) .. "\"" .. name .. '\": {\n'
+      for key, value in pairs(data) do
+         local strEncase = (type(value) == 'string' and "\"") or ""
+         local valueText = (type(value) == 'table' and 'Table') or tostring(value)
+         self.json = self.json .. self:GetIndent(3) .. "\"" .. key .. "\": " .. strEncase .. valueText .. strEncase .. sep
+      end
+      self.json = self.json .. self:GetIndent(2) .. ' }' .. sep
+
+   else
+      self.json = self.json .. self:GetIndent(1) .. "\"" .. name .. "\": " .. strEncase .. tostring(data) .. strEncase .. sep
+   end
 end

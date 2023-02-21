@@ -328,3 +328,15 @@ function CraftSim.ReagentData:Copy(recipeData)
 
     return copy
 end
+
+function CraftSim.ReagentData:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:AddList("requiredReagents", self.requiredReagents)
+    jb:AddList("optionalReagentSlots", self.optionalReagentSlots)
+    jb:AddList("finishingReagentSlots", self.finishingReagentSlots)
+    jb:Add("salvageReagentSlot", self.salvageReagentSlot, true)
+    jb:End()
+    return jb.json
+end

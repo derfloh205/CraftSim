@@ -136,3 +136,29 @@ function CraftSim.SpecializationData:Copy()
     
     return copy
 end
+
+function CraftSim.SpecializationData:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("isImplemented", self.isImplemented)
+    jb:AddList("nodeData", self.nodeData)
+    local layernumlist = {}
+    table.foreach(self.numNodesPerLayer, function (index, value)
+        local listString = "["
+        table.foreach(value, function (index, v)
+            if index < #value then
+                listString = listString .. v .. ","
+            else
+                listString = listString .. v
+            end
+        end)
+
+        listString = listString .. "]"
+        layernumlist[index] = listString
+    end)
+    jb:AddList("numNodesPerLayer", layernumlist)
+    jb:Add("professionStats", self.professionStats, true)
+    jb:End()
+    return jb.json
+end

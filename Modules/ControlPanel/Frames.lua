@@ -56,6 +56,14 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
     end)
 
+    frame.content.exportButton = CraftSim.FRAME:CreateButton("Export Recipe", frame.content, frame.content.debugButton, "RIGHT", "LEFT", 0, 0, 15, 25, true, 
+    function() 
+        if CraftSim.MAIN.currentRecipeData then
+            local json = CraftSim.MAIN.currentRecipeData:GetJSON()
+            CraftSim.UTIL:KethoEditBox_Show(json)
+        end
+    end)
+
     frame.content.optionsButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
 	frame.content.optionsButton:SetPoint("RIGHT", frame.content.newsButton, "LEFT", 0, 0)	
 	frame.content.optionsButton:SetText("Options")

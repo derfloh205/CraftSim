@@ -32,3 +32,13 @@ function CraftSim.ProfessionData:new(recipeID)
         self.isLoaded = true
     end
 end
+
+function CraftSim.ProfessionData:GetJSON(indent)
+	indent = indent or 0
+	local jb = CraftSim.JSONBuilder(indent)
+	jb:Begin()
+	jb:Add("professionInfo", self.professionInfo)
+	jb:Add("skillLineID", self.skillLineID, true)
+	jb:End()
+	return jb.json
+end

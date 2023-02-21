@@ -95,3 +95,22 @@ function CraftSim.NodeRule:Debug()
     debugLines = CraftSim.UTIL:Concat({debugLines, statLines})
     return debugLines
 end
+
+function CraftSim.NodeRule:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("nodeID", self.nodeData.nodeID)
+    jb:Add("threshold", self.threshold)
+    jb:Add("professionStats", self.professionStats)
+    jb:Add("equalsSkill", self.equalsSkill)
+    jb:Add("equalsMulticraft", self.equalsMulticraft)
+    jb:Add("equalsInspiration", self.equalsInspiration)
+    jb:Add("equalsResourcefulness", self.equalsResourcefulness)
+    jb:Add("equalsCraftingspeed", self.equalsCraftingspeed)
+    jb:Add("equalsResourcefulnessExtraItemsFactor", self.equalsResourcefulnessExtraItemsFactor)
+    jb:Add("equalsPhialExperimentationChanceFactor", self.equalsPhialExperimentationChanceFactor)
+    jb:Add("equalsPotionExperimentationChanceFactor", self.equalsPotionExperimentationChanceFactor, true)
+    jb:End()
+    return jb.json
+end

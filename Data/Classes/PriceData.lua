@@ -125,3 +125,15 @@ function CraftSim.PriceData:Copy(recipeData)
     copy.craftingCostsRequired = self.craftingCostsRequired
     return copy
 end
+
+function CraftSim.PriceData:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:AddList("qualityPriceList", self.qualityPriceList)
+    jb:Add("craftingCosts", self.craftingCosts)
+    jb:Add("craftingCostsRequired", self.craftingCostsRequired)
+    jb:Add("craftingCostsFixed", self.craftingCostsFixed, true)
+    jb:End()
+    return jb.json
+end

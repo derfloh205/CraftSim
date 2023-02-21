@@ -164,3 +164,19 @@ function CraftSim.ProfessionStats:Copy()
 
 	return copy
 end
+
+function CraftSim.ProfessionStats:GetJSON(indent)
+	indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("recipeDifficulty", self.recipeDifficulty)
+    jb:Add("skill", self.skill)
+    jb:Add("inspiration", self.inspiration)
+    jb:Add("multicraft", self.multicraft)
+    jb:Add("resourcefulness", self.resourcefulness)
+    jb:Add("craftingspeed", self.craftingspeed)
+    jb:Add("phialExperimentationFactor", self.phialExperimentationFactor)
+    jb:Add("potionExperimentationFactor", self.potionExperimentationFactor, true)
+    jb:End()
+    return jb.json
+end

@@ -179,3 +179,22 @@ function CraftSim.ProfessionGearSet:Debug()
     return debugLines
 end
 
+function CraftSim.ProfessionGearSet:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("professionID", self.professionID)
+    jb:AddList("professionGearSlots", self.professionGearSlots)
+    jb:Add("isCooking", self.isCooking)
+    if self.isCooking then
+        jb:Add("gear2", self.gear2)
+    else
+        jb:Add("gear1", self.gear1)
+        jb:Add("gear2", self.gear2)
+    end
+    jb:Add("tool", self.tool)
+    jb:Add("professionStats", self.professionStats, true)
+    jb:End()
+    return jb.json
+end
+

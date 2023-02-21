@@ -60,3 +60,14 @@ function CraftSim.OptionalReagent:Deserialize(serializedOptionalReagent)
     serializedOptionalReagent.qualityID = tonumber(serializedOptionalReagent.qualityID) or 0
     return CraftSim.OptionalReagent(serializedOptionalReagent) -- as it builds from itemID only its fine
 end
+
+function CraftSim.OptionalReagent:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("professionStats", self.professionStats)
+    jb:Add("qualityID", self.qualityID)
+    jb:Add("itemID", self.item:GetItemID())
+    jb:End()
+    return jb.json
+end

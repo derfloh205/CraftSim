@@ -188,3 +188,15 @@ function CraftSim.Reagent:Deserialize(serializedReagent)
     end)
     return reagent
 end
+
+function CraftSim.Reagent:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("hasQuality", self.hasQuality)
+    jb:Add("requiredQuantity", self.requiredQuantity)
+    jb:Add("dataSlotIndex", self.dataSlotIndex)
+    jb:AddList("items", self.items, true)
+    jb:End()
+    return jb.json
+end

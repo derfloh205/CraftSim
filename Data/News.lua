@@ -14,6 +14,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.P .. f.g("Simulation Mode for Work Orders") .. " added!" ..
         f.P .. f.bb("Average Profit and Cost Overview") .. " now considers the comission" ..
         f.a .. "and the consortium cut when a work order is viewed" ..
+        f.s .. f.g("/craftsim export") .. " now exports the open recipe as JSON" ..
+        f.a .. "Also added an " .. f.g("Export Recipe") .. " button to the control panel" ..
         newP("7.3.0") ..
         f.p .. "Wording changes in HSV Explanation" ..
         f.p .. "Profit Calculation bug fix for recipes without " .. f.bb("Multicraft") ..

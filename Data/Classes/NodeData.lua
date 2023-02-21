@@ -79,3 +79,22 @@ function CraftSim.NodeData:UpdateProfessionStats()
         end
     end
 end
+
+function CraftSim.NodeData:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("nodeID", self.nodeID)
+    jb:Add("active", self.active)
+    jb:Add("rank", self.rank)
+    jb:Add("maxRank", self.maxRank)
+    jb:Add("nodeName", self.nodeName)
+    jb:Add("affectsRecipe", self.affectsRecipe)
+    jb:Add("professionStats", self.professionStats)
+    jb:Add("idMapping", self.idMapping)
+    jb:Add("parentNodeID", (self.parentNode and self.parentNode.nodeID) or nil)
+    jb:AddList("nodeRules", self.nodeRules)
+    jb:AddList("childNodeIDs", CraftSim.UTIL:Map(self.childNodes, function(cn) return cn.nodeID end), true)
+    jb:End()
+    return jb.json
+end

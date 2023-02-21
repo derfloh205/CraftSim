@@ -118,3 +118,17 @@ function CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot)
     end)
     return deserialized
 end
+
+function CraftSim.OptionalReagentSlot:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:AddList("possibleReagents", self.possibleReagents)
+    jb:Add("activeReagent", self.activeReagent)
+    jb:Add("slotText", self.slotText)
+    jb:Add("dataSlotIndex", self.dataSlotIndex)
+    jb:Add("locked", self.locked)
+    jb:Add("lockedReason", self.lockedReason, true)
+    jb:End()
+    return jb.json
+end

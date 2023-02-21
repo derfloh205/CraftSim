@@ -67,3 +67,14 @@ function CraftSim.ReagentItem:Deserialize(serializedReagentItem)
     deserialized.quantity = tonumber(serializedReagentItem.quantity)
     return deserialized
 end
+
+function CraftSim.ReagentItem:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("qualityID", self.qualityID)
+    jb:Add("quantity", self.quantity)
+    jb:Add("itemID", self.item:GetItemID(), true)
+    jb:End()
+    return jb.json
+end

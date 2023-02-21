@@ -224,3 +224,31 @@ function CraftSim.ResultData:Deserialize(serializedResultData)
     deserialized.expectedItemInspirationHSV = (serializedResultData.expectedItemLinkInspirationHSV and deserialized.itemsByQuality[deserialized.expectedQualityInspirationHSV]) or nil
     return deserialized
 end
+
+function CraftSim.ResultData:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    local itemList = {}
+    table.foreach(self.itemsByQuality, function (_, item)
+        table.insert(itemList, tostring(CraftSim.UTIL:GetItemStringFromLink(item:GetItemLink())))
+    end)
+    
+    jb:AddList("itemsByQuality", itemList)
+    jb:Add("expectedQuality", self.expectedQuality)
+    jb:Add("expectedQualityInspiration", self.expectedQualityInspiration)
+    jb:Add("expectedQualityHSV", self.expectedQualityHSV)
+    jb:Add("expectedQualityInspirationHSV", self.expectedQualityInspirationHSV)
+    jb:Add("expectedQualityUpgrade", self.expectedQualityUpgrade)
+    jb:Add("expectedItem", (self.expectedItem and CraftSim.UTIL:GetItemStringFromLink(self.expectedItem:GetItemLink())) or nil)
+    jb:Add("expectedItemUpgrade", (self.expectedItemUpgrade and CraftSim.UTIL:GetItemStringFromLink(self.expectedItemUpgrade:GetItemLink())) or nil)
+    jb:Add("expectedItemInspiration", (self.expectedItemInspiration and CraftSim.UTIL:GetItemStringFromLink(self.expectedItemInspiration:GetItemLink())) or nil)
+    jb:Add("expectedItemHSV", (self.expectedItemHSV and CraftSim.UTIL:GetItemStringFromLink(self.expectedItemHSV:GetItemLink())) or nil)
+    jb:Add("expectedItemInspirationHSV", (self.expectedItemInspirationHSV and CraftSim.UTIL:GetItemStringFromLink(self.expectedItemInspirationHSV:GetItemLink())) or nil)
+    jb:Add("canUpgradeQuality", self.canUpgradeQuality)
+    jb:Add("canUpgradeInspiration", self.canUpgradeInspiration)
+    jb:Add("canUpgradeHSV", self.canUpgradeHSV)
+    jb:Add("canUpgradeInspirationHSV", self.canUpgradeInspirationHSV, true)
+    jb:End()
+    return jb.json
+end

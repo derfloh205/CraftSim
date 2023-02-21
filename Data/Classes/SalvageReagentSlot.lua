@@ -38,3 +38,25 @@ function CraftSim.SalvageReagentSlot:Debug()
 
     return debugLines
 end
+
+function CraftSim.SalvageReagentSlot:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    local itemList = {}
+    table.foreach(self.possibleItems, function (_, item)
+        table.insert(itemList, {
+            itemID = item:GetItemID(),
+            itemLink = item:GetItemLink()
+        })
+    end)
+    jb:AddList("possibleReagents", itemList)
+    if self.activeItem then
+        jb:Add("activeItemID", self.activeItem:GetItemID())
+    else
+        jb:Add("activeItemID", nil)
+    end
+    jb:Add("requiredQuantity", self.requiredQuantity, true)
+    jb:End()
+    return jb.json
+end

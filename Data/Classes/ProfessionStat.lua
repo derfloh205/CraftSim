@@ -91,3 +91,17 @@ end
 function CraftSim.ProfessionStat:subtractExtraValueAfterFactor(extraValueAfterFactor)
     self.extraValueAfterFactor = self.extraValueAfterFactor - extraValueAfterFactor
 end
+
+function CraftSim.ProfessionStat:GetJSON(indent)
+	indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("name", self.name)
+    jb:Add("value", self.value)
+    jb:Add("percentMod", self.percentMod)
+    jb:Add("extraFactor", self.extraFactor)
+    jb:Add("extraValue", self.extraValue)
+    jb:Add("extraValueAfterFactor", self.extraValueAfterFactor, true)
+    jb:End()
+    return jb.json
+end
