@@ -189,7 +189,8 @@ function CraftSim.MAIN:HookToEvent()
 		-- if init turn sim mode off
 		if CraftSim.SIMULATION_MODE.isActive then
 			CraftSim.SIMULATION_MODE.isActive = false
-			CraftSim.SIMULATION_MODE.toggleButton:SetChecked(false)
+			CraftSim.SIMULATION_MODE.FRAMES.WORKORDER.toggleButton:SetChecked(false)
+			CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton:SetChecked(false)
 		end
 		
 		if recipeInfo then
@@ -551,7 +552,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	-- Simulation Mode
 	showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
-	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.toggleButton, showSimulationMode)
+	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.FRAMES.WORKORDER.toggleButton,showSimulationMode and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton, showSimulationMode and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility() -- show sim mode frames depending if active or not
 	if CraftSim.SIMULATION_MODE.isActive and recipeData then
 		-- update simulationframe recipedata by inputs and the frontend

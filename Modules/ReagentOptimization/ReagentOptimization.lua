@@ -192,8 +192,10 @@ end
 
 ---@param optimizationResult CraftSim.ReagentOptimizationResult
 function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(optimizationResult)
+    local simulationModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
     if CraftSim.SIMULATION_MODE.isActive then
-        for reagentIndex, currentInput in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
+        for reagentIndex, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
             local reagent = optimizationResult.reagents[reagentIndex]
 
             if reagent then
@@ -204,8 +206,6 @@ function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(optimizationResult)
                 end
             end
         end
-
-        --recipeData:Update()
     
         CraftSim.MAIN:TriggerModulesErrorSafe()
     end

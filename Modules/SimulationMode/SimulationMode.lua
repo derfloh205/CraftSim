@@ -3,18 +3,7 @@ AddonName, CraftSim = ...
 CraftSim.SIMULATION_MODE = {}
 
 CraftSim.SIMULATION_MODE.isActive = false
-CraftSim.SIMULATION_MODE.reagentOverwriteFrame = nil
-CraftSim.SIMULATION_MODE.craftingDetailsFrame = nil
 CraftSim.SIMULATION_MODE.recipeData = nil
-CraftSim.SIMULATION_MODE.baseSpecNodeData = nil
-CraftSim.SIMULATION_MODE.reagentSkillIncrease = nil
-
-CraftSim.SIMULATION_MODE.baseInspiration = nil
-CraftSim.SIMULATION_MODE.baseMulticraft = nil
-CraftSim.SIMULATION_MODE.baseResourcefulness = nil
-
-CraftSim.SIMULATION_MODE.baseSkillNoReagentsOrOptionalReagents = nil
-
 CraftSim.SIMULATION_MODE.specializationData = nil
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE)
@@ -86,7 +75,10 @@ function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
 end
 
 function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
-    for _, currentInput in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
+    local simulationModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
+
+    for _, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
 
         if currentInput.isActive then
             for i = 1, 3, 1 do
@@ -118,30 +110,32 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     recipeData.professionStatModifiers:Clear()
     recipeData.professionStatModifiers:add(professionStatsSpecDiff)
 
+    local simulationModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+
     -- update difficulty based on input
-    local recipeDifficultyMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeRecipeDifficultyModInput, true)
+    local recipeDifficultyMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.recipeDifficultyMod, true)
     recipeData.professionStatModifiers.recipeDifficulty:addValue(recipeDifficultyMod)
 
     -- update skill based on input
-    local skillMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeSkillModInput, true)
+    local skillMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.baseSkillMod, true)
     recipeData.professionStatModifiers.skill:addValue(skillMod)
 
     -- update other stats
     if recipeData.supportsInspiration then
-        local inspirationMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeInspirationModInput, true)
-        local inspirationSkillMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeInspirationSkillModInput, true)
+        local inspirationMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.inspirationMod, true)
+        local inspirationSkillMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.inspirationSkillMod, true)
 
         recipeData.professionStatModifiers.inspiration:addValue(inspirationMod)
         recipeData.professionStatModifiers.inspiration:addExtraValueAfterFactor(inspirationSkillMod)
     end
 
     if recipeData.supportsMulticraft then
-        local multicraftMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeMulticraftModInput, true)
+        local multicraftMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.multicraftMod, true)
         recipeData.professionStatModifiers.multicraft:addValue(multicraftMod)
     end
     
     if recipeData.supportsResourcefulness then
-        local resourcefulnessMod = CraftSim.UTIL:ValidateNumberInput(CraftSimSimModeResourcefulnessModInput, true)
+        local resourcefulnessMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.resourcefulnessMod, true)
         recipeData.professionStatModifiers.resourcefulness:addValue(resourcefulnessMod)
     end
 end
@@ -154,10 +148,13 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     end
     print("Update Reagent Input Frames:")
 
+    local simulationModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
+
     --required
     local reagentList = {}
     -- update item allocations based on inputfields
-    for _, overwriteInput in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.reagentOverwriteInputs) do
+    for _, overwriteInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
         if overwriteInput.isActive then
             table.insert(reagentList, CraftSim.ReagentListItem(overwriteInput.inputq1.itemID, overwriteInput.inputq1:GetNumber()))
             table.insert(reagentList, CraftSim.ReagentListItem(overwriteInput.inputq2.itemID, overwriteInput.inputq2:GetNumber()))
@@ -171,7 +168,7 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     recipeData.reagentData:ClearOptionalReagents()
 
     local itemIDs = {}
-    for _, dropdown in pairs(CraftSim.SIMULATION_MODE.reagentOverwriteFrame.optionalReagentFrames) do
+    for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentFrames) do
         local itemID = dropdown.selectedItemID
         if itemID then
             table.insert(itemIDs, itemID)
