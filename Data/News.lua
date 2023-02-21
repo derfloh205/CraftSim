@@ -10,12 +10,14 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
-        newP("7.3") ..
+        newP("7.3.0") ..
         f.p .. "Wording changes in HSV Explanation" ..
         f.p .. "Profit Calculation bug fix for recipes without " .. f.bb("Multicraft") ..
         f.a .. "but with " .. f.bb("Inspiration") .. " and " .. f.bb("Resourcefulness") ..
         f.p .. "Reintroduced item count in " .. f.bb("Cost Overview") .. 
         f.p .. "Added Nitro Boosts and Goblin Glider Kit to enchant data" ..
+        f.p .. "Fixed " .. f.bb("Extravagancies") .. " Alchemy node shown" .. 
+        f.a .. "for glassware reagents" ..
         newP("7.2.2") ..
         f.p .. "Hotfix customer service recipe whisper and crafting costs" ..
         f.p .. "Hotfix Craft Results multicraft error" ..

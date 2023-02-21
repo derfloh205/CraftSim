@@ -872,24 +872,36 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         EXTRAVAGANCIES_1 = {
             nodeID = 28608,
             idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
-                },
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.PROFESSION_EQUIP] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 },
+            },
+            exceptionRecipeIDs = {
+                -- 'non glassware reagents'
+                374480, -- glossy stone
+                374475, -- shimmering clasp
+                374553, -- elemental harmony
+                395662, -- insight
+                374483, -- sand
+                374484, -- pounce
             },
             equalsSkill = true,
         },
         EXTRAVAGANCIES_2 = {
             nodeID = 28608,
             idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
-                },
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.PROFESSION_EQUIP] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 },
+            },
+            exceptionRecipeIDs = {
+                -- 'non glassware reagents'
+                374480, -- glossy stone
+                374475, -- shimmering clasp
+                374553, -- elemental harmony
+                395662, -- insight
+                374483, -- sand
+                374484, -- pounce
             },
             threshold = 5,
             inspiration = 5,
@@ -897,12 +909,18 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         EXTRAVAGANCIES_3 = {
             nodeID = 28608,
             idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
-                },
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.PROFESSION_EQUIP] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 },
+            },
+            exceptionRecipeIDs = {
+                -- 'non glassware reagents'
+                374480, -- glossy stone
+                374475, -- shimmering clasp
+                374553, -- elemental harmony
+                395662, -- insight
+                374483, -- sand
+                374484, -- pounce
             },
             threshold = 10,
             resourcefulness = 5,
@@ -910,12 +928,18 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         EXTRAVAGANCIES_4 = {
             nodeID = 28608,
             idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
-                },
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.PROFESSION_EQUIP] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 },
+            },
+            exceptionRecipeIDs = {
+                -- 'non glassware reagents'
+                374480, -- glossy stone
+                374475, -- shimmering clasp
+                374553, -- elemental harmony
+                395662, -- insight
+                374483, -- sand
+                374484, -- pounce
             },
             threshold = 15,
             multicraft = 20,
@@ -923,12 +947,18 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         EXTRAVAGANCIES_5 = {
             nodeID = 28608,
             idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
-                },
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.PROFESSION_EQUIP] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 },
+            },
+            exceptionRecipeIDs = {
+                -- 'non glassware reagents'
+                374480, -- glossy stone
+                374475, -- shimmering clasp
+                374553, -- elemental harmony
+                395662, -- insight
+                374483, -- sand
+                374484, -- pounce
             },
             threshold = 20,
             resourcefulness = 5,
@@ -936,12 +966,18 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         EXTRAVAGANCIES_6 = {
             nodeID = 28608,
             idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
-                },
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.PROFESSION_EQUIP] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 },
+            },
+            exceptionRecipeIDs = {
+                -- 'non glassware reagents'
+                374480, -- glossy stone
+                374475, -- shimmering clasp
+                374553, -- elemental harmony
+                395662, -- insight
+                374483, -- sand
+                374484, -- pounce
             },
             threshold = 25,
             inspiration = 10,
@@ -949,12 +985,18 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         EXTRAVAGANCIES_7 = {
             nodeID = 28608,
             idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
-                },
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.PROFESSION_EQUIP] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 },
+            },
+            exceptionRecipeIDs = {
+                -- 'non glassware reagents'
+                374480, -- glossy stone
+                374475, -- shimmering clasp
+                374553, -- elemental harmony
+                395662, -- insight
+                374483, -- sand
+                374484, -- pounce
             },
             threshold = 30,
             skill = 5,
