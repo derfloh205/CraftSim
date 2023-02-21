@@ -36,14 +36,25 @@ _, CraftSim = ...
 ---@field professionStatModifiers CraftSim.ProfessionStats Will add/subtract to final stats (Used in Simulation Mode, usually 0)
 ---@field priceData CraftSim.PriceData
 ---@field resultData CraftSim.ResultData
+---@field orderData CraftingOrderInfo
 
 CraftSim.RecipeData = CraftSim.Object:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
+---@param recipeID number
+---@param isRecraft? boolean
+---@param isWorkOrder? boolean
 ---@return CraftSim.RecipeData?
-function CraftSim.RecipeData:new(recipeID, isRecraft)
+function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.professionData = CraftSim.ProfessionData(recipeID)
+
+    if isWorkOrder then
+        self.orderData = ProfessionsFrame.OrdersPage.OrderView.order
+
+        print("Craft Order Data:")
+        print(self.orderData, true)
+    end
 
     if not self.professionData.isLoaded then
         print("Could not create recipeData: professionData not loaded")
@@ -118,7 +129,12 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
 
     self.professionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
     
-    local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
+    local baseOperationInfo = nil
+    if self.orderData then
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {}, self.orderData.orderID)
+    else
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
+    end
     
     self.baseProfessionStats = CraftSim.ProfessionStats()
     self.professionStats = CraftSim.ProfessionStats()

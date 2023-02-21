@@ -181,8 +181,15 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
     print(maxQualityReagentsCraftingTbl, true)
 
     local recipeID = self.recipeData.recipeID
-    local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)
-    local operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, maxQualityReagentsCraftingTbl, self.recipeData.allocationItemGUID)
+    local baseOperationInfo = nil
+    local operationInfoWithReagents = nil
+    if self.recipeData.orderData then
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {}, self.recipeData.orderData.orderID)
+        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID)
+    else
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)
+        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, maxQualityReagentsCraftingTbl, self.recipeData.allocationItemGUID)
+    end
 
     if baseOperationInfo and operationInfoWithReagents then
         
@@ -210,8 +217,15 @@ function CraftSim.ReagentData:GetSkillFromRequiredReagents()
 
     local recipeID = self.recipeData.recipeID
 
-    local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)
-    local operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, requiredTbl, self.recipeData.allocationItemGUID)
+    local baseOperationInfo = nil
+    local operationInfoWithReagents = nil
+    if self.recipeData.orderData then
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {}, self.recipeData.orderData.orderID)
+        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, requiredTbl, self.recipeData.orderData.orderID)
+    else    
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)
+        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, requiredTbl, self.recipeData.allocationItemGUID)
+    end
 
     if baseOperationInfo and operationInfoWithReagents then
         

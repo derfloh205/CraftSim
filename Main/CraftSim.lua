@@ -486,8 +486,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			return
 		end
 		local isRecraft = currentTransaction:GetRecraftAllocation() ~= nil 
+		local isWorkOrder = CraftSim.UTIL:IsWorkOrder()
 
-		recipeData = CraftSim.RecipeData(recipeInfo.recipeID, isRecraft)
+		recipeData = CraftSim.RecipeData(recipeInfo.recipeID, isRecraft, isWorkOrder)
 
 		if recipeData then
 			-- Set Reagents based on visibleFrame and load equipped profession gear set
@@ -520,7 +521,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	if recipeData.hasQualityReagents then
 		showMaterialOptimization = true
 	end
-	
+
 	if not recipeData.isCooking then
 		showSpecInfo = true
 	end
