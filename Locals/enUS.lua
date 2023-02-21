@@ -101,7 +101,7 @@ function CraftSim.LOCAL_EN:GetData()
         "However you can observe a visualization of the proc: When you craft something the " .. f.bb("Quality Meter") .. "\nfills up to a certain point. And this can 'shoot' quite a bit over your current shown skill.\n" ..
         "\n" .. f.cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
         "This extra skill is always between 0% and 5% of your " .. f.bb("Base Recipe Difficulty") .. ".\nMeaning if you have a recipe with 400 difficulty. You can get up to 20 Skill.\n" ..
-        "And tests tell us that this is " .. f.bb("normally distributed") .. ". Meaning every percent value has the same chance.\n" ..
+        "And tests tell us that this is " .. f.bb("uniformly distributed") .. ". Meaning every percent value has the same chance.\n" ..
         f.l("HSV") .. " can influence profits heavily when close to a quality! In CraftSim it is treated as an additional proc, like " .. f.bb("Inspiration") .. " or " .. f.bb("Multicraft.\n") ..
         "However, its effect is depending on your current skill, the recipe difficulty, and the skill you need to reach the next quality.\n" ..
         "So CraftSim calculates the " .. f.bb("missing skill") .. " to reach the next quality and converts it to " .. f.bb("percent relative to the recipe difficulty\n\n") ..

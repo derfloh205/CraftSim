@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("7.3") ..
+        f.p .. "Wording changes in HSV Explanation" ..
         newP("7.2.2") ..
         f.p .. "Hotfix customer service recipe whisper and crafting costs" ..
         f.p .. "Hotfix Craft Results multicraft error" ..
