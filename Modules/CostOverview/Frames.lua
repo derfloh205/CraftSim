@@ -132,7 +132,8 @@ function CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplay(recipeData, profitPerQuality
             end
             profitFrame.qualityID = qualityID
             local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCosts or nil
-            profitFrame.text:SetText(CraftSim.UTIL:FormatMoney(profitPerQuality[index], true, relativeValue))
+            local comissionProfit = (recipeData.orderData and ((recipeData.orderData.tipAmount or 0) - (recipeData.orderData.consortiumCut or 0))) or 0
+            profitFrame.text:SetText(CraftSim.UTIL:FormatMoney(profitPerQuality[index] + comissionProfit, true, relativeValue))
             profitFrame:Show()
         else
             profitFrame:Hide()

@@ -12,6 +12,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                                 ( You are awesome! )") ..
         newP("7.4.0") ..
         f.P .. f.g("Simulation Mode for Work Orders") .. " added!" ..
+        f.P .. f.bb("Average Profit and Cost Overview") .. " now considers the comission" ..
+        f.a .. "and the consortium cut when a work order is viewed" ..
         newP("7.3.0") ..
         f.p .. "Wording changes in HSV Explanation" ..
         f.p .. "Profit Calculation bug fix for recipes without " .. f.bb("Multicraft") ..

@@ -76,6 +76,20 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         local probabilityTable = {{chance=1, profit=profit}}
         return profit, probabilityTable
     end
+
+    local comissionProfit = 0
+    if recipeData.orderData then
+        comissionProfit = (tonumber(recipeData.orderData.tipAmount) or 0) - (tonumber(recipeData.orderData.consortiumCut) or 0)
+    end
+
+    -- for work orders we do not need to consider auction house cut but we can add the comissionProfit
+    local function adaptResultValue(value) 
+        if recipeData.orderData and comissionProfit > 0 then
+            return value + comissionProfit
+        else
+            return value * CraftSim.CONST.AUCTION_HOUSE_CUT
+        end
+    end
     -- case: every stats exists
     if recipeData.supportsInspiration and recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
         local inspChance = professionStats.inspiration:GetPercent(true)
@@ -167,50 +181,50 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             print("subCombination: " .. tostring(subCombination))
             -- nothing
             if subCombination == "000" then
-                resultValue = (priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
 
             -- no insp, no mc, hsv,  
             elseif subCombination == "001" then
                 if not withInspirationOnly then
-                    resultValue = (priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
                 else
-                    resultValue = (priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
                 end
 
             -- no insp, mc, no hsv, 
             elseif subCombination == "010" then
-                resultValue = (priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * expectedItems)
 
             -- no insp, mc, hsv, 
             elseif subCombination == "011" then
                 if not withInspirationOnly then
-                    resultValue = (priceData.qualityPriceList[qualityWithHSV] or 0) * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * expectedItems)
                 else
-                    resultValue = (priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * expectedItems)
                 end
 
             -- insp, no mc, no hsv, 
             elseif subCombination == "100" then
-                resultValue = (priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
 
             -- insp, no mc, hsv
             elseif subCombination == "101" then
                 if not withInspirationOnly then
-                    resultValue = (priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
                 else
-                    resultValue = (priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
                 end
 
             -- insp, mc, no hsv, 
             elseif subCombination == "110" then
-                resultValue = (priceData.qualityPriceList[qualityWithInspiration] or 0) * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * expectedItems)
 
             -- insp, mc, hsv
             elseif subCombination == "111" then
                 if not withInspirationOnly then
-                    resultValue = (priceData.qualityPriceList[qualityWithInspiration] or 0) * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * expectedItems)
                 else
-                    resultValue = (priceData.qualityPriceList[qualityWithHSV] or 0) * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * expectedItems)
                 end
             end
             
@@ -284,9 +298,9 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
 
             -- if mc
             if procs[1] then
-                resultValue = (priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * expectedItems * CraftSim.CONST.AUCTION_HOUSE_CUT
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * expectedItems)
             elseif not procs[1] then
-                resultValue = (priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
             end
             
             combinationProfit = resultValue - craftingCosts
@@ -365,24 +379,24 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
 
             -- if insp, no hsv
             if not procs[1] and not procs[2] then
-                resultValue = (priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
 
             -- just insp
             elseif procs[1] and not procs[2] then
-                resultValue = (priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
 
             -- not insp, hsv
             elseif not procs[1] and procs[2] then
                 if not withInspirationOnly then
-                    resultValue = (priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
                 else
-                    resultValue = (priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
                 end
             elseif procs[1] and procs[2] then
                 if not withInspirationOnly then
-                    resultValue = (priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
                 else
-                    resultValue = (priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
                 end
             end
             
@@ -449,7 +463,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             local combinationProfit = 0
             local resultValue = 0
 
-            resultValue = (priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount * CraftSim.CONST.AUCTION_HOUSE_CUT
+            resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
             
             combinationProfit = resultValue - craftingCosts
             print(table.concat(combination, "") .. ":" .. CraftSim.UTIL:round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
