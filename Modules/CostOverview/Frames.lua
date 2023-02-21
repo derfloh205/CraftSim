@@ -4,49 +4,6 @@ CraftSim.COSTOVERVIEW.FRAMES = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OVERVIEW)
 
-function CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplay(recipeData, profitPerQuality, currentQuality, exportMode)
-    local costOverviewFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
-    else
-        costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
-    end
-
-    local priceData = recipeData.priceData
-    local resultData = recipeData.resultData
-
-    costOverviewFrame.content.craftingCosts:SetText(CraftSim.UTIL:FormatMoney(priceData.craftingCosts))
-    costOverviewFrame.content.craftingCostsTitle.SwitchAnchor(costOverviewFrame.title)
-    costOverviewFrame.content.minCraftingCosts:Hide()
-    costOverviewFrame.content.minCraftingCostsTitle:Hide()
-
-    print("#profitPerQuality: " .. tostring(#profitPerQuality))
-    CraftSim.FRAME:ToggleFrame(costOverviewFrame.content.resultProfitsTitle, #profitPerQuality > 0)    
-
-    for index, profitFrame in pairs(costOverviewFrame.content.profitFrames) do
-        if profitPerQuality[index] ~= nil then
-            local qualityID = currentQuality + index - 1
-
-            if resultData.itemsByQuality[qualityID] then
-                local item = resultData.itemsByQuality[qualityID]
-                item:ContinueOnItemLoad(function ()
-                    profitFrame.itemLinkText:SetText((item:GetItemLink()))
-                end)
-            else
-                -- if no item recipe e.g. show quality icon
-                local qualityText = CraftSim.UTIL:GetQualityIconAsText(qualityID, 20, 20)
-                profitFrame.itemLinkText:SetText(qualityText)
-            end
-            profitFrame.qualityID = qualityID
-            local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCosts or nil
-            profitFrame.text:SetText(CraftSim.UTIL:FormatMoney(profitPerQuality[index], true, relativeValue))
-            profitFrame:Show()
-        else
-            profitFrame:Hide()
-        end
-    end
-end
-
 function CraftSim.COSTOVERVIEW.FRAMES:Init()
     local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimCostOverviewFrame", 
@@ -137,4 +94,48 @@ function CraftSim.COSTOVERVIEW.FRAMES:Init()
     createContent(frameWO)
     createContent(frameNO_WO)
 
+end
+
+function CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplay(recipeData, profitPerQuality, currentQuality, exportMode)
+    local costOverviewFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
+    else
+        costOverviewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
+    end
+
+    local priceData = recipeData.priceData
+    local resultData = recipeData.resultData
+
+    costOverviewFrame.content.craftingCosts:SetText(CraftSim.UTIL:FormatMoney(priceData.craftingCosts))
+    costOverviewFrame.content.craftingCostsTitle.SwitchAnchor(costOverviewFrame.title)
+    costOverviewFrame.content.minCraftingCosts:Hide()
+    costOverviewFrame.content.minCraftingCostsTitle:Hide()
+
+    print("#profitPerQuality: " .. tostring(#profitPerQuality))
+    CraftSim.FRAME:ToggleFrame(costOverviewFrame.content.resultProfitsTitle, #profitPerQuality > 0)    
+
+    for index, profitFrame in pairs(costOverviewFrame.content.profitFrames) do
+        if profitPerQuality[index] ~= nil then
+            local qualityID = currentQuality + index - 1
+
+            if resultData.itemsByQuality[qualityID] then
+                local item = resultData.itemsByQuality[qualityID]
+                item:ContinueOnItemLoad(function ()
+                    local itemCount = GetItemCount(item:GetItemLink(), true, false, true)
+                    profitFrame.itemLinkText:SetText(item:GetItemLink() .. " x " .. itemCount)
+                end)
+            else
+                -- if no item recipe e.g. show quality icon
+                local qualityText = CraftSim.UTIL:GetQualityIconAsText(qualityID, 20, 20)
+                profitFrame.itemLinkText:SetText(qualityText)
+            end
+            profitFrame.qualityID = qualityID
+            local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCosts or nil
+            profitFrame.text:SetText(CraftSim.UTIL:FormatMoney(profitPerQuality[index], true, relativeValue))
+            profitFrame:Show()
+        else
+            profitFrame:Hide()
+        end
+    end
 end
