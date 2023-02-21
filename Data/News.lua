@@ -10,6 +10,10 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("7.4.1") ..
+        f.p .. "Added mappings for all old world enchants" ..
+        f.a .. "Big thanks goes to the discontinued addon " .. f.bb("OneClickEnchant") ..
+        f.a .. "that had still all this data mapped" ..
         newP("7.4.0") ..
         f.P .. f.g("Simulation Mode for Work Orders") .. " added!" ..
         f.P .. f.bb("Average Profit and Cost Overview") .. " now considers the comission" ..
