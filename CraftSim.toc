@@ -12,6 +12,8 @@
 
 embeds.xml
 
+Libs/Libs.lua
+
 Util/Const.lua
 Util/Util.lua
 

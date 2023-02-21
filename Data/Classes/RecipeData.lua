@@ -22,6 +22,7 @@ _, CraftSim = ...
 ---@field isEnchantingRecipe boolean
 ---@field isSalvageRecipe boolean
 ---@field isCooking boolean
+---@field isOldWorldRecipe boolean
 ---@field baseItemAmount number
 ---@field maxQuality number
 ---@field allocationItemGUID? string
@@ -64,7 +65,12 @@ function CraftSim.RecipeData:new(recipeID, isRecraft)
         local subclassID = select(7, GetItemInfoInstant(recipeInfo.hyperlink))
         self.subtypeID = subclassID
     end
+
     
+
+---@diagnostic disable-next-line: missing-parameter
+    local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
+    self.isOldWorldRecipe = not tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
     self.isRecraft = isRecraft or false
     self.isSimulationModeData = false
     self.recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo) -- TODO: remove

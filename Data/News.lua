@@ -15,6 +15,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.p .. "Profit Calculation bug fix for recipes without " .. f.bb("Multicraft") ..
         f.a .. "but with " .. f.bb("Inspiration") .. " and " .. f.bb("Resourcefulness") ..
         f.p .. "Reintroduced item count in " .. f.bb("Cost Overview") .. 
+        f.p .. "Added Nitro Boosts and Goblin Glider Kit to enchant data" ..
         newP("7.2.2") ..
         f.p .. "Hotfix customer service recipe whisper and crafting costs" ..
         f.p .. "Hotfix Craft Results multicraft error" ..

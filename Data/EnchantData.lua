@@ -65,5 +65,9 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     [391809] = {name = "Illusory Adornment: Frost", q1 = 201312, q2 = 201311, q3 = 201310},
     [390951] = {name = "Illusory Adornment: Fire", q1 = 200614, q2 = 200615, q3 = 200616},
     [391810] = {name = "Illusory Adornment: Air", q1 = 201318, q2 = 201317, q3 = 201316},
-    [391812] = {name = "Illusory Adornment: Order", q1 = 201321, q2 = 201320, q3 = 201319}
+    [391812] = {name = "Illusory Adornment: Order", q1 = 201321, q2 = 201320, q3 = 201319},
+
+    -- Old World
+    [55016] = {name = "Nitro Boosts", q1 = 41118},
+    [162204] = {name = "Goblin Glider Kit", q1 = 109076},
 }
