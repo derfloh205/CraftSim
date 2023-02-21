@@ -402,17 +402,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		return
 	end
 
-	local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
-	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
-		-- hide control panel and return
-		controlPanel:Hide()
-		return nil
-	end
-
-	controlPanel:Show()
-
-    local recipeInfo =  C_TradeSkillUI.GetRecipeInfo(CraftSim.MAIN.currentRecipeID)
-
 	local recipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
 	local craftResultsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerServiceFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
@@ -427,6 +416,33 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local costOverviewFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
 	local materialOptimizationFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
 	local materialOptimizationFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+
+	local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
+	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
+		-- hide control panel and return
+		controlPanel:Hide()
+		-- hide all modules
+		recipeScanFrame:Hide()
+		craftResultsFrame:Hide()
+		customerServiceFrame:Hide()
+		priceOverrideFrame:Hide()
+		priceOverrideFrameWO:Hide()
+		specInfoFrame:Hide()
+		averageProfitFrame:Hide()
+		averageProfitFrameWO:Hide()
+		topgearFrame:Hide()
+		topgearFrameWO:Hide()
+		costOverviewFrame:Hide()
+		costOverviewFrameWO:Hide()
+		materialOptimizationFrame:Hide()
+		materialOptimizationFrameWO:Hide()
+		CraftSim.SIMULATION_MODE.toggleButton:Hide()
+		return nil
+	end
+
+	controlPanel:Show()
+
+    local recipeInfo =  C_TradeSkillUI.GetRecipeInfo(CraftSim.MAIN.currentRecipeID)
 
 	if not recipeInfo or recipeInfo.isGatheringRecipe then
 		-- hide all modules

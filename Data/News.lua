@@ -23,6 +23,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.p .. "Fixed Simulation Mode using base recipe difficulty for" .. 
         f.a .. "threshold calculation instead of updated one" ..
         f.p .. "Fixed a debug print causing an error upon crafting" ..
+        f.p .. "Fixed not hiding frames on npc crafting window" ..
         newP("7.2.2") ..
         f.p .. "Hotfix customer service recipe whisper and crafting costs" ..
         f.p .. "Hotfix Craft Results multicraft error" ..
