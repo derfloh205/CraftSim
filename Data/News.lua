@@ -22,6 +22,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "(Thx " .. f.bb("https://github.com/domi1294") ..
         f.p .. "Fixed Simulation Mode using base recipe difficulty for" .. 
         f.a .. "threshold calculation instead of updated one" ..
+        f.p .. "Fixed a debug print causing an error upon crafting" ..
         newP("7.2.2") ..
         f.p .. "Hotfix customer service recipe whisper and crafting costs" ..
         f.p .. "Hotfix Craft Results multicraft error" ..

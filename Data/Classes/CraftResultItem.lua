@@ -20,7 +20,7 @@ end
 
 function CraftSim.CraftResultItem:Debug()
     local debugLines = {
-        "Q" .. self.qualityID .. " " .. self.item:GetItemLink() .. " x " .. self.quantity - self.quantityMulticraft,
+        "Q" .. tostring(self.qualityID) .. " " .. tostring(self.item:GetItemLink()) .. " x " .. self.quantity - self.quantityMulticraft,
     }
     if self.quantityMulticraft > 0 then
         table.insert(debugLines, "Multicraft: " .. self.quantityMulticraft)
