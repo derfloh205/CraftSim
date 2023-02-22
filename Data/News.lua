@@ -11,7 +11,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("7.6.0") ..
-        f.p .. "Started Mapping the Specialization Info for rest professions" ..
+        f.p .. "Started mapping the " .. f.bb("Specialization Info") .. " for rest professions" ..
         f.p .. "Partially mapped professions now show but with warning" ..
         newP("7.5.0") ..
         f.P .. f.bb("Price Override") .. " Module reworked to be more compact and handy" ..
