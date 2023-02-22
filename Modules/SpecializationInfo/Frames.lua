@@ -19,11 +19,6 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     local function createContent(frame)
         frame:Hide()
     
-        frame.content.notImplementedText = CraftSim.FRAME:CreateText(CraftSim.UTIL:ColorizeText("This profession's specialization data\nis not mapped yet!\nIf you want to help, feel free to ask\nin the discord!", CraftSim.CONST.COLORS.LEGENDARY),
-        frame.content, frame.content, "TOP", "TOP", -25, -100)
-    
-        frame.content.notImplementedText:Hide()
-    
         frame.content.knowledgePointSimulationButton =  CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
         frame.content.knowledgePointSimulationButton:SetPoint("TOP", frame.title, "TOP", 0, -20)	
         frame.content.knowledgePointSimulationButton:SetText("Simulate Knowledge Distribution")
@@ -33,6 +28,11 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
             CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM), not specSimFrame:IsVisible())
         end)
         frame.content.knowledgePointSimulationButton:SetEnabled(false)
+
+        frame.content.notImplementedText = CraftSim.FRAME:CreateText(CraftSim.UTIL:ColorizeText("SpecInfo Work in Progress", CraftSim.CONST.COLORS.LEGENDARY),
+        frame.content, frame.content.knowledgePointSimulationButton, "CENTER", "CENTER", 0, 0)
+    
+        frame.content.notImplementedText:Hide()
     
         frame.content.nodeLines = {}
         local function createNodeLine(parent, anchorParent, offsetY)
@@ -82,10 +82,10 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
         end)
         specInfoFrame.content.notImplementedText:Show()
         specInfoFrame.content.knowledgePointSimulationButton:Hide()
-        return
+    else
+        specInfoFrame.content.knowledgePointSimulationButton:Show()
+        specInfoFrame.content.notImplementedText:Hide()
     end
-    specInfoFrame.content.knowledgePointSimulationButton:Show()
-    specInfoFrame.content.notImplementedText:Hide()
 
     if CraftSim.SIMULATION_MODE.isActive then
         specializationData = CraftSim.SIMULATION_MODE.specializationData

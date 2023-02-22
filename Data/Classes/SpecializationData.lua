@@ -25,7 +25,7 @@ function CraftSim.SpecializationData:new(recipeData)
 
     self.isImplemented = CraftSim.UTIL:IsSpecImplemented(recipeData.professionData.professionInfo.profession)
 
-    if not self.isImplemented or recipeData.isOldWorldRecipe then
+    if recipeData.isOldWorldRecipe then
         return
     end
 
@@ -50,6 +50,7 @@ function CraftSim.SpecializationData:new(recipeData)
     local function parseNode(nodeID, parentNodeData, layer)
         local ruleNodes = CraftSim.UTIL:FilterTable(professionRuleNodes, function (n) return n.nodeID == nodeID end)
         local nodeData = CraftSim.NodeData(self.recipeData, ruleNodes, parentNodeData)
+        print("process nodeID: " .. tostring(nodeID))
         nodeData.nodeName = CraftSim.UTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
         local childNodeNameIDs = ruleNodes[1].childNodeIDs
 
