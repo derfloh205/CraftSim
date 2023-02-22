@@ -11,7 +11,10 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("7.5.0") ..
-        f.P .. "" ..
+        f.P .. f.bb("Price Override") .. " Module reworked to be more compact and handy" ..
+        f.a .. "Also allows for more precise prices now" ..
+        f.a .. f.r("WARNING:") .. " all your current overrides have been reset" ..
+        f.p .. "Fixed old world professions trying to parse specialization data" ..
         newP("7.4.1") ..
         f.p .. "Added mappings for all old world enchants" ..
         f.a .. "Big thanks goes to the discontinued addon " .. f.bb("OneClickEnchant") ..

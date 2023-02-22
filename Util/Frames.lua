@@ -900,28 +900,137 @@ function CraftSim.FRAME:CreateScrollFrame(parent, offsetTOP, offsetLEFT, offsetR
     return scrollFrame, scrollChild
 end
 
-function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onTextChangedCallback)
-    local goldInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
-        goldInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
-        goldInput:SetSize(sizeX, sizeY)
-        goldInput:SetAutoFocus(false) -- dont automatically focus
-        goldInput:SetFontObject("ChatFontNormal")
-        goldInput:SetText(initialValue)
-        goldInput:SetScript("OnEscapePressed", function() goldInput:ClearFocus() end)
-        goldInput:SetScript("OnEnterPressed", function() goldInput:ClearFocus() end)
-        goldInput:SetScript("OnTextChanged", function(self, userInput) 
-            local moneyValue = goldInput.getMoneyValue()
-            onTextChangedCallback(userInput, moneyValue)
-        end)
+---@class GGUI.GoldInputInfo
+---@field gold number
+---@field silver number
+---@field copper number
+---@field total number
 
-        goldInput.getMoneyValue = function()
-            local inputText = goldInput:GetNumber()
-            local totalCopper = inputText*10000
-
-            --print("total value: " .. CraftSim.UTIL:FormatMoney(totalCopper))  
-            return totalCopper
+function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onValueValidCallback, onValidationChangedCallback, showFormatHelpIcon)
+    local function validateMoneyString(moneyString)
+        -- check if the string matches the pattern
+        if not string.match(moneyString, "^%d*g?%d*s?%d*c?$") then
+            return false
         end
 
+        -- check if the string contains at least one of g, s, or c
+        if not string.match(moneyString, "[gsc]") then
+            return false
+        end
+
+        -- check if the string contains multiple g, s, or c
+        if string.match(moneyString, "g.*g") then
+            return false
+        end
+        if string.match(moneyString, "s.*s") then
+            return false
+        end
+        if string.match(moneyString, "c.*c") then
+            return false
+        end
+
+        -- check if it ends incorrectly
+        if string.match(moneyString, "%d$") then
+            return false
+        end
+
+        -- check if the string contains invalid characters
+        if string.match(moneyString, "[^%dgsc]") then
+            return false
+        end
+
+        -- all checks passed, the string is valid
+        return true
+    end
+
+    local goldInput = CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, 
+    function(self, userInput) 
+        print("userinput: " .. tostring(userInput))
+        if userInput then
+            -- validate and color text, and adapt save button
+            local input = self:GetText() or ""
+            -- remove colorizations
+            print(input)
+
+            input = string.gsub(input, CraftSim.CONST.COLORS.GOLD, "")
+            input = string.gsub(input, CraftSim.CONST.COLORS.SILVER, "")
+            input = string.gsub(input, CraftSim.CONST.COLORS.COPPER, "")
+            input = string.gsub(input, "|r", "")
+            input = string.gsub(input, "|", "")
+
+            local valid = validateMoneyString(input)
+            self.isValid = valid
+
+            print("money string valid: " .. tostring(valid))
+            if valid then
+                -- colorize
+                print("colorize")
+                local gold = tonumber(string.match(input, "(%d+)g")) or 0
+                local silver = tonumber(string.match(input, "(%d+)s")) or 0
+                local copper = tonumber(string.match(input, "(%d+)c")) or 0
+                local gC = CraftSim.UTIL:ColorizeText("g", CraftSim.CONST.COLORS.GOLD)
+                local sC = CraftSim.UTIL:ColorizeText("s", CraftSim.CONST.COLORS.SILVER)
+                local cC = CraftSim.UTIL:ColorizeText("c", CraftSim.CONST.COLORS.COPPER)
+                local colorizedText = ((gold > 0 and (gold .. gC)) or "") .. ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
+                self:SetText(colorizedText)
+
+                local goldInputInfo = {
+                    gold=gold,
+                    silver=silver,
+                    copper=copper,
+                    total=gold*10000+silver*100+copper
+                }
+                if onValueValidCallback then
+                    onValueValidCallback(goldInputInfo)
+                end
+
+                self.currentInfo = goldInputInfo
+            end
+
+            self.validationBorder:SetValid(valid)
+
+            if onValidationChangedCallback then
+                onValidationChangedCallback(valid)
+            end
+        end
+    end)
+
+    local validationBorder = CreateFrame("Frame", nil, goldInput, "BackdropTemplate")
+    validationBorder:SetSize(goldInput:GetWidth()*1.3, goldInput:GetHeight()*1.6)
+    validationBorder:SetPoint("CENTER", goldInput, "CENTER", -2, 0)
+    validationBorder:SetBackdrop({
+        edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+        edgeSize = 25,
+    })
+    function validationBorder:SetValid(valid) 
+        if valid then
+            validationBorder:Hide()
+        else
+            validationBorder:Show()
+            validationBorder:SetBackdropBorderColor(1, 0, 0, 0.5)
+        end
+    end
+    validationBorder:Hide()
+    goldInput.validationBorder = validationBorder
+
+    function goldInput:GetInfo()
+        return goldInput.currentInfo
+    end
+
+    function goldInput:SetValue(total)
+        local gold, silver, copper = CraftSim.UTIL:GetMoneyValuesFromCopper(total)
+        local gC = CraftSim.UTIL:ColorizeText("g", CraftSim.CONST.COLORS.GOLD)
+        local sC = CraftSim.UTIL:ColorizeText("s", CraftSim.CONST.COLORS.SILVER)
+        local cC = CraftSim.UTIL:ColorizeText("c", CraftSim.CONST.COLORS.COPPER)
+        local colorizedText = ((gold > 0 and (gold .. gC)) or "") .. ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
+        self:SetText(colorizedText)
+    end
+
+    goldInput:SetValue(initialValue)
+
+    if showFormatHelpIcon then
+        CraftSim.FRAME:CreateHelpIcon("Format: 100g10s1c", goldInput, goldInput, "LEFT", "RIGHT", 5, 0)
+    end
 
     return goldInput
 end

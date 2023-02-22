@@ -17,7 +17,7 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent)
         local recipeData = CraftSim.MAIN.currentRecipeData
 
         if recipeData then
-            local priceOverride = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(recipeData.recipeID, itemID)
+            local priceOverride = CraftSim.PRICE_OVERRIDE:GetGlobalOverridePrice(itemID)
 
             if priceOverride then
                 return priceOverride

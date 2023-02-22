@@ -103,8 +103,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.supportsResourcefulness = false
     self.supportsCraftingspeed = true -- this is always supported (but does not show in details UI when 0)
 
-    -- fetch possible required/optional/finishing reagents, if possible categorize by quality?
-
     if not self.isCooking then
         self.specializationData = CraftSim.SpecializationData(self)
     end

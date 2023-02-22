@@ -536,7 +536,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		showMaterialOptimization = true
 	end
 
-	if not recipeData.isCooking then
+	if not recipeData.isCooking and not recipeData.isOldWorldRecipe then
 		showSpecInfo = true
 	end
 	showSimulationMode = not recipeData.isOldWorldRecipe

@@ -25,7 +25,7 @@ function CraftSim.SpecializationData:new(recipeData)
 
     self.isImplemented = CraftSim.UTIL:IsSpecImplemented(recipeData.professionData.professionInfo.profession)
 
-    if not self.isImplemented then
+    if not self.isImplemented or recipeData.isOldWorldRecipe then
         return
     end
 

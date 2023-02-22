@@ -225,6 +225,9 @@ CraftSim.CONST.COLORS = {
     UNCOMMON = "cff1eff00",
     GREY = "cff9d9d9d",
     ARTIFACT = "cffe6cc80",
+    GOLD = "cfffffc01",
+    SILVER = "cffdadada",
+    COPPER = "cffc9803c"
 }
 
 CraftSim.CONST.RECIPE_CATEGORIES = {

@@ -540,7 +540,7 @@ end
 
 ---Returns the given copper value as gold, silver and copper seperated, as string formated or as numbers
 ---@param copperValue number
----@param formatString boolean
+---@param formatString? boolean
 ---@return string | number
 ---@return number?
 ---@return number?
