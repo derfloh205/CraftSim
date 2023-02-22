@@ -52,7 +52,7 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
 
     if recipeData.isEnchantingRecipe then
         if not CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID] then
-            error("CraftSim: Enchant Recipe Missing in Data: " .. recipeData.recipeID .. " Please contact the developer (discord: genju#4210)")
+            print("CraftSim: Enchant Recipe Missing in Data: " .. recipeData.recipeID)
         end
         local itemIDs = {
             CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID].q1,

@@ -15,7 +15,13 @@ function CraftSim_DEBUG:PrintRecipeIDs(recipeID)
 
     local itemID = nil
     if recipeInfo.isEnchantingRecipe then
-         itemID = CraftSim.ENCHANT_RECIPE_DATA[recipeInfo.recipeID].q1
+        local enchantOutput = CraftSim.ENCHANT_RECIPE_DATA[recipeInfo.recipeID]
+        if enchantOutput then
+            itemID = CraftSim.ENCHANT_RECIPE_DATA[recipeInfo.recipeID].q1
+        else
+            print("no output for enchanting recipe found")
+            return
+        end
     else
         itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
     end
