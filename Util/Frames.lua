@@ -395,6 +395,7 @@ function CraftSim.FRAME:MakeCloseable(frame, moduleOption)
 end
 
 
+--> in GGUI
 function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, scale, font, justifyData)
     scale = scale or 1
     font = font or "GameFontHighlight"
@@ -521,41 +522,6 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
     
     CraftSim.FRAME.frames[frameID] = name
     return frame
-end
-
-function CraftSim.FRAME:UpdateStatDetailsByExtraItemFactors(recipeData)
-    local lines = ProfessionsFrame.CraftingPage.SchematicForm.Details.statLinePool
-	local activeObjects = lines.activeObjects
-
-    local specData = recipeData.specNodeData
-
-    local multicraftExtraItemsFactor = 1
-    local resourcefulnessExtraItemsFactor = 1
-
-    if specData then
-        multicraftExtraItemsFactor = recipeData.stats.multicraft ~= nil and recipeData.stats.multicraft.bonusItemsFactor
-        resourcefulnessExtraItemsFactor = recipeData.stats.resourcefulness ~= nil and recipeData.stats.resourcefulness.bonusItemsFactor
-    else
-        multicraftExtraItemsFactor = recipeData.extraItemFactors.multicraftExtraItemsFactor
-        resourcefulnessExtraItemsFactor = recipeData.extraItemFactors.resourcefulnessExtraItemsFactor
-    end
-    
-	for statLine, _ in pairs(activeObjects) do 
-        local multicraftText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT)
-        local resourcefulnessText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS)
-		if string.find(statLine.LeftLabel:GetText(), multicraftText) and (multicraftExtraItemsFactor or 0) > 1 then
-			local baseText = multicraftText .. " "
-			local formatted = CraftSim.UTIL:FormatFactorToPercent(multicraftExtraItemsFactor)
-			local text = baseText .. CraftSim.UTIL:ColorizeText("" .. formatted .. " Items", CraftSim.CONST.COLORS.GREEN)
-			statLine.LeftLabel:SetText(text)
-		end
-		if string.find(statLine.LeftLabel:GetText(), resourcefulnessText) and (resourcefulnessExtraItemsFactor or 0) > 1 then
-			local baseText = resourcefulnessText .. " " 
-			local formatted = CraftSim.UTIL:FormatFactorToPercent(resourcefulnessExtraItemsFactor)
-			local text = baseText .. CraftSim.UTIL:ColorizeText("" .. formatted .. " Items", CraftSim.CONST.COLORS.GREEN)
-			statLine.LeftLabel:SetText(text)
-		end
-	end
 end
 
 function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initialValue, clickCallback, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
