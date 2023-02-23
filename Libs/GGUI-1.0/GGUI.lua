@@ -2,6 +2,8 @@
 
 local GGUI = LibStub:NewLibrary("GGUI", 1)
 
+local GUTIL = GGUI_GUTIL
+
 local configName = nil
 
 --- CLASSICS insert
@@ -97,11 +99,28 @@ function GGUI:MakeFrameMoveable(frame)
         frame.hookFrame:StopMovingOrSizing()
         end)
 end
+function GGUI:SetItemTooltip(frame, itemLink, owner, anchor)
+    local function onEnter()
+        local _, ItemLink = GameTooltip:GetItem()
+        GameTooltip:SetOwner(owner, anchor);
 
--- TODO: GUTIL
-function GGUI:GetQualityIDFromLink(itemLink)
-    local qualityID = string.match(itemLink, "Quality%-Tier(%d+)")
-    return tonumber(qualityID)
+        if ItemLink ~= itemLink then
+            -- to not set it again and hide the tooltip..
+            GameTooltip:SetHyperlink(itemLink)
+        end
+        GameTooltip:Show();
+    end
+    local function onLeave()
+        GameTooltip:Hide();
+    end
+    if itemLink then
+        frame:SetScript("OnEnter", onEnter)
+        frame:SetScript("OnLeave", onLeave)
+    else
+        frame:SetScript("OnEnter", nil)
+        frame:SetScript("OnLeave", nil)
+
+    end
 end
 
 ---- GGUI Widgets
@@ -419,23 +438,12 @@ function GGUI.Icon:SetItem(idLinkOrMixin, options)
 
     item:ContinueOnItemLoad(function ()
         gIcon.frame:SetNormalTexture(item:GetItemIcon())
-        gIcon.frame:SetScript("OnEnter", function(self) 
-            local itemName, ItemLink = GameTooltip:GetItem()
-            GameTooltip:SetOwner(tooltipOwner or gIcon.frame, tooltipAnchor or "ANCHOR_RIGHT");
-            if ItemLink ~= item:GetItemLink() then
-                -- to not set it again and hide the tooltip..
-                GameTooltip:SetHyperlink(item:GetItemLink())
-            end
-            GameTooltip:Show();
-        end)
-        gIcon.frame:SetScript("OnLeave", function(self) 
-            GameTooltip:Hide();
-        end)
+        GGUI:SetItemTooltip(gIcon.frame, item:GetItemLink(), options.tooltipOwner or gIcon.frame, options.tooltipAnchor or "ANCHOR_RIGHT")
 
         if options.overrideQuality then
             gIcon.qualityIcon:SetQuality(options.overrideQuality)
         else
-            local qualityID = GGUI:GetQualityIDFromLink(item:GetItemLink())
+            local qualityID = GUTIL:GetQualityIDFromLink(item:GetItemLink())
             gIcon.qualityIcon:SetQuality(qualityID)
         end
     end)
@@ -520,4 +528,147 @@ function GGUI.QualityIcon:Hide()
 end
 function GGUI.QualityIcon:Show()
     self.texture:Show()
+end
+
+--- GGUI.Dropdown
+
+---@class GGUI.Dropdown
+---@field frame Frame
+---@field title FontString
+---@field selected? any
+---@field clickCallback? function
+
+---@class GGUI.DropdownConstructorOptions
+---@field globalName? string
+---@field parent? Frame
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field label? string
+---@field offsetX? number
+---@field offsetY? number
+---@field width? number
+---@field initialData? GGUI.DropdownData[]
+---@field clickCallback? function
+---@field defaultValue? any
+
+---@class GGUI.DropdownData
+---@field isCategory? boolean
+---@field label string
+---@field value any
+---@field tooltipItemLink? string
+---@field tooltipConcatText? string
+
+GGUI.Dropdown = GGUI.Object:extend()
+
+---@param options GGUI.DropdownConstructorOptions
+function GGUI.Dropdown:new(options)
+    options = options or {}
+    options.label = options.label or ""
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.width = options.width or 150
+    options.initialData = options.initialData or {}
+    options.defaultValue = options.defaultValue or ""
+	local dropDown = CreateFrame("Frame", options.globalName, options.parent, "UIDropDownMenuTemplate")
+    self.frame = dropDown
+    self.clickCallback = options.clickCallback
+	dropDown:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+	UIDropDownMenu_SetWidth(dropDown, options.width)
+	
+    self:SetData({
+        data=options.initialData, 
+        defaultValue=options.defaultValue})
+
+    self.title = dropDown:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    self.title:SetPoint("TOP", 0, 10)
+
+    self:SetLabel(options.label)
+end
+
+function GGUI.Dropdown:SetLabel(label)
+    self.title:SetText(label)
+end
+
+---@class GGUI.DropdownSetDataOptions
+---@field data GGUI.DropdownData
+---@field defaultValue any
+
+---@param options GGUI.DropdownSetDataOptions
+function GGUI.Dropdown:SetData(options)
+    options = options or {}
+    options.data = options.data or {}
+    options.defaultValue = options.defaultValue or ""
+
+    local dropDown = self.frame
+    local gDropdown = self
+    local function initMainMenu(self, level, menulist) 
+        local info = UIDropDownMenu_CreateInfo()
+        if level == 1 then
+            for _, data in pairs(options.data) do
+                -- print("GGUI dropdown: data")
+                -- print("isCategory: " .. tostring(data.isCategory))
+                -- print("label: " .. tostring(data.label))
+                -- print("value: " .. tostring(data.value))
+                -- print("isCategory: " .. tostring(data.isCategory))
+                -- print("tooltipItemLink: " .. tostring(data.tooltipItemLink))
+                -- print("tooltipConcatText: " .. tostring(data.tooltipConcatText))
+                info.text = data.label
+                info.arg1 = data.value
+                if not data.isCategory then
+                    info.func = function(self, arg1, arg2, checked) 
+                        UIDropDownMenu_SetText(dropDown, data.label) -- value should contain the selected text..
+                        gDropdown.selectedValue = data.value
+                        if gDropdown.clickCallback then
+                            gDropdown.clickCallback(self, data.label, data.value)
+                        end
+                    end
+                end
+                
+                info.hasArrow = data.isCategory
+                info.menuList = data.isCategory and data.label
+                if data.tooltipItemLink then
+                    local concatText = data.tooltipConcatText or ""
+                    info.tooltipText = GUTIL:GetItemTooltipText(data.tooltipItemLink)
+                    -- cut first line as it is the name of the item
+                    info.tooltipTitle, info.tooltipText = string.match(info.tooltipText, "^(.-)\n(.*)$")
+                    info.tooltipTitle = info.tooltipTitle .. "\n" .. concatText
+                    info.tooltipOnButton = true
+                end
+                UIDropDownMenu_AddButton(info)
+            end
+        elseif menulist then
+            for _, currentMenulist in pairs(options.data) do
+                if currentMenulist.label == menulist then
+                    for _, data in pairs(currentMenulist.value) do
+                        info.text = data.label
+                        info.arg1 = data.value
+                        info.func = function(self, arg1, arg2, checked) 
+                            UIDropDownMenu_SetText(dropDown, self.value) -- value should contain the selected text..
+                            gDropdown.selectedValue = self.value
+                            if gDropdown.clickCallback then
+                                gDropdown.clickCallback(self, data.label, data.value)
+                            end
+                            CloseDropDownMenus()
+                        end
+                        
+                        UIDropDownMenu_AddButton(info, level)
+                    end
+                end
+            end
+        end
+	end
+
+	UIDropDownMenu_Initialize(dropDown, initMainMenu, "DROPDOWN_MENU_LEVEL")
+	UIDropDownMenu_SetText(dropDown, options.defaultValue) -- TODO: defaultLabel?
+end
+
+function GGUI.Dropdown:SetEnabled(enabled)
+    if enabled then
+        UIDropDownMenu_EnableDropDown(self.frame)
+    else
+        UIDropDownMenu_DisableDropDown(self.frame)
+    end
 end

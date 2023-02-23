@@ -428,7 +428,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideItem(overrideData)
     overrideOptions:Show()
 
     overrideOptions.itemIcon.SetItem(overrideData.item:GetItemID())
-    local qualityID = CraftSim.UTIL:GetQualityIDFromLink(overrideData.item:GetItemLink())
+    local qualityID = CraftSim.GUTIL:GetQualityIDFromLink(overrideData.item:GetItemLink())
     overrideOptions.itemIcon.SetQuality(qualityID)
 end
 

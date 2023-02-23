@@ -148,4 +148,14 @@ function CraftSim_DEBUG:GGUITest()
 
     local testID = 191500
     testFrame.content.testIcon:SetItem(testID)
+
+
+    testFrame.content.testDropdown = CraftSim.GGUI.Dropdown({
+        parent=testFrame.content,
+        anchorParent=testFrame.content.testIcon.frame,
+        anchorA="TOP",
+        anchorB="BOTTOM",
+        initialData= {{label="Test1", value=1}, {label="Test2", value=2}, {label="TestCategory", isCategory=true, value={{label="Test1", value={someTable=1}}, {label="Test2", value=2}}}},
+        clickCallback = function(_, label, value) print("clicked on: " .. tostring(label) .. " with value " .. tostring(value)) end
+    })
 end

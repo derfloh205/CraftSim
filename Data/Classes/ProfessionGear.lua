@@ -121,7 +121,7 @@ function CraftSim.ProfessionGear:GetJSON(indent)
     local jb = CraftSim.JSONBuilder(indent)
     jb:Begin()
     jb:Add("itemID", self.item:GetItemID())
-    jb:Add("itemString", CraftSim.UTIL:GetItemStringFromLink(self.item:GetItemLink()))
+    jb:Add("itemString", CraftSim.GUTIL:GetItemStringFromLink(self.item:GetItemLink()))
     jb:Add("professionStats", self.professionStats, true)
     jb:End()
     return jb.json

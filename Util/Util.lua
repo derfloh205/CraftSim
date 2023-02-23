@@ -556,15 +556,6 @@ function CraftSim.UTIL:GetMoneyValuesFromCopper(copperValue, formatString)
     end
 end
 
-function CraftSim.UTIL:GetItemStringFromLink(itemLink)
-    return select(3, strfind(itemLink, "|H(.+)|h%["))
-end
-
-function CraftSim.UTIL:GetQualityIDFromLink(itemLink)
-    local qualityID = string.match(itemLink, "Quality%-Tier(%d+)")
-    return tonumber(qualityID)
-end
-
 function CraftSim.UTIL:FoldTable(t, foldFunction, startAtZero)
     local foldedValue = nil
     if #t < 2 and not startAtZero then
@@ -647,6 +638,7 @@ function CraftSim.UTIL:StopProfiling(label)
     CraftSim_DEBUG:print("Elapsed Time for " .. label .. ": " .. CraftSim.UTIL:round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
 end
 
+--> in GUTIL
 function CraftSim.UTIL:GetItemTooltipText(itemLink, showCount)
     local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
 

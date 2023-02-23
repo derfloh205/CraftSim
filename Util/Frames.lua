@@ -14,6 +14,7 @@ function CraftSim.FRAME:GetFrame(frameID)
     return _G[frameName]
 end
 
+--> in GGUI
 function CraftSim.FRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, sizeY, anchorA, anchorB, anchorParent)
     anchorParent = anchorParent or parent
     if anchorA == nil then
@@ -87,6 +88,7 @@ function CraftSim.FRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
     return sign .. CraftSim.UTIL:round(statDiff, roundTo) .. suffix
 end
 
+--> in GGUI in gFrame
 function CraftSim.FRAME:ToggleFrame(frame, visible)
     if visible then
         frame:Show()
