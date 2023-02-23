@@ -672,3 +672,66 @@ function GGUI.Dropdown:SetEnabled(enabled)
         UIDropDownMenu_DisableDropDown(self.frame)
     end
 end
+
+--- GGUI.Text
+
+---@class GGUI.Text
+---@field fontString FontString
+
+
+---@class GGUI.TextConstructorOptions
+---@field text? string
+---@field parent? Frame
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field offsetX? number
+---@field offsetY? number
+---@field font? string
+---@field scale? number
+---@field justifyOptions? GGUI.JustifyOptions
+
+---@class GGUI.JustifyOptions
+---@field type "H" | "V" | "HV"
+---@field align string
+---@field alignH string
+---@field alignV string
+
+
+GGUI.Text = GGUI.Object:extend()
+---@param options GGUI.TextConstructorOptions
+function GGUI.Text:new(options)
+    options = options or {}
+    options.text = options.text or ""
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.font = options.font or "GameFontHighlight"
+    options.scale = options.scale or 1
+
+    local craftSimText = options.parent:CreateFontString(nil, "OVERLAY", options.font)
+    craftSimText:SetText(options.text)
+    craftSimText:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+    craftSimText:SetScale(options.scale)
+    
+    if options.justifyOptions then
+        
+        if options.justifyOptions.type == "V" and options.justifyOptions.align then
+            craftSimText:SetJustifyV(options.justifyOptions.align)
+        elseif options.justifyOptions.type == "H" and options.justifyOptions.align then
+            craftSimText:SetJustifyH(options.justifyOptions.align)
+        elseif options.justifyOptions.type == "HV" and options.justifyOptions.alignH and options.justifyOptions.alignV then
+            craftSimText:SetJustifyH(options.justifyOptions.alignH)
+            craftSimText:SetJustifyV(options.justifyOptions.alignV)
+        end
+    end
+end
+
+function GGUI.Text:GetText()
+    self.fontString:GetText()
+end
+
+function GGUI.Text:SetText(text)
+    self.fontString:SetText(text)
+end

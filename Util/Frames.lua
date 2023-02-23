@@ -147,6 +147,8 @@ function CraftSim.FRAME:SetItemTooltip(frame, itemLink, owner, anchor)
     end
 end
 
+
+--> in GGUI
 --- @param showCount? boolean if enabled, item tooltips show how many the player possesses
 --- @param showItemTooltips? boolean requires the label to be an itemLink
 --- @param concatCallback? function takes one argument which is the itemlink and returns a string that is added to the items tooltip
@@ -206,6 +208,7 @@ function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue, s
 	UIDropDownMenu_SetText(dropDown, defaultValue)
 end
 
+--> in GGUI
 function CraftSim.FRAME:initializeDropdown(dropDown, list, defaultValue)
 	UIDropDownMenu_Initialize(dropDown, function(self) 
 		for k, v in pairs(list) do
@@ -223,6 +226,7 @@ function CraftSim.FRAME:initializeDropdown(dropDown, list, defaultValue)
 	UIDropDownMenu_SetText(dropDown, defaultValue)
 end
 
+--> in GGUI
 function CraftSim.FRAME:CreateQualityIcon(frame, x, y, anchorFrame, anchorSelf, anchorParent, offsetX, offsetY, initialQuality)
     initialQuality = initialQuality or 1
     local icon = frame:CreateTexture(nil, "OVERLAY")
@@ -330,6 +334,7 @@ function CraftSim.FRAME:CreateTab(label, parent, anchorParent, anchorA, anchorB,
     return tabButton
 end
 
+--> in GGUI
 function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     frame.collapsed = false
     frame.collapseButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
@@ -372,6 +377,7 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     end)
 end
 
+--> in GGUI
 function CraftSim.FRAME:MakeCloseable(frame, moduleOption)
     frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
 	frame.closeButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
@@ -387,6 +393,7 @@ function CraftSim.FRAME:MakeCloseable(frame, moduleOption)
         end
     end)
 end
+
 
 function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, scale, font, justifyData)
     scale = scale or 1
@@ -434,6 +441,7 @@ function CraftSim.FRAME:CreateScrollingMessageFrame(parent, anchorParent, anchor
     return scrollingFrame
 end
 
+--> in GGUI
 function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, 
     frameID, scrollable, closeable, frameStrata, moduleOption)
     local hookFrame = CreateFrame("frame", nil, parent)
