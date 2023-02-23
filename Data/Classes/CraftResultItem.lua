@@ -20,7 +20,7 @@ end
 
 function CraftSim.CraftResultItem:Debug()
     local debugLines = {
-        "Q" .. tostring(self.qualityID) .. " " .. tostring(self.item:GetItemLink()) .. " x " .. self.quantity - self.quantityMulticraft,
+        "Q" .. tostring(self.qualityID) .. " " .. tostring(self.item:GetItemLink()) .. " x " .. self.quantity,
     }
     if self.quantityMulticraft > 0 then
         table.insert(debugLines, "Multicraft: " .. self.quantityMulticraft)
@@ -35,7 +35,7 @@ function CraftSim.CraftResultItem:GetJSON(intent)
     jb:Add("itemID", self.item:GetItemID())
     jb:Add("itemString", CraftSim.UTIL:GetItemStringFromLink(self.item:GetItemLink()))
     jb:Add("qualityID", self.qualityID)
-    jb:Add("quantity", self.quantity - self.quantityMulticraft)
+    jb:Add("quantity", self.quantity)
     jb:Add("quantityMulticraft", self.quantityMulticraft, true)
     jb:End()
     return jb.json

@@ -138,8 +138,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     local resultsText = ""
     if #craftResult.craftResultItems > 0 then
         for _, craftResultItem in pairs(craftResult.craftResultItems) do
-            local quantity = craftResultItem.quantity - craftResultItem.quantityMulticraft
-            resultsText = resultsText .. quantity .. " x " .. (craftResultItem.item:GetItemLink() or recipeData.recipeName) .. "\n"
+            resultsText = resultsText .. craftResultItem.quantity .. " x " .. (craftResultItem.item:GetItemLink() or recipeData.recipeName) .. "\n"
         end
     else
         resultsText = resultsText .. recipeData.recipeName .. "\n"
