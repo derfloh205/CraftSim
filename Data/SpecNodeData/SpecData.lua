@@ -13,7 +13,8 @@ CraftSim.SPEC_DATA.RULE_NODES = function()
     [Enum.Profession.Jewelcrafting] = CraftSim.JEWELCRAFTING_DATA:GetData(),
     [Enum.Profession.Enchanting] = CraftSim.ENCHANTING_DATA:GetData(),
     [Enum.Profession.Tailoring] = CraftSim.TAILORING_DATA:GetData(),
-    [Enum.Profession.Inscription] = CraftSim.INSCRIPTION_DATA:GetData()
+    [Enum.Profession.Inscription] = CraftSim.INSCRIPTION_DATA:GetData(),
+    [Enum.Profession.Engineering] = CraftSim.ENGINEERING_DATA:GetData()
 } end
 CraftSim.SPEC_DATA.BASE_RULE_NODES = function() 
     return {
@@ -22,8 +23,9 @@ CraftSim.SPEC_DATA.BASE_RULE_NODES = function()
     [Enum.Profession.Leatherworking] = {"LEATHERWORKING_DISCIPLINE_1", "LEATHER_ARMOR_CRAFTING_1", "MAIL_ARMOR_CRAFTING_1", "PRIMORDIAL_LEATHERWORKING_1"},
     [Enum.Profession.Jewelcrafting] = {"TOOLSET_MASTERY_1", "FACETING_1", "SETTING_1", "ENTERPRISING_1"},
     [Enum.Profession.Enchanting] = {"ENCHANTMENT_1", "INSIGHT_OF_THE_BLUE_1", "RODS_RUNES_AND_RUSES_1"},
-    [Enum.Profession.Tailoring] = {"PH1", "PH2", "PH3", "PH4"},
-    [Enum.Profession.Inscription] = {"PH1", "PH2", "PH3", "PH4"}
+    [Enum.Profession.Tailoring] = {"TAILORING_MASTERY_1", "TEXTILES_1", "DRACONIC_NEEDLEWORK_1", "GARMENTCRAFTING_1"},
+    [Enum.Profession.Inscription] = {"RUNE_MASTERY_1", "ARCHIVING_1", "RUNEBINDING_1"},
+    [Enum.Profession.Engineering] = {"OPTIMIZED_EFFICIENCY_1", "EXPLOSIVES_1", "FUNCTION_OVER_FORM_1", "MECHANICAL_MIND_1"},
 } end
 
 function CraftSim.SPEC_DATA:GetNodes(professionID)
@@ -34,15 +36,15 @@ function CraftSim.SPEC_DATA:GetNodes(professionID)
     elseif professionID == Enum.Profession.Enchanting then
         return CraftSim.ENCHANTING_DATA.NODES()
     elseif professionID == Enum.Profession.Inscription then
-        return CraftSim.LEATHERWORKING_DATA.NODES()
+        return CraftSim.INSCRIPTION_DATA.NODES()
     elseif professionID == Enum.Profession.Jewelcrafting then
         return CraftSim.JEWELCRAFTING_DATA.NODES()
     elseif professionID == Enum.Profession.Leatherworking then
         return CraftSim.LEATHERWORKING_DATA.NODES()
     elseif professionID == Enum.Profession.Tailoring then
-        return CraftSim.LEATHERWORKING_DATA.NODES()
+        return CraftSim.TAILORING_DATA.NODES()
     elseif professionID == Enum.Profession.Engineering then
-        return {}
+        return CraftSim.ENGINEERING_DATA.NODES()
     elseif professionID == Enum.Profession.Cooking then
         return {}
     else

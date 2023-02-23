@@ -629,7 +629,19 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
                 createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), baseOffsetY+nodeFrameOffsetY*2, 2, 2, tabNr, 1),
                 createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX / 2, baseOffsetY+nodeFrameOffsetY*2, 2, 2, tabNr, 2),
         
-                -- last row is either 9, 8, 4, 2, 0
+                -- last row is either 11, 9, 8, 5, 4, 2, 0
+                createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*5, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 1),
+                createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*4, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 2),
+                createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*3, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 3),
+                createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 4),
+                createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 5),
+                createNodeModFrame(parent, parent, "TOP", "TOP", 0, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 6),
+                createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 7),
+                createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 8),
+                createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*3, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 9),
+                createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*4, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 10),
+                createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*5, baseOffsetY+nodeFrameOffsetY*3, 3, 11, tabNr, 11),
+
                 createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*4, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 1),
                 createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*3, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 2),
                 createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*3, 3, 9, tabNr, 3),
@@ -648,6 +660,12 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
                 createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 6),
                 createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 7),
                 createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX*3, baseOffsetY+nodeFrameOffsetY*3, 3, 8, tabNr, 8),
+
+                createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*3, 3, 5, tabNr, 1),
+                createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 5, tabNr, 2),
+                createNodeModFrame(parent, parent, "TOP", "TOP", 0, baseOffsetY+nodeFrameOffsetY*3, 3, 5, tabNr, 3),
+                createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 5, tabNr, 4),
+                createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX*2, baseOffsetY+nodeFrameOffsetY*3, 3, 5, tabNr, 5),
         
                 createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2)-nodeFrameSpacingX, baseOffsetY+nodeFrameOffsetY*3, 3, 4, tabNr, 1),
                 createNodeModFrame(parent, parent, "TOP", "TOP", -(nodeFrameSpacingX / 2), baseOffsetY+nodeFrameOffsetY*3, 3, 4, tabNr, 2),
@@ -806,7 +824,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     if recipeData.supportsResourcefulness then
         local baseResourcefulness = professionStats.resourcefulness.value - professionStatsMod.resourcefulness.value
         local percentText = CraftSim.UTIL:round(professionStats.resourcefulness:GetPercent(), 1) .. "%"
-        detailsFrame.content.resourcefulnessValue:SetText(professionStats.resourcefulness.value .. " (" .. baseResourcefulness .."+"..professionStatsMod.resourcefulness.value .. ") " .. percentText)
+        detailsFrame.content.resourcefulnessValue:SetText(CraftSim.UTIL:round(professionStats.resourcefulness.value) .. " (" .. CraftSim.UTIL:round(baseResourcefulness) .."+".. CraftSim.UTIL:round(professionStatsMod.resourcefulness.value) .. ") " .. percentText)
         
         detailsFrame.content.resourcefulnessBonusValue:SetText(professionStats.resourcefulness.extraFactor*100 .. "%")
     end

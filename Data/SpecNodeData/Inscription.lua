@@ -126,10 +126,31 @@ function CraftSim.INSCRIPTION_DATA:GetData()
     return {
          RUNE_MASTERY_1 = {
             nodeID = 34835,
-            childNodeIDs = {},
+            childNodeIDs = {"PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1"},
          },
          INFINITE_DISCOVERY_1 = {
             nodeID = 34833,
+            threshold = 0,
+            inspirationBonusSkillFactor = 0.05,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+         },
+         INFINITE_DISCOVERY_2 = {
+            nodeID = 34833,
+            threshold = 10,
+            inspirationBonusSkillFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+         },
+         INFINITE_DISCOVERY_3 = {
+            nodeID = 34833,
+            threshold = 20,
+            inspirationBonusSkillFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+         },
+         INFINITE_DISCOVERY_4 = {
+            nodeID = 34833,
+            threshold = 30,
+            inspirationBonusSkillFactor = 0.25,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
          },
          UNDERSTANDING_FLORA_1 = {
             nodeID = 34832,
@@ -139,9 +160,11 @@ function CraftSim.INSCRIPTION_DATA:GetData()
          },
          ARCHIVING_1 = {
             nodeID = 43535,
+            childNodeIDs = {"DARKMOON_MYSTERIES_1", "SHARED_KNOWLEDGE_1", "SCALE_SIGILS_1"},
          },
          DARKMOON_MYSTERIES_1 = {
             nodeID = 43534,
+            childNodeIDs = {"FIRE_1", "FROST_1", "AIR_1", "EARTH_1"},
          },
          FIRE_1 = {
             nodeID = 43533,
@@ -157,6 +180,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
          },
          SHARED_KNOWLEDGE_1 = {
             nodeID = 43529,
+            childNodeIDs = {"CONTRACTS_AND_MISSIVES_1", "DRACONIC_TREATISES_1"},
          },
          CONTRACTS_AND_MISSIVES_1 = {
             nodeID = 43528,
@@ -166,6 +190,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
          },
          SCALE_SIGILS_1 = {
             nodeID = 43526,
+            childNodeIDs = {"AZURESCALE_SIGIL_1", "EMBERSCALE_SIGIL_1", "SAGESCALE_SIGIL_1", "BRONZESCALE_SIGIL_1", "JETSCALE_SIGIL_1"},
          },
          AZURESCALE_SIGIL_1 = {
             nodeID = 43525,
@@ -184,9 +209,11 @@ function CraftSim.INSCRIPTION_DATA:GetData()
          },
          RUNEBINDING_1 = {
             nodeID = 34893,
+            childNodeIDs = {"WOODCARVING_1", "RUNIC_SCRIPTURE_1"},
          },
          WOODCARVING_1 = {
             nodeID = 34892,
+            childNodeIDs = {"PROFESSION_TOOLS_1", "STAVES_1"},
          },
          PROFESSION_TOOLS_1 = {
             nodeID = 34891,
@@ -196,6 +223,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
          },
          RUNIC_SCRIPTURE_1 = {
             nodeID = 34889,
+            childNodeIDs = {"CODEXES_1", "VANTUS_RUNES_1", "FAUNA_RUNES_1"},
          },
          CODEXES_1 = {
             nodeID = 34888,
@@ -206,7 +234,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         FAUNA_RUNES_1 = {
             nodeID = 34886,
         },
-
         PERFECT_PRACTICE_1 = {
             nodeID = 34834,
             threshold = 0,

@@ -8,6 +8,7 @@ _, CraftSim = ...
 ---@field equalsMulticraft boolean
 ---@field equalsInspiration boolean
 ---@field equalsResourcefulness boolean
+---@field equalsResourcefulnessPercent boolean
 ---@field equalsCraftingspeed boolean
 ---@field equalsResourcefulnessExtraItemsFactor boolean
 ---@field equalsPhialExperimentationChanceFactor boolean
@@ -36,6 +37,7 @@ function CraftSim.NodeRule:new(nodeRuleData, nodeData)
     self.equalsMulticraft = nodeRuleData.equalsMulticraft or false
     self.equalsInspiration = nodeRuleData.equalsInspiration or false
     self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or false
+    self.equalsResourcefulnessPercent = nodeRuleData.equalsResourcefulnessPercent or false
     self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or false
     self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or false
     self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or false
@@ -59,6 +61,10 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank()
 
     if self.equalsResourcefulness then
         self.professionStats.resourcefulness.value = self.nodeData.rank
+    end
+
+    if self.equalsResourcefulnessPercent then
+        self.professionStats.resourcefulness.value = self.nodeData.rank * ( 0.01 / CraftSim.CONST.PERCENT_MODS.RESOURCEFULNESS)
     end
 
     if self.equalsCraftingspeed then
@@ -107,6 +113,7 @@ function CraftSim.NodeRule:GetJSON(indent)
     jb:Add("equalsMulticraft", self.equalsMulticraft)
     jb:Add("equalsInspiration", self.equalsInspiration)
     jb:Add("equalsResourcefulness", self.equalsResourcefulness)
+    jb:Add("equalsResourcefulnessPercent", self.equalsResourcefulnessPercent)
     jb:Add("equalsCraftingspeed", self.equalsCraftingspeed)
     jb:Add("equalsResourcefulnessExtraItemsFactor", self.equalsResourcefulnessExtraItemsFactor)
     jb:Add("equalsPhialExperimentationChanceFactor", self.equalsPhialExperimentationChanceFactor)
