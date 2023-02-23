@@ -2,6 +2,8 @@
 
 local GGUI = LibStub:NewLibrary("GGUI", 1)
 
+local configName = nil
+
 --- CLASSICS insert
 local Object = {}
 Object.__index = Object
@@ -61,7 +63,51 @@ end
 
 --- CLASSICS END
 
---- GGUI CLASS DEFINITIONS
+GGUI.numFrames = 0
+GGUI.frames = {}
+
+if not GGUI then return end
+
+-- GGUI Configuration Methods
+    function GGUI:SetConfigSavedVariable(variableName)
+        configName = variableName
+    end
+
+    
+
+-- GGUI UTILS
+function GGUI:MakeFrameCloseable(frame, onCloseCallback)
+    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    frame.closeButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
+    frame.closeButton:SetText("X")
+    frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+15, 20)
+    frame.closeButton:SetScript("OnClick", function(self) 
+        frame:Hide()
+        if onCloseCallback then
+            onCloseCallback(frame)
+        end
+    end)
+end
+function GGUI:MakeFrameMoveable(frame)
+    frame.hookFrame:SetMovable(true)
+    frame:SetScript("OnMouseDown", function(self, button)
+        frame.hookFrame:StartMoving()
+        end)
+        frame:SetScript("OnMouseUp", function(self, button)
+        frame.hookFrame:StopMovingOrSizing()
+        end)
+end
+
+-- TODO: GUTIL
+function GGUI:GetQualityIDFromLink(itemLink)
+    local qualityID = string.match(itemLink, "Quality%-Tier(%d+)")
+    return tonumber(qualityID)
+end
+
+---- GGUI Widgets
+
+--- GGUI Frame
+
 ---@class GGUI.Frame
 ---@field frame Frame
 ---@field content Frame
@@ -111,12 +157,6 @@ end
 ---@field edgeSize? number
 ---@field edgeFile? string
 ---@field insets? backdropInsets
---- GGUI CLASS DEFINITIONS END
-
-GGUI.numFrames = 0
-GGUI.frames = {}
-
-if not GGUI then return end
 
 ---@param frameID string The ID string you gave the frame
 function GGUI:GetFrame(frameID)
@@ -223,16 +263,6 @@ function GGUI.Frame:new(options)
         scrollChild:SetHeight(1) -- ??
 
         frame.content = scrollChild
-
-        frame.UpdateSize = function(x, y) 
-            frame:SetSize(x, y)
-            scrollFrame:SetSize(frame:GetWidth() , frame:GetHeight())
-            scrollFrame:SetPoint("TOP", frame, "TOP", 0, -30)
-            scrollFrame:SetPoint("LEFT", frame, "LEFT", 20, 0)
-            scrollFrame:SetPoint("RIGHT", frame, "RIGHT", -35, 0)
-            scrollFrame:SetPoint("BOTTOM", frame, "BOTTOM", 0, 20)
-            scrollChild:SetWidth(scrollFrame:GetWidth())
-        end
     else
         frame.content = CreateFrame("frame", nil, frame)
         frame.content:SetPoint("TOP", frame, "TOP")
@@ -241,6 +271,18 @@ function GGUI.Frame:new(options)
     self.content = frame.content
     GGUI.frames[self.frameID] = frame
     return frame
+end
+
+function GGUI.Frame:SetSize(x, y)
+    self.frame:SetSize(x, y)
+    if self.frame.scrollFrame then
+        self.frame.scrollFrame:SetSize(self.frame:GetWidth() , self.frame:GetHeight())
+        self.frame.scrollFrame:SetPoint("TOP", self.frame, "TOP", 0, -30)
+        self.frame.scrollFrame:SetPoint("LEFT", self.frame, "LEFT", 20, 0)
+        self.frame.scrollFrame:SetPoint("RIGHT", self.frame, "RIGHT", -35, 0)
+        self.frame.scrollFrame:SetPoint("BOTTOM", self.frame, "BOTTOM", 0, 20)
+        self.frame.scrollFrame.scrollChild:SetWidth(self.frame.scrollFrame:GetWidth())
+    end
 end
 
 ---@param gFrame GGUI.Frame
@@ -287,25 +329,195 @@ function GGUI.Frame:Decollapse()
     end
 end
 
-function GGUI:MakeFrameCloseable(frame, onCloseCallback)
-    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-	frame.closeButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
-	frame.closeButton:SetText("X")
-	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+15, 20)
-    frame.closeButton:SetScript("OnClick", function(self) 
-        frame:Hide()
-        if onCloseCallback then
-            onCloseCallback(frame)
+function GGUI.Frame:Show()
+    self.frame:Show()
+end
+function GGUI.Frame:Hide()
+    self.frame:Hide()
+end
+function GGUI.Frame:SetVisible(visible)
+    if visible then
+        self:Show()
+    else
+        self:Hide()
+    end
+end
+
+--- GGUI Icon
+
+---@class GGUI.Icon
+---@field frame Frame
+---@field qualityIcon GGUI.QualityIcon
+---@field item ItemMixin
+---@field qualityID? number
+
+---@class GGUI.IconConstructorOptions
+---@field parent? Frame
+---@field offsetX? number
+---@field offsetY? number
+---@field texturePath? string
+---@field sizeX? number
+---@field sizeY? number
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field anchorParent? Region
+
+GGUI.Icon = GGUI.Object:extend()
+function GGUI.Icon:new(options)
+    options = options or {}
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.texturePath = options.texturePath or "Interface\\containerframe\\bagsitemslot2x" -- empty slot texture
+    options.sizeX = options.sizeX or 40
+    options.sizeY = options.sizeY or 40
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+
+    local newIcon = CreateFrame("Button", nil, options.parent, "GameMenuButtonTemplate")
+    self.frame = newIcon
+    newIcon:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+	newIcon:SetSize(options.sizeX, options.sizeY)
+	newIcon:SetNormalFontObject("GameFontNormalLarge")
+	newIcon:SetHighlightFontObject("GameFontHighlightLarge")
+	newIcon:SetNormalTexture(options.texturePath)
+    newIcon.qualityIcon = GGUI.QualityIcon({
+        parent=self.frame,
+        sizeX=options.sizeX*0.60,
+        sizeY=options.sizeY*0.60,
+        anchorParent=newIcon,
+        anchorA="TOPLEFT",
+        anchorB="TOPLEFT",
+        offsetX=-options.sizeX*0.15,
+        offsetY=options.sizeY*0.15,
+    })
+    newIcon.qualityIcon:Hide()
+    self.qualityIcon = newIcon.qualityIcon
+end
+
+---@class GGUI.IconSetItemOptions
+---@field tooltipOwner? Frame
+---@field tooltipAnchor? TooltipAnchor
+---@field overrideQuality? number
+
+---@param idLinkOrMixin number | string | ItemMixin
+function GGUI.Icon:SetItem(idLinkOrMixin, options)
+    options = options or {}
+
+    local gIcon = self
+    if not idLinkOrMixin then
+        gIcon.frame:SetScript("OnEnter", nil)
+        gIcon.frame:SetScript("OnLeave", nil)
+    end
+    local item = nil
+    if type(idLinkOrMixin) == 'number' then
+        item = Item:CreateFromItemID(idLinkOrMixin)
+    elseif type(idLinkOrMixin) == 'string' then
+        item = Item:CreateFromItemLink(idLinkOrMixin)
+    elseif type(idLinkOrMixin) == 'table' and idLinkOrMixin.ContinueOnItemLoad then -- some small test if its a mixing
+        item = idLinkOrMixin
+    end
+
+    item:ContinueOnItemLoad(function ()
+        gIcon.frame:SetNormalTexture(item:GetItemIcon())
+        gIcon.frame:SetScript("OnEnter", function(self) 
+            local itemName, ItemLink = GameTooltip:GetItem()
+            GameTooltip:SetOwner(tooltipOwner or gIcon.frame, tooltipAnchor or "ANCHOR_RIGHT");
+            if ItemLink ~= item:GetItemLink() then
+                -- to not set it again and hide the tooltip..
+                GameTooltip:SetHyperlink(item:GetItemLink())
+            end
+            GameTooltip:Show();
+        end)
+        gIcon.frame:SetScript("OnLeave", function(self) 
+            GameTooltip:Hide();
+        end)
+
+        if options.overrideQuality then
+            gIcon.qualityIcon:SetQuality(options.overrideQuality)
+        else
+            local qualityID = GGUI:GetQualityIDFromLink(item:GetItemLink())
+            gIcon.qualityIcon:SetQuality(qualityID)
         end
     end)
 end
 
-function GGUI:MakeFrameMoveable(frame)
-	frame.hookFrame:SetMovable(true)
-	frame:SetScript("OnMouseDown", function(self, button)
-		frame.hookFrame:StartMoving()
-		end)
-		frame:SetScript("OnMouseUp", function(self, button)
-		frame.hookFrame:StopMovingOrSizing()
-		end)
+---@param qualityID number
+function GGUI.Icon:SetQuality(qualityID)
+    if qualityID then
+        self.qualityIcon:SetQuality(qualityID)
+        self.qualityIcon:Show()
+    else
+        self.qualityIcon:Hide()
+    end
+end
+
+function GGUI.Icon:Show()
+    self.frame:Show()
+end
+function GGUI.Icon:Hide()
+    self.frame:Hide()
+end
+
+
+--- GGUI.QualityIcon
+
+---@class GGUI.QualityIcon
+---@field texture Texture
+---@field qualityID number
+
+---@class GGUI.QualityIconConstructorOptions
+---@field parent Frame
+---@field sizeX? number
+---@field sizeY? number
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field offsetX? number
+---@field offsetY? number
+---@field initialQuality? number
+
+GGUI.QualityIcon = GGUI.Object:extend()
+function GGUI.QualityIcon:new(options)
+    options = options or {}
+    options.parent = options.parent or UIParent
+    options.sizeX = options.sizeX or 30
+    options.sizeY = options.sizeY or 30
+    options.anchorParent = options.anchorParent
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.initialQuality = options.initialQuality or 1
+
+
+
+    local icon = options.parent:CreateTexture(nil, "OVERLAY")
+    self.texture = icon
+    icon:SetSize(options.sizeX, options.sizeY)
+    icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+    icon:SetAtlas("Professions-Icon-Quality-Tier" .. options.initialQuality)
+    icon:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+end
+
+---@param qualityID number
+function GGUI.QualityIcon:SetQuality(qualityID)
+    if not qualityID or type(qualityID) ~= 'number' then
+        self.texture:Hide()
+        return
+    end
+    self.texture:Show()
+    if qualityID > 5 then
+        qualityID = 5
+    elseif qualityID < 1 then
+        qualityID = 1
+    end
+    self.texture:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+    self.texture:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
+end
+
+function GGUI.QualityIcon:Hide()
+    self.texture:Hide()
+end
+function GGUI.QualityIcon:Show()
+    self.texture:Show()
 end

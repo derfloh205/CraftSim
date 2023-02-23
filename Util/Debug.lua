@@ -125,7 +125,7 @@ function CraftSim_DEBUG:exampleAPIUsage(recipeID)
 end
 
 function CraftSim_DEBUG:GGUITest()
-    local newFrame = CraftSim.GGUI.Frame({
+    local testFrame = CraftSim.GGUI.Frame({
         title="DEBUG TEST",
         sizeX= 300,
         sizeY= 300,
@@ -137,4 +137,15 @@ function CraftSim_DEBUG:GGUITest()
         moveable=true,
         scrollableContent=true,
     })
+
+    testFrame.content.testIcon = CraftSim.GGUI.Icon({
+        parent=testFrame.content,
+        anchorParent=testFrame.content,
+        anchorA="TOP",
+        anchorB="TOP",
+        offsetY=-50
+    })
+
+    local testID = 191500
+    testFrame.content.testIcon:SetItem(testID)
 end

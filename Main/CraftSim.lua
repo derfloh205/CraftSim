@@ -62,7 +62,7 @@ CraftSimOptions = CraftSimOptions or {
 	craftGarbageCollectCrafts = 500,
 }
 
-CraftSimCollapsedFrames = CraftSimCollapsedFrames or {}
+CraftSimGGUIConfig = CraftSimGGUIConfig or {}
 
 CraftSim.MAIN.currentRecipeData = nil
 CraftSim.MAIN.currentRecipeID = nil
@@ -265,6 +265,7 @@ end
 local priceApiLoaded = false
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == AddonName then
+		CraftSim.GGUI:SetConfigSavedVariable("CraftSimGGUIConfig")
 		CraftSim.LOCAL:Init()
 		CraftSim.MAIN:handleCraftSimOptionsUpdates()
 
@@ -395,7 +396,7 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 
 	CraftSim.PRICE_API:InitPriceSource()
 	CraftSim.OPTIONS:Init()
-	CraftSim.MAIN:HandleCollapsedFrameSave()
+	--CraftSim.MAIN:HandleCollapsedFrameSave()
 
 	-- show one time note
 	CraftSim.FRAME:ShowOneTimeInfo()
