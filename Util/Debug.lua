@@ -123,3 +123,7 @@ function CraftSim_DEBUG:exampleAPIUsage(recipeID)
 
     print(recipeData.priceData)
 end
+
+function CraftSim_DEBUG:GGUITest()
+    CraftSim.GGUI:CreateFrame()
+end

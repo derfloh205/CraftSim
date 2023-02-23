@@ -1,3 +1,3 @@
 _, CraftSim = ...
 
-CraftSim.LIBS = {}
+CraftSim.GGUI = LibStub:GetLibrary("GGUI")
