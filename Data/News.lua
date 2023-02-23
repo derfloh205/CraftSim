@@ -13,6 +13,8 @@ function CraftSim.NEWS:GET_NEWS()
         newP("7.6.0") ..
         f.p .. "Started mapping the " .. f.bb("Specialization Info") .. " for rest professions" ..
         f.p .. "Partially mapped professions now show but with warning" ..
+        f.p .. "Fixed CraftResults subtracting multicraft quantity twice" .. 
+        f.a .. "(display only)" ..
         newP("7.5.0") ..
         f.P .. f.bb("Price Override") .. " Module reworked to be more compact and handy" ..
         f.a .. "Also allows for more precise prices now" ..
