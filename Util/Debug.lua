@@ -125,5 +125,16 @@ function CraftSim_DEBUG:exampleAPIUsage(recipeID)
 end
 
 function CraftSim_DEBUG:GGUITest()
-    CraftSim.GGUI:CreateFrame()
+    local newFrame = CraftSim.GGUI.Frame({
+        title="DEBUG TEST",
+        sizeX= 300,
+        sizeY= 300,
+        backdropOptions = {
+            bgFile="Interface\\CharacterFrame\\UI-Party-Background",
+        },
+        closeable=true,
+        collapseable=true,
+        moveable=true,
+        scrollableContent=true,
+    })
 end

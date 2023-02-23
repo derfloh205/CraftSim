@@ -2,20 +2,78 @@
 
 local GGUI = LibStub:NewLibrary("GGUI", 1)
 
-GGUI.numFrames = 0
-GGUI.frames = {}
+--- CLASSICS insert
+local Object = {}
+Object.__index = Object
 
-if not GGUI then return end
+GGUI.Object = Object
 
----@param frameID string The ID string you gave the frame
-function GGUI:GetFrame(frameID)
-    if not GGUI.frames[frameID] then
-        error("GGUI Error: Frame not found: " .. frameID)
-    end
-    return GGUI.frames[frameID]
+function Object:new()
 end
 
----@class GGUI.createFrameOptions
+function Object:extend()
+  local cls = {}
+  for k, v in pairs(self) do
+    if k:find("__") == 1 then
+      cls[k] = v
+    end
+  end
+  cls.__index = cls
+  cls.super = self
+  setmetatable(cls, self)
+  return cls
+end
+
+
+function Object:implement(...)
+  for _, cls in pairs({...}) do
+    for k, v in pairs(cls) do
+      if self[k] == nil and type(v) == "function" then
+        self[k] = v
+      end
+    end
+  end
+end
+
+
+function Object:is(T)
+  local mt = getmetatable(self)
+  while mt do
+    if mt == T then
+      return true
+    end
+    mt = getmetatable(mt)
+  end
+  return false
+end
+
+
+function Object:__tostring()
+  return "Object"
+end
+
+
+function Object:__call(...)
+  local obj = setmetatable({}, self)
+  obj:new(...)
+  return obj
+end
+
+--- CLASSICS END
+
+--- GGUI CLASS DEFINITIONS
+---@class GGUI.Frame
+---@field frame Frame
+---@field content Frame
+---@field frameID string
+---@field scrollableContent boolean
+---@field closeable boolean
+---@field collapseable boolean
+---@field moveable boolean
+---@field originalX number
+---@field originalY number
+
+---@class GGUI.FrameConstructorOptions
 ---@field globalName? string
 ---@field title? string
 ---@field parent? Frame
@@ -26,10 +84,12 @@ end
 ---@field offsetY? number
 ---@field sizeX? number
 ---@field sizeY? number
+---@field scale? number
 ---@field frameID? string
 ---@field scrollableContent? boolean
 ---@field closeable? boolean
 ---@field collapseable? boolean
+---@field collapsed? boolean
 ---@field moveable? boolean
 ---@field frameStrata? FrameStrata
 ---@field onCloseCallback? function
@@ -51,9 +111,24 @@ end
 ---@field edgeSize? number
 ---@field edgeFile? string
 ---@field insets? backdropInsets
+--- GGUI CLASS DEFINITIONS END
 
----@param options GGUI.createFrameOptions
-function GGUI:CreateFrame(options)
+GGUI.numFrames = 0
+GGUI.frames = {}
+
+if not GGUI then return end
+
+---@param frameID string The ID string you gave the frame
+function GGUI:GetFrame(frameID)
+    if not GGUI.frames[frameID] then
+        error("GGUI Error: Frame not found: " .. frameID)
+    end
+    return GGUI.frames[frameID]
+end
+
+GGUI.Frame = GGUI.Object:extend()
+---@param options GGUI.FrameConstructorOptions
+function GGUI.Frame:new(options)
     options = options or {}
     GGUI.numFrames = GGUI.numFrames + 1
     -- handle defaults
@@ -64,19 +139,25 @@ function GGUI:CreateFrame(options)
     options.offsetY = options.offsetY or 0
     options.sizeX = options.sizeX or 100
     options.sizeY = options.sizeY or 100
-    options.frameID = options.frameID or ("GGUIFrame" .. (GGUI.numFrames))
-    options.scrollableContent = options.scrollableContent or false
-    options.closeable = options.closeable or false
-    options.collapseable = options.collapseable or false
-    options.moveable = options.moveable or false
-    options.frameStrata = options.frameStrata or "HIGH"
+    options.scale = options.scale or 1
+    self.originalX = options.sizeX
+    self.originalY = options.sizeY
+    self.frameID = options.frameID or ("GGUIFrame" .. (GGUI.numFrames))
+    self.scrollableContent = options.scrollableContent or false
+    self.closeable = options.closeable or false
+    self.collapseable = options.collapseable or false
+    self.moveable = options.moveable or false
+    self.frameStrata = options.frameStrata or "HIGH"
+    self.collapsed = false
 
     local hookFrame = CreateFrame("frame", nil, options.parent)
     hookFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
     local frame = CreateFrame("frame", options.globalName, hookFrame, "BackdropTemplate")
+    self.frame = frame
     frame.hookFrame = hookFrame
     hookFrame:SetSize(options.sizeX, options.sizeY)
     frame:SetSize(options.sizeX, options.sizeY)
+    frame:SetScale(options.scale)
     frame:SetFrameStrata(options.frameStrata or "HIGH")
     frame:SetFrameLevel(GGUI.numFrames)
 
@@ -96,16 +177,14 @@ function GGUI:CreateFrame(options)
         backdropOptions.colorG = backdropOptions.colorG or 0
         backdropOptions.colorB = backdropOptions.colorB or 0
         backdropOptions.colorA = backdropOptions.colorA or 1
-        backdropOptions.bgFile = backdropOptions.bgFile or "Interface\\CharacterFrame\\UI-Party-Background"
         backdropOptions.borderOptions = backdropOptions.borderOptions or {}
         local borderOptions = backdropOptions.borderOptions
         borderOptions.colorR = borderOptions.colorR or 0
         borderOptions.colorG = borderOptions.colorG or 0
         borderOptions.colorB = borderOptions.colorB or 0
         borderOptions.colorA = borderOptions.colorA or 1
-        borderOptions.edgeFile = borderOptions.edgeFile or "Interface\\PVPFrame\\UI-Character-PVP-Highlight"
-        borderOptions.edgeSize = borderOptions.edgeSize or 0
-        frame:SetBackdropColor(backdropOptions.colorR, backdropOptions.colorG, backdropOptions.colorB, backdropOptions.colorA)
+        borderOptions.edgeSize = borderOptions.edgeSize or 16
+        borderOptions.insets = borderOptions.insets or { left = 8, right = 6, top = 8, bottom = 8 }
         frame:SetBackdropBorderColor(borderOptions.colorR, borderOptions.colorG, borderOptions.colorB, borderOptions.colorA)
         frame:SetBackdrop({
             bgFile = backdropOptions.bgFile,
@@ -113,25 +192,22 @@ function GGUI:CreateFrame(options)
             edgeSize = borderOptions.edgeSize,
             insets = borderOptions.insets,
         })    
+        frame:SetBackdropColor(backdropOptions.colorR, backdropOptions.colorG, backdropOptions.colorB, backdropOptions.colorA)
     end
 
-    frame.closeable = options.closeable or false
-    if options.closeable then
-        CraftSim.FRAME:MakeCloseable(frame, options.onCloseCallback)
+    if self.closeable then
+        GGUI:MakeFrameCloseable(frame, options.onCloseCallback)
     end
 
-    frame.collapseable = options.collapseable or false
-    if options.collapseable then
-        CraftSim.FRAME:MakeCollapsable(frame, options.sizeX, options.sizeY, options.frameID)
+    if self.collapseable then
+        GGUI:MakeFrameCollapsable(self)
     end
     
-    frame.moveable = options.moveable or false
-    if options.moveable then
-        CraftSim.FRAME:makeFrameMoveable(frame)
+    if self.moveable then
+        GGUI:MakeFrameMoveable(frame)
     end
 
-    frame.scrollableContent = options.scrollableContent or false
-    if options.scrollableContent then
+    if self.scrollableContent then
         -- scrollframe
         frame.scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
         frame.scrollFrame.scrollChild = CreateFrame("frame")
@@ -162,7 +238,74 @@ function GGUI:CreateFrame(options)
         frame.content:SetPoint("TOP", frame, "TOP")
         frame.content:SetSize(options.sizeX, options.sizeY)
     end
-    frame.frameID = options.frameID
-    GGUI.frames[options.frameID] = frame
+    self.content = frame.content
+    GGUI.frames[self.frameID] = frame
     return frame
+end
+
+---@param gFrame GGUI.Frame
+function GGUI:MakeFrameCollapsable(gFrame)
+    local frame = gFrame.frame
+    frame.collapseButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    local offsetX = frame.closeButton and -43 or -23
+	frame.collapseButton:SetPoint("TOP", frame, "TOPRIGHT", offsetX, -10)	
+	frame.collapseButton:SetText(" - ")
+	frame.collapseButton:SetSize(frame.collapseButton:GetTextWidth() + 12, 20)
+
+    frame.collapseButton:SetScript("OnClick", function(self) 
+        if gFrame.collapsed then
+            gFrame:Decollapse()
+        else
+            gFrame:Collapse()
+        end
+    end)
+end
+
+function GGUI.Frame:Collapse()
+    if self.collapseable and self.frame.collapseButton then
+        self.collapsed = true
+        -- make smaller and hide content, only show frameTitle
+        self.frame:SetSize(self.originalX, 40)
+        self.frame.collapseButton:SetText("+")
+        self.frame.content:Hide()
+        if self.frame.scrollFrame then
+            self.frame.scrollFrame:Hide()
+        end
+    end
+end
+
+function GGUI.Frame:Decollapse()
+    if self.collapseable and self.frame.collapseButton then
+        -- restore
+        self.collapsed = false
+        self.frame.collapseButton:SetText("-")
+        self.frame:SetSize(self.originalX, self.originalY)
+        self.frame.content:Show()
+        if self.frame.scrollFrame then
+            self.frame.scrollFrame:Show()
+        end
+    end
+end
+
+function GGUI:MakeFrameCloseable(frame, onCloseCallback)
+    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+	frame.closeButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
+	frame.closeButton:SetText("X")
+	frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+15, 20)
+    frame.closeButton:SetScript("OnClick", function(self) 
+        frame:Hide()
+        if onCloseCallback then
+            onCloseCallback(frame)
+        end
+    end)
+end
+
+function GGUI:MakeFrameMoveable(frame)
+	frame.hookFrame:SetMovable(true)
+	frame:SetScript("OnMouseDown", function(self, button)
+		frame.hookFrame:StartMoving()
+		end)
+		frame:SetScript("OnMouseUp", function(self, button)
+		frame.hookFrame:StopMovingOrSizing()
+		end)
 end
