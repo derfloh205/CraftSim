@@ -130,44 +130,44 @@ function CraftSim.ALCHEMY_DATA:GetData()
         },
         TRANSMUTATION_1 = {
             nodeID = 19538,
-            equalsResourcefulnessExtraItemsFactor = true,
+            equalsResourcefulnessPercent = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.ELEMENTAL
                 }
             },
         },
         TRANSMUTATION_2 = {
             nodeID = 19538,
             threshold = 0,
-            resourcefulnessExtraItemsFactor = 0.05, 
+            resourcefulness = (0.05 / CraftSim.CONST.PERCENT_MODS.RESOURCEFULNESS), 
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.ELEMENTAL
                 }
             },
         },
         TRANSMUTATION_3 = {
             nodeID = 19538,
             threshold = 5,
-            resourcefulnessExtraItemsFactor = 0.05, 
+            resourcefulness = (0.05 / CraftSim.CONST.PERCENT_MODS.RESOURCEFULNESS), 
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.ELEMENTAL
                 }
             },
         },
         TRANSMUTATION_4 = {
             nodeID = 19538,
             threshold = 15,
-            resourcefulnessExtraItemsFactor = 0.15, 
+            resourcefulness = (0.15 / CraftSim.CONST.PERCENT_MODS.RESOURCEFULNESS), 
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.EXPLOSIVES_AND_DEVICES,
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ELEMENTAL
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.ELEMENTAL
                 }
             },
         },

@@ -949,7 +949,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
                         label = label .. "MCI+" .. (professionStats.multicraft.extraFactor*100) .. "% "
                     end
                     if professionStats.resourcefulness.value > 0 then
-                        label = label .. "R+" .. professionStats.resourcefulness.value .. " "
+                        label = label .. "R+" .. CraftSim.UTIL:round(professionStats.resourcefulness.value) .. " "
                     end
                     if professionStats.resourcefulness.extraFactor > 0 then
                         label = label .. "RI+" .. (professionStats.resourcefulness.extraFactor*100) .. "% "

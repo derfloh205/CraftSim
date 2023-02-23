@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("7.7.0") ..
+        f.p .. "Some fixes for " .. f.bb("Alchemy Specialization Info") .. " for transmutation" ..
         newP("7.6.0") ..
         f.p .. "Started mapping the " .. f.bb("Specialization Info") .. " for rest professions" ..
         f.p .. "Partially mapped professions now show but with warning" ..
