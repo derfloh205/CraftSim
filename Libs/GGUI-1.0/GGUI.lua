@@ -973,3 +973,69 @@ end
 function GGUI.Button:GetStatus()
     return tostring(self.activeStatusID)
 end
+
+
+--- GGUI.Tab
+
+---@class GGUI.Tab
+---@field button GGUI.Button
+---@field content Frame
+
+---@class GGUI.TabConstructorOptions
+---@field buttonOptions? GGUI.ButtonConstructorOptions
+---@field canBeEnabled? boolean
+---@field sizeX? number
+---@field sizeY? number
+---@field offsetX? number
+---@field offsetY? number
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field parent? Frame
+---@field anchorParent? Region
+
+GGUI.Tab = GGUI.Object:extend()
+---@param options GGUI.TabConstructorOptions
+function GGUI.Tab:new(options)
+    options = options or {}
+    options.sizeX = options.sizeX or 100
+    options.sizeY = options.sizeY or 100
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+
+    self.button = GGUI.Button(options.buttonOptions)
+    self.button.canBeEnabled = options.canBeEnabled or false
+
+    self.content = CreateFrame("Frame", nil, options.parent)
+    self.content:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+    self.content:SetSize(options.sizeX, options.sizeY)
+end
+
+--- GGUI.TabSystem
+---@class GGUI.TabSystem
+---@field tabs GGUI.Tab[]
+
+GGUI.TabSystem = GGUI.Object:extend()
+
+---@param tabList GGUI.Tab[]
+function GGUI.TabSystem:new(tabList)
+    self.tabs = tabList
+    if #tabList == 0 then
+        return
+    end
+    -- show first tab in list
+    for _, tab in pairs(tabList) do
+        tab.button.frame:SetScript("OnClick", function(self) 
+            for _, otherTab in pairs(tabList) do
+                otherTab.content:Hide()
+                otherTab.button:SetEnabled(otherTab.canBeEnabled)
+            end
+            tab.content:Show()
+            tab.button:SetEnabled(false)
+        end)
+        tab.content:Hide()
+    end
+    tabList[1].content:Show()
+    tabList[1].button:SetEnabled(false)
+end
