@@ -119,7 +119,6 @@ function GGUI:SetItemTooltip(frame, itemLink, owner, anchor)
     else
         frame:SetScript("OnEnter", nil)
         frame:SetScript("OnLeave", nil)
-
     end
 end
 
@@ -418,13 +417,13 @@ function GGUI.Icon:new(options)
 	newIcon:SetNormalTexture(options.texturePath)
     newIcon.qualityIcon = GGUI.QualityIcon({
         parent=self.frame,
-        sizeX=options.sizeX*0.60,
-        sizeY=options.sizeY*0.60,
+        sizeX=options.sizeX*0.50,
+        sizeY=options.sizeY*0.50,
         anchorParent=newIcon,
         anchorA="TOPLEFT",
         anchorB="TOPLEFT",
-        offsetX=-options.sizeX*0.15,
-        offsetY=options.sizeY*0.15,
+        offsetX=-options.sizeX*0.10,
+        offsetY=options.sizeY*0.10,
     })
     newIcon.qualityIcon:Hide()
     self.qualityIcon = newIcon.qualityIcon
@@ -443,6 +442,9 @@ function GGUI.Icon:SetItem(idLinkOrMixin, options)
     if not idLinkOrMixin then
         gIcon.frame:SetScript("OnEnter", nil)
         gIcon.frame:SetScript("OnLeave", nil)
+        gIcon.qualityIcon:Hide()
+        GGUI:SetItemTooltip(gIcon.frame, nil)
+        return
     end
     local item = nil
     if type(idLinkOrMixin) == 'number' then

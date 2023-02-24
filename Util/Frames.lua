@@ -15,7 +15,7 @@ function CraftSim.FRAME:GetFrame(frameID)
     return _G[frameName]
 end
 
---> in GGUI
+--> in GGUI.Icon
 function CraftSim.FRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, sizeY, anchorA, anchorB, anchorParent)
     anchorParent = anchorParent or parent
     if anchorA == nil then
@@ -98,7 +98,7 @@ function CraftSim.FRAME:ToggleFrame(frame, visible)
     end
 end
 
---> in GGUI
+--> in GGUI.Dropdown
 function CraftSim.FRAME:initDropdownMenu(frameName, parent, anchorFrame, label, offsetX, offsetY, width, list, clickCallback, defaultValue, byData)
 	local dropDown = CreateFrame("Frame", frameName, parent, "UIDropDownMenuTemplate")
     dropDown.clickCallback = clickCallback
@@ -123,6 +123,7 @@ function CraftSim.FRAME:initDropdownMenu(frameName, parent, anchorFrame, label, 
     return dropDown
 end
 
+--> in GGUI
 -- anchor: e.g. "ANCHOR_RIGHT"
 -- if itemLink is nil it removes the tooltip
 function CraftSim.FRAME:SetItemTooltip(frame, itemLink, owner, anchor)
@@ -150,7 +151,7 @@ function CraftSim.FRAME:SetItemTooltip(frame, itemLink, owner, anchor)
 end
 
 
---> in GGUI
+--> in GGUI.Dropdown
 --- @param showItemTooltips? boolean requires the label to be an itemLink
 --- @param concatCallback? function takes one argument which is the itemlink and returns a string that is added to the items tooltip
 function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue, showItemTooltips, concatCallback)
@@ -208,7 +209,7 @@ function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue, s
 	UIDropDownMenu_SetText(dropDown, defaultValue)
 end
 
---> in GGUI
+--> in GGUI.Dropdown
 function CraftSim.FRAME:initializeDropdown(dropDown, list, defaultValue)
 	UIDropDownMenu_Initialize(dropDown, function(self) 
 		for k, v in pairs(list) do
@@ -226,7 +227,7 @@ function CraftSim.FRAME:initializeDropdown(dropDown, list, defaultValue)
 	UIDropDownMenu_SetText(dropDown, defaultValue)
 end
 
---> in GGUI
+--> in GGUI.QualityIcon
 function CraftSim.FRAME:CreateQualityIcon(frame, x, y, anchorFrame, anchorSelf, anchorParent, offsetX, offsetY, initialQuality)
     initialQuality = initialQuality or 1
     local icon = frame:CreateTexture(nil, "OVERLAY")
@@ -246,7 +247,7 @@ function CraftSim.FRAME:CreateQualityIcon(frame, x, y, anchorFrame, anchorSelf, 
     return icon
 end
 
---> in GGUI
+--> in GGUI.TabSystem
 function CraftSim.FRAME:InitTabSystem(tabs)
     if #tabs == 0 then
         return
@@ -301,7 +302,7 @@ function CraftSim.FRAME:HandleAuctionatorOverlaps()
     end
 end
 
---> in GGUI
+--> in GGUI.Button
 function CraftSim.FRAME:CreateButton(label, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, sizeX, sizeY, sizeToText, clickCallback)
     local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
     button:SetText(label)
@@ -318,7 +319,7 @@ function CraftSim.FRAME:CreateButton(label, parent, anchorParent, anchorA, ancho
     return button
 end
 
---> in GGUI
+--> in GGUI.Tab
 function CraftSim.FRAME:CreateTab(label, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, canBeEnabled, contentX, contentY, contentParent, contentAnchor, contentOffsetX, contentOffsetY)
     local tabExtraWidth = 15
     local tabButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
@@ -399,7 +400,7 @@ function CraftSim.FRAME:MakeCloseable(frame, moduleOption)
 end
 
 
---> in GGUI
+--> in GGUI.Text
 function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, scale, font, justifyData)
     scale = scale or 1
     font = font or "GameFontHighlight"
@@ -423,8 +424,7 @@ function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB,
     return craftSimText
 end
 
-
---> in GGUI
+--> in GGUI.ScrollingMessageFrame
 function CraftSim.FRAME:CreateScrollingMessageFrame(parent, anchorParent, anchorA, anchorB, anchorX, anchorY, maxLines, sizeX, sizeY)
     local scrollingFrame = CreateFrame("ScrollingMessageFrame", nil, parent)
     scrollingFrame:SetSize(sizeX, sizeY)
@@ -448,7 +448,7 @@ function CraftSim.FRAME:CreateScrollingMessageFrame(parent, anchorParent, anchor
     return scrollingFrame
 end
 
---> in GGUI
+--> in GGUI.Frame
 function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, 
     frameID, scrollable, closeable, frameStrata, moduleOption)
     local hookFrame = CreateFrame("frame", nil, parent)
@@ -530,7 +530,7 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
     return frame
 end
 
---> in GGUI
+--> in GGUI.Checkbox
 function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initialValue, clickCallback, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
     local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
     checkBox:SetHitRectInsets(0, 0, 0, 0); -- see https://wowpedia.fandom.com/wiki/API_Frame_SetHitRectInsets
@@ -550,7 +550,7 @@ function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initial
     return checkBox
 end
 
---> in GGUI
+--> in GGUI.Checkbox
 function CraftSim.FRAME:CreateCheckbox(label, description, optionName, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
     local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
     checkBox:SetHitRectInsets(0, 0, 0, 0); -- see https://wowpedia.fandom.com/wiki/API_Frame_SetHitRectInsets
@@ -567,7 +567,7 @@ function CraftSim.FRAME:CreateCheckbox(label, description, optionName, parent, a
     return checkBox
 end
 
---> in GGUI
+--> in GGUI.Slider
 function CraftSim.FRAME:CreateSlider(name, label, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, orientation, min, max, initialValue, lowText, highText, updateCallback)
     local newSlider = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
     newSlider:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
@@ -584,7 +584,7 @@ function CraftSim.FRAME:CreateSlider(name, label, parent, anchorParent, anchorA,
     return newSlider
 end
 
---> in GGUI
+--> in GGUI.HelpIcon
 function CraftSim.FRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
     local helpButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
     helpButton.tooltipText = text
@@ -876,7 +876,7 @@ function CraftSim.FRAME:CreateScrollFrame(parent, offsetTOP, offsetLEFT, offsetR
     return scrollFrame, scrollChild
 end
 
---> in GGUI
+--> in GGUI.CurrencyInput
 function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onValueValidCallback, onValidationChangedCallback, showFormatHelpIcon)
     local function validateMoneyString(moneyString)
         -- check if the string matches the pattern
@@ -1006,7 +1006,7 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
     return goldInput
 end
 
---> in GGUI
+--> in GGUI.TextInput
 function CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onTextChangedCallback)
     local numericInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
         numericInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
@@ -1023,7 +1023,7 @@ function CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB
     return numericInput
 end
 
-
+--> in GGUI.NumericInput
 function CraftSim.FRAME:CreateNumericInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, allowNegative, onTextChangedCallback)
     local numericInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
         numericInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)

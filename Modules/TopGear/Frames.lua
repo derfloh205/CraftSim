@@ -40,9 +40,30 @@ function CraftSim.TOPGEAR.FRAMES:Init()
             frame.content.autoUpdateCB:HookScript("OnClick", function() 
                 CraftSim.MAIN:TriggerModulesErrorSafe(false)
             end)
-        frame.content.gear1Icon = CraftSim.FRAME:CreateIcon(frame.content, -45, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
-        frame.content.gear2Icon = CraftSim.FRAME:CreateIcon(frame.content,  -0, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
-        frame.content.toolIcon = CraftSim.FRAME:CreateIcon(frame.content, 50, contentOffsetY + iconsOffsetY, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40)
+        frame.content.gear1Icon = CraftSim.GGUI.Icon({
+            parent=frame.content,
+            anchorParent=frame.content,
+            sizeX=40,
+            sizeY=40,
+            offsetX=-45,
+            offsetY=contentOffsetY + iconsOffsetY,
+        })
+        frame.content.gear2Icon = CraftSim.GGUI.Icon({
+            parent=frame.content,
+            anchorParent=frame.content,
+            sizeX=40,
+            sizeY=40,
+            offsetX=0,
+            offsetY=contentOffsetY + iconsOffsetY,
+        })
+        frame.content.toolIcon = CraftSim.GGUI.Icon({
+            parent=frame.content,
+            anchorParent=frame.content,
+            sizeX=40,
+            sizeY=40,
+            offsetX=50,
+            offsetY=contentOffsetY + iconsOffsetY,
+        })
     
         frame.content.equipButton = CreateFrame("Button", "CraftSimTopGearEquipButton", frame.content, "UIPanelButtonTemplate")
         frame.content.equipButton:SetSize(50, 25)
@@ -134,58 +155,33 @@ end
 
 ---@param professionGearSet CraftSim.ProfessionGearSet
 ---@param exportMode number
----@param iconButtonsOverride? table
-function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearSet, exportMode, iconButtonsOverride)
-    local topGearFrame = nil
-    local iconButtons
+---@param gIconsOverride? table
+function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearSet, exportMode, gIconsOverride)
+    local topGearFrame
+    local gIcons
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-        iconButtons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
+        gIcons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
     elseif exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
         topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
-        iconButtons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
+        gIcons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
     end
 
-    iconButtons = iconButtonsOverride or iconButtons
+    gIcons = gIconsOverride or gIcons
 
-    for _, button in pairs(iconButtons) do
+    for _, button in pairs(gIcons) do
         button:Hide() -- only to consider cooking ...
     end
-    if professionGearSet.isCooking and not iconButtonsOverride then
-        iconButtons = {iconButtons[2], iconButtons[3]}
+    if professionGearSet.isCooking and not gIconsOverride then
+        gIcons = {gIcons[2], gIcons[3]}
     end
 
     local professionGearList = professionGearSet:GetProfessionGearList()
 
-    for index, iconButton in pairs(iconButtons) do
-        iconButton:Show()
+    for index, gIcon in pairs(gIcons) do
+        gIcon:Show()
         local professionGear = professionGearList[index]
-        if professionGear and professionGear.item then
-            professionGear.item:ContinueOnItemLoad(function ()
-                iconButton:SetNormalTexture(professionGear.item:GetItemIcon())
-                iconButton:SetScript("OnEnter", function(self) 
-                    local _, ItemLink = GameTooltip:GetItem()
-                    if exportMode ~= CraftSim.CONST.EXPORT_MODE.SCAN then
-                        GameTooltip:SetOwner(topGearFrame.content, "ANCHOR_RIGHT");
-                    else
-                        GameTooltip:SetOwner(iconButton, "ANCHOR_RIGHT");
-                    end
-                    if ItemLink ~= professionGear.item:GetItemLink() then
-                        -- to not set it again and hide the tooltip..
-                        GameTooltip:SetHyperlink(professionGear.item:GetItemLink())
-                    end
-                    GameTooltip:Show();
-                end)
-                iconButton:SetScript("OnLeave", function(self) 
-                    GameTooltip:Hide();
-                end)
-            end)
-        else
-            -- show empty slot texture
-            iconButton:SetNormalTexture(CraftSim.CONST.EMPTY_SLOT_TEXTURE)
-            iconButton:SetScript("OnEnter", nil)
-            iconButton:SetScript("OnLeave", nil)
-        end
+        gIcon:SetItem(professionGear.item)--{tooltipOwner=topGearFrame})
     end
 end
 

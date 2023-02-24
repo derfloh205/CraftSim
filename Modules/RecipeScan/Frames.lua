@@ -113,14 +113,32 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
             resultRowFrame.inspirationChanceText = CraftSim.FRAME:CreateText("100%" , resultRowFrame, resultRowFrame.profitText, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
             resultRowFrame.inspirationChanceText:SetSize(INSPIRATION_ROW_WIDTH, 25) -- so the justify does something!
             local iconSize = 20
-            resultRowFrame.tool1Icon = CraftSim.FRAME:CreateIcon(resultRowFrame, columnSpacingX, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "RIGHT", resultRowFrame.inspirationChanceText)
-            resultRowFrame.tool2Icon = CraftSim.FRAME:CreateIcon(resultRowFrame, columnSpacingX, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "RIGHT", resultRowFrame.tool1Icon)
-            resultRowFrame.tool3Icon = CraftSim.FRAME:CreateIcon(resultRowFrame, columnSpacingX, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "RIGHT", resultRowFrame.tool2Icon)
+            resultRowFrame.tool1Icon = CraftSim.GGUI.Icon({
+                parent=resultRowFrame,
+                anchorParent=resultRowFrame.inspirationChanceText,
+                sizeX=iconSize, sizeY=iconSize,
+                anchorA="LEFT", anchorB="RIGHT",
+                offsetX=columnSpacingX,
+            })
+            resultRowFrame.tool2Icon = CraftSim.GGUI.Icon({
+                parent=resultRowFrame,
+                anchorParent=resultRowFrame.tool1Icon.frame,
+                sizeX=iconSize, sizeY=iconSize,
+                anchorA="LEFT", anchorB="RIGHT",
+                offsetX=columnSpacingX,
+            })
+            resultRowFrame.tool3Icon = CraftSim.GGUI.Icon({
+                parent=resultRowFrame,
+                anchorParent=resultRowFrame.tool2Icon.frame,
+                sizeX=iconSize, sizeY=iconSize,
+                anchorA="LEFT", anchorB="RIGHT",
+                offsetX=columnSpacingX,
+            })
             resultRowFrame.noTopGearText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:ColorizeText("Top Gear Equipped", CraftSim.GUTIL.COLORS.GREEN), 
             resultRowFrame, resultRowFrame.inspirationChanceText, "LEFT", "RIGHT", columnSpacingX, 0)
             resultRowFrame.noTopGearText:SetSize(iconSize*3 + columnSpacingX*2, 25)
 
-            resultRowFrame.recipeResultText = CraftSim.FRAME:CreateText("Recipe #" .. #frame.content.resultRowFrames, resultRowFrame, resultRowFrame.tool3Icon, "LEFT", "RIGHT", columnSpacingX*3, 0, nil, nil, {type="H", value="LEFT"})
+            resultRowFrame.recipeResultText = CraftSim.FRAME:CreateText("Recipe #" .. #frame.content.resultRowFrames, resultRowFrame, resultRowFrame.tool3Icon.frame, "LEFT", "RIGHT", columnSpacingX*3, 0, nil, nil, {type="H", value="LEFT"})
             
             CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(resultRowFrame)
             return resultRowFrame
