@@ -6,6 +6,7 @@ CraftSim.FRAME.frames = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.FRAMES) 
 
+--> in GGUI
 function CraftSim.FRAME:GetFrame(frameID)
     local frameName = CraftSim.FRAME.frames[frameID]
     if not frameName then
@@ -97,6 +98,7 @@ function CraftSim.FRAME:ToggleFrame(frame, visible)
     end
 end
 
+--> in GGUI
 function CraftSim.FRAME:initDropdownMenu(frameName, parent, anchorFrame, label, offsetX, offsetY, width, list, clickCallback, defaultValue, byData)
 	local dropDown = CreateFrame("Frame", frameName, parent, "UIDropDownMenuTemplate")
     dropDown.clickCallback = clickCallback
@@ -246,6 +248,7 @@ function CraftSim.FRAME:CreateQualityIcon(frame, x, y, anchorFrame, anchorSelf, 
     return icon
 end
 
+--> in GGUI
 function CraftSim.FRAME:InitTabSystem(tabs)
     if #tabs == 0 then
         return
@@ -266,6 +269,7 @@ function CraftSim.FRAME:InitTabSystem(tabs)
     tabs[1]:SetEnabled(false)
 end
 
+--> in GGUI
 function CraftSim.FRAME:makeFrameMoveable(frame)
 	frame.hookFrame:SetMovable(true)
 	frame:SetScript("OnMouseDown", function(self, button)
@@ -527,6 +531,7 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
     CraftSim.FRAME.frames[frameID] = name
     return frame
 end
+
 
 function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initialValue, clickCallback, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
     local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
