@@ -103,3 +103,18 @@ function GUTIL:GetItemTooltipText(itemLink)
 
   return tooltipText
 end
+
+---Finds the first element in the table where findFunc(element) returns true
+---@param t any
+---@param findFunc any
+---@return any? element
+---@return any? key
+function GUTIL:Find(t, findFunc)
+  for k, v in pairs(t) do
+      if findFunc(v) then
+          return v, k
+      end
+  end
+
+  return nil
+end

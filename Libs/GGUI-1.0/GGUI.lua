@@ -470,7 +470,7 @@ end
 --- GGUI.QualityIcon
 
 ---@class GGUI.QualityIcon
----@field texture Texture
+---@field frame Texture
 ---@field qualityID number
 
 ---@class GGUI.QualityIconConstructorOptions
@@ -500,7 +500,7 @@ function GGUI.QualityIcon:new(options)
 
 
     local icon = options.parent:CreateTexture(nil, "OVERLAY")
-    self.texture = icon
+    self.frame = icon
     icon:SetSize(options.sizeX, options.sizeY)
     icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
     icon:SetAtlas("Professions-Icon-Quality-Tier" .. options.initialQuality)
@@ -510,24 +510,24 @@ end
 ---@param qualityID number
 function GGUI.QualityIcon:SetQuality(qualityID)
     if not qualityID or type(qualityID) ~= 'number' then
-        self.texture:Hide()
+        self.frame:Hide()
         return
     end
-    self.texture:Show()
+    self.frame:Show()
     if qualityID > 5 then
         qualityID = 5
     elseif qualityID < 1 then
         qualityID = 1
     end
-    self.texture:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
-    self.texture:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
+    self.frame:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
+    self.frame:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
 end
 
 function GGUI.QualityIcon:Hide()
-    self.texture:Hide()
+    self.frame:Hide()
 end
 function GGUI.QualityIcon:Show()
-    self.texture:Show()
+    self.frame:Show()
 end
 
 --- GGUI.Dropdown
@@ -676,7 +676,7 @@ end
 --- GGUI.Text
 
 ---@class GGUI.Text
----@field fontString FontString
+---@field frame FontString
 
 
 ---@class GGUI.TextConstructorOptions
@@ -710,28 +710,262 @@ function GGUI.Text:new(options)
     options.font = options.font or "GameFontHighlight"
     options.scale = options.scale or 1
 
-    local craftSimText = options.parent:CreateFontString(nil, "OVERLAY", options.font)
-    craftSimText:SetText(options.text)
-    craftSimText:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
-    craftSimText:SetScale(options.scale)
+    local text = options.parent:CreateFontString(nil, "OVERLAY", options.font)
+    self.frame = text
+    text:SetText(options.text)
+    text:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+    text:SetScale(options.scale)
     
     if options.justifyOptions then
-        
         if options.justifyOptions.type == "V" and options.justifyOptions.align then
-            craftSimText:SetJustifyV(options.justifyOptions.align)
+            text:SetJustifyV(options.justifyOptions.align)
         elseif options.justifyOptions.type == "H" and options.justifyOptions.align then
-            craftSimText:SetJustifyH(options.justifyOptions.align)
+            text:SetJustifyH(options.justifyOptions.align)
         elseif options.justifyOptions.type == "HV" and options.justifyOptions.alignH and options.justifyOptions.alignV then
-            craftSimText:SetJustifyH(options.justifyOptions.alignH)
-            craftSimText:SetJustifyV(options.justifyOptions.alignV)
+            text:SetJustifyH(options.justifyOptions.alignH)
+            text:SetJustifyV(options.justifyOptions.alignV)
         end
     end
 end
 
 function GGUI.Text:GetText()
-    self.fontString:GetText()
+    self.frame:GetText()
 end
 
 function GGUI.Text:SetText(text)
-    self.fontString:SetText(text)
+    self.frame:SetText(text)
+end
+
+
+--- GGUI.ScrollingMessageFrame
+
+---@class GGUI.ScrollingMessageFrame
+---@field frame Frame
+
+---@class GGUI.ScrollingMessageFrameConstructorOptions
+---@field parent? Frame
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field offsetX? number
+---@field offsetY? number
+---@field maxLines? number
+---@field sizeX? number
+---@field sizeY? number
+---@field font? string
+---@field fading? boolean
+---@field enableScrolling? boolean
+---@field justifyOptions? GGUI.JustifyOptions
+
+GGUI.ScrollingMessageFrame = GGUI.Object:extend()
+---@param options GGUI.ScrollingMessageFrameConstructorOptions
+function GGUI.ScrollingMessageFrame:new(options)
+    options = options or {}
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.sizeX = options.sizeX or 150
+    options.sizeY = options.sizeY or 100
+    options.font = options.font or "GameFontHighlight"
+    options.fading = options.fading or false
+    options.enableScrolling = options.enableScrolling or false
+    local scrollingFrame = CreateFrame("ScrollingMessageFrame", nil, options.parent)
+    self.frame = scrollingFrame
+    scrollingFrame:SetSize(options.sizeX, options.sizeY)
+    scrollingFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+    scrollingFrame:SetFontObject(options.font)
+    if options.maxLines then
+        scrollingFrame:SetMaxLines(options.maxLines)
+    end
+    scrollingFrame:SetFading(options.fading)
+    if options.justifyOptions then
+        if options.justifyOptions.type == "V" and options.justifyOptions.align then
+            scrollingFrame:SetJustifyV(options.justifyOptions.align)
+        elseif options.justifyOptions.type == "H" and options.justifyOptions.align then
+            scrollingFrame:SetJustifyH(options.justifyOptions.align)
+        elseif options.justifyOptions.type == "HV" and options.justifyOptions.alignH and options.justifyOptions.alignV then
+            scrollingFrame:SetJustifyH(options.justifyOptions.alignH)
+            scrollingFrame:SetJustifyV(options.justifyOptions.alignV)
+        end
+    end
+    scrollingFrame:EnableMouseWheel(options.enableScrolling)
+
+    scrollingFrame:SetScript("OnMouseWheel", function(self, delta)
+        if delta > 0 then
+          scrollingFrame:ScrollUp()
+        elseif delta < 0 then
+          scrollingFrame:ScrollDown()
+        end
+      end)
+end
+
+function GGUI.ScrollingMessageFrame:AddMessage(message)
+    self.frame:AddMessage(message)
+end
+function GGUI.ScrollingMessageFrame:Clear(message)
+    self.frame:Clear(message)
+end
+
+
+--- GGUI.Button
+
+---@class GGUI.Button
+---@field frame Frame
+---@field clickCallback? function
+---@field originalX? number
+---@field originalY? number
+---@field originalAnchorA? FramePoint
+---@field originalAnchorB? FramePoint
+---@field originalOffsetX? number
+---@field originalOffsetY? number
+---@field originalText? string
+---@field originalParent? Frame
+---@field originalAnchorParent? Region
+---@field activeStatusID? string
+---@field statusList GGUI.ButtonStatus[]
+
+---@class GGUI.ButtonStatus[]
+---@field statusID string
+---@field sizeX? number
+---@field sizeY? number
+---@field offsetX? number
+---@field offsetY? number
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field parent? Frame
+---@field anchorParent? Region
+---@field label? string
+---@field enabled? boolean
+
+---@class GGUI.ButtonConstructorOptions
+---@field label? string
+---@field parent? Frame
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field offsetX? number
+---@field offsetY? number
+---@field sizeX? number
+---@field sizeY? number
+---@field adjustWidth? boolean
+---@field clickCallback? function
+---@field initialStatusID? string
+
+GGUI.Button = GGUI.Object:extend()
+---@param options GGUI.ButtonConstructorOptions
+function GGUI.Button:new(options)
+    self.statusList = {}
+    options = options or {}
+    options.label = options.label or ""
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    self.originalAnchorA = options.anchorA
+    self.originalAnchorB = options.anchorB
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    self.originalOffsetX = options.offsetX
+    self.originalOffsetY = options.offsetY
+    options.sizeX = options.sizeX or 15
+    options.sizeY = options.sizeY or 25
+    self.originalX = options.sizeX
+    self.originalY = options.sizeY
+    self.originalText = options.label
+    options.adjustWidth = options.adjustWidth or false
+    self.originalParent = options.parent or UIParent
+    self.originalAnchorParent = options.anchorParent or UIParent
+    self.activeStatusID = options.initialStatusID
+
+    print("GGUI Button Creation")
+    print("parent: " .. tostring(options.parent))
+    print("anchorParent: " .. tostring(options.anchorParent))
+    print("sizeX: " .. tostring(options.sizeX))
+    print("sizeY: " .. tostring(options.sizeY))
+
+    local button = CreateFrame("Button", nil, options.parent, "UIPanelButtonTemplate")
+    self.frame = button
+    button:SetText(options.label)
+    if options.adjustWidth then
+        button:SetSize(button:GetTextWidth() + options.sizeX, options.sizeY)
+    else
+        button:SetSize(options.sizeX, options.sizeY)
+    end
+    
+    button:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+
+    self.clickCallback = options.clickCallback
+
+    button:SetScript("OnClick", function() 
+        if self.clickCallback then
+            self.clickCallback(self)
+        end
+    end)
+end
+
+---@param text string
+---@param width? number
+---@param adjustWidth? boolean
+function GGUI.Button:SetText(text, width, adjustWidth)
+    self.frame:SetText(text)
+    if width then
+        if adjustWidth then
+            self.frame:SetSize(self.frame:GetTextWidth() + width, self.originalY)
+        else
+            self.frame:SetSize(width, self.originalY)
+        end
+    elseif adjustWidth then
+        width = self.originalX
+        self.frame:SetSize(self.frame:GetTextWidth() + width, self.originalY)
+    end
+end
+
+function GGUI.Button:SetEnabled(enabled)
+    self.frame:SetEnabled(enabled)
+end
+
+--- Set a list of predefined GGUI.ButtonStatus
+---@param statusList GGUI.ButtonStatus[]
+function GGUI.Button:SetStatusList(statusList)
+    -- map statuslist to their ids
+    table.foreach(statusList, function (_, status)
+        if not status.statusID then
+            error("GGUI: ButtonStatus without statusID")
+        end
+        self.statusList[status.statusID] = status
+    end)
+end
+
+function GGUI.Button:SetStatus(statusID)
+    local buttonStatus = self.statusList[statusID]
+    self.activeStatusID = statusID
+
+    if buttonStatus then
+        if buttonStatus.sizeX then
+            self.frame:SetWidth(buttonStatus.sizeX)
+        end
+        if buttonStatus.sizeY then
+            self.frame:SetHeight(buttonStatus.sizeY)
+        end
+        if buttonStatus.label then
+            self.frame:SetText(buttonStatus.label)
+        end
+        if buttonStatus.enabled ~= nil then
+            self.frame:SetEnabled(buttonStatus.enabled)
+        end
+        if buttonStatus.offsetX or buttonStatus.offsetY or buttonStatus.anchorParent or buttonStatus.anchorA or buttonStatus.anchorB then
+            local offsetX = buttonStatus.offsetX or self.originalOffsetX
+            local offsetY = buttonStatus.offsetY or self.originalOffsetY
+            local anchorParent = buttonStatus.anchorParent or self.originalAnchorParent
+            local anchorA = buttonStatus.anchorA or self.originalAnchorA
+            local anchorB = buttonStatus.anchorB or self.originalAnchorB
+
+            self.frame:ClearAllPoints()
+            self.frame:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+        end
+    end
+end
+
+---@return string statusID
+function GGUI.Button:GetStatus()
+    return tostring(self.activeStatusID)
 end

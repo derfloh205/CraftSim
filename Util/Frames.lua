@@ -419,6 +419,8 @@ function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB,
     return craftSimText
 end
 
+
+--> in GGUI
 function CraftSim.FRAME:CreateScrollingMessageFrame(parent, anchorParent, anchorA, anchorB, anchorX, anchorY, maxLines, sizeX, sizeY)
     local scrollingFrame = CreateFrame("ScrollingMessageFrame", nil, parent)
     scrollingFrame:SetSize(sizeX, sizeY)

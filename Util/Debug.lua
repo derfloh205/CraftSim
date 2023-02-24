@@ -168,5 +168,54 @@ function CraftSim_DEBUG:GGUITest()
         text="Test!!!"
     })
 
+    local testButton = CraftSim.GGUI.Button({
+        parent=testFrame.content,
+        anchorParent=testText.frame,
+        anchorA="TOP",
+        anchorB="BOTTOM",
+        label="Test Button 1",
+        adjustWidth=true,
+        initialStatusID="1",
+        clickCallback = function(button) 
+            local statusID = button:GetStatus()
+            if statusID == "1" then
+                button:SetStatus("2")
+            elseif statusID == "2" then
+                button:SetStatus("3")
+            elseif statusID == "3" then
+                button:SetStatus("4")
+            elseif statusID == "4" then
+                button:SetStatus("1")
+            end
+        end,
+    })
+
+    testButton:SetStatusList({
+        {
+            statusID="1",
+            anchorA="TOP",
+            anchorB="BOTTOM",
+            label="Test Button 1",
+        },
+        {
+            statusID="2",
+            anchorA="LEFT",
+            anchorB="RIGHT",
+            label="Test Button 2",
+        },
+        {
+            statusID="3",
+            anchorA="BOTTOM",
+            anchorB="TOP",
+            label="Test Button 3",
+        },
+        {
+            statusID="4",
+            anchorA="RIGHT",
+            anchorB="LEFT",
+            label="Test Button 4",
+        },
+    })
+
 
 end
