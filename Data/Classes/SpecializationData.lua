@@ -107,7 +107,7 @@ function CraftSim.SpecializationData:Debug()
             return "-" .. line
         end)
 
-        debugLines = CraftSim.UTIL:Concat({debugLines, lines})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, lines})
     end
 
     table.insert(debugLines, "Stats from Specializations:")
@@ -115,7 +115,7 @@ function CraftSim.SpecializationData:Debug()
     local lines = self.professionStats:Debug()
     lines = CraftSim.GUTIL:Map(lines, function(line) return "-" .. line end)
 
-    debugLines = CraftSim.UTIL:Concat({debugLines, lines})
+    debugLines = CraftSim.GUTIL:Concat({debugLines, lines})
 
     return debugLines
 end

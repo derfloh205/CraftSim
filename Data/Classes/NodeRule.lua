@@ -98,7 +98,7 @@ function CraftSim.NodeRule:Debug()
     }
     local statLines = self.professionStats:Debug()
     statLines = CraftSim.GUTIL:Map(statLines, function(line) return "-" .. line end)
-    debugLines = CraftSim.UTIL:Concat({debugLines, statLines})
+    debugLines = CraftSim.GUTIL:Concat({debugLines, statLines})
     return debugLines
 end
 

@@ -16,5 +16,5 @@ end
 ---@param idCategory CraftSim.IDCategory
 function CraftSim.IDCategory:Merge(idCategory)
     self.categoryID = idCategory.categoryID
-    self.subtypeIDs = CraftSim.UTIL:ToSet(CraftSim.UTIL:Concat({idCategory.subtypeIDs, self.subtypeIDs}))
+    self.subtypeIDs = CraftSim.UTIL:ToSet(CraftSim.GUTIL:Concat({idCategory.subtypeIDs, self.subtypeIDs}))
 end

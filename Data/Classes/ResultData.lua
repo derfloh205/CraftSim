@@ -147,7 +147,7 @@ function CraftSim.ResultData:Debug()
     for q, item in pairs(self.itemsByQuality) do
         table.insert(debugLines, "Possible Result Q" .. q .. " " .. (item:GetItemLink() or item:GetItemID()))
     end
-    return CraftSim.UTIL:Concat({debugLines, 
+    return CraftSim.GUTIL:Concat({debugLines, 
         {
             "expectedQuality: " .. tostring(self.expectedQuality),
             "expectedQualityUpgrade: " .. tostring(self.expectedQualityUpgrade),

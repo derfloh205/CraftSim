@@ -212,8 +212,8 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)
 
     local optionalReagents = {}
     local finishingReagents = {}
-    table.foreach(recipeData.reagentData.optionalReagentSlots, function(_, slot) optionalReagents = CraftSim.UTIL:Concat({optionalReagents, slot.possibleReagents}) end)
-    table.foreach(recipeData.reagentData.finishingReagentSlots, function(_, slot) finishingReagents = CraftSim.UTIL:Concat({finishingReagents, slot.possibleReagents}) end)
+    table.foreach(recipeData.reagentData.optionalReagentSlots, function(_, slot) optionalReagents = CraftSim.GUTIL:Concat({optionalReagents, slot.possibleReagents}) end)
+    table.foreach(recipeData.reagentData.finishingReagentSlots, function(_, slot) finishingReagents = CraftSim.GUTIL:Concat({finishingReagents, slot.possibleReagents}) end)
     optionalReagents = CraftSim.GUTIL:Map(optionalReagents, function(optionalReagent) 
         return {
             itemID = optionalReagent.item:GetItemID(),
@@ -285,7 +285,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayV2(recipeData, exportMode)
             local dropdownEntry = {label="Optional Reagents", value = {}}
             local allPossibleReagents = {}
             table.foreach(reagentData.optionalReagentSlots, function (_, slot)
-                allPossibleReagents = CraftSim.UTIL:Concat({allPossibleReagents, slot.possibleReagents})
+                allPossibleReagents = CraftSim.GUTIL:Concat({allPossibleReagents, slot.possibleReagents})
             end)
             table.foreach(allPossibleReagents, function (_, optionalReagent)
                 local reagentLabel = optionalReagent.item:GetItemLink()
@@ -301,7 +301,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayV2(recipeData, exportMode)
             local dropdownEntry = {label="Finishing Reagents", value = {}}
             local allPossibleReagents = {}
             table.foreach(reagentData.finishingReagentSlots, function (_, slot)
-                allPossibleReagents = CraftSim.UTIL:Concat({allPossibleReagents, slot.possibleReagents})
+                allPossibleReagents = CraftSim.GUTIL:Concat({allPossibleReagents, slot.possibleReagents})
             end)
             table.foreach(allPossibleReagents, function (_, optionalReagent)
                 local reagentLabel = optionalReagent.item:GetItemLink()
@@ -343,7 +343,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideList(priceOverrideFrame)
     end)
 
     local itemsToLoad = CraftSim.GUTIL:Map(globalOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)
-    itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, CraftSim.GUTIL:Map(resultOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)})
+    itemsToLoad = CraftSim.GUTIL:Concat({itemsToLoad, CraftSim.GUTIL:Map(resultOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)})
 
     CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
         

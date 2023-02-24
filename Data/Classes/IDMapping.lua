@@ -33,7 +33,7 @@ function CraftSim.IDMapping:Merge(idMapping)
         end
     end
 
-    self.exceptionRecipeIDs = CraftSim.UTIL:ToSet(CraftSim.UTIL:Concat({self.exceptionRecipeIDs, idMapping.exceptionRecipeIDs}))
+    self.exceptionRecipeIDs = CraftSim.UTIL:ToSet(CraftSim.GUTIL:Concat({self.exceptionRecipeIDs, idMapping.exceptionRecipeIDs}))
 end
 
 function CraftSim.IDMapping:Debug()

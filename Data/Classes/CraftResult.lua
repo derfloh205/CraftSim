@@ -99,7 +99,7 @@ function CraftSim.CraftResult:Debug()
         table.foreach(self.craftResultItems, function (_, resultItem)
             local lines = resultItem:Debug()
             lines = CraftSim.GUTIL:Map(lines, function (line) return "-" .. line end)
-            debugLines = CraftSim.UTIL:Concat({debugLines, lines})
+            debugLines = CraftSim.GUTIL:Concat({debugLines, lines})
         end)
     end
 
@@ -108,7 +108,7 @@ function CraftSim.CraftResult:Debug()
         table.foreach(self.savedReagents, function (_, savedReagent)
             local lines = savedReagent:Debug()
             lines = CraftSim.GUTIL:Map(lines, function (line) return "-" .. line end)
-            debugLines = CraftSim.UTIL:Concat({debugLines, lines})
+            debugLines = CraftSim.GUTIL:Concat({debugLines, lines})
         end)
     end
     

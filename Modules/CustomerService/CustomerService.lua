@@ -262,11 +262,11 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateResponse(payload)
     payload.resultData = CraftSim.ResultData:Deserialize(payload.resultData)
 
     local itemsToLoad = CraftSim.GUTIL:Map(payload.reagents, function(reagent) return reagent.item end)
-    table.foreach(CraftSim.UTIL:Concat({payload.optionalReagents, payload.finishingReagents}), function(_, slot)
-        itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, CraftSim.GUTIL:Map(slot.possibleReagents, function(optionalReagent) return optionalReagent.item end)})
+    table.foreach(CraftSim.GUTIL:Concat({payload.optionalReagents, payload.finishingReagents}), function(_, slot)
+        itemsToLoad = CraftSim.GUTIL:Concat({itemsToLoad, CraftSim.GUTIL:Map(slot.possibleReagents, function(optionalReagent) return optionalReagent.item end)})
     end)
 
-    itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, payload.resultData.itemsByQuality})
+    itemsToLoad = CraftSim.GUTIL:Concat({itemsToLoad, payload.resultData.itemsByQuality})
 
     CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
         CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)

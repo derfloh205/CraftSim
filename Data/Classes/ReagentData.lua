@@ -62,7 +62,7 @@ end
 function CraftSim.ReagentData:GetProfessionStatsByOptionals()
     local totalStats = CraftSim.ProfessionStats()
 
-    local optionalStats = CraftSim.GUTIL:Map(CraftSim.UTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots}), 
+    local optionalStats = CraftSim.GUTIL:Map(CraftSim.GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots}), 
         function (slot)
             if slot.activeReagent then
                 return slot.activeReagent.professionStats
@@ -96,14 +96,14 @@ function CraftSim.ReagentData:GetCraftingReagentInfoTbl()
     local required = self:GetRequiredCraftingReagentInfoTbl()
     local optionals = self:GetOptionalCraftingReagentInfoTbl()
 
-    return CraftSim.UTIL:Concat({required, optionals})
+    return CraftSim.GUTIL:Concat({required, optionals})
 end
 
 function CraftSim.ReagentData:GetOptionalCraftingReagentInfoTbl()
     local craftingReagentInfoTbl = {}
 
     -- optional/finishing
-    for _, slot in pairs(CraftSim.UTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
+    for _, slot in pairs(CraftSim.GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
         local craftingReagentInfo = slot:GetCraftingReagentInfo()
         if craftingReagentInfo then
             table.insert(craftingReagentInfoTbl, craftingReagentInfo)
@@ -119,7 +119,7 @@ function CraftSim.ReagentData:GetRequiredCraftingReagentInfoTbl()
     -- required
     for _, reagent in pairs(self.requiredReagents) do
         local craftingReagentInfos = reagent:GetCraftingReagentInfos()
-        craftingReagentInfoTbl = CraftSim.UTIL:Concat({craftingReagentInfoTbl, craftingReagentInfos})
+        craftingReagentInfoTbl = CraftSim.GUTIL:Concat({craftingReagentInfoTbl, craftingReagentInfos})
     end
 
     return craftingReagentInfoTbl
@@ -129,7 +129,7 @@ end
 function CraftSim.ReagentData:GetActiveOptionalReagents()
     local activeReagents = {}
 
-    local allSlots = CraftSim.UTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})
+    local allSlots = CraftSim.GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})
 
     table.foreach(allSlots, function (_, slot)
         if slot.activeReagent then
@@ -142,7 +142,7 @@ end
 
 ---@param itemID number
 function CraftSim.ReagentData:SetOptionalReagent(itemID)
-    for _, slot in pairs(CraftSim.UTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
+    for _, slot in pairs(CraftSim.GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
         local optionalReagent = CraftSim.UTIL:Find(slot.possibleReagents, 
             function (optionalReagent) 
                 return optionalReagent.item:GetItemID() == itemID 
@@ -158,7 +158,7 @@ function CraftSim.ReagentData:SetOptionalReagent(itemID)
 end
 
 function CraftSim.ReagentData:ClearOptionalReagents()
-    for _, slot in pairs(CraftSim.UTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
+    for _, slot in pairs(CraftSim.GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
         slot.activeReagent = nil
     end
 end
@@ -306,15 +306,15 @@ function CraftSim.ReagentData:Debug()
 
     table.insert(debugLines, "Optional Reagent Slots: " .. tostring(#self.optionalReagentSlots))
     for i, slot in pairs(self.optionalReagentSlots) do
-        debugLines = CraftSim.UTIL:Concat({debugLines, slot:Debug()})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, slot:Debug()})
     end
     table.insert(debugLines, "Finishing Reagent Slots: ".. tostring(#self.finishingReagentSlots))
     for i, slot in pairs(self.finishingReagentSlots) do
-        debugLines = CraftSim.UTIL:Concat({debugLines, slot:Debug()})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, slot:Debug()})
     end
 
     table.insert(debugLines, "Salvage Reagent Slot: " .. tostring(#self.salvageReagentSlot.possibleItems))
-    debugLines = CraftSim.UTIL:Concat({debugLines, self.salvageReagentSlot:Debug()})
+    debugLines = CraftSim.GUTIL:Concat({debugLines, self.salvageReagentSlot:Debug()})
 
     return debugLines
 end

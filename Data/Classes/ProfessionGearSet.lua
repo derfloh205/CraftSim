@@ -159,20 +159,20 @@ function CraftSim.ProfessionGearSet:Debug()
     if self.isCooking then
         local toolLines = self.tool:Debug()
         toolLines[1] = "-Tool: " .. toolLines[1]
-        debugLines = CraftSim.UTIL:Concat({debugLines, toolLines})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, toolLines})
         local gearLines = self.gear2:Debug()
         gearLines[1] = "-Gear: " .. gearLines[1]
-        debugLines = CraftSim.UTIL:Concat({debugLines, gearLines})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, gearLines})
     else
         local toolLines = self.tool:Debug()
         toolLines[1] = "-Tool: " .. toolLines[1]
-        debugLines = CraftSim.UTIL:Concat({debugLines, toolLines})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, toolLines})
         local gearLines = self.gear1:Debug()
         gearLines[1] = "-Gear: " .. gearLines[1]
-        debugLines = CraftSim.UTIL:Concat({debugLines, gearLines})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, gearLines})
         local gearLines2 = self.gear2:Debug()
         gearLines2[1] = "-Gear2: " .. gearLines2[1]
-        debugLines = CraftSim.UTIL:Concat({debugLines, gearLines2})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, gearLines2})
 
     end
 

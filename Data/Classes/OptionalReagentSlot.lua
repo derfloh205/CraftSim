@@ -61,7 +61,7 @@ function CraftSim.OptionalReagentSlot:Debug()
     }
 
     for _, reagent in pairs(self.possibleReagents) do
-        debugLines = CraftSim.UTIL:Concat({debugLines, reagent:Debug()})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, reagent:Debug()})
     end
 
     return debugLines

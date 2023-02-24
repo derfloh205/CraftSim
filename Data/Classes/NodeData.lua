@@ -55,7 +55,7 @@ function CraftSim.NodeData:Debug()
         local lines = childNode:Debug()
         lines = CraftSim.GUTIL:Map(lines, function(line) return "-" .. line end)
 
-        debugLines = CraftSim.UTIL:Concat({debugLines, lines})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, lines})
     end
     return debugLines
 end

@@ -108,10 +108,10 @@ function CraftSim.Reagent:Debug()
 
     if self.hasQuality then
         table.foreach(self.items, function (_, reagentItem)
-            debugLines = CraftSim.UTIL:Concat({debugLines, reagentItem:Debug()})
+            debugLines = CraftSim.GUTIL:Concat({debugLines, reagentItem:Debug()})
         end)
     else
-        debugLines = CraftSim.UTIL:Concat({debugLines, self.items[1]:Debug()})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, self.items[1]:Debug()})
     end
 
     return debugLines

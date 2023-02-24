@@ -76,7 +76,7 @@ function CraftSim.PriceData:Update()
         self.craftingCostsRequired = self.craftingCosts
 
         -- optionals and finishing
-        local activeOptionalReagents = CraftSim.UTIL:Concat({
+        local activeOptionalReagents = CraftSim.GUTIL:Concat({
                 CraftSim.GUTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeReagent end),
                 CraftSim.GUTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeReagent end),
             })

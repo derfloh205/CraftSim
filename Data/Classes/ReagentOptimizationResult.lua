@@ -63,7 +63,7 @@ function CraftSim.ReagentOptimizationResult:GetReagentItemList()
     local reagentItemList = {}
     for _, reagent in pairs(self.reagents) do
         if reagent.hasQuality then -- should here but why not check
-            reagentItemList = CraftSim.UTIL:Concat({reagentItemList, reagent:GetReagentItemList()})
+            reagentItemList = CraftSim.GUTIL:Concat({reagentItemList, reagent:GetReagentItemList()})
         end
     end
 
@@ -77,7 +77,7 @@ function CraftSim.ReagentOptimizationResult:Debug()
     }
 
     table.foreach(self.reagents, function (_, reagent)
-        debugLines = CraftSim.UTIL:Concat({debugLines, reagent:Debug()})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, reagent:Debug()})
     end)
 
     return debugLines

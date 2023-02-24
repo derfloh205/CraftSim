@@ -29,9 +29,9 @@ function CraftSim.TopGearResult:Debug()
         "Profession Gear Set:"
     }
 
-    debugLines = CraftSim.UTIL:Concat({debugLines, self.professionGearSet:Debug()})
+    debugLines = CraftSim.GUTIL:Concat({debugLines, self.professionGearSet:Debug()})
 
     table.insert(debugLines, "Relative Stats:")
-    debugLines = CraftSim.UTIL:Concat({debugLines, self.relativeStats:Debug()})
+    debugLines = CraftSim.GUTIL:Concat({debugLines, self.relativeStats:Debug()})
     return debugLines
 end

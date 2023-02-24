@@ -303,20 +303,6 @@ function CraftSim.UTIL:Find(t, findFunc)
     return nil
 end
 
-
---> in GUTIL
--- to concat lists together (behaviour unpredictable with tables that have strings or not ordered numbers as indices)
-function CraftSim.UTIL:Concat(tableList)
-    local finalList = {}
-    for _, currentTable in pairs(tableList) do
-        for _, item in pairs(currentTable) do
-            table.insert(finalList, item)
-        end
-    end
-    return finalList
-end
-
-
 --> in GUTIL
 ---Returns the given copper value as gold, silver and copper seperated, as string formated or as numbers
 ---@param copperValue number

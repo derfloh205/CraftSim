@@ -183,7 +183,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
         return {}
     end
 
-    local allGear = CraftSim.UTIL:Concat({inventoryGear, equippedGearList})
+    local allGear = CraftSim.GUTIL:Concat({inventoryGear, equippedGearList})
 
     -- remove duplicated items (with same stats, this means the link should be the same..)
     local uniqueGear = {}
