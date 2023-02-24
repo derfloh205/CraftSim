@@ -299,6 +299,7 @@ function CraftSim.FRAME:HandleAuctionatorOverlaps()
     end
 end
 
+--> in GGUI
 function CraftSim.FRAME:CreateButton(label, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, sizeX, sizeY, sizeToText, clickCallback)
     local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
     button:SetText(label)
@@ -315,6 +316,7 @@ function CraftSim.FRAME:CreateButton(label, parent, anchorParent, anchorA, ancho
     return button
 end
 
+--> in GGUI
 function CraftSim.FRAME:CreateTab(label, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, canBeEnabled, contentX, contentY, contentParent, contentAnchor, contentOffsetX, contentOffsetY)
     local tabExtraWidth = 15
     local tabButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
