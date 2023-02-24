@@ -837,6 +837,7 @@ end
 ---@field anchorParent? Region
 ---@field label? string
 ---@field enabled? boolean
+---@field activationCallback? function
 
 ---@class GGUI.ButtonConstructorOptions
 ---@field label? string
@@ -961,6 +962,9 @@ function GGUI.Button:SetStatus(statusID)
 
             self.frame:ClearAllPoints()
             self.frame:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+        end
+        if buttonStatus.activationCallback then
+            buttonStatus.activationCallback(self, statusID)
         end
     end
 end
