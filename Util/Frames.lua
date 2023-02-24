@@ -569,6 +569,7 @@ function CraftSim.FRAME:CreateCheckbox(label, description, optionName, parent, a
     return checkBox
 end
 
+--> in GGUI
 function CraftSim.FRAME:CreateSlider(name, label, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, orientation, min, max, initialValue, lowText, highText, updateCallback)
     local newSlider = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
     newSlider:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
@@ -584,6 +585,7 @@ function CraftSim.FRAME:CreateSlider(name, label, parent, anchorParent, anchorA,
 
     return newSlider
 end
+
 
 function CraftSim.FRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
     local helpButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")

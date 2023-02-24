@@ -1147,3 +1147,55 @@ function GGUI.Slider:new(options)
         end
     end)
 end
+
+--- GGUI.HelpIcon
+---@class GGUI.HelpIcon
+---@field frame Button
+
+---@class GGUI.HelpIconConstructorOptions
+---@field text? string
+---@field parent? Frame
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field offsetX? number
+---@field offsetY? number
+
+GGUI.HelpIcon = GGUI.Object:extend()
+
+---@param options GGUI.HelpIconConstructorOptions
+function GGUI.HelpIcon:new(options)
+    options = options or {}
+    options.text = options.text or ""
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+
+    local helpButton = CreateFrame("Button", nil, options.parent, "UIPanelButtonTemplate")
+    self.frame = helpButton
+    helpButton.tooltipText = options.text
+    helpButton:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)	
+    helpButton:SetText("?")
+    helpButton:SetSize(helpButton:GetTextWidth() + 15, 15)
+
+    helpButton:SetScript("OnEnter", function(self) 
+        GameTooltip:SetOwner(helpButton, "ANCHOR_RIGHT")
+        GameTooltip:ClearLines() 
+        GameTooltip:SetText(self.tooltipText)
+        GameTooltip:Show()
+    end)
+    helpButton:SetScript("OnLeave", function(self) 
+        GameTooltip:Hide()
+    end)
+end
+
+function GGUI.HelpIcon:SetText(text)
+    self.frame.tooltipText = text
+end
+function GGUI.HelpIcon:Show()
+    self.frame:Show()
+end
+function GGUI.HelpIcon:Hide()
+    self.frame:Hide()
+end
