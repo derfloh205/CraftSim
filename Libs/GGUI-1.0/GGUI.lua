@@ -1039,3 +1039,51 @@ function GGUI.TabSystem:new(tabList)
     tabList[1].content:Show()
     tabList[1].button:SetEnabled(false)
 end
+
+--- GGUI.Checkbox
+
+GGUI.Checkbox = GGUI.Object:extend()
+
+---@class GGUI.Checkbox
+---@field frame CheckButton
+
+---@class GGUI.CheckboxConstructorOptions
+---@field label? string
+---@field tooltip? string
+---@field initialValue? boolean
+---@field clickCallback? function
+---@field parent? Frame
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field offsetX? number
+---@field offsetY? number
+
+---@param options GGUI.CheckboxConstructorOptions
+function GGUI.Checkbox:new(options)
+    options = options or {}
+    options.label = options.label or ""
+    options.initialValue = options.initialValue or false
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+
+    local checkBox = CreateFrame("CheckButton", nil, options.parent, "ChatConfigCheckButtonTemplate")
+    self.frame = checkBox
+    checkBox:SetHitRectInsets(0, 0, 0, 0); -- see https://wowpedia.fandom.com/wiki/API_Frame_SetHitRectInsets
+	checkBox:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+	checkBox.Text:SetText(options.label)
+    checkBox.tooltip = options.tooltip
+	-- there already is an existing OnClick script that plays a sound, hook it
+    checkBox:SetChecked(options.initialValue)
+	checkBox:HookScript("OnClick", function() 
+        if self.clickCallback then
+            self.clickCallback(self, self.frame:GetChecked())
+        end
+    end)
+end
+
+function GGUI.Checkbox:GetChecked()
+    return self.frame:GetChecked()
+end
