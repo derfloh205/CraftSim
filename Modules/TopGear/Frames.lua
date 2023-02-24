@@ -181,7 +181,7 @@ function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearSet, expor
     for index, gIcon in pairs(gIcons) do
         gIcon:Show()
         local professionGear = professionGearList[index]
-        gIcon:SetItem(professionGear.item)--{tooltipOwner=topGearFrame})
+        gIcon:SetItem(professionGear.item)
     end
 end
 

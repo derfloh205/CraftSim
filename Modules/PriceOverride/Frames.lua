@@ -69,7 +69,14 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
 
         overrideOptions:Hide()
 
-        overrideOptions.itemIcon = CraftSim.FRAME:CreateIcon(overrideOptions, 20, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 30, 30, "TOPLEFT", "TOPLEFT", overrideOptions)
+        overrideOptions.itemIcon = CraftSim.GGUI.Icon({
+            parent=overrideOptions,
+            anchorParent=overrideOptions,
+            offsetX=20,
+            sizeX=30, sizeY=30,
+            anchorA="TOPLEFT", anchorB="TOPLEFT",
+        })
+
         function overrideOptions:updateButtonStatus()
             local currentData = frame.currentDropdownData
             local price = nil
@@ -104,7 +111,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
             end
         end
     
-        overrideOptions.saveButton = CraftSim.FRAME:CreateButton("Save", overrideOptions, overrideOptions.itemIcon, "BOTTOMLEFT", "BOTTOMRIGHT", 3, -25, 15, 25, true, function()
+        overrideOptions.saveButton = CraftSim.FRAME:CreateButton("Save", overrideOptions, overrideOptions.itemIcon.frame, "BOTTOMLEFT", "BOTTOMRIGHT", 3, -25, 15, 25, true, function()
             CraftSim.PRICE_OVERRIDE:SaveOverrideData(frame.recipeID, frame.currentDropdownData)
             overrideOptions:updateButtonStatus()
             CraftSim.MAIN:TriggerModulesErrorSafe()
@@ -130,7 +137,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
             end
         end
 
-        overrideOptions.currencyInputGold = CraftSim.FRAME:CreateGoldInput(nil, overrideOptions, overrideOptions.itemIcon, "LEFT", "RIGHT", 10, 0, 80, 25, 0, nil, function() overrideOptions:updateButtonStatus() end, true)
+        overrideOptions.currencyInputGold = CraftSim.FRAME:CreateGoldInput(nil, overrideOptions, overrideOptions.itemIcon.frame, "LEFT", "RIGHT", 10, 0, 80, 25, 0, nil, function() overrideOptions:updateButtonStatus() end, true)
     
         frame.content.scrollFrame1, frame.content.activeOverridesBox = CraftSim.FRAME:CreateScrollFrame(frame.content, -170, 50, -50, 30)
         local title = CraftSim.FRAME:CreateText("Active Overrides", frame.content, frame.content.scrollFrame1, "BOTTOM", "TOP", 0, 0)
@@ -165,9 +172,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideItem(overrideData)
 
     overrideOptions:Show()
 
-    overrideOptions.itemIcon.SetItem(overrideData.item:GetItemID())
-    local qualityID = CraftSim.GUTIL:GetQualityIDFromLink(overrideData.item:GetItemLink())
-    overrideOptions.itemIcon.SetQuality(qualityID)
+    overrideOptions.itemIcon:SetItem(overrideData.item:GetItemLink())
 end
 
 ---@param recipeData CraftSim.RecipeData

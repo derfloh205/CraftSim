@@ -727,7 +727,10 @@ function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOver
     overwriteInput:SetPoint("TOP", reagentOverwriteFrame, "TOP", offsetX, offsetY)
     overwriteInput:SetSize(50, 50)
     
-    overwriteInput.icon = CraftSim.FRAME:CreateIcon(overwriteInput, 0, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "RIGHT", "LEFT")
+    overwriteInput.icon = CraftSim.GGUI.Icon({
+        parent=overwriteInput, anchorParent=overwriteInput,
+        sizeX=40,sizeY=40,anchorA="RIGHT", anchorB="LEFT",
+    })
 
     overwriteInput.inputq1 = CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteInput(overwriteInput, baseX, 1)
     overwriteInput.inputq2 = CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteInput(overwriteInput, baseX+inputOffsetX, 2)
@@ -743,7 +746,7 @@ end
 function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteInput(overwriteInputFrame, offsetX, qualityID)
     local inputWidth = 30
     local inputBox = CraftSim.FRAME:CreateNumericInput(
-        nil, overwriteInputFrame, overwriteInputFrame.icon, "LEFT", "RIGHT", offsetX, 0, inputWidth, 20, 0, false, 
+        nil, overwriteInputFrame, overwriteInputFrame.icon.frame, "LEFT", "RIGHT", offsetX, 0, inputWidth, 20, 0, false, 
         function (input, userInput)
             CraftSim.SIMULATION_MODE:OnInputAllocationChanged(input, userInput)
         end)
@@ -1174,27 +1177,10 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames(recipeData)
             inputFrame.inputq3:SetText(qualityReagent.items[3].quantity)
 
             inputFrame.isActive = true
-            local item = qualityReagent.items[1].item
-            item:ContinueOnItemLoad(function ()
-                
-                inputFrame.icon:SetNormalTexture(item:GetItemIcon())
-                inputFrame.icon:SetScript("OnEnter", function(self) 
-                    local itemName, ItemLink = GameTooltip:GetItem()
-                    GameTooltip:SetOwner(inputFrame, "ANCHOR_RIGHT");
-                    if ItemLink ~= item:GetItemLink() then
-                        -- to not set it again and hide the tooltip..
-                        GameTooltip:SetHyperlink(item:GetItemLink())
-                    end
-                    GameTooltip:Show();
-                end)
-                inputFrame.icon:SetScript("OnLeave", function(self) 
-                    GameTooltip:Hide();
-                end)
-            end)
-
+            inputFrame.icon:SetItem(qualityReagent.items[1].item)
+            inputFrame.icon.qualityIcon:Hide() -- we show the qualities elsewhere
         else
-            inputFrame.icon:SetScript("OnEnter", nil)
-            inputFrame.icon:SetScript("OnLeave", nil)
+            inputFrame.icon:SetItem(nil)
             inputFrame.isActive = false
         end
     end
