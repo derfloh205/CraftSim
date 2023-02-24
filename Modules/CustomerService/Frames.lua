@@ -229,9 +229,9 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
                     reagentFrame.countTextNoQ:SetText(countText)
                 else 
                     local qualityIconSize = 15
-                    local q1Icon = CraftSim.UTIL:GetQualityIconAsText(1, qualityIconSize, qualityIconSize, 0, 0)
-                    local q2Icon = CraftSim.UTIL:GetQualityIconAsText(2, qualityIconSize, qualityIconSize, 0, 0)
-                    local q3Icon = CraftSim.UTIL:GetQualityIconAsText(3, qualityIconSize, qualityIconSize, 0, 0)
+                    local q1Icon = CraftSim.GUTIL:GetQualityIconString(1, qualityIconSize, qualityIconSize, 0, 0)
+                    local q2Icon = CraftSim.GUTIL:GetQualityIconString(2, qualityIconSize, qualityIconSize, 0, 0)
+                    local q3Icon = CraftSim.GUTIL:GetQualityIconString(3, qualityIconSize, qualityIconSize, 0, 0)
                     print("quality Icons:")
                     print(q1Icon)
                     print(q2Icon)

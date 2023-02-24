@@ -127,7 +127,7 @@ function CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplay(recipeData, profitPerQuality
                 end)
             else
                 -- if no item recipe e.g. show quality icon
-                local qualityText = CraftSim.UTIL:GetQualityIconAsText(qualityID, 20, 20)
+                local qualityText = CraftSim.GUTIL:GetQualityIconString(qualityID, 20, 20)
                 profitFrame.itemLinkText:SetText(qualityText)
             end
             profitFrame.qualityID = qualityID

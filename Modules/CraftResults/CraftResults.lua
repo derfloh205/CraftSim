@@ -122,7 +122,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
         for _, savedReagent in pairs(craftResult.savedReagents) do
             local qualityID = savedReagent.qualityID
             local iconAsText = CraftSim.UTIL:IconToText(savedReagent.item:GetItemIcon(), 25)
-            local qualityAsText = (qualityID > 0 and CraftSim.UTIL:GetQualityIconAsText(qualityID, 20, 20)) or ""
+            local qualityAsText = (qualityID > 0 and CraftSim.GUTIL:GetQualityIconString(qualityID, 20, 20)) or ""
             resourcesText = resourcesText .. "\n" .. iconAsText .. " " .. savedReagent.quantity .. " ".. qualityAsText
         end
     end
@@ -216,7 +216,7 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
     local itemsToLoad = CraftSim.UTIL:Map(craftResult.savedReagents, function (savedReagent)
         return savedReagent.item
     end)
-    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
+    CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
         CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     end) 
 end

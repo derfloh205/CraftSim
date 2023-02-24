@@ -857,14 +857,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
             qualityFrame.nextQualityMissingSkillValue:SetText(CraftSim.GUTIL:Round(missingSkill, 1))
             local missingSkillText = CraftSim.UTIL:ColorizeText(CraftSim.GUTIL:Round(missingSkillInspiration, 1), 
             missingSkillInspiration == 0 and CraftSim.CONST.COLORS.GREEN or CraftSim.CONST.COLORS.RED)
-            local nextQualityIconText = CraftSim.UTIL:GetQualityIconAsText(recipeData.resultData.expectedQuality + 1, 20, 20)
+            local nextQualityIconText = CraftSim.GUTIL:GetQualityIconString(recipeData.resultData.expectedQuality + 1, 20, 20)
             qualityFrame.nextQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. nextQualityIconText)
             qualityFrame.nextQualityMissingSkillInspirationValue:SetText(missingSkillText)
             qualityFrame.nextQualityIcon.SetQuality(recipeData.resultData.expectedQuality + 1)
             qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[recipeData.resultData.expectedQuality])
             
             if canSkipQuality then
-                local skipQualityIconText = CraftSim.UTIL:GetQualityIconAsText(recipeData.resultData.expectedQuality + 2, 20, 20)
+                local skipQualityIconText = CraftSim.GUTIL:GetQualityIconString(recipeData.resultData.expectedQuality + 2, 20, 20)
                 local skipQualityThreshold = thresholds[recipeData.resultData.expectedQuality + 1]
                 local missingSkillInspirationSkip = skipQualityThreshold - (professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor())
                 missingSkillInspirationSkip = missingSkillInspirationSkip > 0 and missingSkillInspirationSkip or 0
