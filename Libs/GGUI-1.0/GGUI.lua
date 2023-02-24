@@ -1087,3 +1087,63 @@ end
 function GGUI.Checkbox:GetChecked()
     return self.frame:GetChecked()
 end
+
+
+--- GGUI.Slider
+---@class GGUI.Slider
+---@field frame Slider
+---@field onValueChangedCallback? function
+
+---@class GGUI.SliderConstructorOptions
+---@field label? string
+---@field parent? Frame
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field offsetX? number
+---@field offsetY? number
+---@field sizeX? number
+---@field sizeY? number
+---@field orientation? string
+---@field minValue? number
+---@field maxValue? number
+---@field initialValue? number
+---@field lowText? string
+---@field highText? string
+---@field onValueChangedCallback? function
+
+GGUI.Slider = GGUI.Object:extend()
+---@param options GGUI.SliderConstructorOptions
+function GGUI.Slider:new(options)
+    options = options or {}
+    options.label = options.label or ""
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.sizeX = options.sizeX or 150
+    options.sizeY = options.sizeY or 25
+    options.orientation = options.orientation or "HORIZONTAL"
+    options.minValue = options.minValue or 0
+    options.maxValue = options.maxValue or 1
+    options.initialValue = options.initialValue or 0
+    options.lowText = options.lowText or ""
+    options.highText = options.highText or ""
+
+    local newSlider = CreateFrame("Slider", nil, options.parent, "OptionsSliderTemplate")
+    newSlider:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+    newSlider:SetSize(options.sizeX, options.sizeY)
+    newSlider:SetOrientation(options.orientation)
+    newSlider:SetMinMaxValues(options.minValue, options.maxValue)
+    newSlider:SetValue(options.initialValue)
+    _G[newSlider:GetName() .. 'Low']:SetText(options.lowText)        -- Sets the left-side slider text (default is "Low").
+    _G[newSlider:GetName() .. 'High']:SetText(options.highText)     -- Sets the right-side slider text (default is "High").
+    _G[newSlider:GetName() .. 'Text']:SetText(options.label)       -- Sets the "title" text (top-centre of slider).
+
+    newSlider:SetScript("OnValueChanged", 
+    function (...)
+        if self.onValueChangedCallback then
+            self.onValueChangedCallback(...)
+        end
+    end)
+end
