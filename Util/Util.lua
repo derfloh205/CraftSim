@@ -65,15 +65,18 @@ function CraftSim.UTIL:GetResourcefulnessPercentByStat(stat)
     return stat * resourcefulnessFactor
 end
 
+--> in GUTIL
 function CraftSim.UTIL:round(number, decimals)
     return (("%%.%df"):format(decimals)):format(number)
 end
 
+--> in GUTIL
 function CraftSim.UTIL:GetItemIDByLink(hyperlink)
     local _, _, foundID = string.find(hyperlink, "item:(%d+)")
     return tonumber(foundID)
 end
 
+--> in GUTIL
 function CraftSim.UTIL:ContinueOnAllItemsLoaded(itemList, callback) 
 		local itemsToLoad = #itemList
         if itemsToLoad == 0 then
@@ -96,6 +99,7 @@ function CraftSim.UTIL:ContinueOnAllItemsLoaded(itemList, callback)
 		end
 end
 
+--> in GUTIL
 function CraftSim.UTIL:EquipItemByLink(link)
 	for bag=BANK_CONTAINER, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
 		for slot=1,C_Container.GetContainerNumSlots(bag) do
@@ -239,15 +243,18 @@ function CraftSim.UTIL:KethoEditBox_Show(text)
     KethoEditBox:Show()
 end
 
+--> in GUTIL
 function CraftSim.UTIL:isItemSoulbound(itemID)
     local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID) 
     return bindType == CraftSim.CONST.BINDTYPES.SOULBOUND
 end
 
+--> in GUTIL
 function CraftSim.UTIL:GetQualityIconAsText(qualityID, sizeX, sizeY, offsetX, offsetY)
     return CreateAtlasMarkup("Professions-Icon-Quality-Tier" .. qualityID, sizeX, sizeY, offsetX, offsetY)
 end
 
+--> remove
 function CraftSim.UTIL:GetRecipeType(recipeInfo) -- the raw info
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
     if not recipeInfo.supportsCraftingStats then
@@ -310,6 +317,7 @@ function CraftSim.UTIL:PrintTable(t, debugID, recursive, level)
     end
 end
 
+--> in GUTIL
 function CraftSim.UTIL:Count(t, func)
     local count = 0
     for _, v in pairs(t) do
@@ -323,6 +331,7 @@ function CraftSim.UTIL:Count(t, func)
     return count
 end
 
+--> in GUTIL
 function CraftSim.UTIL:Sort(t, compFunc)
     local sorted = {}
     for _, item in pairs(t) do
@@ -404,6 +413,7 @@ function CraftSim.UTIL:IsWorkOrder()
     return ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible()
 end
 
+--> in GUTIL
 function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     local absValue = abs(copperValue)
     local minusText = ""
@@ -433,14 +443,7 @@ function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
     end
 end
 
-function CraftSim.UTIL:CollectGarbageAtThreshold(kbThreshold)
-    local kbUsed = collectgarbage("count")
-    print("kbUsed" .. tostring(kbUsed))
-    if kbUsed >= kbThreshold then
-        collectgarbage("collect")
-    end
-end
-
+--> in GUTIL
 function CraftSim.UTIL:CreateRegistreeForEvents(events)
     local registree = CreateFrame("Frame", nil)
     registree:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
@@ -450,6 +453,8 @@ function CraftSim.UTIL:CreateRegistreeForEvents(events)
     return registree
 end
 
+
+--> in GUTIL
 function CraftSim.UTIL:FilterTable(t, filterFunc)
     local filtered = {}
     for k, v in pairs(t) do
@@ -460,6 +465,7 @@ function CraftSim.UTIL:FilterTable(t, filterFunc)
     return filtered
 end
 
+--> in GUTIL
 -- options: subTable, isTableList
 -- subTable: a subproperty that is a table that is to be mapped instead of the table itself
 -- isTableList: if the table only consists of other tables, map each subTable instead
@@ -505,6 +511,8 @@ function CraftSim.UTIL:Map(t, mapFunc, options)
     end
 end
 
+
+--> in GUTIL
 function CraftSim.UTIL:ToSet(t)
     local set = {}
 
@@ -517,6 +525,7 @@ function CraftSim.UTIL:ToSet(t)
     return set
 end
 
+--> in GUTIL
 function CraftSim.UTIL:Find(t, findFunc)
     for k, v in pairs(t) do
         if findFunc(v) then
@@ -527,6 +536,8 @@ function CraftSim.UTIL:Find(t, findFunc)
     return nil
 end
 
+
+--> in GUTIL
 -- to concat lists together (behaviour unpredictable with tables that have strings or not ordered numbers as indices)
 function CraftSim.UTIL:Concat(tableList)
     local finalList = {}
@@ -538,6 +549,8 @@ function CraftSim.UTIL:Concat(tableList)
     return finalList
 end
 
+
+--> in GUTIL
 ---Returns the given copper value as gold, silver and copper seperated, as string formated or as numbers
 ---@param copperValue number
 ---@param formatString? boolean
@@ -556,6 +569,7 @@ function CraftSim.UTIL:GetMoneyValuesFromCopper(copperValue, formatString)
     end
 end
 
+--> in GUTIL
 function CraftSim.UTIL:FoldTable(t, foldFunction, startAtZero)
     local foldedValue = nil
     if #t < 2 and not startAtZero then
@@ -593,11 +607,14 @@ function CraftSim.UTIL:GreyOutByCondition(text, condition)
     end
 end
 
+--> in GUTIL
 function CraftSim.UTIL:ColorizeText(text, color)
     local startLine = "\124"
     local endLine = "\124r"
     return startLine .. color .. text .. endLine
 end
+
+--> in GUTIL
 function CraftSim.UTIL:IconToText(iconPath, height, width) 
     if not width then
         return "\124T" .. iconPath .. ":" .. height .. "\124t"

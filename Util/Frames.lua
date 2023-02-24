@@ -789,6 +789,7 @@ function CraftSim.FRAME:InitWarningFrame()
     frame:Hide()
 end
 
+--> in GGUI
 function CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
     if type(frame) == "table" and frame.SetHyperlinksEnabled and not frame.enabledLinks then -- prevent inf loop by references
         frame.enabledLinks = true
@@ -861,18 +862,7 @@ function CraftSim.FRAME:ShowError(errorText, optionalTitle)
     warningFrame.showError(errorText, optionalTitle)
 end
 
-function CraftSim.FRAME:CreateGoldIcon(parent, anchorParent, anchorA, anchorB, anchorX, anchorY)
-    local startLine = "\124T"
-    local endLine = "\124t"
-    local goldCoin = startLine .. "Interface\\Icons\\INV_Misc_Coin_01:16" .. endLine
-
-    local goldIcon = parent:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    goldIcon:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
-    goldIcon:SetText(goldCoin)
-
-    return goldIcon
-end
-
+---> GGUI
 function CraftSim.FRAME:CreateScrollFrame(parent, offsetTOP, offsetLEFT, offsetRIGHT, offsetBOTTOM)
     local scrollFrame = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")
     scrollFrame.scrollChild = CreateFrame("frame")
@@ -888,12 +878,7 @@ function CraftSim.FRAME:CreateScrollFrame(parent, offsetTOP, offsetLEFT, offsetR
     return scrollFrame, scrollChild
 end
 
----@class GGUI.GoldInputInfo
----@field gold number
----@field silver number
----@field copper number
----@field total number
-
+--> in GGUI
 function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onValueValidCallback, onValidationChangedCallback, showFormatHelpIcon)
     local function validateMoneyString(moneyString)
         -- check if the string matches the pattern

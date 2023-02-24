@@ -117,6 +117,7 @@ CraftSim.CONST.ERROR = {
     NO_RECIPE_DATA = 1
 }
 
+--> used in GUTIL now
 -- if more needed, add https://wowpedia.fandom.com/wiki/LE_ITEM_BIND
 CraftSim.CONST.BINDTYPES = {
     SOULBOUND = 1
@@ -214,6 +215,7 @@ CraftSim.CONST.DEFAULT_POSITIONS = {
     }
 }
 
+--> in GUTIL (without the c prefix)
 CraftSim.CONST.COLORS = {
     GREEN = "cff00FF00",
     RED = "cffFF0000",

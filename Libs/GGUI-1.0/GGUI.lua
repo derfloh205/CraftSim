@@ -1234,3 +1234,260 @@ function GGUI.HelpIcon:Hide()
     self.frame:Hide()
 end
 
+
+--- GGUI.ScrollFrame
+---@class GGUI.ScrollFrame
+---@field content Frame
+---@field scrollFrame Frame
+
+---@class GGUI.ScrollFrameConstructorOptions
+---@field parent? Frame
+---@field offsetTOP? number
+---@field offsetLEFT? number
+---@field offsetRIGHT? number
+---@field offsetBOTTOM? number
+
+GGUI.ScrollFrame = GGUI.Object:extend()
+---@param options GGUI.ScrollFrameConstructorOptions
+function GGUI.ScrollFrame:new(options)
+    options = options or {}
+    options.offsetTOP = options.offsetTOP or 0
+    options.offsetLEFT = options.offsetLEFT or 0
+    options.offsetRIGHT = options.offsetRIGHT or 0
+    options.offsetBOTTOM = options.offsetBOTTOM or 0
+
+    local scrollFrame = CreateFrame("ScrollFrame", nil, options.parent, "UIPanelScrollFrameTemplate")
+    scrollFrame.scrollChild = CreateFrame("frame")
+    local scrollChild = scrollFrame.scrollChild
+    scrollFrame:SetSize(options.parent:GetWidth() , options.parent:GetHeight())
+    scrollFrame:SetPoint("TOP", options.parent, "TOP", 0, options.offsetTOP)
+    scrollFrame:SetPoint("LEFT", options.parent, "LEFT", options.offsetLEFT, 0)
+    scrollFrame:SetPoint("RIGHT", options.parent, "RIGHT", options.offsetRIGHT, 0)
+    scrollFrame:SetPoint("BOTTOM", options.parent, "BOTTOM", 0, options.offsetBOTTOM)
+    scrollFrame:SetScrollChild(scrollFrame.scrollChild)
+    scrollChild:SetWidth(scrollFrame:GetWidth())
+    scrollChild:SetHeight(1)
+
+    self.scrollFrame = scrollFrame
+    self.content = scrollChild
+end
+
+function GGUI.ScrollFrame:EnableHyperLinksForFrameAndChilds()
+    GGUI:EnableHyperLinksForFrameAndChilds(self.content)
+end
+
+--- GGUI.TextInput
+---@class GGUI.TextInput
+---@field frame EditBox
+---@field onTextChangedCallback? function
+
+---@class GGUI.TextInputConstructorOptions
+---@field parent? Frame
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field sizeX? number
+---@field sizeY? number
+---@field offsetX? number
+---@field offsetY? number
+---@field initialValue? string
+---@field autoFocus? boolean
+---@field font? string
+---@field onTextChangedCallback? function
+---@field onEnterCallback? function Default: Clear Focus
+---@field onEscapeCallback? function Default: Clear Focus
+
+GGUI.TextInput = GGUI.Object:extend()
+---@param options GGUI.TextInputConstructorOptions
+function GGUI.TextInput:new(options)
+    options = options or {}
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.sizeX = options.sizeX or 100
+    options.sizeY = options.sizeY or 25
+    options.autoFocus = options.autoFocus or false
+    options.font = options.font or "ChatFontNormal"
+    self.onTextChangedCallback = options.onTextChangedCallback
+    self.onEnterCallback = options.onEnterCallback
+    self.onEscapeCallback = options.onEscapeCallback
+
+    local textInput = CreateFrame("EditBox", nil, options.parent, "InputBoxTemplate")
+    self.frame = textInput
+        textInput:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+        textInput:SetSize(options.sizeX, options.sizeY)
+        textInput:SetAutoFocus(options.autoFocus) -- dont automatically focus
+        textInput:SetFontObject(options.font)
+        textInput:SetText(options.initialValue)
+        textInput:SetScript("OnEscapePressed", function() 
+            if self.oneEnterCallback then
+                self.onEnterCallback(self)
+            else
+                textInput:ClearFocus() 
+            end
+        end)
+        textInput:SetScript("OnEnterPressed", function() 
+            if self.onEscapeCallback then
+                self.onEscapeCallback(self)
+            else
+                textInput:ClearFocus() 
+            end
+        end)
+
+        textInput:SetScript("OnTextChanged", function(_, userInput) 
+            if self.onTextChangedCallback then
+                self.onTextChangedCallback(self, self:GetText(), userInput)
+            end
+        end)
+end
+
+function GGUI.TextInput:GetText()
+    return self.frame:GetText()
+end
+
+--- GGUI.CurrencyInput
+---@class GGUI.CurrencyInput
+---@field textInput GGUI.TextInput
+---@field border Frame
+---@field onValueValidCallback? function
+---@field onValidationChangedCallback? function
+---@field isValid boolean
+---@field gold number
+---@field silver number
+---@field copper number
+---@field total number
+
+---@class GGUI.CurrencyInputConstructorOptions
+---@field parent? Frame
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field offsetX? number
+---@field offsetY? number
+---@field sizeX? number
+---@field sizeY? number
+---@field initialValue? number
+---@field onValueValidCallback? function
+---@field onValidationChangedCallback? function
+---@field showFormatHelpIcon? boolean
+
+GGUI.CurrencyInput = GGUI.Object:extend()
+
+---@param options GGUI.CurrencyInputConstructorOptions
+function GGUI.CurrencyInput:new(options)
+
+    options = options or {}
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.sizeX = options.sizeX or 100
+    options.sizeY = options.sizeY or 25
+    options.initialValue = options.initialValue or 0
+    options.showFormatHelpIcon = options.showFormatHelpIcon or false
+
+    local currencyInput = self
+
+    currencyInput.isValid = true
+
+    currencyInput.total = 0
+    currencyInput.gold = 0
+    currencyInput.silver = 0
+    currencyInput.copper = 0
+
+    local textInput = GGUI.TextInput({
+        parent=options.parent,
+        anchorParent=options.anchorParent,
+        anchorA=options.anchorA,
+        anchorB=options.anchorB,
+        offsetX=options.offsetX,
+        offsetY=options.offsetY,
+        sizeX=options.sizeX,
+        sizeY=options.sizeY,
+        initialValue=options.initialValue,
+        onTextChangedCallback= function(self, input, userInput) 
+            if userInput then
+                -- validate and color text, and adapt save button
+                input = input or ""
+                -- remove colorizations    
+                input = string.gsub(input, CraftSim.CONST.COLORS.GOLD, "")
+                input = string.gsub(input, CraftSim.CONST.COLORS.SILVER, "")
+                input = string.gsub(input, CraftSim.CONST.COLORS.COPPER, "")
+                input = string.gsub(input, "|r", "")
+                input = string.gsub(input, "|", "")
+    
+                local valid = GUTIL:ValidateMoneyString(input)
+                currencyInput.isValid = valid
+    
+                if valid then
+                    -- colorize
+                    local gold = tonumber(string.match(input, "(%d+)g")) or 0
+                    local silver = tonumber(string.match(input, "(%d+)s")) or 0
+                    local copper = tonumber(string.match(input, "(%d+)c")) or 0
+                    local gC = GUTIL:ColorizeText("g", CraftSim.CONST.COLORS.GOLD)
+                    local sC = GUTIL:ColorizeText("s", CraftSim.CONST.COLORS.SILVER)
+                    local cC = GUTIL:ColorizeText("c", CraftSim.CONST.COLORS.COPPER)
+                    local colorizedText = ((gold > 0 and (gold .. gC)) or "") .. ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
+                    currencyInput.frame:SetText(colorizedText)
+    
+    
+                    currencyInput.gold = gold
+                    currencyInput.silver = silver
+                    currencyInput.copper = copper
+                    currencyInput.total = gold*10000+silver*100+copper
+                    if currencyInput.onValueValidCallback then
+                        currencyInput.onValueValidCallback(currencyInput)
+                    end    
+                end
+    
+                currencyInput.border:SetValid(valid)
+    
+                if currencyInput.onValidationChangedCallback then
+                    currencyInput.onValidationChangedCallback(valid)
+                end
+            end
+        end,
+    })
+
+    self.textInput = textInput
+
+    local validationBorder = CreateFrame("Frame", nil, textInput, "BackdropTemplate")
+    self.border = validationBorder
+    validationBorder:SetSize(textInput:GetWidth()*1.3, textInput:GetHeight()*1.6)
+    validationBorder:SetPoint("CENTER", textInput, "CENTER", -2, 0)
+    validationBorder:SetBackdrop({
+        edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+        edgeSize = 25,
+    })
+    function validationBorder:SetValid(valid) 
+        if valid then
+            validationBorder:Hide()
+        else
+            validationBorder:Show()
+            validationBorder:SetBackdropBorderColor(1, 0, 0, 0.5)
+        end
+    end
+    validationBorder:Hide()
+    textInput.validationBorder = validationBorder
+
+    self:SetValue(options.initialValue)
+
+    if options.showFormatHelpIcon then
+        CraftSim.FRAME:CreateHelpIcon("Format: 100g10s1c", textInput, textInput, "LEFT", "RIGHT", 5, 0)
+    end
+end
+
+function GGUI.CurrencyInput:SetValue(total)
+    local gold, silver, copper = GUTIL:GetMoneyValuesFromCopper(total)
+    local gC = GUTIL:ColorizeText("g", GUTIL.COLORS.GOLD)
+    local sC = GUTIL:ColorizeText("s", GUTIL.COLORS.SILVER)
+    local cC = GUTIL:ColorizeText("c", GUTIL.COLORS.COPPER)
+    local colorizedText = ((gold > 0 and (gold .. gC)) or "") .. ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
+    self.textInput:SetText(colorizedText)
+
+    self.gold = gold
+    self.silver = silver
+    self.copper = copper
+    self.total = gold*10000+silver*100+copper
+end
