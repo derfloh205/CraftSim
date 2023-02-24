@@ -91,7 +91,7 @@ function CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutations(totalCombos, isCook
         local gear1A = comboA[2]
         local gear2A = comboA[3]
 
-        local inserted = CraftSim.UTIL:Find(uniqueCombos, function(comboB)
+        local inserted = CraftSim.GUTIL:Find(uniqueCombos, function(comboB)
         
             if not isCooking then
                 local toolB = comboB[1]
@@ -188,7 +188,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
     -- remove duplicated items (with same stats, this means the link should be the same..)
     local uniqueGear = {}
     for _, professionGear in pairs(allGear) do
-        if not CraftSim.UTIL:Find(uniqueGear, function(gear) return gear.item:GetItemLink() == professionGear.item:GetItemLink() end) then
+        if not CraftSim.GUTIL:Find(uniqueGear, function(gear) return gear.item:GetItemLink() == professionGear.item:GetItemLink() end) then
             table.insert(uniqueGear, professionGear)
         end
     end
@@ -321,7 +321,7 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
         end)
         results = CraftSim.GUTIL:Filter(results, function (result)
             -- should have at least 1 copper profit (and not some small decimal)
-            local gold, silver, copper = CraftSim.UTIL:GetMoneyValuesFromCopper(result.relativeProfit)
+            local gold, silver, copper = CraftSim.GUTIL:GetMoneyValuesFromCopper(result.relativeProfit)
             return (gold + silver + copper) > 0
         end)
     elseif topGearMode == CraftSim.CONST.GEAR_SIM_MODES.INSPIRATION then

@@ -166,7 +166,7 @@ function CraftSim.RecipeData:SetReagents(reagentList)
     for _, reagent in pairs(self.reagentData.requiredReagents) do
         local totalQuantity = 0
         for _, reagentItem in pairs(reagent.items) do
-            local listReagent = CraftSim.UTIL:Find(reagentList, function(listReagent) return listReagent.itemID == reagentItem.item:GetItemID() end)
+            local listReagent = CraftSim.GUTIL:Find(reagentList, function(listReagent) return listReagent.itemID == reagentItem.item:GetItemID() end)
             if listReagent then
                 reagentItem.quantity = listReagent.quantity
                 totalQuantity = totalQuantity + listReagent.quantity
@@ -233,7 +233,7 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
                 end
                 local craftSimReagentItem = nil
                 for _, craftSimReagent in pairs(self.reagentData.requiredReagents) do
-                    craftSimReagentItem = CraftSim.UTIL:Find(craftSimReagent.items, function(cr) return cr.item:GetItemID() == reagent.itemID end)
+                    craftSimReagentItem = CraftSim.GUTIL:Find(craftSimReagent.items, function(cr) return cr.item:GetItemID() == reagent.itemID end)
                     if craftSimReagentItem then
                         break
                     end

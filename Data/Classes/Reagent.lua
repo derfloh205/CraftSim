@@ -38,7 +38,7 @@ function CraftSim.Reagent:GetCraftingReagentInfoByQuality(qualityID, maxQuantity
         return nil
     end
 
-    local qualityReagentItem = CraftSim.UTIL:Find(self.items, function(i) return i.qualityID == qualityID end)
+    local qualityReagentItem = CraftSim.GUTIL:Find(self.items, function(i) return i.qualityID == qualityID end)
 
     if not qualityReagentItem then
         return nil

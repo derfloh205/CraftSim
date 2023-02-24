@@ -92,7 +92,7 @@ function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
     end)
 
     -- check learned recipes for recipe with this item as result
-    local foundRecipeInfo = CraftSim.UTIL:Find(recipeInfos, function(recipeInfo) 
+    local foundRecipeInfo = CraftSim.GUTIL:Find(recipeInfos, function(recipeInfo) 
         if not recipeInfo.learned then
             return false
         end
@@ -100,7 +100,7 @@ function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
         local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
         local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
         if isDragonIsleRecipe and recipeInfo.isEnchantingRecipe then
-            local foundEnchant, recipeID = CraftSim.UTIL:Find(CraftSim.ENCHANT_RECIPE_DATA, function (enchantData) 
+            local foundEnchant, recipeID = CraftSim.GUTIL:Find(CraftSim.ENCHANT_RECIPE_DATA, function (enchantData) 
                 return enchantData.q1 == itemID or enchantData.q2 == itemID or enchantData.q3 == itemID
             end)
             if foundEnchant then

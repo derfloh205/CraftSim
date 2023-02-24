@@ -406,7 +406,7 @@ function GUTIL:Sort(t, compFunc)
   return sorted
 end
 
-function GUTIL:FoldTable(t, foldFunction, startAtZero)
+function GUTIL:Fold(t, foldFunction, startAtZero)
   local foldedValue = nil
   if #t < 2 and not startAtZero then
       return t[1]

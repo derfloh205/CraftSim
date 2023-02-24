@@ -34,7 +34,7 @@ function CraftSim.ReagentOptimizationResult:new(recipeData, knapsackResult)
                 local itemID = allocation.itemID
                 local quantity = allocation.allocations
                 
-                local reagentItem = CraftSim.UTIL:Find(reagentItems, function(ri) return ri.item:GetItemID() == itemID end)
+                local reagentItem = CraftSim.GUTIL:Find(reagentItems, function(ri) return ri.item:GetItemID() == itemID end)
                 reagentItem.quantity = quantity
             end
         end

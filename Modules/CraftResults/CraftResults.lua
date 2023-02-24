@@ -196,7 +196,7 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
     local CraftingItemResultData = CopyTable(currentCraftingResults)
     currentCraftingResults = {}
 
-    if CraftSim.UTIL:Find(CraftingItemResultData, function(result) return result.isEnchant end) then
+    if CraftSim.GUTIL:Find(CraftingItemResultData, function(result) return result.isEnchant end) then
         print("isEnchant -> ignore")
         return
     end

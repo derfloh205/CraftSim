@@ -29,7 +29,7 @@ function CraftSim.CraftSessionData:GetCraftRecipeData(recipeID)
     table.foreach(self.craftRecipeData, function (_, data)
         print("data recipe id: " .. tostring(data.recipeID))
     end)
-    return CraftSim.UTIL:Find(self.craftRecipeData, function (craftRecipeData)
+    return CraftSim.GUTIL:Find(self.craftRecipeData, function (craftRecipeData)
         return craftRecipeData.recipeID == recipeID
     end)
 end
@@ -50,7 +50,7 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
     self.totalProfit = self.totalProfit + craftResult.profit
 
     for _, craftResultItemA in pairs(craftResult.craftResultItems) do
-        local craftResultItemB = CraftSim.UTIL:Find(self.totalItems, function(craftResultItemB) 
+        local craftResultItemB = CraftSim.GUTIL:Find(self.totalItems, function(craftResultItemB) 
             local itemLinkA = craftResultItemA.item:GetItemLink() -- for gear its possible to match by itemlink
             local itemLinkB = craftResultItemB.item:GetItemLink()
             local itemIDA = craftResultItemA.item:GetItemID()
@@ -73,7 +73,7 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
     end
 
     for _, savedReagentA in pairs(craftResult.savedReagents) do
-        local savedReagentB = CraftSim.UTIL:Find(self.totalSavedReagents, function(savedReagentB) 
+        local savedReagentB = CraftSim.GUTIL:Find(self.totalSavedReagents, function(savedReagentB) 
             return savedReagentA.item:GetItemID() == savedReagentB.item:GetItemID()
         end)
 

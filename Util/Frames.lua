@@ -991,7 +991,7 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
     end
 
     function goldInput:SetValue(total)
-        local gold, silver, copper = CraftSim.UTIL:GetMoneyValuesFromCopper(total)
+        local gold, silver, copper = CraftSim.GUTIL:GetMoneyValuesFromCopper(total)
         local gC = CraftSim.GUTIL:ColorizeText("g", CraftSim.GUTIL.COLORS.GOLD)
         local sC = CraftSim.GUTIL:ColorizeText("s", CraftSim.GUTIL.COLORS.SILVER)
         local cC = CraftSim.GUTIL:ColorizeText("c", CraftSim.GUTIL.COLORS.COPPER)

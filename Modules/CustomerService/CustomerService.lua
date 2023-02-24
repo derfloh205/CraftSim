@@ -406,7 +406,7 @@ end
 
 --                     local outputInfo = CraftSim.DATAEXPORT:GetOutputInfoByRecipeData(recipeData)
 
---                     local craftingCostsFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(priceData.craftingCostPerCraft, true)
+--                     local craftingCostsFormatted = CraftSim.GUTIL:GetMoneyValuesFromCopper(priceData.craftingCostPerCraft, true)
 
 --                     local reagentItems = {}
 --                     for _, reagent in pairs(recipeData.reagents) do
@@ -435,7 +435,7 @@ end
 --                         local detailedCraftingCostText = "\n"
 --                         for _, item in pairs(reagentItems) do
 --                             local itemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(item:GetItemID(), true)
---                             local moneyText = CraftSim.UTIL:GetMoneyValuesFromCopper(itemPrice*item.quantity, true)
+--                             local moneyText = CraftSim.GUTIL:GetMoneyValuesFromCopper(itemPrice*item.quantity, true)
 --                             -- answer(item.quantity .. " x " .. item:GetItemLink() .. " = " .. moneyText)
 --                             detailedCraftingCostText = detailedCraftingCostText .. item.quantity .. " x " .. item:GetItemLink() .. " = " .. moneyText .. "\n"
 --                         end
@@ -501,7 +501,7 @@ function CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
     local mcStat = (recipeData.supportsMulticraft and (professionStats.multicraft:GetPercent() .. "%%")) or "-"
     local resStat = (recipeData.supportsResourcefulness and (professionStats.resourcefulness:GetPercent() .. "%%")) or "-"
 
-    local craftingCostsFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(priceData.craftingCosts, true)
+    local craftingCostsFormatted = CraftSim.GUTIL:GetMoneyValuesFromCopper(priceData.craftingCosts, true)
 
     local detailedCraftingCostText = ""
     local reagentListText = ""
@@ -511,7 +511,7 @@ function CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
         table.foreach(reagent.items, function (_, reagentItem)
             if reagentItem.quantity > 0 then
                 local itemPrice = (CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true) or 0) * reagentItem.quantity
-                local itemPriceFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(CraftSim.GUTIL:Round(itemPrice*10000)/10000, true)
+                local itemPriceFormatted = CraftSim.GUTIL:GetMoneyValuesFromCopper(CraftSim.GUTIL:Round(itemPrice*10000)/10000, true)
                 detailedCraftingCostText = detailedCraftingCostText .. reagentItem.item:GetItemLink() .. " x " .. reagentItem.quantity .. " (~" .. itemPriceFormatted .. ")" .. "\n"
                 reagentListText = reagentListText .. reagentItem.item:GetItemLink() .. " x " .. reagentItem.quantity .. "\n"
             end
@@ -520,7 +520,7 @@ function CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
 
     table.foreach(optionalReagents, function (_, optionalReagent)
         local itemPrice = (CraftSim.PRICEDATA:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(), true) or 0)
-        local itemPriceFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(CraftSim.GUTIL:Round(itemPrice*10000)/10000, true)
+        local itemPriceFormatted = CraftSim.GUTIL:GetMoneyValuesFromCopper(CraftSim.GUTIL:Round(itemPrice*10000)/10000, true)
         detailedCraftingCostText = detailedCraftingCostText .. optionalReagent.item:GetItemLink() .. " x 1 (~" .. itemPriceFormatted .. ")" .. "\n"
         optionalReagentListText = optionalReagentListText .. optionalReagent.item:GetItemLink() .. " x 1\n"
     end)

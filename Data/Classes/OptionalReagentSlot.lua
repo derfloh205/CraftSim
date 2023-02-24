@@ -36,7 +36,7 @@ function CraftSim.OptionalReagentSlot:SetReagent(itemID)
         return
     end
 
-    self.activeReagent = CraftSim.UTIL:Find(self.possibleReagents, function(possibleReagent) return possibleReagent.item:GetItemID() == itemID end)
+    self.activeReagent = CraftSim.GUTIL:Find(self.possibleReagents, function(possibleReagent) return possibleReagent.item:GetItemID() == itemID end)
 end
 
 ---@return CraftingReagentInfo?
@@ -72,7 +72,7 @@ function CraftSim.OptionalReagentSlot:Copy(recipeData)
     local copy = CraftSim.OptionalReagentSlot(recipeData)
     copy.possibleReagents = CraftSim.GUTIL:Map(self.possibleReagents, function(r) return r:Copy() end)
     if self.activeReagent then
-        copy.activeReagent = CraftSim.UTIL:Find(copy.possibleReagents, function(r) return r.item:GetItemID() == self.activeReagent.item:GetItemID() end)
+        copy.activeReagent = CraftSim.GUTIL:Find(copy.possibleReagents, function(r) return r.item:GetItemID() == self.activeReagent.item:GetItemID() end)
     end
 
     copy.slotText = self.slotText

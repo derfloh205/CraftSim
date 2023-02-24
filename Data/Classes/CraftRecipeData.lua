@@ -49,7 +49,7 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult)
 
         self.numMulticraftExtraItems = self.numMulticraftExtraItems + craftResultItemA.quantityMulticraft
 
-        local found = CraftSim.UTIL:Find(self.totalItems, function(craftResultItemB)
+        local found = CraftSim.GUTIL:Find(self.totalItems, function(craftResultItemB)
             local itemLinkA = craftResultItemA.item:GetItemLink() -- for gear its possible to match by itemlink
             local itemLinkB = craftResultItemB.item:GetItemLink()
             local itemIDA = craftResultItemA.item:GetItemID()
@@ -68,7 +68,7 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult)
     end)
 
     table.foreach(craftResult.savedReagents, function (_, savedReagentA)
-        local savedReagentB = CraftSim.UTIL:Find(self.totalItems, function(savedReagentB) 
+        local savedReagentB = CraftSim.GUTIL:Find(self.totalItems, function(savedReagentB) 
             return savedReagentA.item:GetItemID() == savedReagentB.item:GetItemID()
         end)
 

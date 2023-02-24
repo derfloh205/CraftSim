@@ -31,7 +31,7 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
     nodeModFrame.Update(inputNumber)
 
     -- update specdata
-    local nodeData = CraftSim.UTIL:Find(CraftSim.SIMULATION_MODE.specializationData.nodeData, function(nodeData) return nodeData.nodeID == nodeModFrame.nodeID end)
+    local nodeData = CraftSim.GUTIL:Find(CraftSim.SIMULATION_MODE.specializationData.nodeData, function(nodeData) return nodeData.nodeID == nodeModFrame.nodeID end)
     if not nodeData then
         return
     end

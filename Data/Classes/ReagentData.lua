@@ -80,7 +80,7 @@ end
 function CraftSim.ReagentData:GetReagentQualityIDByItemID(itemID)
     local qualityID = 0
     for _, reagent in pairs(self.requiredReagents) do
-        local reagentItem = CraftSim.UTIL:Find(reagent.items, function (reagentItem)
+        local reagentItem = CraftSim.GUTIL:Find(reagent.items, function (reagentItem)
             return reagentItem.item:GetItemID() == itemID
         end)
         if reagentItem then
@@ -143,7 +143,7 @@ end
 ---@param itemID number
 function CraftSim.ReagentData:SetOptionalReagent(itemID)
     for _, slot in pairs(CraftSim.GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
-        local optionalReagent = CraftSim.UTIL:Find(slot.possibleReagents, 
+        local optionalReagent = CraftSim.GUTIL:Find(slot.possibleReagents, 
             function (optionalReagent) 
                 return optionalReagent.item:GetItemID() == itemID 
             end)

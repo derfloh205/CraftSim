@@ -155,7 +155,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
     
     local RecipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
     -- get first non active row
-    local availableRow = CraftSim.UTIL:Find(RecipeScanFrame.content.resultRowFrames, function(frame) return not frame.isActive end)
+    local availableRow = CraftSim.GUTIL:Find(RecipeScanFrame.content.resultRowFrames, function(frame) return not frame.isActive end)
     local numActiveFrames = CraftSim.GUTIL:Count(RecipeScanFrame.content.resultRowFrames, function(frame) return frame.isActive end)
 
     if not availableRow or numActiveFrames == #RecipeScanFrame.content.resultRowFrames then

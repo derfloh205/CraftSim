@@ -41,7 +41,7 @@ function CraftSim.SpecializationData:new(recipeData)
         end
     end)
 
-    baseRuleNodeIDs = CraftSim.UTIL:ToSet(baseRuleNodeIDs)
+    baseRuleNodeIDs = CraftSim.GUTIL:ToSet(baseRuleNodeIDs)
 
     -- Should contain the ids of the base nodes now
     -- parse data into objects recursively
@@ -51,7 +51,7 @@ function CraftSim.SpecializationData:new(recipeData)
         local ruleNodes = CraftSim.GUTIL:Filter(professionRuleNodes, function (n) return n.nodeID == nodeID end)
         local nodeData = CraftSim.NodeData(self.recipeData, ruleNodes, parentNodeData)
         print("process nodeID: " .. tostring(nodeID))
-        nodeData.nodeName = CraftSim.UTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
+        nodeData.nodeName = CraftSim.GUTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
         local childNodeNameIDs = ruleNodes[1].childNodeIDs
 
         for _, childNodeNameID in pairs(childNodeNameIDs or {}) do

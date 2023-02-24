@@ -302,7 +302,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
     end
 
     --print(" calculating gcd of " .. unpack(mWeight))
-    local weightGCD = CraftSim.UTIL:FoldTable(mWeight, function(a, b) 
+    local weightGCD = CraftSim.GUTIL:Fold(mWeight, function(a, b) 
         --print("fold " .. a .. " and " .. b)
         return CraftSim.REAGENT_OPTIMIZATION:GetGCD(a, b)
     end, true)

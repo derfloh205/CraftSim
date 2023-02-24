@@ -17,7 +17,7 @@ function CraftSim.SalvageReagentSlot:new(recipeData)
 end
 
 function CraftSim.SalvageReagentSlot:SetItem(itemID)
-    local item = CraftSim.UTIL:Find(self.possibleItems, function(item) return item:GetItemID() == itemID end)
+    local item = CraftSim.GUTIL:Find(self.possibleItems, function(item) return item:GetItemID() == itemID end)
 
     if not item then
         error("Error CraftSim.SalvageReagentSlot: Trying to set item which is not in possible salvage item list")
