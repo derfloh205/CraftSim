@@ -121,7 +121,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     if craftResult.triggeredResourcefulness then
         for _, savedReagent in pairs(craftResult.savedReagents) do
             local qualityID = savedReagent.qualityID
-            local iconAsText = CraftSim.UTIL:IconToText(savedReagent.item:GetItemIcon(), 25)
+            local iconAsText = CraftSim.GUTIL:IconToText(savedReagent.item:GetItemIcon(), 25)
             local qualityAsText = (qualityID > 0 and CraftSim.GUTIL:GetQualityIconString(qualityID, 20, 20)) or ""
             resourcesText = resourcesText .. "\n" .. iconAsText .. " " .. savedReagent.quantity .. " ".. qualityAsText
         end

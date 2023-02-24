@@ -123,7 +123,7 @@ function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
                 local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
                 local isRelevantItemLevel = recipeInfo.itemLevel > 1 
                 if isDragonIsleRecipe and isRelevantItemLevel then
-                    local iconAsText = CraftSim.UTIL:IconToText(recipeInfo.icon, 20)
+                    local iconAsText = CraftSim.GUTIL:IconToText(recipeInfo.icon, 20)
                     response.recipes[recipeCategoryInfo.name] = response.recipes[recipeCategoryInfo.name] or {}
                     table.insert(response.recipes[recipeCategoryInfo.name], {
                         recipeID=recipeID,

@@ -292,15 +292,6 @@ function CraftSim.UTIL:GreyOutByCondition(text, condition)
     end
 end
 
---> in GUTIL
-function CraftSim.UTIL:IconToText(iconPath, height, width) 
-    if not width then
-        return "\124T" .. iconPath .. ":" .. height .. "\124t"
-    else
-        return "\124T" .. iconPath .. ":" .. height .. ":" .. width .. "\124t"
-    end
-end
-
 -- from stackoverflow: 
 -- https://stackoverflow.com/questions/9079853/lua-print-integer-as-a-binary
 function CraftSim.UTIL:toBits(num, bits)
@@ -331,41 +322,6 @@ function CraftSim.UTIL:StopProfiling(label)
     local diff = time - profilings[label]
     profilings[label] = nil
     CraftSim_DEBUG:print("Elapsed Time for " .. label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
-end
-
---> in GUTIL
-function CraftSim.UTIL:GetItemTooltipText(itemLink, showCount)
-    local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
-
-    if not tooltipData then
-        return ""
-    end
-
-    local tooltipText = ""
-    for _, line in pairs(tooltipData.lines) do
-        local lineText = ""
-        for _, arg in pairs(line.args) do
-            if arg.stringVal then
-                lineText = lineText .. arg.stringVal
-            end
-        end
-        tooltipText = tooltipText .. lineText .. "\n"
-    end
-
-    if showCount then
-        local itemCountInventory = GetItemCount(itemLink, false, false, true)
-        local itemCountTotal = GetItemCount(itemLink, true, false, true)
-        local itemCountBank = itemCountTotal - itemCountInventory
-        tooltipText = tooltipText .. "\n" .. "Owned: " .. itemCountTotal
-        if itemCountInventory > 0 then
-            tooltipText = tooltipText .. "\n" .. "- Inventory: " .. itemCountInventory
-        end
-        if itemCountBank > 0 then
-            tooltipText = tooltipText .. "\n" .. "- Bank: " .. itemCountBank
-        end
-    end
-
-    return tooltipText
 end
 
 function CraftSim.UTIL:GetFormatter()
@@ -410,7 +366,7 @@ function CraftSim.UTIL:GetFormatter()
     end
 
     formatter.i = function (i, h, w)
-        return CraftSim.UTIL:IconToText(i, h, w)
+        return CraftSim.GUTIL:IconToText(i, h, w)
     end
 
     formatter.cm = function(i, s) 

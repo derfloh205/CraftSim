@@ -429,7 +429,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
                 dropdown:Show()
                 if not optionalReagentSlot.locked then
                     local dropdownListData = convertOptionalReagentsToDropdownListData(optionalReagentSlot.possibleReagents)
-                    CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true, true)
+                    CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true)
                 else
                     CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.GUTIL:ColorizeText("Locked", CraftSim.GUTIL.COLORS.RED))
                     dropdown.selectedID = nil

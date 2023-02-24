@@ -16,7 +16,7 @@ function CraftSim.MEDIA:GetAsTextIcon(image, scale)
         print("width: " .. tostring(width))
         print("height: " .. tostring(height))
 
-        return CraftSim.UTIL:IconToText(CraftSim.MEDIA.BASE_PATH .. image.file, height, width)
+        return CraftSim.GUTIL:IconToText(CraftSim.MEDIA.BASE_PATH .. image.file, height, width)
     else
         print("Could not find image")
         return "<ImageNotFound>"

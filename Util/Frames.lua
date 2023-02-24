@@ -151,10 +151,9 @@ end
 
 
 --> in GGUI
---- @param showCount? boolean if enabled, item tooltips show how many the player possesses
 --- @param showItemTooltips? boolean requires the label to be an itemLink
 --- @param concatCallback? function takes one argument which is the itemlink and returns a string that is added to the items tooltip
-function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue, showItemTooltips, showCount, concatCallback)
+function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue, showItemTooltips, concatCallback)
     print("Init Dropdown By Data", false, true)
     print("showItemTooltips: " .. tostring(showItemTooltips))
     local function initMainMenu(self, level, menulist) 
@@ -175,8 +174,7 @@ function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue, s
                 info.hasArrow = hasSublist
                 info.menuList = hasSublist and label
                 if showItemTooltips then
-                    print("initializeDropdownByData: Set Item Tooltip: " .. tostring(label), false, true)
-                    info.tooltipText = CraftSim.UTIL:GetItemTooltipText(label, showCount)
+                    info.tooltipText = CraftSim.GUTIL:GetItemTooltipText(label)
                     -- cut first line as it is the name of the item
                     info.tooltipTitle, info.tooltipText = string.match(info.tooltipText, "^(.-)\n(.*)$")
                     if concatCallback then
