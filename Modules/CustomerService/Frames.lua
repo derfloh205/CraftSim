@@ -101,7 +101,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         frame.content.updates = {}
         local function checkForTimeOut(updateID)
             if tContains(frame.content.updates, updateID) then
-                frame.content.loadingText:SetText(CraftSim.UTIL:ColorizeText("Timeout (Player Offline?)", CraftSim.CONST.COLORS.RED))
+                frame.content.loadingText:SetText(CraftSim.GUTIL:ColorizeText("Timeout (Player Offline?)", CraftSim.GUTIL.COLORS.RED))
                 frame.content.StopUpdate(true)
             end
         end
@@ -184,7 +184,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             CreateReagentInputDropdown("Finishing 2", dropdownOffsetX, dropdownBaseY + dropdownSpacingY),
         } 
         
-        frame.content.craftingCosts = CraftSim.FRAME:CreateText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(0), frame.content, frame.content.optionalDropdownGroup, "TOP", "BOTTOM", 0, -20)
+        frame.content.craftingCosts = CraftSim.FRAME:CreateText("Crafting Costs\n" .. CraftSim.GUTIL:FormatMoney(0), frame.content, frame.content.optionalDropdownGroup, "TOP", "BOTTOM", 0, -20)
         
         frame.content.expectedResultTitle = CraftSim.FRAME:CreateText("Expected Result", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", -80, -10, nil, nil)
         
@@ -368,7 +368,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
     for i, reagent in pairs(reagents) do
         for _, reagentItem in pairs(reagent.items) do
             local reagentCost = reagentItem.quantity * CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true)
-            print("reagentCost #" .. i .. ": " .. CraftSim.UTIL:FormatMoney(reagentCost))
+            print("reagentCost #" .. i .. ": " .. CraftSim.GUTIL:FormatMoney(reagentCost))
             print(reagentItem.quantity .. " x " .. CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true))
             craftingCosts = craftingCosts + reagentCost
         end
@@ -431,7 +431,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
                     local dropdownListData = convertOptionalReagentsToDropdownListData(optionalReagentSlot.possibleReagents)
                     CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true, true)
                 else
-                    CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.UTIL:ColorizeText("Locked", CraftSim.CONST.COLORS.RED))
+                    CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.GUTIL:ColorizeText("Locked", CraftSim.GUTIL.COLORS.RED))
                     dropdown.selectedID = nil
                 end
             else
@@ -444,6 +444,6 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
 
     end
 
-    previewFrame.content.craftingCosts:SetText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(craftingCosts))
+    previewFrame.content.craftingCosts:SetText("Crafting Costs\n" .. CraftSim.GUTIL:FormatMoney(craftingCosts))
     previewFrame.content.craftingCosts:Show()
 end

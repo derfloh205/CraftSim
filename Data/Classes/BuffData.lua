@@ -47,7 +47,7 @@ function CraftSim.BuffData:Debug()
     }
 
     local statLines = self.professionStats:Debug()
-    statLines = CraftSim.UTIL:Map(statLines, function(line) return "-" .. line end)
+    statLines = CraftSim.GUTIL:Map(statLines, function(line) return "-" .. line end)
     debugLines = CraftSim.UTIL:Concat({debugLines, statLines})
 
     return debugLines

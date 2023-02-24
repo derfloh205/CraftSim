@@ -104,7 +104,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         print("resChance: " .. resChance)
         print("hsvChance: " .. hsvChance)
 
-        print("SavedCostsRes: " .. CraftSim.UTIL:FormatMoney(savedCostsByRes))
+        print("SavedCostsRes: " .. CraftSim.GUTIL:FormatMoney(savedCostsByRes))
 
         local maxExtraItems = (CraftSimOptions.customMulticraftConstant*recipeData.baseItemAmount) * professionStats.multicraft:GetExtraFactor(true)
         local expectedAdditionalItems = (1 + maxExtraItems) / 2 
@@ -229,7 +229,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             end
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 inspiration = procs[1],
                 multicraft = procs[2],
@@ -248,7 +248,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         end
 
         print("Probability Sum: " .. tostring(probabilitySum))
-        print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
+        print("ExpectedProfit: " .. CraftSim.GUTIL:FormatMoney(expectedProfit, true))
 
         return expectedProfit, probabilityTable
     elseif not recipeData.supportsInspiration and recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
@@ -304,7 +304,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             end
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 multicraft = procs[1],
                 resourcefulness = procs[2],
@@ -321,7 +321,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         end
 
         print("Probability Sum: " .. tostring(probabilitySum))
-        print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
+        print("ExpectedProfit: " .. CraftSim.GUTIL:FormatMoney(expectedProfit, true))
 
         return expectedProfit, probabilityTable
     elseif recipeData.supportsInspiration and not recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
@@ -401,7 +401,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             end
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 inspiration = procs[1],
                 hsv = procs[2],
@@ -419,7 +419,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         end
 
         print("Probability Sum: " .. tostring(probabilitySum))
-        print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
+        print("ExpectedProfit: " .. CraftSim.GUTIL:FormatMoney(expectedProfit, true))
 
         return expectedProfit, probabilityTable
     elseif not recipeData.supportsInspiration and not recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
@@ -466,7 +466,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 resourcefulness = procs[1],
                 chance = combinationChance,
@@ -482,7 +482,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         end
 
         print("Probability Sum: " .. tostring(probabilitySum))
-        print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
+        print("ExpectedProfit: " .. CraftSim.GUTIL:FormatMoney(expectedProfit, true))
 
         return expectedProfit, probabilityTable
     elseif not recipeData.supportsResourcefulness then
@@ -490,7 +490,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         return 0, {}
     end
 
-    print(CraftSim.UTIL:ColorizeText("Szenario not implemented yet", CraftSim.CONST.COLORS.RED), false, true)
+    print(CraftSim.GUTIL:ColorizeText("Szenario not implemented yet", CraftSim.GUTIL.COLORS.RED), false, true)
     print("Supports Crafting Stats: " .. recipeData.supportsCraftingStats)
     print("Inspiration: " .. recipeData.supportsInspiration)
     print("Multicraft: " .. recipeData.supportsMulticraft)

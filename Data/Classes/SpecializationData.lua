@@ -34,7 +34,7 @@ function CraftSim.SpecializationData:new(recipeData)
     local baseRuleNodes = CraftSim.SPEC_DATA:BASE_RULE_NODES()[recipeData.professionData.professionInfo.profession]
 
 
-    local baseRuleNodeIDs = CraftSim.UTIL:Map(baseRuleNodes, function (nameID)
+    local baseRuleNodeIDs = CraftSim.GUTIL:Map(baseRuleNodes, function (nameID)
         local ruleNode = professionRuleNodes[nameID]
         if ruleNode then
             return ruleNode.nodeID
@@ -48,7 +48,7 @@ function CraftSim.SpecializationData:new(recipeData)
 
     local baseNodeIndex = 1
     local function parseNode(nodeID, parentNodeData, layer)
-        local ruleNodes = CraftSim.UTIL:FilterTable(professionRuleNodes, function (n) return n.nodeID == nodeID end)
+        local ruleNodes = CraftSim.GUTIL:Filter(professionRuleNodes, function (n) return n.nodeID == nodeID end)
         local nodeData = CraftSim.NodeData(self.recipeData, ruleNodes, parentNodeData)
         print("process nodeID: " .. tostring(nodeID))
         nodeData.nodeName = CraftSim.UTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
@@ -103,7 +103,7 @@ function CraftSim.SpecializationData:Debug()
 
     for _, nodeData in pairs(self.baseNodeData) do
         local lines = nodeData:Debug()
-        lines = CraftSim.UTIL:Map(lines, function (line)
+        lines = CraftSim.GUTIL:Map(lines, function (line)
             return "-" .. line
         end)
 
@@ -113,7 +113,7 @@ function CraftSim.SpecializationData:Debug()
     table.insert(debugLines, "Stats from Specializations:")
 
     local lines = self.professionStats:Debug()
-    lines = CraftSim.UTIL:Map(lines, function(line) return "-" .. line end)
+    lines = CraftSim.GUTIL:Map(lines, function(line) return "-" .. line end)
 
     debugLines = CraftSim.UTIL:Concat({debugLines, lines})
 

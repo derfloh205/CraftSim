@@ -49,8 +49,8 @@ function CraftSim.TOOLTIP:Init()
     --     tooltip:AddLine(titleLine)
     --     local relativeValue = CraftSimOptions.showProfitPercentage and craftingCostPerCraft or nil
     --     tooltip:AddDoubleLine(" Crafter:", tooltipData.crafter, 0.43, 0.57, 0.89, 1, 1, 1) -- TODO: class colors?
-    --     tooltip:AddDoubleLine(" Profit / Craft (".. tooltipData.baseItemAmount .." Items):", CraftSim.UTIL:FormatMoney(profitByCraft, true, relativeValue), 0.43, 0.57, 0.89)
-    --     tooltip:AddDoubleLine(" Crafting costs with last used material combination:", CraftSim.UTIL:FormatMoney(craftingCostPerCraft), 0.43, 0.57, 0.89, 1, 1, 1)
+    --     tooltip:AddDoubleLine(" Profit / Craft (".. tooltipData.baseItemAmount .." Items):", CraftSim.GUTIL:FormatMoney(profitByCraft, true, relativeValue), 0.43, 0.57, 0.89)
+    --     tooltip:AddDoubleLine(" Crafting costs with last used material combination:", CraftSim.GUTIL:FormatMoney(craftingCostPerCraft), 0.43, 0.57, 0.89, 1, 1, 1)
 
     --     if not CraftSimOptions.detailedCraftingInfoTooltip then
     --         return
@@ -83,13 +83,13 @@ function CraftSim.TOOLTIP:Init()
 
     --             local sum = prices[1] + prices[2] + prices[3]
     --             -- TODO: tooltip option
-    --             --priceText = CraftSim.UTIL:FormatMoney(prices[1]) .. " | " .. CraftSim.UTIL:FormatMoney(prices[2]) .. " | " .. CraftSim.UTIL:FormatMoney(prices[3]) .. " (" .. CraftSim.UTIL:FormatMoney(sum) .. ")"
-    --             priceText = CraftSim.UTIL:FormatMoney(sum)
+    --             --priceText = CraftSim.GUTIL:FormatMoney(prices[1]) .. " | " .. CraftSim.GUTIL:FormatMoney(prices[2]) .. " | " .. CraftSim.GUTIL:FormatMoney(prices[3]) .. " (" .. CraftSim.GUTIL:FormatMoney(sum) .. ")"
+    --             priceText = CraftSim.GUTIL:FormatMoney(sum)
     --         else
     --             local allocations = reagent.itemsInfo[1].allocations or reagent.quantityRequired
     --             combinationText = allocations
     --             local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagent.itemsInfo[1].itemID, true) * allocations
-    --             priceText = CraftSim.UTIL:FormatMoney(price)
+    --             priceText = CraftSim.GUTIL:FormatMoney(price)
     --         end
     --         local itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(reagent.itemsInfo[1].itemID)
     --         tooltip:AddDoubleLine(" " .. itemData.name .. ": " .. combinationText, priceText, 1, 1, 1, 1, 1, 1)

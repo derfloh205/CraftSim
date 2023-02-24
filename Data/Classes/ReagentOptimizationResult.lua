@@ -15,7 +15,7 @@ function CraftSim.ReagentOptimizationResult:new(recipeData, knapsackResult)
         self.craftingCosts = knapsackResult.minValue + recipeData.priceData.craftingCostsFixed
     
         local reagentItems = {}
-        self.reagents = CraftSim.UTIL:Map(recipeData.reagentData.requiredReagents, function(reagent) 
+        self.reagents = CraftSim.GUTIL:Map(recipeData.reagentData.requiredReagents, function(reagent) 
             if reagent.hasQuality then
                 local copy = reagent:Copy()
                 copy:Clear()
@@ -73,7 +73,7 @@ end
 function CraftSim.ReagentOptimizationResult:Debug()
     local debugLines = {
         "qualityID: " .. tostring(self.qualityID),
-        "craftingCosts: " .. CraftSim.UTIL:FormatMoney(self.craftingCosts),
+        "craftingCosts: " .. CraftSim.GUTIL:FormatMoney(self.craftingCosts),
     }
 
     table.foreach(self.reagents, function (_, reagent)

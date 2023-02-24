@@ -102,9 +102,9 @@ function CraftSim.OPTIONS:Init()
         local expression = tsmMaterialsPriceExpression:GetText()
         local isValid = TSM_API.IsCustomPriceValid(expression)
         if not isValid then
-            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.UTIL:ColorizeText("Expression Invalid", CraftSim.CONST.COLORS.RED))
+            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText("Expression Invalid", CraftSim.GUTIL.COLORS.RED))
         else
-            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
             CraftSimOptions.tsmPriceKeyMaterials = tsmMaterialsPriceExpression:GetText()
         end
     end)
@@ -119,7 +119,7 @@ function CraftSim.OPTIONS:Init()
 
     local validationInfoMaterials = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoMaterials', 'OVERLAY', 'GameFontNormal')
     validationInfoMaterials:SetPoint("TOPLEFT", tsmMaterialsPriceExpression, "TOPRIGHT",  5, 0)
-    validationInfoMaterials:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+    validationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
 
     local tsmItemsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionItems", TSMTab.content, "InputBoxTemplate")
     tsmItemsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -200)
@@ -134,9 +134,9 @@ function CraftSim.OPTIONS:Init()
         local expression = tsmItemsPriceExpression:GetText()
         local isValid = TSM_API.IsCustomPriceValid(expression)
         if not isValid then
-            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Invalid", CraftSim.CONST.COLORS.RED))
+            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.GUTIL:ColorizeText("Expression Invalid", CraftSim.GUTIL.COLORS.RED))
         else
-            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
             CraftSimOptions.tsmPriceKeyItems = tsmItemsPriceExpression:GetText()
         end
     end)
@@ -151,7 +151,7 @@ function CraftSim.OPTIONS:Init()
 
     local validationInfoItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoItems', 'OVERLAY', 'GameFontNormal')
     validationInfoItems:SetPoint("TOPLEFT", tsmItemsPriceExpression, "TOPRIGHT",  5, 0)
-    validationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+    validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
 
     CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, ModulesTab, ProfitCalculationTab, CraftingTab}) -- AccountSyncTab
 

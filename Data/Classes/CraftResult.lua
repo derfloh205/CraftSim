@@ -85,9 +85,9 @@ end
 function CraftSim.CraftResult:Debug()
     local debugLines = {
         "recipeID: " .. tostring(self.recipeID),
-        "profit: " .. CraftSim.UTIL:FormatMoney(self.profit, true),
-        "expectedAverageProfit: " .. CraftSim.UTIL:FormatMoney(self.expectedAverageProfit, true),
-        "expectedAverageSavedCosts: " .. CraftSim.UTIL:FormatMoney(self.expectedAverageSavedCosts, true),
+        "profit: " .. CraftSim.GUTIL:FormatMoney(self.profit, true),
+        "expectedAverageProfit: " .. CraftSim.GUTIL:FormatMoney(self.expectedAverageProfit, true),
+        "expectedAverageSavedCosts: " .. CraftSim.GUTIL:FormatMoney(self.expectedAverageSavedCosts, true),
         "expectedQuality: " .. tostring(self.expectedQuality),
         "craftingChance: " .. tostring((self.craftingChance or 0)*100) .. "%",
         "triggeredInspiration: " .. tostring(self.triggeredInspiration),
@@ -98,7 +98,7 @@ function CraftSim.CraftResult:Debug()
         table.insert(debugLines, "Items:")
         table.foreach(self.craftResultItems, function (_, resultItem)
             local lines = resultItem:Debug()
-            lines = CraftSim.UTIL:Map(lines, function (line) return "-" .. line end)
+            lines = CraftSim.GUTIL:Map(lines, function (line) return "-" .. line end)
             debugLines = CraftSim.UTIL:Concat({debugLines, lines})
         end)
     end
@@ -107,7 +107,7 @@ function CraftSim.CraftResult:Debug()
         table.insert(debugLines, "SavedReagents:")
         table.foreach(self.savedReagents, function (_, savedReagent)
             local lines = savedReagent:Debug()
-            lines = CraftSim.UTIL:Map(lines, function (line) return "-" .. line end)
+            lines = CraftSim.GUTIL:Map(lines, function (line) return "-" .. line end)
             debugLines = CraftSim.UTIL:Concat({debugLines, lines})
         end)
     end

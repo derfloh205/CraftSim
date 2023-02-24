@@ -11,7 +11,7 @@ function CraftSim.SalvageReagentSlot:new(recipeData)
     self.possibleItems = {}
     local itemIDs = C_TradeSkillUI.GetSalvagableItemIDs(recipeData.recipeID)
     if itemIDs then
-        self.possibleItems = CraftSim.UTIL:Map(itemIDs, function(itemID) return Item:CreateFromItemID(itemID) end)
+        self.possibleItems = CraftSim.GUTIL:Map(itemIDs, function(itemID) return Item:CreateFromItemID(itemID) end)
         self.requiredQuantity = 0
     end
 end

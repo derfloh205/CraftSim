@@ -20,7 +20,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
 
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimMaterialOptimizationWOFrame", 
-        "CraftSim Material Optimization " .. CraftSim.UTIL:ColorizeText("WO", CraftSim.CONST.COLORS.GREY), 
+        "CraftSim Material Optimization " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY), 
         ProfessionsFrame.OrdersPage.OrderView.OrderDetails, 
         CraftSimCostOverviewFrame, 
         "TOPLEFT", 
@@ -191,9 +191,9 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
             materialFrame.content.allocateText:Show()
             materialFrame.content.allocateButton:Hide()
             if hasItems then
-                materialFrame.content.allocateText:SetText(CraftSim.UTIL:ColorizeText("Materials available", CraftSim.CONST.COLORS.GREEN))
+                materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText("Materials available", CraftSim.GUTIL.COLORS.GREEN))
             else
-                materialFrame.content.allocateText:SetText(CraftSim.UTIL:ColorizeText("Materials missing", CraftSim.CONST.COLORS.RED))
+                materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText("Materials missing", CraftSim.GUTIL.COLORS.RED))
             end
         end
         materialFrame.content.allocateButton:SetSize(materialFrame.content.allocateButton:GetTextWidth() + 15, 25)

@@ -347,7 +347,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
              -- warning
             -- simModeDetailsFrame.content.warningText = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
             -- simModeDetailsFrame.content.warningText:SetPoint("BOTTOM", simModeDetailsFrame.content, "BOTTOM", 0, 30)
-            -- simModeDetailsFrame.content.warningText:SetText(CraftSim.UTIL:ColorizeText("~ WORK IN PROGRESS ~", CraftSim.CONST.COLORS.RED))
+            -- simModeDetailsFrame.content.warningText:SetText(CraftSim.GUTIL:ColorizeText("~ WORK IN PROGRESS ~", CraftSim.GUTIL.COLORS.RED))
     
             return frames
     end
@@ -500,12 +500,12 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
                     --print("currentValue: " .. tostring(currentValue))
                     if threshold.rank and threshold.rank <= currentValue then
                     -- print("color green")
-                        thresholdText:SetText(CraftSim.UTIL:ColorizeText(threshold.originalText or "", CraftSim.CONST.COLORS.GREEN))
-                        thresholdRankText:SetText(CraftSim.UTIL:ColorizeText(threshold.rank or "", CraftSim.CONST.COLORS.GREEN))
+                        thresholdText:SetText(CraftSim.GUTIL:ColorizeText(threshold.originalText or "", CraftSim.GUTIL.COLORS.GREEN))
+                        thresholdRankText:SetText(CraftSim.GUTIL:ColorizeText(threshold.rank or "", CraftSim.GUTIL.COLORS.GREEN))
                     else
                         --print("color grey")
-                        thresholdText:SetText(CraftSim.UTIL:ColorizeText(threshold.originalText or "", CraftSim.CONST.COLORS.GREY))
-                        thresholdRankText:SetText(CraftSim.UTIL:ColorizeText(threshold.rank or "", CraftSim.CONST.COLORS.GREY))
+                        thresholdText:SetText(CraftSim.GUTIL:ColorizeText(threshold.originalText or "", CraftSim.GUTIL.COLORS.GREY))
+                        thresholdRankText:SetText(CraftSim.GUTIL:ColorizeText(threshold.rank or "", CraftSim.GUTIL.COLORS.GREY))
                     end
                 end
             end
@@ -712,7 +712,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLay
 
     if tab then
         local nodeModFrames = tab.content.nodeModFrames
-        local relevantModFrames = CraftSim.UTIL:FilterTable(nodeModFrames, function(nodeModFrame) 
+        local relevantModFrames = CraftSim.GUTIL:Filter(nodeModFrames, function(nodeModFrame) 
             return nodeModFrame.layer == layer and nodeModFrame.layerMaxNodes == layerMaxNodes
         end)
 
@@ -855,8 +855,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
             missingSkill = missingSkill > 0 and missingSkill or 0
             missingSkillInspiration = missingSkillInspiration > 0 and missingSkillInspiration or 0
             qualityFrame.nextQualityMissingSkillValue:SetText(CraftSim.GUTIL:Round(missingSkill, 1))
-            local missingSkillText = CraftSim.UTIL:ColorizeText(CraftSim.GUTIL:Round(missingSkillInspiration, 1), 
-            missingSkillInspiration == 0 and CraftSim.CONST.COLORS.GREEN or CraftSim.CONST.COLORS.RED)
+            local missingSkillText = CraftSim.GUTIL:ColorizeText(CraftSim.GUTIL:Round(missingSkillInspiration, 1), 
+            missingSkillInspiration == 0 and CraftSim.GUTIL.COLORS.GREEN or CraftSim.GUTIL.COLORS.RED)
             local nextQualityIconText = CraftSim.GUTIL:GetQualityIconString(recipeData.resultData.expectedQuality + 1, 20, 20)
             qualityFrame.nextQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. nextQualityIconText)
             qualityFrame.nextQualityMissingSkillInspirationValue:SetText(missingSkillText)
@@ -868,8 +868,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
                 local skipQualityThreshold = thresholds[recipeData.resultData.expectedQuality + 1]
                 local missingSkillInspirationSkip = skipQualityThreshold - (professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor())
                 missingSkillInspirationSkip = missingSkillInspirationSkip > 0 and missingSkillInspirationSkip or 0
-                local missinSkillText = CraftSim.UTIL:ColorizeText(CraftSim.GUTIL:Round(missingSkillInspirationSkip, 1), 
-                missingSkillInspirationSkip == 0 and CraftSim.CONST.COLORS.GREEN or CraftSim.CONST.COLORS.RED)
+                local missinSkillText = CraftSim.GUTIL:ColorizeText(CraftSim.GUTIL:Round(missingSkillInspirationSkip, 1), 
+                missingSkillInspirationSkip == 0 and CraftSim.GUTIL.COLORS.GREEN or CraftSim.GUTIL.COLORS.RED)
                 qualityFrame.skipQualityMissingSkillInspirationValue:SetText(missinSkillText)
                 qualityFrame.skipQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. skipQualityIconText)
             end
@@ -993,7 +993,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
         initNode(baseNodeData, 1, numNodesPerLayer) 
     end
 
-    local baseNodeNames = CraftSim.UTIL:Map(specializationData.baseNodeData, function(baseNodeData) return baseNodeData.nodeName end)
+    local baseNodeNames = CraftSim.GUTIL:Map(specializationData.baseNodeData, function(baseNodeData) return baseNodeData.nodeName end)
 
     for i = 1, 4, 1 do
         local specTabName = baseNodeNames[i]
@@ -1150,7 +1150,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames(recipeData)
     -- set non quality reagents to max allocations
 
     -- filter out non quality reagents
-    local qualityReagents = CraftSim.UTIL:FilterTable(recipeData.reagentData.requiredReagents, function(reagent) 
+    local qualityReagents = CraftSim.GUTIL:Filter(recipeData.reagentData.requiredReagents, function(reagent) 
         return reagent.hasQuality
     end)
     -- reagent overwrites

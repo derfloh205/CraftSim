@@ -222,46 +222,7 @@ function CraftSim.UTIL:PrintTable(t, debugID, recursive, level)
     end
 end
 
---> in GUTIL
-function CraftSim.UTIL:Count(t, func)
-    local count = 0
-    for _, v in pairs(t) do
-        if func and func(v) then
-            count = count + 1
-        elseif not func then
-            count = count + 1
-        end
-    end
-
-    return count
-end
-
---> in GUTIL
-function CraftSim.UTIL:Sort(t, compFunc)
-    local sorted = {}
-    for _, item in pairs(t) do
-        if sorted[1] == nil then
-            table.insert(sorted, item)
-        else
-            -- local sortedCopy = CraftSim.UTIL:Concat({sorted}) -- we dont want a deepcopy
-            local inserted = false
-            for sortedIndex, sortedItem in pairs(sorted) do
-                if compFunc(item, sortedItem) then
-                    table.insert(sorted, sortedIndex, item)
-                    inserted = true
-                    break
-                end
-            end
-
-            if not inserted then
-                table.insert(sorted, item)
-            end
-        end
-    end
-
-    return sorted
-end
-
+--> built into GGUI
 function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     local inputNumber = inputBox:GetNumber()
     local inputText = inputBox:GetText()
@@ -317,105 +278,6 @@ end
 function CraftSim.UTIL:IsWorkOrder()
     return ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible()
 end
-
---> in GUTIL
-function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
-    local absValue = abs(copperValue)
-    local minusText = ""
-    local color = CraftSim.CONST.COLORS.GREEN
-    local percentageText = ""
-
-    if percentRelativeTo then
-        local oneP = percentRelativeTo / 100
-        local percent = CraftSim.GUTIL:Round(copperValue / oneP, 0)
-
-        if oneP == 0 then
-            percent = 0
-        end
-
-        percentageText = " (" .. percent .. "%)"
-    end
-
-    if copperValue < 0 then
-        minusText = "-"
-        color = CraftSim.CONST.COLORS.RED
-    end
-
-    if useColor then
-        return CraftSim.UTIL:ColorizeText(minusText .. GetCoinTextureString(absValue, 10) .. percentageText, color)
-    else
-        return minusText .. GetCoinTextureString(absValue, 10) .. percentageText
-    end
-end
-
---> in GUTIL
-function CraftSim.UTIL:CreateRegistreeForEvents(events)
-    local registree = CreateFrame("Frame", nil)
-    registree:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
-    for _, event in pairs(events) do
-        registree:RegisterEvent(event)
-    end
-    return registree
-end
-
-
---> in GUTIL
-function CraftSim.UTIL:FilterTable(t, filterFunc)
-    local filtered = {}
-    for k, v in pairs(t) do
-        if filterFunc(v) then
-            table.insert(filtered, v)
-        end
-    end
-    return filtered
-end
-
---> in GUTIL
--- options: subTable, isTableList
--- subTable: a subproperty that is a table that is to be mapped instead of the table itself
--- isTableList: if the table only consists of other tables, map each subTable instead
-function CraftSim.UTIL:Map(t, mapFunc, options)
-    options = options or {}
-    local mapped = {}
-    if not options.subTable then
-        for k, v in pairs(t) do
-            if options.isTableList then
-                if type(v) ~= "table" then
-                    error("UTIL.Map: t contains a nontable element")
-                end
-                for subK, subV in pairs(v) do
-                    local mappedValue = mapFunc(subV, subK)
-                    if not mappedValue then
-                        error("UTIL.Map: Did you forget to return in mapFunc?")
-                    end
-                    table.insert(mapped, mappedValue)
-                end
-            else
-                local mappedValue = mapFunc(v, k)
-                if mappedValue then
-                    table.insert(mapped, mappedValue)
-                end
-            end
-        end
-        return mapped
-    else
-        for k, v in pairs(t) do
-            if not v[options.subTable] or type(v[options.subTable]) ~= "table" then
-                print("Mapping Error: given options.subTable is not existing or no table: " .. tostring(v[options.subTable]))
-            else
-                for subK, subV in pairs(v[options.subTable]) do
-                    local mappedValue = mapFunc(subV, subK)
-                    if not mappedValue then
-                        error("UTIL.Map: Did you forget to return in mapFunc?")
-                    end
-                    table.insert(mapped, mappedValue)
-                end
-            end
-        end
-        return mapped
-    end
-end
-
 
 --> in GUTIL
 function CraftSim.UTIL:ToSet(t)
@@ -506,17 +368,10 @@ end
 
 function CraftSim.UTIL:GreyOutByCondition(text, condition)
     if condition then
-        CraftSim.UTIL:ColorizeText(text, CraftSim.CONST.COLORS.GREY)
+        CraftSim.GUTIL:ColorizeText(text, CraftSim.GUTIL.COLORS.GREY)
     else
         return text
     end
-end
-
---> in GUTIL
-function CraftSim.UTIL:ColorizeText(text, color)
-    local startLine = "\124"
-    local endLine = "\124r"
-    return startLine .. color .. text .. endLine
 end
 
 --> in GUTIL
@@ -596,13 +451,13 @@ function CraftSim.UTIL:GetItemTooltipText(itemLink, showCount)
 end
 
 function CraftSim.UTIL:GetFormatter()
-    local b = CraftSim.CONST.COLORS.DARK_BLUE
-    local bb = CraftSim.CONST.COLORS.BRIGHT_BLUE
-    local g = CraftSim.CONST.COLORS.GREEN
-    local r = CraftSim.CONST.COLORS.RED
-    local l = CraftSim.CONST.COLORS.LEGENDARY
+    local b = CraftSim.GUTIL.COLORS.DARK_BLUE
+    local bb = CraftSim.GUTIL.COLORS.BRIGHT_BLUE
+    local g = CraftSim.GUTIL.COLORS.GREEN
+    local r = CraftSim.GUTIL.COLORS.RED
+    local l = CraftSim.GUTIL.COLORS.LEGENDARY
     local c = function(text, color) 
-        return CraftSim.UTIL:ColorizeText(text, color)
+        return CraftSim.GUTIL:ColorizeText(text, color)
     end
     local p = "\n" .. CraftSim.GUTIL:GetQualityIconString(1, 15, 15) .. " "
     local s = "\n" .. CraftSim.GUTIL:GetQualityIconString(2, 15, 15) .. " "
@@ -630,10 +485,10 @@ function CraftSim.UTIL:GetFormatter()
     formatter.P = P
     formatter.a = a
     formatter.m = function (m)
-        return CraftSim.UTIL:FormatMoney(m, true)
+        return CraftSim.GUTIL:FormatMoney(m, true)
     end
     formatter.mw = function (m)
-        return CraftSim.UTIL:FormatMoney(m)
+        return CraftSim.GUTIL:FormatMoney(m)
     end
 
     formatter.i = function (i, h, w)

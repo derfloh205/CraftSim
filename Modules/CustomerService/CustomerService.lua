@@ -1,6 +1,6 @@
 AddonName, CraftSim = ...
 
-CraftSim.CUSTOMER_SERVICE = {} --CraftSim.UTIL:CreateRegistreeForEvents({"CHAT_MSG_WHISPER"})
+CraftSim.CUSTOMER_SERVICE = {}
 local PREVIEW_REQUEST_PREFIX = "CraftSimReq1"
 local PREVIEW_RECIPE_LIST_RESPONSE_PREFIX = "CraftSimRes1"
 local PREVIEW_REQUEST_RECIPE_UPDATE = "CraftSimReq2"
@@ -256,14 +256,14 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateResponse(payload)
 
     print("received serialized data, deserialize and continue..")
 
-    payload.reagents = CraftSim.UTIL:Map(payload.reagents, function(serializedReagent) return CraftSim.Reagent:Deserialize(serializedReagent) end)
-    payload.optionalReagents = CraftSim.UTIL:Map(payload.optionalReagents, function(serializedOptionalReagentSlot) return CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot) end)
-    payload.finishingReagents = CraftSim.UTIL:Map(payload.finishingReagents, function(serializedOptionalReagentSlot) return CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot) end)
+    payload.reagents = CraftSim.GUTIL:Map(payload.reagents, function(serializedReagent) return CraftSim.Reagent:Deserialize(serializedReagent) end)
+    payload.optionalReagents = CraftSim.GUTIL:Map(payload.optionalReagents, function(serializedOptionalReagentSlot) return CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot) end)
+    payload.finishingReagents = CraftSim.GUTIL:Map(payload.finishingReagents, function(serializedOptionalReagentSlot) return CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot) end)
     payload.resultData = CraftSim.ResultData:Deserialize(payload.resultData)
 
-    local itemsToLoad = CraftSim.UTIL:Map(payload.reagents, function(reagent) return reagent.item end)
+    local itemsToLoad = CraftSim.GUTIL:Map(payload.reagents, function(reagent) return reagent.item end)
     table.foreach(CraftSim.UTIL:Concat({payload.optionalReagents, payload.finishingReagents}), function(_, slot)
-        itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, CraftSim.UTIL:Map(slot.possibleReagents, function(optionalReagent) return optionalReagent.item end)})
+        itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, CraftSim.GUTIL:Map(slot.possibleReagents, function(optionalReagent) return optionalReagent.item end)})
     end)
 
     itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, payload.resultData.itemsByQuality})

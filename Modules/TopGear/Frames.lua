@@ -20,7 +20,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
 
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimSimWOFrame", 
-        "CraftSim Top Gear " .. CraftSim.UTIL:ColorizeText("WO", CraftSim.CONST.COLORS.GREY), 
+        "CraftSim Top Gear " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY), 
         ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
         ProfessionsFrame.CloseButton, 
         "TOPLEFT", 
@@ -208,7 +208,7 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, expo
     end
 
     if topGearMode == CraftSim.CONST.GEAR_SIM_MODES.PROFIT then
-        topGearFrame.content.profitText:SetText("Ø Profit Difference\n".. CraftSim.UTIL:FormatMoney(topResult.relativeProfit, true))
+        topGearFrame.content.profitText:SetText("Ø Profit Difference\n".. CraftSim.GUTIL:FormatMoney(topResult.relativeProfit, true))
     elseif topGearMode == CraftSim.CONST.GEAR_SIM_MODES.MULTICRAFT then
         topGearFrame.content.profitText:SetText("New Multicraft\n".. CraftSim.GUTIL:Round(topResult.relativeStats.multicraft:GetPercent(), 2) .. "%")
     elseif topGearMode == CraftSim.CONST.GEAR_SIM_MODES.CRAFTING_SPEED then

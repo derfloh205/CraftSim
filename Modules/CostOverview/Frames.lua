@@ -20,7 +20,7 @@ function CraftSim.COSTOVERVIEW.FRAMES:Init()
 
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimCostOverviewWOFrame", 
-        "CraftSim Cost Overview " .. CraftSim.UTIL:ColorizeText("WO", CraftSim.CONST.COLORS.GREY), 
+        "CraftSim Cost Overview " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY), 
         ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
         CraftSimSimFrame, 
         "TOP", 
@@ -107,7 +107,7 @@ function CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplay(recipeData, profitPerQuality
     local priceData = recipeData.priceData
     local resultData = recipeData.resultData
 
-    costOverviewFrame.content.craftingCosts:SetText(CraftSim.UTIL:FormatMoney(priceData.craftingCosts))
+    costOverviewFrame.content.craftingCosts:SetText(CraftSim.GUTIL:FormatMoney(priceData.craftingCosts))
     costOverviewFrame.content.craftingCostsTitle.SwitchAnchor(costOverviewFrame.title)
     costOverviewFrame.content.minCraftingCosts:Hide()
     costOverviewFrame.content.minCraftingCostsTitle:Hide()
@@ -133,7 +133,7 @@ function CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplay(recipeData, profitPerQuality
             profitFrame.qualityID = qualityID
             local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCosts or nil
             local comissionProfit = (recipeData.orderData and ((recipeData.orderData.tipAmount or 0) - (recipeData.orderData.consortiumCut or 0))) or 0
-            profitFrame.text:SetText(CraftSim.UTIL:FormatMoney(profitPerQuality[index] + comissionProfit, true, relativeValue))
+            profitFrame.text:SetText(CraftSim.GUTIL:FormatMoney(profitPerQuality[index] + comissionProfit, true, relativeValue))
             profitFrame:Show()
         else
             profitFrame:Hide()

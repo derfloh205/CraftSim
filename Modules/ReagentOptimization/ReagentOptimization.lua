@@ -185,7 +185,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
         end
     end
 
-    local results = CraftSim.UTIL:Map(outResult, function(result) return CraftSim.ReagentOptimizationResult(recipeData, result) end)
+    local results = CraftSim.GUTIL:Map(outResult, function(result) return CraftSim.ReagentOptimizationResult(recipeData, result) end)
 
     return results
 end
@@ -287,7 +287,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
     end
 
     -- Create Knapsacks for required reagents with different Qualities
-    local requiredReagents = CraftSim.UTIL:FilterTable(recipeData.reagentData.requiredReagents, function (reagent)
+    local requiredReagents = CraftSim.GUTIL:Filter(recipeData.reagentData.requiredReagents, function (reagent)
         return reagent.hasQuality
     end)
 
@@ -434,7 +434,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
 
     -- remove any result that maps to the expected quality without reagent increase
     -- NEW: any that is below! Same is fine
-    local results = CraftSim.UTIL:FilterTable(results, function(result) 
+    local results = CraftSim.GUTIL:Filter(results, function(result) 
         return result.qualityID >= expectedQualityWithoutReagents
     end)
     

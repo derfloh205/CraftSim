@@ -34,7 +34,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
 
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimPriceOverrideWOFrame", 
-        "CraftSim Price Overrides " .. CraftSim.UTIL:ColorizeText("WO", CraftSim.CONST.COLORS.GREY), 
+        "CraftSim Price Overrides " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY), 
         ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
         ProfessionsFrame.CraftingPage.SchematicForm, 
         "CENTER", 
@@ -214,13 +214,13 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)
     local finishingReagents = {}
     table.foreach(recipeData.reagentData.optionalReagentSlots, function(_, slot) optionalReagents = CraftSim.UTIL:Concat({optionalReagents, slot.possibleReagents}) end)
     table.foreach(recipeData.reagentData.finishingReagentSlots, function(_, slot) finishingReagents = CraftSim.UTIL:Concat({finishingReagents, slot.possibleReagents}) end)
-    optionalReagents = CraftSim.UTIL:Map(optionalReagents, function(optionalReagent) 
+    optionalReagents = CraftSim.GUTIL:Map(optionalReagents, function(optionalReagent) 
         return {
             itemID = optionalReagent.item:GetItemID(),
             qualityID = optionalReagent.qualityID
         }
     end)
-    finishingReagents = CraftSim.UTIL:Map(finishingReagents, function(finishingReagent) 
+    finishingReagents = CraftSim.GUTIL:Map(finishingReagents, function(finishingReagent) 
         return {
             itemID = finishingReagent.item:GetItemID(),
             qualityID = finishingReagent.qualityID
@@ -342,21 +342,21 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideList(priceOverrideFrame)
         end)
     end)
 
-    local itemsToLoad = CraftSim.UTIL:Map(globalOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)
-    itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, CraftSim.UTIL:Map(resultOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)})
+    local itemsToLoad = CraftSim.GUTIL:Map(globalOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)
+    itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, CraftSim.GUTIL:Map(resultOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)})
 
     CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
         
         local text = ""
         table.foreach(globalOverrides, function (_, priceOverrideData)
             local item = Item:CreateFromItemID(priceOverrideData.itemID)
-            text = text .. item:GetItemLink() .. ": " .. CraftSim.UTIL:FormatMoney(priceOverrideData.price) .. "\n"
+            text = text .. item:GetItemLink() .. ": " .. CraftSim.GUTIL:FormatMoney(priceOverrideData.price) .. "\n"
         end)
 
         table.foreach(recipeOverrides, function (_, resultOverrideList)
             table.foreach(resultOverrideList, function (_, resultOverride)                
                 local item = Item:CreateFromItemID(resultOverride.itemID)
-                text = text .. item:GetItemLink() .. ": " .. CraftSim.UTIL:FormatMoney(resultOverride.price) .. " " .. CraftSim.UTIL:ColorizeText("(as result)", CraftSim.CONST.COLORS.BRIGHT_BLUE) .. "\n"
+                text = text .. item:GetItemLink() .. ": " .. CraftSim.GUTIL:FormatMoney(resultOverride.price) .. " " .. CraftSim.GUTIL:ColorizeText("(as result)", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) .. "\n"
             end)
         end)
 

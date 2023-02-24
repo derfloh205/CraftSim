@@ -1,7 +1,7 @@
 AddonName, CraftSim = ...
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
-CraftSim.CRAFT_RESULTS = CraftSim.UTIL:CreateRegistreeForEvents({"TRADE_SKILL_ITEM_CRAFTED_RESULT", "TRADE_SKILL_CRAFT_BEGIN"})
+CraftSim.CRAFT_RESULTS = CraftSim.GUTIL:CreateRegistreeForEvents({"TRADE_SKILL_ITEM_CRAFTED_RESULT", "TRADE_SKILL_CRAFT_BEGIN"})
 
 CraftSim.CRAFT_RESULTS.currentRecipeData = nil
 
@@ -105,7 +105,7 @@ function CraftSim.CRAFT_RESULTS:AddCraftData(craftResult)
     CraftSim.CRAFT_RESULTS.currentSessionData:AddCraftResult(craftResult)
 
     -- update frames
-    craftResultFrame.content.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(CraftSim.CRAFT_RESULTS.currentSessionData.totalProfit, true))
+    craftResultFrame.content.totalProfitAllValue:SetText(CraftSim.GUTIL:FormatMoney(CraftSim.CRAFT_RESULTS.currentSessionData.totalProfit, true))
 
     CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
 end
@@ -128,7 +128,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     end
 
     local roundedProfit = CraftSim.GUTIL:Round(craftResult.profit*10000) / 10000
-    local profitText = CraftSim.UTIL:FormatMoney(roundedProfit, true)
+    local profitText = CraftSim.GUTIL:FormatMoney(roundedProfit, true)
     local chanceText = ""
 
     if not recipeData.isSalvageRecipe and recipeData.supportsCraftingStats then
@@ -155,9 +155,9 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     resultsText ..
     "Profit: " .. profitText .. "\n" ..
     chanceText ..
-    ((craftResult.triggeredInspiration and CraftSim.UTIL:ColorizeText("Inspired!\n", CraftSim.CONST.COLORS.LEGENDARY)) or "") ..
-    ((craftResult.triggeredMulticraft and (CraftSim.UTIL:ColorizeText("Multicraft: ", CraftSim.CONST.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
-    ((craftResult.triggeredResourcefulness and (CraftSim.UTIL:ColorizeText("Resources Saved!: \n", CraftSim.CONST.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
+    ((craftResult.triggeredInspiration and CraftSim.GUTIL:ColorizeText("Inspired!\n", CraftSim.GUTIL.COLORS.LEGENDARY)) or "") ..
+    ((craftResult.triggeredMulticraft and (CraftSim.GUTIL:ColorizeText("Multicraft: ", CraftSim.GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
+    ((craftResult.triggeredResourcefulness and (CraftSim.GUTIL:ColorizeText("Resources Saved!: \n", CraftSim.GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
 
     craftResultFrame.content.scrollingMessageFrame:AddMessage("\n" .. newText)
 
@@ -213,7 +213,7 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
     print("Craft Result: ")
     print(craftResult)
     
-    local itemsToLoad = CraftSim.UTIL:Map(craftResult.savedReagents, function (savedReagent)
+    local itemsToLoad = CraftSim.GUTIL:Map(craftResult.savedReagents, function (savedReagent)
         return savedReagent.item
     end)
     CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()

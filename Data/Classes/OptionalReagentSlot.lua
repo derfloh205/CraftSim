@@ -70,7 +70,7 @@ end
 function CraftSim.OptionalReagentSlot:Copy(recipeData)
 
     local copy = CraftSim.OptionalReagentSlot(recipeData)
-    copy.possibleReagents = CraftSim.UTIL:Map(self.possibleReagents, function(r) return r:Copy() end)
+    copy.possibleReagents = CraftSim.GUTIL:Map(self.possibleReagents, function(r) return r:Copy() end)
     if self.activeReagent then
         copy.activeReagent = CraftSim.UTIL:Find(copy.possibleReagents, function(r) return r.item:GetItemID() == self.activeReagent.item:GetItemID() end)
     end
@@ -98,7 +98,7 @@ function CraftSim.OptionalReagentSlot:Serialize()
     serialized.dataSlotIndex = self.dataSlotIndex
     serialized.locked = self.locked
     serialized.lockedReason = self.lockedReason
-    serialized.possibleReagents = CraftSim.UTIL:Map(self.possibleReagents, function (optionalReagent)
+    serialized.possibleReagents = CraftSim.GUTIL:Map(self.possibleReagents, function (optionalReagent)
         return optionalReagent:Serialize()
     end)
     return serialized
@@ -113,7 +113,7 @@ function CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot)
     deserialized.dataSlotIndex = tonumber(serializedOptionalReagentSlot.dataSlotIndex)
     deserialized.locked = not not serializedOptionalReagentSlot.locked -- is this enough to deserialize a boolean? or do I need to parse a string?
     deserialized.lockedReason = serializedOptionalReagentSlot.lockedReason
-    deserialized.possibleReagents = CraftSim.UTIL:Map(serializedOptionalReagentSlot.possibleReagents, function (serializedOptionalReagent)
+    deserialized.possibleReagents = CraftSim.GUTIL:Map(serializedOptionalReagentSlot.possibleReagents, function (serializedOptionalReagent)
         return CraftSim.OptionalReagent:Deserialize(serializedOptionalReagent)
     end)
     return deserialized

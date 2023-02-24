@@ -20,7 +20,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
 
     local frameWorkOrder = CraftSim.FRAME:CreateCraftSimFrame(
     "CraftSimDetailsWOFrame", 
-    "CraftSim Average Profit " .. CraftSim.UTIL:ColorizeText("WO", CraftSim.CONST.COLORS.GREY), 
+    "CraftSim Average Profit " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY), 
     ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
     ProfessionsFrame.OrdersPage.OrderView.OrderDetails, 
     "BOTTOMRIGHT", 
@@ -87,19 +87,19 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts,
         if statWeights.averageProfit then
             statText = statText .. "Ø Profit / Craft:" .. "\n"
             local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
-            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.averageProfit, true, relativeValue) .. "\n"
+            valueText = valueText .. CraftSim.GUTIL:FormatMoney(statWeights.averageProfit, true, relativeValue) .. "\n"
         end
         if statWeights.inspirationWeight then
             statText = statText .. "Inspiration:" .. "\n"
-            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.inspirationWeight) .. "\n"
+            valueText = valueText .. CraftSim.GUTIL:FormatMoney(statWeights.inspirationWeight) .. "\n"
         end
         if statWeights.multicraftWeight then
             statText = statText .. "Multicraft:" .. "\n"
-            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.multicraftWeight) .. "\n"
+            valueText = valueText .. CraftSim.GUTIL:FormatMoney(statWeights.multicraftWeight) .. "\n"
         end
         if statWeights.resourcefulnessWeight then
             statText = statText .. "Resourcefulness:"
-            valueText = valueText .. CraftSim.UTIL:FormatMoney(statWeights.resourcefulnessWeight)
+            valueText = valueText .. CraftSim.GUTIL:FormatMoney(statWeights.resourcefulnessWeight)
         end
         statweightFrame.content.statText:SetText(statText)
         statweightFrame.content.valueText:SetText(valueText)

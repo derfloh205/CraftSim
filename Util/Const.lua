@@ -215,23 +215,6 @@ CraftSim.CONST.DEFAULT_POSITIONS = {
     }
 }
 
---> in GUTIL (without the c prefix)
-CraftSim.CONST.COLORS = {
-    GREEN = "cff00FF00",
-    RED = "cffFF0000",
-    DARK_BLUE = "cff2596be",
-    BRIGHT_BLUE = "cff00ccff",
-    LEGENDARY = "cffff8000",
-    EPIC = "cffa335ee",
-    RARE = "cff0070dd",
-    UNCOMMON = "cff1eff00",
-    GREY = "cff9d9d9d",
-    ARTIFACT = "cffe6cc80",
-    GOLD = "cfffffc01",
-    SILVER = "cffdadada",
-    COPPER = "cffc9803c"
-}
-
 CraftSim.CONST.RECIPE_CATEGORIES = {
     ALL = 999999,
     BLACKSMITHING = {

@@ -184,7 +184,7 @@ function GUTIL:Map(t, mapFunc, options)
   end
 end
 
-function GUTIL:FilterTable(t, filterFunc)
+function GUTIL:Filter(t, filterFunc)
   local filtered = {}
   for k, v in pairs(t) do
       if filterFunc(v) then
@@ -265,7 +265,7 @@ end
 ---@param color string
 ---@return string colorizedText
 function GUTIL:ColorizeText(text, color)
-  local startLine = "\124"
+  local startLine = "\124c"
   local endLine = "\124r"
   return startLine .. color .. text .. endLine
 end

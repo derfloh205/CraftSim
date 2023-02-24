@@ -114,7 +114,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.buffData:Update()
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
 
-    local qualityReagents = CraftSim.UTIL:Count(self.reagentData.requiredReagents, function (reagent)
+    local qualityReagents = CraftSim.GUTIL:Count(self.reagentData.requiredReagents, function (reagent)
         return reagent.hasQuality
     end)
 

@@ -732,7 +732,7 @@ end
 
 function CraftSim.FRAME:InitWarningFrame()
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimWarningFrame", 
-    CraftSim.UTIL:ColorizeText("CraftSim Warning", CraftSim.CONST.COLORS.RED), 
+    CraftSim.GUTIL:ColorizeText("CraftSim Warning", CraftSim.GUTIL.COLORS.RED), 
     UIParent, 
     UIParent, 
     "CENTER", "CENTER", 0, 0, 500, 500, CraftSim.CONST.FRAMES.WARNING, true, true)
@@ -766,7 +766,7 @@ function CraftSim.FRAME:InitWarningFrame()
         CraftSim.FRAME:ToggleFrame(frame.content.doNotShowAgainButton, not hideDoNotShowButton)
         optionalTitle = optionalTitle or "CraftSim Warning"
         local wrapped = CraftSim.UTIL:WrapText(warningText, 50)
-        frame.title:SetText(CraftSim.UTIL:ColorizeText(optionalTitle, CraftSim.CONST.COLORS.RED))
+        frame.title:SetText(CraftSim.GUTIL:ColorizeText(optionalTitle, CraftSim.GUTIL.COLORS.RED))
         frame.content.warningText:SetText(wrapped)
         frame.content.warningText:Show()
         frame.content.errorBox:Hide()
@@ -777,7 +777,7 @@ function CraftSim.FRAME:InitWarningFrame()
 
     frame.showError = function(errorText, optionalTitle) 
         optionalTitle = optionalTitle or "CraftSim Warning"
-        frame.title:SetText(CraftSim.UTIL:ColorizeText(optionalTitle, CraftSim.CONST.COLORS.RED))
+        frame.title:SetText(CraftSim.GUTIL:ColorizeText(optionalTitle, CraftSim.GUTIL.COLORS.RED))
         frame.content.errorBox:SetText(errorText)
         frame.content.errorBox:Show()
         frame.content.warningText:Hide()
@@ -807,7 +807,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     local currentVersion = GetAddOnMetadata(AddonName, "Version")
 
     local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimOneTimeNoteFrame", 
-    CraftSim.UTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")", CraftSim.CONST.COLORS.GREEN), 
+    CraftSim.GUTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")", CraftSim.GUTIL.COLORS.GREEN), 
     UIParent, 
     UIParent, 
     "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO, true, true)
@@ -925,9 +925,9 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
             -- remove colorizations
             print(input)
 
-            input = string.gsub(input, CraftSim.CONST.COLORS.GOLD, "")
-            input = string.gsub(input, CraftSim.CONST.COLORS.SILVER, "")
-            input = string.gsub(input, CraftSim.CONST.COLORS.COPPER, "")
+            input = string.gsub(input, CraftSim.GUTIL.COLORS.GOLD, "")
+            input = string.gsub(input, CraftSim.GUTIL.COLORS.SILVER, "")
+            input = string.gsub(input, CraftSim.GUTIL.COLORS.COPPER, "")
             input = string.gsub(input, "|r", "")
             input = string.gsub(input, "|", "")
 
@@ -941,9 +941,9 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
                 local gold = tonumber(string.match(input, "(%d+)g")) or 0
                 local silver = tonumber(string.match(input, "(%d+)s")) or 0
                 local copper = tonumber(string.match(input, "(%d+)c")) or 0
-                local gC = CraftSim.UTIL:ColorizeText("g", CraftSim.CONST.COLORS.GOLD)
-                local sC = CraftSim.UTIL:ColorizeText("s", CraftSim.CONST.COLORS.SILVER)
-                local cC = CraftSim.UTIL:ColorizeText("c", CraftSim.CONST.COLORS.COPPER)
+                local gC = CraftSim.GUTIL:ColorizeText("g", CraftSim.GUTIL.COLORS.GOLD)
+                local sC = CraftSim.GUTIL:ColorizeText("s", CraftSim.GUTIL.COLORS.SILVER)
+                local cC = CraftSim.GUTIL:ColorizeText("c", CraftSim.GUTIL.COLORS.COPPER)
                 local colorizedText = ((gold > 0 and (gold .. gC)) or "") .. ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
                 self:SetText(colorizedText)
 
@@ -992,9 +992,9 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
 
     function goldInput:SetValue(total)
         local gold, silver, copper = CraftSim.UTIL:GetMoneyValuesFromCopper(total)
-        local gC = CraftSim.UTIL:ColorizeText("g", CraftSim.CONST.COLORS.GOLD)
-        local sC = CraftSim.UTIL:ColorizeText("s", CraftSim.CONST.COLORS.SILVER)
-        local cC = CraftSim.UTIL:ColorizeText("c", CraftSim.CONST.COLORS.COPPER)
+        local gC = CraftSim.GUTIL:ColorizeText("g", CraftSim.GUTIL.COLORS.GOLD)
+        local sC = CraftSim.GUTIL:ColorizeText("s", CraftSim.GUTIL.COLORS.SILVER)
+        local cC = CraftSim.GUTIL:ColorizeText("c", CraftSim.GUTIL.COLORS.COPPER)
         local colorizedText = ((gold > 0 and (gold .. gC)) or "") .. ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
         self:SetText(colorizedText)
     end

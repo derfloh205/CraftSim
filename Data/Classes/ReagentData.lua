@@ -41,19 +41,19 @@ end
 ---Serializes the required reagents list for sending via the addon channel
 ---@return CraftSim.Reagent.Serialized[]
 function CraftSim.ReagentData:SerializeReagents()
-    return CraftSim.UTIL:Map(self.requiredReagents, function (reagent)
+    return CraftSim.GUTIL:Map(self.requiredReagents, function (reagent)
         return reagent:Serialize()
     end)
 end
 
 function CraftSim.ReagentData:SerializeOptionalReagentSlots()
-    return CraftSim.UTIL:Map(self.optionalReagentSlots, function (slot)
+    return CraftSim.GUTIL:Map(self.optionalReagentSlots, function (slot)
         return slot:Serialize()
     end)
 end
 
 function CraftSim.ReagentData:SerializeFinishingReagentSlots()
-    return CraftSim.UTIL:Map(self.finishingReagentSlots, function (slot)
+    return CraftSim.GUTIL:Map(self.finishingReagentSlots, function (slot)
         return slot:Serialize()
     end)
 end
@@ -62,7 +62,7 @@ end
 function CraftSim.ReagentData:GetProfessionStatsByOptionals()
     local totalStats = CraftSim.ProfessionStats()
 
-    local optionalStats = CraftSim.UTIL:Map(CraftSim.UTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots}), 
+    local optionalStats = CraftSim.GUTIL:Map(CraftSim.UTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots}), 
         function (slot)
             if slot.activeReagent then
                 return slot.activeReagent.professionStats
@@ -173,7 +173,7 @@ function CraftSim.ReagentData:HasOptionalReagents()
 end
 
 function CraftSim.ReagentData:GetMaxSkillFactor()
-    local maxQualityReagentsCraftingTbl = CraftSim.UTIL:Map(self.requiredReagents, function(rr) 
+    local maxQualityReagentsCraftingTbl = CraftSim.GUTIL:Map(self.requiredReagents, function(rr) 
         return rr:GetCraftingReagentInfoByQuality(3, true)
     end)
 
@@ -243,7 +243,7 @@ function CraftSim.ReagentData:EqualsQualityReagents(reagents)
     print("EqualsQualityReagents ?")
     print(reagents, true)
     -- order can be different?
-    local qualityReagents = CraftSim.UTIL:FilterTable(self.requiredReagents, function(reagent) return reagent.hasQuality end)
+    local qualityReagents = CraftSim.GUTIL:Filter(self.requiredReagents, function(reagent) return reagent.hasQuality end)
     for index, reagentA in pairs(qualityReagents) do
         local reagentB = reagents[index]
         for itemIndex, reagentItemA in pairs(reagentA.items) do
@@ -322,9 +322,9 @@ end
 function CraftSim.ReagentData:Copy(recipeData)
     local copy = CraftSim.ReagentData(recipeData)
 
-    copy.requiredReagents = CraftSim.UTIL:Map(self.requiredReagents, function(r) return r:Copy() end)
-    copy.optionalReagentSlots = CraftSim.UTIL:Map(self.optionalReagentSlots, function(r) return r:Copy(recipeData) end)
-    copy.finishingReagentSlots = CraftSim.UTIL:Map(self.finishingReagentSlots, function(r) return r:Copy(recipeData) end)
+    copy.requiredReagents = CraftSim.GUTIL:Map(self.requiredReagents, function(r) return r:Copy() end)
+    copy.optionalReagentSlots = CraftSim.GUTIL:Map(self.optionalReagentSlots, function(r) return r:Copy(recipeData) end)
+    copy.finishingReagentSlots = CraftSim.GUTIL:Map(self.finishingReagentSlots, function(r) return r:Copy(recipeData) end)
 
     return copy
 end

@@ -1418,9 +1418,9 @@ function GGUI.CurrencyInput:new(options)
                 -- validate and color text, and adapt save button
                 input = input or ""
                 -- remove colorizations    
-                input = string.gsub(input, CraftSim.CONST.COLORS.GOLD, "")
-                input = string.gsub(input, CraftSim.CONST.COLORS.SILVER, "")
-                input = string.gsub(input, CraftSim.CONST.COLORS.COPPER, "")
+                input = string.gsub(input, CraftSim.GUTIL.COLORS.GOLD, "")
+                input = string.gsub(input, CraftSim.GUTIL.COLORS.SILVER, "")
+                input = string.gsub(input, CraftSim.GUTIL.COLORS.COPPER, "")
                 input = string.gsub(input, "|r", "")
                 input = string.gsub(input, "|", "")
     
@@ -1432,9 +1432,9 @@ function GGUI.CurrencyInput:new(options)
                     local gold = tonumber(string.match(input, "(%d+)g")) or 0
                     local silver = tonumber(string.match(input, "(%d+)s")) or 0
                     local copper = tonumber(string.match(input, "(%d+)c")) or 0
-                    local gC = GUTIL:ColorizeText("g", CraftSim.CONST.COLORS.GOLD)
-                    local sC = GUTIL:ColorizeText("s", CraftSim.CONST.COLORS.SILVER)
-                    local cC = GUTIL:ColorizeText("c", CraftSim.CONST.COLORS.COPPER)
+                    local gC = GUTIL:ColorizeText("g", CraftSim.GUTIL.COLORS.GOLD)
+                    local sC = GUTIL:ColorizeText("s", CraftSim.GUTIL.COLORS.SILVER)
+                    local cC = GUTIL:ColorizeText("c", CraftSim.GUTIL.COLORS.COPPER)
                     local colorizedText = ((gold > 0 and (gold .. gC)) or "") .. ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
                     currencyInput.frame:SetText(colorizedText)
     

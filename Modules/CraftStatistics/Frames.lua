@@ -85,7 +85,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
             row.hsv:SetSize(boolRowWidth, 25)
 
             row.profit = CraftSim.FRAME:CreateText(
-            CraftSim.UTIL:FormatMoney(10000000, true), 
+            CraftSim.GUTIL:FormatMoney(10000000, true), 
             row, row.hsv, "LEFT", "RIGHT", 15, 0, nil, nil, {type="H", value="LEFT"})
             row.profit:SetSize(200, 25)
 
@@ -101,8 +101,8 @@ function CraftSim.STATISTICS.FRAMES:Init()
         end
 
         frame.content.expectedProfitTitle = CraftSim.FRAME:CreateText("Expected Profit (μ)", frame.content, frame.content.scrollFrame, "TOP", "BOTTOM", 0, -30)
-        frame.content.expectedProfitValue = CraftSim.FRAME:CreateText(CraftSim.UTIL:FormatMoney(0, true), frame.content, frame.content.expectedProfitTitle, "TOP", "BOTTOM", 0, -10)
-        frame.content.craftsTextTop = CraftSim.FRAME:CreateText("Chance of " .. CraftSim.UTIL:ColorizeText("Profit > 0", CraftSim.CONST.COLORS.GREEN) .. " after", frame.content, frame.content.expectedProfitValue, "TOP", "BOTTOM", 0, -30)
+        frame.content.expectedProfitValue = CraftSim.FRAME:CreateText(CraftSim.GUTIL:FormatMoney(0, true), frame.content, frame.content.expectedProfitTitle, "TOP", "BOTTOM", 0, -10)
+        frame.content.craftsTextTop = CraftSim.FRAME:CreateText("Chance of " .. CraftSim.GUTIL:ColorizeText("Profit > 0", CraftSim.GUTIL.COLORS.GREEN) .. " after", frame.content, frame.content.expectedProfitValue, "TOP", "BOTTOM", 0, -30)
         frame.content.numCraftsInput = CraftSim.FRAME:CreateNumericInput(nil, frame.content, frame.content.craftsTextTop, "TOP", "BOTTOM", -40, -10, 50, 25, 1, false, function() 
             local recipeData = CraftSim.MAIN.currentRecipeData
             if not recipeData then
@@ -126,7 +126,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
         return
     end
 
-    probabilityTable = CraftSim.UTIL:Sort(probabilityTable, function(a, b) 
+    probabilityTable = CraftSim.GUTIL:Sort(probabilityTable, function(a, b) 
         return a.chance >= b.chance
     end)
 
@@ -142,9 +142,9 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
                 row:Hide()
             else
                 row:Show()
-                local check = CraftSim.UTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.CONST.COLORS.GREEN)
-                local cross = CraftSim.UTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.CONST.COLORS.RED)
-                local isNot = CraftSim.UTIL:ColorizeText("-", CraftSim.CONST.COLORS.GREY)
+                local check = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.GUTIL.COLORS.GREEN)
+                local cross = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.GUTIL.COLORS.RED)
+                local isNot = CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY)
                 if probabilityEntry.inspiration ~= nil then
                     row.inspiration:SetText(probabilityEntry.inspiration and check or cross)
                 else
@@ -170,14 +170,14 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
                 end
                 
                 row.chance:SetText(CraftSim.GUTIL:Round(probabilityEntry.chance*100, 2) .. "%")
-                row.profit:SetText(CraftSim.UTIL:FormatMoney(probabilityEntry.profit, true))
+                row.profit:SetText(CraftSim.GUTIL:FormatMoney(probabilityEntry.profit, true))
             end
         end
     end
 
     local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
 
-    statisticsFrame.content.expectedProfitValue:SetText(CraftSim.UTIL:FormatMoney(meanProfit, true))
+    statisticsFrame.content.expectedProfitValue:SetText(CraftSim.GUTIL:FormatMoney(meanProfit, true))
     local roundedProfit = CraftSim.GUTIL:Round(probabilityPositive * 100, 5)
     if probabilityPositive == 1 then
         -- if e.g. every craft has a positive outcome

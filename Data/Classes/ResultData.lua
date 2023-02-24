@@ -186,7 +186,7 @@ end
 --- Make sure that the items are loaded before serializing or the links are empty
 function CraftSim.ResultData:Serialize()
     local serialized = {}
-    serialized.itemLinksByQuality = CraftSim.UTIL:Map(self.itemsByQuality, function (item)
+    serialized.itemLinksByQuality = CraftSim.GUTIL:Map(self.itemsByQuality, function (item)
         return item:GetItemLink()
     end)
     serialized.expectedQuality = self.expectedQuality
@@ -208,7 +208,7 @@ end
 ---@return CraftSim.ResultData
 function CraftSim.ResultData:Deserialize(serializedResultData)
     local deserialized = CraftSim.ResultData()
-    deserialized.itemsByQuality = CraftSim.UTIL:Map(serializedResultData.itemLinksByQuality, function (itemLink)
+    deserialized.itemsByQuality = CraftSim.GUTIL:Map(serializedResultData.itemLinksByQuality, function (itemLink)
         return Item:CreateFromItemLink(itemLink)
     end)
     deserialized.expectedQuality = tonumber(serializedResultData.expectedQuality)

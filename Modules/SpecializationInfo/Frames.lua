@@ -29,7 +29,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         end)
         frame.content.knowledgePointSimulationButton:SetEnabled(false)
 
-        frame.content.notImplementedText = CraftSim.FRAME:CreateText(CraftSim.UTIL:ColorizeText("SpecInfo Work in Progress", CraftSim.CONST.COLORS.LEGENDARY),
+        frame.content.notImplementedText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:ColorizeText("SpecInfo Work in Progress", CraftSim.GUTIL.COLORS.LEGENDARY),
         frame.content, frame.content.knowledgePointSimulationButton, "CENTER", "CENTER", 0, 0)
     
         frame.content.notImplementedText:Hide()
@@ -91,7 +91,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
         specializationData = CraftSim.SIMULATION_MODE.specializationData
     end
 
-    local affectedNodeDataList = CraftSim.UTIL:FilterTable(specializationData.nodeData, function(nodeData) 
+    local affectedNodeDataList = CraftSim.GUTIL:Filter(specializationData.nodeData, function(nodeData) 
         return nodeData.affectsRecipe 
     end)
 
@@ -113,7 +113,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
             nodeLine.statTooltip:Show()
             nodeLine:Show()
         elseif affectedNodeData and not affectedNodeData.active then
-            local greyText = CraftSim.UTIL:ColorizeText(affectedNodeData.nodeName .. " (-/" .. tostring(affectedNodeData.maxRank) .. ")", CraftSim.CONST.COLORS.GREY)
+            local greyText = CraftSim.GUTIL:ColorizeText(affectedNodeData.nodeName .. " (-/" .. tostring(affectedNodeData.maxRank) .. ")", CraftSim.GUTIL.COLORS.GREY)
             nodeLine.nodeName:SetText(greyText)
             nodeLine.statTooltip:Hide()
             nodeLine:Show()

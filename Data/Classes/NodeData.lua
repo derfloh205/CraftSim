@@ -53,7 +53,7 @@ function CraftSim.NodeData:Debug()
 
     for _, childNode in pairs(self.childNodes) do
         local lines = childNode:Debug()
-        lines = CraftSim.UTIL:Map(lines, function(line) return "-" .. line end)
+        lines = CraftSim.GUTIL:Map(lines, function(line) return "-" .. line end)
 
         debugLines = CraftSim.UTIL:Concat({debugLines, lines})
     end
@@ -94,7 +94,7 @@ function CraftSim.NodeData:GetJSON(indent)
     jb:Add("idMapping", self.idMapping)
     jb:Add("parentNodeID", (self.parentNode and self.parentNode.nodeID) or nil)
     jb:AddList("nodeRules", self.nodeRules)
-    jb:AddList("childNodeIDs", CraftSim.UTIL:Map(self.childNodes, function(cn) return cn.nodeID end), true)
+    jb:AddList("childNodeIDs", CraftSim.GUTIL:Map(self.childNodes, function(cn) return cn.nodeID end), true)
     jb:End()
     return jb.json
 end

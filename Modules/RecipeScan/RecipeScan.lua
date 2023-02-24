@@ -87,7 +87,7 @@ function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
         end
     end
 
-    local recipeInfos = CraftSim.UTIL:Map(recipeIDs, function(recipeID) 
+    local recipeInfos = CraftSim.GUTIL:Map(recipeIDs, function(recipeID) 
         return C_TradeSkillUI.GetRecipeInfo(recipeID)
     end)
 
@@ -189,10 +189,10 @@ function CraftSim.RECIPE_SCAN:StartScan()
     local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
     print("Scan Mode: " .. tostring(scanMode))
     local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
-    local recipeInfos = CraftSim.UTIL:Map(recipeIDs, function(recipeID) 
+    local recipeInfos = CraftSim.GUTIL:Map(recipeIDs, function(recipeID) 
         return C_TradeSkillUI.GetRecipeInfo(recipeID)
     end)
-    recipeInfos = CraftSim.UTIL:FilterTable(recipeInfos, CraftSim.RECIPE_SCAN.FilterRecipes)
+    recipeInfos = CraftSim.GUTIL:Filter(recipeInfos, CraftSim.RECIPE_SCAN.FilterRecipes)
     local currentIndex = 1
 
     local function scanRecipesByInterval()

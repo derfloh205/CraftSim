@@ -77,8 +77,8 @@ function CraftSim.PriceData:Update()
 
         -- optionals and finishing
         local activeOptionalReagents = CraftSim.UTIL:Concat({
-                CraftSim.UTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeReagent end),
-                CraftSim.UTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeReagent end),
+                CraftSim.GUTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeReagent end),
+                CraftSim.GUTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeReagent end),
             })
         print("num active optionals: " .. #activeOptionalReagents)
         for _, activeOptionalReagent in pairs(activeOptionalReagents) do
@@ -107,11 +107,11 @@ end
 function CraftSim.PriceData:Debug() 
     local debugLines = {
         "PriceData: ",
-        "Crafting Costs: " .. CraftSim.UTIL:FormatMoney(self.craftingCosts),
+        "Crafting Costs: " .. CraftSim.GUTIL:FormatMoney(self.craftingCosts),
     }
 
     for q, qualityPrice in pairs(self.qualityPriceList) do
-        table.insert(debugLines, "-Q" .. q .. ": " .. CraftSim.UTIL:FormatMoney(qualityPrice))
+        table.insert(debugLines, "-Q" .. q .. ": " .. CraftSim.GUTIL:FormatMoney(qualityPrice))
     end
 
     return debugLines
@@ -119,7 +119,7 @@ end
 
 function CraftSim.PriceData:Copy(recipeData)
     local copy = CraftSim.PriceData(recipeData)
-    copy.qualityPriceList = CraftSim.UTIL:Map(self.qualityPriceList, function(n) return n end)
+    copy.qualityPriceList = CraftSim.GUTIL:Map(self.qualityPriceList, function(n) return n end)
     copy.craftingCosts = self.craftingCosts
     copy.craftingCostsFixed = self.craftingCostsFixed
     copy.craftingCostsRequired = self.craftingCostsRequired

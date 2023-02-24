@@ -94,7 +94,7 @@ function CraftSim.Reagent:Copy()
     copy.requiredQuantity = self.requiredQuantity
     copy.dataSlotIndex = self.dataSlotIndex
 
-    copy.items = CraftSim.UTIL:Map(self.items, function(i) return i:Copy() end)
+    copy.items = CraftSim.GUTIL:Map(self.items, function(i) return i:Copy() end)
 
     return copy
 end
@@ -169,7 +169,7 @@ function CraftSim.Reagent:Serialize()
     serialized.hasQuality = self.hasQuality
     serialized.requiredQuantity = self.requiredQuantity
     serialized.dataSlotIndex = self.dataSlotIndex
-    serialized.items = CraftSim.UTIL:Map(self.items, function (reagentItem)
+    serialized.items = CraftSim.GUTIL:Map(self.items, function (reagentItem)
         return reagentItem:Serialize()
     end)
     return serialized
@@ -183,7 +183,7 @@ function CraftSim.Reagent:Deserialize(serializedReagent)
     reagent.hasQuality = not not serializedReagent.hasQuality
     reagent.requiredQuantity = tonumber(serializedReagent.requiredQuantity)
     reagent.dataSlotIndex = tonumber(serializedReagent.dataSlotIndex)
-    reagent.items = CraftSim.UTIL:Map(serializedReagent.items, function (serializedReagentItem)
+    reagent.items = CraftSim.GUTIL:Map(serializedReagent.items, function (serializedReagentItem)
         return CraftSim.ReagentItem:Deserialize(serializedReagentItem)
     end)
     return reagent
