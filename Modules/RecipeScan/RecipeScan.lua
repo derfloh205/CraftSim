@@ -155,36 +155,28 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
         return true
     end
     if isDragonIsleRecipe then
-        if recipeInfo and recipeInfo.supportsCraftingStats then
-            local recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo)
-
-            if 
-                recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and
-                recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION and
-                recipeType ~= CraftSim.CONST.RECIPE_TYPES.GATHERING
-            then
+        if recipeInfo and recipeInfo.supportsCraftingStats and not recipeInfo.isGatheringRecipe and not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft then
+            if recipeInfo.hyperlink then
+                local isGear = recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil
+                local isSoulbound = CraftSim.GUTIL:isItemSoulbound(CraftSim.GUTIL:GetItemIDByLink(recipeInfo.hyperlink))
                 if not CraftSimOptions.recipeScanIncludeSoulbound then
-                    if (recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR) then
+                    if isGear and isSoulbound then
                         return false
                     end
-                    if not CraftSimOptions.recipeScanIncludeGear and (recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR) then
+                    if not CraftSimOptions.recipeScanIncludeGear and isGear then
                         return false
                     end
-                    local itemID = CraftSim.GUTIL:GetItemIDByLink(recipeInfo.hyperlink)
-                    local isSoulboundNonGear = CraftSim.GUTIL:isItemSoulbound(itemID)
 
-                    if isSoulboundNonGear then
+                    if isSoulbound then
                         return false
                     end
                 end
 
-                if not CraftSimOptions.recipeScanIncludeGear and (recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR or recipeType == CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR) then
+                if not CraftSimOptions.recipeScanIncludeGear and isGear then
                     return false
                 end
                 
-                if not recipeInfo.isRecraft and not recipeInfo.isSalvageRecipe and not recipeInfo.isGatheringRecipe then
-                    return true
-                end
+                return true
             end
             return false
         end

@@ -4,7 +4,6 @@ _, CraftSim = ...
 ---@field recipeID number 
 ---@field categoryID number
 ---@field subtypeID number
----@field recipeType number
 ---@field learned boolean
 ---@field numSkillUps? number
 ---@field recipeIcon? string
@@ -84,7 +83,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.isOldWorldRecipe = not tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
     self.isRecraft = isRecraft or false
     self.isSimulationModeData = false
-    self.recipeType = CraftSim.UTIL:GetRecipeType(recipeInfo) -- TODO: remove
     self.learned = recipeInfo.learned or false
 	self.numSkillUps = recipeInfo.numSkillUps
 	self.recipeIcon = recipeInfo.icon

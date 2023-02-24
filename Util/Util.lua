@@ -194,41 +194,6 @@ function CraftSim.UTIL:KethoEditBox_Show(text)
     KethoEditBox:Show()
 end
 
---> remove
-function CraftSim.UTIL:GetRecipeType(recipeInfo) -- the raw info
-    local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
-    if not recipeInfo.supportsCraftingStats then
-        return CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION
-    elseif recipeInfo.isEnchantingRecipe then
-        return CraftSim.CONST.RECIPE_TYPES.ENCHANT
-    elseif schematicInfo.hasGatheringOperationInfo then
-        return CraftSim.CONST.RECIPE_TYPES.GATHERING
-    elseif recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil then -- its gear
-        local itemID = schematicInfo.outputItemID
-		if CraftSim.GUTIL:isItemSoulbound(itemID) then
-            return CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR
-        else
-            return CraftSim.CONST.RECIPE_TYPES.GEAR
-        end
-	elseif recipeInfo.supportsQualities then
-        if not recipeInfo.qualityItemIDs and not recipeInfo.qualityIlvlBonuses then
-            return CraftSim.CONST.RECIPE_TYPES.NO_ITEM
-        elseif schematicInfo.quantityMin > 1 or schematicInfo.quantityMax > 1 then
-            return CraftSim.CONST.RECIPE_TYPES.MULTIPLE
-        elseif schematicInfo.quantityMin == 1 and schematicInfo.quantityMax == 1 then
-            return CraftSim.CONST.RECIPE_TYPES.SINGLE
-        end
-    elseif not recipeInfo.supportsQualities then
-        if schematicInfo.quantityMin > 1 or schematicInfo.quantityMax > 1 then
-            return CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_MULTIPLE
-        elseif schematicInfo.quantityMin == 1 and schematicInfo.quantityMax == 1 then
-            return CraftSim.CONST.RECIPE_TYPES.NO_QUALITY_SINGLE
-        end
-    end
-end
-
-
-
 -- for debug purposes
 function CraftSim.UTIL:PrintTable(t, debugID, recursive, level)
     level = level or 0
