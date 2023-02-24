@@ -217,5 +217,17 @@ function CraftSim_DEBUG:GGUITest()
         },
     })
 
+    local numericInput = CraftSim.GGUI.NumericInput({
+        parent=testFrame.frame,
+        anchorParent=testButton.frame,
+        anchorA="TOP",
+        anchorB="BOTTOM",
+        incrementOneButtons=true,
+        maxValue=10,
+        minValue=0,
+        borderAdjustWidth=0.95,
+        borderWidth=25,
+    })
+
 
 end

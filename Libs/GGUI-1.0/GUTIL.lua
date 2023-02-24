@@ -439,3 +439,17 @@ function GUTIL:IconToText(iconPath, height, width)
       return "\124T" .. iconPath .. ":" .. height .. ":" .. width .. "\124t"
   end
 end
+
+function GUTIL:ValidateNumberString(str, min, max, allowDecimals)
+  local num = tonumber(str)
+  if num == nil then
+    return false -- Not a valid number
+  end
+  if not allowDecimals and num ~= math.floor(num) then
+    return false -- Decimals not allowed
+  end
+  if (min and num < min) or (max and num > max) then
+    return false -- Outside specified range
+  end
+  return true -- Valid number within range
+end

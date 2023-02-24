@@ -1008,6 +1008,7 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
     return goldInput
 end
 
+--> in GGUI
 function CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY, initialValue, onTextChangedCallback)
     local numericInput = CreateFrame("EditBox", name, parent, "InputBoxTemplate")
         numericInput:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)

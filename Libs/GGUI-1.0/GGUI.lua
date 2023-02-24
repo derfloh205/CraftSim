@@ -901,12 +901,6 @@ function GGUI.Button:new(options)
     self.originalAnchorParent = options.anchorParent or UIParent
     self.activeStatusID = options.initialStatusID
 
-    print("GGUI Button Creation")
-    print("parent: " .. tostring(options.parent))
-    print("anchorParent: " .. tostring(options.anchorParent))
-    print("sizeX: " .. tostring(options.sizeX))
-    print("sizeY: " .. tostring(options.sizeY))
-
     local button = CreateFrame("Button", nil, options.parent, "UIPanelButtonTemplate")
     self.frame = button
     button:SetText(options.label)
@@ -1345,6 +1339,13 @@ end
 function GGUI.TextInput:GetText()
     return self.frame:GetText()
 end
+function GGUI.TextInput:SetText(text, userInput)
+    self.frame:SetText(text)
+
+    if self.onTextChangedCallback then
+        self.onTextChangedCallback(self, self:GetText(), userInput)
+    end
+end
 
 --- GGUI.CurrencyInput
 ---@class GGUI.CurrencyInput
@@ -1371,6 +1372,9 @@ end
 ---@field onValueValidCallback? function
 ---@field onValidationChangedCallback? function
 ---@field showFormatHelpIcon? boolean
+---@field borderAdjustWidth? number
+---@field borderAdjustHeight? number
+---@field borderWidth? number
 
 GGUI.CurrencyInput = GGUI.Object:extend()
 
@@ -1385,6 +1389,9 @@ function GGUI.CurrencyInput:new(options)
     options.sizeX = options.sizeX or 100
     options.sizeY = options.sizeY or 25
     options.initialValue = options.initialValue or 0
+    options.borderAdjustWidth = options.borderAdjustWidth or 1
+    options.borderAdjustHeight = options.borderAdjustHeight or 1
+    options.borderWidth = options.borderWidth or 25
     options.showFormatHelpIcon = options.showFormatHelpIcon or false
 
     local currencyInput = self
@@ -1454,11 +1461,11 @@ function GGUI.CurrencyInput:new(options)
 
     local validationBorder = CreateFrame("Frame", nil, textInput, "BackdropTemplate")
     self.border = validationBorder
-    validationBorder:SetSize(textInput:GetWidth()*1.3, textInput:GetHeight()*1.6)
+    validationBorder:SetSize(textInput:GetWidth()*1.3*options.borderAdjustWidth, textInput:GetHeight()*1.6*options.borderAdjustHeight)
     validationBorder:SetPoint("CENTER", textInput, "CENTER", -2, 0)
     validationBorder:SetBackdrop({
         edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
-        edgeSize = 25,
+        edgeSize = options.borderWidth,
     })
     function validationBorder:SetValid(valid) 
         if valid then
@@ -1490,4 +1497,177 @@ function GGUI.CurrencyInput:SetValue(total)
     self.silver = silver
     self.copper = copper
     self.total = gold*10000+silver*100+copper
+end
+
+--- GGUI.NumericInput
+---@class GGUI.NumericInput
+---@field textInput EditBox
+---@field onNumberValidCallback? function
+---@field onValidationChangedCallback? function
+---@field validationBorder Frame
+---@field minValue? number
+---@field maxValue? number
+---@field allowDecimals? boolean
+
+---@class GGUI.NumericInputConstructorOptions
+---@field parent? Frame
+---@field anchorParent? Region
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field offsetX? number
+---@field offsetY? number
+---@field sizeX? number
+---@field sizeY? number
+---@field initialValue? number
+---@field allowDecimals? boolean
+---@field minValue? number
+---@field maxValue? number
+---@field autoFocus? boolean
+---@field font? string
+---@field onNumberValidCallback? function
+---@field onValidationChangedCallback? function
+---@field incrementOneButtons? boolean
+---@field incrementFiveButtons? boolean
+---@field borderAdjustWidth? number
+---@field borderAdjustHeight? number
+---@field borderWidth? number
+
+GGUI.NumericInput = GGUI.Object:extend()
+---@param options GGUI.NumericInputConstructorOptions
+function GGUI.NumericInput:new(options)
+    options = options or {}
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.sizeX = options.sizeX or 100    
+    options.sizeY = options.sizeY or 25
+    options.initialValue = options.initialValue or 0 
+    options.allowDecimals = options.allowDecimals or false
+    options.autoFocus = options.autoFocus or false
+    options.font = options.font or "ChatFontNormal"
+    options.incrementOneButtons = options.incrementOneButtons or false
+    options.incrementFiveButtons = options.incrementFiveButtons or false
+    options.borderAdjustWidth = options.borderAdjustWidth or 1
+    options.borderAdjustHeight = options.borderAdjustHeight or 1
+    options.borderWidth = options.borderWidth or 25
+    self.onNumberValidCallback = options.onNumberValidCallback
+    self.onValidationChangedCallback = options.onValidationChangedCallback
+    self.allowDecimals = options.allowDecimals
+    self.autoFocus = options.autoFocus
+    self.minValue = options.minValue
+    self.maxValue = options.maxValue
+
+    local numericInput = self
+
+    self.textInput = GGUI.TextInput({
+        parent=options.parent,
+        anchorParent=options.anchorParent,
+        anchorA=options.anchorA,
+        anchorB=options.anchorB,
+        offsetX=options.offsetX,
+        offsetY=options.offsetY,
+        sizeX=options.sizeX,
+        sizeY=options.sizeY,
+        initialValue=options.initialValue,
+        autoFocus=options.autoFocus,
+        onTextChangedCallback=function (textInput, input, userInput)
+            if userInput then
+                local valid = GUTIL:ValidateNumberString(input, self.minValue, self.maxValue, self.allowDecimals)
+                if valid then
+                    textInput:SetText(input)
+                    if numericInput.onNumberValidCallback then
+                        numericInput.onNumberValidCallback(numericInput)
+                    end
+                else
+                end
+                numericInput.validationBorder:SetValid(valid)
+                if numericInput.onValidationChangedCallback then
+                    numericInput.onValidationChangedCallback(valid)
+                end
+            end
+        end,
+    })
+
+    if options.incrementOneButtons then
+        local buttonWidth = 5
+        local buttonHeight = options.sizeY / 2 - 1
+        local buttonOffsetX = 0
+        local buttonOffsetY = -1
+        self.textInput.frame.plusButton = GGUI.Button({
+            parent=self.textInput.frame,
+            anchorParent=self.textInput.frame,
+            anchorA="TOPLEFT",
+            anchorB="TOPRIGHT",
+            offsetX=buttonOffsetX,
+            offsetY=buttonOffsetY,
+            label="+",
+            sizeX=buttonWidth,
+            sizeY=buttonHeight,
+            adjustWidth=true,
+            clickCallback=function ()
+                local input = tonumber(numericInput.textInput:GetText())
+                if input then
+                    local valid = GUTIL:ValidateNumberString(tostring(input + 1), self.minValue, self.maxValue, self.allowDecimals)   
+                    
+                    if valid then
+                        numericInput.textInput:SetText(input + 1)
+                        if numericInput.onNumberValidCallback then
+                            numericInput.onNumberValidCallback(numericInput)
+                        end
+                    end
+
+                    if numericInput.onValidationChangedCallback then
+                        numericInput.onValidationChangedCallback(valid)
+                    end
+                end
+            end,
+        })
+        self.textInput.frame.minusButton = GGUI.Button({
+            parent=self.textInput.frame,
+            anchorParent=self.textInput.frame.plusButton.frame,
+            anchorA="TOP",
+            anchorB="BOTTOM",
+            label="-",
+            sizeX=buttonWidth,
+            sizeY=buttonHeight,
+            adjustWidth=true,
+            clickCallback=function ()
+                local input = tonumber(numericInput.textInput:GetText())
+                if input then
+                    local valid = GUTIL:ValidateNumberString(tostring(input - 1), self.minValue, self.maxValue, self.allowDecimals)   
+                    
+                    if valid then
+                        numericInput.textInput:SetText(input - 1)
+                        if numericInput.onNumberValidCallback then
+                            numericInput.onNumberValidCallback(numericInput)
+                        end
+                    end
+
+                    if numericInput.onValidationChangedCallback then
+                        numericInput.onValidationChangedCallback(valid)
+                    end
+                end
+            end,
+        })
+    end
+
+    local validationBorder = CreateFrame("Frame", nil, self.textInput.frame, "BackdropTemplate")
+    self.border = validationBorder
+    validationBorder:SetSize(self.textInput.frame:GetWidth()*1.3*options.borderAdjustWidth, self.textInput.frame:GetHeight()*1.6*options.borderAdjustHeight)
+    validationBorder:SetPoint("CENTER", self.textInput.frame, "CENTER", -2, 0)
+    validationBorder:SetBackdrop({
+        edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
+        edgeSize = options.borderWidth,
+    })
+    function validationBorder:SetValid(valid) 
+        if valid then
+            validationBorder:Hide()
+        else
+            validationBorder:Show()
+            validationBorder:SetBackdropBorderColor(1, 0, 0, 0.5)
+        end
+    end
+    validationBorder:Hide()
+    self.validationBorder = validationBorder
 end
