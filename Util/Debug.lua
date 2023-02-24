@@ -23,7 +23,7 @@ function CraftSim_DEBUG:PrintRecipeIDs(recipeID)
             return
         end
     else
-        itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
+        itemID = CraftSim.GUTIL:GetItemIDByLink(recipeInfo.hyperlink)
     end
     local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType,
     itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType,

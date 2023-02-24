@@ -130,7 +130,7 @@ function CraftSim.ProfessionGearSet:Equip()
     C_Timer.After(1, function ()
         for _, professionGear in pairs(self:GetProfessionGearList()) do
             if professionGear.item then
-                CraftSim.UTIL:EquipItemByLink(professionGear.item:GetItemLink())
+                CraftSim.GUTIL:EquipItemByLink(professionGear.item:GetItemLink())
                 EquipPendingItem(0)
             end
         end

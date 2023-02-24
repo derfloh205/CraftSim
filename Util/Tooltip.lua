@@ -19,7 +19,7 @@ function CraftSim.TOOLTIP:Init()
     --         return
     --     end
 
-    --     local itemID = CraftSim.UTIL:GetItemIDByLink(itemLink)
+    --     local itemID = CraftSim.GUTIL:GetItemIDByLink(itemLink)
 
     --     if not itemID then
     --         return

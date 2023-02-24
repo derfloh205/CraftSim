@@ -268,7 +268,7 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateResponse(payload)
 
     itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, payload.resultData.itemsByQuality})
 
-    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
+    CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
         CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
         CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
     end)
@@ -431,7 +431,7 @@ end
 --                         table.insert(reagentItems, item)
 --                     end
 
---                     CraftSim.UTIL:ContinueOnAllItemsLoaded(reagentItems, function() 
+--                     CraftSim.GUTIL:ContinueOnAllItemsLoaded(reagentItems, function() 
 --                         local detailedCraftingCostText = "\n"
 --                         for _, item in pairs(reagentItems) do
 --                             local itemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(item:GetItemID(), true)

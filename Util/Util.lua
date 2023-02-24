@@ -65,50 +65,6 @@ function CraftSim.UTIL:GetResourcefulnessPercentByStat(stat)
     return stat * resourcefulnessFactor
 end
 
---> in GUTIL
-function CraftSim.UTIL:GetItemIDByLink(hyperlink)
-    local _, _, foundID = string.find(hyperlink, "item:(%d+)")
-    return tonumber(foundID)
-end
-
---> in GUTIL
-function CraftSim.UTIL:ContinueOnAllItemsLoaded(itemList, callback) 
-		local itemsToLoad = #itemList
-        if itemsToLoad == 0 then
-            callback()
-        end
-		local itemLoaded = function ()
-			itemsToLoad = itemsToLoad - 1
-			CraftSim_DEBUG:print("util: loaded items left: " .. itemsToLoad, CraftSim.CONST.DEBUG_IDS.MAIN)
-	
-			if itemsToLoad <= 0 then
-				CraftSim_DEBUG:print("util: all items loaded, call callback", CraftSim.CONST.DEBUG_IDS.MAIN)
-				callback()
-			end
-		end
-
-		if itemsToLoad >= 1 then
-			for _, itemToLoad in pairs(itemList) do
-				itemToLoad:ContinueOnItemLoad(itemLoaded)
-			end
-		end
-end
-
---> in GUTIL
-function CraftSim.UTIL:EquipItemByLink(link)
-	for bag=BANK_CONTAINER, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
-		for slot=1,C_Container.GetContainerNumSlots(bag) do
-			local item = C_Container.GetContainerItemLink(bag, slot)
-			if item and item == link then
-				if CursorHasItem() or CursorHasMoney() or CursorHasSpell() then ClearCursor() end
-				C_Container.PickupContainerItem(bag, slot)
-				AutoEquipCursorItem()
-				return true
-			end
-		end
-	end
-end
-
 function CraftSim.UTIL:IsMyVersionHigher(versionB)
     local versionA = GetAddOnMetadata(AddonName, "Version") or ""
     local subVersionsA = strsplittable(".", versionA)
@@ -238,17 +194,6 @@ function CraftSim.UTIL:KethoEditBox_Show(text)
     KethoEditBox:Show()
 end
 
---> in GUTIL
-function CraftSim.UTIL:isItemSoulbound(itemID)
-    local _, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID) 
-    return bindType == CraftSim.CONST.BINDTYPES.SOULBOUND
-end
-
---> in GUTIL
-function CraftSim.UTIL:GetQualityIconAsText(qualityID, sizeX, sizeY, offsetX, offsetY)
-    return CreateAtlasMarkup("Professions-Icon-Quality-Tier" .. qualityID, sizeX, sizeY, offsetX, offsetY)
-end
-
 --> remove
 function CraftSim.UTIL:GetRecipeType(recipeInfo) -- the raw info
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(recipeInfo.recipeID, false)
@@ -260,7 +205,7 @@ function CraftSim.UTIL:GetRecipeType(recipeInfo) -- the raw info
         return CraftSim.CONST.RECIPE_TYPES.GATHERING
     elseif recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil then -- its gear
         local itemID = schematicInfo.outputItemID
-		if CraftSim.UTIL:isItemSoulbound(itemID) then
+		if CraftSim.GUTIL:isItemSoulbound(itemID) then
             return CraftSim.CONST.RECIPE_TYPES.SOULBOUND_GEAR
         else
             return CraftSim.CONST.RECIPE_TYPES.GEAR
@@ -694,9 +639,9 @@ function CraftSim.UTIL:GetFormatter()
     local c = function(text, color) 
         return CraftSim.UTIL:ColorizeText(text, color)
     end
-    local p = "\n" .. CraftSim.UTIL:GetQualityIconAsText(1, 15, 15) .. " "
-    local s = "\n" .. CraftSim.UTIL:GetQualityIconAsText(2, 15, 15) .. " "
-    local P = "\n" .. CraftSim.UTIL:GetQualityIconAsText(3, 15, 15) .. " "
+    local p = "\n" .. CraftSim.GUTIL:GetQualityIconString(1, 15, 15) .. " "
+    local s = "\n" .. CraftSim.GUTIL:GetQualityIconString(2, 15, 15) .. " "
+    local P = "\n" .. CraftSim.GUTIL:GetQualityIconString(3, 15, 15) .. " "
     local a = "\n     "
 
     local formatter = {}

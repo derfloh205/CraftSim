@@ -170,8 +170,8 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
                     if not CraftSimOptions.recipeScanIncludeGear and (recipeType == CraftSim.CONST.RECIPE_TYPES.GEAR) then
                         return false
                     end
-                    local itemID = CraftSim.UTIL:GetItemIDByLink(recipeInfo.hyperlink)
-                    local isSoulboundNonGear = CraftSim.UTIL:isItemSoulbound(itemID)
+                    local itemID = CraftSim.GUTIL:GetItemIDByLink(recipeInfo.hyperlink)
+                    local isSoulboundNonGear = CraftSim.GUTIL:isItemSoulbound(itemID)
 
                     if isSoulboundNonGear then
                         return false
@@ -252,7 +252,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
         end
         -- so we can display them smoothly
         -- TODO: should we also wait for the reagents to load?
-        CraftSim.UTIL:ContinueOnAllItemsLoaded(recipeData.resultData.itemsByQuality, continueScan)
+        CraftSim.GUTIL:ContinueOnAllItemsLoaded(recipeData.resultData.itemsByQuality, continueScan)
     end
 
     CraftSim.RECIPE_SCAN:ToggleScanButton(false)

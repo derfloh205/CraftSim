@@ -216,7 +216,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
             local q2Item = reagent.items[2]
             local q3Item = reagent.items[3]
 
-            CraftSim.UTIL:ContinueOnAllItemsLoaded({q1Item.item, q2Item.item, q3Item.item}, function ()
+            CraftSim.GUTIL:ContinueOnAllItemsLoaded({q1Item.item, q2Item.item, q3Item.item}, function ()
                 local itemTexture = q1Item.item:GetItemIcon()
                 materialFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
                 materialFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)

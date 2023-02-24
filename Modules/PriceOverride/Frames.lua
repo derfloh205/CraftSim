@@ -345,7 +345,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideList(priceOverrideFrame)
     local itemsToLoad = CraftSim.UTIL:Map(globalOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)
     itemsToLoad = CraftSim.UTIL:Concat({itemsToLoad, CraftSim.UTIL:Map(resultOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)})
 
-    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
+    CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
         
         local text = ""
         table.foreach(globalOverrides, function (_, priceOverrideData)

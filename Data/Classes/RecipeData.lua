@@ -123,7 +123,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.hasQualityReagents = qualityReagents > 0
 
     self.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
-    self.isSoulbound = (schematicInfo.outputItemID and CraftSim.UTIL:isItemSoulbound(schematicInfo.outputItemID)) or false
+    self.isSoulbound = (schematicInfo.outputItemID and CraftSim.GUTIL:isItemSoulbound(schematicInfo.outputItemID)) or false
 
     self.professionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
     
