@@ -86,7 +86,7 @@ function CraftSim.FRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
     if suffix == nil then
         suffix = ""
     end
-    return sign .. CraftSim.UTIL:round(statDiff, roundTo) .. suffix
+    return sign .. CraftSim.GUTIL:Round(statDiff, roundTo) .. suffix
 end
 
 --> in GGUI in gFrame

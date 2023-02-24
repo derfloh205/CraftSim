@@ -127,12 +127,12 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
         end
     end
 
-    local roundedProfit = CraftSim.UTIL:round(craftResult.profit*10000) / 10000
+    local roundedProfit = CraftSim.GUTIL:Round(craftResult.profit*10000) / 10000
     local profitText = CraftSim.UTIL:FormatMoney(roundedProfit, true)
     local chanceText = ""
 
     if not recipeData.isSalvageRecipe and recipeData.supportsCraftingStats then
-       chanceText = "Chance: " .. CraftSim.UTIL:round(craftResult.craftingChance*100, 1) .. "%\n" 
+       chanceText = "Chance: " .. CraftSim.GUTIL:Round(craftResult.craftingChance*100, 1) .. "%\n" 
     end
 
     local resultsText = ""

@@ -769,12 +769,12 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     local skillNoReagents = professionStats.skill.value - reagentSkillIncrease
     local professionStatsOptionals = recipeData.reagentData:GetProfessionStatsByOptionals()
     local fullRecipeDifficulty = recipeData.professionStats.recipeDifficulty.value
-    detailsFrame.content.recipeDifficultyValue:SetText(CraftSim.UTIL:round(fullRecipeDifficulty, 1) .. " (" .. baseProfessionStats.recipeDifficulty.value .. "+" .. professionStatsOptionals.recipeDifficulty.value .. "+" .. professionStatsMod.recipeDifficulty.value  .. ")")
-    detailsFrame.content.baseSkillValue:SetText(CraftSim.UTIL:round(professionStats.skill.value, 1) .. " (" .. CraftSim.UTIL:round(skillNoReagents, 1) .. "+" .. CraftSim.UTIL:round(reagentSkillIncrease, 1) .. "+" .. professionStatsMod.skill.value ..")")
+    detailsFrame.content.recipeDifficultyValue:SetText(CraftSim.GUTIL:Round(fullRecipeDifficulty, 1) .. " (" .. baseProfessionStats.recipeDifficulty.value .. "+" .. professionStatsOptionals.recipeDifficulty.value .. "+" .. professionStatsMod.recipeDifficulty.value  .. ")")
+    detailsFrame.content.baseSkillValue:SetText(CraftSim.GUTIL:Round(professionStats.skill.value, 1) .. " (" .. CraftSim.GUTIL:Round(skillNoReagents, 1) .. "+" .. CraftSim.GUTIL:Round(reagentSkillIncrease, 1) .. "+" .. professionStatsMod.skill.value ..")")
     local maxSkillFactor = recipeData.reagentData:GetMaxSkillFactor()
     local maxReagentSkillIncrease = baseProfessionStats.recipeDifficulty.value * maxSkillFactor
-    detailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSim.UTIL:round(reagentSkillIncrease, 0) .. " / " .. CraftSim.UTIL:round(maxReagentSkillIncrease, 0))
-    detailsFrame.content.reagentMaxFactorValue:SetText(CraftSim.UTIL:round(maxSkillFactor*100, 1) .. " %")
+    detailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSim.GUTIL:Round(reagentSkillIncrease, 0) .. " / " .. CraftSim.GUTIL:Round(maxReagentSkillIncrease, 0))
+    detailsFrame.content.reagentMaxFactorValue:SetText(CraftSim.GUTIL:Round(maxSkillFactor*100, 1) .. " %")
 
 
     -- Inspiration Display
@@ -784,7 +784,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationMod, recipeData.supportsInspiration)
     if recipeData.supportsInspiration then
         local baseInspiration = professionStats.inspiration.value - professionStatsMod.inspiration.value
-        local percentText = CraftSim.UTIL:round(professionStats.inspiration:GetPercent(), 1) .. "%"
+        local percentText = CraftSim.GUTIL:Round(professionStats.inspiration:GetPercent(), 1) .. "%"
         detailsFrame.content.inspirationValue:SetText(professionStats.inspiration.value .. " (" .. baseInspiration .."+"..professionStatsMod.inspiration.value .. ") " .. percentText)
     end
 
@@ -795,8 +795,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationSkillMod, recipeData.supportsInspiration)
     if recipeData.supportsInspiration then
         local baseInspirationSkill = professionStats.inspiration.extraValue
-        detailsFrame.content.inspirationSkillValue:SetText(CraftSim.UTIL:round(professionStats.inspiration:GetExtraValueByFactor(), 1) .. " (" .. CraftSim.UTIL:round(baseInspirationSkill, 1) ..
-        "*" .. CraftSim.UTIL:round(1+professionStats.inspiration.extraFactor, 2) .."+"..professionStatsMod.inspiration.extraValueAfterFactor .. ")")
+        detailsFrame.content.inspirationSkillValue:SetText(CraftSim.GUTIL:Round(professionStats.inspiration:GetExtraValueByFactor(), 1) .. " (" .. CraftSim.GUTIL:Round(baseInspirationSkill, 1) ..
+        "*" .. CraftSim.GUTIL:Round(1+professionStats.inspiration.extraFactor, 2) .."+"..professionStatsMod.inspiration.extraValueAfterFactor .. ")")
     end
 
     -- Multicraft Display
@@ -808,7 +808,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftBonusValue, recipeData.supportsMulticraft)
     if recipeData.supportsMulticraft then
         local baseMulticraft = professionStats.multicraft.value - professionStatsMod.multicraft.value
-        local percentText = CraftSim.UTIL:round(professionStats.multicraft:GetPercent(), 1) .. "%"
+        local percentText = CraftSim.GUTIL:Round(professionStats.multicraft:GetPercent(), 1) .. "%"
         detailsFrame.content.multicraftValue:SetText(professionStats.multicraft.value .. " (" .. baseMulticraft .."+"..professionStatsMod.multicraft.value .. ") " .. percentText)
 
         detailsFrame.content.multicraftBonusValue:SetText(professionStats.multicraft.extraFactor*100 .. "%")
@@ -823,8 +823,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.resourcefulnessBonusValue, recipeData.supportsResourcefulness)
     if recipeData.supportsResourcefulness then
         local baseResourcefulness = professionStats.resourcefulness.value - professionStatsMod.resourcefulness.value
-        local percentText = CraftSim.UTIL:round(professionStats.resourcefulness:GetPercent(), 1) .. "%"
-        detailsFrame.content.resourcefulnessValue:SetText(CraftSim.UTIL:round(professionStats.resourcefulness.value) .. " (" .. CraftSim.UTIL:round(baseResourcefulness) .."+".. CraftSim.UTIL:round(professionStatsMod.resourcefulness.value) .. ") " .. percentText)
+        local percentText = CraftSim.GUTIL:Round(professionStats.resourcefulness:GetPercent(), 1) .. "%"
+        detailsFrame.content.resourcefulnessValue:SetText(CraftSim.GUTIL:Round(professionStats.resourcefulness.value) .. " (" .. CraftSim.GUTIL:Round(baseResourcefulness) .."+".. CraftSim.GUTIL:Round(professionStatsMod.resourcefulness.value) .. ") " .. percentText)
         
         detailsFrame.content.resourcefulnessBonusValue:SetText(professionStats.resourcefulness.extraFactor*100 .. "%")
     end
@@ -854,8 +854,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
             local missingSkillInspiration = nextQualityThreshold - (professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor())
             missingSkill = missingSkill > 0 and missingSkill or 0
             missingSkillInspiration = missingSkillInspiration > 0 and missingSkillInspiration or 0
-            qualityFrame.nextQualityMissingSkillValue:SetText(CraftSim.UTIL:round(missingSkill, 1))
-            local missingSkillText = CraftSim.UTIL:ColorizeText(CraftSim.UTIL:round(missingSkillInspiration, 1), 
+            qualityFrame.nextQualityMissingSkillValue:SetText(CraftSim.GUTIL:Round(missingSkill, 1))
+            local missingSkillText = CraftSim.UTIL:ColorizeText(CraftSim.GUTIL:Round(missingSkillInspiration, 1), 
             missingSkillInspiration == 0 and CraftSim.CONST.COLORS.GREEN or CraftSim.CONST.COLORS.RED)
             local nextQualityIconText = CraftSim.UTIL:GetQualityIconAsText(recipeData.resultData.expectedQuality + 1, 20, 20)
             qualityFrame.nextQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. nextQualityIconText)
@@ -868,7 +868,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
                 local skipQualityThreshold = thresholds[recipeData.resultData.expectedQuality + 1]
                 local missingSkillInspirationSkip = skipQualityThreshold - (professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor())
                 missingSkillInspirationSkip = missingSkillInspirationSkip > 0 and missingSkillInspirationSkip or 0
-                local missinSkillText = CraftSim.UTIL:ColorizeText(CraftSim.UTIL:round(missingSkillInspirationSkip, 1), 
+                local missinSkillText = CraftSim.UTIL:ColorizeText(CraftSim.GUTIL:Round(missingSkillInspirationSkip, 1), 
                 missingSkillInspirationSkip == 0 and CraftSim.CONST.COLORS.GREEN or CraftSim.CONST.COLORS.RED)
                 qualityFrame.skipQualityMissingSkillInspirationValue:SetText(missinSkillText)
                 qualityFrame.skipQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. skipQualityIconText)
@@ -949,7 +949,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
                         label = label .. "MCI+" .. (professionStats.multicraft.extraFactor*100) .. "% "
                     end
                     if professionStats.resourcefulness.value > 0 then
-                        label = label .. "R+" .. CraftSim.UTIL:round(professionStats.resourcefulness.value) .. " "
+                        label = label .. "R+" .. CraftSim.GUTIL:Round(professionStats.resourcefulness.value) .. " "
                     end
                     if professionStats.resourcefulness.extraFactor > 0 then
                         label = label .. "RI+" .. (professionStats.resourcefulness.extraFactor*100) .. "% "

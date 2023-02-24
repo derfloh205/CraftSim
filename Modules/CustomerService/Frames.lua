@@ -106,7 +106,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             end
         end
         frame.content.StartUpdate = function()
-            local updateID = CraftSim.UTIL:round(debugprofilestop())
+            local updateID = CraftSim.GUTIL:Round(debugprofilestop())
             table.insert(frame.content.updates, updateID)
             frame.SetEnabled(false)
             frame.content.isUpdating = true

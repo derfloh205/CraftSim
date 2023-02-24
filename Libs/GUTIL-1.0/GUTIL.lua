@@ -249,9 +249,9 @@ end
 ---@return number?
 ---@return number?
 function GUTIL:GetMoneyValuesFromCopper(copperValue, formatString)
-    local gold = CraftSim.UTIL:round(copperValue/10000)
-    local silver = CraftSim.UTIL:round(copperValue/100000)
-    local copper = CraftSim.UTIL:round(copperValue/10000000)
+    local gold = GUTIL:Round(copperValue/10000)
+    local silver = GUTIL:Round(copperValue/100000)
+    local copper = GUTIL:Round(copperValue/10000000)
 
     if not formatString then
         return tonumber(gold) or 0, tonumber(silver) or 0, tonumber(copper) or 0

@@ -66,11 +66,6 @@ function CraftSim.UTIL:GetResourcefulnessPercentByStat(stat)
 end
 
 --> in GUTIL
-function CraftSim.UTIL:round(number, decimals)
-    return (("%%.%df"):format(decimals)):format(number)
-end
-
---> in GUTIL
 function CraftSim.UTIL:GetItemIDByLink(hyperlink)
     local _, _, foundID = string.find(hyperlink, "item:(%d+)")
     return tonumber(foundID)
@@ -422,7 +417,7 @@ function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
 
     if percentRelativeTo then
         local oneP = percentRelativeTo / 100
-        local percent = CraftSim.UTIL:round(copperValue / oneP, 0)
+        local percent = CraftSim.GUTIL:Round(copperValue / oneP, 0)
 
         if oneP == 0 then
             percent = 0
@@ -558,9 +553,9 @@ end
 ---@return number?
 ---@return number?
 function CraftSim.UTIL:GetMoneyValuesFromCopper(copperValue, formatString)
-    local gold = CraftSim.UTIL:round(copperValue/10000)
-    local silver = CraftSim.UTIL:round(copperValue/100000)
-    local copper = CraftSim.UTIL:round(copperValue/10000000)
+    local gold = CraftSim.GUTIL:Round(copperValue/10000)
+    local silver = CraftSim.GUTIL:Round(copperValue/100000)
+    local copper = CraftSim.GUTIL:Round(copperValue/10000000)
 
     if not formatString then
         return tonumber(gold) or 0, tonumber(silver) or 0, tonumber(copper) or 0
@@ -595,7 +590,7 @@ function CraftSim.UTIL:FoldTable(t, foldFunction, startAtZero)
 end
 
 function CraftSim.UTIL:FormatFactorToPercent(factor)
-    local percentText = CraftSim.UTIL:round((factor % 1) * 100)
+    local percentText = CraftSim.GUTIL:Round((factor % 1) * 100)
     return "+" .. percentText .. "%"
 end
 
@@ -652,7 +647,7 @@ function CraftSim.UTIL:StopProfiling(label)
     local time = debugprofilestop()
     local diff = time - profilings[label]
     profilings[label] = nil
-    CraftSim_DEBUG:print("Elapsed Time for " .. label .. ": " .. CraftSim.UTIL:round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+    CraftSim_DEBUG:print("Elapsed Time for " .. label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
 end
 
 --> in GUTIL

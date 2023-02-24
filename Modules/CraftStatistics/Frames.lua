@@ -169,7 +169,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
                     row.hsv:SetText(isNot)
                 end
                 
-                row.chance:SetText(CraftSim.UTIL:round(probabilityEntry.chance*100, 2) .. "%")
+                row.chance:SetText(CraftSim.GUTIL:Round(probabilityEntry.chance*100, 2) .. "%")
                 row.profit:SetText(CraftSim.UTIL:FormatMoney(probabilityEntry.profit, true))
             end
         end
@@ -178,7 +178,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
     local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
 
     statisticsFrame.content.expectedProfitValue:SetText(CraftSim.UTIL:FormatMoney(meanProfit, true))
-    local roundedProfit = CraftSim.UTIL:round(probabilityPositive * 100, 5)
+    local roundedProfit = CraftSim.GUTIL:Round(probabilityPositive * 100, 5)
     if probabilityPositive == 1 then
         -- if e.g. every craft has a positive outcome
         roundedProfit = "100.00000"

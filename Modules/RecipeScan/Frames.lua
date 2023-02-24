@@ -170,7 +170,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
     local resultData = recipeData.resultData
     if resultData.expectedQualityInspiration > resultData.expectedQuality then
         availableRow.recipeResultText:SetText(resultData.expectedItemInspiration:GetItemLink())
-        local inspirationPercent = CraftSim.UTIL:round(recipeData.professionStats.inspiration:GetPercent())
+        local inspirationPercent = CraftSim.GUTIL:Round(recipeData.professionStats.inspiration:GetPercent())
         availableRow.inspirationChanceText:SetText(CraftSim.UTIL:ColorizeText(inspirationPercent .. "%", CraftSim.CONST.COLORS.GREEN))
     else
         availableRow.recipeResultText:SetText(resultData.expectedItem:GetItemLink())
@@ -187,7 +187,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
 
     local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
 
-    local profitText = CraftSim.UTIL:FormatMoney(CraftSim.UTIL:round(averageProfit / 10000) * 10000, true, recipeData.priceData.craftingCosts) -- round to gold
+    local profitText = CraftSim.UTIL:FormatMoney(CraftSim.GUTIL:Round(averageProfit / 10000) * 10000, true, recipeData.priceData.craftingCosts) -- round to gold
     availableRow.profitText:SetText(profitText)
 
     availableRow.learnedText:SetText((recipeData.learned and CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125)) or CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125))

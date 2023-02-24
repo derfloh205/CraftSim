@@ -229,7 +229,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             end
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.UTIL:round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 inspiration = procs[1],
                 multicraft = procs[2],
@@ -304,7 +304,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             end
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.UTIL:round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 multicraft = procs[1],
                 resourcefulness = procs[2],
@@ -401,7 +401,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             end
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.UTIL:round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 inspiration = procs[1],
                 hsv = procs[2],
@@ -466,7 +466,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.UTIL:round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
+            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 resourcefulness = procs[1],
                 chance = combinationChance,

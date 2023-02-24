@@ -104,7 +104,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
         statisticsText = statisticsText .. "Real Profit: " .. actualProfit .. "\n\n"
         statisticsText = statisticsText .. "Procs - Real / Expected:\n\n"
         if CraftSim.MAIN.currentRecipeData.supportsInspiration then
-            local expectedProcs = tonumber(CraftSim.UTIL:round(CraftSim.MAIN.currentRecipeData.professionStats.inspiration:GetPercent(true) * craftRecipeData.numCrafts, 1)) or 0
+            local expectedProcs = tonumber(CraftSim.GUTIL:Round(CraftSim.MAIN.currentRecipeData.professionStats.inspiration:GetPercent(true) * craftRecipeData.numCrafts, 1)) or 0
             if craftRecipeData.numInspiration >= expectedProcs then
                 statisticsText = statisticsText .. "Inspiration: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numInspiration, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedProcs .. "\n"
             else
@@ -112,7 +112,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
             end
         end
         if CraftSim.MAIN.currentRecipeData.supportsMulticraft then
-            local expectedProcs =  tonumber(CraftSim.UTIL:round(CraftSim.MAIN.currentRecipeData.professionStats.multicraft:GetPercent(true) * craftRecipeData.numCrafts, 1)) or 0
+            local expectedProcs =  tonumber(CraftSim.GUTIL:Round(CraftSim.MAIN.currentRecipeData.professionStats.multicraft:GetPercent(true) * craftRecipeData.numCrafts, 1)) or 0
             if craftRecipeData.numMulticraft >= expectedProcs then
                 statisticsText = statisticsText .. "Multicraft: " .. CraftSim.UTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.CONST.COLORS.GREEN) .. " / " .. expectedProcs .. "\n"
             else
@@ -123,9 +123,9 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
             local multicraftExtraItemsFactor = CraftSim.MAIN.currentRecipeData.professionStats.multicraft:GetExtraFactor(true)
     
             local maxExtraItems = (CraftSimOptions.customMulticraftConstant*CraftSim.MAIN.currentRecipeData.baseItemAmount) * multicraftExtraItemsFactor
-            expectedAdditionalItems = tonumber(CraftSim.UTIL:round((1 + maxExtraItems) / 2, 2)) or 0
+            expectedAdditionalItems = tonumber(CraftSim.GUTIL:Round((1 + maxExtraItems) / 2, 2)) or 0
     
-            averageExtraItems = tonumber(CraftSim.UTIL:round(( craftRecipeData.numMulticraft > 0 and (craftRecipeData.numMulticraftExtraItems / craftRecipeData.numMulticraft)) or 0, 2)) or 0
+            averageExtraItems = tonumber(CraftSim.GUTIL:Round(( craftRecipeData.numMulticraft > 0 and (craftRecipeData.numMulticraftExtraItems / craftRecipeData.numMulticraft)) or 0, 2)) or 0
             if averageExtraItems == 0 then
                 statisticsText = statisticsText .. "- Ø Extra Items: " .. averageExtraItems .. " / " .. expectedAdditionalItems .. "\n"
             elseif averageExtraItems >= expectedAdditionalItems then
@@ -138,8 +138,8 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
             local averageSavedCosts = 0
             local expectedAverageSavedCosts = 0
             if craftRecipeData.numCrafts > 0 then
-                averageSavedCosts = CraftSim.UTIL:round((craftRecipeData.totalSavedCosts / craftRecipeData.numCrafts)/10000) * 10000 --roundToGold
-                expectedAverageSavedCosts = CraftSim.UTIL:round((craftRecipeData.totalExpectedSavedCosts / craftRecipeData.numCrafts)/10000) * 10000
+                averageSavedCosts = CraftSim.GUTIL:Round((craftRecipeData.totalSavedCosts / craftRecipeData.numCrafts)/10000) * 10000 --roundToGold
+                expectedAverageSavedCosts = CraftSim.GUTIL:Round((craftRecipeData.totalExpectedSavedCosts / craftRecipeData.numCrafts)/10000) * 10000
             end
 
             if averageSavedCosts == 0 then

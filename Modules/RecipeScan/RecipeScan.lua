@@ -29,7 +29,7 @@ function CraftSim.RECIPE_SCAN:ToggleScanButton(value)
 end
 
 function CraftSim.RECIPE_SCAN:UpdateScanPercent(currentProgress, maxProgress)
-    local currentPercentage = CraftSim.UTIL:round(currentProgress / (maxProgress / 100))
+    local currentPercentage = CraftSim.GUTIL:Round(currentProgress / (maxProgress / 100))
 
     if currentPercentage % 1 == 0 then
         local frame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)

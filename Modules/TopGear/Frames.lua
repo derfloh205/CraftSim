@@ -210,13 +210,13 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, expo
     if topGearMode == CraftSim.CONST.GEAR_SIM_MODES.PROFIT then
         topGearFrame.content.profitText:SetText("Ø Profit Difference\n".. CraftSim.UTIL:FormatMoney(topResult.relativeProfit, true))
     elseif topGearMode == CraftSim.CONST.GEAR_SIM_MODES.MULTICRAFT then
-        topGearFrame.content.profitText:SetText("New Multicraft\n".. CraftSim.UTIL:round(topResult.relativeStats.multicraft:GetPercent(), 2) .. "%")
+        topGearFrame.content.profitText:SetText("New Multicraft\n".. CraftSim.GUTIL:Round(topResult.relativeStats.multicraft:GetPercent(), 2) .. "%")
     elseif topGearMode == CraftSim.CONST.GEAR_SIM_MODES.CRAFTING_SPEED then
-        topGearFrame.content.profitText:SetText("New Crafting Speed\n".. CraftSim.UTIL:round(topResult.relativeStats.craftingspeed:GetPercent(), 2) .. "%")
+        topGearFrame.content.profitText:SetText("New Crafting Speed\n".. CraftSim.GUTIL:Round(topResult.relativeStats.craftingspeed:GetPercent(), 2) .. "%")
     elseif topGearMode == CraftSim.CONST.GEAR_SIM_MODES.RESOURCEFULNESS then
-        topGearFrame.content.profitText:SetText("New Resourcefulness\n".. CraftSim.UTIL:round(topResult.relativeStats.resourcefulness:GetPercent(), 2) .. "%")
+        topGearFrame.content.profitText:SetText("New Resourcefulness\n".. CraftSim.GUTIL:Round(topResult.relativeStats.resourcefulness:GetPercent(), 2) .. "%")
     elseif topGearMode == CraftSim.CONST.GEAR_SIM_MODES.INSPIRATION then
-        topGearFrame.content.profitText:SetText("New Inspiration\n".. CraftSim.UTIL:round(topResult.relativeStats.inspiration:GetPercent(), 2) .. "%")
+        topGearFrame.content.profitText:SetText("New Inspiration\n".. CraftSim.GUTIL:Round(topResult.relativeStats.inspiration:GetPercent(), 2) .. "%")
     elseif topGearMode == CraftSim.CONST.GEAR_SIM_MODES.SKILL then
         topGearFrame.content.profitText:SetText("New Skill\n".. topResult.relativeStats.skill.value)
     else
@@ -232,7 +232,7 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, expo
         if topResult.relativeStats.inspiration.extraFactor <= 0 then
             prefix = ""
         end
-        inspirationBonusSkillText = " (" .. prefix .. CraftSim.UTIL:round(topResult.relativeStats.inspiration.extraFactor*100, 0) .. " % Skill)"
+        inspirationBonusSkillText = " (" .. prefix .. CraftSim.GUTIL:Round(topResult.relativeStats.inspiration.extraFactor*100, 0) .. " % Skill)"
     end
 
     topGearFrame.content.statDiff.inspiration:SetText("Inspiration: " .. CraftSim.FRAME:FormatStatDiffpercentText(topResult.relativeStats.inspiration:GetPercent(), 2, "%") .. inspirationBonusSkillText)

@@ -33,7 +33,7 @@ function CraftSim.CUSTOMER_SERVICE:GeneratePreviewInviteLink()
         return
     end
     local professionID = recipeData.professionData.professionInfo.profession
-    local timeID = CraftSim.UTIL:round(debugprofilestop())
+    local timeID = CraftSim.GUTIL:Round(debugprofilestop())
     local inviteLink = "CraftSimLivePreview:" .. GetUnitName("player", true) .. ":" .. professionID .. ":" .. recipeData.professionData.professionInfo.parentProfessionName .. ":" .. timeID
     table.insert(CraftSimOptions.customerServiceActivePreviewIDs, timeID)
     return inviteLink
@@ -233,7 +233,7 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateRequest(payload)
         end
     end 
 
-    upgradeChance = CraftSim.UTIL:round(upgradeChance, 2)
+    upgradeChance = CraftSim.GUTIL:Round(upgradeChance, 2)
 
     -- for now use pricedata from customer (so the crafter cannot scam with price overrides)
     local responseData = {
@@ -511,7 +511,7 @@ function CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
         table.foreach(reagent.items, function (_, reagentItem)
             if reagentItem.quantity > 0 then
                 local itemPrice = (CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true) or 0) * reagentItem.quantity
-                local itemPriceFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(CraftSim.UTIL:round(itemPrice*10000)/10000, true)
+                local itemPriceFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(CraftSim.GUTIL:Round(itemPrice*10000)/10000, true)
                 detailedCraftingCostText = detailedCraftingCostText .. reagentItem.item:GetItemLink() .. " x " .. reagentItem.quantity .. " (~" .. itemPriceFormatted .. ")" .. "\n"
                 reagentListText = reagentListText .. reagentItem.item:GetItemLink() .. " x " .. reagentItem.quantity .. "\n"
             end
@@ -520,7 +520,7 @@ function CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
 
     table.foreach(optionalReagents, function (_, optionalReagent)
         local itemPrice = (CraftSim.PRICEDATA:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(), true) or 0)
-        local itemPriceFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(CraftSim.UTIL:round(itemPrice*10000)/10000, true)
+        local itemPriceFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(CraftSim.GUTIL:Round(itemPrice*10000)/10000, true)
         detailedCraftingCostText = detailedCraftingCostText .. optionalReagent.item:GetItemLink() .. " x 1 (~" .. itemPriceFormatted .. ")" .. "\n"
         optionalReagentListText = optionalReagentListText .. optionalReagent.item:GetItemLink() .. " x 1\n"
     end)
