@@ -586,7 +586,7 @@ function CraftSim.FRAME:CreateSlider(name, label, parent, anchorParent, anchorA,
     return newSlider
 end
 
-
+--> in GGUI
 function CraftSim.FRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
     local helpButton = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
     helpButton.tooltipText = text

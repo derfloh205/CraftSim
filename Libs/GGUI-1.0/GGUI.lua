@@ -123,6 +123,19 @@ function GGUI:SetItemTooltip(frame, itemLink, owner, anchor)
     end
 end
 
+function GGUI:EnableHyperLinksForFrameAndChilds(frame)
+    if type(frame) == "table" and frame.SetHyperlinksEnabled and not frame.enabledLinks then -- prevent inf loop by references
+        frame.enabledLinks = true
+        frame:SetHyperlinksEnabled(true)
+        frame:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow)
+
+        for possibleFrame1, possibleFrame2 in pairs(frame) do
+            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(possibleFrame1)
+            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(possibleFrame2)
+        end
+    end
+end
+
 ---- GGUI Widgets
 
 --- GGUI Frame
@@ -302,6 +315,10 @@ function GGUI.Frame:SetSize(x, y)
         self.frame.scrollFrame:SetPoint("BOTTOM", self.frame, "BOTTOM", 0, 20)
         self.frame.scrollFrame.scrollChild:SetWidth(self.frame.scrollFrame:GetWidth())
     end
+end
+
+function GGUI.Frame:EnableHyperLinksForFrameAndChilds()
+    GGUI:EnableHyperLinksForFrameAndChilds(self.frame)
 end
 
 ---@param gFrame GGUI.Frame
@@ -736,6 +753,9 @@ function GGUI.Text:SetText(text)
     self.frame:SetText(text)
 end
 
+function GGUI.Text:EnableHyperLinksForFrameAndChilds()
+    GGUI:EnableHyperLinksForFrameAndChilds(self.frame)
+end
 
 --- GGUI.ScrollingMessageFrame
 
@@ -805,6 +825,10 @@ function GGUI.ScrollingMessageFrame:AddMessage(message)
 end
 function GGUI.ScrollingMessageFrame:Clear(message)
     self.frame:Clear(message)
+end
+
+function GGUI.ScrollingMessageFrame:EnableHyperLinksForFrameAndChilds()
+    GGUI:EnableHyperLinksForFrameAndChilds(self.frame)
 end
 
 
@@ -1012,6 +1036,10 @@ function GGUI.Tab:new(options)
     self.content:SetSize(options.sizeX, options.sizeY)
 end
 
+function GGUI.Tab:EnableHyperLinksForFrameAndChilds()
+    GGUI:EnableHyperLinksForFrameAndChilds(self.content)
+end
+
 --- GGUI.TabSystem
 ---@class GGUI.TabSystem
 ---@field tabs GGUI.Tab[]
@@ -1038,6 +1066,12 @@ function GGUI.TabSystem:new(tabList)
     end
     tabList[1].content:Show()
     tabList[1].button:SetEnabled(false)
+end
+
+function GGUI.TabSystem:EnableHyperLinksForFrameAndChilds()
+    table.foreach(self.tabs, function (_, tab)
+        GGUI:EnableHyperLinksForFrameAndChilds(tab.content)
+    end)
 end
 
 --- GGUI.Checkbox
@@ -1199,3 +1233,4 @@ end
 function GGUI.HelpIcon:Hide()
     self.frame:Hide()
 end
+
