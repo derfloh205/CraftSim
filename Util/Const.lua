@@ -3,7 +3,7 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 57 -- last patch increase: 7.7.0
+CraftSim.CONST.currentInfoVersionID = 58 -- last patch increase: 7.7.1
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -439,11 +439,7 @@ CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function()
         Enum.Profession.Blacksmithing, 
         Enum.Profession.Alchemy, 
         Enum.Profession.Jewelcrafting, 
-        Enum.Profession.Leatherworking, 
-        Enum.Profession.Enchanting, -- check
-        Enum.Profession.Tailoring, -- check
-        Enum.Profession.Inscription, -- check
-        Enum.Profession.Engineering, -- check
+        Enum.Profession.Leatherworking,
     }
 end
 

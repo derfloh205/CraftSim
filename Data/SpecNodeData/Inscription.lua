@@ -155,9 +155,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
          UNDERSTANDING_FLORA_1 = {
             nodeID = 34832,
          },
-         FLAWLESS_INKS_1 = {
-            nodeID = 34831,
-         },
          ARCHIVING_1 = {
             nodeID = 43535,
             childNodeIDs = {"DARKMOON_MYSTERIES_1", "SHARED_KNOWLEDGE_1", "SCALE_SIGILS_1"},
@@ -258,7 +255,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             resourcefulnessExtraItemsFactor = 0.25,
             idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
-        FLAWLESS_INKS = {
+        FLAWLESS_INKS_1 = {
             nodeID = 34831,
             threshold = 20,
             multicraftExtraItemsFactor = 0.50,
