@@ -13,10 +13,11 @@ function CraftSim.NEWS:GET_NEWS()
         newP("7.7.0") ..
         f.s .. "Started to extract GUI and UTIL methods into separate libraries" ..
         f.a .. "to make it easier for me to create other addons in the future" ..
-        f.p .. "Fixed Inspiration Skill consideration" ..
+        f.p .. "Fixed " .. f.bb("Inspiration Skill") .. " consideration" ..
         f.p .. "Some fixes for " .. f.bb("Alchemy Specialization Info") .. " for transmutation" ..
-        f.p .. f.bb("Material Optimization Module") .. " now considers up to 6 different reagents" ..
-        f.a .. "and shows item tooltips" ..
+        f.p .. f.bb("Material Optimization Module") .. " now considers" .. 
+        f.a .. "up to 6 different reagents and shows item tooltips" ..
+        f.p .. "Fixes to " .. f.bb("Simulation Mode") .. " for " .. f.bb("Cooking") ..
         newP("7.6.0") ..
         f.p .. "Started mapping the " .. f.bb("Specialization Info") .. " for rest professions" ..
         f.p .. "Partially mapped professions now show but with warning" ..
