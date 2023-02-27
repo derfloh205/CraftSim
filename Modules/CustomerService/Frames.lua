@@ -192,7 +192,6 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             parent=frame.content,anchorParent=frame.content.expectedResultTitle,
             sizeX=40, sizeY=40, offsetY=-10, anchorA="TOP", anchorB="BOTTOM"
         })
-        --frame.content.expectedResultIcon = CraftSim.FRAME:CreateIcon(frame.content, 0, -10, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "TOP", "BOTTOM", frame.content.expectedResultTitle)
         
         frame.content.expectedInspirationPercent = CraftSim.FRAME:CreateText("100% Chance for", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 80, -10, nil, nil)
         
@@ -200,7 +199,6 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             parent=frame.content,anchorParent=frame.content.expectedInspirationPercent,
             sizeX=40, sizeY=40, offsetY=-10, anchorA="TOP", anchorB="BOTTOM"
         })
-        --frame.content.expectedInspirationIcon = CraftSim.FRAME:CreateIcon(frame.content, 0, -10, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "TOP", "BOTTOM", frame.content.expectedInspirationPercent)
         
         frame.content.reagentDetailsTitle = CraftSim.FRAME:CreateText("Required Materials", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 0, -80)
         
@@ -214,7 +212,6 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
                 parent=reagentFrame, sizeX=iconSize, sizeY=iconSize, anchorA="LEFT", anchorB="LEFT", anchorParent=reagentFrame,
                 hideQualityIcon=true,
             })
-            --reagentFrame.icon = CraftSim.FRAME:CreateIcon(reagentFrame, 0, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "LEFT", reagentFrame)
             reagentFrame.countTextNoQ = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon.frame, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
             
             reagentFrame.countTextQ1 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon.frame, "LEFT", "RIGHT", 5, 12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
