@@ -5,6 +5,8 @@ CraftSim.REAGENT_OPTIMIZATION.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
 
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
+    local sizeX = 280
+    local sizeY = 270
     local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimMaterialOptimizationFrame", 
         "CraftSim Material Optimization", 
@@ -14,8 +16,8 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         "TOPRIGHT", 
         -10, 
         0, 
-        280, 
-        250,
+        sizeX, 
+        sizeY,
         CraftSim.CONST.FRAMES.MATERIALS, false, true, nil, "modulesMaterials")
 
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
@@ -27,13 +29,11 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         "TOPRIGHT", 
         -10, 
         0, 
-        280, 
-        250,
+        sizeX, 
+        sizeY,
         CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER, false, true, nil, "modulesMaterials")
 
     local function createContent(frame)
-
-        local contentOffsetY = -15
     
         frame.content.inspirationCheck = CreateFrame("CheckButton", nil, frame.content, "ChatConfigCheckButtonTemplate")
         frame.content.inspirationCheck:SetPoint("TOP", frame.title, -90, -20)
@@ -73,13 +73,13 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         frame.content.reagentFrames = {}
         frame.content.reagentFrames.rows = {}
         frame.content.reagentFrames.numReagents = 0
-        local baseX = -20
         local iconSize = 30
         table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY, iconSize))
         table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY, iconSize))
         table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*2, iconSize))
         table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*3, iconSize))
         table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*4, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*5, iconSize))
     
         frame:Hide()
     end
@@ -92,43 +92,38 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(parent, hookFra
     local reagentFrame = CreateFrame("frame", nil, parent)
     reagentFrame:SetSize(parent:GetWidth(), iconSize)
     reagentFrame:SetPoint("TOP", hookFrame, "TOP", 10, y)
-    
-    local qualityIconSize = 20
-    local qualityIconX = 3
-    local qualityIconY = -3
 
     local qualityAmountTextX = 5
-    local qualityAmountTextSpacingX = 40
 
     local reagentRowOffsetX = 40
     local reagentIconsOffsetX = 70
 
-    reagentFrame.q1Icon = reagentFrame:CreateTexture()
-    reagentFrame.q1Icon:SetSize(25, 25)
-    reagentFrame.q1Icon:SetPoint("LEFT", reagentFrame, "LEFT", reagentRowOffsetX, 0)
-
-    reagentFrame.q2Icon = reagentFrame:CreateTexture()
-    reagentFrame.q2Icon:SetSize(25, 25)
-    reagentFrame.q2Icon:SetPoint("LEFT", reagentFrame, "LEFT", reagentRowOffsetX + reagentIconsOffsetX, 0)
-
-    reagentFrame.q3Icon = reagentFrame:CreateTexture()
-    reagentFrame.q3Icon:SetSize(25, 25)
-    reagentFrame.q3Icon:SetPoint("LEFT", reagentFrame, "LEFT", reagentRowOffsetX + reagentIconsOffsetX*2, 0)
-    
-    reagentFrame.q1qualityIcon = CraftSim.FRAME:CreateQualityIcon(reagentFrame, qualityIconSize, qualityIconSize, reagentFrame.q1Icon, "CENTER", "TOPLEFT", qualityIconX, qualityIconY, 1)
-    reagentFrame.q2qualityIcon = CraftSim.FRAME:CreateQualityIcon(reagentFrame, qualityIconSize, qualityIconSize, reagentFrame.q2Icon, "CENTER", "TOPLEFT", qualityIconX, qualityIconY, 2)
-    reagentFrame.q3qualityIcon = CraftSim.FRAME:CreateQualityIcon(reagentFrame, qualityIconSize, qualityIconSize, reagentFrame.q3Icon, "CENTER", "TOPLEFT", qualityIconX, qualityIconY, 3)
+    reagentFrame.q1Icon = CraftSim.GGUI.Icon({
+        parent=reagentFrame, anchorParent=reagentFrame,
+        sizeX=25, sizeY=25, anchorA="LEFT", anchorB="LEFT",
+        offsetX=reagentRowOffsetX, qualityIconScale=1.6,
+    })
+    reagentFrame.q2Icon = CraftSim.GGUI.Icon({
+        parent=reagentFrame, anchorParent=reagentFrame,
+        sizeX=25, sizeY=25, anchorA="LEFT", anchorB="LEFT",
+        offsetX=reagentRowOffsetX + reagentIconsOffsetX,qualityIconScale=1.6,
+    })
+    reagentFrame.q3Icon = CraftSim.GGUI.Icon({
+        parent=reagentFrame, anchorParent=reagentFrame,
+        sizeX=25, sizeY=25, anchorA="LEFT", anchorB="LEFT",
+        offsetX=reagentRowOffsetX + reagentIconsOffsetX*2,qualityIconScale=1.6,
+    })
 
     reagentFrame.q1text = reagentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    reagentFrame.q1text:SetPoint("LEFT", reagentFrame.q1Icon, "RIGHT", qualityAmountTextX, 0)
+    reagentFrame.q1text:SetPoint("LEFT", reagentFrame.q1Icon.frame, "RIGHT", qualityAmountTextX, 0)
     reagentFrame.q1text:SetText("x ?")
 
     reagentFrame.q2text = reagentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    reagentFrame.q2text:SetPoint("LEFT", reagentFrame.q2Icon, "RIGHT", qualityAmountTextX, 0)
+    reagentFrame.q2text:SetPoint("LEFT", reagentFrame.q2Icon.frame, "RIGHT", qualityAmountTextX, 0)
     reagentFrame.q2text:SetText("x ?")
 
     reagentFrame.q3text = reagentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    reagentFrame.q3text:SetPoint("LEFT", reagentFrame.q3Icon, "RIGHT", qualityAmountTextX, 0)
+    reagentFrame.q3text:SetPoint("LEFT", reagentFrame.q3Icon.frame, "RIGHT", qualityAmountTextX, 0)
     reagentFrame.q3text:SetText("x ?")
 
     reagentFrame:Hide()
@@ -164,7 +159,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
         materialFrame.content.qualityText:Hide()
         materialFrame.content.allocateButton:Hide()
 
-        for i = 1, 5, 1 do
+        for i = 1, #materialFrame.content.reagentFrames.rows, 1 do
             materialFrame.content.reagentFrames.rows[i]:Hide()
         end
 
@@ -209,24 +204,22 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
         materialFrame.content.qualityText:SetText("Cheapest Materials")
         materialFrame.content.inspirationCheck:Hide()
     end
-    for frameIndex = 1, 5, 1 do
+    for frameIndex = 1, #materialFrame.content.reagentFrames.rows, 1 do
         local reagent = optimizationResult.reagents[frameIndex]
         if reagent then
             local q1Item = reagent.items[1]
             local q2Item = reagent.items[2]
             local q3Item = reagent.items[3]
 
-            CraftSim.GUTIL:ContinueOnAllItemsLoaded({q1Item.item, q2Item.item, q3Item.item}, function ()
-                local itemTexture = q1Item.item:GetItemIcon()
-                materialFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetTexture(itemTexture)
-                materialFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetTexture(itemTexture)
-                materialFrame.content.reagentFrames.rows[frameIndex].q3Icon:SetTexture(itemTexture)
-                materialFrame.content.reagentFrames.rows[frameIndex].q1text:SetText(q1Item.quantity)
-                materialFrame.content.reagentFrames.rows[frameIndex].q2text:SetText(q2Item.quantity)
-                materialFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(q3Item.quantity)
-    
-                materialFrame.content.reagentFrames.rows[frameIndex]:Show()
-            end)
+            materialFrame.content.reagentFrames.rows[frameIndex].q1Icon:SetItem(q1Item.item)
+            materialFrame.content.reagentFrames.rows[frameIndex].q2Icon:SetItem(q2Item.item)
+            materialFrame.content.reagentFrames.rows[frameIndex].q3Icon:SetItem(q3Item.item)
+
+            materialFrame.content.reagentFrames.rows[frameIndex].q1text:SetText(q1Item.quantity)
+            materialFrame.content.reagentFrames.rows[frameIndex].q2text:SetText(q2Item.quantity)
+            materialFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(q3Item.quantity)
+
+            materialFrame.content.reagentFrames.rows[frameIndex]:Show()
 
         else
             materialFrame.content.reagentFrames.rows[frameIndex]:Hide()

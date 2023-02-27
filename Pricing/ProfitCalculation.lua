@@ -85,7 +85,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
     -- for work orders we do not need to consider auction house cut but we can add the comissionProfit
     local function adaptResultValue(value) 
         if recipeData.orderData and comissionProfit > 0 then
-            return value + comissionProfit
+            return comissionProfit
         else
             return value * CraftSim.CONST.AUCTION_HOUSE_CUT
         end

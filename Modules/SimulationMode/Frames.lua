@@ -767,18 +767,6 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     local simModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
     local detailsFrame = simModeFrames.detailsFrame
 
-    -- stat details
-    local reagentSkillIncrease = recipeData.reagentData:GetSkillFromRequiredReagents()
-    local skillNoReagents = professionStats.skill.value - reagentSkillIncrease
-    local professionStatsOptionals = recipeData.reagentData:GetProfessionStatsByOptionals()
-    local fullRecipeDifficulty = recipeData.professionStats.recipeDifficulty.value
-    detailsFrame.content.recipeDifficultyValue:SetText(CraftSim.GUTIL:Round(fullRecipeDifficulty, 1) .. " (" .. baseProfessionStats.recipeDifficulty.value .. "+" .. professionStatsOptionals.recipeDifficulty.value .. "+" .. professionStatsMod.recipeDifficulty.value  .. ")")
-    detailsFrame.content.baseSkillValue:SetText(CraftSim.GUTIL:Round(professionStats.skill.value, 1) .. " (" .. CraftSim.GUTIL:Round(skillNoReagents, 1) .. "+" .. CraftSim.GUTIL:Round(reagentSkillIncrease, 1) .. "+" .. professionStatsMod.skill.value ..")")
-    local maxSkillFactor = recipeData.reagentData:GetMaxSkillFactor()
-    local maxReagentSkillIncrease = baseProfessionStats.recipeDifficulty.value * maxSkillFactor
-    detailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSim.GUTIL:Round(reagentSkillIncrease, 0) .. " / " .. CraftSim.GUTIL:Round(maxReagentSkillIncrease, 0))
-    detailsFrame.content.reagentMaxFactorValue:SetText(CraftSim.GUTIL:Round(maxSkillFactor*100, 1) .. " %")
-
 
     -- Inspiration Display
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationTitle, recipeData.supportsInspiration)
@@ -834,6 +822,16 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
 
     local qualityFrame = detailsFrame.content.qualityFrame
     CraftSim.FRAME:ToggleFrame(qualityFrame, recipeData.supportsQualities)
+    CraftSim.FRAME:ToggleFrame(detailsFrame.content.baseSkillTitle, recipeData.supportsQualities)
+    CraftSim.FRAME:ToggleFrame(detailsFrame.content.baseSkillValue, recipeData.supportsQualities)
+    CraftSim.FRAME:ToggleFrame(detailsFrame.content.baseSkillMod, recipeData.supportsQualities)
+    CraftSim.FRAME:ToggleFrame(detailsFrame.content.recipeDifficultyTitle, recipeData.supportsQualities)
+    CraftSim.FRAME:ToggleFrame(detailsFrame.content.recipeDifficultyValue, recipeData.supportsQualities)
+    CraftSim.FRAME:ToggleFrame(detailsFrame.content.recipeDifficultyMod, recipeData.supportsQualities)
+    CraftSim.FRAME:ToggleFrame(detailsFrame.content.reagentSkillIncreaseTitle,  recipeData.supportsQualities and recipeData.hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(detailsFrame.content.reagentSkillIncreaseValue, recipeData.supportsQualities and recipeData.hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(detailsFrame.content.reagentMaxFactorTitle, recipeData.supportsQualities and recipeData.hasQualityReagents)
+    CraftSim.FRAME:ToggleFrame(detailsFrame.content.reagentMaxFactorValue, recipeData.supportsQualities and recipeData.hasQualityReagents)
     if recipeData.supportsQualities then
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, professionStats.recipeDifficulty.value, CraftSimOptions.breakPointOffset)
         qualityFrame.currentQualityIcon.SetQuality(recipeData.resultData.expectedQuality)
@@ -876,6 +874,21 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
                 qualityFrame.skipQualityMissingSkillInspirationValue:SetText(missinSkillText)
                 qualityFrame.skipQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. skipQualityIconText)
             end
+        end
+
+            -- Skill
+        local reagentSkillIncrease = recipeData.reagentData:GetSkillFromRequiredReagents()
+        local skillNoReagents = professionStats.skill.value - reagentSkillIncrease
+        local professionStatsOptionals = recipeData.reagentData:GetProfessionStatsByOptionals()
+        local fullRecipeDifficulty = recipeData.professionStats.recipeDifficulty.value
+        detailsFrame.content.recipeDifficultyValue:SetText(CraftSim.GUTIL:Round(fullRecipeDifficulty, 1) .. " (" .. baseProfessionStats.recipeDifficulty.value .. "+" .. professionStatsOptionals.recipeDifficulty.value .. "+" .. professionStatsMod.recipeDifficulty.value  .. ")")
+        detailsFrame.content.baseSkillValue:SetText(CraftSim.GUTIL:Round(professionStats.skill.value, 1) .. " (" .. CraftSim.GUTIL:Round(skillNoReagents, 1) .. "+" .. CraftSim.GUTIL:Round(reagentSkillIncrease, 1) .. "+" .. professionStatsMod.skill.value ..")")
+        
+        if recipeData.hasQualityReagents then
+            local maxSkillFactor = recipeData.reagentData:GetMaxSkillFactor()
+            local maxReagentSkillIncrease = baseProfessionStats.recipeDifficulty.value * maxSkillFactor
+            detailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSim.GUTIL:Round(reagentSkillIncrease, 0) .. " / " .. CraftSim.GUTIL:Round(maxReagentSkillIncrease, 0))
+            detailsFrame.content.reagentMaxFactorValue:SetText(CraftSim.GUTIL:Round(maxSkillFactor*100, 1) .. " %")
         end
     end
 end

@@ -102,13 +102,19 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     if not recipeData then
         return
     end
-    local baseProfessionStatsSpec = CraftSim.SIMULATION_MODE.specializationData.professionStats
-    local professionStatsSpec = recipeData.specializationData.professionStats
-    local professionStatsSpecDiff = baseProfessionStatsSpec:Copy()
-    professionStatsSpecDiff:subtract(professionStatsSpec)
-
     recipeData.professionStatModifiers:Clear()
-    recipeData.professionStatModifiers:add(professionStatsSpecDiff)
+
+    local baseProfessionStatsSpec = nil
+    local professionStatsSpec = nil
+    local professionStatsSpecDiff = nil
+    if not recipeData.isCooking then
+        baseProfessionStatsSpec = CraftSim.SIMULATION_MODE.specializationData.professionStats
+        professionStatsSpec = recipeData.specializationData.professionStats
+        professionStatsSpecDiff = baseProfessionStatsSpec:Copy()
+        professionStatsSpecDiff:subtract(professionStatsSpec)
+        recipeData.professionStatModifiers:add(professionStatsSpecDiff)
+    end
+
 
     local simulationModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
 
@@ -188,9 +194,9 @@ end
 function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.SIMULATION_MODE.recipeData = recipeData
 
-    -- dont have to do a thing...?
-
-    CraftSim.SIMULATION_MODE.specializationData = recipeData.specializationData:Copy()
+    if not recipeData.isCooking and not recipeData.isOldWorldRecipe then
+        CraftSim.SIMULATION_MODE.specializationData = recipeData.specializationData:Copy()
+    end
     
     -- update frame visiblity and initialize the input fields
     CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()

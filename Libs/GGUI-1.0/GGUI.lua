@@ -397,6 +397,7 @@ end
 ---@field texturePath? string
 ---@field sizeX? number
 ---@field sizeY? number
+---@field qualityIconScale? number
 ---@field anchorA? FramePoint
 ---@field anchorB? FramePoint
 ---@field anchorParent? Region
@@ -411,6 +412,7 @@ function GGUI.Icon:new(options)
     options.sizeY = options.sizeY or 40
     options.anchorA = options.anchorA or "CENTER"
     options.anchorB = options.anchorB or "CENTER"
+    options.qualityIconScale = options.qualityIconScale or 1
 
     local newIcon = CreateFrame("Button", nil, options.parent, "GameMenuButtonTemplate")
     self.frame = newIcon
@@ -421,13 +423,13 @@ function GGUI.Icon:new(options)
 	newIcon:SetNormalTexture(options.texturePath)
     newIcon.qualityIcon = GGUI.QualityIcon({
         parent=self.frame,
-        sizeX=options.sizeX*0.50,
-        sizeY=options.sizeY*0.50,
+        sizeX=options.sizeX*0.50*options.qualityIconScale,
+        sizeY=options.sizeY*0.50*options.qualityIconScale,
         anchorParent=newIcon,
         anchorA="TOPLEFT",
         anchorB="TOPLEFT",
-        offsetX=-options.sizeX*0.10,
-        offsetY=options.sizeY*0.10,
+        offsetX=-options.sizeX*0.10*options.qualityIconScale,
+        offsetY=options.sizeY*0.10*options.qualityIconScale,
     })
     newIcon.qualityIcon:Hide()
     self.qualityIcon = newIcon.qualityIcon

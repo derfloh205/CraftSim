@@ -15,6 +15,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "to make it easier for me to create other addons in the future" ..
         f.p .. "Fixed Inspiration Skill consideration" ..
         f.p .. "Some fixes for " .. f.bb("Alchemy Specialization Info") .. " for transmutation" ..
+        f.p .. f.bb("Material Optimization Module") .. " now considers up to 6 different reagents" ..
+        f.a .. "and shows item tooltips" ..
         newP("7.6.0") ..
         f.p .. "Started mapping the " .. f.bb("Specialization Info") .. " for rest professions" ..
         f.p .. "Partially mapped professions now show but with warning" ..
