@@ -75,6 +75,8 @@ function CraftSim.ENGINEERING_DATA:GetData()
     return {
         OPTIMIZED_EFFICIENCY_1 = {
             nodeID = 50993,
+            threshold = 40,
+            inspirationBonusSkillFactor = 0.20,
             childNodeIDs = {"PIECES_PARTS_1", "SCRAPPER_1", "GENERALIST_1"},
         },
         PIECES_PARTS_1 = {

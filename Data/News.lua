@@ -11,6 +11,9 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("7.7.0") ..
+        f.s .. "Started to extract GUI and UTIL methods into separate libraries" ..
+        f.a .. "to make it easier for me to create other addons in the future" ..
+        f.p .. "Fixed Inspiration Skill consideration for " .. f.bb("Enchanting") ..
         f.p .. "Some fixes for " .. f.bb("Alchemy Specialization Info") .. " for transmutation" ..
         newP("7.6.0") ..
         f.p .. "Started mapping the " .. f.bb("Specialization Info") .. " for rest professions" ..

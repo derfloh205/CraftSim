@@ -147,6 +147,27 @@ function CraftSim.ENCHANTING_DATA:GetData()
         },
         INSPIRED_DEVOTION_1 = {
             nodeID = 68441,
+            threshold = 0,
+            inspirationBonusSkillFactor = 0.05,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        INSPIRED_DEVOTION_2 = {
+            nodeID = 68441,
+            threshold = 10,
+            inspirationBonusSkillFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        INSPIRED_DEVOTION_3 = {
+            nodeID = 68441,
+            threshold = 20,
+            inspirationBonusSkillFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        INSPIRED_DEVOTION_4 = {
+            nodeID = 68441,
+            threshold = 30,
+            inspirationBonusSkillFactor = 0.25,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RESOURCEFUL_WRIT_1 = {
             nodeID = 68442,
