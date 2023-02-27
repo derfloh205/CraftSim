@@ -15,7 +15,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
 function CraftSim.RECIPE_SCAN:GetScanMode()
     local RecipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
-    return RecipeScanFrame.content.scanMode.currentMode
+    return RecipeScanFrame.content.scanMode.selectedValue
 end
 
 function CraftSim.RECIPE_SCAN:ToggleScanButton(value)

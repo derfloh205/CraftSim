@@ -78,12 +78,14 @@ function CraftSim.TOPGEAR.FRAMES:Init()
                 CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MAIN.currentRecipeData)
             end)
         
-    
-        frame.content.simModeDropdown = 
-        CraftSim.FRAME:initDropdownMenu("CraftSimTopGearSimMode", frame.content, frame.title, "", 0, contentOffsetY, 120, {"Placeholder"}, function(arg1) 
-            CraftSimOptions.topGearMode = arg1
-            CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MAIN.currentRecipeData)
-        end, "Placeholder")
+        frame.content.simModeDropdown = CraftSim.GGUI.Dropdown({
+            parent=frame.content, anchorParent=frame.title, anchorA="TOP", anchorB="TOP", offsetY=contentOffsetY, width=120,
+            clickCallback=function(_, _, value) 
+                CraftSimOptions.topGearMode = value
+                CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MAIN.currentRecipeData)
+            end
+        }) 
+
         frame.content.profitText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         frame.content.profitText:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 10)
     
@@ -263,6 +265,8 @@ function CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(recipeData, exportMode)
     if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
         CraftSimOptions.topGearMode = availableModes[1]
     end
+
+    availableModes = CraftSim.GUTIL:Map(availableModes, function(mode) return {label=mode, value=mode} end)
     
-    CraftSim.FRAME:initializeDropdown(topGearFrame.content.simModeDropdown, availableModes, CraftSimOptions.topGearMode)
+    topGearFrame.content.simModeDropdown:SetData({data=availableModes, initialValue=CraftSimOptions.topGearMode})
 end

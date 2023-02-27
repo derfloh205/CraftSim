@@ -583,7 +583,7 @@ end
 ---@field width? number
 ---@field initialData? GGUI.DropdownData[]
 ---@field clickCallback? function
----@field defaultValue? any
+---@field initialValue? any
 
 ---@class GGUI.DropdownData
 ---@field isCategory? boolean
@@ -604,7 +604,7 @@ function GGUI.Dropdown:new(options)
     options.offsetY = options.offsetY or 0
     options.width = options.width or 150
     options.initialData = options.initialData or {}
-    options.defaultValue = options.defaultValue or ""
+    options.initialValue = options.initialValue or ""
 	local dropDown = CreateFrame("Frame", options.globalName, options.parent, "UIDropDownMenuTemplate")
     self.frame = dropDown
     self.clickCallback = options.clickCallback
@@ -613,7 +613,7 @@ function GGUI.Dropdown:new(options)
 	
     self:SetData({
         data=options.initialData, 
-        defaultValue=options.defaultValue})
+        initialValue=options.initialValue})
 
     self.title = dropDown:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     self.title:SetPoint("TOP", 0, 10)
@@ -627,13 +627,13 @@ end
 
 ---@class GGUI.DropdownSetDataOptions
 ---@field data GGUI.DropdownData
----@field defaultValue any
+---@field initialValue any
 
 ---@param options GGUI.DropdownSetDataOptions
 function GGUI.Dropdown:SetData(options)
     options = options or {}
     options.data = options.data or {}
-    options.defaultValue = options.defaultValue or ""
+    options.initialValue = options.initialValue or ""
 
     local dropDown = self.frame
     local gDropdown = self
@@ -695,7 +695,7 @@ function GGUI.Dropdown:SetData(options)
 	end
 
 	UIDropDownMenu_Initialize(dropDown, initMainMenu, "DROPDOWN_MENU_LEVEL")
-	UIDropDownMenu_SetText(dropDown, options.defaultValue) -- TODO: defaultLabel?
+	UIDropDownMenu_SetText(dropDown, options.initialValue)
 end
 
 function GGUI.Dropdown:SetEnabled(enabled)
@@ -704,6 +704,13 @@ function GGUI.Dropdown:SetEnabled(enabled)
     else
         UIDropDownMenu_DisableDropDown(self.frame)
     end
+end
+
+function GGUI.Dropdown:Show()
+    self.frame:Show()
+end
+function GGUI.Dropdown:Hide()
+    self.frame:Hide()
 end
 
 --- GGUI.Text

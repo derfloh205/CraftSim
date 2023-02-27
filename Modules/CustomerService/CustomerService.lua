@@ -166,7 +166,7 @@ function CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, isInit)
         -- gather optionalReagents and send back to use
         optionalReagents = {}
         for _, dropdown in pairs(previewFrame.content.optionalDropdowns) do
-            table.insert(optionalReagents, dropdown.selectedID)
+            table.insert(optionalReagents, dropdown.selectedValue)
         end
     end
 

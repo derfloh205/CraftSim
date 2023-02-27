@@ -25,19 +25,21 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
     local function createContent(frame)
         frame:Hide()
 
-        frame.content.scanMode = CraftSim.FRAME:initDropdownMenu(nil, frame.content, frame.title, "Scan Mode", 0, -30, 170, 
-        CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return e end), function(arg1) 
-            frame.content.scanMode.currentMode = arg1
-        end, CraftSim.RECIPE_SCAN.SCAN_MODES.Q1)
-        frame.content.scanMode.currentMode = CraftSim.RECIPE_SCAN.SCAN_MODES.Q1
+        frame.content.scanMode = CraftSim.GGUI.Dropdown({
+            parent=frame.content, anchorParent=frame.title, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170,
+            initialValue=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I,
+            label="Scan Mode",
+            initialData=CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return {label=e, value=e} end)
+        })
+        frame.content.scanMode.selectedValue=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
 
-        frame.content.scanButton = CraftSim.FRAME:CreateButton("Scan Recipes", frame.content, frame.content.scanMode, "TOP", "TOP", 0, -30, 15, 25, true, function() 
+        frame.content.scanButton = CraftSim.FRAME:CreateButton("Scan Recipes", frame.content, frame.content.scanMode.frame, "TOP", "TOP", 0, -30, 15, 25, true, function() 
             CraftSim.RECIPE_SCAN:StartScan()
         end)
 
         frame.content.includeSoulboundCB = CraftSim.FRAME:CreateCheckbox(
             " Include Soulbound", "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items", 
-        "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode, "RIGHT", "LEFT", -190, 0)
+        "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode.frame, "RIGHT", "LEFT", -190, 0)
 
         frame.content.includeNotLearnedCB = CraftSim.FRAME:CreateCheckbox(
             " Include not learned", "Include recipes you do not have learned in the recipe scan", 
@@ -48,7 +50,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
 
         frame.content.optimizeProfessionToolsCB = CraftSim.FRAME:CreateCheckbox(" Optimize Profession Tools", "For each recipe optimize your profession tools for profit\n\n" .. 
                                                                                 CraftSim.GUTIL:ColorizeText("Might lower performance during scanning\nif you have a lot of tools in your inventory", CraftSim.GUTIL.COLORS.RED), 
-        "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode, "LEFT", "RIGHT", 10, 0)
+        "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 10, 0)
 
         -- scrollFrame for results
          -- scrollframe

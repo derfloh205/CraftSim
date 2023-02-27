@@ -50,7 +50,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         local overrideOptions = nil
 
         ---@param overrideData CraftSim.PRICE_OVERRIDE.overrideDropdownData
-        local function selectionCallback(_, overrideData)
+        local function selectionCallback(_, _, overrideData)
             print("Selected itemID: " .. tostring(overrideData.item:GetItemID()))
             frame.currentDropdownData = overrideData
             CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideItem(overrideData)
@@ -59,11 +59,14 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
 
         frame.recipeID = nil
 
-        frame.content.itemDropdown = CraftSim.FRAME:initDropdownMenu(nil, frame.content, frame.title, "Override Item", 0, -30, 150, {}, selectionCallback, "", true)
+        frame.content.itemDropdown = CraftSim.GGUI.Dropdown({
+            parent=frame.content, anchorParent=frame.title, anchorA="TOP", anchorB="TOP", offsetY=-30, width=150,
+            clickCallback=selectionCallback
+        })
 
         frame.content.overrideOptions = CreateFrame("Frame", nil, frame.content)
         frame.content.overrideOptions:SetSize(200, 80)
-        frame.content.overrideOptions:SetPoint("TOP", frame.content.itemDropdown, "BOTTOM", 0, 0)
+        frame.content.overrideOptions:SetPoint("TOP", frame.content.itemDropdown.frame, "BOTTOM", 0, 0)
 
         overrideOptions = frame.content.overrideOptions
 
@@ -266,14 +269,12 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayV2(recipeData, exportMode)
         -- recipe was changed, reload and hide the options again
         priceOverrideFrame.content.overrideOptions:Hide()
         priceOverrideFrame.recipeID = recipeData.recipeID
-    
-        -- TODO: probably after waiting for load? Check if necessary
-    
+        
         local dropdownData = {
         }
         local reagentData = recipeData.reagentData
         if #reagentData.requiredReagents > 0 then
-            local dropdownEntry = {label="Required Reagents", value = {}}
+            local dropdownEntry = {label="Required Reagents", value = {}, isCategory=true}
             table.foreach(reagentData.requiredReagents, function (_, reagent)
                 table.foreach(reagent.items, function (_, reagentItem)
                     local reagentLabel = reagentItem.item:GetItemLink()
@@ -287,7 +288,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayV2(recipeData, exportMode)
         end
     
         if #reagentData.optionalReagentSlots > 0 then
-            local dropdownEntry = {label="Optional Reagents", value = {}}
+            local dropdownEntry = {label="Optional Reagents", value = {}, isCategory=true}
             local allPossibleReagents = {}
             table.foreach(reagentData.optionalReagentSlots, function (_, slot)
                 allPossibleReagents = CraftSim.GUTIL:Concat({allPossibleReagents, slot.possibleReagents})
@@ -303,7 +304,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayV2(recipeData, exportMode)
         end
     
         if #reagentData.finishingReagentSlots > 0 then
-            local dropdownEntry = {label="Finishing Reagents", value = {}}
+            local dropdownEntry = {label="Finishing Reagents", value = {}, isCategory=true}
             local allPossibleReagents = {}
             table.foreach(reagentData.finishingReagentSlots, function (_, slot)
                 allPossibleReagents = CraftSim.GUTIL:Concat({allPossibleReagents, slot.possibleReagents})
@@ -319,7 +320,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayV2(recipeData, exportMode)
         end
     
         if #recipeData.resultData.itemsByQuality > 0 then
-            local dropdownEntry = {label="Result Items", value = {}}
+            local dropdownEntry = {label="Result Items", value = {}, isCategory=true}
             table.foreach(recipeData.resultData.itemsByQuality, function (qualityID, item)
                 table.insert(dropdownEntry.value, {
                     label=item:GetItemLink(),
@@ -329,7 +330,8 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayV2(recipeData, exportMode)
             table.insert(dropdownData, dropdownEntry)
         end
     
-        CraftSim.FRAME:initializeDropdownByData(priceOverrideFrame.content.itemDropdown, dropdownData, "")
+        --CraftSim.FRAME:initializeDropdownByData(priceOverrideFrame.content.itemDropdown, dropdownData, "")
+        priceOverrideFrame.content.itemDropdown:SetData({data=dropdownData})
     end
 end
 

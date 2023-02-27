@@ -175,7 +175,7 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
 
     local itemIDs = {}
     for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentFrames) do
-        local itemID = dropdown.selectedItemID
+        local itemID = dropdown.selectedValue
         if itemID then
             table.insert(itemIDs, itemID)
         end

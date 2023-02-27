@@ -157,11 +157,21 @@ function CraftSim.OPTIONS:Init()
 
     local priceSourceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
-        CraftSim.FRAME:initDropdownMenu("CraftSimPriceSourcesDropdown", generalTab.content, generalTab.content, "Price Source", 0, -50, 200, priceSourceAddons, 
-        function(arg1) 
-            CraftSim.PRICE_APIS:SwitchAPIByAddonName(arg1)
-            CraftSimOptions.priceSource = arg1
-        end, CraftSim.PRICE_API.name)
+        local priceSourceAddonsDropdownData = {}
+        for _, priceSourceName in pairs(priceSourceAddons) do
+            table.insert(priceSourceAddonsDropdownData, {
+                label=priceSourceName,
+                value=priceSourceName,
+            })
+        end
+        CraftSim.OPTIONS.priceSourceDropdown = CraftSim.GGUI.Dropdown({
+            parent=generalTab.content, anchorParent=generalTab.content, label="Price Source", anchorA="TOP", anchorB="TOP",
+            offsetY=-50, width=200, initialData=priceSourceAddonsDropdownData, initialValue=CraftSim.PRICE_API.name,
+            clickCallback=function(_, _, value) 
+                CraftSim.PRICE_APIS:SwitchAPIByAddonName(value)
+                CraftSimOptions.priceSource = value
+            end
+        })
     elseif #priceSourceAddons == 1 then
         local info = generalTab.content:CreateFontString('info', 'OVERLAY', 'GameFontNormal')
         info:SetPoint("TOP", 0, -50)

@@ -85,7 +85,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
     local function createContent(frame)
         frame:Hide()
 
-        local function onRecipeSelected(_, recipeID)
+        local function onRecipeSelected(_, _, recipeID)
             print("Selected RecipeID: " .. tostring(recipeID))
             frame.currentRecipeID = recipeID
             CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, true) 
@@ -93,10 +93,13 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
 
         frame.content.previewTitle = CraftSim.FRAME:CreateText("Crafter's Profession", frame.content, frame.title, "TOP", "BOTTOM", 0, -10)
 
-        frame.content.recipeDropdown = CraftSim.FRAME:initDropdownMenu(nil, frame.content, frame.content.previewTitle, "Learned Recipes", 0, -30, 200, {}, onRecipeSelected, "Select Recipe", true)
+        frame.content.recipeDropdown = CraftSim.GGUI.Dropdown({
+            parent=frame.content, anchorParent=frame.content.previewTitle, anchorA="TOP", anchorB="TOP",
+            label="Learned Recipes", offsetY=-30, sizeX=200, clickCallback=onRecipeSelected, initialValue="Select Recipe",
+        })
 
         local requestingUpdate = "Requesting Update"
-        frame.content.loadingText = CraftSim.FRAME:CreateText(requestingUpdate, frame.content, frame.content.recipeDropdown, "LEFT", "RIGHT", -20, 5, 0.8, nil, {type="H", value="LEFT"})
+        frame.content.loadingText = CraftSim.FRAME:CreateText(requestingUpdate, frame.content, frame.content.recipeDropdown.frame, "LEFT", "RIGHT", -20, 5, 0.8, nil, {type="H", value="LEFT"})
         frame.content.isUpdating = false
         frame.content.updates = {}
         local function checkForTimeOut(updateID)
@@ -136,8 +139,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             frame.SetEnabled(true)
             frame.content.updates = {}
         end
-        local function onOptionalReagentSelected(dropdown, itemID) 
-            dropdown.selectedID = itemID
+        local function onOptionalReagentSelected(_, _, itemID) 
             print("selected optional Reagent: " .. tostring(itemID))
             CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(frame.currentRecipeID) 
         end
@@ -147,14 +149,14 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         end
 
         frame.content.guaranteeCB = CraftSim.FRAME:CreateCheckboxCustomCallback("Highest Guaranteed", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION),
-        false, onCheckboxChecked, frame.content, frame.content.recipeDropdown, "TOPLEFT", "BOTTOMLEFT", 17, 0)
+        false, onCheckboxChecked, frame.content, frame.content.recipeDropdown.frame, "TOPLEFT", "BOTTOMLEFT", 17, 0)
         local dropdownWidth = 120
         local dropdownOffsetX = 70
         local dropdownBaseY = 0
         local dropdownSpacingY = -40
         frame.content.optionalDropdownGroup = CreateFrame("frame", nil, frame.content)
         frame.content.optionalDropdownGroup:SetSize(dropdownWidth*2 + dropdownOffsetX, -1*dropdownBaseY + -1*dropdownSpacingY*2 + 25)
-        frame.content.optionalDropdownGroup:SetPoint("TOP", frame.content.recipeDropdown, "BOTTOM", 0, -35)
+        frame.content.optionalDropdownGroup:SetPoint("TOP", frame.content.recipeDropdown.frame, "BOTTOM", 0, -35)
 
         frame.content.optionalDropdownGroup.SetCollapsed = function(collapsed)
             if collapsed then
@@ -169,8 +171,11 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         frame.content.optionalDropdownGroup.SetCollapsed(true)
         frame.content.optionalDropdownGroup:Hide()
 
-        local function CreateReagentInputDropdown(label, anchorX, anchorY)
-            local optionalReagentDropdown = CraftSim.FRAME:initDropdownMenu(nil, frame.content.optionalDropdownGroup, frame.content.optionalDropdownGroup, label, anchorX, anchorY, dropdownWidth, {}, onOptionalReagentSelected)
+        local function CreateReagentInputDropdown(label, offsetX, offsetY)
+            local optionalReagentDropdown = CraftSim.GGUI.Dropdown({
+                parent=frame.content.optionalDropdownGroup, anchorParent=frame.content.optionalDropdownGroup, anchorA="TOP",anchorB="TOP",
+                label=label, offsetX=offsetX,offsetY=offsetY, width=dropdownWidth, clickCallback=onOptionalReagentSelected,
+            })
             return optionalReagentDropdown
         end
 
@@ -263,16 +268,9 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         }
 
         frame.SetEnabled = function(value)
-            print("enable frames: " .. tostring(value)) 
             -- disable/enable all childs
-            local toggleDropdown = (value and UIDropDownMenu_EnableDropDown) or UIDropDownMenu_DisableDropDown
-            toggleDropdown(frame.content.recipeDropdown)
+            frame.content.recipeDropdown:SetEnabled(value)
             frame.content.guaranteeCB:SetEnabled(value)
-
-            for _, dropdown in pairs(frame.content.optionalDropdowns) do
-                toggleDropdown(dropdown)
-            end
-
         end
 
     end
@@ -298,6 +296,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
             local dropdownEntry = {
                 label = categoryName,
                 value = {},
+                isCategory=true,
             }
             for _, recipeEntry in pairs(recipes) do
                 table.insert(dropdownEntry.value, {
@@ -324,7 +323,9 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     previewFrame.content.reagentDetailsTitle:Hide()
     previewFrame.content.optionalDropdownGroup:Hide()
     previewFrame.content.guaranteeCB:Hide()
-    CraftSim.FRAME:initializeDropdownByData(previewFrame.content.recipeDropdown, convertToDropdownListData(recipes), "Select a Recipe")
+
+
+    previewFrame.content.recipeDropdown:SetData({data=convertToDropdownListData(recipes), initialValue="Select Recipe"})
 
     previewFrame:Show()
 end
@@ -424,10 +425,13 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
                 dropdown:Show()
                 if not optionalReagentSlot.locked then
                     local dropdownListData = convertOptionalReagentsToDropdownListData(optionalReagentSlot.possibleReagents)
-                    CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true)
+                    dropdown:SetData({data=dropdownListData, initialValue="None"})
+                    --CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true)
+                    dropdown.selectedValue = nil
                 else
-                    CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.GUTIL:ColorizeText("Locked", CraftSim.GUTIL.COLORS.RED))
-                    dropdown.selectedID = nil
+                    dropdown:SetData({data={}, initialValue=CraftSim.GUTIL:ColorizeText("Locked", CraftSim.GUTIL.COLORS.RED)})
+                    --CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.GUTIL:ColorizeText("Locked", CraftSim.GUTIL.COLORS.RED))
+                    dropdown.selectedValue = nil
                 end
             else
                 dropdown:Hide()

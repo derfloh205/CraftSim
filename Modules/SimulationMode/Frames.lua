@@ -88,10 +88,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         frames.reagentOverwriteFrame = reagentOverwriteFrame
     
         local function CreateReagentInputDropdown(offsetY)
-            local optionalReagentDropdown = CraftSim.FRAME:initDropdownMenu(nil, reagentOverwriteFrame, schematicForm.OptionalReagents, "Optional", -20, offsetY + 3, 120, {"Placeholder"}, function(self, arg1) 
-                self.selectedItemID = arg1
-                CraftSim.MAIN:TriggerModulesErrorSafe()
-            end, "None")
+            local optionalReagentDropdown = CraftSim.GGUI.Dropdown({
+                parent=reagentOverwriteFrame, anchorParent=schematicForm.OptionalReagents, anchorA="TOP",anchorB="TOP",
+                offsetX=-20, offsetY=offsetY + 3, width=120,
+                clickCallback=function (_, _, value)
+                    CraftSim.MAIN:TriggerModulesErrorSafe()
+                end
+            })
             return optionalReagentDropdown
         end
     
@@ -1050,7 +1053,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns(recipeData
         dropdown.isOptional = false
         dropdown.isFinishing = false
         dropdown.slotIndex = nil
-        dropdown.selectedItemID = nil
+        dropdown.selectedValue = nil
         dropdown:Hide()
     end
 
@@ -1060,34 +1063,32 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns(recipeData
     for slotIndex, optionalReagentSlot in pairs(optionalReagentSlots) do
         local currentDropdown = reagentOverwriteFrame.optionalReagentFrames[dropdownIndex]
         local dropdownlist = convertReagentListToDropdownListData(optionalReagentSlot.possibleReagents)
-        CraftSim.FRAME:initializeDropdownByData(currentDropdown, dropdownlist, nil, true)
         currentDropdown:Show()
         currentDropdown.slotIndex = slotIndex
         currentDropdown.isOptional = true
-        currentDropdown.SetLabel("Optional #" .. slotIndex)
+        currentDropdown:SetLabel("Optional #" .. slotIndex)
         dropdownIndex = dropdownIndex + 1
-        currentDropdown.selectedItemID = optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item:GetItemID()
-        if currentDropdown.selectedItemID then
-            UIDropDownMenu_SetText(currentDropdown, optionalReagentSlot.activeReagent.item:GetItemLink())
+        currentDropdown.selectedValue = optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item:GetItemID()
+        if currentDropdown.selectedValue then
+            currentDropdown:SetData({data=dropdownlist, initialValue=optionalReagentSlot.activeReagent.item:GetItemLink()})
         else
-            UIDropDownMenu_SetText(currentDropdown, "None")
+            currentDropdown:SetData({data=dropdownlist, initialValue="None"})
         end
     end
     -- finishing
     for slotIndex, optionalReagentSlot in pairs(finishingReagentSlots) do
         local currentDropdown = reagentOverwriteFrame.optionalReagentFrames[dropdownIndex]
         local dropdownlist = convertReagentListToDropdownListData(optionalReagentSlot.possibleReagents)
-        CraftSim.FRAME:initializeDropdownByData(currentDropdown, dropdownlist, nil, true)
         currentDropdown:Show()
-        currentDropdown.slotIndex = slotIndex
+        currentDropdown.slotIndex = slotIndex 
         currentDropdown.isFinishing = true
-        currentDropdown.SetLabel("Finishing #" .. slotIndex)
+        currentDropdown:SetLabel("Finishing #" .. slotIndex)
         dropdownIndex = dropdownIndex + 1
-        currentDropdown.selectedItemID = optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item:GetItemID()
-        if currentDropdown.selectedItemID then
-            UIDropDownMenu_SetText(currentDropdown, optionalReagentSlot.activeReagent.item:GetItemLink())
+        currentDropdown.selectedValue = optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item:GetItemID()
+        if currentDropdown.selectedValue then
+            currentDropdown:SetData({data=dropdownlist, initialValue=optionalReagentSlot.activeReagent.item:GetItemLink()})
         else
-            UIDropDownMenu_SetText(currentDropdown, "None")
+            currentDropdown:SetData({data=dropdownlist, initialValue="None"})
         end
     end
 end

@@ -15,66 +15,6 @@ function CraftSim.FRAME:GetFrame(frameID)
     return _G[frameName]
 end
 
---> in GGUI.Icon
-function CraftSim.FRAME:CreateIcon(parent, offsetX, offsetY, texture, sizeX, sizeY, anchorA, anchorB, anchorParent)
-    anchorParent = anchorParent or parent
-    if anchorA == nil then
-        anchorA = "CENTER"
-    end
-    if anchorB == nil then
-        anchorB = "CENTER"
-    end
-    local newIcon = CreateFrame("Button", nil, parent, "GameMenuButtonTemplate")
-    newIcon:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
-	newIcon:SetSize(sizeX, sizeY)
-	newIcon:SetNormalFontObject("GameFontNormalLarge")
-	newIcon:SetHighlightFontObject("GameFontHighlightLarge")
-	newIcon:SetNormalTexture(texture)
-    newIcon.qualityIcon = CraftSim.FRAME:CreateQualityIcon(newIcon, sizeX*0.60, sizeY*0.60, newIcon, "TOPLEFT", "TOPLEFT", -sizeX*0.15, sizeY*0.15, 1)
-    newIcon.qualityIcon:Hide()
-    newIcon.SetQuality = function(qualityID) 
-        if qualityID then
-            newIcon.qualityIcon.SetQuality(qualityID)
-            newIcon.qualityIcon:Show()
-        else
-            newIcon.qualityIcon:Hide()
-        end
-    end
-
-    newIcon.SetItem = function(itemIDOrLink, tooltipOwner, tooltipAnchor, byLink)
-        if itemIDOrLink then
-
-            local item = nil
-            if byLink then
-                item = Item:CreateFromItemLink(itemIDOrLink)
-            else
-                item = Item:CreateFromItemID(itemIDOrLink)
-            end
-
-            item:ContinueOnItemLoad(function ()
-                newIcon:SetNormalTexture(item:GetItemIcon())
-                newIcon:SetScript("OnEnter", function(self) 
-                    local itemName, ItemLink = GameTooltip:GetItem()
-                    GameTooltip:SetOwner(tooltipOwner or newIcon, tooltipAnchor or "ANCHOR_RIGHT");
-                    if ItemLink ~= item:GetItemLink() then
-                        -- to not set it again and hide the tooltip..
-                        GameTooltip:SetHyperlink(item:GetItemLink())
-                    end
-                    GameTooltip:Show();
-                end)
-                newIcon:SetScript("OnLeave", function(self) 
-                    GameTooltip:Hide();
-                end)
-            end)
-        else
-            newIcon:SetScript("OnEnter", nil)
-            newIcon:SetScript("OnLeave", nil)
-        end
-    end
-
-    return newIcon
-end
-
 function CraftSim.FRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
     if statDiff == nil then
         statDiff = 0
@@ -96,31 +36,6 @@ function CraftSim.FRAME:ToggleFrame(frame, visible)
     else
         frame:Hide()
     end
-end
-
---> in GGUI.Dropdown
-function CraftSim.FRAME:initDropdownMenu(frameName, parent, anchorFrame, label, offsetX, offsetY, width, list, clickCallback, defaultValue, byData)
-	local dropDown = CreateFrame("Frame", frameName, parent, "UIDropDownMenuTemplate")
-    dropDown.clickCallback = clickCallback
-	dropDown:SetPoint("TOP", anchorFrame, offsetX, offsetY)
-	UIDropDownMenu_SetWidth(dropDown, width)
-	
-    if byData then
-        CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue)
-    else
-        CraftSim.FRAME:initializeDropdown(dropDown, list, defaultValue)
-    end
-
-	local dd_title = dropDown:CreateFontString('dd_title', 'OVERLAY', 'GameFontNormal')
-    dd_title:SetPoint("TOP", 0, 10)
-
-    dropDown.SetLabel = function(label) 
-        dd_title:SetText(label)
-    end
-
-    dropDown.SetLabel(label)
-
-    return dropDown
 end
 
 --> in GGUI
@@ -148,83 +63,6 @@ function CraftSim.FRAME:SetItemTooltip(frame, itemLink, owner, anchor)
         frame:SetScript("OnLeave", nil)
 
     end
-end
-
-
---> in GGUI.Dropdown
---- @param showItemTooltips? boolean requires the label to be an itemLink
---- @param concatCallback? function takes one argument which is the itemlink and returns a string that is added to the items tooltip
-function CraftSim.FRAME:initializeDropdownByData(dropDown, list, defaultValue, showItemTooltips, concatCallback)
-    print("Init Dropdown By Data", false, true)
-    print("showItemTooltips: " .. tostring(showItemTooltips))
-    local function initMainMenu(self, level, menulist) 
-        local info = UIDropDownMenu_CreateInfo()
-        if level == 1 then
-            for _, v in pairs(list) do
-                local label = v.label
-                local value = v.value
-                local hasSublist = type(value) == 'table'
-                if not hasSublist then
-                    info.func = function(self, arg1, arg2, checked) 
-                        UIDropDownMenu_SetText(dropDown, self.value) -- value should contain the selected text..
-                        dropDown.clickCallback(dropDown, arg1)
-                    end
-                end
-                info.text = label
-                info.arg1 = value
-                info.hasArrow = hasSublist
-                info.menuList = hasSublist and label
-                if showItemTooltips then
-                    info.tooltipText = CraftSim.GUTIL:GetItemTooltipText(label)
-                    -- cut first line as it is the name of the item
-                    info.tooltipTitle, info.tooltipText = string.match(info.tooltipText, "^(.-)\n(.*)$")
-                    if concatCallback then
-                    info.tooltipTitle = info.tooltipTitle .. "\n" .. tostring(concatCallback(label))
-                    end
-                    info.tooltipOnButton = true
-                end
-                UIDropDownMenu_AddButton(info)
-            end
-        elseif menulist then
-            for _, currentMenulist in pairs(list) do
-                if currentMenulist.label == menulist then
-                    for _, v in pairs(currentMenulist.value) do
-                        local label = v.label
-                        local value = v.value
-                        info.func = function(self, arg1, arg2, checked) 
-                            UIDropDownMenu_SetText(dropDown, self.value) -- value should contain the selected text..
-                            dropDown.clickCallback(dropDown, arg1)
-                            CloseDropDownMenus()
-                        end
-                        info.text = label
-                        info.arg1 = value
-                        UIDropDownMenu_AddButton(info, level)
-                    end
-                end
-            end
-        end
-	end
-
-	UIDropDownMenu_Initialize(dropDown, initMainMenu, "DROPDOWN_MENU_LEVEL")
-	UIDropDownMenu_SetText(dropDown, defaultValue)
-end
-
---> in GGUI.Dropdown
-function CraftSim.FRAME:initializeDropdown(dropDown, list, defaultValue)
-	UIDropDownMenu_Initialize(dropDown, function(self) 
-		for k, v in pairs(list) do
-			local info = UIDropDownMenu_CreateInfo()
-			info.func = function(self, arg1, arg2, checked) 
-                UIDropDownMenu_SetText(dropDown, arg1)
-                dropDown.clickCallback(arg1)
-            end
-			info.text = v
-			info.arg1 = v
-			UIDropDownMenu_AddButton(info)
-		end
-	end)
-
-	UIDropDownMenu_SetText(dropDown, defaultValue)
 end
 
 --> in GGUI.QualityIcon
