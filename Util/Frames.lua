@@ -38,53 +38,6 @@ function CraftSim.FRAME:ToggleFrame(frame, visible)
     end
 end
 
---> in GGUI
--- anchor: e.g. "ANCHOR_RIGHT"
--- if itemLink is nil it removes the tooltip
-function CraftSim.FRAME:SetItemTooltip(frame, itemLink, owner, anchor)
-    local function onEnter()
-        local _, ItemLink = GameTooltip:GetItem()
-        GameTooltip:SetOwner(owner, anchor);
-
-        if ItemLink ~= itemLink then
-            -- to not set it again and hide the tooltip..
-            GameTooltip:SetHyperlink(itemLink)
-        end
-        GameTooltip:Show();
-    end
-    local function onLeave()
-        GameTooltip:Hide();
-    end
-    if itemLink then
-        frame:SetScript("OnEnter", onEnter)
-        frame:SetScript("OnLeave", onLeave)
-    else
-        frame:SetScript("OnEnter", nil)
-        frame:SetScript("OnLeave", nil)
-
-    end
-end
-
---> in GGUI.QualityIcon
-function CraftSim.FRAME:CreateQualityIcon(frame, x, y, anchorFrame, anchorSelf, anchorParent, offsetX, offsetY, initialQuality)
-    initialQuality = initialQuality or 1
-    local icon = frame:CreateTexture(nil, "OVERLAY")
-    icon:SetSize(x, y)
-    icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
-    icon:SetAtlas("Professions-Icon-Quality-Tier" .. initialQuality)
-    icon:SetPoint(anchorSelf, anchorFrame, anchorParent, offsetX, offsetY)
-
-    icon.SetQuality = function(qualityID) 
-        if qualityID > 5 then
-            qualityID = 5
-        end
-        icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
-        icon:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
-    end
-
-    return icon
-end
-
 --> in GGUI.TabSystem
 function CraftSim.FRAME:InitTabSystem(tabs)
     if #tabs == 0 then

@@ -118,7 +118,10 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         frame.content.statDiff.quality:SetPoint("TOP", frame.content.statDiff, "TOP", -5, statTxtSpacingY*6)
         frame.content.statDiff.quality:SetText("Quality: ")
     
-        frame.content.statDiff.qualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content, 20, 20, frame.content.statDiff.quality, "LEFT", "RIGHT", 3, 0)
+        frame.content.statDiff.qualityIcon = CraftSim.GGUI.QualityIcon({
+            parent=frame.content,anchorParent=frame.content.statDiff.quality,anchorA="LEFT",anchorB="RIGHT",offsetX=3,
+            sizeX=20,sizeY=20,
+        })
     
         frame:Hide()
     end
@@ -240,7 +243,7 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, expo
     topGearFrame.content.statDiff.skill:SetText("Skill: " .. CraftSim.FRAME:FormatStatDiffpercentText(topResult.relativeStats.skill.value, 0))
 
     if CraftSim.MAIN.currentRecipeData.supportsQualities then
-        topGearFrame.content.statDiff.qualityIcon.SetQuality(topResult.expectedQuality)
+        topGearFrame.content.statDiff.qualityIcon:SetQuality(topResult.expectedQuality)
         topGearFrame.content.statDiff.quality:Show()
         topGearFrame.content.statDiff.qualityIcon:Show()
     else

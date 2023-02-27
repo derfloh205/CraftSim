@@ -1015,6 +1015,13 @@ function GGUI.Button:GetStatus()
     return tostring(self.activeStatusID)
 end
 
+function GGUI.Button:Show()
+    self.frame:Show()
+end
+function GGUI.Button:Hide()
+    self.frame:Hide()
+end
+
 
 --- GGUI.Tab
 

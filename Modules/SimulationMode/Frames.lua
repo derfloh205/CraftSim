@@ -40,39 +40,46 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         local baseX = 10
         local inputOffsetX = 50
     
-        reagentOverwriteFrame.qualityIcon1 = CraftSim.FRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX - 15, 15, 1)
-        reagentOverwriteFrame.quality1Button = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
-        reagentOverwriteFrame.quality1Button:SetPoint("BOTTOM", reagentOverwriteFrame.qualityIcon1, "TOP", 0, 0)	
-        reagentOverwriteFrame.quality1Button:SetText("->")
-        reagentOverwriteFrame.quality1Button:SetSize(reagentOverwriteFrame.qualityIcon1:GetSize())
-        reagentOverwriteFrame.quality1Button:SetScript("OnClick", function(self) 
-            CraftSim.SIMULATION_MODE:AllocateAllByQuality(1)
-        end)
-        reagentOverwriteFrame.qualityIcon2 = CraftSim.FRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX+inputOffsetX - 15, 15, 2)
-        reagentOverwriteFrame.quality2Button = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
-        reagentOverwriteFrame.quality2Button:SetPoint("BOTTOM", reagentOverwriteFrame.qualityIcon2, "TOP", 0, 0)	
-        reagentOverwriteFrame.quality2Button:SetText("->")
-        reagentOverwriteFrame.quality2Button:SetSize(reagentOverwriteFrame.qualityIcon2:GetSize())
-        reagentOverwriteFrame.quality2Button:SetScript("OnClick", function(self) 
-            CraftSim.SIMULATION_MODE:AllocateAllByQuality(2)
-        end)
-        reagentOverwriteFrame.qualityIcon3 = CraftSim.FRAME:CreateQualityIcon(reagentOverwriteFrame, 20, 20, reagentOverwriteFrame, "TOP", "TOP", baseX+inputOffsetX*2 - 15, 15, 3)
-        reagentOverwriteFrame.quality3Button = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
-        reagentOverwriteFrame.quality3Button:SetPoint("BOTTOM", reagentOverwriteFrame.qualityIcon3, "TOP", 0, 0)	
-        reagentOverwriteFrame.quality3Button:SetText("->")
-        reagentOverwriteFrame.quality3Button:SetSize(reagentOverwriteFrame.qualityIcon3:GetSize())
-        reagentOverwriteFrame.quality3Button:SetScript("OnClick", function(self) 
-            CraftSim.SIMULATION_MODE:AllocateAllByQuality(3)
-        end)
-    
-        reagentOverwriteFrame.clearAllocationsButton = CreateFrame("Button", nil, reagentOverwriteFrame, "UIPanelButtonTemplate")
-        reagentOverwriteFrame.clearAllocationsButton:SetPoint("LEFT", reagentOverwriteFrame.quality3Button, "RIGHT", inputOffsetX - 30, 0)	
-        reagentOverwriteFrame.clearAllocationsButton:SetText("Clear")
-        reagentOverwriteFrame.clearAllocationsButton:SetSize(reagentOverwriteFrame.clearAllocationsButton:GetTextWidth(), 20)
-        reagentOverwriteFrame.clearAllocationsButton:SetScript("OnClick", function(self) 
-            -- Clear
-            CraftSim.SIMULATION_MODE:AllocateAllByQuality(0)
-        end)
+        reagentOverwriteFrame.qualityIcon1 = CraftSim.GGUI.QualityIcon({
+            parent=reagentOverwriteFrame, anchorParent=reagentOverwriteFrame,sizeX=20,sizeY=20,anchorA="TOP",anchorB="TOP",
+            offsetX=baseX-15,offsetY=15, initialQuality=1,
+        })
+        reagentOverwriteFrame.quality1Button = CraftSim.GGUI.Button({
+            parent=reagentOverwriteFrame, anchorParent=reagentOverwriteFrame.qualityIcon1.frame,anchorA="BOTTOM", anchorB="TOP",
+            sizeX=20,sizeY=20,label="->",
+            clickCallback=function() 
+                CraftSim.SIMULATION_MODE:AllocateAllByQuality(1)
+            end
+        })
+        reagentOverwriteFrame.qualityIcon2 = CraftSim.GGUI.QualityIcon({
+            parent=reagentOverwriteFrame, anchorParent=reagentOverwriteFrame,sizeX=20,sizeY=20,anchorA="TOP",anchorB="TOP",
+            offsetX=baseX+inputOffsetX - 15,offsetY=15, initialQuality=2,
+        })
+        reagentOverwriteFrame.quality2Button = CraftSim.GGUI.Button({
+            parent=reagentOverwriteFrame, anchorParent=reagentOverwriteFrame.qualityIcon2.frame,anchorA="BOTTOM", anchorB="TOP",
+            sizeX=20,sizeY=20,label="->",
+            clickCallback=function() 
+                CraftSim.SIMULATION_MODE:AllocateAllByQuality(2)
+            end
+        })
+        reagentOverwriteFrame.qualityIcon3 = CraftSim.GGUI.QualityIcon({
+            parent=reagentOverwriteFrame, anchorParent=reagentOverwriteFrame,sizeX=20,sizeY=20,anchorA="TOP",anchorB="TOP",
+            offsetX=baseX+inputOffsetX*2 - 15,offsetY=15, initialQuality=2,
+        })
+        reagentOverwriteFrame.quality3Button = CraftSim.GGUI.Button({
+            parent=reagentOverwriteFrame, anchorParent=reagentOverwriteFrame.qualityIcon3.frame,anchorA="BOTTOM", anchorB="TOP",
+            sizeX=20,sizeY=20,label="->",
+            clickCallback=function() 
+                CraftSim.SIMULATION_MODE:AllocateAllByQuality(3)
+            end
+        })
+        reagentOverwriteFrame.clearAllocationsButton = CraftSim.GGUI.Button({
+            parent=reagentOverwriteFrame, anchorParent=reagentOverwriteFrame.quality3Button.frame, anchorA="LEFT", anchorB="RIGHT",
+            offsetX=inputOffsetX - 30, label="Clear", adjustWidth=true, sizeX=0,sizeY=20,
+            clickCallback=function() 
+                CraftSim.SIMULATION_MODE:AllocateAllByQuality(0)
+            end
+        })
     
         reagentOverwriteFrame.reagentOverwriteInputs = {}
     
@@ -307,20 +314,25 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             qualityFrame.currentQualityTitle:SetPoint("TOPLEFT", qualityFrame, "TOPLEFT", 0, 0)
             qualityFrame.currentQualityTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL))
     
-            qualityFrame.currentQualityIcon = CraftSim.FRAME:CreateQualityIcon(qualityFrame, 25, 25, qualityFrame, "TOPRIGHT", "TOPRIGHT", 0, 5)
+            qualityFrame.currentQualityIcon = CraftSim.GGUI.QualityIcon({
+                parent=qualityFrame,anchorParent=qualityFrame,sizeX=25,sizeY=25,anchorA="TOPRIGHT",anchorB="TOPRIGHT",offsetY=5
+            })
     
             qualityFrame.currentQualityThreshold = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.currentQualityThreshold:SetPoint("RIGHT", qualityFrame.currentQualityIcon, "LEFT", -5, 0)
+            qualityFrame.currentQualityThreshold:SetPoint("RIGHT", qualityFrame.currentQualityIcon.frame, "LEFT", -5, 0)
             qualityFrame.currentQualityThreshold:SetText("> ???")
     
             qualityFrame.nextQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
             qualityFrame.nextQualityTitle:SetPoint("TOPLEFT", qualityFrame.currentQualityTitle, "TOPLEFT", 0, offsetY)
             qualityFrame.nextQualityTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL))
     
-            qualityFrame.nextQualityIcon = CraftSim.FRAME:CreateQualityIcon(qualityFrame, 25, 25, qualityFrame.currentQualityIcon, "TOP", "TOP", 0, offsetY)
+            qualityFrame.nextQualityIcon = CraftSim.GGUI.QualityIcon({
+                parent=qualityFrame,anchorParent=qualityFrame.currentQualityIcon.frame,anchorA="TOP",anchorB="TOP",offsetY=offsetY,
+                sizeX=25,sizeY=25,
+            })
     
             qualityFrame.nextQualityThreshold = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.nextQualityThreshold:SetPoint("RIGHT", qualityFrame.nextQualityIcon, "LEFT", -5, 0)
+            qualityFrame.nextQualityThreshold:SetPoint("RIGHT", qualityFrame.nextQualityIcon.frame, "LEFT", -5, 0)
             qualityFrame.nextQualityThreshold:SetText("> ???")
     
             qualityFrame.nextQualityMissingSkillTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
@@ -346,11 +358,6 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             qualityFrame.skipQualityMissingSkillInspirationValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
             qualityFrame.skipQualityMissingSkillInspirationValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityMissingSkillInspirationValue, "TOPRIGHT", 0, offsetY)
             qualityFrame.skipQualityMissingSkillInspirationValue:SetText("???")
-    
-             -- warning
-            -- simModeDetailsFrame.content.warningText = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            -- simModeDetailsFrame.content.warningText:SetPoint("BOTTOM", simModeDetailsFrame.content, "BOTTOM", 0, 30)
-            -- simModeDetailsFrame.content.warningText:SetText(CraftSim.GUTIL:ColorizeText("~ WORK IN PROGRESS ~", CraftSim.GUTIL.COLORS.RED))
     
             return frames
     end
@@ -837,7 +844,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.reagentMaxFactorValue, recipeData.supportsQualities and recipeData.hasQualityReagents)
     if recipeData.supportsQualities then
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, professionStats.recipeDifficulty.value, CraftSimOptions.breakPointOffset)
-        qualityFrame.currentQualityIcon.SetQuality(recipeData.resultData.expectedQuality)
+        qualityFrame.currentQualityIcon:SetQuality(recipeData.resultData.expectedQuality)
         qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[recipeData.resultData.expectedQuality - 1] or 0))
         
         local hasNextQuality = recipeData.resultData.expectedQuality < recipeData.maxQuality
@@ -864,7 +871,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
             local nextQualityIconText = CraftSim.GUTIL:GetQualityIconString(recipeData.resultData.expectedQuality + 1, 20, 20)
             qualityFrame.nextQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. nextQualityIconText)
             qualityFrame.nextQualityMissingSkillInspirationValue:SetText(missingSkillText)
-            qualityFrame.nextQualityIcon.SetQuality(recipeData.resultData.expectedQuality + 1)
+            qualityFrame.nextQualityIcon:SetQuality(recipeData.resultData.expectedQuality + 1)
             qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[recipeData.resultData.expectedQuality])
             
             if canSkipQuality then

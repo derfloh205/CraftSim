@@ -50,7 +50,10 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         frame.content.qualityText:SetPoint("TOP", frame.title, "TOP", 0, -45)
         frame.content.qualityText:SetText("Reachable Quality: ")
     
-        frame.content.qualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content, 25, 25, frame.content.qualityText, "LEFT", "RIGHT", 3, 0)
+        frame.content.qualityIcon = CraftSim.GGUI.QualityIcon({
+            parent=frame.content,anchorParent=frame.content.qualityText,anchorA="LEFT",anchorB="RIGHT",offsetX=3,
+            sizeX=25,sizeY=25,
+        })
     
         frame.content.allocateButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame.content, "UIPanelButtonTemplate")
         frame.content.allocateButton:SetSize(50, 25)
@@ -195,7 +198,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
     end
 
     if optimizationResult.qualityID and optimizationResult.qualityID > 0 then
-        materialFrame.content.qualityIcon.SetQuality(optimizationResult.qualityID)
+        materialFrame.content.qualityIcon:SetQuality(optimizationResult.qualityID)
         materialFrame.content.qualityIcon:Show()
         materialFrame.content.qualityText:SetText("Reachable Quality: ")
         materialFrame.content.inspirationCheck:Show()
