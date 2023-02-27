@@ -123,9 +123,9 @@ function CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutations(totalCombos, isCook
                 local toolB = comboB[1]
                 local gear1B = comboB[2]
         
-                local existsGear = gear2A == EMPTY and gear1B == EMPTY
+                local existsGear = gear1A == EMPTY and gear1B == EMPTY
                 if not existsGear then
-                    existsGear = gear1B ~= EMPTY and gear1B:Equals(gear2A)
+                    existsGear = gear1B ~= EMPTY and gear1B:Equals(gear1A)
                 end
     
                 local existsTool = toolA == EMPTY and toolB == EMPTY
