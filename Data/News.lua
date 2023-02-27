@@ -18,6 +18,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.p .. f.bb("Material Optimization Module") .. " now considers" .. 
         f.a .. "up to 6 different reagents and shows item tooltips" ..
         f.p .. "Fixes to " .. f.bb("Simulation Mode") .. " for " .. f.bb("Cooking") ..
+        f.p .. f.bb("Work Order Profits") .. " are now correctly only" ..
+        f.a .. "considering comission and consortium cut" .. 
         newP("7.6.0") ..
         f.p .. "Started mapping the " .. f.bb("Specialization Info") .. " for rest professions" ..
         f.p .. "Partially mapped professions now show but with warning" ..

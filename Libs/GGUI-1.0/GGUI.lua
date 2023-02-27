@@ -389,6 +389,7 @@ end
 ---@field qualityIcon GGUI.QualityIcon
 ---@field item ItemMixin
 ---@field qualityID? number
+---@field hideQualityIcon? boolean
 
 ---@class GGUI.IconConstructorOptions
 ---@field parent? Frame
@@ -401,6 +402,7 @@ end
 ---@field anchorA? FramePoint
 ---@field anchorB? FramePoint
 ---@field anchorParent? Region
+---@field hideQualityIcon? boolean
 
 GGUI.Icon = GGUI.Object:extend()
 function GGUI.Icon:new(options)
@@ -413,6 +415,7 @@ function GGUI.Icon:new(options)
     options.anchorA = options.anchorA or "CENTER"
     options.anchorB = options.anchorB or "CENTER"
     options.qualityIconScale = options.qualityIconScale or 1
+    self.hideQualityIcon = options.hideQualityIcon or false
 
     local newIcon = CreateFrame("Button", nil, options.parent, "GameMenuButtonTemplate")
     self.frame = newIcon
@@ -471,6 +474,10 @@ function GGUI.Icon:SetItem(idLinkOrMixin, options)
         else
             local qualityID = GUTIL:GetQualityIDFromLink(item:GetItemLink())
             gIcon.qualityIcon:SetQuality(qualityID)
+        end
+
+        if self.hideQualityIcon then
+            gIcon.qualityIcon:Hide()
         end
     end)
 end

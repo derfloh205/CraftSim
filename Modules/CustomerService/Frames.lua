@@ -188,13 +188,19 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         
         frame.content.expectedResultTitle = CraftSim.FRAME:CreateText("Expected Result", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", -80, -10, nil, nil)
         
-        local resultQualityIconSize = 20
-        frame.content.expectedResultIcon = CraftSim.FRAME:CreateIcon(frame.content, 0, -10, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "TOP", "BOTTOM", frame.content.expectedResultTitle)
-        frame.content.expectedResultQualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content.expectedResultIcon, resultQualityIconSize, resultQualityIconSize, frame.content.expectedResultIcon, "TOPLEFT", "TOPLEFT", -3, 3, 1)
+        frame.content.expectedResultIcon = CraftSim.GGUI.Icon({
+            parent=frame.content,anchorParent=frame.content.expectedResultTitle,
+            sizeX=40, sizeY=40, offsetY=-10, anchorA="TOP", anchorB="BOTTOM"
+        })
+        --frame.content.expectedResultIcon = CraftSim.FRAME:CreateIcon(frame.content, 0, -10, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "TOP", "BOTTOM", frame.content.expectedResultTitle)
         
         frame.content.expectedInspirationPercent = CraftSim.FRAME:CreateText("100% Chance for", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 80, -10, nil, nil)
-        frame.content.expectedInspirationIcon = CraftSim.FRAME:CreateIcon(frame.content, 0, -10, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "TOP", "BOTTOM", frame.content.expectedInspirationPercent)
-        frame.content.expectedInspirationQualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content.expectedInspirationIcon, resultQualityIconSize, resultQualityIconSize, frame.content.expectedInspirationIcon, "TOPLEFT", "TOPLEFT", -3, 3, 1)
+        
+        frame.content.expectedInspirationIcon = CraftSim.GGUI.Icon({
+            parent=frame.content,anchorParent=frame.content.expectedInspirationPercent,
+            sizeX=40, sizeY=40, offsetY=-10, anchorA="TOP", anchorB="BOTTOM"
+        })
+        --frame.content.expectedInspirationIcon = CraftSim.FRAME:CreateIcon(frame.content, 0, -10, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "TOP", "BOTTOM", frame.content.expectedInspirationPercent)
         
         frame.content.reagentDetailsTitle = CraftSim.FRAME:CreateText("Required Materials", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 0, -80)
         
@@ -204,16 +210,18 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             reagentFrame:SetSize(iconSize, iconSize)
             reagentFrame:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
             
-            reagentFrame.icon = CraftSim.FRAME:CreateIcon(reagentFrame, 0, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "LEFT", reagentFrame)
-            reagentFrame.countTextNoQ = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.icon = CraftSim.GGUI.Icon({
+                parent=reagentFrame, sizeX=iconSize, sizeY=iconSize, anchorA="LEFT", anchorB="LEFT", anchorParent=reagentFrame,
+                hideQualityIcon=true,
+            })
+            --reagentFrame.icon = CraftSim.FRAME:CreateIcon(reagentFrame, 0, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "LEFT", reagentFrame)
+            reagentFrame.countTextNoQ = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon.frame, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
             
-            reagentFrame.countTextQ1 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, 12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
-            reagentFrame.countTextQ2 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
-            reagentFrame.countTextQ3 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, -12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.countTextQ1 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon.frame, "LEFT", "RIGHT", 5, 12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.countTextQ2 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon.frame, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.countTextQ3 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon.frame, "LEFT", "RIGHT", 5, -12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
             reagentFrame.SetReagent = function (itemID, isQuality, countq1, countq2, countq3)
-                print("set reagent: " .. tostring(itemID) .. " - " .. tostring(type(itemID)))
-                print("qualities? " .. tostring(isQuality))
-                reagentFrame.icon.SetItem(itemID, frame.content)
+                reagentFrame.icon:SetItem(itemID)
                 if not itemID then
                     reagentFrame:Hide()
                     return
@@ -232,10 +240,6 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
                     local q1Icon = CraftSim.GUTIL:GetQualityIconString(1, qualityIconSize, qualityIconSize, 0, 0)
                     local q2Icon = CraftSim.GUTIL:GetQualityIconString(2, qualityIconSize, qualityIconSize, 0, 0)
                     local q3Icon = CraftSim.GUTIL:GetQualityIconString(3, qualityIconSize, qualityIconSize, 0, 0)
-                    print("quality Icons:")
-                    print(q1Icon)
-                    print(q2Icon)
-                    print(q3Icon)
                     reagentFrame.countTextNoQ:Hide()
                     reagentFrame.countTextQ1:SetText(q1Icon .. " x " .. countq1)
                     reagentFrame.countTextQ2:SetText(q2Icon .. " x " .. countq2)
@@ -339,27 +343,21 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
     if resultData.canUpgradeQuality then
         local upgradeChanceText = payload.upgradeChance .. "%"
         previewFrame.content.expectedInspirationPercent:SetText(upgradeChanceText .. " Chance for")
-        previewFrame.content.expectedInspirationIcon.SetItem(resultData.expectedItemUpgrade:GetItemLink(), nil, nil, true)
-        previewFrame.content.expectedInspirationQualityIcon.SetQuality(resultData.expectedQualityUpgrade)
+        previewFrame.content.expectedInspirationIcon:SetItem(resultData.expectedItemUpgrade, nil, nil, true)
         previewFrame.content.expectedInspirationIcon:Show()
         previewFrame.content.expectedInspirationPercent:Show()
-        previewFrame.content.expectedInspirationQualityIcon:Show()
     else
         previewFrame.content.expectedInspirationIcon:Hide()
         previewFrame.content.expectedInspirationPercent:Hide()
-        previewFrame.content.expectedInspirationQualityIcon:Hide()
     end
     
     previewFrame.content.reagentDetailsTitle:Show()
     previewFrame.content.expectedResultTitle:Show()
     previewFrame.content.expectedResultIcon:Show()
-    previewFrame.content.expectedResultIcon.SetItem(resultData.expectedItem:GetItemLink(), nil, nil, true)
+    previewFrame.content.expectedResultIcon:SetItem(resultData.expectedItem, nil, nil, true)
     if supportsQualities then
-        previewFrame.content.expectedResultQualityIcon.SetQuality(resultData.expectedQuality)
-        previewFrame.content.expectedResultQualityIcon:Show()
         previewFrame.content.guaranteeCB:Show()
     else
-        previewFrame.content.expectedResultQualityIcon:Hide()
         previewFrame.content.guaranteeCB:Hide()
     end
 
