@@ -173,7 +173,7 @@ function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearSet, expor
         button:Hide() -- only to consider cooking ...
     end
     if professionGearSet.isCooking and not gIconsOverride then
-        gIcons = {gIcons[2], gIcons[3]}
+        gIcons = {gIcons[1], gIcons[3]}
     end
 
     local professionGearList = professionGearSet:GetProfessionGearList()

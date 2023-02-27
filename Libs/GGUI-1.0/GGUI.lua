@@ -70,6 +70,10 @@ GGUI.frames = {}
 
 if not GGUI then return end
 
+-- GGUI CONST
+GGUI.CONST = {}
+GGUI.CONST.EMPTY_TEXTURE = "Interface\\containerframe\\bagsitemslot2x"
+
 -- GGUI Configuration Methods
     function GGUI:SetConfigSavedVariable(variableName)
         configName = variableName
@@ -402,7 +406,7 @@ function GGUI.Icon:new(options)
     options = options or {}
     options.offsetX = options.offsetX or 0
     options.offsetY = options.offsetY or 0
-    options.texturePath = options.texturePath or "Interface\\containerframe\\bagsitemslot2x" -- empty slot texture
+    options.texturePath = options.texturePath or GGUI.CONST.EMPTY_TEXTURE -- empty slot texture
     options.sizeX = options.sizeX or 40
     options.sizeY = options.sizeY or 40
     options.anchorA = options.anchorA or "CENTER"
@@ -444,6 +448,7 @@ function GGUI.Icon:SetItem(idLinkOrMixin, options)
         gIcon.frame:SetScript("OnLeave", nil)
         gIcon.qualityIcon:Hide()
         GGUI:SetItemTooltip(gIcon.frame, nil)
+        gIcon.frame:SetNormalTexture(GGUI.CONST.EMPTY_TEXTURE)
         return
     end
     local item = nil
