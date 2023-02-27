@@ -46,11 +46,14 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         frame.content.breakdownButton.tooltip = "Test"
 
         if statisticsFrameID then
-            frame.content.statisticsButton = CraftSim.FRAME:CreateButton("Show Statistics", frame.content, frame.content.breakdownButton, "LEFT", "RIGHT", 1, 0, 15, 20, true, 
-            function() 
-                local statisticsFrame = CraftSim.FRAME:GetFrame(statisticsFrameID)
-                CraftSim.FRAME:ToggleFrame(statisticsFrame, not statisticsFrame:IsVisible())
-            end)
+            frame.content.statisticsButton = CraftSim.GGUI.Button({
+                label="Show Statistics", parent=frame.content,anchorParent=frame.content.breakdownButton,anchorA="LEFT",anchorB="RIGHT",offsetX=1,sizeX=15,sizeY=20,
+                adjustWidth=true,
+                clickCallback=function() 
+                    local statisticsFrame = CraftSim.FRAME:GetFrame(statisticsFrameID)
+                    CraftSim.FRAME:ToggleFrame(statisticsFrame, not statisticsFrame:IsVisible())
+                end
+            })
         end
         
 

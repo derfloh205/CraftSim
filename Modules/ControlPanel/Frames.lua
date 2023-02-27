@@ -40,32 +40,34 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local cbBaseOffsetX = 20
     local cbBaseOffsetY = -35
 
-    frame.content.newsButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.newsButton:SetPoint("TOPRIGHT", frame.content, "TOPRIGHT", -50, cbBaseOffsetY + 5)	
-	frame.content.newsButton:SetText("News")
-	frame.content.newsButton:SetSize(frame.content.newsButton:GetTextWidth()+15, 25)
-    frame.content.newsButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:ShowOneTimeInfo(true)
-    end)
-
-    frame.content.debugButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.debugButton:SetPoint("TOPLEFT", frame.content.newsButton, "BOTTOMLEFT", 0, 0)	
-	frame.content.debugButton:SetText("Debug")
-	frame.content.debugButton:SetSize(frame.content.debugButton:GetTextWidth()+15, 25)
-    frame.content.debugButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
-    end)
-
-    frame.content.exportButton = CraftSim.FRAME:CreateButton("Export Recipe", frame.content, frame.content.debugButton, "RIGHT", "LEFT", 0, 0, 15, 25, true, 
-    function() 
-        if CraftSim.MAIN.currentRecipeData then
-            local json = CraftSim.MAIN.currentRecipeData:GetJSON()
-            CraftSim.UTIL:KethoEditBox_Show(json)
+    frame.content.newsButton = CraftSim.GGUI.Button({
+        label="News", parent=frame.content, anchorParent=frame.content,anchorA="TOPRIGHT",anchorB="TOPRIGHT",offsetX=-50,offsetY=cbBaseOffsetY+5,
+        sizeX=15,sizeY=25, adjustWidth=true,
+        clickCallback=function() 
+            CraftSim.FRAME:ShowOneTimeInfo(true)
         end
-    end)
+    })
+
+    frame.content.debugButton = CraftSim.GGUI.Button({
+        label="Debug",parent=frame.content,anchorParent=frame.content.newsButton.frame,anchorA="TOPLEFT",anchorB="BOTTOMLEFT",
+        sizeX=15,sizeY=25,adjustWidth=true,
+        clickCallback=function() 
+            CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
+        end
+    })
+
+    frame.content.exportButton = CraftSim.GGUI.Button({
+        label="Export Recipe", parent=frame.content,anchorParent=frame.content.debugButton.frame,anchorA="RIGHT", anchorB="LEFT", sizeX=15,sizeY=25,adjustWidth=true,
+        clickCallback=function() 
+            if CraftSim.MAIN.currentRecipeData then
+                local json = CraftSim.MAIN.currentRecipeData:GetJSON()
+                CraftSim.UTIL:KethoEditBox_Show(json)
+            end
+        end
+    })
 
     frame.content.optionsButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.optionsButton:SetPoint("RIGHT", frame.content.newsButton, "LEFT", 0, 0)	
+	frame.content.optionsButton:SetPoint("RIGHT", frame.content.newsButton.frame, "LEFT", 0, 0)	
 	frame.content.optionsButton:SetText("Options")
 	frame.content.optionsButton:SetSize(frame.content.optionsButton:GetTextWidth()+15, 25)
     frame.content.optionsButton:SetScript("OnClick", function(self) 
