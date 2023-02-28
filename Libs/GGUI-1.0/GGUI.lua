@@ -165,10 +165,16 @@ end
 function GGUI.Widget:SetEnabled(enabled)
     self.frame:SetEnabled(enabled)
 end
+function GGUI.Widget:SetVisible(visible)
+    if visible then
+        self:Show()
+    else
+        self:Hide()
+    end
+end
 --- GGUI Frame
 
 ---@class GGUI.Frame
----@field frame Frame
 ---@field content Frame
 ---@field frameID string
 ---@field scrollableContent boolean
@@ -225,7 +231,7 @@ function GGUI:GetFrame(frameID)
     return GGUI.frames[frameID]
 end
 
-GGUI.Frame = GGUI.Object:extend()
+GGUI.Frame = GGUI.Widget:extend()
 ---@param options GGUI.FrameConstructorOptions
 function GGUI.Frame:new(options)
     options = options or {}
@@ -252,7 +258,7 @@ function GGUI.Frame:new(options)
     local hookFrame = CreateFrame("frame", nil, options.parent)
     hookFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
     local frame = CreateFrame("frame", options.globalName, hookFrame, "BackdropTemplate")
-    self.frame = frame
+    GGUI.Frame.super.new(self, frame)
     frame.hookFrame = hookFrame
     hookFrame:SetSize(options.sizeX, options.sizeY)
     frame:SetSize(options.sizeX, options.sizeY)
@@ -392,24 +398,9 @@ function GGUI.Frame:Decollapse()
     end
 end
 
-function GGUI.Frame:Show()
-    self.frame:Show()
-end
-function GGUI.Frame:Hide()
-    self.frame:Hide()
-end
-function GGUI.Frame:SetVisible(visible)
-    if visible then
-        self:Show()
-    else
-        self:Hide()
-    end
-end
-
 --- GGUI Icon
 
 ---@class GGUI.Icon
----@field frame Frame
 ---@field qualityIcon GGUI.QualityIcon
 ---@field item ItemMixin
 ---@field qualityID? number
@@ -428,7 +419,7 @@ end
 ---@field anchorParent? Region
 ---@field hideQualityIcon? boolean
 
-GGUI.Icon = GGUI.Object:extend()
+GGUI.Icon = GGUI.Widget:extend()
 function GGUI.Icon:new(options)
     options = options or {}
     options.offsetX = options.offsetX or 0
@@ -442,7 +433,7 @@ function GGUI.Icon:new(options)
     self.hideQualityIcon = options.hideQualityIcon or false
 
     local newIcon = CreateFrame("Button", nil, options.parent, "GameMenuButtonTemplate")
-    self.frame = newIcon
+    GGUI.Icon.super.new(self, newIcon)
     newIcon:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
 	newIcon:SetSize(options.sizeX, options.sizeY)
 	newIcon:SetNormalFontObject("GameFontNormalLarge")
@@ -516,18 +507,9 @@ function GGUI.Icon:SetQuality(qualityID)
     end
 end
 
-function GGUI.Icon:Show()
-    self.frame:Show()
-end
-function GGUI.Icon:Hide()
-    self.frame:Hide()
-end
-
-
 --- GGUI.QualityIcon
 
 ---@class GGUI.QualityIcon
----@field frame Texture
 ---@field qualityID number
 
 ---@class GGUI.QualityIconConstructorOptions
@@ -541,7 +523,7 @@ end
 ---@field offsetY? number
 ---@field initialQuality? number
 
-GGUI.QualityIcon = GGUI.Object:extend()
+GGUI.QualityIcon = GGUI.Widget:extend()
 function GGUI.QualityIcon:new(options)
     options = options or {}
     options.parent = options.parent or UIParent
@@ -554,10 +536,8 @@ function GGUI.QualityIcon:new(options)
     options.offsetY = options.offsetY or 0
     options.initialQuality = options.initialQuality or 1
 
-
-
     local icon = options.parent:CreateTexture(nil, "OVERLAY")
-    self.frame = icon
+    GGUI.QualityIcon.super.new(self, icon)
     icon:SetSize(options.sizeX, options.sizeY)
     icon:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
     icon:SetAtlas("Professions-Icon-Quality-Tier" .. options.initialQuality)
@@ -578,13 +558,6 @@ function GGUI.QualityIcon:SetQuality(qualityID)
     end
     self.frame:SetTexture("Interface\\Professions\\ProfessionsQualityIcons")
     self.frame:SetAtlas("Professions-Icon-Quality-Tier" .. qualityID)
-end
-
-function GGUI.QualityIcon:Hide()
-    self.frame:Hide()
-end
-function GGUI.QualityIcon:Show()
-    self.frame:Show()
 end
 
 --- GGUI.Dropdown
@@ -729,18 +702,9 @@ function GGUI.Dropdown:SetEnabled(enabled)
     end
 end
 
-function GGUI.Dropdown:Show()
-    self.frame:Show()
-end
-function GGUI.Dropdown:Hide()
-    self.frame:Hide()
-end
-
 --- GGUI.Text
 
 ---@class GGUI.Text
----@field frame FontString
-
 
 ---@class GGUI.TextConstructorOptions
 ---@field text? string
@@ -761,7 +725,7 @@ end
 ---@field alignV string
 
 
-GGUI.Text = GGUI.Object:extend()
+GGUI.Text = GGUI.Widget:extend()
 ---@param options GGUI.TextConstructorOptions
 function GGUI.Text:new(options)
     options = options or {}
@@ -774,7 +738,7 @@ function GGUI.Text:new(options)
     options.scale = options.scale or 1
 
     local text = options.parent:CreateFontString(nil, "OVERLAY", options.font)
-    self.frame = text
+    GGUI.Text.super.new(self, text)
     text:SetText(options.text)
     text:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
     text:SetScale(options.scale)
@@ -806,7 +770,6 @@ end
 --- GGUI.ScrollingMessageFrame
 
 ---@class GGUI.ScrollingMessageFrame
----@field frame Frame
 
 ---@class GGUI.ScrollingMessageFrameConstructorOptions
 ---@field parent? Frame
@@ -823,7 +786,7 @@ end
 ---@field enableScrolling? boolean
 ---@field justifyOptions? GGUI.JustifyOptions
 
-GGUI.ScrollingMessageFrame = GGUI.Object:extend()
+GGUI.ScrollingMessageFrame = GGUI.Widget:extend()
 ---@param options GGUI.ScrollingMessageFrameConstructorOptions
 function GGUI.ScrollingMessageFrame:new(options)
     options = options or {}
@@ -837,7 +800,7 @@ function GGUI.ScrollingMessageFrame:new(options)
     options.fading = options.fading or false
     options.enableScrolling = options.enableScrolling or false
     local scrollingFrame = CreateFrame("ScrollingMessageFrame", nil, options.parent)
-    self.frame = scrollingFrame
+    GGUI.ScrollingMessageFrame.super.new(self, scrollingFrame)
     scrollingFrame:SetSize(options.sizeX, options.sizeY)
     scrollingFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
     scrollingFrame:SetFontObject(options.font)
@@ -1259,12 +1222,6 @@ end
 
 function GGUI.HelpIcon:SetText(text)
     self.frame.tooltipText = text
-end
-function GGUI.HelpIcon:Show()
-    self.frame:Show()
-end
-function GGUI.HelpIcon:Hide()
-    self.frame:Hide()
 end
 
 
