@@ -55,10 +55,10 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
             sizeX=25,sizeY=25,
         })
     
-        frame.content.allocateButton = CreateFrame("Button", "CraftSimMaterialAllocateButton", frame.content, "UIPanelButtonTemplate")
-        frame.content.allocateButton:SetSize(50, 25)
-        frame.content.allocateButton:SetPoint("TOP", frame.content.qualityText, "TOP", 0, -20)	
-        frame.content.allocateButton:SetText("Assign")
+        frame.content.allocateButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.content.qualityText, anchorA="TOP", anchorB="TOP", offsetY=-20,
+            label="Assign",sizeX=15,sizeY=20,adjustWidth=true,
+        })
     
         frame.content.allocateText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         frame.content.allocateText:SetPoint("TOP", frame.content.qualityText, "TOP", 0, -20)	
@@ -77,12 +77,12 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         frame.content.reagentFrames.rows = {}
         frame.content.reagentFrames.numReagents = 0
         local iconSize = 30
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY, iconSize))
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY, iconSize))
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*2, iconSize))
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*3, iconSize))
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*4, iconSize))
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton, iconsOffsetY - iconsSpacingY*5, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY - iconsSpacingY, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY - iconsSpacingY*2, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY - iconsSpacingY*3, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY - iconsSpacingY*4, iconSize))
+        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY - iconsSpacingY*5, iconSize))
     
         frame:Hide()
     end
@@ -194,7 +194,6 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
                 materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText("Materials missing", CraftSim.GUTIL.COLORS.RED))
             end
         end
-        materialFrame.content.allocateButton:SetSize(materialFrame.content.allocateButton:GetTextWidth() + 15, 25)
     end
 
     if optimizationResult.qualityID and optimizationResult.qualityID > 0 then

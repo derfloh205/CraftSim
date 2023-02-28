@@ -64,17 +64,17 @@ function CraftSim.TOPGEAR.FRAMES:Init()
             offsetX=50,
             offsetY=contentOffsetY + iconsOffsetY,
         })
-    
-        frame.content.equipButton = CreateFrame("Button", "CraftSimTopGearEquipButton", frame.content, "UIPanelButtonTemplate")
-        frame.content.equipButton:SetSize(50, 25)
-        frame.content.equipButton:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 50)	
-        frame.content.equipButton:SetText("Equip")
-        frame.content.equipButton:SetScript("OnClick", function(self) 
-            CraftSim.TOPGEAR:EquipTopGear()
-        end)
+
+        frame.content.equipButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.content, offsetY=contentOffsetY + 50,
+            label="Equip", sizeX=15, sizeY=25, adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.TOPGEAR:EquipTopGear()
+            end
+        })
     
         frame.content.simulateButton = CraftSim.GGUI.Button({
-            parent=frame.content,anchorParent=frame.content.equipButton,label="Simulate Top Gear", sizeX=5,sizeY=25,adjustWidth=true,
+            parent=frame.content,anchorParent=frame.content.equipButton.frame,label="Simulate Top Gear", sizeX=5,sizeY=25,adjustWidth=true,
             clickCallback=function ()
                 CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MAIN.currentRecipeData)
             end

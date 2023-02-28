@@ -328,19 +328,19 @@ end
 ---@param gFrame GGUI.Frame
 function GGUI:MakeFrameCollapsable(gFrame)
     local frame = gFrame.frame
-    frame.collapseButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     local offsetX = frame.closeButton and -43 or -23
-	frame.collapseButton:SetPoint("TOP", frame, "TOPRIGHT", offsetX, -10)	
-	frame.collapseButton:SetText(" - ")
-	frame.collapseButton:SetSize(frame.collapseButton:GetTextWidth() + 12, 20)
 
-    frame.collapseButton:SetScript("OnClick", function(self) 
-        if gFrame.collapsed then
-            gFrame:Decollapse()
-        else
-            gFrame:Collapse()
+    frame.collapseButton = GGUI.Button({
+        parent=frame,anchorParent=frame,anchorA="TOP",anchorB="TOPRIGHT",offsetX=offsetX,offsetY=-10,
+        label=" - ", sizeX=12,sizeY=20,adjustWidth=true,
+        clickCallback=function ()
+            if gFrame.collapsed then
+                gFrame:Decollapse()
+            else
+                gFrame:Collapse()
+            end
         end
-    end)
+    })
 end
 
 function GGUI.Frame:Collapse()
@@ -1021,6 +1021,10 @@ function GGUI.Button:Show()
 end
 function GGUI.Button:Hide()
     self.frame:Hide()
+end
+
+function GGUI.Button:SetScript(...)
+    self.frame:SetScript(...)
 end
 
 

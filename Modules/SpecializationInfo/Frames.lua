@@ -19,18 +19,19 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     local function createContent(frame)
         frame:Hide()
     
-        frame.content.knowledgePointSimulationButton =  CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-        frame.content.knowledgePointSimulationButton:SetPoint("TOP", frame.title, "TOP", 0, -20)	
-        frame.content.knowledgePointSimulationButton:SetText("Simulate Knowledge Distribution")
-        frame.content.knowledgePointSimulationButton:SetSize(frame.content.knowledgePointSimulationButton:GetTextWidth()+5, 20)
-        frame.content.knowledgePointSimulationButton:SetScript("OnClick", function(self) 
-            local specSimFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
-            CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM), not specSimFrame:IsVisible())
-        end)
+        frame.content.knowledgePointSimulationButton = CraftSim.GGUI.Button({
+            parent=frame.content, anchorParent=frame.title,anchorA="TOP",anchorB="TOP",offsetY=-20,
+            sizeX=15,sizeY=20, adjustWidth=true,label="Simulate Knowledge Distribution",
+            clickCallback=function ()
+                local specSimFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+                CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM), not specSimFrame:IsVisible())
+            end
+        })
+
         frame.content.knowledgePointSimulationButton:SetEnabled(false)
 
         frame.content.notImplementedText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:ColorizeText("SpecInfo Work in Progress", CraftSim.GUTIL.COLORS.LEGENDARY),
-        frame.content, frame.content.knowledgePointSimulationButton, "CENTER", "CENTER", 0, 0)
+        frame.content, frame.content.knowledgePointSimulationButton.frame, "CENTER", "CENTER", 0, 0)
     
         frame.content.notImplementedText:Hide()
     

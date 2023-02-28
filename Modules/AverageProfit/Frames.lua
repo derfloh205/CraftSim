@@ -32,22 +32,21 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER, false, true, nil, "modulesStatWeights")
 
     local function createContent(frame, profitDetailsFrameID, statisticsFrameID)
-        frame.content.breakdownButton = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-        frame.content.breakdownButton:SetPoint("TOP", frame.title, "TOP", (statisticsFrameID and -60) or 0, -15)	
-        frame.content.breakdownButton:SetText("Show Explanation")
-        frame.content.breakdownButton:SetSize(frame.content.breakdownButton:GetTextWidth() + 15, 20)
-        frame.content.breakdownButton:SetScript("OnClick", function(self)
-            local profitDetailsFrame = CraftSim.FRAME:GetFrame(profitDetailsFrameID) 
-            local isVisible = profitDetailsFrame:IsVisible()
-            CraftSim.FRAME:ToggleFrame(profitDetailsFrame, not isVisible)
-            frame.content.breakdownButton:SetText(isVisible and "Show Explanation" or not isVisible and "Hide Explanation")
-        end)
-
-        frame.content.breakdownButton.tooltip = "Test"
+        frame.content.breakdownButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.title,anchorA="TOP",anchorB="TOP",
+            offsetX= (statisticsFrameID and -60) or 0, offsetY=-15,
+            label="Show Explanation", sizeX=15,sizeY=20,adjustWidth=true,
+            clickCallback=function ()
+                local profitDetailsFrame = CraftSim.FRAME:GetFrame(profitDetailsFrameID) 
+                local isVisible = profitDetailsFrame:IsVisible()
+                CraftSim.FRAME:ToggleFrame(profitDetailsFrame, not isVisible)
+                frame.content.breakdownButton:SetText(isVisible and "Show Explanation" or not isVisible and "Hide Explanation")
+            end
+        })
 
         if statisticsFrameID then
             frame.content.statisticsButton = CraftSim.GGUI.Button({
-                label="Show Statistics", parent=frame.content,anchorParent=frame.content.breakdownButton,anchorA="LEFT",anchorB="RIGHT",offsetX=1,sizeX=15,sizeY=20,
+                label="Show Statistics", parent=frame.content,anchorParent=frame.content.breakdownButton.frame,anchorA="LEFT",anchorB="RIGHT",offsetX=1,sizeX=15,sizeY=20,
                 adjustWidth=true,
                 clickCallback=function() 
                     local statisticsFrame = CraftSim.FRAME:GetFrame(statisticsFrameID)

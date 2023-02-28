@@ -348,13 +348,13 @@ function CraftSim.OPTIONS:Init()
     --     CraftSim.ACCOUNTSYNC:SynchronizeAccounts()
     -- end)
 
-    local optionsSyncButton = CreateFrame("Button", "CraftSimOptionsSyncButton", AccountSyncTab.content, "UIPanelButtonTemplate")
-	optionsSyncButton:SetPoint("TOPRIGHT", characterNameInput, "TOPRIGHT", 0, -30)	
-	optionsSyncButton:SetText("Synchronize Options")
-	optionsSyncButton:SetSize(optionsSyncButton:GetTextWidth() + 20, 25)
-    optionsSyncButton:SetScript("OnClick", function(self) 
-        CraftSim.ACCOUNTSYNC:SynchronizeOptions()
-    end)
+    local optionsSyncButton = CraftSim.GGUI.Button({
+        parent=AccountSyncTab.content, anchorParent=characterNameInput, anchorA="TOPRIGHT", anchorB="TOPRIGHT", offsetY=-30,
+        sizeX=20,sizeY=25,adjustWidth=true,label="Synchronize Options",
+        clickCallback=function ()
+            CraftSim.ACCOUNTSYNC:SynchronizeOptions()
+        end
+    })
 
     local supportedPriceSources = generalTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -200)
