@@ -142,6 +142,29 @@ end
 
 ---- GGUI Widgets
 
+--- GGUI Widget
+
+---@class GGUI.Widget
+---@field frame Frame original blizzard frame/region
+
+GGUI.Widget = GGUI.Object:extend()
+
+function GGUI.Widget:new(frame)
+    self.frame=frame
+end
+--- forward common frame/region methods to original frame
+function GGUI.Widget:SetScript(...)
+    self.frame:SetScript(...)
+end
+function GGUI.Widget:Show()
+    self.frame:Show()
+end
+function GGUI.Widget:Hide()
+    self.frame:Hide()
+end
+function GGUI.Widget:SetEnabled(enabled)
+    self.frame:SetEnabled(enabled)
+end
 --- GGUI Frame
 
 ---@class GGUI.Frame
@@ -567,7 +590,6 @@ end
 --- GGUI.Dropdown
 
 ---@class GGUI.Dropdown
----@field frame Frame
 ---@field title FontString
 ---@field selected? any
 ---@field clickCallback? function
@@ -593,7 +615,7 @@ end
 ---@field tooltipItemLink? string
 ---@field tooltipConcatText? string
 
-GGUI.Dropdown = GGUI.Object:extend()
+GGUI.Dropdown = GGUI.Widget:extend()
 
 ---@param options GGUI.DropdownConstructorOptions
 function GGUI.Dropdown:new(options)
@@ -607,7 +629,7 @@ function GGUI.Dropdown:new(options)
     options.initialData = options.initialData or {}
     options.initialValue = options.initialValue or ""
 	local dropDown = CreateFrame("Frame", options.globalName, options.parent, "UIDropDownMenuTemplate")
-    self.frame = dropDown
+    GGUI.Dropdown.super.new(self, dropDown)
     self.clickCallback = options.clickCallback
 	dropDown:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
 	UIDropDownMenu_SetWidth(dropDown, options.width)
@@ -859,7 +881,6 @@ end
 --- GGUI.Button
 
 ---@class GGUI.Button
----@field frame Frame
 ---@field clickCallback? function
 ---@field originalX? number
 ---@field originalY? number
@@ -901,7 +922,7 @@ end
 ---@field clickCallback? function
 ---@field initialStatusID? string
 
-GGUI.Button = GGUI.Object:extend()
+GGUI.Button = GGUI.Widget:extend()
 ---@param options GGUI.ButtonConstructorOptions
 function GGUI.Button:new(options)
     self.statusList = {}
@@ -926,7 +947,7 @@ function GGUI.Button:new(options)
     self.activeStatusID = options.initialStatusID
 
     local button = CreateFrame("Button", nil, options.parent, "UIPanelButtonTemplate")
-    self.frame = button
+    GGUI.Button.super.new(self, button)
     button:SetText(options.label)
     if options.adjustWidth then
         button:SetSize(button:GetTextWidth() + options.sizeX, options.sizeY)
@@ -960,10 +981,6 @@ function GGUI.Button:SetText(text, width, adjustWidth)
         width = self.originalX
         self.frame:SetSize(self.frame:GetTextWidth() + width, self.originalY)
     end
-end
-
-function GGUI.Button:SetEnabled(enabled)
-    self.frame:SetEnabled(enabled)
 end
 
 --- Set a list of predefined GGUI.ButtonStatus
@@ -1015,18 +1032,6 @@ end
 function GGUI.Button:GetStatus()
     return tostring(self.activeStatusID)
 end
-
-function GGUI.Button:Show()
-    self.frame:Show()
-end
-function GGUI.Button:Hide()
-    self.frame:Hide()
-end
-
-function GGUI.Button:SetScript(...)
-    self.frame:SetScript(...)
-end
-
 
 --- GGUI.Tab
 
@@ -1105,7 +1110,7 @@ end
 
 --- GGUI.Checkbox
 
-GGUI.Checkbox = GGUI.Object:extend()
+GGUI.Checkbox = GGUI.Widget:extend()
 
 ---@class GGUI.Checkbox
 ---@field frame CheckButton
@@ -1154,7 +1159,6 @@ end
 
 --- GGUI.Slider
 ---@class GGUI.Slider
----@field frame Slider
 ---@field onValueChangedCallback? function
 
 ---@class GGUI.SliderConstructorOptions
@@ -1175,7 +1179,7 @@ end
 ---@field highText? string
 ---@field onValueChangedCallback? function
 
-GGUI.Slider = GGUI.Object:extend()
+GGUI.Slider = GGUI.Widget:extend()
 ---@param options GGUI.SliderConstructorOptions
 function GGUI.Slider:new(options)
     options = options or {}
@@ -1194,6 +1198,7 @@ function GGUI.Slider:new(options)
     options.highText = options.highText or ""
 
     local newSlider = CreateFrame("Slider", nil, options.parent, "OptionsSliderTemplate")
+    GGUI.Slider.super.new(self, newSlider)
     newSlider:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
     newSlider:SetSize(options.sizeX, options.sizeY)
     newSlider:SetOrientation(options.orientation)
@@ -1213,7 +1218,6 @@ end
 
 --- GGUI.HelpIcon
 ---@class GGUI.HelpIcon
----@field frame Button
 
 ---@class GGUI.HelpIconConstructorOptions
 ---@field text? string
@@ -1224,7 +1228,7 @@ end
 ---@field offsetX? number
 ---@field offsetY? number
 
-GGUI.HelpIcon = GGUI.Object:extend()
+GGUI.HelpIcon = GGUI.Widget:extend()
 
 ---@param options GGUI.HelpIconConstructorOptions
 function GGUI.HelpIcon:new(options)
@@ -1236,7 +1240,7 @@ function GGUI.HelpIcon:new(options)
     options.offsetY = options.offsetY or 0
 
     local helpButton = CreateFrame("Button", nil, options.parent, "UIPanelButtonTemplate")
-    self.frame = helpButton
+    GGUI.HelpIcon.super.new(self, helpButton)
     helpButton.tooltipText = options.text
     helpButton:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)	
     helpButton:SetText("?")
@@ -1307,7 +1311,6 @@ end
 
 --- GGUI.TextInput
 ---@class GGUI.TextInput
----@field frame EditBox
 ---@field onTextChangedCallback? function
 
 ---@class GGUI.TextInputConstructorOptions
@@ -1326,7 +1329,7 @@ end
 ---@field onEnterCallback? function Default: Clear Focus
 ---@field onEscapeCallback? function Default: Clear Focus
 
-GGUI.TextInput = GGUI.Object:extend()
+GGUI.TextInput = GGUI.Widget:extend()
 ---@param options GGUI.TextInputConstructorOptions
 function GGUI.TextInput:new(options)
     options = options or {}
@@ -1343,32 +1346,32 @@ function GGUI.TextInput:new(options)
     self.onEscapeCallback = options.onEscapeCallback
 
     local textInput = CreateFrame("EditBox", nil, options.parent, "InputBoxTemplate")
-    self.frame = textInput
-        textInput:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
-        textInput:SetSize(options.sizeX, options.sizeY)
-        textInput:SetAutoFocus(options.autoFocus) -- dont automatically focus
-        textInput:SetFontObject(options.font)
-        textInput:SetText(options.initialValue)
-        textInput:SetScript("OnEscapePressed", function() 
-            if self.oneEnterCallback then
-                self.onEnterCallback(self)
-            else
-                textInput:ClearFocus() 
-            end
-        end)
-        textInput:SetScript("OnEnterPressed", function() 
-            if self.onEscapeCallback then
-                self.onEscapeCallback(self)
-            else
-                textInput:ClearFocus() 
-            end
-        end)
+    GGUI.TextInput.super.new(self, textInput)
+    textInput:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+    textInput:SetSize(options.sizeX, options.sizeY)
+    textInput:SetAutoFocus(options.autoFocus) -- dont automatically focus
+    textInput:SetFontObject(options.font)
+    textInput:SetText(options.initialValue)
+    textInput:SetScript("OnEscapePressed", function() 
+        if self.oneEnterCallback then
+            self.onEnterCallback(self)
+        else
+            textInput:ClearFocus() 
+        end
+    end)
+    textInput:SetScript("OnEnterPressed", function() 
+        if self.onEscapeCallback then
+            self.onEscapeCallback(self)
+        else
+            textInput:ClearFocus() 
+        end
+    end)
 
-        textInput:SetScript("OnTextChanged", function(_, userInput) 
-            if self.onTextChangedCallback then
-                self.onTextChangedCallback(self, self:GetText(), userInput)
-            end
-        end)
+    textInput:SetScript("OnTextChanged", function(_, userInput) 
+        if self.onTextChangedCallback then
+            self.onTextChangedCallback(self, self:GetText(), userInput)
+        end
+    end)
 end
 
 function GGUI.TextInput:GetText()
