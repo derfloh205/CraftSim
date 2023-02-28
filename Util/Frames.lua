@@ -142,7 +142,6 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
 	frame.collapseButton:SetSize(frame.collapseButton:GetTextWidth() + 12, 20)
     frame.collapse = function(self) 
         frame.collapsed = true
-        CraftSimCollapsedFrames[frameID] = true
         -- make smaller and hide content, only show frameTitle
         frame:SetSize(self.originalX, 40)
         frame.collapseButton:SetText("+")
@@ -155,7 +154,6 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     frame.decollapse = function(self) 
         -- restore
         frame.collapsed = false
-        CraftSimCollapsedFrames[frameID] = false
         frame.collapseButton:SetText("-")
         frame:SetSize(self.originalX, self.originalY)
         frame.content:Show()

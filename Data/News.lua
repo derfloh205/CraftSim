@@ -11,7 +11,10 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("7.8.0") ..
-        f.p .. "" ..
+        f.s .. f.r("Warning: ") .. "Collapsed status of frames is" .. 
+        f.a .. "currently not saved and restored on login." ..
+        f.a .. "This is due to preparation for a rework of the frame backend" .. 
+        f.p .. "Fixed a bug when trying to collapse frames" ..
         newP("7.7.1") ..
         f.s .. "Started to extract GUI and UTIL methods into separate libraries" ..
         f.a .. "to make it easier for me to create other addons in the future" ..
