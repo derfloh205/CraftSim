@@ -20,11 +20,14 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         function() 
         end)
 
-        recipeWhisperTab.content.whisperButton = CraftSim.FRAME:CreateButton("Whisper", recipeWhisperTab.content, recipeWhisperTab.content.customerCharacterInput, "LEFT", "RIGHT", 10, 0, 15, 25, true,
-        function ()
-            local whisperTarget = recipeWhisperTab.content.customerCharacterInput:GetText()
-            CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
-        end)
+        recipeWhisperTab.content.whisperButton = CraftSim.GGUI.Button({
+            parent=recipeWhisperTab.content,anchorParent=recipeWhisperTab.content.customerCharacterInput,anchorA="LEFT",anchorB="RIGHT", offsetX=10,sizeX=15,sizeY=25,adjustWidth=true,
+            label="Whisper",
+            clickCallback=function ()
+                local whisperTarget = recipeWhisperTab.content.customerCharacterInput:GetText()
+                CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
+            end
+        })
 
         recipeWhisperTab.content.msgFormatScrollFrame, recipeWhisperTab.content.msgFrameContent =
          CraftSim.FRAME:CreateScrollFrame(recipeWhisperTab.content, -90, 10, -10, 40)
@@ -47,15 +50,19 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 
         recipeWhisperTab.content.messageFormatHelp = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION), recipeWhisperTab.content, recipeWhisperTab.content.messageFormatTitle, "LEFT", "RIGHT", 10, 0)
 
-        recipeWhisperTab.content.resetDefaults = CraftSim.FRAME:CreateButton("Reset to Defaults", recipeWhisperTab.content, recipeWhisperTab.content.messageFormatHelp, "LEFT", "RIGHT", 10, 0, 15, 25, true, function() 
-            local defaultFormat = 
-            "Highest Result: %gc\n" ..
-            "with Inspiration: %ic (%insp)\n" ..
-            "Crafting Costs: %cc\n" ..
-            "%ccd"
-            CraftSimOptions.customerServiceRecipeWhisperFormat = defaultFormat
-            recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(defaultFormat)
-        end)
+        recipeWhisperTab.content.resetDefaults = CraftSim.GGUI.Button({
+            parent=recipeWhisperTab.content,anchorParent=recipeWhisperTab.content.messageFormatHelp,anchorA="LEFT",anchorB="RIGHT", offsetX=10,sizeX=15,sizeY=25,adjustWidth=true,
+            label="Reset to Defaults",
+            clickCallback=function ()
+                local defaultFormat = 
+                "Highest Result: %gc\n" ..
+                "with Inspiration: %ic (%insp)\n" ..
+                "Crafting Costs: %cc\n" ..
+                "%ccd"
+                CraftSimOptions.customerServiceRecipeWhisperFormat = defaultFormat
+                recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(defaultFormat)
+            end
+        })
 
         autoResultTab.content.enableConnections = CraftSim.FRAME:CreateCheckbox("Allow Connections", 
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION), "customerServiceAllowAutoResult", 
@@ -66,10 +73,14 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         function() 
         end)
 
-        autoResultTab.content.inviteButton = CraftSim.FRAME:CreateButton("Send Invite", autoResultTab.content.browserInviteInput, autoResultTab.content.browserInviteInput, "LEFT", "RIGHT", 5, 0, 15, 25, true, function()
-            local whisperTarget = autoResultTab.content.browserInviteInput:GetText()
-            CraftSim.CUSTOMER_SERVICE:WhisperInvite(whisperTarget)
-        end)
+        recipeWhisperTab.content.resetDefaults = CraftSim.GGUI.Button({
+            parent=autoResultTab.content,anchorParent=autoResultTab.content.browserInviteInput,anchorA="LEFT",anchorB="RIGHT", offsetX=5,sizeX=15,sizeY=25,adjustWidth=true,
+            label="Send Invite",
+            clickCallback=function ()
+                local whisperTarget = autoResultTab.content.browserInviteInput:GetText()
+                CraftSim.CUSTOMER_SERVICE:WhisperInvite(whisperTarget)
+            end
+        })
         
         frame.tabs = {recipeWhisperTab, autoResultTab}
         CraftSim.FRAME:InitTabSystem(frame.tabs)

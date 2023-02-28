@@ -394,10 +394,12 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
 
         CraftSim.FRAME:InitTabSystem(frame.content.specializationTabs)
 
-        frame.content.resetButton = CraftSim.FRAME:CreateButton("Reset", 
-        frame.content, spec4, "LEFT", "RIGHT", 40, 0, 15, 25, true, function() 
-            CraftSim.SIMULATION_MODE:ResetSpecData()
-        end)
+        frame.content.resetButton = CraftSim.GGUI.Button({
+            label="Reset", parent=frame.content,anchorParent=spec4,anchorA="LEFT",anchorB="RIGHT", offsetX=40,sizeX=15,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.SIMULATION_MODE:ResetSpecData()   
+            end
+        })
 
         frame.content.legendText = CraftSim.FRAME:CreateText(
             [[

@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("7.8.0") ..
+        f.p .. "" ..
         newP("7.7.1") ..
         f.s .. "Started to extract GUI and UTIL methods into separate libraries" ..
         f.a .. "to make it easier for me to create other addons in the future" ..

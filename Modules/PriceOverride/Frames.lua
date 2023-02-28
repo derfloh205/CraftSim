@@ -114,44 +114,62 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
             end
         end
     
-        overrideOptions.saveButton = CraftSim.FRAME:CreateButton("Save", overrideOptions, overrideOptions.itemIcon.frame, "BOTTOMLEFT", "BOTTOMRIGHT", 3, -25, 15, 25, true, function()
-            CraftSim.PRICE_OVERRIDE:SaveOverrideData(frame.recipeID, frame.currentDropdownData)
-            overrideOptions:updateButtonStatus()
-            CraftSim.MAIN:TriggerModulesErrorSafe()
-        end)
+        overrideOptions.saveButton = CraftSim.GGUI.Button({
+            parent=overrideOptions,anchorParent=overrideOptions.itemIcon.frame,anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",offsetX=3,offsetY=-25,sizeX=15,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.PRICE_OVERRIDE:SaveOverrideData(frame.recipeID, frame.currentDropdownData)
+                overrideOptions:updateButtonStatus()
+                CraftSim.MAIN:TriggerModulesErrorSafe()
+            end,
+            initialStatus="READY",
+            label="Save",
+        })
+        overrideOptions.saveButton:SetStatusList({
+            {
+                statusID="READY",
+                enabled=true,
+                label="Save",
+            },
+            {
+                statusID="SAVED",
+                enabled=false,
+                label="Saved",
+            },
+            {
+                statusID="INVALID",
+                enabled=false,
+                label="Save",
+            },
+        })
 
-        overrideOptions.removeButton = CraftSim.FRAME:CreateButton("Remove", overrideOptions, overrideOptions.saveButton, "LEFT", "RIGHT", 3, 0, 15, 25, true, function()
-            CraftSim.PRICE_OVERRIDE:RemoveOverrideData(frame.recipeID, frame.currentDropdownData)
-            overrideOptions:updateButtonStatus()
-            overrideOptions.currencyInputGold:SetText("")
-            CraftSim.MAIN:TriggerModulesErrorSafe()
-        end)
-
-        function overrideOptions.saveButton:SetStatus(status)
-            if status == "SAVED" then
-                overrideOptions.saveButton:SetText("Saved")
-                overrideOptions.saveButton:SetEnabled(false)
-            elseif status == "READY" then
-                overrideOptions.saveButton:SetText("Save")
-                overrideOptions.saveButton:SetEnabled(true)
-            elseif status == "INVALID" then
-                overrideOptions.saveButton:SetText("Save")
-                overrideOptions.saveButton:SetEnabled(false)
-            end
-        end
+        overrideOptions.removeButton = CraftSim.GGUI.Button({
+            parent=overrideOptions,anchorParent=overrideOptions.saveButton.frame,anchorA="LEFT",anchorB="RIGHT",offsetX=3,sizeX=15,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.PRICE_OVERRIDE:RemoveOverrideData(frame.recipeID, frame.currentDropdownData)
+                overrideOptions:updateButtonStatus()
+                overrideOptions.currencyInputGold:SetText("")
+                CraftSim.MAIN:TriggerModulesErrorSafe()
+            end,
+            label="Remove",
+        })
 
         overrideOptions.currencyInputGold = CraftSim.FRAME:CreateGoldInput(nil, overrideOptions, overrideOptions.itemIcon.frame, "LEFT", "RIGHT", 10, 0, 80, 25, 0, nil, function() overrideOptions:updateButtonStatus() end, true)
     
         frame.content.scrollFrame1, frame.content.activeOverridesBox = CraftSim.FRAME:CreateScrollFrame(frame.content, -170, 50, -50, 30)
         local title = CraftSim.FRAME:CreateText("Active Overrides", frame.content, frame.content.scrollFrame1, "BOTTOM", "TOP", 0, 0)
         CraftSim.FRAME:CreateHelpIcon("'(as result)' -> price override only considered when item is a result of a recipe", frame.content, title, "LEFT", "RIGHT", 3, 0)
-        frame.content.clearAllButton = CraftSim.FRAME:CreateButton("Clear All", frame.content, title, "LEFT", "RIGHT", 30, 0, 15, 18, true, function()
-            CraftSim.PRICE_OVERRIDE:ClearAll()
-            if frame.currentDropdownData then
-                overrideOptions:updateButtonStatus()
+
+        frame.content.clearAllButton = CraftSim.GGUI.Button({
+            label="Clear All", parent=frame.content,anchorParent=title,anchorA="LEFT",anchorB="RIGHT",offsetX=30,sizeX=15,sizeY=18,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.PRICE_OVERRIDE:ClearAll()
+                if frame.currentDropdownData then
+                    overrideOptions:updateButtonStatus()
+                end
+                CraftSim.MAIN:TriggerModulesErrorSafe()
             end
-            CraftSim.MAIN:TriggerModulesErrorSafe()
-        end)
+        })
+
         
         frame.content.activeOverridesBox.overrideList = CraftSim.FRAME:CreateText("", frame.content.activeOverridesBox, frame.content.activeOverridesBox, "TOPLEFT", "TOPLEFT", 0, 0, 0.85, nil, {type="H", value="LEFT"})
         CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)

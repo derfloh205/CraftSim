@@ -109,9 +109,13 @@ function CraftSim.OPTIONS:Init()
         end
     end)
 
-    CraftSim.FRAME:CreateButton("Reset Default", TSMTab.content, tsmMaterialsPriceExpression, "RIGHT", "LEFT", -10, 1, 15, 20, true, function()
-        tsmMaterialsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
-    end)
+    CraftSim.GGUI.Button({
+        parent=TSMTab.content,anchorParent=tsmMaterialsPriceExpression,anchorA="RIGHT",anchorB="LEFT",offsetX=-10,offsetY=1,sizeX=15,sizeY=20,adjustWidth=true,
+        label="Reset Default",
+        clickCallback=function ()
+            tsmMaterialsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
+        end
+    })
 
     local tsmExpressionTitleMaterials = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     tsmExpressionTitleMaterials:SetPoint("BOTTOMLEFT", tsmMaterialsPriceExpression, "TOPLEFT",  0, 10)
@@ -141,9 +145,13 @@ function CraftSim.OPTIONS:Init()
         end
     end)
 
-    CraftSim.FRAME:CreateButton("Reset Default", TSMTab.content, tsmItemsPriceExpression, "RIGHT", "LEFT", -10, 1, 15, 20, true, function()
-        tsmItemsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
-    end)
+    CraftSim.GGUI.Button({
+        parent=TSMTab.content,anchorParent=tsmItemsPriceExpression,anchorA="RIGHT",anchorB="LEFT",offsetX=-10,offsetY=1,sizeX=15,sizeY=20,adjustWidth=true,
+        label="Reset Default",
+        clickCallback=function ()
+            tsmItemsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
+        end
+    })
 
     local tsmExpressionTitleItems = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     tsmExpressionTitleItems:SetPoint("BOTTOMLEFT", tsmItemsPriceExpression, "TOPLEFT",  0, 10)

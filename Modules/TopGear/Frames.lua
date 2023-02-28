@@ -73,10 +73,12 @@ function CraftSim.TOPGEAR.FRAMES:Init()
             CraftSim.TOPGEAR:EquipTopGear()
         end)
     
-        frame.content.simulateButton = CraftSim.FRAME:CreateButton(
-            "Simulate Top Gear", frame.content, frame.content.equipButton, "CENTER", "CENTER", 0, 0, 5, 25, true, function(self) 
+        frame.content.simulateButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.content.equipButton,label="Simulate Top Gear", sizeX=5,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
                 CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MAIN.currentRecipeData)
-            end)
+            end
+        })
         
         frame.content.simModeDropdown = CraftSim.GGUI.Dropdown({
             parent=frame.content, anchorParent=frame.title, anchorA="TOP", anchorB="TOP", offsetY=contentOffsetY, width=120,

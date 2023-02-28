@@ -33,9 +33,12 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         })
         frame.content.scanMode.selectedValue=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
 
-        frame.content.scanButton = CraftSim.FRAME:CreateButton("Scan Recipes", frame.content, frame.content.scanMode.frame, "TOP", "TOP", 0, -30, 15, 25, true, function() 
-            CraftSim.RECIPE_SCAN:StartScan()
-        end)
+        frame.content.scanButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.content.scanMode.frame,label="Scan Recipes", anchorA="TOP", anchorB="TOP",offsetY=-30,sizeX=15,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.RECIPE_SCAN:StartScan()
+            end
+        })
 
         frame.content.includeSoulboundCB = CraftSim.FRAME:CreateCheckbox(
             " Include Soulbound", "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items", 
@@ -59,7 +62,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
          local scrollFrame = frame.content.scrollFrame
          local scrollChild = scrollFrame.scrollChild
          scrollFrame:SetSize(frame.content:GetWidth() , frame.content:GetHeight())
-         scrollFrame:SetPoint("TOP", frame.content.scanButton, "TOP", 0, -50)
+         scrollFrame:SetPoint("TOP", frame.content.scanButton.frame, "TOP", 0, -50)
          scrollFrame:SetPoint("LEFT", frame.content, "LEFT", 20, 0)
          scrollFrame:SetPoint("RIGHT", frame.content, "RIGHT", -35, 0)
          scrollFrame:SetPoint("BOTTOM", frame.content, "BOTTOM", 0, 20)
@@ -103,12 +106,14 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
             resultRowFrame.isActive = false
             resultRowFrame.recipeID = nil
 
-            resultRowFrame.recipeButton = CraftSim.FRAME:CreateButton("->", resultRowFrame, resultRowFrame, "LEFT", "LEFT", 0, 0, 5, 15, true, function() 
-                if resultRowFrame.recipeID then
+            resultRowFrame.recipeButton = CraftSim.GGUI.Button({
+                parent=resultRowFrame,anchorParent=resultRowFrame,anchorA="LEFT",anchorB="LEFT",sizeX=5,sizeY=15,adjustWidth=true,
+                label="->", clickCallback=function ()
                     C_TradeSkillUI.OpenRecipe(resultRowFrame.recipeID)
                 end
-            end)
-            resultRowFrame.learnedText = CraftSim.FRAME:CreateText("", resultRowFrame, resultRowFrame.recipeButton, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
+            })
+
+            resultRowFrame.learnedText = CraftSim.FRAME:CreateText("", resultRowFrame, resultRowFrame.recipeButton.frame, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
             resultRowFrame.learnedText:SetSize(LEARNED_ROW_WIDTH, 25)
             resultRowFrame.profitText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:FormatMoney(1000000000) , resultRowFrame, resultRowFrame.learnedText, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
             resultRowFrame.profitText:SetSize(PROFIT_ROW_WIDTH, 25) -- so the justify does something!

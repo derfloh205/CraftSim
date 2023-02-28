@@ -19,20 +19,26 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
         "TOPLEFT", "BOTTOMLEFT", 0, -5, nil, nil, {type="H", value="LEFT"})
     
 
-        frame.content.clearButton = CraftSim.FRAME:CreateButton("Reset Data", frame.content, frame.content.totalProfitAllTitle, "TOPLEFT", "BOTTOMLEFT", 
-        0, -40, 15, 25, true, function() 
-            frame.content.scrollingMessageFrame:Clear()
-            frame.content.craftedItemsFrame.resultFeed:SetText("")
-            frame.content.totalProfitAllValue:SetText(CraftSim.GUTIL:FormatMoney(0, true))
-            CraftSim.CRAFT_RESULTS:ResetData()
-            CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.MAIN.currentRecipeData.recipeID)
-        end)
+        frame.content.clearButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.content.totalProfitAllTitle, anchorA="TOPLEFT",anchorB="BOTTOMLEFT",
+            sizeX=15,sizeY=25,adjustWidth=true,offsetY=-40, label="Reset Data",
+            clickCallback=function() 
+                frame.content.scrollingMessageFrame:Clear()
+                frame.content.craftedItemsFrame.resultFeed:SetText("")
+                frame.content.totalProfitAllValue:SetText(CraftSim.GUTIL:FormatMoney(0, true))
+                CraftSim.CRAFT_RESULTS:ResetData()
+                CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.MAIN.currentRecipeData.recipeID)
+            end
+        })
 
-        frame.content.exportButton = CraftSim.FRAME:CreateButton("Export JSON", frame.content, frame.content.clearButton, "TOPLEFT", "BOTTOMLEFT", 
-        0, -10, 15, 25, true, function() 
-            local json = CraftSim.CRAFT_RESULTS:ExportJSON()
-            CraftSim.UTIL:KethoEditBox_Show(json)
-        end)
+        frame.content.exportButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.content.clearButton.frame,anchorA="TOPLEFT",anchorB="BOTTOMLEFT",
+            sizeX=25,sizeY=25,offsetY=-10,adjustWidth=true, label="Export JSON",
+            clickCallback=function() 
+                local json = CraftSim.CRAFT_RESULTS:ExportJSON()
+                CraftSim.UTIL:KethoEditBox_Show(json)
+            end
+        })
 
         
         -- craft results

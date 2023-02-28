@@ -446,47 +446,51 @@ function CraftSim.FRAME:InitDebugFrame()
     controlPanel.content.autoScrollCB = CraftSim.FRAME:CreateCheckbox("Autoscroll", "Toggle Log Autoscrolling", "debugAutoScroll", controlPanel.content,
     controlPanel.content, "TOP", "TOP", -120, -30)
 
-    controlPanel.content.clearButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
-	controlPanel.content.clearButton:SetPoint("TOP", controlPanel.content.autoScrollCB, "BOTTOM", 100, 0)	
-	controlPanel.content.clearButton:SetText("Clear")
-	controlPanel.content.clearButton:SetSize(controlPanel.content.clearButton:GetTextWidth()+15, 25)
-    controlPanel.content.clearButton:SetScript("OnClick", function(self) 
-        frame.content.debugBox:SetText("")
-    end)
+    controlPanel.content.clearButton = CraftSim.GGUI.Button({
+        label="Clear", parent=controlPanel.content,anchorParent=controlPanel.content.autoScrollCB,anchorA="TOP",anchorB="BOTTOM",sizeX=15,sizeY=25,adjustWidth=true,
+        clickCallback=function()
+            frame.content.debugBox:SetText("")
+        end,
+        offsetX=100,
+    })
 
-    controlPanel.content.reloadButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
-	controlPanel.content.reloadButton:SetPoint("RIGHT", controlPanel.content.clearButton, "LEFT", -15, 0)	
-	controlPanel.content.reloadButton:SetText("Reload UI")
-	controlPanel.content.reloadButton:SetSize(controlPanel.content.reloadButton:GetTextWidth()+15, 25)
-    controlPanel.content.reloadButton:SetScript("OnClick", function(self) 
-        C_UI.Reload()
-    end)
+    controlPanel.content.reloadButton = CraftSim.GGUI.Button({
+        label="Reload UI", parent=controlPanel.content,anchorParent=controlPanel.content.clearButton.frame,anchorA="RIGHT",anchorB="LEFT",sizeX=15,sizeY=25,adjustWidth=true,
+        clickCallback=function()
+            C_UI.Reload()
+        end,
+        offsetX=-15,
+    })
 
     controlPanel.content.nodeDebugInput = CraftSim.FRAME:CreateInput(
-        "CraftSimDebugNodeIDInput", controlPanel.content, controlPanel.content.clearButton, 
+        "CraftSimDebugNodeIDInput", controlPanel.content, controlPanel.content.clearButton.frame, 
         "TOP", "TOP", -50, -25, 120, 20, "", function() end)
 
-    controlPanel.content.debugNodeButton = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
-	controlPanel.content.debugNodeButton:SetPoint("LEFT", controlPanel.content.nodeDebugInput, "RIGHT", 10, 0)	
-	controlPanel.content.debugNodeButton:SetText("Debug Node")
-	controlPanel.content.debugNodeButton:SetSize(controlPanel.content.debugNodeButton:GetTextWidth()+15, 25)
-    controlPanel.content.debugNodeButton:SetScript("OnClick", function(self) 
-        local nodeIdentifier = CraftSimDebugNodeIDInput:GetText()
-        CraftSim_DEBUG:CheckSpecNode(nodeIdentifier)
-    end)
 
-    controlPanel.content.compareData = CreateFrame("Button", nil, controlPanel.content, "UIPanelButtonTemplate")
-	controlPanel.content.compareData:SetPoint("TOPLEFT", controlPanel.content.nodeDebugInput, "TOPLEFT", -5, -25)	
-	controlPanel.content.compareData:SetText("Compare UI/Spec Data")
-	controlPanel.content.compareData:SetSize(controlPanel.content.compareData:GetTextWidth()+15, 25)
-    controlPanel.content.compareData:SetScript("OnClick", function(self) 
-        CraftSim_DEBUG:CompareStatData()
-    end)
+    controlPanel.content.debugNodeButton = CraftSim.GGUI.Button({
+        label="Debug Node", parent=controlPanel.content,anchorParent=controlPanel.content.nodeDebugInput,anchorA="LEFT",anchorB="RIGHT",sizeX=15,sizeY=25,adjustWidth=true,
+        clickCallback=function ()
+            local nodeIdentifier = CraftSimDebugNodeIDInput:GetText()
+            CraftSim_DEBUG:CheckSpecNode(nodeIdentifier)
+        end,
+        offsetX=10,
+    })
 
-    controlPanel.content.clearCacheButton = CraftSim.FRAME:CreateButton("Clear Cache",
-    controlPanel.content, controlPanel.content.compareData, "LEFT", "RIGHT", 0, 0, 15, 25, true, function(self) 
-        CraftSim.CACHE:ClearAll()
-    end)
+
+    controlPanel.content.compareData = CraftSim.GGUI.Button({
+        label="Compare UI/Spec Data", parent=controlPanel.content,anchorParent=controlPanel.content.nodeDebugInput,anchorA="TOPLEFT",anchorB="TOPLEFT",sizeX=15,sizeY=25,adjustWidth=true,
+        clickCallback=function ()
+            CraftSim_DEBUG:CompareStatData()
+        end,
+        offsetX=-5, offsetY=-25,
+    })
+
+    controlPanel.content.clearCacheButton = CraftSim.GGUI.Button({
+        label="Clear Cache", parent=controlPanel.content,anchorParent=controlPanel.content.compareData.frame,anchorA="LEFT",anchorB="RIGHT",sizeX=15,sizeY=25,adjustWidth=true,
+        clickCallback=function ()
+            CraftSim.CACHE:ClearAll()
+        end
+    })
 
     controlPanel.content.debugIDScrollFrame, controlPanel.content.debugIDSFrame = CraftSim.FRAME:CreateScrollFrame(controlPanel.content, -130, 10, -40, 20)
     local checkBoxOffsetY = 0
@@ -530,11 +534,14 @@ function CraftSim.FRAME:InitWarningFrame()
     frame.content.warningText:SetPoint("TOP", frame.content, "TOP", 0, -20)
     frame.content.warningText:SetText("No Warning")
 
-    frame.content.doNotShowAgainButton = CraftSim.FRAME:CreateButton("I know, do not show this again!", frame.content, frame.content, "TOP", "TOP", 0, -200, 15, 25, true,
-    function()
-            StaticPopup_Show("CRAFT_SIM_ACCEPT_NO_PRICESOURCE_WARNING")
-        end
-    )
+    frame.content.doNotShowAgainButton = CraftSim.GGUI.Button({
+        parent=frame.content,anchorParent=frame.content,anchorA="TOP",anchorB="TOP",offsetY=-200,sizeX=15,sizeY=25,adjustWidth=true,
+        label="I know, do not show this again!",
+            clickCallback=function ()
+                StaticPopup_Show("CRAFT_SIM_ACCEPT_NO_PRICESOURCE_WARNING")
+            end
+    })
+
 
     frame.content.errorBox = CreateFrame("EditBox", nil, frame.content)
     frame.content.errorBox:SetPoint("TOP", frame.content, "TOP", 0, -20)

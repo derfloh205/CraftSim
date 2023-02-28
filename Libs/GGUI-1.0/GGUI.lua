@@ -83,16 +83,17 @@ GGUI.CONST.EMPTY_TEXTURE = "Interface\\containerframe\\bagsitemslot2x"
 
 -- GGUI UTILS
 function GGUI:MakeFrameCloseable(frame, onCloseCallback)
-    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    frame.closeButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)	
-    frame.closeButton:SetText("X")
-    frame.closeButton:SetSize(frame.closeButton:GetTextWidth()+15, 20)
-    frame.closeButton:SetScript("OnClick", function(self) 
-        frame:Hide()
-        if onCloseCallback then
-            onCloseCallback(frame)
+    frame.closeButton = GGUI.Button({
+        parent=frame,anchorParent=frame,offsetX=-20,offsetY=-10,label="X",
+        anchorA="TOP",anchorB="TOPRIGHT",
+        sizeX=15,sizeY=20,adjustWidth=true,
+        clickCallback=function ()
+            frame:Hide()
+            if onCloseCallback then
+                onCloseCallback(frame)
+            end
         end
-    end)
+    })
 end
 function GGUI:MakeFrameMoveable(frame)
     frame.hookFrame:SetMovable(true)

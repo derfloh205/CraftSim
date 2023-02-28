@@ -66,21 +66,23 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         end
     })
 
-    frame.content.optionsButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.optionsButton:SetPoint("RIGHT", frame.content.newsButton.frame, "LEFT", 0, 0)	
-	frame.content.optionsButton:SetText("Options")
-	frame.content.optionsButton:SetSize(frame.content.optionsButton:GetTextWidth()+15, 25)
-    frame.content.optionsButton:SetScript("OnClick", function(self) 
-        InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
-    end)
+    frame.content.optionsButton = CraftSim.GGUI.Button({
+        parent=frame.content, anchorParent=frame.content.newsButton.frame, anchorA="RIGHT", anchorB="LEFT",
+        sizeX=15, sizeY=25, adjustWidth=true,
+        clickCallback=function() 
+            InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+        end,
+        label="Options"
+    })
 
-    frame.content.resetFramesButton = CreateFrame("Button", "CraftSimResetFramesButton", frame.content, "UIPanelButtonTemplate")
-	frame.content.resetFramesButton:SetPoint("RIGHT", frame.content.optionsButton, "LEFT", 0, 0)	
-	frame.content.resetFramesButton:SetText("Reset Frame Positions")
-	frame.content.resetFramesButton:SetSize(frame.content.resetFramesButton:GetTextWidth() + 20, 25)
-    frame.content.resetFramesButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:ResetFrames()
-    end)
+    frame.content.resetFramesButton = CraftSim.GGUI.Button({
+        parent=frame.content, anchorParent=frame.content.optionsButton.frame, anchorA="RIGHT", anchorB="LEFT",
+        sizeX=20, sizeY=25, adjustWidth=true,
+        clickCallback=function() 
+            CraftSim.FRAME:ResetFrames()
+        end,
+        label="Reset Frame Positions"
+    })
     
     -- 1. Row
     frame.content.modulesMaterials = createModuleCheckbox("Material Optimization", 
