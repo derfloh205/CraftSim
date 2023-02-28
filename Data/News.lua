@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("7.8.1") ..
+        f.p .. "" ..
         newP("7.8.0") ..
         f.s .. f.r("Warning: ") .. "Collapsed status of frames is" .. 
         f.a .. "currently not saved and restored on login." ..
