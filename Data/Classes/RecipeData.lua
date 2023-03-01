@@ -121,6 +121,13 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.hasQualityReagents = qualityReagents > 0
 
     self.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
+
+    -- EXCEPTION for Sturdy Expedition Shovel - 388279
+    -- Due to a blizzard bug the recipe's baseItemAmount is 2 although it only produces 1
+    if self.recipeID == 388279 then
+        self.baseItemAmount = 1
+    end
+
     self.isSoulbound = (schematicInfo.outputItemID and CraftSim.GUTIL:isItemSoulbound(schematicInfo.outputItemID)) or false
 
     self.professionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)

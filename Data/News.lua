@@ -12,6 +12,9 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                                 ( You are awesome! )") ..
         newP("7.8.2") ..
         f.p .. "Backend Changes" ..
+        f.p .. "Added an exception for " .. f.bb("Sturdy Expedition Shovel") ..
+        f.a .. "because due to a bug on blizzards side the api" ..
+        f.a .. "tells us it produces 2 instead of 1 items per craft" ..
         newP("7.8.1") ..
         f.p .. f.bb("Salvage Recipes ") .. "are now again showing" ..
         f.a .. "a minus profit based on crafting cost alone." ..
