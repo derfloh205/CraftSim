@@ -43,8 +43,8 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
             parent=frame.content, anchorParent=frame.title.frame,anchorA="TOP",anchorB="TOP",offsetY=-20,
             sizeX=15,sizeY=20, adjustWidth=true,label="Simulate Knowledge Distribution",
             clickCallback=function ()
-                local specSimFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
-                CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM), not specSimFrame:IsVisible())
+                local specSimFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+                CraftSim.FRAME:ToggleFrame(CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM), not specSimFrame:IsVisible())
             end
         })
 

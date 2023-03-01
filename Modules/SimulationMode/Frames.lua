@@ -367,17 +367,21 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
 end
 
 function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
+    local sizeX=1000
+    local sizeY=700
 
-    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame("CraftSimSpecSimFrame", 
-    "CraftSim Knowledge Simulation", 
-    ProfessionsFrame.CraftingPage.SchematicForm, 
-    UIParent, 
-    "CENTER", "CENTER", 0, 0, 1000, 700, CraftSim.CONST.FRAMES.SPEC_SIM, false, true)
-    local frameWO = CraftSim.FRAME:CreateCraftSimFrame("CraftSimSpecSimFrameWO", 
-    "CraftSim Knowledge Simulation", 
-    ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, 
-    UIParent, 
-    "CENTER", "CENTER", 0, 0, 1000, 700, CraftSim.CONST.FRAMES.SPEC_SIM_WO, false, true)
+    local frameNO_WO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.CraftingPage.SchematicForm,anchorParent=UIParent,sizeX=sizeX,sizeY=sizeY,frameID=CraftSim.CONST.FRAMES.SPEC_SIM, frameStrata="FULLSCREEN",
+        closeable=true,collapseable=true, moveable=true,
+        title="CraftSim Knowledge Simulation",
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+    })
+    local frameWO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,anchorParent=UIParent,sizeX=sizeX,sizeY=sizeY,frameID=CraftSim.CONST.FRAMES.SPEC_SIM_WO, frameStrata="FULLSCREEN",
+        closeable=true,collapseable=true, moveable=true,
+        title="CraftSim Knowledge Simulation",
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+    })
     
     local function createContent(frame)
         local spec2 = CraftSim.FRAME:CreateTab(
@@ -715,9 +719,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLay
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local specSimFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        specSimFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM_WO)
+        specSimFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM_WO)
     else
-        specSimFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+        specSimFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
     end
 
     local tab = specSimFrame.content.specializationTabs[tabIndex]
@@ -916,9 +920,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local specModFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        specModFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM_WO)
+        specModFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM_WO)
     else
-        specModFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+        specModFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
     end
     -- save copy of original in frame
     specModFrame.content.activeNodeModFrames = {}
@@ -1131,7 +1135,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     end
     specializationInfoFrame.content.knowledgePointSimulationButton:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
     if not CraftSim.SIMULATION_MODE.isActive then
-        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM):Hide()
+        CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM):Hide()
     end
 
     local reagentOverwriteFrame = simModeFrames.reagentOverwriteFrame
