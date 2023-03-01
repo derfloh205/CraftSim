@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("7.8.2") ..
+        f.p .. "Backend Changes" ..
         newP("7.8.1") ..
         f.p .. f.bb("Salvage Recipes ") .. "are now again showing" ..
         f.a .. "a minus profit based on crafting cost alone." ..
