@@ -77,9 +77,7 @@ function CraftSim.PRICE_OVERRIDE:SaveOverrideData(recipeID, overrideDropdownData
         priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
     end
 
-    local inputInfo = priceOverrideFrame.content.overrideOptions.currencyInputGold:GetInfo()
-
-    local price = (inputInfo and inputInfo.total) or 0
+    local price = priceOverrideFrame.content.overrideOptions.currencyInputGold.total or 0
 
     local overrideData = {
         recipeID = recipeID,

@@ -223,24 +223,24 @@ function GUTIL:ValidateMoneyString(moneyString)
   -- check if the string contains multiple g, s, or c
   if string.match(moneyString, "g.*g") then
       return false
-  end
-  if string.match(moneyString, "s.*s") then
+    end
+    if string.match(moneyString, "s.*s") then
       return false
-  end
-  if string.match(moneyString, "c.*c") then
+    end
+    if string.match(moneyString, "c.*c") then
       return false
-  end
-
-  -- check if it ends incorrectly
-  if string.match(moneyString, "%d$") then
+    end
+    
+    -- check if it ends incorrectly
+    if string.match(moneyString, "%d$") then
       return false
-  end
-
-  -- check if the string contains invalid characters
-  if string.match(moneyString, "[^%dgsc]") then
+    end
+    
+    -- check if the string contains invalid characters
+    if string.match(moneyString, "[^%dgsc]") then
       return false
-  end
-
+    end
+    
   -- all checks passed, the string is valid
   return true
 end

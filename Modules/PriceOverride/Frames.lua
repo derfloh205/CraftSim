@@ -91,14 +91,13 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
 
             local valid = overrideOptions.currencyInputGold.isValid
 
-            print("button update: price:" .. tostring(price))
+            --print("button update: price:" .. tostring(price))
 
             overrideOptions.removeButton:SetEnabled(price)
             if price then
                 -- check if same price as currently set
                 if valid then
-                    local inputInfo = overrideOptions.currencyInputGold:GetInfo()
-                    local priceInput = inputInfo.total
+                    local priceInput = overrideOptions.currencyInputGold.total
                     if price == priceInput then
                         overrideOptions.saveButton:SetStatus("SAVED")
                     else
@@ -147,13 +146,19 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
             clickCallback=function ()
                 CraftSim.PRICE_OVERRIDE:RemoveOverrideData(frame.recipeID, frame.currentDropdownData)
                 overrideOptions:updateButtonStatus()
-                overrideOptions.currencyInputGold:SetText("")
+                overrideOptions.currencyInputGold:SetValue(0)
                 CraftSim.MAIN:TriggerModulesErrorSafe()
             end,
             label="Remove",
         })
 
-        overrideOptions.currencyInputGold = CraftSim.FRAME:CreateGoldInput(nil, overrideOptions, overrideOptions.itemIcon.frame, "LEFT", "RIGHT", 10, 0, 80, 25, 0, nil, function() overrideOptions:updateButtonStatus() end, true)
+        overrideOptions.currencyInputGold = CraftSim.GGUI.CurrencyInput({
+            parent=overrideOptions,anchorParent=overrideOptions.itemIcon.frame,anchorA="LEFT",anchorB="RIGHT",offsetX=10,sizeX=80,sizeY=25,
+            onValidationChangedCallback=function() overrideOptions:updateButtonStatus() end,
+            showFormatHelpIcon=true, initialValue=0,
+
+        })
+        --overrideOptions.currencyInputGold = CraftSim.FRAME:CreateGoldInput(nil, overrideOptions, overrideOptions.itemIcon.frame, "LEFT", "RIGHT", 10, 0, 80, 25, 0, nil, function() overrideOptions:updateButtonStatus() end, true)
     
         frame.content.scrollFrame1, frame.content.activeOverridesBox = CraftSim.FRAME:CreateScrollFrame(frame.content, -170, 50, -50, 30)
         local title = CraftSim.FRAME:CreateText("Active Overrides", frame.content, frame.content.scrollFrame1, "BOTTOM", "TOP", 0, 0)

@@ -172,6 +172,12 @@ function GGUI.Widget:SetVisible(visible)
         self:Hide()
     end
 end
+function GGUI.Widget:GetHeight()
+    return self.frame:GetHeight()
+end
+function GGUI.Widget:GetWidth()
+    return self.frame:GetWidth()
+end
 --- GGUI Frame
 
 ---@class GGUI.Frame
@@ -1389,6 +1395,9 @@ function GGUI.CurrencyInput:new(options)
     options.borderWidth = options.borderWidth or 25
     options.showFormatHelpIcon = options.showFormatHelpIcon or false
 
+    self.onValidationChangedCallback = options.onValidationChangedCallback
+    self.onValueValidCallback = options.onValueValidCallback
+
     local currencyInput = self
 
     currencyInput.isValid = true
@@ -1408,7 +1417,7 @@ function GGUI.CurrencyInput:new(options)
         sizeX=options.sizeX,
         sizeY=options.sizeY,
         initialValue=options.initialValue,
-        onTextChangedCallback= function(self, input, userInput) 
+        onTextChangedCallback= function(self, input, userInput)             
             if userInput then
                 -- validate and color text, and adapt save button
                 input = input or ""
@@ -1417,7 +1426,7 @@ function GGUI.CurrencyInput:new(options)
                 input = string.gsub(input, CraftSim.GUTIL.COLORS.SILVER, "")
                 input = string.gsub(input, CraftSim.GUTIL.COLORS.COPPER, "")
                 input = string.gsub(input, "|r", "")
-                input = string.gsub(input, "|", "")
+                input = string.gsub(input, "|c", "")
     
                 local valid = GUTIL:ValidateMoneyString(input)
                 currencyInput.isValid = valid
@@ -1431,7 +1440,7 @@ function GGUI.CurrencyInput:new(options)
                     local sC = GUTIL:ColorizeText("s", CraftSim.GUTIL.COLORS.SILVER)
                     local cC = GUTIL:ColorizeText("c", CraftSim.GUTIL.COLORS.COPPER)
                     local colorizedText = ((gold > 0 and (gold .. gC)) or "") .. ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
-                    currencyInput.frame:SetText(colorizedText)
+                    currencyInput.textInput:SetText(colorizedText)
     
     
                     currencyInput.gold = gold
@@ -1442,9 +1451,10 @@ function GGUI.CurrencyInput:new(options)
                         currencyInput.onValueValidCallback(currencyInput)
                     end    
                 end
-    
+
+                
                 currencyInput.border:SetValid(valid)
-    
+                
                 if currencyInput.onValidationChangedCallback then
                     currencyInput.onValidationChangedCallback(valid)
                 end
@@ -1454,10 +1464,10 @@ function GGUI.CurrencyInput:new(options)
 
     self.textInput = textInput
 
-    local validationBorder = CreateFrame("Frame", nil, textInput, "BackdropTemplate")
+    local validationBorder = CreateFrame("Frame", nil, textInput.frame, "BackdropTemplate")
     self.border = validationBorder
     validationBorder:SetSize(textInput:GetWidth()*1.3*options.borderAdjustWidth, textInput:GetHeight()*1.6*options.borderAdjustHeight)
-    validationBorder:SetPoint("CENTER", textInput, "CENTER", -2, 0)
+    validationBorder:SetPoint("CENTER", textInput.frame, "CENTER", -2, 0)
     validationBorder:SetBackdrop({
         edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight",
         edgeSize = options.borderWidth,
@@ -1476,7 +1486,7 @@ function GGUI.CurrencyInput:new(options)
     self:SetValue(options.initialValue)
 
     if options.showFormatHelpIcon then
-        CraftSim.FRAME:CreateHelpIcon("Format: 100g10s1c", textInput, textInput, "LEFT", "RIGHT", 5, 0)
+        CraftSim.FRAME:CreateHelpIcon("Format: 100g10s1c", textInput.frame, textInput.frame, "LEFT", "RIGHT", 5, 0)
     end
 end
 
