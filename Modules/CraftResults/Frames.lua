@@ -17,10 +17,9 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
         closeable=true,
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameStrata="FULLSCREEN"
-    })
-    -- TODO: "modulesCraftResults"
-    
+        frameStrata="FULLSCREEN",
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCraftResults"),
+    })    
     
         local function createContent(frame)
         frame.content.totalProfitAllTitle = CraftSim.FRAME:CreateText("Session Profit", frame.content, frame.content, 

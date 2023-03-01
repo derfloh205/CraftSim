@@ -6,14 +6,23 @@ CraftSim.CUSTOMER_SERVICE.timeoutSeconds = 5
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_SERVICE)
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
-    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimCustomerServiceFrame", "CraftSim Customer Service",
-    ProfessionsFrame, UIParent, "CENTER", "CENTER", 0, 0, 
-    400, 300, CraftSim.CONST.FRAMES.CUSTOMER_SERVICE, false, true, "DIALOG", "modulesCustomerService")
+    local frame = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame, 
+        sizeX=400,sizeY=300,
+        frameID=CraftSim.CONST.FRAMES.CUSTOMER_SERVICE, 
+        title="CraftSim Customer Service",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata="DIALOG",
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCustomerService"),
+    })
 
     local function createContent(frame)
         frame:Hide()
-        local recipeWhisperTab = CraftSim.FRAME:CreateTab("Recipe Whisper", frame.content, frame.title, "TOP", "BOTTOM", -90, -15, true, 300, 250, frame.content, frame.title, 0, -50)
-        local autoResultTab = CraftSim.FRAME:CreateTab("Live Preview", frame.content, recipeWhisperTab, "LEFT", "RIGHT", 0, 0, true, 300, 250, frame.content, frame.title, 0, -50)
+        local recipeWhisperTab = CraftSim.FRAME:CreateTab("Recipe Whisper", frame.content, frame.title.frame, "TOP", "BOTTOM", -90, -15, true, 300, 250, frame.content, frame.title.frame, 0, -50)
+        local autoResultTab = CraftSim.FRAME:CreateTab("Live Preview", frame.content, recipeWhisperTab, "LEFT", "RIGHT", 0, 0, true, 300, 250, frame.content, frame.title.frame, 0, -50)
 
         recipeWhisperTab.content.customerCharacterInput = CraftSim.FRAME:CreateInput(nil, recipeWhisperTab.content, recipeWhisperTab.content, "TOPLEFT", "TOPLEFT", 10, -30, 150, 25, 
         "", 

@@ -181,7 +181,7 @@ function CraftSim.FRAME:MakeCloseable(frame, moduleOption)
         frame:Hide()
         if moduleOption then
             CraftSimOptions[moduleOption] = false
-            local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
+            local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
 
             controlPanel.content[moduleOption]:SetChecked(false)
         end
@@ -857,4 +857,11 @@ function CraftSim.FRAME:CreateNumericInput(name, parent, anchorParent, anchorA, 
     end)
 
     return numericInput
+end
+
+function CraftSim.FRAME:HandleModuleClose(moduleOption)
+    return function ()
+        CraftSimOptions[moduleOption] = false
+        CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL).content[moduleOption]:SetChecked(false)
+    end
 end

@@ -383,4 +383,3 @@ function CraftSim.UTIL:GetSchematicFormByVisibility()
         return ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm
     end
 end
-

@@ -18,8 +18,8 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         closeable=true,
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesStatWeights"),
     })
-    -- TODO: react to modulesStatWeights when closed
 
     local frameWorkOrder = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails, 
@@ -32,6 +32,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         closeable=true,
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesStatWeights"),
     })
 
     local function createContent(frame, profitDetailsFrameID, statisticsFrameID)
