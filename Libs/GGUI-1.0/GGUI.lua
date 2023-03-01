@@ -181,6 +181,9 @@ end
 function GGUI.Widget:SetTransparency(transparency)
     self.frame:SetBackdropColor(0, 0, 0 , transparency) -- TODO: with current color
 end
+function GGUI.Widget:IsVisible()
+    return self.frame:IsVisible()
+end
 --- GGUI Frame
 
 ---@class GGUI.Frame

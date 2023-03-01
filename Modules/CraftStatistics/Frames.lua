@@ -5,18 +5,32 @@ CraftSim.STATISTICS.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
 
 function CraftSim.STATISTICS.FRAMES:Init()
-    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimStatisticsFrame", 
-        "CraftSim Profit Statistics", 
-        CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame,
-        UIParent, 
-        "CENTER", 
-        "CENTER", 
-        0, 
-        0, 
-        700,
-        400,
-        CraftSim.CONST.FRAMES.STATISTICS, false, true, "DIALOG")
+    local sizeX = 700
+    local sizeY = 400
+
+    local frameNO_WO = CraftSim.GGUI.Frame({
+        parent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.STATISTICS, 
+        title="CraftSim Statistics",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata="DIALOG",
+    })
+
+    local frameWO = CraftSim.GGUI.Frame({
+        parent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER).frame, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.STATISTICS_WORKORDER, 
+        title="CraftSim Statistics " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata="DIALOG",
+    })
 
 
     local function createContent(frame)
@@ -116,10 +130,11 @@ function CraftSim.STATISTICS.FRAMES:Init()
     end
 
     createContent(frameNO_WO)
+    createContent(frameWO)
 end
 
 function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
-    local statisticsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STATISTICS)
+    local statisticsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STATISTICS)
     local meanProfit, probabilityTable = CraftSim.CALC:GetAverageProfit(recipeData)
 
     if not probabilityTable then

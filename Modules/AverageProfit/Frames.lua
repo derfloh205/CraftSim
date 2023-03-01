@@ -37,7 +37,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     local function createContent(frame, profitDetailsFrameID, statisticsFrameID)
         frame.content.breakdownButton = CraftSim.GGUI.Button({
             parent=frame.content,anchorParent=frame.title.frame,anchorA="TOP",anchorB="TOP",
-            offsetX= (statisticsFrameID and -60) or 0, offsetY=-15,
+            offsetX= -60, offsetY=-15,
             label="Show Explanation", sizeX=15,sizeY=20,adjustWidth=true,
             clickCallback=function ()
                 local profitDetailsFrame = CraftSim.FRAME:GetFrame(profitDetailsFrameID) 
@@ -47,16 +47,14 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
             end
         })
 
-        if statisticsFrameID then
-            frame.content.statisticsButton = CraftSim.GGUI.Button({
-                label="Show Statistics", parent=frame.content,anchorParent=frame.content.breakdownButton.frame,anchorA="LEFT",anchorB="RIGHT",offsetX=1,sizeX=15,sizeY=20,
-                adjustWidth=true,
-                clickCallback=function() 
-                    local statisticsFrame = CraftSim.FRAME:GetFrame(statisticsFrameID)
-                    CraftSim.FRAME:ToggleFrame(statisticsFrame, not statisticsFrame:IsVisible())
-                end
-            })
-        end
+        frame.content.statisticsButton = CraftSim.GGUI.Button({
+            label="Show Statistics", parent=frame.content,anchorParent=frame.content.breakdownButton.frame,anchorA="LEFT",anchorB="RIGHT",offsetX=1,sizeX=15,sizeY=20,
+            adjustWidth=true,
+            clickCallback=function() 
+                local statisticsFrame = CraftSim.GGUI:GetFrame(statisticsFrameID)
+                CraftSim.FRAME:ToggleFrame(statisticsFrame, not statisticsFrame:IsVisible())
+            end
+        })
         
 
         frame.content.statText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -68,7 +66,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     end
 
     createContent(frameNonWorkOrder, CraftSim.CONST.FRAMES.PROFIT_DETAILS, CraftSim.CONST.FRAMES.STATISTICS)
-    createContent(frameWorkOrder, CraftSim.CONST.FRAMES.PROFIT_DETAILS_WORK_ORDER)
+    createContent(frameWorkOrder, CraftSim.CONST.FRAMES.PROFIT_DETAILS_WORK_ORDER, CraftSim.CONST.FRAMES.STATISTICS_WORKORDER)
 
     
 end
