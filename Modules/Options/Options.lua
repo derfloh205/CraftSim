@@ -196,10 +196,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyMaterials, -- get from options..
         "0", "1", 
         function(self, value)
-            CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
+            CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
             CraftSimOptions.transparencyMaterials = value
         end)
-    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions.transparencyMaterials)
+    CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions.transparencyMaterials)
 
     CraftSim.FRAME:CreateText("Material Optimizing Module", 
     ModulesTab.content, materialSuggestionTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)

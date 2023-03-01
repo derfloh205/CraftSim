@@ -7,36 +7,38 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIM
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     local sizeX = 280
     local sizeY = 270
-    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimMaterialOptimizationFrame", 
-        "CraftSim Material Optimization", 
-        ProfessionsFrame.CraftingPage.SchematicForm, 
-        CraftSimCostOverviewFrame, 
-        "TOPLEFT", 
-        "TOPRIGHT", 
-        -10, 
-        0, 
-        sizeX, 
-        sizeY,
-        CraftSim.CONST.FRAMES.MATERIALS, false, true, nil, "modulesMaterials")
 
-    local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimMaterialOptimizationWOFrame", 
-        "CraftSim Material Optimization " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY), 
-        ProfessionsFrame.OrdersPage.OrderView.OrderDetails, 
-        CraftSimCostOverviewFrame, 
-        "TOPLEFT", 
-        "TOPRIGHT", 
-        -10, 
-        0, 
-        sizeX, 
-        sizeY,
-        CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER, false, true, nil, "modulesMaterials")
+    local frameWO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
+        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER).frame, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER, 
+        title="CraftSim Material Optimization " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        anchorA="TOPLEFT",anchorB="TOPRIGHT",offsetX=-10,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesMaterials"),
+    })
+    local frameNO_WO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW).frame, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.MATERIALS, 
+        title="CraftSim Material Optimization",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        anchorA="TOPLEFT",anchorB="TOPRIGHT",offsetX=-10,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesMaterials"),
+    })
 
     local function createContent(frame)
     
         frame.content.inspirationCheck = CreateFrame("CheckButton", nil, frame.content, "ChatConfigCheckButtonTemplate")
-        frame.content.inspirationCheck:SetPoint("TOP", frame.title, -90, -20)
+        frame.content.inspirationCheck:SetPoint("TOP", frame.title.frame, -90, -20)
         frame.content.inspirationCheck.Text:SetText(" Reach Inspiration Breakpoint")
         frame.content.inspirationCheck.tooltip = "Try to reach the skill breakpoint where an inspiration proc upgrades to the next higher quality with the cheapest material combination"
         frame.content.inspirationCheck:SetChecked(CraftSimOptions.materialSuggestionInspirationThreshold)
@@ -47,7 +49,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         end)
     
         frame.content.qualityText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        frame.content.qualityText:SetPoint("TOP", frame.title, "TOP", 0, -45)
+        frame.content.qualityText:SetPoint("TOP", frame.title.frame, "TOP", 0, -45)
         frame.content.qualityText:SetText("Reachable Quality: ")
     
         frame.content.qualityIcon = CraftSim.GGUI.QualityIcon({
@@ -140,9 +142,9 @@ end
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, optimizationResult, exportMode)
     local materialFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+        materialFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
     else
-        materialFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
+        materialFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
     end
 
     local isSameAllocation = false

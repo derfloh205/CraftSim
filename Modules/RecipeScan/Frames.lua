@@ -9,24 +9,26 @@ local LEARNED_ROW_WIDTH = 35
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
 function CraftSim.RECIPE_SCAN.FRAMES:Init()
-    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimRecipeScan", 
-        "CraftSim Recipe Scan", 
-        ProfessionsFrame.CraftingPage.SchematicForm, 
-        ProfessionsFrame.CraftingPage.SchematicForm, 
-        "CENTER", 
-        "CENTER", 
-        0, 
-        0, 
-        700, 
-        400,
-        CraftSim.CONST.FRAMES.RECIPE_SCAN, false, true, "DIALOG", "modulesRecipeScan")
+
+    local frameNO_WO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent=ProfessionsFrame.CraftingPage.SchematicForm, 
+        sizeX=700,sizeY=400,
+        frameID=CraftSim.CONST.FRAMES.RECIPE_SCAN, 
+        title="CraftSim Recipe Scan",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        frameStrata="DIALOG",
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesRecipeScan"),
+    })
 
     local function createContent(frame)
         frame:Hide()
 
         frame.content.scanMode = CraftSim.GGUI.Dropdown({
-            parent=frame.content, anchorParent=frame.title, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170,
+            parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170,
             initialValue=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I,
             label="Scan Mode",
             initialData=CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return {label=e, value=e} end)
@@ -165,7 +167,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
 end
 
 function CraftSim.RECIPE_SCAN:ResetResults()
-    local RecipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+    local RecipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
 
     for _, resultRowFrame in pairs(RecipeScanFrame.content.resultRowFrames) do
         resultRowFrame:Hide()
@@ -178,7 +180,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
     
-    local RecipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+    local RecipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
     -- get first non active row
     local availableRow = CraftSim.GUTIL:Find(RecipeScanFrame.content.resultRowFrames, function(frame) return not frame.isActive end)
     local numActiveFrames = CraftSim.GUTIL:Count(RecipeScanFrame.content.resultRowFrames, function(frame) return frame.isActive end)

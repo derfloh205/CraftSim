@@ -404,7 +404,7 @@ end
 
 function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
-	local recipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+	local recipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
 	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerServiceFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
 	local priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
@@ -416,8 +416,8 @@ function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	local topgearFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
 	local costOverviewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
 	local costOverviewFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
-	local materialOptimizationFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
-	local materialOptimizationFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
+	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
 	-- hide control panel and return
 	if not keepControlPanel then
 		controlPanel:Hide()
@@ -447,7 +447,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		return
 	end
 
-	local recipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+	local recipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
 	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerServiceFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
 	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
@@ -459,8 +459,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local topgearFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
 	local costOverviewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
 	local costOverviewFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
-	local materialOptimizationFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
-	local materialOptimizationFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
+	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
 
 	-- local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
 	local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)

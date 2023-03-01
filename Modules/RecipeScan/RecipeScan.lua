@@ -14,12 +14,12 @@ CraftSim.RECIPE_SCAN.SCAN_MODES = {
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
 function CraftSim.RECIPE_SCAN:GetScanMode()
-    local RecipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+    local RecipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
     return RecipeScanFrame.content.scanMode.selectedValue
 end
 
 function CraftSim.RECIPE_SCAN:ToggleScanButton(value)
-    local frame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+    local frame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
     frame.content.scanButton:SetEnabled(value)
     if not value then
         frame.content.scanButton:SetText("Scanning 0%")
@@ -32,7 +32,7 @@ function CraftSim.RECIPE_SCAN:UpdateScanPercent(currentProgress, maxProgress)
     local currentPercentage = CraftSim.GUTIL:Round(currentProgress / (maxProgress / 100))
 
     if currentPercentage % 1 == 0 then
-        local frame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+        local frame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
         frame.content.scanButton:SetText("Scanning " .. currentPercentage .. "%")
     end
 end
