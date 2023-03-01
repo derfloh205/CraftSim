@@ -12,7 +12,7 @@ function CraftSim.COSTOVERVIEW.FRAMES:Init()
 
     local frameNO_WO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm, 
-        anchorParent=CraftSimSimFrame,
+        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR).frame,
         anchorA="TOP",anchorB="BOTTOM",
         offsetX=offsetX,offsetY=offsetY,
         sizeX=sizeX,sizeY=sizeY,
@@ -27,7 +27,7 @@ function CraftSim.COSTOVERVIEW.FRAMES:Init()
 
     local frameWO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, 
-        anchorParent=CraftSimSimFrame,
+        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR).frame,
         anchorA="TOP",anchorB="BOTTOM",
         offsetX=offsetX,offsetY=offsetY,
         sizeX=sizeX,sizeY=sizeY,

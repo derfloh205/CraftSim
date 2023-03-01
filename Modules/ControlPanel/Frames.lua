@@ -47,7 +47,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         label="Debug",parent=frame.content,anchorParent=frame.content.newsButton.frame,anchorA="TOPLEFT",anchorB="BOTTOMLEFT",
         sizeX=15,sizeY=25,adjustWidth=true,
         clickCallback=function() 
-            CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
+            CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
         end
     })
 

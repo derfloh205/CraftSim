@@ -1120,14 +1120,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     local bestQBox = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         bestQBox = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.AllocateBestQualityCheckBox
-        specializationInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO_WO)
+        specializationInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO_WO)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.OptionalReagents, not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
     else
         bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
-        specializationInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
+        specializationInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
     end
     specializationInfoFrame.content.knowledgePointSimulationButton:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
     if not CraftSim.SIMULATION_MODE.isActive then

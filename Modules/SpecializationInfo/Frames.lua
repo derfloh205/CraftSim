@@ -5,22 +5,42 @@ CraftSim.SPECIALIZATION_INFO.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
-    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame("CraftSimSpecInfoFrame", 
-    "CraftSim Specialization Info", 
-    ProfessionsFrame.CraftingPage.SchematicForm, 
-    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR), 
-    "TOPLEFT", "TOPRIGHT", -10, 0, 310, 300, CraftSim.CONST.FRAMES.SPEC_INFO, true, true, nil, "modulesSpecInfo")
-    local frameWO = CraftSim.FRAME:CreateCraftSimFrame("CraftSimSpecInfoFrameWO", 
-    "CraftSim Specialization Info", 
-    ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, 
-    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER), 
-    "TOPLEFT", "TOPRIGHT", -10, 0, 310, 300, CraftSim.CONST.FRAMES.SPEC_INFO_WO, true, true, nil, "modulesSpecInfo")
+    local sizeX=310
+    local sizeY=300
+    local offsetX=-10
+
+    local frameNO_WO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR).frame, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.SPEC_INFO, 
+        title="CraftSim Specialization Info",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        anchorA="TOPLEFT",anchorB="TOPRIGHT",offsetX=offsetX,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesSpecInfo"),
+    })
+    local frameWO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER).frame, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.SPEC_INFO_WO, 
+        title="CraftSim Specialization Info",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        anchorA="TOPLEFT",anchorB="TOPRIGHT",offsetX=offsetX,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesSpecInfo"),
+    })
 
     local function createContent(frame)
         frame:Hide()
     
         frame.content.knowledgePointSimulationButton = CraftSim.GGUI.Button({
-            parent=frame.content, anchorParent=frame.title,anchorA="TOP",anchorB="TOP",offsetY=-20,
+            parent=frame.content, anchorParent=frame.title.frame,anchorA="TOP",anchorB="TOP",offsetY=-20,
             sizeX=15,sizeY=20, adjustWidth=true,label="Simulate Knowledge Distribution",
             clickCallback=function ()
                 local specSimFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
@@ -54,7 +74,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         local maxNodeLines = 31
         frame.content.AddNodeLine = function()
             local numNodeLines = #frame.content.nodeLines
-            table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title, baseY + nodeLineSpacingY*(numNodeLines-1)))
+            table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title.frame, baseY + nodeLineSpacingY*(numNodeLines-1)))
         end
         
         for i = 1, maxNodeLines, 1 do
@@ -70,9 +90,9 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local specInfoFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO_WO)
+        specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO_WO)
     else
-        specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
+        specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
     end
 
     local specializationData = recipeData.specializationData

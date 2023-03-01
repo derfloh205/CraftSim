@@ -75,7 +75,7 @@ function CraftSim_DEBUG:print(debugOutput, debugID, recursive, printLabel, level
         if type(debugOutput) == "table" then
             CraftSim.UTIL:PrintTable(debugOutput, debugID, recursive, level)
         else
-            local debugFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG)
+            local debugFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.DEBUG)
             debugFrame.addDebug(debugOutput, debugID, printLabel)
         end
     end

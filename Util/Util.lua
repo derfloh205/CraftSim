@@ -9,7 +9,7 @@ local craftingspeedFactor = 0.002
 
 function CraftSim.UTIL:SetDebugPrint(debugID)
     local function print(text, recursive, l, level)
-        if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
+        if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
             CraftSim_DEBUG:print(text, debugID, recursive, l, level)
         else
             print(text)

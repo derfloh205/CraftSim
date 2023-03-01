@@ -5,31 +5,37 @@ CraftSim.TOPGEAR.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.TOP_GEAR)
 
 function CraftSim.TOPGEAR.FRAMES:Init()
-    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimSimFrame", 
-        "CraftSim Top Gear", 
-        ProfessionsFrame.CraftingPage.SchematicForm,
-        ProfessionsFrame.CloseButton, 
-        "TOPLEFT", 
-        "TOPRIGHT", 
-        -5, 
-        3, 
-        250, 
-        320,
-        CraftSim.CONST.FRAMES.TOP_GEAR, false, true, nil, "modulesTopGear")
+    local sizeX=250
+    local sizeY=320
+    local offsetX=-5
+    local offsetY=3
 
-    local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimSimWOFrame", 
-        "CraftSim Top Gear " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY), 
-        ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
-        ProfessionsFrame.CloseButton, 
-        "TOPLEFT", 
-        "TOPRIGHT", 
-        -5, 
-        3, 
-        250, 
-        320,
-        CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER, false, true, nil, "modulesTopGear")
+    local frameWO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent=ProfessionsFrame.CloseButton, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER, 
+        title="CraftSim Top Gear " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        anchorA="TOPLEFT",anchorB="TOPRIGHT",offsetX=offsetX,offsetY=offsetY,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesTopGear"),
+    })
+    local frameNO_WO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent=ProfessionsFrame.CloseButton, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.TOP_GEAR, 
+        title="CraftSim Top Gear",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        anchorA="TOPLEFT",anchorB="TOPRIGHT",offsetX=offsetX,offsetY=offsetY,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesTopGear"),
+    })
 
     local function createContent(frame)
     
@@ -81,7 +87,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         })
         
         frame.content.simModeDropdown = CraftSim.GGUI.Dropdown({
-            parent=frame.content, anchorParent=frame.title, anchorA="TOP", anchorB="TOP", offsetY=contentOffsetY, width=120,
+            parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=contentOffsetY, width=120,
             clickCallback=function(_, _, value) 
                 CraftSimOptions.topGearMode = value
                 CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MAIN.currentRecipeData)
@@ -137,9 +143,9 @@ function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData, isClear, export
     if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
         return
     elseif exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
     else
-        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
     end
 
     local emptyProfessionGearSet = CraftSim.ProfessionGearSet(recipeData.professionData.professionInfo.profession)
@@ -167,10 +173,10 @@ function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearSet, expor
     local topGearFrame
     local gIcons
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
         gIcons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
     elseif exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
-        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
         gIcons = {topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon}
     end
 
@@ -200,9 +206,9 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, expo
     if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
         return
     elseif exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
     else
-        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
     end
     local topResult = results[1] -- as they are already sorted 
     CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(topResult.professionGearSet, exportMode)
@@ -260,9 +266,9 @@ function CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(recipeData, exportMode)
 
     local topGearFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
     else
-        topGearFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
     end
 
 

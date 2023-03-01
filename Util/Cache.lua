@@ -3,7 +3,7 @@ AddonName, CraftSim = ...
 CraftSim.CACHE = {}
 
 local function print(text, recursive, l) -- override
-    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
+    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
         CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.CACHE, recursive, l)
     else
         print(text)

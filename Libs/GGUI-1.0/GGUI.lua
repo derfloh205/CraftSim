@@ -156,6 +156,9 @@ end
 function GGUI.Widget:SetScript(...)
     self.frame:SetScript(...)
 end
+function GGUI.Widget:HookScript(...)
+    self.frame:HookScript(...)
+end
 function GGUI.Widget:Show()
     self.frame:Show()
 end

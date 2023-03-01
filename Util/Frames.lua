@@ -398,47 +398,58 @@ function CraftSim.FRAME:CreateHelpIcon(text, parent, anchorParent, anchorA, anch
 end
 
 function CraftSim.FRAME:InitDebugFrame()
-    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimDebugFrame", "CraftSim Debug", 
-    UIParent, 
-    UIParent, 
-    "BOTTOMRIGHT", "BOTTOMRIGHT", 0, 0, 400, 400, CraftSim.CONST.FRAMES.DEBUG, true, true)
-    CraftSim.FRAME:ToggleFrame(frame, CraftSimOptions.debugVisible)
+    local debugFrame = CraftSim.GGUI.Frame({
+        anchorA="BOTTOMRIGHT",anchorB="BOTTOMRIGHT",
+        sizeX=400,sizeY=400,
+        frameID=CraftSim.CONST.FRAMES.DEBUG, 
+        title="CraftSim Debug",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        scrollableContent=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        parent=UIParent,anchorParent=UIParent,
+    })
 
-    frame:HookScript("OnShow", function() CraftSimOptions.debugVisible = true end)
-    frame:HookScript("OnHide", function() CraftSimOptions.debugVisible = false end)
+    CraftSim.FRAME:ToggleFrame(debugFrame, CraftSimOptions.debugVisible)
 
-    frame.content.debugBox = CreateFrame("EditBox", nil, frame.content)
-    frame.content.debugBox:SetPoint("TOP", frame.content, "TOP", 0, -20)
-    frame.content.debugBox:SetText("")
-    frame.content.debugBox:SetWidth(frame.content:GetWidth() - 15)
-    frame.content.debugBox:SetHeight(20)
-    frame.content.debugBox:SetMultiLine(true)
-    frame.content.debugBox:SetAutoFocus(false)
-    frame.content.debugBox:SetFontObject("ChatFontNormal")
-    frame.content.debugBox:SetScript("OnEscapePressed", function() frame.content.debugBox:ClearFocus() end)
-    frame.content.debugBox:SetScript("OnEnterPressed", function() frame.content.debugBox:ClearFocus() end)
+    debugFrame:HookScript("OnShow", function() CraftSimOptions.debugVisible = true end)
+    debugFrame:HookScript("OnHide", function() CraftSimOptions.debugVisible = false end)
 
-    frame.addDebug = function(debugOutput, debugID, printLabel) 
-        if frame:IsVisible() then -- to not make it too bloated over time
-            local currentOutput = frame.content.debugBox:GetText()
+    debugFrame.content.debugBox = CreateFrame("EditBox", nil, debugFrame.content)
+    debugFrame.content.debugBox:SetPoint("TOP", debugFrame.content, "TOP", 0, -20)
+    debugFrame.content.debugBox:SetText("")
+    debugFrame.content.debugBox:SetWidth(debugFrame.content:GetWidth() - 15)
+    debugFrame.content.debugBox:SetHeight(20)
+    debugFrame.content.debugBox:SetMultiLine(true)
+    debugFrame.content.debugBox:SetAutoFocus(false)
+    debugFrame.content.debugBox:SetFontObject("ChatFontNormal")
+    debugFrame.content.debugBox:SetScript("OnEscapePressed", function() debugFrame.content.debugBox:ClearFocus() end)
+    debugFrame.content.debugBox:SetScript("OnEnterPressed", function() debugFrame.content.debugBox:ClearFocus() end)
+
+    debugFrame.addDebug = function(debugOutput, debugID, printLabel) 
+        if debugFrame:IsVisible() then -- to not make it too bloated over time
+            local currentOutput = debugFrame.content.debugBox:GetText()
             if printLabel then
-                frame.content.debugBox:SetText(currentOutput .. "\n\n- " .. debugID .. ":\n" .. tostring(debugOutput))
+                debugFrame.content.debugBox:SetText(currentOutput .. "\n\n- " .. debugID .. ":\n" .. tostring(debugOutput))
             else
-                frame.content.debugBox:SetText(currentOutput .. "\n" .. tostring(debugOutput))
+                debugFrame.content.debugBox:SetText(currentOutput .. "\n" .. tostring(debugOutput))
             end
         end
     end
 
-    frame.scrollFrame:HookScript("OnScrollRangeChanged", function() 
+    debugFrame.frame.scrollFrame:HookScript("OnScrollRangeChanged", function() 
         if CraftSimOptions.debugAutoScroll then
-            frame.scrollFrame:SetVerticalScroll(frame.scrollFrame:GetVerticalScrollRange())
+            debugFrame.frame.scrollFrame:SetVerticalScroll(debugFrame.frame.scrollFrame:GetVerticalScrollRange())
         end
     end)
 
-    local controlPanel = CraftSim.FRAME:CreateCraftSimFrame("CraftSimDebugControlFrame", "Debug Control", 
-    frame, 
-    frame, 
-    "TOPRIGHT", "TOPLEFT", 10, 0, 300, 400, CraftSim.CONST.FRAMES.DEBUG_CONTROL)
+    local controlPanel = CraftSim.GGUI.Frame({
+        parent=debugFrame.frame,anchorParent=debugFrame.frame,
+        anchorA="TOPRIGHT",anchorB="TOPLEFT",title="Debug Control",
+        offsetX=10,sizeX=300,sizeY=400,frameID=CraftSim.CONST.FRAMES.DEBUG_CONTROL,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS
+    })
 
     controlPanel.content.autoScrollCB = CraftSim.FRAME:CreateCheckbox("Autoscroll", "Toggle Log Autoscrolling", "debugAutoScroll", controlPanel.content,
     controlPanel.content, "TOP", "TOP", -120, -30)
@@ -446,7 +457,7 @@ function CraftSim.FRAME:InitDebugFrame()
     controlPanel.content.clearButton = CraftSim.GGUI.Button({
         label="Clear", parent=controlPanel.content,anchorParent=controlPanel.content.autoScrollCB,anchorA="TOP",anchorB="BOTTOM",sizeX=15,sizeY=25,adjustWidth=true,
         clickCallback=function()
-            frame.content.debugBox:SetText("")
+            debugFrame.content.debugBox:SetText("")
         end,
         offsetX=100,
     })
@@ -517,7 +528,7 @@ function CraftSim.FRAME:InitDebugFrame()
     end
 
 
-    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
+    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(debugFrame)
 end
 
 function CraftSim.FRAME:InitWarningFrame()
