@@ -15,6 +15,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "a minus profit based on crafting cost alone." ..
         f.a .. "At one point a profit forecast for such recipes will" .. 
         f.a .. "be implemented but this will take a while!" ..
+        f.p .. "Fixed the " .. f.bb("Price Override ") .. "currency input" ..
+        f.a .. "validation being bugged due to GGUI changes" ..
         newP("7.8.0") ..
         f.s .. f.r("Warning: ") .. "Collapsed status of frames is" .. 
         f.a .. "currently not saved and restored on login." ..
