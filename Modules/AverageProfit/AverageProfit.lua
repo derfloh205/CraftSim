@@ -91,9 +91,9 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Statweights statweightResult
 function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
-    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
-
     local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
+
+    print("calculate stat weights avg profit: " .. tostring(CraftSim.GUTIL:FormatMoney(averageProfit, true)))
 
     local inspirationWeight = CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, averageProfit)
     local multicraftWeight = CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, averageProfit)

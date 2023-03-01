@@ -2,9 +2,7 @@ _, CraftSim = ...
 
 CraftSim.CALC = {}
 
-local function print(text, recursive, l) -- override
-	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION, recursive, l)
-end
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION)
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
@@ -67,6 +65,11 @@ end
 ---@return number meanProfit
 ---@return table probabilityTable
 function CraftSim.CALC:GetAverageProfit(recipeData)
+    print("Get Average Profit", false, true)
+    print("Supports Crafting Stats: " .. tostring(recipeData.supportsCraftingStats))
+    print("Inspiration: " .. tostring(recipeData.supportsInspiration))
+    print("Multicraft: " .. tostring(recipeData.supportsMulticraft))
+    print("Resourcefulness: " .. tostring(recipeData.supportsResourcefulness))
     local priceData = recipeData.priceData
     local professionStats = recipeData.professionStats
     if not recipeData.supportsCraftingStats then
@@ -491,10 +494,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
     end
 
     print(CraftSim.GUTIL:ColorizeText("Szenario not implemented yet", CraftSim.GUTIL.COLORS.RED), false, true)
-    print("Supports Crafting Stats: " .. recipeData.supportsCraftingStats)
-    print("Inspiration: " .. recipeData.supportsInspiration)
-    print("Multicraft: " .. recipeData.supportsMulticraft)
-    print("Resourcefulness: " .. recipeData.supportsResourcefulness)
+    
 
     return 0, {}
 end

@@ -138,6 +138,11 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     
     self.baseProfessionStats:SetStatsByOperationInfo(self, baseOperationInfo)
 
+    -- exception: when salvage recipe, then resourcefulness is supported!
+    if self.isSalvageRecipe then
+        self.supportsResourcefulness = true
+    end
+
     self.baseProfessionStats:SetInspirationBaseBonusSkill(self.baseProfessionStats.recipeDifficulty.value, self.maxQuality)
 
     -- subtract stats from current set to get base stats

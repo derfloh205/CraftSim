@@ -11,7 +11,10 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("7.8.1") ..
-        f.p .. "" ..
+        f.p .. f.bb("Salvage Recipes ") .. " are now again showing" ..
+        f.a .. "a minus profit based on crafting cost alone." ..
+        f.a .. "At one point a profit forecast for such recipes will" .. 
+        f.a .. "be implemented but this will take a while!" ..
         newP("7.8.0") ..
         f.s .. f.r("Warning: ") .. "Collapsed status of frames is" .. 
         f.a .. "currently not saved and restored on login." ..
