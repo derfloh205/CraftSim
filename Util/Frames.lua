@@ -247,7 +247,8 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
     hookFrame:SetSize(sizeX, sizeY)
     frame:SetSize(sizeX, sizeY)
     frame:SetFrameStrata(frameStrata or "HIGH")
-    frame:SetFrameLevel(frameID) -- Prevent wierd overlap of craftsim frames
+    local currentFrameCount = CraftSim.GUTIL:Count(CraftSim.FRAME.frames)
+    frame:SetFrameLevel(currentFrameCount) -- Prevent wierd overlap of craftsim frames?
 
     frame.resetPosition = function() 
         hookFrame:SetPoint(anchorA, anchorFrame, anchorB, offsetX, offsetY)
@@ -258,10 +259,8 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
 	frame.title:SetText(title)
     
     frame:SetPoint("TOP",  hookFrame, "TOP", 0, 0)
-	--frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 	frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
 	frame:SetBackdrop({
-		--bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
 		bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
 		edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
 		edgeSize = 16,
