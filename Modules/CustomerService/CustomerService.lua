@@ -159,7 +159,7 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeListResponse(payload)
 end
 
 function CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, isInit)
-    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
 
     local optionalReagents = nil
     if not isInit then
@@ -285,198 +285,13 @@ function CraftSim.CUSTOMER_SERVICE:TransformLink(event, message, sender, ...)
     end
 end
 
--- depricated
--- function CraftSim.CUSTOMER_SERVICE:CHAT_MSG_WHISPER(text, playerName, 
---     languageName, channelName, playerName2, specialFlags, zoneChannelID, 
---     channelIndex, channelBaseName, languageID, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
-
---     if not CraftSimOptions.customerServiceEnableAutoReply then
---         return
---     end
-
---     local commands = strsplittable(" ", text)
-
---     local function getInfusionItemByIlvlRangeAndRecipeData(ilvl, recipeData)
---         ilvl = tonumber(ilvl)
-
---         --TODO check if player can even use infusions yet
-
---         local infusions = false
---         local matrix1Included = false
---         local matrices = false
-
---         for _, optionalReagents in pairs(recipeData.possibleOptionalReagents) do
---             for _, reagent in pairs(optionalReagents) do
---                 if reagent.itemID == 197921 then
---                     infusions = true
---                     break
---                 elseif reagent.itemID == 198048 then
---                     matrix1Included = true
---                 elseif reagent.itemID == 198056 then
---                     matrices = true
---                 end
---             end
---         end
-
---         if infusions then
---             if ilvl >= 408 then
---                 return 198046 -- conc primal infusion
---             elseif ilvl >= 395 then
---                 return 197921 -- primal infusion
---             end
---         elseif matrices then
---             if ilvl >= 372 then
---                 return 198059 -- TM IV
---             elseif ilvl >= 359 then
---                 return 198058 -- TM III
---             elseif ilvl >= 346 then
---                 return 198056 -- TM II
---             elseif ilvl >= 333 and matrix1Included then
---                 return 198048 -- TM I
---             end
---         end
---         return nil
---     end
-
---     if commands[1] and commands[1] == CraftSimOptions.customerServiceAutoReplyCommand then
---         local ilvl = string.match(text, "|r (%d+)")
---         print("Triggered Command!")
-
---         local it = string.gmatch(text, "%|H.*%|h")
---         local itemString = it()
---         if itemString then
---             local item = Item:CreateFromItemLink(itemString)
---             if item then
---                 item:ContinueOnItemLoad(function() 
---                     print("ItemName: " .. tostring(item:GetItemName()))
---                     print("ItemLink: " .. tostring(item:GetItemLink()))
---                     print("ItemID: " .. tostring(item:GetItemID()))
-
---                     local function answer(text)
---                         SendChatMessage(text, "WHISPER", nil, playerName)
---                     end
-
---                     local recipeInfo = CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(item)
-
---                     if not recipeInfo then
---                         answer("I cannot craft this!")
---                         return
---                     end
---                     local recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN)
---                     if not recipeData then
---                         print("Could not create recipeData for customer request")
---                         return
---                     end
---                     local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
---                     if not priceData then
---                         print("Could not create priceData for customer request")
---                         return
---                     end
---                     local optimizedReagents = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentsForScannedRecipeData(recipeData, priceData, true) 
-
---                     print("optimized reagents:")
---                     print(optimizedReagents, true)
-
---                     local optionalReagents = {}
---                     if ilvl then
---                         print("Command3: " .. tostring(ilvl))
---                         local itemID = getInfusionItemByIlvlRangeAndRecipeData(ilvl, recipeData)
---                         if itemID then
---                             table.insert(optionalReagents, {
---                                 itemID = itemID,
---                                 quantity = 1,
---                                 dataSlotIndex = 3, -- optional infusions and matrices
---                                 itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID), -- cause price data needs it
---                             })
---                         end
---                     end
-
---                     recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN, {scanReagents=optimizedReagents, optionalReagents=optionalReagents})
---                     if not recipeData then
---                         print("2 Could not create recipeData for customer request")
---                         return
---                     end
---                     priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
-
---                     if not priceData then
---                         print("2 Could not create priceData for customer request")
---                         return
---                     end
-
-
---                     local outputInfo = CraftSim.DATAEXPORT:GetOutputInfoByRecipeData(recipeData)
-
---                     local craftingCostsFormatted = CraftSim.GUTIL:GetMoneyValuesFromCopper(priceData.craftingCostPerCraft, true)
-
---                     local reagentItems = {}
---                     for _, reagent in pairs(recipeData.reagents) do
---                         for _, itemInfo in pairs(reagent.itemsInfo) do
---                             if itemInfo.allocations > 0 then
---                                 local item = Item:CreateFromItemID(itemInfo.itemID)
---                                 item.quantity = itemInfo.allocations
---                                 table.insert(reagentItems, item)
---                             end
---                         end
---                     end
-
---                     for _, reagent in pairs(recipeData.optionalReagents) do
---                         local item = Item:CreateFromItemID(reagent.itemID)
---                         item.quantity = reagent.quantity
---                         table.insert(reagentItems, item)
---                     end
-
---                     for _, reagent in pairs(recipeData.finishingReagents) do
---                         local item = Item:CreateFromItemID(reagent.itemID)
---                         item.quantity = reagent.quantity
---                         table.insert(reagentItems, item)
---                     end
-
---                     CraftSim.GUTIL:ContinueOnAllItemsLoaded(reagentItems, function() 
---                         local detailedCraftingCostText = "\n"
---                         for _, item in pairs(reagentItems) do
---                             local itemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(item:GetItemID(), true)
---                             local moneyText = CraftSim.GUTIL:GetMoneyValuesFromCopper(itemPrice*item.quantity, true)
---                             -- answer(item.quantity .. " x " .. item:GetItemLink() .. " = " .. moneyText)
---                             detailedCraftingCostText = detailedCraftingCostText .. item.quantity .. " x " .. item:GetItemLink() .. " = " .. moneyText .. "\n"
---                         end
-
---                         -- replace formattext with values
---                         local responseText = CraftSimOptions.customerServiceAutoReplyFormat
-                        
---                         local inspStat = (recipeData.stats.inspiration and (recipeData.stats.inspiration.percent .. "%%")) or "-"
---                         local mcStat = (recipeData.stats.multicraft and (recipeData.stats.multicraft.percent .. "%%")) or "-"
---                         local resStat = (recipeData.stats.resourcefulness and (recipeData.stats.resourcefulness.percent .. "%%")) or "-"
-                        
-
---                         responseText = string.gsub(responseText or "", "%%gc", outputInfo.expected)
---                         responseText = string.gsub(responseText or "", "%%ic", outputInfo.inspiration or "-")
-
---                         responseText = string.gsub(responseText or "", "%%insp", (outputInfo.inspiration and inspStat) or "-")
-    
---                         responseText = string.gsub(responseText or "", "%%mc", mcStat)
---                         responseText = string.gsub(responseText or "", "%%res", resStat)
---                         responseText = string.gsub(responseText or "", "%%ccd", detailedCraftingCostText) -- order is important or the %cc of %ccd will be replaced
---                         responseText = string.gsub(responseText or "", "%%cc", craftingCostsFormatted)
-
---                         local responseLines = strsplittable("\n", responseText or "")
-
---                         for _, answerLine in pairs(responseLines) do
---                             answer(answerLine)
---                         end
---                     end)
---                 end)
---             end
---         end
---     end
--- end
-
 function CraftSim.CUSTOMER_SERVICE:StartLivePreviewUpdating()
-    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
     previewFrame.content.StartUpdate()
 end
 
 function CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
-    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
     previewFrame.content.StopUpdate()
 end
 

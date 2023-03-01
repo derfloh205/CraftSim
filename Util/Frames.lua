@@ -532,11 +532,11 @@ function CraftSim.FRAME:InitDebugFrame()
 end
 
 function CraftSim.FRAME:InitWarningFrame()
-    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimWarningFrame", 
-    CraftSim.GUTIL:ColorizeText("CraftSim Warning", CraftSim.GUTIL.COLORS.RED), 
-    UIParent, 
-    UIParent, 
-    "CENTER", "CENTER", 0, 0, 500, 500, CraftSim.CONST.FRAMES.WARNING, true, true)
+    local frame = CraftSim.GGUI.Frame({
+        parent=UIParent,anchorParent=UIParent,title=CraftSim.GUTIL:ColorizeText("CraftSim Warning", CraftSim.GUTIL.COLORS.RED),
+        sizeX=500,sizeY=500, frameID=CraftSim.CONST.FRAMES.WARNING,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS
+    })
 
     frame.content.warningText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.content.warningText:SetPoint("TOP", frame.content, "TOP", 0, -20)
@@ -610,11 +610,12 @@ end
 function CraftSim.FRAME:InitOneTimeNoteFrame()
     local currentVersion = GetAddOnMetadata(AddonName, "Version")
 
-    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimOneTimeNoteFrame", 
-    CraftSim.GUTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")", CraftSim.GUTIL.COLORS.GREEN), 
-    UIParent, 
-    UIParent, 
-    "CENTER", "CENTER", 0, 0, 500, 300, CraftSim.CONST.FRAMES.INFO, true, true)
+    local frame = CraftSim.GGUI.Frame({
+        parent=UIParent,anchorParent=UIParent,sizeX=500,sizeY=300,frameID=CraftSim.CONST.FRAMES.INFO,
+        closeable=true, scrollableContent=true,
+        title=CraftSim.GUTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")", CraftSim.GUTIL.COLORS.GREEN),
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS
+    })
 
     frame.content.discordBox = CraftSim.FRAME:CreateInput(
         nil, frame.content, frame.content, "TOP", "TOP", 0, -20, 200, 30, CraftSim.CONST.DISCORD_INVITE_URL, function() 
@@ -648,21 +649,21 @@ function CraftSim.FRAME:ShowOneTimeInfo(force)
 
     CraftSimOptions.infoVersionID = versionID
 
-    local infoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.INFO)
+    local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.INFO)
     -- resize
-    infoFrame.UpdateSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
+    infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
     infoFrame.originalX = CraftSim.CONST.infoBoxSizeX
     infoFrame.originalY = CraftSim.CONST.infoBoxSizeY
     infoFrame.showInfo(infoText)
 end
 
 function CraftSim.FRAME:ShowWarning(warningText, optionalTitle, hideBtn)
-    local warningFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING)
+    local warningFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.WARNING)
     warningFrame.showWarning(warningText, optionalTitle, hideBtn)
 end
 
 function CraftSim.FRAME:ShowError(errorText, optionalTitle)
-    local warningFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.WARNING)
+    local warningFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.WARNING)
     warningFrame.showError(errorText, optionalTitle)
 end
 

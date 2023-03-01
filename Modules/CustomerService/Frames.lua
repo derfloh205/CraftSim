@@ -99,8 +99,12 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
-    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimLivePreviewFrame", "CraftSim Live Preview", UIParent, UIParent,
-    "CENTER", "CENTER", 0, 0, 500, 500, CraftSim.CONST.FRAMES.LIVE_PREVIEW, false, true, "DIALOG")
+    local frame = CraftSim.GGUI.Frame({
+        parent=UIParent,anchorParent=UIParent,sizeX=500,sizeY=500,frameID=CraftSim.CONST.FRAMES.LIVE_PREVIEW, frameStrata="DIALOG",
+        closeable=true,collapseable=true, moveable=true,
+        title="CraftSim Live Preview",
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+    })
 
     local function createContent(frame)
         frame:Hide()
@@ -111,7 +115,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, true) 
         end
 
-        frame.content.previewTitle = CraftSim.FRAME:CreateText("Crafter's Profession", frame.content, frame.title, "TOP", "BOTTOM", 0, -10)
+        frame.content.previewTitle = CraftSim.FRAME:CreateText("Crafter's Profession", frame.content, frame.title.frame, "TOP", "BOTTOM", 0, -10)
 
         frame.content.recipeDropdown = CraftSim.GGUI.Dropdown({
             parent=frame.content, anchorParent=frame.content.previewTitle, anchorA="TOP", anchorB="TOP",
@@ -303,7 +307,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     local recipes = payload.recipes
     local crafter = payload.crafter
     local professionName = payload.professionName
-    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
 
     previewFrame.professionID = payload.professionID
     previewFrame.crafter = crafter
@@ -351,7 +355,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
 end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
-    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
     local resultData = payload.resultData
     local reagents = payload.reagents
     local optionalReagents = payload.optionalReagents
