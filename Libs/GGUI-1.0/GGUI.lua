@@ -178,9 +178,13 @@ end
 function GGUI.Widget:GetWidth()
     return self.frame:GetWidth()
 end
+function GGUI.Widget:SetTransparency(transparency)
+    self.frame:SetBackdropColor(0, 0, 0 , transparency) -- TODO: with current color
+end
 --- GGUI Frame
 
 ---@class GGUI.Frame
+---@field title GGUI.Text
 ---@field content Frame
 ---@field frameID string
 ---@field scrollableContent boolean
@@ -276,9 +280,10 @@ function GGUI.Frame:new(options)
         hookFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
     end
 
-    frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	frame.title:SetPoint("TOP", frame, "TOP", 0, -15)
-	frame.title:SetText(options.title)
+    self.title = GGUI.Text({
+        parent=frame,anchorParent=frame,text=options.title,offsetY=-15,
+        anchorA="TOP",anchorB="TOP"
+    })
     
     frame:SetPoint("TOP",  hookFrame, "TOP", 0, 0)
 
@@ -340,7 +345,7 @@ function GGUI.Frame:new(options)
         frame.content:SetSize(options.sizeX, options.sizeY)
     end
     self.content = frame.content
-    GGUI.frames[self.frameID] = frame
+    GGUI.frames[self.frameID] = self
     return frame
 end
 

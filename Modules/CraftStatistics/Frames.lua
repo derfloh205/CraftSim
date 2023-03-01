@@ -8,7 +8,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
     local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimStatisticsFrame", 
         "CraftSim Profit Statistics", 
-        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS),
+        CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame,
         UIParent, 
         "CENTER", 
         "CENTER", 
