@@ -4,20 +4,14 @@ CraftSim.CONTROL_PANEL.FRAMES = {}
 
 function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local currentVersion = GetAddOnMetadata(AddonName, "Version")
-    local frame = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimControlPanelFrame", 
-        "CraftSim " .. currentVersion, 
-        ProfessionsFrame, 
-        ProfessionsFrame, 
-        "BOTTOM", 
-        "TOP", 
-        0, 
-        -8, 
-        1120, 
-        100,
-        CraftSim.CONST.FRAMES.CONTROL_PANEL)
 
-    
+    local frame = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame, anchorParent=ProfessionsFrame,anchorA="BOTTOM",anchorB="TOP",offsetY=-8,
+        sizeX=1120,sizeY=100,frameID=CraftSim.CONST.FRAMES.CONTROL_PANEL, 
+        title="CraftSim " .. currentVersion,
+        collapseable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+    })
 
     local createModuleCheckbox = function(label, description, anchorA, anchorParent, anchorB, offsetX, offsetY, optionVariable)
         local cb = CraftSim.FRAME:CreateCheckbox(" " .. label, 

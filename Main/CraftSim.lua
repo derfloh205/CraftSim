@@ -403,7 +403,7 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 end
 
 function CraftSim.MAIN:HideAllFrames(keepControlPanel)
-	local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
+	local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
 	local recipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
 	local craftResultsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerServiceFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
@@ -462,7 +462,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local materialOptimizationFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
 	local materialOptimizationFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
 
-	local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
+	-- local controlPanel = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
+	local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
 		CraftSim.MAIN:HideAllFrames()
 		return
