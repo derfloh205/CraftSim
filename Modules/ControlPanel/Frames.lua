@@ -10,6 +10,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         sizeX=1120,sizeY=100,frameID=CraftSim.CONST.FRAMES.CONTROL_PANEL, 
         title="CraftSim " .. currentVersion,
         collapseable=true,
+        moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
     })
 

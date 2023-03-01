@@ -5,14 +5,24 @@ CraftSim.CRAFT_RESULTS.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
 
 function CraftSim.CRAFT_RESULTS.FRAMES:Init()
-    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimCraftResultsFrame", "CraftSim Crafting Results", 
-        ProfessionsFrame.CraftingPage,
-        ProfessionsFrame.CraftingPage.CraftingOutputLog, "TOPLEFT", "TOPLEFT", 0, 10, 700, 450, CraftSim.CONST.FRAMES.CRAFT_RESULTS, false, true, "FULLSCREEN", "modulesCraftResults")
-
-    local function createContent(frame)
-        -- Tracker
-
+    local frameNO_WO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.CraftingPage, 
+        anchorParent=ProfessionsFrame.CraftingPage.CraftingOutputLog,
+        anchorA="TOPLEFT",anchorB="TOPLEFT",
+        offsetY=10,
+        sizeX=700,sizeY=450,
+        frameID=CraftSim.CONST.FRAMES.CRAFT_RESULTS, 
+        title="CraftSim Crafting Results",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata="FULLSCREEN"
+    })
+    -- TODO: "modulesCraftResults"
+    
+    
+        local function createContent(frame)
         frame.content.totalProfitAllTitle = CraftSim.FRAME:CreateText("Session Profit", frame.content, frame.content, 
         "TOP", "TOP", 140, -60, nil, nil, {type="H", value="LEFT"})
         frame.content.totalProfitAllValue = CraftSim.FRAME:CreateText(CraftSim.GUTIL:FormatMoney(0, true), frame.content, frame.content.totalProfitAllTitle, 
@@ -73,7 +83,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
         return
     end
 
-    local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     local craftSessionData = CraftSim.CRAFT_RESULTS.currentSessionData 
     if not craftSessionData then
@@ -167,7 +177,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
 end
 
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
-    local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
     -- total items
     local craftResultItems = CraftSim.CRAFT_RESULTS.currentSessionData.totalItems
 

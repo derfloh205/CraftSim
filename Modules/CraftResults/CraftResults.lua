@@ -91,7 +91,7 @@ end
 ---Saves the currentCraftData
 ---@param craftResult CraftSim.CraftResult
 function CraftSim.CRAFT_RESULTS:AddCraftData(craftResult)
-    local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     print("AddCraftData:", false, true)
     CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CRAFT_RESULTS.currentSessionData
@@ -114,7 +114,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param craftResult CraftSim.CraftResult
 function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
-    local craftResultFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     local resourcesText = ""
 

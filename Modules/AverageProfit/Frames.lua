@@ -16,6 +16,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         title="CraftSim Average Profit",
         collapseable=true,
         closeable=true,
+        moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
     })
     -- TODO: react to modulesStatWeights when closed
@@ -29,6 +30,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         title="CraftSim Average Profit " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
         collapseable=true,
         closeable=true,
+        moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
     })
 

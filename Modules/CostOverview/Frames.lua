@@ -20,6 +20,7 @@ function CraftSim.COSTOVERVIEW.FRAMES:Init()
         title="CraftSim Cost Overview",
         collapseable=true,
         closeable=true,
+        moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
     })
     -- TODO: "modulesCostOverview"
@@ -34,6 +35,7 @@ function CraftSim.COSTOVERVIEW.FRAMES:Init()
         title="CraftSim Cost Overview " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
         collapseable=true,
         closeable=true,
+        moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
     })
 

@@ -405,7 +405,7 @@ end
 function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
 	local recipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
-	local craftResultsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerServiceFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
 	local priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
 	local priceOverrideFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
@@ -448,7 +448,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	end
 
 	local recipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
-	local craftResultsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerServiceFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
 	local priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
 	local priceOverrideFrameWO = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
