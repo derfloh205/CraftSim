@@ -64,7 +64,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         })
         reagentOverwriteFrame.qualityIcon3 = CraftSim.GGUI.QualityIcon({
             parent=reagentOverwriteFrame, anchorParent=reagentOverwriteFrame,sizeX=20,sizeY=20,anchorA="TOP",anchorB="TOP",
-            offsetX=baseX+inputOffsetX*2 - 15,offsetY=15, initialQuality=2,
+            offsetX=baseX+inputOffsetX*2 - 15,offsetY=15, initialQuality=3,
         })
         reagentOverwriteFrame.quality3Button = CraftSim.GGUI.Button({
             parent=reagentOverwriteFrame, anchorParent=reagentOverwriteFrame.qualityIcon3.frame,anchorA="BOTTOM", anchorB="TOP",
