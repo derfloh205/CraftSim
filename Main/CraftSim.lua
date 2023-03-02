@@ -286,6 +286,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.STATISTICS.FRAMES:Init()
 		CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 		CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
+		CraftSim.CRAFTDATA.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -439,6 +440,7 @@ function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	costOverviewFrameWO:Hide()
 	materialOptimizationFrame:Hide()
 	materialOptimizationFrameWO:Hide()
+	CraftSim.CRAFTDATA.frame:Hide()
 	-- hide sim mode toggle button
 	CraftSim.SIMULATION_MODE.FRAMES.WORKORDER.toggleButton:Hide()
 	CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton:Hide()
@@ -529,6 +531,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local showCraftResults = true
 	local showRecipeScan = true
 	local showCustomerService = true
+	local showCraftData = true
 
 	
 	if recipeData.supportsCraftingStats then
@@ -558,13 +561,19 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showRecipeScan = showRecipeScan and CraftSimOptions.modulesRecipeScan
 	showCraftResults = showCraftResults and CraftSimOptions.modulesCraftResults
 	showCustomerService = showCustomerService and CraftSimOptions.modulesCustomerService
+	showCraftData = showCraftData and CraftSimOptions.modulesCraftData
 
 	CraftSim.FRAME:ToggleFrame(recipeScanFrame, showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
 	CraftSim.FRAME:ToggleFrame(customerServiceFrame, showCustomerService)
-
+	
 	if recipeData and showCraftResults then
 		CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeData.recipeID)
+	end
+
+	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTDATA.frame, showCraftData)
+	if showCraftData then
+		CraftSim.CRAFTDATA.FRAMES:UpdateDisplay(recipeData)
 	end
 
 	-- Simulation Mode

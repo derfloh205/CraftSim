@@ -1,29 +1,28 @@
 _, CraftSim = ...
 
 ---@class CraftSim.ProfessionStats
----@field recipeDifficulty CraftSim.ProfessionStat
----@field skill CraftSim.ProfessionStat
----@field inspiration CraftSim.ProfessionStat
----@field multicraft CraftSim.ProfessionStat
----@field resourcefulness CraftSim.ProfessionStat
----@field craftingspeed CraftSim.ProfessionStat
----@field phialExperimentationFactor CraftSim.ProfessionStat
----@field potionExperimentationFactor CraftSim.ProfessionStat
-
 CraftSim.ProfessionStats = CraftSim.Object:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 function CraftSim.ProfessionStats:new()
+	---@type CraftSim.ProfessionStat
     self.recipeDifficulty = CraftSim.ProfessionStat("recipedifficulty")
+	---@type CraftSim.ProfessionStat
     self.skill = CraftSim.ProfessionStat("skill")
+	---@type CraftSim.ProfessionStat
     self.inspiration = CraftSim.ProfessionStat("inspiration", 0, CraftSim.CONST.PERCENT_MODS.INSPIRATION)
+	---@type CraftSim.ProfessionStat
     self.multicraft = CraftSim.ProfessionStat("multicraft", 0, CraftSim.CONST.PERCENT_MODS.MULTICRAFT)
+	---@type CraftSim.ProfessionStat
     self.resourcefulness = CraftSim.ProfessionStat("resourcefulness", 0, CraftSim.CONST.PERCENT_MODS.RESOURCEFULNESS)
+	---@type CraftSim.ProfessionStat
     self.craftingspeed = CraftSim.ProfessionStat("craftingspeed", 0, CraftSim.CONST.PERCENT_MODS.CRAFTINGSPEED)
-
+	
 	-- alchemy specific
+	---@type CraftSim.ProfessionStat
     self.phialExperimentationFactor = CraftSim.ProfessionStat("phialExperimentationFactor")
+	---@type CraftSim.ProfessionStat
     self.potionExperimentationFactor = CraftSim.ProfessionStat("potionExperimentationFactor")
 end
 

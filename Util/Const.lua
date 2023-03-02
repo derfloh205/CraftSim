@@ -3,7 +3,7 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 63 -- last patch increase: 7.8.2
+CraftSim.CONST.currentInfoVersionID = 64 -- last patch increase: 8.0.0
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -62,6 +62,7 @@ CraftSim.CONST.FRAMES = {
     CRAFTING_DETAILS_WO = "CRAFTING_DETAILS_WO",
     SPEC_SIM_WO = "SPEC_SIM_WO",
     SPEC_INFO_WO = "SPEC_INFO_WO",
+    CRAFT_DATA = "CRAFT_DATA",
 }
 
 CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS = {
@@ -120,6 +121,7 @@ CraftSim.CONST.DEBUG_IDS = {
     COST_OVERVIEW = "COST_OVERVIEW",
     MEDIA = "MEDIA",
     TOP_GEAR = "TOP_GEAR",
+    CRAFT_DATA = "CRAFT_DATA",
 }
 
 CraftSim.CONST.ERROR = {

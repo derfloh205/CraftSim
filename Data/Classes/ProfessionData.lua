@@ -3,10 +3,6 @@ _, CraftSim = ...
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 ---@class CraftSim.ProfessionData
----@field professionInfo ProfessionInfo
----@field skillLineID number
----@field isLoaded boolean
-
 CraftSim.ProfessionData = CraftSim.Object:extend()
 
 function CraftSim.ProfessionData:new(recipeID)
@@ -17,7 +13,9 @@ function CraftSim.ProfessionData:new(recipeID)
 		local professionID = CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)
 
 		if professionID then
+			---@type ProfessionInfo?
 			self.professionInfo = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimProfessionInfoCache, professionID)
+			---@type number?
 			self.skillLineID = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimProfessionSkillLineIDCache, professionID)
 		end
 	else

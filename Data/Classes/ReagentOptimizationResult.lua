@@ -1,20 +1,20 @@
 _, CraftSim = ...
 
----@class CraftSim.ReagentOptimizationResult
----@field reagents CraftSim.Reagent[]
----@field qualityID number
----@field craftingCosts number -- required + fixed costs
-
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
 
+---@class CraftSim.ReagentOptimizationResult
 CraftSim.ReagentOptimizationResult = CraftSim.Object:extend()
 
+---@param recipeData CraftSim.RecipeData
+---@param knapsackResult table
 function CraftSim.ReagentOptimizationResult:new(recipeData, knapsackResult)
     if knapsackResult then
+        ---@type number
         self.qualityID = knapsackResult.qualityReached
         self.craftingCosts = knapsackResult.minValue + recipeData.priceData.craftingCostsFixed
     
         local reagentItems = {}
+        ---@type CraftSim.Reagent[]
         self.reagents = CraftSim.GUTIL:Map(recipeData.reagentData.requiredReagents, function(reagent) 
             if reagent.hasQuality then
                 local copy = reagent:Copy()

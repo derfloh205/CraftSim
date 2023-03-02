@@ -1,11 +1,10 @@
  _, CraftSim = ...
 
----@class CraftSim.JSONBuilder
----@field json string
----@field indent number
-
+ 
+ ---@class CraftSim.JSONBuilder
  CraftSim.JSONBuilder = CraftSim.Object:extend()
-
+ 
+ ---@param indent number?
  function CraftSim.JSONBuilder:new(indent)
     self.indent = indent or 0
     self.json = ""

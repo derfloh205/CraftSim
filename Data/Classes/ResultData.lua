@@ -1,25 +1,9 @@
 _, CraftSim = ...
 
----@class CraftSim.ResultData
----@field recipeData CraftSim.RecipeData
----@field itemsByQuality ItemMixin[]
----@field expectedQuality number
----@field expectedQualityInspiration number
----@field expectedQualityHSV number
----@field expectedQualityInspirationHSV number
----@field expectedQualityUpgrade number
----@field expectedItem? ItemMixin
----@field expectedItemUpgrade? ItemMixin
----@field canUpgradeQuality boolean
----@field canUpgradeInspiration boolean
----@field canUpgradeHSV boolean
----@field canUpgradeInspirationHSV boolean
----@field expectedItemInspiration? ItemMixin
----@field expectedItemHSV? ItemMixin
----@field expectedItemInspirationHSV? ItemMixin
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
+---@class CraftSim.ResultData
 CraftSim.ResultData = CraftSim.Object:extend()
 
 ---@param recipeData CraftSim.RecipeData
@@ -28,6 +12,7 @@ function CraftSim.ResultData:new(recipeData)
         return
     end
     self.recipeData = recipeData
+    ---@type ItemMixin[]
     self.itemsByQuality = {}
     self.canUpgradeQuality = false
     self.canUpgradeInspiration = false
@@ -38,6 +23,19 @@ function CraftSim.ResultData:new(recipeData)
     self.expectedQualityInspiration = 1
     self.expectedQualityHSV = 1
     self.expectedQualityInspirationHSV = 1
+
+    ---@type ItemMixin?
+    self.expectedItemInspiration = nil
+
+    ---@type ItemMixin?
+    self.expectedItemHSV = nil
+
+    ---@type ItemMixin?
+    self.expectedItemInspirationHSV = nil
+
+    ---@type ItemMixin?
+    self.expectedItemUpgrade = nil
+
 
     self:UpdatePossibleResultItems()
 end

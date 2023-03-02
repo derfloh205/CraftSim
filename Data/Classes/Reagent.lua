@@ -1,14 +1,10 @@
 _, CraftSim = ...
----@class CraftSim.Reagent
----@field hasQuality boolean
----@field requiredQuantity number
----@field dataSlotIndex number
----@field items CraftSim.ReagentItem[]
-
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
+---@class CraftSim.Reagent
 CraftSim.Reagent = CraftSim.Object:extend()
 
+---@param reagentSlotSchematic CraftingReagentSlotSchematic
 function CraftSim.Reagent:new(reagentSlotSchematic)
     if not reagentSlotSchematic then
         return
@@ -20,6 +16,7 @@ function CraftSim.Reagent:new(reagentSlotSchematic)
         self.hasQuality = true
     end
 
+    ---@type CraftSim.ReagentItem[]
     self.items = {}
     for qualityID, itemInfo in pairs(reagentSlotSchematic.reagents) do
         local reagentItem = CraftSim.ReagentItem(itemInfo.itemID, qualityID)

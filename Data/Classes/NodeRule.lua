@@ -1,24 +1,14 @@
 _, CraftSim = ...
 
----@class CraftSim.NodeRule
----@field nodeData CraftSim.NodeData
----@field threshold number
----@field professionStats CraftSim.ProfessionStats
----@field equalsSkill boolean
----@field equalsMulticraft boolean
----@field equalsInspiration boolean
----@field equalsResourcefulness boolean
----@field equalsResourcefulnessPercent boolean
----@field equalsCraftingspeed boolean
----@field equalsResourcefulnessExtraItemsFactor boolean
----@field equalsPhialExperimentationChanceFactor boolean
----@field equalsPotionExperimentationChanceFactor boolean
 
+---@class CraftSim.NodeRule
 CraftSim.NodeRule = CraftSim.Object:extend()
 
 ---@param nodeRuleData table
+---@param nodeData CraftSim.NodeData
 function CraftSim.NodeRule:new(nodeRuleData, nodeData)
     self.nodeData = nodeData
+    ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
     self.threshold = nodeRuleData.threshold or -42 -- dont ask why 42
 

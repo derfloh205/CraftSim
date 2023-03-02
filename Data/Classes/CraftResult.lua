@@ -1,26 +1,15 @@
 _, CraftSim = ...
 
 ---@class CraftSim.CraftResult
----@field recipeID number
----@field recipeName number
----@field profit number
----@field expectedAverageProfit number
----@field savedCosts number
----@field expectedAverageSavedCosts number
----@field craftResultItems CraftSim.CraftResultItem[]
----@field expectedQuality number
----@field craftingChance number
----@field triggeredInspiration boolean
----@field triggeredMulticraft boolean
----@field triggeredResourcefulness boolean
----@field savedReagents CraftSim.CraftResultSavedReagent[]
-
 CraftSim.CraftResult = CraftSim.Object:extend()
 
+---@param recipeData CraftSim.RecipeData
 ---@param craftingItemResultData CraftingItemResultData[]
 function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     self.recipeID = recipeData.recipeID
+    ---@type CraftSim.CraftResultItem[]
     self.craftResultItems = {}
+    ---@type CraftSim.CraftResultSavedReagent[]
     self.savedReagents = {}
     self.expectedQuality = recipeData.resultData.expectedQuality
     self.triggeredInspiration = false

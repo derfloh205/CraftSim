@@ -121,4 +121,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "Module that offers various options to interact with potential customers",
     "LEFT", frame.content.modulesRecipeScan, "RIGHT", 90, 0, "modulesCustomerService")
 
+    frame.content.modulesCraftData = createModuleCheckbox("Craft Data", 
+    "Edit the saved configurations for crafting commodities of different qualities to show in tooltips and to calculate crafting costs!",
+    "TOP", frame.content.modulesCustomerService, "TOP", 0, -20, "modulesCraftData")
+
 end

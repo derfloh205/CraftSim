@@ -1,12 +1,7 @@
 _, CraftSim = ...
 
----@class CraftSim.PriceData
----@field recipeData CraftSim.RecipeData
----@field qualityPriceList number[]
----@field craftingCosts number
----@field craftingCostsRequired number
----@field craftingCostsFixed number -- the crafting costs without any reagents of quality
 
+---@class CraftSim.PriceData
 CraftSim.PriceData = CraftSim.Object:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
@@ -14,6 +9,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFI
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.PriceData:new(recipeData)
     self.recipeData = recipeData
+    ---@type number[]
     self.qualityPriceList = {}
     self.craftingCosts = 0
 end

@@ -1,13 +1,11 @@
 _, CraftSim = ...
 
 ---@class CraftSim.ProfessionGear
----@field item ItemMixin
----@field professionStats CraftSim.ProfessionStats
-
 CraftSim.ProfessionGear = CraftSim.Object:extend()
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 function CraftSim.ProfessionGear:new()
+	---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
 end
 

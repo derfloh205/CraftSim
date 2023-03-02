@@ -1,0 +1,4 @@
+_, CraftSim = ...
+
+CraftSim.CRAFTDATA = {}
+

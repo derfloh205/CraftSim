@@ -1,20 +1,6 @@
 _, CraftSim = ...
 
 ---@class CraftSim.CraftRecipeData
----@field recipeID number
----@field numCrafts number
----@field totalProfit number
----@field totalExpectedProfit number
----@field numInspiration number
----@field numMulticraft number
----@field numMulticraftExtraItems number
----@field numResourcefulness number
----@field totalSavedCosts number
----@field totalExpectedSavedCosts number
----@field craftResults CraftSim.CraftResult[] -- TODO: figure out if this eats too much RAM for big crafting sessions and maybe make optional
----@field totalItems CraftSim.CraftResultItem[]
----@field totalSavedReagents CraftSim.CraftResultSavedReagent[]
-
 CraftSim.CraftRecipeData = CraftSim.Object:extend()
 
 ---@param recipeID number
@@ -29,8 +15,11 @@ function CraftSim.CraftRecipeData:new(recipeID)
     self.numResourcefulness = 0
     self.totalSavedCosts = 0
     self.totalExpectedSavedCosts = 0
+    ---@type CraftSim.CraftResult[]
     self.craftResults = {}
+    ---@type CraftSim.CraftResultItem[]
     self.totalItems = {}
+    ---@type CraftSim.CraftResultSavedReagent[]
     self.totalSavedReagents = {}
 end
 
@@ -78,7 +67,7 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult)
         -- we do not need to increase quantity as this would have been already done in the CraftSessionData Constructor
     end) 
 
-    table.insert(self.craftResults, craftResult) -- TODO: see CraftSessionData
+    table.insert(self.craftResults, craftResult)
 end
 
 function CraftSim.CraftRecipeData:Debug()

@@ -33,5 +33,8 @@
         "ChatFrame_AddMessageEventFilter",
         "CloseDropDownMenus",
         "UIDropDownMenu_SetEnabled"
+    ],
+    "Lua.diagnostics.disable": [
+        "missing-parameter"
     ]
 }

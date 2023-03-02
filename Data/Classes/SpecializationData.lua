@@ -1,15 +1,8 @@
 _, CraftSim = ...
 
----@class CraftSim.SpecializationData
----@field recipeData CraftSim.RecipeData
----@field isImplemented boolean
----@field nodeData CraftSim.NodeData[]
----@field baseNodeData CraftSim.NodeData[]
----@field numNodesPerLayer number[][]
----@field professionStats CraftSim.ProfessionStats
-
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
+---@class CraftSim.SpecializationData
 CraftSim.SpecializationData = CraftSim.Object:extend()
 
 ---@param recipeData CraftSim.RecipeData
@@ -18,9 +11,13 @@ function CraftSim.SpecializationData:new(recipeData)
         return
     end
     self.recipeData = recipeData
+    ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
+    ---@type CraftSim.NodeData
     self.baseNodeData = {}
+    ---@type CraftSim.NodeData
     self.nodeData = {}
+    ---@type number[][]
     self.numNodesPerLayer = {}
 
     self.isImplemented = CraftSim.UTIL:IsSpecImplemented(recipeData.professionData.professionInfo.profession)

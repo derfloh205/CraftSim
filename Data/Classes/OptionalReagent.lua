@@ -1,15 +1,13 @@
 _, CraftSim = ...
 
----@class CraftSim.OptionalReagent
----@field professionStats CraftSim.ProfessionStats
----@field qualityID number
----@field item ItemMixin
 
+---@class CraftSim.OptionalReagent
 CraftSim.OptionalReagent = CraftSim.Object:extend()
 
 ---@param craftingReagent CraftingReagent
 function CraftSim.OptionalReagent:new(craftingReagent)
     self.item = Item:CreateFromItemID(craftingReagent.itemID)
+    ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
     local stats = CraftSim.OPTIONAL_REAGENT_DATA[craftingReagent.itemID]
 

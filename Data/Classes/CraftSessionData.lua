@@ -1,23 +1,20 @@
 _, CraftSim = ...
 
----@class CraftSim.CraftSessionData
----@field numCrafts number
----@field totalProfit number
----@field totalItems CraftSim.CraftResultItem[]
----@field totalSavedReagents CraftSim.CraftResultSavedReagent[]
----@field craftResults CraftSim.CraftResult[] -- TODO: figure out if this eats too much RAM for big crafting sessions and maybe make optional
----@field craftRecipeData CraftSim.CraftRecipeData[]
-
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
 
+---@class CraftSim.CraftSessionData
 CraftSim.CraftSessionData = CraftSim.Object:extend()
 
 function CraftSim.CraftSessionData:new()
     self.totalProfit = 0
     self.numCrafts = 0
+    ---@type CraftSim.CraftResultItem[]
     self.totalItems = {}
+    ---@type CraftSim.CraftResultSavedReagent[]
     self.totalSavedReagents = {}
+    ---@type CraftSim.CraftRecipeData[]
     self.craftRecipeData = {}
+    ---@type CraftSim.CraftResult[]
     self.craftResults = {}
 end
 

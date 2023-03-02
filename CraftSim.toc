@@ -4,7 +4,7 @@
 ## Title: CraftSim
 ## Notes: Calculates profession statweights and displays them per recipe
 ## Author: genju
-## Version: 7.8.2
+## Version: 8.0.0
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
@@ -70,6 +70,9 @@ Modules/TopGear/Frames.lua
 
 Modules/CostOverview/CostOverview.lua
 Modules/CostOverview/Frames.lua
+
+Modules/CraftData/CraftData.lua
+Modules/CraftData/Frames.lua
 
 Locals/Localization.lua
 Locals/enUS.lua

@@ -1,28 +1,24 @@
 _, CraftSim = ...
 
 ---@class CraftSim.ProfessionGearSet
----@field professionID number
----@field professionGearSlots string[]
----@field isCooking boolean
----@field gear1? CraftSim.ProfessionGear
----@field gear2 CraftSim.ProfessionGear
----@field tool CraftSim.ProfessionGear
----@field professionStats CraftSim.ProfessionStats
-
 CraftSim.ProfessionGearSet = CraftSim.Object:extend()
 
----@params professionID number
+---@param professionID number
 function CraftSim.ProfessionGearSet:new(professionID)
     self.professionID = professionID
     self.professionGearSlots = C_TradeSkillUI.GetProfessionSlots(professionID)
     if professionID ~= Enum.Profession.Cooking then
+        ---@type CraftSim.ProfessionGear?
         self.gear1 = CraftSim.ProfessionGear()
         self.isCooking = false
     else
         self.isCooking = true
     end
+    ---@type CraftSim.ProfessionGear
     self.gear2 = CraftSim.ProfessionGear()
+    ---@type CraftSim.ProfessionGear
     self.tool = CraftSim.ProfessionGear()
+    ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
 end
 

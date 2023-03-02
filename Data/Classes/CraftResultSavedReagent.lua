@@ -1,13 +1,12 @@
 _, CraftSim = ...
 
----@class CraftSim.CraftResultSavedReagent
----@field item ItemMixin
----@field qualityID number
----@field quantity number
----@field savedCosts number
 
+---@class CraftSim.CraftResultSavedReagent
 CraftSim.CraftResultSavedReagent = CraftSim.Object:extend()
 
+---@param recipeData CraftSim.RecipeData
+---@param itemID number
+---@param quantity number
 function CraftSim.CraftResultSavedReagent:new(recipeData, itemID, quantity)
     self.item = Item:CreateFromItemID(itemID)
     self.quantity = quantity

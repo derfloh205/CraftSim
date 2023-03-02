@@ -1,22 +1,18 @@
 _, CraftSim = ...
 
----@class CraftSim.OptionalReagentSlot
----@field possibleReagents CraftSim.OptionalReagent[]
----@field activeReagent CraftSim.OptionalReagent
----@field slotText string
----@field dataSlotIndex number
----@field locked boolean
----@field lockedReason? string
 
+---@class CraftSim.OptionalReagentSlot
 CraftSim.OptionalReagentSlot = CraftSim.Object:extend()
 
 ---@param reagentSlotSchematic CraftingReagentSlotSchematic
+---@param recipeData CraftSim.RecipeData
 function CraftSim.OptionalReagentSlot:new(recipeData, reagentSlotSchematic)
     -- self.recipeData = recipeData
     if not recipeData or not reagentSlotSchematic then
         return
     end
     self.dataSlotIndex = reagentSlotSchematic.dataSlotIndex
+    ---@type CraftSim.OptionalReagent[]
     self.possibleReagents = {}
 
     if reagentSlotSchematic.slotInfo and reagentSlotSchematic.slotInfo.mcrSlotID then
@@ -36,6 +32,7 @@ function CraftSim.OptionalReagentSlot:SetReagent(itemID)
         return
     end
 
+    ---@type CraftSim.OptionalReagent?
     self.activeReagent = CraftSim.GUTIL:Find(self.possibleReagents, function(possibleReagent) return possibleReagent.item:GetItemID() == itemID end)
 end
 

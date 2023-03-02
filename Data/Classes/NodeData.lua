@@ -1,33 +1,28 @@
 _, CraftSim = ...
 
----@class CraftSim.NodeData
----@field recipeData CraftSim.RecipeData
----@field nodeID number
----@field active boolean
----@field rank number
----@field maxRank number
----@field nodeName? string
----@field description? string
----@field affectsRecipe boolean
----@field professionStats CraftSim.ProfessionStats
----@field idMapping CraftSim.IDMapping
----@field parentNode? CraftSim.NodeData
----@field nodeRules CraftSim.NodeRule[]
----@field childNodes CraftSim.NodeData[]
 
+---@class CraftSim.NodeData
 CraftSim.NodeData = CraftSim.Object:extend()
 
 ---@param nodeRulesData table[]
+---@param recipeData CraftSim.RecipeData
+---@param parentNode CraftSim.NodeData?
 function CraftSim.NodeData:new(recipeData, nodeRulesData, parentNode)
+    self.affectsRecipe = false
     if not recipeData then
         return
     end
     self.recipeData = recipeData
     self.parentNode = parentNode
+    ---@type number
     self.nodeID = nodeRulesData[1].nodeID
+    ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
+    ---@type CraftSim.IDMapping
     self.idMapping = CraftSim.IDMapping(self.recipeData, nodeRulesData[1].idMapping, nodeRulesData[1].exceptionRecipeIDs)
+    ---@type CraftSim.NodeRule[]
     self.nodeRules = {}
+    ---@type CraftSim.NodeData[]
     self.childNodes = {}
 
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)

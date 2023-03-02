@@ -2,22 +2,22 @@ _, CraftSim = ...
 
 
 
----@class CraftSim.ReagentData
----@field recipeData CraftSim.RecipeData
----@field requiredReagents CraftSim.Reagent[]
----@field optionalReagentSlots CraftSim.OptionalReagentSlot[]
----@field finishingReagentSlots CraftSim.OptionalReagentSlot[]
----@field salvageReagentSlot CraftSim.SalvageReagentSlot
-
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
+---@class CraftSim.ReagentData
 CraftSim.ReagentData = CraftSim.Object:extend()
 
+---@param recipeData CraftSim.RecipeData
+---@param schematicInfo CraftingRecipeSchematic
 function CraftSim.ReagentData:new(recipeData, schematicInfo)
     self.recipeData = recipeData
+    ---@type CraftSim.Reagent[]
     self.requiredReagents = {}
+    ---@type CraftSim.OptionalReagentSlot[]
     self.optionalReagentSlots = {}
+    ---@type CraftSim.OptionalReagentSlot[]
     self.finishingReagentSlots = {}
+    ---@type CraftSim.SalvageReagentSlot
     self.salvageReagentSlot = CraftSim.SalvageReagentSlot(self.recipeData)
 
     if not schematicInfo then

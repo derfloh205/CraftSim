@@ -1,14 +1,11 @@
 _, CraftSim = ...
 
----@class CraftSim.BuffData
----@field professionStats CraftSim.ProfessionStats
----@field incenseActive boolean
----@field alchemicallyInspiredActive boolean
----@field quickHandsActive boolean
 
+---@class CraftSim.BuffData
 CraftSim.BuffData = CraftSim.Object:extend()
 
 function CraftSim.BuffData:new()
+    ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
     self.incenseActive = false
     self.quickHandsActive = false

@@ -1,17 +1,13 @@
 _, CraftSim = ...
 
 ---@class CraftSim.ProfessionStat
----@field name string
----@field value number
----@field percentMod number
----@field extraFactor number
----@field extraValue number
----@field extraValueAfterFactor number -- used for sim mode, added after GetExtraValueByFactor
-
 CraftSim.ProfessionStat = CraftSim.Object:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
+---@param name string
+---@param value number?
+---@param percentMod number?
 function CraftSim.ProfessionStat:new(name, value, percentMod)
     self.name = name
     self.value = value or 0

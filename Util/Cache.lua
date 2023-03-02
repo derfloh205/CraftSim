@@ -37,6 +37,7 @@ function CraftSim.CACHE:ClearAll()
     CraftSimProfessionSkillLineIDCache = {}
 end
 
+---@return any?
 function CraftSim.CACHE:GetCacheEntryByVersion(cache, entryID)
     local currentVersion = GetAddOnMetadata(AddonName, "Version")
     print("Cache by version " .. tostring(currentVersion) .. " id: " .. tostring(entryID), false, true)

@@ -1,18 +1,17 @@
 _, CraftSim = ...
 
----@class CraftSim.IDMapping
----@field recipeData CraftSim.RecipeData
----@field categories CraftSim.IDCategory[]
----@field exceptionRecipeIDs number[]
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
+---@class CraftSim.IDMapping
 CraftSim.IDMapping = CraftSim.Object:extend()
 
 ---@param idMappingData table
 ---@param exceptionRecipeIDs number[]
+---@param recipeData CraftSim.RecipeData
 function CraftSim.IDMapping:new(recipeData, idMappingData, exceptionRecipeIDs)
     self.recipeData = recipeData
+    ---@type CraftSim.IDCategory[]
     self.categories = {}
     self.exceptionRecipeIDs = exceptionRecipeIDs or {}
 

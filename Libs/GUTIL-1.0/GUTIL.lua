@@ -1,8 +1,8 @@
 
 
-local GUTIL = LibStub:NewLibrary("GUTIL", 1)
 
-local configName = nil
+---@class GUTIL
+local GUTIL = LibStub:NewLibrary("GUTIL", 1)
 
 --- CLASSICS insert
 local Object = {}

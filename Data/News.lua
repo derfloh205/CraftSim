@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.0.0") ..
+        f.P .. "" ..
         newP("7.8.2") ..
         f.p .. "Backend Changes" ..
         f.p .. "Added an exception for " .. f.bb("Sturdy Expedition Shovel") ..

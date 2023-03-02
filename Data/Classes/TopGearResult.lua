@@ -1,15 +1,14 @@
 _, CraftSim = ...
 
 ---@class CraftSim.TopGearResult
----@field professionGearSet CraftSim.ProfessionGearSet
----@field averageProfit number
----@field relativeProfit number
----@field expectedQuality number
----@field expectedQualityUpgrade number
----@field relativeStats CraftSim.ProfessionStats
-
 CraftSim.TopGearResult = CraftSim.Object:extend()
 
+---@param professionGearSet CraftSim.ProfessionGearSet
+---@param averageProfit number
+---@param relativeProfit number
+---@param relativeStats CraftSim.ProfessionStats
+---@param expectedQuality number
+---@param expectedQualityUpgrade number
 function CraftSim.TopGearResult:new(professionGearSet, averageProfit, relativeProfit, relativeStats, expectedQuality, expectedQualityUpgrade)
     self.relativeStats = relativeStats
     self.professionGearSet = professionGearSet

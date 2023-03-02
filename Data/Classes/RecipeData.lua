@@ -1,42 +1,6 @@
 _, CraftSim = ...
 
 ---@class CraftSim.RecipeData
----@field recipeID number 
----@field categoryID number
----@field subtypeID number
----@field learned boolean
----@field numSkillUps? number
----@field recipeIcon? string
----@field recipeName? string
----@field isSimulationModeData boolean
----@field hasQualityReagents boolean
----@field supportsQualities boolean
----@field supportsCraftingStats boolean
----@field supportsInspiration boolean
----@field supportsMulticraft boolean
----@field supportsResourcefulness boolean
----@field supportsCraftingspeed boolean
----@field isGear boolean
----@field isSoulbound boolean
----@field isEnchantingRecipe boolean
----@field isSalvageRecipe boolean
----@field isCooking boolean
----@field isOldWorldRecipe boolean
----@field baseItemAmount number
----@field maxQuality number
----@field allocationItemGUID? string
----@field professionData CraftSim.ProfessionData
----@field reagentData CraftSim.ReagentData
----@field specializationData CraftSim.SpecializationData
----@field buffData CraftSim.BuffData
----@field professionGearSet CraftSim.ProfessionGearSet
----@field professionStats CraftSim.ProfessionStats The ProfessionStats of that recipe considering gear, reagents, buffs.. etc
----@field baseProfessionStats CraftSim.ProfessionStats The ProfessionStats of that recipe without gear or reagents
----@field professionStatModifiers CraftSim.ProfessionStats Will add/subtract to final stats (Used in Simulation Mode, usually 0)
----@field priceData CraftSim.PriceData
----@field resultData CraftSim.ResultData
----@field orderData CraftingOrderInfo
-
 CraftSim.RecipeData = CraftSim.Object:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
@@ -46,9 +10,11 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 ---@param isWorkOrder? boolean
 ---@return CraftSim.RecipeData?
 function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
+    ---@type CraftSim.ProfessionData
     self.professionData = CraftSim.ProfessionData(recipeID)
 
     if isWorkOrder then
+        ---@type CraftingOrderInfo
         self.orderData = ProfessionsFrame.OrdersPage.OrderView.order
 
         print("Craft Order Data:")
@@ -73,12 +39,10 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
 
     if recipeInfo.hyperlink then
         local subclassID = select(7, GetItemInfoInstant(recipeInfo.hyperlink))
+        ---@type number?
         self.subtypeID = subclassID
     end
 
-    
-
----@diagnostic disable-next-line: missing-parameter
     local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
     self.isOldWorldRecipe = not tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
     self.isRecraft = isRecraft or false
@@ -92,6 +56,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.isEnchantingRecipe = recipeInfo.isEnchantingRecipe or false
     self.isCooking = self.professionData.professionInfo.profession == Enum.Profession.Cooking
     self.isSalvageRecipe = recipeInfo.isSalvageRecipe or false
+    ---@type string?
     self.allocationItemGUID = nil
     self.maxQuality = recipeInfo.maxQuality
     self.isGear = recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil
@@ -102,6 +67,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.supportsCraftingspeed = true -- this is always supported (but does not show in details UI when 0)
 
     if not self.isCooking then
+        ---@type CraftSim.SpecializationData?
         self.specializationData = CraftSim.SpecializationData(self)
     end
 
@@ -110,8 +76,10 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
         print("No RecipeData created: SchematicInfo not found")
         return
     end
+    ---@type CraftSim.BuffData
     self.buffData = CraftSim.BuffData()
     self.buffData:Update()
+    ---@type CraftSim.ReagentData
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
 
     local qualityReagents = CraftSim.GUTIL:Count(self.reagentData.requiredReagents, function (reagent)
@@ -130,6 +98,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
 
     self.isSoulbound = (schematicInfo.outputItemID and CraftSim.GUTIL:isItemSoulbound(schematicInfo.outputItemID)) or false
 
+    ---@type CraftSim.ProfessionGearSet
     self.professionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
     
     local baseOperationInfo = nil
@@ -139,8 +108,11 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
     end
     
+    ---@type CraftSim.ProfessionStats
     self.baseProfessionStats = CraftSim.ProfessionStats()
+    ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
+    ---@type CraftSim.ProfessionStats
     self.professionStatModifiers = CraftSim.ProfessionStats()
     
     self.baseProfessionStats:SetStatsByOperationInfo(self, baseOperationInfo)
@@ -164,9 +136,11 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
 
     self:UpdateProfessionStats()
     
+    ---@type CraftSim.ResultData
     self.resultData = CraftSim.ResultData(self)
     self.resultData:Update()
 
+    ---@type CraftSim.PriceData
     self.priceData = CraftSim.PriceData(self)
     self.priceData:Update()
 end

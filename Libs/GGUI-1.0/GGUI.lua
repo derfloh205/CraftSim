@@ -1,5 +1,6 @@
 
 
+---@class GGUI
 local GGUI = LibStub:NewLibrary("GGUI", 1)
 
 local GUTIL = GGUI_GUTIL
@@ -7,6 +8,7 @@ local GUTIL = GGUI_GUTIL
 local configName = nil
 
 --- CLASSICS insert
+---@class Object
 local Object = {}
 Object.__index = Object
 
@@ -145,8 +147,6 @@ end
 --- GGUI Widget
 
 ---@class GGUI.Widget
----@field frame Frame original blizzard frame/region
-
 GGUI.Widget = GGUI.Object:extend()
 
 function GGUI.Widget:new(frame)
@@ -187,18 +187,8 @@ end
 function GGUI.Widget:IsVisible()
     return self.frame:IsVisible()
 end
---- GGUI Frame
 
----@class GGUI.Frame
----@field title GGUI.Text
----@field content Frame
----@field frameID string
----@field scrollableContent boolean
----@field closeable boolean
----@field collapseable boolean
----@field moveable boolean
----@field originalX number
----@field originalY number
+--- GGUI Frame
 
 ---@class GGUI.FrameConstructorOptions
 ---@field globalName? string
@@ -240,6 +230,7 @@ end
 ---@field insets? backdropInsets
 
 ---@param frameID string The ID string you gave the frame
+---@return GGUI.Frame | GGUI.Widget
 function GGUI:GetFrame(frameID)
     if not GGUI.frames[frameID] then
         error("GGUI Error: Frame not found: " .. frameID)
@@ -247,7 +238,9 @@ function GGUI:GetFrame(frameID)
     return GGUI.frames[frameID]
 end
 
+---@class GGUI.Frame
 GGUI.Frame = GGUI.Widget:extend()
+
 ---@param options GGUI.FrameConstructorOptions
 function GGUI.Frame:new(options)
     options = options or {}
@@ -417,12 +410,6 @@ end
 
 --- GGUI Icon
 
----@class GGUI.Icon
----@field qualityIcon GGUI.QualityIcon
----@field item ItemMixin
----@field qualityID? number
----@field hideQualityIcon? boolean
-
 ---@class GGUI.IconConstructorOptions
 ---@field parent? Frame
 ---@field offsetX? number
@@ -436,6 +423,7 @@ end
 ---@field anchorParent? Region
 ---@field hideQualityIcon? boolean
 
+---@class GGUI.Icon
 GGUI.Icon = GGUI.Widget:extend()
 function GGUI.Icon:new(options)
     options = options or {}
@@ -526,9 +514,6 @@ end
 
 --- GGUI.QualityIcon
 
----@class GGUI.QualityIcon
----@field qualityID number
-
 ---@class GGUI.QualityIconConstructorOptions
 ---@field parent Frame
 ---@field sizeX? number
@@ -540,6 +525,7 @@ end
 ---@field offsetY? number
 ---@field initialQuality? number
 
+---@class GGUI.QualityIcon
 GGUI.QualityIcon = GGUI.Widget:extend()
 function GGUI.QualityIcon:new(options)
     options = options or {}
@@ -579,11 +565,6 @@ end
 
 --- GGUI.Dropdown
 
----@class GGUI.Dropdown
----@field title FontString
----@field selected? any
----@field clickCallback? function
-
 ---@class GGUI.DropdownConstructorOptions
 ---@field globalName? string
 ---@field parent? Frame
@@ -605,6 +586,7 @@ end
 ---@field tooltipItemLink? string
 ---@field tooltipConcatText? string
 
+---@class GGUI.Dropdown
 GGUI.Dropdown = GGUI.Widget:extend()
 
 ---@param options GGUI.DropdownConstructorOptions
@@ -721,8 +703,6 @@ end
 
 --- GGUI.Text
 
----@class GGUI.Text
-
 ---@class GGUI.TextConstructorOptions
 ---@field text? string
 ---@field parent? Frame
@@ -741,7 +721,7 @@ end
 ---@field alignH string
 ---@field alignV string
 
-
+---@class GGUI.Text
 GGUI.Text = GGUI.Widget:extend()
 ---@param options GGUI.TextConstructorOptions
 function GGUI.Text:new(options)
@@ -786,8 +766,6 @@ end
 
 --- GGUI.ScrollingMessageFrame
 
----@class GGUI.ScrollingMessageFrame
-
 ---@class GGUI.ScrollingMessageFrameConstructorOptions
 ---@field parent? Frame
 ---@field anchorParent? Region
@@ -803,6 +781,7 @@ end
 ---@field enableScrolling? boolean
 ---@field justifyOptions? GGUI.JustifyOptions
 
+---@class GGUI.ScrollingMessageFrame
 GGUI.ScrollingMessageFrame = GGUI.Widget:extend()
 ---@param options GGUI.ScrollingMessageFrameConstructorOptions
 function GGUI.ScrollingMessageFrame:new(options)
@@ -860,20 +839,6 @@ end
 
 --- GGUI.Button
 
----@class GGUI.Button
----@field clickCallback? function
----@field originalX? number
----@field originalY? number
----@field originalAnchorA? FramePoint
----@field originalAnchorB? FramePoint
----@field originalOffsetX? number
----@field originalOffsetY? number
----@field originalText? string
----@field originalParent? Frame
----@field originalAnchorParent? Region
----@field activeStatusID? string
----@field statusList GGUI.ButtonStatus[]
-
 ---@class GGUI.ButtonStatus[]
 ---@field statusID string
 ---@field sizeX? number
@@ -902,6 +867,7 @@ end
 ---@field clickCallback? function
 ---@field initialStatusID? string
 
+---@class GGUI.Button
 GGUI.Button = GGUI.Widget:extend()
 ---@param options GGUI.ButtonConstructorOptions
 function GGUI.Button:new(options)
@@ -1015,10 +981,6 @@ end
 
 --- GGUI.Tab
 
----@class GGUI.Tab
----@field button GGUI.Button
----@field content Frame
-
 ---@class GGUI.TabConstructorOptions
 ---@field buttonOptions? GGUI.ButtonConstructorOptions
 ---@field canBeEnabled? boolean
@@ -1031,6 +993,7 @@ end
 ---@field parent? Frame
 ---@field anchorParent? Region
 
+---@class GGUI.Tab
 GGUI.Tab = GGUI.Object:extend()
 ---@param options GGUI.TabConstructorOptions
 function GGUI.Tab:new(options)
@@ -1055,9 +1018,8 @@ function GGUI.Tab:EnableHyperLinksForFrameAndChilds()
 end
 
 --- GGUI.TabSystem
----@class GGUI.TabSystem
----@field tabs GGUI.Tab[]
 
+---@class GGUI.TabSystem
 GGUI.TabSystem = GGUI.Object:extend()
 
 ---@param tabList GGUI.Tab[]
@@ -1089,11 +1051,8 @@ function GGUI.TabSystem:EnableHyperLinksForFrameAndChilds()
 end
 
 --- GGUI.Checkbox
-
-GGUI.Checkbox = GGUI.Widget:extend()
-
 ---@class GGUI.Checkbox
----@field frame CheckButton
+GGUI.Checkbox = GGUI.Widget:extend()
 
 ---@class GGUI.CheckboxConstructorOptions
 ---@field label? string
@@ -1138,8 +1097,6 @@ end
 
 
 --- GGUI.Slider
----@class GGUI.Slider
----@field onValueChangedCallback? function
 
 ---@class GGUI.SliderConstructorOptions
 ---@field label? string
@@ -1159,6 +1116,7 @@ end
 ---@field highText? string
 ---@field onValueChangedCallback? function
 
+---@class GGUI.Slider
 GGUI.Slider = GGUI.Widget:extend()
 ---@param options GGUI.SliderConstructorOptions
 function GGUI.Slider:new(options)
@@ -1197,8 +1155,6 @@ function GGUI.Slider:new(options)
 end
 
 --- GGUI.HelpIcon
----@class GGUI.HelpIcon
-
 ---@class GGUI.HelpIconConstructorOptions
 ---@field text? string
 ---@field parent? Frame
@@ -1208,6 +1164,7 @@ end
 ---@field offsetX? number
 ---@field offsetY? number
 
+---@class GGUI.HelpIcon
 GGUI.HelpIcon = GGUI.Widget:extend()
 
 ---@param options GGUI.HelpIconConstructorOptions
@@ -1243,9 +1200,6 @@ end
 
 
 --- GGUI.ScrollFrame
----@class GGUI.ScrollFrame
----@field content Frame
----@field scrollFrame Frame
 
 ---@class GGUI.ScrollFrameConstructorOptions
 ---@field parent? Frame
@@ -1254,6 +1208,7 @@ end
 ---@field offsetRIGHT? number
 ---@field offsetBOTTOM? number
 
+---@class GGUI.ScrollFrame
 GGUI.ScrollFrame = GGUI.Object:extend()
 ---@param options GGUI.ScrollFrameConstructorOptions
 function GGUI.ScrollFrame:new(options)
@@ -1284,8 +1239,6 @@ function GGUI.ScrollFrame:EnableHyperLinksForFrameAndChilds()
 end
 
 --- GGUI.TextInput
----@class GGUI.TextInput
----@field onTextChangedCallback? function
 
 ---@class GGUI.TextInputConstructorOptions
 ---@field parent? Frame
@@ -1303,6 +1256,7 @@ end
 ---@field onEnterCallback? function Default: Clear Focus
 ---@field onEscapeCallback? function Default: Clear Focus
 
+---@class GGUI.TextInput
 GGUI.TextInput = GGUI.Widget:extend()
 ---@param options GGUI.TextInputConstructorOptions
 function GGUI.TextInput:new(options)
@@ -1360,16 +1314,6 @@ function GGUI.TextInput:SetText(text, userInput)
 end
 
 --- GGUI.CurrencyInput
----@class GGUI.CurrencyInput
----@field textInput GGUI.TextInput
----@field border Frame
----@field onValueValidCallback? function
----@field onValidationChangedCallback? function
----@field isValid boolean
----@field gold number
----@field silver number
----@field copper number
----@field total number
 
 ---@class GGUI.CurrencyInputConstructorOptions
 ---@field parent? Frame
@@ -1388,6 +1332,7 @@ end
 ---@field borderAdjustHeight? number
 ---@field borderWidth? number
 
+---@class GGUI.CurrencyInput
 GGUI.CurrencyInput = GGUI.Object:extend()
 
 ---@param options GGUI.CurrencyInputConstructorOptions
@@ -1516,14 +1461,6 @@ function GGUI.CurrencyInput:SetValue(total)
 end
 
 --- GGUI.NumericInput
----@class GGUI.NumericInput
----@field textInput EditBox
----@field onNumberValidCallback? function
----@field onValidationChangedCallback? function
----@field validationBorder Frame
----@field minValue? number
----@field maxValue? number
----@field allowDecimals? boolean
 
 ---@class GGUI.NumericInputConstructorOptions
 ---@field parent? Frame
@@ -1548,6 +1485,7 @@ end
 ---@field borderAdjustHeight? number
 ---@field borderWidth? number
 
+---@class GGUI.NumericInput
 GGUI.NumericInput = GGUI.Object:extend()
 ---@param options GGUI.NumericInputConstructorOptions
 function GGUI.NumericInput:new(options)

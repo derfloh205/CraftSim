@@ -1,16 +1,12 @@
 _, CraftSim = ...
 
 ---@class CraftSim.CraftResultItem
----@field item ItemMixin
----@field qualityID number
----@field quantity number
----@field quantityMulticraft number
-
 CraftSim.CraftResultItem = CraftSim.Object:extend()
 
 ---@param itemLink string   
 ---@param quantity number
 ---@param quantityMulticraft number
+---@param qualityID number?
 function CraftSim.CraftResultItem:new(itemLink, quantity, quantityMulticraft, qualityID)
     self.qualityID = qualityID
     self.item = Item:CreateFromItemLink(itemLink)

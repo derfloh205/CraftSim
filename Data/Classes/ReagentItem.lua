@@ -1,12 +1,10 @@
 _, CraftSim = ...
 
 ---@class CraftSim.ReagentItem
----@field qualityID number
----@field quantity number
----@field item ItemMixin
-
 CraftSim.ReagentItem = CraftSim.Object:extend()
 
+---@param itemID number
+---@param qualityID number?
 function CraftSim.ReagentItem:new(itemID, qualityID)
     self.qualityID = qualityID
     self.quantity = 0
