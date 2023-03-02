@@ -377,6 +377,34 @@ function CraftSim.RecipeData:OptimizeQuality(optimizeInspiration)
     self:OptimizeReagents(optimizeInspiration)
 end
 
+---@param idLinkOrMixin number | string | ItemMixin
+---@return number? qualityID
+function CraftSim.RecipeData:GetResultQuality(idLinkOrMixin)
+    local item = nil
+
+    if type(idLinkOrMixin) == 'number' then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        item = Item:CreateFromItemID(idLinkOrMixin)
+    elseif type(idLinkOrMixin) == 'string' then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        item = Item:CreateFromItemLink(idLinkOrMixin)
+    elseif type(idLinkOrMixin) == 'table' and idLinkOrMixin.ContinueOnItemLoad then
+        item = idLinkOrMixin
+    end
+
+    for qualityID, _item in pairs(self.resultData.itemsByQuality) do
+        if _item:GetItemID() == item:GetItemID() then
+            return qualityID
+        end
+    end
+
+    return nil
+end
+
+function CraftSim.RecipeData:IsResult(idLinkOrMixin)
+    return self:GetResultQuality(idLinkOrMixin) ~= nil
+end
+
 function CraftSim.RecipeData:GetJSON(indent)
     indent = indent or 0
 

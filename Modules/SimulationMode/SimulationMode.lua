@@ -3,7 +3,9 @@ AddonName, CraftSim = ...
 CraftSim.SIMULATION_MODE = {}
 
 CraftSim.SIMULATION_MODE.isActive = false
+---@type CraftSim.RecipeData?
 CraftSim.SIMULATION_MODE.recipeData = nil
+---@type CraftSim.SpecializationData?
 CraftSim.SIMULATION_MODE.specializationData = nil
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE)

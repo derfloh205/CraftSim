@@ -614,6 +614,8 @@ function GGUI.Dropdown:new(options)
     self.title:SetPoint("TOP", 0, 10)
 
     self:SetLabel(options.label)
+
+    self.selectedValue = nil
 end
 
 function GGUI.Dropdown:SetLabel(label)
@@ -622,13 +624,15 @@ end
 
 ---@class GGUI.DropdownSetDataOptions
 ---@field data GGUI.DropdownData
----@field initialValue any
+---@field initialValue? any
+---@field initialLabel? string
 
 ---@param options GGUI.DropdownSetDataOptions
 function GGUI.Dropdown:SetData(options)
     options = options or {}
     options.data = options.data or {}
-    options.initialValue = options.initialValue or ""
+    options.initialValue = options.initialValue or nil
+    options.initialLabel = options.initialLabel or ""
 
     local dropDown = self.frame
     local gDropdown = self
@@ -689,8 +693,11 @@ function GGUI.Dropdown:SetData(options)
         end
 	end
 
+    
 	UIDropDownMenu_Initialize(dropDown, initMainMenu, "DROPDOWN_MENU_LEVEL")
-	UIDropDownMenu_SetText(dropDown, options.initialValue)
+	UIDropDownMenu_SetText(dropDown, options.initialLabel)
+
+    self.selectedValue = options.initialValue
 end
 
 function GGUI.Dropdown:SetEnabled(enabled)
@@ -843,6 +850,7 @@ end
 ---@field statusID string
 ---@field sizeX? number
 ---@field sizeY? number
+---@field adjustWidth? boolean
 ---@field offsetX? number
 ---@field offsetY? number
 ---@field anchorA? FramePoint
@@ -946,7 +954,13 @@ function GGUI.Button:SetStatus(statusID)
     self.activeStatusID = statusID
 
     if buttonStatus then
-        if buttonStatus.sizeX then
+        if buttonStatus.adjustWidth then
+            if buttonStatus.sizeX then
+                self.frame:SetWidth(self.frame:GetTextWidth() + buttonStatus.sizeX)
+            else
+                self.frame:SetWidth(self.frame:GetTextWidth() + self.originalX)
+            end
+        elseif buttonStatus.sizeX then
             self.frame:SetWidth(buttonStatus.sizeX)
         end
         if buttonStatus.sizeY then

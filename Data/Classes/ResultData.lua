@@ -36,6 +36,13 @@ function CraftSim.ResultData:new(recipeData)
     ---@type ItemMixin?
     self.expectedItemUpgrade = nil
 
+    self.chanceUpgrade = 0
+    self.chanceInspiration = 0
+    self.chanceHSV = 0
+    self.chanceInspirationHSV = 0
+
+    ---@type number[]
+    self.chanceByQuality = {}
 
     self:UpdatePossibleResultItems()
 end
@@ -115,10 +122,10 @@ function CraftSim.ResultData:Update()
     self.expectedQuality = expectedQualityBySkill(professionStats.skill.value, recipeData.maxQuality, professionStats.recipeDifficulty.value)
     self.expectedItem = self.itemsByQuality[self.expectedQuality]
 
-    local skillInspiration = professionStats.skill.value + professionStats.inspiration.extraValue
+    local skillInspiration = professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor()
     local maxHSVSkill = professionStats.recipeDifficulty.value * 0.05
     local skillHSV = professionStats.skill.value + maxHSVSkill
-    local skillInspirationHSV = professionStats.skill.value + professionStats.inspiration.extraValue + maxHSVSkill
+    local skillInspirationHSV = professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor() + maxHSVSkill
 
     local qualityInspiration = expectedQualityBySkill(skillInspiration, recipeData.maxQuality, professionStats.recipeDifficulty.value)
     local qualityHSV = expectedQualityBySkill(skillHSV, recipeData.maxQuality, professionStats.recipeDifficulty.value)
@@ -138,6 +145,46 @@ function CraftSim.ResultData:Update()
     self.expectedItemHSV = self.itemsByQuality[qualityHSV]
     self.expectedItemInspirationHSV = self.itemsByQuality[qualityInspirationHSV]
     self.expectedItemUpgrade = self.itemsByQuality[self.expectedQualityUpgrade]
+
+    
+    local hsv, inspOnly = CraftSim.CALC:getHSVChance(self.recipeData)
+    if qualityInspirationHSV > self.expectedQuality then
+        local inspChance = professionStats.inspiration:GetPercent(true)
+        self.chanceInspirationHSV = hsv * inspChance
+        if not inspOnly then
+            if qualityInspiration > self.expectedQuality then
+                self.chanceInspiration = inspChance
+            end
+            if qualityHSV > self.expectedQuality then
+                 self.chanceHSV = hsv
+            end
+        end
+    end
+
+    for quality = 1, self.recipeData.maxQuality, 1 do
+        if quality <= self.expectedQuality then
+            self.chanceByQuality[quality] = 1
+        else
+            local chanceHSV = ((quality == qualityHSV) and self.chanceHSV) or 0
+            local chanceInspiration = ((quality <= qualityInspiration) and self.chanceInspiration) or 0
+            local chanceInspirationHSV = ((quality <= qualityInspirationHSV) and self.chanceInspirationHSV) or 0
+            
+            local totalChance = 
+            chanceHSV*(1-chanceInspiration) +
+            (1-chanceHSV)*chanceInspiration +
+            chanceInspirationHSV
+
+            self.chanceByQuality[quality] = totalChance
+
+            if self.expectedQualityUpgrade == quality then
+                self.chanceUpgrade = self.chanceByQuality[quality]
+            end
+        end
+    end
+
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_DATA)
+    print("after last resultdata update:")
+    print(self, true)
 end
 
 function CraftSim.ResultData:Debug()
@@ -158,6 +205,10 @@ function CraftSim.ResultData:Debug()
             "expectedItemInspiration: " .. tostring(self.expectedItemInspiration and self.expectedItemInspiration:GetItemLink()),
             "expectedItemHSV: " .. tostring(self.expectedItemHSV and self.expectedItemHSV:GetItemLink()),
             "expectedItemInspirationHSV: " .. tostring(self.expectedItemInspirationHSV and self.expectedItemInspirationHSV:GetItemLink()),
+            "chanceUpgrade: " .. tostring(self.chanceUpgrade*100) .. "%", 
+            "chanceInspiration: " .. tostring(self.chanceInspiration*100) .. "%", 
+            "chanceHSV: " .. tostring(self.chanceHSV*100) .. "%", 
+            "chanceInspirationHSV: " .. tostring(self.chanceInspirationHSV*100) .. "%", 
         }
     })
 end
@@ -180,6 +231,10 @@ end
 ---@field expectedItemLinkInspiration? string
 ---@field expectedItemLinkHSV? string
 ---@field expectedItemLinkInspirationHSV? string
+---@field chanceUpgrade number
+---@field chanceInspiration number
+---@field chanceHSV number
+---@field chanceInspirationHSV number
 
 --- Make sure that the items are loaded before serializing or the links are empty
 function CraftSim.ResultData:Serialize()
@@ -198,6 +253,10 @@ function CraftSim.ResultData:Serialize()
     serialized.expectedItemLinkInspiration = (self.expectedItemInspiration and self.expectedItemInspiration:GetItemLink()) or nil
     serialized.expectedItemLinkHSV = (self.expectedItemHSV and self.expectedItemHSV:GetItemLink()) or nil
     serialized.expectedItemLinkInspirationHSV = (self.expectedItemInspirationHSV and self.expectedItemInspirationHSV:GetItemLink()) or nil
+    serialized.chanceUpgrade = self.chanceUpgrade
+    serialized.chanceInspiration = self.chanceInspiration
+    serialized.chanceHSV = self.chanceHSV
+    serialized.chanceInspirationHSV = self.chanceInspirationHSV
     return serialized
 end
 
@@ -214,6 +273,10 @@ function CraftSim.ResultData:Deserialize(serializedResultData)
     deserialized.expectedQualityHSV = tonumber(serializedResultData.expectedQualityHSV)
     deserialized.expectedQualityInspirationHSV = tonumber(serializedResultData.expectedQualityInspirationHSV)
     deserialized.expectedQualityUpgrade = tonumber(serializedResultData.expectedQualityUpgrade)
+    deserialized.chanceUpgrade = tonumber(serializedResultData.chanceUpgrade)
+    deserialized.chanceInspiration = tonumber(serializedResultData.chanceInspiration)
+    deserialized.chanceHSV = tonumber(serializedResultData.chanceHSV)
+    deserialized.chanceInspirationHSV = tonumber(serializedResultData.chanceInspirationHSV)
     deserialized.canUpgradeQuality = not not serializedResultData.canUpgradeQuality
     deserialized.expectedItem = (serializedResultData.expectedItemLink and deserialized.itemsByQuality[deserialized.expectedQuality]) or nil
     deserialized.expectedItemUpgrade = (serializedResultData.expectedItemLinkUpgrade and deserialized.itemsByQuality[deserialized.expectedQualityUpgrade]) or nil

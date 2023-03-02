@@ -528,7 +528,7 @@ function CraftSim.FRAME:InitDebugFrame()
     end
 
 
-    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(debugFrame)
+    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(debugFrame.content)
 end
 
 function CraftSim.FRAME:InitWarningFrame()

@@ -64,12 +64,12 @@ CraftSimOptions = CraftSimOptions or {
 
 CraftSimGGUIConfig = CraftSimGGUIConfig or {}
 
+---@type CraftSim.RecipeData?
 CraftSim.MAIN.currentRecipeData = nil
+---@type number?
 CraftSim.MAIN.currentRecipeID = nil
 
-local function print(text, recursive) -- override
-	CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.MAIN, recursive)
-end
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.MAIN)
 
 function CraftSim.MAIN:COMBAT_LOG_EVENT_UNFILTERED(event)
 	local _, subEvent, _, _, sourceName = CombatLogGetCurrentEventInfo()
@@ -567,16 +567,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
 	CraftSim.FRAME:ToggleFrame(customerServiceFrame, showCustomerService)
 	
-	if recipeData and showCraftResults then
-		CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeData.recipeID)
-	end
+	
 
-	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTDATA.frame, showCraftData)
-	if showCraftData then
-		CraftSim.CRAFTDATA.FRAMES:UpdateDisplay(recipeData)
-	end
-
-	-- Simulation Mode
+	-- Simulation Mode (always update first because it changes recipeData based on simMode inputs)
 	showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
 	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.FRAMES.WORKORDER.toggleButton,showSimulationMode and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton, showSimulationMode and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
@@ -586,6 +579,15 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		-- since recipeData is a reference here to the recipeData in the simulationmode, 
 		-- the recipeData that is used in the below modules should also be the modified one!
 		CraftSim.SIMULATION_MODE:UpdateSimulationMode()
+	end
+
+	if recipeData and showCraftResults then
+		CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeData.recipeID)
+	end
+
+	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTDATA.frame, showCraftData)
+	if showCraftData then
+		CraftSim.CRAFTDATA.FRAMES:UpdateDisplay(recipeData)
 	end
 
 	-- AverageProfit Module
