@@ -11,10 +11,14 @@ function CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
 
     local savedCosts = 0
     if recipeData.supportsResourcefulness then
-        savedCosts = priceData.craftingCostsRequired * (CraftSimOptions.customResourcefulnessConstant * extraSavedItemsFactor)
+        savedCosts = CraftSim.CALC:CalculateResourcefulnessSavedCosts(extraSavedItemsFactor, priceData.craftingCostsRequired)
     end
 
     return savedCosts
+end
+
+function CraftSim.CALC:CalculateResourcefulnessSavedCosts(resExtraFactor, craftingCostsRequired)
+    return craftingCostsRequired * (CraftSimOptions.customResourcefulnessConstant * resExtraFactor)
 end
 
 ---Returns the chance to receive an upgrade with hsv
@@ -57,6 +61,31 @@ function CraftSim.CALC:getHSVChance(recipeData)
         return hsvChance
     else
         return 0
+    end
+end
+
+---Returns the total items received if multicraft procs
+---@param recipeData CraftSim.RecipeData
+---@return number expectedItems the total amount (base + extra)
+---@return number expectedExtraItems the expected amount of extra items
+function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
+    if not recipeData.supportsMulticraft then
+        return recipeData.baseItemAmount, 0
+    end
+
+    local maxExtraItems = (CraftSimOptions.customMulticraftConstant*recipeData.baseItemAmount) * recipeData.professionStats.multicraft:GetExtraFactor(true)
+    local expectedExtraItems = (1 + maxExtraItems) / 2 
+    local expectedItems = recipeData.baseItemAmount + expectedExtraItems
+
+    return expectedItems, expectedExtraItems
+end
+
+function CraftSim.CALC:CalculateExpectedCosts(expectedCrafts, chance, resChance, resExtraFactor, avgItemAmount, craftingCosts, requiredCraftingCosts)
+    local avgSavedCostsRes = CraftSim.CALC:CalculateResourcefulnessSavedCosts(resExtraFactor, requiredCraftingCosts) * resChance
+    if chance == 1 then
+        return craftingCosts - avgSavedCostsRes
+    elseif chance > 0 then
+        return ((craftingCosts- avgSavedCostsRes) * expectedCrafts) / avgItemAmount
     end
 end
 
@@ -109,9 +138,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
 
         print("SavedCostsRes: " .. CraftSim.GUTIL:FormatMoney(savedCostsByRes))
 
-        local maxExtraItems = (CraftSimOptions.customMulticraftConstant*recipeData.baseItemAmount) * professionStats.multicraft:GetExtraFactor(true)
-        local expectedAdditionalItems = (1 + maxExtraItems) / 2 
-        local expectedItems = recipeData.baseItemAmount + expectedAdditionalItems
+        local expectedItems = CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
 
         print("Inspiration Extra Factor:" .. professionStats.inspiration.extraFactor)
         print("Inspiration Extra Value:" .. professionStats.inspiration.extraValue)
@@ -260,9 +287,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         local resChance = professionStats.resourcefulness:GetPercent(true)
         local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
 
-        local maxExtraItems = (CraftSimOptions.customMulticraftConstant*recipeData.baseItemAmount) * professionStats.multicraft:GetExtraFactor(true)
-        local expectedAdditionalItems = (1 + maxExtraItems) / 2 
-        local expectedItems = recipeData.baseItemAmount + expectedAdditionalItems
+        local expectedItems = CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
 
         local probabilityTable = {}
 

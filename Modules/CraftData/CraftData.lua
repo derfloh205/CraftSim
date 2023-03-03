@@ -13,9 +13,8 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
     if recipeData then
         local qualityID = recipeData:GetResultQuality(item)
         if qualityID then -- could be nil if item does not belong to recipe, may happen with bugs
+            local expectedCrafts = recipeData.resultData.expectedCraftsByQuality[qualityID]
             local chance = recipeData.resultData.chanceByQuality[qualityID]
-            print("chance: " .. tostring(chance))
-            local expectedCrafts = math.ceil(1 / chance) --  cause we cannot craft something 1.3 times lol
 
             ---@type CraftSim.Reagent[]
             local requiredReagents = CraftSim.GUTIL:Map(recipeData.reagentData.requiredReagents, function (reagent)
@@ -48,11 +47,23 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
             local crafterName = UnitName("player")
             local crafterClass = select(2, UnitClass("player"))
 
-            local craftData = CraftSim.CraftData(expectedCrafts, chance, requiredReagents, optionalReagents, crafterName, crafterClass)
+            local resChance = recipeData.professionStats.resourcefulness:GetPercent(true)
+            local resExtraFactor = recipeData.professionStats.resourcefulness:GetExtraFactor(true)
+            local avgItemAmount = recipeData.baseItemAmount
+            if recipeData.supportsMulticraft then
+                local extraItemsMC = select(2, CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData))
+                local mcChance = recipeData.professionStats.multicraft:GetPercent(true)
+                local mcUpgradeChance = mcChance*chance
+                local avgExtraItemsOnMCUpgrade = mcUpgradeChance*extraItemsMC
+                avgItemAmount = recipeData.baseItemAmount + avgExtraItemsOnMCUpgrade
+            end
+
+            local craftData = CraftSim.CraftData(expectedCrafts, chance, 
+            requiredReagents, optionalReagents, crafterName, 
+            crafterClass, resChance, resExtraFactor, avgItemAmount)
 
             --- use itemString for key to enable saving data for gear
             local itemString = CraftSim.GUTIL:GetItemStringFromLink(item:GetItemLink())
-            print("Saving: " .. tostring(itemString))
             if itemString then
                 CraftSimCraftData[recipeData.recipeID] = CraftSimCraftData[recipeData.recipeID] or {}
                 CraftSimCraftData[recipeData.recipeID][itemString] = craftData:Serialize()

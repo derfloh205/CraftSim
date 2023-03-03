@@ -11,6 +11,7 @@ function CraftSim.PriceData:new(recipeData)
     self.recipeData = recipeData
     ---@type number[]
     self.qualityPriceList = {}
+    self.expectedCostsByQuality = {}
     self.craftingCosts = 0
 end
 
@@ -23,6 +24,7 @@ function CraftSim.PriceData:Update()
     self.craftingCostsRequired = 0
     self.craftingCostsFixed = 0
     self.qualityPriceList = {}
+    self.expectedCostsByQuality = {}
 
     print("Calculating Crafting Costs: ", false, true)
 
@@ -97,6 +99,32 @@ function CraftSim.PriceData:Update()
             itemPrice = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or CraftSim.PRICEDATA:GetMinBuyoutByItemID(item:GetItemID())
         end
         table.insert(self.qualityPriceList, itemPrice)
+    end
+
+    local avgSavedCostsRes = 0
+    if self.recipeData.supportsResourcefulness then
+        -- in this case we need the average saved costs per craft
+        avgSavedCostsRes = CraftSim.CALC:getResourcefulnessSavedCosts(self.recipeData) * self.recipeData.professionStats.resourcefulness:GetPercent(true)
+    end
+    for qualityID, chance in pairs(self.recipeData.resultData.chanceByQuality) do
+        if chance == 1 then
+            self.expectedCostsByQuality[qualityID] = self.craftingCosts - avgSavedCostsRes
+        elseif chance > 0 then
+            local expectedCrafts = self.recipeData.resultData.expectedCraftsByQuality[qualityID]
+            local baseAmount = self.recipeData.baseItemAmount
+            local averageItemAmountForUpgrade = baseAmount
+            if self.recipeData.supportsMulticraft then
+                local multicraftChance = self.recipeData.professionStats.multicraft:GetPercent(true)
+                local multiCraftUpgradeChance = chance * multicraftChance
+                local expectedExtraItems = select(2, CraftSim.CALC:GetExpectedItemAmountMulticraft(self.recipeData))
+                local avgExpectedExtraItemsForUpgradeWithMC = multiCraftUpgradeChance * expectedExtraItems
+                averageItemAmountForUpgrade = averageItemAmountForUpgrade + avgExpectedExtraItemsForUpgradeWithMC
+            end
+            
+            self.expectedCostsByQuality[qualityID] = CraftSim.CALC:CalculateExpectedCosts(
+                expectedCrafts, chance, self.recipeData.professionStats.resourcefulness:GetPercent(true), 
+                self.recipeData.professionStats.resourcefulness:GetExtraFactor(true), averageItemAmountForUpgrade, self.craftingCosts, self.craftingCostsRequired)
+        end
     end
 end
 

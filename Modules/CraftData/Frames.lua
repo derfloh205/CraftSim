@@ -20,6 +20,9 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         frameStrata="DIALOG",
     })
 
+    CraftSim.GGUI.HelpIcon({parent=craftDataFrame.content, anchorParent=craftDataFrame.title.frame, 
+        anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_EXPLANATION)})
+
     ---@type GGUI.Dropdown | GGUI.Widget
     craftDataFrame.content.resultsDropdown = CraftSim.GGUI.Dropdown({
         parent=craftDataFrame.content,anchorParent=craftDataFrame.title.frame,
@@ -85,18 +88,26 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         anchorA="LEFT", anchorB="RIGHT", offsetX=5,
         text=1, justifyOptions={type="H", align="LEFT"},
     })
+    CraftSim.GGUI.HelpIcon({parent=dataFrame, anchorParent=dataFrame.expectedCraftsValue.frame, 
+        anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EXPECTED_CRAFTS_EXPLANATION)})
+
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.chanceTitle = CraftSim.GGUI.Text({
         parent=dataFrame,anchorParent=dataFrame.expectedCraftsTitle.frame,
         anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=sideTextSpacing,
         text="Crafting Chance: ", justifyOptions={type="H", align="LEFT"},
     })
+
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.chanceValue = CraftSim.GGUI.Text({
         parent=dataFrame,anchorParent=dataFrame.chanceTitle.frame,
         anchorA="LEFT", anchorB="RIGHT", offsetX=5,
         text="100%", justifyOptions={type="H", align="LEFT"},
     })
+
+    CraftSim.GGUI.HelpIcon({parent=dataFrame, anchorParent=dataFrame.chanceValue.frame, 
+        anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.UPGRADE_CHANCE_EXPLANATION)})
+
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.expectedCostsTitle = CraftSim.GGUI.Text({
         parent=dataFrame,anchorParent=dataFrame.chanceTitle.frame,
@@ -109,6 +120,10 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         anchorA="LEFT", anchorB="RIGHT", offsetX=5,
         text=CraftSim.GUTIL:FormatMoney(1234567000), justifyOptions={type="H", align="LEFT"},
     })
+
+    CraftSim.GGUI.HelpIcon({parent=dataFrame, anchorParent=dataFrame.expectedCostsValue.frame, 
+        anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EXPECTED_COSTS_EXPLANATION)})
+
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.minimumCostsTitle = CraftSim.GGUI.Text({
         parent=dataFrame,anchorParent=dataFrame.expectedCostsTitle.frame,
@@ -384,20 +399,21 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
         end)
     end)
 
+    local qualityID = recipeData:GetResultQuality(item)
+
     if craftDataSerialized then
         dataFrame.saveButton:SetStatus("UPDATE")
         dataFrame.deleteDataItem:SetEnabled(true)
         local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
-        -- TODO: calculate expected costs from craftData
-        local craftingCosts = craftData:GetCraftingCosts()
-    
-        local expectedCosts = craftingCosts * craftData.expectedCrafts
-        local minimumCosts = craftingCosts
+        print("deserializeddata:")
+        print(craftData, true)
+        local expectedCosts = craftData:GetExpectedCosts()
+        local minimumCosts = craftData:GetCraftingCosts()
     
         dataFrame.expectedCostsValue:SetText(CraftSim.GUTIL:FormatMoney(expectedCosts))
         dataFrame.minimumCostsValue:SetText(CraftSim.GUTIL:FormatMoney(minimumCosts))
-        dataFrame.expectedCraftsValue:SetText(craftData.expectedCrafts)
-        dataFrame.chanceValue:SetText(craftData.chance*100 .. "%")
+        dataFrame.expectedCraftsValue:SetText(CraftSim.GUTIL:Round(craftData.expectedCrafts, 2))
+        dataFrame.chanceValue:SetText(CraftSim.GUTIL:Round(craftData.chance*100,2) .. "%")
     
         table.foreach(dataFrame.reagentFrames, function (reagentIndex, reagentFrame)
             local reagent = craftData.requiredReagents[reagentIndex]
@@ -440,13 +456,10 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
         table.foreach(dataFrame.reagentFrames, function (_, reagentFrame)
             reagentFrame:Hide()
         end)
-    end
+    end    
 
-    -- if selected item is not reachable with current recipe data configuration, set status of save button
-    local qualityID = recipeData:GetResultQuality(item)
-
-    -- The quality is unreachable if the max upgrade quality is lower than it
-    if qualityID > recipeData.resultData.expectedQualityUpgrade then
+    -- if unreachable
+    if not recipeData.resultData.expectedCraftsByQuality[qualityID] then
         dataFrame.saveButton:SetStatus("UNREACHABLE")
     end
 end

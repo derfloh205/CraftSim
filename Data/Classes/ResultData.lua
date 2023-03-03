@@ -44,6 +44,9 @@ function CraftSim.ResultData:new(recipeData)
     ---@type number[]
     self.chanceByQuality = {}
 
+    ---@type number[] if an item is unreachable the expected crafts are nil
+    self.expectedCraftsByQuality = {} 
+
     self:UpdatePossibleResultItems()
 end
 
@@ -161,6 +164,9 @@ function CraftSim.ResultData:Update()
         end
     end
 
+    self.expectedCraftsByQuality = {}
+    self.chanceByQuality = {}
+
     for quality = 1, self.recipeData.maxQuality, 1 do
         if quality <= self.expectedQuality then
             self.chanceByQuality[quality] = 1
@@ -180,11 +186,10 @@ function CraftSim.ResultData:Update()
                 self.chanceUpgrade = self.chanceByQuality[quality]
             end
         end
+        if self.chanceByQuality[quality] > 0 then
+            self.expectedCraftsByQuality[quality] = 1 / self.chanceByQuality[quality]
+        end
     end
-
-    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_DATA)
-    print("after last resultdata update:")
-    print(self, true)
 end
 
 function CraftSim.ResultData:Debug()

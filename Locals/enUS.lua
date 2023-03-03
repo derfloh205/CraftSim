@@ -127,6 +127,11 @@ function CraftSim.LOCAL_EN:GetData()
         -- Options
         [CraftSim.CONST.TEXT.MULTICRAFT_CONSTANT_EXPLANATION] = "Default: 2.5\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe maximum extra items one can receive from a multicraft proc is 1+C*y.\nWhere y is the base item amount for one craft and C is 2.5.\nHowever if you wish you can modify this value here.",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_CONSTANT_EXPLANATION] = "Default: 0.3\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe average amount of items saved is 30% of the required quantity.\nHowever if you wish you can modify this value here.",
-            
+
+        -- Craft Data
+        [CraftSim.CONST.TEXT.EXPECTED_CRAFTS_EXPLANATION] = "The expected number of crafts for an item is based on your " .. f.bb("Inspiration") .. ", " .. f.l("HSV Chance") .. " and " .. f.bb("Multicraft"),
+        [CraftSim.CONST.TEXT.UPGRADE_CHANCE_EXPLANATION] = "The craft chance for an item is based on your\n" .. f.bb("Inspiration ") .. "and " .. f.l("HSV Chance"),
+        [CraftSim.CONST.TEXT.EXPECTED_COSTS_EXPLANATION] = "The expected costs of an item is based on the " .. f.bb("Expected Crafts") .. ", the " .. f.bb("Crafting Costs") .. " and your "  .. f.bb("Resourcefulness"),
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPLANATION] = "Here you can take a " .. f.bb("'Snapshot'") .. " of your current recipe configuration for a target item\nThe saved data includes a snapshot of your current " .. f.bb("Profession Stats") .. "\nand calculates the " .. f.l("Expected Costs") .. " for an item based on that.\nYou can use " .. f.bb("Simulation Mode") .. " to finetune your configurations!",
     }
 end
