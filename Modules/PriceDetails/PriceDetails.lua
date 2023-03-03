@@ -1,12 +1,12 @@
 AddonName, CraftSim = ...
 
-CraftSim.COSTOVERVIEW = {}
+CraftSim.PRICE_DETAILS = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OVERVIEW)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS)
 
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
-function CraftSim.COSTOVERVIEW:UpdateDisplay(recipeData, exportMode)
+function CraftSim.PRICE_DETAILS:UpdateDisplay(recipeData, exportMode)
     -- calculate profit for qualities from current until max
     local profitByNextQualities = {}
     if recipeData.supportsCraftingStats then
@@ -24,5 +24,5 @@ function CraftSim.COSTOVERVIEW:UpdateDisplay(recipeData, exportMode)
     end
 
     -- TODO: refactor the mincraftingcosts thingy, currently just set it always to same
-    CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplay(recipeData, profitByNextQualities, 1, exportMode)
+    CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitByNextQualities, 1, exportMode)
 end

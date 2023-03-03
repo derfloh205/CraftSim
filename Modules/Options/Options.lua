@@ -239,10 +239,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyCostOverview, -- get from options..
         "0", "1", 
         function(self, value)
-            CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW):SetTransparency(value)
+            CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_DETAILS):SetTransparency(value)
             CraftSimOptions.transparencyCostOverview = value
         end)
-    CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW):SetTransparency(CraftSimOptions.transparencyCostOverview)
+    CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_DETAILS):SetTransparency(CraftSimOptions.transparencyCostOverview)
     CraftSim.FRAME:CreateText("Cost Overview Module", 
     ModulesTab.content, CraftSimCostOverviewTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 

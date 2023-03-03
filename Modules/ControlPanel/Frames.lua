@@ -93,9 +93,9 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "Shows the best available profession gear combination based on the selected mode",
     "LEFT", frame.content.modulesMaterials, "RIGHT", 150, 0, "modulesTopGear")
 
-    frame.content.modulesCostOverview = createModuleCheckbox("Cost Overview", 
+    frame.content.modulesPriceDetails = createModuleCheckbox("Price Details", 
     "Shows a crafting cost and sell profit overview by resulting quality",
-    "TOP", frame.content.modulesTopGear, "TOP", 0, -20, "modulesCostOverview")
+    "TOP", frame.content.modulesTopGear, "TOP", 0, -20, "modulesPriceDetails")
 
     -- 3. Row
     frame.content.modulesSpecInfo = createModuleCheckbox("Specialization Info", 

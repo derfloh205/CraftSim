@@ -68,8 +68,8 @@ Modules/ReagentOptimization/Frames.lua
 Modules/TopGear/TopGear.lua
 Modules/TopGear/Frames.lua
 
-Modules/CostOverview/CostOverview.lua
-Modules/CostOverview/Frames.lua
+Modules/PriceDetails/PriceDetails.lua
+Modules/PriceDetails/Frames.lua
 
 Modules/CraftData/CraftData.lua
 Modules/CraftData/Frames.lua

@@ -11,7 +11,12 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.0.0") ..
-        f.P .. "" ..
+        f.P .. "New Module: " .. f.g("Craft Data") ..
+        f.s .. "Renamed Modules:" ..
+        f.a .. "Cost Overview -> " .. f.g("Price Details") ..
+        f.s .. f.l("API Update: ") .. "RecipeData.ResultData" ..
+        f.a .. "now includes a craft chance per quality table and" ..
+        f.a .. "an expected crafts per quality table" .. 
         newP("7.8.2") ..
         f.p .. "Backend Changes" ..
         f.p .. "Added an exception for " .. f.bb("Sturdy Expedition Shovel") ..

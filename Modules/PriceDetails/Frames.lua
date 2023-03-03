@@ -1,10 +1,10 @@
 AddonName, CraftSim = ...
 
-CraftSim.COSTOVERVIEW.FRAMES = {}
+CraftSim.PRICE_DETAILS.FRAMES = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OVERVIEW)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS)
 
-function CraftSim.COSTOVERVIEW.FRAMES:Init()
+function CraftSim.PRICE_DETAILS.FRAMES:Init()
     local sizeX=350
     local sizeY=400
     local offsetX=50
@@ -16,13 +16,13 @@ function CraftSim.COSTOVERVIEW.FRAMES:Init()
         anchorA="TOP",anchorB="BOTTOM",
         offsetX=offsetX,offsetY=offsetY,
         sizeX=sizeX,sizeY=sizeY,
-        frameID=CraftSim.CONST.FRAMES.COST_OVERVIEW, 
-        title="CraftSim Cost Overview",
+        frameID=CraftSim.CONST.FRAMES.PRICE_DETAILS, 
+        title="CraftSim Price Details",
         collapseable=true,
         closeable=true,
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCostOverview"),
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesPriceDetails"),
     })
 
     local frameWO = CraftSim.GGUI.Frame({
@@ -31,13 +31,13 @@ function CraftSim.COSTOVERVIEW.FRAMES:Init()
         anchorA="TOP",anchorB="BOTTOM",
         offsetX=offsetX,offsetY=offsetY,
         sizeX=sizeX,sizeY=sizeY,
-        frameID=CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER, 
-        title="CraftSim Cost Overview " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+        frameID=CraftSim.CONST.FRAMES.PRICE_DETAILS_WORK_ORDER, 
+        title="CraftSim Price Details " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
         collapseable=true,
         closeable=true,
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCostOverview"),
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesPriceDetails"),
     })
 
     local function createContent(frame)
@@ -92,12 +92,12 @@ function CraftSim.COSTOVERVIEW.FRAMES:Init()
     createContent(frameNO_WO)
 end
 
-function CraftSim.COSTOVERVIEW.FRAMES:UpdateDisplay(recipeData, profitPerQuality, currentQuality, exportMode)
+function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitPerQuality, currentQuality, exportMode)
     local costOverviewFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        costOverviewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
+        costOverviewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_DETAILS_WORK_ORDER)
     else
-        costOverviewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
+        costOverviewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_DETAILS)
     end
 
     local priceData = recipeData.priceData

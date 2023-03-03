@@ -25,7 +25,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesMaterials = true,
 	modulesStatWeights = true,
 	modulesTopGear = true,
-	modulesCostOverview = true,
+	modulesPriceDetails = true,
 	modulesSpecInfo = true,
 	modulesPriceOverride = false,
 	modulesRecipeScan = false,
@@ -133,8 +133,8 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		if CraftSimOptions.modulesTopGear == nil then
 			CraftSimOptions.modulesTopGear = true
 		end
-		if CraftSimOptions.modulesCostOverview == nil then
-			CraftSimOptions.modulesCostOverview = true
+		if CraftSimOptions.modulesPriceDetails == nil then
+			CraftSimOptions.modulesPriceDetails = true
 		end
 		if CraftSimOptions.modulesSpecInfo == nil then
 			CraftSimOptions.modulesSpecInfo = true
@@ -273,7 +273,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.AVERAGEPROFIT.FRAMES:Init()
 		CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
 		CraftSim.TOPGEAR.FRAMES:Init()
-		CraftSim.COSTOVERVIEW.FRAMES:Init()
+		CraftSim.PRICE_DETAILS.FRAMES:Init()
 		CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
 		CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
 		CraftSim.FRAME:InitWarningFrame()
@@ -416,8 +416,8 @@ function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	local averageProfitFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
 	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
 	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local costOverviewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
-	local costOverviewFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
+	local priceDetailsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_DETAILS)
+	local priceDetailsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_DETAILS_WORK_ORDER)
 	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
 	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
 	-- hide control panel and return
@@ -436,8 +436,8 @@ function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	averageProfitFrameWO:Hide()
 	topgearFrame:Hide()
 	topgearFrameWO:Hide()
-	costOverviewFrame:Hide()
-	costOverviewFrameWO:Hide()
+	priceDetailsFrame:Hide()
+	priceDetailsFrameWO:Hide()
 	materialOptimizationFrame:Hide()
 	materialOptimizationFrameWO:Hide()
 	CraftSim.CRAFTDATA.frame:Hide()
@@ -462,8 +462,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local averageProfitFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
 	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
 	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local costOverviewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW)
-	local costOverviewFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW_WORK_ORDER)
+	local costOverviewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_DETAILS)
+	local costOverviewFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_DETAILS_WORK_ORDER)
 	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
 	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
 
@@ -555,7 +555,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showMaterialOptimization = showMaterialOptimization and CraftSimOptions.modulesMaterials 
 	showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
 	showTopGear = showTopGear and CraftSimOptions.modulesTopGear
-	showCostOverview = showCostOverview and CraftSimOptions.modulesCostOverview
+	showCostOverview = showCostOverview and CraftSimOptions.modulesPriceDetails
 	showSpecInfo = showSpecInfo and CraftSimOptions.modulesSpecInfo
 	showPriceOverride = showPriceOverride and CraftSimOptions.modulesPriceOverride
 	showRecipeScan = showRecipeScan and CraftSimOptions.modulesRecipeScan
@@ -607,7 +607,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(costOverviewFrame, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(costOverviewFrameWO, showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showCostOverview then
-		CraftSim.COSTOVERVIEW:UpdateDisplay(recipeData, exportMode)
+		CraftSim.PRICE_DETAILS:UpdateDisplay(recipeData, exportMode)
 	end
 
 
