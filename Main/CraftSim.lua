@@ -31,6 +31,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesRecipeScan = false,
 	modulesCraftResults = false,
 	modulesCustomerService = false,
+	modulesCostDetails = false,
 
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
@@ -287,6 +288,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 		CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
 		CraftSim.CRAFTDATA.FRAMES:Init()
+		CraftSim.COST_DETAILS.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()

@@ -7,31 +7,32 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     local sizeX=310
     local sizeY=300
-    local offsetX=-10
+    local offsetX=240
+    local offsetY=450
 
     local frameNO_WO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR).frame, 
+        anchorParent=ProfessionsFrame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.SPEC_INFO, 
         title="CraftSim Specialization Info",
         collapseable=true,
         closeable=true,
         moveable=true,
-        anchorA="TOPLEFT",anchorB="TOPRIGHT",offsetX=offsetX,
+        anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",offsetX=offsetX,offsetY=offsetY,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesSpecInfo"),
     })
     local frameWO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
-        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER).frame, 
+        anchorParent=ProfessionsFrame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.SPEC_INFO_WO, 
         title="CraftSim Specialization Info",
         collapseable=true,
         closeable=true,
         moveable=true,
-        anchorA="TOPLEFT",anchorB="TOPRIGHT",offsetX=offsetX,
+        anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",offsetX=offsetX,offsetY=offsetY,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesSpecInfo"),
     })

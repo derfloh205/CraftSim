@@ -157,31 +157,4 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitPerQualit
             profitFrame:Hide()
         end
     end
-
-    -- CraftSim.FRAME:ToggleFrame(priceDetailsFrame.content.resultProfitsTitle, #profitPerQuality > 0)    
-
-    -- for index, profitFrame in pairs(priceDetailsFrame.content.profitFrames) do
-    --     if profitPerQuality[index] ~= nil then
-    --         local qualityID = currentQuality + index - 1
-
-    --         if resultData.itemsByQuality[qualityID] then
-    --             local item = resultData.itemsByQuality[qualityID]
-    --             item:ContinueOnItemLoad(function ()
-    --                 local itemCount = GetItemCount(item:GetItemLink(), true, false, true)
-    --                 profitFrame.itemLinkText:SetText(item:GetItemLink() .. " x " .. itemCount)
-    --             end)
-    --         else
-    --             -- if no item recipe e.g. show quality icon
-    --             local qualityText = CraftSim.GUTIL:GetQualityIconString(qualityID, 20, 20)
-    --             profitFrame.itemLinkText:SetText(qualityText)
-    --         end
-    --         profitFrame.qualityID = qualityID
-    --         local relativeValue = CraftSimOptions.showProfitPercentage and priceData.craftingCosts or nil
-    --         local comissionProfit = (recipeData.orderData and ((recipeData.orderData.tipAmount or 0) - (recipeData.orderData.consortiumCut or 0))) or 0
-    --         profitFrame.text:SetText(CraftSim.GUTIL:FormatMoney(profitPerQuality[index] + comissionProfit, true, relativeValue))
-    --         profitFrame:Show()
-    --     else
-    --         profitFrame:Hide()
-    --     end
-    -- end
 end

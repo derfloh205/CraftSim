@@ -7,30 +7,32 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIM
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     local sizeX = 280
     local sizeY = 270
+    local offsetX = 240
+    local offsetY = 190
 
     local frameWO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
-        anchorParent=CraftSim.PRICE_DETAILS.frame.frame, 
+        anchorParent=ProfessionsFrame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER, 
         title="CraftSim Material Optimization " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
         collapseable=true,
         closeable=true,
         moveable=true,
-        anchorA="TOPLEFT",anchorB="TOPRIGHT",offsetX=-10,
+        anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",offsetX=offsetX, offsetY=offsetY,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesMaterials"),
     })
     local frameNO_WO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent=CraftSim.PRICE_DETAILS.frame.frame, 
+        anchorParent=ProfessionsFrame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.MATERIALS, 
         title="CraftSim Material Optimization",
         collapseable=true,
         closeable=true,
         moveable=true,
-        anchorA="TOPLEFT",anchorB="TOPRIGHT",offsetX=-10,
+        anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",offsetX=offsetX, offsetY=offsetY,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesMaterials"),
     })
