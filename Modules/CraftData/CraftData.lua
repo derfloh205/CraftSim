@@ -16,6 +16,13 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
             local expectedCrafts = recipeData.resultData.expectedCraftsByQuality[qualityID]
             local chance = recipeData.resultData.chanceByQuality[qualityID]
 
+            print("save:")
+            print("qualityID of result:" .. qualityID)
+            print("expectedCraftsByQuality")
+            print(recipeData.resultData.expectedCraftsByQuality, true)
+            print("chanceByQuality")
+            print(recipeData.resultData.chanceByQuality, true)
+
             ---@type CraftSim.Reagent[]
             local requiredReagents = CraftSim.GUTIL:Map(recipeData.reagentData.requiredReagents, function (reagent)
                 return reagent:Copy()

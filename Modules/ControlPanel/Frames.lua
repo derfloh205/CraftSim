@@ -94,7 +94,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "LEFT", frame.content.modulesMaterials, "RIGHT", 150, 0, "modulesTopGear")
 
     frame.content.modulesPriceDetails = createModuleCheckbox("Price Details", 
-    "Shows a crafting cost and sell profit overview by resulting quality",
+    "Shows a sell price and profit overview by resulting item quality",
     "TOP", frame.content.modulesTopGear, "TOP", 0, -20, "modulesPriceDetails")
 
     -- 3. Row

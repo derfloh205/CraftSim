@@ -71,10 +71,8 @@ function CraftSim.FRAME:makeFrameMoveable(frame)
 end
 
 function CraftSim.FRAME:ResetFrames()
-    for _, frameName in pairs(CraftSim.FRAME.frames) do
-        local frame = _G[frameName]
-        frame.hookFrame:ClearAllPoints()
-        frame.resetPosition()
+    for _, frame in pairs(CraftSim.GGUI.frames) do
+        frame:ResetPosition()
     end
 end
 

@@ -393,8 +393,14 @@ function CraftSim.RecipeData:GetResultQuality(idLinkOrMixin)
     end
 
     for qualityID, _item in pairs(self.resultData.itemsByQuality) do
-        if _item:GetItemID() == item:GetItemID() then
-            return qualityID
+        local itemLinkA = _item:GetItemLink()
+        local itemLinkB = item:GetItemLink()
+        if itemLinkA and itemLinkB then
+            if _item:GetItemLink() == item:GetItemLink() then
+                return qualityID
+            end
+        elseif _item:GetItemID() == item:GetItemID() then
+                return qualityID
         end
     end
 

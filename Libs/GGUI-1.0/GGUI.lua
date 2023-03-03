@@ -151,6 +151,7 @@ GGUI.Widget = GGUI.Object:extend()
 
 function GGUI.Widget:new(frame)
     self.frame=frame
+    self.isGGUI = true
 end
 --- forward common frame/region methods to original frame
 function GGUI.Widget:SetScript(...)
@@ -190,6 +191,19 @@ end
 
 --- GGUI Frame
 
+---@class GGUI.FrameStatus[]
+---@field statusID string
+---@field sizeX? number
+---@field sizeY? number
+---@field offsetX? number
+---@field offsetY? number
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field parent? Frame
+---@field anchorParent? Region
+---@field title? string
+---@field activationCallback? function
+
 ---@class GGUI.FrameConstructorOptions
 ---@field globalName? string
 ---@field title? string
@@ -210,7 +224,10 @@ end
 ---@field moveable? boolean
 ---@field frameStrata? FrameStrata
 ---@field onCloseCallback? function
+---@field onCollapseCallback? function
+---@field onCollapseOpenCallback? function
 ---@field backdropOptions GGUI.BackdropOptions
+---@field initialStatusID? string
 
 ---@class GGUI.BackdropOptions
 ---@field colorR? number
@@ -256,6 +273,11 @@ function GGUI.Frame:new(options)
     options.scale = options.scale or 1
     self.originalX = options.sizeX
     self.originalY = options.sizeY
+    self.originalOffsetX = options.offsetX
+    self.originalOffsetY = options.offsetY
+    self.originalAnchorParent = options.anchorParent
+    self.originalAnchorA = options.anchorB
+    self.originalAnchorB = options.anchorB
     self.frameID = options.frameID or ("GGUIFrame" .. (GGUI.numFrames))
     self.scrollableContent = options.scrollableContent or false
     self.closeable = options.closeable or false
@@ -263,6 +285,11 @@ function GGUI.Frame:new(options)
     self.moveable = options.moveable or false
     self.frameStrata = options.frameStrata or "HIGH"
     self.collapsed = false
+    self.activeStatusID = options.initialStatusID
+    ---@type GGUI.FrameStatus[]
+    self.statusList = {}
+    self.onCollapseCallback = options.onCollapseCallback
+    self.onCollapseOpenCallback = options.onCollapseOpenCallback
 
     local hookFrame = CreateFrame("frame", nil, options.parent)
     hookFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
@@ -274,10 +301,6 @@ function GGUI.Frame:new(options)
     frame:SetScale(options.scale)
     frame:SetFrameStrata(options.frameStrata or "HIGH")
     frame:SetFrameLevel(GGUI.numFrames)
-
-    frame.resetPosition = function() 
-        hookFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
-    end
 
     self.title = GGUI.Text({
         parent=frame,anchorParent=frame,text=options.title,offsetY=-15,
@@ -392,6 +415,10 @@ function GGUI.Frame:Collapse()
         if self.frame.scrollFrame then
             self.frame.scrollFrame:Hide()
         end
+
+        if self.onCollapseCallback then
+            self.onCollapseCallback(self)
+        end
     end
 end
 
@@ -405,7 +432,68 @@ function GGUI.Frame:Decollapse()
         if self.frame.scrollFrame then
             self.frame.scrollFrame:Show()
         end
+
+        if self.onCollapseOpenCallback then
+            self.onCollapseOpenCallback(self)
+        end
     end
+end
+
+function GGUI.Frame:ResetPosition()
+    self.frame:ClearAllPoints()
+    self.frame:SetPoint(self.originalAnchorA, self.originalAnchorParent, self.originalAnchorB, self.originalOffsetX, self.originalOffsetY)
+end
+
+--- Set a list of predefined GGUI.ButtonStatus
+---@param statusList GGUI.FrameStatus[]
+function GGUI.Frame:SetStatusList(statusList)
+    -- map statuslist to their ids
+    table.foreach(statusList, function (_, status)
+        if not status.statusID then
+            error("GGUI: FrameStatus without statusID")
+        end
+        self.statusList[status.statusID] = status
+    end)
+end
+
+function GGUI.Frame:SetStatus(statusID)
+    local frameStatus = self.statusList[statusID]
+    self.activeStatusID = statusID
+
+    if frameStatus then
+        if frameStatus.sizeX then
+            self.frame:SetWidth(frameStatus.sizeX)
+        end
+        if frameStatus.sizeY then
+            self.frame:SetHeight(frameStatus.sizeY)
+        end
+        if frameStatus.title then
+            self.frame.title:SetText(frameStatus.title)
+        end
+        if frameStatus.offsetX or frameStatus.offsetY or frameStatus.anchorParent or frameStatus.anchorA or frameStatus.anchorB then
+            local offsetX = frameStatus.offsetX or self.originalOffsetX
+            local offsetY = frameStatus.offsetY or self.originalOffsetY
+            local anchorParent = frameStatus.anchorParent or self.originalAnchorParent
+            local anchorA = frameStatus.anchorA or self.originalAnchorA
+            local anchorB = frameStatus.anchorB or self.originalAnchorB
+
+            self.frame:ClearAllPoints()
+            self.frame:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
+        end
+        if frameStatus.activationCallback then
+            frameStatus.activationCallback(self, statusID)
+        end
+
+        -- if collapsed, restore collapse height
+        if self.collapseable and self.collapsed then
+            self:Collapse()
+        end
+    end
+end
+
+---@return string statusID
+function GGUI.Frame:GetStatus()
+    return tostring(self.activeStatusID)
 end
 
 --- GGUI Icon
@@ -1018,6 +1106,7 @@ function GGUI.Tab:new(options)
     options.offsetY = options.offsetY or 0
     options.anchorA = options.anchorA or "CENTER"
     options.anchorB = options.anchorB or "CENTER"
+    self.isGGUI = true
 
     self.button = GGUI.Button(options.buttonOptions)
     self.button.canBeEnabled = options.canBeEnabled or false
@@ -1038,6 +1127,7 @@ GGUI.TabSystem = GGUI.Object:extend()
 
 ---@param tabList GGUI.Tab[]
 function GGUI.TabSystem:new(tabList)
+    self.isGGUI = true
     self.tabs = tabList
     if #tabList == 0 then
         return
@@ -1226,6 +1316,7 @@ end
 GGUI.ScrollFrame = GGUI.Object:extend()
 ---@param options GGUI.ScrollFrameConstructorOptions
 function GGUI.ScrollFrame:new(options)
+    self.isGGUI = true
     options = options or {}
     options.offsetTOP = options.offsetTOP or 0
     options.offsetLEFT = options.offsetLEFT or 0
@@ -1351,7 +1442,7 @@ GGUI.CurrencyInput = GGUI.Object:extend()
 
 ---@param options GGUI.CurrencyInputConstructorOptions
 function GGUI.CurrencyInput:new(options)
-
+    self.isGGUI = true
     options = options or {}
     options.anchorA = options.anchorA or "CENTER"
     options.anchorB = options.anchorB or "CENTER"
@@ -1503,6 +1594,7 @@ end
 GGUI.NumericInput = GGUI.Object:extend()
 ---@param options GGUI.NumericInputConstructorOptions
 function GGUI.NumericInput:new(options)
+    self.isGGUI = true
     options = options or {}
     options.anchorA = options.anchorA or "CENTER"
     options.anchorB = options.anchorB or "CENTER"

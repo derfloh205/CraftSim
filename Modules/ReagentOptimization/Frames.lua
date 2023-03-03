@@ -10,7 +10,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
 
     local frameWO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
-        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_DETAILS_WORK_ORDER).frame, 
+        anchorParent=CraftSim.PRICE_DETAILS.frame.frame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER, 
         title="CraftSim Material Optimization " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
@@ -23,7 +23,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     })
     local frameNO_WO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_DETAILS).frame, 
+        anchorParent=CraftSim.PRICE_DETAILS.frame.frame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.MATERIALS, 
         title="CraftSim Material Optimization",
