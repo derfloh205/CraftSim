@@ -10,8 +10,8 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS
 function CraftSim.PRICE_DETAILS.FRAMES:Init()
     local sizeX=250
     local sizeY=220
-    local offsetX=0
-    local offsetY=10
+    local offsetX=-5
+    local offsetY=130
 
     local sizeYQ1 = 100
     local sizeYQ3 = 165
@@ -23,8 +23,8 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
 
     CraftSim.PRICE_DETAILS.frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm, 
-        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR).frame,
-        anchorA="TOP",anchorB="BOTTOM",
+        anchorParent=ProfessionsFrame,
+        anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",
         offsetX=offsetX,offsetY=offsetY,
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.PRICE_DETAILS, 
@@ -40,8 +40,8 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
     
     CraftSim.PRICE_DETAILS.frameWO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, 
-        anchorParent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR).frame,
-        anchorA="TOP",anchorB="BOTTOM",
+        anchorParent=ProfessionsFrame,
+        anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",
         offsetX=offsetX,offsetY=offsetY,
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.PRICE_DETAILS_WORK_ORDER, 

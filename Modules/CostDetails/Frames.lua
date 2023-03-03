@@ -10,12 +10,14 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
 
     local sizeX=300
     local sizeY=250
+    local offsetX=80
+    local offsetY=-98
 
     CraftSim.COST_DETAILS.frame = CraftSim.GGUI.Frame({
             parent=ProfessionsFrame.CraftingPage.SchematicForm, 
-            anchorParent=CraftSim.PRICE_DETAILS.frame.frame,
-            anchorA="TOP",anchorB="BOTTOM",
-            sizeX=sizeX,sizeY=sizeY, offsetY=10,
+            anchorParent=ProfessionsFrame,
+            anchorA="BOTTOM",anchorB="BOTTOM",
+            sizeX=sizeX,sizeY=sizeY, offsetY=offsetY, offsetX=offsetX,
             frameID=CraftSim.CONST.FRAMES.COST_DETAILS, 
             title="CraftSim Cost Details",
             collapseable=true,
@@ -26,9 +28,9 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
         })
     CraftSim.COST_DETAILS.frameWO = CraftSim.GGUI.Frame({
             parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, 
-            anchorParent=CraftSim.PRICE_DETAILS.frameWO.frame,
-            anchorA="TOP",anchorB="BOTTOM",
-            sizeX=sizeX,sizeY=sizeY, offsetY=10,
+            anchorParent=ProfessionsFrame,
+            anchorA="BOTTOM",anchorB="BOTTOM",
+            sizeX=sizeX,sizeY=sizeY, offsetY=offsetY, offsetX=offsetX,
             frameID=CraftSim.CONST.FRAMES.COST_DETAILS, 
             title="CraftSim Cost Details " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
             collapseable=true,
