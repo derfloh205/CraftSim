@@ -97,14 +97,26 @@ function GGUI:MakeFrameCloseable(frame, onCloseCallback)
         end
     })
 end
-function GGUI:MakeFrameMoveable(frame)
-    frame.hookFrame:SetMovable(true)
-    frame:SetScript("OnMouseDown", function(self, button)
-        frame.hookFrame:StartMoving()
+function GGUI:MakeFrameMoveable(gFrame)
+    gFrame.frame.hookFrame:SetMovable(true)
+    gFrame.frame:SetScript("OnMouseDown", function(self, button)
+        local anchorParent = select(2, gFrame.frame.hookFrame:GetPoint())
+        gFrame.preMoveAnchorParent = anchorParent
+        gFrame.frame.hookFrame:StartMoving()
         end)
-        frame:SetScript("OnMouseUp", function(self, button)
-        frame.hookFrame:StopMovingOrSizing()
-        end)
+        gFrame.frame:SetScript("OnMouseUp", function(self, button)
+            gFrame.frame.hookFrame:StopMovingOrSizing()
+            local x, y = gFrame.frame.hookFrame:GetCenter()
+            local relativeX, relativeY = gFrame.preMoveAnchorParent:GetCenter()
+        
+            -- Calculate the offset between the original anchor parent and the new position
+            local offsetX = x - relativeX
+            local offsetY = y - relativeY
+    
+            -- Reapply the anchor point with the offset
+            gFrame.frame.hookFrame:ClearAllPoints()
+            gFrame.frame.hookFrame:SetPoint("CENTER", gFrame.preMoveAnchorParent, "CENTER", offsetX, offsetY)
+    end)
 end
 function GGUI:SetItemTooltip(frame, itemLink, owner, anchor)
     local function onEnter()
@@ -342,7 +354,7 @@ function GGUI.Frame:new(options)
     end
     
     if self.moveable then
-        GGUI:MakeFrameMoveable(frame)
+        GGUI:MakeFrameMoveable(self)
     end
 
     if self.scrollableContent then
