@@ -288,7 +288,7 @@ function GGUI.Frame:new(options)
     self.originalOffsetX = options.offsetX
     self.originalOffsetY = options.offsetY
     self.originalAnchorParent = options.anchorParent
-    self.originalAnchorA = options.anchorB
+    self.originalAnchorA = options.anchorA
     self.originalAnchorB = options.anchorB
     self.frameID = options.frameID or ("GGUIFrame" .. (GGUI.numFrames))
     self.scrollableContent = options.scrollableContent or false
@@ -452,8 +452,8 @@ function GGUI.Frame:Decollapse()
 end
 
 function GGUI.Frame:ResetPosition()
-    self.frame:ClearAllPoints()
-    self.frame:SetPoint(self.originalAnchorA, self.originalAnchorParent, self.originalAnchorB, self.originalOffsetX, self.originalOffsetY)
+    self.frame.hookFrame:ClearAllPoints()
+    self.frame.hookFrame:SetPoint(self.originalAnchorA, self.originalAnchorParent, self.originalAnchorB, self.originalOffsetX, self.originalOffsetY)
 end
 
 --- Set a list of predefined GGUI.ButtonStatus
