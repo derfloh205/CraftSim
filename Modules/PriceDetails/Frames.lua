@@ -9,13 +9,13 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS
 
 function CraftSim.PRICE_DETAILS.FRAMES:Init()
     local sizeX=250
-    local sizeY=250
+    local sizeY=220
     local offsetX=0
     local offsetY=10
 
-    local sizeYQ1 = 125
-    local sizeYQ3 = 190
-    local sizeYQ5 = 250
+    local sizeYQ1 = 100
+    local sizeYQ3 = 165
+    local sizeYQ5 = 225
 
     local function restoreStatus(self) 
         self:SetStatus(self.activeStatusID)
@@ -56,13 +56,8 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
     })
 
     local function createContent(frame)
-        frame.content.showLinksButton = CraftSim.GGUI.Button({
-            parent=frame.content, anchorParent=frame.title.frame, offsetY=-5,
-            label="Show Item Links", adjustWidth=true, anchorA="TOP", anchorB="BOTTOM",
-        })
-
         frame.content.resultProfitsTitle = CraftSim.GGUI.Text({
-            parent=frame.content, anchorParent=frame.content.showLinksButton.frame, offsetY=-5,
+            parent=frame.content, anchorParent=frame.title.frame, offsetY=-5,
             text="Price/Profit By Quality", anchorA="TOP", anchorB="BOTTOM"
         })
 
@@ -149,7 +144,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitPerQualit
         local profitFrame = priceDetailsFrame.content.profitFrames[qualityID]
         local resultItem = resultData.itemsByQuality[qualityID]
 
-        if resultItem then
+        if resultItem and not (not recipeData.supportsQualities and qualityID > 1) then
             resultItem:ContinueOnItemLoad(function ()
                 profitFrame.itemIcon:SetItem(resultItem)
                 local price = CraftSim.PRICEDATA:GetMinBuyoutByItemLink(resultItem:GetItemLink())

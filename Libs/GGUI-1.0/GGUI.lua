@@ -524,6 +524,8 @@ function GGUI.Icon:new(options)
     options.anchorB = options.anchorB or "CENTER"
     options.qualityIconScale = options.qualityIconScale or 1
     self.hideQualityIcon = options.hideQualityIcon or false
+    ---@type ItemMixin?
+    self.item = nil
 
     local newIcon = CreateFrame("Button", nil, options.parent, "GameMenuButtonTemplate")
     GGUI.Icon.super.new(self, newIcon)
@@ -544,6 +546,14 @@ function GGUI.Icon:new(options)
     })
     newIcon.qualityIcon:Hide()
     self.qualityIcon = newIcon.qualityIcon
+
+    self.frame:HookScript("OnClick", function ()
+        if IsShiftKeyDown() and self.item then
+            self.item:ContinueOnItemLoad(function ()
+                ChatEdit_InsertLink(self.item:GetItemLink())
+            end)
+        end
+    end)
 end
 
 ---@class GGUI.IconSetItemOptions
@@ -573,6 +583,7 @@ function GGUI.Icon:SetItem(idLinkOrMixin, options)
         item = idLinkOrMixin
     end
 
+    self.item = item
     item:ContinueOnItemLoad(function ()
         gIcon.frame:SetNormalTexture(item:GetItemIcon())
         GGUI:SetItemTooltip(gIcon.frame, item:GetItemLink(), options.tooltipOwner or gIcon.frame, options.tooltipAnchor or "ANCHOR_RIGHT")

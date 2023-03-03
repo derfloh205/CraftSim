@@ -12,6 +12,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                                 ( You are awesome! )") ..
         newP("8.0.0") ..
         f.P .. "New Module: " .. f.g("Craft Data") ..
+        f.P .. f.g("All Item Icons") .. " can now be " .. f.bb("shift-clicked") .. " to insert the" ..
+        f.a .. "respective item link into the active chat" ..
         f.s .. "Renamed Modules:" ..
         f.a .. "Cost Overview -> " .. f.g("Price Details") ..
         f.s .. f.l("API Update: ") .. "RecipeData.ResultData" ..
