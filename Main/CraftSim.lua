@@ -302,6 +302,8 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.MAIN:InitStaticPopups()
 
 		CraftSim.CUSTOMER_SERVICE:Init()
+
+		CraftSim.FRAME:RestoreModulePositions()
 	end
 end
 

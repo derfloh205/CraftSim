@@ -14,6 +14,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.P .. "New Module: " .. f.g("Craft Data") ..
         f.P .. f.g("All Item Icons") .. " can now be " .. f.bb("shift-clicked") .. " to insert the" ..
         f.a .. "respective item link into the active chat" ..
+        f.s .. "Module windows now stay anchored to the ProfessionsFrame" ..
+        f.a .. "and position/collapsed status is saved and restored over sessions" ..
         f.s .. "Renamed Modules:" ..
         f.a .. "Cost Overview -> " .. f.g("Price Details") ..
         f.s .. f.l("API Update: ") .. "RecipeData.ResultData" ..

@@ -79,9 +79,24 @@ GGUI.CONST.EMPTY_TEXTURE = "Interface\\containerframe\\bagsitemslot2x"
 -- GGUI Configuration Methods
     function GGUI:SetConfigSavedVariable(variableName)
         configName = variableName
+        _G[configName] = _G[configName] or {} 
     end
 
-    
+    function GGUI:GetConfig(key)
+        if configName then
+            return _G[configName][key]
+        else
+            error("GGUI Get Config Error: Config not set!")
+        end
+    end
+
+    function GGUI:SaveConfig(key, value)
+        if configName then
+            _G[configName][key] = value
+        else
+            error("GGUI Set Config Error: Config not set!")
+        end
+    end
 
 -- GGUI UTILS
 function GGUI:MakeFrameCloseable(frame, onCloseCallback)
@@ -116,6 +131,8 @@ function GGUI:MakeFrameMoveable(gFrame)
             -- Reapply the anchor point with the offset
             gFrame.frame.hookFrame:ClearAllPoints()
             gFrame.frame.hookFrame:SetPoint("CENTER", gFrame.preMoveAnchorParent, "CENTER", offsetX, offsetY)
+
+            gFrame:SavePosition(offsetX, offsetY)
     end)
 end
 function GGUI:SetItemTooltip(frame, itemLink, owner, anchor)
@@ -287,7 +304,7 @@ function GGUI.Frame:new(options)
     self.originalY = options.sizeY
     self.originalOffsetX = options.offsetX
     self.originalOffsetY = options.offsetY
-    self.originalAnchorParent = options.anchorParent
+    self.originalAnchorParent = options.anchorParent or UIParent
     self.originalAnchorA = options.anchorA
     self.originalAnchorB = options.anchorB
     self.frameID = options.frameID or ("GGUIFrame" .. (GGUI.numFrames))
@@ -431,6 +448,8 @@ function GGUI.Frame:Collapse()
         if self.onCollapseCallback then
             self.onCollapseCallback(self)
         end
+
+        GGUI:SaveConfig("collapsed_" .. self.frameID, true)
     end
 end
 
@@ -448,12 +467,23 @@ function GGUI.Frame:Decollapse()
         if self.onCollapseOpenCallback then
             self.onCollapseOpenCallback(self)
         end
+
+        GGUI:SaveConfig("collapsed_" .. self.frameID, false)
     end
 end
 
 function GGUI.Frame:ResetPosition()
     self.frame.hookFrame:ClearAllPoints()
     self.frame.hookFrame:SetPoint(self.originalAnchorA, self.originalAnchorParent, self.originalAnchorB, self.originalOffsetX, self.originalOffsetY)
+
+    local x, y = self.frame.hookFrame:GetCenter()
+    local relativeX, relativeY = self.originalAnchorParent:GetCenter()
+
+    -- Calculate the offset between the original anchor parent and the new position
+    local offsetX = x - relativeX
+    local offsetY = y - relativeY
+
+    self:SavePosition(offsetX, offsetY)
 end
 
 --- Set a list of predefined GGUI.ButtonStatus
@@ -506,6 +536,29 @@ end
 ---@return string statusID
 function GGUI.Frame:GetStatus()
     return tostring(self.activeStatusID)
+end
+
+function GGUI.Frame:RestoreSavedConfig(relativeTo)
+    local savedPosInfo = GGUI:GetConfig("savedPos_" .. self.frameID)
+
+    if savedPosInfo then
+        relativeTo = relativeTo or UIParent
+        self.frame.hookFrame:ClearAllPoints()
+        self.frame.hookFrame:SetPoint("CENTER", relativeTo, "CENTER", savedPosInfo.offsetX, savedPosInfo.offsetY)
+    end
+
+    if self.collapseable then
+        if GGUI:GetConfig("collapsed_" .. self.frameID) then
+            self:Collapse()
+        end
+    end
+end
+
+function GGUI.Frame:SavePosition(offsetX, offsetY)
+    GGUI:SaveConfig("savedPos_" .. self.frameID, {
+        offsetX = offsetX,
+        offsetY = offsetY,
+    })
 end
 
 --- GGUI Icon
