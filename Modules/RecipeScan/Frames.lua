@@ -4,6 +4,7 @@ CraftSim.RECIPE_SCAN.FRAMES = {}
 
 local PROFIT_ROW_WIDTH  = 120
 local INSPIRATION_ROW_WIDTH = 55
+local AMOUNT_ROW_WIDTH = 40
 local LEARNED_ROW_WIDTH = 35
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
@@ -93,7 +94,10 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
          frame.content.header.profitTitle = CraftSim.FRAME:CreateText("Ø Profit", frame.content.header, frame.content.header.learnedTitle, "LEFT", "RIGHT", 38, 0, nil, nil, {type="H", value="RIGHT"})
          frame.content.header.profitTitle:SetSize(60, 25)
 
-         frame.content.header.inspirationTitle = CraftSim.FRAME:CreateText("Insp%", frame.content.header, frame.content.header.profitTitle, "LEFT", "RIGHT", 20, 0, nil, nil, {type="H", value="RIGHT"})
+         frame.content.header.amountTitle = CraftSim.FRAME:CreateText("AH", frame.content.header, frame.content.header.profitTitle, "LEFT", "RIGHT", 20, 0, nil, nil, {type="H", value="RIGHT"})
+         frame.content.header.amountTitle:SetSize(30, 25)
+
+         frame.content.header.inspirationTitle = CraftSim.FRAME:CreateText("Insp%", frame.content.header, frame.content.header.amountTitle, "LEFT", "RIGHT", 20, 0, nil, nil, {type="H", value="RIGHT"})
          frame.content.header.inspirationTitle:SetSize(40, 25)
 
          frame.content.header.topGearTitle = CraftSim.FRAME:CreateText("Top Gear", frame.content.header, frame.content.header.inspirationTitle, "LEFT", "RIGHT", 17, 0, nil, nil, {type="H", value="RIGHT"})
@@ -117,10 +121,16 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
 
             resultRowFrame.learnedText = CraftSim.FRAME:CreateText("", resultRowFrame, resultRowFrame.recipeButton.frame, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
             resultRowFrame.learnedText:SetSize(LEARNED_ROW_WIDTH, 25)
-            resultRowFrame.profitText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:FormatMoney(1000000000) , resultRowFrame, resultRowFrame.learnedText, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
+
+		    resultRowFrame.profitText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:FormatMoney(1000000000) , resultRowFrame, resultRowFrame.learnedText, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
             resultRowFrame.profitText:SetSize(PROFIT_ROW_WIDTH, 25) -- so the justify does something!
-            resultRowFrame.inspirationChanceText = CraftSim.FRAME:CreateText("100%" , resultRowFrame, resultRowFrame.profitText, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
+
+		    resultRowFrame.amountText = CraftSim.FRAME:CreateText("?" , resultRowFrame, resultRowFrame.profitText, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
+            resultRowFrame.amountText:SetSize(AMOUNT_ROW_WIDTH, 25) -- so the justify does something!
+
+		    resultRowFrame.inspirationChanceText = CraftSim.FRAME:CreateText("100%" , resultRowFrame, resultRowFrame.amountText, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
             resultRowFrame.inspirationChanceText:SetSize(INSPIRATION_ROW_WIDTH, 25) -- so the justify does something!
+
             local iconSize = 20
             resultRowFrame.tool1Icon = CraftSim.GGUI.Icon({
                 parent=resultRowFrame,
@@ -143,6 +153,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
                 anchorA="LEFT", anchorB="RIGHT",
                 offsetX=columnSpacingX,
             })
+
             resultRowFrame.noTopGearText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:ColorizeText("Top Gear Equipped", CraftSim.GUTIL.COLORS.GREEN),
             resultRowFrame, resultRowFrame.inspirationChanceText, "LEFT", "RIGHT", columnSpacingX, 0)
             resultRowFrame.noTopGearText:SetSize(iconSize*3 + columnSpacingX*2, 25)
@@ -195,6 +206,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
     -- fill content TODO: include HSV results?
     availableRow.recipeID = recipeData.recipeID
     local resultData = recipeData.resultData
+
     if resultData.expectedQualityInspiration > resultData.expectedQuality then
         availableRow.recipeResultText:SetText(resultData.expectedItemInspiration:GetItemLink())
         local inspirationPercent = CraftSim.GUTIL:Round(recipeData.professionStats.inspiration:GetPercent())
@@ -216,8 +228,11 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
 
     local profitText = CraftSim.GUTIL:FormatMoney(CraftSim.GUTIL:Round(averageProfit / 10000) * 10000, true, recipeData.priceData.craftingCosts) -- round to gold
     availableRow.profitText:SetText(profitText)
-
     availableRow.learnedText:SetText((recipeData.learned and CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125)) or CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125))
+
+    local itemID = resultData.expectedItem:GetItemID()
+	local amountText = CraftSim.PRICE_API:GetAuctionAmount(itemID)
+	availableRow.amountText:SetText(amountText)
 
     if not CraftSimOptions.recipeScanOptimizeProfessionTools then
         availableRow.tool1Icon:Hide()
