@@ -12,9 +12,9 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
 
     local frameNO_WO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent=ProfessionsFrame.CraftingPage.SchematicForm, 
+        anchorParent=ProfessionsFrame.CraftingPage.SchematicForm,
         sizeX=700,sizeY=400,
-        frameID=CraftSim.CONST.FRAMES.RECIPE_SCAN, 
+        frameID=CraftSim.CONST.FRAMES.RECIPE_SCAN,
         title="CraftSim Recipe Scan",
         collapseable=true,
         closeable=true,
@@ -43,18 +43,18 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         })
 
         frame.content.includeSoulboundCB = CraftSim.FRAME:CreateCheckbox(
-            " Include Soulbound", "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items", 
+            " Include Soulbound", "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items",
         "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode.frame, "RIGHT", "LEFT", -190, 0)
 
         frame.content.includeNotLearnedCB = CraftSim.FRAME:CreateCheckbox(
-            " Include not learned", "Include recipes you do not have learned in the recipe scan", 
+            " Include not learned", "Include recipes you do not have learned in the recipe scan",
         "recipeScanIncludeNotLearned", frame.content, frame.content.includeSoulboundCB, "BOTTOMLEFT", "TOPLEFT", 0, 0)
 
-        frame.content.includeGearCB = CraftSim.FRAME:CreateCheckbox(" Include Gear", "Include all form of gear recipes in the recipe scan", 
+        frame.content.includeGearCB = CraftSim.FRAME:CreateCheckbox(" Include Gear", "Include all form of gear recipes in the recipe scan",
         "recipeScanIncludeGear", frame.content, frame.content.includeSoulboundCB, "TOPLEFT", "BOTTOMLEFT", 0, 0)
 
-        frame.content.optimizeProfessionToolsCB = CraftSim.FRAME:CreateCheckbox(" Optimize Profession Tools", "For each recipe optimize your profession tools for profit\n\n" .. 
-                                                                                CraftSim.GUTIL:ColorizeText("Might lower performance during scanning\nif you have a lot of tools in your inventory", CraftSim.GUTIL.COLORS.RED), 
+        frame.content.optimizeProfessionToolsCB = CraftSim.FRAME:CreateCheckbox(" Optimize Profession Tools", "For each recipe optimize your profession tools for profit\n\n" ..
+                                                                                CraftSim.GUTIL:ColorizeText("Might lower performance during scanning\nif you have a lot of tools in your inventory", CraftSim.GUTIL.COLORS.RED),
         "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 10, 0)
 
         -- scrollFrame for results
@@ -71,7 +71,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
          scrollFrame:SetScrollChild(scrollFrame.scrollChild)
          scrollChild:SetWidth(scrollFrame:GetWidth())
          scrollChild:SetHeight(1) -- ??
- 
+
          frame.content.resultFrame = scrollChild
 
          local columnSpacingX = 5
@@ -143,12 +143,12 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
                 anchorA="LEFT", anchorB="RIGHT",
                 offsetX=columnSpacingX,
             })
-            resultRowFrame.noTopGearText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:ColorizeText("Top Gear Equipped", CraftSim.GUTIL.COLORS.GREEN), 
+            resultRowFrame.noTopGearText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:ColorizeText("Top Gear Equipped", CraftSim.GUTIL.COLORS.GREEN),
             resultRowFrame, resultRowFrame.inspirationChanceText, "LEFT", "RIGHT", columnSpacingX, 0)
             resultRowFrame.noTopGearText:SetSize(iconSize*3 + columnSpacingX*2, 25)
 
             resultRowFrame.recipeResultText = CraftSim.FRAME:CreateText("Recipe #" .. #frame.content.resultRowFrames, resultRowFrame, resultRowFrame.tool3Icon.frame, "LEFT", "RIGHT", columnSpacingX*3, 0, nil, nil, {type="H", value="LEFT"})
-            
+
             CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(resultRowFrame)
             return resultRowFrame
          end
@@ -156,7 +156,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
          frame.content.resultRowFrames = {}
 
          local numRowFrames = 100
-         
+
          for i = 1, numRowFrames, 1 do
             table.insert(frame.content.resultRowFrames, frame.content.resultFrame.createResultRowFrame())
          end
@@ -179,7 +179,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
-    
+
     local RecipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
     -- get first non active row
     local availableRow = CraftSim.GUTIL:Find(RecipeScanFrame.content.resultRowFrames, function(frame) return not frame.isActive end)
@@ -218,7 +218,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
     availableRow.profitText:SetText(profitText)
 
     availableRow.learnedText:SetText((recipeData.learned and CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125)) or CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125))
-    
+
     if not CraftSimOptions.recipeScanOptimizeProfessionTools then
         availableRow.tool1Icon:Hide()
         availableRow.tool2Icon:Hide()
