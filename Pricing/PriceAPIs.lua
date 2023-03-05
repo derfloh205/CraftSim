@@ -21,7 +21,7 @@ function CraftSim.PRICE_API:InitPriceSource()
             CraftSim.FRAME:ShowWarning("No price source found!\n\n" ..
              "You need to have installed at least one of the\nfollowing price source addons to utilize CraftSim's profit calculations:\n\n\n" ..
              table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
-        end 
+        end
         return
     end
 
@@ -94,18 +94,22 @@ function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
     end
 end
 
+-- ====================================================================================
+-- TSM
+-- ====================================================================================
+
 function CraftSimTSM:GetMinBuyoutByItemID(itemID, isReagent)
     if itemID == nil then
         return
     end
-    local _, itemLink = GetItemInfo(itemID) 
+    local _, itemLink = GetItemInfo(itemID)
     local tsmItemString = ""
     if itemLink == nil then
         tsmItemString = "i:" .. itemID -- manually, if the link was not generated
     else
         tsmItemString = TSM_API.ToItemString(itemLink)
     end
-    
+
     return CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString, isReagent)
 end
 
@@ -140,6 +144,10 @@ function CraftSimTSM:GetMinBuyoutByItemLink(itemLink, isReagent)
     return CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString, isReagent)
 end
 
+-- ====================================================================================
+-- AUCTIONATOR
+-- ====================================================================================
+
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)
     local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemID(AddonName, itemID)
     if vendorPrice then
@@ -158,6 +166,10 @@ function CraftSimAUCTIONATOR:GetMinBuyoutByItemLink(itemLink)
     end
 end
 
+-- ====================================================================================
+-- RECRYSTALLIZE
+-- ====================================================================================
+
 function CraftSimRECRYSTALLIZE:GetMinBuyoutByItemID(itemID)
     local output = RECrystallize_PriceCheckItemID(itemID)
     return output and output or 0
@@ -167,6 +179,10 @@ function CraftSimRECRYSTALLIZE:GetMinBuyoutByItemLink(itemLink)
     local output = RECrystallize_PriceCheck(itemLink)
     return output and output or 0
 end
+
+-- ====================================================================================
+-- DEBUG
+-- ====================================================================================
 
 function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
     local debugItem = CraftSimDebugData[itemID]
