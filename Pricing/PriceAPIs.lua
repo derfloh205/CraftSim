@@ -98,6 +98,10 @@ end
 -- TSM
 -- ====================================================================================
 
+function CraftSimTSM:GetAuctionAmount(itemID)
+	return GetAuctionQuantity(itemID)
+end
+
 function CraftSimTSM:GetMinBuyoutByItemID(itemID, isReagent)
     if itemID == nil then
         return
@@ -148,6 +152,14 @@ end
 -- AUCTIONATOR
 -- ====================================================================================
 
+function CraftSimAUCTIONATOR:GetAuctionAmount(itemID)
+    local _, tsmLoaded = IsAddOnLoaded("TradeSkillMaster")
+	if (tsmLoaded) then
+		return CraftSimTSM:GetAuctionAmount(itemID)
+	end
+	return 0
+end
+
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)
     local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemID(AddonName, itemID)
     if vendorPrice then
@@ -170,6 +182,14 @@ end
 -- RECRYSTALLIZE
 -- ====================================================================================
 
+function CraftSimRECRYSTALLIZE:GetAuctionAmount(itemID)
+	local _, tsmLoaded = IsAddOnLoaded("TradeSkillMaster")
+	if (tsmLoaded) then
+		return CraftSimTSM:GetAuctionAmount(itemID)
+	end
+	return 0
+end
+
 function CraftSimRECRYSTALLIZE:GetMinBuyoutByItemID(itemID)
     local output = RECrystallize_PriceCheckItemID(itemID)
     return output and output or 0
@@ -183,6 +203,10 @@ end
 -- ====================================================================================
 -- DEBUG
 -- ====================================================================================
+
+function CraftSimRECRYSTALLIZE:GetAuctionAmount(itemID)
+	return 123
+end
 
 function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
     local debugItem = CraftSimDebugData[itemID]
