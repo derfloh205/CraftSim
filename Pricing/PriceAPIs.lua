@@ -99,7 +99,18 @@ end
 -- ====================================================================================
 
 function CraftSimTSM:GetAuctionAmount(itemID)
-	return GetAuctionQuantity(itemID)
+    if itemID == nil then
+        return "?"
+    end
+    local _, itemLink = GetItemInfo(itemID)
+    local tsmItemString = ""
+    if itemLink == nil then
+        tsmItemString = "i:" .. itemID -- manually, if the link was not generated
+    else
+        tsmItemString = TSM_API.ToItemString(itemLink)
+    end
+
+	return TSM_API.GetAuctionQuantity(tsmItemString)
 end
 
 function CraftSimTSM:GetMinBuyoutByItemID(itemID, isReagent)
