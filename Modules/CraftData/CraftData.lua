@@ -79,6 +79,8 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
 
             --- use itemString for key to enable saving data for gear
             local itemString = CraftSim.GUTIL:GetItemStringFromLink(item:GetItemLink())
+            -- get player level and specializationID and remove the bonusIDs from the link to make the string unique character wide
+            itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
             if itemString then
                 ---@type CraftSim.CraftDataRecipeSave[]
                 CraftSimCraftData[recipeData.recipeID] = CraftSimCraftData[recipeData.recipeID] or {}

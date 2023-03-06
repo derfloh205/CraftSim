@@ -514,6 +514,7 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
 
     -- link should be loaded here cause we need to wait for it anyway to populate the dropdown
     local itemString = CraftSim.GUTIL:GetItemStringFromLink(item:GetItemLink())
+    itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
     print("Fetch Craft Data for: " .. tostring(itemString))
     print("link: " .. item:GetItemLink())
 
