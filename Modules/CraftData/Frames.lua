@@ -8,7 +8,7 @@ CraftSim.CRAFTDATA.frame = nil
 
 function CraftSim.CRAFTDATA.FRAMES:Init()
     local sizeYRetracted = 400
-    local sizeYExpanded = 600
+    local sizeYExpanded = 630
 
     ---@type GGUI.Frame | GGUI.Widget
     local craftDataFrame = CraftSim.GGUI.Frame({
@@ -83,9 +83,13 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
                 craftDataFrame:SetStatus("EXPANDED")
                 craftDataFrame.expandListButton:SetStatus("UP")
                 craftDataFrame.content.dataFrame.dataList:Show()
+                craftDataFrame.content.dataFrame.sendDataButton:Show()
+                craftDataFrame.content.dataFrame.sendDataInput:Show()
             elseif craftDataFrame:GetStatus() == "EXPANDED" then
                 craftDataFrame:SetStatus("RETRACTED")
                 craftDataFrame.expandListButton:SetStatus("DOWN")
+                craftDataFrame.content.dataFrame.sendDataInput:Hide()
+                craftDataFrame.content.dataFrame.sendDataButton:Hide()
                 craftDataFrame.content.dataFrame.dataList:Hide()
             end
         end
@@ -94,11 +98,11 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     craftDataFrame.expandListButton:SetStatusList({
         {
             statusID="UP",
-            label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_UP, 0.4)
+            label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_UP, 0.4),
         },
         {
             statusID="DOWN",
-            label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_DOWN, 0.4)
+            label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_DOWN, 0.4),
         }
     })
 
@@ -194,7 +198,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     ---@type GGUI.Button | GGUI.Widget
     dataFrame.saveButton = CraftSim.GGUI.Button({
         parent=dataFrame, anchorParent=dataFrame, label="Save",
-        anchorA="TOP", anchorB="TOP", offsetX=-30, offsetY=-70, sizeX=60,
+        anchorA="TOP", anchorB="TOP", offsetX=-30, offsetY=-80, sizeX=60,
         clickCallback=function() 
             local selectedItem = craftDataFrame.content.resultsDropdown.selectedValue
             if selectedItem then
@@ -242,12 +246,12 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.savedConfigurationTitle = CraftSim.GGUI.Text({
         parent=dataFrame, anchorParent=dataFrame, anchorA="TOP", anchorB="TOP",
-        text="Saved Material Configuration", offsetY=-100
+        text="Saved Material Configuration", offsetY=-120
     })
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.noDataText = CraftSim.GGUI.Text({
         parent=dataFrame, anchorParent=dataFrame, anchorA="TOP", anchorB="TOP",
-        text=CraftSim.GUTIL:ColorizeText("No data found for this item", CraftSim.GUTIL.COLORS.RED), offsetY=-100
+        text=CraftSim.GUTIL:ColorizeText("No data found for this item", CraftSim.GUTIL.COLORS.RED), offsetY=-120
     })
 
     local function createReagentFrame(anchorA, anchorParent, anchorB, anchorX, anchorY)
@@ -406,8 +410,6 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
             local chanceColumn = columns[3]
             local loadButtonColumn = columns[4]
 
-            print("row constructor called")
-
             crafterColumn.text = CraftSim.GGUI.Text({
                 parent=crafterColumn, anchorParent=crafterColumn,
                 text="Abcdefghijkl", justifyOptions={type="H", align="LEFT"},
@@ -448,9 +450,72 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         end,
     })
 
-    -- dataFrame.dataList:UpdateDisplay(function (rowA, rowB)
-    --     return rowA.chance > rowB.chance
-    -- end)
+    ---@param craftData CraftSim.CraftData
+    function dataFrame:AddCraftDataToList(craftData)
+        dataFrame.dataList:Add(function (row) 
+            row.expectedCosts = craftData:GetExpectedCosts()
+            row.crafter = craftData.crafterName
+            row.craftingChance = craftData.chance
+            local classColor = C_ClassColor.GetClassColor(craftData.crafterClass)
+            row.columns[1].text:SetText(classColor:WrapTextInColorCode(row.crafter))
+            row.columns[2].text:SetText(CraftSim.GUTIL:FormatMoney(row.expectedCosts))
+            row.columns[3].text:SetText(row.craftingChance*100 .. "%")
+
+            local itemString = CraftSim.GUTIL:GetItemStringFromLink(craftData.itemLink) or ""
+            itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
+
+            local dataLoaded = false
+            if CraftSimCraftData[craftData.recipeID][itemString].activeData then
+                if CraftSimCraftData[craftData.recipeID][itemString].activeData.crafterName == craftData.crafterName then
+                    dataLoaded = true
+                end
+            end
+
+            if dataLoaded then
+                row.columns[4].loadButton:SetStatus("LOADED")
+            else
+                row.columns[4].loadButton:SetStatus("LOAD")
+            end
+        end)
+
+        dataFrame.dataList:UpdateDisplay(function (rowA, rowB)
+            return rowA.expectedCosts < rowB.expectedCosts
+        end)
+    end
+
+    ---@type GGUI.TextInput | GGUI.Widget
+    dataFrame.sendDataInput = CraftSim.GGUI.TextInput({
+        parent=dataFrame, anchorParent=dataFrame.dataList.frame,
+        sizeX=100, anchorA="TOPLEFT", anchorB="BOTTOMLEFT",
+    })
+
+    dataFrame.sendDataInput:Hide()
+
+    dataFrame.sendDataButton = CraftSim.GGUI.Button({
+        parent=dataFrame, anchorParent=dataFrame.sendDataInput.frame,
+        anchorA="LEFT",anchorB="RIGHT", label="Send to Player", adjustWidth=true,
+        clickCallback=function ()
+            local selectedItem = craftDataFrame.content.resultsDropdown.selectedValue
+            local target = dataFrame.sendDataInput:GetText()
+            if selectedItem and target ~= "" then
+                CraftSim.CRAFTDATA:SendCraftData(selectedItem, target)
+            end
+        end,
+        initialStatusID="READY"
+    })
+
+    dataFrame.sendDataButton:Hide()
+
+    dataFrame.sendDataButton:SetStatusList({
+        {
+            statusID="READY",
+            enabled=true,
+        },
+        {
+            statusID="DISABLED",
+            enabled=false,
+        },
+    })
 
     dataFrame.dataList:Hide()
 
@@ -588,6 +653,7 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
                 icon:Show()
             end
         end
+        dataFrame.sendDataButton:SetStatus("READY")
     else
         dataFrame.saveButton:SetStatus("SAVE")
         dataFrame.deleteDataItem:SetEnabled(false)
@@ -596,6 +662,7 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
         dataFrame.expectedCraftsValue:SetText("?")
         dataFrame.chanceValue:SetText("?")
         dataFrame.crafterValue:SetText("?")
+        dataFrame.sendDataButton:SetStatus("DISABLED")
         
         table.foreach(dataFrame.reagentFrames, function (_, reagentFrame)
             reagentFrame:Hide()

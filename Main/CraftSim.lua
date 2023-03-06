@@ -249,17 +249,30 @@ function CraftSim.MAIN:InitStaticPopups()
       }
 
 	StaticPopupDialogs["CRAFT_SIM_ACCEPT_NO_PRICESOURCE_WARNING"] = {
-	text = "Are you sure you do not want to be reminded to get a price source?",
-	button1 = "Yes",
-	button2 = "No",
-	OnAccept = function(self, data1, data2)
-		CraftSimOptions.doNotRemindPriceSource = true
-		CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.WARNING):Hide()
-	end,
-	timeout = 0,
-	whileDead = true,
-	hideOnEscape = true,
-	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+		text = "Are you sure you do not want to be reminded to get a price source?",
+		button1 = "Yes",
+		button2 = "No",
+		OnAccept = function(self, data1, data2)
+			CraftSimOptions.doNotRemindPriceSource = true
+			CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.WARNING):Hide()
+		end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+	}
+
+	StaticPopupDialogs["CRAFT_SIM_ACCEPT_CRAFT_DATA_MESSAGE"] = {
+		text = "--",
+		button1 = "Yes",
+		button2 = "No",
+		OnAccept = function(self, data1)
+			CraftSim.CRAFTDATA:AddReceivedCraftData(data1)
+		end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
 	}
 end
 
@@ -302,6 +315,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.MAIN:InitStaticPopups()
 
 		CraftSim.CUSTOMER_SERVICE:Init()
+		CraftSim.CRAFTDATA:Init()
 
 		CraftSim.FRAME:RestoreModulePositions()
 	end

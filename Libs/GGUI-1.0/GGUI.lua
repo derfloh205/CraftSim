@@ -1458,6 +1458,7 @@ function GGUI.TextInput:new(options)
     options.sizeY = options.sizeY or 25
     options.autoFocus = options.autoFocus or false
     options.font = options.font or "ChatFontNormal"
+    options.initialValue = options.initialValue or ""
     self.onTextChangedCallback = options.onTextChangedCallback
     self.onEnterCallback = options.onEnterCallback
     self.onEscapeCallback = options.onEscapeCallback
@@ -2020,6 +2021,33 @@ function GGUI.FrameList:Add(fillFunc)
         fillFunc(freeRow)
     end
     freeRow.active = true
+end
+
+---@param updateFunc function -- receives the found row as parameter
+---@param filterFunc function -- receives a row as parameter to filter
+---@param limit? number -- optional limit of max updates
+function GGUI.FrameList:UpdateRows(updateFunc, filterFunc, limit)
+    local count = 0
+    for _, row in pairs(self.rows) do
+        if row.active then
+            count = count + 1
+            if filterFunc(row) then
+                updateFunc(row)
+            end
+
+            if limit and count >= limit then
+                return
+            end
+        end
+    end
+end
+
+function GGUI.FrameList:GetRow(filterFunc)
+    for _, row in pairs(self.rows) do
+        if row.active and filterFunc(row) then
+            return row
+        end
+    end
 end
 
 --- removes all (up to the limit) rows where filterFunc is true from the list

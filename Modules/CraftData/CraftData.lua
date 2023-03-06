@@ -11,6 +11,13 @@ CraftSimCraftData = CraftSimCraftData or {}
 
 CraftSim.CRAFTDATA = {}
 
+local CRAFTDATA_MESSAGE = "CRAFTDATA_MSG"
+
+function CraftSim.CRAFTDATA:Init()
+    -- init comm
+    CraftSim.COMM:RegisterPrefix(CRAFTDATA_MESSAGE, CraftSim.CRAFTDATA.OnCraftDataReceived)
+end
+
 function CraftSim.CRAFTDATA:UpdateCraftData(item)
     local recipeData = CraftSim.MAIN.currentRecipeData
 
@@ -75,7 +82,8 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
 
             local craftData = CraftSim.CraftData(expectedCrafts, chance, 
             requiredReagents, optionalReagents, crafterName, 
-            crafterClass, resChance, resExtraFactor, avgItemAmount)
+            crafterClass, resChance, resExtraFactor, avgItemAmount, item:GetItemLink(),
+            recipeData.recipeID, recipeData.professionData.professionInfo.profession)
 
             --- use itemString for key to enable saving data for gear
             local itemString = CraftSim.GUTIL:GetItemStringFromLink(item:GetItemLink())
@@ -97,6 +105,63 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
     end
 end
 
+function CraftSim.CRAFTDATA.OnCraftDataReceived(craftDataSerialized)
+    print("Receiving Craft Data..")
+
+    print("crafter: " .. tostring(craftDataSerialized.crafterName)) -- TODO: differentiate between sender and crafter?
+
+    local targetItem = Item:CreateFromItemLink(craftDataSerialized.itemLink)
+
+    targetItem:ContinueOnItemLoad(function ()
+        -- popup that asks to add craft data
+        -- first adjust it
+        local crafter = C_ClassColor.GetClassColor(craftDataSerialized.crafterClass):WrapTextInColorCode(craftDataSerialized.crafterName)
+        StaticPopupDialogs["CRAFT_SIM_ACCEPT_CRAFT_DATA_MESSAGE"].text = 
+        crafter .. "\nwants to share CraftSim CraftData with you for\n" .. targetItem:GetItemLink() .. 
+        "\nDo you want to add this to your Craft Data for this item?"
+        StaticPopup_Show("CRAFT_SIM_ACCEPT_CRAFT_DATA_MESSAGE", "", "", craftDataSerialized)
+    end)
+
+end
+
+---@param craftDataSerialized CraftSim.CraftData.Serialized
+function CraftSim.CRAFTDATA:AddReceivedCraftData(craftDataSerialized)
+    local craftRecipeSaveItems = CraftSimCraftData[craftDataSerialized.recipeID] or {}
+    local itemString = CraftSim.GUTIL:GetItemStringFromLink(craftDataSerialized.itemLink) or ""
+    itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
+    local craftRecipeSave = craftRecipeSaveItems[itemString] or {
+        activeData = nil,
+        dataPerCrafter = {}
+    }
+
+    craftRecipeSave.dataPerCrafter[craftDataSerialized.crafterName] = craftDataSerialized
+
+    if CraftSim.MAIN.currentRecipeData and CraftSim.MAIN.currentRecipeData.recipeID == craftDataSerialized.recipeID then
+            local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
+            CraftSim.CRAFTDATA.frame.content.dataFrame.dataList:Remove(function (row) return row.crafter == craftData.crafterName end, 1)
+            CraftSim.CRAFTDATA.frame.content.dataFrame:AddCraftDataToList(craftData)
+    end
+end
+
+function CraftSim.CRAFTDATA:SendCraftData(selectedItem, target)
+    local recipeData = CraftSim.MAIN.currentRecipeData
+    if not recipeData then
+        return
+    end
+    local itemString = CraftSim.GUTIL:GetItemStringFromLink(selectedItem:GetItemLink()) or ""
+    itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
+
+    local craftRecipeSaveItems = CraftSimCraftData[recipeData.recipeID]
+    if craftRecipeSaveItems then
+        local craftRecipeSave = craftRecipeSaveItems[itemString]
+
+        if craftRecipeSave and craftRecipeSave.activeData then
+            -- its already serialized, just send
+            CraftSim.COMM:SendData(CRAFTDATA_MESSAGE, craftRecipeSave.activeData, "WHISPER", target)
+        end
+    end
+end
+
 function CraftSim.CRAFTDATA:DeleteForRecipe()
     local recipeData = CraftSim.MAIN.currentRecipeData
 
@@ -110,6 +175,7 @@ function CraftSim.CRAFTDATA:DeleteForItem(item)
     if recipeData and recipeData:IsResult(item) then
         if CraftSimCraftData[recipeData.recipeID] then
             local itemString = CraftSim.GUTIL:GetItemStringFromLink(item:GetItemLink()) or ""
+            itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
             CraftSimCraftData[recipeData.recipeID][itemString] = nil
         end
     end

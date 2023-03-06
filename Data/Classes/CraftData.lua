@@ -9,7 +9,11 @@ CraftSim.CraftData = CraftSim.Object:extend()
 ---@param crafterName string
 ---@param crafterClass ClassFile
 ---@param chance number
-function CraftSim.CraftData:new(expectedCrafts, chance, requiredReagents, optionalReagents, crafterName, crafterClass, resChance, resExtraFactor, avgItemAmount)
+---@param itemLink string -- the full item link of that item
+---@param recipeID number
+---@param professionID number
+function CraftSim.CraftData:new(expectedCrafts, chance, requiredReagents, optionalReagents, crafterName, crafterClass, 
+    resChance, resExtraFactor, avgItemAmount, itemLink, recipeID, professionID)
     self.expectedCrafts = expectedCrafts
     self.requiredReagents = requiredReagents
     self.optionalReagents = optionalReagents
@@ -19,6 +23,9 @@ function CraftSim.CraftData:new(expectedCrafts, chance, requiredReagents, option
     self.resChance = resChance
     self.resExtraFactor = resExtraFactor
     self.avgItemAmount = avgItemAmount
+    self.itemLink = itemLink
+    self.recipeID = recipeID
+    self.professionID = professionID
 end
 
 ---@class CraftSim.CraftData.Serialized
@@ -31,6 +38,9 @@ end
 ---@field resChance number
 ---@field resExtraFactor number
 ---@field avgItemAmount number
+---@field itemLink string
+---@field recipeID number
+---@field professionID number
 
 ---@return CraftSim.CraftData.Serialized
 function CraftSim.CraftData:Serialize()
@@ -42,6 +52,9 @@ function CraftSim.CraftData:Serialize()
     serialized.resChance = self.resChance
     serialized.resExtraFactor = self.resExtraFactor
     serialized.avgItemAmount = self.avgItemAmount
+    serialized.itemLink = self.itemLink
+    serialized.recipeID = self.recipeID
+    serialized.professionID = self.professionID
     serialized.requiredReagents = CraftSim.GUTIL:Map(self.requiredReagents, function (reagent)
         return reagent:Serialize()
     end)
@@ -99,7 +112,10 @@ function CraftSim.CraftData:Deserialize(serialized)
         serialized.crafterClass, 
         serialized.resChance, 
         serialized.resExtraFactor, 
-        serialized.avgItemAmount)
+        serialized.avgItemAmount,
+        serialized.itemLink,
+        serialized.recipeID,
+        serialized.professionID)
 end
 
 function CraftSim.CraftData:Debug()
@@ -113,6 +129,9 @@ function CraftSim.CraftData:Debug()
         "AvgItems: " .. tostring(self.avgItemAmount),
         "requiredReagents: " .. tostring(self.requiredReagents),
         "optionalReagents: " .. tostring(self.optionalReagents),
+        "itemLink: " .. tostring(self.itemLink),
+        "recipeID: " .. tostring(self.recipeID),
+        "professionID: " .. tostring(self.professionID),
     }
 
     return debugLines

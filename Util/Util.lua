@@ -225,7 +225,6 @@ end
 function CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
     local linkLevel, specializationID = string.match(itemString, "item:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d*:(%d+):(%d+)")
     local bonusIDString = linkLevel .. ":" .. specializationID
-    print("GSUB: " .. bonusIDString)
 
     return string.gsub(itemString, bonusIDString, "")
 end
