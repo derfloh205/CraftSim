@@ -613,12 +613,12 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
     for _, craftDataSerialized in pairs(CraftSimCraftData[recipeData.recipeID][itemString].dataPerCrafter) do
         local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
         dataFrame.dataList:Add(function (row)
-            row.expectedCost = craftData:GetExpectedCosts()
+            row.expectedCosts = craftData:GetExpectedCosts()
             row.crafter = craftData.crafterName
             row.craftingChance = craftData.chance
             local classColor = C_ClassColor.GetClassColor(craftData.crafterClass)
             row.columns[1].text:SetText(classColor:WrapTextInColorCode(row.crafter))
-            row.columns[2].text:SetText(CraftSim.GUTIL:FormatMoney(row.expectedCost))
+            row.columns[2].text:SetText(CraftSim.GUTIL:FormatMoney(row.expectedCosts))
             row.columns[3].text:SetText(row.craftingChance*100 .. "%")
 
             local dataLoaded = false
