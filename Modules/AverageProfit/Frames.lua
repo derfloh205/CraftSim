@@ -7,11 +7,14 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFI
 function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     local sizeX = 320
     local sizeY = 120
+    local offsetX = -10
+    local offsetY = 30
     local frameNonWorkOrder = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm, 
-        anchorParent=ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent=ProfessionsFrame,
         anchorA="BOTTOMRIGHT",anchorB="BOTTOMRIGHT",
         sizeX=sizeX,sizeY=sizeY,
+        offsetX=offsetX,offsetY=offsetY,
         frameID=CraftSim.CONST.FRAMES.STAT_WEIGHTS, 
         title="CraftSim Average Profit",
         collapseable=true,
@@ -23,9 +26,10 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
 
     local frameWorkOrder = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails, 
-        anchorParent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
+        anchorParent=ProfessionsFrame,
         anchorA="BOTTOMRIGHT",anchorB="BOTTOMRIGHT",
         sizeX=sizeX,sizeY=sizeY,
+        offsetX=offsetX,offsetY=offsetY,
         frameID=CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER, 
         title="CraftSim Average Profit " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
         collapseable=true,

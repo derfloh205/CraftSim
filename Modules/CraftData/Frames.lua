@@ -7,17 +7,31 @@ CraftSim.CRAFTDATA.FRAMES = {}
 CraftSim.CRAFTDATA.frame = nil
 
 function CraftSim.CRAFTDATA.FRAMES:Init()
+    local sizeYRetracted = 400
+    local sizeYExpanded = 600
 
     ---@type GGUI.Frame | GGUI.Widget
     local craftDataFrame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame,anchorFrame=UIParent,
-        sizeX=500,sizeY=420,
+        sizeX=500,sizeY=sizeYRetracted,
         title="CraftSim Craft Data",
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         collapseable=true,moveable=true,closeable=true,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCraftData"),
         frameID=CraftSim.CONST.FRAMES.CRAFT_DATA,
         frameStrata="DIALOG",
+        initialStatusID="RETRACTED",
+    })
+
+    craftDataFrame:SetStatusList({
+        {
+            statusID="RETRACTED",
+            sizeY=sizeYRetracted,
+        },
+        {
+            statusID="EXPANDED",
+            sizeY=sizeYExpanded,
+        },
     })
 
     CraftSim.GGUI.HelpIcon({parent=craftDataFrame.content, anchorParent=craftDataFrame.title.frame, 
@@ -60,6 +74,34 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         end
     })
 
+    craftDataFrame.expandListButton = CraftSim.GGUI.Button({
+        parent=craftDataFrame.content,anchorParent=craftDataFrame.frame, anchorA="BOTTOM", anchorB="BOTTOM",
+        label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_DOWN, 0.4), sizeX=15, sizeY=20, offsetY=10, adjustWidth = true,
+        initialStatusID="DOWN",
+        clickCallback=function ()
+            if craftDataFrame:GetStatus() == "RETRACTED" then
+                craftDataFrame:SetStatus("EXPANDED")
+                craftDataFrame.expandListButton:SetStatus("UP")
+                craftDataFrame.content.dataFrame.dataList:Show()
+            elseif craftDataFrame:GetStatus() == "EXPANDED" then
+                craftDataFrame:SetStatus("RETRACTED")
+                craftDataFrame.expandListButton:SetStatus("DOWN")
+                craftDataFrame.content.dataFrame.dataList:Hide()
+            end
+        end
+    })
+
+    craftDataFrame.expandListButton:SetStatusList({
+        {
+            statusID="UP",
+            label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_UP, 0.4)
+        },
+        {
+            statusID="DOWN",
+            label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_DOWN, 0.4)
+        }
+    })
+
     local dataFrame = CreateFrame("Frame", nil, craftDataFrame.content)
     dataFrame:SetSize(350,300)
     dataFrame:SetPoint("TOP", craftDataFrame.content.resultsDropdown.frame, "BOTTOM", 0, -20)
@@ -77,9 +119,21 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     local sideTextSpacing = -3
 
     ---@type GGUI.Text | GGUI.Widget
-    dataFrame.expectedCraftsTitle = CraftSim.GGUI.Text({
+    dataFrame.crafterTitle = CraftSim.GGUI.Text({
         parent=dataFrame,anchorParent=dataFrame.itemIcon.frame,
-        anchorA="TOPLEFT", anchorB="TOPRIGHT", offsetX=15, offsetY=0,
+        anchorA="TOPLEFT", anchorB="TOPRIGHT", offsetX=15, offsetY=3,
+        text="Crafter: ", justifyOptions={type="H", align="LEFT"},
+    })
+    ---@type GGUI.Text | GGUI.Widget
+    dataFrame.crafterValue = CraftSim.GGUI.Text({
+        parent=dataFrame,anchorParent=dataFrame.crafterTitle.frame,
+        anchorA="LEFT", anchorB="RIGHT", offsetX=5,
+        text=1, justifyOptions={type="H", align="LEFT"},
+    })
+    ---@type GGUI.Text | GGUI.Widget
+    dataFrame.expectedCraftsTitle = CraftSim.GGUI.Text({
+        parent=dataFrame,anchorParent=dataFrame.crafterTitle.frame,
+        anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=sideTextSpacing,
         text="Expected Crafts: ", justifyOptions={type="H", align="LEFT"},
     })
     ---@type GGUI.Text | GGUI.Widget
@@ -324,6 +378,82 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         },
     }
 
+    ---@type GGUI.FrameList | GGUI.Widget
+    dataFrame.dataList = CraftSim.GGUI.FrameList({
+        parent=dataFrame, 
+        sizeY=150, anchorA="TOP", anchorB="BOTTOM", anchorParent=dataFrame,
+        showHeaderLine = true,
+        columnOptions={
+            {
+                label="Crafter",
+                width=90
+            },
+            {
+                label="Expected Cost",
+                width=130
+            },
+            {
+                label="Chance",
+                width=80,
+            },
+            {
+                width=90,
+            },
+        },
+        rowConstructor=function (columns)
+            local crafterColumn = columns[1]
+            local expectedCostColumn = columns[2]
+            local chanceColumn = columns[3]
+            local loadButtonColumn = columns[4]
+
+            print("row constructor called")
+
+            crafterColumn.text = CraftSim.GGUI.Text({
+                parent=crafterColumn, anchorParent=crafterColumn,
+                text="Abcdefghijkl", justifyOptions={type="H", align="LEFT"},
+                fixedWidth=crafterColumn:GetWidth(),
+            })
+            expectedCostColumn.text = CraftSim.GGUI.Text({
+                parent=expectedCostColumn, anchorParent=expectedCostColumn,
+                text=CraftSim.GUTIL:FormatMoney(10000000), justifyOptions={type="H", align="LEFT"},
+                fixedWidth=expectedCostColumn:GetWidth(),
+            })
+
+            chanceColumn.text = CraftSim.GGUI.Text({
+                parent=chanceColumn, anchorParent=chanceColumn,
+                text="100%", justifyOptions={type="H", align="LEFT"},
+                fixedWidth=chanceColumn:GetWidth(),
+            })
+
+            loadButtonColumn.loadButton = CraftSim.GGUI.Button({
+                parent=loadButtonColumn, anchorParent=loadButtonColumn,
+                label="Load", sizeX=40,
+                initialStatusID="LOAD"
+            })
+
+            loadButtonColumn.loadButton:SetStatusList({
+                {
+                    statusID="LOAD",
+                    enabled=true,
+                    label="Load",
+                    sizeX=40,
+                },
+                {
+                    statusID="LOADED",
+                    enabled=false,
+                    label="Loaded",
+                    sizeX=60,
+                },
+            })
+        end,
+    })
+
+    -- dataFrame.dataList:UpdateDisplay(function (rowA, rowB)
+    --     return rowA.chance > rowB.chance
+    -- end)
+
+    dataFrame.dataList:Hide()
+
     dataFrame:Hide()
 
     CraftSim.CRAFTDATA.frame = craftDataFrame
@@ -386,8 +516,17 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
     local itemString = CraftSim.GUTIL:GetItemStringFromLink(item:GetItemLink())
     print("Fetch Craft Data for: " .. tostring(itemString))
     print("link: " .. item:GetItemLink())
+
+    if not itemString then
+        return
+    end
+
     CraftSimCraftData[recipeData.recipeID] = CraftSimCraftData[recipeData.recipeID] or {}
-    local craftDataSerialized = CraftSimCraftData[recipeData.recipeID][itemString]
+    CraftSimCraftData[recipeData.recipeID][itemString] = CraftSimCraftData[recipeData.recipeID][itemString] or {
+        activeData = nil,
+        dataPerCrafter = {},
+    }
+    local craftDataSerialized = CraftSimCraftData[recipeData.recipeID][itemString].activeData
 
     CraftSim.FRAME:ToggleFrame(dataFrame.savedConfigurationTitle, craftDataSerialized)
     CraftSim.FRAME:ToggleFrame(dataFrame.noDataText, not craftDataSerialized)
@@ -409,7 +548,10 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
         print(craftData, true)
         local expectedCosts = craftData:GetExpectedCosts()
         local minimumCosts = craftData:GetCraftingCosts()
+        local classColor = C_ClassColor.GetClassColor(craftData.crafterClass)
+        local crafterText = classColor:WrapTextInColorCode(craftData.crafterName)
     
+        dataFrame.crafterValue:SetText(crafterText)
         dataFrame.expectedCostsValue:SetText(CraftSim.GUTIL:FormatMoney(expectedCosts))
         dataFrame.minimumCostsValue:SetText(CraftSim.GUTIL:FormatMoney(minimumCosts))
         dataFrame.expectedCraftsValue:SetText(CraftSim.GUTIL:Round(craftData.expectedCrafts, 2))
@@ -452,6 +594,7 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
         dataFrame.minimumCostsValue:SetText("?")
         dataFrame.expectedCraftsValue:SetText("?")
         dataFrame.chanceValue:SetText("?")
+        dataFrame.crafterValue:SetText("?")
         
         table.foreach(dataFrame.reagentFrames, function (_, reagentFrame)
             reagentFrame:Hide()
@@ -462,4 +605,37 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
     if not recipeData.resultData.expectedCraftsByQuality[qualityID] then
         dataFrame.saveButton:SetStatus("UNREACHABLE")
     end
+
+    --- update craftData list
+    dataFrame.dataList:Remove() -- clear all
+
+    for _, craftDataSerialized in pairs(CraftSimCraftData[recipeData.recipeID][itemString].dataPerCrafter) do
+        local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
+        dataFrame.dataList:Add(function (row)
+            row.expectedCost = craftData:GetExpectedCosts()
+            row.crafter = craftData.crafterName
+            row.craftingChance = craftData.chance
+            local classColor = C_ClassColor.GetClassColor(craftData.crafterClass)
+            row.columns[1].text:SetText(classColor:WrapTextInColorCode(row.crafter))
+            row.columns[2].text:SetText(CraftSim.GUTIL:FormatMoney(row.expectedCost))
+            row.columns[3].text:SetText(row.craftingChance*100 .. "%")
+
+            local dataLoaded = false
+            if CraftSimCraftData[recipeData.recipeID][itemString].activeData then
+                if CraftSimCraftData[recipeData.recipeID][itemString].activeData.crafterName == craftData.crafterName then
+                    dataLoaded = true
+                end
+            end
+
+            if dataLoaded then
+                row.columns[4].loadButton:SetStatus("LOADED")
+            else
+                row.columns[4].loadButton:SetStatus("LOAD")
+            end
+        end)
+    end
+
+    dataFrame.dataList:UpdateDisplay(function (rowA, rowB)
+        return rowA.expectedCosts < rowB.expectedCosts
+    end)
 end

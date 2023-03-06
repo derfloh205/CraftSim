@@ -165,8 +165,8 @@ function GGUI:EnableHyperLinksForFrameAndChilds(frame)
         frame:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow)
 
         for possibleFrame1, possibleFrame2 in pairs(frame) do
-            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(possibleFrame1)
-            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(possibleFrame2)
+            GGUI:EnableHyperLinksForFrameAndChilds(possibleFrame1)
+            GGUI:EnableHyperLinksForFrameAndChilds(possibleFrame2)
         end
     end
 end
@@ -216,6 +216,9 @@ function GGUI.Widget:SetTransparency(transparency)
 end
 function GGUI.Widget:IsVisible()
     return self.frame:IsVisible()
+end
+function GGUI.Widget:SetPoint(...)
+    return self.frame:SetPoint(...)
 end
 
 --- GGUI Frame
@@ -885,6 +888,7 @@ end
 ---@field font? string
 ---@field scale? number
 ---@field justifyOptions? GGUI.JustifyOptions
+---@field fixedWidth? number
 
 ---@class GGUI.JustifyOptions
 ---@field type "H" | "V" | "HV"
@@ -910,6 +914,10 @@ function GGUI.Text:new(options)
     text:SetText(options.text)
     text:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
     text:SetScale(options.scale)
+
+    if options.fixedWidth then
+        text:SetWidth(options.fixedWidth)
+    end
     
     if options.justifyOptions then
         if options.justifyOptions.type == "V" and options.justifyOptions.align then
@@ -1559,9 +1567,9 @@ function GGUI.CurrencyInput:new(options)
                 -- validate and color text, and adapt save button
                 input = input or ""
                 -- remove colorizations    
-                input = string.gsub(input, CraftSim.GUTIL.COLORS.GOLD, "")
-                input = string.gsub(input, CraftSim.GUTIL.COLORS.SILVER, "")
-                input = string.gsub(input, CraftSim.GUTIL.COLORS.COPPER, "")
+                input = string.gsub(input, GUTIL.COLORS.GOLD, "")
+                input = string.gsub(input, GUTIL.COLORS.SILVER, "")
+                input = string.gsub(input, GUTIL.COLORS.COPPER, "")
                 input = string.gsub(input, "|r", "")
                 input = string.gsub(input, "|c", "")
     
@@ -1573,9 +1581,9 @@ function GGUI.CurrencyInput:new(options)
                     local gold = tonumber(string.match(input, "(%d+)g")) or 0
                     local silver = tonumber(string.match(input, "(%d+)s")) or 0
                     local copper = tonumber(string.match(input, "(%d+)c")) or 0
-                    local gC = GUTIL:ColorizeText("g", CraftSim.GUTIL.COLORS.GOLD)
-                    local sC = GUTIL:ColorizeText("s", CraftSim.GUTIL.COLORS.SILVER)
-                    local cC = GUTIL:ColorizeText("c", CraftSim.GUTIL.COLORS.COPPER)
+                    local gC = GUTIL:ColorizeText("g", GUTIL.COLORS.GOLD)
+                    local sC = GUTIL:ColorizeText("s", GUTIL.COLORS.SILVER)
+                    local cC = GUTIL:ColorizeText("c", GUTIL.COLORS.COPPER)
                     local colorizedText = ((gold > 0 and (gold .. gC)) or "") .. ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
                     currencyInput.textInput:SetText(colorizedText)
     
@@ -1623,7 +1631,10 @@ function GGUI.CurrencyInput:new(options)
     self:SetValue(options.initialValue)
 
     if options.showFormatHelpIcon then
-        CraftSim.FRAME:CreateHelpIcon("Format: 100g10s1c", textInput.frame, textInput.frame, "LEFT", "RIGHT", 5, 0)
+        GGUI.HelpIcon({
+            parent=options.parent,
+            text="Format: 100g10s1c", textInput.frame, anchorParent=textInput.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=5,
+        })
     end
 end
 
@@ -1806,4 +1817,260 @@ function GGUI.NumericInput:new(options)
     end
     validationBorder:Hide()
     self.validationBorder = validationBorder
+end
+
+--- GGUI.FrameList
+
+---@class GGUI.FrameList
+GGUI.FrameList = GGUI.Widget:extend()
+
+---@class GGUI.FrameListConstructorOptions
+---@field parent? Frame
+---@field rowHeight? number
+---@field columnOptions GGUI.FrameList.ColumnOption[]
+---@field rowConstructor function used to construct the rows and fill the column frames with content, columns are forwarded as params (...)
+---@field showHeaderLine? boolean
+---@field showBorder? boolean
+---@field headerLineRGBA? table
+---@field borderLinesRGBA? table
+---@field anchorParent? Frame
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
+---@field offsetX? number
+---@field offsetY? number
+---@field sizeX? number if omitted will adjust to row width
+---@field sizeY? number
+---@field headerOffsetX? number
+
+---@class GGUI.FrameList.ColumnOption
+---@field width? number
+---@field label? string
+
+function GGUI.FrameList:new(options)
+    self.isGGUI = true
+    ---@type GGUI.FrameListConstructorOptions
+    options = options or {}
+    options.parent = options.parent or UIParent
+    options.anchorParent = options.anchorParent or UIParent
+    options.sizeY = options.sizeY or 100
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.rowHeight = options.rowHeight or 25
+    options.headerOffsetX = options.headerOffsetX or 5
+    self.rowHeight = options.rowHeight
+    
+    if not options.columnOptions or #options.columnOptions == 0 then
+        error("GGUI Error: FrameList needs a least one column! (columnOptions)")
+    end
+    
+    if not options.rowConstructor then
+        error("GGUI Error: FrameList needs a rowConstructor function!")
+        end
+        
+        local firstColumnOffsetX = 0
+        local rowWidth = firstColumnOffsetX
+        
+        table.foreach(options.columnOptions, function (_, columnOption)
+            if not columnOption.width then
+                error("GGUI Error: All columnOptions need a width property!")
+            end
+            rowWidth = rowWidth + columnOption.width
+        end)
+    self.rowWidth = rowWidth
+    self.columnOptions = options.columnOptions
+    self.rowConstructor = options.rowConstructor 
+
+    local mainFrame = CreateFrame("Frame", nil, options.parent) 
+    mainFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB)
+    mainFrame:SetSize(options.sizeX or (rowWidth + 10), options.sizeY)
+    
+    ---@type GGUI.ScrollFrame
+    self.scrollFrame = GGUI.ScrollFrame({
+        parent=mainFrame,
+        offsetTOP=-5,
+        offsetLEFT=5,
+        offsetRIGHT=-5,
+        offsetBOTTOM=5,
+    })
+    
+    self.rows = {}
+    
+    local header = CreateFrame("Frame", nil, mainFrame)
+    header:SetPoint("BOTTOMLEFT", mainFrame, "TOPLEFT")
+    header:SetSize(rowWidth, 25)
+    
+    local lastHeaderColumn = nil
+    for index, columnOption in pairs(options.columnOptions) do
+        local headerColumn = CreateFrame("Frame", nil, header)
+        headerColumn:SetSize(columnOption.width, 25)
+        
+        headerColumn.text = GGUI.Text({
+            fixedWidth=columnOption.width, text=columnOption.label or "",
+            parent=headerColumn, anchorParent=headerColumn, justifyOptions={type="H", align="LEFT"},
+        })
+        
+        if index == 1 then
+            headerColumn:SetPoint("TOPLEFT", header ,"TOPLEFT", options.headerOffsetX, 0)
+        else
+            headerColumn:SetPoint("LEFT", lastHeaderColumn ,"RIGHT")
+        end
+        
+        lastHeaderColumn = headerColumn
+    end
+
+    if options.showHeaderLine or options.showBorder then
+        local headerRGBA = options.headerLineRGBA or {1, 1, 1, 1} -- Default: white
+        local left = mainFrame:CreateLine()
+        left:SetColorTexture(headerRGBA[1],headerRGBA[2],headerRGBA[3],headerRGBA[4]) -- TODO: create option
+        left:SetThickness(1) -- TODO: as option
+        left:SetStartPoint("TOPLEFT", 0, 0)
+        left:SetEndPoint("TOPRIGHT", 0, 0)
+    end
+
+    if options.showBorder then
+        local borderRGBA = options.borderLinesRGBA or {1, 1, 1, 1} -- Default: white
+        -- left
+        local left = mainFrame:CreateLine()
+        left:SetColorTexture(borderRGBA[1],borderRGBA[2],borderRGBA[3],borderRGBA[4]) -- TODO: create option
+        left:SetThickness(1) -- TODO: as option
+        left:SetStartPoint("TOPLEFT", 0, 0)
+        left:SetEndPoint("BOTTOMLEFT", 0, 0)
+
+        -- right
+        local right = mainFrame:CreateLine()
+        right:SetColorTexture(borderRGBA[1],borderRGBA[2],borderRGBA[3],borderRGBA[4]) -- TODO: create option
+        right:SetThickness(1) -- TODO: as option
+        right:SetStartPoint("TOPRIGHT", 0, 0)
+        right:SetEndPoint("BOTTOMRIGHT", 0, 0)
+
+        -- bottom
+        local right = mainFrame:CreateLine()
+        right:SetColorTexture(borderRGBA[1],borderRGBA[2],borderRGBA[3],borderRGBA[4]) -- TODO: create option
+        right:SetThickness(1) -- TODO: as option
+        right:SetStartPoint("BOTTOMLEFT", 0, 0)
+        right:SetEndPoint("BOTTOMRIGHT", 0, 0)
+    end
+
+    GGUI.FrameList.super.new(self, mainFrame)
+end
+
+--- GGUI.FrameList.Row
+
+---@class GGUI.FrameList.Row
+GGUI.FrameList.Row = GGUI.Widget:extend()
+
+---@param rowFrame Frame
+---@param columns Frame[]
+---@param rowConstructor function
+function GGUI.FrameList.Row:new(rowFrame, columns, rowConstructor)
+    GGUI.FrameList.Row.super.new(self, rowFrame)
+    self.columns = columns
+    self.active=false
+    rowConstructor(self.columns)
+    self:Hide()
+end
+
+function GGUI.FrameList:CreateRow()
+
+    local rowFrame = CreateFrame("Frame", nil, self.scrollFrame.content)
+    rowFrame:SetSize(self.rowWidth, self.rowHeight)
+    if #self.rows == 0 then
+        rowFrame:SetPoint("TOPLEFT", self.scrollFrame.content, "TOPLEFT")
+    else
+        rowFrame:SetPoint("TOPLEFT", self.rows[#self.rows].frame, "BOTTOMLEFT")
+    end
+    
+    local columns = {}
+    local lastColumn = nil
+    for index, columnOption in pairs(self.columnOptions) do
+        local columnFrame = CreateFrame("Frame", nil, rowFrame)
+        columnFrame:SetSize(columnOption.width, self.rowHeight)
+
+        if index == 1 then
+            columnFrame:SetPoint("TOPLEFT", rowFrame, "TOPLEFT", 0, 0)
+        else
+            columnFrame:SetPoint("LEFT", lastColumn, "RIGHT")
+        end
+
+        table.insert(columns, columnFrame)
+
+        lastColumn = columnFrame
+    end
+
+    local newRow = GGUI.FrameList.Row(rowFrame, columns, self.rowConstructor)
+
+    table.insert(self.rows, newRow)
+
+    return newRow
+end
+
+---Add row data into the list
+---@param fillFunc? function function that receives a free row to add to the list
+function GGUI.FrameList:Add(fillFunc)
+    -- get an inactive row from the list of rows, call fillFunc on it
+    local freeRow = GUTIL:Find(self.rows, function(row) return not row.active end)
+
+    if not freeRow then
+        -- create a new row if no row is free
+        freeRow = self:CreateRow()
+    end
+    if fillFunc then
+        fillFunc(freeRow)
+    end
+    freeRow.active = true
+end
+
+--- removes all (up to the limit) rows where filterFunc is true from the list
+---@param filterFunc? function -- param: row
+---@param limit? number
+function GGUI.FrameList:Remove(filterFunc, limit)
+    local currentRemoveCount = 0
+    for _, row in pairs(self.rows) do
+        if row.active then
+            if (filterFunc and filterFunc(row)) or (not filterFunc) then
+                row.active = false
+                currentRemoveCount = currentRemoveCount + 1
+
+                if limit and currentRemoveCount >= limit then
+                    return
+                end
+            end
+        end
+    end
+end
+
+--- Update the list display, optionally filter then show all active rows
+---@param sortFunc? function -- sortFunc(rowA, rowB) optional sorting before updating the display
+function GGUI.FrameList:UpdateDisplay(sortFunc)
+    -- filter and show active rows and hide all inactive
+    ---@type GGUI.FrameList.Row[] | GGUI.Widget[]
+    local activeRows = GUTIL:Filter(self.rows, function(row) 
+        if row.active then
+            row:Show()
+            return true
+        else
+            row:Hide()
+            return false
+        end
+    end)
+
+    if #activeRows == 0 then
+        return
+    end
+
+    if #activeRows > 1 and sortFunc then
+        activeRows = GUTIL:Sort(activeRows, sortFunc)
+    end
+
+    local lastRow = nil
+    for index, row in pairs(activeRows) do
+        if index == 1 then
+            row:SetPoint("TOPLEFT", self.scrollFrame.content, "TOPLEFT")
+        else
+            row:SetPoint("TOPLEFT", lastRow.frame, "BOTTOMLEFT")
+        end
+        lastRow = row
+    end
 end

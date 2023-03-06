@@ -2,7 +2,11 @@ _, CraftSim = ...
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_DATA)
 
----@type CraftSim.CraftData.Serialized[]
+---@class CraftSim.CraftDataRecipeSave
+---@field activeData? CraftSim.CraftData.Serialized
+---@field dataPerCrafter CraftSim.CraftData.Serialized[]
+
+---@type CraftSim.CraftDataRecipeSave[][]
 CraftSimCraftData = CraftSimCraftData or {}
 
 CraftSim.CRAFTDATA = {}
@@ -54,6 +58,10 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
             local crafterName = UnitName("player")
             local crafterClass = select(2, UnitClass("player"))
 
+            if not crafterName then
+                return
+            end
+
             local resChance = recipeData.professionStats.resourcefulness:GetPercent(true)
             local resExtraFactor = recipeData.professionStats.resourcefulness:GetExtraFactor(true)
             local avgItemAmount = recipeData.baseItemAmount
@@ -72,8 +80,16 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
             --- use itemString for key to enable saving data for gear
             local itemString = CraftSim.GUTIL:GetItemStringFromLink(item:GetItemLink())
             if itemString then
+                ---@type CraftSim.CraftDataRecipeSave[]
                 CraftSimCraftData[recipeData.recipeID] = CraftSimCraftData[recipeData.recipeID] or {}
-                CraftSimCraftData[recipeData.recipeID][itemString] = craftData:Serialize()
+                ---@type CraftSim.CraftDataRecipeSave
+                CraftSimCraftData[recipeData.recipeID][itemString] = CraftSimCraftData[recipeData.recipeID][itemString] or {
+                    activeData = nil,
+                    dataPerCrafter = {},
+                }
+                local serializedData = craftData:Serialize()
+                CraftSimCraftData[recipeData.recipeID][itemString].activeData = serializedData
+                CraftSimCraftData[recipeData.recipeID][itemString].dataPerCrafter[crafterName] = serializedData
             end
         end
     end

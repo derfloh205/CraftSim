@@ -12,7 +12,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
 
     local frameWO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent=ProfessionsFrame.CloseButton, 
+        anchorParent=ProfessionsFrame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER, 
         title="CraftSim Top Gear " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
@@ -25,7 +25,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
     })
     local frameNO_WO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent=ProfessionsFrame.CloseButton, 
+        anchorParent=ProfessionsFrame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.TOP_GEAR, 
         title="CraftSim Top Gear",
