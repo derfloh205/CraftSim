@@ -7,13 +7,14 @@ CraftSim.CRAFTDATA.FRAMES = {}
 CraftSim.CRAFTDATA.frame = nil
 
 function CraftSim.CRAFTDATA.FRAMES:Init()
-    local sizeYRetracted = 400
-    local sizeYExpanded = 630
+    local sizeYRetracted = 420
+    local sizeYExpanded = 650
+    local sizeX=600
 
     ---@type GGUI.Frame | GGUI.Widget
     local craftDataFrame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame,anchorFrame=UIParent,
-        sizeX=500,sizeY=sizeYRetracted,
+        sizeX=sizeX,sizeY=sizeYRetracted,
         title="CraftSim Craft Data",
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         collapseable=true,moveable=true,closeable=true,
@@ -39,7 +40,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
 
     ---@type GGUI.Dropdown | GGUI.Widget
     craftDataFrame.content.resultsDropdown = CraftSim.GGUI.Dropdown({
-        parent=craftDataFrame.content,anchorParent=craftDataFrame.title.frame,
+        parent=craftDataFrame.content,anchorParent=craftDataFrame.title.frame, label="Recipe Items",
         anchorA="TOP", anchorB="BOTTOM", offsetY=-30, width=200,
         clickCallback=function (_, _, item)
             CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
@@ -82,15 +83,11 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
             if craftDataFrame:GetStatus() == "RETRACTED" then
                 craftDataFrame:SetStatus("EXPANDED")
                 craftDataFrame.expandListButton:SetStatus("UP")
-                craftDataFrame.content.dataFrame.dataList:Show()
-                craftDataFrame.content.dataFrame.sendDataButton:Show()
-                craftDataFrame.content.dataFrame.sendDataInput:Show()
+                craftDataFrame.content.expandFrame:Show()
             elseif craftDataFrame:GetStatus() == "EXPANDED" then
                 craftDataFrame:SetStatus("RETRACTED")
                 craftDataFrame.expandListButton:SetStatus("DOWN")
-                craftDataFrame.content.dataFrame.sendDataInput:Hide()
-                craftDataFrame.content.dataFrame.sendDataButton:Hide()
-                craftDataFrame.content.dataFrame.dataList:Hide()
+                craftDataFrame.content.expandFrame:Hide()
             end
         end
     })
@@ -198,13 +195,15 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     ---@type GGUI.Button | GGUI.Widget
     dataFrame.saveButton = CraftSim.GGUI.Button({
         parent=dataFrame, anchorParent=dataFrame, label="Save",
-        anchorA="TOP", anchorB="TOP", offsetX=-30, offsetY=-80, sizeX=60,
+        anchorA="TOP", anchorB="TOP", offsetX=-70, offsetY=-80, sizeX=60,
         clickCallback=function() 
             local selectedItem = craftDataFrame.content.resultsDropdown.selectedValue
             if selectedItem then
                 print("Save Button: selectedItem: " .. tostring(selectedItem:GetItemLink()))
                 CraftSim.CRAFTDATA:UpdateCraftData(selectedItem)
-                CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(selectedItem)
+                --CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(selectedItem)
+
+                CraftSim.MAIN:TriggerModulesErrorSafe()
             end
         end,
         initialStatus="SAVE",
@@ -232,14 +231,14 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     })
 
     ---@type GGUI.Button | GGUI.Widget
-    dataFrame.deleteDataItem = CraftSim.GGUI.Button({
+    dataFrame.deleteCraftDataButton = CraftSim.GGUI.Button({
         parent=dataFrame,anchorParent=dataFrame.saveButton.frame, anchorA="LEFT", anchorB="RIGHT", 
         label="Delete", adjustWidth=true,
         clickCallback=function ()
             local selectedItem = craftDataFrame.content.resultsDropdown.selectedValue
             if selectedItem then
                 CraftSim.CRAFTDATA:DeleteForItem(selectedItem)
-                CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(selectedItem)
+                CraftSim.MAIN:TriggerModulesErrorSafe()
             end
         end
     })
@@ -382,12 +381,22 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         },
     }
 
+    craftDataFrame.content.expandFrame = CreateFrame("Frame", nil, craftDataFrame.content)
+    local expandFrame = craftDataFrame.content.expandFrame
+    expandFrame:SetSize(craftDataFrame:GetWidth(), sizeYExpanded - sizeYRetracted)
+    expandFrame:SetPoint("TOP", dataFrame, "BOTTOM")
+    expandFrame:Hide()
+
     ---@type GGUI.FrameList | GGUI.Widget
-    dataFrame.dataList = CraftSim.GGUI.FrameList({
-        parent=dataFrame, 
-        sizeY=150, anchorA="TOP", anchorB="BOTTOM", anchorParent=dataFrame,
+    expandFrame.dataList = CraftSim.GGUI.FrameList({
+        parent=expandFrame, 
+        sizeY=170, anchorA="TOP", anchorB="TOP", anchorParent=expandFrame,
         showHeaderLine = true,
         columnOptions={
+            {
+                label="Item",
+                width=40,
+            },
             {
                 label="Crafter",
                 width=90
@@ -408,32 +417,44 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
             },
         },
         rowConstructor=function (columns)
-            local crafterColumn = columns[1]
-            local expectedCostColumn = columns[2]
-            local chanceColumn = columns[3]
-            local loadButtonColumn = columns[4]
-            local deleteButtonColumn = columns[5]
+            local itemColumn = columns[1]
+            local crafterColumn = columns[2]
+            local expectedCostColumn = columns[3]
+            local chanceColumn = columns[4]
+            local loadButtonColumn = columns[5]
+            local deleteButtonColumn = columns[6]
 
+            ---@type GGUI.Icon | GGUI.Widget
+            itemColumn.itemIcon = CraftSim.GGUI.Icon({
+                parent=itemColumn, anchorParent=itemColumn,
+                sizeX=25,sizeY=25, anchorA="LEFT", anchorB="LEFT", qualityIconScale=1.3,
+            })
+
+            ---@type GGUI.Text | GGUI.Widget
             crafterColumn.text = CraftSim.GGUI.Text({
                 parent=crafterColumn, anchorParent=crafterColumn,
                 text="Abcdefghijkl", justifyOptions={type="H", align="LEFT"},
                 fixedWidth=crafterColumn:GetWidth(),
             })
+
+            ---@type GGUI.Text | GGUI.Widget
             expectedCostColumn.text = CraftSim.GGUI.Text({
                 parent=expectedCostColumn, anchorParent=expectedCostColumn,
                 text=CraftSim.GUTIL:FormatMoney(10000000), justifyOptions={type="H", align="LEFT"},
                 fixedWidth=expectedCostColumn:GetWidth(),
             })
 
+            ---@type GGUI.Text | GGUI.Widget
             chanceColumn.text = CraftSim.GGUI.Text({
                 parent=chanceColumn, anchorParent=chanceColumn,
                 text="100%", justifyOptions={type="H", align="LEFT"},
                 fixedWidth=chanceColumn:GetWidth(),
             })
 
+            ---@type GGUI.Button | GGUI.Widget
             loadButtonColumn.loadButton = CraftSim.GGUI.Button({
                 parent=loadButtonColumn, anchorParent=loadButtonColumn,
-                label="Load", sizeX=40,
+                label="Load", sizeX=60,
                 initialStatusID="LOAD",
                 clickCallback=function (gButton)
                     ---@type CraftSim.CraftData
@@ -445,10 +466,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
                         if CraftSimCraftData[craftData.recipeID][itemString] then
                             CraftSimCraftData[craftData.recipeID][itemString].activeData = craftData:Serialize()
 
-                            -- refresh display, should not be possible to not have the loaded selected but check anyway
-                            if CraftSim.CRAFTDATA.frame.content.resultsDropdown.selectedValue then
-                                CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(CraftSim.CRAFTDATA.frame.content.resultsDropdown.selectedValue)
-                            end
+                            CraftSim.MAIN:TriggerModulesErrorSafe()
                         end
                     end
                 end
@@ -458,17 +476,16 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
                 {
                     statusID="LOAD",
                     enabled=true,
-                    label="Load",
-                    sizeX=40,
+                    label="Activate",
                 },
                 {
                     statusID="LOADED",
                     enabled=false,
-                    label="Loaded",
-                    sizeX=60,
+                    label="Active",
                 },
             })
 
+            ---@type GGUI.Button | GGUI.Widget
             deleteButtonColumn.deleteButton = CraftSim.GGUI.Button({
                 parent=deleteButtonColumn, anchorParent=deleteButtonColumn,
                 label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.1), sizeX=25,
@@ -487,10 +504,14 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
                                 end
                             end
 
-                            -- refresh display, should not be possible to not have the loaded selected but check anyway
-                            if CraftSim.CRAFTDATA.frame.content.resultsDropdown.selectedValue then
-                                CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(CraftSim.CRAFTDATA.frame.content.resultsDropdown.selectedValue)
-                            end
+                            -- -- refresh display, should not be possible to not have the loaded selected but check anyway
+                            -- if CraftSim.CRAFTDATA.frame.content.resultsDropdown.selectedValue then
+                            --     CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(CraftSim.CRAFTDATA.frame.content.resultsDropdown.selectedValue)
+                            -- end
+
+                            -- CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()
+
+                            CraftSim.MAIN:TriggerModulesErrorSafe()
                         end
                     end
                 end
@@ -499,17 +520,19 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     })
 
     ---@param craftData CraftSim.CraftData
-    function dataFrame:AddCraftDataToList(craftData)
-        dataFrame.dataList:Add(function (row) 
+    function craftDataFrame:AddCraftDataToList(craftData)
+        expandFrame.dataList:Add(function (row) 
             row.expectedCosts = craftData:GetExpectedCosts()
             row.crafter = craftData.crafterName
             row.craftingChance = craftData.chance
+            row.craftData = craftData
             local classColor = C_ClassColor.GetClassColor(craftData.crafterClass)
-            row.columns[1].text:SetText(classColor:WrapTextInColorCode(row.crafter))
-            row.columns[2].text:SetText(CraftSim.GUTIL:FormatMoney(row.expectedCosts))
-            row.columns[3].text:SetText(row.craftingChance*100 .. "%")
-            row.columns[4].loadButton.craftData = craftData
-            row.columns[5].deleteButton.craftData = craftData
+            row.columns[1].itemIcon:SetItem(craftData.itemLink)
+            row.columns[2].text:SetText(classColor:WrapTextInColorCode(row.crafter))
+            row.columns[3].text:SetText(CraftSim.GUTIL:FormatMoney(row.expectedCosts))
+            row.columns[4].text:SetText(row.craftingChance*100 .. "%")
+            row.columns[5].loadButton.craftData = craftData
+            row.columns[6].deleteButton.craftData = craftData
 
             local itemString = CraftSim.GUTIL:GetItemStringFromLink(craftData.itemLink) or ""
             itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
@@ -522,28 +545,33 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
             end
 
             if dataLoaded then
-                row.columns[4].loadButton:SetStatus("LOADED")
+                row.columns[5].loadButton:SetStatus("LOADED")
             else
-                row.columns[4].loadButton:SetStatus("LOAD")
+                row.columns[5].loadButton:SetStatus("LOAD")
             end
         end)
+    end
 
-        dataFrame.dataList:UpdateDisplay(function (rowA, rowB)
-            return rowA.expectedCosts < rowB.expectedCosts
-        end)
+    function craftDataFrame:RemoveCraftDataFromList(craftData)
+        local itemStringA = CraftSim.GUTIL:GetItemStringFromLink(craftData.itemLink)
+        itemStringA = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemStringA)
+        craftDataFrame.content.expandFrame.dataList:Remove(function (row) 
+            local itemStringB = CraftSim.GUTIL:GetItemStringFromLink(row.craftData.itemLink)
+            itemStringB = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemStringB)
+            -- if crafter and item string equal, remove it from the craft data list
+            return row.crafter == craftData.crafterName and itemStringA == itemStringB
+        end, 1)
     end
 
     ---@type GGUI.TextInput | GGUI.Widget
     dataFrame.sendDataInput = CraftSim.GGUI.TextInput({
-        parent=dataFrame, anchorParent=dataFrame.dataList.frame,
-        sizeX=100, anchorA="TOPLEFT", anchorB="BOTTOMLEFT",
+        parent=dataFrame, anchorParent=dataFrame.deleteCraftDataButton.frame,
+        sizeX=100, anchorA="LEFT", anchorB="RIGHT", offsetX=10,
     })
-
-    dataFrame.sendDataInput:Hide()
 
     dataFrame.sendDataButton = CraftSim.GGUI.Button({
         parent=dataFrame, anchorParent=dataFrame.sendDataInput.frame,
-        anchorA="LEFT",anchorB="RIGHT", label="Send to Player", adjustWidth=true,
+        anchorA="LEFT",anchorB="RIGHT", label="Send", adjustWidth=true,
         clickCallback=function ()
             local selectedItem = craftDataFrame.content.resultsDropdown.selectedValue
             local target = dataFrame.sendDataInput:GetText()
@@ -553,8 +581,6 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         end,
         initialStatusID="READY"
     })
-
-    dataFrame.sendDataButton:Hide()
 
     dataFrame.sendDataButton:SetStatusList({
         {
@@ -566,8 +592,6 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
             enabled=false,
         },
     })
-
-    dataFrame.dataList:Hide()
 
     dataFrame:Hide()
 
@@ -611,6 +635,8 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDisplay(recipeData)
             CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(value)
         end
     end)
+
+    CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()
 end
 
 ---@param item ItemMixin
@@ -658,7 +684,7 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
 
     if craftDataSerialized then
         dataFrame.saveButton:SetStatus("UPDATE")
-        dataFrame.deleteDataItem:SetEnabled(true)
+        dataFrame.deleteCraftDataButton:SetEnabled(true)
         local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
         print("deserializeddata:")
         print(craftData, true)
@@ -706,7 +732,7 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
         dataFrame.sendDataButton:SetStatus("READY")
     else
         dataFrame.saveButton:SetStatus("SAVE")
-        dataFrame.deleteDataItem:SetEnabled(false)
+        dataFrame.deleteCraftDataButton:SetEnabled(false)
         dataFrame.expectedCostsValue:SetText("?")
         dataFrame.minimumCostsValue:SetText("?")
         dataFrame.expectedCraftsValue:SetText("?")
@@ -723,40 +749,30 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
     if not recipeData.resultData.expectedCraftsByQuality[qualityID] then
         dataFrame.saveButton:SetStatus("UNREACHABLE")
     end
+end
 
-    --- update craftData list
-    dataFrame.dataList:Remove() -- clear all
+function CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()
+    -- --- update craftData list
+    local craftDataFrame = CraftSim.CRAFTDATA.frame
+    local expandFrame = craftDataFrame.content.expandFrame
+    expandFrame.dataList:Remove() -- clear all
 
-    for _, craftDataSerialized in pairs(CraftSimCraftData[recipeData.recipeID][itemString].dataPerCrafter) do
-        local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
-        dataFrame:AddCraftDataToList(craftData)
-        -- dataFrame.dataList:Add(function (row)
-        --     row.expectedCosts = craftData:GetExpectedCosts()
-        --     row.crafter = craftData.crafterName
-        --     row.craftingChance = craftData.chance
-        --     local classColor = C_ClassColor.GetClassColor(craftData.crafterClass)
-        --     row.columns[1].text:SetText(classColor:WrapTextInColorCode(row.crafter))
-        --     row.columns[2].text:SetText(CraftSim.GUTIL:FormatMoney(row.expectedCosts))
-        --     row.columns[3].text:SetText(row.craftingChance*100 .. "%")
-
-        --     local dataLoaded = false
-        --     if CraftSimCraftData[recipeData.recipeID][itemString].activeData then
-        --         if CraftSimCraftData[recipeData.recipeID][itemString].activeData.crafterName == craftData.crafterName then
-        --             dataLoaded = true
-        --         end
-        --     end
-
-        --     if dataLoaded then
-        --         row.columns[4].loadButton:SetStatus("LOADED")
-        --     else
-        --         row.columns[4].loadButton:SetStatus("LOAD")
-        --     end
-        -- end)
+    for _, recipeItemList in pairs(CraftSimCraftData) do
+        for _, itemData in pairs(recipeItemList) do
+            for _, craftDataSerialized in pairs(itemData.dataPerCrafter) do
+                local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
+                craftDataFrame:AddCraftDataToList(craftData)
+            end
+        end
     end
 
-    dataFrame.dataList:UpdateDisplay(function (rowA, rowB)
-        return rowA.expectedCosts < rowB.expectedCosts
-    end)
+    local recipeData = CraftSim.MAIN.currentRecipeData
 
-
+    if recipeData then
+        expandFrame.dataList:UpdateDisplay(function (rowA, rowB)
+            return rowA.craftData.recipeID == recipeData.recipeID
+        end)
+    else
+        expandFrame.dataList:UpdateDisplay()
+    end
 end

@@ -1886,7 +1886,7 @@ function GGUI.FrameList:new(options)
     self.rowConstructor = options.rowConstructor 
 
     local mainFrame = CreateFrame("Frame", nil, options.parent) 
-    mainFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB)
+    mainFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
     mainFrame:SetSize(options.sizeX or (rowWidth + 10), options.sizeY)
     
     ---@type GGUI.ScrollFrame

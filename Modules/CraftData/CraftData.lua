@@ -189,11 +189,7 @@ function CraftSim.CRAFTDATA:AddReceivedCraftData(craftDataSerialized)
 
     craftRecipeSave.dataPerCrafter[craftDataSerialized.crafterName] = craftDataSerialized
 
-    if CraftSim.MAIN.currentRecipeData and CraftSim.MAIN.currentRecipeData.recipeID == craftDataSerialized.recipeID then
-            local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
-            CraftSim.CRAFTDATA.frame.content.dataFrame.dataList:Remove(function (row) return row.crafter == craftData.crafterName end, 1)
-            CraftSim.CRAFTDATA.frame.content.dataFrame:AddCraftDataToList(craftData)
-    end
+    CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()
 end
 
 ---@class CraftSim.CraftData.CraftDataMsg
@@ -226,6 +222,8 @@ function CraftSim.CRAFTDATA:DeleteForRecipe()
     if recipeData then
         CraftSimCraftData[recipeData.recipeID] = nil
     end
+
+    CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()
 end
 function CraftSim.CRAFTDATA:DeleteForItem(item)
     local recipeData = CraftSim.MAIN.currentRecipeData
@@ -237,7 +235,10 @@ function CraftSim.CRAFTDATA:DeleteForItem(item)
             CraftSimCraftData[recipeData.recipeID][itemString] = nil
         end
     end
+    
+    CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()
 end
 function CraftSim.CRAFTDATA:DeleteAll()
     CraftSimCraftData = {}
+    CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()
 end
