@@ -235,19 +235,6 @@ function CraftSim.MAIN:HookToEvent()
 end
 
 function CraftSim.MAIN:InitStaticPopups()
-	StaticPopupDialogs["CRAFT_SIM_ACCEPT_TOOLTIP_SYNC"] = {
-        text = "Incoming Craft Sim Account Sync: Do you accept?",
-        button1 = "Yes",
-        button2 = "No",
-        OnAccept = function(self, data1, data2)
-            CraftSim.ACCOUNTSYNC:HandleIncomingSync(data1, data2)
-        end,
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-      }
-
 	StaticPopupDialogs["CRAFT_SIM_ACCEPT_NO_PRICESOURCE_WARNING"] = {
 		text = "Are you sure you do not want to be reminded to get a price source?",
 		button1 = "Yes",
@@ -255,19 +242,6 @@ function CraftSim.MAIN:InitStaticPopups()
 		OnAccept = function(self, data1, data2)
 			CraftSimOptions.doNotRemindPriceSource = true
 			CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.WARNING):Hide()
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = true,
-		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-	}
-
-	StaticPopupDialogs["CRAFT_SIM_ACCEPT_CRAFT_DATA_MESSAGE"] = {
-		text = "--",
-		button1 = "Yes",
-		button2 = "No",
-		OnAccept = function(self, data1)
-			CraftSim.CRAFTDATA:AddReceivedCraftData(data1)
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -313,6 +287,10 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 
 		CraftSim.CONTROL_PANEL.FRAMES:Init()
 		CraftSim.MAIN:InitStaticPopups()
+		CraftSim.GGUI:InitializePopup({
+			backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+			sizeX=300, sizeY=300, title="CraftSim Popup", frameID=CraftSim.CONST.FRAMES.POPUP,
+		})
 
 		CraftSim.CUSTOMER_SERVICE:Init()
 		CraftSim.CRAFTDATA:Init()

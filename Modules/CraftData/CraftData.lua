@@ -112,20 +112,48 @@ function CraftSim.CRAFTDATA.OnCraftDataReceived(craftDataMessage)
     print("crafter: " .. tostring(craftDataSerialized.crafterName))
     print("sender: " .. tostring(craftDataMessage.senderName))
 
+    local f = CraftSim.UTIL:GetFormatter()
+
+    local hasProfession = CraftSim.UTIL:HasProfession(craftDataSerialized.professionID)
+
+    print("received profID: " .. tostring(craftDataSerialized.professionID))
+
+    if not hasProfession then
+        CraftSim.UTIL:SystemPrint(f.bb("CraftSim:") .. " Declined CraftData for unlearned profession")
+        return
+    end
+
     local targetItem = Item:CreateFromItemLink(craftDataSerialized.itemLink)
+
+
+
 
     targetItem:ContinueOnItemLoad(function ()
         -- popup that asks to add craft data
         -- first adjust it
-        local crafter = C_ClassColor.GetClassColor(craftDataSerialized.crafterClass):WrapTextInColorCode(craftDataSerialized.crafterName)
+        local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
+        local crafter = C_ClassColor.GetClassColor(craftData.crafterClass):WrapTextInColorCode(craftData.crafterName)
         local sender = C_ClassColor.GetClassColor(craftDataMessage.senderClass):WrapTextInColorCode(craftDataMessage.senderName)
-        StaticPopupDialogs["CRAFT_SIM_ACCEPT_CRAFT_DATA_MESSAGE"].text = 
-        sender .. "\nwants to share CraftSim CraftData with you!" ..
-        "\nDo you want to add this to your Craft Data for this item?\n" ..
+        local formattedChance = CraftSim.GUTIL:Round(craftData.chance*100) .. "%"
+        local expectedCosts = CraftSim.GUTIL:FormatMoney(craftData:GetExpectedCosts())
+        local expectedCrafts = CraftSim.GUTIL:Round(craftData.expectedCrafts, 1)
+        local text = sender .. "\n\nwants to share " .. f.bb("Craft Data") .. " with you!" ..
+        "\nDo you want to add this to your Craft Data for this item?\n\n" ..
         "Item: " .. targetItem:GetItemLink() .. "\n" ..
         "Crafter: " .. crafter .. "\n" ..
-        "Chance: " .. craftDataSerialized.chance
-        StaticPopup_Show("CRAFT_SIM_ACCEPT_CRAFT_DATA_MESSAGE", "", "", craftDataSerialized)
+        "Chance: " .. formattedChance .. "\n" ..
+        "Expected Crafts: " .. expectedCrafts .. "\n" ..
+        "Expected Costs: " .. expectedCosts
+
+        CraftSim.GGUI:ShowPopup({
+            title="Incoming CraftSim Craft Data", 
+            text=text, 
+            onAccept=function ()
+                CraftSim.CRAFTDATA:AddReceivedCraftData(craftDataSerialized)
+            end,
+            sizeX=400,
+            sizeY=210,
+        })
     end)
 
 end
@@ -141,7 +169,7 @@ function CraftSim.CRAFTDATA:GetActiveCraftData(item)
         
         local craftRecipeSave = CraftSimCraftData[recipeID]
         if craftRecipeSave then
-            local craftItemData = craftRecipeSave[recipeID][itemString]
+            local craftItemData = craftRecipeSave[itemString]
             if craftItemData then
                 return craftItemData.activeData
             end

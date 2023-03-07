@@ -303,11 +303,13 @@ function GGUI.Frame:new(options)
     options.sizeX = options.sizeX or 100
     options.sizeY = options.sizeY or 100
     options.scale = options.scale or 1
+    options.parent = options.parent or UIParent
+    options.anchorParent = options.anchorParent or UIParent
     self.originalX = options.sizeX
     self.originalY = options.sizeY
     self.originalOffsetX = options.offsetX
     self.originalOffsetY = options.offsetY
-    self.originalAnchorParent = options.anchorParent or UIParent
+    self.originalAnchorParent = options.anchorParent
     self.originalAnchorA = options.anchorA
     self.originalAnchorB = options.anchorB
     self.frameID = options.frameID or ("GGUIFrame" .. (GGUI.numFrames))
@@ -2101,4 +2103,93 @@ function GGUI.FrameList:UpdateDisplay(sortFunc)
         end
         lastRow = row
     end
+end
+
+
+---@class GGUI.ShowPopupOptions
+---@field title? string
+---@field text? string
+---@field acceptButtonLabel? string
+---@field declineButtonLabel? string
+---@field onAccept? function
+---@field onDecline? function
+---@field sizeX? number
+---@field sizeY? number
+
+local popupFrame = nil
+---@param options GGUI.ShowPopupOptions
+function GGUI:ShowPopup(options)
+    if not popupFrame then
+        error("GGUI Error: Popup Frame not initialized")
+    end
+    options.title = options.title or nil
+    options.text = options.text or ""
+    options.acceptButtonLabel = options.acceptButtonLabel or "Accept"
+    options.declineButtonLabel = options.declineButtonLabel or "Decline"
+    options.width = options.width or 300
+    options.height = options.height or 300
+
+    if options.title then
+        popupFrame.title:SetText(options.title)
+    end
+    popupFrame.content.text:SetText(options.text)
+    popupFrame.onAccept = options.onAccept
+    popupFrame.content.acceptButton.frame:SetText(options.acceptButtonLabel)
+    popupFrame.content.acceptButton.frame:SetWidth(popupFrame.content.acceptButton.frame:GetTextWidth() + 15)
+    popupFrame.onDecline = options.onDecline
+    popupFrame.content.declineButton.frame:SetText(options.declineButtonLabel)
+    popupFrame.content.declineButton.frame:SetWidth(popupFrame.content.declineButton.frame:GetTextWidth() + 15)
+
+    if options.sizeX then
+        popupFrame.frame:SetWidth(options.sizeX)
+    end
+    if options.sizeY then
+        popupFrame.frame:SetHeight(options.sizeY)
+    end
+
+    popupFrame:Show()
+end
+
+---@class GGUI.InitPopupOptions
+---@field backdropOptions GGUI.BackdropOptions
+---@field title? string
+---@field sizeX? number
+---@field sizeY? number
+---@field frameID? string
+
+---@param options GGUI.InitPopupOptions
+function GGUI:InitializePopup(options)
+    ---@type GGUI.Frame | GGUI.Widget
+        popupFrame = CraftSim.GGUI.Frame({
+            backdropOptions = options.backdropOptions,
+            sizeX=options.sizeX or 300, sizeY=options.sizeY or 300, moveable=true, frameStrata="DIALOG", frameID=options.frameID,
+            title=options.title or ""
+        })
+
+        popupFrame.content.text = CraftSim.GGUI.Text({
+            parent=popupFrame.content, anchorParent=popupFrame.title.frame, anchorA="TOP", anchorB="BOTTOM", offsetY=-20,
+        })
+
+        popupFrame.content.acceptButton = CraftSim.GGUI.Button({
+            parent=popupFrame.content, anchorParent=popupFrame.frame, anchorA="BOTTOMLEFT", anchorB="BOTTOMLEFT", offsetX=10, offsetY=10,
+            label="Accept", clickCallback=function ()
+                if popupFrame.onAccept then
+                    popupFrame.onAccept()
+                end
+                popupFrame:Hide()
+            end
+        })
+        popupFrame.content.declineButton = CraftSim.GGUI.Button({
+            parent=popupFrame.content, anchorParent=popupFrame.frame, anchorA="BOTTOMRIGHT", anchorB="BOTTOMRIGHT", offsetX=-10, offsetY=10,
+            label="Decline", clickCallback=function ()
+                if popupFrame.onDecline then
+                    popupFrame.onDecline()
+                end
+                popupFrame:Hide()
+            end
+        })
+
+        popupFrame:Hide()
+
+        CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(popupFrame.content)
 end

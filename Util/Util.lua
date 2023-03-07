@@ -19,6 +19,10 @@ function CraftSim.UTIL:SetDebugPrint(debugID)
     return print
 end
 
+function CraftSim.UTIL:SystemPrint(text)
+    print(text)
+end
+
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.UTIL) 
 
 function CraftSim.UTIL:GetInspirationStatByPercent(percent) 
@@ -388,5 +392,30 @@ function CraftSim.UTIL:GetSchematicFormByVisibility()
         return ProfessionsFrame.CraftingPage.SchematicForm
     elseif ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm:IsVisible() then
         return ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm
+    end
+end
+
+function CraftSim.UTIL:HasProfession(professionID)
+    local skilllineids = C_TradeSkillUI.GetAllProfessionTradeSkillLines()
+    local professionsChecked = 0
+    for _, id in pairs(skilllineids) do
+    
+        local info = C_TradeSkillUI.GetProfessionInfoBySkillLineID(id)
+
+        if info.maxSkillLevel > 0 then
+            professionsChecked = professionsChecked + 1
+            if info.profession == professionID then
+                return true
+            end
+
+            -- doesnt make sense to check more than the max learned professions per character
+            if professionsChecked >= 5 then
+                return false
+            end
+        end
+        
+        if info.profession == professionID and info.maxSkillLevel > 0 then
+            return true
+        end
     end
 end
