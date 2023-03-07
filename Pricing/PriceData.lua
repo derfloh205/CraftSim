@@ -9,18 +9,34 @@ CraftSim.PRICEDATA.overrideCraftingCosts = nil
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
 
--- Wrappers 
-function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent)
+---Wrapper for Price Source addons price fetch by itemID
+---@param itemID number
+---@param isReagent? boolean Use TSM Expression for materials
+---@return number
+---@return boolean? isPriceOverride
+---@return boolean? isCraftData
+function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice)
+    if forceAHPrice then
+        return CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, isReagent) or 0
+    end
     -- check for overrides
     if isReagent then
-        -- only applies to reagents here
-        local recipeData = CraftSim.MAIN.currentRecipeData
+        local priceOverrideData = CraftSim.PRICE_OVERRIDE:GetGlobalOverride(itemID)
 
-        if recipeData then
-            local priceOverride = CraftSim.PRICE_OVERRIDE:GetGlobalOverridePrice(itemID)
+        if priceOverrideData then
+            if priceOverrideData.useCraftData then
+                --- get craft data and return expected costs
+                --- based on cached map
+                local craftDataSerialized = CraftSim.CRAFTDATA:GetActiveCraftDataByItemID(itemID)
 
-            if priceOverride then
-                return priceOverride
+                --- this no craft data is found it will continue and just fetch the buyout
+                if craftDataSerialized then
+                    local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
+                    return craftData:GetExpectedCosts(), true, true
+                end
+            else
+                --print("does not use craft data")
+                return priceOverrideData.price, true
             end
         end
     end

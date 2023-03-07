@@ -126,7 +126,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "TOP", frame.content.modulesCustomerService, "TOP", 0, -20, "modulesCraftData")
 
     -- 6. Row
-    frame.content.modulesCustomerService = createModuleCheckbox("Cost Details",
+    frame.content.modulesCostDetails = createModuleCheckbox("Cost Details",
     "Module that shows detailed information about crafting costs",
     "LEFT", frame.content.modulesCraftData, "RIGHT", 100, 0, "modulesCostDetails")
 

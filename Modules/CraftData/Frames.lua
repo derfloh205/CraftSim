@@ -396,6 +396,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
             {
                 label="Item",
                 width=40,
+                justifyOptions={type="H", align="CENTER"},
             },
             {
                 label="Crafter",
@@ -427,7 +428,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
             ---@type GGUI.Icon | GGUI.Widget
             itemColumn.itemIcon = CraftSim.GGUI.Icon({
                 parent=itemColumn, anchorParent=itemColumn,
-                sizeX=25,sizeY=25, anchorA="LEFT", anchorB="LEFT", qualityIconScale=1.3,
+                sizeX=25,sizeY=25, qualityIconScale=1.4,
             })
 
             ---@type GGUI.Text | GGUI.Widget
@@ -615,16 +616,26 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDisplay(recipeData)
 
     CraftSim.GUTIL:ContinueOnAllItemsLoaded(recipeData.resultData.itemsByQuality, function ()
         local dropdownData = {}
-        table.foreach(recipeData.resultData.itemsByQuality, function (_, item)
-            table.insert(dropdownData, {
-                label = item:GetItemLink(),
-                value = item,
-            })
-        end)
+        if recipeData.supportsQualities then
+            table.foreach(recipeData.resultData.itemsByQuality, function (_, item)
+                table.insert(dropdownData, {
+                    label = item:GetItemLink(),
+                    value = item,
+                })
+            end)
+        else
+            local item = recipeData.resultData.itemsByQuality[1]
+            if item then
+                table.insert(dropdownData, {
+                    label = item:GetItemLink(),
+                    value = item,
+                })
+            end
+        end
         local label = nil
         local value = nil
         if selectedItem then
-            local selectedQuality = CraftSim.GUTIL:GetQualityIDFromLink(selectedItem:GetItemLink())
+            local selectedQuality = CraftSim.GUTIL:GetQualityIDFromLink(selectedItem:GetItemLink()) or 1
             value = recipeData.resultData.itemsByQuality[selectedQuality]
             label = value:GetItemLink()
         end
@@ -745,9 +756,11 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
         end)
     end    
 
-    -- if unreachable
-    if not recipeData.resultData.expectedCraftsByQuality[qualityID] then
-        dataFrame.saveButton:SetStatus("UNREACHABLE")
+    if recipeData.supportsQualities then
+        -- if unreachable
+        if not recipeData.resultData.expectedCraftsByQuality[qualityID] then
+            dataFrame.saveButton:SetStatus("UNREACHABLE")
+        end
     end
 end
 

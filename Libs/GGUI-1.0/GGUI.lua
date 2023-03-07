@@ -1265,9 +1265,12 @@ function GGUI.Checkbox:new(options)
     options.anchorB = options.anchorB or "CENTER"
     options.offsetX = options.offsetX or 0
     options.offsetY = options.offsetY or 0
+    options.parent = options.parent or UIParent
+    options.anchorParent = options.anchorParent or UIParent
+    self.clickCallback = options.clickCallback
 
     local checkBox = CreateFrame("CheckButton", nil, options.parent, "ChatConfigCheckButtonTemplate")
-    self.frame = checkBox
+    GGUI.Checkbox.super.new(self, checkBox)
     checkBox:SetHitRectInsets(0, 0, 0, 0); -- see https://wowpedia.fandom.com/wiki/API_Frame_SetHitRectInsets
 	checkBox:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
 	checkBox.Text:SetText(options.label)
@@ -1283,6 +1286,9 @@ end
 
 function GGUI.Checkbox:GetChecked()
     return self.frame:GetChecked()
+end
+function GGUI.Checkbox:SetChecked(value)
+    return self.frame:SetChecked(value)
 end
 
 
@@ -1634,7 +1640,7 @@ function GGUI.CurrencyInput:new(options)
     self:SetValue(options.initialValue)
 
     if options.showFormatHelpIcon then
-        GGUI.HelpIcon({
+        self.helpIcon = GGUI.HelpIcon({
             parent=options.parent,
             text="Format: 100g10s1c", textInput.frame, anchorParent=textInput.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=5,
         })
@@ -1653,6 +1659,19 @@ function GGUI.CurrencyInput:SetValue(total)
     self.silver = silver
     self.copper = copper
     self.total = gold*10000+silver*100+copper
+end
+
+function GGUI.CurrencyInput:Show()
+    self.textInput:Show()
+    if self.helpIcon then
+        self.helpIcon:Show()
+    end
+end
+function GGUI.CurrencyInput:Hide()
+    self.textInput:Hide()
+    if self.helpIcon then
+        self.helpIcon:Hide()
+    end
 end
 
 --- GGUI.NumericInput
@@ -1848,6 +1867,7 @@ GGUI.FrameList = GGUI.Widget:extend()
 ---@class GGUI.FrameList.ColumnOption
 ---@field width? number
 ---@field label? string
+---@field justifyOptions? GGUI.JustifyOptions
 
 function GGUI.FrameList:new(options)
     self.isGGUI = true
@@ -1911,7 +1931,7 @@ function GGUI.FrameList:new(options)
         
         headerColumn.text = GGUI.Text({
             fixedWidth=columnOption.width, text=columnOption.label or "",
-            parent=headerColumn, anchorParent=headerColumn, justifyOptions={type="H", align="LEFT"},
+            parent=headerColumn, anchorParent=headerColumn, justifyOptions=columnOption.justifyOptions or {type="H", align="LEFT"},
         })
         
         if index == 1 then

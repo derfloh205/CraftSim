@@ -24,8 +24,8 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
     if recipeData then
         local qualityID = recipeData:GetResultQuality(item)
         if qualityID then -- could be nil if item does not belong to recipe, may happen with bugs
-            local expectedCrafts = recipeData.resultData.expectedCraftsByQuality[qualityID]
-            local chance = recipeData.resultData.chanceByQuality[qualityID]
+            local expectedCrafts = recipeData.resultData.expectedCraftsByQuality[qualityID] or 1
+            local chance = recipeData.resultData.chanceByQuality[qualityID] or 1
 
             print("save:")
             print("qualityID of result:" .. qualityID)
@@ -172,6 +172,23 @@ function CraftSim.CRAFTDATA:GetActiveCraftData(item)
             local craftItemData = craftRecipeSave[itemString]
             if craftItemData then
                 return craftItemData.activeData
+            end
+        end
+    end
+end
+
+--- Probably slower cause we need to search, and does not work for gear (Could make it working for gear tho when getting the itemstring from somewhere)
+---@param itemID number
+---@return CraftSim.CraftData.Serialized? craftDataSerialized
+function CraftSim.CRAFTDATA:GetActiveCraftDataByItemID(itemID)
+    for _, recipeItemList in pairs(CraftSimCraftData) do
+        for _, itemCraftData in pairs(recipeItemList) do
+            if itemCraftData.activeData then
+                local itemIDSaved = CraftSim.GUTIL:GetItemIDByLink(itemCraftData.activeData.itemLink)
+
+                if itemIDSaved == itemID then
+                    return itemCraftData.activeData
+                end 
             end
         end
     end

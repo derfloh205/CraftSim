@@ -432,6 +432,8 @@ function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	topgearFrameWO:Hide()
 	CraftSim.PRICE_DETAILS.frame:Hide()
 	CraftSim.PRICE_DETAILS.frameWO:Hide()
+	CraftSim.COST_DETAILS.frame:Hide()
+	CraftSim.COST_DETAILS.frameWO:Hide()
 	materialOptimizationFrame:Hide()
 	materialOptimizationFrameWO:Hide()
 	CraftSim.CRAFTDATA.frame:Hide()
@@ -514,16 +516,17 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
     local showMaterialOptimization = false
     local showStatweights = false
     local showTopGear = false
-    local showCostOverview = false
 	local showSimulationMode = false
 	local showSpecInfo = false
-	local showPriceOverride = false
 	
 	-- always on modules
+    local showCostOverview = true
+	local showPriceOverride = true
 	local showCraftResults = true
 	local showRecipeScan = true
 	local showCustomerService = true
 	local showCraftData = true
+	local showCostDetails = true
 
 	
 	if recipeData.supportsCraftingStats then
@@ -540,9 +543,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	end
 	showSimulationMode = not recipeData.isOldWorldRecipe
 
-	showCostOverview = true
-	showPriceOverride = true
-
 
 	showMaterialOptimization = showMaterialOptimization and CraftSimOptions.modulesMaterials 
 	showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
@@ -554,6 +554,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showCraftResults = showCraftResults and CraftSimOptions.modulesCraftResults
 	showCustomerService = showCustomerService and CraftSimOptions.modulesCustomerService
 	showCraftData = showCraftData and CraftSimOptions.modulesCraftData
+	showCostDetails = showCostDetails and CraftSimOptions.modulesCostDetails
 
 	CraftSim.FRAME:ToggleFrame(recipeScanFrame, showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
@@ -571,6 +572,12 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		-- since recipeData is a reference here to the recipeData in the simulationmode, 
 		-- the recipeData that is used in the below modules should also be the modified one!
 		CraftSim.SIMULATION_MODE:UpdateSimulationMode()
+	end
+
+	CraftSim.FRAME:ToggleFrame(CraftSim.COST_DETAILS.frame, showCostDetails and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(CraftSim.COST_DETAILS.frameWO, showCostDetails and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showCostDetails then
+		CraftSim.COST_DETAILS:UpdateDisplay(recipeData, exportMode)
 	end
 
 	if recipeData and showCraftResults then
