@@ -105,10 +105,12 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
     end
 end
 
-function CraftSim.CRAFTDATA.OnCraftDataReceived(craftDataSerialized)
+---@param craftDataMessage CraftSim.CraftData.CraftDataMsg
+function CraftSim.CRAFTDATA.OnCraftDataReceived(craftDataMessage)
     print("Receiving Craft Data..")
-
-    print("crafter: " .. tostring(craftDataSerialized.crafterName)) -- TODO: differentiate between sender and crafter?
+    local craftDataSerialized = craftDataMessage.craftDataSerialized
+    print("crafter: " .. tostring(craftDataSerialized.crafterName))
+    print("sender: " .. tostring(craftDataMessage.senderName))
 
     local targetItem = Item:CreateFromItemLink(craftDataSerialized.itemLink)
 
@@ -116,12 +118,35 @@ function CraftSim.CRAFTDATA.OnCraftDataReceived(craftDataSerialized)
         -- popup that asks to add craft data
         -- first adjust it
         local crafter = C_ClassColor.GetClassColor(craftDataSerialized.crafterClass):WrapTextInColorCode(craftDataSerialized.crafterName)
+        local sender = C_ClassColor.GetClassColor(craftDataMessage.senderClass):WrapTextInColorCode(craftDataMessage.senderName)
         StaticPopupDialogs["CRAFT_SIM_ACCEPT_CRAFT_DATA_MESSAGE"].text = 
-        crafter .. "\nwants to share CraftSim CraftData with you for\n" .. targetItem:GetItemLink() .. 
-        "\nDo you want to add this to your Craft Data for this item?"
+        sender .. "\nwants to share CraftSim CraftData with you!" ..
+        "\nDo you want to add this to your Craft Data for this item?\n" ..
+        "Item: " .. targetItem:GetItemLink() .. "\n" ..
+        "Crafter: " .. crafter .. "\n" ..
+        "Chance: " .. craftDataSerialized.chance
         StaticPopup_Show("CRAFT_SIM_ACCEPT_CRAFT_DATA_MESSAGE", "", "", craftDataSerialized)
     end)
 
+end
+
+---@return CraftSim.CraftData.Serialized? craftDataSerialized
+function CraftSim.CRAFTDATA:GetActiveCraftData(item)
+    local itemToRecipe = CraftSim.CACHE:GetCacheEntryByGameVersion(CraftSimRecipeMap, "itemToRecipe")
+    if itemToRecipe then
+        local recipeID = itemToRecipe[item:GetItemID()]
+        local itemLink = item:GetItemLink()
+        local itemString = CraftSim.GUTIL:GetItemStringFromLink(itemLink)
+        itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
+        
+        local craftRecipeSave = CraftSimCraftData[recipeID]
+        if craftRecipeSave then
+            local craftItemData = craftRecipeSave[recipeID][itemString]
+            if craftItemData then
+                return craftItemData.activeData
+            end
+        end
+    end
 end
 
 ---@param craftDataSerialized CraftSim.CraftData.Serialized
@@ -143,22 +168,27 @@ function CraftSim.CRAFTDATA:AddReceivedCraftData(craftDataSerialized)
     end
 end
 
+---@class CraftSim.CraftData.CraftDataMsg
+---@field senderName string
+---@field senderClass string
+---@field craftDataSerialized CraftSim.CraftData.Serialized
+
 function CraftSim.CRAFTDATA:SendCraftData(selectedItem, target)
     local recipeData = CraftSim.MAIN.currentRecipeData
     if not recipeData then
         return
     end
-    local itemString = CraftSim.GUTIL:GetItemStringFromLink(selectedItem:GetItemLink()) or ""
-    itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
 
-    local craftRecipeSaveItems = CraftSimCraftData[recipeData.recipeID]
-    if craftRecipeSaveItems then
-        local craftRecipeSave = craftRecipeSaveItems[itemString]
+    local activeDataSerialized = CraftSim.CRAFTDATA:GetActiveCraftData(selectedItem)
 
-        if craftRecipeSave and craftRecipeSave.activeData then
-            -- its already serialized, just send
-            CraftSim.COMM:SendData(CRAFTDATA_MESSAGE, craftRecipeSave.activeData, "WHISPER", target)
-        end
+    if activeDataSerialized then
+        ---@type CraftSim.CraftData.CraftDataMsg
+        local message = {
+            senderName = UnitName("player") or "",
+            senderClass = select(2, UnitClass("player")),
+            craftDataSerialized = activeDataSerialized,
+        }
+        CraftSim.COMM:SendData(CRAFTDATA_MESSAGE, message, "WHISPER", target)
     end
 end
 

@@ -15,6 +15,13 @@ CraftSimRecipeIDs = CraftSimRecipeIDs or {}
 CraftSimProfessionInfoCache = CraftSimProfessionInfoCache or {}
 CraftSimProfessionSkillLineIDCache = CraftSimProfessionSkillLineIDCache or {}
 
+---@class CraftSim.RecipeMap
+---@field itemToRecipe? number[]
+---@field recipeToProfession? number[]
+
+---@type CraftSim.RecipeMap
+CraftSimRecipeMap = CraftSimRecipeMap or {}
+
 -- session caches
 CraftSim.CACHE.SpecDataStatsByRecipeID = {}
 
@@ -40,7 +47,7 @@ end
 ---@return any?
 function CraftSim.CACHE:GetCacheEntryByVersion(cache, entryID)
     local currentVersion = GetAddOnMetadata(AddonName, "Version")
-    print("Cache by version " .. tostring(currentVersion) .. " id: " .. tostring(entryID), false, true)
+    print("get cache entry by addon version " .. tostring(currentVersion) .. " id: " .. tostring(entryID), false, true)
     -- reset if version changed
     if not next(cache) or cache.version ~= currentVersion then
         print("reset version cache get")
@@ -60,17 +67,86 @@ function CraftSim.CACHE:GetCacheEntryByVersion(cache, entryID)
     return nil
 end
 
-function CraftSim.CACHE:AddCacheEntryByVersion(cache, entryID, data)
-    local currentVersion = GetAddOnMetadata(AddonName, "Version")
+---@return any?
+function CraftSim.CACHE:GetCacheEntryByGameVersion(cache, entryID)
+    local gameVersion = select(4, GetBuildInfo())
+    print("get cache entry by game version " .. tostring(gameVersion) .. " id: " .. tostring(entryID), false, true)
     -- reset if version changed
-    if not next(cache) or cache.version ~= currentVersion then
-        print("reset version cache add")
+    if not next(cache) or cache.version ~= gameVersion then
+        print("reset version cache get")
         wipe(cache)
-        cache.version = currentVersion
+        cache.version = gameVersion
         cache.data = {}
-        print("cache now:")
-        print(cache, true)
+    end
+        
+    if cache.data[entryID] then
+        print("return from cache")
+        return cache.data[entryID]
+    end
+    print("cache entry not found")
+
+    return nil
+end
+
+--- By Addon Version
+function CraftSim.CACHE:AddCacheEntryByVersion(cache, entryID, data)
+    local addonVersion = GetAddOnMetadata(AddonName, "Version")
+    -- reset if version changed
+    if not next(cache) or cache.version ~= addonVersion then
+        print("reset addon version cache add")
+        wipe(cache)
+        cache.version = addonVersion
+        cache.data = {}
     end
 
     cache.data[entryID] = data
+end
+--- By Game Version
+function CraftSim.CACHE:AddCacheEntryByGameVersion(cache, entryID, data)
+    local gameVersion = select(4, GetBuildInfo())
+    -- reset if version changed
+    if not next(cache) or cache.version ~= gameVersion then
+        print("reset game version cache add")
+        wipe(cache)
+        cache.version = gameVersion
+        cache.data = {}
+    end
+
+    cache.data[entryID] = data
+end
+
+---@param professionInfo ProfessionInfo
+function CraftSim.CACHE:BuildRecipeMap(professionInfo)
+    local professionID = professionInfo.profession
+    if professionInfo and professionID then
+        
+        --- only need to check one of the lists
+        local itemToRecipeMap = CraftSim.CACHE:GetCacheEntryByGameVersion(CraftSimRecipeMap, "itemToRecipe")
+        if not itemToRecipeMap or not itemToRecipeMap[professionID] then
+            -- build maps for profession
+            print("Build RecipeMap")
+            CraftSim.UTIL:StartProfiling("RECIPE_MAPPING")
+            local recipeMapForItems = {}
+            local recipeMapForProfession = {}
+            local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
+            table.foreach(recipeIDs, function (_, recipeID)
+                local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+                recipeMapForProfession[recipeID] = professionID
+
+                if recipeInfo and not recipeInfo.isEnchantingRecipe and not recipeInfo.isGatheringRecipe and not tContains(CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS, recipeInfo.categoryID) then
+                    local itemIDs = CraftSim.DATAEXPORT:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, {})
+                    itemIDs = CraftSim.GUTIL:ToSet(itemIDs) -- to consider gear where all qualities have the same itemID
+
+                    table.foreach(itemIDs, function (_, itemID)
+                        recipeMapForItems[itemID] = recipeID
+                    end)
+                end
+            end)
+            CraftSim.CACHE:AddCacheEntryByGameVersion(CraftSimRecipeMap, "itemToRecipe", recipeMapForItems)
+            CraftSim.CACHE:AddCacheEntryByGameVersion(CraftSimRecipeMap, "recipeToProfession", recipeMapForProfession)
+            CraftSim.UTIL:StopProfiling("RECIPE_MAPPING")
+        else
+            print("RecipeMap already cached")
+        end
+    end
 end

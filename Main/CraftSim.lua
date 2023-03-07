@@ -185,8 +185,6 @@ function CraftSim.MAIN:HookToEvent()
 		if not self:IsVisible() then
 			return
 		end
-		print("recipeinfo", false, true)
-		print(recipeInfo)
 		-- if init turn sim mode off
 		if CraftSim.SIMULATION_MODE.isActive then
 			CraftSim.SIMULATION_MODE.isActive = false
@@ -209,6 +207,8 @@ function CraftSim.MAIN:HookToEvent()
 					CraftSim.CACHE:AddCacheEntryByVersion(CraftSimRecipeIDs, professionInfo.profession, recipeIDs)
 				end
 			end
+
+			CraftSim.CACHE:BuildRecipeMap(professionInfo)
 		else
 			print("Hide all frames recipeInfo nil")
 			CraftSim.MAIN:HideAllFrames()
