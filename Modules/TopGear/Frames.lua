@@ -279,5 +279,5 @@ function CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(recipeData, exportMode)
 
     availableModes = CraftSim.GUTIL:Map(availableModes, function(mode) return {label=mode, value=mode} end)
     
-    topGearFrame.content.simModeDropdown:SetData({data=availableModes, initialValue=CraftSimOptions.topGearMode})
+    topGearFrame.content.simModeDropdown:SetData({data=availableModes, initialValue=CraftSimOptions.topGearMode, initialLabel=CraftSimOptions.topGearMode})
 end

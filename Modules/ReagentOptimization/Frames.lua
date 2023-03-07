@@ -5,10 +5,10 @@ CraftSim.REAGENT_OPTIMIZATION.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
 
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
-    local sizeX = 280
+    local sizeX = 310
     local sizeY = 270
     local offsetX = 240
-    local offsetY = 190
+    local offsetY = 80
 
     local frameWO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
