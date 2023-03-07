@@ -208,7 +208,7 @@ function CraftSim.MAIN:HookToEvent()
 				end
 			end
 
-			CraftSim.CACHE:BuildRecipeMap(professionInfo)
+			CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeInfo.recipeID)
 		else
 			print("Hide all frames recipeInfo nil")
 			CraftSim.MAIN:HideAllFrames()

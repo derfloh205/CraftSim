@@ -116,13 +116,14 @@ function CraftSim.CACHE:AddCacheEntryByGameVersion(cache, entryID, data)
 end
 
 ---@param professionInfo ProfessionInfo
-function CraftSim.CACHE:BuildRecipeMap(professionInfo)
+---@param recipeID number
+function CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeID)
     local professionID = professionInfo.profession
     if professionInfo and professionID then
         
         --- only need to check one of the lists
-        local itemToRecipeMap = CraftSim.CACHE:GetCacheEntryByGameVersion(CraftSimRecipeMap, "itemToRecipe")
-        if not itemToRecipeMap or not itemToRecipeMap[professionID] then
+        local recipeToProfession = CraftSim.CACHE:GetCacheEntryByGameVersion(CraftSimRecipeMap, "recipeToProfession")
+        if not recipeToProfession or not recipeToProfession[recipeID] then
             -- build maps for profession
             print("Build RecipeMap")
             CraftSim.UTIL:StartProfiling("RECIPE_MAPPING")
