@@ -37,6 +37,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "(This caused first calculations of recipes and " .. f.bb("Recipe Scans") ..
         f.a .. "made right after a fresh login to show an incorrect profit" .. 
         f.a .. "due to missing multicraft values)" ..
+        f.p .. "Added a workaround to blizzard firing multiple refresh events" ..
+        f.a .. "upon finishing a craft to improve crafting performance" ..
         newP("7.8.2") ..
         f.p .. "Backend Changes" ..
         f.p .. "Added an exception for " .. f.bb("Sturdy Expedition Shovel") ..
