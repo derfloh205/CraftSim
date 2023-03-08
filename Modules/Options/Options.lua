@@ -175,6 +175,7 @@ function CraftSim.OPTIONS:Init()
         CraftSim.OPTIONS.priceSourceDropdown = CraftSim.GGUI.Dropdown({
             parent=generalTab.content, anchorParent=generalTab.content, label="Price Source", anchorA="TOP", anchorB="TOP",
             offsetY=-50, width=200, initialData=priceSourceAddonsDropdownData, initialValue=CraftSim.PRICE_API.name,
+            initialLabel=CraftSim.PRICE_API.name,
             clickCallback=function(_, _, value) 
                 CraftSim.PRICE_APIS:SwitchAPIByAddonName(value)
                 CraftSimOptions.priceSource = value

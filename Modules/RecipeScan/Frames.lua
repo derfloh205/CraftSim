@@ -35,6 +35,8 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
             initialData=CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return {label=e, value=e} end)
         })
 
+        print("Set initialValue and Label: " .. CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I)
+
         frame.content.scanButton = CraftSim.GGUI.Button({
             parent=frame.content,anchorParent=frame.content.scanMode.frame,label="Scan Recipes", anchorA="TOP", anchorB="TOP",offsetY=-30,sizeX=15,sizeY=25,adjustWidth=true,
             clickCallback=function ()
@@ -163,7 +165,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
     end
 
     createContent(frameNO_WO)
-    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frameNO_WO)
+    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frameNO_WO.content)
 end
 
 function CraftSim.RECIPE_SCAN:ResetResults()

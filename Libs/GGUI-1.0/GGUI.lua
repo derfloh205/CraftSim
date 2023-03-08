@@ -747,6 +747,7 @@ end
 ---@field initialData? GGUI.DropdownData[]
 ---@field clickCallback? function
 ---@field initialValue? any
+---@field initialLabel? string
 
 ---@class GGUI.DropdownData
 ---@field isCategory? boolean
@@ -769,22 +770,23 @@ function GGUI.Dropdown:new(options)
     options.width = options.width or 150
     options.initialData = options.initialData or {}
     options.initialValue = options.initialValue or ""
+    options.initialLabel = options.initialLabel or ""
 	local dropDown = CreateFrame("Frame", options.globalName, options.parent, "UIDropDownMenuTemplate")
     GGUI.Dropdown.super.new(self, dropDown)
     self.clickCallback = options.clickCallback
 	dropDown:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
 	UIDropDownMenu_SetWidth(dropDown, options.width)
+    self.selectedValue = nil
 	
     self:SetData({
         data=options.initialData, 
-        initialValue=options.initialValue})
+        initialValue=options.initialValue, initialLabel=options.initialLabel})
 
     self.title = dropDown:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     self.title:SetPoint("TOP", 0, 10)
 
     self:SetLabel(options.label)
 
-    self.selectedValue = nil
 end
 
 function GGUI.Dropdown:SetLabel(label)

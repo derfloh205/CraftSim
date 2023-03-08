@@ -195,8 +195,7 @@ function CraftSim.MAIN:HookToEvent()
 		if recipeInfo then
 			print("Init: " .. tostring(recipeInfo.recipeID))
 			CraftSim.MAIN.currentRecipeID = recipeInfo.recipeID
-			CraftSim.MAIN:TriggerModulesErrorSafe(true)
-
+			
 			local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 			local professionRecipeIDs = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimRecipeIDs, professionInfo.profession)
 			if not professionRecipeIDs then
@@ -207,7 +206,9 @@ function CraftSim.MAIN:HookToEvent()
 					CraftSim.CACHE:AddCacheEntryByVersion(CraftSimRecipeIDs, professionInfo.profession, recipeIDs)
 				end
 			end
-
+			
+			CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionInfo.profession)
+			CraftSim.MAIN:TriggerModulesErrorSafe(true)
 			CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeInfo.recipeID)
 		else
 			print("Hide all frames recipeInfo nil")
