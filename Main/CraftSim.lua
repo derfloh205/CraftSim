@@ -5,6 +5,7 @@ CraftSim.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, 
 CraftSim.MAIN:RegisterEvent("ADDON_LOADED")
 CraftSim.MAIN:RegisterEvent("PLAYER_LOGIN")
 CraftSim.MAIN:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+CraftSim.MAIN:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 CraftSimOptions = CraftSimOptions or {
 	priceDebug = false,
@@ -69,8 +70,16 @@ CraftSimGGUIConfig = CraftSimGGUIConfig or {}
 CraftSim.MAIN.currentRecipeData = nil
 ---@type number?
 CraftSim.MAIN.currentRecipeID = nil
+CraftSim.MAIN.initialLogin = false
+CraftSim.MAIN.isReloadingUI = false
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.MAIN)
+function CraftSim.MAIN:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
+	CraftSim.MAIN.initialLogin = initialLogin
+	CraftSim.MAIN.isReloadingUI = isReloadingUI
+
+	-- for any processes that may only happen once a session e.g.
+end
 
 function CraftSim.MAIN:COMBAT_LOG_EVENT_UNFILTERED(event)
 	local _, subEvent, _, _, sourceName = CombatLogGetCurrentEventInfo()

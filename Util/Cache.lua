@@ -14,6 +14,7 @@ end
 CraftSimRecipeIDs = CraftSimRecipeIDs or {}
 CraftSimProfessionInfoCache = CraftSimProfessionInfoCache or {}
 CraftSimProfessionSkillLineIDCache = CraftSimProfessionSkillLineIDCache or {}
+CraftSimLoadedProfessionRecipes = CraftSimLoadedProfessionRecipes or {}
 
 ---@class CraftSim.RecipeMap
 ---@field itemToRecipe? number[]
@@ -154,18 +155,20 @@ end
 
 --- Since Multicraft seems to be missing on operationInfo on the first call after a fresh login, and seems to be loaded in after the first call,
 --- trigger it for all recipes on purpose when the profession is opened the first time in this session
-local loadedProfessions = {}
 function CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionID)
     if not professionRecipeIDs then
         return
     end
-    if not tContains(loadedProfessions, professionID) then
+    if CraftSim.MAIN.initialLogin then
+        CraftSimLoadedProfessionRecipes = {}
+    end
+    if not tContains(CraftSimLoadedProfessionRecipes, professionID) then
         CraftSim.UTIL:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
         for _, recipeID in ipairs(professionRecipeIDs) do
             C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
         end
         
-        table.insert(loadedProfessions, professionID)
+        table.insert(CraftSimLoadedProfessionRecipes, professionID)
         CraftSim.UTIL:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
     end
 end

@@ -12,15 +12,31 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                                 ( You are awesome! )") ..
         newP("8.0.0") ..
         f.P .. "New Module: " .. f.g("Craft Data") ..
+        f.a .. "This module allows you to take a " .. f.bb("'Snapshot'") ..
+        f.a .. "of your recipe's " .. f.bb("Craft Configurations") .. 
+        f.a .. "You can also setup a " .. f.bb("Price Override") .. 
+        f.a .. "to use an item's " .. f.bb("Craft Data") .. " as material price" ..
+        f.a .. "when calculating crafting costs!" ..
+        f.a .. f.bb("Craft Data") .. " can also be shared with other players" ..
+        f.a .. "and you can switch between saved data of different characters" ..
+        f.a .. "for an item" ..
+        f.P .. "New Module: " .. f.g("Cost Details") ..
+        f.a .. "View the " .. f.bb("AH Price") .. " and the price used by CraftSim" ..
+        f.a .. "for each material used in your currently viewed recipe!" ..
         f.P .. f.g("All Item Icons") .. " can now be " .. f.bb("shift-clicked") .. " to insert the" ..
         f.a .. "respective item link into the active chat" ..
         f.s .. "Module windows now stay anchored to the ProfessionsFrame" ..
         f.a .. "and position/collapsed status is saved and restored over sessions" ..
-        f.s .. "Renamed Modules:" ..
-        f.a .. "Cost Overview -> " .. f.g("Price Details") ..
+        f.s .. "Reworked " .. f.bb("Cost Overview") .. " to " .. f.g("Price Details") ..
+        f.a .. "Now displays only information about the resulting items" ..
         f.s .. f.l("API Update: ") .. "RecipeData.ResultData" ..
         f.a .. "now includes a craft chance per quality table and" ..
         f.a .. "an expected crafts per quality table" .. 
+        f.p .. "Added a workaround to blizzard's Crafting API's" .. 
+        f.a .. "wierd late-loading of multicraft data" ..
+        f.a .. "(This caused first calculations of recipes and " .. f.bb("Recipe Scans") ..
+        f.a .. "made right after a fresh login to show an incorrect profit" .. 
+        f.a .. "due to missing multicraft values)" ..
         newP("7.8.2") ..
         f.p .. "Backend Changes" ..
         f.p .. "Added an exception for " .. f.bb("Sturdy Expedition Shovel") ..
