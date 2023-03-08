@@ -628,10 +628,11 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
         return
     end
 
-    craftDataFrame.activeData = CraftSim.CraftData:GetActiveCraftDataByItem(item)
+    local craftDataSerialized = CraftSim.CraftData:GetActiveCraftDataByItem(item)
 
-    CraftSim.FRAME:ToggleFrame(dataFrame.savedConfigurationTitle, craftDataFrame.activeData)
-    CraftSim.FRAME:ToggleFrame(dataFrame.noDataText, not craftDataFrame.activeData)
+
+    CraftSim.FRAME:ToggleFrame(dataFrame.savedConfigurationTitle, craftDataSerialized)
+    CraftSim.FRAME:ToggleFrame(dataFrame.noDataText, not craftDataSerialized)
     dataFrame.optionalReagentsTitle:Hide()
     -- hide all optional icons per default
     table.foreach(dataFrame.optionalReagentIcons, function (_, icons)
@@ -642,10 +643,11 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
 
     local qualityID = recipeData:GetResultQuality(item)
 
-    if craftDataFrame.activeData then
+    if craftDataSerialized then
+        local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
+        craftDataFrame.activeData = craftData
         dataFrame.saveButton:SetStatus("UPDATE")
         dataFrame.deleteCraftDataButton:SetEnabled(true)
-        local craftData = CraftSim.CraftData:Deserialize(craftDataFrame.activeData)
         print("deserializeddata:")
         print(craftData, true)
         local expectedCosts = craftData:GetExpectedCosts()
@@ -691,6 +693,7 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
         end
         dataFrame.sendDataButton:SetStatus("READY")
     else
+        craftDataFrame.activeData = nil
         dataFrame.saveButton:SetStatus("SAVE")
         dataFrame.deleteCraftDataButton:SetEnabled(false)
         dataFrame.expectedCostsValue:SetText("?")
