@@ -30,10 +30,10 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         frame.content.scanMode = CraftSim.GGUI.Dropdown({
             parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170,
             initialValue=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I,
+            initialLabel=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I, -- TODO: save and use last selected saved in CraftSimOptions
             label="Scan Mode",
             initialData=CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return {label=e, value=e} end)
         })
-        frame.content.scanMode.selectedValue=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
 
         frame.content.scanButton = CraftSim.GGUI.Button({
             parent=frame.content,anchorParent=frame.content.scanMode.frame,label="Scan Recipes", anchorA="TOP", anchorB="TOP",offsetY=-30,sizeX=15,sizeY=25,adjustWidth=true,
