@@ -20,7 +20,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         collapseable=true,moveable=true,closeable=true,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCraftData"),
         frameID=CraftSim.CONST.FRAMES.CRAFT_DATA,
-        frameStrata="DIALOG",
+        frameStrata="FULLSCREEN",
         initialStatusID="RETRACTED",
     })
 

@@ -103,7 +103,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "LEFT", frame.content.modulesTopGear, "RIGHT", 100, 0, "modulesSpecInfo")
 
     frame.content.modulesPriceOverride = createModuleCheckbox("Price Overrides", 
-    "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically.",
+    "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically. You can also set an item to use Craft Data as price.",
     "TOP", frame.content.modulesSpecInfo, "TOP", 0, -20, "modulesPriceOverride")
 
     -- 4. Row
@@ -122,7 +122,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "LEFT", frame.content.modulesRecipeScan, "RIGHT", 90, 0, "modulesCustomerService")
 
     frame.content.modulesCraftData = createModuleCheckbox("Craft Data", 
-    "Edit the saved configurations for crafting commodities of different qualities to show in tooltips and to calculate crafting costs(wip)",
+    "Edit the saved configurations for crafting commodities of different qualities to show in tooltips and to calculate crafting costs",
     "TOP", frame.content.modulesCustomerService, "TOP", 0, -20, "modulesCraftData")
 
     -- 6. Row

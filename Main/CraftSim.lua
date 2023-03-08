@@ -161,7 +161,21 @@ end
 local hookedEvent = false
 
 local freshLoginRecall = true
+local lastCallTime = 0
 function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
+
+	local callTime = GetTime()
+	if lastCallTime == callTime then
+		print("SAME FRAME, RETURN")
+		return
+	else
+		print("NEW FRAME, CONTINUE")
+	end
+
+	print("lastCallTime: " .. tostring(lastCallTime))
+	print("callTime: " .. tostring(callTime))
+
+	lastCallTime = callTime
 
 	if freshLoginRecall and isInit then
 		freshLoginRecall = false

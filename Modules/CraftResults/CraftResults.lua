@@ -114,6 +114,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param craftResult CraftSim.CraftResult
 function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
+    CraftSim.UTIL:StartProfiling("PROCESS_CRAFT_RESULTS_UI_UPDATE")
     local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     local resourcesText = ""
@@ -163,6 +164,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
 
     CraftSim.CRAFT_RESULTS:AddCraftData(craftResult)
     CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(craftResult.recipeID)
+    CraftSim.UTIL:StopProfiling("PROCESS_CRAFT_RESULTS_UI_UPDATE")
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -193,6 +195,8 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
     -- print(currentCraftingResults, true)
     -- print("Num Craft Results: " .. tostring(#currentCraftingResults))
 
+    CraftSim.UTIL:StartProfiling("PROCESS_CRAFT_RESULTS")
+
     local CraftingItemResultData = CopyTable(currentCraftingResults)
     currentCraftingResults = {}
 
@@ -216,6 +220,7 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
     local itemsToLoad = CraftSim.GUTIL:Map(craftResult.savedReagents, function (savedReagent)
         return savedReagent.item
     end)
+    CraftSim.UTIL:StopProfiling("PROCESS_CRAFT_RESULTS")
     CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
         CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     end) 
