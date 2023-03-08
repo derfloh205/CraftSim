@@ -26,6 +26,96 @@ function CraftSim.CraftData:new(expectedCrafts, chance, requiredReagents, option
     self.itemLink = itemLink
     self.recipeID = recipeID
     self.professionID = professionID
+    --- use a unified itemString for key to enable saving data for gear
+    -- get player level and specializationID and remove the bonusIDs from the link to make the string unique character wide
+    self.unifiedItemString = CraftSim.CraftData:GetUnifiedItemStringFromLink(self.itemLink)
+end
+
+--- Set the CraftData as activeData for its item
+function CraftSim.CraftData:SetActive()
+    --print("Set CraftData as active")
+    CraftSimCraftData[self.recipeID] = CraftSimCraftData[self.recipeID] or {}
+    CraftSimCraftData[self.recipeID][self.unifiedItemString] = CraftSimCraftData[self.recipeID][self.unifiedItemString] or {
+        activeData = nil,
+        dataPerCrafter = {}
+    }
+    CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData = self:Serialize()
+end
+
+---@return boolean isActive
+function CraftSim.CraftData:IsActive()
+    CraftSimCraftData[self.recipeID] = CraftSimCraftData[self.recipeID] or {}
+    CraftSimCraftData[self.recipeID][self.unifiedItemString] = CraftSimCraftData[self.recipeID][self.unifiedItemString] or {
+        activeData = nil,
+        dataPerCrafter = {}
+    }
+    if CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData then
+        return CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData.crafterName == self.crafterName
+    end
+
+    return false
+end
+
+function CraftSim.CraftData:Delete()
+    CraftSimCraftData[self.recipeID] = CraftSimCraftData[self.recipeID] or {}
+    CraftSimCraftData[self.recipeID][self.unifiedItemString] = CraftSimCraftData[self.recipeID][self.unifiedItemString] or {
+        activeData = nil,
+        dataPerCrafter = {}
+    }
+    CraftSimCraftData[self.recipeID][self.unifiedItemString].dataPerCrafter[self.crafterName] = nil
+    if CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData then
+        if CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData.crafterName == self.crafterName then
+            CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData = nil
+        end
+    end
+end
+
+--- STATIC careful: will not return the precise item if its not loaded and we cannot fetch the itemstring
+function CraftSim.CraftData:GetActiveCraftDataByItem(item)
+
+    local itemToRecipe = CraftSim.CACHE:GetCacheEntryByGameVersion(CraftSimRecipeMap, "itemToRecipe")
+    local itemLink = item:GetItemLink()
+    local itemID = item:GetItemID()
+    --- if a cache entry for this recipe exists we can do it faster! otherwise search for it
+    if itemToRecipe and itemToRecipe[itemID] then
+        local recipeID = itemToRecipe[itemID]
+        CraftSimCraftData[recipeID] = CraftSimCraftData[recipeID] or {}
+        if itemLink then
+            local unifiedItemString = CraftSim.CraftData:GetUnifiedItemStringFromLink(itemLink)
+            CraftSimCraftData[recipeID][unifiedItemString] = CraftSimCraftData[recipeID][unifiedItemString] or {
+                activeData = nil,
+                dataPerCrafter = {}
+            }
+
+            return CraftSimCraftData[recipeID][unifiedItemString].activeData
+        else
+            -- if the itemlink is not loaded (could be for nongear reagents)
+            for key, itemCraftData in pairs(CraftSimCraftData[recipeID]) do
+                if string.match(tostring(key), tostring(itemID)) then
+                    return itemCraftData.activeData
+                end
+            end
+        end
+        return nil     
+    else
+        for _, recipeItemList in pairs(CraftSimCraftData) do
+            for _, itemCraftData in pairs(recipeItemList) do
+                if itemCraftData.activeData then
+                    local itemIDSaved = CraftSim.GUTIL:GetItemIDByLink(itemCraftData.activeData.itemLink)
+    
+                    if itemIDSaved == itemID then
+                        return itemCraftData.activeData
+                    end 
+                end
+            end
+        end
+    end
+end
+
+---STATIC
+---@param itemLink string
+function CraftSim.CraftData:GetUnifiedItemStringFromLink(itemLink)
+    return CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(CraftSim.GUTIL:GetItemStringFromLink(itemLink))
 end
 
 ---@class CraftSim.CraftData.Serialized

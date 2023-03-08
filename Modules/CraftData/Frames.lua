@@ -24,6 +24,9 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         initialStatusID="RETRACTED",
     })
 
+    ---@type CraftSim.CraftData
+    craftDataFrame.activeData = nil
+
     craftDataFrame:SetStatusList({
         {
             statusID="RETRACTED",
@@ -460,16 +463,8 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
                 clickCallback=function (gButton)
                     ---@type CraftSim.CraftData
                     local craftData = gButton.craftData
-                    print("Set CraftData as selected")
-                    if CraftSimCraftData[craftData.recipeID] then
-                        local itemString = CraftSim.GUTIL:GetItemStringFromLink(craftData.itemLink)
-                        itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
-                        if CraftSimCraftData[craftData.recipeID][itemString] then
-                            CraftSimCraftData[craftData.recipeID][itemString].activeData = craftData:Serialize()
-
-                            CraftSim.MAIN:TriggerModulesErrorSafe()
-                        end
-                    end
+                    craftData:SetActive()
+                    CraftSim.MAIN:TriggerModulesErrorSafe()
                 end
             })
 
@@ -492,29 +487,8 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
                 label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.1), sizeX=25,
                 clickCallback=function(gButton)
                     ---@type CraftSim.CraftData
-                    local craftData = gButton.craftData
-                    print("Remove CraftData")
-                    if CraftSimCraftData[craftData.recipeID] then
-                        local itemString = CraftSim.GUTIL:GetItemStringFromLink(craftData.itemLink)
-                        itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
-                        if CraftSimCraftData[craftData.recipeID][itemString] then
-                            CraftSimCraftData[craftData.recipeID][itemString].dataPerCrafter[craftData.crafterName] = nil
-                            if CraftSimCraftData[craftData.recipeID][itemString].activeData then
-                                if CraftSimCraftData[craftData.recipeID][itemString].activeData.crafterName == craftData.crafterName then
-                                    CraftSimCraftData[craftData.recipeID][itemString].activeData = nil
-                                end
-                            end
-
-                            -- -- refresh display, should not be possible to not have the loaded selected but check anyway
-                            -- if CraftSim.CRAFTDATA.frame.content.resultsDropdown.selectedValue then
-                            --     CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(CraftSim.CRAFTDATA.frame.content.resultsDropdown.selectedValue)
-                            -- end
-
-                            -- CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()
-
-                            CraftSim.MAIN:TriggerModulesErrorSafe()
-                        end
-                    end
+                    gButton.craftData:Delete()
+                    CraftSim.MAIN:TriggerModulesErrorSafe()
                 end
             })
         end,
@@ -535,17 +509,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
             row.columns[5].loadButton.craftData = craftData
             row.columns[6].deleteButton.craftData = craftData
 
-            local itemString = CraftSim.GUTIL:GetItemStringFromLink(craftData.itemLink) or ""
-            itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
-
-            local dataLoaded = false
-            if CraftSimCraftData[craftData.recipeID][itemString].activeData then
-                if CraftSimCraftData[craftData.recipeID][itemString].activeData.crafterName == craftData.crafterName then
-                    dataLoaded = true
-                end
-            end
-
-            if dataLoaded then
+            if craftData:IsActive() then
                 row.columns[5].loadButton:SetStatus("LOADED")
             else
                 row.columns[5].loadButton:SetStatus("LOAD")
@@ -574,10 +538,10 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         parent=dataFrame, anchorParent=dataFrame.sendDataInput.frame,
         anchorA="LEFT",anchorB="RIGHT", label="Send", adjustWidth=true,
         clickCallback=function ()
-            local selectedItem = craftDataFrame.content.resultsDropdown.selectedValue
+            local activeData = craftDataFrame.activeData
             local target = dataFrame.sendDataInput:GetText()
-            if selectedItem and target ~= "" then
-                CraftSim.CRAFTDATA:SendCraftData(selectedItem, target)
+            if activeData and target ~= "" then
+                CraftSim.CRAFTDATA:SendCraftData(activeData, target)
             end
         end,
         initialStatusID="READY"
@@ -664,25 +628,10 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
         return
     end
 
-    -- link should be loaded here cause we need to wait for it anyway to populate the dropdown
-    local itemString = CraftSim.GUTIL:GetItemStringFromLink(item:GetItemLink())
-    itemString = CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
-    print("Fetch Craft Data for: " .. tostring(itemString))
-    print("link: " .. item:GetItemLink())
+    craftDataFrame.activeData = CraftSim.CraftData:GetActiveCraftDataByItem(item)
 
-    if not itemString then
-        return
-    end
-
-    CraftSimCraftData[recipeData.recipeID] = CraftSimCraftData[recipeData.recipeID] or {}
-    CraftSimCraftData[recipeData.recipeID][itemString] = CraftSimCraftData[recipeData.recipeID][itemString] or {
-        activeData = nil,
-        dataPerCrafter = {},
-    }
-    local craftDataSerialized = CraftSimCraftData[recipeData.recipeID][itemString].activeData
-
-    CraftSim.FRAME:ToggleFrame(dataFrame.savedConfigurationTitle, craftDataSerialized)
-    CraftSim.FRAME:ToggleFrame(dataFrame.noDataText, not craftDataSerialized)
+    CraftSim.FRAME:ToggleFrame(dataFrame.savedConfigurationTitle, craftDataFrame.activeData)
+    CraftSim.FRAME:ToggleFrame(dataFrame.noDataText, not craftDataFrame.activeData)
     dataFrame.optionalReagentsTitle:Hide()
     -- hide all optional icons per default
     table.foreach(dataFrame.optionalReagentIcons, function (_, icons)
@@ -693,10 +642,10 @@ function CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
 
     local qualityID = recipeData:GetResultQuality(item)
 
-    if craftDataSerialized then
+    if craftDataFrame.activeData then
         dataFrame.saveButton:SetStatus("UPDATE")
         dataFrame.deleteCraftDataButton:SetEnabled(true)
-        local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
+        local craftData = CraftSim.CraftData:Deserialize(craftDataFrame.activeData)
         print("deserializeddata:")
         print(craftData, true)
         local expectedCosts = craftData:GetExpectedCosts()

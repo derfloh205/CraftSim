@@ -27,7 +27,7 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
             if priceOverrideData.useCraftData then
                 --- get craft data and return expected costs
                 --- based on cached map
-                local craftDataSerialized = CraftSim.CRAFTDATA:GetActiveCraftDataByItemID(itemID)
+                local craftDataSerialized = CraftSim.CraftData:GetActiveCraftDataByItem(Item:CreateFromItemID(itemID))
 
                 --- this no craft data is found it will continue and just fetch the buyout
                 if craftDataSerialized then
