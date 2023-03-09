@@ -69,7 +69,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
             profitFrame:SetPoint("TOP", anchorParent, "TOP", profitFrameBaseX, offsetY)
             local iconSize=26
             profitFrame.itemIcon = CraftSim.GGUI.Icon({
-                parent=profitFrame, anchorParent=profitFrame, anchorA="TOPLEFT", anchorB="TOPLEFT", offsetX=10,
+                parent=profitFrame, anchorParent=profitFrame, anchorA="TOPLEFT", anchorB="TOPLEFT", offsetX=20,
                 sizeX=iconSize, sizeY=iconSize,qualityIconScale=1.4,
             })
 
