@@ -34,14 +34,17 @@ function CraftSim.JSONBuilder:AddList(name, list, last)
       local sep = (not last and ",\n") or ""
       local jsonList = self:GetIndent(1) .. "\"" .. name .. "\": [\n"
   
-      for index, listItem in pairs(list) do
-          local subSep = (index == #list and "") or ",\n"
+      local numListEntries = CraftSim.GUTIL:Count(list)
+      local index = 1
+      for _, listItem in pairs(list) do
+          local subSep = (index == numListEntries and "") or ",\n"
           if type(listItem) == 'table' and listItem.GetJSON then
-              jsonList = jsonList .. self:GetIndent(2) .. listItem:GetJSON(self.indent + 3) .. subSep
+              jsonList = jsonList .. self:GetIndent(2) .. listItem:GetJSON(self.indent + 3) .. subSep 
           else
-               local strEncase = (type(listItem) == 'string' and "\"") or ""
+              local strEncase = (type(listItem) == 'string' and "\"") or ""
               jsonList = jsonList .. self:GetIndent(2) .. strEncase .. tostring(listItem) .. strEncase ..subSep
           end
+          index = index + 1
       end
   
       jsonList = jsonList .. "\n" .. self:GetIndent(1) .. "]" .. sep
@@ -56,12 +59,16 @@ function CraftSim.JSONBuilder:Add(name, data, last)
       self.json = self.json .. self:GetIndent(1) .. "\"" .. name .. "\": " .. strEncase .. data:GetJSON(self.indent + 1) .. strEncase .. sep
    elseif type(data) == 'table' then
       self.json = self.json .. self:GetIndent(1) .. "\"" .. name .. '\": {\n'
+      local index = 1
+      local numData = CraftSim.GUTIL:Count(data)
       for key, value in pairs(data) do
+         local sep = (index ~= numData and ",\n") or ""
          local strEncase = (type(value) == 'string' and "\"") or ""
          local valueText = (type(value) == 'table' and 'Table') or tostring(value)
          self.json = self.json .. self:GetIndent(3) .. "\"" .. key .. "\": " .. strEncase .. valueText .. strEncase .. sep
+         index = index + 1
       end
-      self.json = self.json .. self:GetIndent(2) .. ' }' .. sep
+      self.json = self.json .. self:GetIndent(2) .. '\n}' .. sep
 
    else
       self.json = self.json .. self:GetIndent(1) .. "\"" .. name .. "\": " .. strEncase .. tostring(data) .. strEncase .. sep

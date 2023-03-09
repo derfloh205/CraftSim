@@ -3,6 +3,7 @@ _, CraftSim = ...
 CraftSim.RECIPE_SCAN = {}
 
 CraftSim.RECIPE_SCAN.scanInterval = 0.01
+CraftSim.RECIPE_SCAN.frame = nil
 
 CraftSim.RECIPE_SCAN.SCAN_MODES = {
     Q1 = "Materials Quality 1", 
@@ -17,12 +18,12 @@ CraftSim.RECIPE_SCAN.currentResults = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
 function CraftSim.RECIPE_SCAN:GetScanMode()
-    local RecipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+    local RecipeScanFrame = CraftSim.RECIPE_SCAN.frame
     return RecipeScanFrame.content.scanMode.selectedValue
 end
 
 function CraftSim.RECIPE_SCAN:ToggleScanButton(value)
-    local frame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+    local frame = CraftSim.RECIPE_SCAN.frame
     frame.content.scanButton:SetEnabled(value)
     if not value then
         frame.content.scanButton:SetText("Scanning 0%")
@@ -35,7 +36,7 @@ function CraftSim.RECIPE_SCAN:UpdateScanPercent(currentProgress, maxProgress)
     local currentPercentage = CraftSim.GUTIL:Round(currentProgress / (maxProgress / 100))
 
     if currentPercentage % 1 == 0 then
-        local frame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+        local frame = CraftSim.RECIPE_SCAN.frame
         frame.content.scanButton:SetText("Scanning " .. currentPercentage .. "%")
     end
 end
@@ -44,6 +45,7 @@ function CraftSim.RECIPE_SCAN:EndScan()
     print("scan finished")
     collectgarbage("collect") -- By Option?
     CraftSim.RECIPE_SCAN:ToggleScanButton(true)
+    CraftSim.RECIPE_SCAN.frame.content.exportForgeFinderButton:SetEnabled(#CraftSim.RECIPE_SCAN.currentResults > 0)
 end
 
 function CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)
@@ -190,6 +192,7 @@ end
 function CraftSim.RECIPE_SCAN:StartScan()
 
     CraftSim.RECIPE_SCAN.currentResults = {}
+    CraftSim.RECIPE_SCAN.frame.content.exportForgeFinderButton:SetEnabled(false)
     
     local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
     print("Scan Mode: " .. tostring(scanMode))
@@ -250,8 +253,6 @@ function CraftSim.RECIPE_SCAN:StartScan()
             print(recipeData.professionGearSet.professionStats)
         end
 
-
-
         local function continueScan()
             CraftSim.UTIL:StopProfiling("Single Recipe Scan")
             CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData) 
@@ -284,5 +285,26 @@ function CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G or scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I then
         local optimizeInspiration = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
         recipeData:OptimizeReagents(optimizeInspiration)
+    end
+end
+
+function CraftSim.RECIPE_SCAN:ForgeFinderExport()
+    
+    local numRecipes = #CraftSim.RECIPE_SCAN.currentResults
+    if numRecipes > 0 then
+        ---@type CraftSim.JSONBuilder
+        local jb = CraftSim.JSONBuilder()
+        jb.json = jb.json .. "[\n"
+        for index, recipeData in pairs(CraftSim.RECIPE_SCAN.currentResults) do
+            local recipeJson = recipeData:GetForgeFinderExport(1)
+            if index == numRecipes then
+                jb.json = jb.json .. recipeJson
+            else
+                jb.json = jb.json .. recipeJson .. ",\n"
+            end
+        end
+        
+        jb.json = jb.json .. "\n]"
+        CraftSim.UTIL:KethoEditBox_Show(jb.json)
     end
 end

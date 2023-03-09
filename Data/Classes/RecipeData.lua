@@ -456,3 +456,44 @@ function CraftSim.RecipeData:GetJSON(indent)
 
     return jb.json
 end
+
+function CraftSim.RecipeData:GetForgeFinderExport(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+
+    jb:Begin()
+    jb:Add("recipeID", self.recipeID)
+    local fullCraftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
+    local reagents = {}
+    for _, craftingReagentInfo in pairs(fullCraftingReagentInfoTbl) do
+        reagents[craftingReagentInfo.itemID] = craftingReagentInfo.quantity
+    end
+
+    jb:Add("reagents", reagents)
+    if self.supportsQualities then
+        jb:Add("skill", self.professionStats.skill.value)
+        jb:Add("baseSkill", self.professionStats.skill.value - self.reagentData:GetSkillFromRequiredReagents())
+    end
+    if self.supportsCraftingStats then
+        if self.supportsMulticraft then
+            if not self.supportsInspiration and not self.supportsResourcefulness then
+                jb:Add("multicraft", self.professionStats.multicraft.value, true)
+            else
+                jb:Add("multicraft", self.professionStats.multicraft.value)
+            end
+        end
+        if self.supportsInspiration then
+            if not self.supportsMulticraft and not self.supportsResourcefulness then
+                jb:Add("inspiration", self.professionStats.inspiration.value, true)
+            else
+                jb:Add("inspiration", self.professionStats.inspiration.value)
+            end
+        end
+        if self.supportsResourcefulness then
+                jb:Add("resourcefulness", self.professionStats.resourcefulness.value, true)
+        end
+    end
+    jb:End()
+
+    return jb.json
+end

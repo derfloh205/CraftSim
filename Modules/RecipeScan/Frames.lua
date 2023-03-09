@@ -10,7 +10,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
 function CraftSim.RECIPE_SCAN.FRAMES:Init()
 
-    local frameNO_WO = CraftSim.GGUI.Frame({
+    CraftSim.RECIPE_SCAN.frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent=ProfessionsFrame.CraftingPage.SchematicForm, 
         sizeX=700,sizeY=400,
@@ -43,6 +43,14 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
                 CraftSim.RECIPE_SCAN:StartScan()
             end
         })
+
+        
+        frame.content.exportForgeFinderButton = CraftSim.GGUI.Button({
+            parent=frame.content, anchorParent = frame.content.scanButton.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=135, adjustWidth = true,
+            label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Export",
+            clickCallback=CraftSim.RECIPE_SCAN.ForgeFinderExport
+        })
+        frame.content.exportForgeFinderButton:SetEnabled(false)
 
         frame.content.includeSoulboundCB = CraftSim.FRAME:CreateCheckbox(
             " Include Soulbound", "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items", 
@@ -164,12 +172,12 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
          end
     end
 
-    createContent(frameNO_WO)
-    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frameNO_WO.content)
+    createContent(CraftSim.RECIPE_SCAN.frame)
+    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(CraftSim.RECIPE_SCAN.frame.content)
 end
 
 function CraftSim.RECIPE_SCAN:ResetResults()
-    local RecipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+    local RecipeScanFrame = CraftSim.RECIPE_SCAN.frame
 
     for _, resultRowFrame in pairs(RecipeScanFrame.content.resultRowFrames) do
         resultRowFrame:Hide()
@@ -182,7 +190,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData)
     
-    local RecipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
+    local RecipeScanFrame = CraftSim.RECIPE_SCAN.frame
     -- get first non active row
     local availableRow = CraftSim.GUTIL:Find(RecipeScanFrame.content.resultRowFrames, function(frame) return not frame.isActive end)
     local numActiveFrames = CraftSim.GUTIL:Count(RecipeScanFrame.content.resultRowFrames, function(frame) return frame.isActive end)
