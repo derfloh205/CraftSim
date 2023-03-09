@@ -7,7 +7,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     local sizeX=310
     local sizeY=320
-    local offsetX=240
+    local offsetX=260
     local offsetY=341
 
     local frameNO_WO = CraftSim.GGUI.Frame({

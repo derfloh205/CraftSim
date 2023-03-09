@@ -76,9 +76,9 @@ function CraftSim.PRICE_APIS:IsAddonPriceApiAddon(addon_name)
 end
 
 function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
-    local _, tsmLoaded = IsAddOnLoaded("TradeSkillMaster")
-    local _, auctionatorLoaded = IsAddOnLoaded("Auctionator")
-    local _, recrystallizeLoaded = IsAddOnLoaded("RECrystallize")
+    local _, tsmLoaded = IsAddOnLoaded(CraftSimTSM.name)
+    local _, auctionatorLoaded = IsAddOnLoaded(CraftSimAUCTIONATOR.name)
+    local _, recrystallizeLoaded = IsAddOnLoaded(CraftSimRECRYSTALLIZE.name)
     if tsmLoaded then
         CraftSim.PRICE_API = CraftSimTSM
     elseif auctionatorLoaded then
@@ -92,6 +92,27 @@ function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
             print(name)
         end
     end
+end
+
+---@param idOrLink? number | string
+---@return number? auctionAmount
+function CraftSimTSM:GetAuctionAmount(idOrLink)
+    if not idOrLink then
+        return
+    end
+    if type(idOrLink) == 'number' then
+        return CraftSimTSM:GetAuctionAmountByItemID(idOrLink)
+    else
+        return CraftSimTSM:GetAuctionAmountByItemLink(idOrLink)
+    end
+end
+
+function CraftSimTSM:GetAuctionAmountByItemID(itemID)
+	return TSM_API.GetAuctionQuantity("i:" .. itemID)
+end
+
+function CraftSimTSM:GetAuctionAmountByItemLink(itemLink)
+	return TSM_API.GetAuctionQuantity(TSM_API.ToItemString(itemLink))
 end
 
 function CraftSimTSM:GetMinBuyoutByItemID(itemID, isReagent)

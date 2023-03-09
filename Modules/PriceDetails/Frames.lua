@@ -8,7 +8,7 @@ CraftSim.PRICE_DETAILS.frameWO = nil
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS)
 
 function CraftSim.PRICE_DETAILS.FRAMES:Init()
-    local sizeX=250
+    local sizeX=270
     local sizeY=220
     local offsetX=-5
     local offsetY=130
@@ -71,6 +71,23 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
             profitFrame.itemIcon = CraftSim.GGUI.Icon({
                 parent=profitFrame, anchorParent=profitFrame, anchorA="TOPLEFT", anchorB="TOPLEFT", offsetX=10,
                 sizeX=iconSize, sizeY=iconSize,qualityIconScale=1.4,
+            })
+
+            profitFrame.countAHTitle = CraftSim.GGUI.Text({
+                parent=profitFrame, anchorParent=profitFrame.itemIcon.frame, anchorA="RIGHT", anchorB="LEFT",
+                justifyOptions={type="H", align="LEFT"}, scale=0.8, offsetX=-26, fixedWidth=25, text="AH:", offsetY=5
+            })
+            profitFrame.countAHValue = CraftSim.GGUI.Text({
+                parent=profitFrame, anchorParent=profitFrame.countAHTitle.frame, anchorA="LEFT", anchorB="RIGHT",
+                justifyOptions={type="H", align="LEFT"}, scale=0.8
+            })
+            profitFrame.countTitle = CraftSim.GGUI.Text({
+                parent=profitFrame, anchorParent=profitFrame.countAHTitle.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT",
+                justifyOptions={type="H", align="LEFT"}, scale=0.8, fixedWidth=25, text="Inv:",
+            })
+            profitFrame.countValue = CraftSim.GGUI.Text({
+                parent=profitFrame, anchorParent=profitFrame.countTitle.frame, anchorA="LEFT", anchorB="RIGHT",
+                justifyOptions={type="H", align="LEFT"}, scale=0.8
             })
 
             profitFrame.price = CraftSim.GGUI.Text({
@@ -146,11 +163,25 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitPerQualit
 
         if resultItem and not (not recipeData.supportsQualities and qualityID > 1) then
             resultItem:ContinueOnItemLoad(function ()
+                local itemLink = resultItem:GetItemLink()
                 profitFrame.itemIcon:SetItem(resultItem)
-                local price = CraftSim.PRICEDATA:GetMinBuyoutByItemLink(resultItem:GetItemLink())
+                local price = CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink)
                 local profit = (price*CraftSim.CONST.AUCTION_HOUSE_CUT) - priceData.craftingCosts
                 profitFrame.price:SetText("Price: " .. CraftSim.GUTIL:FormatMoney(price, true))
                 profitFrame.profit:SetText("Profit: " .. CraftSim.GUTIL:FormatMoney(profit, true))
+
+                local itemCount = GetItemCount(itemLink, true, false, true)
+                local ahCount = CraftSim.PRICEDATA:GetAuctionAmount(itemLink)
+
+                profitFrame.countValue:SetText(itemCount or 0)
+
+                if ahCount then
+                    profitFrame.countAHValue:SetText(ahCount)
+                    profitFrame.countAHValue:Show()
+                else
+                    profitFrame.countAHValue:Hide()
+                end
+
             end)
             profitFrame:Show()
         else

@@ -23,6 +23,5 @@ function CraftSim.PRICE_DETAILS:UpdateDisplay(recipeData, exportMode)
         table.insert(profitByNextQualities, meanProfitCurrentQuality)
     end
 
-    -- TODO: refactor the mincraftingcosts thingy, currently just set it always to same
     CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitByNextQualities, 1, exportMode)
 end

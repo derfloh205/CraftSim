@@ -7,7 +7,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIM
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     local sizeX = 310
     local sizeY = 270
-    local offsetX = 240
+    local offsetX = 260
     local offsetY = 80
 
     local frameWO = CraftSim.GGUI.Frame({

@@ -5,7 +5,7 @@ CraftSim.TOPGEAR.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.TOP_GEAR)
 
 function CraftSim.TOPGEAR.FRAMES:Init()
-    local sizeX=250
+    local sizeX=270
     local sizeY=320
     local offsetX=-5
     local offsetY=3
