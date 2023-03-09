@@ -91,6 +91,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Statweights statweightResult
 function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
+    print("Get Average Profit", false, true)
     local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
 
     print("calculate stat weights avg profit: " .. tostring(CraftSim.GUTIL:FormatMoney(averageProfit, true)))

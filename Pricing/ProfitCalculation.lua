@@ -26,26 +26,31 @@ end
 ---@return number hsvChance -- not in decimal!
 ---@return boolean withInspirationOnly -- only if it procs together with inspiration, the inspiration chance has to be factored in afterwards
 function CraftSim.CALC:getHSVChance(recipeData) 
+    print("HSV Chance calc")
     if recipeData.maxQuality and recipeData.resultData.expectedQuality < recipeData.maxQuality then
         
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
-        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty)
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty, CraftSimOptions.breakPointOffset)
         local upperThreshold = thresholds[recipeData.resultData.expectedQuality]
-
+        
         local playerSkill = recipeData.professionStats.skill.value
-
+        
         local skillDiff = upperThreshold - playerSkill
         local relativeToDifficulty = skillDiff / (baseRecipeDifficulty / 100)
 
+        print("skillDiff: " .. tostring(skillDiff))
+        print("relativeToDifficulty: " .. tostring(relativeToDifficulty))
         if relativeToDifficulty >= 5 then
             -- check if we can reach together with inspiration (if inspiration is not reaching alone)
-            local skillWithInspiration = playerSkill + recipeData.professionStats.inspiration.extraValue
-            if skillWithInspiration < upperThreshold then
+            local skillWithInspiration = playerSkill + recipeData.professionStats.inspiration:GetExtraValueByFactor()
+            print("skillWithInsp: " .. skillWithInspiration)
+            print("upperThreshold: " .. upperThreshold)
+            if skillWithInspiration <= upperThreshold then
                 -- check if within 5%
                 skillDiff = upperThreshold - skillWithInspiration
                 relativeToDifficulty = skillDiff / (baseRecipeDifficulty / 100)
-
+                print("relativeToDifficultyInsp: " .. tostring(relativeToDifficulty))
                 if relativeToDifficulty < 5 then
                     -- together with hsv we can reach the threshold
                     -- calculate chance for this and mark as hsv with inspiration only
@@ -53,14 +58,16 @@ function CraftSim.CALC:getHSVChance(recipeData)
                     return hsvChance, true
                 end
             end
-            return 0
+            print("out of reach -> chance 0")
+            return 0, false
         end
 
         local hsvChance = (5-relativeToDifficulty) / 5
 
-        return hsvChance
+        return hsvChance, false
     else
-        return 0
+        print("max quality reached -> chance 0")
+        return 0, false
     end
 end
 
@@ -144,15 +151,14 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         print("Inspiration Extra Value:" .. professionStats.inspiration.extraValue)
         print("Inspiration Extra Value By Factor:" .. professionStats.inspiration:GetExtraValueByFactor())
 
-        local skillWithInspiration = professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor()
-        print("skill: " .. professionStats.skill.value)
-        print("skillWithInspiration: " .. skillWithInspiration)
-        local qualityWithInspiration = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skillWithInspiration)
-        local qualityWithHSV = math.min(recipeData.resultData.expectedQuality + 1, recipeData.maxQuality)
+        local qualityWithInspiration = recipeData.resultData.expectedQualityInspiration
+        local qualityWithInspirationHSV = recipeData.resultData.expectedQualityInspirationHSV
+        local qualityWithHSV = recipeData.resultData.expectedQualityHSV
 
         print("expectedQuality: " .. recipeData.resultData.expectedQuality)
         print("qualityWithHSV: " .. tostring(qualityWithHSV))
         print("qualityWithInspiration: " .. tostring(qualityWithInspiration))
+        print("qualityWithInspirationHSV: " .. tostring(qualityWithInspirationHSV))
 
         -- get all possible craft results (for resourcefulness take avg) and their profits
         -- to build the probability distribution with p(x) = x where x is the profit
@@ -239,11 +245,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
 
             -- insp, no mc, hsv
             elseif subCombination == "101" then
-                if not withInspirationOnly then
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
-                else
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
-                end
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSV] or 0) * recipeData.baseItemAmount)
 
             -- insp, mc, no hsv, 
             elseif subCombination == "110" then
@@ -332,7 +334,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             end
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
+            --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 multicraft = procs[1],
                 resourcefulness = procs[2],
@@ -358,12 +360,22 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         local resChance = professionStats.resourcefulness:GetPercent(true)
         local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
 
-        local skillWithInspiration = professionStats.skill.value + professionStats.inspiration.extraValue
-        local qualityWithInspiration = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skillWithInspiration)
-        local qualityWithHSV = math.min(recipeData.resultData.expectedQuality + 1, recipeData.maxQuality)
+        print("Chances:")
+        print("inspChance: " .. inspChance)
+        print("resChance: " .. resChance)
+        print("hsvChance: " .. hsvChance)
+
+        local qualityWithInspiration = recipeData.resultData.expectedQualityInspiration
+        local qualityWithInspirationHSV = recipeData.resultData.expectedQualityInspirationHSV
+        local qualityWithHSV = recipeData.resultData.expectedQualityHSV
         
         -- get all possible craft results (for resourcefulness take avg) and their profits
         -- to build the probability distribution with p(x) = x where x is the profit
+
+        print("expectedQuality: " .. recipeData.resultData.expectedQuality)
+        print("qualityWithHSV: " .. tostring(qualityWithHSV))
+        print("qualityWithInspiration: " .. tostring(qualityWithInspiration))
+        print("qualityWithInspirationHSV: " .. tostring(qualityWithInspirationHSV))
 
         local probabilityTable = {}
 
@@ -402,8 +414,6 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             local combinationProfit = 0
             local resultValue = 0
 
-            print("recipeData.baseItemAmount: " .. tostring(recipeData.baseItemAmount))
-            print("buyout for expected: " .. tostring(priceData.qualityPriceList[recipeData.resultData.expectedQuality]))
 
             -- if insp, no hsv
             if not procs[1] and not procs[2] then
@@ -415,21 +425,14 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
 
             -- not insp, hsv
             elseif not procs[1] and procs[2] then
-                if not withInspirationOnly then
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
-                else
-                    resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
-                end
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
+            -- insp and hsv
             elseif procs[1] and procs[2] then
-                if not withInspirationOnly then
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
-                else
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
-                end
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSV] or 0) * recipeData.baseItemAmount)
             end
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
+            --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 inspiration = procs[1],
                 hsv = procs[2],
@@ -494,7 +497,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
             
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
+            --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 resourcefulness = procs[1],
                 chance = combinationChance,

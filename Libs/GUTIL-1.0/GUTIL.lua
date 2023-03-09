@@ -316,7 +316,7 @@ function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
 end
 
 function GUTIL:Round(number, decimals)
-  return (("%%.%df"):format(decimals)):format(number)
+  return tonumber((("%%.%df"):format(decimals)):format(number))
 end
 
 function GUTIL:GetItemIDByLink(hyperlink)
