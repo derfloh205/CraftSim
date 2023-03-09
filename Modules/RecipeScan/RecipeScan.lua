@@ -11,6 +11,9 @@ CraftSim.RECIPE_SCAN.SCAN_MODES = {
     OPTIMIZE_G = "Optimize for Guaranteed", 
     OPTIMIZE_I = "Optimize for Inspiration"}
 
+    ---@type CraftSim.RecipeData[]
+CraftSim.RECIPE_SCAN.currentResults = {}
+
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
 function CraftSim.RECIPE_SCAN:GetScanMode()
@@ -185,6 +188,8 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
 end
 
 function CraftSim.RECIPE_SCAN:StartScan()
+
+    CraftSim.RECIPE_SCAN.currentResults = {}
     
     local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
     print("Scan Mode: " .. tostring(scanMode))
@@ -250,6 +255,8 @@ function CraftSim.RECIPE_SCAN:StartScan()
         local function continueScan()
             CraftSim.UTIL:StopProfiling("Single Recipe Scan")
             CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData) 
+
+            table.insert(CraftSim.RECIPE_SCAN.currentResults, recipeData)
 
             currentIndex = currentIndex + 1
             C_Timer.After(CraftSim.RECIPE_SCAN.scanInterval, scanRecipesByInterval)
