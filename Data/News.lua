@@ -18,7 +18,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "AH count is only shown when " .. f.bb("TSM") .. " is loaded." ..
         f.a .. "(It is not necessary to set it as price source)" ..
         f.p .. "Fixed " .. f.bb("Profit Calculation") .. " for recipes that support" .. 
-        f.a .. "only inspiration and resourcefulness not considering bonus inspiration skill" ..
+        f.a .. "only inspiration and resourcefulness not considering" ..
+        f.a .. "extra inspiration skill from specializations" ..
         newP("8.1.0") ..
         f.s .. f.l("Expected Costs") .. " from saved " .. f.bb("Craft Data") .. " is now only" ..
         f.a .. "used when lower than the auction house price." ..
