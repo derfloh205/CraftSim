@@ -255,7 +255,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
 
         local function continueScan()
             CraftSim.UTIL:StopProfiling("Single Recipe Scan")
-            CraftSim.RECIPE_SCAN.FRAMES:AddRecipeToRecipeRow(recipeData) 
+            CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData) 
 
             table.insert(CraftSim.RECIPE_SCAN.currentResults, recipeData)
 

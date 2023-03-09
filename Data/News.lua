@@ -10,6 +10,13 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.2.0") ..
+        f.P .. f.bb("Recipe Scan") .. " and " .. f.bb("Recipe Export") .. " now offer" ..
+        f.a .. "an export than can be used on " .. f.l("www.wowforgefinder.com") ..
+        f.s .. f.bb("Recipe Scan: ") .. " redesigned result list, now shows " ..
+        f.a .. "total inventory and auction house count of a recipe's items" ..
+        f.a .. "AH count is only shown when " .. f.bb("TSM") .. " is loaded." ..
+        f.a .. "(It is not necessary to set it as price source)" ..
         newP("8.1.0") ..
         f.s .. f.l("Expected Costs") .. " from saved " .. f.bb("Craft Data") .. " is now only" ..
         f.a .. "used when lower than the auction house price." ..

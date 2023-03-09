@@ -2137,6 +2137,12 @@ end
 ---@field onDecline? function
 ---@field sizeX? number
 ---@field sizeY? number
+---@field parent? Frame
+---@field anchorParent? Region
+---@field offsetX? number
+---@field offsetY? number
+---@field anchorA? FramePoint
+---@field anchorB? FramePoint
 
 local popupFrame = nil
 ---@param options GGUI.ShowPopupOptions
@@ -2150,6 +2156,12 @@ function GGUI:ShowPopup(options)
     options.declineButtonLabel = options.declineButtonLabel or "Decline"
     options.width = options.width or 300
     options.height = options.height or 300
+    options.parent = options.parent or UIParent
+    options.anchorParent = options.anchorParent or UIParent
+    options.offsetX = options.offsetX or 0
+    options.offsetY = options.offsetY or 0
+    options.anchorA = options.anchorA or "CENTER"
+    options.anchorB = options.anchorB or "CENTER"
 
     if options.title then
         popupFrame.title:SetText(options.title)
@@ -2169,6 +2181,9 @@ function GGUI:ShowPopup(options)
         popupFrame.frame:SetHeight(options.sizeY)
     end
 
+    popupFrame.frame:ClearAllPoints()
+    popupFrame:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
+
     popupFrame:Show()
 end
 
@@ -2185,7 +2200,7 @@ function GGUI:InitializePopup(options)
         popupFrame = CraftSim.GGUI.Frame({
             backdropOptions = options.backdropOptions,
             sizeX=options.sizeX or 300, sizeY=options.sizeY or 300, moveable=true, frameStrata="DIALOG", frameID=options.frameID,
-            title=options.title or ""
+            title=options.title or "", closeable=true,
         })
 
         popupFrame.content.text = CraftSim.GGUI.Text({
