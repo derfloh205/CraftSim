@@ -178,7 +178,9 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitPerQualit
                 if ahCount then
                     profitFrame.countAHValue:SetText(ahCount)
                     profitFrame.countAHValue:Show()
+                    profitFrame.countAHTitle:Show()
                 else
+                    profitFrame.countAHTitle:Hide()
                     profitFrame.countAHValue:Hide()
                 end
 
