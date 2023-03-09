@@ -9,15 +9,32 @@ CraftSim.PRICEDATA.overrideCraftingCosts = nil
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
 
+---@class CraftSim.PriceData.PriceInfo
+---@field ahPrice number
+---@field craftDataExpectedCosts? number
+---@field priceOverride? number
+---@field isAHPrice boolean
+---@field noAHPriceFound boolean
+---@field isCraftData boolean
+---@field isOverride boolean
+---@field noPriceSource boolean
+
 ---Wrapper for Price Source addons price fetch by itemID
 ---@param itemID number
 ---@param isReagent? boolean Use TSM Expression for materials
----@return number
----@return boolean? isPriceOverride
----@return boolean? isCraftData
+---@return number usedPrice
+---@return CraftSim.PriceData.PriceInfo priceInfo
 function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice)
+    local ahPrice = CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, isReagent)
+    ---@type CraftSim.PriceData.PriceInfo
+    local priceInfo = {
+        ahPrice = ahPrice or 0,
+        noAHPriceFound = ahPrice == nil
+    }
+
     if forceAHPrice then
-        return CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, isReagent) or 0
+        priceInfo.isAHPrice = true
+        return priceInfo.ahPrice, priceInfo
     end
     -- check for overrides
     if isReagent then
@@ -32,32 +49,40 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
                 --- this no craft data is found it will continue and just fetch the buyout
                 if craftDataSerialized then
                     local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
-                    return craftData:GetExpectedCosts(), true, true
+                    local expectedCosts = craftData:GetExpectedCosts()
+                    priceInfo.craftDataExpectedCosts = expectedCosts
+
+                    if priceInfo.noAHPriceFound then
+                        -- if no ahPrice could be found but we have craftData, use craftData
+                        priceInfo.isCraftData = true
+                        priceInfo.noAHPriceFound = true
+                        return expectedCosts, priceInfo
+                    end
+
+                    if priceInfo.ahPrice <= expectedCosts then
+                        -- if we have ah price and expected costs but ah price is lower, use ah price
+                        priceInfo.isAHPrice = true
+                        return priceInfo.ahPrice, priceInfo
+                    end
+
+                    priceInfo.isCraftData = true
+                    return expectedCosts, priceInfo
                 end
             else
-                --print("does not use craft data")
-                return priceOverrideData.price, true
+                -- we have an override, but no craft data, so use override
+                priceInfo.isOverride = true
+                return priceOverrideData.price, priceInfo
             end
         end
     end
 
     if not CraftSim.PRICE_APIS.available then
-        return 0
+        priceInfo.noPriceSource = true
+        return 0, priceInfo
     end
 
-    local minbuyout = CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, isReagent)
-    if minbuyout == nil then
-        local _, link = GetItemInfo(itemID)
-        if link == nil then
-            link = itemID
-        end
-        if CraftSim.PRICEDATA.noPriceDataLinks[link] == nil then
-            -- not beautiful but hey, easy map
-            CraftSim.PRICEDATA.noPriceDataLinks[link] = link
-        end
-        minbuyout = 0
-    end
-    return minbuyout
+    priceInfo.isAHPrice = true
+    return priceInfo.ahPrice, priceInfo
 end
 
 function CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink, isReagent)

@@ -83,7 +83,7 @@ end
 function CraftSim.CALC:CalculateExpectedCosts(expectedCrafts, chance, resChance, resExtraFactor, avgItemAmount, craftingCosts, requiredCraftingCosts)
     local avgSavedCostsRes = CraftSim.CALC:CalculateResourcefulnessSavedCosts(resExtraFactor, requiredCraftingCosts) * resChance
     if chance == 1 then
-        return craftingCosts - avgSavedCostsRes
+        return (craftingCosts - avgSavedCostsRes) / avgItemAmount
     elseif chance > 0 then
         return ((craftingCosts- avgSavedCostsRes) * expectedCrafts) / avgItemAmount
     end
