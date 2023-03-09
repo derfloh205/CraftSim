@@ -13,6 +13,8 @@ function CraftSim.NEWS:GET_NEWS()
         newP("8.1.0") ..
         f.s .. f.l("Expected Costs") .. " from saved " .. f.bb("Craft Data") .. " is now only" ..
         f.a .. "used when they are lower than the auction house price." ..
+        f.s .. f.bb("Cost Details") .. " now shows all possible prices and" ..
+        f.a .. "which one of them is used" ..
         f.p .. "Fixed " .. f.bb("Craft Data") .. " for guaranteed items not considering" ..
         f.a .. "the amount of crafted items" ..
         newP("8.0.0") ..

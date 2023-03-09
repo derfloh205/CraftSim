@@ -12,7 +12,7 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
 
     local sizeX=480
     local sizeY=270
-    local offsetX=-15
+    local offsetX=-5
     local offsetY=-120
 
     CraftSim.COST_DETAILS.frame = CraftSim.GGUI.Frame({
@@ -50,6 +50,12 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
         frame.content.craftingCostsValue = CraftSim.GGUI.Text({
             parent=frame.content,anchorParent=frame.content.craftingCostsTitle.frame, anchorA="LEFT", anchorB="RIGHT",
             text=CraftSim.GUTIL:FormatMoney(123456789), justifyOptions={type="H",align="LEFT"}
+        })
+
+        CraftSim.GGUI.HelpIcon({
+            parent=frame.content,anchorParent=frame.title.frame,
+            anchorA="LEFT", anchorB="RIGHT", offsetX=5,
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_EXPLANATION)
         })
 
 
