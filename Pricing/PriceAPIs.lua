@@ -27,6 +27,7 @@ function CraftSim.PRICE_API:InitPriceSource()
                 end
              })
         end 
+        CraftSim.PRICE_API = CraftSimDEBUG_PRICE_API
         return
     end
 
