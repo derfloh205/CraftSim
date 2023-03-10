@@ -117,7 +117,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         local simModeDetailsFrame = CraftSim.GGUI.Frame({
             parent=schematicForm, anchorParent=schematicForm.Details, anchorA="TOPRIGHT", anchorB="TOPRIGHT", offsetX=30,
             sizeX=350, sizeY=355, frameID=(workOrder and CraftSim.CONST.FRAMES.CRAFTING_DETAILS_WO) or CraftSim.CONST.FRAMES.CRAFTING_DETAILS,
-            backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS, collapseable=true, moveable=true
+            backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS, collapseable=true, moveable=true,
+            title="CraftSim Simulation Mode"
         })
     
         simModeDetailsFrame:Hide()

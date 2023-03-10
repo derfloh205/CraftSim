@@ -463,34 +463,39 @@ function CraftSim.RecipeData:GetForgeFinderExport(indent)
 
     jb:Begin()
     jb:Add("recipeID", self.recipeID)
-    local fullCraftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
     local reagents = {}
-    for _, craftingReagentInfo in pairs(fullCraftingReagentInfoTbl) do
-        reagents[craftingReagentInfo.itemID] = craftingReagentInfo.quantity
+    for _, reagent in pairs(self.reagentData.requiredReagents) do
+        for _, reagentItem in pairs(reagent.items) do
+            reagents[reagentItem.item:GetItemID()] = reagent.requiredQuantity
+        end
     end
 
-    jb:Add("reagents", reagents)
+    local professionStatsForExport = self.professionStats:Copy()
+    professionStatsForExport:subtract(self.buffData.professionStats)
+
+    jb:Add("reagents", reagents) -- itemID mapped to required quantity
     if self.supportsQualities then
-        jb:Add("skill", self.professionStats.skill.value)
-        jb:Add("baseSkill", self.professionStats.skill.value - self.reagentData:GetSkillFromRequiredReagents())
+        jb:Add("skill", professionStatsForExport.skill.value - self.reagentData:GetSkillFromRequiredReagents()) -- skill without reagent bonus
+        jb:Add("difficulty", self.baseProfessionStats.recipeDifficulty.value) -- base difficulty (without optional reagents)
     end
     if self.supportsCraftingStats then
         if self.supportsMulticraft then
             if not self.supportsInspiration and not self.supportsResourcefulness then
-                jb:Add("multicraft", self.professionStats.multicraft.value, true)
+                jb:Add("multicraft", professionStatsForExport.multicraft:GetPercent(true), true)
             else
-                jb:Add("multicraft", self.professionStats.multicraft.value)
+                jb:Add("multicraft", professionStatsForExport.multicraft:GetPercent(true))
             end
         end
         if self.supportsInspiration then
+            jb:Add("inspiration", professionStatsForExport.inspiration:GetPercent(true))
             if not self.supportsMulticraft and not self.supportsResourcefulness then
-                jb:Add("inspiration", self.professionStats.inspiration.value, true)
+                jb:Add("inspirationSkill", self.professionStats.inspiration:GetExtraValueByFactor(), true)
             else
-                jb:Add("inspiration", self.professionStats.inspiration.value)
+                jb:Add("inspirationSkill", self.professionStats.inspiration:GetExtraValueByFactor())
             end
         end
         if self.supportsResourcefulness then
-                jb:Add("resourcefulness", self.professionStats.resourcefulness.value, true)
+                jb:Add("resourcefulness", professionStatsForExport.resourcefulness:GetPercent(true), true)
         end
     end
     jb:End()
