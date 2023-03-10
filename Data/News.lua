@@ -10,8 +10,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
-        newP("8.2.2") ..
+        newP("8.2.3") ..
         f.p .. "Smaller tweaks to " .. f.l("ForgeFinder") .. " export" ..
+        f.p .. "Fixed " .. f.bb("Top Gear") .. " not showing for Work Orders" ..
         newP("8.2.1") ..
         f.P .. f.bb("Craft Data") .. " is now always used if existing and lower" ..
         f.a .. "than current ah price" ..

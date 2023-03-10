@@ -11,7 +11,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
     local offsetY=3
 
     local frameWO = CraftSim.GGUI.Frame({
-        parent=ProfessionsFrame.CraftingPage.SchematicForm,
+        parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
         anchorParent=ProfessionsFrame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER, 
