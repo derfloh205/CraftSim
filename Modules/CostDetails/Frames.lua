@@ -77,7 +77,7 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
                     width=110,
                 },
                 {
-                    label="CraftData",
+                    label="Craft Data",
                     width=110,
                 },
                 {
