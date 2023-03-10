@@ -46,6 +46,11 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         })
         frame.content.exportForgeFinderButton:SetEnabled(false)
 
+        CraftSim.GGUI.HelpIcon({
+            parent=frame.content,anchorParent=frame.content.exportForgeFinderButton.frame, anchorA="RIGHT", anchorB="LEFT", offsetX=-3,
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FORGEFINDER_EXPLANATION)
+        })
+
         frame.content.includeSoulboundCB = CraftSim.FRAME:CreateCheckbox(
             " Include Soulbound", "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items", 
         "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode.frame, "RIGHT", "LEFT", -190, 0)

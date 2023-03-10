@@ -139,5 +139,8 @@ function CraftSim.LOCAL_EN:GetData()
         -- Popups
         [CraftSim.CONST.TEXT.NO_PRICE_SOURCE_WARNING] = "No price source found!\n\n" ..
         "You need to have installed at least one of the\nfollowing price source addons to\nutilize CraftSim's profit calculations:\n\n\n",
+
+        -- RecipeScan
+        [CraftSim.CONST.TEXT.FORGEFINDER_EXPLANATION] = f.l("www.wowforgefinder.com") .. "\nis a website to search and offer " .. f.bb("WoW Crafting Orders"),
     }
 end

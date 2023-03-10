@@ -13,6 +13,9 @@ function CraftSim.NEWS:GET_NEWS()
         newP("8.2.1") ..
         f.p .. "Fixed FrameStrata of " .. f.bb("Simulation Mode Details") .. " Frame" ..
         f.p .. "Fixed an error when using CraftSim without a " .. f.bb("Price Source") ..
+        f.p .. "Adjusted exported data for the " .. f.l("ForgeFinder") .. " export" ..
+        f.a .. f.bb("Note: ") .. "CraftSim already provides this export, although" ..
+        f.a .. f.l("ForgeFinder") .. " is still working on it" ..
         newP("8.2.0") ..
         f.P .. f.bb("Recipe Scan") .. " and " .. f.bb("Recipe Export") .. " now offer" ..
         f.a .. "an export than can be used on " .. f.l("www.wowforgefinder.com") ..
