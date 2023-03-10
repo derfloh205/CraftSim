@@ -11,11 +11,13 @@ CraftSimDEBUG_PRICE_API = {name = "Debug"}
 CraftSimDebugData = CraftSimDebugData or {}
 CraftSim.PRICE_APIS.available = true
 
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_APIS)
+
 function CraftSim.PRICE_API:InitPriceSource()
     local loadedSources = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
 
     if #loadedSources == 0 then
-        print("CraftSim: No Supported Price Source Available!")
+        CraftSim.UTIL:SystemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:",CraftSim.GUTIL.COLORS.BRIGHT_BLUE) .. " No Supported Price Source Available!")
         CraftSim.PRICE_APIS.available = false
         if not CraftSimOptions.doNotRemindPriceSource then
              CraftSim.GGUI:ShowPopup({

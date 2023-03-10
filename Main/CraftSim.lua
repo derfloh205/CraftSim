@@ -265,7 +265,6 @@ function CraftSim.MAIN:InitStaticPopups()
 		button2 = "No",
 		OnAccept = function(self, data1, data2)
 			CraftSimOptions.doNotRemindPriceSource = true
-			CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.WARNING):Hide()
 		end,
 		timeout = 0,
 		whileDead = true,
