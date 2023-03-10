@@ -60,13 +60,54 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
                 CraftSim.FRAME:ToggleFrame(statisticsFrame, not statisticsFrame:IsVisible())
             end
         })
+
+        local textOffsetX = 30
+        local textOffsetY= -50
+        local textSpacingY = -2
+        local titleWidth = 120
+        local titleValueSpacingX = 20
+        frame.content.profit = {}
+        frame.content.inspiration = {}
+        frame.content.multicraft = {}
+        frame.content.resourcefulness = {}
+        frame.content.profit.title = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content, offsetX=textOffsetX, offsetY=textOffsetY,
+            anchorA="TOPLEFT", anchorB="TOPLEFT", fixedWidth=titleWidth, justifyOptions={type="H", align="RIGHT"},
+            text="Ø Profit / Craft: ",
+        })
+        frame.content.profit.value = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content.profit.title.frame,
+            anchorA="LEFT", anchorB="RIGHT", justifyOptions={type="H", align="LEFT"}
+        })
+
+        frame.content.inspiration.title = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content.profit.title.frame, offsetY=textSpacingY,
+            anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", fixedWidth=titleWidth, justifyOptions={type="H", align="RIGHT"},
+            text="Inspiration: "
+        })
+        frame.content.inspiration.value = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content.inspiration.title.frame,
+            anchorA="LEFT", anchorB="RIGHT", justifyOptions={type="H", align="LEFT"}, offsetX=titleValueSpacingX
+        })
+        frame.content.multicraft.title = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content.inspiration.title.frame, offsetY=textSpacingY,
+            anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", fixedWidth=titleWidth, justifyOptions={type="H", align="RIGHT"},
+            text="Multicraft: "
+        })
+        frame.content.multicraft.value = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content.multicraft.title.frame,
+            anchorA="LEFT", anchorB="RIGHT", justifyOptions={type="H", align="LEFT"}, offsetX=titleValueSpacingX
+        })
+        frame.content.resourcefulness.title = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content.multicraft.title.frame, offsetY=textSpacingY,
+            anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", fixedWidth=titleWidth, justifyOptions={type="H", align="RIGHT"},
+            text="Resourcefulness: "
+        })
+        frame.content.resourcefulness.value = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content.resourcefulness.title.frame,
+            anchorA="LEFT", anchorB="RIGHT", justifyOptions={type="H", align="LEFT"}, offsetX=titleValueSpacingX
+        })
         
-
-        frame.content.statText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        frame.content.statText:SetPoint("LEFT", frame.content, "LEFT", 15, -20)
-
-        frame.content.valueText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        frame.content.valueText:SetPoint("RIGHT", frame.content, "RIGHT", -15, -20)
         frame:Hide()
     end
 
@@ -86,31 +127,33 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts,
         statweightFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS)
     end
     if statWeights == nil then
-        statweightFrame.content.statText:SetText("")
-        statweightFrame.content.valueText:SetText("")
+        -- statweightFrame.content.statText:SetText("")
+        -- statweightFrame.content.valueText:SetText("")
     else
         local statText = ""
         local valueText = ""
 
         if statWeights.averageProfit then
-            statText = statText .. "Ø Profit / Craft:" .. "\n"
             local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
-            valueText = valueText .. CraftSim.GUTIL:FormatMoney(statWeights.averageProfit, true, relativeValue) .. "\n"
+            statweightFrame.content.profit.value:SetText(CraftSim.GUTIL:FormatMoney(statWeights.averageProfit, true, relativeValue))
+        else
+            statweightFrame.content.profit.value:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
         end
         if statWeights.inspirationWeight then
-            statText = statText .. "Inspiration:" .. "\n"
-            valueText = valueText .. CraftSim.GUTIL:FormatMoney(statWeights.inspirationWeight) .. "\n"
+            statweightFrame.content.inspiration.value:SetText(CraftSim.GUTIL:FormatMoney(statWeights.inspirationWeight))
+        else
+            statweightFrame.content.inspiration.value:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
         end
         if statWeights.multicraftWeight then
-            statText = statText .. "Multicraft:" .. "\n"
-            valueText = valueText .. CraftSim.GUTIL:FormatMoney(statWeights.multicraftWeight) .. "\n"
+            statweightFrame.content.multicraft.value:SetText(CraftSim.GUTIL:FormatMoney(statWeights.multicraftWeight))
+        else
+            statweightFrame.content.multicraft.value:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
         end
         if statWeights.resourcefulnessWeight then
-            statText = statText .. "Resourcefulness:"
-            valueText = valueText .. CraftSim.GUTIL:FormatMoney(statWeights.resourcefulnessWeight)
+            statweightFrame.content.resourcefulness.value:SetText(CraftSim.GUTIL:FormatMoney(statWeights.resourcefulnessWeight))
+        else
+            statweightFrame.content.resourcefulness.value:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
         end
-        statweightFrame.content.statText:SetText(statText)
-        statweightFrame.content.valueText:SetText(valueText)
     end
 end
 
