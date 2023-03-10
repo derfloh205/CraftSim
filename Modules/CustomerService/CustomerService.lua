@@ -90,7 +90,11 @@ function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
     if not CraftSim.UTIL:IsMyVersionHigher(payload.addonVersion) and not versionWarningShowed then
         versionWarningShowed = true
         -- show warning but dont stop
-        CraftSim.FRAME:ShowWarning("There is a newer CraftSim Version available: " .. payload.addonVersion, "Newer CraftSim Version Detected", true)
+        CraftSim.GGUI:ShowPopup({
+            sizeX=400, sizeY=250, title="Newer CraftSim Version Detected",
+            text="There is a newer CraftSim Version available: " .. payload.addonVersion,
+            acceptButtonLabel="OK", declineButtonLabel="Close",
+         })
     end
 
     -- otherwise does not work as key
@@ -144,7 +148,11 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeListResponse(payload)
     if not CraftSim.UTIL:IsMyVersionHigher(payload.addonVersion) and not versionWarningShowed then
         versionWarningShowed = true
         -- show warning but dont stop
-        CraftSim.FRAME:ShowWarning("There is a newer CraftSim Version available: " .. payload.addonVersion, "Newer CraftSim Version Detected", true)
+        CraftSim.GGUI:ShowPopup({
+            sizeX=400, sizeY=250, title="Newer CraftSim Version Detected",
+            text="There is a newer CraftSim Version available: " .. payload.addonVersion,
+            acceptButtonLabel="OK", declineButtonLabel="Close",
+         })
     end
 
     if payload.recipes then

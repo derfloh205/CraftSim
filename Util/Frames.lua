@@ -583,82 +583,6 @@ function CraftSim.FRAME:InitDebugFrame()
     CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(debugFrame.content)
 end
 
-function CraftSim.FRAME:InitWarningFrame()
-    local frame = CraftSim.GGUI.Frame({
-        parent=UIParent,anchorParent=UIParent,title=CraftSim.GUTIL:ColorizeText("CraftSim Warning", CraftSim.GUTIL.COLORS.RED),
-        sizeX=500,sizeY=500, frameID=CraftSim.CONST.FRAMES.WARNING,
-        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS
-    })
-
-    frame.content.warningText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.content.warningText:SetPoint("TOP", frame.content, "TOP", 0, -20)
-    frame.content.warningText:SetText("No Warning")
-
-    frame.content.doNotShowAgainButton = CraftSim.GGUI.Button({
-        parent=frame.content,anchorParent=frame.content,anchorA="TOP",anchorB="TOP",offsetY=-200,sizeX=15,sizeY=25,adjustWidth=true,
-        label="I know, do not show this again!",
-            clickCallback=function ()
-                StaticPopup_Show("CRAFT_SIM_ACCEPT_NO_PRICESOURCE_WARNING")
-            end
-    })
-
-
-    frame.content.errorBox = CreateFrame("EditBox", nil, frame.content)
-    frame.content.errorBox:SetPoint("TOP", frame.content, "TOP", 0, -20)
-    frame.content.errorBox:SetText("No Warning")
-    frame.content.errorBox:SetWidth(frame.content:GetWidth() - 15)
-    frame.content.errorBox:SetHeight(20)
-    frame.content.errorBox:SetMultiLine(true)
-    frame.content.errorBox:SetAutoFocus(false)
-    frame.content.errorBox:SetFontObject("ChatFontNormal")
-    
-    frame.content.errorBox:SetScript("OnEscapePressed", function() frame.content.errorBox:ClearFocus() end)
-    frame.content.errorBox:SetScript("OnEnterPressed", function() frame.content.errorBox:ClearFocus() end)
-
-    frame.content.warningText:Hide()
-    frame.content.errorBox:Hide()
-
-    frame.showWarning = function(warningText, optionalTitle, hideDoNotShowButton) 
-        CraftSim.FRAME:ToggleFrame(frame.content.doNotShowAgainButton, not hideDoNotShowButton)
-        optionalTitle = optionalTitle or "CraftSim Warning"
-        local wrapped = CraftSim.UTIL:WrapText(warningText, 50)
-        frame.title:SetText(CraftSim.GUTIL:ColorizeText(optionalTitle, CraftSim.GUTIL.COLORS.RED))
-        frame.content.warningText:SetText(wrapped)
-        frame.content.warningText:Show()
-        frame.content.errorBox:Hide()
-        frame.content.errorBox:SetText("")
-        frame:Raise()
-        frame:Show()
-    end
-
-    frame.showError = function(errorText, optionalTitle) 
-        optionalTitle = optionalTitle or "CraftSim Warning"
-        frame.title:SetText(CraftSim.GUTIL:ColorizeText(optionalTitle, CraftSim.GUTIL.COLORS.RED))
-        frame.content.errorBox:SetText(errorText)
-        frame.content.errorBox:Show()
-        frame.content.warningText:Hide()
-        frame.content.warningText:SetText("")
-        frame:Raise()
-        frame:Show()
-    end
-
-    frame:Hide()
-end
-
---> in GGUI
-function CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
-    if type(frame) == "table" and frame.SetHyperlinksEnabled and not frame.enabledLinks then -- prevent inf loop by references
-        frame.enabledLinks = true
-        frame:SetHyperlinksEnabled(true)
-        frame:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow)
-
-        for possibleFrame1, possibleFrame2 in pairs(frame) do
-            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(possibleFrame1)
-            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(possibleFrame2)
-        end
-    end
-end
-
 function CraftSim.FRAME:InitOneTimeNoteFrame()
     local currentVersion = GetAddOnMetadata(AddonName, "Version")
 
@@ -688,7 +612,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         frame:Show()
     end
 
-    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
+    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
     frame:Hide()
 end
 
@@ -707,16 +631,6 @@ function CraftSim.FRAME:ShowOneTimeInfo(force)
     infoFrame.originalX = CraftSim.CONST.infoBoxSizeX
     infoFrame.originalY = CraftSim.CONST.infoBoxSizeY
     infoFrame.showInfo(infoText)
-end
-
-function CraftSim.FRAME:ShowWarning(warningText, optionalTitle, hideBtn)
-    local warningFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.WARNING)
-    warningFrame.showWarning(warningText, optionalTitle, hideBtn)
-end
-
-function CraftSim.FRAME:ShowError(errorText, optionalTitle)
-    local warningFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.WARNING)
-    warningFrame.showError(errorText, optionalTitle)
 end
 
 ---> GGUI

@@ -71,7 +71,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
     end
 
     createContent(frameNO_WO)
-    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frameNO_WO)
+    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frameNO_WO.content)
 end
 
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)

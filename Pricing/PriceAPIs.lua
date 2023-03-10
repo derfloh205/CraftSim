@@ -18,9 +18,14 @@ function CraftSim.PRICE_API:InitPriceSource()
         print("CraftSim: No Supported Price Source Available!")
         CraftSim.PRICE_APIS.available = false
         if not CraftSimOptions.doNotRemindPriceSource then
-            CraftSim.FRAME:ShowWarning("No price source found!\n\n" ..
-             "You need to have installed at least one of the\nfollowing price source addons to utilize CraftSim's profit calculations:\n\n\n" ..
-             table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
+             CraftSim.GGUI:ShowPopup({
+                sizeX=400, sizeY=250, title=CraftSim.GUTIL:ColorizeText("CraftSim Price Source Warning", CraftSim.GUTIL.COLORS.RED),
+                text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NO_PRICE_SOURCE_WARNING) .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"),
+                acceptButtonLabel="OK", declineButtonLabel="Do not show warning again",
+                onDecline=function ()
+                    StaticPopup_Show("CRAFT_SIM_ACCEPT_NO_PRICESOURCE_WARNING")
+                end
+             })
         end 
         return
     end

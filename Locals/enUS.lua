@@ -135,5 +135,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_DATA_EXPLANATION] = "Here you can take a " .. f.bb("'Snapshot'") .. " of your current recipe configuration for a target item\nThe saved data includes a snapshot of your current " .. f.bb("Profession Stats") .. "\nand calculates the " .. f.l("Expected Costs") .. " for an item based on that.\nYou can use " .. f.bb("Simulation Mode") .. " to finetune your configurations!",
         [CraftSim.CONST.TEXT.CRAFT_DATA_OVERRIDE_EXPLANATION] = "If this is checked, the item price will be the " .. f.l("Expected Costs") .. " of the saved Craft Data of this item.\nIf no Craft Data for this item exists " .. f.bb("OR") .. " the Auction House Price is lower, the Auction House price will be taken.",
         [CraftSim.CONST.TEXT.COST_DETAILS_EXPLANATION] = "Here you can see an overview of all possible prices of the used materials.\nThe " .. f.bb("'Used'") .. " column indicates which one of the prices is used.\n\n" .. f.g("AH") .. " .. Auction House Price\n" .. f.l("OR") .. " .. Price Override\n" .. f.bb("CD") .. " .. Expected Costs from Craft Data\n\n" .. f.l("OR") .. " will always be used if set. " .. f.bb("CD") .. " will only be used if lower than " .. f.g("AH"),
+        
+        -- Popups
+        [CraftSim.CONST.TEXT.NO_PRICE_SOURCE_WARNING] = "No price source found!\n\n" ..
+        "You need to have installed at least one of the\nfollowing price source addons to\nutilize CraftSim's profit calculations:\n\n\n",
     }
 end

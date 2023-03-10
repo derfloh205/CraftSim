@@ -214,7 +214,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
 
         
         frame.content.activeOverridesBox.overrideList = CraftSim.FRAME:CreateText("", frame.content.activeOverridesBox, frame.content.activeOverridesBox, "TOPLEFT", "TOPLEFT", 0, 0, 0.85, nil, {type="H", value="LEFT"})
-        CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
+        CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
     end
 
     createContentV2(frameNO_WO)

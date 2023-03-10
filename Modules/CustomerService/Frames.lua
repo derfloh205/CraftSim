@@ -300,7 +300,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
     end
 
     createContent(frame)
-    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
+    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
 end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)

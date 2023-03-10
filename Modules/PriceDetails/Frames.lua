@@ -100,7 +100,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
                 text=CraftSim.GUTIL:FormatMoney(-123456789, true)
             })
 
-            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(profitFrame)
+            CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(profitFrame)
             return profitFrame
         end
     
@@ -114,7 +114,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame.content, frame.content.resultProfitsTitle.frame))
         
     
-        CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
+        CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
         frame:Hide()
 
         frame:SetStatusList({

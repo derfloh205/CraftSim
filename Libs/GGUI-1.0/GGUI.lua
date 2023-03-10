@@ -220,6 +220,15 @@ end
 function GGUI.Widget:SetPoint(...)
     return self.frame:SetPoint(...)
 end
+function GGUI.Widget:Raise()
+    self.frame:Raise()
+end
+function GGUI.Widget:Lower()
+    self.frame:Lower()
+end
+function GGUI.Widget:SetFrameLevel(...)
+    self.frame:SetFrameLevel(...)
+end
 
 --- GGUI Frame
 
