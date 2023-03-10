@@ -462,7 +462,9 @@ function CraftSim.RecipeData:GetForgeFinderExport(indent)
     local jb = CraftSim.JSONBuilder(indent)
 
     jb:Begin()
-    jb:Add("recipeID", self.recipeID)
+    jb:AddList("itemIDs", CraftSim.GUTIL:Map(self.resultData.itemsByQuality, function (item)
+        return item:GetItemID()
+    end))
     local reagents = {}
     for _, reagent in pairs(self.reagentData.requiredReagents) do
         for _, reagentItem in pairs(reagent.items) do
