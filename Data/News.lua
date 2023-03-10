@@ -10,6 +10,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.2.1") ..
+        f.p .. "Fixed FrameStrata of " .. f.bb("Simulation Mode Details") .. " Frame" ..
+        f.p .. "Fixed an error when using CraftSim without a " .. f.bb("Price Source") ..
         newP("8.2.0") ..
         f.P .. f.bb("Recipe Scan") .. " and " .. f.bb("Recipe Export") .. " now offer" ..
         f.a .. "an export than can be used on " .. f.l("www.wowforgefinder.com") ..

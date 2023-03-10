@@ -114,252 +114,245 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*4))
     
         -- DETAILS FRAME
-        local simModeDetailsFrame = CraftSim.FRAME:CreateCraftSimFrame(
-            nil, 
-            "CraftSim Simulation Mode", 
-            schematicForm,
-            schematicForm.Details, 
-            "TOPRIGHT", 
-            "TOPRIGHT", 
-            30, 
-            0, 
-            350, 
-            355, 
-            (workOrder and CraftSim.CONST.FRAMES.CRAFTING_DETAILS_WO) or CraftSim.CONST.FRAMES.CRAFTING_DETAILS)
+        local simModeDetailsFrame = CraftSim.GGUI.Frame({
+            parent=schematicForm, anchorParent=schematicForm.Details, anchorA="TOPRIGHT", anchorB="TOPRIGHT", offsetX=30,
+            sizeX=350, sizeY=355, frameID=(workOrder and CraftSim.CONST.FRAMES.CRAFTING_DETAILS_WO) or CraftSim.CONST.FRAMES.CRAFTING_DETAILS,
+            backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS, collapseable=true, moveable=true
+        })
     
-            simModeDetailsFrame:Hide()
+        simModeDetailsFrame:Hide()
 
-            frames.detailsFrame = simModeDetailsFrame
-    
-            local offsetY = -20
-            local modOffsetX = 5
-            local valueOffsetX = -5
-            local valueOffsetY = 0.5
-    
-            -- recipe difficulty
-            simModeDetailsFrame.content.recipeDifficultyTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.recipeDifficultyTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content, "TOPLEFT", 20, offsetY - 20)
-            simModeDetailsFrame.content.recipeDifficultyTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL))
-            simModeDetailsFrame.content.recipeDifficultyTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP), 
-                simModeDetailsFrame.content, simModeDetailsFrame.content.recipeDifficultyTitle, "RIGHT", "LEFT", -20, 0)
-    
-    
-            simModeDetailsFrame.content.recipeDifficultyMod = CraftSim.FRAME:CreateNumericInput(
-                "CraftSimSimModeRecipeDifficultyModInput", simModeDetailsFrame.content, simModeDetailsFrame.content, 
-                "TOPRIGHT", "TOPRIGHT", modOffsetX - 30, offsetY - 20 + 3.5, 30, 20, 0, true, 
-                function(_, userInput)
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end)
+        frames.detailsFrame = simModeDetailsFrame
 
-            frames.recipeDifficultyMod = simModeDetailsFrame.content.recipeDifficultyMod
-    
-            simModeDetailsFrame.content.recipeDifficultyMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY
-    
-            simModeDetailsFrame.content.recipeDifficultyValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.recipeDifficultyValue:SetPoint("RIGHT", simModeDetailsFrame.content.recipeDifficultyMod, "LEFT", valueOffsetX, valueOffsetY)
-            simModeDetailsFrame.content.recipeDifficultyValue:SetText("0")
-    
-            -- Inspiration
-            simModeDetailsFrame.content.inspirationTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.inspirationTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.recipeDifficultyTitle, "TOPLEFT", 0, offsetY)
-            simModeDetailsFrame.content.inspirationTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_LABEL))
-            simModeDetailsFrame.content.inspirationTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_EXPLANATION_TOOLTIP), 
-                simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationTitle, "RIGHT", "LEFT", -20, 0)
-    
-            simModeDetailsFrame.content.inspirationMod = CraftSim.FRAME:CreateNumericInput(
-                "CraftSimSimModeInspirationModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.recipeDifficultyMod, 
-                "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
-                function(_, userInput)
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end)
-            frames.inspirationMod = simModeDetailsFrame.content.inspirationMod
-            simModeDetailsFrame.content.inspirationMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION
-    
-            simModeDetailsFrame.content.inspirationValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.inspirationValue:SetPoint("RIGHT", simModeDetailsFrame.content.inspirationMod, "LEFT", valueOffsetX, valueOffsetY)
-            simModeDetailsFrame.content.inspirationValue:SetText("0")
-    
-            -- Inspiration Skill
-            simModeDetailsFrame.content.inspirationSkillTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.inspirationSkillTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.inspirationTitle, "TOPLEFT", 0, offsetY)
-            simModeDetailsFrame.content.inspirationSkillTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_SKILL_LABEL))
-            simModeDetailsFrame.content.inspirationSkillTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_SKILL_EXPLANATION_TOOLTIP), 
-                simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationTitle, "RIGHT", "LEFT", -20, 0)
-    
-            simModeDetailsFrame.content.inspirationSkillMod = CraftSim.FRAME:CreateNumericInput(
-                "CraftSimSimModeInspirationSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationMod, 
-                "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
-                function(_, userInput)
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end)
-            frames.inspirationSkillMod = simModeDetailsFrame.content.inspirationSkillMod
-            simModeDetailsFrame.content.inspirationSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION_SKILL
-    
-            simModeDetailsFrame.content.inspirationSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.inspirationSkillValue:SetPoint("RIGHT", simModeDetailsFrame.content.inspirationSkillMod, "LEFT", valueOffsetX, valueOffsetY)
-            simModeDetailsFrame.content.inspirationSkillValue:SetText("0")
-    
-            -- Multicraft
-            simModeDetailsFrame.content.multicraftTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.multicraftTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.inspirationSkillTitle, "TOPLEFT", 0, offsetY)
-            simModeDetailsFrame.content.multicraftTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_LABEL))
-            simModeDetailsFrame.content.multicraftTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP), 
-                simModeDetailsFrame.content, simModeDetailsFrame.content.multicraftTitle, "RIGHT", "LEFT", -20, 0)
-    
-            simModeDetailsFrame.content.multicraftMod = CraftSim.FRAME:CreateNumericInput(
-                "CraftSimSimModeMulticraftModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationSkillMod, 
-                "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
-                function(_, userInput)
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end)
-            frames.multicraftMod = simModeDetailsFrame.content.multicraftMod
-            simModeDetailsFrame.content.multicraftMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT
-    
-            simModeDetailsFrame.content.multicraftValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.multicraftValue:SetPoint("RIGHT", simModeDetailsFrame.content.multicraftMod, "LEFT", valueOffsetX, valueOffsetY)
-            simModeDetailsFrame.content.multicraftValue:SetText("0")
-    
-            -- Multicraft BonusItemsFactor
-            simModeDetailsFrame.content.multicraftBonusTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.multicraftBonusTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.multicraftTitle, "TOPLEFT", 0, offsetY)
-            simModeDetailsFrame.content.multicraftBonusTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL))
-    
-            simModeDetailsFrame.content.multicraftBonusValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.multicraftBonusValue:SetPoint("TOP", simModeDetailsFrame.content.multicraftMod, "BOTTOM", 0, -3)
-            simModeDetailsFrame.content.multicraftBonusValue:SetText("0%")
-    
-            -- Resourcefulness
-            simModeDetailsFrame.content.resourcefulnessTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.resourcefulnessTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.multicraftBonusTitle, "TOPLEFT", 0, offsetY)
-            simModeDetailsFrame.content.resourcefulnessTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL))
-            simModeDetailsFrame.content.resourcefulnessTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP), 
-                simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessTitle, "RIGHT", "LEFT", -20, 0)
-    
-            simModeDetailsFrame.content.resourcefulnessMod = CraftSim.FRAME:CreateNumericInput(
-                "CraftSimSimModeResourcefulnessModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.multicraftMod, 
-                "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, 
-                function(_, userInput)
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end)
-            frames.resourcefulnessMod = simModeDetailsFrame.content.resourcefulnessMod
-            simModeDetailsFrame.content.resourcefulnessMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS
-    
-            simModeDetailsFrame.content.resourcefulnessValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.resourcefulnessValue:SetPoint("RIGHT", simModeDetailsFrame.content.resourcefulnessMod, "LEFT", valueOffsetX, valueOffsetY)
-            simModeDetailsFrame.content.resourcefulnessValue:SetText("0")
-    
-            -- Resourcefulness BonusItemsFactor
-            simModeDetailsFrame.content.resourcefulnessBonusTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.resourcefulnessBonusTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.resourcefulnessTitle, "TOPLEFT", 0, offsetY)
-            simModeDetailsFrame.content.resourcefulnessBonusTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL))
-    
-            simModeDetailsFrame.content.resourcefulnessBonusValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.resourcefulnessBonusValue:SetPoint("TOP", simModeDetailsFrame.content.resourcefulnessMod, "BOTTOM", 0, -3)
-            simModeDetailsFrame.content.resourcefulnessBonusValue:SetText("0%")
-    
-            -- skill
-    
-            simModeDetailsFrame.content.baseSkillTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.baseSkillTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.resourcefulnessBonusTitle, "TOPLEFT", 0, offsetY)
-            simModeDetailsFrame.content.baseSkillTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SKILL_LABEL))
-    
-            simModeDetailsFrame.content.baseSkillMod = CraftSim.FRAME:CreateNumericInput(
-                "CraftSimSimModeSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessMod, 
-                "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, 
-                function(_, userInput)
-                    CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-                end)
-            frames.baseSkillMod = simModeDetailsFrame.content.baseSkillMod
-            simModeDetailsFrame.content.baseSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL
-    
-            simModeDetailsFrame.content.baseSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.baseSkillValue:SetPoint("RIGHT", simModeDetailsFrame.content.baseSkillMod, "LEFT", valueOffsetX, valueOffsetY)
-            simModeDetailsFrame.content.baseSkillValue:SetText("0")
-    
-            -- reagent skill
-    
-            simModeDetailsFrame.content.reagentSkillIncreaseTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.baseSkillTitle, "TOPLEFT", 0, offsetY)
-            simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL))
-            simModeDetailsFrame.content.reagentSkillIncreaseTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP), 
-                simModeDetailsFrame.content, simModeDetailsFrame.content.reagentSkillIncreaseTitle, "RIGHT", "LEFT", -20, 0)
-    
-            simModeDetailsFrame.content.reagentSkillIncreaseValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.reagentSkillIncreaseValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP", valueOffsetX - 15, offsetY - 5)
-            simModeDetailsFrame.content.reagentSkillIncreaseValue:SetText("0")
-    
-            -- reagent max factor
-            simModeDetailsFrame.content.reagentMaxFactorTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.reagentMaxFactorTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.reagentSkillIncreaseTitle, "TOPLEFT", 0, offsetY)
-            simModeDetailsFrame.content.reagentMaxFactorTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL))
-            simModeDetailsFrame.content.reagentMaxFactorTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP), 
-                simModeDetailsFrame.content, simModeDetailsFrame.content.reagentMaxFactorTitle, "RIGHT", "LEFT", -20, 0)
-    
-            simModeDetailsFrame.content.reagentMaxFactorValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            simModeDetailsFrame.content.reagentMaxFactorValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP", valueOffsetX - 15, offsetY*2 - 5)
-            simModeDetailsFrame.content.reagentMaxFactorValue:SetText("0")
-    
-            simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
-            simModeDetailsFrame.content.qualityFrame:SetSize(simModeDetailsFrame:GetWidth() - 40, 230)
-            simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY*12)
-            local qualityFrame = simModeDetailsFrame.content.qualityFrame
-            qualityFrame.currentQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.currentQualityTitle:SetPoint("TOPLEFT", qualityFrame, "TOPLEFT", 0, 0)
-            qualityFrame.currentQualityTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL))
-    
-            qualityFrame.currentQualityIcon = CraftSim.GGUI.QualityIcon({
-                parent=qualityFrame,anchorParent=qualityFrame,sizeX=25,sizeY=25,anchorA="TOPRIGHT",anchorB="TOPRIGHT",offsetY=5
-            })
-    
-            qualityFrame.currentQualityThreshold = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.currentQualityThreshold:SetPoint("RIGHT", qualityFrame.currentQualityIcon.frame, "LEFT", -5, 0)
-            qualityFrame.currentQualityThreshold:SetText("> ???")
-    
-            qualityFrame.nextQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.nextQualityTitle:SetPoint("TOPLEFT", qualityFrame.currentQualityTitle, "TOPLEFT", 0, offsetY)
-            qualityFrame.nextQualityTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL))
-    
-            qualityFrame.nextQualityIcon = CraftSim.GGUI.QualityIcon({
-                parent=qualityFrame,anchorParent=qualityFrame.currentQualityIcon.frame,anchorA="TOP",anchorB="TOP",offsetY=offsetY,
-                sizeX=25,sizeY=25,
-            })
-    
-            qualityFrame.nextQualityThreshold = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.nextQualityThreshold:SetPoint("RIGHT", qualityFrame.nextQualityIcon.frame, "LEFT", -5, 0)
-            qualityFrame.nextQualityThreshold:SetText("> ???")
-    
-            qualityFrame.nextQualityMissingSkillTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.nextQualityMissingSkillTitle:SetPoint("TOPLEFT", qualityFrame.nextQualityTitle, "TOPLEFT", 0, offsetY)
-            qualityFrame.nextQualityMissingSkillTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_LABEL))
-    
-            qualityFrame.nextQualityMissingSkillValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.nextQualityMissingSkillValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityThreshold, "TOPRIGHT", 0, offsetY)
-            qualityFrame.nextQualityMissingSkillValue:SetText("???")
-    
-            qualityFrame.nextQualityMissingSkillInspiration = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.nextQualityMissingSkillInspiration:SetPoint("TOPLEFT", qualityFrame.nextQualityMissingSkillTitle, "TOPLEFT", 0, offsetY)
-            qualityFrame.nextQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. ":")
-    
-            qualityFrame.nextQualityMissingSkillInspirationValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.nextQualityMissingSkillInspirationValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityMissingSkillValue, "TOPRIGHT", 0, offsetY)
-            qualityFrame.nextQualityMissingSkillInspirationValue:SetText("???")
-    
-            qualityFrame.skipQualityMissingSkillInspiration = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.skipQualityMissingSkillInspiration:SetPoint("TOPLEFT", qualityFrame.nextQualityMissingSkillInspiration, "TOPLEFT", 0, offsetY)
-            qualityFrame.skipQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. ":")
-    
-            qualityFrame.skipQualityMissingSkillInspirationValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
-            qualityFrame.skipQualityMissingSkillInspirationValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityMissingSkillInspirationValue, "TOPRIGHT", 0, offsetY)
-            qualityFrame.skipQualityMissingSkillInspirationValue:SetText("???")
-    
-            return frames
+        local offsetY = -20
+        local modOffsetX = 5
+        local valueOffsetX = -5
+        local valueOffsetY = 0.5
+
+        -- recipe difficulty
+        simModeDetailsFrame.content.recipeDifficultyTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.recipeDifficultyTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content, "TOPLEFT", 20, offsetY - 20)
+        simModeDetailsFrame.content.recipeDifficultyTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL))
+        simModeDetailsFrame.content.recipeDifficultyTitle.helper = CraftSim.FRAME:CreateHelpIcon(
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP), 
+            simModeDetailsFrame.content, simModeDetailsFrame.content.recipeDifficultyTitle, "RIGHT", "LEFT", -20, 0)
+
+
+        simModeDetailsFrame.content.recipeDifficultyMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeRecipeDifficultyModInput", simModeDetailsFrame.content, simModeDetailsFrame.content, 
+            "TOPRIGHT", "TOPRIGHT", modOffsetX - 30, offsetY - 20 + 3.5, 30, 20, 0, true, 
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+            end)
+
+        frames.recipeDifficultyMod = simModeDetailsFrame.content.recipeDifficultyMod
+
+        simModeDetailsFrame.content.recipeDifficultyMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RECIPE_DIFFICULTY
+
+        simModeDetailsFrame.content.recipeDifficultyValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.recipeDifficultyValue:SetPoint("RIGHT", simModeDetailsFrame.content.recipeDifficultyMod, "LEFT", valueOffsetX, valueOffsetY)
+        simModeDetailsFrame.content.recipeDifficultyValue:SetText("0")
+
+        -- Inspiration
+        simModeDetailsFrame.content.inspirationTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.inspirationTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.recipeDifficultyTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.inspirationTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_LABEL))
+        simModeDetailsFrame.content.inspirationTitle.helper = CraftSim.FRAME:CreateHelpIcon(
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_EXPLANATION_TOOLTIP), 
+            simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationTitle, "RIGHT", "LEFT", -20, 0)
+
+        simModeDetailsFrame.content.inspirationMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeInspirationModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.recipeDifficultyMod, 
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+            end)
+        frames.inspirationMod = simModeDetailsFrame.content.inspirationMod
+        simModeDetailsFrame.content.inspirationMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION
+
+        simModeDetailsFrame.content.inspirationValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.inspirationValue:SetPoint("RIGHT", simModeDetailsFrame.content.inspirationMod, "LEFT", valueOffsetX, valueOffsetY)
+        simModeDetailsFrame.content.inspirationValue:SetText("0")
+
+        -- Inspiration Skill
+        simModeDetailsFrame.content.inspirationSkillTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.inspirationSkillTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.inspirationTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.inspirationSkillTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_SKILL_LABEL))
+        simModeDetailsFrame.content.inspirationSkillTitle.helper = CraftSim.FRAME:CreateHelpIcon(
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_SKILL_EXPLANATION_TOOLTIP), 
+            simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationTitle, "RIGHT", "LEFT", -20, 0)
+
+        simModeDetailsFrame.content.inspirationSkillMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeInspirationSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationMod, 
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+            end)
+        frames.inspirationSkillMod = simModeDetailsFrame.content.inspirationSkillMod
+        simModeDetailsFrame.content.inspirationSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION_SKILL
+
+        simModeDetailsFrame.content.inspirationSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.inspirationSkillValue:SetPoint("RIGHT", simModeDetailsFrame.content.inspirationSkillMod, "LEFT", valueOffsetX, valueOffsetY)
+        simModeDetailsFrame.content.inspirationSkillValue:SetText("0")
+
+        -- Multicraft
+        simModeDetailsFrame.content.multicraftTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.multicraftTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.inspirationSkillTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.multicraftTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_LABEL))
+        simModeDetailsFrame.content.multicraftTitle.helper = CraftSim.FRAME:CreateHelpIcon(
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP), 
+            simModeDetailsFrame.content, simModeDetailsFrame.content.multicraftTitle, "RIGHT", "LEFT", -20, 0)
+
+        simModeDetailsFrame.content.multicraftMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeMulticraftModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationSkillMod, 
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true, 
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+            end)
+        frames.multicraftMod = simModeDetailsFrame.content.multicraftMod
+        simModeDetailsFrame.content.multicraftMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_MULTICRAFT
+
+        simModeDetailsFrame.content.multicraftValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.multicraftValue:SetPoint("RIGHT", simModeDetailsFrame.content.multicraftMod, "LEFT", valueOffsetX, valueOffsetY)
+        simModeDetailsFrame.content.multicraftValue:SetText("0")
+
+        -- Multicraft BonusItemsFactor
+        simModeDetailsFrame.content.multicraftBonusTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.multicraftBonusTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.multicraftTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.multicraftBonusTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL))
+
+        simModeDetailsFrame.content.multicraftBonusValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.multicraftBonusValue:SetPoint("TOP", simModeDetailsFrame.content.multicraftMod, "BOTTOM", 0, -3)
+        simModeDetailsFrame.content.multicraftBonusValue:SetText("0%")
+
+        -- Resourcefulness
+        simModeDetailsFrame.content.resourcefulnessTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.resourcefulnessTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.multicraftBonusTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.resourcefulnessTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL))
+        simModeDetailsFrame.content.resourcefulnessTitle.helper = CraftSim.FRAME:CreateHelpIcon(
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP), 
+            simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessTitle, "RIGHT", "LEFT", -20, 0)
+
+        simModeDetailsFrame.content.resourcefulnessMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeResourcefulnessModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.multicraftMod, 
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, 
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+            end)
+        frames.resourcefulnessMod = simModeDetailsFrame.content.resourcefulnessMod
+        simModeDetailsFrame.content.resourcefulnessMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_RESOURCEFULNESS
+
+        simModeDetailsFrame.content.resourcefulnessValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.resourcefulnessValue:SetPoint("RIGHT", simModeDetailsFrame.content.resourcefulnessMod, "LEFT", valueOffsetX, valueOffsetY)
+        simModeDetailsFrame.content.resourcefulnessValue:SetText("0")
+
+        -- Resourcefulness BonusItemsFactor
+        simModeDetailsFrame.content.resourcefulnessBonusTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.resourcefulnessBonusTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.resourcefulnessTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.resourcefulnessBonusTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL))
+
+        simModeDetailsFrame.content.resourcefulnessBonusValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.resourcefulnessBonusValue:SetPoint("TOP", simModeDetailsFrame.content.resourcefulnessMod, "BOTTOM", 0, -3)
+        simModeDetailsFrame.content.resourcefulnessBonusValue:SetText("0%")
+
+        -- skill
+
+        simModeDetailsFrame.content.baseSkillTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.baseSkillTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.resourcefulnessBonusTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.baseSkillTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SKILL_LABEL))
+
+        simModeDetailsFrame.content.baseSkillMod = CraftSim.FRAME:CreateNumericInput(
+            "CraftSimSimModeSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessMod, 
+            "TOPRIGHT", "TOPRIGHT", 0, offsetY*2, 30, 20, 0, true, 
+            function(_, userInput)
+                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
+            end)
+        frames.baseSkillMod = simModeDetailsFrame.content.baseSkillMod
+        simModeDetailsFrame.content.baseSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL
+
+        simModeDetailsFrame.content.baseSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.baseSkillValue:SetPoint("RIGHT", simModeDetailsFrame.content.baseSkillMod, "LEFT", valueOffsetX, valueOffsetY)
+        simModeDetailsFrame.content.baseSkillValue:SetText("0")
+
+        -- reagent skill
+
+        simModeDetailsFrame.content.reagentSkillIncreaseTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.baseSkillTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL))
+        simModeDetailsFrame.content.reagentSkillIncreaseTitle.helper = CraftSim.FRAME:CreateHelpIcon(
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP), 
+            simModeDetailsFrame.content, simModeDetailsFrame.content.reagentSkillIncreaseTitle, "RIGHT", "LEFT", -20, 0)
+
+        simModeDetailsFrame.content.reagentSkillIncreaseValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.reagentSkillIncreaseValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP", valueOffsetX - 15, offsetY - 5)
+        simModeDetailsFrame.content.reagentSkillIncreaseValue:SetText("0")
+
+        -- reagent max factor
+        simModeDetailsFrame.content.reagentMaxFactorTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.reagentMaxFactorTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content.reagentSkillIncreaseTitle, "TOPLEFT", 0, offsetY)
+        simModeDetailsFrame.content.reagentMaxFactorTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL))
+        simModeDetailsFrame.content.reagentMaxFactorTitle.helper = CraftSim.FRAME:CreateHelpIcon(
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP), 
+            simModeDetailsFrame.content, simModeDetailsFrame.content.reagentMaxFactorTitle, "RIGHT", "LEFT", -20, 0)
+
+        simModeDetailsFrame.content.reagentMaxFactorValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        simModeDetailsFrame.content.reagentMaxFactorValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP", valueOffsetX - 15, offsetY*2 - 5)
+        simModeDetailsFrame.content.reagentMaxFactorValue:SetText("0")
+
+        simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
+        simModeDetailsFrame.content.qualityFrame:SetSize(simModeDetailsFrame:GetWidth() - 40, 230)
+        simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY*12)
+        local qualityFrame = simModeDetailsFrame.content.qualityFrame
+        qualityFrame.currentQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.currentQualityTitle:SetPoint("TOPLEFT", qualityFrame, "TOPLEFT", 0, 0)
+        qualityFrame.currentQualityTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL))
+
+        qualityFrame.currentQualityIcon = CraftSim.GGUI.QualityIcon({
+            parent=qualityFrame,anchorParent=qualityFrame,sizeX=25,sizeY=25,anchorA="TOPRIGHT",anchorB="TOPRIGHT",offsetY=5
+        })
+
+        qualityFrame.currentQualityThreshold = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.currentQualityThreshold:SetPoint("RIGHT", qualityFrame.currentQualityIcon.frame, "LEFT", -5, 0)
+        qualityFrame.currentQualityThreshold:SetText("> ???")
+
+        qualityFrame.nextQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityTitle:SetPoint("TOPLEFT", qualityFrame.currentQualityTitle, "TOPLEFT", 0, offsetY)
+        qualityFrame.nextQualityTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL))
+
+        qualityFrame.nextQualityIcon = CraftSim.GGUI.QualityIcon({
+            parent=qualityFrame,anchorParent=qualityFrame.currentQualityIcon.frame,anchorA="TOP",anchorB="TOP",offsetY=offsetY,
+            sizeX=25,sizeY=25,
+        })
+
+        qualityFrame.nextQualityThreshold = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityThreshold:SetPoint("RIGHT", qualityFrame.nextQualityIcon.frame, "LEFT", -5, 0)
+        qualityFrame.nextQualityThreshold:SetText("> ???")
+
+        qualityFrame.nextQualityMissingSkillTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityMissingSkillTitle:SetPoint("TOPLEFT", qualityFrame.nextQualityTitle, "TOPLEFT", 0, offsetY)
+        qualityFrame.nextQualityMissingSkillTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_LABEL))
+
+        qualityFrame.nextQualityMissingSkillValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityMissingSkillValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityThreshold, "TOPRIGHT", 0, offsetY)
+        qualityFrame.nextQualityMissingSkillValue:SetText("???")
+
+        qualityFrame.nextQualityMissingSkillInspiration = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityMissingSkillInspiration:SetPoint("TOPLEFT", qualityFrame.nextQualityMissingSkillTitle, "TOPLEFT", 0, offsetY)
+        qualityFrame.nextQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. ":")
+
+        qualityFrame.nextQualityMissingSkillInspirationValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.nextQualityMissingSkillInspirationValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityMissingSkillValue, "TOPRIGHT", 0, offsetY)
+        qualityFrame.nextQualityMissingSkillInspirationValue:SetText("???")
+
+        qualityFrame.skipQualityMissingSkillInspiration = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.skipQualityMissingSkillInspiration:SetPoint("TOPLEFT", qualityFrame.nextQualityMissingSkillInspiration, "TOPLEFT", 0, offsetY)
+        qualityFrame.skipQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. ":")
+
+        qualityFrame.skipQualityMissingSkillInspirationValue = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
+        qualityFrame.skipQualityMissingSkillInspirationValue:SetPoint("TOPRIGHT", qualityFrame.nextQualityMissingSkillInspirationValue, "TOPRIGHT", 0, offsetY)
+        qualityFrame.skipQualityMissingSkillInspirationValue:SetText("???")
+
+        return frames
     end
 
     CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER = createSimulationModeFrames(ProfessionsFrame.CraftingPage.SchematicForm)
