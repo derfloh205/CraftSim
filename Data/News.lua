@@ -11,10 +11,16 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.2.1") ..
-        f.P .. f.bb("CraftData") .. " is now always used if existing and lower" ..
+        f.P .. f.bb("Craft Data") .. " is now always used if existing and lower" ..
         f.a .. "than current ah price" ..
         f.a .. "Removed the " .. f.bb("Use Craft Data") .. " toggle in price override due" ..
         f.a .. "to redundancy" ..
+        f.s .. f.bb("Recipe Scan") .. " now shows the recipeNames wrapped, colorized" ..
+        f.a .. "and scaled down a bit" ..
+        f.p .. "Added a Cancel button to " .. f.bb("Recipe Scan") ..
+        f.a .. "Because some recipes, especially " .. f.e("Life Bound Gear") ..
+        f.a .. " for " .. f.bb("Leatherworking").. " decrease performance when" .. 
+        f.a .. "optimizing materials due to over 150 required reagents" ..
         f.p .. "Fixed FrameStrata of " .. f.bb("Simulation Mode Details") .. " Frame" ..
         f.p .. "Fixed an error when using CraftSim without a " .. f.bb("Price Source") ..
         f.p .. "Adjusted exported data for the " .. f.l("ForgeFinder") .. " export" ..
