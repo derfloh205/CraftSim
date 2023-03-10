@@ -9,7 +9,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
     CraftSim.RECIPE_SCAN.frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent=ProfessionsFrame.CraftingPage.SchematicForm, 
-        sizeX=700,sizeY=400,
+        sizeX=850,sizeY=400,
         frameID=CraftSim.CONST.FRAMES.RECIPE_SCAN, 
         title="CraftSim Recipe Scan",
         collapseable=true,
@@ -40,7 +40,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
 
         
         frame.content.exportForgeFinderButton = CraftSim.GGUI.Button({
-            parent=frame.content, anchorParent = frame.content.scanButton.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=135, adjustWidth = true,
+            parent=frame.content, anchorParent = frame.content.scanButton.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=210, adjustWidth = true,
             label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Export",
             clickCallback=CraftSim.RECIPE_SCAN.ForgeFinderExport
         })
@@ -53,7 +53,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
 
         frame.content.includeSoulboundCB = CraftSim.FRAME:CreateCheckbox(
             " Include Soulbound", "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items", 
-        "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode.frame, "RIGHT", "LEFT", -190, 0)
+        "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode.frame, "RIGHT", "LEFT", -250, 0)
 
         frame.content.includeNotLearnedCB = CraftSim.FRAME:CreateCheckbox(
             " Include not learned", "Include recipes you do not have learned in the recipe scan", 
@@ -64,12 +64,16 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
 
         frame.content.optimizeProfessionToolsCB = CraftSim.FRAME:CreateCheckbox(" Optimize Profession Tools", "For each recipe optimize your profession tools for profit\n\n" .. 
                                                                                 CraftSim.GUTIL:ColorizeText("Might lower performance during scanning\nif you have a lot of tools in your inventory", CraftSim.GUTIL.COLORS.RED), 
-        "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 10, 0)
+        "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 90, 0)
 
         local columnOptions = {
             {
                 -- switch to recipe button
-                width=30,
+                width=40,
+            },
+            {
+                label="Recipe",
+                width=150,
             },
             {
                 label="Learned",
@@ -88,7 +92,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
             },
             {
                 label="Average Profit",
-                width=110,
+                width=140,
             },
             {
                 label="Top Gear",
@@ -110,18 +114,24 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
             columnOptions=columnOptions,
             rowConstructor=function (columns)
                 local switchToRecipeColumn = columns[1] 
-                local learnedColumn = columns[2]
-                local expectedResultColumn = columns[3] 
-                local highestResultColumn = columns[4] 
-                local averageProfitColumn = columns[5] 
-                local topGearColumn = columns[6] 
-                local countColumn = columns[7]
+                local recipeColumn = columns[2]
+                local learnedColumn = columns[3]
+                local expectedResultColumn = columns[4] 
+                local highestResultColumn = columns[5] 
+                local averageProfitColumn = columns[6] 
+                local topGearColumn = columns[7] 
+                local countColumn = columns[8]
 
                 switchToRecipeColumn.switchButton = CraftSim.GGUI.Button({
                     parent=switchToRecipeColumn,anchorParent=switchToRecipeColumn, sizeX=25, sizeY=25,
                     label="->", clickCallback=function (gButton) 
                         C_TradeSkillUI.OpenRecipe(gButton.recipeID)
                     end
+                })
+
+                recipeColumn.text = CraftSim.GGUI.Text({
+                    parent=recipeColumn,anchorParent=recipeColumn,anchorA="LEFT",anchorB="LEFT", justifyOptions={type="H",align="LEFT"}, scale=0.9,
+                    fixedWidth=recipeColumn:GetWidth(), wrap=true,
                 })
                 
                 learnedColumn.text = CraftSim.GGUI.Text({
@@ -209,14 +219,20 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
         local columns = row.columns
 
         local switchToRecipeColumn = columns[1] 
-        local learnedColumn = columns[2]
-        local expectedResultColumn = columns[3] 
-        local highestResultColumn = columns[4] 
-        local averageProfitColumn = columns[5] 
-        local topGearColumn = columns[6] 
-        local countColumn = columns[7]
+        local recipeColumn = columns[2]
+        local learnedColumn = columns[3]
+        local expectedResultColumn = columns[4] 
+        local highestResultColumn = columns[5] 
+        local averageProfitColumn = columns[6] 
+        local topGearColumn = columns[7] 
+        local countColumn = columns[8]
 
         switchToRecipeColumn.switchButton.recipeID = recipeData.recipeID
+
+        local recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
+
+        recipeColumn.text:SetText(recipeRarity.hex .. recipeData.recipeName .. "|r")
+
         learnedColumn:SetLearned(recipeData.learned)
 
         expectedResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItem)
@@ -233,7 +249,11 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
             highestResultColumn.chance:Hide()
         end
         local averageProfit = recipeData:GetAverageProfit()
-        averageProfitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(averageProfit, true))
+        local relativeTo = nil
+        if CraftSimOptions.showProfitPercentage then
+            relativeTo = recipeData.priceData.craftingCosts
+        end
+        averageProfitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(averageProfit, true, relativeTo))
         row.averageProfit = averageProfit
 
         if CraftSim.RECIPE_SCAN.frame.content.optimizeProfessionToolsCB:GetChecked() then

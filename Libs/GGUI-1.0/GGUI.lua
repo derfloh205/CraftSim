@@ -928,6 +928,10 @@ function GGUI.Text:new(options)
     text:SetPoint(options.anchorA, options.anchorParent, options.anchorB, options.offsetX, options.offsetY)
     text:SetScale(options.scale)
 
+    if options.wrap then
+        text:SetWordWrap(true)
+    end
+
     if options.fixedWidth then
         text:SetWidth(options.fixedWidth)
     end

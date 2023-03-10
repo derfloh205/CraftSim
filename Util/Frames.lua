@@ -126,6 +126,7 @@ end
 
 function CraftSim.FRAME:ResetFrames()
     for _, frame in pairs(CraftSim.GGUI.frames) do
+        print("reseting frameID: " .. tostring(frame.frameID))
         frame:ResetPosition()
     end
 end

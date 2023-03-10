@@ -12,6 +12,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
 ---@class CraftSim.PriceData.PriceInfo
 ---@field ahPrice number
 ---@field craftDataExpectedCosts? number
+---@field craftData? CraftSim.CraftData
 ---@field priceOverride? number
 ---@field isAHPrice boolean
 ---@field noAHPriceFound boolean
@@ -43,8 +44,8 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
 
         -- always use craftData except if ahPrice is lower OR a priceOverride exists (OR has priority)
         if craftDataSerialized then
-            local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
-            local expectedCosts = craftData:GetExpectedCosts()
+            priceInfo.craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
+            local expectedCosts = priceInfo.craftData:GetExpectedCosts()
             priceInfo.craftDataExpectedCosts = expectedCosts
         end
 

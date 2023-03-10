@@ -57,11 +57,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         label="Delete for all Recipes",
         clickCallback=function ()
             CraftSim.CRAFTDATA:DeleteAll()
-
-            local selectedItem = craftDataFrame.content.resultsDropdown.selectedValue
-            if selectedItem then
-                CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(selectedItem)
-            end
+            CraftSim.MAIN:TriggerModulesErrorSafe() -- refresh all modules since it may be possible that we delete craftdata that is used here
         end
     })
     ---@type GGUI.Button | GGUI.Widget
