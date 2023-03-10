@@ -11,6 +11,10 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.2.1") ..
+        f.P .. f.bb("CraftData") .. " is now always used if existing and lower" ..
+        f.a .. "than current ah price" ..
+        f.a .. "Removed the " .. f.bb("Use Craft Data") .. " toggle in price override due" ..
+        f.a .. "to redundancy" ..
         f.p .. "Fixed FrameStrata of " .. f.bb("Simulation Mode Details") .. " Frame" ..
         f.p .. "Fixed an error when using CraftSim without a " .. f.bb("Price Source") ..
         f.p .. "Adjusted exported data for the " .. f.l("ForgeFinder") .. " export" ..

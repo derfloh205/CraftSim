@@ -129,7 +129,7 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
                     usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText("CD", CraftSim.GUTIL.COLORS.BRIGHT_BLUE))
                 end
                 function usedPriceColumn:SetUnknown()
-                    usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText("?", CraftSim.GUTIL.COLORS.RED))
+                    usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.RED))
                 end
             end
         })

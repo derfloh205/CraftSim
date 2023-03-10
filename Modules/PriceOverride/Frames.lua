@@ -94,19 +94,6 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
 
             overrideOptions.removeButton:SetEnabled(overrideData)
 
-            if overrideOptions.useCraftDataCB:GetChecked() then
-
-                if overrideData and overrideData.useCraftData then
-                    if overrideData.useCraftData then
-                        overrideOptions.saveButton:SetStatus("SAVED")
-                    end
-                else
-                    overrideOptions.saveButton:SetStatus("READY")
-                end
-
-                return
-            end
-
             local valid = overrideOptions.currencyInputGold.isValid
 
             if overrideData and overrideData.price then
@@ -173,29 +160,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
             showFormatHelpIcon=true, initialValue=0,
 
         })
-        overrideOptions.useCraftDataCB = CraftSim.GGUI.Checkbox({
-            parent=overrideOptions, anchorParent=overrideOptions.currencyInputGold.textInput.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=30,
-            label="Craft Data",
-            tooltip=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_OVERRIDE_EXPLANATION),
-            clickCallback=function (self, checked)
-                if checked then
-                    overrideOptions.currencyInputGold:Hide()
-                    overrideOptions.craftDataUsageText:Show()
-                else
-                    overrideOptions.currencyInputGold:Show()
-                    overrideOptions.craftDataUsageText:Hide()
-                end
-                overrideOptions:updateButtonStatus()
-            end
-        })
 
-        overrideOptions.craftDataUsageText = CraftSim.GGUI.Text({
-            parent=overrideOptions, anchorParent=overrideOptions.currencyInputGold.textInput.frame, 
-            text = CraftSim.GUTIL:ColorizeText("Use Craft Data", CraftSim.GUTIL.COLORS.BRIGHT_BLUE), anchorA="LEFT", anchorB="LEFT"
-        })
-
-        overrideOptions.craftDataUsageText:Hide()
-    
         frame.content.scrollFrame1, frame.content.activeOverridesBox = CraftSim.FRAME:CreateScrollFrame(frame.content, -170, 50, -50, 30)
         local title = CraftSim.FRAME:CreateText("Active Overrides", frame.content, frame.content.scrollFrame1, "BOTTOM", "TOP", 0, 0)
         CraftSim.FRAME:CreateHelpIcon("'(as result)' -> price override only considered when item is a result of a recipe", frame.content, title, "LEFT", "RIGHT", 3, 0)
@@ -236,29 +201,6 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideItem(overrideData)
     overrideOptions:Show()
 
     overrideOptions.itemIcon:SetItem(overrideData.item:GetItemLink())
-
-    if overrideData.isResult then
-        overrideOptions.useCraftDataCB:SetChecked(false)
-        overrideOptions.useCraftDataCB:Hide(false)
-        overrideOptions.craftDataUsageText:Hide()
-        overrideOptions.currencyInputGold:Show()
-    else
-        local priceOverrideData = CraftSim.PRICE_OVERRIDE:GetGlobalOverride(overrideData.item:GetItemID())
-
-        overrideOptions.useCraftDataCB:Show()
-        if priceOverrideData then
-            if priceOverrideData.useCraftData then
-                overrideOptions.useCraftDataCB:SetChecked(true)
-                overrideOptions.craftDataUsageText:Show()
-                overrideOptions.currencyInputGold:Hide()
-            else
-                overrideOptions.useCraftDataCB:SetChecked(false)
-                overrideOptions.craftDataUsageText:Hide()
-                overrideOptions.currencyInputGold:Show()
-            end
-        end
-  
-    end
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -367,11 +309,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideList(priceOverrideFrame)
         local text = ""
         table.foreach(globalOverrides, function (_, priceOverrideData)
             local item = Item:CreateFromItemID(priceOverrideData.itemID)
-            if priceOverrideData.useCraftData then
-                text = text .. item:GetItemLink() .. ": " .. CraftSim.GUTIL:ColorizeText("Use Craft Data", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) .. "\n"
-            else
-                text = text .. item:GetItemLink() .. ": " .. CraftSim.GUTIL:FormatMoney(priceOverrideData.price) .. "\n"
-            end
+            text = text .. item:GetItemLink() .. ": " .. CraftSim.GUTIL:FormatMoney(priceOverrideData.price) .. "\n"
         end)
 
         table.foreach(recipeOverrides, function (_, resultOverrideList)

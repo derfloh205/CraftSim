@@ -39,40 +39,36 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
     -- check for overrides
     if isReagent then
         local priceOverrideData = CraftSim.PRICE_OVERRIDE:GetGlobalOverride(itemID)
+        local craftDataSerialized = CraftSim.CraftData:GetActiveCraftDataByItem(Item:CreateFromItemID(itemID))
+
+        -- always use craftData except if ahPrice is lower OR a priceOverride exists (OR has priority)
+        if craftDataSerialized then
+            local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
+            local expectedCosts = craftData:GetExpectedCosts()
+            priceInfo.craftDataExpectedCosts = expectedCosts
+        end
 
         if priceOverrideData then
-            if priceOverrideData.useCraftData then
-                --- get craft data and return expected costs
-                --- based on cached map
-                local craftDataSerialized = CraftSim.CraftData:GetActiveCraftDataByItem(Item:CreateFromItemID(itemID))
+            priceInfo.isOverride = true
+            return priceOverrideData.price, priceInfo
+        end
 
-                --- this no craft data is found it will continue and just fetch the buyout
-                if craftDataSerialized then
-                    local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
-                    local expectedCosts = craftData:GetExpectedCosts()
-                    priceInfo.craftDataExpectedCosts = expectedCosts
-
-                    if priceInfo.noAHPriceFound then
-                        -- if no ahPrice could be found but we have craftData, use craftData
-                        priceInfo.isCraftData = true
-                        priceInfo.noAHPriceFound = true
-                        return expectedCosts, priceInfo
-                    end
-
-                    if priceInfo.ahPrice <= expectedCosts then
-                        -- if we have ah price and expected costs but ah price is lower, use ah price
-                        priceInfo.isAHPrice = true
-                        return priceInfo.ahPrice, priceInfo
-                    end
-
-                    priceInfo.isCraftData = true
-                    return expectedCosts, priceInfo
-                end
-            else
-                -- we have an override, but no craft data, so use override
-                priceInfo.isOverride = true
-                return priceOverrideData.price, priceInfo
+        if priceInfo.craftDataExpectedCosts then
+            if priceInfo.noAHPriceFound then
+                -- if no ahPrice could be found but we have craftData, use craftData
+                priceInfo.isCraftData = true
+                priceInfo.noAHPriceFound = true
+                return priceInfo.craftDataExpectedCosts, priceInfo                
             end
+
+            if priceInfo.ahPrice <= priceInfo.craftDataExpectedCosts then
+                -- if we have ah price and expected costs but ah price is lower, use ah price
+                priceInfo.isAHPrice = true
+                return priceInfo.ahPrice, priceInfo
+            end
+
+            priceInfo.isCraftData = true
+            return priceInfo.craftDataExpectedCosts, priceInfo
         end
     end
 

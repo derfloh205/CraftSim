@@ -17,7 +17,6 @@ CraftSimPriceOverridesV2 = CraftSimPriceOverridesV2 or {
 ---@field itemID number
 ---@field price number
 ---@field qualityID? number -- used for result item mappings in a recipe
----@field useCraftData boolean
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE)
 
@@ -101,7 +100,6 @@ function CraftSim.PRICE_OVERRIDE:SaveOverrideData(recipeID, overrideDropdownData
         itemID = overrideDropdownData.item:GetItemID(),
         qualityID = overrideDropdownData.qualityID,
         price = price,
-        useCraftData = priceOverrideFrame.content.overrideOptions.useCraftDataCB:GetChecked()
     }
     
     if overrideDropdownData.isResult then
