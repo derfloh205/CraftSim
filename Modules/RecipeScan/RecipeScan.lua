@@ -4,6 +4,7 @@ CraftSim.RECIPE_SCAN = {}
 
 CraftSim.RECIPE_SCAN.scanInterval = 0.01
 CraftSim.RECIPE_SCAN.frame = nil
+CraftSim.RECIPE_SCAN.isScanning = false
 
 CraftSim.RECIPE_SCAN.SCAN_MODES = {
     Q1 = "Materials Quality 1", 
@@ -25,6 +26,7 @@ end
 function CraftSim.RECIPE_SCAN:ToggleScanButton(value)
     local frame = CraftSim.RECIPE_SCAN.frame
     frame.content.scanButton:SetEnabled(value)
+    frame.content.cancelScanButton:SetVisible(not value)
     if not value then
         frame.content.scanButton:SetText("Scanning 0%")
     else
@@ -46,6 +48,7 @@ function CraftSim.RECIPE_SCAN:EndScan()
     collectgarbage("collect") -- By Option?
     CraftSim.RECIPE_SCAN:ToggleScanButton(true)
     CraftSim.RECIPE_SCAN.frame.content.exportForgeFinderButton:SetEnabled(#CraftSim.RECIPE_SCAN.currentResults > 0)
+    CraftSim.RECIPE_SCAN.isScanning = false
 end
 
 function CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)
@@ -146,7 +149,14 @@ function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
     return nil
 end
 
+---@param recipeInfo TradeSkillRecipeInfo
 function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
+    if recipeInfo.isDummyRecipe then
+        return false
+    end
+    if tContains(CraftSim.CONST.BLIZZARD_DUMMY_RECIPES, recipeInfo.recipeID) then
+        return false
+    end
     if not CraftSimOptions.recipeScanIncludeNotLearned and not recipeInfo.learned then
         return false
     end
@@ -193,6 +203,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
 
     CraftSim.RECIPE_SCAN.currentResults = {}
     CraftSim.RECIPE_SCAN.frame.content.exportForgeFinderButton:SetEnabled(false)
+    CraftSim.RECIPE_SCAN.isScanning = true
     
     local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
     print("Scan Mode: " .. tostring(scanMode))
@@ -204,6 +215,12 @@ function CraftSim.RECIPE_SCAN:StartScan()
     local currentIndex = 1
 
     local function scanRecipesByInterval()
+
+        -- check if scan was ended
+        if not CraftSim.RECIPE_SCAN.isScanning then
+            return
+        end
+
         CraftSim.UTIL:StartProfiling("Single Recipe Scan")
         local recipeInfo = recipeInfos[currentIndex]
         if not recipeInfo then
@@ -224,6 +241,8 @@ function CraftSim.RECIPE_SCAN:StartScan()
             CraftSim.RECIPE_SCAN:EndScan()
             return
         end
+
+        
 
         
         --optimize top gear first cause optimized reagents might change depending on the gear
@@ -267,6 +286,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
         CraftSim.GUTIL:ContinueOnAllItemsLoaded(recipeData.resultData.itemsByQuality, continueScan)
     end
 
+    print("End Scan")
     CraftSim.RECIPE_SCAN:ToggleScanButton(false)
     CraftSim.RECIPE_SCAN:ResetResults()
     scanRecipesByInterval()

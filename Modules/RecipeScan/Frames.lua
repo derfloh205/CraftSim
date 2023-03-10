@@ -38,6 +38,14 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
             end
         })
 
+        frame.content.cancelScanButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.content.scanButton.frame,label="Cancel", anchorA="LEFT", anchorB="RIGHT",sizeX=15,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.RECIPE_SCAN:EndScan()
+            end
+        })
+
+        frame.content.cancelScanButton:Hide()
         
         frame.content.exportForgeFinderButton = CraftSim.GGUI.Button({
             parent=frame.content, anchorParent = frame.content.scanButton.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=210, adjustWidth = true,

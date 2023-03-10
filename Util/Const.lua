@@ -19,6 +19,11 @@ CraftSim.CONST.PERCENT_MODS = {
     CRAFTINGSPEED = 0.002,
 }
 
+-- some dummy recipes are not flagged as dummy ..........
+CraftSim.CONST.BLIZZARD_DUMMY_RECIPES = {
+    371635, -- "Demonstration Item Recipe" part of Alchemy Stone Category for Alchemy
+}
+
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
 -- currently this is just an approximation
 CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
