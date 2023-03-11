@@ -179,35 +179,41 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         },
         BRILLIANT_BAUBLING_2 = {
             nodeID = 81118,
+            threshold = 0,
+            inspirationBonusSkillFactor = 0.05,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+        },
+        BRILLIANT_BAUBLING_3 = {
+            nodeID = 81118,
             threshold = 5,
             inspiration = 15,
             idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
-        BRILLIANT_BAUBLING_3 = {
+        BRILLIANT_BAUBLING_4 = {
             nodeID = 81118,
             threshold = 10,
             inspirationBonusSkillFactor = 0.10,
             idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
-        BRILLIANT_BAUBLING_4 = {
+        BRILLIANT_BAUBLING_5 = {
             nodeID = 81118,
             threshold = 15,
             inspiration = 15,
             idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
-        BRILLIANT_BAUBLING_5 = {
+        BRILLIANT_BAUBLING_6 = {
             nodeID = 81118,
             threshold = 20,
             inspirationBonusSkillFactor = 0.10,
             idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
-        BRILLIANT_BAUBLING_6 = {
+        BRILLIANT_BAUBLING_7 = {
             nodeID = 81118,
             threshold = 25,
             inspiration = 15,
             idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
-        BRILLIANT_BAUBLING_7 = {
+        BRILLIANT_BAUBLING_8 = {
             nodeID = 81118,
             threshold = 30,
             inspirationBonusSkillFactor = 0.25,
