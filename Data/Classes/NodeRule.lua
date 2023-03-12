@@ -26,6 +26,7 @@ function CraftSim.NodeRule:new(nodeRuleData, nodeData)
     self.equalsSkill = nodeRuleData.equalsSkill or false
     self.equalsMulticraft = nodeRuleData.equalsMulticraft or false
     self.equalsInspiration = nodeRuleData.equalsInspiration or false
+    self.equalsInspirationBonusSkillFactor = nodeRuleData.equalsInspirationBonusSkillFactor or false
     self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or false
     self.equalsResourcefulnessPercent = nodeRuleData.equalsResourcefulnessPercent or false
     self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or false
@@ -47,6 +48,10 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank()
 
     if self.equalsInspiration then
         self.professionStats.inspiration.value = self.nodeData.rank
+    end
+
+    if self.equalsInspirationBonusSkillFactor then
+        self.professionStats.inspiration.extraFactor = self.nodeData.rank * 0.01
     end
 
     if self.equalsResourcefulness then

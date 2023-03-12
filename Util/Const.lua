@@ -266,6 +266,22 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
         ALCHEMIST_STONES = 1605,
         CAULDRONS = 1612,
     },
+    ENGINEERING = {
+        PARTS = 1718,
+        FINISHING_REAGENTS = 1717,
+        OPTIONAL_REAGENTS = 1722,
+        TINKERS = 1713,
+        GOGGLES = 1715,
+        ARMOR = 1723,
+        WEAPONS = 1716,
+        COGWHEELS = 1720,
+        SCOPES_AND_AMMO = 1712,
+        FIREWORKS = 1711,
+        EXPLOSIVES = 1721,
+        DEVICES = 1710,
+        PROFESSION_EQUIPMENT = 1714,
+        ROBOTICS = 1719,
+    },
     LEATHERWORKING = {
         DRUMS = 1655,
         ARMOR_KITS = 1651,
@@ -339,6 +355,34 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         ELEMENTAL = 10, -- transmutations
         EXPLOSIVES_AND_DEVICES = 0, -- transmutations
         MISC = 0, -- trinket
+    },
+    ENGINEERING = {
+        PARTS = 1,
+        EXPLOSIVES_AND_DEVICES = 0, -- Explosives, S.A.V.I.O.R, Rummage Through Scrap
+        FINISHING_REAGENTS = 19,
+        OPTIONAL_REAGENTS = 18, -- Safety Components, Cogwheels, Magazine of Healing Darts
+        TWO_HANDED_WEAPON = 12, -- Scopes
+        OTHER = 9, -- Tinkers, Fireworks, most Devices
+        OTHER2 = 8, -- Ammo, Portable Alchemy/Engineering Benches
+        OTHER_BOMB_CRATES = 4, -- Bomb Crates
+        COMPANION_PETS = 2,
+
+        -- Goggles/Bracers (Armor)
+        PLATE = 4,
+        CLOTH = 1,
+        MAIL = 3,
+        LEATHER = 2,
+
+        -- Weapons
+        GUNS = 3,
+
+        -- Tools
+        ENGINEERING = 7,
+        MINING = 5,
+        FISHING = 9,
+        JEWELCRAFTING = 11,
+        TAILORING = 6,
+
     },
     LEATHERWORKING = {
         DRUMS = 8, -- Drums
@@ -468,6 +512,7 @@ CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function()
     return {
         Enum.Profession.Blacksmithing, 
         Enum.Profession.Alchemy, 
+        Enum.Profession.Engineering, 
         Enum.Profession.Jewelcrafting, 
         Enum.Profession.Leatherworking,
     }
