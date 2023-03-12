@@ -1,12 +1,8 @@
 _, CraftSim = ...
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 ---@class CraftSim.ProfessionData
----@field professionInfo ProfessionInfo
----@field skillLineID number
----@field isLoaded boolean
-
 CraftSim.ProfessionData = CraftSim.Object:extend()
 
 function CraftSim.ProfessionData:new(recipeID)
@@ -17,7 +13,9 @@ function CraftSim.ProfessionData:new(recipeID)
 		local professionID = CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)
 
 		if professionID then
+			---@type ProfessionInfo?
 			self.professionInfo = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimProfessionInfoCache, professionID)
+			---@type number?
 			self.skillLineID = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimProfessionSkillLineIDCache, professionID)
 		end
 	else
@@ -31,4 +29,14 @@ function CraftSim.ProfessionData:new(recipeID)
     if self.professionInfo and self.professionInfo.profession then
         self.isLoaded = true
     end
+end
+
+function CraftSim.ProfessionData:GetJSON(indent)
+	indent = indent or 0
+	local jb = CraftSim.JSONBuilder(indent)
+	jb:Begin()
+	jb:Add("professionInfo", self.professionInfo)
+	jb:Add("skillLineID", self.skillLineID, true)
+	jb:End()
+	return jb.json
 end

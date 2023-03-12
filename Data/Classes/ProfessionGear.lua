@@ -1,14 +1,21 @@
 _, CraftSim = ...
 
 ---@class CraftSim.ProfessionGear
----@field item ItemMixin
----@field professionStats CraftSim.ProfessionStats
-
 CraftSim.ProfessionGear = CraftSim.Object:extend()
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 function CraftSim.ProfessionGear:new()
+	---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
+end
+
+function CraftSim.ProfessionGear:Equals(professionGear)
+	if not self.item and not professionGear.item then
+		return true
+	elseif not self.item or not professionGear.item then
+		return false
+	end
+	return self.item:GetItemLink() == professionGear.item:GetItemLink()
 end
 
 function CraftSim.ProfessionGear:SetItem(itemLink)
@@ -97,4 +104,23 @@ function CraftSim.ProfessionGear:Copy()
 	end
 
 	return copy
+end
+
+function CraftSim.ProfessionGear:Debug()
+	if not self.item then
+		return {"None"}
+	else
+		return {self.item:GetItemLink() or self.item:GetItemID()}
+	end
+end
+
+function CraftSim.ProfessionGear:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("itemID", self.item:GetItemID())
+    jb:Add("itemString", CraftSim.GUTIL:GetItemStringFromLink(self.item:GetItemLink()))
+    jb:Add("professionStats", self.professionStats, true)
+    jb:End()
+    return jb.json
 end

@@ -16,7 +16,7 @@ function CraftSim.MEDIA:GetAsTextIcon(image, scale)
         print("width: " .. tostring(width))
         print("height: " .. tostring(height))
 
-        return CraftSim.UTIL:IconToText(CraftSim.MEDIA.BASE_PATH .. image.file, height, width)
+        return CraftSim.GUTIL:IconToText(CraftSim.MEDIA.BASE_PATH .. image.file, height, width)
     else
         print("Could not find image")
         return "<ImageNotFound>"
@@ -28,4 +28,6 @@ CraftSim.MEDIA.IMAGES = {
     FALSE = {file="false.blp",dimensions={x=128,y=128}},
     TRUE = {file="true.blp",dimensions={x=128,y=128}},
     HSV_EXAMPLE = {file="hsvVisualization.blp",dimensions={x=256,y=64}},
+    ARROW_UP = {file="upArrow.blp", dimensions={x=64,y=64}},
+    ARROW_DOWN = {file="downArrow.blp", dimensions={x=64,y=64}},
 }

@@ -11,17 +11,25 @@ CraftSimDEBUG_PRICE_API = {name = "Debug"}
 CraftSimDebugData = CraftSimDebugData or {}
 CraftSim.PRICE_APIS.available = true
 
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_APIS)
+
 function CraftSim.PRICE_API:InitPriceSource()
     local loadedSources = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
 
     if #loadedSources == 0 then
-        print("CraftSim: No Supported Price Source Available!")
+        CraftSim.UTIL:SystemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:",CraftSim.GUTIL.COLORS.BRIGHT_BLUE) .. " No Supported Price Source Available!")
         CraftSim.PRICE_APIS.available = false
         if not CraftSimOptions.doNotRemindPriceSource then
-            CraftSim.FRAME:ShowWarning("No price source found!\n\n" ..
-             "You need to have installed at least one of the\nfollowing price source addons to utilize CraftSim's profit calculations:\n\n\n" ..
-             table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
+             CraftSim.GGUI:ShowPopup({
+                sizeX=400, sizeY=250, title=CraftSim.GUTIL:ColorizeText("CraftSim Price Source Warning", CraftSim.GUTIL.COLORS.RED),
+                text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NO_PRICE_SOURCE_WARNING) .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"),
+                acceptButtonLabel="OK", declineButtonLabel="Do not show warning again",
+                onDecline=function ()
+                    StaticPopup_Show("CRAFT_SIM_ACCEPT_NO_PRICESOURCE_WARNING")
+                end
+             })
         end 
+        CraftSim.PRICE_API = CraftSimDEBUG_PRICE_API
         return
     end
 
@@ -76,9 +84,9 @@ function CraftSim.PRICE_APIS:IsAddonPriceApiAddon(addon_name)
 end
 
 function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
-    local _, tsmLoaded = IsAddOnLoaded("TradeSkillMaster")
-    local _, auctionatorLoaded = IsAddOnLoaded("Auctionator")
-    local _, recrystallizeLoaded = IsAddOnLoaded("RECrystallize")
+    local _, tsmLoaded = IsAddOnLoaded(CraftSimTSM.name)
+    local _, auctionatorLoaded = IsAddOnLoaded(CraftSimAUCTIONATOR.name)
+    local _, recrystallizeLoaded = IsAddOnLoaded(CraftSimRECRYSTALLIZE.name)
     if tsmLoaded then
         CraftSim.PRICE_API = CraftSimTSM
     elseif auctionatorLoaded then
@@ -92,6 +100,27 @@ function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
             print(name)
         end
     end
+end
+
+---@param idOrLink? number | string
+---@return number? auctionAmount
+function CraftSimTSM:GetAuctionAmount(idOrLink)
+    if not idOrLink then
+        return
+    end
+    if type(idOrLink) == 'number' then
+        return CraftSimTSM:GetAuctionAmountByItemID(idOrLink)
+    else
+        return CraftSimTSM:GetAuctionAmountByItemLink(idOrLink)
+    end
+end
+
+function CraftSimTSM:GetAuctionAmountByItemID(itemID)
+	return TSM_API.GetAuctionQuantity("i:" .. itemID)
+end
+
+function CraftSimTSM:GetAuctionAmountByItemLink(itemLink)
+	return TSM_API.GetAuctionQuantity(TSM_API.ToItemString(itemLink))
 end
 
 function CraftSimTSM:GetMinBuyoutByItemID(itemID, isReagent)

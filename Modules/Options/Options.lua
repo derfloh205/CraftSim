@@ -36,11 +36,13 @@ function CraftSim.OPTIONS:Init()
     tooltipTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
     tooltipTab.content:SetSize(300, 350)
     tooltipTab.canBeEnabled = true
+    tooltipTab:Hide()
+    tooltipTab.content:Hide()
 
     local TSMTab = CreateFrame("Button", "CraftSimOptionsTSMTab", CraftSim.OPTIONS.optionsPanel, "UIPanelButtonTemplate")
     TSMTab:SetText("TSM")
     TSMTab:SetSize(TSMTab:GetTextWidth() + tabExtraWidth, 30)
-    TSMTab:SetPoint("LEFT", tooltipTab, "RIGHT", 0, 0)
+    TSMTab:SetPoint("LEFT", generalTab, "RIGHT", 0, 0)
 
     TSMTab.content = CreateFrame("Frame", nil, CraftSim.OPTIONS.optionsPanel)
     TSMTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
@@ -58,11 +60,13 @@ function CraftSim.OPTIONS:Init()
     AccountSyncTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
     AccountSyncTab.content:SetSize(300, 350)
     AccountSyncTab.canBeEnabled = true
+    AccountSyncTab:Hide()
+    AccountSyncTab.content:Hide()
 
     local ModulesTab = CreateFrame("Button", "CraftSimOptionsModulesTab", CraftSim.OPTIONS.optionsPanel, "UIPanelButtonTemplate")
     ModulesTab:SetText("Modules")
     ModulesTab:SetSize(ModulesTab:GetTextWidth() + tabExtraWidth, 30)
-    ModulesTab:SetPoint("LEFT", AccountSyncTab, "RIGHT", 0, 0)
+    ModulesTab:SetPoint("LEFT", TSMTab, "RIGHT", 0, 0)
 
     ModulesTab.content = CreateFrame("Frame", nil, CraftSim.OPTIONS.optionsPanel)
     ModulesTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
@@ -79,18 +83,8 @@ function CraftSim.OPTIONS:Init()
     ProfitCalculationTab.content:SetSize(300, 350)
     ProfitCalculationTab.canBeEnabled = true
 
-    local ExperimentalTab = CreateFrame("Button", "CraftSimOptionsExperimentalTab", CraftSim.OPTIONS.optionsPanel, "UIPanelButtonTemplate")
-    ExperimentalTab:SetText("Experimental")
-    ExperimentalTab:SetSize(ExperimentalTab:GetTextWidth() + tabExtraWidth, 30)
-    ExperimentalTab:SetPoint("LEFT", ProfitCalculationTab, "RIGHT", 0, 0)
-
-    ExperimentalTab.content = CreateFrame("Frame", nil, CraftSim.OPTIONS.optionsPanel)
-    ExperimentalTab.content:SetPoint("TOP", CraftSim.OPTIONS.optionsPanel, "TOP", 0, contentPanelsOffsetY)
-    ExperimentalTab.content:SetSize(300, 350)
-    ExperimentalTab.canBeEnabled = true
-
     local CraftingTab = CraftSim.FRAME:CreateTab("Crafting", CraftSim.OPTIONS.optionsPanel, 
-        ExperimentalTab, "LEFT", "RIGHT", 0, 0, true, 300, 350, CraftSim.OPTIONS.optionsPanel, CraftSim.OPTIONS.optionsPanel, 0, contentPanelsOffsetY)
+    ProfitCalculationTab, "LEFT", "RIGHT", 0, 0, true, 300, 350, CraftSim.OPTIONS.optionsPanel, CraftSim.OPTIONS.optionsPanel, 0, contentPanelsOffsetY)
 
     local expressionSizeX = 300
     local expressionSizeY = 50
@@ -108,16 +102,20 @@ function CraftSim.OPTIONS:Init()
         local expression = tsmMaterialsPriceExpression:GetText()
         local isValid = TSM_API.IsCustomPriceValid(expression)
         if not isValid then
-            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.UTIL:ColorizeText("Expression Invalid", CraftSim.CONST.COLORS.RED))
+            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText("Expression Invalid", CraftSim.GUTIL.COLORS.RED))
         else
-            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
             CraftSimOptions.tsmPriceKeyMaterials = tsmMaterialsPriceExpression:GetText()
         end
     end)
 
-    CraftSim.FRAME:CreateButton("Reset Default", TSMTab.content, tsmMaterialsPriceExpression, "RIGHT", "LEFT", -10, 1, 15, 20, true, function()
-        tsmMaterialsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
-    end)
+    CraftSim.GGUI.Button({
+        parent=TSMTab.content,anchorParent=tsmMaterialsPriceExpression,anchorA="RIGHT",anchorB="LEFT",offsetX=-10,offsetY=1,sizeX=15,sizeY=20,adjustWidth=true,
+        label="Reset Default",
+        clickCallback=function ()
+            tsmMaterialsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
+        end
+    })
 
     local tsmExpressionTitleMaterials = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     tsmExpressionTitleMaterials:SetPoint("BOTTOMLEFT", tsmMaterialsPriceExpression, "TOPLEFT",  0, 10)
@@ -125,7 +123,7 @@ function CraftSim.OPTIONS:Init()
 
     local validationInfoMaterials = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoMaterials', 'OVERLAY', 'GameFontNormal')
     validationInfoMaterials:SetPoint("TOPLEFT", tsmMaterialsPriceExpression, "TOPRIGHT",  5, 0)
-    validationInfoMaterials:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+    validationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
 
     local tsmItemsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionItems", TSMTab.content, "InputBoxTemplate")
     tsmItemsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -200)
@@ -140,16 +138,20 @@ function CraftSim.OPTIONS:Init()
         local expression = tsmItemsPriceExpression:GetText()
         local isValid = TSM_API.IsCustomPriceValid(expression)
         if not isValid then
-            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Invalid", CraftSim.CONST.COLORS.RED))
+            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.GUTIL:ColorizeText("Expression Invalid", CraftSim.GUTIL.COLORS.RED))
         else
-            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
             CraftSimOptions.tsmPriceKeyItems = tsmItemsPriceExpression:GetText()
         end
     end)
 
-    CraftSim.FRAME:CreateButton("Reset Default", TSMTab.content, tsmItemsPriceExpression, "RIGHT", "LEFT", -10, 1, 15, 20, true, function()
-        tsmItemsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
-    end)
+    CraftSim.GGUI.Button({
+        parent=TSMTab.content,anchorParent=tsmItemsPriceExpression,anchorA="RIGHT",anchorB="LEFT",offsetX=-10,offsetY=1,sizeX=15,sizeY=20,adjustWidth=true,
+        label="Reset Default",
+        clickCallback=function ()
+            tsmItemsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
+        end
+    })
 
     local tsmExpressionTitleItems = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     tsmExpressionTitleItems:SetPoint("BOTTOMLEFT", tsmItemsPriceExpression, "TOPLEFT",  0, 10)
@@ -157,17 +159,28 @@ function CraftSim.OPTIONS:Init()
 
     local validationInfoItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoItems', 'OVERLAY', 'GameFontNormal')
     validationInfoItems:SetPoint("TOPLEFT", tsmItemsPriceExpression, "TOPRIGHT",  5, 0)
-    validationInfoItems:SetText(CraftSim.UTIL:ColorizeText("Expression Valid", CraftSim.CONST.COLORS.GREEN))
+    validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
 
-    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, AccountSyncTab, ModulesTab, ProfitCalculationTab, ExperimentalTab, CraftingTab})
+    CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, ModulesTab, ProfitCalculationTab, CraftingTab}) -- AccountSyncTab
 
     local priceSourceAddons = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
     if #priceSourceAddons > 1 then
-        CraftSim.FRAME:initDropdownMenu("CraftSimPriceSourcesDropdown", generalTab.content, generalTab.content, "Price Source", 0, -50, 200, priceSourceAddons, 
-        function(arg1) 
-            CraftSim.PRICE_APIS:SwitchAPIByAddonName(arg1)
-            CraftSimOptions.priceSource = arg1
-        end, CraftSim.PRICE_API.name)
+        local priceSourceAddonsDropdownData = {}
+        for _, priceSourceName in pairs(priceSourceAddons) do
+            table.insert(priceSourceAddonsDropdownData, {
+                label=priceSourceName,
+                value=priceSourceName,
+            })
+        end
+        CraftSim.OPTIONS.priceSourceDropdown = CraftSim.GGUI.Dropdown({
+            parent=generalTab.content, anchorParent=generalTab.content, label="Price Source", anchorA="TOP", anchorB="TOP",
+            offsetY=-50, width=200, initialData=priceSourceAddonsDropdownData, initialValue=CraftSim.PRICE_API.name,
+            initialLabel=CraftSim.PRICE_API.name,
+            clickCallback=function(_, _, value) 
+                CraftSim.PRICE_APIS:SwitchAPIByAddonName(value)
+                CraftSimOptions.priceSource = value
+            end
+        })
     elseif #priceSourceAddons == 1 then
         local info = generalTab.content:CreateFontString('info', 'OVERLAY', 'GameFontNormal')
         info:SetPoint("TOP", 0, -50)
@@ -184,10 +197,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyMaterials, -- get from options..
         "0", "1", 
         function(self, value)
-            CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
+            CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
             CraftSimOptions.transparencyMaterials = value
         end)
-    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions.transparencyMaterials)
+    CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions.transparencyMaterials)
 
     CraftSim.FRAME:CreateText("Material Optimizing Module", 
     ModulesTab.content, materialSuggestionTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
@@ -198,10 +211,11 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyStatWeights, -- get from options..
         "0", "1", 
         function(self, value)
-            CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(value)
+            CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(value)
             CraftSimOptions.transparencyStatWeights = value
         end)
-    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(CraftSimOptions.transparencyStatWeights)
+
+    CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(CraftSimOptions.transparencyStatWeights)
     CraftSim.FRAME:CreateText("Average Profit Module", 
     ModulesTab.content, CraftSimDetailsTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
@@ -212,10 +226,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyTopGear, -- get from options..
         "0", "1", 
         function(self, value)
-            CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(value)
+            CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(value)
             CraftSimOptions.transparencyTopGear = value
         end)
-    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(CraftSimOptions.transparencyTopGear)
+    CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(CraftSimOptions.transparencyTopGear)
     CraftSim.FRAME:CreateText("Top Gear Module", 
     ModulesTab.content, CraftSimTopGearTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
@@ -226,10 +240,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyCostOverview, -- get from options..
         "0", "1", 
         function(self, value)
-            CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW):SetTransparency(value)
+            CraftSim.PRICE_DETAILS.frame:SetTransparency(value)
             CraftSimOptions.transparencyCostOverview = value
         end)
-    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.COST_OVERVIEW):SetTransparency(CraftSimOptions.transparencyCostOverview)
+    CraftSim.PRICE_DETAILS.frame:SetTransparency(CraftSimOptions.transparencyCostOverview)
     CraftSim.FRAME:CreateText("Cost Overview Module", 
     ModulesTab.content, CraftSimCostOverviewTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
@@ -239,10 +253,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencySpecInfo, -- get from options..
         "0", "1", 
         function(self, value)
-            CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(value)
+            CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(value)
             CraftSimOptions.transparencySpecInfo = value
         end)
-    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions.transparencySpecInfo)
+    CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions.transparencySpecInfo)
     CraftSim.FRAME:CreateText("Specialization Info Module", 
     ModulesTab.content, specInfoTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
@@ -254,18 +268,29 @@ function CraftSim.OPTIONS:Init()
      "TOP", 
      "TOP", 
      -90, 
-     -20)
+     -50)
 
-     local enableHSVCheckbox = CraftSim.FRAME:CreateCheckbox(" Enable HSV Consideration in Profit Calculation", 
-     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.HSV_EXPLANATION),
-     "enableHSV", 
-     ProfitCalculationTab.content, 
-     skillBreakpointsCheckbox, 
-     "TOPLEFT", 
-     "BOTTOMLEFT", 
-     0, 
-     0)
+    local customMulticraftConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputMulticraftConstant", ProfitCalculationTab.content, skillBreakpointsCheckbox, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25, 
+        CraftSimOptions.customMulticraftConstant, 
+        function ()
+            CraftSimOptions.customMulticraftConstant = CraftSimOptionsInputMulticraftConstant:GetText()
+        end)
 
+    CraftSim.FRAME:CreateText("Multicraft Constant", ProfitCalculationTab.content, customMulticraftConstantInput, "LEFT", "RIGHT", 5, 0)
+
+    CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_CONSTANT_EXPLANATION), ProfitCalculationTab.content, customMulticraftConstantInput, "RIGHT", "LEFT", -5, 0)
+
+    local customResourcefulnessConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputResourcefulnessConstant", ProfitCalculationTab.content, customMulticraftConstantInput, "TOPLEFT", "BOTTOMLEFT", 0, -10, 100, 25, 
+    CraftSimOptions.customResourcefulnessConstant, 
+    function ()
+        CraftSimOptions.customResourcefulnessConstant = CraftSimOptionsInputResourcefulnessConstant:GetText()
+    end)
+
+    CraftSim.FRAME:CreateText("Resourcefulness Constant", ProfitCalculationTab.content, customResourcefulnessConstantInput, "LEFT", "RIGHT", 5, 0)
+
+    CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_CONSTANT_EXPLANATION), ProfitCalculationTab.content, customResourcefulnessConstantInput, "RIGHT", "LEFT", -5, 0)
+
+    
     local precentProfitCheckbox = CraftSim.FRAME:CreateCheckbox(" Show Profit Percentage", 
     "Show the percentage of profit to crafting costs besides the gold value",
     "showProfitPercentage", 
@@ -317,65 +342,25 @@ function CraftSim.OPTIONS:Init()
     sendingProgress:SetPoint("LEFT", characterNameInput, "RIGHT", 5, 0)
     sendingProgress:SetText("")
 
-    local accountSyncButton = CreateFrame("Button", "CraftSimACCOUNTSYNCButton", AccountSyncTab.content, "UIPanelButtonTemplate")
-	accountSyncButton:SetPoint("TOPRIGHT", characterNameInput, "TOPRIGHT", 0, -30)	
-	accountSyncButton:SetText("Synchronize Tooltip Data")
-	accountSyncButton:SetSize(accountSyncButton:GetTextWidth() + 20, 25)
-    accountSyncButton:SetScript("OnClick", function(self) 
-        CraftSim.ACCOUNTSYNC:SynchronizeAccounts()
-    end)
+    -- local accountSyncButton = CreateFrame("Button", "CraftSimACCOUNTSYNCButton", AccountSyncTab.content, "UIPanelButtonTemplate")
+	-- accountSyncButton:SetPoint("TOPRIGHT", characterNameInput, "TOPRIGHT", 0, -30)	
+	-- accountSyncButton:SetText("Synchronize Tooltip Data")
+	-- accountSyncButton:SetSize(accountSyncButton:GetTextWidth() + 20, 25)
+    -- accountSyncButton:SetScript("OnClick", function(self) 
+    --     CraftSim.ACCOUNTSYNC:SynchronizeAccounts()
+    -- end)
 
-    local optionsSyncButton = CreateFrame("Button", "CraftSimOptionsSyncButton", AccountSyncTab.content, "UIPanelButtonTemplate")
-	optionsSyncButton:SetPoint("TOPRIGHT", accountSyncButton, "TOPRIGHT", 0, -30)	
-	optionsSyncButton:SetText("Synchronize Options")
-	optionsSyncButton:SetSize(optionsSyncButton:GetTextWidth() + 20, 25)
-    optionsSyncButton:SetScript("OnClick", function(self) 
-        CraftSim.ACCOUNTSYNC:SynchronizeOptions()
-    end)
+    local optionsSyncButton = CraftSim.GGUI.Button({
+        parent=AccountSyncTab.content, anchorParent=characterNameInput, anchorA="TOPRIGHT", anchorB="TOPRIGHT", offsetY=-30,
+        sizeX=20,sizeY=25,adjustWidth=true,label="Synchronize Options",
+        clickCallback=function ()
+            CraftSim.ACCOUNTSYNC:SynchronizeOptions()
+        end
+    })
 
     local supportedPriceSources = generalTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -200)
     supportedPriceSources:SetText("Supported Price Sources:\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
-
-    local enableSpecDataBlacksmithingCheckbox = CraftSim.FRAME:CreateCheckbox(" Blacksmithing SpecData", 
-     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
-     "blacksmithingEnabled", 
-     ExperimentalTab.content, 
-     ExperimentalTab.content, 
-     "TOP", 
-     "TOP", 
-     -90, 
-     -50)
-
-     local enableSpecDataAlchemyCheckbox = CraftSim.FRAME:CreateCheckbox(" Alchemy SpecData", 
-     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
-     "alchemyEnabled", 
-     ExperimentalTab.content, 
-     enableSpecDataBlacksmithingCheckbox, 
-     "TOP", 
-     "TOP", 
-     0, 
-     -20)
-
-     local enableSpecDataJewelcraftingCheckbox = CraftSim.FRAME:CreateCheckbox(" Jewelcrafting SpecData", 
-     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
-     "jewelcraftingEnabled", 
-     ExperimentalTab.content, 
-     enableSpecDataAlchemyCheckbox, 
-     "TOP", 
-     "TOP", 
-     0, 
-     -20)
-
-     local enableSpecDataLeatherworkingCheckbox = CraftSim.FRAME:CreateCheckbox(" Leatherworking SpecData", 
-     "Use the new experimental data extraction that fetches\nyour stats from your profession spezializations instead from the UI display",
-     "leatherworkingEnabled", 
-     ExperimentalTab.content, 
-     enableSpecDataJewelcraftingCheckbox, 
-     "TOP", 
-     "TOP", 
-     0, 
-     -20)
 
      local enableGarbageCollectWhenCraftingCB = CraftSim.FRAME:CreateCheckbox(" Enable RAM cleanup while crafting", 
         "When enabled, CraftSim will clear your RAM every specified number of crafts from unused data to prevent memory from building up.\nMemory Build Up can also happen because of other addons and is not CraftSim specific.\nA cleanup will affect the whole WoW RAM Usage.",

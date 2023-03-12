@@ -1,29 +1,28 @@
 _, CraftSim = ...
 
 ---@class CraftSim.ProfessionStats
----@field recipeDifficulty CraftSim.ProfessionStat
----@field skill CraftSim.ProfessionStat
----@field inspiration CraftSim.ProfessionStat
----@field multicraft CraftSim.ProfessionStat
----@field resourcefulness CraftSim.ProfessionStat
----@field craftingspeed CraftSim.ProfessionStat
----@field phialExperimentationFactor CraftSim.ProfessionStat
----@field potionExperimentationFactor CraftSim.ProfessionStat
-
 CraftSim.ProfessionStats = CraftSim.Object:extend()
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 function CraftSim.ProfessionStats:new()
+	---@type CraftSim.ProfessionStat
     self.recipeDifficulty = CraftSim.ProfessionStat("recipedifficulty")
+	---@type CraftSim.ProfessionStat
     self.skill = CraftSim.ProfessionStat("skill")
+	---@type CraftSim.ProfessionStat
     self.inspiration = CraftSim.ProfessionStat("inspiration", 0, CraftSim.CONST.PERCENT_MODS.INSPIRATION)
+	---@type CraftSim.ProfessionStat
     self.multicraft = CraftSim.ProfessionStat("multicraft", 0, CraftSim.CONST.PERCENT_MODS.MULTICRAFT)
+	---@type CraftSim.ProfessionStat
     self.resourcefulness = CraftSim.ProfessionStat("resourcefulness", 0, CraftSim.CONST.PERCENT_MODS.RESOURCEFULNESS)
+	---@type CraftSim.ProfessionStat
     self.craftingspeed = CraftSim.ProfessionStat("craftingspeed", 0, CraftSim.CONST.PERCENT_MODS.CRAFTINGSPEED)
-
+	
 	-- alchemy specific
+	---@type CraftSim.ProfessionStat
     self.phialExperimentationFactor = CraftSim.ProfessionStat("phialExperimentationFactor")
+	---@type CraftSim.ProfessionStat
     self.potionExperimentationFactor = CraftSim.ProfessionStat("potionExperimentationFactor")
 end
 
@@ -86,6 +85,7 @@ function CraftSim.ProfessionStats:subtract(professionStatsB)
 		local professionStatB = statsB[index]
 		professionStatA:subtractValue(professionStatB.value)
 		professionStatA:subtractFactor(professionStatB.extraFactor)
+		professionStatA:subtractExtraValueAfterFactor(professionStatB.extraValueAfterFactor)
 	end
 end
 
@@ -100,6 +100,7 @@ function CraftSim.ProfessionStats:add(professionStatsB)
 		local professionStatB = statsB[index]
 		professionStatA:addValue(professionStatB.value)
 		professionStatA:addFactor(professionStatB.extraFactor)
+		professionStatA:addExtraValueAfterFactor(professionStatB.extraValueAfterFactor)
 	end
 end
 
@@ -124,7 +125,7 @@ function CraftSim.ProfessionStats:Debug()
 		"RecipeDifficulty: " .. self.recipeDifficulty.value,
 		"Skill: " .. self.skill.value,
 		"Inspiration: " .. self.inspiration.value .. " (".. self.inspiration:GetPercent() .."%) " .. self.inspiration.percentMod,
-		"Inspiration Bonus Skill: " .. self.inspiration:GetExtraValueByFactor() .. " (".. self.inspiration.extraValue .." * ".. self.inspiration:GetExtraFactor(true) ..")",
+		"Inspiration Bonus Skill: " .. self.inspiration:GetExtraValueByFactor() .. " (".. self.inspiration.extraValue .." * ".. self.inspiration:GetExtraFactor(true) .. "+" .. self.inspiration.extraValueAfterFactor ..")",
 		"Multicraft: " .. self.multicraft.value .. " (".. self.multicraft:GetPercent() .."%)",
 		"Multicraft Factor: " .. self.multicraft.extraFactor,
 		"Resourcefulness: " .. self.resourcefulness.value .. " (".. self.resourcefulness:GetPercent() .."%)",
@@ -142,9 +143,39 @@ function CraftSim.ProfessionStats:Debug()
 	return debugLines
 end
 
+function CraftSim.ProfessionStats:GetTooltipText()
+	local text = 
+		((self.skill.value > 0 and ("Skill: " .. self.skill.value .. "\n")) or "") ..
+		((self.inspiration.value > 0 and ("Inspiration: " .. self.inspiration.value .. "\n")) or "") ..
+		((self.inspiration.extraFactor > 0 and ("Inspiration Bonus Skill: " .. self.inspiration.extraFactor*100 .. "%" .. "\n")) or "") ..
+		((self.multicraft.value > 0 and ("Multicraft: " .. self.multicraft.value .. "\n")) or "") ..
+		((self.multicraft.extraFactor > 0 and ("Multicraft Extra Items: " .. self.multicraft.extraFactor*100 .. "%" .. "\n")) or "") ..
+		((self.resourcefulness.value > 0 and ("Resourcefulness: " .. self.resourcefulness.value .. "\n")) or "") ..
+		((self.resourcefulness.extraFactor > 0 and ("Resourcefulness Extra Items: " .. self.resourcefulness.extraFactor*100 .. "%" .. "\n")) or "") ..
+		((self.craftingspeed.value > 0 and ("Craftingspeed: " .. self.craftingspeed.value .. "\n")) or "") ..
+		((self.craftingspeed.extraFactor > 0 and ("Craftingspeed %: " .. self.craftingspeed.extraFactor*100 .. "%" .. "\n")) or "")
+	return text
+end
+
 function CraftSim.ProfessionStats:Copy()
 	local copy = CraftSim.ProfessionStats()
 	copy:add(self)
 
 	return copy
+end
+
+function CraftSim.ProfessionStats:GetJSON(indent)
+	indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("recipeDifficulty", self.recipeDifficulty)
+    jb:Add("skill", self.skill)
+    jb:Add("inspiration", self.inspiration)
+    jb:Add("multicraft", self.multicraft)
+    jb:Add("resourcefulness", self.resourcefulness)
+    jb:Add("craftingspeed", self.craftingspeed)
+    jb:Add("phialExperimentationFactor", self.phialExperimentationFactor)
+    jb:Add("potionExperimentationFactor", self.potionExperimentationFactor, true)
+    jb:End()
+    return jb.json
 end

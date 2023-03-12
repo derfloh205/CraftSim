@@ -4,13 +4,15 @@
 ## Title: CraftSim
 ## Notes: Calculates profession statweights and displays them per recipe
 ## Author: genju
-## Version: 6.8
+## Version: 8.2.3
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
-## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimTooltipData, CraftSimItemCache, CraftSimCollapsedFrames, CraftSimSpecNodeCache, CraftSimPriceOverrides, CraftSimRecipeIDs, CraftSimProfessionInfoCache, CraftSimProfessionSkillLineIDCache
+## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimGGUIConfig, CraftSimPriceOverridesV2, CraftSimRecipeIDs, CraftSimProfessionInfoCache, CraftSimProfessionSkillLineIDCache, CraftSimCraftData, CraftSimRecipeMap, CraftSimLoadedProfessionRecipes
 
 embeds.xml
+
+Libs/Libs.lua
 
 Util/Const.lua
 Util/Util.lua
@@ -22,6 +24,7 @@ Util/Tooltip.lua
 Util/Frames.lua
 Util/Cache.lua
 Util/Comm.lua
+Util/API.lua
 
 Main/CraftSim.lua
 
@@ -53,7 +56,7 @@ Modules/SpecializationInfo/Frames.lua
 Modules/Options/Options.lua
 Modules/Options/AccountSync.lua
 
-Modules/SimulationMode/SimMode.lua
+Modules/SimulationMode/SimulationMode.lua
 Modules/SimulationMode/Frames.lua
 
 Modules/AverageProfit/AverageProfit.lua
@@ -65,8 +68,14 @@ Modules/ReagentOptimization/Frames.lua
 Modules/TopGear/TopGear.lua
 Modules/TopGear/Frames.lua
 
-Modules/CostOverview/CostOverview.lua
-Modules/CostOverview/Frames.lua
+Modules/PriceDetails/PriceDetails.lua
+Modules/PriceDetails/Frames.lua
+
+Modules/CraftData/CraftData.lua
+Modules/CraftData/Frames.lua
+
+Modules/CostDetails/CostDetails.lua
+Modules/CostDetails/Frames.lua
 
 Locals/Localization.lua
 Locals/enUS.lua
@@ -93,6 +102,7 @@ Data/SpecNodeData/Inscription.lua
 Data/SpecNodeData/Jewelcrafting.lua
 Data/SpecNodeData/Leatherworking.lua
 Data/SpecNodeData/Tailoring.lua
+Data/SpecNodeData/Engineering.lua
 
 Data/Classes/ProfessionData.lua
 Data/Classes/RecipeData.lua
@@ -100,6 +110,7 @@ Data/Classes/PriceData.lua
 Data/Classes/ReagentData.lua
 Data/Classes/Reagent.lua
 Data/Classes/ReagentItem.lua
+Data/Classes/ReagentListItem.lua
 Data/Classes/ProfessionStats.lua
 Data/Classes/ProfessionStat.lua
 Data/Classes/ProfessionGearSet.lua
@@ -115,3 +126,13 @@ Data/Classes/IDMapping.lua
 Data/Classes/IDCategory.lua
 Data/Classes/Statweights.lua
 Data/Classes/ReagentOptimizationResult.lua
+Data/Classes/TopGearResult.lua
+Data/Classes/CraftResult.lua
+Data/Classes/CraftResultItem.lua
+Data/Classes/CraftResultSavedReagent.lua
+Data/Classes/CraftResultSavedReagent.lua
+Data/Classes/CraftSessionData.lua
+Data/Classes/CraftRecipeData.lua
+Data/Classes/JSONBuilder.lua
+Data/Classes/BuffData.lua
+Data/Classes/CraftData.lua

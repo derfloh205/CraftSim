@@ -2,40 +2,66 @@ _, CraftSim = ...
 
 CraftSim.RECIPE_SCAN.FRAMES = {}
 
-local PROFIT_ROW_WIDTH  = 120
-local INSPIRATION_ROW_WIDTH = 55
-local LEARNED_ROW_WIDTH = 35
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
 function CraftSim.RECIPE_SCAN.FRAMES:Init()
-    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimRecipeScan", 
-        "CraftSim Recipe Scan", 
-        ProfessionsFrame.CraftingPage.SchematicForm, 
-        ProfessionsFrame.CraftingPage.SchematicForm, 
-        "CENTER", 
-        "CENTER", 
-        0, 
-        0, 
-        700, 
-        400,
-        CraftSim.CONST.FRAMES.RECIPE_SCAN, false, true, "DIALOG", "modulesRecipeScan")
+
+    CraftSim.RECIPE_SCAN.frame = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent=ProfessionsFrame.CraftingPage.SchematicForm, 
+        sizeX=850,sizeY=400,
+        frameID=CraftSim.CONST.FRAMES.RECIPE_SCAN, 
+        title="CraftSim Recipe Scan",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        frameStrata="DIALOG",
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesRecipeScan"),
+    })
 
     local function createContent(frame)
         frame:Hide()
 
-        frame.content.scanMode = CraftSim.FRAME:initDropdownMenu(nil, frame.content, frame.title, "Scan Mode", 0, -30, 170, 
-        CraftSim.UTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return e end), function(arg1) 
-            frame.content.scanMode.currentMode = arg1
-        end, CraftSim.RECIPE_SCAN.SCAN_MODES.Q1)
-        frame.content.scanMode.currentMode = CraftSim.RECIPE_SCAN.SCAN_MODES.Q1
+        frame.content.scanMode = CraftSim.GGUI.Dropdown({
+            parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170,
+            initialValue=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I,
+            initialLabel=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I, -- TODO: save and use last selected saved in CraftSimOptions
+            label="Scan Mode",
+            initialData=CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return {label=e, value=e} end)
+        })
 
-        frame.content.scanButton = CraftSim.FRAME:CreateButton("Scan Recipes", frame.content, frame.content.scanMode, "TOP", "TOP", 0, -30, 15, 25, true, function() 
-            CraftSim.RECIPE_SCAN:StartScan()
-        end)
+        frame.content.scanButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.content.scanMode.frame,label="Scan Recipes", anchorA="TOP", anchorB="TOP",offsetY=-30,sizeX=15,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.RECIPE_SCAN:StartScan()
+            end
+        })
+
+        frame.content.cancelScanButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.content.scanButton.frame,label="Cancel", anchorA="LEFT", anchorB="RIGHT",sizeX=15,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.RECIPE_SCAN:EndScan()
+            end
+        })
+
+        frame.content.cancelScanButton:Hide()
+        
+        frame.content.exportForgeFinderButton = CraftSim.GGUI.Button({
+            parent=frame.content, anchorParent = frame.content.scanButton.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=210, adjustWidth = true,
+            label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Export",
+            clickCallback=CraftSim.RECIPE_SCAN.ForgeFinderExport
+        })
+        frame.content.exportForgeFinderButton:SetEnabled(false)
+
+        CraftSim.GGUI.HelpIcon({
+            parent=frame.content,anchorParent=frame.content.exportForgeFinderButton.frame, anchorA="RIGHT", anchorB="LEFT", offsetX=-3,
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FORGEFINDER_EXPLANATION)
+        })
 
         frame.content.includeSoulboundCB = CraftSim.FRAME:CreateCheckbox(
             " Include Soulbound", "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items", 
-        "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode, "RIGHT", "LEFT", -190, 0)
+        "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode.frame, "RIGHT", "LEFT", -250, 0)
 
         frame.content.includeNotLearnedCB = CraftSim.FRAME:CreateCheckbox(
             " Include not learned", "Include recipes you do not have learned in the recipe scan", 
@@ -45,194 +71,255 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         "recipeScanIncludeGear", frame.content, frame.content.includeSoulboundCB, "TOPLEFT", "BOTTOMLEFT", 0, 0)
 
         frame.content.optimizeProfessionToolsCB = CraftSim.FRAME:CreateCheckbox(" Optimize Profession Tools", "For each recipe optimize your profession tools for profit\n\n" .. 
-                                                                                CraftSim.UTIL:ColorizeText("Might lower performance during scanning\nif you have a lot of tools in your inventory", CraftSim.CONST.COLORS.RED), 
-        "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode, "LEFT", "RIGHT", 10, 0)
+                                                                                CraftSim.GUTIL:ColorizeText("Might lower performance during scanning\nif you have a lot of tools in your inventory", CraftSim.GUTIL.COLORS.RED), 
+        "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 90, 0)
 
-        -- scrollFrame for results
-         -- scrollframe
-         frame.content.scrollFrame = CreateFrame("ScrollFrame", nil, frame.content, "UIPanelScrollFrameTemplate")
-         frame.content.scrollFrame.scrollChild = CreateFrame("frame")
-         local scrollFrame = frame.content.scrollFrame
-         local scrollChild = scrollFrame.scrollChild
-         scrollFrame:SetSize(frame.content:GetWidth() , frame.content:GetHeight())
-         scrollFrame:SetPoint("TOP", frame.content.scanButton, "TOP", 0, -50)
-         scrollFrame:SetPoint("LEFT", frame.content, "LEFT", 20, 0)
-         scrollFrame:SetPoint("RIGHT", frame.content, "RIGHT", -35, 0)
-         scrollFrame:SetPoint("BOTTOM", frame.content, "BOTTOM", 0, 20)
-         scrollFrame:SetScrollChild(scrollFrame.scrollChild)
-         scrollChild:SetWidth(scrollFrame:GetWidth())
-         scrollChild:SetHeight(1) -- ??
- 
-         frame.content.resultFrame = scrollChild
+        local columnOptions = {
+            {
+                -- switch to recipe button
+                width=40,
+            },
+            {
+                label="Recipe",
+                width=150,
+            },
+            {
+                label="Learned",
+                width=60,
+                justifyOptions={type="H", align="CENTER"}
+            },
+            {
+                label="Guaranteed",
+                width=80,
+                justifyOptions={type="H", align="CENTER"}
+            },
+            {
+                label="Highest Result", -- icon + upgrade chance
+                width=110,
+                justifyOptions={type="H", align="CENTER"}
+            },
+            {
+                label="Average Profit",
+                width=140,
+            },
+            {
+                label="Top Gear",
+                width=120,
+                justifyOptions={type="H", align="CENTER"}
+            },
+            {
+                label="Inv/AH",
+                width=80,
+                justifyOptions={type="H", align="CENTER"}
+            }
+        }
 
-         local columnSpacingX = 5
+        ---@type GGUI.FrameList | GGUI.Widget
+        frame.content.resultList = CraftSim.GGUI.FrameList({
+            parent = frame.content, anchorParent=frame.content.scanButton.frame, anchorA="TOP", anchorB="BOTTOM",
+            showHeaderLine=true,
+            sizeY=250, offsetY=-25,
+            columnOptions=columnOptions,
+            rowConstructor=function (columns)
+                local switchToRecipeColumn = columns[1] 
+                local recipeColumn = columns[2]
+                local learnedColumn = columns[3]
+                local expectedResultColumn = columns[4] 
+                local highestResultColumn = columns[5] 
+                local averageProfitColumn = columns[6] 
+                local topGearColumn = columns[7] 
+                local countColumn = columns[8]
 
-         frame.content.header = CreateFrame("Frame", nil, frame.content)
-         frame.content.header:SetSize(frame.content:GetWidth(), 25)
-         frame.content.header:SetPoint("BOTTOMLEFT", frame.content.scrollFrame, "TOPLEFT", 0, 0)
+                switchToRecipeColumn.switchButton = CraftSim.GGUI.Button({
+                    parent=switchToRecipeColumn,anchorParent=switchToRecipeColumn, sizeX=25, sizeY=25,
+                    label="->", clickCallback=function (gButton) 
+                        C_TradeSkillUI.OpenRecipe(gButton.recipeID)
+                    end
+                })
 
-        ---@diagnostic disable-next-line: undefined-field
-         frame.content.header.line = frame.content.header:CreateLine()
-         frame.content.header.line:SetStartPoint("BOTTOMLEFT", 0, 0)
-         frame.content.header.line:SetEndPoint("BOTTOMRIGHT", -60, 0)
-         frame.content.header.line:SetThickness(0.5)
-         frame.content.header.line:SetColorTexture(1,1,1,1)
+                recipeColumn.text = CraftSim.GGUI.Text({
+                    parent=recipeColumn,anchorParent=recipeColumn,anchorA="LEFT",anchorB="LEFT", justifyOptions={type="H",align="LEFT"}, scale=0.9,
+                    fixedWidth=recipeColumn:GetWidth(), wrap=true,
+                })
+                
+                learnedColumn.text = CraftSim.GGUI.Text({
+                    parent=learnedColumn,anchorParent=learnedColumn,justifyOptions={type="H",align="CENTER"},
+                })
 
-         frame.content.header.learnedTitle = CraftSim.FRAME:CreateText("Learned?", frame.content.header, frame.content.header, "LEFT", "LEFT", 30, 0, nil, nil, {type="H", value="RIGHT"})
-         frame.content.header.learnedTitle:SetSize(60, 25)
-
-         frame.content.header.profitTitle = CraftSim.FRAME:CreateText("Ø Profit", frame.content.header, frame.content.header.learnedTitle, "LEFT", "RIGHT", 38, 0, nil, nil, {type="H", value="RIGHT"})
-         frame.content.header.profitTitle:SetSize(60, 25)
-
-         frame.content.header.inspirationTitle = CraftSim.FRAME:CreateText("Insp%", frame.content.header, frame.content.header.profitTitle, "LEFT", "RIGHT", 20, 0, nil, nil, {type="H", value="RIGHT"})
-         frame.content.header.inspirationTitle:SetSize(40, 25)
-
-         frame.content.header.topGearTitle = CraftSim.FRAME:CreateText("Top Gear", frame.content.header, frame.content.header.inspirationTitle, "LEFT", "RIGHT", 17, 0, nil, nil, {type="H", value="RIGHT"})
-         frame.content.header.topGearTitle:SetSize(60, 25)
-
-         frame.content.header.highestResultTitle = CraftSim.FRAME:CreateText("Highest Result", frame.content.header, frame.content.header.topGearTitle, "LEFT", "RIGHT", 5, 0, nil, nil, {type="H", value="RIGHT"})
-         frame.content.header.highestResultTitle:SetSize(100, 25)
-
-         frame.content.resultFrame.createResultRowFrame = function()
-            local resultRowFrame = CreateFrame("Frame", nil, frame.content.resultFrame)
-            resultRowFrame:SetSize(frame.content.resultFrame:GetWidth()-10, 30)
-            resultRowFrame.isActive = false
-            resultRowFrame.recipeID = nil
-
-            resultRowFrame.recipeButton = CraftSim.FRAME:CreateButton("->", resultRowFrame, resultRowFrame, "LEFT", "LEFT", 0, 0, 5, 15, true, function() 
-                if resultRowFrame.recipeID then
-                    C_TradeSkillUI.OpenRecipe(resultRowFrame.recipeID)
+                function learnedColumn:SetLearned(learned)
+                    if learned then
+                        learnedColumn.text:SetText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125))
+                    else
+                        learnedColumn.text:SetText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125))
+                    end
                 end
-            end)
-            resultRowFrame.learnedText = CraftSim.FRAME:CreateText("", resultRowFrame, resultRowFrame.recipeButton, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
-            resultRowFrame.learnedText:SetSize(LEARNED_ROW_WIDTH, 25)
-            resultRowFrame.profitText = CraftSim.FRAME:CreateText(CraftSim.UTIL:FormatMoney(1000000000) , resultRowFrame, resultRowFrame.learnedText, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
-            resultRowFrame.profitText:SetSize(PROFIT_ROW_WIDTH, 25) -- so the justify does something!
-            resultRowFrame.inspirationChanceText = CraftSim.FRAME:CreateText("100%" , resultRowFrame, resultRowFrame.profitText, "LEFT", "RIGHT", columnSpacingX, 0, nil, nil, {type="H", value="RIGHT"})
-            resultRowFrame.inspirationChanceText:SetSize(INSPIRATION_ROW_WIDTH, 25) -- so the justify does something!
-            local iconSize = 20
-            resultRowFrame.tool1Icon = CraftSim.FRAME:CreateIcon(resultRowFrame, columnSpacingX, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "RIGHT", resultRowFrame.inspirationChanceText)
-            resultRowFrame.tool2Icon = CraftSim.FRAME:CreateIcon(resultRowFrame, columnSpacingX, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "RIGHT", resultRowFrame.tool1Icon)
-            resultRowFrame.tool3Icon = CraftSim.FRAME:CreateIcon(resultRowFrame, columnSpacingX, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "RIGHT", resultRowFrame.tool2Icon)
-            resultRowFrame.noTopGearText = CraftSim.FRAME:CreateText(CraftSim.UTIL:ColorizeText("Top Gear Equipped", CraftSim.CONST.COLORS.GREEN), 
-            resultRowFrame, resultRowFrame.inspirationChanceText, "LEFT", "RIGHT", columnSpacingX, 0)
-            resultRowFrame.noTopGearText:SetSize(iconSize*3 + columnSpacingX*2, 25)
 
-            resultRowFrame.recipeResultText = CraftSim.FRAME:CreateText("Recipe #" .. #frame.content.resultRowFrames, resultRowFrame, resultRowFrame.tool3Icon, "LEFT", "RIGHT", columnSpacingX*3, 0, nil, nil, {type="H", value="LEFT"})
-            
-            CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(resultRowFrame)
-            return resultRowFrame
-         end
+                local iconSize = 23
 
-         frame.content.resultRowFrames = {}
+                ---@type GGUI.Icon | GGUI.Widget
+                expectedResultColumn.itemIcon = CraftSim.GGUI.Icon({
+                    parent=expectedResultColumn,anchorParent=expectedResultColumn, sizeX=iconSize, sizeY=iconSize, qualityIconScale=1.4,
+                })
 
-         local numRowFrames = 100
-         
-         for i = 1, numRowFrames, 1 do
-            table.insert(frame.content.resultRowFrames, frame.content.resultFrame.createResultRowFrame())
-         end
+                ---@type GGUI.Icon | GGUI.Widget
+                highestResultColumn.itemIcon = CraftSim.GGUI.Icon({
+                    parent=highestResultColumn,anchorParent=highestResultColumn, sizeX=iconSize, sizeY=iconSize, qualityIconScale=1.4,
+                    offsetX=-25
+                })
+
+                ---@type GGUI.Text | GGUI.Widget
+                highestResultColumn.noneText = CraftSim.GGUI.Text({
+                    parent=highestResultColumn,anchorParent=highestResultColumn, text=CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY)
+                })
+
+                ---@type GGUI.Text | GGUI.Widget
+                highestResultColumn.chance = CraftSim.GGUI.Text({
+                    parent=highestResultColumn, anchorParent=highestResultColumn.itemIcon.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=10,
+                })
+
+                ---@type GGUI.Text | GGUI.Widget
+                averageProfitColumn.text = CraftSim.GGUI.Text({
+                    parent=averageProfitColumn,anchorParent=averageProfitColumn, anchorA="LEFT", anchorB="LEFT"
+                })
+
+                topGearColumn.gear2Icon = CraftSim.GGUI.Icon({
+                    parent=topGearColumn, anchorParent=topGearColumn, sizeX=iconSize,sizeY=iconSize, qualityIconScale=1.4,
+                })
+
+                topGearColumn.gear1Icon = CraftSim.GGUI.Icon({
+                    parent=topGearColumn, anchorParent=topGearColumn.gear2Icon.frame, anchorA="RIGHT", anchorB="LEFT", sizeX=iconSize,sizeY=iconSize, qualityIconScale=1.4, offsetX=-10,
+                })
+                topGearColumn.toolIcon = CraftSim.GGUI.Icon({
+                    parent=topGearColumn, anchorParent=topGearColumn.gear2Icon.frame, anchorA="LEFT", anchorB="RIGHT", sizeX=iconSize,sizeY=iconSize, qualityIconScale=1.4, offsetX=10
+                })
+                topGearColumn.equippedText = CraftSim.GGUI.Text({
+                    parent=topGearColumn, anchorParent=topGearColumn
+                })
+
+                function topGearColumn.equippedText:SetEquipped()
+                    topGearColumn.equippedText:SetText(CraftSim.GUTIL:ColorizeText("Equipped", CraftSim.GUTIL.COLORS.GREEN))
+                end
+                function topGearColumn.equippedText:SetIrrelevant()
+                    topGearColumn.equippedText:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
+                end
+
+                countColumn.text = CraftSim.GGUI.Text({
+                    parent=countColumn, anchorParent=countColumn
+                })
+
+            end
+        })
     end
 
-    createContent(frameNO_WO)
-    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frameNO_WO)
+    createContent(CraftSim.RECIPE_SCAN.frame)
+    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(CraftSim.RECIPE_SCAN.frame.content)
 end
 
 function CraftSim.RECIPE_SCAN:ResetResults()
-    local RecipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
-
-    for _, resultRowFrame in pairs(RecipeScanFrame.content.resultRowFrames) do
-        resultRowFrame:Hide()
-        resultRowFrame:SetPoint("TOP", RecipeScanFrame.content, "TOP", 0, 0) -- "save" somewhere
-        resultRowFrame.isActive = false
-        resultRowFrame.recipeID = nil
-    end
+    CraftSim.RECIPE_SCAN.frame.content.resultList:Remove()
 end
 
-function CraftSim.RECIPE_SCAN:AddRecipeToRecipeRow(recipeData, priceData, meanProfit, bestSimulation)
-    local RecipeScanFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
-    -- get first non active row
-    local availableRow = CraftSim.UTIL:Find(RecipeScanFrame.content.resultRowFrames, function(frame) return not frame.isActive end)
-    local numActiveFrames = CraftSim.UTIL:Count(RecipeScanFrame.content.resultRowFrames, function(frame) return frame.isActive end)
+---@param recipeData CraftSim.RecipeData
+function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
+    
+    CraftSim.RECIPE_SCAN.frame.content.resultList:Add(
+    function(row) 
+        local columns = row.columns
 
-    if not availableRow or numActiveFrames == #RecipeScanFrame.content.resultRowFrames then
-        -- too few rows.. create dynamically
-        local newRow = RecipeScanFrame.content.resultFrame.createResultRowFrame()
-        table.insert(RecipeScanFrame.content.resultRowFrames, newRow)
-        availableRow = newRow
-    end
+        local switchToRecipeColumn = columns[1] 
+        local recipeColumn = columns[2]
+        local learnedColumn = columns[3]
+        local expectedResultColumn = columns[4] 
+        local highestResultColumn = columns[5] 
+        local averageProfitColumn = columns[6] 
+        local topGearColumn = columns[7] 
+        local countColumn = columns[8]
 
-    -- fill content
-    availableRow.recipeID = recipeData.recipeID
-    local outputInfo = CraftSim.DATAEXPORT:GetOutputInfoByRecipeData(recipeData)
-    if outputInfo.inspirationCanUpgrade then
-        if not outputInfo.inspiration then
-            -- not loaded yet, do some makeshift thingy
-            outputInfo.inspiration = "[" .. recipeData.recipeName .. " " .. CraftSim.UTIL:GetQualityIconAsText(outputInfo.expectedQualityInspiration, 15, 15) .. "]"
-        end
-        availableRow.recipeResultText:SetText(outputInfo.inspiration)
-        outputInfo.inspirationPercent = CraftSim.UTIL:round(outputInfo.inspirationPercent)
-        availableRow.inspirationChanceText:SetText(CraftSim.UTIL:ColorizeText(outputInfo.inspirationPercent .. "%", CraftSim.CONST.COLORS.GREEN))
-    else
-        if not outputInfo.expected then
-            -- not loaded yet, do some makeshift thingy
-            outputInfo.expected = "[" .. recipeData.recipeName .. " " .. CraftSim.UTIL:GetQualityIconAsText(outputInfo.expectedQuality, 15, 15) .. "]"
-        end
-        availableRow.recipeResultText:SetText(outputInfo.expected)
-        if recipeData.expectedQuality == recipeData.maxQuality then
-            availableRow.inspirationChanceText:SetText(CraftSim.UTIL:ColorizeText("max", CraftSim.CONST.COLORS.GREEN))
+        switchToRecipeColumn.switchButton.recipeID = recipeData.recipeID
+
+        local recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
+
+        recipeColumn.text:SetText(recipeRarity.hex .. recipeData.recipeName .. "|r")
+
+        learnedColumn:SetLearned(recipeData.learned)
+
+        expectedResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItem)
+
+        if recipeData.resultData.canUpgradeQuality then
+            highestResultColumn.itemIcon:Show()
+            highestResultColumn.chance:Show()
+            highestResultColumn.noneText:Hide()
+            highestResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItemUpgrade)
+            highestResultColumn.chance:SetText(CraftSim.GUTIL:Round(recipeData.resultData.chanceUpgrade*100, 1) .. "%")
         else
-            if recipeData.result.isNoQuality then
-                availableRow.inspirationChanceText:SetText("-")
+            highestResultColumn.noneText:Show()
+            highestResultColumn.itemIcon:Hide()
+            highestResultColumn.chance:Hide()
+        end
+        local averageProfit = recipeData:GetAverageProfit()
+        local relativeTo = nil
+        if CraftSimOptions.showProfitPercentage then
+            relativeTo = recipeData.priceData.craftingCosts
+        end
+        averageProfitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(averageProfit, true, relativeTo))
+        row.averageProfit = averageProfit
+
+        if CraftSim.RECIPE_SCAN.frame.content.optimizeProfessionToolsCB:GetChecked() then
+            if recipeData.professionGearSet:IsEquipped() then
+                topGearColumn.equippedText:Show()
+                topGearColumn.equippedText:SetEquipped()
+
+                topGearColumn.gear1Icon:Hide()
+                topGearColumn.gear2Icon:Hide()
+                topGearColumn.toolIcon:Hide()
             else
-                availableRow.inspirationChanceText:SetText(CraftSim.UTIL:ColorizeText("0%", CraftSim.CONST.COLORS.RED))
+                topGearColumn.equippedText:Hide()
+                if recipeData.isCooking then
+                    topGearColumn.gear1Icon:Hide()
+                else
+                    topGearColumn.gear1Icon:SetItem(recipeData.professionGearSet.gear1.item)
+                    topGearColumn.gear1Icon:Show()
+                end
+
+                topGearColumn.gear2Icon:SetItem(recipeData.professionGearSet.gear2.item)
+                topGearColumn.toolIcon:SetItem(recipeData.professionGearSet.tool.item)
+
+                topGearColumn.gear2Icon:Show()
+                topGearColumn.toolIcon:Show()
+            end
+        else
+            topGearColumn.gear1Icon:Hide()
+            topGearColumn.gear2Icon:Hide()
+            topGearColumn.toolIcon:Hide()
+            topGearColumn.equippedText:Show()
+            topGearColumn.equippedText:SetIrrelevant()
+        end
+
+        -- for inventory count, count all result items together? For now.. Maybe a user will have a better idea!
+
+        local totalCountInv = 0
+        local totalCountAH = nil
+        for _, resultItem in pairs(recipeData.resultData.itemsByQuality) do
+            -- links are already loaded here
+            totalCountInv = totalCountInv + GetItemCount(resultItem:GetItemLink(), true, false, true)
+            local countAH = CraftSim.PRICEDATA:GetAuctionAmount(resultItem:GetItemLink())
+
+            if countAH then
+                totalCountAH = (totalCountAH or 0) + countAH
             end
         end
-    end
+        
+        local countText = tostring(totalCountInv)
 
-    local profitText = CraftSim.UTIL:FormatMoney(CraftSim.UTIL:round(meanProfit / 10000) * 10000, true, priceData.craftingCostPerCraft) -- round to gold
-    availableRow.profitText:SetText(profitText)
-
-    availableRow.learnedText:SetText((recipeData.learned and CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125)) or CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125))
-
-    if not CraftSimOptions.recipeScanOptimizeProfessionTools then
-        availableRow.tool1Icon:Hide()
-        availableRow.tool2Icon:Hide()
-        availableRow.tool3Icon:Hide()
-        availableRow.noTopGearText:Show()
-        availableRow.noTopGearText:SetText("-")
-    elseif bestSimulation then
-        CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(bestSimulation.combo, recipeData.professiosID == Enum.Profession.Cooking, CraftSim.CONST.EXPORT_MODE.SCAN, {
-            availableRow.tool1Icon,
-            availableRow.tool2Icon,
-            availableRow.tool3Icon,
-        })
-        availableRow.noTopGearText:Hide()
-    else
-        availableRow.tool1Icon:Hide()
-        availableRow.tool2Icon:Hide()
-        availableRow.tool3Icon:Hide()
-        availableRow.noTopGearText:Show()
-        availableRow.noTopGearText:SetText(CraftSim.UTIL:ColorizeText("Equipped", CraftSim.CONST.COLORS.GREEN))
-    end
-
-    -- update visibility and position
-
-    availableRow.isActive = true
-    local baseOffsetY = -30
-    local spacingY = -20
-    local totalOffsetY = baseOffsetY - spacingY
-    for i = 1, numActiveFrames, 1 do
-        local row = RecipeScanFrame.content.resultRowFrames[i]
-        if row.meanProfit < meanProfit then
-            row.offset = row.offset + spacingY
-            row:SetPoint("TOP", RecipeScanFrame.content.resultFrame, "TOP", 0, row.offset)
-        else
-            totalOffsetY = totalOffsetY + spacingY
+        if totalCountAH then
+            countText = countText .. " / " .. totalCountAH
         end
-    end
-    availableRow.meanProfit = meanProfit
-    availableRow.offset = totalOffsetY
-    availableRow:Show()
-    availableRow:SetPoint("TOP", RecipeScanFrame.content.resultFrame, "TOP", 0, totalOffsetY)
 
+        countColumn.text:SetText(countText)
+
+    end)
+
+    CraftSim.RECIPE_SCAN.frame.content.resultList:UpdateDisplay(function (rowA, rowB)
+        return rowA.averageProfit > rowB.averageProfit
+    end)
 end

@@ -1,15 +1,10 @@
 _, CraftSim = ...
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 ---@class CraftSim.Reagent
----@field hasQuality boolean
----@field requiredQuantity number
----@field dataSlotIndex number
----@field items CraftSim.ReagentItem[]
-
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.EXPORT_V2)
-
 CraftSim.Reagent = CraftSim.Object:extend()
 
+---@param reagentSlotSchematic CraftingReagentSlotSchematic
 function CraftSim.Reagent:new(reagentSlotSchematic)
     if not reagentSlotSchematic then
         return
@@ -21,6 +16,7 @@ function CraftSim.Reagent:new(reagentSlotSchematic)
         self.hasQuality = true
     end
 
+    ---@type CraftSim.ReagentItem[]
     self.items = {}
     for qualityID, itemInfo in pairs(reagentSlotSchematic.reagents) do
         local reagentItem = CraftSim.ReagentItem(itemInfo.itemID, qualityID)
@@ -39,7 +35,7 @@ function CraftSim.Reagent:GetCraftingReagentInfoByQuality(qualityID, maxQuantity
         return nil
     end
 
-    local qualityReagentItem = CraftSim.UTIL:Find(self.items, function(i) return i.qualityID == qualityID end)
+    local qualityReagentItem = CraftSim.GUTIL:Find(self.items, function(i) return i.qualityID == qualityID end)
 
     if not qualityReagentItem then
         return nil
@@ -78,6 +74,16 @@ function CraftSim.Reagent:GetCraftingReagentInfos()
     return craftingReagentInfos
 end
 
+---@return CraftSim.ReagentListItem[]
+function CraftSim.Reagent:GetReagentItemList()
+    local reagentItemList = {}
+    for _, item in pairs(self.items) do
+        table.insert(reagentItemList, item:GetAsReagentListItem())
+    end
+
+    return reagentItemList
+end
+
 function CraftSim.Reagent:Copy()
     local copy = CraftSim.Reagent()
 
@@ -85,7 +91,7 @@ function CraftSim.Reagent:Copy()
     copy.requiredQuantity = self.requiredQuantity
     copy.dataSlotIndex = self.dataSlotIndex
 
-    copy.items = CraftSim.UTIL:Map(self.items, function(i) return i:Copy() end)
+    copy.items = CraftSim.GUTIL:Map(self.items, function(i) return i:Copy() end)
 
     return copy
 end
@@ -99,10 +105,10 @@ function CraftSim.Reagent:Debug()
 
     if self.hasQuality then
         table.foreach(self.items, function (_, reagentItem)
-            debugLines = CraftSim.UTIL:Concat({debugLines, reagentItem:Debug()})
+            debugLines = CraftSim.GUTIL:Concat({debugLines, reagentItem:Debug()})
         end)
     else
-        debugLines = CraftSim.UTIL:Concat({debugLines, self.items[1]:Debug()})
+        debugLines = CraftSim.GUTIL:Concat({debugLines, self.items[1]:Debug()})
     end
 
     return debugLines
@@ -123,4 +129,71 @@ function CraftSim.Reagent:HasItems()
     end
 
     return true
+end
+
+function CraftSim.Reagent:SetCheapestQualityMax()
+    if self.hasQuality then
+        local itemPriceQ1 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[1].item:GetItemID(), true)
+        local itemPriceQ2 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[2].item:GetItemID(), true)
+        local itemPriceQ3 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[3].item:GetItemID(), true)
+
+        local cheapest = math.min(itemPriceQ1, itemPriceQ2, itemPriceQ3)
+
+        self:Clear()
+
+        if itemPriceQ1 == cheapest then
+            self.items[1].quantity = self.requiredQuantity
+        elseif itemPriceQ2 == cheapest then
+            self.items[2].quantity = self.requiredQuantity
+        elseif itemPriceQ3 == cheapest then
+            self.items[3].quantity = self.requiredQuantity
+        end
+    else
+        self.items[1].quantity = self.requiredQuantity
+    end
+end
+
+
+
+---@class CraftSim.Reagent.Serialized
+---@field hasQuality boolean
+---@field requiredQuantity number
+---@field dataSlotIndex number
+---@field items CraftSim.ReagentItem.Serialized[]
+
+function CraftSim.Reagent:Serialize()
+    local serialized = {}
+    serialized.hasQuality = self.hasQuality
+    serialized.requiredQuantity = self.requiredQuantity
+    serialized.dataSlotIndex = self.dataSlotIndex
+    serialized.items = CraftSim.GUTIL:Map(self.items, function (reagentItem)
+        return reagentItem:Serialize()
+    end)
+    return serialized
+end
+
+---STATIC: Deserializes a serialized reagent into a reagent
+---@param serializedReagent CraftSim.Reagent.Serialized
+---@return CraftSim.Reagent
+function CraftSim.Reagent:Deserialize(serializedReagent)
+    local reagent = CraftSim.Reagent()
+    reagent.hasQuality = not not serializedReagent.hasQuality
+    reagent.requiredQuantity = tonumber(serializedReagent.requiredQuantity)
+    reagent.dataSlotIndex = tonumber(serializedReagent.dataSlotIndex)
+    reagent.items = CraftSim.GUTIL:Map(serializedReagent.items, function (serializedReagentItem)
+        return CraftSim.ReagentItem:Deserialize(serializedReagentItem)
+    end)
+    return reagent
+end
+
+function CraftSim.Reagent:GetJSON(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+    jb:Begin()
+    jb:Add("hasQuality", self.hasQuality)
+    jb:Add("requiredQuantity", self.requiredQuantity)
+    jb:Add("dataSlotIndex", self.dataSlotIndex)
+    jb:AddList("items", self.items, true)
+    jb:End()
+    return jb.json
 end

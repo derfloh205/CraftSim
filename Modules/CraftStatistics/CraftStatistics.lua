@@ -24,10 +24,10 @@ function CraftSim.STATISTICS:CDF(q, mu, sd)
     return phi_Z
 end
 
-function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCraftsV2(probabilityTable, numCrafts)
+function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
     local meanOneCraft = 0
 
-    probabilityTable = CraftSim.UTIL:FilterTable(probabilityTable, function (entry)
+    probabilityTable = CraftSim.GUTIL:Filter(probabilityTable, function (entry)
         return entry.chance > 0
     end)
 
@@ -65,10 +65,10 @@ function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCraftsV2(probabilit
     local standardDeviationNumCrafts = math.sqrt(numCrafts) * standardDeviation
     local meanNumCrafts = meanOneCraft*numCrafts
 
-    print("mean (profit) of 1 craft: " .. CraftSim.UTIL:FormatMoney(meanOneCraft, true))
-    print("mean (profit) of "..numCrafts.." crafts: " .. CraftSim.UTIL:FormatMoney(meanNumCrafts, true))
-    print("standardDeviation 1 craft: " .. CraftSim.UTIL:FormatMoney(standardDeviation, true))
-    print("standardDeviation "..numCrafts.." crafts: " .. CraftSim.UTIL:FormatMoney(standardDeviationNumCrafts, true))
+    print("mean (profit) of 1 craft: " .. CraftSim.GUTIL:FormatMoney(meanOneCraft, true))
+    print("mean (profit) of "..numCrafts.." crafts: " .. CraftSim.GUTIL:FormatMoney(meanNumCrafts, true))
+    print("standardDeviation 1 craft: " .. CraftSim.GUTIL:FormatMoney(standardDeviation, true))
+    print("standardDeviation "..numCrafts.." crafts: " .. CraftSim.GUTIL:FormatMoney(standardDeviationNumCrafts, true))
 
 
     -- CDF:

@@ -2,179 +2,140 @@ AddonName, CraftSim = ...
 
 CraftSim.SPECIALIZATION_INFO.FRAMES = {}
 
-local function print(text, recursive, l) -- override
-    if CraftSim_DEBUG and CraftSim.FRAME.GetFrame and CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG) then
-        CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.FRAMES, recursive, l)
-    else
-        print(text)
-    end
-end
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
-    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimSpecInfoFrame", 
-    "CraftSim Specialization Info", 
-    ProfessionsFrame.CraftingPage.SchematicForm, 
-    CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR), 
-    "TOPLEFT", "TOPRIGHT", -10, 0, 310, 300, CraftSim.CONST.FRAMES.SPEC_INFO, true, true, nil, "modulesSpecInfo")
+    local sizeX=310
+    local sizeY=320
+    local offsetX=260
+    local offsetY=341
 
-    frame:Hide()
+    local frameNO_WO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent=ProfessionsFrame, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.SPEC_INFO, 
+        title="CraftSim Specialization Info",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",offsetX=offsetX,offsetY=offsetY,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesSpecInfo"),
+    })
+    local frameWO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        anchorParent=ProfessionsFrame, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.SPEC_INFO_WO, 
+        title="CraftSim Specialization Info",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",offsetX=offsetX,offsetY=offsetY,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesSpecInfo"),
+    })
 
-    frame.content.knowledgePointSimulationButton =  CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.knowledgePointSimulationButton:SetPoint("TOP", frame.title, "TOP", 0, -20)	
-	frame.content.knowledgePointSimulationButton:SetText("Simulate Knowledge Distribution")
-	frame.content.knowledgePointSimulationButton:SetSize(frame.content.knowledgePointSimulationButton:GetTextWidth()+5, 20)
-    frame.content.knowledgePointSimulationButton:SetScript("OnClick", function(self) 
-        local specSimFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
-        CraftSim.FRAME:ToggleFrame(CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM), not specSimFrame:IsVisible())
-    end)
-    frame.content.knowledgePointSimulationButton:SetEnabled(false)
-
-    frame.content.nodeLines = {}
-    local function createNodeLine(parent, anchorParent, offsetY)
-        local nodeLine = CreateFrame("frame", nil, parent)
-        nodeLine:SetSize(frame.content:GetWidth(), 25)
-        nodeLine:SetPoint("TOP", anchorParent, "TOP", 0, offsetY)
-
-        nodeLine.statTooltip = CraftSim.FRAME:CreateHelpIcon("No data", nodeLine, nodeLine, "LEFT", "LEFT", 20, 0)
-
-        nodeLine.nodeName = nodeLine:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        nodeLine.nodeName:SetPoint("LEFT", nodeLine.statTooltip, "RIGHT", 10, 0)
-        nodeLine.nodeName:SetText("NodeName")
-        return nodeLine
-    end
-    -- TODO: how many do I need?
-    local baseY = -60
-    local nodeLineSpacingY = -20
-    local maxNodeLines = 31
-    frame.content.AddNodeLine = function()
-        local numNodeLines = #frame.content.nodeLines
-        table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title, baseY + nodeLineSpacingY*(numNodeLines-1)))
-    end
+    local function createContent(frame)
+        frame:Hide()
     
-    for i = 1, maxNodeLines, 1 do
-        frame.content.AddNodeLine()
+        frame.content.knowledgePointSimulationButton = CraftSim.GGUI.Button({
+            parent=frame.content, anchorParent=frame.title.frame,anchorA="TOP",anchorB="TOP",offsetY=-20,
+            sizeX=15,sizeY=20, adjustWidth=true,label="Simulate Knowledge Distribution",
+            clickCallback=function ()
+                local specSimFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+                CraftSim.FRAME:ToggleFrame(CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM), not specSimFrame:IsVisible())
+            end
+        })
+
+        frame.content.knowledgePointSimulationButton:SetEnabled(false)
+
+        frame.content.notImplementedText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:ColorizeText("SpecInfo Work in Progress", CraftSim.GUTIL.COLORS.LEGENDARY),
+        frame.content, frame.content.knowledgePointSimulationButton.frame, "CENTER", "CENTER", 0, 0)
+    
+        frame.content.notImplementedText:Hide()
+    
+        frame.content.nodeLines = {}
+        local function createNodeLine(parent, anchorParent, offsetY)
+            local nodeLine = CreateFrame("frame", nil, parent)
+            nodeLine:SetSize(frame.content:GetWidth(), 25)
+            nodeLine:SetPoint("TOP", anchorParent, "TOP", 0, offsetY)
+    
+            nodeLine.statTooltip = CraftSim.FRAME:CreateHelpIcon("No data", nodeLine, nodeLine, "LEFT", "LEFT", 20, 0)
+    
+            nodeLine.nodeName = nodeLine:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            nodeLine.nodeName:SetPoint("LEFT", nodeLine.statTooltip, "RIGHT", 10, 0)
+            nodeLine.nodeName:SetText("NodeName")
+            return nodeLine
+        end
+        -- TODO: how many do I need?
+        local baseY = -60
+        local nodeLineSpacingY = -20
+        local maxNodeLines = 31
+        frame.content.AddNodeLine = function()
+            local numNodeLines = #frame.content.nodeLines
+            table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title.frame, baseY + nodeLineSpacingY*(numNodeLines-1)))
+        end
+        
+        for i = 1, maxNodeLines, 1 do
+            frame.content.AddNodeLine()
+        end
     end
+
+    createContent(frameWO)
+    createContent(frameNO_WO)
 end
 
 function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
-    local professionID = recipeData.professionID
-
-    local professionNodes = CraftSim.SPEC_DATA:GetNodes(professionID)
-
-    local specInfoFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
-
-    local ruleNodes = CraftSim.SPEC_DATA.RULE_NODES()[recipeData.professionID]
-
-    local function nodeStatsToTooltip(nodeStats)
-        local tooltipText = ""
-        for statName, statValue in pairs(nodeStats) do
-            local translatedStatName = CraftSim.LOCAL:TranslateStatName(statName)
-            local includeStat = statValue > 0
-            local isPercent = false
-            if string.match(statName, "Factor")  then
-                isPercent = true
-                if statValue == 1 then
-                    includeStat = false
-                end
-            end 
-            if includeStat then
-                if isPercent then
-                    local displayValue = CraftSim.UTIL:FormatFactorToPercent(statValue)
-                    tooltipText = tooltipText .. tostring(translatedStatName) .. ": " .. tostring(displayValue) .. "\n"
-                else
-                    tooltipText = tooltipText .. tostring(translatedStatName) .. ": +" .. tostring(statValue) .. "\n"
-                end
-            end
-        end
-
-        return tooltipText
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    local specInfoFrame = nil
+    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
+        specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO_WO)
+    else
+        specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
     end
 
-    local affectedNodes = {}
-    for name, nodeData in pairs(ruleNodes) do
-        local nodeInfo = recipeData.specNodeData[nodeData.nodeID]
+    local specializationData = recipeData.specializationData
 
-        -- minus one cause its always 1 more than the ui rank to know wether it was learned or not (learned with 0 has 1 rank)
-            -- only increase if the current recipe has a matching category AND Subtype (like weapons -> one handed axes)
-        local nodeRank = nodeInfo.activeRank
-        local nodeActualValue = nodeInfo.activeRank - 1
-
-        -- fetch all subtypeIDs, categoryIDs and exceptionRecipeIDs recursively
-        local IDs = CraftSim.SPEC_DATA:GetIDsFromChildNodesCached(nodeData, ruleNodes)
-        
-        local affectedNoRank = CraftSim.SPEC_DATA:affectsRecipeByIDs(recipeData, IDs)
-        local nodeAffectsRecipe = nodeRank > 0 and affectedNoRank
-
-        local alreadyInserted = CraftSim.UTIL:Find(affectedNodes, function(aN) return aN.nodeID == nodeData.nodeID end)
-        
-        if not alreadyInserted then
-            if affectedNoRank and not nodeAffectsRecipe then
-
-                local nodeNameData = CraftSim.UTIL:FilterTable(professionNodes, function(node) 
-                    return nodeData.nodeID == node.nodeID
-                end)[1]
-    
-                if nodeNameData.name == "Short Blades" then
-                    print("SpecInfo: NodeActive: " .. nodeNameData.name)
-                    print("nodeData.nodeID: " .. nodeData.nodeID)
-                    print("nodeData: ")
-                    print(nodeData, true)
-                    print("IDs:")
-                    print(IDs, true)
-                end
-
-                local nodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeData.nodeID)
-    
-                local nodeName = nodeNameData.name
-                table.insert(affectedNodes, {
-                    nodeID = nodeData.nodeID,
-                    name = nodeName,
-                    isActive = false,
-                    value = nodeActualValue,
-                    maxValue = nodeInfo.maxRanks - 1,
-                    nodeStats = nodeStats
-                })
-            elseif nodeAffectsRecipe then
-                local nodeNameData = CraftSim.UTIL:FilterTable(professionNodes, function(node) 
-                    return nodeData.nodeID == node.nodeID
-                end)[1]
-    
-                local nodeStats = CraftSim.SPEC_DATA:GetStatsFromSpecNodeData(recipeData, ruleNodes, nodeData.nodeID)
-    
-                local nodeName = nodeNameData.name
-                table.insert(affectedNodes, {
-                    nodeID = nodeData.nodeID,
-                    name = nodeName,
-                    isActive = true,
-                    value = nodeActualValue,
-                    maxValue = nodeInfo.maxRanks - 1,
-                    nodeStats = nodeStats
-                })
-            end
-            -- else it does not affect the recipe in any case
-        end
+    if not specializationData.isImplemented then
+        table.foreach(specInfoFrame.content.nodeLines, function (_, nodeLine)
+            nodeLine:Hide()
+        end)
+        specInfoFrame.content.notImplementedText:Show()
+        specInfoFrame.content.knowledgePointSimulationButton:Hide()
+    else
+        specInfoFrame.content.knowledgePointSimulationButton:Show()
+        specInfoFrame.content.notImplementedText:Hide()
     end
 
-    print("Affecting Nodes: " .. tostring(#affectedNodes))
-    if #affectedNodes > #specInfoFrame.content.nodeLines then
-        error("You need more nodeLines: " .. #affectedNodes .. " / " .. #specInfoFrame.content.nodeLines)
+    if CraftSim.SIMULATION_MODE.isActive then
+        specializationData = CraftSim.SIMULATION_MODE.specializationData
+    end
+
+    local affectedNodeDataList = CraftSim.GUTIL:Filter(specializationData.nodeData, function(nodeData) 
+        return nodeData.affectsRecipe 
+    end)
+
+    if #affectedNodeDataList > #specInfoFrame.content.nodeLines then
+        error("You need more nodeLines: " .. #affectedNodeDataList .. " / " .. #specInfoFrame.content.nodeLines)
     end
     for nodeLineIndex, nodeLine in pairs(specInfoFrame.content.nodeLines) do
-        local affectedNode = affectedNodes[nodeLineIndex]
-        if affectedNode and affectedNode.isActive then
-            nodeLine.nodeName:SetText(affectedNode.name .. " (" .. tostring(affectedNode.value) .. "/" .. tostring(affectedNode.maxValue) .. ")")
+        local affectedNodeData = affectedNodeDataList[nodeLineIndex]
+        if affectedNodeData and affectedNodeData.active then
+            nodeLine.nodeName:SetText(affectedNodeData.nodeName .. " (" .. tostring(affectedNodeData.rank) .. "/" .. tostring(affectedNodeData.maxRank) .. ")")
 
-            local nodeStats = affectedNode.nodeStats
+            local nodeProfessionStats = affectedNodeData.professionStats
 
             local tooltipText = "This node grants you following stats for this recipe:\n\n"
 
-            tooltipText = tooltipText .. nodeStatsToTooltip(nodeStats)
+            tooltipText = tooltipText .. nodeProfessionStats:GetTooltipText()
 
             nodeLine.statTooltip.SetTooltipText(tooltipText)
             nodeLine.statTooltip:Show()
             nodeLine:Show()
-        elseif affectedNode and not affectedNode.isActive then
-            local greyText = CraftSim.UTIL:ColorizeText(affectedNode.name .. " (-/" .. tostring(affectedNode.maxValue) .. ")", CraftSim.CONST.COLORS.GREY)
+        elseif affectedNodeData and not affectedNodeData.active then
+            local greyText = CraftSim.GUTIL:ColorizeText(affectedNodeData.nodeName .. " (-/" .. tostring(affectedNodeData.maxRank) .. ")", CraftSim.GUTIL.COLORS.GREY)
             nodeLine.nodeName:SetText(greyText)
             nodeLine.statTooltip:Hide()
             nodeLine:Show()

@@ -1,0 +1,3 @@
+_, CraftSim = ...
+
+CraftSim.COST_DETAILS = {}

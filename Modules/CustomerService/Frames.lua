@@ -6,62 +6,72 @@ CraftSim.CUSTOMER_SERVICE.timeoutSeconds = 5
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_SERVICE)
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
-    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimCustomerServiceFrame", "CraftSim Customer Service",
-    ProfessionsFrame, UIParent, "CENTER", "CENTER", 0, 0, 
-    400, 300, CraftSim.CONST.FRAMES.CUSTOMER_SERVICE, false, true, "DIALOG", "modulesCustomerService")
+    local frame = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame, 
+        sizeX=400,sizeY=300,
+        frameID=CraftSim.CONST.FRAMES.CUSTOMER_SERVICE, 
+        title="CraftSim Customer Service",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata="DIALOG",
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCustomerService"),
+    })
 
     local function createContent(frame)
         frame:Hide()
-        local autoReplyTab = CraftSim.FRAME:CreateTab("Auto Reply", frame.content, frame.title, "TOP", "BOTTOM", -70, -15, true, 300, 250, frame.content, frame.title, 0, -50)
-        local autoResultTab = CraftSim.FRAME:CreateTab("Live Preview", frame.content, autoReplyTab, "LEFT", "RIGHT", 0, 0, true, 300, 250, frame.content, frame.title, 0, -50)
+        local recipeWhisperTab = CraftSim.FRAME:CreateTab("Recipe Whisper", frame.content, frame.title.frame, "TOP", "BOTTOM", -90, -15, true, 300, 250, frame.content, frame.title.frame, 0, -50)
+        local autoResultTab = CraftSim.FRAME:CreateTab("Live Preview", frame.content, recipeWhisperTab, "LEFT", "RIGHT", 0, 0, true, 300, 250, frame.content, frame.title.frame, 0, -50)
 
-        autoReplyTab.content.enableReplyCB = CraftSim.FRAME:CreateCheckbox("Enable Auto Reply", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION), 
-        "customerServiceEnableAutoReply", autoReplyTab.content, autoReplyTab.content, "TOPLEFT", "TOPLEFT", 10, -10)
-
-        autoReplyTab.content.whisperCommandTitle = CraftSim.FRAME:CreateText("Command:", autoReplyTab.content, autoReplyTab.content.enableReplyCB, "TOPLEFT", "BOTTOMLEFT", 0, -10)
-        autoReplyTab.content.whisperCommandInput = CraftSim.FRAME:CreateInput(nil, autoReplyTab.content, autoReplyTab.content.whisperCommandTitle, "LEFT", "RIGHT", 5, 0, 100, 25, 
-        CraftSimOptions.customerServiceAutoReplyCommand, 
+        recipeWhisperTab.content.customerCharacterInput = CraftSim.FRAME:CreateInput(nil, recipeWhisperTab.content, recipeWhisperTab.content, "TOPLEFT", "TOPLEFT", 10, -30, 150, 25, 
+        "", 
         function() 
-            CraftSimOptions.customerServiceAutoReplyCommand = autoReplyTab.content.whisperCommandInput:GetText()
-            autoReplyTab.content.commandPreview:SetText("Example: " .. CraftSimOptions.customerServiceAutoReplyCommand .. " <itemLink> <ilvl>")
-        end)
-        autoReplyTab.content.commandPreview = CraftSim.FRAME:CreateText("Example: " .. CraftSimOptions.customerServiceAutoReplyCommand .. " <itemLink> <ilvl>", 
-        autoReplyTab.content, autoReplyTab.content.whisperCommandTitle, "TOPLEFT", "BOTTOMLEFT", 0, -15, nil, nil, {type="H", value="LEFT"})
-        autoReplyTab.content.resetDefaults = CraftSim.FRAME:CreateButton("Reset to Defaults", autoReplyTab.content, autoReplyTab.content.whisperCommandInput, "LEFT", "RIGHT", 15, 0, 15, 25, true, function() 
-            local defaultFormat = 
-            "Highest Result: %gc\n" ..
-            "with Inspiration: %ic (%insp)\n" ..
-            "Crafting Costs: %cc\n" ..
-            "%ccd"
-            local defaultCommand = "!craft"
-            CraftSimOptions.customerServiceAutoReplyFormat = defaultFormat
-            autoReplyTab.content.msgFrameContent.msgFormatBox:SetText(defaultFormat)
-
-            autoReplyTab.content.whisperCommandInput:SetText(defaultCommand)
-            CraftSimOptions.customerServiceAutoReplyCommand = defaultCommand
         end)
 
-        autoReplyTab.content.messageFormatTitle = CraftSim.FRAME:CreateText("Message Format", 
-        autoReplyTab.content, autoReplyTab.content.commandPreview, "TOPLEFT", "BOTTOMLEFT", 80, -15)
+        recipeWhisperTab.content.whisperButton = CraftSim.GGUI.Button({
+            parent=recipeWhisperTab.content,anchorParent=recipeWhisperTab.content.customerCharacterInput,anchorA="LEFT",anchorB="RIGHT", offsetX=10,sizeX=15,sizeY=25,adjustWidth=true,
+            label="Whisper",
+            clickCallback=function ()
+                local whisperTarget = recipeWhisperTab.content.customerCharacterInput:GetText()
+                CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
+            end
+        })
 
-        autoReplyTab.content.messageFormatHelp = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION), autoReplyTab.content, autoReplyTab.content.messageFormatTitle, "LEFT", "RIGHT", 10, 0)
+        recipeWhisperTab.content.msgFormatScrollFrame, recipeWhisperTab.content.msgFrameContent =
+         CraftSim.FRAME:CreateScrollFrame(recipeWhisperTab.content, -90, 10, -10, 40)
 
-
-        autoReplyTab.content.msgFormatScrollFrame, autoReplyTab.content.msgFrameContent =
-         CraftSim.FRAME:CreateScrollFrame(autoReplyTab.content, -110, 10, -10, 40)
-
-        autoReplyTab.content.msgFrameContent.msgFormatBox = CreateFrame("EditBox", nil, autoReplyTab.content.msgFrameContent)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetPoint("TOP", autoReplyTab.content.msgFrameContent, "TOP", 0, -5)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetText(CraftSimOptions.customerServiceAutoReplyFormat)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetWidth(autoReplyTab.content.msgFrameContent:GetWidth() - 15)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetHeight(20)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetMultiLine(true)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetAutoFocus(false)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetFontObject("ChatFontNormal")
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetScript("OnEscapePressed", function() autoReplyTab.content.msgFrameContent.msgFormatBox:ClearFocus() end)
-        autoReplyTab.content.msgFrameContent.msgFormatBox:SetScript("OnTextChanged", function() 
-            CraftSimOptions.customerServiceAutoReplyFormat = autoReplyTab.content.msgFrameContent.msgFormatBox:GetText()
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox = CreateFrame("EditBox", nil, recipeWhisperTab.content.msgFrameContent)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetPoint("TOP", recipeWhisperTab.content.msgFrameContent, "TOP", 0, -5)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(CraftSimOptions.customerServiceRecipeWhisperFormat)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetWidth(recipeWhisperTab.content.msgFrameContent:GetWidth() - 15)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetHeight(20)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetMultiLine(true)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetAutoFocus(false)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetFontObject("ChatFontNormal")
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetScript("OnEscapePressed", function() recipeWhisperTab.content.msgFrameContent.msgFormatBox:ClearFocus() end)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetScript("OnTextChanged", function() 
+            CraftSimOptions.customerServiceRecipeWhisperFormat = recipeWhisperTab.content.msgFrameContent.msgFormatBox:GetText()
         end)
+
+        recipeWhisperTab.content.messageFormatTitle = CraftSim.FRAME:CreateText("Message Format", 
+        recipeWhisperTab.content, recipeWhisperTab.content.msgFormatScrollFrame, "BOTTOMLEFT", "TOPLEFT", 8, 5)
+
+        recipeWhisperTab.content.messageFormatHelp = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION), recipeWhisperTab.content, recipeWhisperTab.content.messageFormatTitle, "LEFT", "RIGHT", 10, 0)
+
+        recipeWhisperTab.content.resetDefaults = CraftSim.GGUI.Button({
+            parent=recipeWhisperTab.content,anchorParent=recipeWhisperTab.content.messageFormatHelp,anchorA="LEFT",anchorB="RIGHT", offsetX=10,sizeX=15,sizeY=25,adjustWidth=true,
+            label="Reset to Defaults",
+            clickCallback=function ()
+                local defaultFormat = 
+                "Highest Result: %gc\n" ..
+                "with Inspiration: %ic (%insp)\n" ..
+                "Crafting Costs: %cc\n" ..
+                "%ccd"
+                CraftSimOptions.customerServiceRecipeWhisperFormat = defaultFormat
+                recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(defaultFormat)
+            end
+        })
 
         autoResultTab.content.enableConnections = CraftSim.FRAME:CreateCheckbox("Allow Connections", 
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION), "customerServiceAllowAutoResult", 
@@ -72,12 +82,16 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         function() 
         end)
 
-        autoResultTab.content.inviteButton = CraftSim.FRAME:CreateButton("Send Invite", autoResultTab.content.browserInviteInput, autoResultTab.content.browserInviteInput, "LEFT", "RIGHT", 5, 0, 15, 25, true, function()
-            local whisperTarget = autoResultTab.content.browserInviteInput:GetText()
-            CraftSim.CUSTOMER_SERVICE:WhisperInvite(whisperTarget)
-        end)
+        recipeWhisperTab.content.resetDefaults = CraftSim.GGUI.Button({
+            parent=autoResultTab.content,anchorParent=autoResultTab.content.browserInviteInput,anchorA="LEFT",anchorB="RIGHT", offsetX=5,sizeX=15,sizeY=25,adjustWidth=true,
+            label="Send Invite",
+            clickCallback=function ()
+                local whisperTarget = autoResultTab.content.browserInviteInput:GetText()
+                CraftSim.CUSTOMER_SERVICE:WhisperInvite(whisperTarget)
+            end
+        })
         
-        frame.tabs = {autoReplyTab, autoResultTab}
+        frame.tabs = {recipeWhisperTab, autoResultTab}
         CraftSim.FRAME:InitTabSystem(frame.tabs)
     end
 
@@ -85,34 +99,41 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
-    local frame = CraftSim.FRAME:CreateCraftSimFrame("CraftSimLivePreviewFrame", "CraftSim Live Preview", UIParent, UIParent,
-    "CENTER", "CENTER", 0, 0, 500, 500, CraftSim.CONST.FRAMES.LIVE_PREVIEW, false, true, "DIALOG")
+    local frame = CraftSim.GGUI.Frame({
+        parent=UIParent,anchorParent=UIParent,sizeX=500,sizeY=500,frameID=CraftSim.CONST.FRAMES.LIVE_PREVIEW, frameStrata="DIALOG",
+        closeable=true,collapseable=true, moveable=true,
+        title="CraftSim Live Preview",
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+    })
 
     local function createContent(frame)
         frame:Hide()
 
-        local function onRecipeSelected(_, recipeID)
+        local function onRecipeSelected(_, _, recipeID)
             print("Selected RecipeID: " .. tostring(recipeID))
             frame.currentRecipeID = recipeID
             CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, true) 
         end
 
-        frame.content.previewTitle = CraftSim.FRAME:CreateText("Crafter's Profession", frame.content, frame.title, "TOP", "BOTTOM", 0, -10)
+        frame.content.previewTitle = CraftSim.FRAME:CreateText("Crafter's Profession", frame.content, frame.title.frame, "TOP", "BOTTOM", 0, -10)
 
-        frame.content.recipeDropdown = CraftSim.FRAME:initDropdownMenu(nil, frame.content, frame.content.previewTitle, "Learned Recipes", 0, -30, 200, {}, onRecipeSelected, "Select Recipe", true)
+        frame.content.recipeDropdown = CraftSim.GGUI.Dropdown({
+            parent=frame.content, anchorParent=frame.content.previewTitle, anchorA="TOP", anchorB="TOP",
+            label="Learned Recipes", offsetY=-30, sizeX=200, clickCallback=onRecipeSelected, initialValue="Select Recipe",
+        })
 
         local requestingUpdate = "Requesting Update"
-        frame.content.loadingText = CraftSim.FRAME:CreateText(requestingUpdate, frame.content, frame.content.recipeDropdown, "LEFT", "RIGHT", -20, 5, 0.8, nil, {type="H", value="LEFT"})
+        frame.content.loadingText = CraftSim.FRAME:CreateText(requestingUpdate, frame.content, frame.content.recipeDropdown.frame, "LEFT", "RIGHT", -20, 5, 0.8, nil, {type="H", value="LEFT"})
         frame.content.isUpdating = false
         frame.content.updates = {}
         local function checkForTimeOut(updateID)
             if tContains(frame.content.updates, updateID) then
-                frame.content.loadingText:SetText(CraftSim.UTIL:ColorizeText("Timeout (Player Offline?)", CraftSim.CONST.COLORS.RED))
+                frame.content.loadingText:SetText(CraftSim.GUTIL:ColorizeText("Timeout (Player Offline?)", CraftSim.GUTIL.COLORS.RED))
                 frame.content.StopUpdate(true)
             end
         end
         frame.content.StartUpdate = function()
-            local updateID = CraftSim.UTIL:round(debugprofilestop())
+            local updateID = CraftSim.GUTIL:Round(debugprofilestop())
             table.insert(frame.content.updates, updateID)
             frame.SetEnabled(false)
             frame.content.isUpdating = true
@@ -142,8 +163,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             frame.SetEnabled(true)
             frame.content.updates = {}
         end
-        local function onOptionalReagentSelected(dropdown, itemID) 
-            dropdown.selectedID = itemID
+        local function onOptionalReagentSelected(_, _, itemID) 
             print("selected optional Reagent: " .. tostring(itemID))
             CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(frame.currentRecipeID) 
         end
@@ -153,14 +173,14 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         end
 
         frame.content.guaranteeCB = CraftSim.FRAME:CreateCheckboxCustomCallback("Highest Guaranteed", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION),
-        false, onCheckboxChecked, frame.content, frame.content.recipeDropdown, "TOPLEFT", "BOTTOMLEFT", 17, 0)
+        false, onCheckboxChecked, frame.content, frame.content.recipeDropdown.frame, "TOPLEFT", "BOTTOMLEFT", 17, 0)
         local dropdownWidth = 120
         local dropdownOffsetX = 70
         local dropdownBaseY = 0
         local dropdownSpacingY = -40
         frame.content.optionalDropdownGroup = CreateFrame("frame", nil, frame.content)
         frame.content.optionalDropdownGroup:SetSize(dropdownWidth*2 + dropdownOffsetX, -1*dropdownBaseY + -1*dropdownSpacingY*2 + 25)
-        frame.content.optionalDropdownGroup:SetPoint("TOP", frame.content.recipeDropdown, "BOTTOM", 0, -35)
+        frame.content.optionalDropdownGroup:SetPoint("TOP", frame.content.recipeDropdown.frame, "BOTTOM", 0, -35)
 
         frame.content.optionalDropdownGroup.SetCollapsed = function(collapsed)
             if collapsed then
@@ -175,8 +195,11 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         frame.content.optionalDropdownGroup.SetCollapsed(true)
         frame.content.optionalDropdownGroup:Hide()
 
-        local function CreateReagentInputDropdown(label, anchorX, anchorY)
-            local optionalReagentDropdown = CraftSim.FRAME:initDropdownMenu(nil, frame.content.optionalDropdownGroup, frame.content.optionalDropdownGroup, label, anchorX, anchorY, dropdownWidth, {}, onOptionalReagentSelected)
+        local function CreateReagentInputDropdown(label, offsetX, offsetY)
+            local optionalReagentDropdown = CraftSim.GGUI.Dropdown({
+                parent=frame.content.optionalDropdownGroup, anchorParent=frame.content.optionalDropdownGroup, anchorA="TOP",anchorB="TOP",
+                label=label, offsetX=offsetX,offsetY=offsetY, width=dropdownWidth, clickCallback=onOptionalReagentSelected,
+            })
             return optionalReagentDropdown
         end
 
@@ -190,17 +213,21 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             CreateReagentInputDropdown("Finishing 2", dropdownOffsetX, dropdownBaseY + dropdownSpacingY),
         } 
         
-        frame.content.craftingCosts = CraftSim.FRAME:CreateText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(0), frame.content, frame.content.optionalDropdownGroup, "TOP", "BOTTOM", 0, -20)
+        frame.content.craftingCosts = CraftSim.FRAME:CreateText("Crafting Costs\n" .. CraftSim.GUTIL:FormatMoney(0), frame.content, frame.content.optionalDropdownGroup, "TOP", "BOTTOM", 0, -20)
         
         frame.content.expectedResultTitle = CraftSim.FRAME:CreateText("Expected Result", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", -80, -10, nil, nil)
         
-        local resultQualityIconSize = 20
-        frame.content.expectedResultIcon = CraftSim.FRAME:CreateIcon(frame.content, 0, -10, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "TOP", "BOTTOM", frame.content.expectedResultTitle)
-        frame.content.expectedResultQualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content.expectedResultIcon, resultQualityIconSize, resultQualityIconSize, frame.content.expectedResultIcon, "TOPLEFT", "TOPLEFT", -3, 3, 1)
+        frame.content.expectedResultIcon = CraftSim.GGUI.Icon({
+            parent=frame.content,anchorParent=frame.content.expectedResultTitle,
+            sizeX=40, sizeY=40, offsetY=-10, anchorA="TOP", anchorB="BOTTOM"
+        })
         
         frame.content.expectedInspirationPercent = CraftSim.FRAME:CreateText("100% Chance for", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 80, -10, nil, nil)
-        frame.content.expectedInspirationIcon = CraftSim.FRAME:CreateIcon(frame.content, 0, -10, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 40, 40, "TOP", "BOTTOM", frame.content.expectedInspirationPercent)
-        frame.content.expectedInspirationQualityIcon = CraftSim.FRAME:CreateQualityIcon(frame.content.expectedInspirationIcon, resultQualityIconSize, resultQualityIconSize, frame.content.expectedInspirationIcon, "TOPLEFT", "TOPLEFT", -3, 3, 1)
+        
+        frame.content.expectedInspirationIcon = CraftSim.GGUI.Icon({
+            parent=frame.content,anchorParent=frame.content.expectedInspirationPercent,
+            sizeX=40, sizeY=40, offsetY=-10, anchorA="TOP", anchorB="BOTTOM"
+        })
         
         frame.content.reagentDetailsTitle = CraftSim.FRAME:CreateText("Required Materials", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 0, -80)
         
@@ -210,16 +237,17 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             reagentFrame:SetSize(iconSize, iconSize)
             reagentFrame:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
             
-            reagentFrame.icon = CraftSim.FRAME:CreateIcon(reagentFrame, 0, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, iconSize, iconSize, "LEFT", "LEFT", reagentFrame)
-            reagentFrame.countTextNoQ = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.icon = CraftSim.GGUI.Icon({
+                parent=reagentFrame, sizeX=iconSize, sizeY=iconSize, anchorA="LEFT", anchorB="LEFT", anchorParent=reagentFrame,
+                hideQualityIcon=true,
+            })
+            reagentFrame.countTextNoQ = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon.frame, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
             
-            reagentFrame.countTextQ1 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, 12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
-            reagentFrame.countTextQ2 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
-            reagentFrame.countTextQ3 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon, "LEFT", "RIGHT", 5, -12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.countTextQ1 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon.frame, "LEFT", "RIGHT", 5, 12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.countTextQ2 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon.frame, "LEFT", "RIGHT", 5, 0, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
+            reagentFrame.countTextQ3 = CraftSim.FRAME:CreateText(" x ???", reagentFrame, reagentFrame.icon.frame, "LEFT", "RIGHT", 5, -12, 0.9, nil, {type="HV", valueH="LEFT", valueV="CENTER"})
             reagentFrame.SetReagent = function (itemID, isQuality, countq1, countq2, countq3)
-                print("set reagent: " .. tostring(itemID) .. " - " .. tostring(type(itemID)))
-                print("qualities? " .. tostring(isQuality))
-                reagentFrame.icon.SetItem(itemID, frame.content)
+                reagentFrame.icon:SetItem(itemID)
                 if not itemID then
                     reagentFrame:Hide()
                     return
@@ -235,13 +263,9 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
                     reagentFrame.countTextNoQ:SetText(countText)
                 else 
                     local qualityIconSize = 15
-                    local q1Icon = CraftSim.UTIL:GetQualityIconAsText(1, qualityIconSize, qualityIconSize, 0, 0)
-                    local q2Icon = CraftSim.UTIL:GetQualityIconAsText(2, qualityIconSize, qualityIconSize, 0, 0)
-                    local q3Icon = CraftSim.UTIL:GetQualityIconAsText(3, qualityIconSize, qualityIconSize, 0, 0)
-                    print("quality Icons:")
-                    print(q1Icon)
-                    print(q2Icon)
-                    print(q3Icon)
+                    local q1Icon = CraftSim.GUTIL:GetQualityIconString(1, qualityIconSize, qualityIconSize, 0, 0)
+                    local q2Icon = CraftSim.GUTIL:GetQualityIconString(2, qualityIconSize, qualityIconSize, 0, 0)
+                    local q3Icon = CraftSim.GUTIL:GetQualityIconString(3, qualityIconSize, qualityIconSize, 0, 0)
                     reagentFrame.countTextNoQ:Hide()
                     reagentFrame.countTextQ1:SetText(q1Icon .. " x " .. countq1)
                     reagentFrame.countTextQ2:SetText(q2Icon .. " x " .. countq2)
@@ -268,29 +292,22 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         }
 
         frame.SetEnabled = function(value)
-            print("enable frames: " .. tostring(value)) 
             -- disable/enable all childs
-            local toggleDropdown = (value and UIDropDownMenu_EnableDropDown) or UIDropDownMenu_DisableDropDown
-            toggleDropdown(frame.content.recipeDropdown)
+            frame.content.recipeDropdown:SetEnabled(value)
             frame.content.guaranteeCB:SetEnabled(value)
-
-            for _, dropdown in pairs(frame.content.optionalDropdowns) do
-                toggleDropdown(dropdown)
-            end
-
         end
 
     end
 
     createContent(frame)
-    CraftSim.FRAME:EnableHyperLinksForFrameAndChilds(frame)
+    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
 end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     local recipes = payload.recipes
     local crafter = payload.crafter
     local professionName = payload.professionName
-    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
 
     previewFrame.professionID = payload.professionID
     previewFrame.crafter = crafter
@@ -303,6 +320,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
             local dropdownEntry = {
                 label = categoryName,
                 value = {},
+                isCategory=true,
             }
             for _, recipeEntry in pairs(recipes) do
                 table.insert(dropdownEntry.value, {
@@ -329,152 +347,126 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     previewFrame.content.reagentDetailsTitle:Hide()
     previewFrame.content.optionalDropdownGroup:Hide()
     previewFrame.content.guaranteeCB:Hide()
-    CraftSim.FRAME:initializeDropdownByData(previewFrame.content.recipeDropdown, convertToDropdownListData(recipes), "Select a Recipe")
+
+
+    previewFrame.content.recipeDropdown:SetData({data=convertToDropdownListData(recipes), initialValue="Select Recipe"})
 
     previewFrame:Show()
 end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
-    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
-    local outputInfo = payload.outputInfo
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local resultData = payload.resultData
     local reagents = payload.reagents
     local optionalReagents = payload.optionalReagents
     local finishingReagents = payload.finishingReagents
+    local supportsQualities = payload.supportsQualities
 
+    if resultData.canUpgradeQuality then
+        local upgradeChanceText = payload.upgradeChance .. "%"
+        previewFrame.content.expectedInspirationPercent:SetText(upgradeChanceText .. " Chance for")
+        previewFrame.content.expectedInspirationIcon:SetItem(resultData.expectedItemUpgrade, nil, nil, true)
+        previewFrame.content.expectedInspirationIcon:Show()
+        previewFrame.content.expectedInspirationPercent:Show()
+    else
+        previewFrame.content.expectedInspirationIcon:Hide()
+        previewFrame.content.expectedInspirationPercent:Hide()
+    end
+    
+    previewFrame.content.reagentDetailsTitle:Show()
+    previewFrame.content.expectedResultTitle:Show()
+    previewFrame.content.expectedResultIcon:Show()
+    previewFrame.content.expectedResultIcon:SetItem(resultData.expectedItem, nil, nil, true)
+    if supportsQualities then
+        previewFrame.content.guaranteeCB:Show()
+    else
+        previewFrame.content.guaranteeCB:Hide()
+    end
 
-    -- load reagents and optionalReagents, then continue
-    local itemsToLoad = {}
-    CraftSim.UTIL:Concat({ -- wtf ? TODO: remove concat?
-        CraftSim.UTIL:Map(reagents, function (itemInfo)
-            local item = Item:CreateFromItemID(itemInfo.itemID)
-            table.insert(itemsToLoad, item)
-            itemInfo.item = item
-            return item
-        end, {subTable="itemsInfo"}),
-        CraftSim.UTIL:Map(optionalReagents, function (reagent)
-            local item = Item:CreateFromItemID(reagent.itemID)
-            table.insert(itemsToLoad, item)
-            reagent.item = item
-            return item
-        end, {isTableList=true}),
-        CraftSim.UTIL:Map(finishingReagents, function (reagent)
-            local item = Item:CreateFromItemID(reagent.itemID)
-            table.insert(itemsToLoad, item)
-            reagent.item = item
-            return item
-        end, {isTableList=true})
-    })
+    local craftingCosts = 0
 
-    CraftSim.UTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
-        if outputInfo.inspirationCanUpgrade then
-            local inspirationText = payload.inspirationPercent .. "%"
-            previewFrame.content.expectedInspirationPercent:SetText(inspirationText .. " Chance for")
-            previewFrame.content.expectedInspirationIcon.SetItem(outputInfo.inspiration, nil, nil, true)
-            previewFrame.content.expectedInspirationQualityIcon.SetQuality(outputInfo.expectedQualityInspiration)
-            previewFrame.content.expectedInspirationIcon:Show()
-            previewFrame.content.expectedInspirationPercent:Show()
-            previewFrame.content.expectedInspirationQualityIcon:Show()
-        else
-            previewFrame.content.expectedInspirationIcon:Hide()
-            previewFrame.content.expectedInspirationPercent:Hide()
-            previewFrame.content.expectedInspirationQualityIcon:Hide()
+    for i, reagent in pairs(reagents) do
+        for _, reagentItem in pairs(reagent.items) do
+            local reagentCost = reagentItem.quantity * CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true)
+            print("reagentCost #" .. i .. ": " .. CraftSim.GUTIL:FormatMoney(reagentCost))
+            print(reagentItem.quantity .. " x " .. CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true))
+            craftingCosts = craftingCosts + reagentCost
         end
-    
-        
-        previewFrame.content.reagentDetailsTitle:Show()
-        previewFrame.content.expectedResultTitle:Show()
-        previewFrame.content.expectedResultIcon:Show()
-        previewFrame.content.expectedResultIcon.SetItem(outputInfo.expected, nil, nil, true)
-        if not outputInfo.isNoQuality then
-            previewFrame.content.expectedResultQualityIcon.SetQuality(outputInfo.expectedQuality)
-            previewFrame.content.expectedResultQualityIcon:Show()
-            previewFrame.content.guaranteeCB:Show()
-        else
-            previewFrame.content.expectedResultQualityIcon:Hide()
-            previewFrame.content.guaranteeCB:Hide()
+    end
+
+    for _, dropdown in pairs(previewFrame.content.optionalDropdowns) do
+        if dropdown.selectedID then
+            local reagentCost = CraftSim.PRICEDATA:GetMinBuyoutByItemID(dropdown.selectedID, true)
+            craftingCosts = craftingCosts + reagentCost
         end
-    
-        local craftingCosts = 0
-    
-        for i, reagent in pairs(reagents) do
-            for _, itemInfo in pairs(reagent.itemsInfo) do
-                local reagentCost = tonumber(itemInfo.allocations) * CraftSim.PRICEDATA:GetMinBuyoutByItemID(tonumber(itemInfo.itemID), true)
-                print("reagentCost #" .. i .. ": " .. CraftSim.UTIL:FormatMoney(reagentCost))
-                print(tonumber(itemInfo.allocations) .. " x " .. CraftSim.PRICEDATA:GetMinBuyoutByItemID(tonumber(itemInfo.itemID), true))
-                craftingCosts = craftingCosts + reagentCost
+    end
+
+    for index, reagentFrame in pairs(previewFrame.content.reagentFrames) do
+        local currentReagent = reagents[index]
+        if currentReagent then
+            local itemID = tonumber(currentReagent.items[1].item:GetItemID())
+            if currentReagent.hasQuality then
+                reagentFrame.SetReagent(itemID, true,
+                currentReagent.items[1].quantity, 
+                currentReagent.items[2].quantity, 
+                currentReagent.items[3].quantity)
+            else
+                reagentFrame.SetReagent(itemID, false, currentReagent.items[1].quantity)
             end
+        else
+            reagentFrame.SetReagent(nil)
         end
+    end
 
-        for _, dropdown in pairs(previewFrame.content.optionalDropdowns) do
-            if dropdown.selectedID then
-                local reagentCost = CraftSim.PRICEDATA:GetMinBuyoutByItemID(dropdown.selectedID, true)
-                craftingCosts = craftingCosts + reagentCost
+    if payload.isInit then
+        previewFrame.currentOptionalReagentSlots = optionalReagents
+        previewFrame.currentFinishingReagentSlots = finishingReagents
+        previewFrame.content.optionalDropdownGroup.SetCollapsed(#optionalReagents + #finishingReagents == 0)
+
+        ---@param optionalReagentList CraftSim.OptionalReagent[]
+        local function convertOptionalReagentsToDropdownListData(optionalReagentList)
+            local dropDownListData = {{label = "None", value = nil}}
+            for _, optionalReagent in pairs(optionalReagentList) do
+                table.insert(dropDownListData, {
+                    label = optionalReagent.item:GetItemLink(),
+                    value = optionalReagent.item:GetItemID(),
+                })
             end
+            return dropDownListData
         end
 
-        for index, reagentFrame in pairs(previewFrame.content.reagentFrames) do
-            local currentReagent = reagents[index]
-            if currentReagent then
-                local itemID = tonumber(currentReagent.itemsInfo[1].itemID)
-                if currentReagent.differentQualities then
-                    reagentFrame.SetReagent(itemID, true,
-                    currentReagent.itemsInfo[1].allocations, 
-                    currentReagent.itemsInfo[2].allocations, 
-                    currentReagent.itemsInfo[3].allocations)
+        local dropdownIndex = 1
+        for i = 1, 5, 1 do
+            local dropdown = previewFrame.content.optionalDropdowns[i]
+            local optionalReagentSlot = nil
+            if i < 4 then
+                optionalReagentSlot = optionalReagents[i]
+            else
+                optionalReagentSlot = finishingReagents[i-3]
+            end
+
+            if optionalReagentSlot then
+                dropdown:Show()
+                if not optionalReagentSlot.locked then
+                    local dropdownListData = convertOptionalReagentsToDropdownListData(optionalReagentSlot.possibleReagents)
+                    dropdown:SetData({data=dropdownListData, initialValue="None"})
+                    --CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true)
+                    dropdown.selectedValue = nil
                 else
-                    reagentFrame.SetReagent(itemID, false, currentReagent.itemsInfo[1].allocations)
+                    dropdown:SetData({data={}, initialValue=CraftSim.GUTIL:ColorizeText("Locked", CraftSim.GUTIL.COLORS.RED)})
+                    --CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.GUTIL:ColorizeText("Locked", CraftSim.GUTIL.COLORS.RED))
+                    dropdown.selectedValue = nil
                 end
             else
-                reagentFrame.SetReagent(nil)
+                dropdown:Hide()
             end
+
+            dropdownIndex = dropdownIndex + 1
         end
+    else
 
-        if payload.isInit then
-            previewFrame.currentOptionalReagents = payload.optionalReagents
-            previewFrame.currentFinishingReagents = payload.finishingReagents
-            previewFrame.content.optionalDropdownGroup.SetCollapsed(#optionalReagents + #finishingReagents == 0)
-    
-            local function convertOptionalReagentsToDropdownListData(reagentList)
-                local dropDownListData = {{label = "None", value = nil}}
-                for _, reagent in pairs(reagentList) do
-                    table.insert(dropDownListData, {
-                        label = reagent.item:GetItemLink(),
-                        value = reagent.itemID,
-                    })
-                end
-                return dropDownListData
-            end
-    
-            local dropdownIndex = 1
-            for i = 1, 5, 1 do
-                local dropdown = previewFrame.content.optionalDropdowns[i]
-                local reagentList = {}
-                if i < 4 then
-                    reagentList = optionalReagents[i]
-                else
-                    reagentList = finishingReagents[i-3]
-                end
-    
-                if reagentList then
-                    dropdown:Show()
-                    if not reagentList[1].locked then
-                        local dropdownListData = convertOptionalReagentsToDropdownListData(reagentList)
-                        CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true, true)
-                    else
-                        CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.UTIL:ColorizeText("Locked", CraftSim.CONST.COLORS.RED))
-                        dropdown.selectedID = nil
-                    end
-                else
-                    dropdown:Hide()
-                end
-    
-                dropdownIndex = dropdownIndex + 1
-            end
-        else
+    end
 
-        end
-
-        previewFrame.content.craftingCosts:SetText("Crafting Costs\n" .. CraftSim.UTIL:FormatMoney(craftingCosts))
-        previewFrame.content.craftingCosts:Show()
-    end)
+    previewFrame.content.craftingCosts:SetText("Crafting Costs\n" .. CraftSim.GUTIL:FormatMoney(craftingCosts))
+    previewFrame.content.craftingCosts:Show()
 end

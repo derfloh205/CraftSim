@@ -5,18 +5,32 @@ CraftSim.STATISTICS.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
 
 function CraftSim.STATISTICS.FRAMES:Init()
-    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimStatisticsFrame", 
-        "CraftSim Profit Statistics", 
-        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS),
-        UIParent, 
-        "CENTER", 
-        "CENTER", 
-        0, 
-        0, 
-        700,
-        400,
-        CraftSim.CONST.FRAMES.STATISTICS, false, true, "DIALOG")
+    local sizeX = 700
+    local sizeY = 400
+
+    local frameNO_WO = CraftSim.GGUI.Frame({
+        parent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.STATISTICS, 
+        title="CraftSim Statistics",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata="DIALOG",
+    })
+
+    local frameWO = CraftSim.GGUI.Frame({
+        parent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER).frame, 
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.STATISTICS_WORKORDER, 
+        title="CraftSim Statistics " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata="DIALOG",
+    })
 
 
     local function createContent(frame)
@@ -85,7 +99,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
             row.hsv:SetSize(boolRowWidth, 25)
 
             row.profit = CraftSim.FRAME:CreateText(
-            CraftSim.UTIL:FormatMoney(10000000, true), 
+            CraftSim.GUTIL:FormatMoney(10000000, true), 
             row, row.hsv, "LEFT", "RIGHT", 15, 0, nil, nil, {type="H", value="LEFT"})
             row.profit:SetSize(200, 25)
 
@@ -101,22 +115,14 @@ function CraftSim.STATISTICS.FRAMES:Init()
         end
 
         frame.content.expectedProfitTitle = CraftSim.FRAME:CreateText("Expected Profit (μ)", frame.content, frame.content.scrollFrame, "TOP", "BOTTOM", 0, -30)
-        frame.content.expectedProfitValue = CraftSim.FRAME:CreateText(CraftSim.UTIL:FormatMoney(0, true), frame.content, frame.content.expectedProfitTitle, "TOP", "BOTTOM", 0, -10)
-        frame.content.craftsTextTop = CraftSim.FRAME:CreateText("Chance of " .. CraftSim.UTIL:ColorizeText("Profit > 0", CraftSim.CONST.COLORS.GREEN) .. " after", frame.content, frame.content.expectedProfitValue, "TOP", "BOTTOM", 0, -30)
+        frame.content.expectedProfitValue = CraftSim.FRAME:CreateText(CraftSim.GUTIL:FormatMoney(0, true), frame.content, frame.content.expectedProfitTitle, "TOP", "BOTTOM", 0, -10)
+        frame.content.craftsTextTop = CraftSim.FRAME:CreateText("Chance of " .. CraftSim.GUTIL:ColorizeText("Profit > 0", CraftSim.GUTIL.COLORS.GREEN) .. " after", frame.content, frame.content.expectedProfitValue, "TOP", "BOTTOM", 0, -30)
         frame.content.numCraftsInput = CraftSim.FRAME:CreateNumericInput(nil, frame.content, frame.content.craftsTextTop, "TOP", "BOTTOM", -40, -10, 50, 25, 1, false, function() 
             local recipeData = CraftSim.MAIN.currentRecipeData
             if not recipeData then
                 return
             end
-            if CraftSimOptions.enablefeatureToggleID_OOP then
-                CraftSim.STATISTICS.FRAMES:UpdateStatisticsOOP(recipeData)
-            else
-                local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
-                if not priceData then
-                    return
-                end
-                CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
-            end
+            CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
         end)
         frame.content.cdfExplanation = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION), frame.content, frame.content.numCraftsInput, "RIGHT", "LEFT", -10, 1)
         frame.content.craftsTextBottom = CraftSim.FRAME:CreateText("Crafts: ", frame.content, frame.content.numCraftsInput, "LEFT", "RIGHT", 20, 0)
@@ -124,17 +130,18 @@ function CraftSim.STATISTICS.FRAMES:Init()
     end
 
     createContent(frameNO_WO)
+    createContent(frameWO)
 end
 
-function CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
-    local statisticsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STATISTICS)
-    local meanProfit, probabilityTable = CraftSim.CALC:getMeanProfit(recipeData, priceData) -- TODO, take from statweight frame instead of recalculation
+function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
+    local statisticsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STATISTICS)
+    local meanProfit, probabilityTable = CraftSim.CALC:GetAverageProfit(recipeData)
 
     if not probabilityTable then
         return
     end
 
-    probabilityTable = CraftSim.UTIL:Sort(probabilityTable, function(a, b) 
+    probabilityTable = CraftSim.GUTIL:Sort(probabilityTable, function(a, b) 
         return a.chance >= b.chance
     end)
 
@@ -150,9 +157,9 @@ function CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
                 row:Hide()
             else
                 row:Show()
-                local check = CraftSim.UTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.CONST.COLORS.GREEN)
-                local cross = CraftSim.UTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.CONST.COLORS.RED)
-                local isNot = CraftSim.UTIL:ColorizeText("-", CraftSim.CONST.COLORS.GREY)
+                local check = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.GUTIL.COLORS.GREEN)
+                local cross = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.GUTIL.COLORS.RED)
+                local isNot = CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY)
                 if probabilityEntry.inspiration ~= nil then
                     row.inspiration:SetText(probabilityEntry.inspiration and check or cross)
                 else
@@ -177,88 +184,16 @@ function CraftSim.STATISTICS.FRAMES:UpdateStatistics(recipeData, priceData)
                     row.hsv:SetText(isNot)
                 end
                 
-                row.chance:SetText(CraftSim.UTIL:round(probabilityEntry.chance*100, 2) .. "%")
-                row.profit:SetText(CraftSim.UTIL:FormatMoney(probabilityEntry.profit, true))
+                row.chance:SetText(CraftSim.GUTIL:Round(probabilityEntry.chance*100, 2) .. "%")
+                row.profit:SetText(CraftSim.GUTIL:FormatMoney(probabilityEntry.profit, true))
             end
         end
     end
 
-    local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCraftsV2(probabilityTable, numCrafts)
+    local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
 
-    statisticsFrame.content.expectedProfitValue:SetText(CraftSim.UTIL:FormatMoney(meanProfit, true))
-    local roundedProfit = CraftSim.UTIL:round(probabilityPositive * 100, 5)
-    if probabilityPositive == 1 then
-        -- if e.g. every craft has a positive outcome
-        roundedProfit = "100.00000"
-    elseif tonumber(roundedProfit) >= 100 then
-        -- if the probability is not 1 but the rounded is 100 then show that there is a smaaaall chance of failure
-        roundedProfit = ">99.99999"
-    end
-    statisticsFrame.content.probabilityValue:SetText(roundedProfit .. "%")
-end
-
--- OOP Refactor
-function CraftSim.STATISTICS.FRAMES:UpdateStatisticsOOP(recipeData)
-    local statisticsFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.STATISTICS)
-    local meanProfit, probabilityTable = CraftSim.CALC:GetMeanProfitOOP(recipeData)
-
-    if not probabilityTable then
-        return
-    end
-
-    probabilityTable = CraftSim.UTIL:Sort(probabilityTable, function(a, b) 
-        return a.chance >= b.chance
-    end)
-
-    local numCrafts = CraftSim.UTIL:ValidateNumberInput(statisticsFrame.content.numCraftsInput, false)
-
-    local probabilityRows = statisticsFrame.content.probabilityTableFrame.tableRows
-    for index, row in pairs(probabilityRows) do
-        if not probabilityTable then
-            row:Hide()
-        else
-            local probabilityEntry = probabilityTable[index]
-            if not probabilityEntry then
-                row:Hide()
-            else
-                row:Show()
-                local check = CraftSim.UTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.CONST.COLORS.GREEN)
-                local cross = CraftSim.UTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.CONST.COLORS.RED)
-                local isNot = CraftSim.UTIL:ColorizeText("-", CraftSim.CONST.COLORS.GREY)
-                if probabilityEntry.inspiration ~= nil then
-                    row.inspiration:SetText(probabilityEntry.inspiration and check or cross)
-                else
-                    row.inspiration:SetText(isNot)
-                end
-    
-                if probabilityEntry.multicraft ~= nil then
-                    row.multicraft:SetText(probabilityEntry.multicraft and check or cross)
-                else
-                    row.multicraft:SetText(isNot)
-                end
-    
-                if probabilityEntry.resourcefulness ~= nil then
-                    row.resourcefulness:SetText(probabilityEntry.resourcefulness and check or cross)
-                else
-                    row.resourcefulness:SetText(isNot)
-                end
-
-                if probabilityEntry.hsv ~= nil then
-                    row.hsv:SetText(probabilityEntry.hsv and check or cross)
-                else
-                    row.hsv:SetText(isNot)
-                end
-                
-                row.chance:SetText(CraftSim.UTIL:round(probabilityEntry.chance*100, 2) .. "%")
-                row.profit:SetText(CraftSim.UTIL:FormatMoney(probabilityEntry.profit, true))
-            end
-        end
-    end
-
-    local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCraftsV2(probabilityTable, numCrafts)
-
-    statisticsFrame.content.expectedProfitValue:SetText(CraftSim.UTIL:FormatMoney(meanProfit, true))
-    local roundedProfit = CraftSim.UTIL:round(probabilityPositive * 100, 5)
+    statisticsFrame.content.expectedProfitValue:SetText(CraftSim.GUTIL:FormatMoney(meanProfit, true))
+    local roundedProfit = CraftSim.GUTIL:Round(probabilityPositive * 100, 5)
     if probabilityPositive == 1 then
         -- if e.g. every craft has a positive outcome
         roundedProfit = "100.00000"

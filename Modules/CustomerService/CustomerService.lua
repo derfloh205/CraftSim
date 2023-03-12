@@ -1,6 +1,6 @@
 AddonName, CraftSim = ...
 
-CraftSim.CUSTOMER_SERVICE = CraftSim.UTIL:CreateRegistreeForEvents({"CHAT_MSG_WHISPER"})
+CraftSim.CUSTOMER_SERVICE = {}
 local PREVIEW_REQUEST_PREFIX = "CraftSimReq1"
 local PREVIEW_RECIPE_LIST_RESPONSE_PREFIX = "CraftSimRes1"
 local PREVIEW_REQUEST_RECIPE_UPDATE = "CraftSimReq2"
@@ -32,8 +32,9 @@ function CraftSim.CUSTOMER_SERVICE:GeneratePreviewInviteLink()
     if not recipeData then
         return
     end
-    local timeID = CraftSim.UTIL:round(debugprofilestop())
-    local inviteLink = "CraftSimLivePreview:" .. GetUnitName("player", true) .. ":" .. recipeData.professionID .. ":" .. recipeData.professionInfo.parentProfessionName .. ":" .. timeID
+    local professionID = recipeData.professionData.professionInfo.profession
+    local timeID = CraftSim.GUTIL:Round(debugprofilestop())
+    local inviteLink = "CraftSimLivePreview:" .. GetUnitName("player", true) .. ":" .. professionID .. ":" .. recipeData.professionData.professionInfo.parentProfessionName .. ":" .. timeID
     table.insert(CraftSimOptions.customerServiceActivePreviewIDs, timeID)
     return inviteLink
 end
@@ -89,7 +90,11 @@ function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
     if not CraftSim.UTIL:IsMyVersionHigher(payload.addonVersion) and not versionWarningShowed then
         versionWarningShowed = true
         -- show warning but dont stop
-        CraftSim.FRAME:ShowWarning("There is a newer CraftSim Version available: " .. payload.addonVersion, "Newer CraftSim Version Detected", true)
+        CraftSim.GGUI:ShowPopup({
+            sizeX=400, sizeY=250, title="Newer CraftSim Version Detected",
+            text="There is a newer CraftSim Version available: " .. payload.addonVersion,
+            acceptButtonLabel="OK", declineButtonLabel="Close",
+         })
     end
 
     -- otherwise does not work as key
@@ -122,7 +127,7 @@ function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
                 local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
                 local isRelevantItemLevel = recipeInfo.itemLevel > 1 
                 if isDragonIsleRecipe and isRelevantItemLevel then
-                    local iconAsText = CraftSim.UTIL:IconToText(recipeInfo.icon, 20)
+                    local iconAsText = CraftSim.GUTIL:IconToText(recipeInfo.icon, 20)
                     response.recipes[recipeCategoryInfo.name] = response.recipes[recipeCategoryInfo.name] or {}
                     table.insert(response.recipes[recipeCategoryInfo.name], {
                         recipeID=recipeID,
@@ -143,7 +148,11 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeListResponse(payload)
     if not CraftSim.UTIL:IsMyVersionHigher(payload.addonVersion) and not versionWarningShowed then
         versionWarningShowed = true
         -- show warning but dont stop
-        CraftSim.FRAME:ShowWarning("There is a newer CraftSim Version available: " .. payload.addonVersion, "Newer CraftSim Version Detected", true)
+        CraftSim.GGUI:ShowPopup({
+            sizeX=400, sizeY=250, title="Newer CraftSim Version Detected",
+            text="There is a newer CraftSim Version available: " .. payload.addonVersion,
+            acceptButtonLabel="OK", declineButtonLabel="Close",
+         })
     end
 
     if payload.recipes then
@@ -158,14 +167,14 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeListResponse(payload)
 end
 
 function CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, isInit)
-    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
 
     local optionalReagents = nil
     if not isInit then
         -- gather optionalReagents and send back to use
         optionalReagents = {}
         for _, dropdown in pairs(previewFrame.content.optionalDropdowns) do
-            table.insert(optionalReagents, dropdown.selectedID)
+            table.insert(optionalReagents, dropdown.selectedValue)
         end
     end
 
@@ -191,29 +200,59 @@ end
 
 function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateRequest(payload)
     local recipeID = payload.recipeID
-    local professionID = payload.professionID
     local customer = payload.customer
-    local highestGuaranteed = payload.highestGuaranteed
+    local optimizeInspiration = not payload.highestGuaranteed
+    local optionalReagents = payload.optionalReagents
 
     print("OnRecipeUpdateRequest")
 
-    local optimizedRecipe = CraftSim.CUSTOMER_SERVICE:OptimizeRecipe(recipeID, payload.optionalReagents, highestGuaranteed)
+    -- Optimize for highest reachable quality
+    local recipeData = CraftSim.RecipeData(recipeID, false)
 
-    if not optimizedRecipe then
+    if not recipeData then
         return
     end
+    if optionalReagents then
+        recipeData:SetOptionalReagents(optionalReagents)
+    end
+    recipeData:OptimizeQuality(optimizeInspiration)
 
-    local inspPercent = (optimizedRecipe.recipeData.stats.inspiration and optimizedRecipe.recipeData.stats.inspiration.percent) or nil
+    print("result:")
+    print(recipeData.resultData, true)
+
+
+    -- TODO: make it its own method/function
+    local inspPercent = (recipeData.supportsInspiration and recipeData.professionStats.inspiration:GetPercent()) or nil
+    local hsvChance, withInspiration = CraftSim.CALC:getHSVChance(recipeData)
+    hsvChance = hsvChance / 100
+    local upgradeChance = 0
+    if hsvChance == 0 and recipeData.supportsInspiration then
+        upgradeChance = inspPercent
+    elseif recipeData.supportsInspiration then
+        if withInspiration then
+            local inspChance = inspPercent / 100
+            upgradeChance = inspChance * hsvChance * 100
+        else
+            -- either one upgrades
+            local inspChance = inspPercent / 100
+            print("inspChance: " .. inspChance)
+            print("hsvChance: " .. hsvChance)
+            upgradeChance = ((inspChance * hsvChance) + ((1-inspChance) * hsvChance) + (inspChance * (1-hsvChance))) * 100
+        end
+    end 
+
+    upgradeChance = CraftSim.GUTIL:Round(upgradeChance, 2)
 
     -- for now use pricedata from customer (so the crafter cannot scam with price overrides)
     local responseData = {
         recipeID = recipeID,
-        recipeIcon = optimizedRecipe.recipeData.recipeIcon,
-        inspirationPercent = inspPercent,
-        reagents = optimizedRecipe.recipeData.reagents,
-        optionalReagents = optimizedRecipe.recipeData.possibleOptionalReagents,
-        finishingReagents = optimizedRecipe.recipeData.possibleFinishingReagents,
-        outputInfo = optimizedRecipe.outputInfo,
+        recipeIcon = recipeData.recipeIcon,
+        supportsQualities = recipeData.supportsQualities,
+        upgradeChance = upgradeChance,
+        reagents = recipeData.reagentData:SerializeReagents(),
+        optionalReagents = recipeData.reagentData:SerializeOptionalReagentSlots(),
+        finishingReagents = recipeData.reagentData:SerializeFinishingReagentSlots(),
+        resultData = recipeData.resultData:Serialize(),
         isInit = payload.isInit,
     }
 
@@ -223,11 +262,25 @@ end
 function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateResponse(payload)
     print("OnRecipeUpdateResponse")
 
-    print("received output info")
-    print(payload.outputInfo, true)
+    print("received serialized data, deserialize and continue..")
 
-    CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
-    CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
+    payload.reagents = CraftSim.GUTIL:Map(payload.reagents, function(serializedReagent) return CraftSim.Reagent:Deserialize(serializedReagent) end)
+    payload.optionalReagents = CraftSim.GUTIL:Map(payload.optionalReagents, function(serializedOptionalReagentSlot) return CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot) end)
+    payload.finishingReagents = CraftSim.GUTIL:Map(payload.finishingReagents, function(serializedOptionalReagentSlot) return CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot) end)
+    payload.resultData = CraftSim.ResultData:Deserialize(payload.resultData)
+
+    local itemsToLoad = CraftSim.GUTIL:Map(payload.reagents, function(reagent) return reagent.item end)
+    table.foreach(CraftSim.GUTIL:Concat({payload.optionalReagents, payload.finishingReagents}), function(_, slot)
+        itemsToLoad = CraftSim.GUTIL:Concat({itemsToLoad, CraftSim.GUTIL:Map(slot.possibleReagents, function(optionalReagent) return optionalReagent.item end)})
+    end)
+
+    itemsToLoad = CraftSim.GUTIL:Concat({itemsToLoad, payload.resultData.itemsByQuality})
+
+    CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
+        CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
+        CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
+    end)
+
 end
 
 -- On the recipient side, decode the string and transform it into a clickable link
@@ -240,281 +293,89 @@ function CraftSim.CUSTOMER_SERVICE:TransformLink(event, message, sender, ...)
     end
 end
 
-local function getCraftReagentInfoTblEntryFromOptionalsByItemID(recipeData, itemID)
-    local optionalReagent = nil
-    local finishingReagent = nil
-
-    for _, slot in pairs(recipeData.possibleOptionalReagents) do
-        optionalReagent = CraftSim.UTIL:Find(slot, function(r) return r.itemID == itemID end)
-        if optionalReagent then
-            break
-        end
-    end
-    for _, slot in pairs(recipeData.possibleFinishingReagents) do
-        finishingReagent = CraftSim.UTIL:Find(slot, function(r) return r.itemID == itemID end)
-        if finishingReagent then
-            break
-        end
-    end
-
-    local reagent = optionalReagent or finishingReagent
-
-    if reagent then
-        reagent.quantity = 1
-        reagent.itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID)
-    end
-
-    return reagent
-end
-
-function CraftSim.CUSTOMER_SERVICE:OptimizeRecipe(recipeID, optionalReagents, optimizeForGuaranteed)
-    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
-    if not recipeInfo then
-        print("Could not fetch recipeInfo for recipe: " .. tostring(recipeID))
-        return
-    end
-
-    local recipeData = nil
-    local mappedOptionalReagents = nil
-    if optionalReagents and #optionalReagents > 0 then
-        -- build them to craftingreagentInfoTbl items
-        recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN)
-
-        mappedOptionalReagents = CraftSim.UTIL:Map(optionalReagents, function(itemID) 
-            return getCraftReagentInfoTblEntryFromOptionalsByItemID(recipeData, itemID)
-        end)
-    end
-
-    print("mapped optionals:", false, true)
-    print(mappedOptionalReagents, true)
-
-    local initialOverride = (mappedOptionalReagents and {optionalReagents=mappedOptionalReagents}) or nil
-    print("initial override: ", false, true)
-    print(initialOverride, true)
-    recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN, initialOverride)
-    if not recipeData then
-        print("Could not create recipeData for recipe optimization")
-        return
-    end
-    local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
-    if not priceData then
-        print("Could not create priceData for recipe optimization")
-        return
-    end
-    local optimizedReagents = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentsForScannedRecipeData(recipeData, priceData, not optimizeForGuaranteed) 
-
-    recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN, {scanReagents=optimizedReagents, optionalReagents=mappedOptionalReagents})
-    if not recipeData then
-        print("2 Could not create recipeData for recipe optimization")
-        return
-    end
-    priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
-
-    if not priceData then
-        print("2 Could not create priceData for recipe optimization")
-        return
-    end
-
-    local outputInfo = CraftSim.DATAEXPORT:GetOutputInfoByRecipeData(recipeData)
-
-    return {
-        recipeData = recipeData,
-        priceData = priceData,
-        outputInfo = outputInfo
-    }
-end
-
-function CraftSim.CUSTOMER_SERVICE:CHAT_MSG_WHISPER(text, playerName, 
-    languageName, channelName, playerName2, specialFlags, zoneChannelID, 
-    channelIndex, channelBaseName, languageID, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
-
-    if not CraftSimOptions.customerServiceEnableAutoReply then
-        return
-    end
-
-    local commands = strsplittable(" ", text)
-
-    local function getInfusionItemByIlvlRangeAndRecipeData(ilvl, recipeData)
-        ilvl = tonumber(ilvl)
-
-        --TODO check if player can even use infusions yet
-
-        local infusions = false
-        local matrix1Included = false
-        local matrices = false
-
-        for _, optionalReagents in pairs(recipeData.possibleOptionalReagents) do
-            for _, reagent in pairs(optionalReagents) do
-                if reagent.itemID == 197921 then
-                    infusions = true
-                    break
-                elseif reagent.itemID == 198048 then
-                    matrix1Included = true
-                elseif reagent.itemID == 198056 then
-                    matrices = true
-                end
-            end
-        end
-
-        if infusions then
-            if ilvl >= 408 then
-                return 198046 -- conc primal infusion
-            elseif ilvl >= 395 then
-                return 197921 -- primal infusion
-            end
-        elseif matrices then
-            if ilvl >= 372 then
-                return 198059 -- TM IV
-            elseif ilvl >= 359 then
-                return 198058 -- TM III
-            elseif ilvl >= 346 then
-                return 198056 -- TM II
-            elseif ilvl >= 333 and matrix1Included then
-                return 198048 -- TM I
-            end
-        end
-        return nil
-    end
-
-    if commands[1] and commands[1] == CraftSimOptions.customerServiceAutoReplyCommand then
-        local ilvl = string.match(text, "|r (%d+)")
-        print("Triggered Command!")
-
-        local it = string.gmatch(text, "%|H.*%|h")
-        local itemString = it()
-        if itemString then
-            local item = Item:CreateFromItemLink(itemString)
-            if item then
-                item:ContinueOnItemLoad(function() 
-                    print("ItemName: " .. tostring(item:GetItemName()))
-                    print("ItemLink: " .. tostring(item:GetItemLink()))
-                    print("ItemID: " .. tostring(item:GetItemID()))
-
-                    local function answer(text)
-                        SendChatMessage(text, "WHISPER", nil, playerName)
-                    end
-
-                    local recipeInfo = CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(item)
-
-                    if not recipeInfo then
-                        answer("I cannot craft this!")
-                        return
-                    end
-                    local recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN)
-                    if not recipeData then
-                        print("Could not create recipeData for customer request")
-                        return
-                    end
-                    local priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
-                    if not priceData then
-                        print("Could not create priceData for customer request")
-                        return
-                    end
-                    local optimizedReagents = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentsForScannedRecipeData(recipeData, priceData, true) 
-
-                    print("optimized reagents:")
-                    print(optimizedReagents, true)
-
-                    local optionalReagents = {}
-                    if ilvl then
-                        print("Command3: " .. tostring(ilvl))
-                        local itemID = getInfusionItemByIlvlRangeAndRecipeData(ilvl, recipeData)
-                        if itemID then
-                            table.insert(optionalReagents, {
-                                itemID = itemID,
-                                quantity = 1,
-                                dataSlotIndex = 3, -- optional infusions and matrices
-                                itemData = CraftSim.DATAEXPORT:GetItemFromCacheByItemID(itemID), -- cause price data needs it
-                            })
-                        end
-                    end
-
-                    recipeData = CraftSim.DATAEXPORT:exportRecipeData(recipeInfo.recipeID, CraftSim.CONST.EXPORT_MODE.SCAN, {scanReagents=optimizedReagents, optionalReagents=optionalReagents})
-                    if not recipeData then
-                        print("2 Could not create recipeData for customer request")
-                        return
-                    end
-                    priceData = CraftSim.PRICEDATA:GetPriceData(recipeData, recipeData.recipeType)
-
-                    if not priceData then
-                        print("2 Could not create priceData for customer request")
-                        return
-                    end
-
-
-                    local outputInfo = CraftSim.DATAEXPORT:GetOutputInfoByRecipeData(recipeData)
-
-                    local craftingCostsFormatted = CraftSim.UTIL:GetMoneyValuesFromCopper(priceData.craftingCostPerCraft, true)
-
-                    local reagentItems = {}
-                    for _, reagent in pairs(recipeData.reagents) do
-                        for _, itemInfo in pairs(reagent.itemsInfo) do
-                            if itemInfo.allocations > 0 then
-                                local item = Item:CreateFromItemID(itemInfo.itemID)
-                                item.quantity = itemInfo.allocations
-                                table.insert(reagentItems, item)
-                            end
-                        end
-                    end
-
-                    for _, reagent in pairs(recipeData.optionalReagents) do
-                        local item = Item:CreateFromItemID(reagent.itemID)
-                        item.quantity = reagent.quantity
-                        table.insert(reagentItems, item)
-                    end
-
-                    for _, reagent in pairs(recipeData.finishingReagents) do
-                        local item = Item:CreateFromItemID(reagent.itemID)
-                        item.quantity = reagent.quantity
-                        table.insert(reagentItems, item)
-                    end
-
-                    CraftSim.UTIL:ContinueOnAllItemsLoaded(reagentItems, function() 
-                        local detailedCraftingCostText = "\n"
-                        for _, item in pairs(reagentItems) do
-                            local itemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(item:GetItemID(), true)
-                            local moneyText = CraftSim.UTIL:GetMoneyValuesFromCopper(itemPrice*item.quantity, true)
-                            -- answer(item.quantity .. " x " .. item:GetItemLink() .. " = " .. moneyText)
-                            detailedCraftingCostText = detailedCraftingCostText .. item.quantity .. " x " .. item:GetItemLink() .. " = " .. moneyText .. "\n"
-                        end
-
-                        -- replace formattext with values
-                        local responseText = CraftSimOptions.customerServiceAutoReplyFormat
-                        
-                        local inspStat = (recipeData.stats.inspiration and (recipeData.stats.inspiration.percent .. "%%")) or "-"
-                        local mcStat = (recipeData.stats.multicraft and (recipeData.stats.multicraft.percent .. "%%")) or "-"
-                        local resStat = (recipeData.stats.resourcefulness and (recipeData.stats.resourcefulness.percent .. "%%")) or "-"
-                        
-
-                        responseText = string.gsub(responseText or "", "%%gc", outputInfo.expected)
-                        responseText = string.gsub(responseText or "", "%%ic", outputInfo.inspiration or "-")
-
-                        responseText = string.gsub(responseText or "", "%%insp", (outputInfo.inspiration and inspStat) or "-")
-    
-                        responseText = string.gsub(responseText or "", "%%mc", mcStat)
-                        responseText = string.gsub(responseText or "", "%%res", resStat)
-                        responseText = string.gsub(responseText or "", "%%ccd", detailedCraftingCostText) -- order is important or the %cc of %ccd will be replaced
-                        responseText = string.gsub(responseText or "", "%%cc", craftingCostsFormatted)
-
-                        local responseLines = strsplittable("\n", responseText or "")
-
-                        for _, answerLine in pairs(responseLines) do
-                            answer(answerLine)
-                        end
-                    end)
-                end)
-            end
-        end
-    end
-end
-
 function CraftSim.CUSTOMER_SERVICE:StartLivePreviewUpdating()
-    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
     previewFrame.content.StartUpdate()
 end
 
 function CraftSim.CUSTOMER_SERVICE:StopLivePreviewUpdating()
-    local previewFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
     previewFrame.content.StopUpdate()
+end
+
+function CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
+    local recipeData = CraftSim.MAIN.currentRecipeData
+
+    if not recipeData then
+        return
+    end
+
+    local resultData = recipeData.resultData
+    local priceData = recipeData.priceData
+    local professionStats = recipeData.professionStats
+
+    local optionalReagents = recipeData.reagentData:GetActiveOptionalReagents()
+    local requiredReagents = recipeData.reagentData.requiredReagents
+
+    -- replace formattext with values
+    local responseText = CraftSimOptions.customerServiceRecipeWhisperFormat
+                    
+    local inspStat = (recipeData.supportsInspiration and (professionStats.inspiration:GetPercent() .. "%%")) or "-"
+    local mcStat = (recipeData.supportsMulticraft and (professionStats.multicraft:GetPercent() .. "%%")) or "-"
+    local resStat = (recipeData.supportsResourcefulness and (professionStats.resourcefulness:GetPercent() .. "%%")) or "-"
+
+    local craftingCostsFormatted = CraftSim.GUTIL:GetMoneyValuesFromCopper(priceData.craftingCosts, true)
+
+    local detailedCraftingCostText = ""
+    local reagentListText = ""
+    local optionalReagentListText = ""
+
+    table.foreach(requiredReagents, function (_, reagent)
+        table.foreach(reagent.items, function (_, reagentItem)
+            if reagentItem.quantity > 0 then
+                local itemPrice = (CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true) or 0) * reagentItem.quantity
+                local itemPriceFormatted = CraftSim.GUTIL:GetMoneyValuesFromCopper(CraftSim.GUTIL:Round(itemPrice*10000)/10000, true)
+                detailedCraftingCostText = detailedCraftingCostText .. reagentItem.item:GetItemLink() .. " x " .. reagentItem.quantity .. " (~" .. itemPriceFormatted .. ")" .. "\n"
+                reagentListText = reagentListText .. reagentItem.item:GetItemLink() .. " x " .. reagentItem.quantity .. "\n"
+            end
+        end)
+    end)
+
+    table.foreach(optionalReagents, function (_, optionalReagent)
+        local itemPrice = (CraftSim.PRICEDATA:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(), true) or 0)
+        local itemPriceFormatted = CraftSim.GUTIL:GetMoneyValuesFromCopper(CraftSim.GUTIL:Round(itemPrice*10000)/10000, true)
+        detailedCraftingCostText = detailedCraftingCostText .. optionalReagent.item:GetItemLink() .. " x 1 (~" .. itemPriceFormatted .. ")" .. "\n"
+        optionalReagentListText = optionalReagentListText .. optionalReagent.item:GetItemLink() .. " x 1\n"
+    end)
+
+    
+    responseText = string.gsub(responseText or "", "%%gc", resultData.expectedItem:GetItemLink())
+    responseText = string.gsub(responseText or "", "%%ic", (resultData.canUpgradeInspiration and resultData.expectedItemInspiration:GetItemLink()) or "-")
+
+    responseText = string.gsub(responseText or "", "%%insp", (resultData.canUpgradeInspiration and inspStat) or "-")
+
+    responseText = string.gsub(responseText or "", "%%mc", mcStat)
+    responseText = string.gsub(responseText or "", "%%res", resStat)
+    responseText = string.gsub(responseText or "", "%%ccd", detailedCraftingCostText) -- order is important or the %cc of %ccd will be replaced
+    responseText = string.gsub(responseText or "", "%%cc", craftingCostsFormatted)
+    responseText = string.gsub(responseText or "", "%%orl", optionalReagentListText)
+    responseText = string.gsub(responseText or "", "%%rl", reagentListText)
+
+    local responseLines = strsplittable("\n", responseText or "")
+
+    local modifiedStatsText = recipeData.professionStatModifiers:GetTooltipText()
+
+    if modifiedStatsText ~= "" then
+        local modifiedLines = strsplittable("\n", modifiedStatsText)
+        table.insert(responseLines, "Some profession stats were manually increased/decreased:")
+        table.foreach(modifiedLines, function (_, line)
+            table.insert(responseLines, line)
+        end)
+    end
+
+    for _, answerLine in pairs(responseLines) do
+        SendChatMessage(answerLine, "WHISPER", nil, whisperTarget)
+    end
+
 end
 

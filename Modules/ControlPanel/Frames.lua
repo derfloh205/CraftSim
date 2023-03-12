@@ -4,20 +4,15 @@ CraftSim.CONTROL_PANEL.FRAMES = {}
 
 function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local currentVersion = GetAddOnMetadata(AddonName, "Version")
-    local frame = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimControlPanelFrame", 
-        "CraftSim " .. currentVersion, 
-        ProfessionsFrame, 
-        ProfessionsFrame, 
-        "BOTTOM", 
-        "TOP", 
-        0, 
-        -8, 
-        1120, 
-        100,
-        CraftSim.CONST.FRAMES.CONTROL_PANEL)
 
-    
+    local frame = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame, anchorParent=ProfessionsFrame,anchorA="BOTTOM",anchorB="TOP",offsetY=-8,
+        sizeX=1120,sizeY=100,frameID=CraftSim.CONST.FRAMES.CONTROL_PANEL, 
+        title="CraftSim " .. currentVersion,
+        collapseable=true,
+        moveable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+    })
 
     local createModuleCheckbox = function(label, description, anchorA, anchorParent, anchorB, offsetX, offsetY, optionVariable)
         local cb = CraftSim.FRAME:CreateCheckbox(" " .. label, 
@@ -40,37 +35,67 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local cbBaseOffsetX = 20
     local cbBaseOffsetY = -35
 
-    frame.content.newsButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.newsButton:SetPoint("TOPRIGHT", frame.content, "TOPRIGHT", -50, cbBaseOffsetY + 5)	
-	frame.content.newsButton:SetText("News")
-	frame.content.newsButton:SetSize(frame.content.newsButton:GetTextWidth()+15, 25)
-    frame.content.newsButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:ShowOneTimeInfo(true)
-    end)
+    frame.content.newsButton = CraftSim.GGUI.Button({
+        label="News", parent=frame.content, anchorParent=frame.content,anchorA="TOPRIGHT",anchorB="TOPRIGHT",offsetX=-50,offsetY=cbBaseOffsetY+5,
+        sizeX=15,sizeY=25, adjustWidth=true,
+        clickCallback=function() 
+            CraftSim.FRAME:ShowOneTimeInfo(true)
+        end
+    })
 
-    frame.content.debugButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.debugButton:SetPoint("TOPLEFT", frame.content.newsButton, "BOTTOMLEFT", 0, 0)	
-	frame.content.debugButton:SetText("Debug")
-	frame.content.debugButton:SetSize(frame.content.debugButton:GetTextWidth()+15, 25)
-    frame.content.debugButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
-    end)
+    frame.content.debugButton = CraftSim.GGUI.Button({
+        label="Debug",parent=frame.content,anchorParent=frame.content.newsButton.frame,anchorA="TOPLEFT",anchorB="BOTTOMLEFT",
+        sizeX=15,sizeY=25,adjustWidth=true,
+        clickCallback=function() 
+            CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
+        end
+    })
 
-    frame.content.optionsButton  = CreateFrame("Button", nil, frame.content, "UIPanelButtonTemplate")
-	frame.content.optionsButton:SetPoint("RIGHT", frame.content.newsButton, "LEFT", 0, 0)	
-	frame.content.optionsButton:SetText("Options")
-	frame.content.optionsButton:SetSize(frame.content.optionsButton:GetTextWidth()+15, 25)
-    frame.content.optionsButton:SetScript("OnClick", function(self) 
-        InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
-    end)
+    frame.content.exportButton = CraftSim.GGUI.Button({
+        label="Export Recipe", parent=frame.content,anchorParent=frame.content.debugButton.frame,anchorA="RIGHT", anchorB="LEFT", sizeX=15,sizeY=25,adjustWidth=true,
+        clickCallback=function() 
+            CraftSim.GGUI:ShowPopup({
+                parent=frame.content,anchorParent=frame.content.exportButton.frame,anchorA="TOP", anchorB="BOTTOM",
+                title="Recipe Export", sizeX=250, sizeY=70,
+                acceptButtonLabel=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Export",
+                declineButtonLabel="Full Export",
+                onAccept=function ()
+                    if CraftSim.MAIN.currentRecipeData then
+                        local json = CraftSim.MAIN.currentRecipeData:GetForgeFinderExport()
+                        if json then
+                            CraftSim.UTIL:KethoEditBox_Show(json)
+                        end
+                    end
+                end,
+                onDecline=function ()
+                    if CraftSim.MAIN.currentRecipeData then
+                        local json = CraftSim.MAIN.currentRecipeData:GetJSON()
+                        if json then
+                            CraftSim.UTIL:KethoEditBox_Show(json)
+                        end
+                    end
+                end
+            })
+        end
+    })
 
-    frame.content.resetFramesButton = CreateFrame("Button", "CraftSimResetFramesButton", frame.content, "UIPanelButtonTemplate")
-	frame.content.resetFramesButton:SetPoint("RIGHT", frame.content.optionsButton, "LEFT", 0, 0)	
-	frame.content.resetFramesButton:SetText("Reset Frame Positions")
-	frame.content.resetFramesButton:SetSize(frame.content.resetFramesButton:GetTextWidth() + 20, 25)
-    frame.content.resetFramesButton:SetScript("OnClick", function(self) 
-        CraftSim.FRAME:ResetFrames()
-    end)
+    frame.content.optionsButton = CraftSim.GGUI.Button({
+        parent=frame.content, anchorParent=frame.content.newsButton.frame, anchorA="RIGHT", anchorB="LEFT",
+        sizeX=15, sizeY=25, adjustWidth=true,
+        clickCallback=function() 
+            InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+        end,
+        label="Options"
+    })
+
+    frame.content.resetFramesButton = CraftSim.GGUI.Button({
+        parent=frame.content, anchorParent=frame.content.optionsButton.frame, anchorA="RIGHT", anchorB="LEFT",
+        sizeX=20, sizeY=25, adjustWidth=true,
+        clickCallback=function() 
+            CraftSim.FRAME:ResetFrames()
+        end,
+        label="Reset Frame Positions"
+    })
     
     -- 1. Row
     frame.content.modulesMaterials = createModuleCheckbox("Material Optimization", 
@@ -86,17 +111,17 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     "Shows the best available profession gear combination based on the selected mode",
     "LEFT", frame.content.modulesMaterials, "RIGHT", 150, 0, "modulesTopGear")
 
-    frame.content.modulesCostOverview = createModuleCheckbox("Cost Overview", 
-    "Shows a crafting cost and sell profit overview by resulting quality",
-    "TOP", frame.content.modulesTopGear, "TOP", 0, -20, "modulesCostOverview")
+    frame.content.modulesPriceDetails = createModuleCheckbox("Price Details", 
+    "Shows a sell price and profit overview by resulting item quality",
+    "TOP", frame.content.modulesTopGear, "TOP", 0, -20, "modulesPriceDetails")
 
     -- 3. Row
     frame.content.modulesSpecInfo = createModuleCheckbox("Specialization Info", 
-    "Shows how your profession specializations affect this recipe\nDISCLAIMER: This shows up only for professions with experimental spec data turned on.",
+    "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
     "LEFT", frame.content.modulesTopGear, "RIGHT", 100, 0, "modulesSpecInfo")
 
     frame.content.modulesPriceOverride = createModuleCheckbox("Price Overrides", 
-    "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically.",
+    "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically. You can also set an item to use Craft Data as price.",
     "TOP", frame.content.modulesSpecInfo, "TOP", 0, -20, "modulesPriceOverride")
 
     -- 4. Row
@@ -113,5 +138,14 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     frame.content.modulesCustomerService = createModuleCheckbox("Customer Service",
     "Module that offers various options to interact with potential customers",
     "LEFT", frame.content.modulesRecipeScan, "RIGHT", 90, 0, "modulesCustomerService")
+
+    frame.content.modulesCraftData = createModuleCheckbox("Craft Data", 
+    "Edit the saved configurations for crafting commodities of different qualities to show in tooltips and to calculate crafting costs",
+    "TOP", frame.content.modulesCustomerService, "TOP", 0, -20, "modulesCraftData")
+
+    -- 6. Row
+    frame.content.modulesCostDetails = createModuleCheckbox("Cost Details",
+    "Module that shows detailed information about crafting costs",
+    "LEFT", frame.content.modulesCraftData, "RIGHT", 100, 0, "modulesCostDetails")
 
 end

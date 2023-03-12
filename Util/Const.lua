@@ -3,14 +3,13 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 47 -- last patch increase: 6.8 - 47
+CraftSim.CONST.currentInfoVersionID = 69 -- last patch increase: 8.2.3
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
 ----------------
 
 CraftSim.CONST.FEATURE_TOGGLES = {
-    OOP = "OOP",
 }
 
 CraftSim.CONST.PERCENT_MODS = {
@@ -20,9 +19,15 @@ CraftSim.CONST.PERCENT_MODS = {
     CRAFTINGSPEED = 0.002,
 }
 
+-- some dummy recipes are not flagged as dummy ..........
+CraftSim.CONST.BLIZZARD_DUMMY_RECIPES = {
+    371635, -- "Demonstration Item Recipe" part of Alchemy Stone Category for Alchemy
+}
+
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
 -- currently this is just an approximation
 CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
+CraftSim.CONST.MULTICRAFT_CONSTANT = 2.5
 
 CraftSim.CONST.DISCORD_INVITE_URL = "https://discord.gg/7vqKMgezXR"
 
@@ -33,31 +38,48 @@ CraftSim.CONST.EXPORT_MODE = {
 }
 
 CraftSim.CONST.FRAMES = {
-    MATERIALS = 0,
-    STAT_WEIGHTS = 1,
-    TOP_GEAR = 2,
-    COST_OVERVIEW = 3,
-    PROFIT_DETAILS = 4,
-    CRAFTING_DETAILS = 5,
-    SPEC_INFO = 6,
-    WARNING = 7,
-    INFO = 8,
-    DEBUG = 9,
-    DEBUG_CONTROL = 10,
-    SPEC_SIM = 11,
-    CONTROL_PANEL = 12,
-    STAT_WEIGHTS_WORK_ORDER = 13,
-    PROFIT_DETAILS_WORK_ORDER = 14,
-    MATERIALS_WORK_ORDER = 15,
-    COST_OVERVIEW_WORK_ORDER = 16,
-    TOP_GEAR_WORK_ORDER = 17,
-    PRICE_OVERRIDE_WORK_ORDER = 18,
-    PRICE_OVERRIDE = 19,
-    RECIPE_SCAN = 20,
-    CRAFT_RESULTS = 21,
-    STATISTICS = 22,
-    CUSTOMER_SERVICE = 23,
-    LIVE_PREVIEW = 24,
+    MATERIALS = "MATERIALS",
+    STAT_WEIGHTS = "STAT_WEIGHTS",
+    TOP_GEAR = "TOP_GEAR",
+    PRICE_DETAILS = "PRICE_DETAILS",
+    PROFIT_DETAILS = "PROFIT_DETAILS",
+    CRAFTING_DETAILS = "CRAFTING_DETAILS",
+    SPEC_INFO = "SPEC_INFO",
+    WARNING = "WARNING",
+    INFO = "INFO",
+    DEBUG = "DEBUG",
+    DEBUG_CONTROL = "DEBUG_CONTROL",
+    SPEC_SIM = "SPEC_SIM",
+    CONTROL_PANEL = "CONTROL_PANEL",
+    STAT_WEIGHTS_WORK_ORDER = "STAT_WEIGHTS_WORK_ORDER",
+    PROFIT_DETAILS_WORK_ORDER = "PROFIT_DETAILS_WORK_ORDER",
+    MATERIALS_WORK_ORDER = "MATERIALS_WORK_ORDER",
+    PRICE_DETAILS_WORK_ORDER = "PRICE_DETAILS_WORK_ORDER",
+    TOP_GEAR_WORK_ORDER = "TOP_GEAR_WORK_ORDER",
+    PRICE_OVERRIDE_WORK_ORDER = "PRICE_OVERRIDE_WORK_ORDER",
+    PRICE_OVERRIDE = "PRICE_OVERRIDE",
+    RECIPE_SCAN = "RECIPE_SCAN",
+    CRAFT_RESULTS = "CRAFT_RESULTS",
+    STATISTICS = "STATISTICS",
+    STATISTICS_WORKORDER = "STATISTICS_WORKORDER",
+    CUSTOMER_SERVICE = "CUSTOMER_SERVICE",
+    LIVE_PREVIEW = "LIVE_PREVIEW",
+    CRAFTING_DETAILS_WO = "CRAFTING_DETAILS_WO",
+    SPEC_SIM_WO = "SPEC_SIM_WO",
+    SPEC_INFO_WO = "SPEC_INFO_WO",
+    CRAFT_DATA = "CRAFT_DATA",
+    COST_DETAILS = "COST_DETAILS",
+    COST_DETAILS_WO = "COST_DETAILS_WO",
+    POPUP = "POPUP",
+}
+
+CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS = {
+    bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
+    borderOptions = {
+        edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
+        edgeSize = 16,
+        insets = { left = 8, right = 6, top = 8, bottom = 8 },
+    }
 }
 
 CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
@@ -87,7 +109,6 @@ CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS = {
 CraftSim.CONST.DEBUG_IDS = {
     MAIN = "MAIN",
     SPECDATA = "SPECDATA",
-    SPECDATA_OOP = "SPECDATA_OOP",
     ERROR = "ERROR",
     DATAEXPORT = "DATAEXPORT",
     SIMULATION_MODE = "SIMULATION_MODE",
@@ -105,12 +126,12 @@ CraftSim.CONST.DEBUG_IDS = {
     CUSTOMER_SERVICE = "CUSTOMER_SERVICE",
     COMM = "COMM",
     UTIL = "UTIL",
-    COST_OVERVIEW = "COST_OVERVIEW",
+    PRICE_DETAILS = "PRICE_DETAILS",
     MEDIA = "MEDIA",
-    -- OOP_REFACTOR
-    EXPORT_V2 = "EXPORT_V2",
-    AVERAGE_PROFIT_OOP = "AVERAGE_PROFIT_OOP",
-    REAGENT_OPTIMIZATION_OOP = "REAGENT_OPTIMIZATION_OOP",
+    TOP_GEAR = "TOP_GEAR",
+    CRAFT_DATA = "CRAFT_DATA",
+    COST_DETAILS = "COST_DETAILS",
+    PRICE_APIS = "PRICE_APIS",
 }
 
 CraftSim.CONST.ERROR = {
@@ -118,6 +139,7 @@ CraftSim.CONST.ERROR = {
     NO_RECIPE_DATA = 1
 }
 
+--> used in GUTIL now
 -- if more needed, add https://wowpedia.fandom.com/wiki/LE_ITEM_BIND
 CraftSim.CONST.BINDTYPES = {
     SOULBOUND = 1
@@ -201,7 +223,7 @@ CraftSim.CONST.DEFAULT_POSITIONS = {
         x = 0,
         y = 0,
     },
-    COST_OVERVIEW_FRAME = {
+    PRICE_DETAILS_FRAME = {
         x = 0,
         y = 10,
     },
@@ -213,19 +235,6 @@ CraftSim.CONST.DEFAULT_POSITIONS = {
         x = 0,
         y = -80,
     }
-}
-
-CraftSim.CONST.COLORS = {
-    GREEN = "cff00FF00",
-    RED = "cffFF0000",
-    DARK_BLUE = "cff2596be",
-    BRIGHT_BLUE = "cff00ccff",
-    LEGENDARY = "cffff8000",
-    EPIC = "cffa335ee",
-    RARE = "cff0070dd",
-    UNCOMMON = "cff1eff00",
-    GREY = "cff9d9d9d",
-    ARTIFACT = "cffe6cc80",
 }
 
 CraftSim.CONST.RECIPE_CATEGORIES = {
@@ -443,10 +452,25 @@ CraftSim.CONST.TEXT = {
     STATISTICS_CDF_EXPLANATION = 49,
     PROFIT_EXPLANATION = 50,
     PROFIT_EXPLANATION_HSV = 51,
+    MULTICRAFT_CONSTANT_EXPLANATION = 52,
+    RESOURCEFULNESS_CONSTANT_EXPLANATION = 53,
+    EXPECTED_CRAFTS_EXPLANATION = 54,
+    UPGRADE_CHANCE_EXPLANATION = 55,
+    EXPECTED_COSTS_EXPLANATION = 56,
+    CRAFT_DATA_EXPLANATION = 57,
+    CRAFT_DATA_OVERRIDE_EXPLANATION = 58,
+    COST_DETAILS_EXPLANATION = 59,
+    NO_PRICE_SOURCE_WARNING = 60,
+    FORGEFINDER_EXPLANATION = 61,
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
-    return {Enum.Profession.Blacksmithing, Enum.Profession.Alchemy, Enum.Profession.Jewelcrafting, Enum.Profession.Leatherworking}
+    return {
+        Enum.Profession.Blacksmithing, 
+        Enum.Profession.Alchemy, 
+        Enum.Profession.Jewelcrafting, 
+        Enum.Profession.Leatherworking,
+    }
 end
 
 CraftSim.CONST.ITEM_ID_EXCEPTION_MAPPING = {

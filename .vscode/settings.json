@@ -32,6 +32,10 @@
         "TSM_API",
         "ChatFrame_AddMessageEventFilter",
         "CloseDropDownMenus",
-        "UIDropDownMenu_SetEnabled"
+        "UIDropDownMenu_SetEnabled",
+        "CraftSimCraftData"
+    ],
+    "Lua.diagnostics.disable": [
+        "missing-parameter"
     ]
 }

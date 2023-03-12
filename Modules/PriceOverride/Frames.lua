@@ -1,477 +1,326 @@
 AddonName, CraftSim = ...
 
+---@class CraftSim.PRICE_OVERRIDE.overrideDropdownData
+---@field item ItemMixin
+---@field isResult boolean
+---@field qualityID number
+
+CraftSim.PRICE_OVERRIDE.OverrideDropdownData = CraftSim.Object:extend()
+function CraftSim.PRICE_OVERRIDE.OverrideDropdownData:new(item, isResult, qualityID)
+    self.item = item
+    self.isResult = isResult
+    self.qualityID = qualityID 
+end
+
 CraftSim.PRICE_OVERRIDE.FRAMES = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE)
 
 function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
-    local sizeX = 800
-    local sizeY = 600
-    local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimPriceOverrideFrame", 
-        "CraftSim Price Overrides", 
-        ProfessionsFrame.CraftingPage.SchematicForm,
-        ProfessionsFrame.CraftingPage.SchematicForm, 
-        "CENTER", 
-        "CENTER", 
-        0, 
-        0, 
-        sizeX, 
-        sizeY,
-        CraftSim.CONST.FRAMES.PRICE_OVERRIDE, false, true, "DIALOG", "modulesPriceOverride")
+    local sizeX = 400
+    local sizeY = 300
 
-    local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
-        "CraftSimPriceOverrideWOFrame", 
-        "CraftSim Price Overrides " .. CraftSim.UTIL:ColorizeText("WO", CraftSim.CONST.COLORS.GREY), 
-        ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
-        ProfessionsFrame.CraftingPage.SchematicForm, 
-        "CENTER", 
-        "CENTER", 
-        0, 
-        0, 
-        sizeX, 
-        sizeY,
-        CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER, false, true, "DIALOG", "modulesPriceOverride")
+    local frameNO_WO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.CraftingPage.SchematicForm, 
+        anchorParent=ProfessionsFrame.CraftingPage.SchematicForm,
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.PRICE_OVERRIDE, 
+        title="CraftSim Price Overrides",
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata="DIALOG",
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesPriceOverride"),
+    })
+    local frameWO = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, 
+        anchorParent=ProfessionsFrame.CraftingPage.SchematicForm,
+        sizeX=sizeX,sizeY=sizeY,
+        frameID=CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER, 
+        title="CraftSim Price Overrides " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+        collapseable=true,
+        closeable=true,
+        moveable=true,
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata="DIALOG",
+        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesPriceOverride"),
+    })
 
-    local function createContent(frame)
-        frame:Hide()
-        -- create tabs for the different kinds of overrides
-        -- materials, optional reagents, finishing reagents, crafted items
-        local contentOffsetY = -60
-        local materialTab = CraftSim.FRAME:CreateTab(
-            "Materials", frame.content, frame.content, "TOPLEFT", "TOPLEFT", sizeX/5, -30, true, sizeX, sizeY - 20, frame.content, frame.content, 0, contentOffsetY)
+    local function createContentV2(frame)
 
-        local optionalReagentsTab = CraftSim.FRAME:CreateTab(
-        "Optional Reagents", frame.content, materialTab, "LEFT", "RIGHT", 0, 0, true, sizeX, sizeY - 20, frame.content, frame.content, 0, contentOffsetY)
+        local overrideOptions = nil
 
-        local finishingReagentsTab = CraftSim.FRAME:CreateTab(
-        "Finishing Reagents", frame.content, optionalReagentsTab, "LEFT", "RIGHT", 0, 0, true, sizeX, sizeY - 20, frame.content, frame.content, 0, contentOffsetY)
-
-        local craftedItemsTab = CraftSim.FRAME:CreateTab(
-        "Crafted Items", frame.content, finishingReagentsTab, "LEFT", "RIGHT", 0, 0, true, sizeX, sizeY - 20, frame.content, frame.content, 0, contentOffsetY)
-
-        frame.content.tabs = {materialTab, optionalReagentsTab, finishingReagentsTab, craftedItemsTab}
-        CraftSim.FRAME:InitTabSystem(frame.content.tabs)
-
-        frame.content.resetAllButton = CraftSim.FRAME:CreateButton("Reset All", 
-        frame.content, materialTab, "TOPRIGHT", "TOPLEFT", -65, 0, 15, 25, true, function(self)
-            CraftSim.PRICE_OVERRIDE:ResetAll()
-            local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-            local recipeData = CraftSim.MAIN.currentRecipeData
-            if not recipeData then
-                return
-            end
-            CraftSim.MAIN:TriggerModulesErrorSafe(false, recipeData.recipeID, exportMode)
-        end)
-
-        frame.content.resetRecipeButton = CraftSim.FRAME:CreateButton("Reset Recipe", 
-        frame.content, frame.content.resetAllButton, "TOPLEFT", "BOTTOMLEFT", 0, 0, 15, 25, true, function(self)
-            local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-            local recipeData = CraftSim.MAIN.currentRecipeData
-            if not recipeData then
-                return
-            end
-            CraftSim.PRICE_OVERRIDE:ResetRecipe(recipeData.recipeID)
-            CraftSim.MAIN:TriggerModulesErrorSafe(false, recipeData.recipeID, exportMode)
-        end)
-
-        local function createOverrideFrame(parent, anchorParent, anchorA, anchorB, anchorX, anchorY, isCraftedItem)
-            local overrideFrame = CreateFrame("frame", nil, parent)
-            overrideFrame:SetSize(50, 50)
-            overrideFrame:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
-
-            overrideFrame.itemID = nil
-            overrideFrame.qualityID = nil
-            overrideFrame.isCraftedItem = isCraftedItem
-
-            overrideFrame.icon = CraftSim.FRAME:CreateIcon(overrideFrame, 0, 0, CraftSim.CONST.EMPTY_SLOT_TEXTURE, 30, 30, "LEFT", "LEFT")
-            -- TODO: quality icon?
-
-            overrideFrame.qualityIcon = CraftSim.FRAME:CreateQualityIcon(
-                overrideFrame.icon, 20, 20, overrideFrame.icon, "TOPRIGHT", "TOPRIGHT", 5, 5, 3)
-
-            local function onPriceOverrideChanged(userInput, moneyValue)
-                if not userInput then
-                    return
-                end
-                print("Changed Price Override")
-                print("userInput: " .. tostring(userInput))
-                print("moneyValue: " .. tostring(moneyValue))
-
-                local isRecipeOverride = overrideFrame.recipeCheckBox:GetChecked()
-                local isGlobalOverride = overrideFrame.globalCheckBox:GetChecked()
-                local recipeData = CraftSim.MAIN.currentRecipeData
-                if not recipeData then
-                    return
-                end
-                local itemID = overrideFrame.itemID
-
-                if not itemID then
-                    return
-                end
-                
-                if not isRecipeOverride and not isGlobalOverride then
-                    CraftSim.PRICE_OVERRIDE:RemoveAllOverridesForItem(recipeData.recipeID, itemID)
-                elseif isRecipeOverride then
-                    CraftSim.PRICE_OVERRIDE:AddOverrideForRecipe(recipeData.recipeID, itemID, moneyValue)
-                    CraftSim.PRICE_OVERRIDE:RemoveOverrideGlobal(itemID)
-                elseif isGlobalOverride then
-                    CraftSim.PRICE_OVERRIDE:AddOverrideGlobal(itemID, moneyValue)
-                    CraftSim.PRICE_OVERRIDE:RemoveOverrideForRecipe(recipeData.recipeID, itemID)
-                end
-
-                -- reload modules to adapt to price change
-                local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-                CraftSim.MAIN:TriggerModulesErrorSafe(false, recipeData.recipeID, exportMode)
-            end
-
-            local function recipeCallback(self)
-                if self:GetChecked() then
-                    overrideFrame.globalCheckBox:SetChecked(false)
-                end
-                onPriceOverrideChanged(true, overrideFrame.input.getMoneyValue())
-            end
-
-            local function globalCallback(self)
-                if self:GetChecked() then
-                    overrideFrame.recipeCheckBox:SetChecked(false)
-                end
-
-                onPriceOverrideChanged(true, overrideFrame.input.getMoneyValue())
-            end
-
-            overrideFrame.recipeCheckBox = CraftSim.FRAME:CreateCheckboxCustomCallback("Recipe", "Override price for this recipe", false, recipeCallback, 
-            overrideFrame, overrideFrame.icon, "TOPLEFT", "TOPRIGHT", 0, 2)
-
-            overrideFrame.globalCheckBox = CraftSim.FRAME:CreateCheckboxCustomCallback("All", "Override price for all recipes", false, globalCallback, 
-            overrideFrame, overrideFrame.recipeCheckBox, "TOP", "BOTTOM", 0, 10)
-
-            if overrideFrame.isCraftedItem then
-                overrideFrame.globalCheckBox:Hide()
-            end
-
-            
-            overrideFrame.input = CraftSim.FRAME:CreateGoldInput(
-                nil, overrideFrame, overrideFrame.icon, "TOPLEFT", "BOTTOMLEFT", 5, 0, 50, 25, 0, onPriceOverrideChanged)
-
-            overrideFrame.goldIcon = CraftSim.FRAME:CreateGoldIcon(overrideFrame, overrideFrame.input, "LEFT", "RIGHT", 2, -2)
-
-            overrideFrame.SetItem = function(itemID, recipeID, qualityID, isGear)
-
-                if not itemID and not isGear then
-                    overrideFrame.icon:SetScript("OnEnter", nil)
-                    overrideFrame.icon:SetScript("OnLeave", nil)
-                    overrideFrame.itemID = null
-                    overrideFrame.qualityID = null
-                    overrideFrame:Hide()
-                    return
-                end
-
-                local priceOverride, isGlobal = nil, nil
-
-                overrideFrame:Show()
-
-                overrideFrame.qualityID = qualityID
-
-                if overrideFrame.isCraftedItem then
-                    overrideFrame.itemID = qualityID
-                else
-                    overrideFrame.itemID = itemID
-                end
-
-
-                local function updateIconAndTooltip(itemLink, itemTexture)
-                    overrideFrame.icon:SetScript("OnEnter", function(self) 
-                        local itemName, tooltipLink = GameTooltip:GetItem()
-                        GameTooltip:SetOwner(overrideFrame, "ANCHOR_RIGHT");
-                        if tooltipLink ~= itemLink then
-                            -- to not set it again and hide the tooltip..
-                            GameTooltip:SetHyperlink(itemLink)
-                        end
-                        GameTooltip:Show();
-                    end)
-                    overrideFrame.icon:SetScript("OnLeave", function(self) 
-                        GameTooltip:Hide();
-                    end)
-
-                    overrideFrame.icon:SetNormalTexture(itemTexture or CraftSim.CONST.EMPTY_SLOT_TEXTURE) -- if not loaded
-                end
-
-                local itemLink = nil
-                local itemTexture = nil
-                if not isCraftedItem then
-                    priceOverride, isGlobal = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(recipeID, itemID)
-                    local itemData = Item:CreateFromItemID(itemID)
-                    itemData:ContinueOnItemLoad(function() 
-                        updateIconAndTooltip(itemData:GetItemLink(), itemData:GetItemIcon())
-                    end)
-                else
-                    priceOverride, isGlobal = CraftSim.PRICE_OVERRIDE:GetPriceOverrideForItem(recipeID, qualityID)
-
-                    print("found price override for qualityID " .. tostring(qualityID) .. ": " .. tostring(priceOverride))
-                    if isGear then
-                        local itemData = Item:CreateFromItemLink(itemID)  -- this is the itemLink for gear
-                        itemLink = itemID
-                        itemData:ContinueOnItemLoad(function() 
-                            updateIconAndTooltip(itemLink, itemData:GetItemIcon())
-                        end)
-                    else
-                        local itemData = Item:CreateFromItemID(itemID)
-                        itemData:ContinueOnItemLoad(function() 
-                            updateIconAndTooltip(itemData:GetItemLink(), itemData:GetItemIcon())
-                        end)
-                    end
-                end
-                --print("found price override for qualityID " .. tostring(qualityID) .. ": " .. tostring(priceOverride) .. " isGear: " .. tostring(isGear))
-
-                if priceOverride then
-                    -- only override text if the input field is not currently focused
-                    if not overrideFrame.input:HasFocus() then
-                        overrideFrame.input:SetText(priceOverride / 10000) -- copper to gold
-                        print("Override Input Field: " .. tostring(priceOverride / 10000))
-                    else
-                        print("Do not override input, it has focus")
-                    end
-                    if isGlobal then
-                        overrideFrame.recipeCheckBox:SetChecked(false)
-                        overrideFrame.globalCheckBox:SetChecked(true)
-                    else
-                        overrideFrame.recipeCheckBox:SetChecked(true)
-                        overrideFrame.globalCheckBox:SetChecked(false)
-                    end
-                else
-                    overrideFrame.input:SetText("0")
-                    overrideFrame.recipeCheckBox:SetChecked(false)
-                    overrideFrame.globalCheckBox:SetChecked(false)
-                end
-
-                if not qualityID then
-                    overrideFrame.qualityIcon:Hide()
-                else
-                    overrideFrame.qualityIcon.SetQuality(qualityID)
-                    overrideFrame.qualityIcon:Show()
-                end
-            
-            end
-
-            return overrideFrame
+        ---@param overrideData CraftSim.PRICE_OVERRIDE.overrideDropdownData
+        local function selectionCallback(_, _, overrideData)
+            print("Selected itemID: " .. tostring(overrideData.item:GetItemID()))
+            frame.currentDropdownData = overrideData
+            CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideItem(overrideData)
+            overrideOptions:updateButtonStatus()
         end
 
-        local numOverrideFrames = 42
+        frame.recipeID = nil
 
-        local baseOffsetY = -30
-        local baseOffsetX = -sizeX/2 + 50
-        local spacingY = -70
-        local spacingX = 110
-        local framesPerRow = 7
+        frame.content.itemDropdown = CraftSim.GGUI.Dropdown({
+            parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=150,
+            clickCallback=selectionCallback
+        })
 
-        local function createOverrideFramesForTab(tab, isCraftedItem)
-            tab.content.overrideFrames = {}
+        frame.content.overrideOptions = CreateFrame("Frame", nil, frame.content)
+        frame.content.overrideOptions:SetSize(200, 80)
+        frame.content.overrideOptions:SetPoint("TOP", frame.content.itemDropdown.frame, "BOTTOM", 0, 0)
 
-            local numFrames = 0
-            local currentOffsetX = baseOffsetX
-            for i = 1, numOverrideFrames, 1 do
-                local numRow = math.floor(numFrames / framesPerRow)
-                -- print("current frame: " .. tostring(numFrames))
-                -- print("current column: " .. tostring(numRow))
-                
-                local overrideFrame = createOverrideFrame(tab.content, tab.content, "TOP", "TOP", currentOffsetX, baseOffsetY + spacingY*numRow, isCraftedItem)
-                table.insert(tab.content.overrideFrames, overrideFrame)
-                numFrames = numFrames + 1
-                if numFrames % framesPerRow == 0 then
-                    currentOffsetX = baseOffsetX
-                else
-                    currentOffsetX = currentOffsetX + spacingX
-                end
-            end
-        end
+        overrideOptions = frame.content.overrideOptions
 
-        for tabNr, tab in pairs(frame.content.tabs) do
-            if tabNr == 4 then
-                createOverrideFramesForTab(tab, true)
+        overrideOptions:Hide()
+
+        overrideOptions.itemIcon = CraftSim.GGUI.Icon({
+            parent=overrideOptions,
+            anchorParent=overrideOptions,
+            offsetX=20,
+            sizeX=30, sizeY=30,
+            anchorA="TOPLEFT", anchorB="TOPLEFT",
+        })
+
+        function overrideOptions:updateButtonStatus()
+            local currentData = frame.currentDropdownData
+
+            local overrideData = nil
+            if currentData.isResult then
+                overrideData = CraftSim.PRICE_OVERRIDE:GetResultOverride(frame.recipeID, currentData.qualityID)
             else
-                createOverrideFramesForTab(tab)
+                overrideData = CraftSim.PRICE_OVERRIDE:GetGlobalOverride(currentData.item:GetItemID())
             end
-        end        
+
+            overrideOptions.removeButton:SetEnabled(overrideData)
+
+            local valid = overrideOptions.currencyInputGold.isValid
+
+            if overrideData and overrideData.price then
+                -- check if same price as currently set
+                if valid then
+                    local priceInput = overrideOptions.currencyInputGold.total
+                    if overrideData.price == priceInput then
+                        overrideOptions.saveButton:SetStatus("SAVED")
+                    else
+                        overrideOptions.saveButton:SetStatus("READY")
+                    end
+                else
+                    overrideOptions.saveButton:SetStatus("INVALID")
+                end
+            elseif valid then
+                overrideOptions.saveButton:SetStatus("READY")
+            else
+                overrideOptions.saveButton:SetStatus("INVALID")
+            end
+        end
+    
+        overrideOptions.saveButton = CraftSim.GGUI.Button({
+            parent=overrideOptions,anchorParent=overrideOptions.itemIcon.frame,anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",offsetX=3,offsetY=-25,sizeX=15,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.PRICE_OVERRIDE:SaveOverrideData(frame.recipeID, frame.currentDropdownData)
+                overrideOptions:updateButtonStatus()
+                CraftSim.MAIN:TriggerModulesErrorSafe()
+            end,
+            initialStatus="READY",
+            label="Save",
+        })
+        overrideOptions.saveButton:SetStatusList({
+            {
+                statusID="READY",
+                enabled=true,
+                label="Save",
+            },
+            {
+                statusID="SAVED",
+                enabled=false,
+                label="Saved",
+            },
+            {
+                statusID="INVALID",
+                enabled=false,
+                label="Save",
+            },
+        })
+
+        overrideOptions.removeButton = CraftSim.GGUI.Button({
+            parent=overrideOptions,anchorParent=overrideOptions.saveButton.frame,anchorA="LEFT",anchorB="RIGHT",offsetX=3,sizeX=15,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.PRICE_OVERRIDE:RemoveOverrideData(frame.recipeID, frame.currentDropdownData)
+                overrideOptions:updateButtonStatus()
+                overrideOptions.currencyInputGold:SetValue(0)
+                CraftSim.MAIN:TriggerModulesErrorSafe()
+            end,
+            label="Remove",
+        })
+
+        overrideOptions.currencyInputGold = CraftSim.GGUI.CurrencyInput({
+            parent=overrideOptions,anchorParent=overrideOptions.itemIcon.frame,anchorA="LEFT",anchorB="RIGHT",offsetX=10,sizeX=80,sizeY=25,
+            onValidationChangedCallback=function() overrideOptions:updateButtonStatus() end,
+            showFormatHelpIcon=true, initialValue=0,
+
+        })
+
+        frame.content.scrollFrame1, frame.content.activeOverridesBox = CraftSim.FRAME:CreateScrollFrame(frame.content, -170, 50, -50, 30)
+        local title = CraftSim.FRAME:CreateText("Active Overrides", frame.content, frame.content.scrollFrame1, "BOTTOM", "TOP", 0, 0)
+        CraftSim.FRAME:CreateHelpIcon("'(as result)' -> price override only considered when item is a result of a recipe", frame.content, title, "LEFT", "RIGHT", 3, 0)
+
+
+        frame.content.clearAllButton = CraftSim.GGUI.Button({
+            label="Clear All", parent=frame.content,anchorParent=title,anchorA="LEFT",anchorB="RIGHT",offsetX=30,sizeX=15,sizeY=18,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.PRICE_OVERRIDE:ClearAll()
+                if frame.currentDropdownData then
+                    overrideOptions:updateButtonStatus()
+                end
+                CraftSim.MAIN:TriggerModulesErrorSafe()
+            end
+        })
+
+        
+        frame.content.activeOverridesBox.overrideList = CraftSim.FRAME:CreateText("", frame.content.activeOverridesBox, frame.content.activeOverridesBox, "TOPLEFT", "TOPLEFT", 0, 0, 0.85, nil, {type="H", value="LEFT"})
+        CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
     end
 
-    createContent(frameNO_WO)
-    createContent(frameWO)
+    createContentV2(frameNO_WO)
+    createContentV2(frameWO)
 end
 
-function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateFrames(recipeData, exportMode)
+---@param overrideData CraftSim.PRICE_OVERRIDE.overrideDropdownData
+function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideItem(overrideData)
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local priceOverrideFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
+        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
     else
-        priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
     end
 
-    local function updateOverrideFramesByItemList(tabNr, itemList)
-        local overrideFrames = priceOverrideFrame.content.tabs[tabNr].content.overrideFrames
+    local overrideOptions = priceOverrideFrame.content.overrideOptions
 
-        for index, overrideFrame in pairs(overrideFrames) do
-            local overrideItemData = itemList[index]
-    
-            if overrideItemData then
-                if overrideItemData.isGear then
-                    --print("set item #" .. tostring(index) .. " -> " .. tostring(overrideItemData.itemLink))
-                    overrideFrame.SetItem(overrideItemData.itemLink, recipeData.recipeID, overrideItemData.qualityID, true)
-                else
-                    overrideFrame.SetItem(overrideItemData.itemID, recipeData.recipeID, overrideItemData.qualityID)
-                end
-            else
-                overrideFrame.SetItem(nil)
-            end
-        end
-    end
+    overrideOptions:Show()
 
-    -- update for required reagents
-    
-
-    local requiredReagents = {}
-
-    for _, reagentData in pairs(recipeData.reagents) do
-        if reagentData.differentQualities then
-            for qualityID, itemInfo in pairs(reagentData.itemsInfo) do
-                table.insert(requiredReagents, {
-                    itemID = itemInfo.itemID,
-                    qualityID = qualityID,
-                })
-            end
-        else
-            table.insert(requiredReagents, {
-                itemID = reagentData.itemsInfo[1].itemID,
-                qualityID = nil
-            })
-        end
-    end
-
-    local optionalReagents = {}
-    for _, slot in pairs(recipeData.possibleOptionalReagents) do
-        for _, optionalReagent in pairs(slot) do
-            table.insert(optionalReagents, {
-                itemID = optionalReagent.itemID,
-                qualityID = optionalReagent.qualityID
-            })
-        end
-    end
-
-    local finishingReagents = {}
-    for _, slot in pairs(recipeData.possibleFinishingReagents) do
-        for _, finishingReagent in pairs(slot) do
-            table.insert(finishingReagents, {
-                itemID = finishingReagent.itemID,
-                qualityID = finishingReagent.qualityID
-            })
-        end
-    end
-
-    local craftedItems = {}
-    if recipeData.result.itemQualityLinks then
-        print("num item quality links: " .. #recipeData.result.itemQualityLinks)
-        for qualityID, itemLink in pairs(recipeData.result.itemQualityLinks) do
-            table.insert(craftedItems, {
-                itemLink = itemLink,
-                qualityID = qualityID,
-                isGear = true,
-            })
-        end
-    elseif recipeData.result.itemID then
-        table.insert(craftedItems, {
-            itemID = recipeData.result.itemID,
-            qualityID = nil
-        })
-    elseif recipeData.result.itemIDs then
-        for qualityID, itemID in pairs(recipeData.result.itemIDs) do
-            table.insert(craftedItems, {
-                itemID = itemID,
-                qualityID = qualityID
-            })
-        end
-    end
-
-    updateOverrideFramesByItemList(1, requiredReagents)
-    updateOverrideFramesByItemList(2, optionalReagents)
-    updateOverrideFramesByItemList(3, finishingReagents)
-    updateOverrideFramesByItemList(4, craftedItems)
-
-
+    overrideOptions.itemIcon:SetItem(overrideData.item:GetItemLink())
 end
-
--- OOP Refactor
 
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
-function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplayOOP(recipeData, exportMode)
+function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)
     local priceOverrideFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
+        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
     else
-        priceOverrideFrame = CraftSim.FRAME:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
     end
 
-    local function updateOverrideFramesByItemList(tabNr, itemList)
-        local overrideFrames = priceOverrideFrame.content.tabs[tabNr].content.overrideFrames
+    CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideList(priceOverrideFrame)
 
-        for index, overrideFrame in pairs(overrideFrames) do
-            local overrideItemData = itemList[index]
-    
-            if overrideItemData then
-                if overrideItemData.isGear then
-                    --print("set item #" .. tostring(index) .. " -> " .. tostring(overrideItemData.itemLink))
-                    overrideFrame.SetItem(overrideItemData.itemLink, recipeData.recipeID, overrideItemData.qualityID, true)
-                else
-                    overrideFrame.SetItem(overrideItemData.itemID, recipeData.recipeID, overrideItemData.qualityID)
-                end
-            else
-                overrideFrame.SetItem(nil)
-            end
+    if priceOverrideFrame.recipeID == recipeData.recipeID then
+        -- same recipe, stay
+    else
+        -- recipe was changed, reload and hide the options again
+        priceOverrideFrame.content.overrideOptions:Hide()
+        priceOverrideFrame.recipeID = recipeData.recipeID
+        
+        local dropdownData = {
+        }
+        local reagentData = recipeData.reagentData
+        if #reagentData.requiredReagents > 0 then
+            local dropdownEntry = {label="Required Reagents", value = {}, isCategory=true}
+            table.foreach(reagentData.requiredReagents, function (_, reagent)
+                table.foreach(reagent.items, function (_, reagentItem)
+                    local reagentLabel = reagentItem.item:GetItemLink()
+                    table.insert(dropdownEntry.value, {
+                        label=reagentLabel,
+                        value= CraftSim.PRICE_OVERRIDE.OverrideDropdownData(reagentItem.item, false),
+                    })
+                end)
+            end)
+            table.insert(dropdownData, dropdownEntry)
         end
-    end
     
-    local requiredReagents = {}
+        if #reagentData.optionalReagentSlots > 0 then
+            local dropdownEntry = {label="Optional Reagents", value = {}, isCategory=true}
+            local allPossibleReagents = {}
+            table.foreach(reagentData.optionalReagentSlots, function (_, slot)
+                allPossibleReagents = CraftSim.GUTIL:Concat({allPossibleReagents, slot.possibleReagents})
+            end)
+            table.foreach(allPossibleReagents, function (_, optionalReagent)
+                local reagentLabel = optionalReagent.item:GetItemLink()
+                table.insert(dropdownEntry.value, {
+                    label=reagentLabel,
+                    value=CraftSim.PRICE_OVERRIDE.OverrideDropdownData(optionalReagent.item, false),
+                })
+            end)
+            table.insert(dropdownData, dropdownEntry)
+        end
+    
+        if #reagentData.finishingReagentSlots > 0 then
+            local dropdownEntry = {label="Finishing Reagents", value = {}, isCategory=true}
+            local allPossibleReagents = {}
+            table.foreach(reagentData.finishingReagentSlots, function (_, slot)
+                allPossibleReagents = CraftSim.GUTIL:Concat({allPossibleReagents, slot.possibleReagents})
+            end)
+            table.foreach(allPossibleReagents, function (_, optionalReagent)
+                local reagentLabel = optionalReagent.item:GetItemLink()
+                table.insert(dropdownEntry.value, {
+                    label=reagentLabel,
+                    value=CraftSim.PRICE_OVERRIDE.OverrideDropdownData(optionalReagent.item, false),
+                })
+            end)
+            table.insert(dropdownData, dropdownEntry)
+        end
+    
+        if #recipeData.resultData.itemsByQuality > 0 then
+            local dropdownEntry = {label="Result Items", value = {}, isCategory=true}
+            table.foreach(recipeData.resultData.itemsByQuality, function (qualityID, item)
+                table.insert(dropdownEntry.value, {
+                    label=item:GetItemLink(),
+                    value=CraftSim.PRICE_OVERRIDE.OverrideDropdownData(item, true, qualityID),
+                })
+            end)
+            table.insert(dropdownData, dropdownEntry)
+        end
+    
+        --CraftSim.FRAME:initializeDropdownByData(priceOverrideFrame.content.itemDropdown, dropdownData, "")
+        priceOverrideFrame.content.itemDropdown:SetData({data=dropdownData})
+    end
+end
 
-    table.foreach(recipeData.reagentData.requiredReagents, function (_, reagent)
-        table.foreach(reagent.items, function (_, reagentItem)
-            table.insert(requiredReagents, {
-                itemID = reagentItem.item:GetItemID(),
-                qualityID = reagentItem.qualityID,  
-            })
+function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideList(priceOverrideFrame)
+
+
+    local overrideText = priceOverrideFrame.content.activeOverridesBox.overrideList
+
+    local globalOverrides = CraftSimPriceOverridesV2.globalOverrides or {}
+    local recipeOverrides = CraftSimPriceOverridesV2.recipeResultOverrides or {}
+    local resultOverrides = {}
+    table.foreach(recipeOverrides, function (_, resultOverrideList)
+        table.foreach(resultOverrideList, function (_, resultOverride)
+            table.insert(resultOverrides, Item:CreateFromItemID(resultOverride.itemID))
         end)
     end)
 
-    local optionalReagents = {}
-    local finishingReagents = {}
-    table.foreach(recipeData.reagentData.optionalReagentSlots, function(_, slot) optionalReagents = CraftSim.UTIL:Concat({optionalReagents, slot.possibleReagents}) end)
-    table.foreach(recipeData.reagentData.finishingReagentSlots, function(_, slot) finishingReagents = CraftSim.UTIL:Concat({finishingReagents, slot.possibleReagents}) end)
-    optionalReagents = CraftSim.UTIL:Map(optionalReagents, function(optionalReagent) 
-        return {
-            itemID = optionalReagent.item:GetItemID(),
-            qualityID = optionalReagent.qualityID
-        }
+    local itemsToLoad = CraftSim.GUTIL:Map(globalOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)
+    itemsToLoad = CraftSim.GUTIL:Concat({itemsToLoad, CraftSim.GUTIL:Map(resultOverrides, function(override) return Item:CreateFromItemID(override.itemID) end)})
+
+    CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
+        
+        local text = ""
+        table.foreach(globalOverrides, function (_, priceOverrideData)
+            local item = Item:CreateFromItemID(priceOverrideData.itemID)
+            text = text .. item:GetItemLink() .. ": " .. CraftSim.GUTIL:FormatMoney(priceOverrideData.price) .. "\n"
+        end)
+
+        table.foreach(recipeOverrides, function (_, resultOverrideList)
+            table.foreach(resultOverrideList, function (_, resultOverride)                
+                local item = Item:CreateFromItemID(resultOverride.itemID)
+                text = text .. item:GetItemLink() .. ": " .. CraftSim.GUTIL:FormatMoney(resultOverride.price) .. " " .. CraftSim.GUTIL:ColorizeText("(as result)", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) .. "\n"
+            end)
+        end)
+
+        overrideText:SetText(text)
+
     end)
-    finishingReagents = CraftSim.UTIL:Map(finishingReagents, function(finishingReagent) 
-        return {
-            itemID = finishingReagent.item:GetItemID(),
-            qualityID = finishingReagent.qualityID
-        }
-    end)
-
-    local craftedItems = {}
-    table.foreach(recipeData.resultData.itemsByQuality, function (index, item)
-        table.insert(craftedItems, {
-            itemLink = item:GetItemLink(),
-            isGear = recipeData.isGear,
-            qualityID = index,
-            itemID = item:GetItemID()
-        })
-    end)
-
-    updateOverrideFramesByItemList(1, requiredReagents)
-    updateOverrideFramesByItemList(2, optionalReagents)
-    updateOverrideFramesByItemList(3, finishingReagents)
-    updateOverrideFramesByItemList(4, craftedItems)
-
-
+    
 end
