@@ -3,7 +3,7 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 70 -- last patch increase: 8.3.0
+CraftSim.CONST.currentInfoVersionID = 71 -- last patch increase: 8.3.1
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -519,7 +519,7 @@ CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function()
     }
 end
 
-CraftSim.CONST.ITEM_ID_EXCEPTION_MAPPING = {
+CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING = {
     [199345] = 200074 -- frosted rimefin tuna to rimefin tuna, due to frosted generating it, and rimefin tuna being soulbound
 }
 

@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.3.1") ..
+        f.p .. "Fixed the exception for " .. f.bb("Rimefin Tuna - Frosted Rimefin Tuna") .. 
         newP("8.3.0") ..
         f.P .. f.g("Engineering Specialization Data") .. " added!" ..
         f.a .. "(Thx to "..f.bb("https://github.com/domi1294")..")" .. 

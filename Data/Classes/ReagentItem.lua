@@ -6,6 +6,10 @@ CraftSim.ReagentItem = CraftSim.Object:extend()
 ---@param itemID number
 ---@param qualityID number?
 function CraftSim.ReagentItem:new(itemID, qualityID)
+
+    -- consider possible exception mappings
+    itemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[itemID] or itemID
+
     self.qualityID = qualityID
     self.quantity = 0
     self.item = Item:CreateFromItemID(itemID)

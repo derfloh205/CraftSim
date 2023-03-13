@@ -219,7 +219,9 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
                 end
                 local craftSimReagentItem = nil
                 for _, craftSimReagent in pairs(self.reagentData.requiredReagents) do
-                    craftSimReagentItem = CraftSim.GUTIL:Find(craftSimReagent.items, function(cr) return cr.item:GetItemID() == reagent.itemID end)
+                    -- consider possible exception mappings
+                    local itemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[reagent.itemID] or reagent.itemID
+                    craftSimReagentItem = CraftSim.GUTIL:Find(craftSimReagent.items, function(cr) return cr.item:GetItemID() == itemID end)
                     if craftSimReagentItem then
                         break
                     end
