@@ -91,7 +91,13 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
         local function mapRecipe()
             local recipeID = professionRecipeIDs[currentIndex]
             if recipeID then
-                table.insert(data, CraftSim.RecipeData(recipeID))
+                ---@type CraftSim.RecipeData
+                local recipeData = CraftSim.RecipeData(recipeID)
+
+                -- only for recipes that have a result
+                if recipeData.resultData.itemsByQuality and #recipeData.resultData.itemsByQuality > 1 then
+                    table.insert(data, CraftSim.RecipeData(recipeID))
+                end
                 currentIndex = currentIndex + 1
                 
                 -- update button

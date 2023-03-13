@@ -10,6 +10,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.3.2") ..
+        f.p .. "Hotfix to " .. f.bb("RecipeScan") .. " bug" ..
+        f.p .. "Include non quality recipes in " .. f.l("ForgeFinder") .. " Export" ..
         newP("8.3.1") ..
         f.p .. "Fixed the exception for " .. f.bb("Rimefin Tuna - Frosted Rimefin Tuna") .. 
         newP("8.3.0") ..
