@@ -8,11 +8,13 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame, anchorParent=ProfessionsFrame,anchorA="BOTTOM",anchorB="TOP",offsetY=-8,
         sizeX=1120,sizeY=100,frameID=CraftSim.CONST.FRAMES.CONTROL_PANEL, 
-        title="CraftSim " .. currentVersion,
+        title="CraftSim Control Panel " .. currentVersion,
         collapseable=true,
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
     })
+
+    CraftSim.CONTROL_PANEL.frame = frame
 
     local createModuleCheckbox = function(label, description, anchorA, anchorParent, anchorB, offsetX, offsetY, optionVariable)
         local cb = CraftSim.FRAME:CreateCheckbox(" " .. label, 
@@ -51,32 +53,25 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         end
     })
 
-    frame.content.exportButton = CraftSim.GGUI.Button({
-        label="Export Recipe", parent=frame.content,anchorParent=frame.content.debugButton.frame,anchorA="RIGHT", anchorB="LEFT", sizeX=15,sizeY=25,adjustWidth=true,
+    frame.content.exportForgeFinderButton = CraftSim.GGUI.Button({
+        label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Export", parent=frame.content,anchorParent=frame.content.debugButton.frame,anchorA="RIGHT", anchorB="LEFT", sizeX=15,sizeY=25,adjustWidth=true,
         clickCallback=function() 
-            CraftSim.GGUI:ShowPopup({
-                parent=frame.content,anchorParent=frame.content.exportButton.frame,anchorA="TOP", anchorB="BOTTOM",
-                title="Recipe Export", sizeX=250, sizeY=70,
-                acceptButtonLabel=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Export",
-                declineButtonLabel="Full Export",
-                onAccept=function ()
-                    if CraftSim.MAIN.currentRecipeData then
-                        local json = CraftSim.MAIN.currentRecipeData:GetForgeFinderExport()
-                        if json then
-                            CraftSim.UTIL:KethoEditBox_Show(json)
-                        end
-                    end
-                end,
-                onDecline=function ()
-                    if CraftSim.MAIN.currentRecipeData then
-                        local json = CraftSim.MAIN.currentRecipeData:GetJSON()
-                        if json then
-                            CraftSim.UTIL:KethoEditBox_Show(json)
-                        end
-                    end
-                end
-            })
-        end
+            CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
+        end,
+        initialStatusID = "READY",
+    })
+
+    frame.content.exportForgeFinderButton:SetStatusList({
+        {
+            statusID = "READY",
+            label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Export",
+            enabled=true,
+        }
+    })
+
+    CraftSim.GGUI.HelpIcon({
+        parent=frame.content,anchorParent=frame.content.exportForgeFinderButton.frame, anchorA="RIGHT", anchorB="LEFT", offsetX=-3,
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FORGEFINDER_EXPLANATION)
     })
 
     frame.content.optionsButton = CraftSim.GGUI.Button({

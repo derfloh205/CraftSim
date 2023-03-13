@@ -307,24 +307,3 @@ function CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
         recipeData:OptimizeReagents(optimizeInspiration)
     end
 end
-
-function CraftSim.RECIPE_SCAN:ForgeFinderExport()
-    
-    local numRecipes = #CraftSim.RECIPE_SCAN.currentResults
-    if numRecipes > 0 then
-        ---@type CraftSim.JSONBuilder
-        local jb = CraftSim.JSONBuilder()
-        jb.json = jb.json .. "[\n"
-        for index, recipeData in pairs(CraftSim.RECIPE_SCAN.currentResults) do
-            local recipeJson = recipeData:GetForgeFinderExport(1)
-            if index == numRecipes then
-                jb.json = jb.json .. recipeJson
-            else
-                jb.json = jb.json .. recipeJson .. ",\n"
-            end
-        end
-        
-        jb.json = jb.json .. "\n]"
-        CraftSim.UTIL:KethoEditBox_Show(jb.json)
-    end
-end
