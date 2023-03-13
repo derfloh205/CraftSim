@@ -315,6 +315,22 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
         PRIMALIST_GEMS = 1641,
         MISC = 1629,
 
+    },
+    TAILORING = {
+        UNRAVELLING = 1668,
+        CLOTH_BOLTS = 1669,
+        OPTIONAL_REAGENTS = 1673,
+        FINISHING_REAGENTS = 1671,
+        PROFESSION_EQUIPMENT = 1606,
+        SPELLTHREAD = 1672, -- Leg enchants for casters
+        BAGS = 1674,
+        ASSORTED_EMBROIDERY = 1670, -- Toys, Bandages & Banners stuff
+        EXPERIMENTS = 1667, -- Two recipes to break your tool and get a set of daggers
+
+        -- Armor
+        ARMOR = 1662,
+        AZUREWEAVE_ARMOR = 1665,
+        CHRONOCLOTH_ARMOR = 1666,
     }
 }
 
@@ -418,6 +434,29 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
     JEWELCRAFTING = {
         GEMS = 9, -- Other
     },
+    TAILORING = {
+        UNRAVELLING = 2,
+        CLOTH_BOLTS = 5,
+        OPTIONAL_REAGENTS = 18,
+        FINISHING_REAGENTS = 19,
+        ARMOR = 1,
+        SPELLTHREAD = 8,
+        BANDAGES = 7,
+        TOYS_AND_BANNERS = 4,
+        EXPERIMENTS = 2, -- Two recipes to break your tool and get a set of daggers
+
+        -- Profession Gear
+        TAILORING = 6,
+        ALCHEMY = 2,
+        COOKING = 4,
+        ENCHANTING = 8,
+        FISHING = 0,
+        HERBALISM = 3,
+
+        -- Bags
+        BAG = 0,
+        REAGENT_BAG = 11,
+    },
 }
 
 CraftSim.CONST.BUFF_IDS = {
@@ -516,6 +555,7 @@ CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function()
         Enum.Profession.Engineering, 
         Enum.Profession.Jewelcrafting, 
         Enum.Profession.Leatherworking,
+        Enum.Profession.Tailoring,
     }
 end
 
