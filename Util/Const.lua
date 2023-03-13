@@ -298,7 +298,24 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
         TOYS = 1652,
     },
     INSCRIPTION = {
-        INKS = 1754
+        INSCRIPTION_ESSENTIALS = 1730,
+        INKS = 1754,
+        REAGENTS = 1767,
+        MISSIVES = 1756,
+        CRAFTING_TOOL_MISSIVES = 1789,
+        GATHERING_TOOL_MISSIVES = 1790,
+        RUNES_AND_SIGILS = 1761,
+        TRINKETS = 1748,
+        WEAPONS = 1758,
+        PROFESSION_EQUIPMENT = 1755,
+        SCROLLS = 1763,
+        MYSTERIES = 1762,
+        CONTRACTS = 1759,
+        DRACONIC_TREATISES = 1757,
+        RENEWED_PROTO_DRAKE = 1799,
+        WINDBORNE_VELOCIDRAKE = 1800,
+        HIGHLAND_DRAKE = 1801,
+        CLIFFSIDE_WYLDERDRAKE = 1802,
     },
     JEWELCRAFTING = {
         REAGENTS = 1630,
@@ -314,7 +331,6 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
         FROST_GEMS = 1640,
         PRIMALIST_GEMS = 1641,
         MISC = 1629,
-
     },
     TAILORING = {
         UNRAVELLING = 1668,
@@ -429,7 +445,13 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         LEATHER_REAGENTS = 6, -- Hides, Scales (Reagents)
     },
     INSCRIPTION = {
-        INKS = 16, -- "Inscription"
+        MILLING = 11,
+        SIGILS = 18,
+        VANTUS_RUNES = 9,
+        FAUNA_RUNES = 8,
+        BUNDLE_O_CARDS = 8,
+        STAVES = 10,
+        OFFHANDS = 0,
     },
     JEWELCRAFTING = {
         GEMS = 9, -- Other
@@ -550,10 +572,11 @@ CraftSim.CONST.TEXT = {
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
     return {
-        Enum.Profession.Blacksmithing, 
-        Enum.Profession.Alchemy, 
-        Enum.Profession.Engineering, 
-        Enum.Profession.Jewelcrafting, 
+        Enum.Profession.Alchemy,
+        Enum.Profession.Blacksmithing,
+        Enum.Profession.Engineering,
+        Enum.Profession.Inscription,
+        Enum.Profession.Jewelcrafting,
         Enum.Profession.Leatherworking,
         Enum.Profession.Tailoring,
     }
