@@ -10,6 +10,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.3.0") ..
+        f.P .. f.g("Engineering Specialization Data") .. " added!" ..
+        f.a .. "(Thx to "..f.bb("https://github.com/domi1294")..")" .. 
         newP("8.2.3") ..
         f.p .. "Smaller tweaks to " .. f.l("ForgeFinder") .. " export" ..
         f.p .. "Fixed " .. f.bb("Top Gear") .. " not showing for Work Orders" ..
