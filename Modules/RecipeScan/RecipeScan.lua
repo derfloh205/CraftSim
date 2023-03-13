@@ -47,7 +47,6 @@ function CraftSim.RECIPE_SCAN:EndScan()
     print("scan finished")
     collectgarbage("collect") -- By Option?
     CraftSim.RECIPE_SCAN:ToggleScanButton(true)
-    CraftSim.RECIPE_SCAN.frame.content.exportForgeFinderButton:SetEnabled(#CraftSim.RECIPE_SCAN.currentResults > 0)
     CraftSim.RECIPE_SCAN.isScanning = false
 end
 
@@ -202,7 +201,6 @@ end
 function CraftSim.RECIPE_SCAN:StartScan()
 
     CraftSim.RECIPE_SCAN.currentResults = {}
-    CraftSim.RECIPE_SCAN.frame.content.exportForgeFinderButton:SetEnabled(false)
     CraftSim.RECIPE_SCAN.isScanning = true
     
     local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
