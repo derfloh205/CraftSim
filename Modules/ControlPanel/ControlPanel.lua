@@ -75,6 +75,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
                 local jb = CraftSim.JSONBuilder()
                 jb.json = jb.json .. "[\n"
                 for index, recipeData in pairs(data) do
+                    print("skill: " .. tostring(recipeData.professionStats.skill.value))
                     local recipeJson = recipeData:GetForgeFinderExport(1)
                     if index == #data then
                         jb.json = jb.json .. recipeJson
@@ -96,7 +97,8 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
 
                 -- only for recipes that have a result
                 if recipeData.resultData.itemsByQuality and #recipeData.resultData.itemsByQuality > 1 then
-                    table.insert(data, CraftSim.RecipeData(recipeID))
+                    recipeData:SetEquippedProfessionGearSet()
+                    table.insert(data, recipeData)
                 end
                 currentIndex = currentIndex + 1
                 
@@ -118,26 +120,5 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
         CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText("Exporting 0%")
         CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetEnabled(false)
         mapRecipe()
-    end
-end
-
-function CraftSim.RECIPE_SCAN:ForgeFinderExport()
-    
-    local numRecipes = #CraftSim.RECIPE_SCAN.currentResults
-    if numRecipes > 0 then
-        ---@type CraftSim.JSONBuilder
-        local jb = CraftSim.JSONBuilder()
-        jb.json = jb.json .. "[\n"
-        for index, recipeData in pairs(CraftSim.RECIPE_SCAN.currentResults) do
-            local recipeJson = recipeData:GetForgeFinderExport(1)
-            if index == numRecipes then
-                jb.json = jb.json .. recipeJson
-            else
-                jb.json = jb.json .. recipeJson .. ",\n"
-            end
-        end
-        
-        jb.json = jb.json .. "\n]"
-        CraftSim.UTIL:KethoEditBox_Show(jb.json)
     end
 end

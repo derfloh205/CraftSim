@@ -479,7 +479,8 @@ function CraftSim.RecipeData:GetForgeFinderExport(indent)
 
     jb:Add("reagents", reagents) -- itemID mapped to required quantity
     if self.supportsQualities then
-        jb:Add("skill", professionStatsForExport.skill.value - self.reagentData:GetSkillFromRequiredReagents()) -- skill without reagent bonus
+        print("json, adding skill: ") 
+        jb:Add("skill", self.professionStats.skill.value) -- skill without reagent bonus TODO: if single export, consider removing reagent bonus
         jb:Add("difficulty", self.baseProfessionStats.recipeDifficulty.value) -- base difficulty (without optional reagents)
     end
     if self.supportsCraftingStats then
