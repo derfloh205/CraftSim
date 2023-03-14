@@ -212,16 +212,11 @@ function CraftSim.COST_DETAILS:UpdateDisplay(recipeData, exportMode)
                 end
 
                 if priceInfo.isAHPrice then
-                    -- if we should use ah price but we dont have one, set unknown (when no price source loaded e.g.)
-                    if priceInfo.noAHPriceFound then
-                        row.columns[5]:SetUnknown()
-                    else
-                        row.columns[5]:SetAH()
-                    end
+                    row.columns[5]:SetAH()
                 elseif priceInfo.isOverride then
                     row.columns[5]:SetOverride()
-                elseif priceInfo.isCraftData then
-                    row.columns[5]:SetCraftData()
+                elseif priceInfo.isCraftData and priceInfo.craftData then
+                    row.columns[5]:SetCrafter(priceInfo.craftData)
                 else
                     row.columns[5]:SetUnknown()
                 end

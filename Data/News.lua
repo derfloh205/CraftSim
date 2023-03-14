@@ -11,7 +11,9 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.4.0") ..
-        f.P .. "" ..
+        f.P .. f.bb("Tailoring") .. " and " .. f.bb("Inscription") .. " specialization data added." ..
+        f.a .. "May thanks to " .. f.bb("https://github.com/domi1294") ..
+        f.p .. "Fixed a bug with " .. f.bb("Craft Data") .. " of optional reagents" ..
         newP("8.3.3") ..
         f.p .. "Fixed " .. f.l("ForgeFinder") .. " Export not including" .. 
         f.a .. "stats from profession gear" ..
