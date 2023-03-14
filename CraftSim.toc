@@ -87,6 +87,7 @@ Locals/frFR.lua
 Locals/esES.lua
 Locals/koKR.lua
 Locals/zhTW.lua
+Locals/zhCN.lua
 
 Data/EnchantData.lua
 Data/ReagentWeightData.lua
