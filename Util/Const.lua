@@ -3,7 +3,7 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 73 -- last patch increase: 8.3.3
+CraftSim.CONST.currentInfoVersionID = 74 -- last patch increase: 8.4.0
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400

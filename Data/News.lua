@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.4.0") ..
+        f.P .. "" ..
         newP("8.3.3") ..
         f.p .. "Fixed " .. f.l("ForgeFinder") .. " Export not including" .. 
         f.a .. "stats from profession gear" ..

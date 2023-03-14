@@ -103,7 +103,6 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
                 currentIndex = currentIndex + 1
                 
                 -- update button
-
                 local currentPercent = CraftSim.GUTIL:Round(currentIndex / (numRecipes / 100))
 
                 CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText("Exporting "..currentPercent.."%")
