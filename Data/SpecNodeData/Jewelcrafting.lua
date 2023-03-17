@@ -224,36 +224,66 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28660,
             childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
             equalsSkill = true,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         FACETING_2 = {
             nodeID = 28660,
             threshold = 5,
             inspiration = 5,
             childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         FACETING_3 = {
             nodeID = 28660,
             threshold = 15,
             resourcefulness = 5,
             childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         FACETING_4 = {
             nodeID = 28660,
             threshold = 25,
             multicraft = 20,
             childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         FACETING_5 = {
             nodeID = 28660,
             threshold = 35,
             skill = 5,
             childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         FACETING_6 = {
             nodeID = 28660,
             threshold = 40,
             craftingspeedBonusFactor = 0.10,
             childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         AIR_1 = {
             nodeID = 28659,
@@ -518,25 +548,44 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             childNodeIDs = {"JEWELRY_1", "CARVING_1"},
             nodeID = 28728,
             equalsSkill = true,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.MISC] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         SETTING_2 = {
             childNodeIDs = {"JEWELRY_1", "CARVING_1"},
             nodeID = 28728,
             threshold = 5,
             inspiration = 5,
-
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.MISC] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         SETTING_3 = {
             childNodeIDs = {"JEWELRY_1", "CARVING_1"},
             nodeID = 28728,
             threshold = 15,
             resourcefulness = 5,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.MISC] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         SETTING_4 = {
             childNodeIDs = {"JEWELRY_1", "CARVING_1"},
             nodeID = 28728,
             threshold = 25,
             inspiration = 5,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.MISC] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         JEWELRY_1 = {
             childNodeIDs = {"NECKLACES_1", "RINGS_1"},
@@ -712,7 +761,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28723,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.TRINKETS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.MISC
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             equalsSkill = true,
@@ -721,7 +770,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28723,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.TRINKETS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.MISC
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             threshold = 5,
@@ -731,7 +780,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28723,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.TRINKETS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.MISC
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             threshold = 10,
@@ -741,7 +790,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28723,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.TRINKETS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.MISC
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             threshold = 15,
@@ -751,7 +800,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28723,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.TRINKETS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.MISC
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             threshold = 20,
@@ -761,7 +810,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28723,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.TRINKETS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.MISC
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             threshold = 25,
@@ -890,6 +939,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 395662, -- insight
                 374483, -- sand
                 374484, -- pounce
+                -- novelties
+                374525, -- Convergent Prism
+                374522, -- Jeweled Offering
             },
             equalsSkill = true,
         },
@@ -908,6 +960,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 395662, -- insight
                 374483, -- sand
                 374484, -- pounce
+                -- novelties
+                374525, -- Convergent Prism
+                374522, -- Jeweled Offering
             },
             threshold = 5,
             inspiration = 5,
@@ -927,6 +982,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 395662, -- insight
                 374483, -- sand
                 374484, -- pounce
+                -- novelties
+                374525, -- Convergent Prism
+                374522, -- Jeweled Offering
             },
             threshold = 10,
             resourcefulness = 5,
@@ -946,6 +1004,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 395662, -- insight
                 374483, -- sand
                 374484, -- pounce
+                -- novelties
+                374525, -- Convergent Prism
+                374522, -- Jeweled Offering
             },
             threshold = 15,
             multicraft = 20,
@@ -965,6 +1026,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 395662, -- insight
                 374483, -- sand
                 374484, -- pounce
+                -- novelties
+                374525, -- Convergent Prism
+                374522, -- Jeweled Offering
             },
             threshold = 20,
             resourcefulness = 5,
@@ -984,6 +1048,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 395662, -- insight
                 374483, -- sand
                 374484, -- pounce
+                -- novelties
+                374525, -- Convergent Prism
+                374522, -- Jeweled Offering
             },
             threshold = 25,
             inspiration = 10,
@@ -1003,6 +1070,9 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 395662, -- insight
                 374483, -- sand
                 374484, -- pounce
+                -- novelties
+                374525, -- Convergent Prism
+                374522, -- Jeweled Offering
             },
             threshold = 30,
             skill = 5,
@@ -1010,21 +1080,22 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         },
         GLASSWARE_1 = {
             nodeID = 28607,
+            equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.EXTRA_GLASSWARES] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 },
             },
             exceptionRecipeIDs = {
-                -- prisms
-                374525,
-                374518,
+                -- novelties
+                374518, -- Projection Prism
+                375063, -- "Rhinestone" Sunglasses
+                377960, -- Split-Lens Specs
                 -- items crafted with fractured glass
                 374478, -- Frameless Lense
                 392697, -- Empty Sould Cage
                 374477, -- Draconic Vial
             },
-            equalsSkill = true,
         },
         GLASSWARE_2 = {
             nodeID = 28607,
@@ -1034,9 +1105,10 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 },
             },
             exceptionRecipeIDs = {
-                -- prisms
-                374525,
-                374518,
+                -- novelties
+                374518, -- Projection Prism
+                375063, -- "Rhinestone" Sunglasses
+                377960, -- Split-Lens Specs
                 -- items crafted with fractured glass
                 374478, -- Frameless Lense
                 392697, -- Empty Sould Cage
@@ -1053,9 +1125,10 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 },
             },
             exceptionRecipeIDs = {
-                -- prisms
-                374525,
-                374518,
+                -- novelties
+                374518, -- Projection Prism
+                375063, -- "Rhinestone" Sunglasses
+                377960, -- Split-Lens Specs
                 -- items crafted with fractured glass
                 374478, -- Frameless Lense
                 392697, -- Empty Sould Cage
@@ -1072,9 +1145,10 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 },
             },
             exceptionRecipeIDs = {
-                -- prisms
-                374525,
-                374518,
+                -- novelties
+                374518, -- Projection Prism
+                375063, -- "Rhinestone" Sunglasses
+                377960, -- Split-Lens Specs
                 -- items crafted with fractured glass
                 374478, -- Frameless Lense
                 392697, -- Empty Sould Cage
@@ -1091,9 +1165,10 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 },
             },
             exceptionRecipeIDs = {
-                -- prisms
-                374525,
-                374518,
+                -- novelties
+                374518, -- Projection Prism
+                375063, -- "Rhinestone" Sunglasses
+                377960, -- Split-Lens Specs
                 -- items crafted with fractured glass
                 374478, -- Frameless Lense
                 392697, -- Empty Sould Cage
