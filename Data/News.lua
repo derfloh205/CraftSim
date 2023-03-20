@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.4.1") ..
+        f.p .. "Tweaks to " .. f.bb("Alchemy Specialization Info") .. " for Transmuation" ..
         newP("8.4.0") ..
         f.P .. f.bb("Tailoring") .. " and " .. f.bb("Inscription") .. " specialization data added." ..
         f.a .. "May thanks to " .. f.bb("https://github.com/domi1294") ..

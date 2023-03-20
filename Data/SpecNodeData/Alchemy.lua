@@ -130,7 +130,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
         },
         TRANSMUTATION_1 = {
             nodeID = 19538,
-            equalsResourcefulnessPercent = true,
+            equalsResourcefulness = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,

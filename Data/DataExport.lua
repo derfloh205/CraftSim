@@ -43,7 +43,7 @@ function CraftSim.DATAEXPORT:exportBuffData()
 	local alchemicallyInspired = C_UnitAuras.GetPlayerAuraBySpellID(CraftSim.CONST.BUFF_IDS.ALCHEMICALLY_INSPIRED)
 
 	buffData.inspirationIncense = inspirationIncense and 20 -- gives 20 inspiration
-	buffData.quickPhial = quickPhial and quickPhial.points[1] -- points gives us the % as integer
+	buffData.quickPhial = quickPhial and quickPhial.points[1] -- points gives us the % as integer	
 	buffData.alchemicallyInspired = alchemicallyInspired and 20 -- gives 20 inspiration
 
 	return buffData
