@@ -263,6 +263,9 @@ function CraftSim.ResultData:Update()
                     -- if none of the above holds, chance to reach the quality is 0
                     self.chanceByQuality[quality] = 0
                 end
+            else
+                -- if none of the above holds, chance to reach the quality is 0
+                self.chanceByQuality[quality] = 0
             end
 
             if self.expectedQualityUpgrade == quality then

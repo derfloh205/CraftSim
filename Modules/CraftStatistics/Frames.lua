@@ -37,86 +37,103 @@ function CraftSim.STATISTICS.FRAMES:Init()
 
         frame:Hide()
 
-        frame.content.scrollFrame, frame.content.probabilityTableFrame = CraftSim.FRAME:CreateScrollFrame(frame.content, -200, 50, -50, 300)
-        frame.content.probabilityTableHeaderChance = CraftSim.FRAME:CreateText(
-            "Chance", 
-        frame.content, frame.content.scrollFrame, "BOTTOMLEFT", "TOPLEFT", 10, 10, nil, nil)
+        ---@type GGUI.FrameList | GGUI.Widget
+        frame.content.probabilityTable = CraftSim.GGUI.FrameList({
+            parent=frame.content, 
+            sizeY=170, anchorA="TOP", anchorB="BOTTOM", anchorParent=frame.title.frame,
+            showHeaderLine = true, offsetY=-30,
+            columnOptions={
+                {
+                    label="Chance",
+                    width=60,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label="Inspiration",
+                    width=80,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label="Multicraft",
+                    width=80,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label="Resourcefulness",
+                    width=110,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label="HSV Next",
+                    width=70,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label="HSV Skip",
+                    width=70,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label="Expected Profit",
+                    width=120,
+                },
+            },
+            rowConstructor=function (columns)
+                local chanceColumn = columns[1]
+                local inspirationColumn = columns[2]
+                local multicraftColumn = columns[3]
+                local resourcefulnessColumn = columns[4]
+                local hsvNextColumn = columns[5]
+                local hsvSkipColumn = columns[6]
+                local profitColumn = columns[7]
+    
+                ---@type GGUI.Text | GGUI.Widget
+                chanceColumn.text = CraftSim.GGUI.Text({
+                    parent=chanceColumn, anchorParent=chanceColumn,
+                    text="100%", justifyOptions={type="H", align="CENTER"},
+                })
 
-        frame.content.probabilityTableHeaderInspiration = CraftSim.FRAME:CreateText(
-            "Inspiration", 
-        frame.content, frame.content.probabilityTableHeaderChance, "LEFT", "RIGHT", 10, 0, nil, nil)
+                ---@type GGUI.Text | GGUI.Widget
+                profitColumn.text = CraftSim.GGUI.Text({
+                    parent=profitColumn, anchorParent=profitColumn,
+                    text=CraftSim.GUTIL:FormatMoney(11312313, true), justifyOptions={type="H", align="LEFT"},
+                })
 
-        frame.content.probabilityTableHeaderMulticraft = CraftSim.FRAME:CreateText(
-        "Multicraft", 
-        frame.content, frame.content.probabilityTableHeaderInspiration, "LEFT", "RIGHT", 10, 0, nil, nil)
+                local booleanColumns = {inspirationColumn, multicraftColumn, resourcefulnessColumn, hsvNextColumn, hsvSkipColumn}
 
-        frame.content.probabilityTableHeaderResourcefulness = CraftSim.FRAME:CreateText(
-        "Resourcefulness", 
-        frame.content, frame.content.probabilityTableHeaderMulticraft, "LEFT", "RIGHT", 10, 0, nil, nil)
+                local check = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.GUTIL.COLORS.GREEN)
+                local cross = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.GUTIL.COLORS.RED)
 
-        frame.content.probabilityTableHeaderHSV = CraftSim.FRAME:CreateText(
-        "HSV", 
-        frame.content, frame.content.probabilityTableHeaderResourcefulness, "LEFT", "RIGHT", 10, 0, nil, nil)
+                for _, column in pairs(booleanColumns) do
+                    ---@type GGUI.Text | GGUI.Widget
+                    column.text = CraftSim.GGUI.Text({
+                        parent=column, anchorParent=column,
+                        text=cross, justifyOptions={type="H", align="CENTER"},
+                    })
 
-        frame.content.probabilityTableHeaderHSV.helperIcon = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.HSV_EXPLANATION), 
-            frame.content, frame.content.probabilityTableHeaderHSV, "BOTTOM", "TOP", 0, 10)
+                    function column:SetChecked(value)
+                        if value then
+                            column.text:SetText(check)
+                        else
+                            column.text:SetText(cross)
+                        end
+                    end
+                end
+            end,
+        })
 
-        frame.content.probabilityTableHeaderProfit = CraftSim.FRAME:CreateText(
-        "Expected Profit", 
-        frame.content, frame.content.probabilityTableHeaderHSV, "LEFT", "RIGHT", 10, 0, nil, nil)
+        ---@type GGUI.Text | GGUI.Widget
+        frame.content.expectedProfitTitle = CraftSim.GGUI.Text({
+            parent=frame.content,anchorParent=frame.content.probabilityTable.frame,
+            anchorA="TOP", anchorB="BOTTOM", offsetY=-30, text="Expected Profit (μ)"
+        })
+        ---@type GGUI.Text | GGUI.Widget
+        frame.content.expectedProfitValue = CraftSim.GGUI.Text({
+            parent=frame.content,anchorParent=frame.content.expectedProfitTitle.frame,
+            anchorA="TOP", anchorB="BOTTOM", offsetY=-10,
+        })
 
-        frame.content.probabilityTableFrame.tableRows = {}
-        local function createTableRow(offsetX, offsetY)
-            local row = CreateFrame("Frame", nil, frame.content.probabilityTableFrame)
-            row:SetSize(frame.content.probabilityTableFrame:GetWidth(), 25)
-            row:SetPoint("TOPLEFT", frame.content.probabilityTableFrame, "TOPLEFT", offsetX, offsetY)
-
-            row.chance = CraftSim.FRAME:CreateText(
-            "70%", 
-            row, row, "TOPLEFT", "TOPLEFT", 5, 0, nil, nil, {type="H", value="RIGHT"})
-            row.chance:SetSize(50, 25)
-
-            local boolRowWidth = 20
-
-            row.inspiration = CraftSim.FRAME:CreateText(
-            CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), 
-            row, row.chance, "LEFT", "RIGHT", 42, 0, nil, nil)
-            row.inspiration:SetSize(boolRowWidth, 25)
-
-            row.multicraft = CraftSim.FRAME:CreateText(
-            CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125),  
-            row, row.inspiration, "LEFT", "RIGHT", 55, 0, nil, nil)
-            row.multicraft:SetSize(boolRowWidth, 25)
-
-            row.resourcefulness = CraftSim.FRAME:CreateText(
-            CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125),  
-            row, row.multicraft, "LEFT", "RIGHT", 75, 0, nil, nil)
-            row.resourcefulness:SetSize(boolRowWidth, 25)
-
-            row.hsv = CraftSim.FRAME:CreateText(
-            CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125),  
-            row, row.resourcefulness, "LEFT", "RIGHT", 55, 0, nil, nil)
-            row.hsv:SetSize(boolRowWidth, 25)
-
-            row.profit = CraftSim.FRAME:CreateText(
-            CraftSim.GUTIL:FormatMoney(10000000, true), 
-            row, row.hsv, "LEFT", "RIGHT", 15, 0, nil, nil, {type="H", value="LEFT"})
-            row.profit:SetSize(200, 25)
-
-            return row
-        end
-
-        local numRows = 16
-        local rowOffsetY = -20
-        local rowOffsetX = 0
-
-        for i = 1, numRows, 1 do
-            table.insert(frame.content.probabilityTableFrame.tableRows, createTableRow(rowOffsetX, rowOffsetY*(i-1)))
-        end
-
-        frame.content.expectedProfitTitle = CraftSim.FRAME:CreateText("Expected Profit (μ)", frame.content, frame.content.scrollFrame, "TOP", "BOTTOM", 0, -30)
-        frame.content.expectedProfitValue = CraftSim.FRAME:CreateText(CraftSim.GUTIL:FormatMoney(0, true), frame.content, frame.content.expectedProfitTitle, "TOP", "BOTTOM", 0, -10)
-        frame.content.craftsTextTop = CraftSim.FRAME:CreateText("Chance of " .. CraftSim.GUTIL:ColorizeText("Profit > 0", CraftSim.GUTIL.COLORS.GREEN) .. " after", frame.content, frame.content.expectedProfitValue, "TOP", "BOTTOM", 0, -30)
+        frame.content.craftsTextTop = CraftSim.FRAME:CreateText("Chance of " .. CraftSim.GUTIL:ColorizeText("Profit > 0", CraftSim.GUTIL.COLORS.GREEN) .. " after", frame.content, frame.content.expectedProfitValue.frame, "TOP", "BOTTOM", 0, -30)
         frame.content.numCraftsInput = CraftSim.FRAME:CreateNumericInput(nil, frame.content, frame.content.craftsTextTop, "TOP", "BOTTOM", -40, -10, 50, 25, 1, false, function() 
             local recipeData = CraftSim.MAIN.currentRecipeData
             if not recipeData then
@@ -141,54 +158,83 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
         return
     end
 
-    probabilityTable = CraftSim.GUTIL:Sort(probabilityTable, function(a, b) 
-        return a.chance >= b.chance
+
+    statisticsFrame.content.probabilityTable:Remove()
+
+    for _, probabilityInfo in pairs(probabilityTable) do
+        statisticsFrame.content.probabilityTable:Add(function(row) 
+            local chanceColumn = row.columns[1]
+            local inspirationColumn = row.columns[2]
+            local multicraftColumn = row.columns[3]
+            local resourcefulnessColumn = row.columns[4]
+            local hsvNextColumn = row.columns[5]
+            local hsvSkipColumn = row.columns[6]
+            local profitColumn = row.columns[7]
+    
+            row.chance = probabilityInfo.chance
+            chanceColumn.text:SetText(CraftSim.GUTIL:Round(row.chance*100, 2) .. "%")
+            profitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(probabilityInfo.profit, true))
+
+            inspirationColumn:SetChecked(probabilityInfo.inspiration)
+            multicraftColumn:SetChecked(probabilityInfo.multicraft)
+            resourcefulnessColumn:SetChecked(probabilityInfo.resourcefulness)
+            hsvNextColumn:SetChecked(probabilityInfo.hsv)
+            hsvSkipColumn:SetChecked(false)
+        end)
+    end 
+
+    statisticsFrame.content.probabilityTable:UpdateDisplay(function (rowA, rowB)
+        return rowA.chance > rowB.chance
     end)
+
+    -- probabilityTable = CraftSim.GUTIL:Sort(probabilityTable, function(a, b) 
+    --     return a.chance >= b.chance
+    -- end)
 
     local numCrafts = CraftSim.UTIL:ValidateNumberInput(statisticsFrame.content.numCraftsInput, false)
 
-    local probabilityRows = statisticsFrame.content.probabilityTableFrame.tableRows
-    for index, row in pairs(probabilityRows) do
-        if not probabilityTable then
-            row:Hide()
-        else
-            local probabilityEntry = probabilityTable[index]
-            if not probabilityEntry then
-                row:Hide()
-            else
-                row:Show()
-                local check = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.GUTIL.COLORS.GREEN)
-                local cross = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.GUTIL.COLORS.RED)
-                local isNot = CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY)
-                if probabilityEntry.inspiration ~= nil then
-                    row.inspiration:SetText(probabilityEntry.inspiration and check or cross)
-                else
-                    row.inspiration:SetText(isNot)
-                end
+    -- local probabilityRows = statisticsFrame.content.probabilityTableFrame.tableRows
+    -- for index, row in pairs(probabilityRows) do
+    --     if not probabilityTable then
+    --         row:Hide()
+    --     else
+    --         local probabilityEntry = probabilityTable[index]
+    --         if not probabilityEntry then
+    --             row:Hide()
+    --         else
+    --             row:Show()
+    --             local check = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.GUTIL.COLORS.GREEN)
+    --             local cross = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.GUTIL.COLORS.RED)
+    --             local isNot = CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY)
+    --             if probabilityEntry.inspiration ~= nil then
+    --                 row.inspiration:SetText(probabilityEntry.inspiration and check or cross)
+    --             else
+    --                 row.inspiration:SetText(isNot)
+    --             end
     
-                if probabilityEntry.multicraft ~= nil then
-                    row.multicraft:SetText(probabilityEntry.multicraft and check or cross)
-                else
-                    row.multicraft:SetText(isNot)
-                end
+    --             if probabilityEntry.multicraft ~= nil then
+    --                 row.multicraft:SetText(probabilityEntry.multicraft and check or cross)
+    --             else
+    --                 row.multicraft:SetText(isNot)
+    --             end
     
-                if probabilityEntry.resourcefulness ~= nil then
-                    row.resourcefulness:SetText(probabilityEntry.resourcefulness and check or cross)
-                else
-                    row.resourcefulness:SetText(isNot)
-                end
+    --             if probabilityEntry.resourcefulness ~= nil then
+    --                 row.resourcefulness:SetText(probabilityEntry.resourcefulness and check or cross)
+    --             else
+    --                 row.resourcefulness:SetText(isNot)
+    --             end
 
-                if probabilityEntry.hsv ~= nil then
-                    row.hsv:SetText(probabilityEntry.hsv and check or cross)
-                else
-                    row.hsv:SetText(isNot)
-                end
+    --             if probabilityEntry.hsv ~= nil then
+    --                 row.hsv:SetText(probabilityEntry.hsv and check or cross)
+    --             else
+    --                 row.hsv:SetText(isNot)
+    --             end
                 
-                row.chance:SetText(CraftSim.GUTIL:Round(probabilityEntry.chance*100, 2) .. "%")
-                row.profit:SetText(CraftSim.GUTIL:FormatMoney(probabilityEntry.profit, true))
-            end
-        end
-    end
+    --             row.chance:SetText(CraftSim.GUTIL:Round(probabilityEntry.chance*100, 2) .. "%")
+    --             row.profit:SetText(CraftSim.GUTIL:FormatMoney(probabilityEntry.profit, true))
+    --         end
+    --     end
+    -- end
 
     local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
 

@@ -173,10 +173,18 @@ function CraftSim.CALC:CalculateExpectedCosts(expectedCrafts, chance, resChance,
     end
 end
 
+---@class CraftSim.ProbabilityInfo
+---@field inspiration? boolean 
+---@field multicraft? boolean 
+---@field hsv? boolean 
+---@field resourcefulness? boolean 
+---@field chance number 
+---@field profit number 
+
 --- Do not forget to update Price Data first
 ---@params recipeData CraftSim.RecipeData
 ---@return number meanProfit
----@return table probabilityTable
+---@return CraftSim.ProbabilityInfo[] probabilityTable
 function CraftSim.CALC:GetAverageProfit(recipeData)
     print("Get Average Profit", false, true)
     print("Supports Crafting Stats: " .. tostring(recipeData.supportsCraftingStats))
