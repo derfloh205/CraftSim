@@ -186,6 +186,11 @@ function CraftSim.STATISTICS.FRAMES:Init()
             text="Recipe Probability Table"
         })
 
+        CraftSim.GGUI.HelpIcon({
+            parent=expandFrame, anchorParent=expandFrame.probabilityTableTitle.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=5,
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION)
+        })
+
         ---@type GGUI.FrameList | GGUI.Widget
         expandFrame.probabilityTable = CraftSim.GGUI.FrameList({
             parent=expandFrame, 

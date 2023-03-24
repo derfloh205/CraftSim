@@ -589,7 +589,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
 
     local frame = CraftSim.GGUI.Frame({
         parent=UIParent,anchorParent=UIParent,sizeX=500,sizeY=300,frameID=CraftSim.CONST.FRAMES.INFO,
-        closeable=true, scrollableContent=true,
+        closeable=true, scrollableContent=true, moveable=true,
         title=CraftSim.GUTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")", CraftSim.GUTIL.COLORS.GREEN),
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS
     })

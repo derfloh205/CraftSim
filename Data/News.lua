@@ -11,6 +11,13 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.5.0") ..
+        f.P .. "CraftSim now correctly considers the chance to skip a quality" ..
+        f.a .. "by " .. f.l("HSV") .. " and " .. f.bb("Inspiration") .. " double proc" ..
+        f.P .. "Reworked the " .. f.bb("Statistics") .. " window of the " ..
+        f.a .. f.bb("Average Profit") .. " module. It now shows a list" ..
+        f.a .. "of chances and expected crafts per quality." .. 
+        f.a .. "Furthermore, the " .. f.bb("Recipe Probability Table") .. 
+        f.a .. "is now only shown when the window is expanded." ..
         newP("8.4.1") ..
         f.s .. "Added functionality support for " .. f.g("zhCN") ..  " localization" ..
         f.a .. "(Thx to " .. f.bb("https://github.com/ak48disk)") ..

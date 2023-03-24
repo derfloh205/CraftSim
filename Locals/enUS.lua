@@ -124,6 +124,8 @@ function CraftSim.LOCAL_EN:GetData()
         "the skill from " .. f.bb("Inspiration") .. " plus the skill from " .. f.l("HSV") .. " give you enough skill to reach the next quality! This is also considered by CraftSim."
         ,
 
+        [CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION] = "This table shows all possible proc combinations of the current recipe.\n\n" .. f.l("HSV Next") ..  " .. HSV chance for next quality\n\n" .. f.l("HSV Skip") .. " .. HSV chance to skip a quality with inspiration",
+        
         -- Options
         [CraftSim.CONST.TEXT.MULTICRAFT_CONSTANT_EXPLANATION] = "Default: 2.5\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe maximum extra items one can receive from a multicraft proc is 1+C*y.\nWhere y is the base item amount for one craft and C is 2.5.\nHowever if you wish you can modify this value here.",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_CONSTANT_EXPLANATION] = "Default: 0.3\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe average amount of items saved is 30% of the required quantity.\nHowever if you wish you can modify this value here.",
