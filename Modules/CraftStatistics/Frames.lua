@@ -6,11 +6,12 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
 
 function CraftSim.STATISTICS.FRAMES:Init()
     local sizeX = 700
-    local sizeY = 400
+    local sizeYExpanded = 630
+    local sizeYRetracted = 350 
 
     local frameNO_WO = CraftSim.GGUI.Frame({
         parent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame, 
-        sizeX=sizeX,sizeY=sizeY,
+        sizeX=sizeX,sizeY=sizeYRetracted,
         frameID=CraftSim.CONST.FRAMES.STATISTICS, 
         title="CraftSim Statistics",
         collapseable=true,
@@ -18,11 +19,12 @@ function CraftSim.STATISTICS.FRAMES:Init()
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata="DIALOG",
+        initialStatusID="RETRACTED",
     })
 
     local frameWO = CraftSim.GGUI.Frame({
         parent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER).frame, 
-        sizeX=sizeX,sizeY=sizeY,
+        sizeX=sizeX,sizeY=sizeYRetracted,
         frameID=CraftSim.CONST.FRAMES.STATISTICS_WORKORDER, 
         title="CraftSim Statistics " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
         collapseable=true,
@@ -30,17 +32,164 @@ function CraftSim.STATISTICS.FRAMES:Init()
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata="DIALOG",
+        initialStatusID="RETRACTED",
     })
 
 
     local function createContent(frame)
 
+        frame:SetStatusList({
+            {
+                statusID="RETRACTED",
+                sizeY=sizeYRetracted,
+            },
+            {
+                statusID="EXPANDED",
+                sizeY=sizeYExpanded,
+            },
+        })
+
         frame:Hide()
 
+        ---@type GGUI.Text | GGUI.Widget
+        frame.content.expectedProfitTitle = CraftSim.GGUI.Text({
+            parent=frame.content,anchorParent=frame.title.frame,
+            anchorA="TOP", anchorB="BOTTOM", offsetY=-30, text="Expected Profit (μ)"
+        })
+        ---@type GGUI.Text | GGUI.Widget
+        frame.content.expectedProfitValue = CraftSim.GGUI.Text({
+            parent=frame.content,anchorParent=frame.content.expectedProfitTitle.frame,
+            anchorA="TOP", anchorB="BOTTOM", offsetY=-10,
+        })
+        ---@type GGUI.Text | GGUI.Widget
+        frame.content.craftsTextTop = CraftSim.GGUI.Text({
+            parent=frame.content,anchorParent=frame.content.expectedProfitValue.frame,
+            anchorA="TOP", anchorB="BOTTOM", offsetY=-30, 
+            text="Chance of " .. CraftSim.GUTIL:ColorizeText("Profit > 0", CraftSim.GUTIL.COLORS.GREEN) .. " after",
+        })
+
+        ---@type GGUI.NumericInput
+        frame.content.numCraftsInput = CraftSim.GGUI.NumericInput({
+            parent=frame.content, anchorParent=frame.content.craftsTextTop.frame,
+            anchorA="TOP",anchorB="BOTTOM", offsetX=-40, offsetY=-10, sizeX=50, sizeY=25, initialValue=1,
+            allowDecimals=false, minValue=1, incrementOneButtons=true,borderAdjustWidth=1.15, borderAdjustHeight=1.05,
+            onNumberValidCallback = function ()
+                local recipeData = CraftSim.MAIN.currentRecipeData
+                if not recipeData then
+                    return
+                end
+                CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
+            end
+        })
+
+        frame.content.cdfExplanation = CraftSim.GGUI.HelpIcon({
+            parent=frame.content,anchorParent=frame.content.numCraftsInput.textInput.frame,
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION), anchorA="RIGHT", anchorB="LEFT", offsetX=-10, offsetY=1,
+        })
+
+        ---@type GGUI.Text | GGUI.Widget
+        frame.content.craftsTextBottom = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content.numCraftsInput.textInput.frame, offsetX=20,
+            text="Crafts: ", anchorA="LEFT", anchorB="RIGHT",
+        })
+
+        ---@type GGUI.Text | GGUI.Widget
+        frame.content.probabilityValue = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content.craftsTextBottom.frame, offsetX=1,
+            text="0%", justifyOptions= {type="H", align="LEFT"}, anchorA="LEFT", anchorB="RIGHT",
+        })
+
+        frame.content.chanceByQualityTable = CraftSim.GGUI.FrameList({
+            parent=frame.content, anchorParent=frame.content.craftsTextTop.frame, anchorA="TOP", anchorB="BOTTOM", offsetY=-60,
+            showHeaderLine=true, sizeY=130,
+            columnOptions={
+                {
+                    label="Quality",
+                    width=60,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label="Chance",
+                    width=60,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label="Expected Crafts",
+                    width=100,
+                    justifyOptions={type="H", align="CENTER"},
+                }
+            },
+            rowConstructor=function (columns)
+                local qualityRow = columns[1]
+                local chanceRow = columns[2]
+                local craftsRow = columns[3]
+
+                qualityRow.text = CraftSim.GGUI.Text({
+                    parent=qualityRow,anchorParent=qualityRow,
+                })
+                function qualityRow:SetQuality(qualityID)
+                    if qualityID then
+                        qualityRow.text:SetText(CraftSim.GUTIL:GetQualityIconString(qualityID, 25, 25))
+                    else
+                        qualityRow.text:SetText("")
+                    end
+                end
+
+                chanceRow.text = CraftSim.GGUI.Text({
+                    parent=chanceRow, anchorParent=chanceRow,
+                })
+
+                craftsRow.text = CraftSim.GGUI.Text({
+                    parent=craftsRow, anchorParent=craftsRow
+                })
+            end
+        })
+
+        frame.content.expandButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=frame.frame, anchorA="BOTTOM", anchorB="BOTTOM",
+            label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_DOWN, 0.4), sizeX=15, sizeY=20, offsetY=10, adjustWidth = true,
+            initialStatusID="DOWN",
+            clickCallback=function ()
+                if frame:GetStatus() == "RETRACTED" then
+                    frame:SetStatus("EXPANDED")
+                    frame.content.expandButton:SetStatus("UP")
+                    frame.content.expandFrame:Show()
+                elseif frame:GetStatus() == "EXPANDED" then
+                    frame:SetStatus("RETRACTED")
+                    frame.content.expandButton:SetStatus("DOWN")
+                    frame.content.expandFrame:Hide()
+                end
+            end
+        })
+
+        
+
+        frame.content.expandButton:SetStatusList({
+            {
+                statusID="UP",
+                label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_UP, 0.4),
+            },
+            {
+                statusID="DOWN",
+                label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_DOWN, 0.4),
+            }
+        })
+
+        frame.content.expandFrame = CreateFrame("Frame", nil, frame.content)
+        local expandFrame = frame.content.expandFrame
+        expandFrame:SetSize(frame:GetWidth(), sizeYExpanded - sizeYRetracted)
+        expandFrame:SetPoint("TOP", frame.content, "TOP", 0, - sizeYRetracted)
+        expandFrame:Hide()
+
+        expandFrame.probabilityTableTitle = CraftSim.GGUI.Text({
+            parent=expandFrame, anchorParent=expandFrame, anchorA="TOP", anchorB="TOP",
+            text="Recipe Probability Table"
+        })
+
         ---@type GGUI.FrameList | GGUI.Widget
-        frame.content.probabilityTable = CraftSim.GGUI.FrameList({
-            parent=frame.content, 
-            sizeY=170, anchorA="TOP", anchorB="BOTTOM", anchorParent=frame.title.frame,
+        expandFrame.probabilityTable = CraftSim.GGUI.FrameList({
+            parent=expandFrame, 
+            sizeY=188, anchorA="TOP", anchorB="BOTTOM", anchorParent=expandFrame.probabilityTableTitle.frame,
             showHeaderLine = true, offsetY=-30,
             columnOptions={
                 {
@@ -126,29 +275,6 @@ function CraftSim.STATISTICS.FRAMES:Init()
                 end
             end,
         })
-
-        ---@type GGUI.Text | GGUI.Widget
-        frame.content.expectedProfitTitle = CraftSim.GGUI.Text({
-            parent=frame.content,anchorParent=frame.content.probabilityTable.frame,
-            anchorA="TOP", anchorB="BOTTOM", offsetY=-30, text="Expected Profit (μ)"
-        })
-        ---@type GGUI.Text | GGUI.Widget
-        frame.content.expectedProfitValue = CraftSim.GGUI.Text({
-            parent=frame.content,anchorParent=frame.content.expectedProfitTitle.frame,
-            anchorA="TOP", anchorB="BOTTOM", offsetY=-10,
-        })
-
-        frame.content.craftsTextTop = CraftSim.FRAME:CreateText("Chance of " .. CraftSim.GUTIL:ColorizeText("Profit > 0", CraftSim.GUTIL.COLORS.GREEN) .. " after", frame.content, frame.content.expectedProfitValue.frame, "TOP", "BOTTOM", 0, -30)
-        frame.content.numCraftsInput = CraftSim.FRAME:CreateNumericInput(nil, frame.content, frame.content.craftsTextTop, "TOP", "BOTTOM", -40, -10, 50, 25, 1, false, function() 
-            local recipeData = CraftSim.MAIN.currentRecipeData
-            if not recipeData then
-                return
-            end
-            CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
-        end)
-        frame.content.cdfExplanation = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION), frame.content, frame.content.numCraftsInput, "RIGHT", "LEFT", -10, 1)
-        frame.content.craftsTextBottom = CraftSim.FRAME:CreateText("Crafts: ", frame.content, frame.content.numCraftsInput, "LEFT", "RIGHT", 20, 0)
-        frame.content.probabilityValue = CraftSim.FRAME:CreateText("0%", frame.content, frame.content.craftsTextBottom, "LEFT", "RIGHT", 1, 0, nil, nil, {type="H", value="LEFT"})
     end
 
     createContent(frameNO_WO)
@@ -164,11 +290,34 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
         return
     end
 
+    statisticsFrame.content.chanceByQualityTable:Remove()
 
-    statisticsFrame.content.probabilityTable:Remove()
+    for qualityID, chance in pairs(recipeData.resultData.chanceByQuality) do
+        local expectedCrafts = nil
+        if chance == 0 then
+            expectedCrafts = "-"
+        else
+            expectedCrafts = CraftSim.GUTIL:Round(recipeData.resultData.expectedCraftsByQuality[qualityID], 2)
+        end
+
+        statisticsFrame.content.chanceByQualityTable:Add(function (row) 
+            local qualityRow = row.columns[1]
+            local chanceRow = row.columns[2]
+            local craftsRow = row.columns[3]
+
+            qualityRow:SetQuality(qualityID)
+            chanceRow.text:SetText(CraftSim.GUTIL:Round(chance*100, 2) .. "%")
+            craftsRow.text:SetText(expectedCrafts)
+        end)
+    end
+
+    statisticsFrame.content.chanceByQualityTable:UpdateDisplay()
+
+
+    statisticsFrame.content.expandFrame.probabilityTable:Remove()
 
     for _, probabilityInfo in pairs(probabilityTable) do
-        statisticsFrame.content.probabilityTable:Add(function(row) 
+        statisticsFrame.content.expandFrame.probabilityTable:Add(function(row) 
             local chanceColumn = row.columns[1]
             local inspirationColumn = row.columns[2]
             local multicraftColumn = row.columns[3]
@@ -213,7 +362,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
         end)
     end 
 
-    statisticsFrame.content.probabilityTable:UpdateDisplay(function (rowA, rowB)
+    statisticsFrame.content.expandFrame.probabilityTable:UpdateDisplay(function (rowA, rowB)
         return rowA.chance > rowB.chance
     end)
 
@@ -221,7 +370,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
     --     return a.chance >= b.chance
     -- end)
 
-    local numCrafts = CraftSim.UTIL:ValidateNumberInput(statisticsFrame.content.numCraftsInput, false)
+    local numCrafts=statisticsFrame.content.numCraftsInput.currentValue
 
     -- local probabilityRows = statisticsFrame.content.probabilityTableFrame.tableRows
     -- for index, row in pairs(probabilityRows) do

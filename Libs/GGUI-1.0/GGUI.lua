@@ -1741,9 +1741,10 @@ function GGUI.NumericInput:new(options)
     self.autoFocus = options.autoFocus
     self.minValue = options.minValue
     self.maxValue = options.maxValue
-
+    self.currentValue = options.initialValue or 0
     local numericInput = self
 
+    ---@type GGUI.TextInput | GGUI.Widget
     self.textInput = GGUI.TextInput({
         parent=options.parent,
         anchorParent=options.anchorParent,
@@ -1759,6 +1760,7 @@ function GGUI.NumericInput:new(options)
             if userInput then
                 local valid = GUTIL:ValidateNumberString(input, self.minValue, self.maxValue, self.allowDecimals)
                 if valid then
+                    numericInput.currentValue = input
                     textInput:SetText(input)
                     if numericInput.onNumberValidCallback then
                         numericInput.onNumberValidCallback(numericInput)
@@ -1795,6 +1797,7 @@ function GGUI.NumericInput:new(options)
                     local valid = GUTIL:ValidateNumberString(tostring(input + 1), self.minValue, self.maxValue, self.allowDecimals)   
                     
                     if valid then
+                        numericInput.currentValue = input
                         numericInput.textInput:SetText(input + 1)
                         if numericInput.onNumberValidCallback then
                             numericInput.onNumberValidCallback(numericInput)
@@ -1822,6 +1825,7 @@ function GGUI.NumericInput:new(options)
                     local valid = GUTIL:ValidateNumberString(tostring(input - 1), self.minValue, self.maxValue, self.allowDecimals)   
                     
                     if valid then
+                        numericInput.currentValue = input
                         numericInput.textInput:SetText(input - 1)
                         if numericInput.onNumberValidCallback then
                             numericInput.onNumberValidCallback(numericInput)
