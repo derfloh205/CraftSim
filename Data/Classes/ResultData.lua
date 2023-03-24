@@ -23,6 +23,7 @@ function CraftSim.ResultData:new(recipeData)
     self.expectedQualityInspiration = 1
     self.expectedQualityHSV = 1
     self.expectedQualityInspirationHSV = 1
+    self.expectedQualityInspirationHSVSkip = 1
 
     ---@type ItemMixin?
     self.expectedItemInspiration = nil
@@ -125,31 +126,94 @@ function CraftSim.ResultData:Update()
     self.expectedQuality = expectedQualityBySkill(professionStats.skill.value, recipeData.maxQuality, professionStats.recipeDifficulty.value)
     self.expectedItem = self.itemsByQuality[self.expectedQuality]
 
+    local hsvInfo = CraftSim.CALC:GetHSVInfo(self.recipeData)
+
     local skillInspiration = professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor()
-    local maxHSVSkill = professionStats.recipeDifficulty.value * 0.05
-    local skillHSV = professionStats.skill.value + maxHSVSkill
-    local skillInspirationHSV = professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor() + maxHSVSkill
-
     local qualityInspiration = expectedQualityBySkill(skillInspiration, recipeData.maxQuality, professionStats.recipeDifficulty.value)
-    local qualityHSV = expectedQualityBySkill(skillHSV, recipeData.maxQuality, professionStats.recipeDifficulty.value)
-    local qualityInspirationHSV = expectedQualityBySkill(skillInspirationHSV, recipeData.maxQuality, professionStats.recipeDifficulty.value)
 
-    self.expectedQualityUpgrade = math.max(self.expectedQuality, qualityInspiration, qualityHSV, qualityInspirationHSV)
+    local qualityHSV = self.expectedQuality
+    local qualityInspirationHSV = qualityInspiration
+    local qualityInspirationHSVSkip = qualityInspiration
+
+    if hsvInfo.chanceNextQuality > 0 then
+        if hsvInfo.nextQualityWithInspirationOnly then
+            qualityInspirationHSV = self.expectedQuality + 1
+        else
+            qualityHSV = self.expectedQuality + 1
+        end
+    end
+    if hsvInfo.canSkipQualityWithInspiration then
+        qualityInspirationHSVSkip = self.expectedQuality + 2
+    end
+
+    -- case #1
+    -- expected = 1
+    -- qualityHSV = 1
+    -- qualityInspiration = 1
+    -- expectedQualityWithInspirationAndHSV = 1
+    --> qualityInspirationHSV = 1
+    --> qualityInspirationHSVSkip = 1
+    
+    -- case #2
+    -- expected = 1
+    -- qualityHSV = 1
+    -- qualityInspiration = 2
+    -- expectedQualityWithInspirationAndHSV = 2
+    --> qualityInspirationHSV = 2
+    --> qualityInspirationHSVSkip = 2
+
+    -- case #3
+    -- expected = 1
+    -- qualityHSV = 1
+    -- qualityInspiration = 1
+    -- expectedQualityWithInspirationAndHSV = 2
+    --> qualityInspirationHSV = 2
+    --> qualityInspirationHSVSkip = 2
+
+    -- case #4
+    -- expected = 1
+    -- qualityHSV = 1
+    -- qualityInspiration = 2
+    -- expectedQualityWithInspirationAndHSV = 2
+    --> qualityInspirationHSV = 2
+    --> qualityInspirationHSVSkip = 2
+
+    -- case #5
+    -- expected = 1
+    -- qualityHSV = 2
+    -- qualityInspiration = 2
+    -- expectedQualityWithInspirationAndHSV = 2
+    --> qualityInspirationHSV = 2
+    --> qualityInspirationHSVSkip = 2
+
+    -- case #6
+    -- expected = 1
+    -- qualityHSV = 2
+    -- qualityInspiration = 2
+    -- expectedQualityWithInspirationAndHSV = 3
+    --> qualityInspirationHSV = 2
+    --> qualityInspirationHSVSkip = 3
+
+    -- TODO: rename to highest quality Upgrade
+    self.expectedQualityUpgrade = math.max(self.expectedQuality, qualityInspiration, qualityHSV, qualityInspirationHSV, qualityInspirationHSVSkip)
     self.expectedQualityInspiration = qualityInspiration
     self.expectedQualityHSV = qualityHSV
     self.expectedQualityInspirationHSV = qualityInspirationHSV
+    self.expectedQualityInspirationHSVSkip = qualityInspirationHSVSkip
 
     self.canUpgradeQuality = self.expectedQuality < self.expectedQualityUpgrade
     self.canUpgradeInspiration = self.expectedQuality < self.expectedQualityInspiration
     self.canUpgradeHSV = self.expectedQuality < self.expectedQualityHSV
     self.canUpgradeInspirationHSV = self.expectedQuality < self.expectedQualityInspirationHSV
+    self.canUpgradeInspirationHSVSkip = self.expectedQuality < self.expectedQualityInspirationHSVSkip
 
     self.expectedItemInspiration = self.itemsByQuality[qualityInspiration]
     self.expectedItemHSV = self.itemsByQuality[qualityHSV]
     self.expectedItemInspirationHSV = self.itemsByQuality[qualityInspirationHSV]
+    self.expectedItemInspirationHSVSkip = self.itemsByQuality[qualityInspirationHSVSkip]
     self.expectedItemUpgrade = self.itemsByQuality[self.expectedQualityUpgrade]
 
-    
+    -- refactor below with hsvInfo 
     local hsv, inspOnly = CraftSim.CALC:getHSVChance(self.recipeData)
     if qualityInspirationHSV > self.expectedQuality then
         local inspChance = professionStats.inspiration:GetPercent(true)
@@ -204,16 +268,18 @@ function CraftSim.ResultData:Debug()
             "expectedQualityInspiration: " .. tostring(self.expectedQualityInspiration),
             "expectedQualityHSV: " .. tostring(self.expectedQualityHSV),
             "expectedQualityInspirationHSV: " .. tostring(self.expectedQualityInspirationHSV),
+            "expectedQualityInspirationHSVSkip: " .. tostring(self.expectedQualityInspirationHSVSkip),
             "expectedItem: " .. tostring(self.expectedItem and self.expectedItem:GetItemLink()),
             "expectedItemUpgrade: " .. tostring(self.expectedItemUpgrade and self.expectedItemUpgrade:GetItemLink()),
             "canUpgradeQuality: " .. tostring(self.canUpgradeQuality),
             "expectedItemInspiration: " .. tostring(self.expectedItemInspiration and self.expectedItemInspiration:GetItemLink()),
             "expectedItemHSV: " .. tostring(self.expectedItemHSV and self.expectedItemHSV:GetItemLink()),
             "expectedItemInspirationHSV: " .. tostring(self.expectedItemInspirationHSV and self.expectedItemInspirationHSV:GetItemLink()),
-            "chanceUpgrade: " .. tostring(self.chanceUpgrade*100) .. "%", 
-            "chanceInspiration: " .. tostring(self.chanceInspiration*100) .. "%", 
-            "chanceHSV: " .. tostring(self.chanceHSV*100) .. "%", 
-            "chanceInspirationHSV: " .. tostring(self.chanceInspirationHSV*100) .. "%", 
+            "expectedItemInspirationHSVSkip: " .. tostring(self.expectedItemInspirationHSVSkip and self.expectedItemInspirationHSVSkip:GetItemLink()),
+            -- "chanceUpgrade: " .. tostring(self.chanceUpgrade*100) .. "%", 
+            -- "chanceInspiration: " .. tostring(self.chanceInspiration*100) .. "%", 
+            -- "chanceHSV: " .. tostring(self.chanceHSV*100) .. "%", 
+            -- "chanceInspirationHSV: " .. tostring(self.chanceInspirationHSV*100) .. "%", 
         }
     })
 end

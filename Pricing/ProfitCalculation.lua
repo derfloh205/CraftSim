@@ -71,6 +71,83 @@ function CraftSim.CALC:getHSVChance(recipeData)
     end
 end
 
+
+---Returns a table with information about the hsv interaction for the given recipe
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.HSVInfo hsvInfo
+function CraftSim.CALC:GetHSVInfo(recipeData)
+    print("GET HSV INFO", false, true)
+    ---@class CraftSim.HSVInfo
+    local hsvInfo = {
+        chanceNextQuality = 0, -- hsv chance part to either skip to the next quality with hsv only or to skip to next quality together with inspiration
+        nextQualityWithInspirationOnly = false,
+        canSkipQualityWithInspiration = false,
+        chanceSkipQuality = 0, -- chance to get enough skill from hsv to skip a quality tier together with inspiration
+    }
+
+    if recipeData.maxQuality and recipeData.resultData.expectedQuality < recipeData.maxQuality then
+        
+        local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
+        local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty, CraftSimOptions.breakPointOffset)
+        local upperThreshold = thresholds[recipeData.resultData.expectedQuality]
+        
+        local playerSkill = recipeData.professionStats.skill.value
+        
+        local skillDiff = upperThreshold - playerSkill
+        local relativeToDifficulty = skillDiff / (baseRecipeDifficulty / 100)
+
+        print("skillDiff: " .. tostring(skillDiff))
+        print("relativeToDifficulty: " .. tostring(relativeToDifficulty))
+        if relativeToDifficulty >= 5 then
+            -- check if we can reach together with inspiration (if inspiration is not reaching alone)
+            local skillWithInspiration = playerSkill + recipeData.professionStats.inspiration:GetExtraValueByFactor()
+            print("skillWithInsp: " .. skillWithInspiration)
+            print("upperThreshold: " .. upperThreshold)
+            if skillWithInspiration <= upperThreshold then
+                -- check if within 5%
+                skillDiff = upperThreshold - skillWithInspiration
+                relativeToDifficulty = skillDiff / (baseRecipeDifficulty / 100)
+                print("relativeToDifficultyInsp: " .. tostring(relativeToDifficulty))
+                if relativeToDifficulty < 5 then
+                    -- together with inspiration we can reach the threshold
+                    hsvInfo.nextQualityWithInspirationOnly = true
+                end
+            end
+        end
+
+        hsvInfo.chanceNextQuality = math.max((5-relativeToDifficulty) / 5, 0)
+    end
+
+    if recipeData.maxQuality and recipeData.resultData.expectedQuality + 1 < recipeData.maxQuality then
+        -- if it is possible to skip, check if we can skip a quality with inspiration + hsv
+        local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
+        local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty, CraftSimOptions.breakPointOffset)
+        local skipThreshold = thresholds[recipeData.resultData.expectedQuality + 1]
+        
+        local playerSkill = recipeData.professionStats.skill.value
+        local skillWithInspiration = playerSkill + recipeData.professionStats.inspiration:GetExtraValueByFactor()
+
+        if skillWithInspiration <= skipThreshold then
+            -- now check if within 5%
+            local skillDiff = skipThreshold - skillWithInspiration
+            local relativeToDifficulty = skillDiff / (baseRecipeDifficulty / 100)
+
+            if relativeToDifficulty < 5 then
+                -- hsv + inspiration can skip a quality
+                hsvInfo.chanceSkipQuality = (5-relativeToDifficulty) / 5
+                hsvInfo.canSkipQualityWithInspiration = true
+            end
+        end
+    end
+
+
+    print("hsvInfo:")
+    print(hsvInfo, true)
+    return hsvInfo
+end
+
 ---Returns the total items received if multicraft procs
 ---@param recipeData CraftSim.RecipeData
 ---@return number expectedItems the total amount (base + extra)
