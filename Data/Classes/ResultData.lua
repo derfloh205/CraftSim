@@ -25,6 +25,9 @@ function CraftSim.ResultData:new(recipeData)
     self.expectedQualityInspirationHSV = 1
     self.expectedQualityInspirationHSVSkip = 1
 
+    ---@type CraftSim.HSVInfo
+    self.hsvInfo = nil
+
     ---@type ItemMixin?
     self.expectedItemInspiration = nil
 
@@ -128,6 +131,8 @@ function CraftSim.ResultData:Update()
 
     local hsvInfo = CraftSim.CALC:GetHSVInfo(self.recipeData)
 
+    self.hsvInfo = hsvInfo
+
     local skillInspiration = professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor()
     local qualityInspiration = expectedQualityBySkill(skillInspiration, recipeData.maxQuality, professionStats.recipeDifficulty.value)
 
@@ -213,21 +218,12 @@ function CraftSim.ResultData:Update()
     self.expectedItemInspirationHSVSkip = self.itemsByQuality[qualityInspirationHSVSkip]
     self.expectedItemUpgrade = self.itemsByQuality[self.expectedQualityUpgrade]
 
-    -- refactor below with hsvInfo 
-    local hsv, inspOnly = CraftSim.CALC:getHSVChance(self.recipeData)
-    if qualityInspirationHSV > self.expectedQuality then
-        local inspChance = professionStats.inspiration:GetPercent(true)
-        self.chanceInspirationHSV = hsv * inspChance
-        if not inspOnly then
-            if qualityInspiration > self.expectedQuality then
-                self.chanceInspiration = inspChance
-            end
-            if qualityHSV > self.expectedQuality then
-                 self.chanceHSV = hsv
-            end
-        end
-    end
+    self.chanceInspiration = self.recipeData.professionStats.inspiration:GetPercent(true)
+    self.chanceHSV = self.hsvInfo.chanceNextQuality
+    self.chanceInspirationHSV = self.hsvInfo.chanceNextQuality * self.chanceInspiration
+    self.chanceInspirationHSVSkip = self.hsvInfo.chanceSkipQuality * self.chanceInspiration
 
+    -- refactor below with hsvInfo 
     self.expectedCraftsByQuality = {}
     self.chanceByQuality = {}
 
@@ -235,16 +231,39 @@ function CraftSim.ResultData:Update()
         if quality <= self.expectedQuality then
             self.chanceByQuality[quality] = 1
         else
-            local chanceHSV = ((quality == qualityHSV) and self.chanceHSV) or 0
-            local chanceInspiration = ((quality <= qualityInspiration) and self.chanceInspiration) or 0
-            local chanceInspirationHSV = ((quality <= qualityInspirationHSV) and self.chanceInspirationHSV) or 0
-            
-            local totalChance = 
-            chanceHSV*(1-chanceInspiration) +
-            (1-chanceHSV)*chanceInspiration +
-            chanceInspirationHSV
-
-            self.chanceByQuality[quality] = totalChance
+            -- can either be one quality above expected or two qualities above expected
+            if quality == self.expectedQuality + 1 then
+                if quality ~= qualityHSV and quality == qualityInspiration then
+                    -- just reachable by inspiration
+                    self.chanceByQuality[quality] = self.chanceInspiration
+                elseif quality == qualityHSV and quality == qualityInspiration then 
+                    -- reachable by hsv or inspiration or both
+                    self.chanceByQuality[quality] = 
+                    self.hsvInfo.chanceNextQuality * self.chanceInspiration + 
+                    (1-self.hsvInfo.chanceNextQuality) * self.chanceInspiration +
+                    self.hsvInfo.chanceNextQuality * (1-self.chanceInspiration)
+                elseif quality == qualityHSV and quality ~= qualityInspiration then
+                    -- if we get the quality via hsv but inspiration alone skips it
+                    self.chanceByQuality[quality] = self.hsvInfo.chanceNextQuality
+                elseif quality ~= qualityHSV and quality ~= qualityInspiration and quality == qualityInspirationHSV then
+                    -- only reachable with hsv and inspiration together
+                    self.chanceByQuality[quality] = self.chanceInspirationHSV
+                else 
+                    -- if none of the above holds, chance to reach the quality is 0
+                    self.chanceByQuality[quality] = 0
+                end 
+            elseif quality == self.expectedQuality + 2 then
+                if quality == qualityInspiration then
+                    -- inspiration skips us directly to this quality, then its just the inspiration chance
+                    self.chanceByQuality[quality] = self.chanceInspiration
+                elseif quality == qualityInspirationHSVSkip then
+                    -- we can only reach the quality with inspiration and hsv skip chance
+                    self.chanceByQuality[quality] = self.chanceInspirationHSVSkip
+                else 
+                    -- if none of the above holds, chance to reach the quality is 0
+                    self.chanceByQuality[quality] = 0
+                end
+            end
 
             if self.expectedQualityUpgrade == quality then
                 self.chanceUpgrade = self.chanceByQuality[quality]
@@ -261,6 +280,9 @@ function CraftSim.ResultData:Debug()
     for q, item in pairs(self.itemsByQuality) do
         table.insert(debugLines, "Possible Result Q" .. q .. " " .. (item:GetItemLink() or item:GetItemID()))
     end
+    for q, chance in pairs(self.chanceByQuality) do
+        table.insert(debugLines, "Q" .. q .. " Chance: " .. chance*100 .. " %")
+    end
     return CraftSim.GUTIL:Concat({debugLines, 
         {
             "expectedQuality: " .. tostring(self.expectedQuality),
@@ -276,10 +298,11 @@ function CraftSim.ResultData:Debug()
             "expectedItemHSV: " .. tostring(self.expectedItemHSV and self.expectedItemHSV:GetItemLink()),
             "expectedItemInspirationHSV: " .. tostring(self.expectedItemInspirationHSV and self.expectedItemInspirationHSV:GetItemLink()),
             "expectedItemInspirationHSVSkip: " .. tostring(self.expectedItemInspirationHSVSkip and self.expectedItemInspirationHSVSkip:GetItemLink()),
-            -- "chanceUpgrade: " .. tostring(self.chanceUpgrade*100) .. "%", 
-            -- "chanceInspiration: " .. tostring(self.chanceInspiration*100) .. "%", 
-            -- "chanceHSV: " .. tostring(self.chanceHSV*100) .. "%", 
-            -- "chanceInspirationHSV: " .. tostring(self.chanceInspirationHSV*100) .. "%", 
+            "chanceUpgrade: " .. tostring(self.chanceUpgrade*100) .. "%", 
+            "chanceInspiration: " .. tostring(self.chanceInspiration*100) .. "%", 
+            "chanceHSV: " .. tostring(self.chanceHSV*100) .. "%", 
+            "chanceInspirationHSV: " .. tostring(self.chanceInspirationHSV*100) .. "%", 
+            "chanceInspirationHSVSkip: " .. tostring(self.chanceInspirationHSVSkip*100) .. "%", 
         }
     })
 end
