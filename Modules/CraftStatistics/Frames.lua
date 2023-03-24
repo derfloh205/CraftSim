@@ -178,8 +178,8 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
             inspirationColumn:SetChecked(probabilityInfo.inspiration)
             multicraftColumn:SetChecked(probabilityInfo.multicraft)
             resourcefulnessColumn:SetChecked(probabilityInfo.resourcefulness)
-            hsvNextColumn:SetChecked(probabilityInfo.hsv)
-            hsvSkipColumn:SetChecked(false)
+            hsvNextColumn:SetChecked(probabilityInfo.hsvNext)
+            hsvSkipColumn:SetChecked(probabilityInfo.hsvSkip)
         end)
     end 
 

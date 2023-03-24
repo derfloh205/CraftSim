@@ -176,7 +176,8 @@ end
 ---@class CraftSim.ProbabilityInfo
 ---@field inspiration? boolean 
 ---@field multicraft? boolean 
----@field hsv? boolean 
+---@field hsvNext? boolean 
+---@field hsvSkip? boolean 
 ---@field resourcefulness? boolean 
 ---@field chance number 
 ---@field profit number 
@@ -350,7 +351,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             table.insert(probabilityTable, {
                 inspiration = procs[1],
                 multicraft = procs[2],
-                hsv = procs[3],
+                hsvNext = procs[3],
                 resourcefulness = procs[4],
                 chance = combinationChance,
                 profit = combinationProfit
@@ -520,7 +521,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 inspiration = procs[1],
-                hsv = procs[2],
+                hsvNext = procs[2],
                 resourcefulness = procs[3],
                 chance = combinationChance,
                 profit = combinationProfit
