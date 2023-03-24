@@ -103,6 +103,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
 
                 local check = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.GUTIL.COLORS.GREEN)
                 local cross = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.GUTIL.COLORS.RED)
+                local dash = CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY)
 
                 for _, column in pairs(booleanColumns) do
                     ---@type GGUI.Text | GGUI.Widget
@@ -117,6 +118,10 @@ function CraftSim.STATISTICS.FRAMES:Init()
                         else
                             column.text:SetText(cross)
                         end
+                    end
+
+                    function column:SetIrrelevant()
+                        column.text:SetText(dash)
                     end
                 end
             end,
@@ -150,6 +155,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
     createContent(frameWO)
 end
 
+---@param recipeData CraftSim.RecipeData
 function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
     local statisticsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STATISTICS)
     local meanProfit, probabilityTable = CraftSim.CALC:GetAverageProfit(recipeData)
@@ -175,11 +181,35 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
             chanceColumn.text:SetText(CraftSim.GUTIL:Round(row.chance*100, 2) .. "%")
             profitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(probabilityInfo.profit, true))
 
-            inspirationColumn:SetChecked(probabilityInfo.inspiration)
-            multicraftColumn:SetChecked(probabilityInfo.multicraft)
-            resourcefulnessColumn:SetChecked(probabilityInfo.resourcefulness)
-            hsvNextColumn:SetChecked(probabilityInfo.hsvNext)
-            hsvSkipColumn:SetChecked(probabilityInfo.hsvSkip)
+            if recipeData.supportsInspiration then
+                inspirationColumn:SetChecked(probabilityInfo.inspiration)
+
+                if recipeData.resultData.hsvInfo.chanceNextQuality > 0 then
+                    hsvNextColumn:SetChecked(probabilityInfo.hsvNext)
+                else
+                    hsvNextColumn:SetIrrelevant()
+                end
+                
+                if recipeData.resultData.hsvInfo.chanceSkipQuality > 0 then
+                    hsvSkipColumn:SetChecked(probabilityInfo.hsvSkip)
+                else
+                    hsvSkipColumn:SetIrrelevant()
+                end
+            else
+                inspirationColumn:SetIrrelevant()
+                hsvNextColumn:SetIrrelevant()
+                hsvSkipColumn:SetIrrelevant()
+            end
+            if recipeData.supportsMulticraft then
+                multicraftColumn:SetChecked(probabilityInfo.multicraft)
+            else
+                multicraftColumn:SetIrrelevant()
+            end
+            if recipeData.supportsResourcefulness then
+                resourcefulnessColumn:SetChecked(probabilityInfo.resourcefulness)
+            else
+                resourcefulnessColumn:SetIrrelevant()
+            end
         end)
     end 
 
