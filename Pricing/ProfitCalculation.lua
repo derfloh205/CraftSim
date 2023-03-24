@@ -915,7 +915,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         print("hsvSkipChance: " .. hsvInfo.chanceSkipQuality)
 
         local qualityWithInspiration = recipeData.resultData.expectedQualityInspiration
-        local qualityWithInspirationHSV = recipeData.resultData.expectedQualityInspirationHSV
+        local qualityWithInspirationHSVNext = recipeData.resultData.expectedQualityInspirationHSV
         local qualityWithInspirationHSVSkip = recipeData.resultData.expectedQualityInspirationHSVSkip
         local qualityWithHSV = recipeData.resultData.expectedQualityHSV
         
@@ -925,14 +925,16 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         print("expectedQuality: " .. recipeData.resultData.expectedQuality)
         print("qualityWithHSV: " .. tostring(qualityWithHSV))
         print("qualityWithInspiration: " .. tostring(qualityWithInspiration))
-        print("qualityWithInspirationHSV: " .. tostring(qualityWithInspirationHSV))
+        print("qualityWithInspirationHSVNext: " .. tostring(qualityWithInspirationHSVNext))
         print("qualityWithInspirationHSVSkip: " .. tostring(qualityWithInspirationHSVSkip))
 
         local probabilityTable = {}
 
         print("Build Probability Table (INSP, RES)")
 
-        local bitMax = "111"
+
+
+        local bitMax = "1111"
         local numBits = string.len(bitMax)
         local bitMaxNumber = tonumber(bitMax, 2)
         local totalCombinations = {}
@@ -944,33 +946,71 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         for _, combination in pairs(totalCombinations) do
             local INSP = combination[1] == 1
             local HSV_NEXT = combination[2] == 1
-            local RES = combination[3] == 1
+            local HSV_SKIP = combination[3] == 1
+            local RES = combination[4] == 1
 
             local p_Insp = (INSP and inspChance) or (1-inspChance)
             local p_HSV_Next = (HSV_NEXT and hsvInfo.chanceNextQuality) or (1-hsvInfo.chanceNextQuality)
+            local p_HSV_Skip = (HSV_SKIP and hsvInfo.chanceSkipQuality) or (1-hsvInfo.chanceSkipQuality)
             local p_Res = (RES and resChance) or (1-resChance)
 
-            local combinationChance = p_Insp * p_Res * p_HSV_Next
+            local combinationChance = p_Insp * p_Res * p_HSV_Next * p_HSV_Skip
 
             local craftingCosts = priceData.craftingCosts- ((RES and savedCostsByRes) or 0)
 
             local combinationProfit = 0
             local resultValue = 0
 
-            -- if no insp, no hsv
-            if not INSP and not HSV_NEXT then
+            -- possible combos: (without res)
+            --[[
+                000
+                001
+                010
+                011
+                100
+                101
+                110
+                111
+            --]]
+            local subCombination = string.sub(table.concat(combination, ""), 1, 3)
+            print("subCombination: " .. tostring(subCombination))
+            -- - INSP - HSV_NEXT, - HSV_SKIP
+            if subCombination == "000" then
                 resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
 
-            -- if insp, no hsv
-            elseif INSP and not HSV_NEXT then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
+            -- - INSP - HSV_NEXT, + HSV_SKIP
+            elseif subCombination == "001" then
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
 
-            -- if not insp, hsv
-            elseif not INSP and HSV_NEXT then
+            -- - INSP + HSV_NEXT, - HSV_SKIP
+            elseif subCombination == "010" then
                 resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
-            -- if insp and hsv
-            elseif INSP and HSV_NEXT then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSV] or 0) * recipeData.baseItemAmount)
+
+            -- - INSP + HSV_NEXT, + HSV_SKIP
+            elseif subCombination == "011" then
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
+
+            -- + INSP - HSV_NEXT, - HSV_SKIP
+            elseif subCombination == "100" then
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
+            
+            -- + INSP - HSV_NEXT, + HSV_SKIP
+            elseif subCombination == "101" then
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) * recipeData.baseItemAmount)
+            
+            -- + INSP + HSV_NEXT, - HSV_SKIP
+            elseif subCombination == "110" then
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) * recipeData.baseItemAmount)
+            
+            -- + INSP + HSV_NEXT, + HSV_SKIP
+            elseif subCombination == "111" then
+                if hsvInfo.nextQualityWithInspirationOnly then
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) * recipeData.baseItemAmount)
+                elseif hsvInfo.canSkipQualityWithInspiration then
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) * recipeData.baseItemAmount)
+                else -- if inspiration is not affecting any of the hsv values then its just a normal inspiration proc
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
+                end
             end
             
             combinationProfit = resultValue - craftingCosts
@@ -978,6 +1018,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
             table.insert(probabilityTable, {
                 inspiration = INSP,
                 hsvNext = HSV_NEXT,
+                hsvSkip = HSV_SKIP,
                 resourcefulness = RES,
                 chance = combinationChance,
                 profit = combinationProfit
