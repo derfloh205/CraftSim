@@ -27,7 +27,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         end
         frames.toggleButton = CraftSim.FRAME:CreateCheckboxCustomCallback(
             " Simulation Mode", "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions", false, clickCallback, 
-            schematicForm, schematicForm.Details, "BOTTOM", "TOP", -65, 0)
+            schematicForm, schematicForm.Details, "BOTTOM", "TOP", -65, 40)
         
         frames.toggleButton:Hide()
     
@@ -97,7 +97,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         local function CreateReagentInputDropdown(offsetY)
             local optionalReagentDropdown = CraftSim.GGUI.Dropdown({
                 parent=reagentOverwriteFrame, anchorParent=schematicForm.OptionalReagents, anchorA="TOP",anchorB="TOP",
-                offsetX=-20, offsetY=offsetY + 3, width=120,
+                offsetX=-50, offsetY=offsetY + 3, width=120,
                 clickCallback=function (_, _, value)
                     CraftSim.MAIN:TriggerModulesErrorSafe()
                 end
@@ -106,7 +106,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         end
     
         reagentOverwriteFrame.optionalReagentFrames = {}
-        local dropdownSpacingY = -40
+        local dropdownSpacingY = -38
         table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(0))
         table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY))
         table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*2))
