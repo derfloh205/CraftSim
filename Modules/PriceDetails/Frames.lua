@@ -8,18 +8,10 @@ CraftSim.PRICE_DETAILS.frameWO = nil
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS)
 
 function CraftSim.PRICE_DETAILS.FRAMES:Init()
-    local sizeX=270
-    local sizeY=220
+    local sizeX=370
+    local sizeY=200
     local offsetX=-5
-    local offsetY=130
-
-    local sizeYQ1 = 100
-    local sizeYQ3 = 165
-    local sizeYQ5 = 225
-
-    local function restoreStatus(self) 
-        self:SetStatus(self.activeStatusID)
-    end
+    local offsetY=140
 
     CraftSim.PRICE_DETAILS.frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm, 
@@ -34,8 +26,6 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesPriceDetails"),
-        initialStatusID="Q5",
-        onCollapseOpenCallback=restoreStatus,
     })
     
     CraftSim.PRICE_DETAILS.frameWO = CraftSim.GGUI.Frame({
@@ -51,86 +41,63 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesPriceDetails"),
-        initialStatusID="Q5",
-        onCollapseOpenCallback=restoreStatus,
     })
 
     local function createContent(frame)
-        frame.content.resultProfitsTitle = CraftSim.GGUI.Text({
-            parent=frame.content, anchorParent=frame.title.frame, offsetY=-5,
-            text="Price/Profit By Quality", anchorA="TOP", anchorB="BOTTOM"
+
+        ---@type GGUI.FrameList | GGUI.Widget
+        frame.content.priceDetailsList = CraftSim.GGUI.FrameList({
+            parent=frame.content,anchorParent=frame.title.frame,anchorA="TOP",anchorB="BOTTOM",offsetY=-30, offsetX=-10,
+            sizeY=140, showHeaderLine=true,
+            columnOptions={
+                {
+                    label="Inv/AH",
+                    width=60,
+                    justifyOptions={type="H",align="CENTER"}
+                },
+                {
+                    label="Item",
+                    width=40,
+                    justifyOptions={type="H",align="CENTER"}
+                },
+                {
+                    label="Price / Item",
+                    width=110,
+                },
+                {
+                    label="Profit / Item",
+                    width=110,
+                }
+            },
+            rowConstructor=function (columns)
+                local invColumn = columns[1]
+                local itemColumn = columns[2]
+                local priceColumn = columns[3]
+                local profitColumn = columns[4]
+
+                invColumn.text = CraftSim.GGUI.Text({
+                    parent=invColumn,anchorParent=invColumn
+                })
+
+                itemColumn.icon = CraftSim.GGUI.Icon({
+                    parent=itemColumn,anchorParent=itemColumn,
+                    sizeX=25,sizeY=25,qualityIconScale=1.4
+                })
+
+                priceColumn.text = CraftSim.GGUI.Text({
+                    parent=priceColumn,anchorParent=priceColumn,
+                    justifyOptions={type="H",align="LEFT"}, fixedWidth=priceColumn:GetWidth()
+                })
+                profitColumn.text = CraftSim.GGUI.Text({
+                    parent=profitColumn,anchorParent=profitColumn,
+                    justifyOptions={type="H",align="LEFT"}, fixedWidth=profitColumn:GetWidth()
+                })
+            end
         })
-
-        local profitFrameBaseX=40
-    
-        local function createProfitFrame(offsetY, parent, anchorParent)
-            local profitFrame = CreateFrame("frame", nil, parent)
-            profitFrame:SetSize(parent:GetWidth(), 25)
-            profitFrame:SetPoint("TOP", anchorParent, "TOP", profitFrameBaseX, offsetY)
-            local iconSize=26
-            profitFrame.itemIcon = CraftSim.GGUI.Icon({
-                parent=profitFrame, anchorParent=profitFrame, anchorA="TOPLEFT", anchorB="TOPLEFT", offsetX=20,
-                sizeX=iconSize, sizeY=iconSize,qualityIconScale=1.4,
-            })
-
-            profitFrame.countAHTitle = CraftSim.GGUI.Text({
-                parent=profitFrame, anchorParent=profitFrame.itemIcon.frame, anchorA="RIGHT", anchorB="LEFT",
-                justifyOptions={type="H", align="LEFT"}, scale=0.8, offsetX=-26, fixedWidth=25, text="AH:", offsetY=5
-            })
-            profitFrame.countAHValue = CraftSim.GGUI.Text({
-                parent=profitFrame, anchorParent=profitFrame.countAHTitle.frame, anchorA="LEFT", anchorB="RIGHT",
-                justifyOptions={type="H", align="LEFT"}, scale=0.8
-            })
-            profitFrame.countTitle = CraftSim.GGUI.Text({
-                parent=profitFrame, anchorParent=profitFrame.countAHTitle.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT",
-                justifyOptions={type="H", align="LEFT"}, scale=0.8, fixedWidth=25, text="Inv:",
-            })
-            profitFrame.countValue = CraftSim.GGUI.Text({
-                parent=profitFrame, anchorParent=profitFrame.countTitle.frame, anchorA="LEFT", anchorB="RIGHT",
-                justifyOptions={type="H", align="LEFT"}, scale=0.8
-            })
-
-            profitFrame.price = CraftSim.GGUI.Text({
-                parent=profitFrame, anchorParent=profitFrame.itemIcon.frame, anchorA="TOPLEFT", anchorB="TOPRIGHT", offsetX=5,
-                text=CraftSim.GUTIL:FormatMoney(123456789, true)
-            })
-
-            profitFrame.profit = CraftSim.GGUI.Text({
-                parent=profitFrame, anchorParent=profitFrame.price.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT",
-                text=CraftSim.GUTIL:FormatMoney(-123456789, true)
-            })
-
-            CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(profitFrame)
-            return profitFrame
-        end
-    
-        local baseY = -20
-        local profitFramesSpacingY = -30
-        frame.content.profitFrames = {}
-        table.insert(frame.content.profitFrames, createProfitFrame(baseY, frame.content, frame.content.resultProfitsTitle.frame))
-        table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY, frame.content, frame.content.resultProfitsTitle.frame))
-        table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*2, frame.content, frame.content.resultProfitsTitle.frame))
-        table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*3, frame.content, frame.content.resultProfitsTitle.frame))
-        table.insert(frame.content.profitFrames, createProfitFrame(baseY + profitFramesSpacingY*4, frame.content, frame.content.resultProfitsTitle.frame))
         
     
         CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
         frame:Hide()
-
-        frame:SetStatusList({
-            {
-                statusID="Q1",
-                sizeY=sizeYQ1,
-            },
-            {
-                statusID="Q3",
-                sizeY=sizeYQ3,
-            },
-            {
-                statusID="Q5",
-                sizeY=sizeYQ5,
-            },
-        })
     end
 
     createContent(CraftSim.PRICE_DETAILS.frame)
@@ -153,41 +120,39 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitPerQualit
     local priceData = recipeData.priceData
     local resultData = recipeData.resultData
 
-    local numResults = math.max(1, recipeData.maxQuality or 1)
-    -- adjust frame with status
-    priceDetailsFrame:SetStatus("Q" .. numResults)
+    local itemQualityList = resultData.itemsByQuality
+    if not recipeData.supportsQualities then
+        itemQualityList = {itemQualityList[1]} -- force one of an item (illustrious insight e.g. has always 3 items in it for whatever reason)
+    end
 
-    for qualityID = 1, 5, 1 do
-        local profitFrame = priceDetailsFrame.content.profitFrames[qualityID]
-        local resultItem = resultData.itemsByQuality[qualityID]
+    priceDetailsFrame.content.priceDetailsList:Remove()
 
-        if resultItem and not (not recipeData.supportsQualities and qualityID > 1) then
-            resultItem:ContinueOnItemLoad(function ()
+    for _, resultItem in pairs(itemQualityList) do
+        resultItem:ContinueOnItemLoad(function ()
+            priceDetailsFrame.content.priceDetailsList:Add(function(row) 
+                local invColumn = row.columns[1]
+                local itemColumn = row.columns[2]
+                local priceColumn = row.columns[3]
+                local profitColumn = row.columns[4]
+
                 local itemLink = resultItem:GetItemLink()
-                profitFrame.itemIcon:SetItem(resultItem)
+                itemColumn.icon:SetItem(resultItem)
                 local price = CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink)
-                local profit = (price*CraftSim.CONST.AUCTION_HOUSE_CUT) - priceData.craftingCosts
-                profitFrame.price:SetText("Price: " .. CraftSim.GUTIL:FormatMoney(price, true))
-                profitFrame.profit:SetText("Profit: " .. CraftSim.GUTIL:FormatMoney(profit, true))
+                local profit = (price*CraftSim.CONST.AUCTION_HOUSE_CUT) - (priceData.craftingCosts / recipeData.baseItemAmount)
+                priceColumn.text:SetText(CraftSim.GUTIL:FormatMoney(price))
+                profitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(profit, true))
 
                 local itemCount = GetItemCount(itemLink, true, false, true)
                 local ahCount = CraftSim.PRICEDATA:GetAuctionAmount(itemLink)
 
-                profitFrame.countValue:SetText(itemCount or 0)
-
                 if ahCount then
-                    profitFrame.countAHValue:SetText(ahCount)
-                    profitFrame.countAHValue:Show()
-                    profitFrame.countAHTitle:Show()
+                    invColumn.text:SetText((itemCount or 0) .. "/" .. ahCount)
                 else
-                    profitFrame.countAHTitle:Hide()
-                    profitFrame.countAHValue:Hide()
+                    invColumn.text:SetText(itemCount or 0)
                 end
-
             end)
-            profitFrame:Show()
-        else
-            profitFrame:Hide()
-        end
+        end)
     end
+
+    priceDetailsFrame.content.priceDetailsList:UpdateDisplay()
 end

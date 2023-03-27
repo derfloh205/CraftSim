@@ -235,6 +235,10 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
         ksItem.crumb[j] = {}
         ksItem.crumb[j].value = inf
     end
+    
+    local q3ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[3].item:GetItemID(), true)
+    local q2ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[2].item:GetItemID(), true)
+    local q1ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[1].item:GetItemID(), true)
 
     --print("start crumb creation: " .. ksItem.name)
     for k = 0, n, 1 do
@@ -244,9 +248,7 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
             b = j - k
             c = n - j
             w = 2 * a + b
-            local q3ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[3].item:GetItemID(), true)
-            local q2ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[2].item:GetItemID(), true)
-            local q1ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[1].item:GetItemID(), true)
+            
             goldCost = a * q3ItemPrice + b * q2ItemPrice + c * q1ItemPrice
             goldCost = a * q3ItemPrice + b * q2ItemPrice + c * q1ItemPrice
             --print("current iteration ".. j .." goldCost: " .. tostring(goldCost))
@@ -314,6 +316,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
     for i = 0, #requiredReagents - 1, 1 do
         ksItems[i] = {}
     end
+    CraftSim.UTIL:StartProfiling("KnapsackKsItemCreation")
     -- !!!!! lua tables init with a 0 index, show one less entry with #table then there really is
     for index = 0, #requiredReagents - 1, 1 do
         local reagent = requiredReagents[translateLuaIndex(index)]
@@ -327,14 +330,15 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
             mWeight = mWeight[index] / weightGCD,
             crumb = {}
         }
-
+        
         --print("mWeight of " .. reagent.name .. " is " .. ksItem.mWeight)
         --print("mWeight[index] / weightGCD -> " .. mWeight[index] .. " / " .. weightGCD .. " = " .. mWeight[index] / weightGCD)
-
+        
         -- fill crumbs
         CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
         ksItems[index] = ksItem
     end
+    CraftSim.UTIL:StopProfiling("KnapsackKsItemCreation")
 
     -- Calculate ArrayBP (The skill breakpoints)
     local numBP = 0
