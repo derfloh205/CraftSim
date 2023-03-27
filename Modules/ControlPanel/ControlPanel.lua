@@ -47,7 +47,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
                 return false
             end
 
-            if not recipeInfo.supportsCraftingStats or not recipeInfo.supportsQualities then
+            if not recipeInfo.supportsCraftingStats then
                 return false
             end
 
@@ -95,8 +95,8 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
                 ---@type CraftSim.RecipeData
                 local recipeData = CraftSim.RecipeData(recipeID)
 
-                -- only for recipes that have a result
-                if recipeData.resultData.itemsByQuality and #recipeData.resultData.itemsByQuality > 1 then
+                -- only for recipes that have a result which either has qualities or can multicraft
+                if recipeData.resultData.itemsByQuality and #recipeData.resultData.itemsByQuality > 1 and (recipeData.supportsQualities or recipeData.supportsMulticraft) then
                     recipeData:SetEquippedProfessionGearSet()
                     table.insert(data, recipeData)
                 end
