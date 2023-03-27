@@ -6,8 +6,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local currentVersion = GetAddOnMetadata(AddonName, "Version")
 
     local frame = CraftSim.GGUI.Frame({
-        parent=ProfessionsFrame, anchorParent=ProfessionsFrame,anchorA="BOTTOM",anchorB="TOP",offsetY=-8,
-        sizeX=1120,sizeY=100,frameID=CraftSim.CONST.FRAMES.CONTROL_PANEL, 
+        parent=ProfessionsFrame, anchorParent=ProfessionsFrame,anchorA="BOTTOM",anchorB="TOP",offsetY=-5,
+        sizeX=950,sizeY=125,frameID=CraftSim.CONST.FRAMES.CONTROL_PANEL, 
         title="CraftSim " .. currentVersion .. " - Control Panel",
         collapseable=true,
         moveable=true,
@@ -100,47 +100,45 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     frame.content.modulesStatWeights = createModuleCheckbox("Average Profit",
     "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
     "TOP", frame.content.modulesMaterials, "TOP", 0, -20, "modulesStatWeights")
-    
-    -- 2. Row
+
     frame.content.modulesTopGear = createModuleCheckbox("Top Gear",
     "Shows the best available profession gear combination based on the selected mode",
-    "LEFT", frame.content.modulesMaterials, "RIGHT", 150, 0, "modulesTopGear")
+    "TOP", frame.content.modulesStatWeights, "TOP", 0, -20, "modulesTopGear")
+    
+    -- 2. Row
 
     frame.content.modulesPriceDetails = createModuleCheckbox("Price Details", 
     "Shows a sell price and profit overview by resulting item quality",
-    "TOP", frame.content.modulesTopGear, "TOP", 0, -20, "modulesPriceDetails")
+    "LEFT", frame.content.modulesMaterials, "RIGHT", 150, 0, "modulesPriceDetails")
+
+    frame.content.modulesPriceOverride = createModuleCheckbox("Price Overrides", 
+    "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically. You can also set an item to use Craft Data as price.",
+    "TOP", frame.content.modulesPriceDetails, "TOP", 0, -20, "modulesPriceOverride")
+
+    frame.content.modulesCraftData = createModuleCheckbox("Craft Data", 
+    "Edit the saved configurations for crafting commodities of different qualities to show in tooltips and to calculate crafting costs",
+    "TOP", frame.content.modulesPriceOverride, "TOP", 0, -20, "modulesCraftData")
 
     -- 3. Row
     frame.content.modulesSpecInfo = createModuleCheckbox("Specialization Info", 
     "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
-    "LEFT", frame.content.modulesTopGear, "RIGHT", 100, 0, "modulesSpecInfo")
+    "LEFT", frame.content.modulesPriceDetails, "RIGHT", 100, 0, "modulesSpecInfo")
 
-    frame.content.modulesPriceOverride = createModuleCheckbox("Price Overrides", 
-    "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically. You can also set an item to use Craft Data as price.",
-    "TOP", frame.content.modulesSpecInfo, "TOP", 0, -20, "modulesPriceOverride")
+    frame.content.modulesCraftResults = createModuleCheckbox("Craft Results", 
+    "Show a crafting log and statistics about your crafts!",
+    "TOP", frame.content.modulesSpecInfo, "TOP", 0, -20, "modulesCraftResults")
+
+    frame.content.modulesCostDetails = createModuleCheckbox("Cost Details",
+    "Module that shows detailed information about crafting costs",
+    "TOP", frame.content.modulesCraftResults, "TOP", 0, -20, "modulesCostDetails")
 
     -- 4. Row
     frame.content.modulesRecipeScan = createModuleCheckbox("Recipe Scan",
     "Module that scans your recipe list based on various options",
-    "LEFT", frame.content.modulesTopGear, "RIGHT", 250, 0, "modulesRecipeScan")
-
-    frame.content.modulesCraftResults = createModuleCheckbox("Craft Results", 
-    "Show a crafting log and statistics about your crafts!",
-    "TOP", frame.content.modulesRecipeScan, "TOP", 0, -20, "modulesCraftResults")
-
-    -- 5. Row
+    "LEFT", frame.content.modulesSpecInfo, "RIGHT", 125, 0, "modulesRecipeScan")
 
     frame.content.modulesCustomerService = createModuleCheckbox("Customer Service",
     "Module that offers various options to interact with potential customers",
-    "LEFT", frame.content.modulesRecipeScan, "RIGHT", 90, 0, "modulesCustomerService")
-
-    frame.content.modulesCraftData = createModuleCheckbox("Craft Data", 
-    "Edit the saved configurations for crafting commodities of different qualities to show in tooltips and to calculate crafting costs",
-    "TOP", frame.content.modulesCustomerService, "TOP", 0, -20, "modulesCraftData")
-
-    -- 6. Row
-    frame.content.modulesCostDetails = createModuleCheckbox("Cost Details",
-    "Module that shows detailed information about crafting costs",
-    "LEFT", frame.content.modulesCraftData, "RIGHT", 100, 0, "modulesCostDetails")
+    "TOP", frame.content.modulesRecipeScan, "TOP", 0, -20, "modulesCustomerService")
 
 end
