@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.5.1") ..
+        f.p .. "Removed a debug print that may lead to a nil error" ..
         newP("8.5.0") ..
         f.P .. "CraftSim now correctly considers the chance to skip a quality" ..
         f.a .. "by " .. f.l("HSV") .. " and " .. f.bb("Inspiration") .. " double proc" ..
