@@ -11,6 +11,9 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.5.1") ..
+        f.P .. "Optimized the algorithm for material cost optimization " .. f.g("significantly") ..
+        f.a .. "Optimizing high reagent count recipes now takes" .. 
+        f.a .. "a few milliseconds instead of 1 to 2 seconds per recipe" ..
         f.s .. "Added Translation Keys for all " .. f.bb("Spezialization Node Names") ..
         f.s .. "Restructured the " .. f.bb("Control Panel") .. " to fit the 10.0.7" ..
         f.a .. "Profession Window Size" ..
