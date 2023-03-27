@@ -48,7 +48,16 @@ function CraftSim.SpecializationData:new(recipeData)
         local ruleNodes = CraftSim.GUTIL:Filter(professionRuleNodes, function (n) return n.nodeID == nodeID end)
         local nodeData = CraftSim.NodeData(self.recipeData, ruleNodes, parentNodeData)
         print("process nodeID: " .. tostring(nodeID))
-        nodeData.nodeName = CraftSim.GUTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
+
+        nodeData.nodeName = CraftSim.LOCAL:GetText(nodeID);
+        
+        if not nodeData.nodeName then
+        	nodeData.nodeName = CraftSim.GUTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
+        end
+        
+        print("node name: " .. nodeData.nodeName)
+        
+        -- nodeData.nodeName = CraftSim.GUTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
         local childNodeNameIDs = ruleNodes[1].childNodeIDs
 
         for _, childNodeNameID in pairs(childNodeNameIDs or {}) do
