@@ -133,7 +133,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     local chanceText = ""
 
     if not recipeData.isSalvageRecipe and recipeData.supportsCraftingStats then
-       chanceText = "Chance: " .. CraftSim.GUTIL:Round(craftResult.craftingChance*100, 1) .. "%\n" 
+       chanceText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_5) .. CraftSim.GUTIL:Round(craftResult.craftingChance*100, 1) .. "%\n" 
     end
 
     local resultsText = ""
@@ -154,11 +154,11 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
 
     local newText =
     resultsText ..
-    "Profit: " .. profitText .. "\n" ..
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_1) .. profitText .. "\n" ..
     chanceText ..
-    ((craftResult.triggeredInspiration and CraftSim.GUTIL:ColorizeText("Inspired!\n", CraftSim.GUTIL.COLORS.LEGENDARY)) or "") ..
-    ((craftResult.triggeredMulticraft and (CraftSim.GUTIL:ColorizeText("Multicraft: ", CraftSim.GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
-    ((craftResult.triggeredResourcefulness and (CraftSim.GUTIL:ColorizeText("Resources Saved!: \n", CraftSim.GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
+    ((craftResult.triggeredInspiration and CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_2) .. "\n", CraftSim.GUTIL.COLORS.LEGENDARY)) or "") ..
+    ((craftResult.triggeredMulticraft and (CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_3), CraftSim.GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
+    ((craftResult.triggeredResourcefulness and (CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_4) .. "\n", CraftSim.GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
 
     craftResultFrame.content.scrollingMessageFrame:AddMessage("\n" .. newText)
 

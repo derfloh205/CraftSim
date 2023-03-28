@@ -41,8 +41,8 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     
         frame.content.inspirationCheck = CreateFrame("CheckButton", nil, frame.content, "ChatConfigCheckButtonTemplate")
         frame.content.inspirationCheck:SetPoint("TOP", frame.title.frame, -90, -20)
-        frame.content.inspirationCheck.Text:SetText(" Reach Inspiration Breakpoint")
-        frame.content.inspirationCheck.tooltip = "Try to reach the skill breakpoint where an inspiration proc upgrades to the next higher quality with the cheapest material combination"
+        frame.content.inspirationCheck.Text:SetText(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT))
+        frame.content.inspirationCheck.tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP)
         frame.content.inspirationCheck:SetChecked(CraftSimOptions.materialSuggestionInspirationThreshold)
         frame.content.inspirationCheck:HookScript("OnClick", function(_, btn, down)
             local checked = frame.content.inspirationCheck:GetChecked()
@@ -52,7 +52,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     
         frame.content.qualityText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         frame.content.qualityText:SetPoint("TOP", frame.title.frame, "TOP", 0, -45)
-        frame.content.qualityText:SetText("Reachable Quality: ")
+        frame.content.qualityText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY))
     
         frame.content.qualityIcon = CraftSim.GGUI.QualityIcon({
             parent=frame.content,anchorParent=frame.content.qualityText,anchorA="LEFT",anchorB="RIGHT",offsetX=3,
@@ -70,8 +70,8 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     
         frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         frame.content.infoText:SetPoint("CENTER", frame.content, "CENTER", 0, 0)
-        frame.content.infoText.NoCombinationFound = "No combination found \nto increase quality"
-        frame.content.infoText.SameCombination = "Best combination assigned"
+        frame.content.infoText.NoCombinationFound = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION)
+        frame.content.infoText.SameCombination = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION)
         frame.content.infoText:SetText(frame.content.infoText.NoCombinationFound)
     
         local iconsOffsetY = -25
@@ -180,7 +180,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
         materialFrame.content.allocateButton:Show()
         materialFrame.content.allocateButton:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
         if CraftSim.SIMULATION_MODE.isActive then
-            materialFrame.content.allocateButton:SetText("Assign")
+            materialFrame.content.allocateButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_ASSIGN))
             materialFrame.content.allocateButton:SetScript("OnClick", function(self) 
                 -- uncheck best quality box if checked
                 local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
@@ -193,9 +193,9 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
             materialFrame.content.allocateText:Show()
             materialFrame.content.allocateButton:Hide()
             if hasItems then
-                materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText("Materials available", CraftSim.GUTIL.COLORS.GREEN))
+                materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_AVAILABLE), CraftSim.GUTIL.COLORS.GREEN))
             else
-                materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText("Materials missing", CraftSim.GUTIL.COLORS.RED))
+                materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_MISSING), CraftSim.GUTIL.COLORS.RED))
             end
         end
     end
@@ -203,11 +203,11 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
     if optimizationResult.qualityID and optimizationResult.qualityID > 0 then
         materialFrame.content.qualityIcon:SetQuality(optimizationResult.qualityID)
         materialFrame.content.qualityIcon:Show()
-        materialFrame.content.qualityText:SetText("Reachable Quality: ")
+        materialFrame.content.qualityText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY))
         materialFrame.content.inspirationCheck:Show()
     else
         materialFrame.content.qualityIcon:Hide()
-        materialFrame.content.qualityText:SetText("Cheapest Materials")
+        materialFrame.content.qualityText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_CHEAPER))
         materialFrame.content.inspirationCheck:Hide()
     end
     for frameIndex = 1, #materialFrame.content.reagentFrames.rows, 1 do

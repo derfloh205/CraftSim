@@ -54,7 +54,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
         ---@type GGUI.Text | GGUI.Widget
         frame.content.expectedProfitTitle = CraftSim.GGUI.Text({
             parent=frame.content,anchorParent=frame.title.frame,
-            anchorA="TOP", anchorB="BOTTOM", offsetY=-30, text="Expected Profit (μ)"
+            anchorA="TOP", anchorB="BOTTOM", offsetY=-30, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT)
         })
         ---@type GGUI.Text | GGUI.Widget
         frame.content.expectedProfitValue = CraftSim.GGUI.Text({
@@ -65,7 +65,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
         frame.content.craftsTextTop = CraftSim.GGUI.Text({
             parent=frame.content,anchorParent=frame.content.expectedProfitValue.frame,
             anchorA="TOP", anchorB="BOTTOM", offsetY=-30, 
-            text="Chance of " .. CraftSim.GUTIL:ColorizeText("Profit > 0", CraftSim.GUTIL.COLORS.GREEN) .. " after",
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CHANCE_OF) .. CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_PROFIT) .. " > 0", CraftSim.GUTIL.COLORS.GREEN) .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_AFTER),
         })
 
         ---@type GGUI.NumericInput
@@ -90,7 +90,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
         ---@type GGUI.Text | GGUI.Widget
         frame.content.craftsTextBottom = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content.numCraftsInput.textInput.frame, offsetX=20,
-            text="Crafts: ", anchorA="LEFT", anchorB="RIGHT",
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CRAFTS), anchorA="LEFT", anchorB="RIGHT",
         })
 
         ---@type GGUI.Text | GGUI.Widget
@@ -104,18 +104,18 @@ function CraftSim.STATISTICS.FRAMES:Init()
             showHeaderLine=true, sizeY=130,
             columnOptions={
                 {
-                    label="Quality",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER),
                     width=60,
                     justifyOptions={type="H", align="CENTER"},
                 },
                 {
-                    label="Chance",
-                    width=60,
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER),
+                    width=70,
                     justifyOptions={type="H", align="CENTER"},
                 },
                 {
-                    label="Expected Crafts",
-                    width=100,
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER),
+                    width=110,
                     justifyOptions={type="H", align="CENTER"},
                 }
             },
@@ -183,7 +183,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
 
         expandFrame.probabilityTableTitle = CraftSim.GGUI.Text({
             parent=expandFrame, anchorParent=expandFrame, anchorA="TOP", anchorB="TOP",
-            text="Recipe Probability Table"
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE)
         })
 
         CraftSim.GGUI.HelpIcon({
@@ -198,37 +198,37 @@ function CraftSim.STATISTICS.FRAMES:Init()
             showHeaderLine = true, offsetY=-30,
             columnOptions={
                 {
-                    label="Chance",
-                    width=60,
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER),
+                    width=70,
                     justifyOptions={type="H", align="CENTER"},
                 },
                 {
-                    label="Inspiration",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_INSPIRATION_HEADER),
                     width=80,
                     justifyOptions={type="H", align="CENTER"},
                 },
                 {
-                    label="Multicraft",
-                    width=80,
-                    justifyOptions={type="H", align="CENTER"},
-                },
-                {
-                    label="Resourcefulness",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER),
                     width=110,
                     justifyOptions={type="H", align="CENTER"},
                 },
                 {
-                    label="HSV Next",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER),
+                    width=110,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_HSV_NEXT),
                     width=70,
                     justifyOptions={type="H", align="CENTER"},
                 },
                 {
-                    label="HSV Skip",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP),
                     width=70,
                     justifyOptions={type="H", align="CENTER"},
                 },
                 {
-                    label="Expected Profit",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER),
                     width=120,
                 },
             },

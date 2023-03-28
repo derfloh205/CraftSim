@@ -38,7 +38,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local cbBaseOffsetY = -35
 
     frame.content.newsButton = CraftSim.GGUI.Button({
-        label="News", parent=frame.content, anchorParent=frame.content,anchorA="TOPRIGHT",anchorB="TOPRIGHT",offsetX=-50,offsetY=cbBaseOffsetY+5,
+        label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS),
+        parent=frame.content, anchorParent=frame.content,anchorA="TOPRIGHT",anchorB="TOPRIGHT",offsetX=-50,offsetY=cbBaseOffsetY+5,
         sizeX=15,sizeY=25, adjustWidth=true,
         clickCallback=function() 
             CraftSim.FRAME:ShowOneTimeInfo(true)
@@ -46,7 +47,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     })
 
     frame.content.debugButton = CraftSim.GGUI.Button({
-        label="Debug",parent=frame.content,anchorParent=frame.content.newsButton.frame,anchorA="TOPLEFT",anchorB="BOTTOMLEFT",
+        label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG),
+        parent=frame.content,anchorParent=frame.content.newsButton.frame,anchorA="TOPLEFT",anchorB="BOTTOMLEFT",
         sizeX=15,sizeY=25,adjustWidth=true,
         clickCallback=function() 
             CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
@@ -54,7 +56,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     })
 
     frame.content.exportForgeFinderButton = CraftSim.GGUI.Button({
-        label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Export", parent=frame.content,anchorParent=frame.content.debugButton.frame,anchorA="RIGHT", anchorB="LEFT", sizeX=15,sizeY=25,adjustWidth=true,
+        label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT),
+        parent=frame.content,anchorParent=frame.content.debugButton.frame,anchorA="RIGHT", anchorB="LEFT", sizeX=15,sizeY=25,adjustWidth=true,
         clickCallback=function() 
             CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
         end,
@@ -64,7 +67,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     frame.content.exportForgeFinderButton:SetStatusList({
         {
             statusID = "READY",
-            label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " Export",
+            label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT),
             enabled=true,
         }
     })
@@ -80,7 +83,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         clickCallback=function() 
             InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
         end,
-        label="Options"
+        label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS)
     })
 
     frame.content.resetFramesButton = CraftSim.GGUI.Button({
@@ -89,7 +92,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         clickCallback=function() 
             CraftSim.FRAME:ResetFrames()
         end,
-        label="Reset Frame Positions"
+        label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES)
     })
     
     -- 1. Row

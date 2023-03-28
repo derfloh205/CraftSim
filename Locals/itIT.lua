@@ -3,6 +3,7 @@ AddonName, CraftSim = ...
 CraftSim.LOCAL_IT = {}
 
 function CraftSim.LOCAL_IT:GetData()
+    local f = CraftSim.UTIL:GetFormatter()
     return {
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Ispirazione",
@@ -43,6 +44,7 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Simulation Mode
         [CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL] = "Modalità Simulazione",
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE] = "Modalità Simulazione di CraftSim",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_TOOLTIP] = "La Modalità Simulazione di CraftSim ti permette di sperimentare con una ricetta senza restrizioni",
 
         -- Details Frame
@@ -63,15 +65,46 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "Ottimizzazione Materiali",
+        [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "Raggiungi soglia Ispirazione",
+        [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] = "Prova a raggiungere la soglia di competenza per cui l'attivazione di ispirazione porta l'oggetto alla qualità superiore con la combinazione di materiali più economica",
+        [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Qualità raggiungibile: ",
+        [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Materiali mancanti",
+        [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Materiali disponibioli",
+        [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Materiali più economici",
+        [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "Miglior combinazione assegnata",
+        [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "Nessuna combinazione trovata\nper incrementare la qualità",
 
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "Info Specializzazioni di CraftSim",
-        [CraftSim.CONST.TEXT.SIMULATE_KNOWLEDGE_DISTRIBUTION] = "Simula Distribuzione Conoscenza",
+        [CraftSim.CONST.TEXT.SPEC_INFO_SIMULATE_KNOWLEDGE_DISTRIBUTION] = "Simula Distribuzione Conoscenza",
         [CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP] = "Questa specializzazione ti fornisce le seguenti statistiche per questa ricetta:",
         [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "Specializzazioni non ancora ultimate",
 
         -- Crafting Results Frame
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE] = "Risultati Creazione di CraftSim",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG] = "Resoconto di creazione",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_1] = "Profitto: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_2] = "Ispirazione!",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_3] = "Creazione multipla: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_4] = "Risorse risparmiate!: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_5] = "Possibilità: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_CRAFTED_ITEMS] = "Oggetti creati",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_SESSION_PROFIT] = "Profitto di sessione",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_RESET_DATA] = "Resetta dati",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_EXPORT_JSON] = "Esporta JSON",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_RECIPE_STATISTICS] = "Statistiche Ricetta",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_NOTHING] = "Nessuna creazione al momento!",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_1] = "Creazioni: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_2] = "Profitto Ø Previsto: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_3] = "Profitto Ø Reale: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_4] = "Profitto Reale: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_5] = "Attivazioni - Reali/Previste: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_6] = "Ispirazione: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7] = "Creazione Multipla: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8] = "- Ø Oggetti aggiuntivi: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9] = "Attivazioni Parsimonia: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10] = "- Ø Risparmio: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_11] = "Profitto: ",
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "Profitto Medio di CraftSim",
@@ -86,12 +119,34 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_DETAILS_TITLE] = "Dettaglio Costi di CraftSim",
+        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_COSTS] = "Costi di creazione: ",
+        [CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER] = "Oggetto",
+        [CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER] = "Prezzo AH",
+        [CraftSim.CONST.TEXT.COST_DETAILS_OVERRIDE_HEADER] = "Modifica Prezzo",
+        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFT_DATA_HEADER] = "Craft Data",
+        [CraftSim.CONST.TEXT.COST_DETAILS_USED_SOURCE] = "Sorgente",
 
         -- Craft Data Frame
         [CraftSim.CONST.TEXT.CRAFT_DATA_TITLE] = "CraftSim Craft Data",
 
         -- Statistics Frame
         [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "Statistiche di CraftSim",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT] = "Profitto previsto (μ)",
+        [CraftSim.CONST.TEXT.STATISTICS_CHANCE_OF] = "Probabilità di ",
+        [CraftSim.CONST.TEXT.STATISTICS_PROFIT] = "Profitto",
+        [CraftSim.CONST.TEXT.STATISTICS_AFTER] = " dopo",
+        [CraftSim.CONST.TEXT.STATISTICS_CRAFTS] = "Creazioni: ",
+        [CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER] = "Qualità",
+        [CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER] = "Probabilità",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Creazioni previste",
+        [CraftSim.CONST.TEXT.STATISTICS_INSPIRATION_HEADER] = "Ispirazione",
+        [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "Creazioni multiple",
+        [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "Parsimonia",
+        [CraftSim.CONST.TEXT.STATISTICS_HSV_NEXT] = "HSV Succ.",
+        [CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP] = "HSV Salto",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "Profitto previsto",
+        [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "Tabella delle Probabilità della Ricetta",
+        [CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION] = "Questa tabella mostra tutte le possibili combinazioni di attivazioni per la ricetta corrente.\n\n" .. f.l("HSV Succ.") ..  " .. Probabilità HSV per la qualità successiva\n\n" .. f.l("HSV Salto") .. " .. Probabilità HSV di saltare una qualità grazie all'ispirazione",
 
         -- Customer Service Frame
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "Servizio Clienti di CraftSim",
@@ -105,6 +160,10 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Price Details Frame
         [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "Dettaglio Prezzi di CraftSim",
+        [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Inv/AH",
+        [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "Oggetto",
+        [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "Prezzo/Oggetto",
+        [CraftSim.CONST.TEXT.PRICE_DETAILS_PROFIT_ITEM] = "Profitto/Oggetto",
 
         -- Price Override Frame
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE] = "Modifica Prezzi di CraftSim",
@@ -113,6 +172,7 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE] = "Scansione Ricette di CraftSim",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE] = "Modalità Scansione",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_RECIPIES] = "Scansiona Ricette",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING] = "Scansione",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED] = "Includi non apprese",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP] = "Include le ricette che non hai appreso nella scansione.", 
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND] = "Includi vincolate",
@@ -122,6 +182,13 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS] = "Ottimizza Strumenti Professioni", 
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP] = "Per ogni ricetta ottimizza i tuoi strumenti per il miglior profitto\n\n",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING] = "Potrebbe diminuire le prestazioni durante la scansione se hai molti strumenti nell'inventario.",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER] = "Ricetta",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER] = "Appresa",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_GUARANTEED_HEADER] = "Garantito",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_HIGHEST_RESULT_HEADER] = "Risultato migliore",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER] = "Profitto medio",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_TOP_GEAR_HEADER] = "Strumenti",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Inv/AH",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "Ottimizzazione Strumenti",
@@ -361,5 +428,10 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] = "Modulo che scansiona la tua lista di ricette in base a varie opzioni.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_LABEL] = "Servizio Clienti",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP] = "Modulo che offre varie opzioni per interagire con i potenziali clienti.",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Resetta posizioni finestre",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Opzioni",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "Novità",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = "Export",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "Debug",
     }
 end

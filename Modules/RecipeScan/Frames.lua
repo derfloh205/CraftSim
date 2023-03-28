@@ -76,35 +76,35 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
                 width=40,
             },
             {
-                label="Recipe",
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER),
                 width=150,
             },
             {
-                label="Learned",
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER),
                 width=60,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
-                label="Guaranteed",
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_GUARANTEED_HEADER),
                 width=80,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
-                label="Highest Result", -- icon + upgrade chance
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_HIGHEST_RESULT_HEADER), -- icon + upgrade chance
                 width=110,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
-                label="Average Profit",
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER),
                 width=140,
             },
             {
-                label="Top Gear",
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_TOP_GEAR_HEADER),
                 width=120,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
-                label="Inv/AH",
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER),
                 width=80,
                 justifyOptions={type="H", align="CENTER"}
             }

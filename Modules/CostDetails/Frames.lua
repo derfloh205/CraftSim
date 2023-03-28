@@ -10,7 +10,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_DETAILS)
 
 function CraftSim.COST_DETAILS.FRAMES:Init()
 
-    local sizeX=500
+    local sizeX=520
     local sizeY=270
     local offsetX=-5
     local offsetY=-120
@@ -45,7 +45,7 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
     local function createContent(frame)
         frame.content.craftingCostsTitle = CraftSim.GGUI.Text({
             parent=frame.content,anchorParent=frame.title.frame, anchorA="TOP", anchorB="BOTTOM",
-            offsetX=-30, offsetY=-20, text="Crafting Costs: ",
+            offsetX=-30, offsetY=-20, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_COSTS),
         })
         frame.content.craftingCostsValue = CraftSim.GGUI.Text({
             parent=frame.content,anchorParent=frame.content.craftingCostsTitle.frame, anchorA="LEFT", anchorB="RIGHT",
@@ -64,24 +64,24 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
             sizeY=150, showHeaderLine=true, offsetX=-10,
             columnOptions = {
                 {
-                    label="Item",
-                    width=40,
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER),
+                    width=60,
                     justifyOptions={type="H", align="CENTER"}
                 },
                 {
-                    label="AH Price",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER),
                     width=110,
                 },
                 {
-                    label="Override",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_OVERRIDE_HEADER),
                     width=110,
                 },
                 {
-                    label="Craft Data",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_CRAFT_DATA_HEADER),
                     width=110,
                 },
                 {
-                    label="Used Source",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_USED_SOURCE),
                     width=80,
                     justifyOptions={type="H", align="CENTER"}
                 },

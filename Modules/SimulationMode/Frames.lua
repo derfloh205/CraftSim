@@ -118,7 +118,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             parent=schematicForm, anchorParent=ProfessionsFrame, anchorA="TOPRIGHT", anchorB="TOPRIGHT", offsetX=-5, offsetY=-155,
             sizeX=350, sizeY=355, frameID=(workOrder and CraftSim.CONST.FRAMES.CRAFTING_DETAILS_WO) or CraftSim.CONST.FRAMES.CRAFTING_DETAILS,
             backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS, collapseable=true, moveable=true,
-            title="CraftSim Simulation Mode"
+            title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE)
         })
     
         simModeDetailsFrame:Hide()

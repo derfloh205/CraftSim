@@ -42,7 +42,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     
         frame.content.knowledgePointSimulationButton = CraftSim.GGUI.Button({
             parent=frame.content, anchorParent=frame.title.frame,anchorA="TOP",anchorB="TOP",offsetY=-20,
-            sizeX=15,sizeY=20, adjustWidth=true,label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATE_KNOWLEDGE_DISTRIBUTION),
+            sizeX=15,sizeY=20, adjustWidth=true,label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_SIMULATE_KNOWLEDGE_DISTRIBUTION),
             clickCallback=function ()
                 local specSimFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
                 CraftSim.FRAME:ToggleFrame(CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM), not specSimFrame:IsVisible())
