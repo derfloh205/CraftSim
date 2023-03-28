@@ -11,7 +11,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         anchorParent=ProfessionsFrame.CraftingPage.SchematicForm, 
         sizeX=850,sizeY=400,
         frameID=CraftSim.CONST.FRAMES.RECIPE_SCAN, 
-        title="CraftSim Recipe Scan",
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE),
         collapseable=true,
         closeable=true,
         moveable=true,
@@ -27,12 +27,14 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
             parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170,
             initialValue=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I,
             initialLabel=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I, -- TODO: save and use last selected saved in CraftSimOptions
-            label="Scan Mode",
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_MODE),
             initialData=CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return {label=e, value=e} end)
         })
 
         frame.content.scanButton = CraftSim.GGUI.Button({
-            parent=frame.content,anchorParent=frame.content.scanMode.frame,label="Scan Recipes", anchorA="TOP", anchorB="TOP",offsetY=-30,sizeX=15,sizeY=25,adjustWidth=true,
+            parent=frame.content,anchorParent=frame.content.scanMode.frame,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_RECIPIES), 
+            anchorA="TOP", anchorB="TOP",offsetY=-30,sizeX=15,sizeY=25,adjustWidth=true,
             clickCallback=function ()
                 CraftSim.RECIPE_SCAN:StartScan()
             end
@@ -48,19 +50,25 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         frame.content.cancelScanButton:Hide()
 
         frame.content.includeSoulboundCB = CraftSim.FRAME:CreateCheckbox(
-            " Include Soulbound", "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items", 
-        "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode.frame, "RIGHT", "LEFT", -250, 0)
+            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND),
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP),
+            "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode.frame, "RIGHT", "LEFT", -250, 0)
 
         frame.content.includeNotLearnedCB = CraftSim.FRAME:CreateCheckbox(
-            " Include not learned", "Include recipes you do not have learned in the recipe scan", 
-        "recipeScanIncludeNotLearned", frame.content, frame.content.includeSoulboundCB, "BOTTOMLEFT", "TOPLEFT", 0, 0)
+            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED),
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP),
+            "recipeScanIncludeNotLearned", frame.content, frame.content.includeSoulboundCB, "BOTTOMLEFT", "TOPLEFT", 0, 0)
 
-        frame.content.includeGearCB = CraftSim.FRAME:CreateCheckbox(" Include Gear", "Include all form of gear recipes in the recipe scan", 
-        "recipeScanIncludeGear", frame.content, frame.content.includeSoulboundCB, "TOPLEFT", "BOTTOMLEFT", 0, 0)
+        frame.content.includeGearCB = CraftSim.FRAME:CreateCheckbox(
+            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR),
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP),
+            "recipeScanIncludeGear", frame.content, frame.content.includeSoulboundCB, "TOPLEFT", "BOTTOMLEFT", 0, 0)
 
-        frame.content.optimizeProfessionToolsCB = CraftSim.FRAME:CreateCheckbox(" Optimize Profession Tools", "For each recipe optimize your profession tools for profit\n\n" .. 
-                                                                                CraftSim.GUTIL:ColorizeText("Might lower performance during scanning\nif you have a lot of tools in your inventory", CraftSim.GUTIL.COLORS.RED), 
-        "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 90, 0)
+        frame.content.optimizeProfessionToolsCB = CraftSim.FRAME:CreateCheckbox(
+            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS),
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP) ..
+            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING), CraftSim.GUTIL.COLORS.RED), 
+            "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 90, 0)
 
         local columnOptions = {
             {

@@ -12,7 +12,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
         offsetY=10,
         sizeX=700,sizeY=450,
         frameID=CraftSim.CONST.FRAMES.CRAFT_RESULTS, 
-        title="CraftSim Crafting Results",
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE),
         collapseable=true,
         closeable=true,
         moveable=true,

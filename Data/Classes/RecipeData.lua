@@ -367,7 +367,7 @@ end
 ---@param optimizeInspiration boolean
 function CraftSim.RecipeData:OptimizeProfit(optimizeInspiration)
     self:OptimizeReagents(optimizeInspiration)
-    self:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.PROFIT)
+    self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
     -- need another because it could be that the optimized gear makes it possible to use cheaper reagents
     self:OptimizeReagents(optimizeInspiration) 
 end
@@ -375,7 +375,7 @@ end
 ---Optimizes the recipeData's reagents and gear for highest quality
 ---@param optimizeInspiration boolean
 function CraftSim.RecipeData:OptimizeQuality(optimizeInspiration)
-    self:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.SKILL)
+    self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.SKILL))
     self:OptimizeReagents(optimizeInspiration)
 end
 

@@ -42,6 +42,10 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP] = "The quality of your materials can give you a maximum of 25% of the base recipe difficulty as bonus skill.\n\nAll Q1 Materials: 0% Bonus\nAll Q2 Materials: 12.5% Bonus\nAll Q3 Materials: 25% Bonus\n\nThe skill is calculated by the amount of materials of each quality weighted against their quality\nand a specific weight value that is unique to each individual dragon flight crafting material item\n\nThis is however different for recrafts. There the maximum the reagents can increase the quality\nis dependent on the quality of materials the item was originally crafted with.\nThe exact workings are not known.\nHowever, CraftSim internally compares the achieved skill with all q3 and calculates\nthe max skill increase based on that.",
         [CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP] = "The maximum the materials can contribute to a recipe is most of the time 25% of the base recipe difficulty.\n\nHowever in the case of recrafting, this value can vary based on previous crafts\nand the quality of materials that were used.",
     
+        -- Simulation Mode
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL] = "Simulation Mode",
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_TOOLTIP] = "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions",
+
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Recipe Difficulty: ",
         [CraftSim.CONST.TEXT.INSPIRATION_LABEL] = "Inspiration: ",
@@ -66,7 +70,7 @@ function CraftSim.LOCAL_EN:GetData()
         
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] = "This is calculated by using the 'abramowitz and stegun' approximation (1985) of the CDF (Cumulative Distribution Function)\n\nYou will notice that its always around 50% for 1 craft.\nThis is because 0 is most of the time close to the average profit.\nAnd the chance of getting the mean of the CDF is always 50%.\n\nHowever, the rate of change can be very different between recipes.\nIf it is more likely to have a positive profit than a negative one, it will steadly increase.\nThis is of course also true for the other direction.",
-        [CraftSim.CONST.TEXT.PROFIT_EXPLANATION] = 
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION] = 
         f.r("Warning: ") .. " Math ahead!\n\n" ..
         "When you craft something you have different chances for different outcomes based on your crafting stats.\n" ..
         "And in statistics this is called a " .. f.l("Probability Distribution.\n") .. 
@@ -96,7 +100,7 @@ function CraftSim.LOCAL_EN:GetData()
         f.bb("\nE(X) = -100*0.3 + 300*0.7  ") .. "which is " .. f.m((-100*0.3 + 300*0.7)*10000) .. "\n" ..
         "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
         ,
-        [CraftSim.CONST.TEXT.PROFIT_EXPLANATION_HSV] = 
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV] = 
         "The " .. f.l("Hidden Skill Value (HSV)") .. " is an additional random factor that occurs everytime you craft something. It is not mentioned anywhere in the game.\n" ..
         "However you can observe a visualization of the proc: When you craft something the " .. f.bb("Quality Meter") .. "\nfills up to a certain point. And this can 'shoot' quite a bit over your current shown skill.\n" ..
         "\n" .. f.cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
@@ -145,5 +149,114 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- RecipeScan
         [CraftSim.CONST.TEXT.FORGEFINDER_EXPLANATION] = f.l("www.wowforgefinder.com") .. "\nis a website to search and offer " .. f.bb("WoW Crafting Orders"),
+
+        -- Materials Frame
+        [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "CraftSim Material Optimization",
+
+        -- Specialization Info Frame
+        [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "CraftSim Specialization Info",
+        [CraftSim.CONST.TEXT.SIMULATE_KNOWLEDGE_DISTRIBUTION] = "Simulate Knowledge Distribution",
+        [CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP] = "This node grants you following stats for this recipe:",
+        [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "SpecInfo Work in Progress",
+
+        -- Crafting Results Frame
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE] = "CraftSim Crafting Results",
+
+        -- Stats Weight Frame
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "CraftSim Average Profit",
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_EXPLANATION_TITLE] = "CraftSim Average Profit Explanation",
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON] = "Show Explanation",
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_EXPLANATION_BUTTON] = "Hide Explanation",
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON] = "Show Statistics",
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON] = "Hide Statistics",
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Ø Profit / Craft: ",
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_TAB] = "Basic Profit Calculation",
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV_TAB] = "HSV Consideration",
+
+        -- Cost Details Frame
+        [CraftSim.CONST.TEXT.COST_DETAILS_TITLE] = "CraftSim Cost Details",
+
+        -- Craft Data Frame
+        [CraftSim.CONST.TEXT.CRAFT_DATA_TITLE] = "CraftSim Craft Data",
+
+        -- Statistics Frame
+        [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "CraftSim Statistics",
+
+        -- Customer Service Frame
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "CraftSim Customer Service",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RECIPE_WHISPER] = "Recipe Whisper",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW] = "Live Preview",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_WHISPER] = "Whisper",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_MESSAGE_FORMAT] = "Message Format",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RESET_TO_DEFAULT] = "Reset to Defaults",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS] = "Allow Connections",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_SEND_INVITE] = "Send Invite",
+
+        -- Price Details Frame
+        [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "CraftSim Price Details",
+
+        -- Price Override Frame
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE] = "CraftSim Price Overrides",
+
+        -- Recipe Scan Frame
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE] = "CraftSim Recipe Scan",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE] = "Scan Mode",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_RECIPIES] = "Scan Recipes",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED] = "Include not learned",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP] = "Include recipes you do not have learned in the recipe scan", 
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND] = "Include Soulbound",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP] = "Include soulbound recipes in the recipe scan.\n\nIt is recommended to set a price override (e.g. to simulate a target comission)\nin the Price Override Module for that recipe's crafted items", 
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR] = "Include Gear",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP] = "Include all form of gear recipes in the recipe scan", 
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS] = "Optimize Profession Tools", 
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP] = "For each recipe optimize your profession tools for profit\n\n",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING] = "Might lower performance during scanning\nif you have a lot of tools in your inventory",
+        
+        -- Recipe Top Gear
+        [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",
+        [CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC] = "Automatic",
+        [CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC_TOOLTIP] = "Automatically simulate Top Gear for your selected mode whenever a recipe updates.\n\nTurning this off may increase performance.",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE] = "Simulate Top Gear",
+        [CraftSim.CONST.TEXT.TOP_GEAR_EQUIP] = "Equip",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_QUALITY] = "Quality: ",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_EQUIPPED] = "Top Gear equipped",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE] = "Ø Profit Difference\n",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_MUTLICRAFT] = "New Multicraft\n",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_CRAFTING_SPEED] = "New Crafting Speed\n",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_RESOURCEFULNESS] = "New Resourcefulness\n",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_INSPIRATION] = "New Inspiration\n",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_SKILL] = "New Skill\n",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_UNHANDLED] = "Unhandled Sim Mode",
+
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_PROFIT] = "Top Profit",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_SKILL] = "Top Skill",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_INSPIRATION] = "Top Inspiration",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_MULTICRAFT] = "Top Multicraft",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_RESOURCEFULNESS] = "Top Resourcefulness",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_CRAFTING_SPEED] = "Top Crafting Speed",
+
+        -- Control Panel
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL] = "Top Gear",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP] = "Shows the best available profession gear combination based on the selected mode",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL] = "Price Details",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_TOOLTIP] = "Shows a sell price and profit overview by resulting item quality",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "Average Profit",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] = "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_LABEL] = "Material Optimization",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_TOOLTIP] = "Suggests the cheapest materials to reach the highest quality/inspiration threshold.",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Price Overrides",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] = "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically. You can also set an item to use Craft Data as price.",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_LABEL] = "Craft Data",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_TOOLTIP] = "Edit the saved configurations for crafting commodities of different qualities to show in tooltips and to calculate crafting costs",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL] = "Specialization Info",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP] = "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_LABEL] = "Craft Results",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_TOOLTIP] = "Show a crafting log and statistics about your crafts!",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_LABEL] = "Cost Details",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_TOOLTIP] = "Module that shows detailed information about crafting costs",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Recipe Scan",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] = "Module that scans your recipe list based on various options",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_LABEL] = "Customer Service",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP] = "Module that offers various options to interact with potential customers",
     }
 end

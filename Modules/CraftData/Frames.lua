@@ -15,7 +15,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     local craftDataFrame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame,anchorFrame=UIParent,
         sizeX=sizeX,sizeY=sizeYRetracted,
-        title="CraftSim Craft Data",
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_TITLE),
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         collapseable=true,moveable=true,closeable=true,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCraftData"),

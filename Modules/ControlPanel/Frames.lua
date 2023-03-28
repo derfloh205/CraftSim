@@ -93,52 +93,52 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     })
     
     -- 1. Row
-    frame.content.modulesMaterials = createModuleCheckbox("Material Optimization", 
-    "Suggests the cheapest materials to reach the highest quality/inspiration threshold.",
+    frame.content.modulesMaterials = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_LABEL), 
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_TOOLTIP),
     "TOPLEFT", frame.content, "TOPLEFT", cbBaseOffsetX, cbBaseOffsetY, "modulesMaterials")
 
-    frame.content.modulesStatWeights = createModuleCheckbox("Average Profit",
-    "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
+    frame.content.modulesStatWeights = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL),
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP),
     "TOP", frame.content.modulesMaterials, "TOP", 0, -20, "modulesStatWeights")
 
-    frame.content.modulesTopGear = createModuleCheckbox("Top Gear",
-    "Shows the best available profession gear combination based on the selected mode",
+    frame.content.modulesTopGear = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL),
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP),
     "TOP", frame.content.modulesStatWeights, "TOP", 0, -20, "modulesTopGear")
     
     -- 2. Row
 
-    frame.content.modulesPriceDetails = createModuleCheckbox("Price Details", 
-    "Shows a sell price and profit overview by resulting item quality",
+    frame.content.modulesPriceDetails = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL), 
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_TOOLTIP),
     "LEFT", frame.content.modulesMaterials, "RIGHT", 150, 0, "modulesPriceDetails")
 
-    frame.content.modulesPriceOverride = createModuleCheckbox("Price Overrides", 
-    "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically. You can also set an item to use Craft Data as price.",
+    frame.content.modulesPriceOverride = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL),
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP),
     "TOP", frame.content.modulesPriceDetails, "TOP", 0, -20, "modulesPriceOverride")
 
-    frame.content.modulesCraftData = createModuleCheckbox("Craft Data", 
-    "Edit the saved configurations for crafting commodities of different qualities to show in tooltips and to calculate crafting costs",
+    frame.content.modulesCraftData = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_LABEL), 
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_TOOLTIP),
     "TOP", frame.content.modulesPriceOverride, "TOP", 0, -20, "modulesCraftData")
 
     -- 3. Row
-    frame.content.modulesSpecInfo = createModuleCheckbox("Specialization Info", 
-    "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
+    frame.content.modulesSpecInfo = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL), 
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP),
     "LEFT", frame.content.modulesPriceDetails, "RIGHT", 100, 0, "modulesSpecInfo")
 
-    frame.content.modulesCraftResults = createModuleCheckbox("Craft Results", 
-    "Show a crafting log and statistics about your crafts!",
+    frame.content.modulesCraftResults = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_LABEL), 
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_TOOLTIP),
     "TOP", frame.content.modulesSpecInfo, "TOP", 0, -20, "modulesCraftResults")
 
-    frame.content.modulesCostDetails = createModuleCheckbox("Cost Details",
-    "Module that shows detailed information about crafting costs",
+    frame.content.modulesCostDetails = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_LABEL),
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_TOOLTIP),
     "TOP", frame.content.modulesCraftResults, "TOP", 0, -20, "modulesCostDetails")
 
     -- 4. Row
-    frame.content.modulesRecipeScan = createModuleCheckbox("Recipe Scan",
-    "Module that scans your recipe list based on various options",
+    frame.content.modulesRecipeScan = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL),
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP),
     "LEFT", frame.content.modulesSpecInfo, "RIGHT", 125, 0, "modulesRecipeScan")
 
-    frame.content.modulesCustomerService = createModuleCheckbox("Customer Service",
-    "Module that offers various options to interact with potential customers",
+    frame.content.modulesCustomerService = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_LABEL),
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP),
     "TOP", frame.content.modulesRecipeScan, "TOP", 0, -20, "modulesCustomerService")
 
 end

@@ -41,9 +41,6 @@ Modules/CraftStatistics/Frames.lua
 Modules/CraftResults/CraftResults.lua
 Modules/CraftResults/Frames.lua
 
-Modules/RecipeScan/RecipeScan.lua
-Modules/RecipeScan/Frames.lua
-
 Modules/PriceOverride/PriceOverride.lua
 Modules/PriceOverride/Frames.lua
 
@@ -67,6 +64,9 @@ Modules/ReagentOptimization/Frames.lua
 
 Modules/TopGear/TopGear.lua
 Modules/TopGear/Frames.lua
+
+Modules/RecipeScan/RecipeScan.lua
+Modules/RecipeScan/Frames.lua
 
 Modules/PriceDetails/PriceDetails.lua
 Modules/PriceDetails/Frames.lua

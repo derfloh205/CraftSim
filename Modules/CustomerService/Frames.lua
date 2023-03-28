@@ -10,7 +10,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         parent=ProfessionsFrame, 
         sizeX=400,sizeY=300,
         frameID=CraftSim.CONST.FRAMES.CUSTOMER_SERVICE, 
-        title="CraftSim Customer Service",
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE),
         collapseable=true,
         closeable=true,
         moveable=true,
@@ -21,8 +21,8 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 
     local function createContent(frame)
         frame:Hide()
-        local recipeWhisperTab = CraftSim.FRAME:CreateTab("Recipe Whisper", frame.content, frame.title.frame, "TOP", "BOTTOM", -90, -15, true, 300, 250, frame.content, frame.title.frame, 0, -50)
-        local autoResultTab = CraftSim.FRAME:CreateTab("Live Preview", frame.content, recipeWhisperTab, "LEFT", "RIGHT", 0, 0, true, 300, 250, frame.content, frame.title.frame, 0, -50)
+        local recipeWhisperTab = CraftSim.FRAME:CreateTab(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RECIPE_WHISPER), frame.content, frame.title.frame, "TOP", "BOTTOM", -90, -15, true, 300, 250, frame.content, frame.title.frame, 0, -50)
+        local autoResultTab = CraftSim.FRAME:CreateTab(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW), frame.content, recipeWhisperTab, "LEFT", "RIGHT", 0, 0, true, 300, 250, frame.content, frame.title.frame, 0, -50)
 
         recipeWhisperTab.content.customerCharacterInput = CraftSim.FRAME:CreateInput(nil, recipeWhisperTab.content, recipeWhisperTab.content, "TOPLEFT", "TOPLEFT", 10, -30, 150, 25, 
         "", 
@@ -31,7 +31,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 
         recipeWhisperTab.content.whisperButton = CraftSim.GGUI.Button({
             parent=recipeWhisperTab.content,anchorParent=recipeWhisperTab.content.customerCharacterInput,anchorA="LEFT",anchorB="RIGHT", offsetX=10,sizeX=15,sizeY=25,adjustWidth=true,
-            label="Whisper",
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_WHISPER),
             clickCallback=function ()
                 local whisperTarget = recipeWhisperTab.content.customerCharacterInput:GetText()
                 CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
@@ -54,14 +54,15 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
             CraftSimOptions.customerServiceRecipeWhisperFormat = recipeWhisperTab.content.msgFrameContent.msgFormatBox:GetText()
         end)
 
-        recipeWhisperTab.content.messageFormatTitle = CraftSim.FRAME:CreateText("Message Format", 
-        recipeWhisperTab.content, recipeWhisperTab.content.msgFormatScrollFrame, "BOTTOMLEFT", "TOPLEFT", 8, 5)
+        recipeWhisperTab.content.messageFormatTitle = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_MESSAGE_FORMAT), 
+            recipeWhisperTab.content, recipeWhisperTab.content.msgFormatScrollFrame, "BOTTOMLEFT", "TOPLEFT", 8, 5)
 
-        recipeWhisperTab.content.messageFormatHelp = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION), recipeWhisperTab.content, recipeWhisperTab.content.messageFormatTitle, "LEFT", "RIGHT", 10, 0)
+        recipeWhisperTab.content.messageFormatHelp = CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION), 
+            recipeWhisperTab.content, recipeWhisperTab.content.messageFormatTitle, "LEFT", "RIGHT", 10, 0)
 
         recipeWhisperTab.content.resetDefaults = CraftSim.GGUI.Button({
             parent=recipeWhisperTab.content,anchorParent=recipeWhisperTab.content.messageFormatHelp,anchorA="LEFT",anchorB="RIGHT", offsetX=10,sizeX=15,sizeY=25,adjustWidth=true,
-            label="Reset to Defaults",
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RESET_TO_DEFAULT),
             clickCallback=function ()
                 local defaultFormat = 
                 "Highest Result: %gc\n" ..
@@ -73,7 +74,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
             end
         })
 
-        autoResultTab.content.enableConnections = CraftSim.FRAME:CreateCheckbox("Allow Connections", 
+        autoResultTab.content.enableConnections = CraftSim.FRAME:CreateCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS), 
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION), "customerServiceAllowAutoResult", 
         autoResultTab.content, autoResultTab.content, "TOPLEFT", "TOPLEFT", 10, -10)
 
@@ -84,7 +85,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 
         recipeWhisperTab.content.resetDefaults = CraftSim.GGUI.Button({
             parent=autoResultTab.content,anchorParent=autoResultTab.content.browserInviteInput,anchorA="LEFT",anchorB="RIGHT", offsetX=5,sizeX=15,sizeY=25,adjustWidth=true,
-            label="Send Invite",
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_SEND_INVITE),
             clickCallback=function ()
                 local whisperTarget = autoResultTab.content.browserInviteInput:GetText()
                 CraftSim.CUSTOMER_SERVICE:WhisperInvite(whisperTarget)

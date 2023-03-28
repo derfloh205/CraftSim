@@ -11,7 +11,8 @@ CraftSim.RECIPE_SCAN.SCAN_MODES = {
     Q2 = "Materials Quality 2", 
     Q3 = "Materials Quality 3", 
     OPTIMIZE_G = "Optimize for Guaranteed", 
-    OPTIMIZE_I = "Optimize for Inspiration"}
+    OPTIMIZE_I = "Optimize for Inspiration"
+}
 
     ---@type CraftSim.RecipeData[]
 CraftSim.RECIPE_SCAN.currentResults = {}
@@ -252,7 +253,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
                 recipeData:OptimizeProfit(optimizeI)
             else
                 CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
-                recipeData:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.PROFIT)
+                recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
             end
             CraftSim.UTIL:StopProfiling("Optimize ALL: SCAN")
         else
