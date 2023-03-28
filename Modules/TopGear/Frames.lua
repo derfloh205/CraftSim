@@ -82,7 +82,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         })
     
         frame.content.simulateButton = CraftSim.GGUI.Button({
-            parent=frame.content,anchorParent=frame.content.equipButton.frame,label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE), sizeX=5,sizeY=25,adjustWidth=true,
+            parent=frame.content,anchorParent=frame.content.equipButton.frame,label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE), sizeX=20,sizeY=25,adjustWidth=true,
             clickCallback=function ()
                 CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MAIN.currentRecipeData)
             end

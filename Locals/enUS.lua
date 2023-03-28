@@ -62,12 +62,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL] = "Missing Skill (Inspiration)",
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Skill: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Multicraft Item Bonus: ",
+
         -- Customer Service Module
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION] = "Enable the automatic answering with the highest possible results and material costs when someone whispers you the command and an item link for an item you can craft!",        
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] = "Each line is a seperate chat message in the whisper.\n\nYou can use following labels to insert information about the recipe:\n%gc .. link of the guaranteed result quality\n%ic .. link of the result quality reachable with inspiration\n%insp .. your inspiration chance e.g. 18%\n%mc .. your multicraft chance\n%res .. your resourcefulness chance\n%cc .. the crafting costs\n%ccd .. the detailed costs per reagent used (preferably in its own line)\n%orl .. a simple list of all used optional reagents\n%rl .. a simple list of all required reagents",        
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION] = "Enable live crafting preview connections to you via CraftSim Preview Links.\nAnyone who has CraftSim and clicks the shared link can live connect to your crafting information to check out your crafting abilities",        
         [CraftSim.CONST.TEXT.HSV_EXPLANATION] = "HSV stands for 'Hidden Skill Value' and is a hidden skill increase between 0 to 5% of your recipe difficulty whenever you craft something.\n\nThis hidden skill value can bring you to the next quality similar to inspiration.\n\nHowever, the closer you are to the next quality the higher is the chance!",        
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION] = "Check for the highest guaranteed quality the crafter can craft this recipe. And optimize for lowest crafting costs.\n\nIf toggled off. The highest reachable quality with inspiration will be optimized for crafting costs.",        
         
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] = "This is calculated by using the 'abramowitz and stegun' approximation (1985) of the CDF (Cumulative Distribution Function)\n\nYou will notice that its always around 50% for 1 craft.\nThis is because 0 is most of the time close to the average profit.\nAnd the chance of getting the mean of the CDF is always 50%.\n\nHowever, the rate of change can be very different between recipes.\nIf it is more likely to have a positive profit than a negative one, it will steadly increase.\nThis is of course also true for the other direction.",
@@ -129,19 +126,6 @@ function CraftSim.LOCAL_EN:GetData()
         "the skill from " .. f.bb("Inspiration") .. " plus the skill from " .. f.l("HSV") .. " give you enough skill to reach the next quality! This is also considered by CraftSim."
         ,
 
-        -- Options
-        [CraftSim.CONST.TEXT.MULTICRAFT_CONSTANT_EXPLANATION] = "Default: 2.5\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe maximum extra items one can receive from a multicraft proc is 1+C*y.\nWhere y is the base item amount for one craft and C is 2.5.\nHowever if you wish you can modify this value here.",
-        [CraftSim.CONST.TEXT.RESOURCEFULNESS_CONSTANT_EXPLANATION] = "Default: 0.3\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe average amount of items saved is 30% of the required quantity.\nHowever if you wish you can modify this value here.",
-
-        -- Craft Data
-        [CraftSim.CONST.TEXT.EXPECTED_CRAFTS_EXPLANATION] = "The expected number of crafts for an item is based on your " .. f.bb("Inspiration") .. ", " .. f.l("HSV Chance") .. " and " .. f.bb("Multicraft"),
-        [CraftSim.CONST.TEXT.UPGRADE_CHANCE_EXPLANATION] = "The craft chance for an item is based on your\n" .. f.bb("Inspiration ") .. "and " .. f.l("HSV Chance"),
-        [CraftSim.CONST.TEXT.EXPECTED_COSTS_EXPLANATION] = "The expected costs of an item is based on the " .. f.bb("Expected Crafts") .. ", the " .. f.bb("Crafting Costs") ..", and your "  .. f.bb("Resourcefulness") .. " and " .. f.bb("Multicraft"),
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPLANATION] = "Here you can take a " .. f.bb("'Snapshot'") .. " of your current recipe configuration for a target item\nThe saved data includes a snapshot of your current " .. f.bb("Profession Stats") .. "\nand calculates the " .. f.l("Expected Costs") .. " for an item based on that.\nYou can use " .. f.bb("Simulation Mode") .. " to finetune your configurations!",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_OVERRIDE_EXPLANATION] = "If this is checked, the item price will be the " .. f.l("Expected Costs") .. " of the saved Craft Data of this item.\nIf no Craft Data for this item exists " .. f.bb("OR") .. " the Auction House Price is lower, the Auction House price will be taken.",
-        
-        -- Cost Details
-        [CraftSim.CONST.TEXT.COST_DETAILS_EXPLANATION] = "Here you can see an overview of all possible prices of the used materials.\nThe " .. f.bb("'Used Source'") .. " column indicates which one of the prices is used.\n\n" .. f.g("AH") .. " .. Auction House Price\n" .. f.l("OR") .. " .. Price Override\n" .. f.bb("Any Name") .. " .. Expected Costs from Craft Data for this Crafter\n\n" .. f.l("OR") .. " will always be used if set. " .. f.bb("Craft Data") .. " will only be used if lower than " .. f.g("AH"),
         -- Popups
         [CraftSim.CONST.TEXT.NO_PRICE_SOURCE_WARNING] = "No price source found!\n\n" ..
         "You need to have installed at least one of the\nfollowing price source addons to\nutilize CraftSim's profit calculations:\n\n\n",
@@ -206,6 +190,7 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_DETAILS_TITLE] = "CraftSim Cost Details",
+        [CraftSim.CONST.TEXT.COST_DETAILS_EXPLANATION] = "Here you can see an overview of all possible prices of the used materials.\nThe " .. f.bb("'Used Source'") .. " column indicates which one of the prices is used.\n\n" .. f.g("AH") .. " .. Auction House Price\n" .. f.l("OR") .. " .. Price Override\n" .. f.bb("Any Name") .. " .. Expected Costs from Craft Data for this Crafter\n\n" .. f.l("OR") .. " will always be used if set. " .. f.bb("Craft Data") .. " will only be used if lower than " .. f.g("AH"),
         [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_COSTS] = "Crafting Costs: ",
         [CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER] = "Item",
         [CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER] = "AH Price",
@@ -215,6 +200,31 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Craft Data Frame
         [CraftSim.CONST.TEXT.CRAFT_DATA_TITLE] = "CraftSim Craft Data",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPLANATION] = "Here you can take a " .. f.bb("'Snapshot'") .. " of your current recipe configuration for a target item\nThe saved data includes a snapshot of your current " .. f.bb("Profession Stats") .. "\nand calculates the " .. f.l("Expected Costs") .. " for an item based on that.\nYou can use " .. f.bb("Simulation Mode") .. " to finetune your configurations!",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_RECIPE_ITEMS] = "Recipe Items",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_ALL] = "Delete for all Recipes",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_RECIPE] = "Delete for Recipe",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER] = "Crafter: ",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS] = "Expected Crafts: ",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS_EXPLANATION] = "The expected number of crafts for an item is based on your " .. f.bb("Inspiration") .. ", " .. f.l("HSV Chance") .. " and " .. f.bb("Multicraft"),
+        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTING_CHANCE] = "Crafting Chance: ",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_UPGRADE_CHANCE_EXPLANATION] = "The craft chance for an item is based on your\n" .. f.bb("Inspiration ") .. "and " .. f.l("HSV Chance"),
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS] = "Expected Costs: ",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS_EXPLANATION] = "The expected costs of an item is based on the " .. f.bb("Expected Crafts") .. ", the " .. f.bb("Crafting Costs") ..", and your "  .. f.bb("Resourcefulness") .. " and " .. f.bb("Multicraft"),
+        [CraftSim.CONST.TEXT.CRAFT_DATA_MINIMUM_COST] = "Minimum Costs: ",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_SAVE] = "Save",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_UPDATE] = "Update",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_UNREACHABLE] = "Unreachable",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE] = "Delete",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_SEND] = "Send",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_SAVED_MATERIALS] = "Saved Material Configuration",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_NO_DATA] = "No data found for this item",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_OPTIONAL_MATERIALS] = "Optional Reagents",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_ITEM_HEADER] = "Item",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER_HEADER] = "Crafter",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COST_HEADER] = "Expected Cost",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_CHANCE_HEADER] = "Chance",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_OVERRIDE_EXPLANATION] = "If this is checked, the item price will be the " .. f.l("Expected Costs") .. " of the saved Craft Data of this item.\nIf no Craft Data for this item exists " .. f.bb("OR") .. " the Auction House Price is lower, the Auction House price will be taken.",
 
         -- Statistics Frame
         [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "CraftSim Statistics",
@@ -244,6 +254,10 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RESET_TO_DEFAULT] = "Reset to Defaults",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS] = "Allow Connections",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_SEND_INVITE] = "Send Invite",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION] = "Enable the automatic answering with the highest possible results and material costs when someone whispers you the command and an item link for an item you can craft!",        
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] = "Each line is a seperate chat message in the whisper.\n\nYou can use following labels to insert information about the recipe:\n%gc .. link of the guaranteed result quality\n%ic .. link of the result quality reachable with inspiration\n%insp .. your inspiration chance e.g. 18%\n%mc .. your multicraft chance\n%res .. your resourcefulness chance\n%cc .. the crafting costs\n%ccd .. the detailed costs per reagent used (preferably in its own line)\n%orl .. a simple list of all used optional reagents\n%rl .. a simple list of all required reagents",        
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION] = "Enable live crafting preview connections to you via CraftSim Preview Links.\nAnyone who has CraftSim and clicks the shared link can live connect to your crafting information to check out your crafting abilities",        
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION] = "Check for the highest guaranteed quality the crafter can craft this recipe. And optimize for lowest crafting costs.\n\nIf toggled off. The highest reachable quality with inspiration will be optimized for crafting costs.",        
 
         -- Price Details Frame
         [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "CraftSim Price Details",
@@ -254,7 +268,17 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Price Override Frame
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE] = "CraftSim Price Overrides",
-
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_REQUIRED_REAGENTS] = "Required Reagents",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_OPTIONAL_REAGENTS] = "Optional Reagents",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_FINISHING_REAGENTS] = "Finishing Reagents",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_RESULT_ITEMS] = "Result Items",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_ACTIVE_OVERRIDES] = "Active Overrides",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_ACTIVE_OVERRIDES_TOOLTIP] = "'(as result)' -> price override only considered when item is a result of a recipe",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_CLEAR_ALL] = "Clear All",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVE] = "Save",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVED] = "Saved",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_REMOVE] = "Remove",
+        
         -- Recipe Scan Frame
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE] = "CraftSim Recipe Scan",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE] = "Scan Mode",
@@ -300,6 +324,26 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_RESOURCEFULNESS] = "Top Resourcefulness",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_CRAFTING_SPEED] = "Top Crafting Speed",
 
+        -- Options
+        [CraftSim.CONST.TEXT.OPTIONS_TITLE] = "CraftSim Options",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_TAB] = "General",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_TAB] = "Modules",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_TAB] = "Profit Calculation",
+        [CraftSim.CONST.TEXT.OPTIONS_CRAFTING_TAB] = "Crafting",
+        [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Reset Default",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_TRANSPARENCY] = "Transparency",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Material Optimizing Module",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Average Profit Module",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Top Gear Module",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Cost Overview Module",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "Specialization Info Module",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Offset Skill Breakpoints by 1",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] = "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT] = "Multicraft Constant",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION] = "Default: 2.5\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe maximum extra items one can receive from a multicraft proc is 1+C*y.\nWhere y is the base item amount for one craft and C is 2.5.\nHowever if you wish you can modify this value here.",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT] = "Resourcefulness Constant",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION] = "Default: 0.3\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe average amount of items saved is 30% of the required quantity.\nHowever if you wish you can modify this value here.",
+
         -- Control Panel
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL] = "Top Gear",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP] = "Shows the best available profession gear combination based on the selected mode",
@@ -328,5 +372,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "News",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = "Export",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "Debug",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "Control Panel",
     }
 end

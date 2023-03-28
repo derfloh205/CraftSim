@@ -8,7 +8,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame, anchorParent=ProfessionsFrame,anchorA="BOTTOM",anchorB="TOP",offsetY=-5,
         sizeX=950,sizeY=125,frameID=CraftSim.CONST.FRAMES.CONTROL_PANEL, 
-        title="CraftSim " .. currentVersion .. " - Control Panel",
+        title="CraftSim " .. currentVersion .. " - " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE),
         collapseable=true,
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,

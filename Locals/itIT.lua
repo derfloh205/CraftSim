@@ -63,6 +63,9 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Competenza: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Moltiplicatore oggetti aggiuntivi: ",
 
+        -- RecipeScan
+        [CraftSim.CONST.TEXT.FORGEFINDER_EXPLANATION] = f.l("www.wowforgefinder.com") .. "\nè un sito per la ricerca e l'offerta di " .. f.bb("Ordini d'Artigianato di WoW"),
+
         -- Materials Frame
         [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "Ottimizzazione Materiali",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "Raggiungi soglia Ispirazione",
@@ -81,8 +84,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "Specializzazioni non ancora ultimate",
 
         -- Crafting Results Frame
-        [CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE] = "Risultati Creazione di CraftSim",
-        [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG] = "Resoconto di creazione",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE] = "Risultati Artigianato di CraftSim",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG] = "Resoconto d'artigianato",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_1] = "Profitto: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_2] = "Ispirazione!",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_3] = "Creazione multipla: ",
@@ -119,15 +122,41 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_DETAILS_TITLE] = "Dettaglio Costi di CraftSim",
+        [CraftSim.CONST.TEXT.COST_DETAILS_EXPLANATION] = "In questa sezione puoi vedere una panoramica di tutti i possibili prezzi dei materiali utilizzati.\nLa colonna " .. f.bb("'Sorgente'") .. " indica quale dei prezzi è utilizzato.\n\n" .. f.g("AH") .. " .. Prezzo dell'Asta\n" .. f.l("OR") .. " .. Prezzo Modificato\n" .. f.bb("Nome") .. " .. Costi Previsti dai Dati Salvati dell'Artigiano\n\n" .. f.l("OR") .. " verrà sempre preferito se è stato impostato. " .. f.bb("Dati Salvati") .. " saranno utilizzati solo se inferiori a " .. f.g("AH"),
         [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_COSTS] = "Costi di creazione: ",
         [CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER] = "Oggetto",
         [CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER] = "Prezzo AH",
         [CraftSim.CONST.TEXT.COST_DETAILS_OVERRIDE_HEADER] = "Modifica Prezzo",
-        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFT_DATA_HEADER] = "Craft Data",
+        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFT_DATA_HEADER] = "Dati Salvati",
         [CraftSim.CONST.TEXT.COST_DETAILS_USED_SOURCE] = "Sorgente",
 
         -- Craft Data Frame
-        [CraftSim.CONST.TEXT.CRAFT_DATA_TITLE] = "CraftSim Craft Data",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_TITLE] = "Dati Salvati di CraftSim",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPLANATION] = "In questa sezione puoi prendere una " .. f.bb("'Fotografia'") .. " delle tue configurazioni per le ricette di un dato oggetto.\nLe informazioni salvate includono una fotografia delle tue attuali " .. f.bb("Statistiche di Professione") .. "\ne calcola i " .. f.l("Costi Previsti") .. " per un oggetto in base ad esse.\nPuoi usare la " .. f.bb("Modalità Simulazione") .. " per raffinare le tue configurazioni!",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_RECIPE_ITEMS] = "Oggetti della Ricetta",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_ALL] = "Cancella per tutte le ricette",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_RECIPE] = "Cancella per la ricetta",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER] = "Artigiano: ",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS] = "Creazioni previste: ",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS_EXPLANATION] = "Il numero di creazioni previsto per un oggetto in base alla tua\n" .. f.bb("Ispirazione") .. ", " .. f.l("Percentuale HSV") .. " e " .. f.bb("Creazione multipla"),
+        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTING_CHANCE] = "Probabilità: ",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_UPGRADE_CHANCE_EXPLANATION] = "La probabilità di creare un oggetto è basata sulla tua\n" .. f.bb("Ispirazione") .. " e " .. f.l("Percentuale HSV"),
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS] = "Costi previsti: ",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS_EXPLANATION] = "I costi previsti per un oggetto sono basati sul numero di\n" .. f.bb("Creazioni Previste") .. ", i " .. f.bb("Costi di Creazione") ..", e la tua "  .. f.bb("Parsimonia") .. " e " .. f.bb("Creazione multipla"),
+        [CraftSim.CONST.TEXT.CRAFT_DATA_MINIMUM_COST] = "Costi minimi: ",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_SAVE] = "Salva",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_UPDATE] = "Aggiorna",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_UNREACHABLE] = "Irraggiungibile",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE] = "Cancella",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_SEND] = "Invia",        
+        [CraftSim.CONST.TEXT.CRAFT_DATA_SAVED_MATERIALS] = "Configurazione Materiali Salvati",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_NO_DATA] = "Nessun dato per questo oggetto",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_OPTIONAL_MATERIALS] = "Reagenti Opzionali",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_ITEM_HEADER] = "Oggetto",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER_HEADER] = "Artigiano",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COST_HEADER] = "Costo previsto",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_CHANCE_HEADER] = "Probabilità",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_OVERRIDE_EXPLANATION] = "Se selezionato, il prezzo di un oggetto sarà il " .. f.l("Costo Previsto") .. " deti dati salvati per questo oggetto.\nSe non ci sono dati salvati per questo oggetto " .. f.bb("O") .. " il prezzo dell'Asta è inferiore, verrà utilizzato il prezzo dell'Asta.",
 
         -- Statistics Frame
         [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "Statistiche di CraftSim",
@@ -154,9 +183,13 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW] = "Anteprima Live",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_WHISPER] = "Sussurra",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_MESSAGE_FORMAT] = "Formato Messaggio",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RESET_TO_DEFAULT] = "Resetta al Default",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RESET_TO_DEFAULT] = "Resetta Messaggio",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS] = "Permetti Connessioni",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_SEND_INVITE] = "Manda Invito",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION] = "Abilita la risposta automatica con i risultato più alti possibili e i costi dei materiali quando qualcuno ti sussurra il comando e il link ad un oggetto che puoi creare!",        
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] = "Ogni linea è un messaggio separato nella chat dei sussurri.\n\nPuoi usare le seguenti etichette per inserire informazioni sulla ricetta:\n%gc .. collegamento alla qualità garantita\n%ic .. collegamento alla qualità raggiungibile con l'ispirazione\n%insp .. la tua percentuale di ispirazione es. 18%\n%mc .. la tua percentuale di creazione multipla\n%res .. la tua percentuale di parsimonia\n%cc .. i costi di creazione\n%ccd .. i costi dettagliati per reagente utilizzato (preferibilmente in una linea separata)\n%orl .. una lista semplice di tutti i reagenti opzionali utilizzati\n%rl .. una lista semplice di tutti i reagenti obbligatori",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION] = "Abilita le connessioni all'anteprima live del processo d'artigianato attraverso i 'Collegamenti di Anteprima di CraftSim'.\nChiunque abbia CraftSim e clicchi sul collegamento condiviso può connettersi in tempo reale alle tue informazioni per controllare le tue abilità d'artigianato",
+        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION] = "Controlla la più alta qualità garantita che l'artigiano può creare con questa ricetta e ottimizza al meglio i costi di creazione.\n\nSe disabilitato, la più alta qualità raggiungibile con l'ispirazione sarà ottimizzata in base ai costi di creazione.",
 
         -- Price Details Frame
         [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "Dettaglio Prezzi di CraftSim",
@@ -167,6 +200,16 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Price Override Frame
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE] = "Modifica Prezzi di CraftSim",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_REQUIRED_REAGENTS] = "Reagenti Obbligatori",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_OPTIONAL_REAGENTS] = "Reagenti Facoltativi",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_FINISHING_REAGENTS] = "Reagenti di Finitura",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_RESULT_ITEMS] = "Oggetti Risultanti",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_ACTIVE_OVERRIDES] = "Prezzi modificati Attivi",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_ACTIVE_OVERRIDES_TOOLTIP] = "'(as result)' -> price override only considered when item is a result of a recipe",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_CLEAR_ALL] = "Cancella Tutti",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVE] = "Salva",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVED] = "Salvato",
+        [CraftSim.CONST.TEXT.PRICE_OVERRIDE_REMOVE] = "Rimuovi",
 
         -- Recipe Scan Frame
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE] = "Scansione Ricette di CraftSim",
@@ -405,19 +448,39 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.LEATHERWORKING_DATA.NODE_IDS.BESTIAL_PRIMACY] = "Supremazia Bestiale",
         [CraftSim.LEATHERWORKING_DATA.NODE_IDS.DECAYING_GRASPS] = "Stretta Decadente",
 
+        -- Options
+        [CraftSim.CONST.TEXT.OPTIONS_TITLE] = "Opzioni di CraftSim",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_TAB] = "Generale",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_TAB] = "Moduli",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_TAB] = "Calcolo del Profitto",
+        [CraftSim.CONST.TEXT.OPTIONS_CRAFTING_TAB] = "Ottimizzazione",
+        [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Resetta",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_TRANSPARENCY] = "Trasparenza",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Modulo Ottimizzazione Materiali",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Modulo Profitto Medio",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Modulo Ottimizzazione Strumenti",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Modulo Dettaglio Prezzi",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "Modulo Info Specializzazioni",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Aggiungi 1 alla soglia di Competenza",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] = "Il suggerimento dei migliori materiali proverà a raggiungere la soglia di competenza +1 invece di cercare di raggiungere la competenza esatta richiesta",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT] = "Costante Creazione Multipla",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION] = "Default: 2.5\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe maximum extra items one can receive from a multicraft proc is 1+C*y.\nWhere y is the base item amount for one craft and C is 2.5.\nHowever if you wish you can modify this value here.",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT] = "Costante Parsimonia",
+        [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION] = "Default: 0.3\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe average amount of items saved is 30% of the required quantity.\nHowever if you wish you can modify this value here.",
+
         -- Control Panel
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL] = "Ottimizzazione Strumenti",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP] = "Mostra la miglior combinazione di strumenti per le professioni disponibile in base alla modalità scelta.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL] = "Dettaglio Prezzi",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_TOOLTIP] = "Mostra una panoramica di prezzi e profitti in base alla qualità risultante degli oggetti.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "Profitto Medio",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] = "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] = "Mostra il profitto medio in base alle tue statistiche delle professioni e 'the profit stat weights as gold per point'.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_LABEL] = "Ottimizzazione Materiali",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_TOOLTIP] = "Suggerisce i materiali più economici per raggiungere la più alta soglia di qualità/ispirazione.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Modifica Prezzi",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] = "Modifica i prezzi di qualunque materiale, materiale opzionale e risultati di creazione per tutte le ricette o per una ricetta in particolare. Puoi anche scegliere di usare di dati del 'Craft Data' come prezzo di un oggetto.",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_LABEL] = "Craft Data",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_TOOLTIP] = "Edit the saved configurations for crafting commodities of different qualities to show in tooltips and to calculate crafting costs",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] = "Modifica i prezzi di qualunque materiale, materiale opzionale e risultati di creazione per tutte le ricette o per una ricetta in particolare. Puoi anche scegliere di usare di dati della sezione 'Dati Salvati' come prezzo di un oggetto.",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_LABEL] = "Dati Salvati",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_TOOLTIP] = "Modifica le configurazioni salvate dei vari oggetti delle differenti difficoltà da mostrare nei tooltip e per calcolare i costi di creazione",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL] = "Info Specializzazioni",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP] = "Mostra come le specializzazioni della tua professione influenzano questa ricetta e permette di simulare ogni possibile configurazione!",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_LABEL] = "Risultati Creazione",
@@ -433,5 +496,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "Novità",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = "Export",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "Debug",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "Pannello di Controllo",
     }
 end

@@ -43,7 +43,8 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
 
     ---@type GGUI.Dropdown | GGUI.Widget
     craftDataFrame.content.resultsDropdown = CraftSim.GGUI.Dropdown({
-        parent=craftDataFrame.content,anchorParent=craftDataFrame.title.frame, label="Recipe Items",
+        parent=craftDataFrame.content,anchorParent=craftDataFrame.title.frame, 
+        label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_RECIPE_ITEMS),
         anchorA="TOP", anchorB="BOTTOM", offsetY=-30, width=200,
         clickCallback=function (_, _, item)
             CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(item)
@@ -53,8 +54,8 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     ---@type GGUI.Button | GGUI.Widget
     craftDataFrame.content.clearDataAll = CraftSim.GGUI.Button({
         parent=craftDataFrame.content,anchorParent=craftDataFrame.content, anchorA="TOPLEFT", anchorB="TOPLEFT", 
+        label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_ALL),
         offsetX=10, offsetY=-10, adjustWidth=true,
-        label="Delete for all Recipes",
         clickCallback=function ()
             CraftSim.CRAFTDATA:DeleteAll()
             CraftSim.MAIN:TriggerModulesErrorSafe() -- refresh all modules since it may be possible that we delete craftdata that is used here
@@ -63,7 +64,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     ---@type GGUI.Button | GGUI.Widget
     craftDataFrame.content.clearDataRecipe = CraftSim.GGUI.Button({
         parent=craftDataFrame.content,anchorParent=craftDataFrame.content.clearDataAll.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", 
-        label="Delete for Recipe", adjustWidth=true,
+        label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_RECIPE), adjustWidth=true,
         clickCallback=function ()
             CraftSim.CRAFTDATA:DeleteForRecipe()
 
@@ -122,7 +123,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     dataFrame.crafterTitle = CraftSim.GGUI.Text({
         parent=dataFrame,anchorParent=dataFrame.itemIcon.frame,
         anchorA="TOPLEFT", anchorB="TOPRIGHT", offsetX=15, offsetY=3,
-        text="Crafter: ", justifyOptions={type="H", align="LEFT"},
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER), justifyOptions={type="H", align="LEFT"},
     })
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.crafterValue = CraftSim.GGUI.Text({
@@ -134,7 +135,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     dataFrame.expectedCraftsTitle = CraftSim.GGUI.Text({
         parent=dataFrame,anchorParent=dataFrame.crafterTitle.frame,
         anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=sideTextSpacing,
-        text="Expected Crafts: ", justifyOptions={type="H", align="LEFT"},
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS), justifyOptions={type="H", align="LEFT"},
     })
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.expectedCraftsValue = CraftSim.GGUI.Text({
@@ -143,13 +144,13 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         text=1, justifyOptions={type="H", align="LEFT"},
     })
     CraftSim.GGUI.HelpIcon({parent=dataFrame, anchorParent=dataFrame.expectedCraftsValue.frame, 
-        anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EXPECTED_CRAFTS_EXPLANATION)})
+        anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS_EXPLANATION)})
 
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.chanceTitle = CraftSim.GGUI.Text({
         parent=dataFrame,anchorParent=dataFrame.expectedCraftsTitle.frame,
         anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=sideTextSpacing,
-        text="Crafting Chance: ", justifyOptions={type="H", align="LEFT"},
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTING_CHANCE), justifyOptions={type="H", align="LEFT"},
     })
 
     ---@type GGUI.Text | GGUI.Widget
@@ -160,13 +161,13 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     })
 
     CraftSim.GGUI.HelpIcon({parent=dataFrame, anchorParent=dataFrame.chanceValue.frame, 
-        anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.UPGRADE_CHANCE_EXPLANATION)})
+        anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_UPGRADE_CHANCE_EXPLANATION)})
 
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.expectedCostsTitle = CraftSim.GGUI.Text({
         parent=dataFrame,anchorParent=dataFrame.chanceTitle.frame,
         anchorA="TOPLEFT", anchorB="BOTTOMLEFT",offsetY=sideTextSpacing,
-        text="Expected Costs: ", justifyOptions={type="H", align="LEFT"},
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS), justifyOptions={type="H", align="LEFT"},
     })
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.expectedCostsValue = CraftSim.GGUI.Text({
@@ -176,13 +177,13 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     })
 
     CraftSim.GGUI.HelpIcon({parent=dataFrame, anchorParent=dataFrame.expectedCostsValue.frame, 
-        anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.EXPECTED_COSTS_EXPLANATION)})
+        anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS_EXPLANATION)})
 
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.minimumCostsTitle = CraftSim.GGUI.Text({
         parent=dataFrame,anchorParent=dataFrame.expectedCostsTitle.frame,
         anchorA="TOPLEFT", anchorB="BOTTOMLEFT",offsetY=sideTextSpacing,
-        text="Minimum Costs: ", justifyOptions={type="H", align="LEFT"},
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_MINIMUM_COST), justifyOptions={type="H", align="LEFT"},
     })
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.minimumCostsValue = CraftSim.GGUI.Text({
@@ -193,7 +194,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
 
     ---@type GGUI.Button | GGUI.Widget
     dataFrame.saveButton = CraftSim.GGUI.Button({
-        parent=dataFrame, anchorParent=dataFrame, label="Save",
+        parent=dataFrame, anchorParent=dataFrame, label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_SAVE),
         anchorA="TOP", anchorB="TOP", offsetX=-70, offsetY=-80, sizeX=60,
         clickCallback=function() 
             local selectedItem = craftDataFrame.content.resultsDropdown.selectedValue
@@ -211,19 +212,19 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     dataFrame.saveButton:SetStatusList({
         {
             statusID="SAVE",
-            label="Save",
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_SAVE),
             enabled=true,
             sizeX=60,
         },
         {
             statusID="UPDATE",
-            label="Update",
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_UPDATE),
             enabled=true,
             sizeX=60,
         },
         {
             statusID="UNREACHABLE",
-            label="Unreachable",
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_UNREACHABLE),
             enabled=false,
             sizeX=100,
         }
@@ -232,7 +233,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     ---@type GGUI.Button | GGUI.Widget
     dataFrame.deleteCraftDataButton = CraftSim.GGUI.Button({
         parent=dataFrame,anchorParent=dataFrame.saveButton.frame, anchorA="LEFT", anchorB="RIGHT", 
-        label="Delete", adjustWidth=true,
+        label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_DELETE), adjustWidth=true,
         clickCallback=function ()
             local selectedItem = craftDataFrame.content.resultsDropdown.selectedValue
             if selectedItem then
@@ -244,12 +245,12 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.savedConfigurationTitle = CraftSim.GGUI.Text({
         parent=dataFrame, anchorParent=dataFrame, anchorA="TOP", anchorB="TOP",
-        text="Saved Material Configuration", offsetY=-120
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_SAVED_MATERIALS), offsetY=-120
     })
     ---@type GGUI.Text | GGUI.Widget
     dataFrame.noDataText = CraftSim.GGUI.Text({
         parent=dataFrame, anchorParent=dataFrame, anchorA="TOP", anchorB="TOP",
-        text=CraftSim.GUTIL:ColorizeText("No data found for this item", CraftSim.GUTIL.COLORS.RED), offsetY=-120
+        text=CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_NO_DATA), CraftSim.GUTIL.COLORS.RED), offsetY=-120
     })
 
     local function createReagentFrame(anchorA, anchorParent, anchorB, anchorX, anchorY)
@@ -338,7 +339,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     dataFrame.optionalReagentsTitle = CraftSim.GGUI.Text({
         parent = dataFrame, anchorParent=dataFrame.noDataText.frame, anchorA="TOP", anchorB="BOTTOM",
         offsetY= -90,
-        text="Optional Reagents"
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_OPTIONAL_MATERIALS)
     })
 
     local iconSize = 30
@@ -393,20 +394,20 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         showHeaderLine = true,
         columnOptions={
             {
-                label="Item",
-                width=40,
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_ITEM_HEADER),
+                width=60,
                 justifyOptions={type="H", align="CENTER"},
             },
             {
-                label="Crafter",
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER_HEADER),
                 width=90
             },
             {
-                label="Expected Cost",
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COST_HEADER),
                 width=130
             },
             {
-                label="Chance",
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_CHANCE_HEADER),
                 width=80,
             },
             {
@@ -532,7 +533,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
 
     dataFrame.sendDataButton = CraftSim.GGUI.Button({
         parent=dataFrame, anchorParent=dataFrame.sendDataInput.frame,
-        anchorA="LEFT",anchorB="RIGHT", label="Send", adjustWidth=true,
+        anchorA="LEFT",anchorB="RIGHT", label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_SEND), adjustWidth=true,
         clickCallback=function ()
             local activeData = craftDataFrame.activeData
             local target = dataFrame.sendDataInput:GetText()
