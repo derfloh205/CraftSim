@@ -63,8 +63,11 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Competenza: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Moltiplicatore oggetti aggiuntivi: ",
 
-        -- RecipeScan
-        [CraftSim.CONST.TEXT.FORGEFINDER_EXPLANATION] = f.l("www.wowforgefinder.com") .. "\nè un sito per la ricerca e l'offerta di " .. f.bb("Ordini d'Artigianato di WoW"),
+        -- Popups
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM] = "Nessuna Sorgente dei Prezzi Disponibile!",
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_TITLE] = "Avviso di CraftSim sulle Sorgenti dei Prezzi",
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] = "Nessuna sorgente dei prezzi trovata!\n\nDevi installare almeno uno dei seguenti\naddon per le sorgenti dei prezzi da utilizzare\nnei calcoli di profitto di CraftSim:\n\n\n",
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Non mostrare di nuovo l'avviso",
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "Ottimizzazione Materiali",
@@ -76,6 +79,7 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Materiali più economici",
         [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "Miglior combinazione assegnata",
         [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "Nessuna combinazione trovata\nper incrementare la qualità",
+        [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "Assegna",
 
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "Info Specializzazioni di CraftSim",
@@ -451,10 +455,24 @@ function CraftSim.LOCAL_IT:GetData()
         -- Options
         [CraftSim.CONST.TEXT.OPTIONS_TITLE] = "Opzioni di CraftSim",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_TAB] = "Generale",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_PRICE_SOURCE] = "Sorgenti dei Prezzi",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_CURRENT_PRICE_SOURCE] = "Attuale Sorgente dei Prezzi: ",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_NO_PRICE_SOURCE] = "Nessun addon supportato di Sorgente Prezzi caricato!",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT] = "Mostra Percentuale di Profitto",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP] = "Show the percentage of profit to crafting costs besides the gold value",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE] = "Ricorda ultima ricetta",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP] = "Riapre l'ultima ricetta selezionata quando si riapre la finestra della professione",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP] = "Informazioni dettagliate sull'ultima creazione",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP] = "Mostra un resoconto completo dell'ultima combinazione di materiali utilizzata nel tooltip di un oggetto",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "Sorgenti dei Prezzi supportate:",
+        [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "Abilita pulizia RAM durante la creazione",
+        [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP] = "Quando abilitato, CraftSim eliminerà dalla RAM i dati inutilizzati ogni numero di oggetti creati specificato per prevenire l'aumento della memoria occupata.\nL'aumento di memoria occupata può anche avvenire a causa di altri addon diversi da CraftSim.\nLa pulizia riguarda tutta la RAM utilizzata dagli addon di WOW.",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TAB] = "Moduli",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_TAB] = "Calcolo del Profitto",
         [CraftSim.CONST.TEXT.OPTIONS_CRAFTING_TAB] = "Ottimizzazione",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Resetta",
+        [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Espressione non valida",
+        [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Espressione valida",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TRANSPARENCY] = "Trasparenza",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Modulo Ottimizzazione Materiali",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Modulo Profitto Medio",
@@ -494,7 +512,9 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Resetta posizioni finestre",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Opzioni",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "Novità",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = "Export",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = "Esporta per " .. f.l("ForgeFinder"),
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING] = "Esportazione",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPLANATION] = f.l("www.wowforgefinder.com") .. "\nè un sito per la ricerca e l'offerta di " .. f.bb("Ordini d'Artigianato di WoW"),
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "Debug",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "Pannello di Controllo",
     }

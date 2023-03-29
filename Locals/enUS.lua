@@ -127,11 +127,10 @@ function CraftSim.LOCAL_EN:GetData()
         ,
 
         -- Popups
-        [CraftSim.CONST.TEXT.NO_PRICE_SOURCE_WARNING] = "No price source found!\n\n" ..
-        "You need to have installed at least one of the\nfollowing price source addons to\nutilize CraftSim's profit calculations:\n\n\n",
-
-        -- RecipeScan
-        [CraftSim.CONST.TEXT.FORGEFINDER_EXPLANATION] = f.l("www.wowforgefinder.com") .. "\nis a website to search and offer " .. f.bb("WoW Crafting Orders"),
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM] = "No Supported Price Source Available!",
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_TITLE] = "CraftSim Price Source Warning",
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] = "No price source found!\n\nYou need to have installed at least one of the\nfollowing price source addons to\nutilize CraftSim's profit calculations:\n\n\n",
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Do not show warning again",
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "CraftSim Material Optimization",
@@ -327,10 +326,24 @@ function CraftSim.LOCAL_EN:GetData()
         -- Options
         [CraftSim.CONST.TEXT.OPTIONS_TITLE] = "CraftSim Options",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_TAB] = "General",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_PRICE_SOURCE] = "Price Source",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_CURRENT_PRICE_SOURCE] = "Current Price Source: ",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_NO_PRICE_SOURCE] = "No Supported Price Source Addon loaded!",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT] = "Show Profit Percentage",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP] = "Show the percentage of profit to crafting costs besides the gold value",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE] = "Remember Last Recipe",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP] = "Reopen last selected recipe when opening the crafting window",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP] = "Detailed Last Crafting Information",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP] = "Show the complete breakdown of your last used material combination in an item tooltip",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "Supported Price Sources:",
+        [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "Enable RAM cleanup while crafting",
+        [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP] = "When enabled, CraftSim will clear your RAM every specified number of crafts from unused data to prevent memory from building up.\nMemory Build Up can also happen because of other addons and is not CraftSim specific.\nA cleanup will affect the whole WoW RAM Usage.",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TAB] = "Modules",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_TAB] = "Profit Calculation",
         [CraftSim.CONST.TEXT.OPTIONS_CRAFTING_TAB] = "Crafting",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Reset Default",
+        [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Expression Invalid",
+        [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Expression Valid",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TRANSPARENCY] = "Transparency",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Material Optimizing Module",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Average Profit Module",
@@ -370,7 +383,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Reset Frame Positions",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Options",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "News",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = "Export",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = f.l("ForgeFinder") .. " Export",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING] = "Exporting",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPLANATION] = f.l("www.wowforgefinder.com") .. "\nis a website to search and offer " .. f.bb("WoW Crafting Orders"),
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "Debug",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "Control Panel",
     }

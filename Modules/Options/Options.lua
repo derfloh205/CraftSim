@@ -102,9 +102,9 @@ function CraftSim.OPTIONS:Init()
         local expression = tsmMaterialsPriceExpression:GetText()
         local isValid = TSM_API.IsCustomPriceValid(expression)
         if not isValid then
-            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText("Expression Invalid", CraftSim.GUTIL.COLORS.RED))
+            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION), CraftSim.GUTIL.COLORS.RED))
         else
-            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
+            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
             CraftSimOptions.tsmPriceKeyMaterials = tsmMaterialsPriceExpression:GetText()
         end
     end)
@@ -123,7 +123,7 @@ function CraftSim.OPTIONS:Init()
 
     local validationInfoMaterials = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoMaterials', 'OVERLAY', 'GameFontNormal')
     validationInfoMaterials:SetPoint("TOPLEFT", tsmMaterialsPriceExpression, "TOPRIGHT",  5, 0)
-    validationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
+    validationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
 
     local tsmItemsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionItems", TSMTab.content, "InputBoxTemplate")
     tsmItemsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -200)
@@ -138,9 +138,9 @@ function CraftSim.OPTIONS:Init()
         local expression = tsmItemsPriceExpression:GetText()
         local isValid = TSM_API.IsCustomPriceValid(expression)
         if not isValid then
-            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.GUTIL:ColorizeText("Expression Invalid", CraftSim.GUTIL.COLORS.RED))
+            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION), CraftSim.GUTIL.COLORS.RED))
         else
-            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
+            CraftSimTSMStringValidationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
             CraftSimOptions.tsmPriceKeyItems = tsmItemsPriceExpression:GetText()
         end
     end)
@@ -159,7 +159,7 @@ function CraftSim.OPTIONS:Init()
 
     local validationInfoItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoItems', 'OVERLAY', 'GameFontNormal')
     validationInfoItems:SetPoint("TOPLEFT", tsmItemsPriceExpression, "TOPRIGHT",  5, 0)
-    validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText("Expression Valid", CraftSim.GUTIL.COLORS.GREEN))
+    validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
 
     CraftSim.FRAME:InitTabSystem({generalTab, tooltipTab, TSMTab, ModulesTab, ProfitCalculationTab, CraftingTab}) -- AccountSyncTab
 
@@ -173,9 +173,9 @@ function CraftSim.OPTIONS:Init()
             })
         end
         CraftSim.OPTIONS.priceSourceDropdown = CraftSim.GGUI.Dropdown({
-            parent=generalTab.content, anchorParent=generalTab.content, label="Price Source", anchorA="TOP", anchorB="TOP",
-            offsetY=-50, width=200, initialData=priceSourceAddonsDropdownData, initialValue=CraftSim.PRICE_API.name,
-            initialLabel=CraftSim.PRICE_API.name,
+            parent=generalTab.content, anchorParent=generalTab.content, label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_PRICE_SOURCE),
+            anchorA="TOP", anchorB="TOP", offsetY=-50, width=200,
+            initialData=priceSourceAddonsDropdownData, initialValue=CraftSim.PRICE_API.name, initialLabel=CraftSim.PRICE_API.name,
             clickCallback=function(_, _, value) 
                 CraftSim.PRICE_APIS:SwitchAPIByAddonName(value)
                 CraftSimOptions.priceSource = value
@@ -184,11 +184,11 @@ function CraftSim.OPTIONS:Init()
     elseif #priceSourceAddons == 1 then
         local info = generalTab.content:CreateFontString('info', 'OVERLAY', 'GameFontNormal')
         info:SetPoint("TOP", 0, -50)
-        info:SetText("Current Price Source: " .. tostring(CraftSim.PRICE_API.name))
+        info:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_CURRENT_PRICE_SOURCE) .. " " .. tostring(CraftSim.PRICE_API.name))
     else
         local warning = generalTab.content:CreateFontString('warning', 'OVERLAY', 'GameFontNormal')
         warning:SetPoint("TOP", 0, -50)
-        warning:SetText("No Supported Price Source Addon loaded!")
+        warning:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_NO_PRICE_SOURCE))
     end
 
     local materialSuggestionTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimMaterialSlider", 
@@ -291,8 +291,8 @@ function CraftSim.OPTIONS:Init()
     CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION), ProfitCalculationTab.content, customResourcefulnessConstantInput, "RIGHT", "LEFT", -5, 0)
 
     
-    local precentProfitCheckbox = CraftSim.FRAME:CreateCheckbox(" Show Profit Percentage", 
-    "Show the percentage of profit to crafting costs besides the gold value",
+    local precentProfitCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT), 
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP),
     "showProfitPercentage", 
     generalTab.content, 
     generalTab.content, 
@@ -302,8 +302,8 @@ function CraftSim.OPTIONS:Init()
     -90)
 
 
-    local openLastRecipeCheckbox = CraftSim.FRAME:CreateCheckbox(" Remember Last Recipe", 
-    "Reopen last selected recipe when opening the crafting window",
+    local openLastRecipeCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE),
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP),
     "openLastRecipe", 
     generalTab.content, 
     precentProfitCheckbox, 
@@ -312,8 +312,8 @@ function CraftSim.OPTIONS:Init()
     0, 
     -20)
 
-    local detailedTooltips = CraftSim.FRAME:CreateCheckbox(" Detailed Last Crafting Information", 
-    "Show the complete breakdown of your last used material combination in an item tooltip",
+    local detailedTooltips = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP), 
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP),
     "detailedCraftingInfoTooltip", 
     tooltipTab.content, 
     tooltipTab.content, 
@@ -360,10 +360,10 @@ function CraftSim.OPTIONS:Init()
 
     local supportedPriceSources = generalTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -200)
-    supportedPriceSources:SetText("Supported Price Sources:\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
+    supportedPriceSources:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES) .. "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
 
-     local enableGarbageCollectWhenCraftingCB = CraftSim.FRAME:CreateCheckbox(" Enable RAM cleanup while crafting", 
-        "When enabled, CraftSim will clear your RAM every specified number of crafts from unused data to prevent memory from building up.\nMemory Build Up can also happen because of other addons and is not CraftSim specific.\nA cleanup will affect the whole WoW RAM Usage.",
+     local enableGarbageCollectWhenCraftingCB = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM), 
+     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP),
     "craftGarbageCollectEnabled",
     CraftingTab.content, 
     CraftingTab.content,

@@ -105,7 +105,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
                 -- update button
                 local currentPercent = CraftSim.GUTIL:Round(currentIndex / (numRecipes / 100))
 
-                CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText("Exporting "..currentPercent.."%")
+                CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING) .. " " .. currentPercent.."%")
                 C_Timer.After(0.001, mapRecipe)
             else
                 -- if finished
@@ -116,7 +116,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
         end     
 
         CraftSim.UTIL:StartProfiling("FORGEFINDER_EXPORT") 
-        CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText("Exporting 0%")
+        CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING) .. " 0%")
         CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetEnabled(false)
         mapRecipe()
     end

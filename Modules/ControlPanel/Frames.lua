@@ -56,7 +56,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     })
 
     frame.content.exportForgeFinderButton = CraftSim.GGUI.Button({
-        label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT),
+        label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT),
         parent=frame.content,anchorParent=frame.content.debugButton.frame,anchorA="RIGHT", anchorB="LEFT", sizeX=15,sizeY=25,adjustWidth=true,
         clickCallback=function() 
             CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
@@ -67,14 +67,14 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     frame.content.exportForgeFinderButton:SetStatusList({
         {
             statusID = "READY",
-            label=CraftSim.GUTIL:ColorizeText("ForgeFinder", CraftSim.GUTIL.COLORS.LEGENDARY) .. " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT),
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT),
             enabled=true,
         }
     })
 
     CraftSim.GGUI.HelpIcon({
         parent=frame.content,anchorParent=frame.content.exportForgeFinderButton.frame, anchorA="RIGHT", anchorB="LEFT", offsetX=-3,
-        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FORGEFINDER_EXPLANATION)
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPLANATION)
     })
 
     frame.content.optionsButton = CraftSim.GGUI.Button({
