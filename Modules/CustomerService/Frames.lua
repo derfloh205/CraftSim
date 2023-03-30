@@ -75,8 +75,8 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         })
 
         autoResultTab.content.enableConnections = CraftSim.FRAME:CreateCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS), 
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION), "customerServiceAllowAutoResult", 
-        autoResultTab.content, autoResultTab.content, "TOPLEFT", "TOPLEFT", 10, -10)
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION),
+            "customerServiceAllowAutoResult", autoResultTab.content, autoResultTab.content, "TOPLEFT", "TOPLEFT", 10, -10)
 
         autoResultTab.content.browserInviteInput = CraftSim.FRAME:CreateInput(nil, autoResultTab.content, autoResultTab.content.enableConnections, "TOPLEFT", "BOTTOMLEFT", 0, 0, 150, 25, 
         "", 
@@ -103,7 +103,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
     local frame = CraftSim.GGUI.Frame({
         parent=UIParent,anchorParent=UIParent,sizeX=500,sizeY=500,frameID=CraftSim.CONST.FRAMES.LIVE_PREVIEW, frameStrata="DIALOG",
         closeable=true,collapseable=true, moveable=true,
-        title="CraftSim Live Preview",
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_TITLE),
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
     })
 
@@ -116,20 +116,23 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(recipeID, true) 
         end
 
-        frame.content.previewTitle = CraftSim.FRAME:CreateText("Crafter's Profession", frame.content, frame.title.frame, "TOP", "BOTTOM", 0, -10)
+        frame.content.previewTitle = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTER_PROFESSION), 
+            frame.content, frame.title.frame, "TOP", "BOTTOM", 0, -10)
 
         frame.content.recipeDropdown = CraftSim.GGUI.Dropdown({
             parent=frame.content, anchorParent=frame.content.previewTitle, anchorA="TOP", anchorB="TOP",
-            label="Learned Recipes", offsetY=-30, sizeX=200, clickCallback=onRecipeSelected, initialValue="Select Recipe",
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES), 
+            offsetY=-30, sizeX=200, clickCallback=onRecipeSelected, 
+            initialValue=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES_INITIAL),
         })
 
-        local requestingUpdate = "Requesting Update"
+        local requestingUpdate = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUESTING_UPDATE)
         frame.content.loadingText = CraftSim.FRAME:CreateText(requestingUpdate, frame.content, frame.content.recipeDropdown.frame, "LEFT", "RIGHT", -20, 5, 0.8, nil, {type="H", value="LEFT"})
         frame.content.isUpdating = false
         frame.content.updates = {}
         local function checkForTimeOut(updateID)
             if tContains(frame.content.updates, updateID) then
-                frame.content.loadingText:SetText(CraftSim.GUTIL:ColorizeText("Timeout (Player Offline?)", CraftSim.GUTIL.COLORS.RED))
+                frame.content.loadingText:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TIMEOUT), CraftSim.GUTIL.COLORS.RED))
                 frame.content.StopUpdate(true)
             end
         end
@@ -173,8 +176,10 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             CraftSim.CUSTOMER_SERVICE.SendRecipeUpdateRequest(frame.currentRecipeID)
         end
 
-        frame.content.guaranteeCB = CraftSim.FRAME:CreateCheckboxCustomCallback("Highest Guaranteed", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION),
-        false, onCheckboxChecked, frame.content, frame.content.recipeDropdown.frame, "TOPLEFT", "BOTTOMLEFT", 17, 0)
+        frame.content.guaranteeCB = CraftSim.FRAME:CreateCheckboxCustomCallback(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX),
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION),
+            false, onCheckboxChecked, frame.content, frame.content.recipeDropdown.frame, "TOPLEFT", "BOTTOMLEFT", 17, 0)
+
         local dropdownWidth = 120
         local dropdownOffsetX = 70
         local dropdownBaseY = 0
@@ -206,31 +211,35 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
 
         
         frame.content.optionalDropdowns = {
-            CreateReagentInputDropdown("Optional 1", - dropdownOffsetX, dropdownBaseY),
-            CreateReagentInputDropdown("Optional 2", - dropdownOffsetX, dropdownBaseY + dropdownSpacingY),
-            CreateReagentInputDropdown("Optional 3", - dropdownOffsetX, dropdownBaseY + dropdownSpacingY*2),
+            CreateReagentInputDropdown(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_OPTIONAL) .. " 1", - dropdownOffsetX, dropdownBaseY),
+            CreateReagentInputDropdown(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_OPTIONAL) .. " 2", - dropdownOffsetX, dropdownBaseY + dropdownSpacingY),
+            CreateReagentInputDropdown(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_OPTIONAL) .. " 3", - dropdownOffsetX, dropdownBaseY + dropdownSpacingY*2),
 
-            CreateReagentInputDropdown("Finishing 1", dropdownOffsetX, dropdownBaseY),
-            CreateReagentInputDropdown("Finishing 2", dropdownOffsetX, dropdownBaseY + dropdownSpacingY),
+            CreateReagentInputDropdown(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_FINISHING) .. " 1", dropdownOffsetX, dropdownBaseY),
+            CreateReagentInputDropdown(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_FINISHING) .. " 2", dropdownOffsetX, dropdownBaseY + dropdownSpacingY),
         } 
         
-        frame.content.craftingCosts = CraftSim.FRAME:CreateText("Crafting Costs\n" .. CraftSim.GUTIL:FormatMoney(0), frame.content, frame.content.optionalDropdownGroup, "TOP", "BOTTOM", 0, -20)
+        frame.content.craftingCosts = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTING_COSTS) .. "\n" .. CraftSim.GUTIL:FormatMoney(0), 
+            frame.content, frame.content.optionalDropdownGroup, "TOP", "BOTTOM", 0, -20)
         
-        frame.content.expectedResultTitle = CraftSim.FRAME:CreateText("Expected Result", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", -80, -10, nil, nil)
+        frame.content.expectedResultTitle = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_RESULTS), 
+            frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", -80, -10, nil, nil)
         
         frame.content.expectedResultIcon = CraftSim.GGUI.Icon({
             parent=frame.content,anchorParent=frame.content.expectedResultTitle,
             sizeX=40, sizeY=40, offsetY=-10, anchorA="TOP", anchorB="BOTTOM"
         })
         
-        frame.content.expectedInspirationPercent = CraftSim.FRAME:CreateText("100% Chance for", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 80, -10, nil, nil)
+        frame.content.expectedInspirationPercent = CraftSim.FRAME:CreateText("100% " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_INSPIRATION),
+            frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 80, -10, nil, nil)
         
         frame.content.expectedInspirationIcon = CraftSim.GGUI.Icon({
             parent=frame.content,anchorParent=frame.content.expectedInspirationPercent,
             sizeX=40, sizeY=40, offsetY=-10, anchorA="TOP", anchorB="BOTTOM"
         })
         
-        frame.content.reagentDetailsTitle = CraftSim.FRAME:CreateText("Required Materials", frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 0, -80)
+        frame.content.reagentDetailsTitle = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUIRED_MATERIALS),
+            frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 0, -80)
         
         local function createReagentFrame(anchorA, anchorParent, anchorB, anchorX, anchorY)
             local iconSize = 30
@@ -350,7 +359,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     previewFrame.content.guaranteeCB:Hide()
 
 
-    previewFrame.content.recipeDropdown:SetData({data=convertToDropdownListData(recipes), initialValue="Select Recipe"})
+    previewFrame.content.recipeDropdown:SetData({data=convertToDropdownListData(recipes), initialValue=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES_INITIAL)})
 
     previewFrame:Show()
 end
@@ -364,8 +373,8 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
     local supportsQualities = payload.supportsQualities
 
     if resultData.canUpgradeQuality then
-        local upgradeChanceText = payload.upgradeChance .. "%"
-        previewFrame.content.expectedInspirationPercent:SetText(upgradeChanceText .. " Chance for")
+        local upgradeChanceText = payload.upgradeChance .. "% "
+        previewFrame.content.expectedInspirationPercent:SetText(upgradeChanceText .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_INSPIRATION))
         previewFrame.content.expectedInspirationIcon:SetItem(resultData.expectedItemUpgrade, nil, nil, true)
         previewFrame.content.expectedInspirationIcon:Show()
         previewFrame.content.expectedInspirationPercent:Show()
@@ -450,11 +459,11 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
                 dropdown:Show()
                 if not optionalReagentSlot.locked then
                     local dropdownListData = convertOptionalReagentsToDropdownListData(optionalReagentSlot.possibleReagents)
-                    dropdown:SetData({data=dropdownListData, initialValue="None"})
+                    dropdown:SetData({data=dropdownListData, initialValue=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_NONE)})
                     --CraftSim.FRAME:initializeDropdownByData(dropdown, dropdownListData, "None", true)
                     dropdown.selectedValue = nil
                 else
-                    dropdown:SetData({data={}, initialValue=CraftSim.GUTIL:ColorizeText("Locked", CraftSim.GUTIL.COLORS.RED)})
+                    dropdown:SetData({data={}, initialValue=CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED), CraftSim.GUTIL.COLORS.RED)})
                     --CraftSim.FRAME:initializeDropdownByData(dropdown, {}, CraftSim.GUTIL:ColorizeText("Locked", CraftSim.GUTIL.COLORS.RED))
                     dropdown.selectedValue = nil
                 end
@@ -468,6 +477,6 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
 
     end
 
-    previewFrame.content.craftingCosts:SetText("Crafting Costs\n" .. CraftSim.GUTIL:FormatMoney(craftingCosts))
+    previewFrame.content.craftingCosts:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTING_COSTS) .. "\n" .. CraftSim.GUTIL:FormatMoney(craftingCosts))
     previewFrame.content.craftingCosts:Show()
 end
