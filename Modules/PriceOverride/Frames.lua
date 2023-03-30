@@ -17,7 +17,7 @@ CraftSim.PRICE_OVERRIDE.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE)
 
 function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
-    local sizeX = 400
+    local sizeX = 450
     local sizeY = 300
 
     local frameNO_WO = CraftSim.GGUI.Frame({
@@ -180,7 +180,8 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         })
 
         
-        frame.content.activeOverridesBox.overrideList = CraftSim.FRAME:CreateText("", frame.content.activeOverridesBox, frame.content.activeOverridesBox, "TOPLEFT", "TOPLEFT", 0, 0, 0.85, nil, {type="H", value="LEFT"})
+        frame.content.activeOverridesBox.overrideList = CraftSim.FRAME:CreateText("", frame.content.activeOverridesBox, frame.content.activeOverridesBox, 
+            "TOPLEFT", "TOPLEFT", 0, 0, 0.85, nil, {type="H", value="LEFT"})
         CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
     end
 
