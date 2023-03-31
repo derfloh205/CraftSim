@@ -175,7 +175,8 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9] = "Resourcefulness Procs: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10] = "- Ø Saved Costs: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_11] = "Profit: ",
-
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_SAVED_REAGENTS] = "Saved Reagents",
+        
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "CraftSim Average Profit",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_EXPLANATION_TITLE] = "CraftSim Average Profit Explanation",

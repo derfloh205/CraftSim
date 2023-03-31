@@ -89,7 +89,7 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Crafting Results Frame
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE] = "Risultati Artigianato di CraftSim",
-        [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG] = "Resoconto d'artigianato",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG] = "Resoconto prodotto finale",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_1] = "Profitto: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_2] = "Ispirazione!",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_3] = "Creazione multipla: ",
@@ -112,6 +112,7 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9] = "Attivazioni Parsimonia: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10] = "- Ø Risparmio: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_11] = "Profitto: ",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_SAVED_REAGENTS] = "Reagenti risparmiati",
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "Profitto Medio di CraftSim",
@@ -258,7 +259,7 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC_TOOLTIP] = "Simula automaticamente i migliori strumenti in base alla modalità selezionata ogni volta che si cambia ricetta.\n\nDisabilitando questa impostazione possono aumentare le prestazioni.",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE] = "Simula",
         [CraftSim.CONST.TEXT.TOP_GEAR_EQUIP] = "Equipaggia",
-        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_QUALITY] = "Qualità: ",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_QUALITY] = "Qualità",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_EQUIPPED] = "Strumenti migliori equipaggiati",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE] = "Ø Differenza Profitto\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_MUTLICRAFT] = "Nuova Creazione Multipla\n",

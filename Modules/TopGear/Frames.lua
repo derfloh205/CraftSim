@@ -126,7 +126,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
     
         frame.content.statDiff.quality = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         frame.content.statDiff.quality:SetPoint("TOP", frame.content.statDiff, "TOP", -5, statTxtSpacingY*6)
-        frame.content.statDiff.quality:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_QUALITY))
+        frame.content.statDiff.quality:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_QUALITY) .. ": ")
     
         frame.content.statDiff.qualityIcon = CraftSim.GGUI.QualityIcon({
             parent=frame.content,anchorParent=frame.content.statDiff.quality,anchorA="LEFT",anchorB="RIGHT",offsetX=3,
