@@ -299,8 +299,8 @@ function CraftSim.LOCAL_IT:GetData()
         
         [CraftSim.TAILORING_DATA.NODE_IDS.TAILORING_MASTERY] = "Maestria del Sarto",
         [CraftSim.TAILORING_DATA.NODE_IDS.CLOTH_COLLECTION] = "Collezione di Stoffe",
-        [CraftSim.TAILORING_DATA.NODE_IDS.SPARING_SEWING] = "Cucito Accorto",
-        [CraftSim.TAILORING_DATA.NODE_IDS.SHREWD_STITCHERY] = "Sartoria Parsimoniosa",
+        [CraftSim.TAILORING_DATA.NODE_IDS.SPARING_SEWING] = "Sartoria Parsimoniosa",
+        [CraftSim.TAILORING_DATA.NODE_IDS.SHREWD_STITCHERY] = "Cucito Accorto",
         [CraftSim.TAILORING_DATA.NODE_IDS.TEXTILES] = "Tessuti",
         [CraftSim.TAILORING_DATA.NODE_IDS.SPINNING] = "Filatura",
         [CraftSim.TAILORING_DATA.NODE_IDS.WEAVING] = "Tessitura",
