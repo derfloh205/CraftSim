@@ -10,6 +10,12 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.6.0") ..
+        f.P .. f.g("10.1 Fixes") ..
+        f.p .. "I also want to apologize for not updating a lot in the recent weeks." ..
+        f.a .. "It seems that being a father eats up A LOT of time." ..
+        f.a .. "Recently I am trying to get more time for CraftSim again!" ..
+        f.a .. "I am also thinking about adding a patreon." ..
         newP("8.5.1") ..
         f.P .. "Optimized the " .. f.bb("Material Cost Optimization") .. f.g(" significantly") ..
         f.a .. "Optimizing high reagent count recipes now takes" .. 
