@@ -1,4 +1,4 @@
-## Interface: 100005
+## Interface: 100100
 
 ## Title: Lib: Genju UTIL
 ## Notes: Table Util Functions, Formatter, Builder and more
