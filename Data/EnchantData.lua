@@ -63,6 +63,12 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     [390951] = {name = "Illusory Adornment: Fire", q1 = 200614, q2 = 200615, q3 = 200616},
     [391810] = {name = "Illusory Adornment: Air", q1 = 201318, q2 = 201317, q3 = 201316},
     [391812] = {name = "Illusory Adornment: Order", q1 = 201321, q2 = 201320, q3 = 201319},
+    
+    --- 10.1 Additions
+    
+    [404859] = {name = "Spore Tender", q1 = 204613, q2 = 204614, q3 = 204615},
+    [405076] = {name = "Shadowflame Wreathe", q1 = 204621, q2 = 204622, q3 = 204623},
+    [405650] = {name = "Illusory Adornment: Spores", q1 = 204568, q2 = 204565, q3 = 204567},
 
     -- Old World
     [55016] = {name = "Nitro Boosts", q1 = 41118},

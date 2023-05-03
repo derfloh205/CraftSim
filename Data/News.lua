@@ -23,10 +23,10 @@ function CraftSim.NEWS:GET_NEWS()
         f.p .. "Fixed the Profession Gear Stat parsing now using" ..
         f.a .. "a different tooltip property after 10.1" ..
         f.p .. "Added an additional dropdown to the frame pool in" ..
-        f.a .. f.g("Simulation Mode") .. "to consider the new" .. 
+        f.a .. f.g("Simulation Mode") .. " to consider the new" .. 
         f.a .. "optional spark slot in 10.1" ..
-        f.p .. "Added data for new optional reagents in 10.1" ..
-
+        f.p .. "Added data for " .. f.g("new optional reagents") .. " in 10.1" ..
+        f.p .. "Added data for " .. f.g("new enchanting recipes") .. " in 10.1" ..
         newP("8.5.1") ..
         f.P .. "Optimized the " .. f.bb("Material Cost Optimization") .. f.g(" significantly") ..
         f.a .. "Optimizing high reagent count recipes now takes" .. 
