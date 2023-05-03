@@ -62,22 +62,25 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 	local inspirationMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION)
 	local resourcefulnessMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS)
 	local multicraftMatchString = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT)
+	--print("TooltipData lines:")
+	--print(tooltipData.lines, true)
 	for _, line in pairs(tooltipData.lines) do
-		for _, arg in pairs(line.args) do
-			if arg.stringVal and string.find(arg.stringVal, equipMatchString) then
+		local lineText = line.leftText -- 10.1 Change
+		--for _, arg in pairs(line.args) do
+			if lineText and string.find(lineText, equipMatchString) then
 				-- here the stringVal looks like "Equip: +6 Blacksmithing Skill"
-				parsedSkill = tonumber(string.match(arg.stringVal, "(%d+)")) or 0
+				parsedSkill = tonumber(string.match(lineText, "(%d+)")) or 0
 			end
-			if arg.stringVal and string.find(arg.stringVal, enchantedMatchString) then
-				if string.find(arg.stringVal, inspirationMatchString) then
-					parsedEnchantingStats.inspiration = tonumber(string.match(arg.stringVal, "%+(%d+)")) or 0
-				elseif string.find(arg.stringVal, resourcefulnessMatchString) then
-					parsedEnchantingStats.resourcefulness = tonumber(string.match(arg.stringVal, "%+(%d+)")) or 0
-				elseif string.find(arg.stringVal, multicraftMatchString) then
-					parsedEnchantingStats.multicraft = tonumber(string.match(arg.stringVal, "%+(%d+)")) or 0
+			if lineText and string.find(lineText, enchantedMatchString) then
+				if string.find(lineText, inspirationMatchString) then
+					parsedEnchantingStats.inspiration = tonumber(string.match(lineText, "%+(%d+)")) or 0
+				elseif string.find(lineText, resourcefulnessMatchString) then
+					parsedEnchantingStats.resourcefulness = tonumber(string.match(lineText, "%+(%d+)")) or 0
+				elseif string.find(lineText, multicraftMatchString) then
+					parsedEnchantingStats.multicraft = tonumber(string.match(lineText, "%+(%d+)")) or 0
 				end
 			end
-		end
+		--end
 	end
 
     if parsedSkill > 0 then
