@@ -12,14 +12,14 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                                 ( You are awesome! )") ..
         newP("8.6.0") ..
         f.P .. f.g("10.1 Fixes") ..
-        f.s .. f.r("Warning: ") .. "Specialization Info might be out of date" ..
-        f.a .. "for some of the new recipes added with 10.1 until" ..
-        f.a .. "it is manually updated" .. 
-        f.s .. "I also want to apologize for not updating a lot" .. 
+        f.s .. "I want to apologize for not updating a lot" .. 
         f.a .. "in the recent weeks." ..
         f.a .. "It seems that being a father eats up A LOT of time." ..
         f.a .. "Recently I am trying to get more time for CraftSim again!" ..
         f.a .. "I am also thinking about adding a patreon." ..
+        f.s .. f.r("Warning: ") .. "Specialization Info might be out of date" ..
+        f.a .. "for some of the new recipes added with 10.1 until" ..
+        f.a .. "it is manually updated" .. 
         f.p .. "Fixed the Profession Gear Stat parsing now using" ..
         f.a .. "a different tooltip property after 10.1" ..
         f.p .. "Added an additional dropdown to the frame pool in" ..
