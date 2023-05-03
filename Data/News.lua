@@ -10,7 +10,7 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
-        newP("8.6.0") ..
+        newP("8.6.1") ..
         f.P .. f.g("10.1 Fixes") ..
         f.s .. "I want to apologize for not updating a lot" .. 
         f.a .. "in the recent weeks." ..
@@ -27,6 +27,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "optional spark slot in 10.1" ..
         f.p .. "Added data for " .. f.g("new optional reagents") .. " in 10.1" ..
         f.p .. "Added data for " .. f.g("new enchanting recipes") .. " in 10.1" ..
+        f.p .. "Game Version Update" ..
         newP("8.5.1") ..
         f.P .. "Optimized the " .. f.bb("Material Cost Optimization") .. f.g(" significantly") ..
         f.a .. "Optimizing high reagent count recipes now takes" .. 
@@ -44,13 +45,5 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "to consider the new Profession Window size" ..
         f.p .. "Removed a debug print that may lead to a nil error" ..
         f.p .. f.l("ForgeFinder") .. " Export should now include recipes" ..
-        f.a .. "that do not support qualities but support ".. f.bb("Multicraft") ..
-        newP("8.5.0") ..
-        f.P .. "CraftSim now correctly considers the chance to skip a quality" ..
-        f.a .. "by " .. f.l("HSV") .. " and " .. f.bb("Inspiration") .. " double proc" ..
-        f.P .. "Reworked the " .. f.bb("Statistics") .. " window of the " ..
-        f.a .. f.bb("Average Profit") .. " module. It now shows a list" ..
-        f.a .. "of chances and expected crafts per quality." .. 
-        f.a .. "Furthermore, the " .. f.bb("Recipe Probability Table") .. 
-        f.a .. "is now only shown when the window is expanded."
+        f.a .. "that do not support qualities but support ".. f.bb("Multicraft")
 end
