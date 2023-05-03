@@ -96,8 +96,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     
         local function CreateReagentInputDropdown(offsetY)
             local optionalReagentDropdown = CraftSim.GGUI.Dropdown({
-                parent=reagentOverwriteFrame, anchorParent=schematicForm.OptionalReagents, anchorA="TOP",anchorB="TOP",
-                offsetX=-50, offsetY=offsetY + 3, width=120,
+                parent=reagentOverwriteFrame, anchorParent=schematicForm.OptionalReagents, anchorA="TOPLEFT",anchorB="TOPLEFT",
+                offsetX=30, offsetY=offsetY + 20, width=120,
                 clickCallback=function (_, _, value)
                     CraftSim.MAIN:TriggerModulesErrorSafe()
                 end
@@ -112,7 +112,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*2))
         table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*3))
         table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*4))
-    
+        table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*5))
+        
         -- DETAILS FRAME
         local simModeDetailsFrame = CraftSim.GGUI.Frame({
             parent=schematicForm, anchorParent=ProfessionsFrame, anchorA="TOPRIGHT", anchorB="TOPRIGHT", offsetX=-5, offsetY=-155,
