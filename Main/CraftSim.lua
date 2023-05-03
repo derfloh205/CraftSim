@@ -671,3 +671,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 		CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
 	end	
 end
+
+function CraftSim_OnAddonCompartmentClick()
+	InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+end
