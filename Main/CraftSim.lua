@@ -79,6 +79,10 @@ function CraftSim.MAIN:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 	CraftSim.MAIN.isReloadingUI = isReloadingUI
 
 	-- for any processes that may only happen once a session e.g.
+	if initialLogin then
+		-- Clear Preview IDs upon fresh session
+		CraftSim.CUSTOMER_SERVICE:ClearPreviewIDs()
+	end
 end
 
 function CraftSim.MAIN:COMBAT_LOG_EVENT_UNFILTERED(event)

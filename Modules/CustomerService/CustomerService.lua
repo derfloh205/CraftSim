@@ -81,8 +81,8 @@ function CraftSim.CUSTOMER_SERVICE:SendPreviewRequest(crafter, previewID, profes
 end
 
 function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
-    print("OnPreviewRequest", false, true)
-    if not tContains(CraftSimOptions.customerServiceActivePreviewIDs, payload.previewID) then
+    print("OnPreviewRequest: " .. type(payload.previewID), false, true)
+    if not tContains(CraftSimOptions.customerServiceActivePreviewIDs, tonumber(payload.previewID)) then
         print("PreviewID not active: " .. tostring(payload.previewID))
         return
     end
