@@ -8,7 +8,7 @@ CraftSim.PRICE_DETAILS.frameWO = nil
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS)
 
 function CraftSim.PRICE_DETAILS.FRAMES:Init()
-    local sizeX=370
+    local sizeX=390
     local sizeY=200
     local offsetX=-5
     local offsetY=140
@@ -20,7 +20,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         offsetX=offsetX,offsetY=offsetY,
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.PRICE_DETAILS, 
-        title="CraftSim Price Details",
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE),
         collapseable=true,
         closeable=true,
         moveable=true,
@@ -35,7 +35,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         offsetX=offsetX,offsetY=offsetY,
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.PRICE_DETAILS_WORK_ORDER, 
-        title="CraftSim Price Details " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE) .. " " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
         collapseable=true,
         closeable=true,
         moveable=true,
@@ -51,21 +51,21 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
             sizeY=140, showHeaderLine=true,
             columnOptions={
                 {
-                    label="Inv/AH",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH),
                     width=60,
                     justifyOptions={type="H",align="CENTER"}
                 },
                 {
-                    label="Item",
-                    width=40,
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM),
+                    width=60,
                     justifyOptions={type="H",align="CENTER"}
                 },
                 {
-                    label="Price / Item",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM),
                     width=110,
                 },
                 {
-                    label="Profit / Item",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_PROFIT_ITEM),
                     width=110,
                 }
             },

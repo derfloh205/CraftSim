@@ -26,7 +26,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             CraftSim.MAIN:TriggerModulesErrorSafe()
         end
         frames.toggleButton = CraftSim.FRAME:CreateCheckboxCustomCallback(
-            " Simulation Mode", "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions", false, clickCallback, 
+            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL), CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TOOLTIP), false, clickCallback, 
             schematicForm, schematicForm.Details, "BOTTOM", "TOP", -65, 40)
         
         frames.toggleButton:Hide()
@@ -119,7 +119,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             parent=schematicForm, anchorParent=ProfessionsFrame, anchorA="TOPRIGHT", anchorB="TOPRIGHT", offsetX=-5, offsetY=-155,
             sizeX=350, sizeY=355, frameID=(workOrder and CraftSim.CONST.FRAMES.CRAFTING_DETAILS_WO) or CraftSim.CONST.FRAMES.CRAFTING_DETAILS,
             backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS, collapseable=true, moveable=true,
-            title="CraftSim Simulation Mode"
+            title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE)
         })
     
         simModeDetailsFrame:Hide()

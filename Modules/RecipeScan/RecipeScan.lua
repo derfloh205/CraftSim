@@ -11,7 +11,8 @@ CraftSim.RECIPE_SCAN.SCAN_MODES = {
     Q2 = "Materials Quality 2", 
     Q3 = "Materials Quality 3", 
     OPTIMIZE_G = "Optimize for Guaranteed", 
-    OPTIMIZE_I = "Optimize for Inspiration"}
+    OPTIMIZE_I = "Optimize for Inspiration"
+}
 
     ---@type CraftSim.RecipeData[]
 CraftSim.RECIPE_SCAN.currentResults = {}
@@ -28,9 +29,9 @@ function CraftSim.RECIPE_SCAN:ToggleScanButton(value)
     frame.content.scanButton:SetEnabled(value)
     frame.content.cancelScanButton:SetVisible(not value)
     if not value then
-        frame.content.scanButton:SetText("Scanning 0%")
+        frame.content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) .. " 0%")
     else
-        frame.content.scanButton:SetText("Scan Recipes")
+        frame.content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_RECIPIES))
     end
 end
 
@@ -39,7 +40,7 @@ function CraftSim.RECIPE_SCAN:UpdateScanPercent(currentProgress, maxProgress)
 
     if currentPercentage % 1 == 0 then
         local frame = CraftSim.RECIPE_SCAN.frame
-        frame.content.scanButton:SetText("Scanning " .. currentPercentage .. "%")
+        frame.content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) .. " " .. currentPercentage .. "%")
     end
 end
 
@@ -252,7 +253,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
                 recipeData:OptimizeProfit(optimizeI)
             else
                 CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
-                recipeData:OptimizeGear(CraftSim.CONST.GEAR_SIM_MODES.PROFIT)
+                recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
             end
             CraftSim.UTIL:StopProfiling("Optimize ALL: SCAN")
         else

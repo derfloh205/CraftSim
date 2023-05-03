@@ -3,6 +3,7 @@ AddonName, CraftSim = ...
 CraftSim.LOCAL_ES = {}
 
 function CraftSim.LOCAL_ES:GetData()
+    local f = CraftSim.UTIL:GetFormatter()
     return {
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Inspiración",

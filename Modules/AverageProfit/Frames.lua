@@ -16,7 +16,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         sizeX=sizeX,sizeY=sizeY,
         offsetX=offsetX,offsetY=offsetY,
         frameID=CraftSim.CONST.FRAMES.STAT_WEIGHTS, 
-        title="CraftSim Average Profit",
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE),
         collapseable=true,
         closeable=true,
         moveable=true,
@@ -31,7 +31,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         sizeX=sizeX,sizeY=sizeY,
         offsetX=offsetX,offsetY=offsetY,
         frameID=CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER, 
-        title="CraftSim Average Profit " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE) .. " " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
         collapseable=true,
         closeable=true,
         moveable=true,
@@ -43,37 +43,41 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         frame.content.breakdownButton = CraftSim.GGUI.Button({
             parent=frame.content,anchorParent=frame.title.frame,anchorA="TOP",anchorB="TOP",
             offsetX= -60, offsetY=-15,
-            label="Show Explanation", sizeX=15,sizeY=20,adjustWidth=true,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON), sizeX=15,sizeY=20,adjustWidth=true,
             clickCallback=function ()
                 local profitDetailsFrame = CraftSim.FRAME:GetFrame(profitDetailsFrameID) 
                 local isVisible = profitDetailsFrame:IsVisible()
                 CraftSim.FRAME:ToggleFrame(profitDetailsFrame, not isVisible)
-                frame.content.breakdownButton:SetText(isVisible and "Show Explanation" or not isVisible and "Hide Explanation")
+                frame.content.breakdownButton:SetText(isVisible and CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON) or not isVisible and CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_EXPLANATION_BUTTON))
             end
         })
 
         frame.content.statisticsButton = CraftSim.GGUI.Button({
-            label="Show Statistics", parent=frame.content,anchorParent=frame.content.breakdownButton.frame,anchorA="LEFT",anchorB="RIGHT",offsetX=1,sizeX=15,sizeY=20,
-            adjustWidth=true,
+            parent=frame.content,anchorParent=frame.content.breakdownButton.frame,anchorA="LEFT",anchorB="RIGHT",
+            offsetX= 1,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON), sizeX=15,sizeY=20,adjustWidth=true,
             clickCallback=function() 
                 local statisticsFrame = CraftSim.GGUI:GetFrame(statisticsFrameID)
-                CraftSim.FRAME:ToggleFrame(statisticsFrame, not statisticsFrame:IsVisible())
+                local isVisible = statisticsFrame:IsVisible()
+                CraftSim.FRAME:ToggleFrame(statisticsFrame, not isVisible)
+                frame.content.statisticsButton:SetText(isVisible and CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON) or not isVisible and CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON))
             end
         })
 
         local textOffsetX = 30
         local textOffsetY= -50
         local textSpacingY = -2
-        local titleWidth = 120
+        local titleWidth = 130
         local titleValueSpacingX = 20
         frame.content.profit = {}
         frame.content.inspiration = {}
         frame.content.multicraft = {}
         frame.content.resourcefulness = {}
+
         frame.content.profit.title = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content, offsetX=textOffsetX, offsetY=textOffsetY,
             anchorA="TOPLEFT", anchorB="TOPLEFT", fixedWidth=titleWidth, justifyOptions={type="H", align="RIGHT"},
-            text="Ø Profit / Craft: ",
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT),
         })
         frame.content.profit.value = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content.profit.title.frame,
@@ -83,25 +87,27 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         frame.content.inspiration.title = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content.profit.title.frame, offsetY=textSpacingY,
             anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", fixedWidth=titleWidth, justifyOptions={type="H", align="RIGHT"},
-            text="Inspiration: "
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_LABEL)
         })
         frame.content.inspiration.value = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content.inspiration.title.frame,
             anchorA="LEFT", anchorB="RIGHT", justifyOptions={type="H", align="LEFT"}, offsetX=titleValueSpacingX
         })
+
         frame.content.multicraft.title = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content.inspiration.title.frame, offsetY=textSpacingY,
             anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", fixedWidth=titleWidth, justifyOptions={type="H", align="RIGHT"},
-            text="Multicraft: "
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_LABEL)
         })
         frame.content.multicraft.value = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content.multicraft.title.frame,
             anchorA="LEFT", anchorB="RIGHT", justifyOptions={type="H", align="LEFT"}, offsetX=titleValueSpacingX
         })
+
         frame.content.resourcefulness.title = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content.multicraft.title.frame, offsetY=textSpacingY,
             anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", fixedWidth=titleWidth, justifyOptions={type="H", align="RIGHT"},
-            text="Resourcefulness: "
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL)
         })
         frame.content.resourcefulness.value = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content.resourcefulness.title.frame,
@@ -161,7 +167,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
     
     local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimProfitDetailsFrame", 
-        "CraftSim Average Profit Explanation", 
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_EXPLANATION_TITLE),
         CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame,
         UIParent, 
         "CENTER", 
@@ -174,7 +180,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
 
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimProfitDetailsWOFrame", 
-        "CraftSim Average Profit Explanation", 
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_EXPLANATION_TITLE), 
         CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER).frame,
         UIParent, 
         "CENTER", 
@@ -188,15 +194,15 @@ function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
 
     local function createContent(frame, statweightFrameID)
         frameNO_WO.closeButton:HookScript("OnClick", function(self) 
-            CraftSim.GGUI:GetFrame(statweightFrameID).content.breakdownButton:SetText("Show Explanation")
+            CraftSim.GGUI:GetFrame(statweightFrameID).content.breakdownButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON))
         end)
 
         frame:Hide()
-        frame.content.profitExplanationTab = CraftSim.FRAME:CreateTab("Basic Profit Calculation", frame.content, frame.title, "TOP", "BOTTOM", -50, -15, true, 900, 500, frame.content, frame.title, 0, -50)
-        frame.content.hsvExplanationTab = CraftSim.FRAME:CreateTab("HSV Consideration", frame.content, frame.content.profitExplanationTab, "LEFT", "RIGHT", 0, 0, true, 900, 500, frame.content, frame.title, 0, -50)
-        frame.content.profitExplanationTab.content.description = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PROFIT_EXPLANATION), 
+        frame.content.profitExplanationTab = CraftSim.FRAME:CreateTab(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_TAB), frame.content, frame.title, "TOP", "BOTTOM", -50, -15, true, 900, 500, frame.content, frame.title, 0, -50)
+        frame.content.hsvExplanationTab = CraftSim.FRAME:CreateTab(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV_TAB), frame.content, frame.content.profitExplanationTab, "LEFT", "RIGHT", 0, 0, true, 900, 500, frame.content, frame.title, 0, -50)
+        frame.content.profitExplanationTab.content.description = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION), 
         frame.content.profitExplanationTab.content, frame.content.profitExplanationTab.content, "TOPLEFT", "TOPLEFT", 0, -20, nil, nil, {type="H", value="LEFT"})
-        frame.content.hsvExplanationTab.content.description = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PROFIT_EXPLANATION_HSV), 
+        frame.content.hsvExplanationTab.content.description = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV), 
         frame.content.hsvExplanationTab.content, frame.content.hsvExplanationTab.content, "TOPLEFT", "TOPLEFT", 0, -20, nil, nil, {type="H", value="LEFT"})
 
         CraftSim.FRAME:InitTabSystem({frame.content.profitExplanationTab, frame.content.hsvExplanationTab})

@@ -4,6 +4,8 @@ _, CraftSim = ...
 ---@class CraftSim.NodeData
 CraftSim.NodeData = CraftSim.Object:extend()
 
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.ERROR)
+
 ---@param nodeRulesData table[]
 ---@param recipeData CraftSim.RecipeData
 ---@param parentNode CraftSim.NodeData?
@@ -28,9 +30,15 @@ function CraftSim.NodeData:new(recipeData, nodeRulesData, parentNode)
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)
     local nodeInfo = C_Traits.GetNodeInfo(configID, self.nodeID)
 
-    self.active = nodeInfo.activeRank > 0
-    self.rank = nodeInfo.activeRank - 1
-    self.maxRank = nodeInfo.maxRanks - 1
+    if (nodeInfo) then
+        self.active = nodeInfo.activeRank > 0
+        self.rank = nodeInfo.activeRank - 1
+        self.maxRank = nodeInfo.maxRanks - 1
+    else
+        self.active = false
+        self.rank = 0
+        self.maxRank = 0
+    end
 
     table.foreach(nodeRulesData, function (_, nodeRuleData)
         table.insert(self.nodeRules, CraftSim.NodeRule(nodeRuleData, self))

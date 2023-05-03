@@ -15,7 +15,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         anchorParent=ProfessionsFrame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.SPEC_INFO, 
-        title="CraftSim Specialization Info",
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_TITLE),
         collapseable=true,
         closeable=true,
         moveable=true,
@@ -28,7 +28,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         anchorParent=ProfessionsFrame, 
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.SPEC_INFO_WO, 
-        title="CraftSim Specialization Info",
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_TITLE),
         collapseable=true,
         closeable=true,
         moveable=true,
@@ -42,7 +42,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     
         frame.content.knowledgePointSimulationButton = CraftSim.GGUI.Button({
             parent=frame.content, anchorParent=frame.title.frame,anchorA="TOP",anchorB="TOP",offsetY=-20,
-            sizeX=15,sizeY=20, adjustWidth=true,label="Simulate Knowledge Distribution",
+            sizeX=15,sizeY=20, adjustWidth=true,label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_SIMULATE_KNOWLEDGE_DISTRIBUTION),
             clickCallback=function ()
                 local specSimFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
                 CraftSim.FRAME:ToggleFrame(CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM), not specSimFrame:IsVisible())
@@ -51,7 +51,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
 
         frame.content.knowledgePointSimulationButton:SetEnabled(false)
 
-        frame.content.notImplementedText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:ColorizeText("SpecInfo Work in Progress", CraftSim.GUTIL.COLORS.LEGENDARY),
+        frame.content.notImplementedText = CraftSim.FRAME:CreateText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS), CraftSim.GUTIL.COLORS.LEGENDARY),
         frame.content, frame.content.knowledgePointSimulationButton.frame, "CENTER", "CENTER", 0, 0)
     
         frame.content.notImplementedText:Hide()
@@ -127,7 +127,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
 
             local nodeProfessionStats = affectedNodeData.professionStats
 
-            local tooltipText = "This node grants you following stats for this recipe:\n\n"
+            local tooltipText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP) .. "\n\n";
 
             tooltipText = tooltipText .. nodeProfessionStats:GetTooltipText()
 
