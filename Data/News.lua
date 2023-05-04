@@ -15,6 +15,9 @@ function CraftSim.NEWS:GET_NEWS()
         f.p .. "Added CraftSim to the new ingame " .. f.g("Addon Compartment") ..
         f.p .. "Added a neat little gold icon for CraftSim in the addon list" ..
         f.a .. "and in the new addon compartment" ..
+        f.p .. "Added wait for item load before generating links" ..
+        f.a .. "for price override dropdown to prevent empty links" .. 
+        f.a .. "right after login" ..
         newP("8.6.1") ..
         f.P .. f.g("10.1 Fixes") ..
         f.s .. "I want to apologize for not updating a lot" .. 

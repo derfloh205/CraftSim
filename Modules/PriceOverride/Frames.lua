@@ -224,69 +224,97 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)
         -- recipe was changed, reload and hide the options again
         priceOverrideFrame.content.overrideOptions:Hide()
         priceOverrideFrame.recipeID = recipeData.recipeID
+
+        -- collect items to wait for and continue when everything has loaded to prevent empty links
+        local items = {}
+        local reagentData = recipeData.reagentData
+
+        table.foreach(reagentData.requiredReagents or {}, function (_, reagent)
+            table.foreach(reagent.items, function (_, reagentItem)
+                table.insert(items, reagentItem.item)
+            end)
+        end)
+
+        local allPossibleOptionalReagents = {}
+        table.foreach(reagentData.optionalReagentSlots, function (_, slot)
+            allPossibleOptionalReagents = CraftSim.GUTIL:Concat({allPossibleOptionalReagents, slot.possibleReagents})
+        end)
+        table.foreach(allPossibleOptionalReagents, function (_, optionalReagent)
+            table.insert(items, optionalReagent.item)
+        end)
+
+        local allPossibleFinishingReagents = {}
+        table.foreach(reagentData.finishingReagentSlots, function (_, slot)
+            allPossibleFinishingReagents = CraftSim.GUTIL:Concat({allPossibleFinishingReagents, slot.possibleReagents})
+        end)
+        table.foreach(allPossibleFinishingReagents, function (_, optionalReagent)
+            table.insert(items, optionalReagent.item)
+        end)
         
         local dropdownData = {}
 
-        local reagentData = recipeData.reagentData
-        if #reagentData.requiredReagents > 0 then
-            local dropdownEntry = {label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_REQUIRED_REAGENTS), value = {}, isCategory=true}
-            table.foreach(reagentData.requiredReagents, function (_, reagent)
-                table.foreach(reagent.items, function (_, reagentItem)
-                    local reagentLabel = reagentItem.item:GetItemLink()
+        CraftSim.GUTIL:ContinueOnAllItemsLoaded(items, function() 
+            local reagentData = recipeData.reagentData
+            if #reagentData.requiredReagents > 0 then
+                local dropdownEntry = {label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_REQUIRED_REAGENTS), value = {}, isCategory=true}
+                table.foreach(reagentData.requiredReagents, function (_, reagent)
+                    table.foreach(reagent.items, function (_, reagentItem)
+                        local reagentLabel = reagentItem.item:GetItemLink()
+                        table.insert(dropdownEntry.value, {
+                            label=reagentLabel,
+                            value= CraftSim.PRICE_OVERRIDE.OverrideDropdownData(reagentItem.item, false),
+                        })
+                    end)
+                end)
+                table.insert(dropdownData, dropdownEntry)
+            end
+        
+            if #reagentData.optionalReagentSlots > 0 then
+                local dropdownEntry = {label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_OPTIONAL_REAGENTS), value = {}, isCategory=true}
+                local allPossibleReagents = {}
+                table.foreach(reagentData.optionalReagentSlots, function (_, slot)
+                    allPossibleReagents = CraftSim.GUTIL:Concat({allPossibleReagents, slot.possibleReagents})
+                end)
+                table.foreach(allPossibleReagents, function (_, optionalReagent)
+                    local reagentLabel = optionalReagent.item:GetItemLink()
                     table.insert(dropdownEntry.value, {
                         label=reagentLabel,
-                        value= CraftSim.PRICE_OVERRIDE.OverrideDropdownData(reagentItem.item, false),
+                        value=CraftSim.PRICE_OVERRIDE.OverrideDropdownData(optionalReagent.item, false),
                     })
                 end)
-            end)
-            table.insert(dropdownData, dropdownEntry)
-        end
-    
-        if #reagentData.optionalReagentSlots > 0 then
-            local dropdownEntry = {label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_OPTIONAL_REAGENTS), value = {}, isCategory=true}
-            local allPossibleReagents = {}
-            table.foreach(reagentData.optionalReagentSlots, function (_, slot)
-                allPossibleReagents = CraftSim.GUTIL:Concat({allPossibleReagents, slot.possibleReagents})
-            end)
-            table.foreach(allPossibleReagents, function (_, optionalReagent)
-                local reagentLabel = optionalReagent.item:GetItemLink()
-                table.insert(dropdownEntry.value, {
-                    label=reagentLabel,
-                    value=CraftSim.PRICE_OVERRIDE.OverrideDropdownData(optionalReagent.item, false),
-                })
-            end)
-            table.insert(dropdownData, dropdownEntry)
-        end
-    
-        if #reagentData.finishingReagentSlots > 0 then
-            local dropdownEntry = {label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_FINISHING_REAGENTS), value = {}, isCategory=true}
-            local allPossibleReagents = {}
-            table.foreach(reagentData.finishingReagentSlots, function (_, slot)
-                allPossibleReagents = CraftSim.GUTIL:Concat({allPossibleReagents, slot.possibleReagents})
-            end)
-            table.foreach(allPossibleReagents, function (_, optionalReagent)
-                local reagentLabel = optionalReagent.item:GetItemLink()
-                table.insert(dropdownEntry.value, {
-                    label=reagentLabel,
-                    value=CraftSim.PRICE_OVERRIDE.OverrideDropdownData(optionalReagent.item, false),
-                })
-            end)
-            table.insert(dropdownData, dropdownEntry)
-        end
-    
-        if #recipeData.resultData.itemsByQuality > 0 then
-            local dropdownEntry = {label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_RESULT_ITEMS), value = {}, isCategory=true}
-            table.foreach(recipeData.resultData.itemsByQuality, function (qualityID, item)
-                table.insert(dropdownEntry.value, {
-                    label=item:GetItemLink(),
-                    value=CraftSim.PRICE_OVERRIDE.OverrideDropdownData(item, true, qualityID),
-                })
-            end)
-            table.insert(dropdownData, dropdownEntry)
-        end
-    
-        --CraftSim.FRAME:initializeDropdownByData(priceOverrideFrame.content.itemDropdown, dropdownData, "")
-        priceOverrideFrame.content.itemDropdown:SetData({data=dropdownData})
+                table.insert(dropdownData, dropdownEntry)
+            end
+        
+            if #reagentData.finishingReagentSlots > 0 then
+                local dropdownEntry = {label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_FINISHING_REAGENTS), value = {}, isCategory=true}
+                local allPossibleReagents = {}
+                table.foreach(reagentData.finishingReagentSlots, function (_, slot)
+                    allPossibleReagents = CraftSim.GUTIL:Concat({allPossibleReagents, slot.possibleReagents})
+                end)
+                table.foreach(allPossibleReagents, function (_, optionalReagent)
+                    local reagentLabel = optionalReagent.item:GetItemLink()
+                    table.insert(dropdownEntry.value, {
+                        label=reagentLabel,
+                        value=CraftSim.PRICE_OVERRIDE.OverrideDropdownData(optionalReagent.item, false),
+                    })
+                end)
+                table.insert(dropdownData, dropdownEntry)
+            end
+        
+            if #recipeData.resultData.itemsByQuality > 0 then
+                local dropdownEntry = {label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_RESULT_ITEMS), value = {}, isCategory=true}
+                table.foreach(recipeData.resultData.itemsByQuality, function (qualityID, item)
+                    table.insert(dropdownEntry.value, {
+                        label=item:GetItemLink(),
+                        value=CraftSim.PRICE_OVERRIDE.OverrideDropdownData(item, true, qualityID),
+                    })
+                end)
+                table.insert(dropdownData, dropdownEntry)
+            end
+        
+            priceOverrideFrame.content.itemDropdown:SetData({data=dropdownData})
+        end)
+        
     end
 end
 
