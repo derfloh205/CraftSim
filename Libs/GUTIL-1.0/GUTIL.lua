@@ -283,7 +283,8 @@ GUTIL.COLORS = {
   ARTIFACT = "ffe6cc80",
   GOLD = "fffffc01",
   SILVER = "ffdadada",
-  COPPER = "ffc9803c"
+  COPPER = "ffc9803c",
+  PATREON = "ffff424D",
 }
 
 function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)

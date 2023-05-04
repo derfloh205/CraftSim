@@ -106,10 +106,8 @@ end
 
 
 ---@param recipeData CraftSim.RecipeData
----@param profitPerQuality number[]
----@param currentQuality number
 ---@param exportMode number
-function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitPerQuality, currentQuality, exportMode)
+function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, exportMode)
     local priceDetailsFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         priceDetailsFrame = CraftSim.PRICE_DETAILS.frameWO
@@ -127,7 +125,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitPerQualit
 
     priceDetailsFrame.content.priceDetailsList:Remove()
 
-    for _, resultItem in pairs(itemQualityList) do
+    for qualityID, resultItem in pairs(itemQualityList) do
         resultItem:ContinueOnItemLoad(function ()
             priceDetailsFrame.content.priceDetailsList:Add(function(row) 
                 local invColumn = row.columns[1]
@@ -137,9 +135,10 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, profitPerQualit
 
                 local itemLink = resultItem:GetItemLink()
                 itemColumn.icon:SetItem(resultItem)
-                local price = CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink)
+                local priceOverride = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(recipeData.recipeID, qualityID)
+                local price = priceOverride or CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink)
                 local profit = (price*CraftSim.CONST.AUCTION_HOUSE_CUT) - (priceData.craftingCosts / recipeData.baseItemAmount)
-                priceColumn.text:SetText(CraftSim.GUTIL:FormatMoney(price))
+                priceColumn.text:SetText(CraftSim.GUTIL:FormatMoney(price) .. ((priceOverride and CraftSim.GUTIL:ColorizeText(" (OR)", CraftSim.GUTIL.COLORS.LEGENDARY)) or ""))
                 profitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(profit, true))
 
                 local itemCount = GetItemCount(itemLink, true, false, true)

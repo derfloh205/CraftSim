@@ -277,7 +277,6 @@ function CraftSim.MAIN:InitStaticPopups()
 	}
 end
 
-local priceApiLoaded = false
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == AddonName then
 		CraftSim.GGUI:SetConfigSavedVariable("CraftSimGGUIConfig")
@@ -302,6 +301,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
 		CraftSim.CRAFTDATA.FRAMES:Init()
 		CraftSim.COST_DETAILS.FRAMES:Init()
+		CraftSim.SUPPORTERS.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()

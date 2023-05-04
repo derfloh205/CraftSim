@@ -77,6 +77,13 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPLANATION)
     })
 
+    local pixelHeart = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.2)
+    frame.content.supportersButton = CraftSim.GGUI.Button({parent=frame.content,anchorParent=frame.content.debugButton.frame, anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT",
+        label=pixelHeart .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_SUPPORTERS_BUTTON) .. pixelHeart, sizeX=25,sizeY=25,adjustWidth=true,
+    clickCallback=function() 
+        CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SUPPORTERS):Show()
+    end})
+
     frame.content.optionsButton = CraftSim.GGUI.Button({
         parent=frame.content, anchorParent=frame.content.newsButton.frame, anchorA="RIGHT", anchorB="LEFT",
         sizeX=15, sizeY=25, adjustWidth=true,

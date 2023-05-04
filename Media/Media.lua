@@ -30,4 +30,7 @@ CraftSim.MEDIA.IMAGES = {
     HSV_EXAMPLE = {file="hsvVisualization.blp",dimensions={x=256,y=64}},
     ARROW_UP = {file="upArrow.blp", dimensions={x=64,y=64}},
     ARROW_DOWN = {file="downArrow.blp", dimensions={x=64,y=64}},
+    PIXEL_HEART = {file="pixelHeart.blp", dimensions={x=64,y=64}},
+    KOFI = {file="kofi.blp", dimensions={x=64,y=64}},
+    PAYPAL = {file="paypal.blp", dimensions={x=64,y=64}},
 }

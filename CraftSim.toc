@@ -79,6 +79,9 @@ Modules/CraftData/Frames.lua
 Modules/CostDetails/CostDetails.lua
 Modules/CostDetails/Frames.lua
 
+Modules/Supporters/Supporters.lua
+Modules/Supporters/Frames.lua
+
 Locals/Localization.lua
 Locals/enUS.lua
 Locals/deDE.lua
