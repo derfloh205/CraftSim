@@ -11,6 +11,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.6.2") ..
+        f.P .. "Added major translation support thanks to" ..
+        f.a .. f.bb("https://github.com/SirDester") ..
         f.p .. "Fixed" ..  f.g(" Live Preview") .. " link not opening the Live Preview" .. 
         f.p .. "Added CraftSim to the new ingame " .. f.g("Addon Compartment") ..
         f.p .. "Added a neat little gold icon for CraftSim in the addon list" ..
