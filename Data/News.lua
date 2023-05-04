@@ -16,7 +16,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "and supported CraftSim's development via donations" ..
         f.P .. "Added major translation support thanks to" ..
         f.a .. f.bb("https://github.com/SirDester") ..
-        f.s .. f.g("Price Details") .. " now correctly show any existing" .. 
+        f.s .. f.g("Price Details") .. " now correctly shows any existing" .. 
         f.a .. "price overrides for a recipe's result" ..
         f.p .. "Fixed" ..  f.g(" Live Preview") .. " link not opening the Live Preview" .. 
         f.p .. "Added CraftSim to the new ingame " .. f.g("Addon Compartment") ..
