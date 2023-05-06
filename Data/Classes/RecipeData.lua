@@ -44,7 +44,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     end
 
     local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-    self.isOldWorldRecipe = not tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
+    self.isOldWorldRecipe = recipeCategoryInfo == nil or not tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
     self.isRecraft = isRecraft or false
     self.isSimulationModeData = false
     self.learned = recipeInfo.learned or false
