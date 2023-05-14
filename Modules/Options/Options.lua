@@ -260,6 +260,15 @@ function CraftSim.OPTIONS:Init()
     CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO), 
     ModulesTab.content, specInfoTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
+    local historyMaxSizeInput = CraftSim.FRAME:CreateNumericInput(
+        "Max history entries per client",
+        ModulesTab.content, specInfoTransparencySlider,
+        "TOP", "TOP", 0, -40, 85, 10, 200, false, function(self, value)
+            CraftSimOptions.maxHistoryEntriesPerClient = value
+        end)
+    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE), 
+        ModulesTab.content, historyMaxSizeInput, "LEFT", "RIGHT", 20, 0, 1, nil)
+    
      local skillBreakpointsCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET), 
      CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP),
      "breakPointOffset", 

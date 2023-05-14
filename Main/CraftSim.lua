@@ -40,6 +40,7 @@ CraftSimOptions = CraftSimOptions or {
 	transparencyTopGear = 1,
 	transparencyCostOverview = 1,
 	transparencySpecInfo = 1,
+	maxHistoryEntriesPerClient = 200,
 
 	-- recipeScan
 	recipeScanIncludeSoulbound = false,

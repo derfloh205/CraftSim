@@ -39,6 +39,7 @@ Modules/CustomerService/Frames.lua
 
 Modules/CustomerHistory/CustomerHistory.lua
 Modules/CustomerHistory/Frames.lua
+Modules/CustomerHistory/Migrations.lua
 
 Modules/CraftStatistics/CraftStatistics.lua
 Modules/CraftStatistics/Frames.lua

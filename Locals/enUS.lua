@@ -366,6 +366,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Top Gear Module",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Cost Overview Module",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "Specialization Info Module",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] = "Customer History max messages per client",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Offset Skill Breakpoints by 1",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] = "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT] = "Multicraft Constant",

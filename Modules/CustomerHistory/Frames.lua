@@ -73,10 +73,11 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
     self:ResetDropdown(customer)
     self.frame.content.totalTip:SetText(string.format("%s%s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP), CraftSim.GUTIL:FormatMoney(CraftSim.CUSTOMER_HISTORY.db.realm[customer].totalTip or 0)))
     self.frame.content.messageBox:Clear()
-    for _, message in CraftSim.CUSTOMER_HISTORY:Pairs(CraftSim.CUSTOMER_HISTORY.db.realm[customer].history) do
-        if rawget(message, "from") then
+    -- table.sort(CraftSim.CUSTOMER_HISTORY.db.realm[customer].history, function(a, b) return a.timestamp < b.timestamp end)
+    for _, message in ipairs(CraftSim.CUSTOMER_HISTORY.db.realm[customer].history) do
+        if message.from then
             self.frame.content.messageBox.frame:AddMessage(string.format("%s |Hplayer:%s:1:WHISPER|h[%s]|h|r: %s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_FROM), customer, customer, message.from), ChatTypeInfo["WHISPER"].r, ChatTypeInfo["WHISPER"].g, ChatTypeInfo["WHISPER"].b)
-        elseif rawget(message, "to") then
+        elseif message.to then
             self.frame.content.messageBox.frame:AddMessage(string.format("%s |Hplayer:%s:1:WHISPER|h[%s]|h|r: %s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TO), customer, customer, message.to), ChatTypeInfo["WHISPER"].r, ChatTypeInfo["WHISPER"].g, ChatTypeInfo["WHISPER"].b)
         else
             self.frame.content.messageBox.frame:AddMessage(string.format("%s |Hplayer:%s:1:WHISPER|h[%s]|h|r: ", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_FOR), customer, customer) .. string.format(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_FORMAT), message.crafted, CraftSim.GUTIL:FormatMoney(message.commission)))
@@ -86,10 +87,11 @@ end
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown(customer)
     k, v = next(CraftSim.CUSTOMER_HISTORY.db.realm)
+    data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e) if (a.history) then return {label=e, value=e} end end)
     self.frame.content.customerDropdown:SetData({
         initialLabel=customer or k,
         initialValue=customer or k,
-        initialData=CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(_, e) return {label=e, value=e} end),
-        data=CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(_, e) return {label=e, value=e} end),
+        initialData=data,
+        data=data,
     })
 end
