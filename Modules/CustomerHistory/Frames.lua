@@ -12,7 +12,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         anchorParent=ProfessionsFrame.CraftingPage.SchematicForm, 
         sizeX=600,sizeY=300,
         frameID=CraftSim.CONST.FRAMES.CUSTOMER_HISTORY, 
-        title="TEST", -- CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TITLE),
+        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TITLE),
         collapseable=true,
         closeable=true,
         moveable=true,
@@ -24,12 +24,21 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     local function createContent(frame)
         self.frame:Hide()
         self.frame.content.customerDropdown = CraftSim.GGUI.Dropdown({
-            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170,
+            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170, offsetX=-170,
             initialValue=nil,
             initialLabel="",
-            label="Choose a customer",
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DROPDOWN_LABEL),
             initialData={},
             clickCallback=function (_, _, item) CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(item) end
+        })
+        self.frame.content.totalTip = CraftSim.GGUI.Text({
+            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetX=200, offsetY=-30,
+            text="",
+            font="GameFontNormal",
+            justifyOptions={
+                type="H",
+                align="RIGHT"
+            }
         })
         self.frame.content.messageBox = CraftSim.GGUI.ScrollingMessageFrame({
             parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetX=0, offsetY=-70,
@@ -37,15 +46,13 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             enableScrolling=true,
             fading=false,
             justifyOptions={
-                type="HV",
-                alignH="LEFT",
-                alignV="BOTTOM"
+                type="H",
+                align="LEFT",
             },
             maxLines=50,
-            font=GameFontHighlight,
+            font=GameFontNormal,
         })
         self.frame.content.messageBox:EnableHyperLinksForFrameAndChilds()
-        -- self.frame.content.messageBox:SetTextColor(ChatTypeInfo["WHISPER"].r, ChatTypeInfo["WHISPER"].g, ChatTypeInfo["WHISPER"].b, 1)
     end
 
     createContent(self.frame)
@@ -64,12 +71,15 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
 
     -- if customer ~= self.frame.content.customerDropdown.selectedValue then
     self:ResetDropdown(customer)
+    self.frame.content.totalTip:SetText(string.format("%s%s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP), CraftSim.GUTIL:FormatMoney(CraftSim.CUSTOMER_HISTORY.db.realm[customer].totalTip or 0)))
     self.frame.content.messageBox:Clear()
-    for _, message in pairs(CraftSim.CUSTOMER_HISTORY.db.realm[customer].history) do
+    for _, message in CraftSim.CUSTOMER_HISTORY:Pairs(CraftSim.CUSTOMER_HISTORY.db.realm[customer].history) do
         if rawget(message, "from") then
-            self.frame.content.messageBox.frame:AddMessage(string.format("From |Hplayer:%s:1:WHISPER|h[%s]|h|r: %s", customer, customer, message.from), ChatTypeInfo["WHISPER"].r, ChatTypeInfo["WHISPER"].g, ChatTypeInfo["WHISPER"].b)
+            self.frame.content.messageBox.frame:AddMessage(string.format("%s |Hplayer:%s:1:WHISPER|h[%s]|h|r: %s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_FROM), customer, customer, message.from), ChatTypeInfo["WHISPER"].r, ChatTypeInfo["WHISPER"].g, ChatTypeInfo["WHISPER"].b)
         elseif rawget(message, "to") then
-            self.frame.content.messageBox.frame:AddMessage(string.format("To |Hplayer:%s:1:WHISPER|h[%s]|h|r: %s", customer, customer, message.to), ChatTypeInfo["WHISPER"].r, ChatTypeInfo["WHISPER"].g, ChatTypeInfo["WHISPER"].b)
+            self.frame.content.messageBox.frame:AddMessage(string.format("%s |Hplayer:%s:1:WHISPER|h[%s]|h|r: %s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TO), customer, customer, message.to), ChatTypeInfo["WHISPER"].r, ChatTypeInfo["WHISPER"].g, ChatTypeInfo["WHISPER"].b)
+        else
+            self.frame.content.messageBox.frame:AddMessage(string.format("%s |Hplayer:%s:1:WHISPER|h[%s]|h|r: ", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_FOR), customer, customer) .. string.format(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_FORMAT), message.crafted, CraftSim.GUTIL:FormatMoney(message.commission)))
         end
     end
 end
