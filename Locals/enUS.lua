@@ -276,7 +276,7 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Price Details Frame
         [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "CraftSim Price Details",
-        [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Inv/AH",
+        [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Inv/AH/Alt",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "Item",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "Price/Item",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PROFIT_ITEM] = "Profit/Item",
@@ -314,7 +314,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_HIGHEST_RESULT_HEADER] = "Highest Result",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER] = "Average Profit",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TOP_GEAR_HEADER] = "Top Gear",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Inv/AH",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Inv/AH/Alt",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",

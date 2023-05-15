@@ -295,20 +295,30 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
 
         local totalCountInv = 0
         local totalCountAH = nil
+        local totalCountAlt = nil
         for _, resultItem in pairs(recipeData.resultData.itemsByQuality) do
             -- links are already loaded here
             totalCountInv = totalCountInv + GetItemCount(resultItem:GetItemLink(), true, false, true)
+            local countAlt = 0
+            if (TSM_API) then
+                _, countAlt, _, _ = TSM_API.GetPlayerTotals(TSM_API.ToItemString(resultItem:GetItemLink()))
+            end
+
             local countAH = CraftSim.PRICEDATA:GetAuctionAmount(resultItem:GetItemLink())
 
             if countAH then
                 totalCountAH = (totalCountAH or 0) + countAH
+            end
+
+            if countAlt then
+                totalCountAlt = (totalCountAlt or 0) + countAlt
             end
         end
         
         local countText = tostring(totalCountInv)
 
         if totalCountAH then
-            countText = countText .. " / " .. totalCountAH
+            countText = countText .. " / " .. totalCountAH .. " / " .. (totalCountAlt or 0)
         end
 
         countColumn.text:SetText(countText)
