@@ -144,13 +144,14 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, exportMode)
                 local itemCount = GetItemCount(itemLink, true, false, true)
                 local ahCount = CraftSim.PRICEDATA:GetAuctionAmount(itemLink)
                 local countAlt = 0
+                local countAltAH = 0
                 
                 if (TSM_API) then
-                    _, countAlt, _, _ = TSM_API.GetPlayerTotals(TSM_API.ToItemString(resultItem:GetItemLink()))
+                    _, countAlt, _, countAltAH = TSM_API.GetPlayerTotals(TSM_API.ToItemString(resultItem:GetItemLink()))
                 end
 
                 if ahCount then
-                    invColumn.text:SetText((itemCount or 0) .. "/" .. ahCount .. "/" .. countAlt)
+                    invColumn.text:SetText((itemCount or 0) .. "/" .. ahCount .. "/" .. (countAlt+countAltAH))
                 else
                     invColumn.text:SetText(itemCount or 0)
                 end

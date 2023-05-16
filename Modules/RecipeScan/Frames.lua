@@ -300,8 +300,9 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
             -- links are already loaded here
             totalCountInv = totalCountInv + GetItemCount(resultItem:GetItemLink(), true, false, true)
             local countAlt = 0
+            local countAltAH = 0
             if (TSM_API) then
-                _, countAlt, _, _ = TSM_API.GetPlayerTotals(TSM_API.ToItemString(resultItem:GetItemLink()))
+                _, countAlt, _, countAltAH = TSM_API.GetPlayerTotals(TSM_API.ToItemString(resultItem:GetItemLink()))
             end
 
             local countAH = CraftSim.PRICEDATA:GetAuctionAmount(resultItem:GetItemLink())
@@ -310,8 +311,8 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
                 totalCountAH = (totalCountAH or 0) + countAH
             end
 
-            if countAlt then
-                totalCountAlt = (totalCountAlt or 0) + countAlt
+            if countAlt or countAltAH then
+                totalCountAlt = (totalCountAlt or 0) + countAlt + countAltAH
             end
         end
         
