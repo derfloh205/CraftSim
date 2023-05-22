@@ -575,6 +575,9 @@ function CraftSim.ALCHEMY_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
             },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
         },
         FROST_PHIALS_2 = {
             nodeID = 22482,
@@ -587,7 +590,11 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
-            },        },
+            },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
+        },
         FROST_PHIALS_3 = {
             nodeID = 22482,
             threshold = 10,
@@ -599,7 +606,11 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
-            },        },
+            },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
+        },
         FROST_PHIALS_4 = {
             nodeID = 22482,
             threshold = 15,
@@ -611,7 +622,11 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
-            },        },
+            },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
+        },
         FROST_PHIALS_5 = {
             nodeID = 22482,
             threshold = 20,
@@ -623,7 +638,11 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
-            },        },
+            },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
+        },
         FROST_PHIALS_6 = {
             nodeID = 22482,
             threshold = 25,
@@ -635,7 +654,11 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
-            },        },
+            },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
+        },
         AIR_PHIALS_1 = {
             nodeID = 22481,
             equalsSkill = true,
@@ -647,6 +670,9 @@ function CraftSim.ALCHEMY_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
             },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
         },
         AIR_PHIALS_2 = {
             nodeID = 22481,
@@ -660,6 +686,9 @@ function CraftSim.ALCHEMY_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
             },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
         },
         AIR_PHIALS_3 = {
             nodeID = 22481,
@@ -673,6 +702,9 @@ function CraftSim.ALCHEMY_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
             },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
         },
         AIR_PHIALS_4 = {
             nodeID = 22481,
@@ -686,6 +718,9 @@ function CraftSim.ALCHEMY_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
             },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
         },
         AIR_PHIALS_5 = {
             nodeID = 22481,
@@ -699,6 +734,9 @@ function CraftSim.ALCHEMY_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
             },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
         },
         AIR_PHIALS_6 = {
             nodeID = 22481,
@@ -712,6 +750,9 @@ function CraftSim.ALCHEMY_DATA:GetData()
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
                 }
             },
+            exceptionRecipeIDs = {
+                406106, -- phial cauldron
+            }
         },
         PHIAL_EXPERIMENTATION_1 = {
             nodeID = 22479,
@@ -765,6 +806,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
+                406106, -- phial cauldron
             },
         },
         PHIAL_BATCH_PRODUCTION_2 = {
@@ -785,6 +827,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
+                406106, -- phial cauldron
             },
         },
         PHIAL_BATCH_PRODUCTION_3 = {
@@ -805,6 +848,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
+                406106, -- phial cauldron
             },
         },
         PHIAL_BATCH_PRODUCTION_4 = {
@@ -825,6 +869,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
+                406106, -- phial cauldron
             },
         },
         PHIAL_BATCH_PRODUCTION_5 = {
@@ -845,6 +890,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
+                406106, -- phial cauldron
             },
         },
         PHIAL_BATCH_PRODUCTION_6 = {
@@ -865,6 +911,7 @@ function CraftSim.ALCHEMY_DATA:GetData()
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370746, -- basic
                 370747, -- advanced
+                406106, -- phial cauldron
             },
         },
 
@@ -930,10 +977,12 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
+            },
+            exceptionRecipeIDs = {
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         FROST_POTIONS_2 = {
@@ -946,10 +995,12 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
+            },
+            exceptionRecipeIDs = {
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         FROST_POTIONS_3 = {
@@ -962,10 +1013,12 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
+            },
+            exceptionRecipeIDs = {
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         FROST_POTIONS_4 = {
@@ -978,10 +1031,12 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
+            },
+            exceptionRecipeIDs = {
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         FROST_POTIONS_5 = {
@@ -994,10 +1049,12 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
+            },
+            exceptionRecipeIDs = {
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         AIR_POTIONS_1 = {
@@ -1009,10 +1066,12 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
+            },
+            exceptionRecipeIDs = {
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         AIR_POTIONS_2 = {
@@ -1025,10 +1084,12 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
+            },
+            exceptionRecipeIDs = {
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         AIR_POTIONS_3 = {
@@ -1041,10 +1102,12 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
+            },
+            exceptionRecipeIDs = {
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         AIR_POTIONS_4 = {
@@ -1057,10 +1120,12 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
+            },
+            exceptionRecipeIDs = {
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         AIR_POTIONS_5 = {
@@ -1073,10 +1138,12 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
+            },
+            exceptionRecipeIDs = {
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         POTION_EXPERIMENTATION_1 = {
@@ -1126,14 +1193,14 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370743, -- basic
                 370745, -- advanced
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         POTION_BATCH_PRODUCTION_2 = {
@@ -1149,14 +1216,14 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370743, -- basic
                 370745, -- advanced
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         POTION_BATCH_PRODUCTION_3 = {
@@ -1172,14 +1239,14 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370743, -- basic
                 370745, -- advanced
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         POTION_BATCH_PRODUCTION_4 = {
@@ -1195,14 +1262,14 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370743, -- basic
                 370745, -- advanced
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
         POTION_BATCH_PRODUCTION_5 = {
@@ -1218,14 +1285,14 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 }, 
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.ELEMENTAL_BOTH] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-                },
-                [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.CAULDRONS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
             },
             exceptionRecipeIDs = { -- the crafting speed effects experimentations
                 370743, -- basic
                 370745, -- advanced
+                370672, -- ultimate power cauldron
+                370668, -- power cauldron
+                370673, -- pooka cauldron
             },
         },
     }
