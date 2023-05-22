@@ -402,7 +402,8 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
                 },
             },
         },
@@ -412,7 +413,8 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             multicraft = 20,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
                 },
             },
         },
@@ -422,7 +424,8 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
                 },
             },
         },
@@ -432,7 +435,8 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             multicraft = 40,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
                 },
             },
         },
@@ -442,7 +446,8 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
                 },
             },
         },
@@ -452,7 +457,8 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             multicraftExtraItemsFactor = 0.50,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
                 },
             },
         },
