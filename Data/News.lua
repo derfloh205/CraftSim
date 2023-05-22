@@ -10,6 +10,10 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.7.0") ..
+        f.p .. "Added new Belt Clasp Recipe to Specialization Info" ..
+        f.a .. "Thx to " .. f.bb("https://github.com/domi1294") ..
+        f.p .. "Updated Supporters List <3" ..
         newP("8.6.2") ..
         f.P .. "Added a new " .. f.patreon("Supporters") .. " window to" .. 
         f.a .. "display a list of all those awesome people who support" ..
