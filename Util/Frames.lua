@@ -75,6 +75,7 @@ function CraftSim.FRAME:RestoreModulePositions()
 	local recipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
 	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerServiceFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
+	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
 	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
 	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
@@ -107,6 +108,7 @@ function CraftSim.FRAME:RestoreModulePositions()
     recipeScanFrame:RestoreSavedConfig(ProfessionsFrame)
     craftResultsFrame:RestoreSavedConfig(ProfessionsFrame)
     customerServiceFrame:RestoreSavedConfig(ProfessionsFrame)
+    customerHistoryFrame:RestoreSavedConfig(ProfessionsFrame)
     priceOverrideFrame:RestoreSavedConfig(ProfessionsFrame)
     priceOverrideFrameWO:RestoreSavedConfig(ProfessionsFrame)
     specInfoFrame:RestoreSavedConfig(ProfessionsFrame)
@@ -126,7 +128,7 @@ end
 
 function CraftSim.FRAME:ResetFrames()
     for _, frame in pairs(CraftSim.GGUI.frames) do
-        print("reseting frameID: " .. tostring(frame.frameID))
+        print("resetting frameID: " .. tostring(frame.frameID))
         frame:ResetPosition()
     end
 end

@@ -32,6 +32,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesRecipeScan = false,
 	modulesCraftResults = false,
 	modulesCustomerService = false,
+	modulesHistoryService = false,
 	modulesCostDetails = false,
 
 	transparencyMaterials = 1,
@@ -39,6 +40,7 @@ CraftSimOptions = CraftSimOptions or {
 	transparencyTopGear = 1,
 	transparencyCostOverview = 1,
 	transparencySpecInfo = 1,
+	maxHistoryEntriesPerClient = 200,
 
 	-- recipeScan
 	recipeScanIncludeSoulbound = false,
@@ -299,6 +301,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.STATISTICS.FRAMES:Init()
 		CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 		CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
+		CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 		CraftSim.CRAFTDATA.FRAMES:Init()
 		CraftSim.COST_DETAILS.FRAMES:Init()
 		CraftSim.SUPPORTERS.FRAMES:Init()
@@ -319,6 +322,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		})
 
 		CraftSim.CUSTOMER_SERVICE:Init()
+		CraftSim.CUSTOMER_HISTORY:Init()
 		CraftSim.CRAFTDATA:Init()
 
 		CraftSim.FRAME:RestoreModulePositions()
@@ -428,6 +432,7 @@ end
 function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerServiceFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
+	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
 	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
 	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
@@ -446,6 +451,7 @@ function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	CraftSim.RECIPE_SCAN.frame:Hide()
 	craftResultsFrame:Hide()
 	customerServiceFrame:Hide()
+	customerHistoryFrame:Hide()
 	priceOverrideFrame:Hide()
 	priceOverrideFrameWO:Hide()
 	specInfoFrame:Hide()
@@ -473,6 +479,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerServiceFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
+	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
 	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
 	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
@@ -547,6 +554,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local showCraftResults = true
 	local showRecipeScan = true
 	local showCustomerService = true
+	local showCustomerHistory = true
 	local showCraftData = true
 	local showCostDetails = true
 
@@ -575,12 +583,15 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showRecipeScan = showRecipeScan and CraftSimOptions.modulesRecipeScan
 	showCraftResults = showCraftResults and CraftSimOptions.modulesCraftResults
 	showCustomerService = showCustomerService and CraftSimOptions.modulesCustomerService
+	showCustomerHistory = showCustomerHistory and CraftSimOptions.modulesCustomerHistory
+	showHistoryService = showHistoryService and CraftSimOptions.modulesHistoryService
 	showCraftData = showCraftData and CraftSimOptions.modulesCraftData
 	showCostDetails = showCostDetails and CraftSimOptions.modulesCostDetails
 
 	CraftSim.FRAME:ToggleFrame(CraftSim.RECIPE_SCAN.frame, showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
 	CraftSim.FRAME:ToggleFrame(customerServiceFrame, showCustomerService)
+	CraftSim.FRAME:ToggleFrame(customerHistoryFrame, showCustomerHistory)
 	
 	
 

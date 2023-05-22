@@ -154,4 +154,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP),
         "TOP", frame.content.modulesRecipeScan, "TOP", 0, -20, "modulesCustomerService")
 
+    frame.content.modulesCustomerHistory = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL),
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP),
+        "TOP", frame.content.modulesCustomerService, "TOP", 0, -20, "modulesCustomerHistory")
+
 end
