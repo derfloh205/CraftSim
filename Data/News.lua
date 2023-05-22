@@ -12,6 +12,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                                 ( You are awesome! )") ..
         newP("8.7.0") ..
         f.p .. "Added new belt clasp and new cauldron to " .. f.bb("Specialization Info") ..
+        f.p .. "Added a nil check for recipeCategoryInfo" ..
         f.a .. "Thx to " .. f.bb("https://github.com/domi1294") ..
         f.p .. "Updated Supporters List <3" ..
         newP("8.6.2") ..
