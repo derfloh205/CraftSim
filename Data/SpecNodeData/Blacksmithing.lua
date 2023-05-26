@@ -402,8 +402,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
                 },
             },
         },
@@ -413,8 +412,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             multicraft = 20,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
                 },
             },
         },
@@ -424,8 +422,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
                 },
             },
         },
@@ -435,8 +432,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             multicraft = 40,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
                 },
             },
         },
@@ -446,8 +442,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
                 },
             },
         },
@@ -457,8 +452,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             multicraftExtraItemsFactor = 0.50,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK,
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
                 },
             },
         },
@@ -1266,6 +1260,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             376624, -- pvp
             367602, -- epic
             367618, -- epic
+            408288, -- belt clasp
         },
       },
       BELTS_2 = {
@@ -1277,6 +1272,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             376624, -- pvp
             367602, -- epic
             367618, -- epic
+            408288, -- belt clasp
         },
       },
       BELTS_3 = {
@@ -1288,6 +1284,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             376624, -- pvp
             367602, -- epic
             367618, -- epic
+            408288, -- belt clasp
         },
       },
       BELTS_4 = {
@@ -1299,6 +1296,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             376624, -- pvp
             367602, -- epic
             367618, -- epic
+            408288, -- belt clasp
         },
       },
       BELTS_5 = {
@@ -1310,6 +1308,7 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             376624, -- pvp
             367602, -- epic
             367618, -- epic
+            408288, -- belt clasp
         },
       },
       VAMBRACES_1 = {
