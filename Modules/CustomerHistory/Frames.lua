@@ -24,15 +24,28 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     local function createContent(frame)
         self.frame:Hide()
         self.frame.content.customerDropdown = CraftSim.GGUI.Dropdown({
-            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170, offsetX=-170,
+            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", width=170, offsetX=-170, offsetY=-30,
             initialValue=nil,
             initialLabel="",
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DROPDOWN_LABEL),
             initialData={},
             clickCallback=function (_, _, item) CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(item) end
         })
+        self.frame.content.deleteButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=self.frame.content.customerDropdown.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=0, offsetY=2,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_BUTTON), sizeX=15, sizeY=20, adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.CUSTOMER_HISTORY.db.realm[CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer] = nil
+                self:ResetDropdown()
+                self.frame.content.messageBox:Clear()
+                self.frame.content.totalTip:SetText(string.format("%s%s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP), CraftSim.GUTIL:FormatMoney(0)))
+                CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer = nil
+                self.frame.content.deleteButton.frame:SetEnabled(false)
+            end,
+        })
+        self.frame.content.deleteButton.frame:SetEnabled(false)
         self.frame.content.totalTip = CraftSim.GGUI.Text({
-            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetX=200, offsetY=-30,
+            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetX=200, offsetY=-36,
             text="",
             font="GameFontNormal",
             justifyOptions={
@@ -71,6 +84,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
     end
 
     if C_TradeSkillUI.IsTradeSkillReady() then
+        self.frame.content.deleteButton.frame:SetEnabled(true)
         self:ResetDropdown(customer)
         self:LoadHistory(customer)
     end
