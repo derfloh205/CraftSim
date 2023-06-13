@@ -9,9 +9,9 @@ local rawget = rawget
 function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     self.frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent=ProfessionsFrame.CraftingPage.SchematicForm, 
+        anchorParent=ProfessionsFrame.CraftingPage.SchematicForm,
         sizeX=600,sizeY=300,
-        frameID=CraftSim.CONST.FRAMES.CUSTOMER_HISTORY, 
+        frameID=CraftSim.CONST.FRAMES.CUSTOMER_HISTORY,
         title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TITLE),
         collapseable=true,
         closeable=true,
@@ -85,8 +85,8 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
 end
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown(customer)
-    k, v = next(CraftSim.CUSTOMER_HISTORY.db.realm)
-    data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e) if (a.history) then return {label=e, value=e} end end)
+    local k, v = next(CraftSim.CUSTOMER_HISTORY.db.realm)
+    local data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e) if (a.history) then return {label=e, value=e} end end)
     self.frame.content.customerDropdown:SetData({
         initialLabel=customer or k,
         initialValue=customer or k,
