@@ -5,7 +5,7 @@ CraftSim.OPTIONS = {}
 CraftSim.OPTIONS.lastOpenRecipeID = {}
 function CraftSim.OPTIONS:Init()
     CraftSim.OPTIONS.optionsPanel = CreateFrame("Frame", "CraftSimOptionsPanel")
-    
+
 	CraftSim.OPTIONS.optionsPanel:HookScript("OnShow", function(self)
 		end)
         CraftSim.OPTIONS.optionsPanel.name = "CraftSim"
@@ -83,7 +83,7 @@ function CraftSim.OPTIONS:Init()
     ProfitCalculationTab.content:SetSize(300, 350)
     ProfitCalculationTab.canBeEnabled = true
 
-    local CraftingTab = CraftSim.FRAME:CreateTab(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_CRAFTING_TAB), CraftSim.OPTIONS.optionsPanel, 
+    local CraftingTab = CraftSim.FRAME:CreateTab(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_CRAFTING_TAB), CraftSim.OPTIONS.optionsPanel,
     ProfitCalculationTab, "LEFT", "RIGHT", 0, 0, true, 300, 350, CraftSim.OPTIONS.optionsPanel, CraftSim.OPTIONS.optionsPanel, 0, contentPanelsOffsetY)
 
     local expressionSizeX = 300
@@ -176,7 +176,7 @@ function CraftSim.OPTIONS:Init()
             parent=generalTab.content, anchorParent=generalTab.content, label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_PRICE_SOURCE),
             anchorA="TOP", anchorB="TOP", offsetY=-50, width=200,
             initialData=priceSourceAddonsDropdownData, initialValue=CraftSim.PRICE_API.name, initialLabel=CraftSim.PRICE_API.name,
-            clickCallback=function(_, _, value) 
+            clickCallback=function(_, _, value)
                 CraftSim.PRICE_APIS:SwitchAPIByAddonName(value)
                 CraftSimOptions.priceSource = value
             end
@@ -191,96 +191,97 @@ function CraftSim.OPTIONS:Init()
         warning:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_NO_PRICE_SOURCE))
     end
 
-    local materialSuggestionTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimMaterialSlider", 
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_TRANSPARENCY) .. "\n ", ModulesTab.content, ModulesTab.content, 
-        "TOP", "TOP", -15, -50, 100, 10, "HORIZONTAL", 
+    local materialSuggestionTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimMaterialSlider",
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_TRANSPARENCY) .. "\n ", ModulesTab.content, ModulesTab.content,
+        "TOP", "TOP", -15, -50, 100, 10, "HORIZONTAL",
         0, 1, CraftSimOptions.transparencyMaterials, -- get from options..
-        "0", "1", 
+        "0", "1",
         function(self, value)
             CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
             CraftSimOptions.transparencyMaterials = value
         end)
     CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions.transparencyMaterials)
 
-    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS), 
+    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS),
     ModulesTab.content, materialSuggestionTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
-    local CraftSimDetailsTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimDetailsSlider", 
-        "", ModulesTab.content, materialSuggestionTransparencySlider, 
-        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL", 
+    local CraftSimDetailsTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimDetailsSlider",
+        "", ModulesTab.content, materialSuggestionTransparencySlider,
+        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL",
         0, 1, CraftSimOptions.transparencyStatWeights, -- get from options..
-        "0", "1", 
+        "0", "1",
         function(self, value)
             CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(value)
             CraftSimOptions.transparencyStatWeights = value
         end)
 
     CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(CraftSimOptions.transparencyStatWeights)
-    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT), 
+    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT),
     ModulesTab.content, CraftSimDetailsTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
 
-    local CraftSimTopGearTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimTopGearSlider", 
-        "", ModulesTab.content, CraftSimDetailsTransparencySlider, 
-        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL", 
+    local CraftSimTopGearTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimTopGearSlider",
+        "", ModulesTab.content, CraftSimDetailsTransparencySlider,
+        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL",
         0, 1, CraftSimOptions.transparencyTopGear, -- get from options..
-        "0", "1", 
+        "0", "1",
         function(self, value)
             CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(value)
             CraftSimOptions.transparencyTopGear = value
         end)
     CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(CraftSimOptions.transparencyTopGear)
-    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR), 
+    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR),
     ModulesTab.content, CraftSimTopGearTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
 
-    local CraftSimCostOverviewTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimCostOverviewSlider", 
-        "", ModulesTab.content, CraftSimTopGearTransparencySlider, 
-        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL", 
+    local CraftSimCostOverviewTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimCostOverviewSlider",
+        "", ModulesTab.content, CraftSimTopGearTransparencySlider,
+        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL",
         0, 1, CraftSimOptions.transparencyCostOverview, -- get from options..
-        "0", "1", 
+        "0", "1",
         function(self, value)
             CraftSim.PRICE_DETAILS.frame:SetTransparency(value)
             CraftSimOptions.transparencyCostOverview = value
         end)
     CraftSim.PRICE_DETAILS.frame:SetTransparency(CraftSimOptions.transparencyCostOverview)
-    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW), 
+    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW),
     ModulesTab.content, CraftSimCostOverviewTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
-    local specInfoTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimSpecInfoSlider", 
-        "", ModulesTab.content, CraftSimCostOverviewTransparencySlider, 
-        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL", 
+    local specInfoTransparencySlider =  CraftSim.FRAME:CreateSlider("CraftSimSpecInfoSlider",
+        "", ModulesTab.content, CraftSimCostOverviewTransparencySlider,
+        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL",
         0, 1, CraftSimOptions.transparencySpecInfo, -- get from options..
-        "0", "1", 
+        "0", "1",
         function(self, value)
             CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(value)
             CraftSimOptions.transparencySpecInfo = value
         end)
     CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions.transparencySpecInfo)
-    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO), 
+    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO),
     ModulesTab.content, specInfoTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
     local historyMaxSizeInput = CraftSim.FRAME:CreateNumericInput(
         "Max history entries per client",
         ModulesTab.content, specInfoTransparencySlider,
-        "TOP", "TOP", 0, -40, 85, 10, 200, false, function(self, value)
-            CraftSimOptions.maxHistoryEntriesPerClient = value
+        "TOP", "TOP", 0, -40, 85, 10, 200, false, function(self, userInput)
+            local currentValue = CraftSim.UTIL:ValidateNumberInput(self)
+            CraftSimOptions.maxHistoryEntriesPerClient = currentValue
         end)
-    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE), 
+    CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE),
         ModulesTab.content, historyMaxSizeInput, "LEFT", "RIGHT", 20, 0, 1, nil)
-    
-     local skillBreakpointsCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET), 
+
+     local skillBreakpointsCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET),
      CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP),
-     "breakPointOffset", 
-     ProfitCalculationTab.content, 
-     ProfitCalculationTab.content, 
-     "TOP", 
-     "TOP", 
-     -90, 
+     "breakPointOffset",
+     ProfitCalculationTab.content,
+     ProfitCalculationTab.content,
+     "TOP",
+     "TOP",
+     -90,
      -50)
 
-    local customMulticraftConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputMulticraftConstant", ProfitCalculationTab.content, skillBreakpointsCheckbox, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25, 
-        CraftSimOptions.customMulticraftConstant, 
+    local customMulticraftConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputMulticraftConstant", ProfitCalculationTab.content, skillBreakpointsCheckbox, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25,
+        CraftSimOptions.customMulticraftConstant,
         function ()
             CraftSimOptions.customMulticraftConstant = CraftSimOptionsInputMulticraftConstant:GetText()
         end)
@@ -289,8 +290,8 @@ function CraftSim.OPTIONS:Init()
 
     CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION), ProfitCalculationTab.content, customMulticraftConstantInput, "RIGHT", "LEFT", -5, 0)
 
-    local customResourcefulnessConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputResourcefulnessConstant", ProfitCalculationTab.content, customMulticraftConstantInput, "TOPLEFT", "BOTTOMLEFT", 0, -10, 100, 25, 
-    CraftSimOptions.customResourcefulnessConstant, 
+    local customResourcefulnessConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputResourcefulnessConstant", ProfitCalculationTab.content, customMulticraftConstantInput, "TOPLEFT", "BOTTOMLEFT", 0, -10, 100, 25,
+    CraftSimOptions.customResourcefulnessConstant,
     function ()
         CraftSimOptions.customResourcefulnessConstant = CraftSimOptionsInputResourcefulnessConstant:GetText()
     end)
@@ -299,36 +300,36 @@ function CraftSim.OPTIONS:Init()
 
     CraftSim.FRAME:CreateHelpIcon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT_EXPLANATION), ProfitCalculationTab.content, customResourcefulnessConstantInput, "RIGHT", "LEFT", -5, 0)
 
-    
-    local precentProfitCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT), 
+
+    local precentProfitCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT),
     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP),
-    "showProfitPercentage", 
-    generalTab.content, 
-    generalTab.content, 
-    "TOP", 
-    "TOP", 
-    -90, 
+    "showProfitPercentage",
+    generalTab.content,
+    generalTab.content,
+    "TOP",
+    "TOP",
+    -90,
     -90)
 
 
     local openLastRecipeCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE),
     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP),
-    "openLastRecipe", 
-    generalTab.content, 
-    precentProfitCheckbox, 
-    "TOP", 
-    "TOP", 
-    0, 
+    "openLastRecipe",
+    generalTab.content,
+    precentProfitCheckbox,
+    "TOP",
+    "TOP",
+    0,
     -20)
 
-    local detailedTooltips = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP), 
+    local detailedTooltips = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP),
     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP),
-    "detailedCraftingInfoTooltip", 
-    tooltipTab.content, 
-    tooltipTab.content, 
-    "TOP", 
-    "TOP", 
-    -90, 
+    "detailedCraftingInfoTooltip",
+    tooltipTab.content,
+    tooltipTab.content,
+    "TOP",
+    "TOP",
+    -90,
     -50)
 
     local characterNameInput = CreateFrame("EditBox", "CraftSimSyncCharacterInput", AccountSyncTab.content, "InputBoxTemplate")
@@ -339,7 +340,7 @@ function CraftSim.OPTIONS:Init()
     characterNameInput:SetText(CraftSimOptions.syncTarget or "")
     characterNameInput:SetScript("OnEscapePressed", function() characterNameInput:ClearFocus() end)
     characterNameInput:SetScript("OnEnterPressed", function() characterNameInput:ClearFocus() end)
-    characterNameInput:SetScript("OnTextChanged", function() 
+    characterNameInput:SetScript("OnTextChanged", function()
         CraftSimOptions.syncTarget = characterNameInput:GetText()
     end)
 
@@ -352,10 +353,10 @@ function CraftSim.OPTIONS:Init()
     sendingProgress:SetText("")
 
     -- local accountSyncButton = CreateFrame("Button", "CraftSimACCOUNTSYNCButton", AccountSyncTab.content, "UIPanelButtonTemplate")
-	-- accountSyncButton:SetPoint("TOPRIGHT", characterNameInput, "TOPRIGHT", 0, -30)	
+	-- accountSyncButton:SetPoint("TOPRIGHT", characterNameInput, "TOPRIGHT", 0, -30)
 	-- accountSyncButton:SetText("Synchronize Tooltip Data")
 	-- accountSyncButton:SetSize(accountSyncButton:GetTextWidth() + 20, 25)
-    -- accountSyncButton:SetScript("OnClick", function(self) 
+    -- accountSyncButton:SetScript("OnClick", function(self)
     --     CraftSim.ACCOUNTSYNC:SynchronizeAccounts()
     -- end)
 
@@ -371,24 +372,24 @@ function CraftSim.OPTIONS:Init()
     supportedPriceSources:SetPoint("TOP", 0, -200)
     supportedPriceSources:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES) .. "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
 
-     local enableGarbageCollectWhenCraftingCB = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM), 
+     local enableGarbageCollectWhenCraftingCB = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM),
      CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP),
     "craftGarbageCollectEnabled",
-    CraftingTab.content, 
     CraftingTab.content,
-    "TOP", 
-    "TOP", 
-    -90, 
+    CraftingTab.content,
+    "TOP",
+    "TOP",
+    -90,
     -50)
 
-    local garbageCollectCraftsInput = CraftSim.FRAME:CreateInput("CraftSimGarbageCollectCraftsInput", CraftingTab.content, enableGarbageCollectWhenCraftingCB, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25, 
-        CraftSimOptions.craftGarbageCollectCrafts, 
+    local garbageCollectCraftsInput = CraftSim.FRAME:CreateInput("CraftSimGarbageCollectCraftsInput", CraftingTab.content, enableGarbageCollectWhenCraftingCB, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25,
+        CraftSimOptions.craftGarbageCollectCrafts,
         function ()
             local number = CraftSim.UTIL:ValidateNumberInput(CraftSimGarbageCollectCraftsInput, false)
             CraftSimOptions.craftGarbageCollectCrafts = number
         end)
 
     CraftSim.FRAME:CreateText("Crafts", CraftingTab.content, garbageCollectCraftsInput, "LEFT", "RIGHT", 5, 0)
-    
+
 	InterfaceOptions_AddCategory(self.optionsPanel)
 end
