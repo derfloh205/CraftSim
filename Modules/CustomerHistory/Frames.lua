@@ -62,10 +62,17 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:AddCustomer(customer)
     self:ResetDropdown(customer)
 end
 
+local function GetFallbackCustomer()
+    for k, v in pairs(CraftSim.CUSTOMER_HISTORY.db.realm) do
+        if type(v) == "table" then
+            return k
+        end
+    end
+end
+
 function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
-    if not customer and next(CraftSim.CUSTOMER_HISTORY.db.realm) then
-        customer = next(CraftSim.CUSTOMER_HISTORY.db.realm)
-    elseif not customer then
+    customer = customer or GetFallbackCustomer()
+    if not customer then
         return
     end
 
@@ -78,7 +85,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
     local toText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TO)
     local forText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_FOR)
     local craftFormatText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_FORMAT)
-    for _, message in ipairs(CraftSim.CUSTOMER_HISTORY.db.realm[customer].history or {}) do
+    for _, message in ipairs(CraftSim.CUSTOMER_HISTORY.db.realm[customer].history) do
         if message.from then
             self.frame.content.messageBox.frame:AddMessage(string.format("%s |Hplayer:%s:1:WHISPER|h[%s]|h|r: %s", fromText, customer, customer, message.from), info.r, info.g, info.b)
         elseif message.to then
@@ -90,11 +97,10 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
 end
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown(customer)
-    local k, v = next(CraftSim.CUSTOMER_HISTORY.db.realm)
     local data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e) if (a.history) then return {label=e, value=e} end end)
     self.frame.content.customerDropdown:SetData({
-        initialLabel=customer or k,
-        initialValue=customer or k,
+        initialLabel=customer,
+        initialValue=customer,
         initialData=data,
         data=data,
     })
