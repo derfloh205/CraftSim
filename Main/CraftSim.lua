@@ -125,6 +125,7 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
 		CraftSimOptions.transparencyCostOverview = CraftSimOptions.transparencyCostOverview or 1
 		CraftSimOptions.transparencySpecInfo = CraftSimOptions.transparencySpecInfo or 1
+		CraftSimOptions.maxHistoryEntriesPerClient = CraftSimOptions.maxHistoryEntriesPerClient or 200
 		CraftSimOptions.customerServiceActivePreviewIDs = CraftSimOptions.customerServiceActivePreviewIDs or {}
 		CraftSimOptions.customerServiceRecipeWhisperFormat = CraftSimOptions.customerServiceRecipeWhisperFormat or
 		("Highest Result: %gc\n" ..
