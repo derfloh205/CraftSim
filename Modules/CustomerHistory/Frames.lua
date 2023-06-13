@@ -59,13 +59,8 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 end
 
 local function GetFallbackCustomer()
-    if CraftSim.CUSTOMER_HISTORY.FRAMES.lastCustomer then
-        return CraftSim.CUSTOMER_HISTORY.FRAMES.lastCustomer
-    end
-    for k, v in pairs(CraftSim.CUSTOMER_HISTORY.db.realm) do
-        if type(v) == "table" then
-            return k
-        end
+    if CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer then
+        return CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer
     end
 end
 
@@ -79,7 +74,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
         self:ResetDropdown(customer)
         self:LoadHistory(customer)
     end
-    self.lastCustomer = customer
+    CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer = customer
 end
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadTotalTip(customer)

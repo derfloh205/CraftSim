@@ -38,7 +38,10 @@ function CraftSim.CUSTOMER_HISTORY:HandleWhisper(event, message, customer, ...)
 end
 
 function CraftSim.CUSTOMER_HISTORY:LoadHistory()
-    CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer()
+    if not self.db.realm.lastCustomer then
+        CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown()
+    end
+    CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(self.db.realm.lastCustomer)
 end
 
 function CraftSim.CUSTOMER_HISTORY:OnOrderFinished(event, result, orderID)
