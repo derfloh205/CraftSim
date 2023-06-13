@@ -15,7 +15,7 @@ function CraftSim.CUSTOMER_HISTORY:Init()
     CraftSim.CUSTOMER_HISTORY.MIGRATIONS:Migrate(self.db)
     self:RegisterEvent("CHAT_MSG_WHISPER", "HandleWhisper")
     self:RegisterEvent("CHAT_MSG_WHISPER_INFORM", "HandleWhisper")
-    self:RegisterEvent("TRADE_SKILL_SHOW", "LoadMessages")
+    self:RegisterEvent("TRADE_SKILL_SHOW", "LoadHistory")
     self:RegisterEvent("CRAFTINGORDERS_FULFILL_ORDER_RESPONSE", "OnOrderFinished")
     self:RegisterEvent("CRAFTINGORDERS_RELEASE_ORDER_RESPONSE", "OnOrderFinished")
     self:RegisterEvent("CRAFTINGORDERS_REJECT_ORDER_RESPONSE", "OnOrderFinished")
@@ -34,13 +34,11 @@ function CraftSim.CUSTOMER_HISTORY:HandleWhisper(event, message, customer, ...)
     while (table.getn(self.db.realm[customer].history) > CraftSimOptions.maxHistoryEntriesPerClient) do
         table.remove(self.db.realm[customer].history, 1)
     end
-    CraftSim.CUSTOMER_HISTORY.FRAMES:AddCustomer(customer)
     CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
 end
 
-function CraftSim.CUSTOMER_HISTORY:LoadMessages()
+function CraftSim.CUSTOMER_HISTORY:LoadHistory()
     CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer()
-    self:UnregisterEvent("TRADE_SKILL_SHOW")
 end
 
 function CraftSim.CUSTOMER_HISTORY:OnOrderFinished(event, result, orderID)
@@ -59,7 +57,6 @@ function CraftSim.CUSTOMER_HISTORY:OnOrderFinished(event, result, orderID)
         while (table.getn(self.db.realm[claimedOrder.customerName].history) > CraftSimOptions.maxHistoryEntriesPerClient) do
             table.remove(self.db.realm[claimedOrder.customerName].history, 1)
         end
-        CraftSim.CUSTOMER_HISTORY.FRAMES:AddCustomer(claimedOrder.customerName)
         CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(claimedOrder.customerName)
     end
 end

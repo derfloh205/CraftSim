@@ -58,11 +58,10 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     createContent(self.frame)
 end
 
-function CraftSim.CUSTOMER_HISTORY.FRAMES:AddCustomer(customer)
-    self:ResetDropdown(customer)
-end
-
 local function GetFallbackCustomer()
+    if CraftSim.CUSTOMER_HISTORY.FRAMES.lastCustomer then
+        return CraftSim.CUSTOMER_HISTORY.FRAMES.lastCustomer
+    end
     for k, v in pairs(CraftSim.CUSTOMER_HISTORY.db.realm) do
         if type(v) == "table" then
             return k
@@ -76,8 +75,20 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
         return
     end
 
-    self:ResetDropdown(customer)
+    if C_TradeSkillUI.IsTradeSkillReady() then
+        self:ResetDropdown(customer)
+        self:LoadHistory(customer)
+    end
+    self.lastCustomer = customer
+end
+
+function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadTotalTip(customer)
     self.frame.content.totalTip:SetText(string.format("%s%s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP), CraftSim.GUTIL:FormatMoney(CraftSim.CUSTOMER_HISTORY.db.realm[customer].totalTip or 0)))
+end
+
+function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadHistory(customer)
+    print("Loading history for " .. customer)
+    self:LoadTotalTip(customer)
     self.frame.content.messageBox:Clear()
 
     local info = ChatTypeInfo["WHISPER"]
