@@ -38,7 +38,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
                 CraftSim.CUSTOMER_HISTORY.db.realm[CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer] = nil
                 self:ResetDropdown()
                 self.frame.content.messageBox:Clear()
-                self.frame.content.totalTip:SetText(string.format("%s%s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP), CraftSim.GUTIL:FormatMoney(0)))
+                self:LoadTotalTip()
                 CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer = nil
                 self.frame.content.deleteButton.frame:SetEnabled(false)
             end,
@@ -110,7 +110,12 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
 end
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadTotalTip(customer)
-    self.frame.content.totalTip:SetText(string.format("%s%s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP), CraftSim.GUTIL:FormatMoney(CraftSim.CUSTOMER_HISTORY.db.realm[customer].totalTip or 0)))
+    if customer then
+        local totalTip = CraftSim.CUSTOMER_HISTORY.db.realm[customer].totalTip or 0
+        self.frame.content.totalTip:SetText(string.format("%s%s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP), CraftSim.GUTIL:FormatMoney(totalTip)))
+    else
+        self.frame.content.totalTip:SetText("")
+    end
 end
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadHistory(customer)
