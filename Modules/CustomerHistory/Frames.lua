@@ -89,17 +89,8 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     createContent(self.frame)
 end
 
-local function GetFallbackCustomer()
-    if CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer then
-        return CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer
-    end
-end
-
 function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
-    customer = customer or GetFallbackCustomer()
-    if not customer then
-        return
-    end
+    customer = customer or CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer
 
     if C_TradeSkillUI.IsTradeSkillReady() then
         self.frame.content.deleteButton.frame:SetEnabled(customer ~= nil)
