@@ -102,7 +102,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
     end
 
     if C_TradeSkillUI.IsTradeSkillReady() then
-        self.frame.content.deleteButton.frame:SetEnabled(true)
+        self.frame.content.deleteButton.frame:SetEnabled(customer ~= nil)
         self:ResetDropdown(customer, self.frame.content.filterTextbox:GetText() or nil)
         self:LoadHistory(customer)
     end
@@ -119,6 +119,9 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadTotalTip(customer)
 end
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadHistory(customer)
+    if not customer then
+        return
+    end
     print("Loading history for " .. customer)
     self:LoadTotalTip(customer)
     self.frame.content.messageBox:Clear()
