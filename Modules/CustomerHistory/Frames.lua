@@ -44,6 +44,24 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             end,
         })
         self.frame.content.deleteButton.frame:SetEnabled(false)
+
+        self.frame.content.filterTextbox = CraftSim.FRAME:CreateInput("Search", self.frame.content, self.frame.content.customerDropdown.frame, "TOP", "BOTTOM", 0, 0, 170, 25,
+        "",
+        function(textInput, userInput)
+            if userInput then
+                input = textInput:GetText() or ""
+                self:ResetDropdown(CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer, input)
+                if not _G["DropDownList"..1]:IsShown() then
+                    ToggleDropDownMenu(1, nil, self.frame.content.customerDropdown.frame, self.frame.content.customerDropdown.frame.name, 170, 50, nil, nil)
+                end
+            else
+                self:ResetDropdown(CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer)
+                if _G["DropDownList"..1]:IsShown() then
+                    ToggleDropDownMenu(1, nil, self.frame.content.customerDropdown.frame, CraftSim.CUSTOMER_HISTORY.FRAMES.frame.content.customerDropdown.frame.name, 0, 0, nil, nil)
+                end
+            end
+        end)
+
         self.frame.content.totalTip = CraftSim.GGUI.Text({
             parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetX=200, offsetY=-36,
             text="",
@@ -54,8 +72,8 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             }
         })
         self.frame.content.messageBox = CraftSim.GGUI.ScrollingMessageFrame({
-            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetX=0, offsetY=-70,
-            sizeX=self.frame.originalX - 20, sizeY=self.frame.originalY - 100,
+            parent=self.frame.content, anchorParent=self.frame.content, anchorA="BOTTOMLEFT", anchorB="BOTTOMLEFT", offsetX=15, offsetY=15,
+            sizeX=self.frame.originalX - 20, sizeY=self.frame.originalY - 130,
             enableScrolling=true,
             fading=false,
             justifyOptions={
@@ -85,7 +103,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
 
     if C_TradeSkillUI.IsTradeSkillReady() then
         self.frame.content.deleteButton.frame:SetEnabled(true)
-        self:ResetDropdown(customer)
+        self:ResetDropdown(customer, self.frame.content.filterTextbox:GetText() or nil)
         self:LoadHistory(customer)
     end
     CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer = customer
@@ -116,8 +134,8 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadHistory(customer)
     end
 end
 
-function CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown(customer)
-    local data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e) if (a.history) then return {label=e, value=e} end end)
+function CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown(customer, filter)
+    local data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e) if (a.history and (not filter or string.find(string.lower(e), string.lower(filter)))) then return {label=e, value=e} end end)
     self.frame.content.customerDropdown:SetData({
         initialLabel=customer,
         initialValue=customer,
