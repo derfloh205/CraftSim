@@ -48,17 +48,15 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         self.frame.content.filterTextbox = CraftSim.FRAME:CreateInput("Search", self.frame.content, self.frame.content.customerDropdown.frame, "TOP", "BOTTOM", 0, 0, 170, 25,
         "",
         function(textInput, userInput)
+            if not userInput then return end
             local input = textInput:GetText():gsub("^%s*(.-)%s*$", "%1") or ""
+            self:ResetDropdown(CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer, input)
             if input ~= "" then
-                self:ResetDropdown(CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer, input)
                 if not _G["DropDownList"..1]:IsShown() then
                     ToggleDropDownMenu(1, nil, self.frame.content.customerDropdown.frame, self.frame.content.customerDropdown.frame.name, 170, 50, nil, nil)
                 end
-            else
-                self:ResetDropdown(CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer)
-                if _G["DropDownList"..1]:IsShown() then
-                    ToggleDropDownMenu(1, nil, self.frame.content.customerDropdown.frame, CraftSim.CUSTOMER_HISTORY.FRAMES.frame.content.customerDropdown.frame.name, 0, 0, nil, nil)
-                end
+            elseif _G["DropDownList"..1]:IsShown() then
+                ToggleDropDownMenu(1, nil, self.frame.content.customerDropdown.frame, self.frame.content.customerDropdown.frame.name, 170, 50, nil, nil)
             end
         end)
 
