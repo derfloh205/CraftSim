@@ -132,13 +132,16 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadHistory(customer)
 end
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown(customer, filter)
-    pcall(function()
-        local data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e) if (a.history and (not filter or string.find(string.lower(e), string.lower(filter)))) then return {label=e, value=e} end end)
-        self.frame.content.customerDropdown:SetData({
-            initialLabel=customer,
-            initialValue=customer,
-            initialData=data,
-            data=data,
-        })
+    local data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e)
+        valid, match = pcall(string.find, string.lower(e), string.lower(filter or ""))
+         if (a.history and (not filter or not valid or match)) then
+            return {label=e, value=e}
+        end
     end)
+    self.frame.content.customerDropdown:SetData({
+        initialLabel=customer,
+        initialValue=customer,
+        initialData=data,
+        data=data,
+    })
 end
