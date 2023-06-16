@@ -133,7 +133,7 @@ end
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown(customer, filter)
     local data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e)
-        valid, match = pcall(string.find, string.lower(e), string.lower(filter or ""))
+        local valid, match = pcall(string.find, string.lower(e), string.lower(filter or ""))
          if (a.history and (not filter or not valid or match)) then
             return {label=e, value=e}
         end
