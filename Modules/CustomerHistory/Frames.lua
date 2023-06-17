@@ -24,15 +24,44 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     local function createContent(frame)
         self.frame:Hide()
         self.frame.content.customerDropdown = CraftSim.GGUI.Dropdown({
-            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170, offsetX=-170,
+            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", width=170, offsetX=-170, offsetY=-30,
             initialValue=nil,
             initialLabel="",
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DROPDOWN_LABEL),
             initialData={},
             clickCallback=function (_, _, item) CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(item) end
         })
+        self.frame.content.deleteButton = CraftSim.GGUI.Button({
+            parent=frame.content,anchorParent=self.frame.content.customerDropdown.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=0, offsetY=2,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_BUTTON), sizeX=15, sizeY=20, adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.CUSTOMER_HISTORY.db.realm[CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer] = nil
+                self:ResetDropdown()
+                self.frame.content.messageBox:Clear()
+                self:LoadTotalTip()
+                CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer = nil
+                self.frame.content.deleteButton.frame:SetEnabled(false)
+            end,
+        })
+        self.frame.content.deleteButton.frame:SetEnabled(false)
+
+        self.frame.content.filterTextbox = CraftSim.FRAME:CreateInput("Search", self.frame.content, self.frame.content.customerDropdown.frame, "TOP", "BOTTOM", 0, 0, 170, 25,
+        "",
+        function(textInput, userInput)
+            if not userInput then return end
+            local input = textInput:GetText():gsub("^%s*(.-)%s*$", "%1") or ""
+            self:ResetDropdown(CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer, input)
+            if input ~= "" then
+                if not _G["DropDownList"..1]:IsShown() then
+                    ToggleDropDownMenu(1, nil, self.frame.content.customerDropdown.frame, self.frame.content.customerDropdown.frame.name, 170, 50, nil, nil)
+                end
+            elseif _G["DropDownList"..1]:IsShown() then
+                ToggleDropDownMenu(1, nil, self.frame.content.customerDropdown.frame, self.frame.content.customerDropdown.frame.name, 170, 50, nil, nil)
+            end
+        end)
+
         self.frame.content.totalTip = CraftSim.GGUI.Text({
-            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetX=200, offsetY=-30,
+            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetX=200, offsetY=-36,
             text="",
             font="GameFontNormal",
             justifyOptions={
@@ -41,8 +70,8 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             }
         })
         self.frame.content.messageBox = CraftSim.GGUI.ScrollingMessageFrame({
-            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetX=0, offsetY=-70,
-            sizeX=self.frame.originalX - 20, sizeY=self.frame.originalY - 100,
+            parent=self.frame.content, anchorParent=self.frame.content, anchorA="BOTTOMLEFT", anchorB="BOTTOMLEFT", offsetX=15, offsetY=15,
+            sizeX=self.frame.originalX - 20, sizeY=self.frame.originalY - 130,
             enableScrolling=true,
             fading=false,
             justifyOptions={
@@ -58,26 +87,32 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     createContent(self.frame)
 end
 
-function CraftSim.CUSTOMER_HISTORY.FRAMES:AddCustomer(customer)
-    self:ResetDropdown(customer)
+function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
+    customer = customer or CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer
+
+    if C_TradeSkillUI.IsTradeSkillReady() then
+        self.frame.content.deleteButton.frame:SetEnabled(customer ~= nil)
+        self:ResetDropdown(customer, self.frame.content.filterTextbox:GetText() or nil)
+        self:LoadHistory(customer)
+    end
+    CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer = customer
 end
 
-local function GetFallbackCustomer()
-    for k, v in pairs(CraftSim.CUSTOMER_HISTORY.db.realm) do
-        if type(v) == "table" then
-            return k
-        end
+function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadTotalTip(customer)
+    if customer then
+        local totalTip = CraftSim.CUSTOMER_HISTORY.db.realm[customer].totalTip or 0
+        self.frame.content.totalTip:SetText(string.format("%s%s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP), CraftSim.GUTIL:FormatMoney(totalTip)))
+    else
+        self.frame.content.totalTip:SetText("")
     end
 end
 
-function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
-    customer = customer or GetFallbackCustomer()
+function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadHistory(customer)
     if not customer then
         return
     end
-
-    self:ResetDropdown(customer)
-    self.frame.content.totalTip:SetText(string.format("%s%s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP), CraftSim.GUTIL:FormatMoney(CraftSim.CUSTOMER_HISTORY.db.realm[customer].totalTip or 0)))
+    print("Loading history for " .. customer)
+    self:LoadTotalTip(customer)
     self.frame.content.messageBox:Clear()
 
     local info = ChatTypeInfo["WHISPER"]
@@ -96,8 +131,13 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
     end
 end
 
-function CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown(customer)
-    local data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e) if (a.history) then return {label=e, value=e} end end)
+function CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown(customer, filter)
+    local data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e)
+        local valid, match = pcall(string.find, string.lower(e), string.lower(filter or ""))
+        if (a.history and (not filter or not valid or match)) then
+            return {label=e, value=e}
+        end
+    end)
     self.frame.content.customerDropdown:SetData({
         initialLabel=customer,
         initialValue=customer,
