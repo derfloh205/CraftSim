@@ -10,9 +10,14 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.8.0") ..
+        f.s .. "Updates and Fixes to the " .. f.bb("CustomerHistory") .. " Module by" ..
+        f.a .. f.bb("https://github.com/Meivyn") .. 
+        f.p .. "Supporter List Update" ..
+        f.p .. "Bugfix for Specialization Node Info regarding Shadowbelt Clasp" ..
         newP("8.7.0") ..
-        f.P .. "Thx to " .. f.bb("https://github.com/clery") .. "for" ..
-        f.a .. "adding a whole new" .. f.g("Customer History") .. " module" ..
+        f.P .. "Thx to " .. f.bb("https://github.com/clery") .. " for" ..
+        f.a .. "adding a whole new " .. f.g("Customer History") .. " module" ..
         f.a .. "to CraftSim! (Please report any issues in the discord)" ..
         f.p .. "Added new belt clasp and new cauldron to " .. f.bb("Specialization Info") ..
         f.p .. "Added a nil check for recipeCategoryInfo" ..
