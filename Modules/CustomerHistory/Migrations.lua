@@ -17,6 +17,20 @@ local migrations = {
             end
         end
         table.sort(realm, function(a, b) return a.timestamp < b.timestamp end)
+        db.realm = realm
+    end,
+    ["8.7.0"] = function(db)
+        for charName, charData in pairs(db.realm) do
+            if (string.find(charName, "-") and (charData.totalTip == 0 or charData.totalTip == nil)) then
+                db.realm[charName] = nil
+            end
+        end
+        for charName, charData in pairs(db.realm) do
+            if (string.find(charName, "-") and charData.history) then
+                db.realm.lastCustomer = charName
+                break
+            end
+        end
     end
 }
 

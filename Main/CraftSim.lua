@@ -32,7 +32,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesRecipeScan = false,
 	modulesCraftResults = false,
 	modulesCustomerService = false,
-	modulesHistoryService = false,
+	modulesCustomerHistory = false,
 	modulesCostDetails = false,
 
 	transparencyMaterials = 1,
@@ -125,6 +125,7 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
 		CraftSimOptions.transparencyCostOverview = CraftSimOptions.transparencyCostOverview or 1
 		CraftSimOptions.transparencySpecInfo = CraftSimOptions.transparencySpecInfo or 1
+		CraftSimOptions.maxHistoryEntriesPerClient = CraftSimOptions.maxHistoryEntriesPerClient or 200
 		CraftSimOptions.customerServiceActivePreviewIDs = CraftSimOptions.customerServiceActivePreviewIDs or {}
 		CraftSimOptions.customerServiceRecipeWhisperFormat = CraftSimOptions.customerServiceRecipeWhisperFormat or
 		("Highest Result: %gc\n" ..
@@ -186,7 +187,7 @@ function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
 	if freshLoginRecall and isInit then
 		freshLoginRecall = false
 		-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
-		C_Timer.After(0.1, function() 
+		C_Timer.After(0.1, function()
 			CraftSim.MAIN:TriggerModulesErrorSafe(true)
 		end)
 	end
@@ -209,7 +210,7 @@ function CraftSim.MAIN:HookToEvent()
 		end
 	end
 
-	
+
 	local function Init(self, recipeInfo)
 		if not self:IsVisible() then
 			return
@@ -220,11 +221,11 @@ function CraftSim.MAIN:HookToEvent()
 			CraftSim.SIMULATION_MODE.FRAMES.WORKORDER.toggleButton:SetChecked(false)
 			CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton:SetChecked(false)
 		end
-		
+
 		if recipeInfo then
 			print("Init: " .. tostring(recipeInfo.recipeID))
 			CraftSim.MAIN.currentRecipeID = recipeInfo.recipeID
-			
+
 			local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 			local professionRecipeIDs = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimRecipeIDs, professionInfo.profession)
 			if not professionRecipeIDs then
@@ -235,7 +236,7 @@ function CraftSim.MAIN:HookToEvent()
 					CraftSim.CACHE:AddCacheEntryByVersion(CraftSimRecipeIDs, professionInfo.profession, recipeIDs)
 				end
 			end
-			
+
 			CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionInfo.profession)
 			CraftSim.MAIN:TriggerModulesErrorSafe(true)
 			CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeInfo.recipeID)
@@ -261,7 +262,7 @@ function CraftSim.MAIN:HookToEvent()
 
 	recipeTab:HookScript("OnClick", Update)
 	craftingOrderTab:HookScript("OnClick", Update)
-	
+
 end
 
 function CraftSim.MAIN:InitStaticPopups()
@@ -312,7 +313,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.FRAME:HandleAuctionatorOverlaps()
 		CraftSim.MAIN:HandleAuctionatorHooks()
 		CraftSim.ACCOUNTSYNC:Init()
-		
+
 
 		CraftSim.CONTROL_PANEL.FRAMES:Init()
 		CraftSim.MAIN:InitStaticPopups()
@@ -332,7 +333,7 @@ end
 function CraftSim.MAIN:HandleAuctionatorHooks()
 ---@diagnostic disable-next-line: undefined-global
 	if Auctionator then
-		Auctionator.API.v1.RegisterForDBUpdate(AddonName, function() 
+		Auctionator.API.v1.RegisterForDBUpdate(AddonName, function()
 			print("Auctionator DB Update")
 			CraftSim.MAIN:TriggerModulesErrorSafe(false)
 		end)
@@ -355,11 +356,11 @@ function CraftSim.MAIN:HookToProfessionsFrame()
 	end
 	professionFrameHooked = true
 
-	ProfessionsFrame:HookScript("OnShow", 
+	ProfessionsFrame:HookScript("OnShow",
    function()
 		CraftSim.MAIN.lastRecipeID = nil
 		if CraftSimOptions.openLastRecipe then
-			C_Timer.After(1, function() 
+			C_Timer.After(1, function()
 				local recipeInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeInfo()
 				local professionInfo = ProfessionsFrame:GetProfessionInfo()
 				local professionFullName = professionInfo.professionName
@@ -371,7 +372,7 @@ function CraftSim.MAIN:HookToProfessionsFrame()
 		end
    end)
 
-   ProfessionsFrame.CraftingPage:HookScript("OnHide", 
+   ProfessionsFrame.CraftingPage:HookScript("OnHide",
    function()
 	local professionInfo = ProfessionsFrame:GetProfessionInfo()
 	local profession = professionInfo.parentProfessionName
@@ -389,8 +390,8 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 	SlashCmdList["CRAFTSIM"] = function(input)
 
 		input = SecureCmdOptionParse(input)
-		if not input then 
-			return 
+		if not input then
+			return
 		end
 
 		local command, rest = input:match("^(%S*)%s*(.-)$")
@@ -415,7 +416,7 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 				local json = CraftSim.MAIN.currentRecipeData:GetJSON()
 				CraftSim.UTIL:KethoEditBox_Show(json)
 			end
-		else 
+		else
 			-- open options if any other command or no command is given
 			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
 		end
@@ -511,7 +512,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 
 	print("Export Mode: " .. tostring(exportMode))
 
-	local recipeData = nil 
+	local recipeData = nil
 	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
 		recipeData = CraftSim.SIMULATION_MODE.recipeData
 		CraftSim.MAIN.currentRecipeData = CraftSim.SIMULATION_MODE.recipeData
@@ -528,7 +529,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 			print("CraftSim MAIN: SchematicForm without transaction!")
 			return
 		end
-		local isRecraft = currentTransaction:GetRecraftAllocation() ~= nil 
+		local isRecraft = currentTransaction:GetRecraftAllocation() ~= nil
 		local isWorkOrder = CraftSim.UTIL:IsWorkOrder()
 
 		recipeData = CraftSim.RecipeData(recipeInfo.recipeID, isRecraft, isWorkOrder)
@@ -547,7 +548,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
     local showTopGear = false
 	local showSimulationMode = false
 	local showSpecInfo = false
-	
+
 	-- always on modules
     local showCostOverview = true
 	local showPriceOverride = true
@@ -558,7 +559,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local showCraftData = true
 	local showCostDetails = true
 
-	
+
 	if recipeData.supportsCraftingStats then
 		showStatweights = true
 		showTopGear = true
@@ -574,7 +575,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showSimulationMode = not recipeData.isOldWorldRecipe
 
 
-	showMaterialOptimization = showMaterialOptimization and CraftSimOptions.modulesMaterials 
+	showMaterialOptimization = showMaterialOptimization and CraftSimOptions.modulesMaterials
 	showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
 	showTopGear = showTopGear and CraftSimOptions.modulesTopGear
 	showCostOverview = showCostOverview and CraftSimOptions.modulesPriceDetails
@@ -584,7 +585,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showCraftResults = showCraftResults and CraftSimOptions.modulesCraftResults
 	showCustomerService = showCustomerService and CraftSimOptions.modulesCustomerService
 	showCustomerHistory = showCustomerHistory and CraftSimOptions.modulesCustomerHistory
-	showHistoryService = showHistoryService and CraftSimOptions.modulesHistoryService
 	showCraftData = showCraftData and CraftSimOptions.modulesCraftData
 	showCostDetails = showCostDetails and CraftSimOptions.modulesCostDetails
 
@@ -592,8 +592,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
 	CraftSim.FRAME:ToggleFrame(customerServiceFrame, showCustomerService)
 	CraftSim.FRAME:ToggleFrame(customerHistoryFrame, showCustomerHistory)
-	
-	
+
+
 
 	-- Simulation Mode (always update first because it changes recipeData based on simMode inputs)
 	showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
@@ -602,7 +602,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility() -- show sim mode frames depending if active or not
 	if CraftSim.SIMULATION_MODE.isActive and recipeData then
 		-- update simulationframe recipedata by inputs and the frontend
-		-- since recipeData is a reference here to the recipeData in the simulationmode, 
+		-- since recipeData is a reference here to the recipeData in the simulationmode,
 		-- the recipeData that is used in the below modules should also be the modified one!
 		CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 	end
@@ -680,7 +680,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(specInfoFrameWO, showSpecInfo and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showSpecInfo then
 		CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
-	end	
+	end
 end
 
 function CraftSim_OnAddonCompartmentClick()

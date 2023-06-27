@@ -15,7 +15,7 @@ function CraftSim.CUSTOMER_HISTORY:Init()
     CraftSim.CUSTOMER_HISTORY.MIGRATIONS:Migrate(self.db)
     self:RegisterEvent("CHAT_MSG_WHISPER", "HandleWhisper")
     self:RegisterEvent("CHAT_MSG_WHISPER_INFORM", "HandleWhisper")
-    self:RegisterEvent("TRADE_SKILL_SHOW", "LoadMessages")
+    self:RegisterEvent("TRADE_SKILL_SHOW", "LoadHistory")
     self:RegisterEvent("CRAFTINGORDERS_FULFILL_ORDER_RESPONSE", "OnOrderFinished")
     self:RegisterEvent("CRAFTINGORDERS_RELEASE_ORDER_RESPONSE", "OnOrderFinished")
     self:RegisterEvent("CRAFTINGORDERS_REJECT_ORDER_RESPONSE", "OnOrderFinished")
@@ -31,16 +31,14 @@ function CraftSim.CUSTOMER_HISTORY:HandleWhisper(event, message, customer, ...)
         print("Sent whisper to " .. customer .. " with message: " .. message)
         table.insert(self.db.realm[customer].history, {to = message, timestamp = math.floor((time()+GetTime()%1)*1000)})
     end
-    while (CraftSimOptions.maxHistoryEntriesPerClient and table.getn(self.db.realm[customer].history) > CraftSimOptions.maxHistoryEntriesPerClient) do
-        table.remove(1, self.db.realm[customer].history)
+    while (table.getn(self.db.realm[customer].history) > CraftSimOptions.maxHistoryEntriesPerClient) do
+        table.remove(self.db.realm[customer].history, 1)
     end
-    CraftSim.CUSTOMER_HISTORY.FRAMES:AddCustomer(customer)
     CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
 end
 
-function CraftSim.CUSTOMER_HISTORY:LoadMessages()
-    CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer()
-    self:UnregisterEvent("TRADE_SKILL_SHOW")
+function CraftSim.CUSTOMER_HISTORY:LoadHistory()
+    CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(self.db.realm.lastCustomer)
 end
 
 function CraftSim.CUSTOMER_HISTORY:OnOrderFinished(event, result, orderID)
@@ -56,10 +54,9 @@ function CraftSim.CUSTOMER_HISTORY:OnOrderFinished(event, result, orderID)
         self.db.realm[claimedOrder.customerName].history = self.db.realm[claimedOrder.customerName].history or {}
         table.insert(self.db.realm[claimedOrder.customerName].history, {crafted = claimedOrder.outputItemHyperlink, commission = claimedOrder.tipAmount, reagents = claimedOrder.reagents, timestamp = math.floor((time()+GetTime()%1)*1000)})
         self.db.realm[claimedOrder.customerName].totalTip = (self.db.realm[claimedOrder.customerName].totalTip or 0) + claimedOrder.tipAmount
-        while (CraftSimOptions.maxHistoryEntriesPerClient and table.getn(self.db.realm[claimedOrder.customerName].history) > CraftSimOptions.maxHistoryEntriesPerClient) do
-            table.remove(1, self.db.realm[claimedOrder.customerName].history)
+        while (table.getn(self.db.realm[claimedOrder.customerName].history) > CraftSimOptions.maxHistoryEntriesPerClient) do
+            table.remove(self.db.realm[claimedOrder.customerName].history, 1)
         end
-        CraftSim.CUSTOMER_HISTORY.FRAMES:AddCustomer(claimedOrder.customerName)
         CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(claimedOrder.customerName)
     end
 end
