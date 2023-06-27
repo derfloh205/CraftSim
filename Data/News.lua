@@ -14,7 +14,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.s .. "Updates and Fixes to the " .. f.bb("CustomerHistory") .. " Module by" ..
         f.a .. f.bb("https://github.com/Meivyn") .. 
         f.p .. "Supporter List Update" ..
-        f.p .. "Bugfix for Specialization Node Info regarding Shadowbelt Clasp" ..
+        f.p .. "Bugfix for Specialization Node Info regarding Shadowbelt Clasp by" ..
+        f.a .. f.bb("https://github.com/domi1294") ..
         newP("8.7.0") ..
         f.P .. "Thx to " .. f.bb("https://github.com/clery") .. " for" ..
         f.a .. "adding a whole new " .. f.g("Customer History") .. " module" ..
