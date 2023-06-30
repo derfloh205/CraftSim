@@ -6,8 +6,8 @@ CraftSim.PRICE_APIS = {}
 CraftSimTSM = {name = "TradeSkillMaster"}
 CraftSimAUCTIONATOR = {name = "Auctionator"}
 CraftSimRECRYSTALLIZE = {name = "RECrystallize"}
-CraftSimDEBUG_PRICE_API = {name = "Debug"}
 CraftSimEXCHANGE = {name = "OribosExchange"}
+CraftSimDEBUG_PRICE_API = {name = "Debug"}
 
 CraftSimDebugData = CraftSimDebugData or {}
 CraftSim.PRICE_APIS.available = true
