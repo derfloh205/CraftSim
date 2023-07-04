@@ -13,6 +13,8 @@ function CraftSim.NEWS:GET_NEWS()
         newP("8.9.0") ..
         f.P .. "Thank you " .. f.bb("https://github.com/Kanegasi") .. " for" ..
         f.a .. "adding " .. f.g("Oribos Exchange") .. " to the possible price sources" ..
+        f.s .. f.bb("Profit Calculation") .." for " .. f.bb("Crafting Orders") .. " now correctly considers" ..
+        f.a .. "materials that were provided by the customer" ..
         newP("8.8.0") ..
         f.s .. "Updates and Fixes to the " .. f.bb("CustomerHistory") .. " Module by" ..
         f.a .. f.bb("https://github.com/Meivyn") .. 

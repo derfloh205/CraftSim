@@ -216,6 +216,8 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
                 local allocations = 0
                 if reagentAllocation ~= nil then
                     allocations = reagentAllocation:GetQuantity()
+                    print("reagent #" .. i .. " allocation:", false, true)
+                    print(reagentAllocation, true)
                 end
                 local craftSimReagentItem = nil
                 for _, craftSimReagent in pairs(self.reagentData.requiredReagents) do

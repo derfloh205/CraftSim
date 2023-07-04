@@ -636,9 +636,15 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
     local comissionProfit = 0
     if recipeData.orderData then
         comissionProfit = (tonumber(recipeData.orderData.tipAmount) or 0) - (tonumber(recipeData.orderData.consortiumCut) or 0)
+
+        -- we also need to consider any saved crafting costs from provided materials from the customer and the comission
+        for _, reagentdata in ipairs(recipeData.orderData.reagents) do
+            local price = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentdata.reagent.itemID, true, false)
+            comissionProfit = comissionProfit + (reagentdata.reagent.quantity * price)
+        end
     end
 
-    -- for work orders we do not need to consider auction house cut but we can add the comissionProfit
+    -- for work orders we do not need to consider auction house cut but we can add the comissionProfit    
     local function adaptResultValue(value) 
         if recipeData.orderData and comissionProfit > 0 then
             return comissionProfit
@@ -646,6 +652,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
             return value * CraftSim.CONST.AUCTION_HOUSE_CUT
         end
     end
+
 
     -- case: every stats exists
     if recipeData.supportsInspiration and recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
