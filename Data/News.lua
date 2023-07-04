@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.9.0") ..
+        f.P .. "" ..
         newP("8.8.0") ..
         f.s .. "Updates and Fixes to the " .. f.bb("CustomerHistory") .. " Module by" ..
         f.a .. f.bb("https://github.com/Meivyn") .. 
