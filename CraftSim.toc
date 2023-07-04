@@ -2,7 +2,7 @@
 ## DefaultState: enabled
 
 ## Title: CraftSim
-## Notes: Calculates profession statweights and displays them per recipe
+## Notes: Calculates the average profit based on your profession stats and other tools for dragonflight gold making
 ## Author: genju
 ## Version: 8.9.0
 ## X-Curse-Project-ID: 705015
