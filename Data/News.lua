@@ -11,7 +11,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.9.0") ..
-        f.P .. "" ..
+        f.P .. "Thank you " .. f.bb("https://github.com/Kanegasi") .. " for" ..
+        f.a .. "adding " .. f.g("Oribos Exchange") .. " to the possible price sources" ..
         newP("8.8.0") ..
         f.s .. "Updates and Fixes to the " .. f.bb("CustomerHistory") .. " Module by" ..
         f.a .. f.bb("https://github.com/Meivyn") .. 
