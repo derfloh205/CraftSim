@@ -920,12 +920,14 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             equalsSkill = true,
             exceptionRecipeIDs = {
                 374627, -- prospecting
+                395696, -- crushing
             }
         },
         PROSPECTING_2 = {
             nodeID = 28609,
             exceptionRecipeIDs = {
                 374627, -- prospecting
+                395696, -- crushing
             },
             threshold = 5,
             craftingspeedBonusFactor = 0.15,
@@ -934,6 +936,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28609,
             exceptionRecipeIDs = {
                 374627, -- prospecting
+                395696, -- crushing
             },
             threshold = 15,
             inspiration = 5,
@@ -942,6 +945,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28609,
             exceptionRecipeIDs = {
                 374627, -- prospecting
+                395696, -- crushing
             },
             threshold = 25,
             craftingspeedBonusFactor = 0.25,

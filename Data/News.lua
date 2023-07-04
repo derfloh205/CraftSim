@@ -15,6 +15,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "adding " .. f.g("Oribos Exchange") .. " to the possible price sources" ..
         f.s .. f.bb("Profit Calculation") .." for " .. f.bb("Crafting Orders") .. " now correctly considers" ..
         f.a .. "materials that were provided by the customer" ..
+        f.p .. "Added the " .. f.bb("Prospecting") .. " Talent Node to" .. f.bb(" Dragon Isles Crushing") ..
+        f.a .. "for " .. f.bb("Specialization Info") ..
         newP("8.8.0") ..
         f.s .. "Updates and Fixes to the " .. f.bb("CustomerHistory") .. " Module by" ..
         f.a .. f.bb("https://github.com/Meivyn") .. 
