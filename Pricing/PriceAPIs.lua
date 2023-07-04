@@ -6,6 +6,7 @@ CraftSim.PRICE_APIS = {}
 CraftSimTSM = {name = "TradeSkillMaster"}
 CraftSimAUCTIONATOR = {name = "Auctionator"}
 CraftSimRECRYSTALLIZE = {name = "RECrystallize"}
+CraftSimEXCHANGE = {name = "OribosExchange"}
 CraftSimDEBUG_PRICE_API = {name = "Debug"}
 
 CraftSimDebugData = CraftSimDebugData or {}
@@ -50,6 +51,8 @@ function CraftSim.PRICE_APIS:SwitchAPIByAddonName(addonName)
         CraftSim.PRICE_API = CraftSimAUCTIONATOR
     elseif addonName == "RECrystallize" then
         CraftSim.PRICE_API = CraftSimRECRYSTALLIZE
+    elseif addonName == "OribosExchange" then
+        CraftSim.PRICE_API = CraftSimEXCHANGE
     end
 end
 
@@ -87,12 +90,15 @@ function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
     local _, tsmLoaded = IsAddOnLoaded(CraftSimTSM.name)
     local _, auctionatorLoaded = IsAddOnLoaded(CraftSimAUCTIONATOR.name)
     local _, recrystallizeLoaded = IsAddOnLoaded(CraftSimRECRYSTALLIZE.name)
+    local _, exchangeLoaded = IsAddOnLoaded(CraftSimEXCHANGE.name)
     if tsmLoaded then
         CraftSim.PRICE_API = CraftSimTSM
     elseif auctionatorLoaded then
         CraftSim.PRICE_API = CraftSimAUCTIONATOR
     elseif recrystallizeLoaded then
         CraftSimPriceAPI = CraftSimRECRYSTALLIZE
+    elseif exchangeLoaded then
+        CraftSimPriceAPI = CraftSimEXCHANGE
     else
         print("CraftSim: No supported price source found")
         print("Supported addons are: ")
@@ -195,6 +201,30 @@ end
 function CraftSimRECRYSTALLIZE:GetMinBuyoutByItemLink(itemLink)
     local output = RECrystallize_PriceCheck(itemLink)
     return output and output or 0
+end
+
+local OEresult = {}
+
+function CraftSimEXCHANGE:GetMinBuyoutByItemID(itemID)
+    local output = 0
+    OEMarketInfo(itemID, OEresult)
+    if OEresult["market"] and OEresult["market"] > 0 then
+        output = OEresult["market"]
+    elseif OEresult["region"] and OEresult["region"] > 0 then
+        output = OEresult["region"]
+    end
+    return output
+end
+
+function CraftSimEXCHANGE:GetMinBuyoutByItemLink(itemLink)
+    local output = 0
+    OEMarketInfo(itemLink, OEresult)
+    if OEresult["market"] and OEresult["market"] > 0 then
+        output = OEresult["market"]
+    elseif OEresult["region"] and OEresult["region"] > 0 then
+        output = OEresult["region"]
+    end
+    return output
 end
 
 function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
