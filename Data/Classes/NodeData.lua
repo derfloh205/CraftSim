@@ -68,11 +68,12 @@ function CraftSim.NodeData:UpdateAffectance()
 end
 
 function CraftSim.NodeData:UpdateProfessionStats()
+    -- always clear stats even if not affected or active
+    -- this is important so that stats change to 0 when its not active anymore in the simulator!
+    self.professionStats:Clear()
     if not self.affectsRecipe or not self.active then
         return
     end
-
-    self.professionStats:Clear()
 
     for _, nodeRule in pairs(self.nodeRules) do
         nodeRule:UpdateProfessionStatsByRank(self.rank)

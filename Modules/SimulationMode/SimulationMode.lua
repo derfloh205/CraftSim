@@ -25,6 +25,8 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
     
     local inputNumber = CraftSim.UTIL:ValidateNumberInput(nodeModFrame.input, true)
 
+    print("startinput after validation: " .. inputNumber)
+
     if inputNumber > nodeModFrame.nodeProgressBar.maxValue then
         inputNumber = nodeModFrame.nodeProgressBar.maxValue
     elseif inputNumber < -1 then
@@ -32,7 +34,10 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
     end
     nodeModFrame.Update(inputNumber)
 
+    print("inputNumber after update: " .. inputNumber)
+
     -- update specdata
+    ---@type CraftSim.NodeData
     local nodeData = CraftSim.GUTIL:Find(CraftSim.SIMULATION_MODE.specializationData.nodeData, function(nodeData) return nodeData.nodeID == nodeModFrame.nodeID end)
     if not nodeData then
         return
@@ -40,7 +45,14 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
     nodeData.rank = inputNumber
     nodeData.active = inputNumber > -1
 
+    print("new rank: " .. nodeData.rank)
+    print("new active: " .. tostring(nodeData.active))
+
     nodeData:UpdateProfessionStats()
+
+    print("nodeData stats: ")
+    print(nodeData.professionStats, true, false, 2)
+
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
 
     CraftSim.MAIN:TriggerModulesErrorSafe()
