@@ -20,6 +20,9 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "materials that were provided by the customer" ..
         f.p .. "Added the " .. f.bb("Prospecting") .. " Talent Node to" .. f.bb(" Dragon Isles Crushing") ..
         f.a .. "for " .. f.bb("Specialization Info") ..
+        f.p .. "Added an additional dropdown frame into the" .. 
+        f.a .. "frame pool for optional and finishing reagents" ..
+        f.a .. "to support the new tailoring pvp gear" ..
         newP("8.8.0") ..
         f.s .. "Updates and Fixes to the " .. f.bb("CustomerHistory") .. " Module by" ..
         f.a .. f.bb("https://github.com/Meivyn") .. 

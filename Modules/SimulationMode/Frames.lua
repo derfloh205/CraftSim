@@ -113,6 +113,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*3))
         table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*4))
         table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*5))
+        table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*6))
+
         
         -- DETAILS FRAME
         local simModeDetailsFrame = CraftSim.GGUI.Frame({
