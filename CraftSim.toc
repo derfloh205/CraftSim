@@ -4,13 +4,14 @@
 ## Title: CraftSim
 ## Notes: Calculates the average profit based on your profession stats and other tools for dragonflight gold making
 ## Author: genju
-## Version: 8.9.0
+## Version: 8.9.1
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
 ## AddonCompartmentFunc: CraftSim_OnAddonCompartmentClick
 ## IconTexture: Interface\Icons\inv_misc_coin_02
 ## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimGGUIConfig, CraftSimPriceOverridesV2, CraftSimRecipeIDs, CraftSimProfessionInfoCache, CraftSimProfessionSkillLineIDCache, CraftSimCraftData, CraftSimRecipeMap, CraftSimLoadedProfessionRecipes, CraftSimCustomerHistory
+## Dependencies: Blizzard_Professions
 
 embeds.xml
 
