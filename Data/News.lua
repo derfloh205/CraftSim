@@ -11,6 +11,10 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.9.2") ..
+        f.s .. "Expanded the " .. f.bb("Craft Statistics Panel") .." of the " .. f.bb("Average Profit Module") ..
+        f.a .. "to now also show " .. f.g("expected costs per item") .. 
+        f.a .. "with and without " .. f.g("sell return of lower qualities") ..
+        f.p .. "Added a new help icon (?) to explain the statistics table" ..
         f.p .. "Fixed the " .. f.bb("Show Statistics") .. " button not updating its text when" ..
         f.a .. "closing the " .. f.bb("Statistics Module") ..
         f.p .. "Supporter List Update" ..

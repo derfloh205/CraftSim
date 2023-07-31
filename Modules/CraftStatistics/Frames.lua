@@ -119,7 +119,17 @@ function CraftSim.STATISTICS.FRAMES:Init()
                 },
                 {
                     label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER),
-                    width=110,
+                    width=130,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER),
+                    width=170,
+                    justifyOptions={type="H", align="CENTER"},
+                },
+                {
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER),
+                    width=150,
                     justifyOptions={type="H", align="CENTER"},
                 }
             },
@@ -127,6 +137,8 @@ function CraftSim.STATISTICS.FRAMES:Init()
                 local qualityRow = columns[1]
                 local chanceRow = columns[2]
                 local craftsRow = columns[3]
+                local expectedCostsRow = columns[4]
+                local expectedCostsWithReturnRow = columns[5]
 
                 qualityRow.text = CraftSim.GGUI.Text({
                     parent=qualityRow,anchorParent=qualityRow,
@@ -146,8 +158,21 @@ function CraftSim.STATISTICS.FRAMES:Init()
                 craftsRow.text = CraftSim.GGUI.Text({
                     parent=craftsRow, anchorParent=craftsRow
                 })
+
+                expectedCostsRow.text = CraftSim.GGUI.Text({
+                    parent=expectedCostsRow, anchorParent=expectedCostsRow,
+                })
+
+                expectedCostsWithReturnRow.text = CraftSim.GGUI.Text({
+                    parent=expectedCostsWithReturnRow, anchorParent=expectedCostsWithReturnRow
+                })
             end
         })
+
+        frame.content.statisticsExplanationIcon = CraftSim.GGUI.HelpIcon(
+            {parent=frame.content,anchorParent=frame.content.chanceByQualityTable.frame, anchorA="BOTTOMLEFT", anchorB="TOPRIGHT",
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPLANATION_ICON),
+            offsetY=5, offsetX=-3})
 
         frame.content.expandButton = CraftSim.GGUI.Button({
             parent=frame.content,anchorParent=frame.frame, anchorA="BOTTOM", anchorB="BOTTOM",
@@ -313,10 +338,33 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
             local qualityRow = row.columns[1]
             local chanceRow = row.columns[2]
             local craftsRow = row.columns[3]
+            local expectedCostsRow = row.columns[4]
+            local expectedCostsWithReturnRow = row.columns[5]
 
             qualityRow:SetQuality(qualityID)
             chanceRow.text:SetText(CraftSim.GUTIL:Round(chance*100, 2) .. "%")
             craftsRow.text:SetText(expectedCrafts)
+
+            local expectedCostsForQuality = recipeData.priceData.expectedCostsByQuality[qualityID]
+
+            if expectedCostsForQuality then
+                expectedCostsRow.text:SetText(CraftSim.GUTIL:FormatMoney(expectedCostsForQuality, true));
+                -- Consider selling on average one item of a lower quality per attempted crafts before reaching this quality (the rounded down integer)
+                local expectedSellReturnForQuality = 0
+                if qualityID > 1 then
+                    -- 1.97 minus 1 and ceil is 1 and 1 minus 1 and ceil is 0
+                    -- 1.97 floor is 1 and 1 floor is also one, so we take the ceil and minus one method
+                    -- update: just minus one to get the average crafts before the final average craft that reaches the desired quality
+                    -- e.g: if the expected is 1.05 then the average sell value for lower quality of that is weighted with 0.05 which seems about right
+                    expectedSellReturnForQuality = (recipeData.resultData.expectedCraftsByQuality[qualityID] - 1) * recipeData.priceData.qualityPriceList[qualityID-1]
+                    expectedSellReturnForQuality = expectedSellReturnForQuality * CraftSim.CONST.AUCTION_HOUSE_CUT
+                end
+
+                expectedCostsWithReturnRow.text:SetText(CraftSim.GUTIL:FormatMoney(expectedCostsForQuality - expectedSellReturnForQuality, true));
+            else
+                expectedCostsRow.text:SetText("-")
+                expectedCostsWithReturnRow.text:SetText("-");
+            end
         end)
     end
 
@@ -375,54 +423,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
         return rowA.chance > rowB.chance
     end)
 
-    -- probabilityTable = CraftSim.GUTIL:Sort(probabilityTable, function(a, b) 
-    --     return a.chance >= b.chance
-    -- end)
-
     local numCrafts=statisticsFrame.content.numCraftsInput.currentValue
-
-    -- local probabilityRows = statisticsFrame.content.probabilityTableFrame.tableRows
-    -- for index, row in pairs(probabilityRows) do
-    --     if not probabilityTable then
-    --         row:Hide()
-    --     else
-    --         local probabilityEntry = probabilityTable[index]
-    --         if not probabilityEntry then
-    --             row:Hide()
-    --         else
-    --             row:Show()
-    --             local check = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), CraftSim.GUTIL.COLORS.GREEN)
-    --             local cross = CraftSim.GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), CraftSim.GUTIL.COLORS.RED)
-    --             local isNot = CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY)
-    --             if probabilityEntry.inspiration ~= nil then
-    --                 row.inspiration:SetText(probabilityEntry.inspiration and check or cross)
-    --             else
-    --                 row.inspiration:SetText(isNot)
-    --             end
-    
-    --             if probabilityEntry.multicraft ~= nil then
-    --                 row.multicraft:SetText(probabilityEntry.multicraft and check or cross)
-    --             else
-    --                 row.multicraft:SetText(isNot)
-    --             end
-    
-    --             if probabilityEntry.resourcefulness ~= nil then
-    --                 row.resourcefulness:SetText(probabilityEntry.resourcefulness and check or cross)
-    --             else
-    --                 row.resourcefulness:SetText(isNot)
-    --             end
-
-    --             if probabilityEntry.hsv ~= nil then
-    --                 row.hsv:SetText(probabilityEntry.hsv and check or cross)
-    --             else
-    --                 row.hsv:SetText(isNot)
-    --             end
-                
-    --             row.chance:SetText(CraftSim.GUTIL:Round(probabilityEntry.chance*100, 2) .. "%")
-    --             row.profit:SetText(CraftSim.GUTIL:FormatMoney(probabilityEntry.profit, true))
-    --         end
-    --     end
-    -- end
 
     local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
 

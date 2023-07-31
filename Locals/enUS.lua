@@ -216,7 +216,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_DATA_UPDATE] = "Update",
         [CraftSim.CONST.TEXT.CRAFT_DATA_UNREACHABLE] = "Unreachable",
         [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE] = "Delete",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_SEND] = "Send",
+        [CraftSim.CONST.TEXT.CRAFT_DATA_SEND] = "Send to Player",
         [CraftSim.CONST.TEXT.CRAFT_DATA_SAVED_MATERIALS] = "Saved Material Configuration",
         [CraftSim.CONST.TEXT.CRAFT_DATA_NO_DATA] = "No data found for this item",
         [CraftSim.CONST.TEXT.CRAFT_DATA_OPTIONAL_MATERIALS] = "Optional Reagents",
@@ -235,7 +235,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_CRAFTS] = "Crafts: ",
         [CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER] = "Quality",
         [CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER] = "Chance",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Expected Crafts",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Ø Expected Crafts",
         [CraftSim.CONST.TEXT.STATISTICS_INSPIRATION_HEADER] = "Inspiration",
         [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "Multicraft",
         [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "Resourcefulness",
@@ -244,6 +244,10 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "Expected Profit",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "Recipe Probability Table",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION] = "This table shows all possible proc combinations of the current recipe.\n\n" .. f.l("HSV Next") ..  " .. HSV chance for next quality\n\n" .. f.l("HSV Skip") .. " .. HSV chance to skip a quality with inspiration",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "Ø Expected Costs per Item",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "With Ø Sell Return",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPLANATION_ICON] = "This table gives you the average (Ø) expected crafts and costs per quality.\n\n" .. f.g("Chance") .. " is the chance of crafting this item considering your " .. f.bb("Inspiration") .. " and " .. f.l("HSV") .. "\n\n" .. f.g("Expected Crafts") .. " tells you how often, on average, you have to craft this recipe to craft this quality\n\n" .. f.g("Expected Costs per Item") .. " tells you, on average, what the costs for 1 resulting item in this quality are (this can be below the crafting costs since it is per item and considers stats like " .. f.bb("Multicraft") .. "\n\n" .. f.g("With Sell Return") .. " subtracts the sell value (considering AH Cut) of the (average number) of crafted items of lower quality until the desired quality is crafted",
+
 
         -- Customer Service Frame
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "CraftSim Customer Service",
