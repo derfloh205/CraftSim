@@ -36,7 +36,11 @@ function CraftSim.STATISTICS.FRAMES:Init()
     })
 
 
-    local function createContent(frame)
+    local function createContent(frame, statweightFrameID)
+
+        frame.frame.closeButton:HookScript("OnClick", function(self) 
+            CraftSim.GGUI:GetFrame(statweightFrameID).content.statisticsButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON))
+        end)
 
         frame:SetStatusList({
             {
@@ -282,8 +286,8 @@ function CraftSim.STATISTICS.FRAMES:Init()
         })
     end
 
-    createContent(frameNO_WO)
-    createContent(frameWO)
+    createContent(frameNO_WO, CraftSim.CONST.FRAMES.STAT_WEIGHTS)
+    createContent(frameWO, CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
 end
 
 ---@param recipeData CraftSim.RecipeData

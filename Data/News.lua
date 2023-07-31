@@ -11,6 +11,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.9.2") ..
+        f.p .. "Fixed the " .. f.bb("Show Statistics") .. " button not updating its text when" ..
+        f.a .. "closing the " .. f.bb("Statistics Module") ..
         f.p .. "Supporter List Update" ..
         newP("8.9.1") ..
         f.P .. "10.1.5 Fix" ..
