@@ -633,5 +633,7 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     [309623] = {q1=172368, name="Sinful Revelation"},
     [309620] = {q1=172370, name="Lightless Force"},
     [309621] = {q1=172367, name="Eternal Grace"},
-    [309622] = {q1=172365, name="Ascended Vigor"}
+    [309622] = {q1=172365, name="Ascended Vigor"},
+
+    -- 10.3
 }
