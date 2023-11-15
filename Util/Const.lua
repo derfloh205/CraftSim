@@ -16,7 +16,7 @@ CraftSim.CONST.PERCENT_MODS = {
     INSPIRATION = 0.001,
     MULTICRAFT = 0.0009,
     RESOURCEFULNESS = 0.00111,
-    CRAFTINGSPEED = 0.002,
+    CRAFTINGSPEED = 0.002,  
 }
 
 -- some dummy recipes are not flagged as dummy ..........

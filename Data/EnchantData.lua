@@ -70,6 +70,10 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     [405076] = {name = "Shadowflame Wreathe", q1 = 204621, q2 = 204622, q3 = 204623},
     [405650] = {name = "Illusory Adornment: Spores", q1 = 204568, q2 = 204565, q3 = 204567},
 
+    -- 10.2 Additions
+    [416047] = {name = "Dreaming Devotion", q1 = 207085, q2 = 207086, q3 = 207087},
+    [414946] = {name = "Illusory Adornment: Dreams", q1 = 206967, q2 = 206968, q3 = 206969},
+
     -- Old World
     [55016] = {name = "Nitro Boosts", q1 = 41118},
 
@@ -633,7 +637,5 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     [309623] = {q1=172368, name="Sinful Revelation"},
     [309620] = {q1=172370, name="Lightless Force"},
     [309621] = {q1=172367, name="Eternal Grace"},
-    [309622] = {q1=172365, name="Ascended Vigor"},
-
-    -- 10.3
+    [309622] = {q1=172365, name="Ascended Vigor"}
 }

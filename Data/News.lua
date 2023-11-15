@@ -11,8 +11,8 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("8.9.3") ..
-        f.p .. "Updated recipes for 10.3" ..
-        f.p .. "Supporter List Update <3" ..
+        f.p .. "Updated enchant recipes for 10.2" ..
+        f.p .. "Supporter List Update" ..
         newP("8.9.2") ..
         f.s .. "Expanded the " .. f.bb("Craft Statistics Panel") .." of the " .. f.bb("Average Profit Module") ..
         f.a .. "to now also show " .. f.g("expected costs per item") .. 
