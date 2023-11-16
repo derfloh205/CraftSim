@@ -10,6 +10,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("8.9.4") ..
+        f.p .. "Added " .. f.l("10.2") ..  f.g(" Optional Reagents") ..
+        f.a .. "Thanks to " .. f.bb("https://github.com/TheResinger") .. " !" ..
         newP("8.9.3") ..
         f.p .. "Updated enchant recipes for 10.2" ..
         f.p .. "Supporter List Update" ..
