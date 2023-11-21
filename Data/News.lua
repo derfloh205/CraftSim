@@ -21,6 +21,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.p .. "Added a checkbox to the " .. f.bb("Craft Results") .. " module to" ..
         f.a .. "disable any recording for a potential performance increase" ..
         f.a .. "while crafting" ..
+        f.p .. "Automatically highlight all text for results of the " .. f.l("ForgeFinder Export") ..
         newP("8.9.4") ..
         f.p .. "Added " .. f.l("10.2") ..  f.g(" Optional Reagents") ..
         f.a .. "Thanks to " .. f.bb("https://github.com/TheResinger") .. " !" ..

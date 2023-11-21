@@ -194,6 +194,7 @@ function CraftSim.UTIL:KethoEditBox_Show(text)
     
     if text then
         KethoEditBoxEditBox:SetText(text)
+        KethoEditBoxEditBox:HighlightText(0, KethoEditBoxEditBox:GetNumLetters())
     end
     KethoEditBox:Show()
 end
