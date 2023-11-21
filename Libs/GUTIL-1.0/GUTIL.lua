@@ -287,6 +287,16 @@ GUTIL.COLORS = {
   PATREON = "ffff424D",
 }
 
+function GUTIL:GetPercentRelativeTo(value, hundredPercentValue)
+  local oneP = hundredPercentValue / 100
+      local percent = GUTIL:Round(value / oneP, 0)
+
+      if oneP == 0 then
+          percent = 0
+      end
+      return percent
+end
+
 function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
   local absValue = abs(copperValue)
   local minusText = ""
@@ -294,14 +304,7 @@ function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
   local percentageText = ""
 
   if percentRelativeTo then
-      local oneP = percentRelativeTo / 100
-      local percent = GUTIL:Round(copperValue / oneP, 0)
-
-      if oneP == 0 then
-          percent = 0
-      end
-
-      percentageText = " (" .. percent .. "%)"
+      percentageText = " (" .. GUTIL:GetPercentRelativeTo(copperValue, percentRelativeTo) .. "%)"
   end
 
   if copperValue < 0 then

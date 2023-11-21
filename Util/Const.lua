@@ -3,7 +3,7 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 86 -- last patch increase: 8.9.4
+CraftSim.CONST.currentInfoVersionID = 87 -- last patch increase: 9.0.0
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -802,6 +802,8 @@ CraftSim.CONST.TEXT = {
     RECIPE_SCAN_AVERAGE_PROFIT_HEADER = 717,
     RECIPE_SCAN_TOP_GEAR_HEADER = 718,
     RECIPE_SCAN_INV_AH_HEADER = 719,
+    RECIPE_SCAN_SORT_BY_MARGIN = "RECIPESCAN_SORTBYMARGIN",
+    RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP = "RECIPESCAN_SORTBYMARGIN_TOOLTIP",
 
     TOP_GEAR_TITLE = 750,
     TOP_GEAR_AUTOMATIC = 751,

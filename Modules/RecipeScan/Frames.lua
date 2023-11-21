@@ -70,6 +70,11 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
             CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING), CraftSim.GUTIL.COLORS.RED), 
             "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 90, 0)
 
+        frame.content.sortByProfitMarginCB = CraftSim.FRAME:CreateCheckbox(
+            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN),
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP), 
+            "recipeScanSortByProfitMargin", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 90, -20)
+
         local columnOptions = {
             {
                 -- switch to recipe button
@@ -259,6 +264,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
         end
         averageProfitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(averageProfit, true, relativeTo))
         row.averageProfit = averageProfit
+        row.relativeProfit = CraftSim.GUTIL:GetPercentRelativeTo(averageProfit, recipeData.priceData.craftingCosts)
 
         if CraftSim.RECIPE_SCAN.frame.content.optimizeProfessionToolsCB:GetChecked() then
             if recipeData.professionGearSet:IsEquipped() then
@@ -315,7 +321,14 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
 
     end)
 
-    CraftSim.RECIPE_SCAN.frame.content.resultList:UpdateDisplay(function (rowA, rowB)
-        return rowA.averageProfit > rowB.averageProfit
-    end)
+    if CraftSimOptions.recipeScanSortByProfitMargin then
+        CraftSim.RECIPE_SCAN.frame.content.resultList:UpdateDisplay(function (rowA, rowB)
+            return rowA.relativeProfit > rowB.relativeProfit
+        end)
+    else
+        CraftSim.RECIPE_SCAN.frame.content.resultList:UpdateDisplay(function (rowA, rowB)
+            return rowA.averageProfit > rowB.averageProfit
+        end)
+    end
+    
 end

@@ -10,6 +10,10 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("9.0.0") ..
+        f.P .. "QOL Update" ..
+        f.p .. "Added a Checkbox to the " .. f.bb("Recipe Scan") .. " to optionally sort" ..
+        f.a .. "by relative profit (margin) instead of gold value" ..
         newP("8.9.4") ..
         f.p .. "Added " .. f.l("10.2") ..  f.g(" Optional Reagents") ..
         f.a .. "Thanks to " .. f.bb("https://github.com/TheResinger") .. " !" ..

@@ -241,9 +241,6 @@ function CraftSim.RECIPE_SCAN:StartScan()
             return
         end
 
-        
-
-        
         --optimize top gear first cause optimized reagents might change depending on the gear
         if CraftSimOptions.recipeScanOptimizeProfessionTools then
             CraftSim.UTIL:StartProfiling("Optimize ALL: SCAN")
@@ -258,17 +255,6 @@ function CraftSim.RECIPE_SCAN:StartScan()
             CraftSim.UTIL:StopProfiling("Optimize ALL: SCAN")
         else
             CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
-        end
-
-        if recipeData.recipeID == 371650 then
-            print("DEBUG:", false, true)
-            print("recipeName: " .. tostring(recipeInfo.name))
-            print("stats:")
-            print(recipeData.professionStats)
-            print("gear:")
-            print(recipeData.professionGearSet)
-            print("stats from gear:")
-            print(recipeData.professionGearSet.professionStats)
         end
 
         local function continueScan()

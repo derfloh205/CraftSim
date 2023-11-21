@@ -14,5 +14,10 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Verzaubert:",
 
         -- OPTIONAL:
+
+        -- Recipe Scan
+        
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN] = "Nach Profit % sortieren",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP] = "Sortiere die Profitliste nach Profit relativ zu den Herstellungskosten.\n(Rezepte müssen erneut gescannt werden)",
     }
 end
