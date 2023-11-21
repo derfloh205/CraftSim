@@ -1,0 +1,6 @@
+[submodule "Libs/GGUI"]
+	path = Libs/GGUI
+	url = https://github.com/derfloh205/GGUI.git
+[submodule "Libs/GUTIL"]
+	path = Libs/GUTIL
+	url = https://github.com/derfloh205/GUTIL.git

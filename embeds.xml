@@ -7,7 +7,7 @@
   <Include file="Libs\AceSerializer-3.0\AceSerializer-3.0.xml"/>
   <Include file="Libs\AceDB-3.0\AceDB-3.0.xml"/>
   <Include file="Libs\LibCompress\lib.xml"/>
-  <Include file="Libs\GGUI-1.0\lib.xml"/>
-  <Include file="Libs\GUTIL-1.0\lib.xml"/>
+  <Include file="Libs\GGUI\lib.xml"/>
+  <Include file="Libs\GUTIL\lib.xml"/>
   <Include file="Libs\classic.lua"/>
 </Ui>
