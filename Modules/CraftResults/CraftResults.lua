@@ -9,6 +9,12 @@ CraftSim.CRAFT_RESULTS.currentSessionData = nil
 
 -- save current craft data
 function CraftSim.CRAFT_RESULTS:TRADE_SKILL_CRAFT_BEGIN(spellID)
+
+    -- check if the option is toggled on to disable result recording
+    if CraftSimOptions.craftResultsDisable then
+        return
+    end
+
     -- new craft begins if we do not have saved any recipe data yet
     -- or if the current cached data does not match the recipeid
 
@@ -33,6 +39,10 @@ end
 local currentCraftingResults = {}
 local collectingResults = true
 function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
+    if CraftSimOptions.craftResultsDisable then
+        return
+    end
+
     -- buffer a small time frame, then use all result items at once
     table.insert(currentCraftingResults, craftResult)
 
@@ -41,36 +51,6 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
         C_Timer.After(0.1, function() 
             CraftSim.CRAFT_RESULTS:processCraftResults()
         end)
-    end
-end
-
-local function showhsvInfo(recipeData, craftResult)
-    
-    if recipeData.maxQuality and recipeData.expectedQuality < recipeData.maxQuality then
-        local currentQualityProgress = recipeData.operationInfo.quality % 1
-        local craftQualityProgress = craftResult.qualityProgress
-        
-        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeData.baseDifficulty)
-        local lowerThreshold = thresholds[recipeData.expectedQuality-1] or 0
-        local upperThreshold = thresholds[recipeData.expectedQuality]
-        local diff = upperThreshold - lowerThreshold
-        local playerSkill = lowerThreshold + (diff*currentQualityProgress)
-        local hsvSkill = lowerThreshold + (diff*craftQualityProgress)
-        local skillDiff = hsvSkill - playerSkill
-        local relativeToDifficulty = skillDiff / (recipeData.baseDifficulty / 100)
-
-        if craftResult.isCrit then
-            print("HSV (INSP):")
-        else
-            print("HSV:")
-        end
-        print("- currentQualityProgress: " .. tostring(currentQualityProgress))
-        print("- craftQualityProgress: " .. tostring(craftQualityProgress))
-        print("- playerSkill: " .. tostring(playerSkill))
-        print("- craftSkill: " .. tostring(hsvSkill))
-        print("- hsvSkill: " .. tostring(skillDiff))
-        print("- % of difficulty: " .. tostring(relativeToDifficulty) .. "%")
-
     end
 end
 

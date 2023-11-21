@@ -12,8 +12,11 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                                 ( You are awesome! )") ..
         newP("9.0.0") ..
         f.P .. "QOL Update" ..
-        f.p .. "Added a Checkbox to the " .. f.bb("Recipe Scan") .. " to optionally sort" ..
-        f.a .. "by relative profit (margin) instead of gold value" ..
+        f.p .. "Added a checkbox to the " .. f.bb("Recipe Scan") .. " module to " ..
+        f.a .. "optionally sort by relative profit instead of gold value" ..
+        f.p .. "Added a checkbox to the " .. f.bb("Craft Results") .. " module to" ..
+        f.a .. "disable any recording for a potential performance increase" ..
+        f.a .. "while crafting" ..
         newP("8.9.4") ..
         f.p .. "Added " .. f.l("10.2") ..  f.g(" Optional Reagents") ..
         f.a .. "Thanks to " .. f.bb("https://github.com/TheResinger") .. " !" ..

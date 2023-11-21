@@ -68,6 +68,11 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
         frame.content.statisticsTitle = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_RECIPE_STATISTICS), frame.content, frame.content.craftedItemsTitle, "LEFT", "RIGHT", 270, 0)
         frame.content.statisticsText = CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_NOTHING), frame.content, frame.content.statisticsTitle, "TOPLEFT", "BOTTOMLEFT", -70, -10, nil, nil, {type="H", value="LEFT"})
         frame.content.statisticsText:SetWidth(300)
+
+        frame.content.disableCraftResultsCB = CraftSim.FRAME:CreateCheckbox(
+            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX),
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX_TOOLTIP), 
+            "craftResultsDisable", frame.content, frame.content.exportButton.frame, "TOPLEFT", "BOTTOMLEFT", 0, -10)
     end
 
     createContent(frameNO_WO)

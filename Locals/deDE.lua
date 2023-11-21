@@ -16,8 +16,12 @@ function CraftSim.LOCAL_DE:GetData()
         -- OPTIONAL:
 
         -- Recipe Scan
-        
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN] = "Nach Profit % sortieren",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP] = "Sortiere die Profitliste nach Profit relativ zu den Herstellungskosten.\n(Rezepte müssen erneut gescannt werden)",
+
+        -- Craft Results
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX] = f.l("Aufzeichnen deaktivieren"),
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX_TOOLTIP] = "Das Ausschalten der Herstellungsaufzeichnungen könnte die " .. f.g("Spielperformance beim Herstellen verbessern"),
+
     }
 end
