@@ -323,6 +323,8 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Inv/AH",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN] = "Sort by Profit %",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP] = "Sort the profit list by profit relative to crafting costs.\n(Requires a new scan)",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX] = "Use " .. f.bb("Insight") .. " if possible",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP] = "Use " .. f.bb("Illustrious Insight") .. " or\n" .. f.bb("Lesser Illustrious Insight") .. " as optional reagent for recipes that allow it.",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",

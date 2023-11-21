@@ -14,6 +14,10 @@ function CraftSim.NEWS:GET_NEWS()
         f.P .. "QOL Update" ..
         f.p .. "Added a checkbox to the " .. f.bb("Recipe Scan") .. " module to " ..
         f.a .. "optionally sort by relative profit instead of gold value" ..
+        f.p .. "Added a checkbox to the " .. f.bb("Recipe Scan") .. " module to " ..
+        f.a .. "use " ..f.bb("(Lesser) Illustrious Insight") .. " for recipes that" ..
+        f.a .. "allow it. Might be adding a feature to toggle any" .. 
+        f.a .. "Optional Reagents for scans at some point" .. 
         f.p .. "Added a checkbox to the " .. f.bb("Craft Results") .. " module to" ..
         f.a .. "disable any recording for a potential performance increase" ..
         f.a .. "while crafting" ..

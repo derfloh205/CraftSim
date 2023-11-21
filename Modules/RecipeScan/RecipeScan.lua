@@ -233,7 +233,14 @@ function CraftSim.RECIPE_SCAN:StartScan()
         print("recipeName: " .. tostring(recipeInfo.name))
         print("isEnchant: " .. tostring(recipeInfo.isEnchantingRecipe))
         
+        --- @type CraftSim.RecipeData
         local recipeData = CraftSim.RecipeData(recipeInfo.recipeID);
+
+        if recipeData.reagentData:HasOptionalReagents() and CraftSimOptions.recipeScanUseInsight then
+            recipeData:SetOptionalReagent(CraftSim.CONST.ITEM_IDS.OPTIONAL_REAGENTS.ILLUSTRIOUS_INSIGHT)
+            recipeData:SetOptionalReagent(CraftSim.CONST.ITEM_IDS.OPTIONAL_REAGENTS.LESSER_ILLUSTRIOUS_INSIGHT)
+        end
+
         recipeData.professionGearSet:LoadCurrentEquippedSet()
         recipeData:Update()
         if not recipeData then

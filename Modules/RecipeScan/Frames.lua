@@ -68,12 +68,17 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS),
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP) ..
             CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING), CraftSim.GUTIL.COLORS.RED), 
-            "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 90, 0)
+            "recipeScanOptimizeProfessionTools", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 90, 20)
 
         frame.content.sortByProfitMarginCB = CraftSim.FRAME:CreateCheckbox(
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN),
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP), 
-            "recipeScanSortByProfitMargin", frame.content, frame.content.scanMode.frame, "LEFT", "RIGHT", 90, -20)
+            "recipeScanSortByProfitMargin", frame.content, frame.content.optimizeProfessionToolsCB, "TOPLEFT", "BOTTOMLEFT", 0, 5)
+
+        frame.content.useInsightCB = CraftSim.FRAME:CreateCheckbox(
+            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX),
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP), 
+            "recipeScanUseInsight", frame.content, frame.content.sortByProfitMarginCB, "TOPLEFT", "BOTTOMLEFT", 0, 5)
 
         local columnOptions = {
             {

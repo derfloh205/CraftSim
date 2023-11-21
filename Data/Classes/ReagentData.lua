@@ -140,6 +140,7 @@ function CraftSim.ReagentData:GetActiveOptionalReagents()
     return activeReagents
 end
 
+--- Sets a optional Reagent active in a recipe if supported, if not does nothing
 ---@param itemID number
 function CraftSim.ReagentData:SetOptionalReagent(itemID)
     for _, slot in pairs(CraftSim.GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
@@ -153,8 +154,6 @@ function CraftSim.ReagentData:SetOptionalReagent(itemID)
             return
         end
     end
-
-    print("Error: recipe does not support optional reagent: " .. tostring(itemID))
 end
 
 function CraftSim.ReagentData:ClearOptionalReagents()
