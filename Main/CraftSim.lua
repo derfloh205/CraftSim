@@ -21,6 +21,7 @@ CraftSimOptions = CraftSimOptions or {
 	openLastRecipe = true,
 	materialSuggestionInspirationThreshold = false,
 	topGearAutoUpdate = false,
+	optionsShowNews = true,
 
 	-- modules
 	modulesMaterials = true,
@@ -161,6 +162,9 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.craftGarbageCollectEnabled == nil then
 			CraftSimOptions.craftGarbageCollectEnabled = true
+		end
+		if CraftSimOptions.optionsShowNews == nil then
+			CraftSimOptions.optionsShowNews = true
 		end
 	end
 end
@@ -427,7 +431,9 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 	--CraftSim.MAIN:HandleCollapsedFrameSave()
 
 	-- show one time note
-	CraftSim.FRAME:ShowOneTimeInfo()
+	if CraftSimOptions.optionsShowNews then
+		CraftSim.FRAME:ShowOneTimeInfo()
+	end
 end
 
 function CraftSim.MAIN:HideAllFrames(keepControlPanel)

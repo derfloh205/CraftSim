@@ -311,16 +311,25 @@ function CraftSim.OPTIONS:Init()
     -90,
     -90)
 
-
     local openLastRecipeCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE),
     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP),
     "openLastRecipe",
     generalTab.content,
     precentProfitCheckbox,
-    "TOP",
-    "TOP",
+    "TOPLEFT",
+    "BOTTOMLEFT",
     0,
-    -20)
+    0)
+
+    local showNewsCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX),
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP),
+    "optionsShowNews",
+    generalTab.content,
+    openLastRecipeCheckbox,
+    "TOPLEFT",
+    "BOTTOMLEFT",
+    0,
+    0)
 
     local detailedTooltips = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP),
     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP),

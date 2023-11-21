@@ -15,6 +15,10 @@ function CraftSim.LOCAL_DE:GetData()
 
         -- OPTIONAL:
 
+        -- Options
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX] = "Zeige das " .. f.bb("News") .. " Fenster",
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP] = "Zeige das " .. f.bb("News") .. " Fenster für neue " .. f.l("CraftSim") .. " Updates beim Einloggen",
+
         -- Recipe Scan
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN] = "Nach Profit % sortieren",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP] = "Sortiere die Profitliste nach Profit relativ zu den Herstellungskosten.\n(Rezepte müssen erneut gescannt werden)",
