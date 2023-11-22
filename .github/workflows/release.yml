@@ -21,7 +21,6 @@ jobs:
 
     # specify the environment variables used by the packager, matching the secrets from the project on GitHub
     env:
-      GIT_SUBMODULE_STRATEGY: recursive
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
       WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
       WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
@@ -31,11 +30,17 @@ jobs:
     # "steps" holds a list of all the steps needed to package and release our AddOn
     steps:
 
-      # we first have to clone the AddOn project, this is a required step
-      - name: Clone project
-        uses: actions/checkout@v3
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
         with:
+          submodules: recursive
           fetch-depth: 0  # gets entire git history, needed for automatic changelogs
+
+      # we first have to clone the AddOn project, this is a required step
+      #- name: Clone project
+       # uses: actions/checkout@v3
+       # with:
+         # fetch-depth: 0  # gets entire git history, needed for automatic changelogs
 
       # once cloned, we just run the GitHub Action for the packager project
       - name: Package and release
