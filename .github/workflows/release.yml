@@ -10,11 +10,8 @@ on:
     tags:
       - '**'
 
-variables:
-  GIT_SUBMODULE_STRATEGY: recursive
-
 # a workflow is built up as jobs, and within these jobs are steps
-jobs:
+jobs:    
 
   # "release" is a job, you can name it anything you want
   release:
@@ -24,6 +21,7 @@ jobs:
 
     # specify the environment variables used by the packager, matching the secrets from the project on GitHub
     env:
+      GIT_SUBMODULE_STRATEGY: recursive
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
       WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
       WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
