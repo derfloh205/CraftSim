@@ -10,6 +10,9 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("9.0.2") ..
+        f.p .. "Hotfixed an issue with the deploy process" .. 
+        f.a .. "not recognizing git submodules" ..
         newP("9.0.1") ..
         f.p .. "Code Refactorings regarding GGUI globalizations" ..
         newP("9.0.0") ..
