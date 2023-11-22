@@ -1,4 +1,4 @@
-AddonName, CraftSim = ...
+CraftSimAddonName, CraftSim = ...
 
 CraftSim.MAIN = CreateFrame("Frame", "CraftSimAddon")
 CraftSim.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
@@ -285,7 +285,7 @@ function CraftSim.MAIN:InitStaticPopups()
 end
 
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
-	if addon_name == AddonName then
+	if addon_name == CraftSimAddonName then
 		CraftSim.GGUI:SetConfigSavedVariable("CraftSimGGUIConfig")
 		CraftSim.LOCAL:Init()
 		CraftSim.MAIN:handleCraftSimOptionsUpdates()
@@ -337,7 +337,7 @@ end
 function CraftSim.MAIN:HandleAuctionatorHooks()
 ---@diagnostic disable-next-line: undefined-global
 	if Auctionator then
-		Auctionator.API.v1.RegisterForDBUpdate(AddonName, function()
+		Auctionator.API.v1.RegisterForDBUpdate(CraftSimAddonName, function()
 			print("Auctionator DB Update")
 			CraftSim.MAIN:TriggerModulesErrorSafe(false)
 		end)

@@ -1,4 +1,4 @@
-AddonName, CraftSim = ...
+CraftSimAddonName, CraftSim = ...
 
 CraftSim.FRAME = {}
 
@@ -587,7 +587,7 @@ function CraftSim.FRAME:InitDebugFrame()
 end
 
 function CraftSim.FRAME:InitOneTimeNoteFrame()
-    local currentVersion = GetAddOnMetadata(AddonName, "Version")
+    local currentVersion = GetAddOnMetadata(CraftSimAddonName, "Version")
 
     local frame = CraftSim.GGUI.Frame({
         parent=UIParent,anchorParent=UIParent,sizeX=500,sizeY=300,frameID=CraftSim.CONST.FRAMES.INFO,

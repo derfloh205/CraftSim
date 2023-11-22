@@ -1,4 +1,4 @@
-AddonName, CraftSim = ...
+CraftSimAddonName, CraftSim = ...
 
 CraftSim.PRICE_API = {}
 CraftSim.PRICE_APIS = {}
@@ -176,20 +176,20 @@ function CraftSimTSM:GetMinBuyoutByItemLink(itemLink, isReagent)
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)
-    local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemID(AddonName, itemID)
+    local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemID(CraftSimAddonName, itemID)
     if vendorPrice then
         return vendorPrice
     else
-        return Auctionator.API.v1.GetAuctionPriceByItemID(AddonName , itemID)
+        return Auctionator.API.v1.GetAuctionPriceByItemID(CraftSimAddonName , itemID)
     end
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemLink(itemLink)
-    local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemLink(AddonName, itemLink)
+    local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemLink(CraftSimAddonName, itemLink)
     if vendorPrice then
         return vendorPrice
     else
-        return Auctionator.API.v1.GetAuctionPriceByItemLink(AddonName , itemLink)
+        return Auctionator.API.v1.GetAuctionPriceByItemLink(CraftSimAddonName , itemLink)
     end
 end
 

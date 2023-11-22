@@ -1,4 +1,4 @@
-AddonName, CraftSim = ...
+CraftSimAddonName, CraftSim = ...
 
 CraftSim.CACHE = {}
 
@@ -47,7 +47,7 @@ end
 
 ---@return any?
 function CraftSim.CACHE:GetCacheEntryByVersion(cache, entryID)
-    local currentVersion = GetAddOnMetadata(AddonName, "Version")
+    local currentVersion = GetAddOnMetadata(CraftSimAddonName, "Version")
     print("get cache entry by addon version " .. tostring(currentVersion) .. " id: " .. tostring(entryID), false, true)
     -- reset if version changed
     if not next(cache) or cache.version ~= currentVersion then
@@ -91,7 +91,7 @@ end
 
 --- By Addon Version
 function CraftSim.CACHE:AddCacheEntryByVersion(cache, entryID, data)
-    local addonVersion = GetAddOnMetadata(AddonName, "Version")
+    local addonVersion = GetAddOnMetadata(CraftSimAddonName, "Version")
     -- reset if version changed
     if not next(cache) or cache.version ~= addonVersion then
         print("reset addon version cache add")

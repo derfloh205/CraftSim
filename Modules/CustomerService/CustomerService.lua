@@ -1,4 +1,4 @@
-AddonName, CraftSim = ...
+CraftSimAddonName, CraftSim = ...
 
 CraftSim.CUSTOMER_SERVICE = {}
 local PREVIEW_REQUEST_PREFIX = "CraftSimReq1"
@@ -72,7 +72,7 @@ function CraftSim.CUSTOMER_SERVICE:SendPreviewRequest(crafter, previewID, profes
         professionID = professionID,
         professionName = professionName,
         customer = GetUnitName("player", true),
-        addonVersion = GetAddOnMetadata(AddonName, "Version"),
+        addonVersion = GetAddOnMetadata(CraftSimAddonName, "Version"),
     }
     print("SendPreviewRequest " .. tostring(crafter))
     -- print("Payload: ")
@@ -113,7 +113,7 @@ function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
         crafter = GetUnitName("player", true),
         professionName = payload.professionName,
         recipes = {},
-        addonVersion = GetAddOnMetadata(AddonName, "Version"),
+        addonVersion = GetAddOnMetadata(CraftSimAddonName, "Version"),
     }
 
     for _, recipeID in pairs(professionRecipeIDs) do

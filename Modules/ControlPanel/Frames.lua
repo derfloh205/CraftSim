@@ -1,9 +1,9 @@
-AddonName, CraftSim = ...
+CraftSimAddonName, CraftSim = ...
 
 CraftSim.CONTROL_PANEL.FRAMES = {}
 
 function CraftSim.CONTROL_PANEL.FRAMES:Init()
-    local currentVersion = GetAddOnMetadata(AddonName, "Version")
+    local currentVersion = GetAddOnMetadata(CraftSimAddonName, "Version")
 
     local frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame, anchorParent=ProfessionsFrame,anchorA="BOTTOM",anchorB="TOP",offsetY=-5,

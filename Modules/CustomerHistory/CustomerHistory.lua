@@ -1,11 +1,11 @@
-AddonName, CraftSim = ...
+CraftSimAddonName, CraftSim = ...
 
 CraftSim.CUSTOMER_HISTORY = LibStub("AceAddon-3.0"):NewAddon("CraftSim.CUSTOMER_HISTORY", "AceComm-3.0", "AceEvent-3.0")
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
 local defaultDB = {
     realm = {
-        version = C_AddOns.GetAddOnMetadata(AddonName, "Version")
+        version = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
     }
 }
 
