@@ -33,9 +33,9 @@ function CraftSim.TOPGEAR:EquipTopGear()
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local topGearFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
+        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
     else
-        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+        topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
     end
     if topGearFrame.currentTopResult then
         topGearFrame.currentTopResult.professionGearSet:Equip()

@@ -75,7 +75,7 @@ function CraftSim_DEBUG:print(debugOutput, debugID, recursive, printLabel, level
         if type(debugOutput) == "table" then
             CraftSim.UTIL:PrintTable(debugOutput, debugID, recursive, level)
         else
-            local debugFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.DEBUG)
+            local debugFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
             debugFrame.addDebug(debugOutput, debugID, printLabel)
         end
     end
@@ -136,6 +136,8 @@ function CraftSim_DEBUG:GGUITest()
         collapseable=true,
         moveable=true,
         scrollableContent=true,
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     local testIcon = CraftSim.GGUI.Icon({

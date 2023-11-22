@@ -17,6 +17,8 @@ function CraftSim.SUPPORTERS.FRAMES:Init()
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata="DIALOG",
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     local function createContent(frame)

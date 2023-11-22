@@ -22,6 +22,8 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesStatWeights"),
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     local frameWorkOrder = CraftSim.GGUI.Frame({
@@ -37,6 +39,8 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesStatWeights"),
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     local function createContent(frame, profitDetailsFrameID, statisticsFrameID)
@@ -57,7 +61,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
             offsetX= 1,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON), sizeX=15,sizeY=20,adjustWidth=true,
             clickCallback=function() 
-                local statisticsFrame = CraftSim.GGUI:GetFrame(statisticsFrameID)
+                local statisticsFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, statisticsFrameID)
                 local isVisible = statisticsFrame:IsVisible()
                 CraftSim.FRAME:ToggleFrame(statisticsFrame, not isVisible)
                 frame.content.statisticsButton:SetText(isVisible and CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON) or not isVisible and CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON))
@@ -128,9 +132,9 @@ end
 function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts, exportMode)
     local statweightFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        statweightFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
+        statweightFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
     else
-        statweightFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS)
+        statweightFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS)
     end
     if statWeights == nil then
         -- statweightFrame.content.statText:SetText("")
@@ -168,7 +172,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
     local frameNO_WO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimProfitDetailsFrame", 
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_EXPLANATION_TITLE),
-        CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame,
+        CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame,
         UIParent, 
         "CENTER", 
         "CENTER", 
@@ -181,7 +185,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
     local frameWO = CraftSim.FRAME:CreateCraftSimFrame(
         "CraftSimProfitDetailsWOFrame", 
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_EXPLANATION_TITLE), 
-        CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER).frame,
+        CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER).frame,
         UIParent, 
         "CENTER", 
         "CENTER", 
@@ -194,7 +198,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
 
     local function createContent(frame, statweightFrameID)
         frameNO_WO.closeButton:HookScript("OnClick", function(self) 
-            CraftSim.GGUI:GetFrame(statweightFrameID).content.breakdownButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON))
+            CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, statweightFrameID).content.breakdownButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON))
         end)
 
         frame:Hide()

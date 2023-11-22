@@ -121,7 +121,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             parent=schematicForm, anchorParent=ProfessionsFrame, anchorA="TOPRIGHT", anchorB="TOPRIGHT", offsetX=-5, offsetY=-155,
             sizeX=350, sizeY=355, frameID=(workOrder and CraftSim.CONST.FRAMES.CRAFTING_DETAILS_WO) or CraftSim.CONST.FRAMES.CRAFTING_DETAILS,
             backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS, collapseable=true, moveable=true,
-            title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE)
+            title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE),
+            frameTable=CraftSim.MAIN.FRAMES,
+            frameConfigTable=CraftSimGGUIConfig,
         })
     
         simModeDetailsFrame:Hide()
@@ -372,12 +374,16 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
         closeable=true,collapseable=true, moveable=true,
         title="CraftSim Knowledge Simulation",
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
     local frameWO = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,anchorParent=UIParent,sizeX=sizeX,sizeY=sizeY,frameID=CraftSim.CONST.FRAMES.SPEC_SIM_WO, frameStrata="FULLSCREEN",
         closeable=true,collapseable=true, moveable=true,
         title="CraftSim Knowledge Simulation",
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
     
     local function createContent(frame)
@@ -716,9 +722,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLay
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local specSimFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        specSimFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM_WO)
+        specSimFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM_WO)
     else
-        specSimFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+        specSimFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
     end
 
     local tab = specSimFrame.content.specializationTabs[tabIndex]
@@ -917,9 +923,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local specModFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        specModFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM_WO)
+        specModFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM_WO)
     else
-        specModFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
+        specModFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
     end
     -- save copy of original in frame
     specModFrame.content.activeNodeModFrames = {}
@@ -1121,18 +1127,18 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     local bestQBox = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         bestQBox = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.AllocateBestQualityCheckBox
-        specializationInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO_WO)
+        specializationInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.OptionalReagents, not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
     else
         bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
-        specializationInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
+        specializationInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
     end
     specializationInfoFrame.content.knowledgePointSimulationButton:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
     if not CraftSim.SIMULATION_MODE.isActive then
-        CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM):Hide()
+        CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM):Hide()
     end
 
     local reagentOverwriteFrame = simModeFrames.reagentOverwriteFrame

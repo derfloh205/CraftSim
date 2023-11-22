@@ -71,28 +71,28 @@ function CraftSim.FRAME:makeFrameMoveable(frame)
 end
 
 function CraftSim.FRAME:RestoreModulePositions()
-    local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
-	local recipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.RECIPE_SCAN)
-	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
-	local customerServiceFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
-	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
-	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
-	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
-	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO)
-	local specInfoFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO_WO)
-	local averageProfitFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS)
-	local averageProfitFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
-	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR)
-	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS)
-	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
-    local debugFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.DEBUG)
-    local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.INFO)
-    local livePreviewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
-    local statisticsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STATISTICS)
-    local statisticsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STATISTICS_WORKORDER)
-    local specsim = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_SIM)
-    local specsimWO = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SPEC_INFO_WO)
+    local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CONTROL_PANEL)
+	local recipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.RECIPE_SCAN)
+	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+	local customerServiceFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
+	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
+	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
+	local specInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
+	local specInfoFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
+	local averageProfitFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS)
+	local averageProfitFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER)
+	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
+	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
+	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS)
+	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+    local debugFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
+    local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.INFO)
+    local livePreviewFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local statisticsFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STATISTICS)
+    local statisticsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STATISTICS_WORKORDER)
+    local specsim = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
+    local specsimWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
 
 
     -- profitDetailsFrame:RestoreSavedConfig(UIParent)
@@ -236,7 +236,7 @@ function CraftSim.FRAME:MakeCloseable(frame, moduleOption)
         frame:Hide()
         if moduleOption then
             CraftSimOptions[moduleOption] = false
-            local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL)
+            local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CONTROL_PANEL)
 
             controlPanel.content[moduleOption]:SetChecked(false)
         end
@@ -464,6 +464,8 @@ function CraftSim.FRAME:InitDebugFrame()
         scrollableContent=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         parent=UIParent,anchorParent=UIParent,
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     CraftSim.FRAME:ToggleFrame(debugFrame, CraftSimOptions.debugVisible)
@@ -503,7 +505,9 @@ function CraftSim.FRAME:InitDebugFrame()
         parent=debugFrame.frame,anchorParent=debugFrame.frame,
         anchorA="TOPRIGHT",anchorB="TOPLEFT",title="Debug Control",
         offsetX=10,sizeX=300,sizeY=400,frameID=CraftSim.CONST.FRAMES.DEBUG_CONTROL,
-        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     controlPanel.content.autoScrollCB = CraftSim.FRAME:CreateCheckbox("Autoscroll", "Toggle Log Autoscrolling", "debugAutoScroll", controlPanel.content,
@@ -593,7 +597,9 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         parent=UIParent,anchorParent=UIParent,sizeX=500,sizeY=300,frameID=CraftSim.CONST.FRAMES.INFO,
         closeable=true, scrollableContent=true, moveable=true,
         title=CraftSim.GUTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")", CraftSim.GUTIL.COLORS.GREEN),
-        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS
+        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     frame.content.discordBox = CraftSim.FRAME:CreateInput(
@@ -628,7 +634,7 @@ function CraftSim.FRAME:ShowOneTimeInfo(force)
 
     CraftSimOptions.infoVersionID = versionID
 
-    local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.INFO)
+    local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.INFO)
     -- resize
     infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
     infoFrame.originalX = CraftSim.CONST.infoBoxSizeX
@@ -843,6 +849,6 @@ end
 function CraftSim.FRAME:HandleModuleClose(moduleOption)
     return function ()
         CraftSimOptions[moduleOption] = false
-        CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CONTROL_PANEL).content[moduleOption]:SetChecked(false)
+        CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CONTROL_PANEL).content[moduleOption]:SetChecked(false)
     end
 end

@@ -18,6 +18,8 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         frameStrata="DIALOG",
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesRecipeScan"),
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     local function createContent(frame)

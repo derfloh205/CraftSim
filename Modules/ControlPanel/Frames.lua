@@ -12,6 +12,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         collapseable=true,
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     CraftSim.CONTROL_PANEL.frame = frame
@@ -51,7 +53,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         parent=frame.content,anchorParent=frame.content.newsButton.frame,anchorA="TOPLEFT",anchorB="BOTTOMLEFT",
         sizeX=15,sizeY=25,adjustWidth=true,
         clickCallback=function() 
-            CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.DEBUG):Show()
+            CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
         end
     })
 
@@ -81,7 +83,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     frame.content.supportersButton = CraftSim.GGUI.Button({parent=frame.content,anchorParent=frame.content.debugButton.frame, anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT",
         label=pixelHeart .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_SUPPORTERS_BUTTON) .. pixelHeart, sizeX=25,sizeY=25,adjustWidth=true,
     clickCallback=function() 
-        CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.SUPPORTERS):Show()
+        CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SUPPORTERS):Show()
     end})
 
     frame.content.optionsButton = CraftSim.GGUI.Button({

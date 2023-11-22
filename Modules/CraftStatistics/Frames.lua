@@ -10,7 +10,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
     local sizeYRetracted = 350 
 
     local frameNO_WO = CraftSim.GGUI.Frame({
-        parent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame, 
+        parent=CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame, 
         sizeX=sizeX,sizeY=sizeYRetracted,
         frameID=CraftSim.CONST.FRAMES.STATISTICS, 
         title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_TITLE),
@@ -20,10 +20,12 @@ function CraftSim.STATISTICS.FRAMES:Init()
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata="DIALOG",
         initialStatusID="RETRACTED",
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     local frameWO = CraftSim.GGUI.Frame({
-        parent=CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER).frame, 
+        parent=CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER).frame, 
         sizeX=sizeX,sizeY=sizeYRetracted,
         frameID=CraftSim.CONST.FRAMES.STATISTICS_WORKORDER, 
         title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_TITLE) .. " " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
@@ -33,13 +35,15 @@ function CraftSim.STATISTICS.FRAMES:Init()
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata="DIALOG",
         initialStatusID="RETRACTED",
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
 
     local function createContent(frame, statweightFrameID)
 
         frame.frame.closeButton:HookScript("OnClick", function(self) 
-            CraftSim.GGUI:GetFrame(statweightFrameID).content.statisticsButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON))
+            CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, statweightFrameID).content.statisticsButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON))
         end)
 
         frame:SetStatusList({
@@ -317,7 +321,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
-    local statisticsFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.STATISTICS)
+    local statisticsFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STATISTICS)
     local meanProfit, probabilityTable = CraftSim.CALC:GetAverageProfit(recipeData)
 
     if not probabilityTable then

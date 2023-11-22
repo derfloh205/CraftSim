@@ -17,6 +17,8 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata="DIALOG",
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCustomerService"),
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     local function createContent(frame)
@@ -105,6 +107,8 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         closeable=true,collapseable=true, moveable=true,
         title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_TITLE),
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     local function createContent(frame)
@@ -317,7 +321,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     local recipes = payload.recipes
     local crafter = payload.crafter
     local professionName = payload.professionName
-    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.LIVE_PREVIEW)
 
     previewFrame.professionID = payload.professionID
     previewFrame.crafter = crafter
@@ -365,7 +369,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
 end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
-    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.LIVE_PREVIEW)
     local resultData = payload.resultData
     local reagents = payload.reagents
     local optionalReagents = payload.optionalReagents

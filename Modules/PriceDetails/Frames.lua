@@ -26,6 +26,8 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesPriceDetails"),
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
     
     CraftSim.PRICE_DETAILS.frameWO = CraftSim.GGUI.Frame({
@@ -41,6 +43,8 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         moveable=true,
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesPriceDetails"),
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     local function createContent(frame)

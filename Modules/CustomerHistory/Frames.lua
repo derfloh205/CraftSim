@@ -19,6 +19,8 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata="DIALOG",
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCustomerHistory"),
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     local function createContent(frame)

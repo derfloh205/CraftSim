@@ -27,6 +27,8 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
             moveable=true,
             backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
             onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCostDetails"),
+            frameTable=CraftSim.MAIN.FRAMES,
+            frameConfigTable=CraftSimGGUIConfig,
         })
     CraftSim.COST_DETAILS.frameWO = CraftSim.GGUI.Frame({
             parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, 
@@ -40,6 +42,8 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
             moveable=true,
             backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
             onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCostDetails"),
+            frameTable=CraftSim.MAIN.FRAMES,
+            frameConfigTable=CraftSimGGUIConfig,
         })
 
     local function createContent(frame)

@@ -22,6 +22,8 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         frameID=CraftSim.CONST.FRAMES.CRAFT_DATA,
         frameStrata="FULLSCREEN",
         initialStatusID="RETRACTED",
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })
 
     ---@type CraftSim.CraftData

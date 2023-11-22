@@ -19,6 +19,8 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
         backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata="FULLSCREEN",
         onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCraftResults"),
+        frameTable=CraftSim.MAIN.FRAMES,
+        frameConfigTable=CraftSimGGUIConfig,
     })    
     
         local function createContent(frame)
@@ -87,7 +89,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
         return
     end
 
-    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     local craftSessionData = CraftSim.CRAFT_RESULTS.currentSessionData 
     if not craftSessionData then
@@ -181,7 +183,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
 end
 
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
-    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
     -- total items
     local craftResultItems = CraftSim.CRAFT_RESULTS.currentSessionData.totalItems
 
