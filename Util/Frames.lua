@@ -94,9 +94,6 @@ function CraftSim.FRAME:RestoreModulePositions()
     local specsim = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
     local specsimWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
 
-
-    -- profitDetailsFrame:RestoreSavedConfig(UIParent)
-    -- profitDetailsFrameWO:RestoreSavedConfig(UIParent)
     specsim:RestoreSavedConfig(UIParent)
     specsimWO:RestoreSavedConfig(UIParent)
     statisticsFrame:RestoreSavedConfig(UIParent)
@@ -127,7 +124,7 @@ function CraftSim.FRAME:RestoreModulePositions()
 end
 
 function CraftSim.FRAME:ResetFrames()
-    for _, frame in pairs(CraftSim.GGUI.frames) do
+    for _, frame in pairs(CraftSim.MAIN.FRAMES) do
         print("resetting frameID: " .. tostring(frame.frameID))
         frame:ResetPosition()
     end
