@@ -228,8 +228,8 @@ function CraftSim.ResultData:Update()
     self.chanceByQuality = {}
 
     for quality = 1, self.recipeData.maxQuality, 1 do
-        if quality <= self.expectedQuality then
-            self.chanceByQuality[quality] = 1
+        if quality < self.expectedQuality then
+            self.chanceByQuality[quality] = 0
         else
             -- can either be one quality above expected or two qualities above expected
             if quality == self.expectedQuality + 1 then
@@ -264,7 +264,6 @@ function CraftSim.ResultData:Update()
                     self.chanceByQuality[quality] = 0
                 end
             else
-                -- if none of the above holds, chance to reach the quality is 0
                 self.chanceByQuality[quality] = 0
             end
 
@@ -275,6 +274,27 @@ function CraftSim.ResultData:Update()
         if self.chanceByQuality[quality] > 0 then
             self.expectedCraftsByQuality[quality] = 1 / self.chanceByQuality[quality]
         end
+    end
+
+    -- set the chance for the expected quality as the remaining chance
+    self.chanceByQuality[self.expectedQuality] = 1
+    if self.expectedQuality + 1 <= self.recipeData.maxQuality then
+        self.chanceByQuality[self.expectedQuality] = self.chanceByQuality
+          [self.expectedQuality] - self.chanceByQuality
+          [self.expectedQuality + 1]
+        if self.expectedQuality + 2 <= self.recipeData.maxQuality then
+            self.chanceByQuality[self.expectedQuality] = self.chanceByQuality
+              [self.expectedQuality] -
+              self.chanceByQuality[self.expectedQuality + 2]
+        end
+    end
+
+    if self.expectedQualityUpgrade == self.expectedQuality then
+        self.chanceUpgrade = self.chanceByQuality[self.expectedQuality]
+    end
+
+    if self.chanceByQuality[self.expectedQuality] > 0 then
+        self.expectedCraftsByQuality[self.expectedQuality] = 1 / self.chanceByQuality[self.expectedQuality]
     end
 end
 
