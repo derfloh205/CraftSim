@@ -4,15 +4,19 @@ _, CraftSim = ...
 ---@class CraftSim.NodeRule
 CraftSim.NodeRule = CraftSim.Object:extend()
 
+---@param recipeData CraftSim.RecipeData
 ---@param nodeRuleData table
 ---@param nodeData CraftSim.NodeData
-function CraftSim.NodeRule:new(nodeRuleData, nodeData)
+function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
+    self.affectsRecipe = false
     self.nodeData = nodeData
     ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
     self.threshold = nodeRuleData.threshold or -42 -- dont ask why 42
 
-    
+    ---@type CraftSim.IDMapping
+    self.idMapping = CraftSim.IDMapping(recipeData, nodeRuleData.idMapping, nodeRuleData.exceptionRecipeIDs)
+
     self.professionStats.skill.value = nodeRuleData.skill or 0
     self.professionStats.inspiration.value = nodeRuleData.inspiration or 0
     self.professionStats.multicraft.value = nodeRuleData.multicraft or 0
@@ -36,7 +40,16 @@ function CraftSim.NodeRule:new(nodeRuleData, nodeData)
     self:UpdateProfessionStatsByRank()
 end
 
+function CraftSim.NodeRule:UpdateAffectance()
+    self.affectsRecipe = self.idMapping:AffectsRecipe()
+end
+
 function CraftSim.NodeRule:UpdateProfessionStatsByRank()
+    -- only if I affect the recipe
+    if not self.affectsRecipe then
+        return
+    end
+
     if self.equalsSkill then
         self.professionStats.skill.value = self.nodeData.rank
     end

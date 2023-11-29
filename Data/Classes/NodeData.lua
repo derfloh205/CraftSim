@@ -8,24 +8,19 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.ERROR)
 
 ---@param nodeRulesData table[]
 ---@param recipeData CraftSim.RecipeData
----@param parentNode CraftSim.NodeData?
-function CraftSim.NodeData:new(recipeData, nodeRulesData, parentNode)
+function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData)
     self.affectsRecipe = false
     if not recipeData then
         return
     end
     self.recipeData = recipeData
-    self.parentNode = parentNode
+    self.nodeName = nodeName
     ---@type number
     self.nodeID = nodeRulesData[1].nodeID
     ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
-    ---@type CraftSim.IDMapping
-    self.idMapping = CraftSim.IDMapping(self.recipeData, nodeRulesData[1].idMapping, nodeRulesData[1].exceptionRecipeIDs)
     ---@type CraftSim.NodeRule[]
     self.nodeRules = {}
-    ---@type CraftSim.NodeData[]
-    self.childNodes = {}
 
     local configID = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)
     local nodeInfo = C_Traits.GetNodeInfo(configID, self.nodeID)
@@ -41,7 +36,7 @@ function CraftSim.NodeData:new(recipeData, nodeRulesData, parentNode)
     end
 
     table.foreach(nodeRulesData, function (_, nodeRuleData)
-        table.insert(self.nodeRules, CraftSim.NodeRule(nodeRuleData, self))
+        table.insert(self.nodeRules, CraftSim.NodeRule(self.recipeData, nodeRuleData, self))
     end)
 end
 
@@ -64,7 +59,11 @@ function CraftSim.NodeData:Debug()
 end
 
 function CraftSim.NodeData:UpdateAffectance()
-    self.affectsRecipe = self.idMapping:AffectsRecipe()
+    for _, nodeRule in pairs(self.nodeRules) do
+        nodeRule:UpdateAffectance()
+    end
+    -- if at least one rule node of the node affects the recipe, the node affects the recipe
+    self.affectsRecipe = CraftSim.GUTIL:Count(self.nodeRules, function (nr) return nr.affectsRecipe end) > 0
 end
 
 function CraftSim.NodeData:UpdateProfessionStats()

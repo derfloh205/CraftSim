@@ -14,11 +14,7 @@ function CraftSim.SpecializationData:new(recipeData)
     ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
     ---@type CraftSim.NodeData
-    self.baseNodeData = {}
-    ---@type CraftSim.NodeData
     self.nodeData = {}
-    ---@type number[][]
-    self.numNodesPerLayer = {}
 
     self.isImplemented = CraftSim.UTIL:IsSpecImplemented(recipeData.professionData.professionInfo.profession)
 
@@ -28,61 +24,21 @@ function CraftSim.SpecializationData:new(recipeData)
 
     local nodeNameData = CraftSim.SPEC_DATA:GetNodes(recipeData.professionData.professionInfo.profession)
     local professionRuleNodes = CraftSim.SPEC_DATA:RULE_NODES()[recipeData.professionData.professionInfo.profession]
-    local baseRuleNodes = CraftSim.SPEC_DATA:BASE_RULE_NODES()[recipeData.professionData.professionInfo.profession]
 
+    local nodeIDs = CraftSim.GUTIL:ToSet(CraftSim.GUTIL:Map(nodeNameData, function (nameData) return nameData.nodeID end))
 
-    local baseRuleNodeIDs = CraftSim.GUTIL:Map(baseRuleNodes, function (nameID)
-        local ruleNode = professionRuleNodes[nameID]
-        if ruleNode then
-            return ruleNode.nodeID
-        end
-    end)
-
-    baseRuleNodeIDs = CraftSim.GUTIL:ToSet(baseRuleNodeIDs)
-
-    -- Should contain the ids of the base nodes now
-    -- parse data into objects recursively
-
-    local baseNodeIndex = 1
-    local function parseNode(nodeID, parentNodeData, layer)
+    for _, nodeID in pairs(nodeIDs) do
         local ruleNodes = CraftSim.GUTIL:Filter(professionRuleNodes, function (n) return n.nodeID == nodeID end)
-        local nodeData = CraftSim.NodeData(self.recipeData, ruleNodes, parentNodeData)
-        print("process nodeID: " .. tostring(nodeID))
+        local nodeName = CraftSim.GUTIL:Find(nodeNameData, function(nnd) return nnd.nodeID == nodeID end).name
+        local nodeData = CraftSim.NodeData(self.recipeData, nodeName, ruleNodes)
 
-        nodeData.nodeName = CraftSim.LOCAL:GetText(nodeID);
-        
-        if not nodeData.nodeName then
-        	nodeData.nodeName = CraftSim.GUTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
-        end
-        
-        print("node name: " .. nodeData.nodeName)
-        
-        -- nodeData.nodeName = CraftSim.GUTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
-        local childNodeNameIDs = ruleNodes[1].childNodeIDs
-
-        for _, childNodeNameID in pairs(childNodeNameIDs or {}) do
-            local childNodeID = professionRuleNodes[childNodeNameID].nodeID
-            local childNodeData = parseNode(childNodeID, nodeData, layer + 1)
-            table.insert(nodeData.childNodes, childNodeData)
-            nodeData.idMapping:Merge(childNodeData.idMapping)
-        end
 
         nodeData:UpdateAffectance()
         nodeData:UpdateProfessionStats()
 
-        self.professionStats:add(nodeData.professionStats)
-
-        self.numNodesPerLayer[baseNodeIndex] = (self.numNodesPerLayer[baseNodeIndex] or {})
-        self.numNodesPerLayer[baseNodeIndex][layer] = (self.numNodesPerLayer[baseNodeIndex][layer] or 0) + 1
+        print("@node: " .. nodeName .. " affects: " .. tostring(nodeData.affectsRecipe))
 
         table.insert(self.nodeData, nodeData)
-
-        return nodeData
-    end
-
-    for _, nodeID in pairs(baseRuleNodeIDs) do
-        table.insert(self.baseNodeData, parseNode(nodeID, nil, 1))
-        baseNodeIndex = baseNodeIndex + 1
     end
 end
 
