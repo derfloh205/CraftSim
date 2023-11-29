@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("9.0.4") ..
+        f.p .. "" ..
         newP("9.0.3") ..
         f.p .. "Fixed a bug with the " .. f.bb("Reset Frame Positions") .. " button" ..
         newP("9.0.2") ..
