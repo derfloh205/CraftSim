@@ -146,17 +146,18 @@ end
 ---@param maxProfessionStats CraftSim.ProfessionStats
 function CraftSim.ProfessionStats:GetTooltipText(maxProfessionStats)
 	-- for customer service disclamer if send from simulation mode
+	local r = math.floor
 	if not maxProfessionStats then
 		local text = 
-			((self.skill.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) .. ": " .. self.skill.value .. "\n")) or "") ..
-			((self.inspiration.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION) .. ": " .. self.inspiration.value .. "\n")) or "") ..
-			((self.inspiration.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION_BONUS) .. ": " .. self.inspiration.extraFactor*100 .. "%" .. "\n")) or "") ..
-			((self.multicraft.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT) .. ": " .. self.multicraft.value .. "\n")) or "") ..
-			((self.multicraft.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS) .. ": " .. self.multicraft.extraFactor*100 .. "%" .. "\n")) or "") ..
-			((self.resourcefulness.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS) .. ": " .. self.resourcefulness.value .. "\n")) or "") ..
-			((self.resourcefulness.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS) .. ": " .. self.resourcefulness.extraFactor*100 .. "%" .. "\n")) or "") ..
-			((self.craftingspeed.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED) .. ": " .. self.craftingspeed.value .. "\n")) or "") ..
-			((self.craftingspeed.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS) .. ": " .. self.craftingspeed.extraFactor*100 .. "%" .. "\n")) or "")
+			((self.skill.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) .. ": " .. r(self.skill.value) .. "\n")) or "") ..
+			((self.inspiration.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION) .. ": " .. r(self.inspiration.value) .. "\n")) or "") ..
+			((self.inspiration.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION_BONUS) .. ": " .. r(self.inspiration.extraFactor*100) .. "%" .. "\n")) or "") ..
+			((self.multicraft.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT) .. ": " .. r(self.multicraft.value) .. "\n")) or "") ..
+			((self.multicraft.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS) .. ": " .. r(self.multicraft.extraFactor*100) .. "%" .. "\n")) or "") ..
+			((self.resourcefulness.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS) .. ": " .. r(self.resourcefulness.value) .. "\n")) or "") ..
+			((self.resourcefulness.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS) .. ": " .. r(self.resourcefulness.extraFactor*100) .. "%" .. "\n")) or "") ..
+			((self.craftingspeed.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED) .. ": " .. r(self.craftingspeed.value) .. "\n")) or "") ..
+			((self.craftingspeed.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS) .. ": " .. r(self.craftingspeed.extraFactor*100) .. "%" .. "\n")) or "")
 		return text
 	end
 
@@ -164,15 +165,15 @@ function CraftSim.ProfessionStats:GetTooltipText(maxProfessionStats)
 	local f = CraftSim.UTIL:GetFormatter()
 	-- use the maxProfessionStats as reference to show the line at all
 	local text = 
-		((maxProfessionStats.skill.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) .. ": " .. self.skill.value .. " / " .. f.grey(maxProfessionStats.skill.value) .. "\n")) or "") ..
-		((maxProfessionStats.inspiration.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION) .. ": " .. self.inspiration.value .. " / " .. f.grey(maxProfessionStats.inspiration.value) .."\n")) or "") ..
-		((maxProfessionStats.inspiration.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION_BONUS) .. ": " .. self.inspiration.extraFactor*100 .. "%" .. " / " .. f.grey(maxProfessionStats.inspiration.extraFactor*100 .. "%") .. "\n")) or "") ..
-		((maxProfessionStats.multicraft.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT) .. ": " .. self.multicraft.value .. " / " .. f.grey(maxProfessionStats.multicraft.value) .."\n")) or "") ..
-		((maxProfessionStats.multicraft.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS) .. ": " .. self.multicraft.extraFactor*100 .. "%" .. " / " .. f.grey(maxProfessionStats.multicraft.extraFactor*100 .. "%") .."\n")) or "") ..
-		((maxProfessionStats.resourcefulness.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS) .. ": " .. self.resourcefulness.value .. " / " .. f.grey(maxProfessionStats.resourcefulness.value) .."\n")) or "") ..
-		((maxProfessionStats.resourcefulness.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS) .. ": " .. self.resourcefulness.extraFactor*100 .. "%" .. " / " .. f.grey(maxProfessionStats.resourcefulness.extraFactor*100 .. "%") .."\n")) or "") ..
-		((maxProfessionStats.craftingspeed.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED) .. ": " .. self.craftingspeed.value .. " / " .. f.grey(maxProfessionStats.craftingspeed.value) .."\n")) or "") ..
-		((maxProfessionStats.craftingspeed.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS) .. ": " .. self.craftingspeed.extraFactor*100 .. "%" .. " / " .. f.grey(maxProfessionStats.craftingspeed.extraFactor*100 .. "%") .."\n")) or "")
+		((maxProfessionStats.skill.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) .. ": " .. r(self.skill.value) .. " / " .. f.grey(r(maxProfessionStats.skill.value)) .. "\n")) or "") ..
+		((maxProfessionStats.inspiration.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION) .. ": " .. r(self.inspiration.value) .. " / " .. f.grey(r(maxProfessionStats.inspiration.value)) .."\n")) or "") ..
+		((maxProfessionStats.inspiration.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION_BONUS) .. ": " .. r(self.inspiration.extraFactor*100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.inspiration.extraFactor*100) .. "%") .. "\n")) or "") ..
+		((maxProfessionStats.multicraft.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT) .. ": " .. r(self.multicraft.value) .. " / " .. f.grey(r(maxProfessionStats.multicraft.value)) .."\n")) or "") ..
+		((maxProfessionStats.multicraft.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS) .. ": " .. r(self.multicraft.extraFactor*100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.multicraft.extraFactor*100) .. "%") .."\n")) or "") ..
+		((maxProfessionStats.resourcefulness.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS) .. ": " .. r(self.resourcefulness.value) .. " / " .. f.grey(r(maxProfessionStats.resourcefulness.value)) .."\n")) or "") ..
+		((maxProfessionStats.resourcefulness.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS) .. ": " .. r(self.resourcefulness.extraFactor*100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.resourcefulness.extraFactor*100) .. "%") .."\n")) or "") ..
+		((maxProfessionStats.craftingspeed.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED) .. ": " .. r(self.craftingspeed.value) .. " / " .. f.grey(r(maxProfessionStats.craftingspeed.value)) .."\n")) or "") ..
+		((maxProfessionStats.craftingspeed.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS) .. ": " .. r(self.craftingspeed.extraFactor*100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.craftingspeed.extraFactor*100) .. "%") .."\n")) or "")
 	return text
 
 end
