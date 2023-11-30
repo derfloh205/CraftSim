@@ -28,7 +28,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.p .. "Fixed the legend text alignment in the " .. f.bb("Knowledge Simulator") ..
         f.p .. "Slightly increased the height of the " .. f.bb("Specialization Info Module") ..
         f.a .. "to consider the new profession stat info" ..
-        f.p .. "Updated recipes affected by " .. f.bb("Decayology (Leatherworking)") ..
+        f.p .. "Updated recipes affected by " .. f.bb("Decayology") ..
         newP("9.0.3") ..
         f.p .. "Fixed a bug with the " .. f.bb("Reset Frame Positions") .. " button" ..
         newP("9.0.2") ..
