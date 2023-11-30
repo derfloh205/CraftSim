@@ -111,28 +111,176 @@ end
 
 function CraftSim.ENCHANTING_DATA:GetData()
     return {
-        ENCHANTMENT_1 = {
+        ENCHANTMENT_1 = { -- primal mapped, material mapped
             childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
             nodeID = 64143,
             equalsSkill = true,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         ENCHANTMENT_2 = {
             childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
             nodeID = 64143,
             threshold = 0,
             skill = 5,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         ENCHANTMENT_3 = {
             childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
             nodeID = 64143,
             threshold = 5,
             inspiration = 5,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         ENCHANTMENT_4 = {
             childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
             nodeID = 64143,
             threshold = 15,
             resourcefulness = 5,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         ENCHANTMENT_5 = {
             childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
@@ -140,6 +288,43 @@ function CraftSim.ENCHANTING_DATA:GetData()
             threshold = 25,
             inspiration = 5,
             craftingspeedBonusFactor = 0.10,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         ENCHANTMENT_6 = {
             childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
@@ -147,105 +332,439 @@ function CraftSim.ENCHANTING_DATA:GetData()
             threshold = 30,
             skill = 10,
             resourcefulness = 5,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
-        PRIMAL_1 = {
+        PRIMAL_1 = { -- burning mapped, earthen mapped, sophic mapped, frozen mapped, wafting mapped
             childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
             nodeID = 64142,
             equalsSkill = true,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
         },
         PRIMAL_2 = {
             childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
             nodeID = 64142,
             threshold = 5,
             inspiration = 5,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
         },
         PRIMAL_3 = {
             childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
             nodeID = 64142,
             threshold = 15,
             resourcefulness = 5,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
         },
         PRIMAL_4 = {
             childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
             nodeID = 64142,
             threshold = 25,
             skill = 5,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
         },
         PRIMAL_5 = {
             childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
             nodeID = 64142,
             threshold = 30,
             inspiration = 10,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
         },
         PRIMAL_6 = {
             childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
             nodeID = 64142,
             threshold = 40,
             skill = 10,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
         },
         PRIMAL_7 = {
             childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
             nodeID = 64142,
             threshold = 45,
             resourcefulness = 10,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
         },
         PRIMAL_8 = {
             childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
             nodeID = 64142,
             threshold = 50,
             craftingspeedBonusFactor = 0.10,
+            exceptionRecipeIDs = {
+                -- Burning
+                389547, -- Burning Devotion
+                389537, -- Burning Writ
+                -- earthen
+                389549, -- Earthen Devotion
+                389540, -- Earthen Writ
+                -- sophic
+                389550, -- Sophic Devotion
+                389542, -- Sophic Writ
+                -- frozen
+                389551, -- Frozen Devotion
+                389543, -- Frozen Writ
+                -- wafting
+                389558, -- Wafting Devotion
+                389546, -- Wafting Writ
+            },
         },
-        MATERIAL_MANIPULATION_1 = {
+        MATERIAL_MANIPULATION_1 = { -- adaptive mapped, artistry mapped, magical mapped
             childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
             nodeID = 64136,
             equalsSkill = true,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         MATERIAL_MANIPULATION_2 = {
             childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
             nodeID = 64136,
             threshold = 0,
             resourcefulness = 5,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         MATERIAL_MANIPULATION_3 = {
             childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
             nodeID = 64136,
             threshold = 5,
             skill = 5,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         MATERIAL_MANIPULATION_4 = {
             childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
             nodeID = 64136,
             threshold = 15,
             inspiration = 5,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         MATERIAL_MANIPULATION_5 = {
             childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
             nodeID = 64136,
             threshold = 20,
             skill = 5,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         MATERIAL_MANIPULATION_6 = {
             childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
             nodeID = 64136,
             threshold = 30,
             resourcefulness = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         MATERIAL_MANIPULATION_7 = {
             childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
             nodeID = 64136,
             threshold = 35,
             skill = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         MATERIAL_MANIPULATION_8 = {
             childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
             nodeID = 64136,
             threshold = 40,
             inspiration = 10,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
+                }
+            },
         },
         BURNING_1 = {
             nodeID = 64141,
             equalsSkill = true,
             exceptionRecipeIDs = {
+                -- Burning
                 389547, -- Burning Devotion
                 389537, -- Burning Writ
             },
@@ -263,6 +782,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 64140,
             equalsSkill = true,
             exceptionRecipeIDs = {
+                -- earthen
                 389549, -- Earthen Devotion
                 389540, -- Earthen Writ
             },
@@ -280,6 +800,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 64139,
             equalsSkill = true,
             exceptionRecipeIDs = {
+                -- sophic
                 389550, -- Sophic Devotion
                 389542, -- Sophic Writ
             },
@@ -297,6 +818,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 64138,
             equalsSkill = true,
             exceptionRecipeIDs = {
+                -- frozen
                 389551, -- Frozen Devotion
                 389543, -- Frozen Writ
             },
@@ -314,6 +836,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 64137,
             equalsSkill = true,
             exceptionRecipeIDs = {
+                -- wafting
                 389558, -- Wafting Devotion
                 389546, -- Wafting Writ
             },
@@ -332,9 +855,11 @@ function CraftSim.ENCHANTING_DATA:GetData()
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- adaptive
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- adaptive
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
                 }
             },
@@ -396,8 +921,9 @@ function CraftSim.ENCHANTING_DATA:GetData()
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- artistry
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-                }
+                },
             },
         },
         ARTISTRY_2 = {
@@ -455,9 +981,11 @@ function CraftSim.ENCHANTING_DATA:GetData()
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
+                    -- magical
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- magical
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
                 }
             },
@@ -527,7 +1055,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
                 }
             },
         },
-        INSIGHT_OF_THE_BLUE_1 = {
+        INSIGHT_OF_THE_BLUE_1 = { -- draconic mapped, primal mapped
             childNodeIDs = {"DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1"},
             nodeID = 68402,
         },
@@ -538,24 +1066,31 @@ function CraftSim.ENCHANTING_DATA:GetData()
             resourcefulness = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- draconic, primal
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
+                    -- draconic, primal
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- draconic, primal
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
+                    -- draconic, primal
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- draconic, primal
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
+                    -- draconic, primal
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- draconic, primal
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
                 }
             },
@@ -567,24 +1102,31 @@ function CraftSim.ENCHANTING_DATA:GetData()
             inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
                 }
             },
@@ -596,24 +1138,31 @@ function CraftSim.ENCHANTING_DATA:GetData()
             skill = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
                 }
             },
@@ -625,24 +1174,31 @@ function CraftSim.ENCHANTING_DATA:GetData()
             resourcefulness = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
                 }
             },
@@ -654,24 +1210,31 @@ function CraftSim.ENCHANTING_DATA:GetData()
             inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
                 }
             },
@@ -683,30 +1246,38 @@ function CraftSim.ENCHANTING_DATA:GetData()
             skill = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
                 }
             },
         },
         DRACONIC_DISENCHANTMENT_1 = {
             nodeID = 68401,
+            -- gives extraitems when disenchanting
         },
         DRACONIC_DISENCHANTMENT_2 = {
             nodeID = 68401,
@@ -714,24 +1285,31 @@ function CraftSim.ENCHANTING_DATA:GetData()
             skill = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
                 },
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
+                    -- draconic
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
                 }
             },
@@ -822,6 +1400,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
         },
         PRIMAL_EXTRACTION_1 = {
             nodeID = 68400,
+            -- more rousing elements
         },
         PRIMAL_EXTRACTION_2 = {
             nodeID = 68400,
@@ -963,52 +1542,60 @@ function CraftSim.ENCHANTING_DATA:GetData()
                 }
             },
         },
-        RODS_RUNES_AND_RUSES_1 = {
+        RODS_RUNES_AND_RUSES_1 = { -- mapped all 
             childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
             nodeID = 68445,
             equalsSkill = true,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RODS_RUNES_AND_RUSES_2 = {
             childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
             nodeID = 68445,
             threshold = 0,
             craftingspeedBonusFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RODS_RUNES_AND_RUSES_3 = {
             childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
             nodeID = 68445,
             threshold = 5,
             skill = 5,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RODS_RUNES_AND_RUSES_4 = {
             childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
             nodeID = 68445,
             threshold = 15,
             skill = 5,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RODS_RUNES_AND_RUSES_5 = {
             childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
             nodeID = 68445,
             threshold = 25,
             craftingspeedBonusFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RODS_RUNES_AND_RUSES_6 = {
             childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
             nodeID = 68445,
             threshold = 35,
             skill = 5,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RODS_RUNES_AND_RUSES_7 = {
             childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
             nodeID = 68445,
             threshold = 40,
             skill = 10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RODS_AND_WANDS_1 = {
             nodeID = 68444,
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RODS_AND_WANDS] = {
+                    -- rods and wands
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.RODS,
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WANDS
                 }
@@ -1085,10 +1672,11 @@ function CraftSim.ENCHANTING_DATA:GetData()
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.ILLUSORY_GOODS] = {
+                    -- illusory goods
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSIONS,
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSORY_ADORNMENTS,
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.SCEPTERS
-                }
+                },
             },
         },
         ILLUSORY_GOODS_2 = {
@@ -1160,7 +1748,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
                 389293, -- Haste
                 389294, -- Mastery
                 389295, -- Vers
-                -- Bracer Devotions
+                -- Bracer Devotions 
                 389301, -- Avoidance
                 389303, -- Leech
                 389304, -- Speed
