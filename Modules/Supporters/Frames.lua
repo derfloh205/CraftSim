@@ -23,14 +23,23 @@ function CraftSim.SUPPORTERS.FRAMES:Init()
 
     local function createContent(frame)
         frame:Hide()
-
+        local f = CraftSim.UTIL:GetFormatter()
         frame.content.description = CraftSim.GGUI.Text({
             parent=frame.content,anchorParent=frame.content,anchorA="TOP",anchorB="TOP",offsetY=-40,text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION)
         })
 
+        frame.content.donateBox = CraftSim.FRAME:CreateInput(
+            nil, frame.content, frame.content.description.frame, "TOP", "BOTTOM", 0, -40, 250, 30, CraftSim.CONST.PAYPAL_ME_URL, function() 
+                -- do not let the player remove the link
+                frame.content.donateBox:SetText(CraftSim.CONST.PAYPAL_ME_URL)
+            end)
+            frame.content.donateBox:SetScale(0.75)
+            frame.content.donateBoxLabel = CraftSim.FRAME:CreateText(
+                f.patreon("Do you want to support CraftSim and also be listed here with your message?\nConsider donating <3"), frame.content, frame.content.donateBox, "BOTTOM", "TOP", 0, 0, 1)
+
         frame.content.supportersList = CraftSim.GGUI.FrameList({
-            parent=frame.content,anchorParent=frame.content.description.frame,offsetY=-40,anchorA="TOP",anchorB="BOTTOM",
-            sizeY=400, showHeaderLine = true, rowHeight=60,
+            parent=frame.content,anchorParent=frame.content.donateBox,offsetY=-30,anchorA="TOP",anchorB="BOTTOM",
+            sizeY=350, showHeaderLine = true, rowHeight=60,
             columnOptions={
                 {
                     label="Date",
