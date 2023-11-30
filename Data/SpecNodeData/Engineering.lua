@@ -1008,7 +1008,7 @@ function CraftSim.ENGINEERING_DATA:GetData()
                 }
             },
         },
-        MECHANICAL_MIND_1 = {
+        MECHANICAL_MIND_1 = { -- all mapped
             childNodeIDs = {"INVENTIONS_1", "NOVELTIES_1"},
             nodeID = 50956,
             equalsSkill = true,

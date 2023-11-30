@@ -155,34 +155,39 @@ end
 
 function CraftSim.INSCRIPTION_DATA:GetData()
     return {
-        RUNE_MASTERY_1 = {
+        RUNE_MASTERY_1 = { -- all mapped
             childNodeIDs = {"PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1"},
             nodeID = 34835,
             equalsSkill = true,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RUNE_MASTERY_2 = {
             childNodeIDs = {"PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1"},
             nodeID = 34835,
             threshold = 0,
             skill = 5,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RUNE_MASTERY_3 = {
             childNodeIDs = {"PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1"},
             nodeID = 34835,
             threshold = 5,
             skill = 5,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RUNE_MASTERY_4 = {
             childNodeIDs = {"PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1"},
             nodeID = 34835,
             threshold = 15,
             skill = 5,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RUNE_MASTERY_5 = {
             childNodeIDs = {"PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1"},
             nodeID = 34835,
             threshold = 25,
             skill = 5,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RUNE_MASTERY_6 = {
             childNodeIDs = {"PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1"},
@@ -191,6 +196,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             inspiration = 10,
             resourcefulness = 10,
             craftingspeedBonusFactor = 0.10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         RUNE_MASTERY_7 = {
             childNodeIDs = {"PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1"},
@@ -198,6 +204,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             threshold = 40,
             inspiration = 10,
             resourcefulness = 10,
+            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
         },
         PERFECT_PRACTICE_1 = {
             nodeID = 34834,
@@ -412,22 +419,142 @@ function CraftSim.INSCRIPTION_DATA:GetData()
                 }
             },
         },
-        ARCHIVING_1 = {
+        ARCHIVING_1 = { -- dm mapped, sk mapped, ss mapped
             childNodeIDs = {"DARKMOON_MYSTERIES_1", "SHARED_KNOWLEDGE_1", "SCALE_SIGILS_1"},
             nodeID = 43535,
             equalsSkill = true,
+            idMapping = {
+                -- dm mysteries
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.BUNDLE_O_CARDS
+                },
+                -- contracts and missives
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CRAFTING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.GATHERING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- draconic treatises
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+            },
+            exceptionRecipeIDs = {
+                --- dm mysteries
+                --fire
+                383325, -- Darkmoon Deck Box: Inferno
+                -- frost
+                383767, -- Darkmoon Deck Box: Rime
+                --air
+                383770, -- Darkmoon Deck Box: Dance
+                -- earth
+                383772, -- Darkmoon Deck Box: Watcher
+                -- scale sigils
+                383533, -- Azurescale Sigil
+                383535, -- Emberscale Sigil
+                383534, -- Sagescale Sigil
+                383536, -- Bronzescale Sigil
+                383538, -- Jetscale Sigil
+            },
         },
         ARCHIVING_2 = {
             childNodeIDs = {"DARKMOON_MYSTERIES_1", "SHARED_KNOWLEDGE_1", "SCALE_SIGILS_1"},
             nodeID = 43535,
             threshold = 5,
             inspiration = 5,
+            idMapping = {
+                -- dm mysteries
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.BUNDLE_O_CARDS
+                },
+                -- contracts and missives
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CRAFTING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.GATHERING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- draconic treatises
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+            },
+            exceptionRecipeIDs = {
+                --- dm mysteries
+                --fire
+                383325, -- Darkmoon Deck Box: Inferno
+                -- frost
+                383767, -- Darkmoon Deck Box: Rime
+                --air
+                383770, -- Darkmoon Deck Box: Dance
+                -- earth
+                383772, -- Darkmoon Deck Box: Watcher
+                -- scale sigils
+                383533, -- Azurescale Sigil
+                383535, -- Emberscale Sigil
+                383534, -- Sagescale Sigil
+                383536, -- Bronzescale Sigil
+                383538, -- Jetscale Sigil
+            },
         },
         ARCHIVING_3 = {
             childNodeIDs = {"DARKMOON_MYSTERIES_1", "SHARED_KNOWLEDGE_1", "SCALE_SIGILS_1"},
             nodeID = 43535,
             threshold = 15,
             resourcefulness = 5,
+            idMapping = {
+                -- dm mysteries
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.BUNDLE_O_CARDS
+                },
+                -- contracts and missives
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CRAFTING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.GATHERING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- draconic treatises
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+            },
+            exceptionRecipeIDs = {
+                --- dm mysteries
+                --fire
+                383325, -- Darkmoon Deck Box: Inferno
+                -- frost
+                383767, -- Darkmoon Deck Box: Rime
+                --air
+                383770, -- Darkmoon Deck Box: Dance
+                -- earth
+                383772, -- Darkmoon Deck Box: Watcher
+                -- scale sigils
+                383533, -- Azurescale Sigil
+                383535, -- Emberscale Sigil
+                383534, -- Sagescale Sigil
+                383536, -- Bronzescale Sigil
+                383538, -- Jetscale Sigil
+            },
         },
         ARCHIVING_4 = {
             childNodeIDs = {"DARKMOON_MYSTERIES_1", "SHARED_KNOWLEDGE_1", "SCALE_SIGILS_1"},
@@ -435,15 +562,67 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             threshold = 25,
             inspiration = 5,
             craftingspeedBonusFactor = 0.05,
+            idMapping = {
+                -- dm mysteries
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.BUNDLE_O_CARDS
+                },
+                -- contracts and missives
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CRAFTING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.GATHERING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- draconic treatises
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+            },
+            exceptionRecipeIDs = {
+                --- dm mysteries
+                --fire
+                383325, -- Darkmoon Deck Box: Inferno
+                -- frost
+                383767, -- Darkmoon Deck Box: Rime
+                --air
+                383770, -- Darkmoon Deck Box: Dance
+                -- earth
+                383772, -- Darkmoon Deck Box: Watcher
+                -- scale sigils
+                383533, -- Azurescale Sigil
+                383535, -- Emberscale Sigil
+                383534, -- Sagescale Sigil
+                383536, -- Bronzescale Sigil
+                383538, -- Jetscale Sigil
+            },
         },
-        DARKMOON_MYSTERIES_1 = {
+        DARKMOON_MYSTERIES_1 = { -- fire mapped, frost mapped, air mapped, earth mapped
             childNodeIDs = {"FIRE_1", "FROST_1", "AIR_1", "EARTH_1"},
             nodeID = 43534,
             equalsSkill = true,
             idMapping = {
+                -- dm mysteries
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.BUNDLE_O_CARDS
                 }
+            },
+            exceptionRecipeIDs = {
+                --- dm mysteries
+                --fire
+                383325, -- Darkmoon Deck Box: Inferno
+                -- frost
+                383767, -- Darkmoon Deck Box: Rime
+                --air
+                383770, -- Darkmoon Deck Box: Dance
+                -- earth
+                383772, -- Darkmoon Deck Box: Watcher
             },
         },
         DARKMOON_MYSTERIES_2 = {
@@ -451,10 +630,15 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 43534,
             threshold = 5,
             skill = 5,
-            idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.BUNDLE_O_CARDS
-                }
+            exceptionRecipeIDs = {
+                --fire
+                383325, -- Darkmoon Deck Box: Inferno
+                -- frost
+                383767, -- Darkmoon Deck Box: Rime
+                --air
+                383770, -- Darkmoon Deck Box: Dance
+                -- earth
+                383772, -- Darkmoon Deck Box: Watcher
             },
         },
         DARKMOON_MYSTERIES_3 = {
@@ -462,10 +646,15 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 43534,
             threshold = 15,
             skill = 5,
-            idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.BUNDLE_O_CARDS
-                }
+            exceptionRecipeIDs = {
+                --fire
+                383325, -- Darkmoon Deck Box: Inferno
+                -- frost
+                383767, -- Darkmoon Deck Box: Rime
+                --air
+                383770, -- Darkmoon Deck Box: Dance
+                -- earth
+                383772, -- Darkmoon Deck Box: Watcher
             },
         },
         DARKMOON_MYSTERIES_4 = {
@@ -485,10 +674,15 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             threshold = 25,
             inspiration = 10,
             craftingspeedBonusFactor = 0.10,
-            idMapping = {
-                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.BUNDLE_O_CARDS
-                }
+            exceptionRecipeIDs = {
+                --fire
+                383325, -- Darkmoon Deck Box: Inferno
+                -- frost
+                383767, -- Darkmoon Deck Box: Rime
+                --air
+                383770, -- Darkmoon Deck Box: Dance
+                -- earth
+                383772, -- Darkmoon Deck Box: Watcher
             },
         },
         DARKMOON_MYSTERIES_6 = {
@@ -517,6 +711,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 43533,
             equalsSkill = true,
             exceptionRecipeIDs = {
+                --fire
                 383325, -- Darkmoon Deck Box: Inferno
             },
         },
@@ -540,6 +735,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 43532,
             equalsSkill = true,
             exceptionRecipeIDs = {
+                -- frost
                 383767, -- Darkmoon Deck Box: Rime
             },
         },
@@ -563,6 +759,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 43531,
             equalsSkill = true,
             exceptionRecipeIDs = {
+                --air
                 383770, -- Darkmoon Deck Box: Dance
             },
         },
@@ -586,6 +783,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 43530,
             equalsSkill = true,
             exceptionRecipeIDs = {
+                -- earth
                 383772, -- Darkmoon Deck Box: Watcher
             },
         },
@@ -605,22 +803,79 @@ function CraftSim.INSCRIPTION_DATA:GetData()
                 383772, -- Darkmoon Deck Box: Watcher
             },
         },
-        SHARED_KNOWLEDGE_1 = {
+        SHARED_KNOWLEDGE_1 = { -- c and m mapped, dt mapped
             childNodeIDs = {"CONTRACTS_AND_MISSIVES_1", "DRACONIC_TREATISES_1"},
             nodeID = 43529,
             equalsResourcefulness = true,
+            idMapping = {
+                -- contracts and missives
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CRAFTING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.GATHERING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- draconic treatises
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+            },
         },
         SHARED_KNOWLEDGE_2 = {
             childNodeIDs = {"CONTRACTS_AND_MISSIVES_1", "DRACONIC_TREATISES_1"},
             nodeID = 43529,
             threshold = 0,
             resourcefulness = 5,
+            idMapping = {
+                -- contracts and missives
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CRAFTING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.GATHERING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- draconic treatises
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         SHARED_KNOWLEDGE_3 = {
             childNodeIDs = {"CONTRACTS_AND_MISSIVES_1", "DRACONIC_TREATISES_1"},
             nodeID = 43529,
             threshold = 5,
             resourcefulness = 5,
+            idMapping = {
+                -- contracts and missives
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CRAFTING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.GATHERING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- draconic treatises
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         SHARED_KNOWLEDGE_4 = {
             childNodeIDs = {"CONTRACTS_AND_MISSIVES_1", "DRACONIC_TREATISES_1"},
@@ -628,6 +883,25 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             threshold = 15,
             resourcefulness = 5,
             multicraft = 10,
+            idMapping = {
+                -- contracts and missives
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CRAFTING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.GATHERING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- draconic treatises
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         SHARED_KNOWLEDGE_5 = {
             childNodeIDs = {"CONTRACTS_AND_MISSIVES_1", "DRACONIC_TREATISES_1"},
@@ -635,6 +909,25 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             threshold = 25,
             resourcefulness = 5,
             craftingspeedBonusFactor = 0.05,
+            idMapping = {
+                -- contracts and missives
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CRAFTING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.GATHERING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- draconic treatises
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         SHARED_KNOWLEDGE_6 = {
             childNodeIDs = {"CONTRACTS_AND_MISSIVES_1", "DRACONIC_TREATISES_1"},
@@ -642,11 +935,31 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             threshold = 30,
             resourcefulness = 10,
             craftingspeedBonusFactor = 0.10,
+            idMapping = {
+                -- contracts and missives
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CRAFTING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.GATHERING_TOOL_MISSIVES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- draconic treatises
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                }
+            },
         },
         CONTRACTS_AND_MISSIVES_1 = {
             nodeID = 43528,
             equalsSkill = true,
             idMapping = {
+                -- contracts and missives
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 },
@@ -763,6 +1076,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 43527,
             equalsResourcefulness = true,
             idMapping = {
+                -- draconic treatises
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
@@ -811,10 +1125,18 @@ function CraftSim.INSCRIPTION_DATA:GetData()
                 }
             },
         },
-        SCALE_SIGILS_1 = {
+        SCALE_SIGILS_1 = { -- all mapped
             childNodeIDs = {"AZURESCALE_SIGIL_1", "EMBERSCALE_SIGIL_1", "SAGESCALE_SIGIL_1", "BRONZESCALE_SIGIL_1", "JETSCALE_SIGIL_1"},
             nodeID = 43526,
             equalsSkill = true,
+            exceptionRecipeIDs = {
+                -- scale sigils
+                383533, -- Azurescale Sigil
+                383535, -- Emberscale Sigil
+                383534, -- Sagescale Sigil
+                383536, -- Bronzescale Sigil
+                383538, -- Jetscale Sigil
+            },
         },
         AZURESCALE_SIGIL_1 = {
             nodeID = 43525,
@@ -866,7 +1188,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 43523,
             equalsSkill = true,
             exceptionRecipeIDs = {
-                383534. -- Sagescale Sigil
+                383534, -- Sagescale Sigil
             },
         },
         SAGESCALE_SIGIL_2 = {
@@ -874,7 +1196,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             threshold = 5,
             resourcefulness = 5,
             exceptionRecipeIDs = {
-                383534. -- Sagescale Sigil
+                383534, -- Sagescale Sigil
             },
         },
         SAGESCALE_SIGIL_3 = {
@@ -882,7 +1204,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             threshold = 10,
             inspiration = 5,
             exceptionRecipeIDs = {
-                383534. -- Sagescale Sigil
+                383534, -- Sagescale Sigil
             },
         },
         BRONZESCALE_SIGIL_1 = {
@@ -931,51 +1253,177 @@ function CraftSim.INSCRIPTION_DATA:GetData()
                 383538, -- Jetscale Sigil
             },
         },
-        RUNEBINDING_1 = {
+        RUNEBINDING_1 = { -- woodcarving mapped, rs mapped
             childNodeIDs = {"WOODCARVING_1", "RUNIC_SCRIPTURE_1"},
             nodeID = 34893,
             equalsSkill = true,
+            idMapping = {
+                --- woodcarving
+                -- prof tools
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    -- staves
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES,
+                    -- codexes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES,
+                    -- fauna runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
+                },
+            },
         },
         RUNEBINDING_2 = {
             childNodeIDs = {"WOODCARVING_1", "RUNIC_SCRIPTURE_1"},
             nodeID = 34893,
             threshold = 5,
             resourcefulness = 5,
+            idMapping = {
+                --- woodcarving
+                -- prof tools
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    -- staves
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES,
+                    -- codexes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES,
+                    -- fauna runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
+                },
+            },
         },
         RUNEBINDING_3 = {
             childNodeIDs = {"WOODCARVING_1", "RUNIC_SCRIPTURE_1"},
             nodeID = 34893,
             threshold = 15,
             resourcefulness = 5,
+            idMapping = {
+                --- woodcarving
+                -- prof tools
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    -- staves
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES,
+                    -- codexes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES,
+                    -- fauna runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
+                },
+            },
         },
         RUNEBINDING_4 = {
             childNodeIDs = {"WOODCARVING_1", "RUNIC_SCRIPTURE_1"},
             nodeID = 34893,
             threshold = 25,
             inspiration = 5,
+            idMapping = {
+                --- woodcarving
+                -- prof tools
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    -- staves
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES,
+                    -- codexes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES,
+                    -- fauna runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
+                },
+            },
         },
         RUNEBINDING_5 = {
             childNodeIDs = {"WOODCARVING_1", "RUNIC_SCRIPTURE_1"},
             nodeID = 34893,
             threshold = 30,
             craftingspeedBonusFactor = 0.10,
+            idMapping = {
+                --- woodcarving
+                -- prof tools
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    -- staves
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES,
+                    -- codexes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES,
+                    -- fauna runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
+                },
+            },
         },
-        WOODCARVING_1 = {
+        WOODCARVING_1 = { -- tools mapped, staves mapped
             childNodeIDs = {"PROFESSION_TOOLS_1", "STAVES_1"},
             nodeID = 34892,
             equalsSkill = true,
+            idMapping = {
+                --- woodcarving
+                -- prof tools
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- staves
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES
+                }
+            },
         },
         WOODCARVING_2 = {
             childNodeIDs = {"PROFESSION_TOOLS_1", "STAVES_1"},
             nodeID = 34892,
             threshold = 5,
             inspiration = 5,
+            idMapping = {
+                -- prof tools
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- staves
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES
+                }
+            },
         },
         WOODCARVING_3 = {
             childNodeIDs = {"PROFESSION_TOOLS_1", "STAVES_1"},
             nodeID = 34892,
             threshold = 15,
             inspiration = 5,
+            idMapping = {
+                -- prof tools
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- staves
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES
+                }
+            },
         },
         WOODCARVING_4 = {
             childNodeIDs = {"PROFESSION_TOOLS_1", "STAVES_1"},
@@ -983,17 +1431,38 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             threshold = 25,
             inspiration = 10,
             craftingspeedBonusFactor = 0.10,
+            idMapping = {
+                -- prof tools
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- staves
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES
+                }
+            },
         },
         WOODCARVING_5 = {
             childNodeIDs = {"PROFESSION_TOOLS_1", "STAVES_1"},
             nodeID = 34892,
             threshold = 30,
             skill = 10,
+            idMapping = {
+                -- prof tools
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+                },
+                -- staves
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES
+                }
+            },
         },
         PROFESSION_TOOLS_1 = {
             nodeID = 34891,
             equalsSkill = true,
             idMapping = {
+                -- prof tools
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
                 }
@@ -1033,6 +1502,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 34890,
             equalsSkill = true,
             idMapping = {
+                -- staves
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES
                 }
@@ -1079,22 +1549,58 @@ function CraftSim.INSCRIPTION_DATA:GetData()
                 }
             },
         },
-        RUNIC_SCRIPTURE_1 = {
+        RUNIC_SCRIPTURE_1 = { -- codexes mapped, vr mapped, fauna runes mapped
             childNodeIDs = {"CODEXES_1", "VANTUS_RUNES_1", "FAUNA_RUNES_1"},
             nodeID = 34889,
             equalsSkill = true,
+            idMapping = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    -- codexes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES,
+                    -- fauna runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
+                },
+            },
         },
         RUNIC_SCRIPTURE_2 = {
             childNodeIDs = {"CODEXES_1", "VANTUS_RUNES_1", "FAUNA_RUNES_1"},
             nodeID = 34889,
             threshold = 5,
             inspiration = 5,
+            idMapping = {
+                -- codexes
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES,
+                    -- fauna runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
+                },
+            },
         },
         RUNIC_SCRIPTURE_3 = {
             childNodeIDs = {"CODEXES_1", "VANTUS_RUNES_1", "FAUNA_RUNES_1"},
             nodeID = 34889,
             threshold = 15,
             inspiration = 10,
+            idMapping = {
+                -- codexes
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES,
+                    -- fauna runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
+                },
+            },
         },
         RUNIC_SCRIPTURE_4 = {
             childNodeIDs = {"CODEXES_1", "VANTUS_RUNES_1", "FAUNA_RUNES_1"},
@@ -1102,17 +1608,42 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             threshold = 25,
             inspiration = 10,
             craftingspeedBonusFactor = 0.10,
+            idMapping = {
+                -- codexes
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES,
+                    -- fauna runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
+                },
+            },
         },
         RUNIC_SCRIPTURE_5 = {
             childNodeIDs = {"CODEXES_1", "VANTUS_RUNES_1", "FAUNA_RUNES_1"},
             nodeID = 34889,
             threshold = 30,
             skill = 10,
+            idMapping = {
+                -- codexes
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
+                },
+                [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES,
+                    -- fauna runes
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
+                },
+            },
         },
         CODEXES_1 = {
             nodeID = 34888,
             equalsSkill = true,
             idMapping = {
+                -- codexes
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
                 }
@@ -1174,8 +1705,9 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             equalsResourcefulness = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- vantus runes
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES
-                }
+                },
             },
         },
         VANTUS_RUNES_2 = {
@@ -1236,6 +1768,7 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             equalsResourcefulness = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
+                    -- fauna runes
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
                 }
             },
