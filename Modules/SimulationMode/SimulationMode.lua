@@ -17,6 +17,21 @@ function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.MAIN:TriggerModulesErrorSafe()
 end
 
+function CraftSim.SIMULATION_MODE:MaxSpecData()
+    if not CraftSim.SIMULATION_MODE.specializationData then
+        return
+    end
+    for _, nodeData in pairs(CraftSim.SIMULATION_MODE.specializationData.nodeData) do
+        nodeData.rank = nodeData.maxRank
+        nodeData:UpdateAffectance()
+        nodeData:UpdateProfessionStats()
+    end
+
+    CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
+    CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData() -- update
+    CraftSim.MAIN:TriggerModulesErrorSafe()
+end
+
 function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
     if not userInput or not recipeData then

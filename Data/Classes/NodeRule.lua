@@ -1,5 +1,7 @@
 _, CraftSim = ...
 
+print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
+
 
 ---@class CraftSim.NodeRule
 CraftSim.NodeRule = CraftSim.Object:extend()
@@ -37,53 +39,65 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or false
     self.equalsPotionExperimentationChanceFactor = nodeRuleData.equalsPotionExperimentationChanceFactor or false
 
-    self:UpdateProfessionStatsByRank()
+    --self:UpdateProfessionStatsByRank(nodeData.rank)
 end
 
 function CraftSim.NodeRule:UpdateAffectance()
     self.affectsRecipe = self.idMapping:AffectsRecipe()
+    --print(self.nodeData.nodeName .. "-Rule affects recipe: " .. tostring(self.affectsRecipe))
 end
 
-function CraftSim.NodeRule:UpdateProfessionStatsByRank()
+---@param rank number
+function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
     -- only if I affect the recipe
     if not self.affectsRecipe then
         return
     end
 
+    -- DEBUG
+    if self.nodeData.nodeName == "Curing and Tanning" then
+        print("updating curing and tanning node rule stats with rank: " .. tostring(rank))
+    end
+
     if self.equalsSkill then
-        self.professionStats.skill.value = self.nodeData.rank
+        self.professionStats.skill.value = math.max(0, rank)
     end
     
     if self.equalsMulticraft then
-        self.professionStats.multicraft.value = self.nodeData.rank
+        self.professionStats.multicraft.value = math.max(0, rank)
     end
 
     if self.equalsInspiration then
-        self.professionStats.inspiration.value = self.nodeData.rank
+        self.professionStats.inspiration.value = math.max(0, rank)
     end
 
     if self.equalsInspirationBonusSkillFactor then
-        self.professionStats.inspiration.extraFactor = self.nodeData.rank * 0.01
+        self.professionStats.inspiration.extraFactor = math.max(0, rank * 0.01)
     end
 
     if self.equalsResourcefulness then
-        self.professionStats.resourcefulness.value = self.nodeData.rank
+        self.professionStats.resourcefulness.value = math.max(0, rank)
     end
 
     if self.equalsCraftingspeed then
-        self.professionStats.craftingspeed.value = self.nodeData.rank
+        self.professionStats.craftingspeed.value = math.max(0, rank)
     end
 
     if self.equalsResourcefulnessExtraItemsFactor then
-        self.professionStats.resourcefulness.extraFactor = self.nodeData.rank * 0.01
+        self.professionStats.resourcefulness.extraFactor = math.max(0, rank * 0.01)
     end
 
     if self.equalsPhialExperimentationChanceFactor then
-        self.professionStats.phialExperimentationFactor.extraFactor = self.nodeData.rank * 0.01
+        self.professionStats.phialExperimentationFactor.extraFactor = math.max(0, rank * 0.01)
     end
 
     if self.equalsPotionExperimentationChanceFactor then
-        self.professionStats.potionExperimentationFactor.extraFactor = self.nodeData.rank * 0.01
+        self.professionStats.potionExperimentationFactor.extraFactor = math.max(0, rank * 0.01)
+    end
+
+    if self.nodeData.nodeName == "Curing and Tanning" then
+        print("NodeRule: Rule stats after updating rule: ")
+        print(self.professionStats, true, nil, 1)
     end
 
 end
@@ -91,6 +105,7 @@ end
 function CraftSim.NodeRule:Debug()
     local debugLines = {
         "nodeID: " .. tostring(self.nodeData.nodeID),
+        "affectsRecipe: " .. tostring(self.affectsRecipe),
         "threshold: " .. tostring(self.threshold),
         "equalsSkill: " .. tostring(self.equalsSkill),
         "equalsMulticraft: " .. tostring(self.equalsMulticraft),

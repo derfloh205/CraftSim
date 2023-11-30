@@ -393,7 +393,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MISC,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
                 },
 		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
@@ -409,13 +409,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             multicraft = 20,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MISC,
-                },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
-                },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
                 },
             },
         },
@@ -425,7 +419,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             inspiration =10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MISC,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
                 },
 		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
@@ -441,13 +435,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             multicraft = 40,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MISC,
-                },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
-                },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
                 },
             },
         },
@@ -457,7 +445,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MISC,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
                 },
 		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
@@ -473,13 +461,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             multicraftExtraItemsFactor = 0.50,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MISC,
-                },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
-                },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
-                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS,
+                    CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
                 },
             },
         },

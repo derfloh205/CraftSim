@@ -10,8 +10,21 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
-        newP("9.0.4") ..
-        f.p .. "" ..
+        newP("10.0.0") ..
+        f.P .. "Do you find " .. f.patreon("CraftSim") .. " helpful?" .. 
+        f.a .. "You can now " .. f.g("support its development") .. " by following the new" ..
+        f.a .. "paypal me link in the above box <3" ..
+        f.s .. "Added a current and maximum " .. f.bb("Profession Stat Overview") ..
+        f.a .. "in the " .. f.bb("Specialization Info Module") ..
+        f.s .. "The " .. f.bb("Profession Talent Help Icon") .. " now always shows in the " ..
+        f.a .. f.bb("Specialization Info Module") .. " and shows current and" ..
+        f.a .. "maximum stats in its tooltip" ..
+        f.s .. "Refactored the " .. f.bb("Specialization Node System") .. " to consider" ..
+        f.a .. "talent nodes with thresholds that affect individual recipe types" ..
+        f.s .. "Added a " .. f.g("Max All") .. " button to the " .. f.bb("Knowledge Simulator") ..
+        f.p .. "Fixed the legend text alignment in the " .. f.bb("Knowledge Simulator") ..
+        f.s .. "Fixed " .. f.bb("Armor Kits") .. " not correctly being affected " ..
+        f.a .. "by the talent " .. f.bb("Curing and Tanning") ..
         newP("9.0.3") ..
         f.p .. "Fixed a bug with the " .. f.bb("Reset Frame Positions") .. " button" ..
         newP("9.0.2") ..
@@ -38,36 +51,5 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "Thanks to " .. f.bb("https://github.com/TheResinger") .. " !" ..
         newP("8.9.3") ..
         f.p .. "Updated enchant recipes for 10.2" ..
-        f.p .. "Supporter List Update" ..
-        newP("8.9.2") ..
-        f.s .. "Expanded the " .. f.bb("Craft Statistics Panel") .." of the " .. f.bb("Average Profit Module") ..
-        f.a .. "to now also show " .. f.g("expected costs per item") .. 
-        f.a .. "with and without " .. f.g("sell return of lower qualities") ..
-        f.p .. "Added a new help icon (?) to explain the statistics table" ..
-        f.p .. "Fixed the " .. f.bb("Show Statistics") .. " button not updating its text when" ..
-        f.a .. "closing the " .. f.bb("Statistics Module") ..
-        f.p .. "Supporter List Update" ..
-        newP("8.9.1") ..
-        f.P .. "10.1.5 Fix" ..
-        f.p .. "Supporter List Update" ..
-        newP("8.9.0") ..
-        f.P .. "Thank you " .. f.bb("https://github.com/Kanegasi") .. " for" ..
-        f.a .. "adding " .. f.g("Oribos Exchange") .. " to the possible price sources" ..
-        f.s .. "Fixed a bug in the " .. f.bb("Knowledge Point Simulator") .. " that" ..
-        f.a .. "did not correctly reset a node when subtracting" .. 
-        f.a .. "with the -5 Button below 0" ..
-        f.s .. f.bb("Profit Calculation") .." for " .. f.bb("Crafting Orders") .. " now correctly considers" ..
-        f.a .. "materials that were provided by the customer" ..
-        f.p .. "Added the " .. f.bb("Prospecting") .. " Talent Node to" .. f.bb(" Dragon Isles Crushing") ..
-        f.a .. "for " .. f.bb("Specialization Info") ..
-        f.p .. "Added an additional dropdown frame into the" .. 
-        f.a .. "frame pool for optional and finishing reagents" ..
-        f.a .. "to support the new tailoring pvp gear" ..
-        newP("8.8.0") ..
-        f.s .. "Updates and Fixes to the " .. f.bb("CustomerHistory") .. " Module by" ..
-        f.a .. f.bb("https://github.com/Meivyn") .. 
-        f.p .. "Supporter List Update" ..
-        f.p .. "Bugfix for Specialization Node Info" ..
-        f.a .. "regarding the Shadowbelt Clasp Recipe by" ..
-        f.a .. f.bb("https://github.com/domi1294")
+        f.p .. "Supporter List Update"
 end

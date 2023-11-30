@@ -3,7 +3,7 @@ _, CraftSim = ...
 CraftSim.CONST = {}
 
 -- One Time Info ------------
-CraftSim.CONST.currentInfoVersionID = 93 -- last patch increase: 9.0.4
+CraftSim.CONST.currentInfoVersionID = 100 -- last patch increase: 10.0.0
 CraftSim.CONST.debugInfoText = false
 CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
@@ -30,6 +30,7 @@ CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
 CraftSim.CONST.MULTICRAFT_CONSTANT = 2.5
 
 CraftSim.CONST.DISCORD_INVITE_URL = "https://discord.gg/7vqKMgezXR"
+CraftSim.CONST.PAYPAL_ME_URL = "https://www.paypal.com/paypalme/CraftSim"
 
 CraftSim.CONST.EXPORT_MODE = {
     NON_WORK_ORDER = 0,

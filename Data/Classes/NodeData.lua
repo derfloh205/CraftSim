@@ -4,21 +4,27 @@ _, CraftSim = ...
 ---@class CraftSim.NodeData
 CraftSim.NodeData = CraftSim.Object:extend()
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.ERROR)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 ---@param nodeRulesData table[]
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData)
+---@param parentNode CraftSim.NodeData
+function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData, parentNode)
     self.affectsRecipe = false
     if not recipeData then
         return
     end
+    self.parentNode = parentNode
     self.recipeData = recipeData
+    ---@type CraftSim.NodeData[]
+    self.childNodes = {}
     self.nodeName = nodeName
     ---@type number
     self.nodeID = nodeRulesData[1].nodeID
     ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
+    ---@type CraftSim.ProfessionStats
+    self.maxProfessionStats = CraftSim.ProfessionStats()
     ---@type CraftSim.NodeRule[]
     self.nodeRules = {}
 
@@ -64,22 +70,47 @@ function CraftSim.NodeData:UpdateAffectance()
     end
     -- if at least one rule node of the node affects the recipe, the node affects the recipe
     self.affectsRecipe = CraftSim.GUTIL:Count(self.nodeRules, function (nr) return nr.affectsRecipe end) > 0
+
+    if self.affectsRecipe and self.rank > -1 then
+        self.active = true
+    end
 end
 
 function CraftSim.NodeData:UpdateProfessionStats()
+    
+
     -- always clear stats even if not affected or active
     -- this is important so that stats change to 0 when its not active anymore in the simulator!
     self.professionStats:Clear()
-    if not self.affectsRecipe or not self.active then
+    self.maxProfessionStats:Clear()
+    if not self.affectsRecipe then
         return
     end
 
-    for _, nodeRule in pairs(self.nodeRules) do
-        nodeRule:UpdateProfessionStatsByRank(self.rank)
-        if self.rank >= nodeRule.threshold then
-            
-            self.professionStats:add(nodeRule.professionStats)
+    --- DEBUG
+    if self.nodeName == "Curing and Tanning" then
+        print("NodeData: Update Stats of Node: " .. self.nodeName)
+    end
+
+    for i, nodeRule in pairs(self.nodeRules) do       
+        -- only use rules that affect the recipe
+        if nodeRule.affectsRecipe then
+            -- for maxProfessionStats always use max rank
+            nodeRule:UpdateProfessionStatsByRank(self.maxRank)
+            self.maxProfessionStats:add(nodeRule.professionStats)
+
+            -- then do it again for actual rank if its active
+            nodeRule:UpdateProfessionStatsByRank(self.rank)
+            if self.rank >= nodeRule.threshold then
+                self.professionStats:add(nodeRule.professionStats)
+            end
         end
+    end
+
+    --- DEBUG
+    if self.nodeName == "Curing and Tanning" then
+        print("NodeData: Stats from node after update: ")
+        print(self.professionStats, true, nil, 1)
     end
 end
 

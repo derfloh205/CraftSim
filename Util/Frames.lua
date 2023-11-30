@@ -588,7 +588,9 @@ function CraftSim.FRAME:InitDebugFrame()
 end
 
 function CraftSim.FRAME:InitOneTimeNoteFrame()
-    local currentVersion = GetAddOnMetadata(CraftSimAddonName, "Version")
+    local currentVersion = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
+
+    local f = CraftSim.UTIL:GetFormatter()
 
     local frame = CraftSim.GGUI.Frame({
         parent=UIParent,anchorParent=UIParent,sizeX=500,sizeY=300,frameID=CraftSim.CONST.FRAMES.INFO,
@@ -600,13 +602,22 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     })
 
     frame.content.discordBox = CraftSim.FRAME:CreateInput(
-        nil, frame.content, frame.content, "TOP", "TOP", 0, -20, 200, 30, CraftSim.CONST.DISCORD_INVITE_URL, function() 
-            -- do not let the player remove the discord link.. lol
+        nil, frame.content, frame.content, "TOP", "TOP", -120, -20, 200, 30, CraftSim.CONST.DISCORD_INVITE_URL, function() 
+            -- do not let the player remove the link
             frame.content.discordBox:SetText(CraftSim.CONST.DISCORD_INVITE_URL)
         end)
     frame.content.discordBox:SetScale(0.75)
     frame.content.discordBoxLabel = CraftSim.FRAME:CreateText(
         "Join the Discord!", frame.content, frame.content.discordBox, "BOTTOM", "TOP", 0, 0, 0.75)
+
+    frame.content.donateBox = CraftSim.FRAME:CreateInput(
+    nil, frame.content, frame.content, "TOP", "TOP", 120, -20, 250, 30, CraftSim.CONST.PAYPAL_ME_URL, function() 
+        -- do not let the player remove the link
+        frame.content.donateBox:SetText(CraftSim.CONST.PAYPAL_ME_URL)
+    end)
+    frame.content.donateBox:SetScale(0.75)
+    frame.content.donateBoxLabel = CraftSim.FRAME:CreateText(
+        f.patreon("Support CraftSim, donate <3"), frame.content, frame.content.donateBox, "BOTTOM", "TOP", 0, 0, 0.75)
 
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 10, -45)

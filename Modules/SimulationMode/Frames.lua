@@ -408,21 +408,30 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
             end
         })
 
-        frame.content.legendText = CraftSim.FRAME:CreateText(
-            [[
-                Legend:
+        frame.content.maxButton = CraftSim.GGUI.Button({
+            label="Set Max", parent=frame.content,anchorParent=frame.content.resetButton.frame,anchorA="TOPLEFT",anchorB="BOTTOMLEFT",sizeX=15,sizeY=25,adjustWidth=true,
+            clickCallback=function ()
+                CraftSim.SIMULATION_MODE:MaxSpecData()   
+            end
+        })
 
-                IN ..... Inspiration
-                MC ... Multicraft
-                MCI .. Multicraft Extra Items
-                R ....... Resourcefulness
-                RI ...... Resourcefulness Extra Items
-                CS ..... CraftingSpeed
-                SK ..... Skill
-                PB ..... Potion/Phial Breakthrough Chance
+        local legendText = [[
+            Legend:
 
-            ]], 
-            frame.content, spec1, "RIGHT", "LEFT", -50, -30, 0.8, nil, {type="H", value="LEFT"})
+            IN ..... Inspiration
+            MC ... Multicraft
+            MCI .. Multicraft Extra Items
+            R ....... Resourcefulness
+            RI ...... Resourcefulness Extra Items
+            CS ..... CraftingSpeed
+            SK ..... Skill
+            PB ..... Potion/Phial Breakthrough Chance
+
+        ]]
+        frame.content.legendText = CraftSim.GGUI.Text(
+            {text=legendText, parent=frame.content, anchorParent=frame.content, 
+            anchorA="TOPLEFT", anchorB="TOPLEFT", offsetX=20, offsetY=-60,
+            justifyOptions={type="H", align="LEFT"}, scale=0.8})
 
         local function createNodeModFrame(parent, anchorParent, anchorA, anchorB, offsetX, offsetY, layer, layerMaxNodes, tabNr, numOnLayer)
             local nodeModFrame = CreateFrame("frame", nil, parent)

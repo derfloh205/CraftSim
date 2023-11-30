@@ -20,21 +20,6 @@ function CraftSim.IDMapping:new(recipeData, idMappingData, exceptionRecipeIDs)
     end
 end
 
----@param idMapping CraftSim.IDMapping
-function CraftSim.IDMapping:Merge(idMapping)
-
-    for _, idCategory in pairs(idMapping.categories or {}) do
-        local myIDCategory = CraftSim.GUTIL:Find(self.categories, function(idC) return idC.categoryID == idCategory.categoryID end)
-        if not myIDCategory then
-            table.insert(self.categories, CraftSim.IDCategory(idCategory.categoryID, idCategory.subtypeIDs))
-        else
-            myIDCategory:Merge(idCategory)
-        end
-    end
-
-    self.exceptionRecipeIDs = CraftSim.GUTIL:ToSet(CraftSim.GUTIL:Concat({self.exceptionRecipeIDs, idMapping.exceptionRecipeIDs}))
-end
-
 function CraftSim.IDMapping:Debug()
     local debugLines = {}
 

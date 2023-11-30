@@ -340,6 +340,7 @@ function CraftSim.UTIL:GetFormatter()
     local b = CraftSim.GUTIL.COLORS.DARK_BLUE
     local bb = CraftSim.GUTIL.COLORS.BRIGHT_BLUE
     local g = CraftSim.GUTIL.COLORS.GREEN
+    local grey = CraftSim.GUTIL.COLORS.GREY
     local r = CraftSim.GUTIL.COLORS.RED
     local l = CraftSim.GUTIL.COLORS.LEGENDARY
     local e = CraftSim.GUTIL.COLORS.EPIC
@@ -370,6 +371,9 @@ function CraftSim.UTIL:GetFormatter()
     end
     formatter.e = function (text)
         return c(text, e)
+    end
+    formatter.grey = function (text)
+        return c(text, grey)
     end
     formatter.patreon = function (text)
         return c(text, patreon)

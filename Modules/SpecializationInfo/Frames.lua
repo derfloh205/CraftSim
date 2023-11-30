@@ -59,14 +59,18 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         frame.content, frame.content.knowledgePointSimulationButton.frame, "CENTER", "CENTER", 0, 0)
     
         frame.content.notImplementedText:Hide()
+
+        frame.content.statsText = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content.knowledgePointSimulationButton.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT",
+            text="", justifyOptions={type='H', align="LEFT"}, offsetX=5, offsetY=-10})
     
         frame.content.nodeLines = {}
         local function createNodeLine(parent, anchorParent, offsetY)
             local nodeLine = CreateFrame("frame", nil, parent)
             nodeLine:SetSize(frame.content:GetWidth(), 25)
-            nodeLine:SetPoint("TOP", anchorParent, "TOP", 0, offsetY)
+            nodeLine:SetPoint("TOPLEFT", anchorParent, "BOTTOMLEFT", -77, offsetY)
     
-            nodeLine.statTooltip = CraftSim.FRAME:CreateHelpIcon("No data", nodeLine, nodeLine, "LEFT", "LEFT", 20, 0)
+            nodeLine.statTooltip = CraftSim.FRAME:CreateHelpIcon("No data", nodeLine, nodeLine, "LEFT", "LEFT", 45, 0)
     
             nodeLine.nodeName = nodeLine:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             nodeLine.nodeName:SetPoint("LEFT", nodeLine.statTooltip, "RIGHT", 10, 0)
@@ -74,12 +78,12 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
             return nodeLine
         end
         -- TODO: how many do I need?
-        local baseY = -60
+        local baseY = -30
         local nodeLineSpacingY = -20
         local maxNodeLines = 31
         frame.content.AddNodeLine = function()
             local numNodeLines = #frame.content.nodeLines
-            table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.title.frame, baseY + nodeLineSpacingY*(numNodeLines-1)))
+            table.insert(frame.content.nodeLines, createNodeLine(frame.content, frame.content.statsText.frame, baseY + nodeLineSpacingY*(numNodeLines-1)))
         end
         
         for i = 1, maxNodeLines, 1 do
@@ -108,8 +112,10 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
         end)
         specInfoFrame.content.notImplementedText:Show()
         specInfoFrame.content.knowledgePointSimulationButton:Hide()
+        specInfoFrame.content.statsText:Hide()
     else
         specInfoFrame.content.knowledgePointSimulationButton:Show()
+        specInfoFrame.content.statsText:Show()
         specInfoFrame.content.notImplementedText:Hide()
     end
 
@@ -130,21 +136,30 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
             nodeLine.nodeName:SetText(affectedNodeData.nodeName .. " (" .. tostring(affectedNodeData.rank) .. "/" .. tostring(affectedNodeData.maxRank) .. ")")
 
             local nodeProfessionStats = affectedNodeData.professionStats
-
             local tooltipText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP) .. "\n\n";
-
-            tooltipText = tooltipText .. nodeProfessionStats:GetTooltipText()
-
+            tooltipText = tooltipText .. nodeProfessionStats:GetTooltipText(affectedNodeData.maxProfessionStats)
             nodeLine.statTooltip.SetTooltipText(tooltipText)
             nodeLine.statTooltip:Show()
+
             nodeLine:Show()
         elseif affectedNodeData and not affectedNodeData.active then
             local greyText = CraftSim.GUTIL:ColorizeText(affectedNodeData.nodeName .. " (-/" .. tostring(affectedNodeData.maxRank) .. ")", CraftSim.GUTIL.COLORS.GREY)
             nodeLine.nodeName:SetText(greyText)
-            nodeLine.statTooltip:Hide()
+
+            local nodeProfessionStats = affectedNodeData.professionStats
+            local tooltipText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP) .. "\n\n";
+            tooltipText = tooltipText .. nodeProfessionStats:GetTooltipText(affectedNodeData.maxProfessionStats)
+            --print("show spec info line for non active: " .. affectedNodeData.nodeName)
+            --print(affectedNodeData.professionStats, true, nil, 1)
+            --print(affectedNodeData, true, nil, 1)
+            nodeLine.statTooltip.SetTooltipText(tooltipText)
+            nodeLine.statTooltip:Show() -- always show the tooltip to show what stats are missing with that node
+
             nodeLine:Show()
         else
             nodeLine:Hide()
         end
+
+        specInfoFrame.content.statsText:SetText(specializationData.professionStats:GetTooltipText(specializationData.maxProfessionStats))
     end
 end
