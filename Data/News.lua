@@ -14,6 +14,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.P .. "Do you find " .. f.patreon("CraftSim") .. " helpful?" .. 
         f.a .. "You can now " .. f.g("support its development") .. " by following the new" ..
         f.a .. "paypal me link in the above box" .. " or in the " .. f.patreon("Supporters Module") .. " <3" ..
+        f.P .. f.g("Enchanting Specialization Info ") .. "added" .. 
         f.s .. "Added a current and maximum " .. f.bb("Profession Stat Overview") ..
         f.a .. "in the " .. f.bb("Specialization Info Module") ..
         f.s .. "The " .. f.bb("Profession Talent Help Icon") .. " now always shows in the " ..
@@ -21,13 +22,13 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "maximum stats in its tooltip" ..
         f.s .. "Refactored the " .. f.bb("Specialization Node System") .. " to consider" ..
         f.a .. "talent nodes with thresholds that affect individual recipe types" ..
+        f.s .. "Added a " .. f.g("Max All") .. " button to the " .. f.bb("Knowledge Simulator") ..
+        f.s .. "Fixed " .. f.bb("Armor Kits") .. " not correctly being affected " ..
+        f.a .. "by the talent " .. f.bb("Curing and Tanning (Leatherworking)") ..
+        f.p .. "Fixed the legend text alignment in the " .. f.bb("Knowledge Simulator") ..
         f.p .. "Slightly increased the height of the " .. f.bb("Specialization Info Module") ..
         f.a .. "to consider the new profession stat info" ..
-        f.s .. "Added a " .. f.g("Max All") .. " button to the " .. f.bb("Knowledge Simulator") ..
-        f.p .. "Fixed the legend text alignment in the " .. f.bb("Knowledge Simulator") ..
-        f.s .. "Fixed " .. f.bb("Armor Kits") .. " not correctly being affected " ..
-        f.a .. "by the talent " .. f.bb("Curing and Tanning") ..
-        f.p .. "Updated recipes affected by " .. f.bb("Decayology") ..
+        f.p .. "Updated recipes affected by " .. f.bb("Decayology (Leatherworking)") ..
         newP("9.0.3") ..
         f.p .. "Fixed a bug with the " .. f.bb("Reset Frame Positions") .. " button" ..
         newP("9.0.2") ..
