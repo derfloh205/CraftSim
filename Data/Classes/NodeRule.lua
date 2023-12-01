@@ -1,6 +1,6 @@
 _, CraftSim = ...
 
-print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 
 ---@class CraftSim.NodeRule

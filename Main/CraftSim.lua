@@ -413,7 +413,7 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 				CraftSim.PRICE_APIS:InitAvailablePriceAPI()
 			end
 		elseif command == "news" then
-			CraftSim.FRAME:ShowOneTimeInfo(true)
+			CraftSim.NEWS:ShowNews(true)
 		elseif command == "debug" then
 			CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
 		elseif command == "export" then
@@ -433,7 +433,7 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 
 	-- show one time note
 	if CraftSimOptions.optionsShowNews then
-		CraftSim.FRAME:ShowOneTimeInfo()
+		CraftSim.NEWS:ShowNews()
 	end
 end
 

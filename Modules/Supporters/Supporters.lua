@@ -13,6 +13,12 @@ function CraftSim.SUPPORTERS:GetList()
     local paypal = " " .. CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PAYPAL, 0.35)
     return {
     {
+        name = f.bb("Evgenii"),
+        type = paypal,
+        message = "-",
+        date = "30.11.2023",  
+    },
+    {
         name = f.bb("B"),
         type = kofi,
         message = "You rock.",

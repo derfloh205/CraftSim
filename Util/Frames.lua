@@ -633,23 +633,6 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
     frame:Hide()
 end
 
-function CraftSim.FRAME:ShowOneTimeInfo(force)
-    local infoText = CraftSim.NEWS:GET_NEWS()
-    local versionID = CraftSim.CONST.currentInfoVersionID
-    if CraftSimOptions.infoVersionID == versionID and not CraftSim.CONST.debugInfoText and not force then
-        return
-    end
-
-    CraftSimOptions.infoVersionID = versionID
-
-    local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.INFO)
-    -- resize
-    infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
-    infoFrame.originalX = CraftSim.CONST.infoBoxSizeX
-    infoFrame.originalY = CraftSim.CONST.infoBoxSizeY
-    infoFrame.showInfo(infoText)
-end
-
 ---> GGUI
 function CraftSim.FRAME:CreateScrollFrame(parent, offsetTOP, offsetLEFT, offsetRIGHT, offsetBOTTOM)
     local scrollFrame = CreateFrame("ScrollFrame", nil, parent, "UIPanelScrollFrameTemplate")

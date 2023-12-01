@@ -10,10 +10,17 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("10.0.1") ..
+        f.p .. "Fixed an issue where " .. f.patreon("CraftSim") .. " overwrote the " .. 
+        f.a .. "global print function (sorry other devs)" ..
+        f.p .. "Wether to show the news popup will now determined by" ..
+        f.a .. "a checksum instead of a manually set const" ..
+        f.p .. "Supporter List Update" ..
         newP("10.0.0") ..
         f.P .. "Do you find " .. f.patreon("CraftSim") .. " helpful?" .. 
         f.a .. "You can now " .. f.g("support its development") .. " by following the new" ..
-        f.a .. "paypal me link in the above box" .. " or in the " .. f.patreon("Supporters Module") .. " <3" ..
+        f.a .. "paypal me link in the above box" .. " or in the " .. 
+        f.a .. f.patreon("Supporters Module") .. " <3" ..
         f.P .. f.g("Enchanting Specialization Info ") .. "added" .. 
         f.s .. "Added a current and maximum " .. f.bb("Profession Stat Overview") ..
         f.a .. "in the " .. f.bb("Specialization Info Module") ..
@@ -56,4 +63,44 @@ function CraftSim.NEWS:GET_NEWS()
         newP("8.9.3") ..
         f.p .. "Updated enchant recipes for 10.2" ..
         f.p .. "Supporter List Update"
+end
+
+function CraftSim.NEWS:GetChecksum()
+    local checksum = 0
+    local newsString = CraftSim.NEWS:GET_NEWS()
+    local checkSumBitSize = 256
+
+    -- Iterate through each character in the string
+    for i = 1, #newsString do
+        checksum = (checksum + string.byte(newsString, i)) % checkSumBitSize
+    end
+
+    return checksum
+end
+
+---@return string | nil newChecksum newChecksum when news should be shown, otherwise nil
+function CraftSim.NEWS:IsNewsUpdate()
+    local newChecksum = CraftSim.NEWS:GetChecksum()
+    local oldChecksum = CraftSimOptions.newsChecksum
+    if newChecksum ~= oldChecksum then
+        return newChecksum
+    end
+    return nil
+end
+
+function CraftSim.NEWS:ShowNews(force)
+    local infoText = CraftSim.NEWS:GET_NEWS()
+    local newChecksum = CraftSim.NEWS:IsNewsUpdate()
+    if newChecksum == nil and (not force) then
+       return 
+    end
+
+    CraftSimOptions.newsChecksum = newChecksum
+
+    local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.INFO)
+    -- resize
+    infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
+    infoFrame.originalX = CraftSim.CONST.infoBoxSizeX
+    infoFrame.originalY = CraftSim.CONST.infoBoxSizeY
+    infoFrame.showInfo(infoText)
 end

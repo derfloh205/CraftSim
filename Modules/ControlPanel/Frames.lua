@@ -44,7 +44,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         parent=frame.content, anchorParent=frame.content,anchorA="TOPRIGHT",anchorB="TOPRIGHT",offsetX=-30,offsetY=cbBaseOffsetY+5,
         sizeX=15,sizeY=25, adjustWidth=true,
         clickCallback=function() 
-            CraftSim.FRAME:ShowOneTimeInfo(true)
+            CraftSim.NEWS:ShowNews(true)
         end
     })
 
