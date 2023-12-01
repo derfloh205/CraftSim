@@ -43,9 +43,12 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP] = "The maximum the materials can contribute to a recipe is most of the time 25% of the base recipe difficulty.\n\nHowever in the case of recrafting, this value can vary based on previous crafts\nand the quality of materials that were used.",
     
         -- Simulation Mode
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_NONE] = "None",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL] = "Simulation Mode",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE] = "CraftSim Simulation Mode",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_TOOLTIP] = "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions",
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_OPTIONAL] = "Optional #",
+        [CraftSim.CONST.TEXT.SIMULATION_MODE_FINISHING] = "Finishing #",
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Recipe Difficulty: ",
@@ -304,6 +307,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE] = "CraftSim Recipe Scan",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE] = "Scan Mode",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_RECIPIES] = "Scan Recipes",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_CANCEL] = "Cancel",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING] = "Scanning",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED] = "Include not learned",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP] = "Include recipes you do not have learned in the recipe scan", 
@@ -325,6 +329,12 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP] = "Sort the profit list by profit relative to crafting costs.\n(Requires a new scan)",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX] = "Use " .. f.bb("Insight") .. " if possible",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP] = "Use " .. f.bb("Illustrious Insight") .. " or\n" .. f.bb("Lesser Illustrious Insight") .. " as optional reagent for recipes that allow it.",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Equipped",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Materials Quality 1",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Materials Quality 2",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Materials Quality 3",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OG] = "Optimize for Guaranteed",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OI] = "Optimize for Inspiration",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",
@@ -423,6 +433,11 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Supporters
         [CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION] = f.l("Thank you to all those awesome people!"),
+        [CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION_2] = f.l("Do you want to support CraftSim and also be listed here with your message?\nConsider donating <3"),
+        [CraftSim.CONST.TEXT.SUPPORTERS_DATE] = "Date",
+        [CraftSim.CONST.TEXT.SUPPORTERS_SUPPORTER] = "Supporter",
+        [CraftSim.CONST.TEXT.SUPPORTERS_TYPE] = "Type",
+        [CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE] = "Messaggio",
 
         -- Customer History
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TITLE] = "CraftSim Customer History",

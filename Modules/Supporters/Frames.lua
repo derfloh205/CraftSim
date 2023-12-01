@@ -35,26 +35,26 @@ function CraftSim.SUPPORTERS.FRAMES:Init()
             end)
             frame.content.donateBox:SetScale(0.75)
             frame.content.donateBoxLabel = CraftSim.FRAME:CreateText(
-                f.patreon("Do you want to support CraftSim and also be listed here with your message?\nConsider donating <3"), frame.content, frame.content.donateBox, "BOTTOM", "TOP", 0, 0, 1)
+                f.patreon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION_2)), frame.content, frame.content.donateBox, "BOTTOM", "TOP", 0, 0, 1)
 
         frame.content.supportersList = CraftSim.GGUI.FrameList({
             parent=frame.content,anchorParent=frame.content.donateBox,offsetY=-30,anchorA="TOP",anchorB="BOTTOM",
             sizeY=350, showHeaderLine = true, rowHeight=60,
             columnOptions={
                 {
-                    label="Date",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_DATE),
                     width=100,
                 },
                 {
-                    label="Supporter",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_SUPPORTER),
                     width=100,
                 },
                 {
-                    label="Type",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_TYPE),
                     width=50,
                 },
                 {
-                    label="Message",
+                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE),
                     width=250,
                 },
             },

@@ -1059,7 +1059,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns(recipeData
     local finishingReagentSlots = recipeData.reagentData.finishingReagentSlots
 
     local function convertReagentListToDropdownListData(optionalReagentsList)
-        local dropDownListData = {{label = "None", value = nil}}
+        local dropDownListData = {{label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_NONE), value = nil}}
         for _, optionalReagent in pairs(optionalReagentsList) do
             table.insert(dropDownListData, {
                 label = optionalReagent.item:GetItemLink(),
@@ -1091,13 +1091,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns(recipeData
         currentDropdown:Show()
         currentDropdown.slotIndex = slotIndex
         currentDropdown.isOptional = true
-        currentDropdown:SetLabel("Optional #" .. slotIndex)
+        currentDropdown:SetLabel(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_OPTIONAL) .. slotIndex)
         dropdownIndex = dropdownIndex + 1
         currentDropdown.selectedValue = optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item:GetItemID()
         if currentDropdown.selectedValue then
             currentDropdown:SetData({data=dropdownlist, initialValue=optionalReagentSlot.activeReagent.item:GetItemLink()})
         else
-            currentDropdown:SetData({data=dropdownlist, initialValue="None"})
+            currentDropdown:SetData({data=dropdownlist, initialValue=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_NONE)})
         end
     end
     -- finishing
@@ -1107,13 +1107,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns(recipeData
         currentDropdown:Show()
         currentDropdown.slotIndex = slotIndex 
         currentDropdown.isFinishing = true
-        currentDropdown:SetLabel("Finishing #" .. slotIndex)
+        currentDropdown:SetLabel(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_FINISHING) .. slotIndex)
         dropdownIndex = dropdownIndex + 1
         currentDropdown.selectedValue = optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item:GetItemID()
         if currentDropdown.selectedValue then
             currentDropdown:SetData({data=dropdownlist, initialValue=optionalReagentSlot.activeReagent.item:GetItemLink()})
         else
-            currentDropdown:SetData({data=dropdownlist, initialValue="None"})
+            currentDropdown:SetData({data=dropdownlist, initialValue=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_NONE)})
         end
     end
 end
