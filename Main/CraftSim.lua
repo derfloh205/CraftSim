@@ -474,7 +474,7 @@ function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton:Hide()
 end
 
-function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
+function CraftSim.MAIN:TriggerModulesByRecipeType()
 	if not ProfessionsFrame:IsVisible() then
 		return
 	end
@@ -598,7 +598,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	CraftSim.FRAME:ToggleFrame(customerHistoryFrame, showCustomerHistory)
 
 	-- update CraftQ Display (e.g. cause of profession gear changes)
-	CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
+	CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
 
 	-- Simulation Mode (always update first because it changes recipeData based on simMode inputs)
 	showSimulationMode = (showSimulationMode and recipeData and not recipeData.isSalvageRecipe) or false

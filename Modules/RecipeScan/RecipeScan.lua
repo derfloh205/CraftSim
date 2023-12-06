@@ -49,6 +49,8 @@ function CraftSim.RECIPE_SCAN:EndScan()
     collectgarbage("collect") -- By Option?
     CraftSim.RECIPE_SCAN:ToggleScanButton(true)
     CraftSim.RECIPE_SCAN.isScanning = false
+
+    CraftSim.CRAFTQ.FRAMES:UpdateDisplay() -- update
 end
 
 function CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)

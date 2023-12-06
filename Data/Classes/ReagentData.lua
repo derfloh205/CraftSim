@@ -274,6 +274,8 @@ function CraftSim.ReagentData:SetReagentsMaxByQuality(qualityID)
         if reagent.hasQuality then
             reagent:Clear()
             reagent.items[qualityID].quantity = reagent.requiredQuantity
+        else
+            reagent.items[1].quantity = reagent.requiredQuantity
         end
     end)
 end
@@ -285,6 +287,13 @@ function CraftSim.ReagentData:SetReagentsByOptimizationResult(optimizationResult
     end
     local reagentItemList = optimizationResult:GetReagentItemList()
     self.recipeData:SetReagents(reagentItemList)
+    
+    -- always set nonquality reagents to max
+    for _, reagent in pairs(self.requiredReagents) do
+        if not reagent.hasQuality then
+            reagent.items[1].quantity = reagent.requiredQuantity
+        end
+    end
 end
 
 function CraftSim.ReagentData:HasEnough(multiplier)
@@ -303,6 +312,39 @@ function CraftSim.ReagentData:HasEnough(multiplier)
     end)
     
     return hasRequiredReagents and hasOptionalReagents
+end
+
+--- convert required and finished reagents to string that is displayable in a tooltip
+function CraftSim.ReagentData:GetTooltipText()
+    local text = ""
+    for _, requiredReagent in pairs(self.requiredReagents) do
+        local reagentIcon = requiredReagent.items[1].item:GetItemIcon()
+        local inlineIcon = CraftSim.GUTIL:IconToText(reagentIcon, 50, 50)
+        text = text .. inlineIcon
+        if not requiredReagent.hasQuality then
+            local itemCount = GetItemCount(requiredReagent.items[1].item:GetItemID(), true, false, true)
+            local quantityText = CraftSim.GUTIL:ColorizeText(tostring(requiredReagent.items[1].quantity) .. "(" .. tostring(itemCount) .. ")", CraftSim.GUTIL.COLORS.RED)
+
+            if itemCount >= requiredReagent.items[1].quantity then
+                quantityText = CraftSim.GUTIL:ColorizeText(tostring(requiredReagent.items[1].quantity), CraftSim.GUTIL.COLORS.GREEN)
+            end
+
+            text = text .. " x " .. quantityText .. "\n"
+        else
+            for qualityID, reagentItem in pairs(requiredReagent.items) do
+                local itemCount = GetItemCount(reagentItem.item:GetItemID(), true, false, true)
+                local quantityText = CraftSim.GUTIL:ColorizeText(tostring(reagentItem.quantity) .. "(" .. tostring(itemCount) .. ")", CraftSim.GUTIL.COLORS.RED)
+
+                if itemCount >= reagentItem.quantity then
+                    quantityText = CraftSim.GUTIL:ColorizeText(tostring(reagentItem.quantity), CraftSim.GUTIL.COLORS.GREEN)
+                end
+                local qualityIcon = CraftSim.GUTIL:GetQualityIconString(qualityID, 20, 20)
+                text = text .. qualityIcon .. quantityText .. "   "
+            end
+            text = text .. "\n"
+        end
+    end
+    return text
 end
 
 function CraftSim.ReagentData:Debug()

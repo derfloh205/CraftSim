@@ -30,10 +30,28 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         frame.content.addCurrentRecipeButton = CraftSim.GGUI.Button({
             parent=frame.content, anchorParent=frame.content, anchorA="TOP", anchorB="TOP", offsetY=-30,
             adjustWidth=true,
-            label="Add Open Recipe to Queue", clickCallback=function ()
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL), clickCallback=function ()
                 if CraftSim.MAIN.currentRecipeData then
                     CraftSim.CRAFTQ:AddRecipe(CraftSim.MAIN.currentRecipeData)
                 end
+            end
+        })
+
+        ---@type GGUI.Button
+        frame.content.clearAllButton = CraftSim.GGUI.Button({
+            parent=frame.content, anchorParent=frame.content, anchorA="TOPRIGHT", anchorB="TOPRIGHT", offsetY=-30, offsetX=-100,
+            adjustWidth=true,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL), clickCallback=function ()
+                CraftSim.CRAFTQ:ClearAll()
+            end
+        })
+
+        ---@type GGUI.Button
+        frame.content.importRecipeScanButton = CraftSim.GGUI.Button({
+            parent=frame.content, anchorParent=frame.content, anchorA="TOPLEFT", anchorB="TOPLEFT", offsetY=-30, offsetX=100,
+            adjustWidth=true,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL), clickCallback=function ()
+                CraftSim.CRAFTQ:ImportRecipeScan()
             end
         })
 
@@ -47,6 +65,11 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
                 width=140,
             },
             {
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_REAGENT_INFO_HEADER),
+                width=100,
+                justifyOptions={type="H", align="CENTER"}
+            },
+            {
                 label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER), -- here a button is needed to switch to the top gear for this recipe
                 width=150,
                 justifyOptions={type="H", align="CENTER"}
@@ -58,7 +81,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             },
             {
                 label="",
-                width=80,
+                width=120,
                 justifyOptions={type="H", align="CENTER"}
             }
         }
@@ -72,9 +95,10 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             rowConstructor=function (columns)
                 local recipeColumn = columns[1] 
                 local averageProfitColumn = columns[2]
-                local topGearColumn = columns[3]
-                local craftAmountColumn = columns[4] 
-                local craftButtonColumn = columns[5]
+                local reagentInfoColumn = columns[3]
+                local topGearColumn = columns[4]
+                local craftAmountColumn = columns[5] 
+                local craftButtonColumn = columns[6]
 
                 recipeColumn.text = CraftSim.GGUI.Text({
                     parent=recipeColumn,anchorParent=recipeColumn,anchorA="LEFT",anchorB="LEFT", justifyOptions={type="H",align="LEFT"}, scale=0.9,
@@ -86,6 +110,11 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
                 ---@type GGUI.Text | GGUI.Widget
                 averageProfitColumn.text = CraftSim.GGUI.Text({
                     parent=averageProfitColumn,anchorParent=averageProfitColumn, anchorA="LEFT", anchorB="LEFT"
+                })
+
+                reagentInfoColumn.reagentInfoButton = CraftSim.GGUI.HelpIcon({
+                    parent=reagentInfoColumn, anchorParent=reagentInfoColumn,
+                    text="No Data", label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_REAGENT_INFO_BUTTON_LABEL)
                 })
 
                 topGearColumn.gear2Icon = CraftSim.GGUI.Icon({
@@ -145,19 +174,23 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             local columns = row.columns
             local recipeColumn = columns[1] 
             local averageProfitColumn = columns[2]
-            local topGearColumn = columns[3]
-            local craftAmountColumn = columns[4] 
-            local craftButtonColumn = columns[5]
+            local reagentInfoColumn = columns[3]
+            local topGearColumn = columns[4]
+            local craftAmountColumn = columns[5] 
+            local craftButtonColumn = columns[6]
 
             local canCraftOnce = recipeData:CanCraft(1)
             local gearEquipped = recipeData.professionGearSet:IsEquipped()
+            local correctProfessionOpen = recipeData:IsProfessionOpen()
 
-            local allowedToCraft = canCraftOnce and gearEquipped
+            local allowedToCraft = canCraftOnce and gearEquipped and correctProfessionOpen
 
 
-    
+            local averageProfit = recipeData.averageProfitCached or recipeData:GetAverageProfit()
             recipeColumn.text:SetText(recipeData.recipeName)
-            averageProfitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(select(1, recipeData:GetAverageProfit()), true))
+            averageProfitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(select(1, averageProfit), true))
+
+            reagentInfoColumn.reagentInfoButton:SetText(recipeData.reagentData:GetTooltipText())
     
             if gearEquipped then
                 topGearColumn.equippedText:Show()
@@ -191,6 +224,8 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                     recipeData:Craft()
                 end
                 craftButtonColumn.craftButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL), nil, true)
+            elseif not correctProfessionOpen then
+                craftButtonColumn.craftButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION), nil, true)
             elseif not gearEquipped then
                 craftButtonColumn.craftButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR), nil, true)
             elseif not canCraftOnce then
@@ -201,4 +236,11 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
 
     craftList:UpdateDisplay()
+end
+
+function CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
+    CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
+    local craftQueueFrame = CraftSim.CRAFTQ.frame
+
+    craftQueueFrame.content.importRecipeScanButton:SetEnabled(CraftSim.GUTIL:Count(CraftSim.RECIPE_SCAN.currentResults) > 0)
 end

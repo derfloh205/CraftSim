@@ -36,6 +36,9 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     
     self.recipeID = recipeID
     self.categoryID = recipeInfo.categoryID
+    --- Will be set when something calculates the average profit of this recipe or updates the whole recipe, can be used to access it without recalculating everything
+    ---@type number | nil
+    self.averageProfitCached = nil
 
     if recipeInfo.hyperlink then
         local subclassID = select(7, GetItemInfoInstant(recipeInfo.hyperlink))
@@ -76,7 +79,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
         print("No RecipeData created: SchematicInfo not found")
         return
     end
-    ---@type CraftSim.BuffData
+        ---@type CraftSim.BuffData
     self.buffData = CraftSim.BuffData()
     self.buffData:Update()
     ---@type CraftSim.ReagentData
@@ -317,6 +320,7 @@ function CraftSim.RecipeData:Update()
     self:UpdateProfessionStats()
     self.resultData:Update()
     self.priceData:Update()
+    self:GetAverageProfit()
 end
 
 --- We need copy constructors or CopyTable will run into references of recipeData
@@ -362,6 +366,7 @@ end
 ---@return table probabilityTable
 function CraftSim.RecipeData:GetAverageProfit()
     local averageProfit, probabilityTable = CraftSim.CALC:GetAverageProfit(self)
+    self.averageProfitCached = averageProfit
     return averageProfit, probabilityTable
 end
 
@@ -541,5 +546,18 @@ function CraftSim.RecipeData:Equals(recipeData)
         return -- duh
     end
 
-    
+
+end
+
+---@return boolean true of the profession the recipe belongs to is opened
+function CraftSim.RecipeData:IsProfessionOpen()
+    if not ProfessionsFrame:IsVisible() then
+        return false
+    end
+    if not ProfessionsFrame.professionInfo then
+        return false
+    end
+
+    local openProfessionID = ProfessionsFrame.professionInfo.profession
+    return openProfessionID == self.professionData.professionInfo.profession
 end
