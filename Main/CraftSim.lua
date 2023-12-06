@@ -315,7 +315,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
 		CraftSim.MAIN:HookToProfessionsFrame()
-		CraftSim.FRAME:HandleAuctionatorOverlaps()
+		--CraftSim.FRAME:HandleAuctionatorOverlaps()
 		CraftSim.MAIN:HandleAuctionatorHooks()
 		CraftSim.ACCOUNTSYNC:Init()
 
