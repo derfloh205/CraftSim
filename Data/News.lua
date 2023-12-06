@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("11.0.0") ..
+        f.P .. "News" ..
         newP("10.0.1") ..
         f.p .. "Fixed an issue where " .. f.patreon("CraftSim") .. " overwrote the " .. 
         f.a .. "global print function (sorry other devs)" ..

@@ -509,3 +509,27 @@ function CraftSim.RecipeData:GetForgeFinderExport(indent)
 
     return jb.json
 end
+
+--- Requires a hardware event
+---@param amount number? default: 1, how many crafts should be queued
+function CraftSim.RecipeData:Craft(amount)
+    amount = amount or 1
+    -- TODO: maybe check if crafting is possible (correct profession window open?)
+    -- Also what about recipe requirements
+    local craftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
+    C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl)
+end
+
+function CraftSim.RecipeData:CanCraft(amount)
+    -- check if the player fits the requirements to craft the given amount of the recipe
+
+    -- check: learned, maybe area?, other?
+    if not self.learned then
+        return
+    end
+
+    -- check amount of materials in players inventory + bank
+    local hasEnoughReagents = self.reagentData:HasEnough(amount)
+
+    return hasEnoughReagents
+end

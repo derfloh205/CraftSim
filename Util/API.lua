@@ -9,3 +9,9 @@ CraftSimAPI = {}
 function CraftSimAPI:GetRecipeData(recipeID, isRecraft)
     return CraftSim.RecipeData(recipeID, isRecraft)
 end
+
+---Fetch the currently open CraftSim.RecipeData instance (or the last one opened if profession window was closed)
+---@return CraftSim.RecipeData | nil
+function CraftSimAPI:GetOpenRecipeData()
+    return CraftSim.MAIN.currentRecipeData
+end

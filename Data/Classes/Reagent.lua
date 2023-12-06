@@ -120,15 +120,27 @@ function CraftSim.Reagent:Clear()
     end)
 end
 
-function CraftSim.Reagent:HasItems()
+--- returns wether the player has enough of the given required item's allocations (times the multiplier)
+---@param multiplier number? default: 1
+function CraftSim.Reagent:HasItems(multiplier)
+    multiplier = multiplier or 1
+
+    -- check if the player owns enough of each allocated items's quantity and sum up the allocated quantities
+    local totalQuantity = 0
     for _, reagentItem in pairs(self.items) do
-        local hasItems = reagentItem:HasItem()
+        local hasItems = reagentItem:HasItem(multiplier)
+        totalQuantity = totalQuantity + reagentItem.quantity
         if not hasItems then
             return false
         end
     end
 
-    return true
+    -- check if the allocated quantity is enough to satisfy the required quantity (times multiplier)
+    totalQuantity = totalQuantity * multiplier
+    local requiredQuantity = self.requiredQuantity*multiplier
+    local hasRequiredTotalQuantity = totalQuantity >= requiredQuantity
+
+    return hasRequiredTotalQuantity
 end
 
 function CraftSim.Reagent:SetCheapestQualityMax()

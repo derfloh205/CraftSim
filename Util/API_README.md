@@ -6,6 +6,11 @@ This lets you fetch a RecipeData instance for a recipeID.
 This object represents a recipe in CraftSim and offers various methods to manipulate the recipe or extract information from.
 It is implemented in [RecipeData.lua](../Data/Classes/RecipeData.lua)
 
+## *CraftSimAPI:GetOpenRecipeData()*
+
+This lets you fetch the RecipeData instance for the currently opened recipe
+See [RecipeData.lua](../Data/Classes/RecipeData.lua)
+
 ### recipeData:Update()
 
 This processes all changes done to the recipeData and updates its resultData and professionStats.

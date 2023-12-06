@@ -287,6 +287,24 @@ function CraftSim.ReagentData:SetReagentsByOptimizationResult(optimizationResult
     self.recipeData:SetReagents(reagentItemList)
 end
 
+function CraftSim.ReagentData:HasEnough(multiplier)
+    -- check required, optional and finished reagents if the player has enough times multiplier in his inventory and bank
+
+    local hasRequiredReagents = CraftSim.GUTIL:Every(self.requiredReagents, 
+    ---@param requiredReagent CraftSim.Reagent
+    function (requiredReagent)
+        return requiredReagent:HasItems(multiplier)
+    end)
+
+    local hasOptionalReagents = CraftSim.GUTIL:Every(CraftSim.GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots}), 
+    ---@param optionalReagentSlot CraftSim.OptionalReagentSlot
+    function (optionalReagentSlot)
+        return optionalReagentSlot:HasItem(multiplier)
+    end)
+    
+    return hasRequiredReagents and hasOptionalReagents
+end
+
 function CraftSim.ReagentData:Debug()
     local debugLines = {}
     for _, reagent in pairs(self.requiredReagents) do

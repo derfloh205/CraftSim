@@ -47,6 +47,19 @@ function CraftSim.OptionalReagentSlot:GetCraftingReagentInfo()
     end
 end
 
+--- returns wether the player has enough the selected optional reagent 
+---@param multiplier number? default: 1
+function CraftSim.OptionalReagentSlot:HasItem(multiplier)
+    multiplier = multiplier or 1
+    if not self.activeReagent then
+        return true
+    end
+
+    local itemCount = GetItemCount(self.activeReagent.item:GetItemID(), true, true, true)
+
+    return itemCount >= multiplier
+end
+
 function CraftSim.OptionalReagentSlot:Debug()
     local debugLines = {
         "slotText: " .. tostring(self.slotText),
