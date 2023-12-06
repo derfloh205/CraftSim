@@ -387,6 +387,8 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP] = "Show the " .. f.bb("News") .. " Popup for new " .. f.l("CraftSim") .. " Update Information when logging into the game",
 
         -- Control Panel
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL] = "Craft Queue",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP] = "Queue your recipes and craft them all on one place!",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL] = "Top Gear",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP] = "Shows the best available profession gear combination based on the selected mode",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL] = "Price Details",
@@ -433,5 +435,13 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_FOR] = "For",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_FORMAT] = "Crafted %s for %s",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_BUTTON] = "Remove customer",
+
+        -- Craft Queue
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_TITLE] = "CraftSim Craft Queue",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AMOUNT_LEFT_HEADER] = "Queued",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER] = "Profession Gear",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL] = "Craft",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR] = "Wrong Tools",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "No Materials",
     }
 end

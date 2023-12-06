@@ -1,5 +1,6 @@
 CraftSimAddonName, CraftSim = ...
 
+---@class CraftSim.MAIN : Frame
 CraftSim.MAIN = CreateFrame("Frame", "CraftSimAddon")
 CraftSim.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
 CraftSim.MAIN:RegisterEvent("ADDON_LOADED")
@@ -37,6 +38,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesCustomerService = false,
 	modulesCustomerHistory = false,
 	modulesCostDetails = false,
+	modulesCraftQueue = false,
 
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
@@ -102,9 +104,9 @@ function CraftSim.MAIN:COMBAT_LOG_EVENT_UNFILTERED(event)
 					if CraftSim.MAIN.currentRecipeID then
 						local isWorkOrder = ProfessionsFrame.OrdersPage:IsVisible()
 						if isWorkOrder then
-							CraftSim.MAIN:TriggerModulesErrorSafe(false, CraftSim.MAIN.currentRecipeID, CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+							CraftSim.MAIN:TriggerModulesErrorSafe(false)
 						else
-							CraftSim.MAIN:TriggerModulesErrorSafe(false, CraftSim.MAIN.currentRecipeID, CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+							CraftSim.MAIN:TriggerModulesErrorSafe(false)
 						end
 					end
 				end
@@ -311,6 +313,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.CRAFTDATA.FRAMES:Init()
 		CraftSim.COST_DETAILS.FRAMES:Init()
 		CraftSim.SUPPORTERS.FRAMES:Init()
+		CraftSim.CRAFTQ.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -342,15 +345,6 @@ function CraftSim.MAIN:HandleAuctionatorHooks()
 			print("Auctionator DB Update")
 			CraftSim.MAIN:TriggerModulesErrorSafe(false)
 		end)
-	end
-end
-
-function CraftSim.MAIN:HandleCollapsedFrameSave()
-	for _, frameID in pairs(CraftSim.CONST.FRAMES) do
-		if CraftSimCollapsedFrames[frameID] then
-			local frame = CraftSim.FRAME:GetFrame(frameID)
-			frame.collapse(frame)
-		end
 	end
 end
 
@@ -565,6 +559,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	local showCustomerHistory = true
 	local showCraftData = true
 	local showCostDetails = true
+	local showCraftQueue = true
 
 
 	if recipeData.supportsCraftingStats then
@@ -594,16 +589,19 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	showCustomerHistory = showCustomerHistory and CraftSimOptions.modulesCustomerHistory
 	showCraftData = showCraftData and CraftSimOptions.modulesCraftData
 	showCostDetails = showCostDetails and CraftSimOptions.modulesCostDetails
+	showCraftQueue = showCraftQueue and CraftSimOptions.modulesCraftQueue
 
 	CraftSim.FRAME:ToggleFrame(CraftSim.RECIPE_SCAN.frame, showRecipeScan)
+	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTQ.frame, showCraftQueue)
 	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
 	CraftSim.FRAME:ToggleFrame(customerServiceFrame, showCustomerService)
 	CraftSim.FRAME:ToggleFrame(customerHistoryFrame, showCustomerHistory)
 
-
+	-- update CraftQ Display (e.g. cause of profession gear changes)
+	CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
 	-- Simulation Mode (always update first because it changes recipeData based on simMode inputs)
-	showSimulationMode = showSimulationMode and recipeData and not recipeData.isSalvageRecipe
+	showSimulationMode = (showSimulationMode and recipeData and not recipeData.isSalvageRecipe) or false
 	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.FRAMES.WORKORDER.toggleButton,showSimulationMode and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton, showSimulationMode and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility() -- show sim mode frames depending if active or not
@@ -688,6 +686,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
 	if recipeData and showSpecInfo then
 		CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
 	end
+
+	
 end
 
 function CraftSim_OnAddonCompartmentClick()

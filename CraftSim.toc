@@ -150,3 +150,5 @@ Data/Classes/CraftRecipeData.lua
 Data/Classes/JSONBuilder.lua
 Data/Classes/BuffData.lua
 Data/Classes/CraftData.lua
+Data/Classes/CraftQueue.lua
+Data/Classes/CraftQueueItem.lua

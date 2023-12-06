@@ -533,3 +533,13 @@ function CraftSim.RecipeData:CanCraft(amount)
 
     return hasEnoughReagents
 end
+
+---Checks if the recipeData instances contain the same reagents, specInfos and professionGear Items
+---@param recipeData any
+function CraftSim.RecipeData:Equals(recipeData)
+    if self.recipeID ~= recipeData.recipeID then
+        return -- duh
+    end
+
+    
+end
