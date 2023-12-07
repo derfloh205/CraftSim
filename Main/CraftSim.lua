@@ -289,11 +289,11 @@ function CraftSim.MAIN:InitStaticPopups()
 end
 
 function CraftSim.MAIN:InitCraftRecipeHooks()
-	hooksecurefunc(C_TradeSkillUI, "CraftRecipe", 
 	---@param recipeID number
 	---@param amount number?
 	---@param craftingReagentInfoTbl CraftingReagentInfo[]?
-	function (recipeID, amount, craftingReagentInfoTbl)
+	---@param itemTarget ItemLocationMixin?
+	local function OnCraft(recipeID, amount, craftingReagentInfoTbl, itemTarget)
 		-- create a recipeData instance with given info and forward it to the corresponding modules
 		-- isRecraft and isWorkOrder is omitted cause cant know here
 		-- but recrafts have different reagents.. so they wont be recognized by comparison anyway
@@ -337,9 +337,11 @@ function CraftSim.MAIN:InitCraftRecipeHooks()
 		print("CraftRecipe Hook: " )
 		print(recipeData.reagentData, true)
 
-		CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData, amount or 1)
-		CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount or 1)
-	end)
+		CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData, amount or 1, itemTarget)
+		CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount or 1, itemTarget)
+	end
+	hooksecurefunc(C_TradeSkillUI, "CraftRecipe", OnCraft)
+	hooksecurefunc(C_TradeSkillUI, "CraftEnchant", OnCraft)
 end
 
 function CraftSim.MAIN:ADDON_LOADED(addon_name)

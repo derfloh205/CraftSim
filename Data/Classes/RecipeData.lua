@@ -35,6 +35,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
 	end
     
     self.recipeID = recipeID
+    self.isBaseRecraftRecipe = CraftSim.GUTIL:Some(CraftSim.CONST.BASE_RECRAFT_RECIPE_IDS, function(id) return id == recipeID end)
     self.categoryID = recipeInfo.categoryID
     --- Will be set when something calculates the average profit of this recipe or updates the whole recipe, can be used to access it without recalculating everything
     ---@type number | nil
@@ -548,22 +549,34 @@ function CraftSim.RecipeData:Craft(amount)
     -- TODO: maybe check if crafting is possible (correct profession window open?)
     -- Also what about recipe requirements
     local craftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
-    --- hack const into api call
-    C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil, nil)
+    
+    if self.isEnchantingRecipe then        
+        local vellumLocation = CraftSim.GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
+        if vellumLocation then
+            C_TradeSkillUI.CraftEnchant(self.recipeID, amount, craftingReagentInfoTbl, vellumLocation)
+        end
+    else
+        C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl)
+    end
 end
 
+--- Returns wether the recipe can be crafted with the set reagents a specified amount of times
+---@param amount number
+---@return boolean craftAble is the given amount craftable
+---@return number canCraftAmount how many can be crafted
 function CraftSim.RecipeData:CanCraft(amount)
     -- check if the player fits the requirements to craft the given amount of the recipe
 
     -- check: learned, maybe area?, other?
     if not self.learned then
-        return
+        return false, 0
     end
 
     -- check amount of materials in players inventory + bank
     local hasEnoughReagents = self.reagentData:HasEnough(amount)
+    local craftAbleAmount = self.reagentData:GetCraftableAmount()
 
-    return hasEnoughReagents
+    return hasEnoughReagents, craftAbleAmount
 end
 
 --- Checks if the recipeData instances contain the same recipe, reagents and professionGear Items
@@ -576,8 +589,12 @@ function CraftSim.RecipeData:EqualCraftSetup(recipeData)
     end
     -- do not check spec info cause its not needed
 
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+    print("check equal craft setup")
+
     -- check prof items
     if not self.professionGearSet:Equals(recipeData.professionGearSet) then
+        print("prof gear not equal")
         return false
     end
 
@@ -592,8 +609,15 @@ function CraftSim.RecipeData:EqualCraftSetup(recipeData)
     ---@type CraftingReagentInfo[]
     local reagentsB = CraftSim.GUTIL:Sort(recipeData.reagentData:GetCraftingReagentInfoTbl(), sortByItemID)
 
+    print("reagentsA:")
+    -- print(reagentsA, true, false, 1)
+    print(self.reagentData, true, false, 1)
+    print("reagentsB:")
+    -- print(reagentsB, true, false, 1)
+    print(recipeData.reagentData, true, false, 1)
     -- quick and easy check
     if #reagentsA ~= #reagentsB then
+        print("reagents not equal", false, true)
         return false
     end
 
@@ -602,11 +626,11 @@ function CraftSim.RecipeData:EqualCraftSetup(recipeData)
         local reagentB = reagentsB[index]
 
         -- no need to check the dataslotindex
-        -- print("recipeData.EqualCraftSetup: " .. index, false, true)
-        -- print("reagentA.itemID: " .. reagentA.itemID)
-        -- print("reagentA.quantity: " .. reagentA.quantity)
-        -- print("reagentB.itemID: " .. reagentB.itemID)
-        -- print("reagentB.quantity: " .. reagentB.quantity)
+        print("recipeData.EqualCraftSetup: " .. index, false, true)
+        print("reagentA.itemID: " .. reagentA.itemID)
+        print("reagentA.quantity: " .. reagentA.quantity)
+        print("reagentB.itemID: " .. reagentB.itemID)
+        print("reagentB.quantity: " .. reagentB.quantity)
 
         if reagentA.itemID ~= reagentB.itemID then
             return false

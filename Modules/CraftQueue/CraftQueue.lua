@@ -50,8 +50,16 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param amount number
-function CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount)
+---@param enchantItemTarget ItemLocationMixin?
+function CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount, enchantItemTarget)
     -- find the current queue item and set it to currentlyCraftedQueueItem
+    -- if an enchant was crafted that was not on a vellum, ignore
+    if enchantItemTarget and enchantItemTarget:IsValid() then
+        if C_Item.GetItemID(enchantItemTarget) ~= CraftSim.CONST.ENCHANTING_VELLUM_ID then
+            CraftSim.CRAFTQ.currentlyCraftedRecipeData = nil
+            return
+        end
+    end
     print("OnCraftRecipe", false, true)
     CraftSim.CRAFTQ.currentlyCraftedRecipeData = recipeData
 end
@@ -62,6 +70,6 @@ function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT()
         print("have recipeData, now decrement")
         -- decrement by one and refresh list
         CraftSim.CRAFTQ.craftQueue:SetAmount(CraftSim.CRAFTQ.currentlyCraftedRecipeData, -1, true)
-        CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
+        CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
     end
 end

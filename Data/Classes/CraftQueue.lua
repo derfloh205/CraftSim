@@ -14,6 +14,9 @@ end
 ---@param amount number?
 function CraftSim.CraftQueue:AddRecipe(recipeData, amount)
     amount = amount or 1
+
+    print("Adding recipe to queue with reagents: ")
+    print(recipeData.reagentData, true)
     
     local craftQueueItem = self:FindRecipe(recipeData)
 

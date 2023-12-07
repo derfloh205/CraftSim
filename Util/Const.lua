@@ -199,7 +199,7 @@ CraftSim.CONST.REAGENT_TYPE = {
 
 CraftSim.CONST.AUCTION_HOUSE_CUT = 0.95
 
-CraftSim.CONST.vellumItemID = 38682
+CraftSim.CONST.ENCHANTING_VELLUM_ID = 38682
 
 CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION = "first(DBRecent, DBMinbuyout)"
 
@@ -894,6 +894,8 @@ CraftSim.CONST.TEXT = {
     CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION = "CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION",
     CRAFT_QUEUE_REAGENT_INFO_HEADER = "CRAFT_QUEUE_REAGENT_INFO_HEADER",
     CRAFT_QUEUE_REAGENT_INFO_BUTTON_LABEL = "CRAFT_QUEUE_REAGENT_INFO_BUTTON_LABEL",
+    CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL = "CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL",
+    CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT = "CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT",
 }
 
 CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
@@ -908,6 +910,17 @@ CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function()
         Enum.Profession.Tailoring,
     }
 end
+
+CraftSim.CONST.BASE_RECRAFT_RECIPE_IDS = {
+    385304, -- Blacksmithing
+    389195, -- Leatherworking
+    389191, -- Enchanting
+    389192, -- Engineering
+    389193, -- Inscription
+    389194, -- Jewelcrafting
+    389195, -- Tailoring
+
+}
 
 CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING = {
     [199345] = 200074 -- frosted rimefin tuna to rimefin tuna, due to frosted generating it, and rimefin tuna being soulbound

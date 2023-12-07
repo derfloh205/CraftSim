@@ -293,6 +293,7 @@ function CraftSim.ReagentData:SetReagentsByOptimizationResult(optimizationResult
 end
 
 function CraftSim.ReagentData:HasEnough(multiplier)
+    multiplier = multiplier or 1
     -- check required, optional and finished reagents if the player has enough times multiplier in his inventory and bank
 
     local hasRequiredReagents = CraftSim.GUTIL:Every(self.requiredReagents, 
@@ -306,12 +307,61 @@ function CraftSim.ReagentData:HasEnough(multiplier)
     function (optionalReagentSlot)
         return optionalReagentSlot:HasItem(multiplier)
     end)
+
+    local hasVellumIfneeded = true
+
+    if self.recipeData.isEnchantingRecipe then
+        local itemCount = GetItemCount(CraftSim.CONST.ENCHANTING_VELLUM_ID, true, false, true)
+        hasVellumIfneeded = itemCount >= multiplier
+    end
+
     
-    return hasRequiredReagents and hasOptionalReagents
+    return hasRequiredReagents and hasOptionalReagents and hasVellumIfneeded
+end
+
+function CraftSim.ReagentData:GetCraftableAmount()
+    
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+
+    print("getCraftable amount", false, true)
+    
+    local currentMinimumReagentFit = math.huge
+    for _, requiredReagent in pairs(self.requiredReagents) do 
+        if not requiredReagent:HasItems() then
+            return 0
+        end
+        currentMinimumReagentFit = math.min(requiredReagent:HasQuantityXTimes(), currentMinimumReagentFit)
+    end
+    
+    print("minimum required fit: " .. tostring(currentMinimumReagentFit))
+    
+    local currentMinimumReagentFitOptional = math.huge
+    for _, optionalReagentSlot in pairs(CraftSim.GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do 
+        if not optionalReagentSlot:HasItem() then
+            return 0
+        end
+        currentMinimumReagentFitOptional = math.min(optionalReagentSlot:HasQuantityXTimes(), currentMinimumReagentFitOptional)
+    end
+    print("minimum optional fit: " .. tostring(currentMinimumReagentFitOptional))
+    
+    local vellumMinimumFit = math.huge
+    if self.recipeData.isEnchantingRecipe then
+        local itemCount = GetItemCount(CraftSim.CONST.ENCHANTING_VELLUM_ID, true, false, true)
+        vellumMinimumFit = itemCount
+        print("minimum vellum fit: " .. tostring(vellumMinimumFit))
+    end
+
+    local minFit = math.min(currentMinimumReagentFit, currentMinimumReagentFitOptional, vellumMinimumFit)
+
+    print("minimum total fit: " .. tostring(minFit))
+    return minFit
 end
 
 --- convert required and finished reagents to string that is displayable in a tooltip
-function CraftSim.ReagentData:GetTooltipText()
+---@param multiplier number? default: 1
+function CraftSim.ReagentData:GetTooltipText(multiplier)
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+    multiplier = multiplier or 1
     local iconSize = 25
     local text = ""
     for _, requiredReagent in pairs(self.requiredReagents) do
@@ -320,19 +370,24 @@ function CraftSim.ReagentData:GetTooltipText()
         text = text .. inlineIcon
         if not requiredReagent.hasQuality then
             local itemCount = GetItemCount(requiredReagent.items[1].item:GetItemID(), true, false, true)
-            local quantityText = CraftSim.GUTIL:ColorizeText(tostring(requiredReagent.items[1].quantity) .. "(" .. tostring(itemCount) .. ")", CraftSim.GUTIL.COLORS.RED)
+            print("- tooltiptext for: " .. tostring(requiredReagent.items[1].item:GetItemName()))
+            print("- - player item count: " .. tostring(itemCount))
+            print("- - allocated quantity: " .. tostring(requiredReagent.items[1].quantity))
+            local quantityText = CraftSim.GUTIL:ColorizeText(tostring(requiredReagent.requiredQuantity*multiplier) .. "(" .. tostring(itemCount) .. ")", CraftSim.GUTIL.COLORS.RED)
 
-            if itemCount >= requiredReagent.items[1].quantity then
-                quantityText = CraftSim.GUTIL:ColorizeText(tostring(requiredReagent.items[1].quantity), CraftSim.GUTIL.COLORS.GREEN)
+            if itemCount >= (requiredReagent.requiredQuantity*multiplier) then
+                quantityText = CraftSim.GUTIL:ColorizeText(tostring(requiredReagent.requiredQuantity*multiplier), CraftSim.GUTIL.COLORS.GREEN)
             end
 
             text = text .. " x " .. quantityText .. "\n"
         else
+            local totalCount = requiredReagent:GetTotalQuantity()
+            local totalCountOK = totalCount*multiplier >= requiredReagent.requiredQuantity*multiplier
             for qualityID, reagentItem in pairs(requiredReagent.items) do
                 local itemCount = GetItemCount(reagentItem.item:GetItemID(), true, false, true)
-                local quantityText = CraftSim.GUTIL:ColorizeText(tostring(reagentItem.quantity) .. "(" .. tostring(itemCount) .. ")", CraftSim.GUTIL.COLORS.RED)
+                local quantityText = CraftSim.GUTIL:ColorizeText(tostring(reagentItem.quantity*multiplier) .. "(" .. tostring(itemCount) .. ")", CraftSim.GUTIL.COLORS.RED)
 
-                if itemCount >= reagentItem.quantity then
+                if itemCount >= reagentItem.quantity*multiplier or (reagentItem.quantity == 0 and totalCountOK) then
                     quantityText = CraftSim.GUTIL:ColorizeText(tostring(reagentItem.quantity), CraftSim.GUTIL.COLORS.GREEN)
                 end
                 local qualityIcon = CraftSim.GUTIL:GetQualityIconString(qualityID, 20, 20)

@@ -10,7 +10,8 @@ CraftSim.CRAFT_RESULTS.currentSessionData = nil
 
 ---@param recipeData CraftSim.RecipeData
 ---@param amount number
-function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData, amount)
+---@param enchantItemTarget ItemLocationMixin?
+function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData, amount, enchantItemTarget)
     -- TODO: Implement and use instead of TRADE_SKILL_CRAFT_BEGIN for recipe recognition
 end
 
