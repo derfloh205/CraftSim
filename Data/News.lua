@@ -11,7 +11,15 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("11.0.0") ..
-        f.P .. "News" ..
+        f.P .. f.g("New Module:") .. f.l(" CraftQueue") ..
+        f.a .. "Queue Recipes from your currently open recipe or even" ..
+        f.a .. "from your last " .. f.bb("Recipe Scan") .. " results " .. 
+        f.a .. "and craft them all in one place!" ..
+        f.a .. "Directly create an " .. f.bb("Auctionator Shopping List") .. 
+        f.a .. "to buy every reagent you are missing!" ..
+        f.a .. "- More restock options are coming!" ..
+        f.a .. "- CraftQueue consisting over sessions is also planned" ..
+        f.a .. "(Very new feature, please report any bugs in the discord)" ..
         newP("10.0.1") ..
         f.p .. "Fixed an issue where " .. f.patreon("CraftSim") .. " overwrote the " .. 
         f.a .. "global print function (sorry other devs)" ..
