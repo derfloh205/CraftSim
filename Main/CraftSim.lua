@@ -288,6 +288,60 @@ function CraftSim.MAIN:InitStaticPopups()
 	}
 end
 
+function CraftSim.MAIN:InitCraftRecipeHooks()
+	hooksecurefunc(C_TradeSkillUI, "CraftRecipe", 
+	---@param recipeID number
+	---@param amount number?
+	---@param craftingReagentInfoTbl CraftingReagentInfo[]?
+	function (recipeID, amount, craftingReagentInfoTbl)
+		-- create a recipeData instance with given info and forward it to the corresponding modules
+		-- isRecraft and isWorkOrder is omitted cause cant know here
+		-- but recrafts have different reagents.. so they wont be recognized by comparison anyway
+		-- and if its work order or not is not important for CraftResult records (I hope?)
+		-- If it is important I could just check if the work order frame is open because there is no way a player starts a work order craft without it open!
+		-- conclusion: use work order page to check if its a work order and use (if available) the current main recipeData to check if its a recraft
+		-- new take: problem when recraft recipe is open and crafting in queue.. then it thinks its a recraft... so for now its just always false..
+		local isRecraft = false
+		-- if CraftSim.MAIN.currentRecipeData then
+		-- 	isRecraft = CraftSim.MAIN.currentRecipeData.isRecraft
+		-- end
+
+		local print=CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+
+		---@type CraftSim.RecipeData
+		local recipeData
+		-- if craftsim did not call the api and we do not have reagents, set it by gui
+		if not CraftSim.CRAFTQ.CraftSimCalledCraftRecipe then
+			--- craft was most probably started via default gui craft button...
+			print("api was called via gui")
+			if CraftSim.MAIN.currentRecipeData then
+				isRecraft = CraftSim.MAIN.currentRecipeData.isRecraft
+			end
+			-- this means recraft and work order stuff is important
+			recipeData = CraftSim.RecipeData(recipeID, isRecraft, CraftSim.UTIL:IsWorkOrder())
+
+			recipeData:SetAllReagentsBySchematicForm()
+			-- assume non df recipe or recipe without quality reagents that are all set (cause otherwise crafting would not be possible)
+		else
+			print("api was called via craftsim")
+			-- started via craftsim craft queue
+			recipeData = CraftSim.RecipeData(recipeID, isRecraft, CraftSim.UTIL:IsWorkOrder())
+			recipeData:SetReagentsByCraftingReagentInfoTbl(craftingReagentInfoTbl)
+			recipeData:SetNonQualityReagentsMax()
+		end
+
+		recipeData:SetEquippedProfessionGearSet()
+
+		recipeData:Update() -- is this necessary? check again if there are performance problems with that
+
+		print("CraftRecipe Hook: " )
+		print(recipeData.reagentData, true)
+
+		CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData, amount or 1)
+		CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount or 1)
+	end)
+end
+
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
 		CraftSim.LOCAL:Init()
@@ -320,6 +374,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.MAIN:HookToProfessionsFrame()
 		--CraftSim.FRAME:HandleAuctionatorOverlaps()
 		CraftSim.MAIN:HandleAuctionatorHooks()
+		CraftSim.MAIN:InitCraftRecipeHooks()
 		CraftSim.ACCOUNTSYNC:Init()
 
 

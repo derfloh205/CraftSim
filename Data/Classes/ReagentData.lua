@@ -289,11 +289,7 @@ function CraftSim.ReagentData:SetReagentsByOptimizationResult(optimizationResult
     self.recipeData:SetReagents(reagentItemList)
     
     -- always set nonquality reagents to max
-    for _, reagent in pairs(self.requiredReagents) do
-        if not reagent.hasQuality then
-            reagent.items[1].quantity = reagent.requiredQuantity
-        end
-    end
+    self.recipeData:SetNonQualityReagentsMax()
 end
 
 function CraftSim.ReagentData:HasEnough(multiplier)
@@ -316,10 +312,11 @@ end
 
 --- convert required and finished reagents to string that is displayable in a tooltip
 function CraftSim.ReagentData:GetTooltipText()
+    local iconSize = 25
     local text = ""
     for _, requiredReagent in pairs(self.requiredReagents) do
         local reagentIcon = requiredReagent.items[1].item:GetItemIcon()
-        local inlineIcon = CraftSim.GUTIL:IconToText(reagentIcon, 50, 50)
+        local inlineIcon = CraftSim.GUTIL:IconToText(reagentIcon, iconSize, iconSize)
         text = text .. inlineIcon
         if not requiredReagent.hasQuality then
             local itemCount = GetItemCount(requiredReagent.items[1].item:GetItemID(), true, false, true)

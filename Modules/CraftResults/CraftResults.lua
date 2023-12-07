@@ -7,6 +7,13 @@ CraftSim.CRAFT_RESULTS.currentRecipeData = nil
 
 CraftSim.CRAFT_RESULTS.currentSessionData = nil
 
+
+---@param recipeData CraftSim.RecipeData
+---@param amount number
+function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData, amount)
+    -- TODO: Implement and use instead of TRADE_SKILL_CRAFT_BEGIN for recipe recognition
+end
+
 -- save current craft data
 function CraftSim.CRAFT_RESULTS:TRADE_SKILL_CRAFT_BEGIN(spellID)
 

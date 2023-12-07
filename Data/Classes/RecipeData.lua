@@ -69,6 +69,9 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.supportsResourcefulness = false
     self.supportsCraftingspeed = true -- this is always supported (but does not show in details UI when 0)
 
+    self.crafter, self.crafterRealm = UnitNameUnmodified("player")
+    self.crafterClass = select(2, UnitClass("player"))
+
     if not self.isCooking then
         ---@type CraftSim.SpecializationData?
         self.specializationData = CraftSim.SpecializationData(self)
@@ -165,6 +168,21 @@ function CraftSim.RecipeData:SetReagents(reagentList)
             error("CraftSim: RecipeData SetReagents Error: total set quantity > requiredQuantity -> " .. totalQuantity .. " / " .. reagent.requiredQuantity)
         end
     end
+end
+
+---@param craftingReagentInfoTbl CraftingReagentInfo[]
+function CraftSim.RecipeData:SetReagentsByCraftingReagentInfoTbl(craftingReagentInfoTbl)
+    ---@type CraftingReagentInfo[], CraftingReagentInfo[]
+    local optionalReagents, requiredReagents = CraftSim.GUTIL:Split(craftingReagentInfoTbl, 
+    ---@param craftingReagentInfo CraftingReagentInfo
+    function (craftingReagentInfo)
+        return CraftSim.OPTIONAL_REAGENT_DATA[craftingReagentInfo.itemID] ~= nil
+    end)
+
+    local optionalReagentIDs = CraftSim.GUTIL:Map(optionalReagents, function(optionalReagentInfo) return optionalReagentInfo.itemID end)
+
+    self:SetOptionalReagents(optionalReagentIDs)
+    self:SetReagents(requiredReagents) -- 'type conversion' to ReagentListItem should be fine, both have itemID and quantity
 end
 
 ---@param itemID number
@@ -281,6 +299,14 @@ function CraftSim.RecipeData:SetOptionalReagents(itemIDList)
         self:SetOptionalReagent(itemID)
     end)
     self:Update()
+end
+
+function CraftSim.RecipeData:SetNonQualityReagentsMax()
+    for _, reagent in pairs(self.reagentData.requiredReagents) do
+        if not reagent.hasQuality then
+            reagent.items[1].quantity = reagent.requiredQuantity
+        end
+    end
 end
 
 -- Update the professionStats property of the RecipeData according to set reagents and gearSet (and any stat modifiers)
@@ -522,7 +548,8 @@ function CraftSim.RecipeData:Craft(amount)
     -- TODO: maybe check if crafting is possible (correct profession window open?)
     -- Also what about recipe requirements
     local craftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
-    C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl)
+    --- hack const into api call
+    C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil, nil)
 end
 
 function CraftSim.RecipeData:CanCraft(amount)
@@ -539,14 +566,57 @@ function CraftSim.RecipeData:CanCraft(amount)
     return hasEnoughReagents
 end
 
----Checks if the recipeData instances contain the same reagents, specInfos and professionGear Items
----@param recipeData any
-function CraftSim.RecipeData:Equals(recipeData)
+--- Checks if the recipeData instances contain the same recipe, reagents and professionGear Items
+--- Does not check for true equality (specInfo or same reference)
+---@param recipeData CraftSim.RecipeData
+---@return boolean equal
+function CraftSim.RecipeData:EqualCraftSetup(recipeData)
     if self.recipeID ~= recipeData.recipeID then
-        return -- duh
+        return false -- duh that was easy
+    end
+    -- do not check spec info cause its not needed
+
+    -- check prof items
+    if not self.professionGearSet:Equals(recipeData.professionGearSet) then
+        return false
     end
 
+    ---@param craftingReagentInfoA CraftingReagentInfo
+    ---@param craftingReagentInfoB CraftingReagentInfo
+    local function sortByItemID(craftingReagentInfoA, craftingReagentInfoB)
+        return craftingReagentInfoA.itemID < craftingReagentInfoB.itemID
+    end
+    --- check reagents by fetching a sorted crafting reagentinfo table and check if those are equal
+    ---@type CraftingReagentInfo[]
+    local reagentsA = CraftSim.GUTIL:Sort(self.reagentData:GetCraftingReagentInfoTbl(), sortByItemID)
+    ---@type CraftingReagentInfo[]
+    local reagentsB = CraftSim.GUTIL:Sort(recipeData.reagentData:GetCraftingReagentInfoTbl(), sortByItemID)
 
+    -- quick and easy check
+    if #reagentsA ~= #reagentsB then
+        return false
+    end
+
+    -- more indepth check
+    for index, reagentA in pairs(reagentsA) do
+        local reagentB = reagentsB[index]
+
+        -- no need to check the dataslotindex
+        -- print("recipeData.EqualCraftSetup: " .. index, false, true)
+        -- print("reagentA.itemID: " .. reagentA.itemID)
+        -- print("reagentA.quantity: " .. reagentA.quantity)
+        -- print("reagentB.itemID: " .. reagentB.itemID)
+        -- print("reagentB.quantity: " .. reagentB.quantity)
+
+        if reagentA.itemID ~= reagentB.itemID then
+            return false
+        end
+        if reagentA.quantity ~= reagentB.quantity then
+            return false
+        end
+    end
+
+    return true
 end
 
 ---@return boolean true of the profession the recipe belongs to is opened

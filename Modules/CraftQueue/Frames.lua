@@ -166,7 +166,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
     craftList:Remove()
 
-    for _, craftQueueItem in pairs(craftQueue.craftItems) do
+    for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
         local recipeData = craftQueueItem.recipeData
         craftList:Add(
         ---@param row GGUI.FrameList.Row    
@@ -220,8 +220,9 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             craftButtonColumn.craftButton:SetEnabled(allowedToCraft)
             if allowedToCraft then
                 craftButtonColumn.craftButton.clickCallback = function ()
-                    CraftSim.CRAFTQ.currentlyCraftedQueueItem = craftQueueItem
+                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
                     recipeData:Craft()
+                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
                 end
                 craftButtonColumn.craftButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL), nil, true)
             elseif not correctProfessionOpen then

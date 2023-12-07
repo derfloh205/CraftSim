@@ -109,6 +109,7 @@ CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS = {
     1526, -- Cooking
 }
 
+---@enum CraftSim.DEBUG_IDS
 CraftSim.CONST.DEBUG_IDS = {
     MAIN = "MAIN",
     SPECDATA = "SPECDATA",
@@ -137,6 +138,7 @@ CraftSim.CONST.DEBUG_IDS = {
     COST_DETAILS = "COST_DETAILS",
     PRICE_APIS = "PRICE_APIS",
     CONTROL_PANEL = "CONTROL_PANEL",
+    CRAFTQ = "CRAFTQ",
 }
 
 CraftSim.CONST.ERROR = {

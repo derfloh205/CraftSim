@@ -7,6 +7,7 @@ local multicraftFactor = 0.0009
 local resourcefulnessFactor = 0.00111
 local craftingspeedFactor = 0.002
 
+---@param debugID CraftSim.DEBUG_IDS
 function CraftSim.UTIL:SetDebugPrint(debugID)
     local function print(text, recursive, l, level)
         if CraftSim_DEBUG and CraftSim.GGUI.GetFrame and CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG) then
