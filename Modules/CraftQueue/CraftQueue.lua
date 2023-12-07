@@ -64,6 +64,51 @@ function CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount, enchantItemTarget)
     CraftSim.CRAFTQ.currentlyCraftedRecipeData = recipeData
 end
 
+function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
+    local reagentMap = {}
+    -- create a map of all used reagents in the queue and their quantity
+    for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
+        local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
+        for _, reagent in pairs(requiredReagents) do
+            if reagent.hasQuality then
+                for qualityID, reagentItem in pairs(reagent.items) do
+                    reagentMap[reagentItem.item:GetItemName()] = reagentMap[reagentItem.item:GetItemName()] or {
+                        itemID = reagentItem.item:GetItemID(),
+                        qualityID = nil,
+                        quantity = 0
+                    }
+                    reagentMap[reagentItem.item:GetItemName()].quantity = reagentMap[reagentItem.item:GetItemName()].quantity + (reagentItem.quantity * craftQueueItem.amount)
+                    reagentMap[reagentItem.item:GetItemName()].qualityID = qualityID
+                end
+            else
+                local reagentItem = reagent.items[1]
+                reagentMap[reagentItem.item:GetItemName()] = reagentMap[reagentItem.item:GetItemName()] or {
+                    itemID = reagentItem.item:GetItemID(),
+                    qualityID = nil,
+                    quantity = 0
+                }
+                reagentMap[reagentItem.item:GetItemName()].quantity = reagentMap[reagentItem.item:GetItemName()].quantity + (reagentItem.quantity * craftQueueItem.amount)
+            end
+        end
+    end
+    -- create shoppinglist import string?
+     -- format: Test^"Frostfire Alloy";;0;0;0;0;0;0;0;0;;3;;#;;99
+    local shoppingListImportString = CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME
+
+    for name, info in pairs(reagentMap) do
+        local itemCount = GetItemCount(info.itemID, true, false, true)
+        if itemCount < info.quantity then
+            shoppingListImportString = shoppingListImportString .. '^"'..name..'"' .. ';;0;0;0;0;0;0;0;0;;'..(info.qualityID or '#')..';;' .. info.quantity - itemCount
+        end
+    end
+
+    --CraftSim CraftQueue2^"Khaz'gorite Ore";;0;0;0;0;0;0;0;0;;1;;99^"Awakened Frost";;0;0;0;0;0;0;0;0;;0;;#;;1^"Awakened Fire";;0;0;0;0;0;0;0;0;;0;;#;;1^"Primal Flux";;0;0;0;0;0;0;0;0;;0;;#;;4^"Draconium Ore";;0;0;0;0;0;0;0;0;;1;;#;;5
+    --CraftSim.UTIL:KethoEditBox_Show(shoppingListImportString)
+    -- delete old list
+    Auctionator.Shopping.ListManager:Delete(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
+    Auctionator.Shopping.Lists.BatchImportFromString(shoppingListImportString)
+end
+
 function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT()
     print("onCraftResult")
     if CraftSim.CRAFTQ.currentlyCraftedRecipeData then

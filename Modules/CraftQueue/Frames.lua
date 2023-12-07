@@ -181,6 +181,17 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             adjustWidth=true,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL), clickCallback=nil
         })
+
+        if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+            ---@type GGUI.Button
+            frame.content.createAuctionatorShoppingList = CraftSim.GGUI.Button({
+                parent=frame.content, anchorParent=frame.content.craftList.frame, anchorA="TOP", anchorB="BOTTOM", adjustWidth=true,
+                clickCallback=function ()
+                    CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
+                end,
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL)
+            })
+        end
     end
 
     createContent(CraftSim.CRAFTQ.frame)
@@ -346,5 +357,9 @@ function CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
         )
     else
         craftQueueFrame.content.addCurrentRecipeButton:SetEnabled(false)
+    end
+
+    if craftQueueFrame.content.createAuctionatorShoppingList then
+        craftQueueFrame.content.createAuctionatorShoppingList:SetEnabled(CraftSim.CRAFTQ.craftQueue and #CraftSim.CRAFTQ.craftQueue.craftQueueItems > 0)
     end
 end
