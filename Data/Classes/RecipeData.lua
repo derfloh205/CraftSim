@@ -353,6 +353,7 @@ end
 --- We need copy constructors or CopyTable will run into references of recipeData
 ---@return CraftSim.RecipeData recipeDataCopy
 function CraftSim.RecipeData:Copy()
+    ---@type CraftSim.RecipeData
     local copy = CraftSim.RecipeData(self.recipeID, self.isRecraft)
     copy.reagentData = self.reagentData:Copy(copy)
     copy.professionGearSet = self.professionGearSet:Copy()
@@ -362,6 +363,10 @@ function CraftSim.RecipeData:Copy()
     copy.priceData = self.priceData:Copy(copy) -- Is this needed or covered by constructor?
     copy.resultData = self.resultData:Copy(copy) -- Is this needed or covered by constructor?
     -- copy spec data or already handled in constructor?
+    copy.orderData = self.orderData
+    copy.crafter = self.crafter
+    copy.crafterClass = self.crafterClass
+    copy.crafterRealm = self.crafterRealm
 
     copy:Update()
     return copy
