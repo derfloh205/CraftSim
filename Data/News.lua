@@ -10,11 +10,19 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
-        newP("11.0.1") ..
+        newP("11.1.0") ..
+        f.p .. "Fixed " .. f.bb("CraftResults") .. " incorrectly adding multicraft results" ..
         f.p .. "Fixed " .. f.bb("CraftQueue") .. " not being initialized sometimes" ..
         f.p .. "Fixed " .. f.bb("Create Auctionator Shopping List") .. " button not working" ..
+        f.p .. "Shopping Lists will now exclude soulbound items" ..
+        f.p .. "Added a delete button for each " .. f.bb("CraftQueue Row") ..
+        f.p .. "Unlearned recipes are now not addable to the " .. f.bb("CraftQueue") ..
+        f.p .. f.g("Increased CraftQueue Performance") .. " using an ItemCount Cache" ..
+        f.a .. "and a lot of precalculations" ..
+        f.p .. f.bb("CraftQueue Rows") .. " are now sorted by" ..
+        f.a .. "craftable status > profit per craft" ..
         f.p .. "Supporter List Update!" ..
-        f.a .. "Thanks to Jose Luis for that huge donation! <3" ..
+        f.a .. "Thanks to " .. f.patreon("Jose Luis") .. " for that huge donation! <3" ..
         newP("11.0.0") ..
         f.P .. f.g("New Module:") .. f.l(" CraftQueue") ..
         f.a .. "Queue Recipes from your currently open recipe or even" ..
@@ -50,34 +58,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.p .. "Fixed the legend text alignment in the " .. f.bb("Knowledge Simulator") ..
         f.p .. "Slightly increased the height of the " .. f.bb("Specialization Info Module") ..
         f.a .. "to consider the new profession stat info" ..
-        f.p .. "Updated recipes affected by " .. f.bb("Decayology") ..
-        newP("9.0.3") ..
-        f.p .. "Fixed a bug with the " .. f.bb("Reset Frame Positions") .. " button" ..
-        newP("9.0.2") ..
-        f.p .. "Hotfixed an issue with the deploy process" .. 
-        f.a .. "not recognizing git submodules" ..
-        newP("9.0.1") ..
-        f.p .. "Code Refactorings regarding GGUI globalizations" ..
-        newP("9.0.0") ..
-        f.P .. "QOL Updates:" ..
-        f.s .. "Added a checkbox to the " .. f.bb("Recipe Scan") .. " module to " ..
-        f.a .. "optionally sort by relative profit instead of gold value" ..
-        f.s .. "Added a checkbox to the " .. f.bb("Recipe Scan") .. " module to " ..
-        f.a .. "use " ..f.bb("(Lesser) Illustrious Insight") .. " for recipes that" ..
-        f.a .. "allow it. Might be adding a feature to toggle any" .. 
-        f.a .. "Optional Reagents for scans at some point" .. 
-        f.s .. "Added a checkbox to the " .. f.bb("Craft Results") .. " module to" ..
-        f.a .. "disable any recording for a potential performance increase" ..
-        f.a .. "while crafting" ..
-        f.s .. "Automatically highlight all text for a " .. f.l("ForgeFinder Export") ..
-        f.s .. "Added a new " .. f.g("General Option") .. " to toggle this " .. f.bb("News") .. " Popup" ..
-        f.a .. "when logging in after a " .. f.l("CraftSim") .. " Update" ..
-        newP("8.9.4") ..
-        f.p .. "Added " .. f.l("10.2") ..  f.g(" Optional Reagents") ..
-        f.a .. "Thanks to " .. f.bb("https://github.com/TheResinger") .. " !" ..
-        newP("8.9.3") ..
-        f.p .. "Updated enchant recipes for 10.2" ..
-        f.p .. "Supporter List Update"
+        f.p .. "Updated recipes affected by " .. f.bb("Decayology")
 end
 
 function CraftSim.NEWS:GetChecksum()

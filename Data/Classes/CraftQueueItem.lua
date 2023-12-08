@@ -10,15 +10,22 @@ function CraftSim.CraftQueueItem:new(recipeData, amount)
     self.recipeData = recipeData
     ---@type number
     self.amount = amount or 1
+
+    -- canCraft caches
+    self.allowedToCraft = false
+    self.canCraftOnce = false
+    self.gearEquipped = false
+    self.correctProfessionOpen = false
+    self.craftAbleAmount = 0
 end
 
----@return boolean allowedToCraft, boolean canCraftOnce, boolean gearEquipped, boolean correctProfessionOpen
-function CraftSim.CraftQueueItem:CanCraft()
-    local canCraftOnce = self.recipeData:CanCraft(1) or false
-    local gearEquipped = self.recipeData.professionGearSet:IsEquipped() or false
-    local correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
-
-    local allowedToCraft = canCraftOnce and gearEquipped and correctProfessionOpen
-
-    return allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen
+--- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen and craftAbleAmount
+function CraftSim.CraftQueueItem:CalculateCanCraft()
+    CraftSim.UTIL:StartProfiling('CraftSim.CraftQueueItem:CalculateCanCraft')
+    self.canCraftOnce, self.craftAbleAmount = self.recipeData:CanCraft(1)
+    self.gearEquipped = self.recipeData.professionGearSet:IsEquipped() or false
+    self.correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
+    
+    self.allowedToCraft = self.canCraftOnce and self.gearEquipped and self.correctProfessionOpen
+    CraftSim.UTIL:StopProfiling('CraftSim.CraftQueueItem:CalculateCanCraft')
 end

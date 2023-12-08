@@ -342,6 +342,7 @@ function CraftSim.MAIN:InitCraftRecipeHooks()
 	end
 	hooksecurefunc(C_TradeSkillUI, "CraftRecipe", OnCraft)
 	hooksecurefunc(C_TradeSkillUI, "CraftEnchant", OnCraft)
+	hooksecurefunc(C_TradeSkillUI, "CraftSalvage", CraftSim.CRAFT_RESULTS.OnCraftSalvage)
 end
 
 function CraftSim.MAIN:ADDON_LOADED(addon_name)

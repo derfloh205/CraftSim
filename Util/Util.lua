@@ -334,7 +334,13 @@ function CraftSim.UTIL:StopProfiling(label)
     local time = debugprofilestop()
     local diff = time - profilings[label]
     profilings[label] = nil
-    CraftSim_DEBUG:print("Elapsed Time for " .. label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+    CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+end
+
+function CraftSim.UTIL:ProfilingUpdate(label)
+    local time = debugprofilestop()
+    local diff = time - profilings[label]
+    CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms (u)", CraftSim.CONST.DEBUG_IDS.PROFILING)
 end
 
 function CraftSim.UTIL:GetFormatter()

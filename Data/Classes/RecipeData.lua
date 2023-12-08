@@ -571,14 +571,15 @@ end
 ---@return number canCraftAmount how many can be crafted
 function CraftSim.RecipeData:CanCraft(amount)
     -- check if the player fits the requirements to craft the given amount of the recipe
-
+    
     -- check: learned, maybe area?, other?
     if not self.learned then
         return false, 0
     end
-
+    
     -- check amount of materials in players inventory + bank
     local hasEnoughReagents = self.reagentData:HasEnough(amount)
+
     local craftAbleAmount = self.reagentData:GetCraftableAmount()
 
     return hasEnoughReagents, craftAbleAmount
