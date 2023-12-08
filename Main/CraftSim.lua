@@ -370,6 +370,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.COST_DETAILS.FRAMES:Init()
 		CraftSim.SUPPORTERS.FRAMES:Init()
 		CraftSim.CRAFTQ.FRAMES:Init()
+		CraftSim.CRAFTQ:InitializeCraftQueue()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()

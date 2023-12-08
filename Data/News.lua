@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("11.0.1") ..
+        f.p .. "Fixed CraftQueue not being initialized sometimes (nil error)" ..
         newP("11.0.0") ..
         f.P .. f.g("New Module:") .. f.l(" CraftQueue") ..
         f.a .. "Queue Recipes from your currently open recipe or even" ..

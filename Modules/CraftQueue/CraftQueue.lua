@@ -14,6 +14,11 @@ CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
 
 local print=CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
+function CraftSim.CRAFTQ:InitializeCraftQueue()
+    -- TODO: load from Saved Variables?
+    CraftSim.CRAFTQ.craftQueue = CraftSim.CraftQueue({})
+end
+
 ---@param recipeData CraftSim.RecipeData
 ---@param amount number?
 function CraftSim.CRAFTQ:AddRecipe(recipeData, amount)
