@@ -407,6 +407,8 @@ function CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
         else
             craftQueueFrame.content.craftNextButton.clickCallback = nil
         end
+    else
+        craftQueueFrame.content.craftNextButton:SetEnabled(false)
     end
 
     local currentRecipeData = CraftSim.MAIN.currentRecipeData
