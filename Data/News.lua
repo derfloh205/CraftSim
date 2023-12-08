@@ -10,11 +10,12 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
-        newP("11.1.0") ..
+        newP("11.1.1") ..
         f.p .. "Fixed " .. f.bb("CraftResults") .. " incorrectly adding multicraft results" ..
         f.p .. "Fixed " .. f.bb("CraftQueue") .. " not being initialized sometimes" ..
         f.p .. "Fixed " .. f.bb("Create Auctionator Shopping List") .. " button not working" ..
-        f.p .. "Shopping Lists will now exclude soulbound items" ..
+        f.p .. f.bb("Shopping List") .. " will now exclude soulbound items" ..
+        f.p .. f.bb("Shopping List") .. " will now remove/reduce items when bought" ..
         f.p .. "Added a delete button for each " .. f.bb("CraftQueue Row") ..
         f.p .. "Unlearned recipes are now not addable to the " .. f.bb("CraftQueue") ..
         f.p .. f.g("Increased CraftQueue Performance") .. " using an ItemCount Cache" ..
