@@ -10,7 +10,7 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
-        newP("11.1.1") ..
+        newP("11.1.2") ..
         f.p .. "Fixed " .. f.bb("CraftResults") .. " incorrectly adding multicraft results" ..
         f.p .. "Fixed " .. f.bb("CraftQueue") .. " not being initialized sometimes" ..
         f.p .. "Fixed " .. f.bb("Create Auctionator Shopping List") .. " button not working" ..
