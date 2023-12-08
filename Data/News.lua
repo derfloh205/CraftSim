@@ -11,7 +11,10 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("11.0.1") ..
-        f.p .. "Fixed CraftQueue not being initialized sometimes (nil error)" ..
+        f.p .. "Fixed " .. f.bb("CraftQueue") .. " not being initialized sometimes" ..
+        f.p .. "Fixed " .. f.bb("Create Auctionator Shopping List") .. " button not working" ..
+        f.p .. "Supporter List Update!" ..
+        f.a .. "Thanks to Jose Luis for that huge donation! <3" ..
         newP("11.0.0") ..
         f.P .. f.g("New Module:") .. f.l(" CraftQueue") ..
         f.a .. "Queue Recipes from your currently open recipe or even" ..

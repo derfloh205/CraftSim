@@ -108,9 +108,12 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
     end
 
     --CraftSim CraftQueue2^"Khaz'gorite Ore";;0;0;0;0;0;0;0;0;;1;;99^"Awakened Frost";;0;0;0;0;0;0;0;0;;0;;#;;1^"Awakened Fire";;0;0;0;0;0;0;0;0;;0;;#;;1^"Primal Flux";;0;0;0;0;0;0;0;0;;0;;#;;4^"Draconium Ore";;0;0;0;0;0;0;0;0;;1;;#;;5
-    --CraftSim.UTIL:KethoEditBox_Show(shoppingListImportString)
-    -- delete old list
-    Auctionator.Shopping.ListManager:Delete(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
+    
+    -- delete old list only if it exists to refresh contents instead of adding them
+    local listExists = Auctionator.Shopping.ListManager:GetIndexForName(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
+    if listExists then
+        Auctionator.Shopping.ListManager:Delete(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
+    end
     Auctionator.Shopping.Lists.BatchImportFromString(shoppingListImportString)
 end
 
