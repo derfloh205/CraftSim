@@ -40,6 +40,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     --- Will be set when something calculates the average profit of this recipe or updates the whole recipe, can be used to access it without recalculating everything
     ---@type number | nil
     self.averageProfitCached = nil
+    ---@type number | nil
+    self.relativeProfitCached = nil
 
     if recipeInfo.hyperlink then
         local subclassID = select(7, GetItemInfoInstant(recipeInfo.hyperlink))
@@ -399,6 +401,7 @@ end
 function CraftSim.RecipeData:GetAverageProfit()
     local averageProfit, probabilityTable = CraftSim.CALC:GetAverageProfit(self)
     self.averageProfitCached = averageProfit
+    self.relativeProfitCached = CraftSim.GUTIL:GetPercentRelativeTo(averageProfit, self.priceData.craftingCosts)
     return averageProfit, probabilityTable
 end
 

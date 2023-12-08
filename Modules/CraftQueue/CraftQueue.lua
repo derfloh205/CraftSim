@@ -85,7 +85,7 @@ function CraftSim.CRAFTQ:AddRecipe(recipeData, amount)
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue({})
     CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, amount)
 
-    CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
+    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
 end
 
 function CraftSim.CRAFTQ:ClearAll()
@@ -99,7 +99,8 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
         return false
     end
     if recipeData.averageProfitCached then
-        return recipeData.averageProfitCached > 0
+        local relativeProfit = recipeData.relativeProfitCached or 0
+        return relativeProfit > (CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0)
     else
         return false
     end
@@ -112,7 +113,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
         CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, 1) -- TODO: make configureable per recipe, maybe via tsm string? as option or some fixed stuff
     end
 
-    CraftSim.CRAFTQ.FRAMES:UpdateDisplay()    
+    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()    
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -227,4 +228,13 @@ function CraftSim.CRAFTQ:ParseAuctionatorShoppingListItemString(itemString)
         quantity = tonumber(quantity)
     end
     return name, qualityID, quantity
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.CRAFTQ:IsRecipeQueueable(recipeData)
+    return 
+    recipeData.learned and
+    not recipeData.isRecraft and
+    not recipeData.isSalvageRecipe and
+    not recipeData.isBaseRecraftRecipe
 end

@@ -69,6 +69,9 @@ CraftSimOptions = CraftSimOptions or {
 	-- crafting options
 	craftGarbageCollectEnabled = true,
 	craftGarbageCollectCrafts = 500,
+
+	-- craft queue
+	craftQueueGeneralRestockProfitMarginThreshold = 0,
 }
 
 CraftSimGGUIConfig = CraftSimGGUIConfig or {}
@@ -140,6 +143,7 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.craftGarbageCollectCrafts = CraftSimOptions.craftGarbageCollectCrafts or 500
 		CraftSimOptions.customMulticraftConstant = CraftSimOptions.customMulticraftConstant or CraftSim.CONST.MULTICRAFT_CONSTANT
 		CraftSimOptions.customResourcefulnessConstant = CraftSimOptions.customResourcefulnessConstant or CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
+		CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold = CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end

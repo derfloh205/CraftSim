@@ -50,7 +50,7 @@ function CraftSim.RECIPE_SCAN:EndScan()
     CraftSim.RECIPE_SCAN:ToggleScanButton(true)
     CraftSim.RECIPE_SCAN.isScanning = false
 
-    CraftSim.CRAFTQ.FRAMES:UpdateDisplay() -- update
+    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay() -- TODO: maybe only the button...
 end
 
 function CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)
