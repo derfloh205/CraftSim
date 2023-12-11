@@ -615,6 +615,8 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
         recipeOptionsFrame.recipeTitle:SetText(recipeIconText .. " " .. recipeData.recipeName)
 
         CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID] = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID] or CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
+        --- only use for setting of initial values of checkboxes and such
+        local initialRestockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
         
         ---@type CraftSim.CraftQueue.RestockOptions.TSMSaleRateFrame
         local tsmSaleRateFrame = recipeOptionsFrame.tsmSaleRateFrame
@@ -627,8 +629,8 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
             restockCB:SetVisible(hasQualityID)
             tsmSaleRateCB:SetVisible(hasQualityID)
 
-            restockCB:SetChecked(CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality[qualityID])
-            tsmSaleRateCB:SetChecked(CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality[qualityID])
+            restockCB:SetChecked(initialRestockOptions.restockPerQuality[qualityID])
+            tsmSaleRateCB:SetChecked(initialRestockOptions.saleRatePerQuality[qualityID])
 
             restockCB.clickCallback = function (_, checked)
                 CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality[qualityID] = checked
@@ -637,25 +639,25 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
                 CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality[qualityID] = checked
             end
         end
-        recipeOptionsFrame.enableRecipeCheckbox:SetChecked(CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].enabled or false)
+        recipeOptionsFrame.enableRecipeCheckbox:SetChecked(initialRestockOptions.enabled or false)
         recipeOptionsFrame.enableRecipeCheckbox.clickCallback = function (_, checked)
             CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].enabled = checked
         end
 
         -- adjust numericInputs Visibility, initialValue and Callbacks
-        recipeOptionsFrame.restockAmountInput.textInput:SetText(CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockAmount or 0)
+        recipeOptionsFrame.restockAmountInput.textInput:SetText(initialRestockOptions.restockAmount or 0)
         recipeOptionsFrame.restockAmountInput.onNumberValidCallback = function (input)
             local inputValue = tonumber(input.currentValue)
             CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockAmount = inputValue
         end
-        recipeOptionsFrame.profitMarginThresholdInput.textInput:SetText(CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].profitMarginThreshold or 0)
+        recipeOptionsFrame.profitMarginThresholdInput.textInput:SetText(initialRestockOptions.profitMarginThreshold or 0)
         recipeOptionsFrame.profitMarginThresholdInput.onNumberValidCallback = function (input)
             local inputValue = tonumber(input.currentValue)
             CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].profitMarginThreshold = inputValue
         end
         -- Only show Sale Rate Input Stuff if TSM is loaded
         local tsmLoaded = select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1]))
-        tsmSaleRateFrame.saleRateInput.textInput:SetText(CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRateThreshold)
+        tsmSaleRateFrame.saleRateInput.textInput:SetText(initialRestockOptions.saleRateThreshold)
         tsmSaleRateFrame.saleRateInput.onNumberValidCallback = function (input)
             local inputValue = tonumber(input.currentValue)
             CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRateThreshold = inputValue
