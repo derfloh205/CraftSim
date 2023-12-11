@@ -236,5 +236,7 @@ function CraftSim.CRAFTQ:IsRecipeQueueable(recipeData)
     recipeData.learned and
     not recipeData.isRecraft and
     not recipeData.isSalvageRecipe and
-    not recipeData.isBaseRecraftRecipe
+    not recipeData.isBaseRecraftRecipe and
+    recipeData.resultData.itemsByQuality[1] and -- needs at least one result
+    not recipeData.isAlchemicalExperimentation
 end

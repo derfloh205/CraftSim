@@ -11,9 +11,11 @@ function CraftSim.NEWS:GET_NEWS()
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
         newP("11.2.0") ..
-        f.p .. f.bb("CraftQueue") .. " now shows average profit margin" ..
-        f.p .. f.bb("CraftQueue") .. " now has configureable " .. f.g("Restock Options") ..
-        f.a .. "affecting " .. f.bb("Restock from Recipe Scan") .. "Behaviour" ..
+        f.P .. f.bb("CraftQueue") .. " now has configureable " .. f.g("Restock Options") ..
+        f.a .. "affecting " .. f.bb("Restock from Recipe Scan") .. " Behaviour" ..
+        f.s .. f.bb("CraftQueue") .. " now shows average profit margin" ..
+        f.p .. f.bb("PriceDetails:") .. " fixed a bug where not all qualities were listed" ..
+        f.a .. "when opening a recipe the first time a session" ..
         newP("11.1.2") ..
         f.p .. "Fixed " .. f.bb("CraftResults") .. " incorrectly adding multicraft results" ..
         f.p .. "Fixed " .. f.bb("CraftQueue") .. " not being initialized sometimes" ..

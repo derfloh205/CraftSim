@@ -62,6 +62,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.isEnchantingRecipe = recipeInfo.isEnchantingRecipe or false
     self.isCooking = self.professionData.professionInfo.profession == Enum.Profession.Cooking
     self.isSalvageRecipe = recipeInfo.isSalvageRecipe or false
+    self.isAlchemicalExperimentation = tContains(CraftSim.CONST.ALCHEMICAL_EXPERIMENTATION_RECIPE_IDS, recipeID)
     ---@type string?
     self.allocationItemGUID = nil
     self.maxQuality = recipeInfo.maxQuality
