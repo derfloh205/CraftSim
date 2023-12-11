@@ -633,9 +633,11 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
             tsmSaleRateCB:SetChecked(initialRestockOptions.saleRatePerQuality[qualityID])
 
             restockCB.clickCallback = function (_, checked)
+                CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality or {}
                 CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality[qualityID] = checked
             end
             tsmSaleRateCB.clickCallback = function (_, checked)
+                CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality or {}
                 CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality[qualityID] = checked
             end
         end
