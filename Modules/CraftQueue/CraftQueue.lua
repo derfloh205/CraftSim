@@ -98,19 +98,75 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
     if not recipeData.learned then
         return false
     end
-    if recipeData.averageProfitCached then
-        local relativeProfit = recipeData.relativeProfitCached or 0
-        return relativeProfit > (CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0)
-    else
-        return false
+
+    local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
+
+    if not restockOptions.enabled then
+        -- use general options
+        if recipeData.relativeProfitCached then
+            return recipeData.relativeProfitCached >= (CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0)
+        else
+            return false
+        end
     end
+
+    local profitMarginReached = false
+
+    -- else use recipe specific restock options to filter
+    if recipeData.relativeProfitCached then
+        profitMarginReached = recipeData.relativeProfitCached >= (restockOptions.profitMarginThreshold)
+    end
+
+    local saleRateReached = false
+
+    if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1])) then
+        local totalSaleRate = 0
+        local numUsedQualities = 0
+        for qualityID, use in pairs(restockOptions.saleRatePerQuality) do
+            local item = recipeData.resultData.itemsByQuality[qualityID]
+            if item and use then
+                numUsedQualities = numUsedQualities + 1
+                --- item should be loaded by now cause all recipeData comes from recipescan or MAIN
+                totalSaleRate = totalSaleRate + CraftSimTSM:GetItemSaleRate(item:GetItemLink())
+            end
+        end
+        if numUsedQualities == 0 then
+            saleRateReached = true
+        else
+            local avgSaleRate = totalSaleRate / numUsedQualities
+            saleRateReached = avgSaleRate >= restockOptions.saleRateThreshold
+        end
+    else
+        saleRateReached = true
+    end
+
+
+    return profitMarginReached and saleRateReached
 end
 
 function CraftSim.CRAFTQ:ImportRecipeScan()
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue({})
-    local profitableRecipes = CraftSim.GUTIL:Filter(CraftSim.RECIPE_SCAN.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
-    for _, recipeData in pairs(profitableRecipes) do
-        CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, 1) -- TODO: make configureable per recipe, maybe via tsm string? as option or some fixed stuff
+    ---@type CraftSim.RecipeData[]
+    local filteredRecipes = CraftSim.GUTIL:Filter(CraftSim.RECIPE_SCAN.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
+    for _, recipeData in pairs(filteredRecipes) do
+        local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
+        local restockAmount = tonumber(CraftSimOptions.craftQueueGeneralRestockRestockAmount)
+        if restockOptions.enabled then
+            restockAmount = restockOptions.restockAmount
+
+            for qualityID, use in pairs(restockOptions.restockPerQuality) do
+                if use then
+                    local item = recipeData.resultData.itemsByQuality[qualityID]
+                    if item then
+                        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(item:GetItemID(), true, false, true)
+                        restockAmount = restockAmount - itemCount
+                    end
+                end
+            end
+        end
+        if restockAmount > 0 then
+            CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, restockAmount)
+        end
     end
 
     CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()    
@@ -239,4 +295,26 @@ function CraftSim.CRAFTQ:IsRecipeQueueable(recipeData)
     not recipeData.isBaseRecraftRecipe and
     recipeData.resultData.itemsByQuality[1] and -- needs at least one result
     not recipeData.isAlchemicalExperimentation
+end
+
+---@class CraftSim.CraftQueue.RestockRecipeOption
+---@field enabled boolean,
+---@field profitMarginThreshold number,
+---@field restockAmount number,
+---@field restockPerQuality table<number, boolean>,
+---@field saleRateThreshold number,
+---@field saleRatePerQuality table<number, boolean>
+
+---@param recipeID number
+---@return CraftSim.CraftQueue.RestockRecipeOption
+function CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeID)
+    CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID] = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID] or {}
+    return {
+        enabled = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].enabled or false,
+        profitMarginThreshold = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].profitMarginThreshold or 0,
+        restockAmount = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].restockAmount or 1,
+        restockPerQuality = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].restockPerQuality or {},
+        saleRateThreshold = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].saleRateThreshold or 0,
+        saleRatePerQuality = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].saleRatePerQuality or {}
+    }
 end

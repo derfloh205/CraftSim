@@ -175,6 +175,14 @@ function CraftSimTSM:GetMinBuyoutByItemLink(itemLink, isReagent)
     return CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString, isReagent)
 end
 
+function CraftSimTSM:GetItemSaleRate(itemLink)
+    local key = "dbregionsalerate*1000" -- because 0.x will be rounded down to 0 and resolves to nil 
+    local tsmItemString = TSM_API.ToItemString(itemLink)
+    local salerate, error = TSM_API.GetCustomPriceValue(key, tsmItemString)
+
+    return salerate/1000 or 0
+end
+
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)
     local vendorPrice = Auctionator.API.v1.GetVendorPriceByItemID(CraftSimAddonName, itemID)
     if vendorPrice then

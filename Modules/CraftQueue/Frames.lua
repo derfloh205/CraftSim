@@ -264,14 +264,29 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
                 CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold = tonumber(numberInput.currentValue or 0)
             end
         })
-
         -- %
         CraftSim.GGUI.Text({parent=generalOptionsFrame, anchorParent=generalOptionsFrame.profitMarginThresholdInput.textInput.frame, 
             anchorA="LEFT", anchorB="RIGHT", text="%", offsetX=2})        
+
+        generalOptionsFrame.restockAmountLabel = CraftSim.GGUI.Text({parent=generalOptionsFrame, anchorParent=profitMarginLabel.frame, 
+            anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_AMOUNT_LABEL),
+            offsetY=-15,
+        })
+
+        generalOptionsFrame.restockAmountInput = CraftSim.GGUI.NumericInput{
+            parent=generalOptionsFrame, anchorParent=generalOptionsFrame.restockAmountLabel.frame, 
+            initialValue = tonumber(CraftSimOptions.craftQueueGeneralRestockRestockAmount) or 1, 
+            anchorA="LEFT", anchorB="RIGHT", offsetX=10, minValue=1,
+            sizeX=40, borderAdjustWidth=1.2, onNumberValidCallback=function (input)
+                local value = tostring(input.currentValue)
+                CraftSimOptions.craftQueueGeneralRestockRestockAmount = value or 1
+            end
+        }
+        
         
         restockOptionsTab.content.recipeOptionsFrame = CreateFrame("Frame", nil, restockOptionsTab.content)
         restockOptionsTab.content.recipeOptionsFrame:SetSize(150, 50)
-        restockOptionsTab.content.recipeOptionsFrame:SetPoint("TOP", generalOptionsFrame, "BOTTOM", 0, -20)
+        restockOptionsTab.content.recipeOptionsFrame:SetPoint("TOP", generalOptionsFrame, "BOTTOM", 0, -50)
 
         ---@class CraftSim.CraftQueue.RestockOptions.RecipeOptionsFrame : Frame
         local recipeOptionsFrame = restockOptionsTab.content.recipeOptionsFrame
@@ -314,8 +329,8 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         }
 
         recipeOptionsFrame.restockAmountInput = CraftSim.GGUI.NumericInput{
-            parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame.restockAmountLabel.frame, initialValue = 0, 
-            anchorA="LEFT", anchorB="RIGHT", offsetX=10, minValue=0,
+            parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame.restockAmountLabel.frame, initialValue = 1, 
+            anchorA="LEFT", anchorB="RIGHT", offsetX=10, minValue=1,
             sizeX=40, borderAdjustWidth=1.2, onNumberValidCallback=nil -- set dynamically
         }
 
@@ -599,15 +614,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
         local recipeIconText = CraftSim.GUTIL:IconToText(recipeData.recipeIcon, 25, 25)
         recipeOptionsFrame.recipeTitle:SetText(recipeIconText .. " " .. recipeData.recipeName)
 
-        ---@class CraftSim.CraftQueue.RestockRecipeOption
-        CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID] = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID] or {
-            enabled = false,
-            profitMarginThreshold = 0,
-            restockAmount = 0,
-            restockPerQuality = {},
-            saleRateThreshold = 0,
-            saleRatePerQuality = {}
-        }
+        CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID] = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID] or CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
         
         ---@type CraftSim.CraftQueue.RestockOptions.TSMSaleRateFrame
         local tsmSaleRateFrame = recipeOptionsFrame.tsmSaleRateFrame

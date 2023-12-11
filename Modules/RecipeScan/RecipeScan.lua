@@ -153,6 +153,9 @@ end
 
 ---@param recipeInfo TradeSkillRecipeInfo
 function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
+    if tContains(CraftSim.CONST.ALCHEMICAL_EXPERIMENTATION_RECIPE_IDS, recipeInfo.recipeID) then
+        return false
+    end
     if recipeInfo.isDummyRecipe then
         return false
     end

@@ -13,7 +13,10 @@ function CraftSim.NEWS:GET_NEWS()
         newP("11.2.0") ..
         f.P .. f.bb("CraftQueue") .. " now has configureable " .. f.g("Restock Options") ..
         f.a .. "affecting " .. f.bb("Restock from Recipe Scan") .. " Behaviour" ..
-        f.s .. f.bb("CraftQueue") .. " now shows average profit margin" ..
+        f.a .. "This includes " .. f.g("Restock Amount") .. " and thresholds" .. 
+        f.a .. "like " .. f.g("Profit Margin") .." and " .. f.g("Sale Rate") ..
+        f.a .. f.bb("Sale Rate Thresholds") .. " are only available if TSM is loaded!" ..
+        f.s .. f.bb("CraftQueue") .. " now shows average profit margin per recipe" ..
         f.p .. f.bb("PriceDetails:") .. " fixed a bug where not all qualities were listed" ..
         f.a .. "when opening a recipe the first time a session" ..
         newP("11.1.2") ..
