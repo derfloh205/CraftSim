@@ -103,11 +103,13 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
 
     if not restockOptions.enabled then
         -- use general options
+        local profitThresholdReached = false
         if recipeData.relativeProfitCached then
-            return recipeData.relativeProfitCached >= (CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0)
-        else
-            return false
+            profitThresholdReached = recipeData.relativeProfitCached >= (CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0)
         end
+        local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, nil, CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold)
+
+        return profitThresholdReached and saleRateReached
     end
 
     local profitMarginReached = false
@@ -117,29 +119,7 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
         profitMarginReached = recipeData.relativeProfitCached >= (restockOptions.profitMarginThreshold)
     end
 
-    local saleRateReached = false
-
-    if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1])) then
-        local totalSaleRate = 0
-        local numUsedQualities = 0
-        for qualityID, use in pairs(restockOptions.saleRatePerQuality) do
-            local item = recipeData.resultData.itemsByQuality[qualityID]
-            if item and use then
-                numUsedQualities = numUsedQualities + 1
-                --- item should be loaded by now cause all recipeData comes from recipescan or MAIN
-                totalSaleRate = totalSaleRate + CraftSimTSM:GetItemSaleRate(item:GetItemLink())
-            end
-        end
-        if numUsedQualities == 0 then
-            saleRateReached = true
-        else
-            local avgSaleRate = totalSaleRate / numUsedQualities
-            saleRateReached = avgSaleRate >= restockOptions.saleRateThreshold
-        end
-    else
-        saleRateReached = true
-    end
-
+    local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, restockOptions.saleRatePerQuality, restockOptions.saleRateThreshold)
 
     return profitMarginReached and saleRateReached
 end
@@ -328,4 +308,26 @@ function CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeID)
         saleRateThreshold = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].saleRateThreshold or 0,
         saleRatePerQuality = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].saleRatePerQuality or {}
     }
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param usedQualitiesTable table<number, boolean>?
+---@param saleRateThreshold number
+---@private
+function CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, usedQualitiesTable, saleRateThreshold)
+    usedQualitiesTable = usedQualitiesTable or {true, true, true, true, true}
+    if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1])) then
+        return true -- always true if TSM is not loaded
+    end
+    for qualityID, checkQuality in pairs(usedQualitiesTable or {}) do
+        local item = recipeData.resultData.itemsByQuality[qualityID]
+        if item and checkQuality then
+            -- return true if any item has a sale rate over the threshold
+            if CraftSimTSM:GetItemSaleRate(item:GetItemLink()) >= saleRateThreshold then
+                return true
+            end
+        end
+    end
+
+    return false
 end

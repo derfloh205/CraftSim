@@ -460,11 +460,16 @@ function CraftSim.LOCAL_EN:GetData()
 [[
 Only available when %s is loaded!
 
-If multiple qualities are checked, the average sale rate of those qualities will be used.
-Recipes that produce non-quality items will consider the %s option!
+It will be checked wether %s of an item's chosen qualities has a sale rate
+greater or equal the configured sale rate threshold.
+]], f.bb("TSM"), f.bb("any")),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL] = string.format(
+[[
+Only available when %s is loaded!
 
-If nothing is checked, sale rate will be ignored.
-]], f.bb("TSM"), CraftSim.GUTIL:GetQualityIconString(1, 20, 20)),
+It will be checked wether %s of an item's qualities has a sale rate
+greater or equal the configured sale rate threshold.
+]], f.bb("TSM"), f.bb("any")),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_AMOUNT_LABEL] = "Restock Amount:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_RESTOCK_TOOLTIP] = "This is the " .. f.bb("amount of crafts") .. " that will be queued for that recipe.\n\nThe amount of items you have in your inventory and bank of the checked qualities will be subtracted from the restock amount upon restocking",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_LABEL] = "Enable:",

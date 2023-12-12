@@ -270,7 +270,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
 
         generalOptionsFrame.restockAmountLabel = CraftSim.GGUI.Text({parent=generalOptionsFrame, anchorParent=profitMarginLabel.frame, 
             anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_AMOUNT_LABEL),
-            offsetY=-15,
+            offsetY=-10,
         })
 
         generalOptionsFrame.restockAmountInput = CraftSim.GGUI.NumericInput{
@@ -282,11 +282,42 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
                 CraftSimOptions.craftQueueGeneralRestockRestockAmount = value or 1
             end
         }
-        
+
+        local qualityIconSize = 20
+        local qualityCheckboxBaseOffsetX=10
+        local qualityCheckboxSpacingX=50
+        local function createQualityCheckbox(p, a, qualityID, oX, oY)
+            oX = oX or -2
+            oY = oY or -2.8
+            return CraftSim.GGUI.Checkbox{
+                parent=p, anchorParent=a, 
+                anchorA="LEFT", anchorB="RIGHT", offsetX=qualityCheckboxBaseOffsetX+qualityCheckboxSpacingX*(qualityID-1), 
+                label=CraftSim.GUTIL:GetQualityIconString(qualityID, qualityIconSize, qualityIconSize, oX, oY)}
+        end
+
+        -- always create the inputs and such but only show when tsm is loaded
+        generalOptionsFrame.saleRateTitle = CraftSim.GGUI.Text{parent=generalOptionsFrame, anchorParent=generalOptionsFrame.restockAmountLabel.frame, 
+            anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", offsetY=-10,
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL)
+        }
+
+        generalOptionsFrame.saleRateInput = CraftSim.GGUI.NumericInput{
+            parent=generalOptionsFrame, anchorParent=generalOptionsFrame.saleRateTitle.frame, initialValue = 0, 
+            anchorA="LEFT", anchorB="RIGHT", offsetX=10,
+            allowDecimals=true,minValue=0,
+            sizeX=40, borderAdjustWidth=1.2, onNumberValidCallback=function (input)
+                local value = input.currentValue
+                CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold = tonumber(value)
+            end
+        }
+
+        generalOptionsFrame.helpIcon = CraftSim.GGUI.HelpIcon{parent=generalOptionsFrame, anchorParent=generalOptionsFrame.saleRateTitle.frame, 
+            anchorA="RIGHT", anchorB="LEFT", offsetX=-2, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL)
+        }
         
         restockOptionsTab.content.recipeOptionsFrame = CreateFrame("Frame", nil, restockOptionsTab.content)
         restockOptionsTab.content.recipeOptionsFrame:SetSize(150, 50)
-        restockOptionsTab.content.recipeOptionsFrame:SetPoint("TOP", generalOptionsFrame, "BOTTOM", 0, -50)
+        restockOptionsTab.content.recipeOptionsFrame:SetPoint("TOP", generalOptionsFrame, "BOTTOM", 0, -60)
 
         ---@class CraftSim.CraftQueue.RestockOptions.RecipeOptionsFrame : Frame
         local recipeOptionsFrame = restockOptionsTab.content.recipeOptionsFrame
@@ -333,18 +364,6 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             anchorA="LEFT", anchorB="RIGHT", offsetX=10, minValue=1,
             sizeX=40, borderAdjustWidth=1.2, onNumberValidCallback=nil -- set dynamically
         }
-
-        local qualityIconSize = 20
-        local qualityCheckboxBaseOffsetX=10
-        local qualityCheckboxSpacingX=50
-        local function createQualityCheckbox(p, a, qualityID, oX, oY)
-            oX = oX or -2
-            oY = oY or -2.8
-            return CraftSim.GGUI.Checkbox{
-                parent=p, anchorParent=a, 
-                anchorA="LEFT", anchorB="RIGHT", offsetX=qualityCheckboxBaseOffsetX+qualityCheckboxSpacingX*(qualityID-1), 
-                label=CraftSim.GUTIL:GetQualityIconString(qualityID, qualityIconSize, qualityIconSize, oX, oY)}
-        end
 
         recipeOptionsFrame.restockQualityCheckboxes = {
             createQualityCheckbox(recipeOptionsFrame, recipeOptionsFrame.restockAmountInput.textInput.frame, 1, 0, -3),
@@ -627,15 +646,14 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
             local tsmSaleRateCB = tsmSaleRateFrame.qualityCheckboxes[qualityID]
             local hasQualityID = recipeData.resultData.itemsByQuality[qualityID] ~= nil
             restockCB:SetVisible(hasQualityID)
-            tsmSaleRateCB:SetVisible(hasQualityID)
-
             restockCB:SetChecked(initialRestockOptions.restockPerQuality[qualityID])
-            tsmSaleRateCB:SetChecked(initialRestockOptions.saleRatePerQuality[qualityID])
-
             restockCB.clickCallback = function (_, checked)
                 CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality or {}
                 CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality[qualityID] = checked
             end
+            
+            tsmSaleRateCB:SetVisible(hasQualityID)
+            tsmSaleRateCB:SetChecked(initialRestockOptions.saleRatePerQuality[qualityID])
             tsmSaleRateCB.clickCallback = function (_, checked)
                 CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality or {}
                 CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality[qualityID] = checked
