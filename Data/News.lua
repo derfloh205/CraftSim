@@ -10,6 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return
         f.bb("                   Hello and thank you for using CraftSim!\n") ..
         f.bb("                                 ( You are awesome! )") ..
+        newP("11.3.1") ..
+        f.p .. "Fixed GeneralRestockAmount Options having no default value" ..
         newP("11.3.0") ..
         f.s .. "Changed " .. f.bb("CraftQueue") .. " Restock Option for Sale Rate" ..
         f.a .. "behaviour to check wether any of the chosen qualities reaches" ..

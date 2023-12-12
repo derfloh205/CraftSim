@@ -72,8 +72,9 @@ CraftSimOptions = CraftSimOptions or {
 
 	-- craft queue
 	craftQueueGeneralRestockProfitMarginThreshold = 0,
-	craftQueueRestockPerRecipeOptions = {},
+	craftQueueGeneralRestockRestockAmount = 1,
 	craftQueueGeneralRestockSaleRateThreshold = 0,
+	craftQueueRestockPerRecipeOptions = {},
 }
 
 CraftSimGGUIConfig = CraftSimGGUIConfig or {}
@@ -146,8 +147,9 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.customMulticraftConstant = CraftSimOptions.customMulticraftConstant or CraftSim.CONST.MULTICRAFT_CONSTANT
 		CraftSimOptions.customResourcefulnessConstant = CraftSimOptions.customResourcefulnessConstant or CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
 		CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold = CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0
-		CraftSimOptions.craftQueueRestockPerRecipeOptions = CraftSimOptions.craftQueueRestockPerRecipeOptions or {}
 		CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold = CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold or 0
+		CraftSimOptions.craftQueueGeneralRestockRestockAmount = CraftSimOptions.craftQueueGeneralRestockRestockAmount or 1
+		CraftSimOptions.craftQueueRestockPerRecipeOptions = CraftSimOptions.craftQueueRestockPerRecipeOptions or {}
 		
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
