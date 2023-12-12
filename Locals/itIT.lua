@@ -594,6 +594,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP] = "Mostra la finestra con le ultime " .. f.bb("Novità") .. " di " .. f.l("CraftSim") .. " quando entri in gioco",
 
         -- Control Panel
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL] = "Coda di creazione",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP] = "Metti in coda le tue ricette e creale tutte assieme!",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL] = "Ottimizzazione Strumenti",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP] = "Mostra la miglior combinazione di strumenti per le professioni disponibile in base alla modalità scelta.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL] = "Dettaglio Prezzi",
@@ -644,6 +646,45 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TO] = "A",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_FOR] = "Per",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_FORMAT] = "Creati %s per %s",
-        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_BUTTON] = "Rimuovi cliente",        
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_BUTTON] = "Rimuovi cliente",
+
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_TITLE] = "Coda di Creazione di CraftSim",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AMOUNT_LEFT_HEADER] = "In coda",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER] = "Equipaggiamento professioni",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL] = "Crea",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR] = "Strumenti sbagliati",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "Nessun materiale",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "Aggiungi ricetta selezionata",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Cancella tutto",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Rifornimento da Scansione Ricette",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Professione sbagliata",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_REAGENT_INFO_HEADER] = "Reagenti",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_REAGENT_INFO_BUTTON_LABEL] = "Mostra reagenti",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL] = "Crea successivo",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT] = "Creabile",
+        [CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL] = "Crea lista della spesa in Auctionator",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL] = "Coda di creazione",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL] = "Opzioni di rifornimento",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL] = "Soglia di profitto:",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL] = "Soglia tasso di vendità:",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP] = string.format(
+[[
+Disponibile solo quando %s è caricato!
+
+Verrà controllato se una %s delle qualità dell'oggetto scelto ha un tasso di vendita
+maggiore o uguale alla soglia configurata.
+]], f.bb("TSM"), f.bb("qualunque")),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL] = string.format(
+[[
+Disponibile solo quando %s è caricato!
+
+Verrà controllato se una %s delle qualità dell'oggetto scelto ha un tasso di vendita
+maggiore o uguale alla soglia configurata.
+]], f.bb("TSM"), f.bb("qualunque")),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_AMOUNT_LABEL] = "Quantità di rifornimento:",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_RESTOCK_TOOLTIP] = "E' la " .. f.bb("quantità di creazioni") .. " che sarà messa in coda per la ricetta.\n\nLa quantità di oggetti della qualità selezionata presenti nel tuo inventario e in banca sarà sottratta dalla quantità da rifornire",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_LABEL] = "Abilita:",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_OPTIONS_LABEL] = "Opzioni generali (Tutte le ricette)",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP] = "Se viene deselezionato, la ricetta sarà rifornita in base alle opzioni generali",
     }
 end

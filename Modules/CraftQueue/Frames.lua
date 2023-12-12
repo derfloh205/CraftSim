@@ -156,7 +156,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
                 })
 
                 function topGearColumn.equippedText:SetEquipped()
-                    topGearColumn.equippedText:SetText(CraftSim.GUTIL:ColorizeText("Equipped", CraftSim.GUTIL.COLORS.GREEN))
+                    topGearColumn.equippedText:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED), CraftSim.GUTIL.COLORS.GREEN))
                 end
                 function topGearColumn.equippedText:SetIrrelevant()
                     topGearColumn.equippedText:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
