@@ -10,6 +10,9 @@ function CraftSim.NEWS:GET_NEWS()
     return
         f.bb("                   Hello and thank you for using CraftSim!\n") ..
         f.bb("                                 ( You are awesome! )") ..
+        newP("11.3.2") ..
+        f.p .. "Fixed recipe restock option for salerate false positive if" ..
+        f.a .. "all qualities are toggled off" ..
         newP("11.3.1") ..
         f.p .. "Fixed GeneralRestockAmount Options having no default value" ..
         newP("11.3.0") ..

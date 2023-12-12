@@ -127,6 +127,10 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
 
     local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, restockOptions.saleRatePerQuality, restockOptions.saleRateThreshold)
 
+    print("Filter Recipe: " .. recipeData.recipeName)
+    print("profitMarginReached: " .. tostring(profitMarginReached))
+    print("saleRateReached: " .. tostring(saleRateReached))
+
     return profitMarginReached and saleRateReached
 end
 
@@ -328,6 +332,10 @@ end
 ---@private
 function CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, usedQualitiesTable, saleRateThreshold)
     usedQualitiesTable = usedQualitiesTable or {true, true, true, true, true}
+    local allOff = not CraftSim.GUTIL:Some(usedQualitiesTable, function(v) return v end)
+    if allOff then
+        return true -- if nothing is checked for an individual sale rate check then its just true
+    end
     if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1])) then
         return true -- always true if TSM is not loaded
     end

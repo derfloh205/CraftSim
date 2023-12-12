@@ -360,6 +360,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
                     -- 1.97 floor is 1 and 1 floor is also one, so we take the ceil and minus one method
                     -- update: just minus one to get the average crafts before the final average craft that reaches the desired quality
                     -- e.g: if the expected is 1.05 then the average sell value for lower quality of that is weighted with 0.05 which seems about right
+                    print("recipeData.resultData.expectedCraftsByQuality[qualityID]: " .. tostring(recipeData.resultData.expectedCraftsByQuality[qualityID]), false, true)
                     expectedSellReturnForQuality = (recipeData.resultData.expectedCraftsByQuality[qualityID] - 1) * recipeData.priceData.qualityPriceList[qualityID-1]
                     expectedSellReturnForQuality = expectedSellReturnForQuality * CraftSim.CONST.AUCTION_HOUSE_CUT
                 end
