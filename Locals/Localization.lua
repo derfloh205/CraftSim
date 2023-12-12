@@ -31,6 +31,7 @@ function CraftSim.LOCAL:Init()
     end
 end
 
+---@param ID CraftSim.LOCALIZATION_IDS
 function CraftSim.LOCAL:GetText(ID)
     local localizedText = CraftSim.LOCAL.LOCAL:GetData()[ID]
 

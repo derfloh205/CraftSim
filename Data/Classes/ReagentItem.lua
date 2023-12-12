@@ -3,6 +3,8 @@ _, CraftSim = ...
 ---@class CraftSim.ReagentItem
 CraftSim.ReagentItem = CraftSim.Object:extend()
 
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
+
 ---@param itemID number
 ---@param qualityID number?
 function CraftSim.ReagentItem:new(itemID, qualityID)
@@ -11,6 +13,7 @@ function CraftSim.ReagentItem:new(itemID, qualityID)
     itemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[itemID] or itemID
 
     self.qualityID = qualityID
+    --- how much of that reagentItem has been allocated for this recipe
     self.quantity = 0
     self.item = Item:CreateFromItemID(itemID)
 end
@@ -40,13 +43,15 @@ function CraftSim.ReagentItem:Clear()
     self.quantity = 0
 end
 
-function CraftSim.ReagentItem:HasItem()
+--- returns wether the player has enough of the given required item's allocations (times the multiplier)
+---@param multiplier number? default: 1
+function CraftSim.ReagentItem:HasItem(multiplier)
+    multiplier = multiplier or 1
     if not self.item then
         return false
     end
-    local itemCount = GetItemCount(self.item:GetItemID(), true, true, true)
-
-    return itemCount >= self.quantity
+    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(self.item:GetItemID(), true, true, true)
+    return itemCount >= (self.quantity * multiplier)
 end
 
 ---@class CraftSim.ReagentItem.Serialized

@@ -120,15 +120,57 @@ function CraftSim.Reagent:Clear()
     end)
 end
 
-function CraftSim.Reagent:HasItems()
+function CraftSim.Reagent:GetTotalQuantity()
+    local total = 0
     for _, reagentItem in pairs(self.items) do
-        local hasItems = reagentItem:HasItem()
+        total = total + reagentItem.quantity
+    end
+    return total
+end
+
+--- returns wether the player has enough of the given required item's allocations (times the multiplier)
+---@param multiplier number? default: 1
+function CraftSim.Reagent:HasItems(multiplier)
+    multiplier = multiplier or 1
+
+    -- check if the player owns enough of each allocated items's quantity and sum up the allocated quantities
+    local totalQuantity = 0
+    for _, reagentItem in pairs(self.items) do
+        local hasItems = reagentItem:HasItem(multiplier)
+        totalQuantity = totalQuantity + reagentItem.quantity
         if not hasItems then
             return false
         end
     end
 
-    return true
+    -- check if the allocated quantity is enough to satisfy the required quantity (times multiplier)
+    totalQuantity = totalQuantity * multiplier
+    local requiredQuantity = self.requiredQuantity*multiplier
+    local hasRequiredTotalQuantity = totalQuantity >= requiredQuantity
+
+    return hasRequiredTotalQuantity
+end
+
+--- check how many times the player can fulfill the allocated item quantity
+function CraftSim.Reagent:HasQuantityXTimes()
+    local currentMinTimes = math.huge
+
+    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+    --print("CraftSim.Reagent:HasQuantityXTimes", false, true)
+    for q, reagentItem in pairs(self.items) do
+        if reagentItem.quantity > 0 then
+            --print("-" .. tostring(reagentItem.item:GetItemName()) .. "(" .. q .. ")")
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(reagentItem.item:GetItemID(), true, true, true)
+            --print("--player item count: " .. tostring(itemCount))
+            --print("--reagentItem.quantity: " .. tostring(reagentItem.quantity))
+            local itemFitCount = math.floor(itemCount / reagentItem.quantity)
+            --print("--itemFitCount: " .. tostring(itemFitCount))
+            currentMinTimes = math.min(itemFitCount, currentMinTimes)
+            --print("--currentMinTimes: " .. tostring(currentMinTimes))
+        end
+    end
+
+    return currentMinTimes 
 end
 
 function CraftSim.Reagent:SetCheapestQualityMax()

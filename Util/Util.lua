@@ -7,6 +7,7 @@ local multicraftFactor = 0.0009
 local resourcefulnessFactor = 0.00111
 local craftingspeedFactor = 0.002
 
+---@param debugID CraftSim.DEBUG_IDS
 function CraftSim.UTIL:SetDebugPrint(debugID)
     local function print(text, recursive, l, level)
         if CraftSim_DEBUG and CraftSim.GGUI.GetFrame and CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG) then
@@ -333,7 +334,13 @@ function CraftSim.UTIL:StopProfiling(label)
     local time = debugprofilestop()
     local diff = time - profilings[label]
     profilings[label] = nil
-    CraftSim_DEBUG:print("Elapsed Time for " .. label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+    CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+end
+
+function CraftSim.UTIL:ProfilingUpdate(label)
+    local time = debugprofilestop()
+    local diff = time - profilings[label]
+    CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms (u)", CraftSim.CONST.DEBUG_IDS.PROFILING)
 end
 
 function CraftSim.UTIL:GetFormatter()

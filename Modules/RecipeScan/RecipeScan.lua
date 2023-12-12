@@ -61,6 +61,8 @@ function CraftSim.RECIPE_SCAN:EndScan()
     collectgarbage("collect") -- By Option?
     CraftSim.RECIPE_SCAN:ToggleScanButton(true)
     CraftSim.RECIPE_SCAN.isScanning = false
+
+    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay() -- TODO: maybe only the button...
 end
 
 function CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)
@@ -163,6 +165,9 @@ end
 
 ---@param recipeInfo TradeSkillRecipeInfo
 function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
+    if tContains(CraftSim.CONST.ALCHEMICAL_EXPERIMENTATION_RECIPE_IDS, recipeInfo.recipeID) then
+        return false
+    end
     if recipeInfo.isDummyRecipe then
         return false
     end

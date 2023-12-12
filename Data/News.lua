@@ -7,9 +7,49 @@ function CraftSim.NEWS:GET_NEWS()
     local f = CraftSim.UTIL:GetFormatter()
     local function newP(v) return f.l("\n\n                                   --- Version " .. v .. " ---\n") end
 
-    return 
-        f.bb("                   Hello and thank you for using CraftSim!\n") .. 
+    return
+        f.bb("                   Hello and thank you for using CraftSim!\n") ..
         f.bb("                                 ( You are awesome! )") ..
+        newP("11.3.1") ..
+        f.p .. "Fixed GeneralRestockAmount Options having no default value" ..
+        newP("11.3.0") ..
+        f.s .. "Changed " .. f.bb("CraftQueue") .. " Restock Option for Sale Rate" ..
+        f.a .. "behaviour to check wether any of the chosen qualities reaches" ..
+        f.a .. "the threshold instead of the average" ..
+        f.p .. "Added Sale Rate Threshold option to General Restock Options" ..
+        newP("11.2.2") ..
+        f.P .. f.bb("CraftQueue") .. " now has configureable " .. f.g("Restock Options") ..
+        f.a .. "affecting " .. f.bb("Restock from Recipe Scan") .. " Behaviour" ..
+        f.a .. "This includes " .. f.g("Restock Amount") .. " and thresholds" .. 
+        f.a .. "like " .. f.g("Profit Margin") .." and " .. f.g("Sale Rate") ..
+        f.a .. f.bb("Sale Rate Thresholds") .. " are only available if TSM is loaded!" ..
+        f.s .. f.bb("CraftQueue") .. " now shows average profit margin per recipe" ..
+        f.p .. f.bb("PriceDetails:") .. " fixed a bug where not all qualities were listed" ..
+        f.a .. "when opening a recipe the first time a session" ..
+        newP("11.1.2") ..
+        f.p .. "Fixed " .. f.bb("CraftResults") .. " incorrectly adding multicraft results" ..
+        f.p .. "Fixed " .. f.bb("CraftQueue") .. " not being initialized sometimes" ..
+        f.p .. "Fixed " .. f.bb("Create Auctionator Shopping List") .. " button not working" ..
+        f.p .. f.bb("Shopping List") .. " will now exclude soulbound items" ..
+        f.p .. f.bb("Shopping List") .. " will now remove/reduce items when bought" ..
+        f.p .. "Added a delete button for each " .. f.bb("CraftQueue Row") ..
+        f.p .. "Unlearned recipes are now not addable to the " .. f.bb("CraftQueue") ..
+        f.p .. f.g("Increased CraftQueue Performance") .. " using an ItemCount Cache" ..
+        f.a .. "and a lot of precalculations" ..
+        f.p .. f.bb("CraftQueue Rows") .. " are now sorted by" ..
+        f.a .. "craftable status > profit per craft" ..
+        f.p .. "Supporter List Update!" ..
+        f.a .. "Thanks to " .. f.patreon("Jose Luis") .. " for that huge donation! <3" ..
+        newP("11.0.0") ..
+        f.P .. f.g("New Module:") .. f.l(" CraftQueue") ..
+        f.a .. "Queue Recipes from your currently open recipe or even" ..
+        f.a .. "from your last " .. f.bb("Recipe Scan") .. " results " .. 
+        f.a .. "and craft them all in one place!" ..
+        f.a .. "Directly create an " .. f.bb("Auctionator Shopping List") .. 
+        f.a .. "to buy every reagent you are missing!" ..
+        f.a .. "- More restock options are coming!" ..
+        f.a .. "- CraftQueue consisting over sessions is also planned" ..
+        f.a .. "(Very new feature, please report any bugs in the discord)" ..
         newP("10.0.1") ..
         f.p .. "Fixed an issue where " .. f.patreon("CraftSim") .. " overwrote the " .. 
         f.a .. "global print function (sorry other devs)" ..
@@ -35,34 +75,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.p .. "Fixed the legend text alignment in the " .. f.bb("Knowledge Simulator") ..
         f.p .. "Slightly increased the height of the " .. f.bb("Specialization Info Module") ..
         f.a .. "to consider the new profession stat info" ..
-        f.p .. "Updated recipes affected by " .. f.bb("Decayology") ..
-        newP("9.0.3") ..
-        f.p .. "Fixed a bug with the " .. f.bb("Reset Frame Positions") .. " button" ..
-        newP("9.0.2") ..
-        f.p .. "Hotfixed an issue with the deploy process" .. 
-        f.a .. "not recognizing git submodules" ..
-        newP("9.0.1") ..
-        f.p .. "Code Refactorings regarding GGUI globalizations" ..
-        newP("9.0.0") ..
-        f.P .. "QOL Updates:" ..
-        f.s .. "Added a checkbox to the " .. f.bb("Recipe Scan") .. " module to " ..
-        f.a .. "optionally sort by relative profit instead of gold value" ..
-        f.s .. "Added a checkbox to the " .. f.bb("Recipe Scan") .. " module to " ..
-        f.a .. "use " ..f.bb("(Lesser) Illustrious Insight") .. " for recipes that" ..
-        f.a .. "allow it. Might be adding a feature to toggle any" .. 
-        f.a .. "Optional Reagents for scans at some point" .. 
-        f.s .. "Added a checkbox to the " .. f.bb("Craft Results") .. " module to" ..
-        f.a .. "disable any recording for a potential performance increase" ..
-        f.a .. "while crafting" ..
-        f.s .. "Automatically highlight all text for a " .. f.l("ForgeFinder Export") ..
-        f.s .. "Added a new " .. f.g("General Option") .. " to toggle this " .. f.bb("News") .. " Popup" ..
-        f.a .. "when logging in after a " .. f.l("CraftSim") .. " Update" ..
-        newP("8.9.4") ..
-        f.p .. "Added " .. f.l("10.2") ..  f.g(" Optional Reagents") ..
-        f.a .. "Thanks to " .. f.bb("https://github.com/TheResinger") .. " !" ..
-        newP("8.9.3") ..
-        f.p .. "Updated enchant recipes for 10.2" ..
-        f.p .. "Supporter List Update"
+        f.p .. "Updated recipes affected by " .. f.bb("Decayology")
 end
 
 function CraftSim.NEWS:GetChecksum()

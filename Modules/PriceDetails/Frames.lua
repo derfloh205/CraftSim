@@ -123,14 +123,11 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, exportMode)
     local resultData = recipeData.resultData
 
     local itemQualityList = resultData.itemsByQuality
-    if not recipeData.supportsQualities then
-        itemQualityList = {itemQualityList[1]} -- force one of an item (illustrious insight e.g. has always 3 items in it for whatever reason)
-    end
 
     priceDetailsFrame.content.priceDetailsList:Remove()
 
-    for qualityID, resultItem in pairs(itemQualityList) do
-        resultItem:ContinueOnItemLoad(function ()
+    CraftSim.GUTIL:ContinueOnAllItemsLoaded(itemQualityList, function ()
+        for qualityID, resultItem in pairs(itemQualityList) do
             priceDetailsFrame.content.priceDetailsList:Add(function(row) 
                 local invColumn = row.columns[1]
                 local itemColumn = row.columns[2]
@@ -154,8 +151,9 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, exportMode)
                     invColumn.text:SetText(itemCount or 0)
                 end
             end)
-        end)
-    end
+        end
+    
+        priceDetailsFrame.content.priceDetailsList:UpdateDisplay()
+    end)
 
-    priceDetailsFrame.content.priceDetailsList:UpdateDisplay()
 end

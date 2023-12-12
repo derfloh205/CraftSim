@@ -33,7 +33,16 @@
         "ChatFrame_AddMessageEventFilter",
         "CloseDropDownMenus",
         "UIDropDownMenu_SetEnabled",
-        "CraftSimCraftData"
+        "CraftSimCraftData",
+        "ToggleDropDownMenu",
+        "GameFontNormal",
+        "ChatTypeInfo",
+        "CraftSimGarbageCollectCraftsInput",
+        "RECrystallize_PriceCheckItemID",
+        "RECrystallize_PriceCheck",
+        "OEMarketInfo",
+        "GameFontHighlight",
+        "CraftSimDebugNodeIDInput"
     ],
     "Lua.diagnostics.disable": [
         "missing-parameter"

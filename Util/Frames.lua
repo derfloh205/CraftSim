@@ -121,27 +121,13 @@ function CraftSim.FRAME:RestoreModulePositions()
     materialOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
     materialOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFTDATA.frame:RestoreSavedConfig(ProfessionsFrame)
+    CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
 end
 
 function CraftSim.FRAME:ResetFrames()
     for _, frame in pairs(CraftSim.MAIN.FRAMES) do
         print("resetting frameID: " .. tostring(frame.frameID))
         frame:ResetPosition()
-    end
-end
-
-local hooked = false
-function CraftSim.FRAME:HandleAuctionatorOverlaps()
-    if hooked then
-        return
-    end
-    hooked = true
-    if IsAddOnLoaded("Auctionator") then
-        Auctionator.CraftingInfo._InitializeProfessionsFrame = Auctionator.CraftingInfo.InitializeProfessionsFrame
-        Auctionator.CraftingInfo.InitializeProfessionsFrame = function(self) 
-            Auctionator.CraftingInfo:_InitializeProfessionsFrame()
-            AuctionatorCraftingInfoProfessionsFrame.SearchButton:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, "TOPLEFT", 0, 25)
-        end
     end
 end
 

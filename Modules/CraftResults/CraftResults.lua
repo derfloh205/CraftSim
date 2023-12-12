@@ -1,38 +1,42 @@
 CraftSimAddonName, CraftSim = ...
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
-CraftSim.CRAFT_RESULTS = CraftSim.GUTIL:CreateRegistreeForEvents({"TRADE_SKILL_ITEM_CRAFTED_RESULT", "TRADE_SKILL_CRAFT_BEGIN"})
+---@class CraftSim.CRAFT_RESULTS : Frame
+CraftSim.CRAFT_RESULTS = CraftSim.GUTIL:CreateRegistreeForEvents({"TRADE_SKILL_ITEM_CRAFTED_RESULT"})
 
+---@type CraftSim.RecipeData
 CraftSim.CRAFT_RESULTS.currentRecipeData = nil
 
 CraftSim.CRAFT_RESULTS.currentSessionData = nil
 
--- save current craft data
-function CraftSim.CRAFT_RESULTS:TRADE_SKILL_CRAFT_BEGIN(spellID)
 
-    -- check if the option is toggled on to disable result recording
-    if CraftSimOptions.craftResultsDisable then
-        return
+---@param recipeData CraftSim.RecipeData
+function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
+
+    --- triggered by enchants and not salvage crafts
+
+    if CraftSim.MAIN.currentRecipeData then
+        local recipeData = CraftSim.MAIN.currentRecipeData
+        -- if the open recipe is a recraft recipe than take this as current craft results recipe data instead 
+        -- because this will not be able to be triggered by the craftqueue!
+        if recipeData.isRecraft then
+            CraftSim.CRAFT_RESULTS.currentRecipeData = recipeData
+            return
+        end
     end
 
-    -- new craft begins if we do not have saved any recipe data yet
-    -- or if the current cached data does not match the recipeid
+    CraftSim.CRAFT_RESULTS.currentRecipeData = recipeData
+end
 
-    if CraftSim.MAIN.currentRecipeData and CraftSim.MAIN.currentRecipeData.recipeID == spellID then
-        -- if prospecting or other salvage item, only use the current recipedata if we have a salvage reagent, otherwise use saved one
-        if CraftSim.MAIN.currentRecipeData.isSalvageRecipe and CraftSim.MAIN.currentRecipeData.reagentData.salvageReagentSlot.activeItem then
-            print("Use RecipeData of Salvage")
-            CraftSim.CRAFT_RESULTS.currentRecipeData = CraftSim.MAIN.currentRecipeData
-        elseif not CraftSim.MAIN.currentRecipeData.isSalvageRecipe then
-            print("Use RecipeData")
-            CraftSim.CRAFT_RESULTS.currentRecipeData = CraftSim.MAIN.currentRecipeData
-        else
-            print("Use RecipeData of last Salvage, cause not reagent found")
+function CraftSim.CRAFT_RESULTS:OnCraftSalvage()
+    if CraftSim.MAIN.currentRecipeData then
+        local recipeData = CraftSim.MAIN.currentRecipeData
+        -- if the open recipe is a salvage or recraft recipe than take this as current craft results recipe data instead 
+        -- because this will not be able to be triggered by the craftqueue!
+        if recipeData.isSalvageRecipe then
+            CraftSim.CRAFT_RESULTS.currentRecipeData = recipeData
+            return
         end
-    elseif CraftSim.MAIN.currentRecipeData then
-        print("RecipeID does not match, take saved one")
-    else
-        print("No RecipeData to match current craft")
     end
 end
 
@@ -57,10 +61,6 @@ end
 function CraftSim.CRAFT_RESULTS:ExportJSON() 
     local sessionData = CraftSim.CRAFT_RESULTS.currentSessionData
 
-    if not CraftSim.MAIN.currentRecipeData then
-        return
-    end
-
     return sessionData:GetJSON()
 end
 
@@ -74,6 +74,7 @@ function CraftSim.CRAFT_RESULTS:AddCraftData(craftResult)
     local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     print("AddCraftData:", false, true)
+    ---@type CraftSim.CraftSessionData
     CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CRAFT_RESULTS.currentSessionData
     if not CraftSim.CRAFT_RESULTS.currentSessionData then
         print("AddCraftData: Create new SessionData")
