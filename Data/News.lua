@@ -7,8 +7,8 @@ function CraftSim.NEWS:GET_NEWS()
     local f = CraftSim.UTIL:GetFormatter()
     local function newP(v) return f.l("\n\n                                   --- Version " .. v .. " ---\n") end
 
-    return 
-        f.bb("                   Hello and thank you for using CraftSim!\n") .. 
+    return
+        f.bb("                   Hello and thank you for using CraftSim!\n") ..
         f.bb("                                 ( You are awesome! )") ..
         newP("11.3.0") ..
         f.s .. "Changed " .. f.bb("CraftQueue") .. " Restock Option for Sale Rate" ..

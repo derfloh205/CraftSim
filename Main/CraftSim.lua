@@ -210,7 +210,7 @@ function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
 	end
 
 	CraftSim.UTIL:StartProfiling("MODULES UPDATE")
-	CraftSim.MAIN:TriggerModulesByRecipeType(isInit)
+	CraftSim.MAIN:TriggerModulesByRecipeType()
 	CraftSim.UTIL:StopProfiling("MODULES UPDATE")
 end
 
@@ -346,7 +346,7 @@ function CraftSim.MAIN:InitCraftRecipeHooks()
 		print("CraftRecipe Hook: " )
 		print(recipeData.reagentData, true)
 
-		CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData, amount or 1, itemTarget)
+		CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
 		CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount or 1, itemTarget)
 	end
 	hooksecurefunc(C_TradeSkillUI, "CraftRecipe", OnCraft)

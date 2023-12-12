@@ -25,6 +25,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 
     local function createContent(frame)
         self.frame:Hide()
+        ---@type GGUI.Dropdown
         self.frame.content.customerDropdown = CraftSim.GGUI.Dropdown({
             parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", width=170, offsetX=-170, offsetY=-30,
             initialValue=nil,
