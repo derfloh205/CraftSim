@@ -569,7 +569,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
             queueTab.content.craftNextButton.clickCallback =
                 function ()
                     CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                    firstQueueItem.recipeData:Craft(firstQueueItem.craftAbleAmount)
+                    firstQueueItem.recipeData:Craft(math.min(firstQueueItem.craftAbleAmount, firstQueueItem.amount))
                     CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
                 end
         else

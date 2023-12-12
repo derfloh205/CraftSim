@@ -10,7 +10,7 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
-        newP("11.2.1") ..
+        newP("11.2.2") ..
         f.P .. f.bb("CraftQueue") .. " now has configureable " .. f.g("Restock Options") ..
         f.a .. "affecting " .. f.bb("Restock from Recipe Scan") .. " Behaviour" ..
         f.a .. "This includes " .. f.g("Restock Amount") .. " and thresholds" .. 
