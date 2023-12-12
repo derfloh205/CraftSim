@@ -311,7 +311,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             end
         }
 
-        generalOptionsFrame.helpIcon = CraftSim.GGUI.HelpIcon{parent=generalOptionsFrame, anchorParent=generalOptionsFrame.saleRateTitle.frame, 
+        generalOptionsFrame.saleRateHelpIcon = CraftSim.GGUI.HelpIcon{parent=generalOptionsFrame, anchorParent=generalOptionsFrame.saleRateTitle.frame, 
             anchorA="RIGHT", anchorB="LEFT", offsetX=-2, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL)
         }
         
@@ -628,7 +628,14 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
             return
         end
 
+        local tsmLoaded = select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1]))
+
         recipeOptionsFrame:Show()
+
+        local generalOptionsFrame = restockOptionsTab.content.generalOptionsFrame
+        generalOptionsFrame.saleRateTitle:SetVisible(tsmLoaded)
+        generalOptionsFrame.saleRateInput:SetVisible(tsmLoaded)
+        generalOptionsFrame.saleRateHelpIcon:SetVisible(tsmLoaded)
 
         local recipeIconText = CraftSim.GUTIL:IconToText(recipeData.recipeIcon, 25, 25)
         recipeOptionsFrame.recipeTitle:SetText(recipeIconText .. " " .. recipeData.recipeName)
@@ -676,7 +683,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
             CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].profitMarginThreshold = inputValue
         end
         -- Only show Sale Rate Input Stuff if TSM is loaded
-        local tsmLoaded = select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1]))
+        
         tsmSaleRateFrame.saleRateInput.textInput:SetText(initialRestockOptions.saleRateThreshold)
         tsmSaleRateFrame.saleRateInput.onNumberValidCallback = function (input)
             local inputValue = tonumber(input.currentValue)

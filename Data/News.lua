@@ -10,6 +10,11 @@ function CraftSim.NEWS:GET_NEWS()
     return 
         f.bb("                   Hello and thank you for using CraftSim!\n") .. 
         f.bb("                                 ( You are awesome! )") ..
+        newP("11.3.0") ..
+        f.s .. "Changed " .. f.bb("CraftQueue") .. " Restock Option for Sale Rate" ..
+        f.a .. "behaviour to check wether any of the chosen qualities reaches" ..
+        f.a .. "the threshold instead of the average" ..
+        f.p .. "Added Sale Rate Threshold option to General Restock Options" ..
         newP("11.2.2") ..
         f.P .. f.bb("CraftQueue") .. " now has configureable " .. f.g("Restock Options") ..
         f.a .. "affecting " .. f.bb("Restock from Recipe Scan") .. " Behaviour" ..
