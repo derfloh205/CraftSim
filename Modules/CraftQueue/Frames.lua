@@ -513,16 +513,16 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             switchToRecipeColumn.switchButton:SetEnabled(craftQueueItem.correctProfessionOpen)
             switchToRecipeColumn.switchButton.recipeID = recipeData.recipeID
 
-            local averageProfit = recipeData.averageProfitCached or recipeData:GetAverageProfit()
-            totalAverageProfit = totalAverageProfit + averageProfit
-            recipeColumn.text:SetText(recipeData.recipeName)
-            averageProfitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(select(1, averageProfit), true, recipeData.priceData.craftingCosts))
-
             -- update price data and profit?
             recipeData.priceData:Update()
             recipeData:GetAverageProfit()
-            local craftingCosts = recipeData.priceData.craftingCosts
-            totalCraftingCosts = totalCraftingCosts + craftingCosts
+            local craftingCosts = recipeData.priceData.craftingCosts * craftQueueItem.amount
+
+            local averageProfit = (recipeData.averageProfitCached or recipeData:GetAverageProfit()) * craftQueueItem.amount
+            totalAverageProfit = totalAverageProfit + averageProfit
+            recipeColumn.text:SetText(recipeData.recipeName)
+            averageProfitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(select(1, averageProfit), true, craftingCosts))
+
             craftingCostsColumn.text:SetText(f.r(CraftSim.GUTIL:FormatMoney(craftingCosts)))
 
             reagentInfoColumn.reagentInfoButton:SetText(recipeData.reagentData:GetTooltipText(craftQueueItem.amount))

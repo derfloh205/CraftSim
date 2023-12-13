@@ -10,7 +10,7 @@ function CraftSim.NEWS:GET_NEWS()
     return
         f.bb("                   Hello and thank you for using CraftSim!\n") ..
         f.bb("                                 ( You are awesome! )") ..
-        newP("11.3.5") ..
+        newP("11.3.6") ..
         f.s .. f.bb("CraftQueue") .. " now shows total average profit and crafting costs" ..
         f.s .. "Updated Italian Localizations" ..
         f.a .. "Thanks to " .. f.bb("https://github.com/SirDester") .. 
