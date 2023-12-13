@@ -101,23 +101,34 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instead of : is on purpose here
+    local f = CraftSim.UTIL:GetFormatter()
+    print("Filtering: " .. tostring(recipeData.recipeName), false, true)
     if not recipeData.learned then
+        print(f.r("Not learned"))
         return false
     end
 
     local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
 
     if not restockOptions.enabled then
+        print("restockOptions.disabled")
         -- use general options
         local profitThresholdReached = false
         if recipeData.relativeProfitCached then
             profitThresholdReached = recipeData.relativeProfitCached >= (CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0)
         end
         local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, nil, CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold)
-
-        return profitThresholdReached and saleRateReached
+        print("profitThresholdReached: " .. tostring(profitThresholdReached))
+        print("saleRateReached: " .. tostring(saleRateReached))
+        local include = profitThresholdReached and saleRateReached
+        if include then
+            print(f.g("include"))
+        else
+            print(f.r("not include"))
+        end
+        return include
     end
-
+    print("restockOptions.enabled")
     local profitMarginReached = false
 
     -- else use recipe specific restock options to filter
@@ -127,11 +138,16 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
 
     local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, restockOptions.saleRatePerQuality, restockOptions.saleRateThreshold)
 
-    print("Filter Recipe: " .. recipeData.recipeName)
     print("profitMarginReached: " .. tostring(profitMarginReached))
     print("saleRateReached: " .. tostring(saleRateReached))
 
-    return profitMarginReached and saleRateReached
+    local include = profitMarginReached and saleRateReached
+    if include then
+        print(f.g("include"))
+    else
+        print(f.r("not include"))
+    end
+    return include
 end
 
 function CraftSim.CRAFTQ:ImportRecipeScan()
@@ -154,6 +170,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                 end
             end
         end
+        
         if restockAmount > 0 then
             CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, restockAmount)
         end
@@ -345,21 +362,28 @@ function CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, usedQualiti
     usedQualitiesTable = usedQualitiesTable or {true, true, true, true, true}
     local allOff = not CraftSim.GUTIL:Some(usedQualitiesTable, function(v) return v end)
     if allOff then
+        print("No quality checked -> sale rate true")
         return true -- if nothing is checked for an individual sale rate check then its just true
     end
     if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[1])) then
+        print("tsm not loaded -> sale rate true")
         return true -- always true if TSM is not loaded
     end
     for qualityID, checkQuality in pairs(usedQualitiesTable or {}) do
         local item = recipeData.resultData.itemsByQuality[qualityID]
         if item and checkQuality then
+            print("check sale rate for q" .. qualityID .. ": " .. tostring(checkQuality))
             -- return true if any item has a sale rate over the threshold
-            if CraftSimTSM:GetItemSaleRate(item:GetItemLink()) >= saleRateThreshold then
+            local itemSaleRate = CraftSimTSM:GetItemSaleRate(item:GetItemLink())
+            print("itemSaleRate: " .. tostring(itemSaleRate))
+            print("saleRateThreshold: " .. tostring(saleRateThreshold))
+            if itemSaleRate >= saleRateThreshold then
+                print("sale reate reached for quality: " ..tostring(qualityID))
                 return true
             end
         end
     end
-
+    print("sale rate not reached")
     return false
 end
 

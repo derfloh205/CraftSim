@@ -10,6 +10,11 @@ function CraftSim.NEWS:GET_NEWS()
     return
         f.bb("                   Hello and thank you for using CraftSim!\n") ..
         f.bb("                                 ( You are awesome! )") ..
+        newP("11.3.4") ..
+        f.s .. "Updated Italian Localizations" ..
+        f.a .. "Thanks to " .. f.bb("https://github.com/SirDester") .. 
+        f.p .. f.bb("CraftQueue") .. " Restock Options now correctly display" ..
+        f.a .. "the saved sale rate threshold upon reloading" ..
         newP("11.3.3") ..
         f.p .. f.bb("CraftQueue: ") .. "When adding the currently open recipe, recipes" ..
         f.a .. "that have not enough quantity allocated for a quality reagent" ..

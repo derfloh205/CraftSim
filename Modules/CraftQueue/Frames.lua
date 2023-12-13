@@ -294,7 +294,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         }
 
         generalOptionsFrame.saleRateInput = CraftSim.GGUI.NumericInput{
-            parent=generalOptionsFrame, anchorParent=generalOptionsFrame.saleRateTitle.frame, initialValue = 0, 
+            parent=generalOptionsFrame, anchorParent=generalOptionsFrame.saleRateTitle.frame, initialValue = CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold or 0, 
             anchorA="LEFT", anchorB="RIGHT", offsetX=10,
             allowDecimals=true,minValue=0,
             sizeX=40, borderAdjustWidth=1.2, onNumberValidCallback=function (input)
