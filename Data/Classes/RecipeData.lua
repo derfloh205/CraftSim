@@ -665,3 +665,22 @@ function CraftSim.RecipeData:IsProfessionOpen()
     local openProfessionID = ProfessionsFrame.professionInfo.profession
     return openProfessionID == self.professionData.professionInfo.profession
 end
+
+---@class CraftSim.RecipeData.CooldownInformation
+---@field onCooldown boolean
+---@field duration number
+---@field cooldownStart number
+---@field spellEnabled boolean
+---@field cooldownMod number
+
+---@return CraftSim.RecipeData.CooldownInformation cooldownInformation
+function CraftSim.RecipeData:GetCooldownInformation()
+    local start, duration, enabled, mod = GetSpellCooldown(self.recipeID)
+    return {
+        onCooldown = duration and duration > 0,
+        duration = duration or 0,
+        cooldownStart = start or 0,
+        spellEnabled = enabled,
+        cooldownMod = mod or 1
+    } 
+end
