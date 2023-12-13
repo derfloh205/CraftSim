@@ -6,7 +6,7 @@ local print=CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 
 function  CraftSim.CRAFTQ.FRAMES:Init()
-    local sizeX=930
+    local sizeX=1000
     local sizeY=420
 
     ---@class CraftSim.CraftQueue.Frame : GGUI.Frame
@@ -29,17 +29,20 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         ---@param frame CraftSim.CraftQueue.Frame
     local function createContent(frame)
 
+        local tabContentSizeX = 930
+        local tabContentSizeY = 330
+
         ---@type GGUI.Tab
         frame.content.queueTab = CraftSim.GGUI.Tab({
             buttonOptions={parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="BOTTOM", offsetX=-62, offsetY=-20, 
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL), adjustWidth=true},
-            parent=frame.content,anchorParent=frame.content, sizeX=930, sizeY=400, canBeEnabled=true, offsetY=-30,
+            parent=frame.content,anchorParent=frame.content, sizeX=tabContentSizeX, sizeY=tabContentSizeY, canBeEnabled=true, offsetY=-30,
         })
         ---@type GGUI.Tab
         frame.content.restockOptionsTab = CraftSim.GGUI.Tab({
             buttonOptions={parent=frame.content, anchorParent=frame.content.queueTab.button.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=5, 
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL), adjustWidth=true},
-            parent=frame.content,anchorParent=frame.content, sizeX=930, sizeY=400, canBeEnabled=true, offsetY=-30,
+            parent=frame.content,anchorParent=frame.content, sizeX=tabContentSizeX, sizeY=tabContentSizeY, canBeEnabled=true, offsetY=-30,
         })
         local restockOptionsTab = frame.content.restockOptionsTab
         local queueTab = frame.content.queueTab
@@ -58,26 +61,31 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             },
             {
                 label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER),
-                width=140,
+                width=120,
+            },
+            {
+                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFTING_COSTS_HEADER),
+                width=100,
+                justifyOptions={type="H", align="RIGHT"}
             },
             {
                 label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_REAGENT_INFO_HEADER),
-                width=100,
+                width=75,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
                 label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER), -- here a button is needed to switch to the top gear for this recipe
-                width=150,
+                width=110,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
                 label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT),
-                width=80,
+                width=100,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
                 label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AMOUNT_LEFT_HEADER),
-                width=80,
+                width=60,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
@@ -95,19 +103,20 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         ---@type GGUI.FrameList
         queueTab.content.craftList = CraftSim.GGUI.FrameList({
             parent = queueTab.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP",
-            showHeaderLine=true, scale=0.95,
+            showHeaderLine=true, scale=0.95, showBorder=true,
             sizeY=230, offsetY=-90,
             columnOptions=columnOptions,
             rowConstructor=function (columns)
                 local switchToRecipeColumn = columns[1]
                 local recipeColumn = columns[2] 
                 local averageProfitColumn = columns[3]
-                local reagentInfoColumn = columns[4]
-                local topGearColumn = columns[5]
-                local craftableColumn = columns[6]
-                local craftAmountColumn = columns[7] 
-                local craftButtonColumn = columns[8]
-                local removeRowColumn = columns[9]
+                local craftingCostsColumn = columns[4]
+                local reagentInfoColumn = columns[5]
+                local topGearColumn = columns[6]
+                local craftableColumn = columns[7]
+                local craftAmountColumn = columns[8] 
+                local craftButtonColumn = columns[9]
+                local removeRowColumn = columns[10]
 
                 switchToRecipeColumn.switchButton = CraftSim.GGUI.Button({
                     parent=switchToRecipeColumn,anchorParent=switchToRecipeColumn, sizeX=25, sizeY=25,
@@ -127,6 +136,12 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
                 averageProfitColumn.text = CraftSim.GGUI.Text(
                 { 
                     parent=averageProfitColumn,anchorParent=averageProfitColumn, anchorA="LEFT", anchorB="LEFT", scale = 0.9,
+
+                })
+                ---@type GGUI.Text | GGUI.Widget
+                craftingCostsColumn.text = CraftSim.GGUI.Text(
+                { 
+                    parent=craftingCostsColumn,anchorParent=craftingCostsColumn, anchorA="RIGHT", anchorB="RIGHT", scale = 0.9, justifyOptions={type="H",align="RIGHT"}
 
                 })
 
@@ -185,9 +200,11 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             end
         })
 
+        local craftQueueButtonsOffsetY=-5
+
         ---@type GGUI.Button
         queueTab.content.importRecipeScanButton = CraftSim.GGUI.Button({
-            parent=queueTab.content, anchorParent=queueTab.content.craftList.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=0, offsetX=0,
+            parent=queueTab.content, anchorParent=queueTab.content.craftList.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=craftQueueButtonsOffsetY, offsetX=0,
             adjustWidth=true,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL), clickCallback=function ()
                 CraftSim.CRAFTQ:ImportRecipeScan()
@@ -214,7 +231,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
 
         ---@type GGUI.Button
         queueTab.content.craftNextButton = CraftSim.GGUI.Button({
-            parent=queueTab.content, anchorParent=queueTab.content.craftList.frame, anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", offsetY=0, offsetX=0,
+            parent=queueTab.content, anchorParent=queueTab.content.craftList.frame, anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", offsetY=craftQueueButtonsOffsetY, offsetX=0,
             adjustWidth=true,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL), clickCallback=nil
         })
@@ -223,13 +240,32 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
             ---@type GGUI.Button
             queueTab.content.createAuctionatorShoppingList = CraftSim.GGUI.Button({
-                parent=queueTab.content, anchorParent=queueTab.content.craftList.frame, anchorA="TOP", anchorB="BOTTOM", adjustWidth=true,
+                parent=queueTab.content, anchorParent=queueTab.content, anchorA="BOTTOM", anchorB="BOTTOM", adjustWidth=true, offsetY=0,
                 clickCallback=function ()
                     CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
                 end,
                 label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL)
             })
         end
+
+        -- summaries
+
+        queueTab.content.totalAverageProfitLabel = CraftSim.GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.importRecipeScanButton.frame,
+            scale=0.9*0.9, anchorA="LEFT", anchorB="RIGHT", offsetX=10, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_PROFIT_LABEL),
+            justifyOptions={type="H", align="RIGHT"}
+        })
+        queueTab.content.totalAverageProfit = CraftSim.GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.totalAverageProfitLabel.frame,
+            scale=0.9*0.9, anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.GUTIL:FormatMoney(0, true),
+            justifyOptions={type="H", align="LEFT"}
+        })
+        queueTab.content.totalCraftingCostsLabel = CraftSim.GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.totalAverageProfitLabel.frame,
+            scale=0.9*0.9, anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", offsetY=-19, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL),
+            justifyOptions={type="H", align="RIGHT"}
+        })
+        queueTab.content.totalCraftingCosts = CraftSim.GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.totalCraftingCostsLabel.frame,
+            scale=0.9*0.9, anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.GUTIL:FormatMoney(0, true),
+            justifyOptions={type="H", align="RIGHT"}
+        })
 
         -- restock Options
 
@@ -401,13 +437,16 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
 end
 
 function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
+    local f = CraftSim.UTIL:GetFormatter()
     -- multiples should be possible (different reagent setup)
     -- but if there already is a configuration just increase the count?
 
     CraftSim.UTIL:StartProfiling("FrameListUpdate")
 
+    ---@type GGUI.Tab
+    local queueTab = CraftSim.CRAFTQ.frame.content.queueTab
     ---@type GGUI.FrameList
-    local craftList = CraftSim.CRAFTQ.frame.content.queueTab.content.craftList
+    local craftList = queueTab.content.craftList
 
     local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue({})
 
@@ -447,30 +486,44 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
     craftList:Remove()
 
+    local totalAverageProfit = 0
+    local totalCraftingCosts = 0
+    local totalReagents = {}
+
     CraftSim.UTIL:StartProfiling("- FrameListUpdate Add Rows")
     for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
         local recipeData = craftQueueItem.recipeData
         craftList:Add(
         function (row)
+            
             local profilingID = "- FrameListUpdate Add Recipe: " .. craftQueueItem.recipeData.recipeName
             CraftSim.UTIL:StartProfiling(profilingID)
             local columns = row.columns
             local switchToRecipeColumn = columns[1]
             local recipeColumn = columns[2] 
             local averageProfitColumn = columns[3]
-            local reagentInfoColumn = columns[4]
-            local topGearColumn = columns[5]
-            local craftAbleColumn = columns[6]
-            local craftAmountColumn = columns[7] 
-            local craftButtonColumn = columns[8]
-            local removeRowColumn  = columns[9]
+            local craftingCostsColumn = columns[4]
+            local reagentInfoColumn = columns[5]
+            local topGearColumn = columns[6]
+            local craftAbleColumn = columns[7]
+            local craftAmountColumn = columns[8] 
+            local craftButtonColumn = columns[9]
+            local removeRowColumn = columns[10]
 
             switchToRecipeColumn.switchButton:SetEnabled(craftQueueItem.correctProfessionOpen)
             switchToRecipeColumn.switchButton.recipeID = recipeData.recipeID
 
             local averageProfit = recipeData.averageProfitCached or recipeData:GetAverageProfit()
+            totalAverageProfit = totalAverageProfit + averageProfit
             recipeColumn.text:SetText(recipeData.recipeName)
             averageProfitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(select(1, averageProfit), true, recipeData.priceData.craftingCosts))
+
+            -- update price data and profit?
+            recipeData.priceData:Update()
+            recipeData:GetAverageProfit()
+            local craftingCosts = recipeData.priceData.craftingCosts
+            totalCraftingCosts = totalCraftingCosts + craftingCosts
+            craftingCostsColumn.text:SetText(f.r(CraftSim.GUTIL:FormatMoney(craftingCosts)))
 
             reagentInfoColumn.reagentInfoButton:SetText(recipeData.reagentData:GetTooltipText(craftQueueItem.amount))
     
@@ -556,6 +609,10 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
     --- sort by craftable status
     craftList:UpdateDisplay()
+
+    queueTab.content.totalAverageProfit:SetText(CraftSim.GUTIL:FormatMoney(totalAverageProfit, true, totalCraftingCosts))
+    queueTab.content.totalCraftingCosts:SetText(f.r(CraftSim.GUTIL:FormatMoney(totalCraftingCosts)))
+    
 
     CraftSim.UTIL:StopProfiling("FrameListUpdate")
 end

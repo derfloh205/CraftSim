@@ -16,6 +16,8 @@ CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
 
+CraftSim.CRAFTQ.useAuctionatorShoppingListAPI = false
+
 local print=CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 ---@param itemID number
@@ -227,7 +229,7 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
             end
         end
 
-        if not Auctionator.API.v1.CreateShoppingList then
+        if not CraftSim.CRAFTQ.useAuctionatorShoppingListAPI then
             print("NOT Using Auctionator.API.v1.CreateShoppingList new API")
             -- create shoppinglist import string?
                 -- format: Test^"Frostfire Alloy";;0;0;0;0;0;0;0;0;;3;;#;;99
@@ -259,18 +261,22 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
             Auctionator.Shopping.Lists.BatchImportFromString(shoppingListImportString)
         else
             print("Using Auctionator.API.v1.CreateShoppingList new API")
-            --- convert to Auctionator Search Terms and deduct item count
-            local searchTerms = CraftSim.GUTIL:Map(reagentMap, function (info, itemID)
+            --- convert to Auctionator Search Strings and deduct item count
+            local searchStrings = CraftSim.GUTIL:Map(reagentMap, function (info, itemID)
                 local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(itemID, true, false, true)
-                return {
+                local searchTerm = {
                     searchString = info.itemName,
-                    categoryKey = "",
                     tier = info.qualityID,
                     quantity = math.max(info.quantity - itemCount, 0),
                     isExact = true,
                 }
+                if searchTerm.quantity == 0 then
+                    return nil -- do not put into table
+                end
+                local searchString = Auctionator.API.v1.ConvertToSearchString(CraftSimAddonName, searchTerm)
+                return searchString
             end)
-            Auctionator.API.v1.CreateShoppingList(CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchTerms)
+            Auctionator.API.v1.CreateShoppingList(CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
     end
    
     CraftSim.UTIL:StopProfiling("CreateAuctionatorShopping")
