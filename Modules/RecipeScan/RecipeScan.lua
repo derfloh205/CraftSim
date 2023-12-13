@@ -7,26 +7,14 @@ CraftSim.RECIPE_SCAN.frame = nil
 CraftSim.RECIPE_SCAN.isScanning = false
 
 CraftSim.RECIPE_SCAN.SCAN_MODES = {
-    Q1 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1, 
-    Q2 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2, 
-    Q3 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3, 
-    OPTIMIZE_G = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OG, 
-    OPTIMIZE_I = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OI
+    Q1 = "Materials Quality 1", 
+    Q2 = "Materials Quality 2", 
+    Q3 = "Materials Quality 3", 
+    OPTIMIZE_G = "Optimize for Guaranteed", 
+    OPTIMIZE_I = "Optimize for Inspiration"
 }
 
-function CraftSim.RECIPE_SCAN:GetScanModeText(scanMode) 
-    return CraftSim.LOCAL:GetText(scanMode)
-end
-
--- CraftSim.RECIPE_SCAN.SCAN_MODES = {
---     Q1 = "Materials Quality 1", 
---     Q2 = "Materials Quality 2",
---     Q3 = "Materials Quality 3",
---     OPTIMIZE_G = "Optimize for Guaranteed",
---     OPTIMIZE_I = "Optimize for Inspiration"
--- }
-
-    ---@type CraftSim.RecipeData[]
+---@type CraftSim.RecipeData[]
 CraftSim.RECIPE_SCAN.currentResults = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)

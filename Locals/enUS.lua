@@ -43,12 +43,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP] = "The maximum the materials can contribute to a recipe is most of the time 25% of the base recipe difficulty.\n\nHowever in the case of recrafting, this value can vary based on previous crafts\nand the quality of materials that were used.",
     
         -- Simulation Mode
-        [CraftSim.CONST.TEXT.SIMULATION_MODE_NONE] = "None",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL] = "Simulation Mode",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE] = "CraftSim Simulation Mode",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_TOOLTIP] = "CraftSim's Simulation Mode makes it possible to play around with a recipe without restrictions",
-        [CraftSim.CONST.TEXT.SIMULATION_MODE_OPTIONAL] = "Optional #",
-        [CraftSim.CONST.TEXT.SIMULATION_MODE_FINISHING] = "Finishing #",
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Recipe Difficulty: ",
@@ -330,11 +327,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX] = "Use " .. f.bb("Insight") .. " if possible",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP] = "Use " .. f.bb("Illustrious Insight") .. " or\n" .. f.bb("Lesser Illustrious Insight") .. " as optional reagent for recipes that allow it.",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Equipped",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Materials Quality 1",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Materials Quality 2",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Materials Quality 3",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OG] = "Optimize for Guaranteed",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OI] = "Optimize for Inspiration",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",

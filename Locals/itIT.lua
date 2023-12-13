@@ -43,12 +43,9 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP] = "La qualità dei reagenti utilizzati può aumentare la Competenza fino a 25% della Difficoltà ricetta di base.\n\nNel caso di una ricreazione, però, questo valore può variare in base alla qualità dei reagenti utilizzati per la creazione originale e per le ricreazioni precedenti.",
 
         -- Simulation Mode
-        [CraftSim.CONST.TEXT.SIMULATION_MODE_NONE] = "Nessuno",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_LABEL] = "Modalità Simulazione",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE] = "Modalità Simulazione di CraftSim",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_TOOLTIP] = "La Modalità Simulazione di CraftSim ti permette di sperimentare con una ricetta senza restrizioni",
-        [CraftSim.CONST.TEXT.SIMULATION_MODE_OPTIONAL] = "Facoltativo #",
-        [CraftSim.CONST.TEXT.SIMULATION_MODE_FINISHING] = "Finitura #",
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Difficoltà ricetta: ",
@@ -335,11 +332,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX] = "Usa " .. f.bb("Consapevolezza Illustre"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP] = "Usa " .. f.bb("Consapevolezza Illustre") .. " o\n" .. f.bb("Consapevolezza Illustre Minore") .. " come reagente opzionale per le ricette che lo permettono",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Equipaggiato",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Qualità materiali 1",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Qualità materiali 2",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Qualità materiali 3",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OG] = "Ottimizza per Garantito",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OI] = "Ottimizza per Ispirazione",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "Ottimizzazione Strumenti",
