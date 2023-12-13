@@ -25,12 +25,22 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
     local function createContent(frame)
         frame:Hide()
 
+        local initialScanModeValue = CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
+        local initialScanModeLabel = CraftSim.LOCAL:GetText(CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP[initialScanModeValue])
+
         frame.content.scanMode = CraftSim.GGUI.Dropdown({
             parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170,
-            initialValue=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I,
-            initialLabel=CraftSim.RECIPE_SCAN:GetScanModeText(CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I), -- TODO: save and use last selected saved in CraftSimOptions
+            initialValue=initialScanModeValue,
+            initialLabel=initialScanModeLabel,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_MODE),
-            initialData=CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return {label=CraftSim.RECIPE_SCAN:GetScanModeText(e), value=e} end)
+            initialData=CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, 
+            function(scanMode) 
+                local localizationID = CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP[scanMode]
+                return {
+                    label=CraftSim.LOCAL:GetText(localizationID), 
+                    value=scanMode
+                } 
+            end)
         })
 
         frame.content.scanButton = CraftSim.GGUI.Button({
