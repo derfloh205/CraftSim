@@ -28,9 +28,9 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         frame.content.scanMode = CraftSim.GGUI.Dropdown({
             parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-30, width=170,
             initialValue=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I,
-            initialLabel=CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I, -- TODO: save and use last selected saved in CraftSimOptions
+            initialLabel=CraftSim.RECIPE_SCAN:GetScanModeText(CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I), -- TODO: save and use last selected saved in CraftSimOptions
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_MODE),
-            initialData=CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return {label=e, value=e} end)
+            initialData=CraftSim.GUTIL:Map(CraftSim.RECIPE_SCAN.SCAN_MODES, function(e) return {label=CraftSim.RECIPE_SCAN:GetScanModeText(e), value=e} end)
         })
 
         frame.content.scanButton = CraftSim.GGUI.Button({
@@ -43,7 +43,9 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         })
 
         frame.content.cancelScanButton = CraftSim.GGUI.Button({
-            parent=frame.content,anchorParent=frame.content.scanButton.frame,label="Cancel", anchorA="LEFT", anchorB="RIGHT",sizeX=15,sizeY=25,adjustWidth=true,
+            parent=frame.content,anchorParent=frame.content.scanButton.frame,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_CANCEL),
+            anchorA="LEFT", anchorB="RIGHT",sizeX=15,sizeY=25,adjustWidth=true,
             clickCallback=function ()
                 CraftSim.RECIPE_SCAN:EndScan()
             end
@@ -205,7 +207,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
                 })
 
                 function topGearColumn.equippedText:SetEquipped()
-                    topGearColumn.equippedText:SetText(CraftSim.GUTIL:ColorizeText("Equipped", CraftSim.GUTIL.COLORS.GREEN))
+                    topGearColumn.equippedText:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED), CraftSim.GUTIL.COLORS.GREEN))
                 end
                 function topGearColumn.equippedText:SetIrrelevant()
                     topGearColumn.equippedText:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
