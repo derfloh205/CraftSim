@@ -17,6 +17,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "the queue" ..
         f.p .. "Ensured that all recipes added to the " .. f.bb("CraftQueue") .. 
         f.a .. "have enough required reagents allocated to be crafted" ..
+        f.p .. "Recipes that are on cooldown now show that in the craft queue" ..
         newP("11.3.2") ..
         f.p .. "Fixed recipe restock option for salerate false positive if" ..
         f.a .. "all qualities are toggled off" ..
