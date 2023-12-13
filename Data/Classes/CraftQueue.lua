@@ -17,6 +17,17 @@ function CraftSim.CraftQueue:AddRecipe(recipeData, amount)
 
     print("Adding recipe to queue with reagents: ")
     print(recipeData.reagentData, true)
+
+    -- make sure all required reagents are maxed out
+    recipeData:SetNonQualityReagentsMax()
+    for _, reagent in pairs(recipeData.reagentData.requiredReagents) do
+        if reagent.hasQuality then
+            if reagent:GetTotalQuantity() < reagent.requiredQuantity then
+                reagent:SetCheapestQualityMax()
+            end
+
+        end
+    end
     
     local craftQueueItem = self:FindRecipe(recipeData)
 

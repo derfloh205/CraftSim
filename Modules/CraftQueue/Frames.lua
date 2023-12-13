@@ -199,15 +199,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             parent=queueTab.content, anchorParent=queueTab.content.importRecipeScanButton.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=0,
             adjustWidth=true,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL), clickCallback=function ()
-                if CraftSim.SIMULATION_MODE.isActive then
-                    if CraftSim.SIMULATION_MODE.recipeData then
-                        CraftSim.CRAFTQ:AddRecipe(CraftSim.SIMULATION_MODE.recipeData:Copy()) -- need a copy or changes in simulation mode just overwrite it
-                    end
-                else
-                    if CraftSim.MAIN.currentRecipeData then
-                        CraftSim.CRAFTQ:AddRecipe(CraftSim.MAIN.currentRecipeData)
-                    end
-                end
+                CraftSim.CRAFTQ:AddOpenRecipe()
             end
         })
 

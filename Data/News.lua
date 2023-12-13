@@ -10,6 +10,13 @@ function CraftSim.NEWS:GET_NEWS()
     return
         f.bb("                   Hello and thank you for using CraftSim!\n") ..
         f.bb("                                 ( You are awesome! )") ..
+        newP("11.3.3") ..
+        f.p .. f.bb("CraftQueue: ") .. "When adding the currently open recipe, recipes" ..
+        f.a .. "that have not enough quantity allocated for a quality reagent" ..
+        f.a .. "now use the cheapest quality of that reagent when adding it to" ..
+        f.a .. "the queue" ..
+        f.p .. "Ensured that all recipes added to the " .. f.bb("CraftQueue") .. 
+        f.a .. "have enough required reagents allocated to be crafted" ..
         newP("11.3.2") ..
         f.p .. "Fixed recipe restock option for salerate false positive if" ..
         f.a .. "all qualities are toggled off" ..
@@ -52,33 +59,7 @@ function CraftSim.NEWS:GET_NEWS()
         f.a .. "to buy every reagent you are missing!" ..
         f.a .. "- More restock options are coming!" ..
         f.a .. "- CraftQueue consisting over sessions is also planned" ..
-        f.a .. "(Very new feature, please report any bugs in the discord)" ..
-        newP("10.0.1") ..
-        f.p .. "Fixed an issue where " .. f.patreon("CraftSim") .. " overwrote the " .. 
-        f.a .. "global print function (sorry other devs)" ..
-        f.p .. "Wether to show the news popup will now determined by" ..
-        f.a .. "a checksum instead of a manually set const" ..
-        f.p .. "Supporter List Update" ..
-        newP("10.0.0") ..
-        f.P .. "Do you find " .. f.patreon("CraftSim") .. " helpful?" .. 
-        f.a .. "You can now " .. f.g("support its development") .. " by following the new" ..
-        f.a .. "paypal me link in the above box" .. " or in the " .. 
-        f.a .. f.patreon("Supporters Module") .. " <3" ..
-        f.P .. f.g("Enchanting Specialization Info ") .. "added" .. 
-        f.s .. "Added a current and maximum " .. f.bb("Profession Stat Overview") ..
-        f.a .. "in the " .. f.bb("Specialization Info Module") ..
-        f.s .. "The " .. f.bb("Profession Talent Help Icon") .. " now always shows in the " ..
-        f.a .. f.bb("Specialization Info Module") .. " and shows current and" ..
-        f.a .. "maximum stats in its tooltip" ..
-        f.s .. "Refactored the " .. f.bb("Specialization Node System") .. " to consider" ..
-        f.a .. "talent nodes with thresholds that affect individual recipe types" ..
-        f.s .. "Added a " .. f.g("Max All") .. " button to the " .. f.bb("Knowledge Simulator") ..
-        f.s .. "Fixed " .. f.bb("Armor Kits") .. " not correctly being affected " ..
-        f.a .. "by the talent " .. f.bb("Curing and Tanning (Leatherworking)") ..
-        f.p .. "Fixed the legend text alignment in the " .. f.bb("Knowledge Simulator") ..
-        f.p .. "Slightly increased the height of the " .. f.bb("Specialization Info Module") ..
-        f.a .. "to consider the new profession stat info" ..
-        f.p .. "Updated recipes affected by " .. f.bb("Decayology")
+        f.a .. "(Very new feature, please report any bugs in the discord)"
 end
 
 function CraftSim.NEWS:GetChecksum()

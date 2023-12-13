@@ -179,6 +179,7 @@ function CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount, enchantItemTarget)
 end
 
 function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
+    print("CraftSim.CRAFTQ:CreateAuctionatorShoppingList", false, true)
     CraftSim.UTIL:StartProfiling("CreateAuctionatorShopping")
     local reagentMap = {}
     -- create a map of all used reagents in the queue and their quantity
@@ -203,11 +204,14 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
                         quantity = 0
                     }
                     reagentMap[reagentItem.item:GetItemID()].quantity = reagentMap[reagentItem.item:GetItemID()].quantity + (reagentItem.quantity * craftQueueItem.amount)
+                    print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
+                    print("quantity: " .. tostring(reagentMap[reagentItem.item:GetItemID()].quantity))
                 end
             end
         end
 
         if not Auctionator.API.v1.CreateShoppingList then
+            print("NOT Using Auctionator.API.v1.CreateShoppingList new API")
             -- create shoppinglist import string?
                 -- format: Test^"Frostfire Alloy";;0;0;0;0;0;0;0;0;;3;;#;;99
             local shoppingListImportString = CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME
@@ -217,10 +221,16 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
                 if not isSoulbound then
                     local itemCount = GetItemCount(itemID, true, false, true)
                     local neededItemCount = info.quantity - itemCount
+                    print(tostring(info.itemName) .. " itemCount: " .. tostring(itemCount))
+                    print(tostring(info.itemName) .. " quantity: " .. tostring(info.quantity))
+                    print(tostring(info.itemName) .. " neededItemCount: " .. tostring(neededItemCount))
                     if neededItemCount > 0 then
                         local itemShoppingListString = CraftSim.CRAFTQ:GetAuctionatorShoppingListItemString(info.itemName, info.qualityID, neededItemCount)
+                        print("add to shopping list: " .. tostring(itemShoppingListString))
                         shoppingListImportString = shoppingListImportString .. '^' .. itemShoppingListString
                     end
+                else
+                    print("item is soulbound, ignore: " .. tostring(info.itemName))
                 end
             end
             
@@ -231,6 +241,7 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
             end
             Auctionator.Shopping.Lists.BatchImportFromString(shoppingListImportString)
         else
+            print("Using Auctionator.API.v1.CreateShoppingList new API")
             --- convert to Auctionator Search Terms and deduct item count
             local searchTerms = CraftSim.GUTIL:Map(reagentMap, function (info, itemID)
                 local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(itemID, true, false, true)
@@ -350,4 +361,24 @@ function CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, usedQualiti
     end
 
     return false
+end
+
+--- Called by the AddCurrentRecipeButton
+function CraftSim.CRAFTQ:AddOpenRecipe()
+    local recipeData
+    if CraftSim.SIMULATION_MODE.isActive then
+        if CraftSim.SIMULATION_MODE.recipeData then
+            recipeData = CraftSim.SIMULATION_MODE.recipeData:Copy() -- need a copy or changes in simulation mode just overwrite it
+        end
+    else
+        if CraftSim.MAIN.currentRecipeData then
+            recipeData = CraftSim.MAIN.currentRecipeData
+        end
+    end
+
+    if not recipeData then
+        return
+    end
+
+    CraftSim.CRAFTQ:AddRecipe(recipeData)
 end

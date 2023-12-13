@@ -179,8 +179,13 @@ function CraftSimTSM:GetItemSaleRate(itemLink)
     local key = "dbregionsalerate*1000" -- because 0.x will be rounded down to 0 and resolves to nil 
     local tsmItemString = TSM_API.ToItemString(itemLink)
     local salerate, error = TSM_API.GetCustomPriceValue(key, tsmItemString)
-
-    return salerate/1000 or 0
+    if error then
+        local f = CraftSim.UTIL:GetFormatter()
+        print(f.r("CraftSimTSM:GetItemSaleRate Error: " .. tostring(error)), false, true)
+        print("itemLink: " .. tostring(itemLink))
+    end
+    salerate = salerate or 0 -- nil safe
+    return salerate/1000
 end
 
 function CraftSimAUCTIONATOR:GetMinBuyoutByItemID(itemID)

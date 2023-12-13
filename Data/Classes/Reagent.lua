@@ -120,6 +120,8 @@ function CraftSim.Reagent:Clear()
     end)
 end
 
+--- returns the total quantity of all qualities
+---@return number totalQuantity
 function CraftSim.Reagent:GetTotalQuantity()
     local total = 0
     for _, reagentItem in pairs(self.items) do
