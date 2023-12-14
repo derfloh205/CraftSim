@@ -355,10 +355,10 @@ function CraftSim.UTIL:GetFormatter()
     local c = function(text, color) 
         return CraftSim.GUTIL:ColorizeText(text, color)
     end
-    local p = "\n" .. CraftSim.GUTIL:GetQualityIconString(1, 15, 15) .. " "
-    local s = "\n" .. CraftSim.GUTIL:GetQualityIconString(2, 15, 15) .. " "
-    local P = "\n" .. CraftSim.GUTIL:GetQualityIconString(3, 15, 15) .. " "
-    local a = "\n     "
+    local p = CraftSim.GUTIL:GetQualityIconString(1, 15, 15) .. " "
+    local s = CraftSim.GUTIL:GetQualityIconString(2, 15, 15) .. " "
+    local P = CraftSim.GUTIL:GetQualityIconString(3, 15, 15) .. " "
+    local a = "     "
 
     local formatter = {}
     formatter.b = function (text)
