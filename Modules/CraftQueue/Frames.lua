@@ -517,6 +517,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             recipeData.priceData:Update()
             recipeData:GetAverageProfit()
             local craftingCosts = recipeData.priceData.craftingCosts * craftQueueItem.amount
+            totalCraftingCosts = totalCraftingCosts + craftingCosts
 
             local averageProfit = (recipeData.averageProfitCached or recipeData:GetAverageProfit()) * craftQueueItem.amount
             totalAverageProfit = totalAverageProfit + averageProfit
