@@ -4,7 +4,6 @@ CraftSim.CUSTOMER_HISTORY.FRAMES = {}
 CraftSim.CUSTOMER_HISTORY.timeoutSeconds = 5
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
-local rawget = rawget
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     self.frame = CraftSim.GGUI.Frame({

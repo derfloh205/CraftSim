@@ -97,8 +97,6 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
     end
 end
 
-
-
 function CraftSim.CRAFTQ:InitializeCraftQueue()
     -- TODO: load from Saved Variables?
     CraftSim.CRAFTQ.craftQueue = CraftSim.CraftQueue({})

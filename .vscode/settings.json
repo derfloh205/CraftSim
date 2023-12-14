@@ -42,9 +42,11 @@
         "RECrystallize_PriceCheck",
         "OEMarketInfo",
         "GameFontHighlight",
-        "CraftSimDebugNodeIDInput"
+        "CraftSimDebugNodeIDInput",
+        "CraftSimCustomerHistoryV2"
     ],
     "Lua.diagnostics.disable": [
-        "missing-parameter"
+        "missing-parameter",
+        "empty-block"
     ]
 }
