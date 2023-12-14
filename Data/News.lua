@@ -10,9 +10,8 @@ function CraftSim.NEWS:GET_NEWS()
     return
         f.bb("                   Hello and thank you for using CraftSim!\n") ..
         f.bb("                                 ( You are awesome! )") ..
-        newP("11.3.8") ..
-        f.p .. f.bb("CraftQueue") .. " fixed total crafting costs not calculating" ..
         newP("11.3.7") ..
+        f.p .. f.bb("CraftQueue") .. " fixed total crafting costs not calculating" ..
         f.p .. "Preparations for the new " .. f.bb("Auctionator") .. " API" ..
         f.a .. "to create Shopping Lists." ..
         newP("11.3.6") ..
