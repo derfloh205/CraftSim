@@ -16,7 +16,7 @@ CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
 
-CraftSim.CRAFTQ.useAuctionatorShoppingListAPI = true
+CraftSim.CRAFTQ.useAuctionatorShoppingListAPI = false
 
 local systemPrint=print
 local print=CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
@@ -223,7 +223,7 @@ end
 
 function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
     print("CraftSim.CRAFTQ:CreateAuctionatorShoppingList", false, true)
-    if not Auctionator.API.v1.ConvertToSearchString then
+    if CraftSim.CRAFTQ.useAuctionatorShoppingListAPI and not Auctionator.API.v1.ConvertToSearchString then
         local f = CraftSim.UTIL:GetFormatter()
         systemPrint(f.r("Error:") .. f.l(" CraftSim") .. " relies on the newest version of " .. 
         f.bb("Auctionator") .. " to create ShoppingLists. Please make sure your " .. f.bb("Auctionator") .. " addon is up to date!")
@@ -260,8 +260,47 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
         end
     end
 
+    if not CraftSim.CRAFTQ.useAuctionatorShoppingListAPI then
+        print("NOT Using Auctionator new API")
+        -- create shoppinglist import string?
+            -- format: Test^"Frostfire Alloy";;0;0;0;0;0;0;0;0;;3;;#;;99
+        local shoppingListImportString = CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME
+
+        for itemID, info in pairs(reagentMap) do
+            local isSoulbound = CraftSim.GUTIL:isItemSoulbound(itemID)
+            if not isSoulbound then
+                local itemCount = GetItemCount(itemID, true, false, true)
+                local neededItemCount = info.quantity - itemCount
+                print(tostring(info.itemName) .. " itemCount: " .. tostring(itemCount))
+                print(tostring(info.itemName) .. " quantity: " .. tostring(info.quantity))
+                print(tostring(info.itemName) .. " neededItemCount: " .. tostring(neededItemCount))
+                if neededItemCount > 0 then
+                    local itemShoppingListString = CraftSim.CRAFTQ:GetAuctionatorShoppingListItemString(info.itemName, info.qualityID, neededItemCount)
+                    print("add to shopping list: " .. tostring(itemShoppingListString))
+                    shoppingListImportString = shoppingListImportString .. '^' .. itemShoppingListString
+                end
+            else
+                print("item is soulbound, ignore: " .. tostring(info.itemName))
+            end
+        end
+
+        -- delete old list only if it exists to refresh contents instead of adding them
+        local listExists = Auctionator.Shopping.ListManager:GetIndexForName(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
+        if listExists then
+            Auctionator.Shopping.ListManager:Delete(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
+        end
+        Auctionator.Shopping.Lists.BatchImportFromString(shoppingListImportString)
+
+        return
+    end
+
+    print("Using Auctionator new API")
+
     --- convert to Auctionator Search Strings and deduct item count
     local searchStrings = CraftSim.GUTIL:Map(reagentMap, function (info, itemID)
+        if CraftSim.GUTIL:isItemSoulbound(itemID) then
+            return nil
+        end
         local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(itemID, true, false, true)
         local searchTerm = {
             searchString = info.itemName,
