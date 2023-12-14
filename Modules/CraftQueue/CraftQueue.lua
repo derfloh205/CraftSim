@@ -1,7 +1,7 @@
 _, CraftSim = ...
 
 ---@class CraftSim.CRAFTQ : Frame
-CraftSim.CRAFTQ = CraftSim.GUTIL:CreateRegistreeForEvents({"TRADE_SKILL_ITEM_CRAFTED_RESULT"})
+CraftSim.CRAFTQ = CraftSim.GUTIL:CreateRegistreeForEvents({"TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED"})
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
@@ -16,9 +16,16 @@ CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
 
-CraftSim.CRAFTQ.useAuctionatorShoppingListAPI = false
+CraftSim.CRAFTQ.useAuctionatorShoppingListAPI = true
 
+local systemPrint=print
 local print=CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+
+--- cache for OnConfirmCommoditiesPurchase -> COMMODITY_PURCHASE_SUCCEEDED flow
+---@class CraftSim.CraftQueue.purchasedItem
+---@field item ItemMixin?
+---@field quantity number
+CraftSim.CRAFTQ.purchasedItem = nil
 
 ---@param itemID number
 ---@param boughtQuantity number
@@ -26,54 +33,71 @@ function CraftSim.CRAFTQ:OnConfirmCommoditiesPurchase(itemID, boughtQuantity)
     if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
         return -- do not need if Auctionator not loaded
     end
-    local itemMixin = Item:CreateFromItemID(itemID)
 
-    CraftSim.GUTIL:ContinueOnAllItemsLoaded({itemMixin}, function ()
-        print("bought commodity")
-        print("item: " .. tostring(itemMixin:GetItemLink()))
-        print("quantity: " .. tostring(boughtQuantity))
-    
-        -- modify shopping list
-        local listIndex = Auctionator.Shopping.ListManager:GetIndexForName(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
-        if listIndex then
-            local shoppingList = Auctionator.Shopping.ListManager:GetByIndex(listIndex)
-            local itemQualityID = CraftSim.GUTIL:GetQualityIDFromLink(itemMixin:GetItemLink()) or '#'
+    CraftSim.CRAFTQ.purchasedItem = {
+        item=Item:CreateFromItemID(itemID),
+        quantity = boughtQuantity
+    }
+end
+
+function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
+    if not select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
+        return -- do not need if Auctionator not loaded
+    end
+
+    if not Auctionator.API.v1.ConvertToSearchString then
+        return -- if Auctionator is not up to date, do nothing
+    end
+    if CraftSim.CRAFTQ.purchasedItem then
+        CraftSim.GUTIL:ContinueOnAllItemsLoaded({CraftSim.CRAFTQ.purchasedItem.item}, function ()
+            local purchasedItem = CraftSim.CRAFTQ.purchasedItem
+            print("commodity purchase successfull")
+            print("item: " .. tostring(purchasedItem.item:GetItemLink()))
+            print("quantity: " .. tostring(purchasedItem.quantity))
+
+            local success, result = pcall(Auctionator.API.v1.GetShoppingListItems,CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
+            if not success then
+                print("Error calling GetShoppingListItems:\n" .. tostring(result))
+                return
+            end
+
+            local itemQualityID = CraftSim.GUTIL:GetQualityIDFromLink(purchasedItem.item:GetItemLink())
             local searchTerms = {
-                searchString=itemMixin:GetItemName(),
+                searchString=purchasedItem.item:GetItemName(),
                 isExact=true,
-                categoryKey="",
                 tier=itemQualityID,
             }
-            local searchString = Auctionator.Search.ReconstituteAdvancedSearch(searchTerms)
-            print("searchString: " .. tostring(searchString))
-            local item = CraftSim.GUTIL:Find(shoppingList.data.items, function (itemString)
-                return CraftSim.GUTIL:StringStartsWith(itemString, searchString)
+            local searchString = Auctionator.API.v1.ConvertToSearchString(CraftSimAddonName, searchTerms)
+            local oldSearchString = CraftSim.GUTIL:Find(result, function(r) 
+                return CraftSim.GUTIL:StringStartsWith(r, searchString) 
             end)
-            if item then 
-                local itemIndex = shoppingList:GetIndexForItem(item)
-                if not itemIndex then
-                    return
-                end
-                local name, qualityID, quantity = CraftSim.CRAFTQ:ParseAuctionatorShoppingListItemString(item)
-                print("found and parsed shopping list item string: ")
-                print("name: " .. tostring(name))
-                print("qualityID: " .. tostring(qualityID))
-                print("quantity: " .. tostring(quantity))
-                searchTerms.quantity = quantity - boughtQuantity
-
-                if searchTerms.quantity > 0 then
-                    local newItemString = Auctionator.Search.ReconstituteAdvancedSearch(searchTerms)
-                    -- update item
-                    shoppingList:AlterItem(itemIndex, newItemString)
-                else
-                    -- remove item
-                    shoppingList:DeleteItem(itemIndex)
-                end
+            if not oldSearchString then
+                print("item could not be found in shopping list")
+                return
             end
-        end
-    end)
 
+            local oldTerms = Auctionator.API.v1.ConvertFromSearchString(CraftSimAddonName, oldSearchString)
+
+            -- modify original line by updated quantity
+            local newQuantity = oldTerms.quantity - purchasedItem.quantity
+
+            if newQuantity > 0 then
+                searchTerms.quantity = newQuantity
+                local newSearchString = Auctionator.API.v1.ConvertToSearchString(CraftSimAddonName, searchTerms)
+                -- adapt
+                Auctionator.API.v1.AlterShoppingListItem(CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, 
+                oldSearchString, newSearchString)
+            else
+                -- remove
+                Auctionator.API.v1.DeleteShoppingListItem(CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, oldSearchString)
+            end
+
+            CraftSim.CRAFTQ.purchasedItem = nil -- reset
+        end)
+    end
 end
+
+
 
 function CraftSim.CRAFTQ:InitializeCraftQueue()
     -- TODO: load from Saved Variables?
@@ -199,85 +223,59 @@ end
 
 function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
     print("CraftSim.CRAFTQ:CreateAuctionatorShoppingList", false, true)
+    if not Auctionator.API.v1.ConvertToSearchString then
+        local f = CraftSim.UTIL:GetFormatter()
+        systemPrint(f.r("Error:") .. f.l(" CraftSim") .. " relies on the newest version of " .. 
+        f.bb("Auctionator") .. " to create ShoppingLists. Please make sure your " .. f.bb("Auctionator") .. " addon is up to date!")
+        return
+    end
+
     CraftSim.UTIL:StartProfiling("CreateAuctionatorShopping")
     local reagentMap = {}
     -- create a map of all used reagents in the queue and their quantity
     for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
-            local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
-            for _, reagent in pairs(requiredReagents) do
-                if reagent.hasQuality then
-                    for qualityID, reagentItem in pairs(reagent.items) do
-                        reagentMap[reagentItem.item:GetItemID()] = reagentMap[reagentItem.item:GetItemID()] or {
-                            itemName = reagentItem.item:GetItemName(),
-                            qualityID = nil,
-                            quantity = 0
-                        }
-                        reagentMap[reagentItem.item:GetItemID()].quantity = reagentMap[reagentItem.item:GetItemID()].quantity + (reagentItem.quantity * craftQueueItem.amount)
-                        reagentMap[reagentItem.item:GetItemID()].qualityID = qualityID
-                    end
-                else
-                    local reagentItem = reagent.items[1]
+        local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
+        for _, reagent in pairs(requiredReagents) do
+            if reagent.hasQuality then
+                for qualityID, reagentItem in pairs(reagent.items) do
                     reagentMap[reagentItem.item:GetItemID()] = reagentMap[reagentItem.item:GetItemID()] or {
                         itemName = reagentItem.item:GetItemName(),
                         qualityID = nil,
                         quantity = 0
                     }
                     reagentMap[reagentItem.item:GetItemID()].quantity = reagentMap[reagentItem.item:GetItemID()].quantity + (reagentItem.quantity * craftQueueItem.amount)
-                    print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
-                    print("quantity: " .. tostring(reagentMap[reagentItem.item:GetItemID()].quantity))
+                    reagentMap[reagentItem.item:GetItemID()].qualityID = qualityID
                 end
+            else
+                local reagentItem = reagent.items[1]
+                reagentMap[reagentItem.item:GetItemID()] = reagentMap[reagentItem.item:GetItemID()] or {
+                    itemName = reagentItem.item:GetItemName(),
+                    qualityID = nil,
+                    quantity = 0
+                }
+                reagentMap[reagentItem.item:GetItemID()].quantity = reagentMap[reagentItem.item:GetItemID()].quantity + (reagentItem.quantity * craftQueueItem.amount)
+                print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
+                print("quantity: " .. tostring(reagentMap[reagentItem.item:GetItemID()].quantity))
             end
         end
-
-        if not CraftSim.CRAFTQ.useAuctionatorShoppingListAPI then
-            print("NOT Using Auctionator.API.v1.CreateShoppingList new API")
-            -- create shoppinglist import string?
-                -- format: Test^"Frostfire Alloy";;0;0;0;0;0;0;0;0;;3;;#;;99
-            local shoppingListImportString = CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME
-
-            for itemID, info in pairs(reagentMap) do
-                local isSoulbound = CraftSim.GUTIL:isItemSoulbound(itemID)
-                if not isSoulbound then
-                    local itemCount = GetItemCount(itemID, true, false, true)
-                    local neededItemCount = info.quantity - itemCount
-                    print(tostring(info.itemName) .. " itemCount: " .. tostring(itemCount))
-                    print(tostring(info.itemName) .. " quantity: " .. tostring(info.quantity))
-                    print(tostring(info.itemName) .. " neededItemCount: " .. tostring(neededItemCount))
-                    if neededItemCount > 0 then
-                        local itemShoppingListString = CraftSim.CRAFTQ:GetAuctionatorShoppingListItemString(info.itemName, info.qualityID, neededItemCount)
-                        print("add to shopping list: " .. tostring(itemShoppingListString))
-                        shoppingListImportString = shoppingListImportString .. '^' .. itemShoppingListString
-                    end
-                else
-                    print("item is soulbound, ignore: " .. tostring(info.itemName))
-                end
-            end
-            
-            -- delete old list only if it exists to refresh contents instead of adding them
-            local listExists = Auctionator.Shopping.ListManager:GetIndexForName(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
-            if listExists then
-                Auctionator.Shopping.ListManager:Delete(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
-            end
-            Auctionator.Shopping.Lists.BatchImportFromString(shoppingListImportString)
-        else
-            print("Using Auctionator.API.v1.CreateShoppingList new API")
-            --- convert to Auctionator Search Strings and deduct item count
-            local searchStrings = CraftSim.GUTIL:Map(reagentMap, function (info, itemID)
-                local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(itemID, true, false, true)
-                local searchTerm = {
-                    searchString = info.itemName,
-                    tier = info.qualityID,
-                    quantity = math.max(info.quantity - itemCount, 0),
-                    isExact = true,
-                }
-                if searchTerm.quantity == 0 then
-                    return nil -- do not put into table
-                end
-                local searchString = Auctionator.API.v1.ConvertToSearchString(CraftSimAddonName, searchTerm)
-                return searchString
-            end)
-            Auctionator.API.v1.CreateShoppingList(CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
     end
+
+    --- convert to Auctionator Search Strings and deduct item count
+    local searchStrings = CraftSim.GUTIL:Map(reagentMap, function (info, itemID)
+        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(itemID, true, false, true)
+        local searchTerm = {
+            searchString = info.itemName,
+            tier = info.qualityID,
+            quantity = math.max(info.quantity - itemCount, 0),
+            isExact = true,
+        }
+        if searchTerm.quantity == 0 then
+            return nil -- do not put into table
+        end
+        local searchString = Auctionator.API.v1.ConvertToSearchString(CraftSimAddonName, searchTerm)
+        return searchString
+    end)
+    Auctionator.API.v1.CreateShoppingList(CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
    
     CraftSim.UTIL:StopProfiling("CreateAuctionatorShopping")
 end
