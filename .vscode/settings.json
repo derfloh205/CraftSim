@@ -43,7 +43,8 @@
         "OEMarketInfo",
         "GameFontHighlight",
         "CraftSimDebugNodeIDInput",
-        "CraftSimCustomerHistoryV2"
+        "CraftSimCustomerHistoryV2",
+        "DisplayTableInspectorWindow"
     ],
     "Lua.diagnostics.disable": [
         "missing-parameter",

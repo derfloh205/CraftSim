@@ -80,6 +80,12 @@ function CraftSim_DEBUG:print(debugOutput, debugID, recursive, printLabel, level
         end
     end
 end
+function CraftSim_DEBUG:InspectTable(table)
+    local loaded = C_AddOns.LoadAddOn("Blizzard_DebugTools")
+    if table and type(table) == "table" and loaded then
+        DisplayTableInspectorWindow(table)
+    end
+end
 
 ---This is an example for the usage of CraftSim's recipeData Object. It will most like
 ---@param recipeID any

@@ -31,7 +31,7 @@ CraftSim.CUSTOMER_HISTORY.DB = {}
         table.insert(self.db.realm[customer].history, {to = message, timestamp = math.floor((time()+GetTime()%1)*1000)})
 ]]
 
-
+local DB_VERSION = 2
 --- V2
 ---@class CraftSim.CustomerHistory
 ---@field v number -- data version
@@ -48,14 +48,14 @@ CraftSim.CUSTOMER_HISTORY.DB = {}
 ---@class CraftSim.CustomerHistory.ChatMessage
 ---@field fromPlayer boolean
 ---@field content string
----@field date CalendarTime
+---@field timestamp number unix ts in seconds
 
 ---@class CraftSim.CustomerHistory.Craft
 ---@field itemLink string
 ---@field tip number
 ---@field reagents CraftingOrderReagentInfo[]
 ---@field reagentState Enum.CraftingOrderReagentsType
----@field date CalendarTime
+---@field timestamp number unix ts in seconds
 ---@field customerNotes string
 
 ---@type CraftSim.CustomerHistory[]
@@ -67,7 +67,7 @@ CraftSimCustomerHistoryV2 = CraftSimCustomerHistoryV2 or {}
 function CraftSim.CUSTOMER_HISTORY.DB:GetCustomerHistory(customer, realm)
     ---@type CraftSim.CustomerHistory
     local defaultCustomerHistory = {
-        v = 2,
+        v = DB_VERSION,
         chatHistory = {},
         craftHistory = {},
         customer = customer,
@@ -87,4 +87,71 @@ function CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
     CraftSim.GUTIL:TrimTable(customerHistory.chatHistory, CraftSimOptions.maxHistoryEntriesPerClient, true)
 
     CraftSimCustomerHistoryV2[customerHistory.customer .. "-" .. customerHistory.realm] = customerHistory
+end
+
+
+-- MIGRATIONS
+
+function CraftSim.CUSTOMER_HISTORY.DB:MigrateDataV2()
+    print("Starting CustomerHistoryLegacy Migration")
+    local playerRealm = GetRealmName()
+    
+    if CraftSimCustomerHistory and CraftSimCustomerHistory.realm and CraftSimCustomerHistory.realm[playerRealm] then
+
+        ---@type table<string, CraftSim.CustomerHistory.Legacy>
+        local realmData = CraftSimCustomerHistory.realm[playerRealm]
+        for customerName, customerHistoryLegacy in pairs(realmData) do
+            if type(customerHistoryLegacy) == "table" then
+                print("Migrating Customer: " .. tostring(customerName))
+                local name, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(customerName)
+                -- create customer history v2 in new db
+                local customerHistory = CraftSim.CUSTOMER_HISTORY.DB:GetCustomerHistory(name, realm)
+    
+                customerHistory.totalTip = customerHistoryLegacy.totalTip
+                customerHistory.chatHistory = CraftSim.GUTIL:Map(customerHistoryLegacy.history, 
+                ---@param historyLegacy CraftSim.CustomerHistory.Craft.Legacy | CraftSim.CustomerHistory.ChatMessage.Legacy
+                function (historyLegacy)
+                    if historyLegacy.crafted then
+                        return nil
+                    end
+                    ---@type CraftSim.CustomerHistory.ChatMessage
+                    local chatMessage = {
+                        content = historyLegacy.from or historyLegacy.to,
+                        timestamp = math.floor(historyLegacy.timestamp / 1000),
+                        fromPlayer = historyLegacy.to ~= nil,
+                    }
+                    return chatMessage
+                end)
+    
+                customerHistory.craftHistory = CraftSim.GUTIL:Map(customerHistoryLegacy.history, 
+                ---@param historyLegacy CraftSim.CustomerHistory.Craft.Legacy | CraftSim.CustomerHistory.ChatMessage.Legacy
+                function (historyLegacy)
+                    if historyLegacy.from or historyLegacy.to then
+                        return nil
+                    end
+                    local reagentState = Enum.CraftingOrderReagentsType.All
+                    if not historyLegacy.reagents or #historyLegacy.reagents == 0 then
+                        reagentState = Enum.CraftingOrderReagentsType.None
+                    end 
+                    if CraftSim.GUTIL:Some(historyLegacy.reagents, function(r) return r.source == Enum.CraftingOrderReagentSource.Customer end) then
+                        reagentState = Enum.CraftingOrderReagentsType.Some
+                    end
+                    ---@type CraftSim.CustomerHistory.Craft
+                    local craft = {
+                        customerNotes = "",
+                        timestamp = math.floor(historyLegacy.timestamp / 1000),
+                        itemLink = historyLegacy.crafted,
+                        reagentState = reagentState,
+                        reagents = historyLegacy.reagents,
+                        tip = historyLegacy.commission
+                    }
+                    return craft
+                end)
+    
+                customerHistory.totalOrders = #customerHistory.craftHistory
+    
+                CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
+            end
+        end
+    end
 end
