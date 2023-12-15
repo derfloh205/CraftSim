@@ -8,13 +8,75 @@ CraftSim.CUSTOMER_HISTORY = CraftSim.GUTIL:CreateRegistreeForEvents(
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
 
 
+function CraftSim.CUSTOMER_HISTORY:MigrateDataV2()
+    print("Starting CustomerHistoryLegacy Migration")
+    local playerRealm = GetRealmName()
+    
+    if CraftSimCustomerHistory and CraftSimCustomerHistory[playerRealm] then
+
+        ---@type table<string, CraftSim.CustomerHistory.Legacy>
+        local realmData = CraftSimCustomerHistory[playerRealm]
+        for customerName, customerHistoryLegacy in pairs(realmData) do
+            print("Migrating Customer: " .. tostring(customerName))
+            local name, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(customerName)
+            -- create customer history v2 in new db
+            local customerHistory = CraftSim.CUSTOMER_HISTORY.DB:GetCustomerHistory(name, realm)
+
+            customerHistory.totalTip = customerHistoryLegacy.totalTip
+            customerHistory.chatHistory = CraftSim.GUTIL:Map(customerHistoryLegacy.history, 
+            ---@param historyLegacy CraftSim.CustomerHistory.Craft.Legacy | CraftSim.CustomerHistory.ChatMessage.Legacy
+            function (historyLegacy)
+                if historyLegacy.crafted then
+                    return nil
+                end
+                ---@type CraftSim.CustomerHistory.ChatMessage
+                local chatMessage = {
+                    content = historyLegacy.from or historyLegacy.to,
+                    date = C_DateAndTime.GetCalendarTimeFromEpoch(historyLegacy.timestamp),
+                    fromPlayer = historyLegacy.to ~= nil,
+                }
+                return chatMessage
+            end)
+
+            customerHistory.craftHistory = CraftSim.GUTIL:Map(customerHistoryLegacy.history, 
+            ---@param historyLegacy CraftSim.CustomerHistory.Craft.Legacy | CraftSim.CustomerHistory.ChatMessage.Legacy
+            function (historyLegacy)
+                if historyLegacy.from or historyLegacy.to then
+                    return nil
+                end
+                local reagentState = Enum.CraftingOrderReagentsType.All
+                if not historyLegacy.reagents or #historyLegacy.reagents == 0 then
+                    reagentState = Enum.CraftingOrderReagentsType.None
+                end 
+                if CraftSim.GUTIL:Some(historyLegacy.reagents, function(r) return r.source == Enum.CraftingOrderReagentSource.Customer end) then
+                    reagentState = Enum.CraftingOrderReagentsType.Some
+                end
+                ---@type CraftSim.CustomerHistory.Craft
+                local craft = {
+                    customerNotes = "",
+                    date = C_DateAndTime.GetCalendarTimeFromEpoch(historyLegacy.timestamp),
+                    itemLink = historyLegacy.crafted,
+                    reagentState = reagentState,
+                    reagents = historyLegacy.reagents,
+                    tip = historyLegacy.commission
+                }
+                return craft
+            end)
+
+            customerHistory.totalOrders = #customerHistory.craftHistory
+
+            CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
+        end
+    end
+end
+
 function CraftSim.CUSTOMER_HISTORY:Init()
-    -- self:RegisterEvent("CHAT_MSG_WHISPER", "HandleWhisper")
-    -- self:RegisterEvent("CHAT_MSG_WHISPER_INFORM", "HandleWhisper")
-    -- self:RegisterEvent("TRADE_SKILL_SHOW", "LoadHistory")
-    -- self:RegisterEvent("CRAFTINGORDERS_FULFILL_ORDER_RESPONSE", "OnOrderFinished")
-    -- self:RegisterEvent("CRAFTINGORDERS_RELEASE_ORDER_RESPONSE", "OnOrderFinished") -- for testing?
-    -- self:RegisterEvent("CRAFTINGORDERS_REJECT_ORDER_RESPONSE", "OnOrderFinished")
+    -- local s, e = pcall(CraftSim.CUSTOMER_HISTORY.MigrateDataV2)
+    -- if not s then
+    --     print(CraftSim.UTIL:GetFormatter().r("CustomerHistoryLegacy Migration failed:\n" .. tostring(e)))
+    -- else
+    --     print(CraftSim.UTIL:GetFormatter().g("CustomerHistoryLegacy Migration succeded"))
+    -- end
 end
 
 function CraftSim.CUSTOMER_HISTORY:CHAT_MSG_WHISPER(message, fullSenderName)
