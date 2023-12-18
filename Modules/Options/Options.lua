@@ -1,4 +1,7 @@
-local CraftSimAddonName, CraftSim = ...
+local _, CraftSim = ...
+
+---@type GGUI
+local GGUI = CraftSim.GGUI
 
 CraftSim.OPTIONS = {}
 
@@ -109,7 +112,7 @@ function CraftSim.OPTIONS:Init()
         end
     end)
 
-    CraftSim.GGUI.Button({
+    GGUI.Button({
         parent=TSMTab.content,anchorParent=tsmMaterialsPriceExpression,anchorA="RIGHT",anchorB="LEFT",offsetX=-10,offsetY=1,sizeX=15,sizeY=20,adjustWidth=true,
         label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_TSM_RESET),
         clickCallback=function ()
@@ -145,7 +148,7 @@ function CraftSim.OPTIONS:Init()
         end
     end)
 
-    CraftSim.GGUI.Button({
+    GGUI.Button({
         parent=TSMTab.content,anchorParent=tsmItemsPriceExpression,anchorA="RIGHT",anchorB="LEFT",offsetX=-10,offsetY=1,sizeX=15,sizeY=20,adjustWidth=true,
         label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_TSM_RESET),
         clickCallback=function ()
@@ -172,7 +175,7 @@ function CraftSim.OPTIONS:Init()
                 value=priceSourceName,
             })
         end
-        CraftSim.OPTIONS.priceSourceDropdown = CraftSim.GGUI.Dropdown({
+        CraftSim.OPTIONS.priceSourceDropdown = GGUI.Dropdown({
             parent=generalTab.content, anchorParent=generalTab.content, label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_PRICE_SOURCE),
             anchorA="TOP", anchorB="TOP", offsetY=-50, width=200,
             initialData=priceSourceAddonsDropdownData, initialValue=CraftSim.PRICE_API.name, initialLabel=CraftSim.PRICE_API.name,
@@ -197,10 +200,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyMaterials, -- get from options..
         "0", "1",
         function(self, value)
-            CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
+            GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
             CraftSimOptions.transparencyMaterials = value
         end)
-    CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions.transparencyMaterials)
+    GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions.transparencyMaterials)
 
     CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS),
     ModulesTab.content, materialSuggestionTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
@@ -211,11 +214,11 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyStatWeights, -- get from options..
         "0", "1",
         function(self, value)
-            CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(value)
+            GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(value)
             CraftSimOptions.transparencyStatWeights = value
         end)
 
-    CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(CraftSimOptions.transparencyStatWeights)
+    GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(CraftSimOptions.transparencyStatWeights)
     CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT),
     ModulesTab.content, CraftSimDetailsTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
@@ -226,10 +229,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyTopGear, -- get from options..
         "0", "1",
         function(self, value)
-            CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(value)
+            GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(value)
             CraftSimOptions.transparencyTopGear = value
         end)
-    CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(CraftSimOptions.transparencyTopGear)
+    GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(CraftSimOptions.transparencyTopGear)
     CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR),
     ModulesTab.content, CraftSimTopGearTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
@@ -253,22 +256,24 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencySpecInfo, -- get from options..
         "0", "1",
         function(self, value)
-            CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(value)
+            GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(value)
             CraftSimOptions.transparencySpecInfo = value
         end)
-    CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions.transparencySpecInfo)
+    GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions.transparencySpecInfo)
     CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO),
     ModulesTab.content, specInfoTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
-    local historyMaxSizeInput = CraftSim.FRAME:CreateNumericInput(
-        "Max history entries per client",
-        ModulesTab.content, specInfoTransparencySlider,
-        "TOP", "TOP", 0, -40, 85, 10, 200, false, function(self, userInput)
-            local currentValue = CraftSim.UTIL:ValidateNumberInput(self)
-            CraftSimOptions.maxHistoryEntriesPerClient = currentValue
-        end)
+    local historyMaxSizeInput = GGUI.NumericInput{
+        parent=ModulesTab.content, anchorParent=specInfoTransparencySlider,
+        anchorA="TOP", anchorB="TOP", label="Max history entries per client",
+        offsetY=-40, sizeX=85, sizeY=10, initialValue=CraftSimOptions.maxHistoryEntriesPerClient, allowDecimals=false, minValue=1,
+        onNumberValidCallback=function (numberInput)
+            local value = tonumber(numberInput.currentValue)
+            CraftSimOptions.maxHistoryEntriesPerClient = value
+        end, borderAdjustHeight=0.6, borderWidth=30,
+    }
     CraftSim.FRAME:CreateText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE),
-        ModulesTab.content, historyMaxSizeInput, "LEFT", "RIGHT", 20, 0, 1, nil)
+        ModulesTab.content, historyMaxSizeInput.textInput.frame, "LEFT", "RIGHT", 20, 0, 1, nil)
 
      local skillBreakpointsCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET),
      CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP),
@@ -369,7 +374,7 @@ function CraftSim.OPTIONS:Init()
     --     CraftSim.ACCOUNTSYNC:SynchronizeAccounts()
     -- end)
 
-    local optionsSyncButton = CraftSim.GGUI.Button({
+    local optionsSyncButton = GGUI.Button({
         parent=AccountSyncTab.content, anchorParent=characterNameInput, anchorA="TOPRIGHT", anchorB="TOPRIGHT", offsetY=-30,
         sizeX=20,sizeY=25,adjustWidth=true,label="Synchronize Options",
         clickCallback=function ()
