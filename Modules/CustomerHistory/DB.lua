@@ -89,6 +89,11 @@ function CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
     CraftSimCustomerHistoryV2[customerHistory.customer .. "-" .. customerHistory.realm] = customerHistory
 end
 
+---@param customerHistory CraftSim.CustomerHistory
+function CraftSim.CUSTOMER_HISTORY.DB:RemoveCustomerHistory(customerHistory)
+    CraftSimCustomerHistoryV2[customerHistory.customer .. "-" .. customerHistory.realm] = nil
+end
+
 
 -- MIGRATIONS
 

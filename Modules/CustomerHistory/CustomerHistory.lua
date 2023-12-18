@@ -22,6 +22,10 @@ end
 function CraftSim.CUSTOMER_HISTORY:CHAT_MSG_WHISPER(message, fullSenderName)
     local sender, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(fullSenderName)
 
+    -- DEBUG
+    -- sender = "Smitey"
+    -- realm = "Thrall"
+    -- message = "Hello again! I thought maybe I should write a really long message to test the capacity for the the customer history and to see if the message will clip out or not. So anyway this is a really long message. Hi."
     CraftSim.CUSTOMER_HISTORY:OnWhisper(sender, realm, message, false)
 end
 function CraftSim.CUSTOMER_HISTORY:CHAT_MSG_WHISPER_INFORM(message, _, _, _, fullTargetName)

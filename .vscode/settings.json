@@ -44,7 +44,8 @@
         "GameFontHighlight",
         "CraftSimDebugNodeIDInput",
         "CraftSimCustomerHistoryV2",
-        "DisplayTableInspectorWindow"
+        "DisplayTableInspectorWindow",
+        "RunNextFrame"
     ],
     "Lua.diagnostics.disable": [
         "missing-parameter",

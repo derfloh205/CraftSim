@@ -427,6 +427,7 @@ function CraftSim.MAIN:HookToProfessionsFrame()
 
 	ProfessionsFrame:HookScript("OnShow",
    function()
+		CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateDisplay()
 		CraftSim.MAIN.lastRecipeID = nil
 		if CraftSimOptions.openLastRecipe then
 			C_Timer.After(1, function()

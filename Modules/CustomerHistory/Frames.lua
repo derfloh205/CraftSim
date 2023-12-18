@@ -3,13 +3,17 @@ CraftSimAddonName, CraftSim = ...
 CraftSim.CUSTOMER_HISTORY.FRAMES = {}
 CraftSim.CUSTOMER_HISTORY.timeoutSeconds = 5
 
+CraftSim.CUSTOMER_HISTORY.frame = nil
+
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
-    self.frame = CraftSim.GGUI.Frame({
-        parent=ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent=ProfessionsFrame.CraftingPage.SchematicForm,
-        sizeX=600,sizeY=300,
+    local sizeX=1000
+    local sizeY=500
+    CraftSim.CUSTOMER_HISTORY.frame = CraftSim.GGUI.Frame({
+        parent=ProfessionsFrame,
+        anchorParent=ProfessionsFrame,
+        sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.CUSTOMER_HISTORY,
         title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TITLE),
         collapseable=true,
@@ -23,127 +27,368 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     })
 
     local function createContent(frame)
-        self.frame:Hide()
-        ---@type GGUI.Dropdown
-        self.frame.content.customerDropdown = CraftSim.GGUI.Dropdown({
-            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", width=170, offsetX=-170, offsetY=-30,
-            initialValue=nil,
-            initialLabel="",
-            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DROPDOWN_LABEL),
-            initialData={},
-            clickCallback=function (_, _, item) CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(item) end
-        })
-        self.frame.content.deleteButton = CraftSim.GGUI.Button({
-            parent=frame.content,anchorParent=self.frame.content.customerDropdown.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=0, offsetY=2,
-            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_BUTTON), sizeX=15, sizeY=20, adjustWidth=true,
-            clickCallback=function ()
-                CraftSim.CUSTOMER_HISTORY.db.realm[CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer] = nil
-                self:ResetDropdown()
-                self.frame.content.messageBox:Clear()
-                self:LoadTotalTip()
-                CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer = nil
-                self.frame.content.deleteButton.frame:SetEnabled(false)
-            end,
-        })
-        self.frame.content.deleteButton.frame:SetEnabled(false)
+        frame:Hide()
 
-        self.frame.content.filterTextbox = CraftSim.FRAME:CreateInput("Search", self.frame.content, self.frame.content.customerDropdown.frame, "TOP", "BOTTOM", 0, 0, 170, 25,
-        "",
-        function(textInput, userInput)
-            if not userInput then return end
-            local input = textInput:GetText():gsub("^%s*(.-)%s*$", "%1") or ""
-            self:ResetDropdown(CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer, input)
-            if input ~= "" then
-                if not _G["DropDownList"..1]:IsShown() then
-                    ToggleDropDownMenu(1, nil, self.frame.content.customerDropdown.frame, self.frame.content.customerDropdown.frame.name, 170, 50, nil, nil)
-                end
-            elseif _G["DropDownList"..1]:IsShown() then
-                ToggleDropDownMenu(1, nil, self.frame.content.customerDropdown.frame, self.frame.content.customerDropdown.frame.name, 170, 50, nil, nil)
-            end
-        end)
-
-        self.frame.content.totalTip = CraftSim.GGUI.Text({
-            parent=self.frame.content, anchorParent=self.frame.title.frame, anchorA="TOP", anchorB="TOP", offsetX=200, offsetY=-36,
-            text="",
-            font="GameFontNormal",
-            justifyOptions={
-                type="H",
-                align="RIGHT"
-            }
-        })
-        self.frame.content.messageBox = CraftSim.GGUI.ScrollingMessageFrame({
-            parent=self.frame.content, anchorParent=self.frame.content, anchorA="BOTTOMLEFT", anchorB="BOTTOMLEFT", offsetX=15, offsetY=15,
-            sizeX=self.frame.originalX - 20, sizeY=self.frame.originalY - 130,
-            enableScrolling=true,
-            fading=false,
-            justifyOptions={
-                type="H",
-                align="LEFT",
+        ---@type GGUI.FrameList.ColumnOption[]
+        local columnOptionsCustomerList = {
+            {
+                label="Customer",
+                width=100,
             },
-            maxLines=50,
-            font=GameFontNormal,
+            {
+                label ="Total Tip",
+                width=70,
+            },
+            {
+                label="", -- remove column
+                width=30,
+                justifyOptions={type="H", align="CENTER"}
+            }
+        }
+        frame.content.customerList = CraftSim.GGUI.FrameList({  
+            sizeY=400, columnOptions=columnOptionsCustomerList, parent=frame.content, anchorParent=frame.content, anchorA="TOPLEFT", anchorB="TOPLEFT", 
+            offsetY=-70, offsetX=30, selectableRows=true, rowHeight=20,
+            showHeaderLine=true,
+            rowConstructor = function (columns)
+                local customerColumn = columns[1]
+                local tipColumn = columns[2] 
+                local removeColumn = columns[3] 
+
+                local rowContentScale = 0.9
+
+                customerColumn.text = CraftSim.GGUI.Text({
+                    parent=customerColumn, anchorParent=customerColumn, anchorA="LEFT", anchorB="LEFT", offsetX=2,
+                    justifyOptions={type="H", align="LEFT"}, text="CustomerName", scale=rowContentScale
+                })
+                tipColumn.text = CraftSim.GGUI.Text({
+                    parent=tipColumn, anchorParent=tipColumn, anchorA="RIGHT", anchorB="RIGHT", offsetX=-10,
+                    justifyOptions={type="H", align="RIGHT"}, text=CraftSim.GUTIL:FormatMoney(0), scale=rowContentScale
+                })
+                removeColumn.removeButton = CraftSim.GGUI.Button({
+                    parent=removeColumn, anchorParent=removeColumn, scale = 0.8,
+                    label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.15),
+                    sizeX=25, clickCallback = nil -- set dynamically in Add
+                })
+            end,
+            selectionCallback=function (row)
+                CraftSim.CUSTOMER_HISTORY.FRAMES:OnCustomerSelected(row.customerHistory)
+            end
         })
-        self.frame.content.messageBox:EnableHyperLinksForFrameAndChilds()
+
+        frame.content.customerName = CraftSim.GGUI.Text({
+            parent=frame.content, anchorParent=frame.content, anchorA="TOP", anchorB="TOP",
+            text="CustomerName", offsetX=100, offsetY=-50,
+        })
+
+        local chatMessageColumnWidth=450
+
+        ---@type GGUI.FrameList.ColumnOption[]
+        local columnOptionsChatFrame = {
+            {
+                label="", -- Timestamp
+                width=100,
+                justifyOptions={type="H", align="RIGHT"}
+            },
+            {
+                label="", -- Sender
+                width=100,
+                justifyOptions={type="H", align="RIGHT"}
+            },
+            {
+                label ="", -- Message
+                width=chatMessageColumnWidth,
+                justifyOptions={type="H", align="LEFT"}
+            }
+        }
+
+        frame.content.chatMessageList = CraftSim.GGUI.FrameList({
+            parent=frame.content, anchorParent=frame.content.customerName.frame, anchorA="TOP", anchorB="BOTTOM", offsetY=-8,
+            columnOptions=columnOptionsChatFrame, showHeaderLine = true, rowHeight=20, sizeY=200,
+            rowConstructor=function (columns)
+                local timeColumn = columns[1]
+                local senderColumn = columns[2]
+                local messageColumn = columns[3]
+                
+                timeColumn.text = CraftSim.GGUI.Text({
+                    parent=timeColumn, anchorParent=timeColumn, anchorA="RIGHT",
+                    anchorB="RIGHT", justifyOptions={type="H", align="RIGHT"}, text="Timestamp"                
+                })
+                senderColumn.text = CraftSim.GGUI.Text({
+                    parent=senderColumn, anchorParent=senderColumn, anchorA="RIGHT",
+                    anchorB="RIGHT", justifyOptions={type="H", align="RIGHT"}, text="Sender"                
+                })
+                messageColumn.text = CraftSim.GGUI.Text({
+                    parent=messageColumn, anchorParent=messageColumn, anchorA="TOPLEFT",
+                    anchorB="TOPLEFT", justifyOptions={type="HV", alignH="LEFT", alignV="LEFT"}, text="Message", fixedWidth=chatMessageColumnWidth, offsetY=-4.1,                
+                })
+
+                CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(messageColumn)
+            end
+        })
+
+        ---@type GGUI.FrameList.ColumnOption[]
+        local columnOptionsCraftList = {
+            {
+                label="Date", -- Timestamp
+                width=100,
+                justifyOptions={type="H", align="LEFT"}
+            },
+            {
+                label="Result", -- Result
+                width=250,
+                justifyOptions={type="H", align="RIGHT"}
+            },
+            {
+                label ="Tip", -- Tip
+                width=100,
+                justifyOptions={type="H", align="RIGHT"}
+            },
+            {
+                label ="Customer Reagents", 
+                width=150,
+                justifyOptions={type="H", align="RIGHT"}
+            },
+            {
+                label ="Note", -- Customer Note
+                width=50,
+                justifyOptions={type="H", align="CENTER"}
+            }
+        }
+
+        frame.content.craftList = CraftSim.GGUI.FrameList({
+            parent=frame.content, anchorParent=frame.content.chatMessageList.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=-30,
+            columnOptions=columnOptionsCraftList, showHeaderLine = true, rowHeight=20, sizeY=150,
+            rowConstructor=function (columns)
+                local timeColumn = columns[1]
+                local resultColumn = columns[2]
+                local tipColumn = columns[3]
+                local reagentColumn = columns[4]
+                local noteColumn = columns[5]
+                
+                timeColumn.text = CraftSim.GGUI.Text({
+                    parent=timeColumn, anchorParent=timeColumn, anchorA="LEFT",
+                    anchorB="LEFT", justifyOptions={type="H", align="LEFT"}, text="Timestamp"                
+                })
+                resultColumn.text = CraftSim.GGUI.Text({
+                    parent=resultColumn, anchorParent=resultColumn, anchorA="RIGHT",
+                    anchorB="RIGHT", justifyOptions={type="H", align="LEFT"}, text="ResultLink"                
+                })
+                tipColumn.text = CraftSim.GGUI.Text({
+                    parent=tipColumn, anchorParent=tipColumn, anchorA="RIGHT",
+                    anchorB="RIGHT", justifyOptions={type="H", align="RIGHT"}, text="Tip",                
+                })
+                reagentColumn.icon = CraftSim.GGUI.HelpIcon({
+                    parent=reagentColumn, anchorParent=reagentColumn, text="Reagents",                
+                })
+
+                noteColumn.icon = CraftSim.GGUI.HelpIcon{
+                    parent=noteColumn, anchorParent=noteColumn, text="SomeNote"
+                }
+
+                CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(resultColumn)
+            end
+        })
     end
 
-    createContent(self.frame)
+    createContent(CraftSim.CUSTOMER_HISTORY.frame)
 end
 
-function CraftSim.CUSTOMER_HISTORY.FRAMES:SetCustomer(customer)
-    customer = customer or CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer
-
-    if C_TradeSkillUI.IsTradeSkillReady() then
-        self.frame.content.deleteButton.frame:SetEnabled(customer ~= nil)
-        self:ResetDropdown(customer, self.frame.content.filterTextbox:GetText() or nil)
-        self:LoadHistory(customer)
-    end
-    CraftSim.CUSTOMER_HISTORY.db.realm.lastCustomer = customer
+function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateDisplay()
+    CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
 end
-
-function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadTotalTip(customer)
-    if customer then
-        local totalTip = CraftSim.CUSTOMER_HISTORY.db.realm[customer].totalTip or 0
-        self.frame.content.totalTip:SetText(string.format("%s%s", CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP), CraftSim.GUTIL:FormatMoney(totalTip)))
-    else
-        self.frame.content.totalTip:SetText("")
-    end
-end
-
-function CraftSim.CUSTOMER_HISTORY.FRAMES:LoadHistory(customer)
-    if not customer then
+    
+function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
+    if not CraftSimCustomerHistoryV2 then
         return
     end
-    print("Loading history for " .. customer)
-    self:LoadTotalTip(customer)
-    self.frame.content.messageBox:Clear()
 
-    local info = ChatTypeInfo["WHISPER"]
-    local fromText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_FROM)
-    local toText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TO)
-    local forText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_FOR)
-    local craftFormatText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_FORMAT)
-    for _, message in ipairs(CraftSim.CUSTOMER_HISTORY.db.realm[customer].history) do
-        if message.from then
-            self.frame.content.messageBox.frame:AddMessage(string.format("%s |Hplayer:%s:1:WHISPER|h[%s]|h|r: %s", fromText, customer, customer, message.from), info.r, info.g, info.b)
-        elseif message.to then
-            self.frame.content.messageBox.frame:AddMessage(string.format("%s |Hplayer:%s:1:WHISPER|h[%s]|h|r: %s", toText, customer, customer, message.to), info.r, info.g, info.b)
-        else
-            self.frame.content.messageBox.frame:AddMessage(string.format("%s |Hplayer:%s:1:WHISPER|h[%s]|h|r: ", forText, customer, customer) .. string.format(craftFormatText, message.crafted, CraftSim.GUTIL:FormatMoney(message.commission)))
-        end
+    ---@type GGUI.FrameList
+    local customerList = CraftSim.CUSTOMER_HISTORY.frame.content.customerList
+    customerList:Remove()
+
+    for _, customerHistory in pairs(CraftSimCustomerHistoryV2) do
+        customerList:Add(function (row) 
+            local columns = row.columns
+            local customerColumn = columns[1]
+            local tipColumn = columns[2] 
+            local removeColumn = columns[3] 
+            row.customerHistory = customerHistory
+            customerColumn.text:SetText(customerHistory.customer)
+            tipColumn.text:SetText(CraftSim.GUTIL:FormatMoney(customerHistory.totalTip))
+            removeColumn.removeButton.clickCallback = function ()
+                CraftSim.CUSTOMER_HISTORY.DB:RemoveCustomerHistory(customerHistory)
+                CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateDisplay()
+                if row == CraftSim.CUSTOMER_HISTORY.frame.content.customerList.selectedRow then
+                    CraftSim.CUSTOMER_HISTORY.frame.content.customerList:SelectRow(1)
+                end
+            end
+        end)
+    end
+
+    customerList:UpdateDisplay(function (rowA, rowB)
+        return rowA.customerHistory.totalTip >= rowB.customerHistory.totalTip
+    end)
+
+    if not customerList.selectedRow then
+        customerList:SelectRow(1)
     end
 end
 
-function CraftSim.CUSTOMER_HISTORY.FRAMES:ResetDropdown(customer, filter)
-    local data = CraftSim.GUTIL:Map(CraftSim.CUSTOMER_HISTORY.db.realm, function(a, e)
-        local valid, match = pcall(string.find, string.lower(e), string.lower(filter or ""))
-        if (a.history and (not filter or not valid or match)) then
-            return {label=e, value=e}
-        end
+---@param customerHistory CraftSim.CustomerHistory
+function CraftSim.CUSTOMER_HISTORY.FRAMES:OnCustomerSelected(customerHistory)
+    ---@type GGUI.Text
+    local customerName = CraftSim.CUSTOMER_HISTORY.frame.content.customerName
+    customerName:SetText(customerHistory.customer .. "-" .. customerHistory.realm)
+
+    CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerChatHistory(customerHistory.customer, customerHistory.chatHistory)
+    CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerCraftHistory(customerHistory.craftHistory)
+end
+
+---@param craftHistory CraftSim.CustomerHistory.Craft
+function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerCraftHistory(craftHistory)
+    ---@type GGUI.FrameList
+    local craftList = CraftSim.CUSTOMER_HISTORY.frame.content.craftList
+
+    craftList:Remove()
+
+    ---@type CraftSim.CustomerHistory.Craft[]
+    local craftsSorted = CraftSim.GUTIL:Sort(craftHistory, 
+    ---@param craftA CraftSim.CustomerHistory.Craft
+    ---@param craftB CraftSim.CustomerHistory.Craft
+    function(craftA, craftB) 
+        return craftA.timestamp > craftB.timestamp
     end)
-    self.frame.content.customerDropdown:SetData({
-        initialLabel=customer,
-        initialValue=customer,
-        initialData=data,
-        data=data,
-    })
+
+    local f = CraftSim.UTIL:GetFormatter()
+    for _, craft in pairs(craftsSorted) do
+        craftList:Add(function (row)
+            local columns = row.columns
+            local timeColumn = columns[1]
+            local resultColumn = columns[2]
+            local tipColumn = columns[3]
+            local reagentColumn = columns[4]
+            local noteColumn = columns[5]
+
+            timeColumn.text:SetText(CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedDayString(craft.timestamp))
+    
+            resultColumn.text:SetText(tostring(craft.itemLink))
+            tipColumn.text:SetText(f.m(craft.tip))
+
+            noteColumn.icon:SetText(craft.customerNotes)
+            noteColumn.icon:SetEnabled(#craft.customerNotes > 0)
+
+            local reagentItems = CraftSim.GUTIL:Map(craft.reagents, function(r) return Item:CreateFromItemID(r.reagent.itemID) end)
+            CraftSim.GUTIL:ContinueOnAllItemsLoaded(reagentItems, function ()     
+                local reagentText=""
+                for _, reagent in pairs(craft.reagents) do
+                    local item = Item:CreateFromItemID(reagent.reagent.itemID)
+                    local qualityID = CraftSim.GUTIL:GetQualityIDFromLink(item:GetItemLink())
+                    local qualityIcon = ""
+                    local itemIcon = CraftSim.GUTIL:IconToText(item:GetItemIcon(), 20, 20)
+                    if qualityID then
+                        qualityIcon = CraftSim.GUTIL:GetQualityIconString(qualityID, 20, 20, 0, 0)
+                    end
+                    reagentText = reagentText .. itemIcon .. qualityIcon .. " x " .. reagent.reagent.quantity .. "\n"
+                end
+                reagentColumn.icon:SetText(reagentText)
+            end)
+
+        end)
+    end
+
+    craftList:UpdateDisplay()
+end
+
+---@param chatHistory CraftSim.CustomerHistory.ChatMessage
+function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerChatHistory(customer, chatHistory)
+    
+    ---@type GGUI.FrameList
+    local chatMessageList = CraftSim.CUSTOMER_HISTORY.frame.content.chatMessageList
+
+    chatMessageList:Remove()
+
+    ---@type CraftSim.CustomerHistory.ChatMessage[]
+    local chatMessagesReversed = CraftSim.GUTIL:Sort(chatHistory, 
+    ---@param chatMessageA CraftSim.CustomerHistory.ChatMessage
+    ---@param chatMessageB CraftSim.CustomerHistory.ChatMessage
+    function(chatMessageA, chatMessageB) 
+        return chatMessageA.timestamp < chatMessageB.timestamp
+    end)
+
+    -- insert headers per day
+    ---@type (CraftSim.CustomerHistory.ChatMessage | {day:string})[]
+    local chatMessages = {}
+    local currentDate = nil
+    for _, chatMessage in pairs(chatMessagesReversed) do
+        local dayString = CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedDayString(chatMessage.timestamp)
+        if currentDate ~= dayString then
+            table.insert(chatMessages, {
+                day=dayString
+            })
+            currentDate = dayString
+        end
+        table.insert(chatMessages, chatMessage)
+    end
+
+    local f = CraftSim.UTIL:GetFormatter()
+    for _, chatMessage in pairs(chatMessages) do
+        chatMessageList:Add(function (row)
+            local columns = row.columns
+            local timeColumn = columns[1]
+            local senderColumn = columns[2]
+            local messageColumn = columns[3]
+
+            if chatMessage.day then
+                timeColumn.text:SetText(f.whisper("[" .. chatMessage.day .. "]"))
+                senderColumn.text:SetText("")
+                messageColumn.text:SetText("")
+            else
+                timeColumn.text:SetText(f.whisper("[" .. CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedTimeString(chatMessage.timestamp) .. "]"))
+    
+                local sender = "[" .. tostring(customer) .. "]: "
+    
+                if chatMessage.fromPlayer then
+                    sender = "[You]: "
+                end
+        
+                senderColumn.text:SetText(f.whisper(tostring(sender)))
+                messageColumn.text:SetText(f.whisper(tostring(chatMessage.content)))
+            end
+
+            -- adjust row height
+            ---@type Frame
+            local rowFrame = row.frame
+            ---@type SimpleFontString
+            local messageText = messageColumn.text.frame
+            local messageHeight = math.max(20, messageText:GetStringHeight())
+            rowFrame:SetHeight(messageHeight)
+        end)
+    end
+
+    chatMessageList:UpdateDisplay()
+    RunNextFrame(function ()
+        chatMessageList:ScrollDown()
+    end)
+end
+
+local function normalize(dateNumber)
+    dateNumber = tostring(dateNumber)
+    if #dateNumber == 2 then
+        return dateNumber
+    else
+        return "0" .. dateNumber
+    end
+end
+
+---@param timestamp number
+---@return string
+function CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedDayString(timestamp)
+    local date = date("*t", timestamp)
+    return string.format("%s.%s.%s", normalize(date.day), normalize(date.month), date.year)
+end
+---@param timestamp number
+---@return string
+function CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedTimeString(timestamp)
+    local date = date("*t", timestamp)
+    return string.format("%s:%s:%s", normalize(date.hour), normalize(date.min), normalize(date.sec))
 end

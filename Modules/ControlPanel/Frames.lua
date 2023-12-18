@@ -3,7 +3,7 @@ CraftSimAddonName, CraftSim = ...
 CraftSim.CONTROL_PANEL.FRAMES = {}
 
 function CraftSim.CONTROL_PANEL.FRAMES:Init()
-    local currentVersion = GetAddOnMetadata(CraftSimAddonName, "Version")
+    local currentVersion = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
 
     local frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame, anchorParent=ProfessionsFrame,anchorA="BOTTOM",anchorB="TOP",offsetY=-5,
@@ -18,7 +18,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
 
     CraftSim.CONTROL_PANEL.frame = frame
 
-    local createModuleCheckbox = function(label, description, anchorA, anchorParent, anchorB, offsetX, offsetY, optionVariable)
+    local createModuleCheckbox = function(label, description, anchorA, anchorParent, anchorB, offsetX, offsetY, optionVariable, optionalFrameToToggle)
         local cb = CraftSim.FRAME:CreateCheckbox(" " .. label, 
         description, 
         optionVariable,
@@ -29,7 +29,11 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         offsetX, 
         offsetY)
         cb:HookScript("OnClick", function() 
+            local checked= frame.content[optionVariable]:GetChecked()
             CraftSim.MAIN:TriggerModulesErrorSafe()
+            if optionalFrameToToggle then
+                CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, optionalFrameToToggle):SetVisible(checked)
+            end
         end)
         return cb
     end
@@ -163,6 +167,6 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
 
     frame.content.modulesCustomerHistory = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP),
-        "TOP", frame.content.modulesCustomerService, "TOP", 0, cbSpacingY, "modulesCustomerHistory")
+        "TOP", frame.content.modulesCustomerService, "TOP", 0, cbSpacingY, "modulesCustomerHistory", CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 
 end
