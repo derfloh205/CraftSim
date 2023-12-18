@@ -10,25 +10,25 @@ function CraftSim.LOCAL:Init()
     if currentLocale == CraftSim.CONST.LOCALES.EN then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL.LOCAL_EN
     elseif currentLocale == CraftSim.CONST.LOCALES.DE then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_DE
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_DE:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.IT then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_IT
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_IT:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.RU then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_RU
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_RU:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.PT then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_PT
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_PT:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.ES then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_ES
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_ES:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.FR then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_FR
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_FR:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.MX then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_ES
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_ES:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.KO then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_KO
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_KO:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.TW then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_TW
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_TW:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.CN then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_CN
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_CN:GetData()
     else
         error("CraftSim Error: Client not supported: " .. tostring(currentLocale)) 
     end

@@ -1,4 +1,4 @@
-local CraftSimAddonName, CraftSim = ...
+local _, CraftSim = ...
 
 CraftSim.NEWS = {}
 
@@ -9,9 +9,11 @@ function CraftSim.NEWS:GET_NEWS()
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
-        newP("12.0.4"),
+        newP("12.0.5"),
         f.p .. "Hotfixes regarding " ..f.bb("CustomerHistory") .. " Data Migration",
         f.p .. "Added price source addons to optional deps......",
+        f.p .. "Fixed average profit not correctly calculated",
+        f.a .. "for non english clients",
         newP("12.0.0"),
         f.P .. "Reworked " .. f.bb("Customer History") .. ". Now includes:",
         f.a .. "- " .. f.g("A Whisper Button"),

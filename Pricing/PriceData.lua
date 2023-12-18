@@ -102,7 +102,7 @@ end
 ---@param idOrLink? number | string
 ---@return number? auctionAmount
 function CraftSim.PRICEDATA:GetAuctionAmount(idOrLink)
-    if IsAddOnLoaded(CraftSimTSM.name) then
+    if C_AddOns.IsAddOnLoaded(CraftSimTSM.name) then
         return CraftSimTSM:GetAuctionAmount(idOrLink)
     else
         return

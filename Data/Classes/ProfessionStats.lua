@@ -33,6 +33,7 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 		print("No Operation Info -> No Stats")
 		return
 	end
+	print("Parse Stats By OperationInfo", false, true)
     self.skill.value = operationInfo.baseSkill + operationInfo.bonusSkill
     self.recipeDifficulty.value = operationInfo.baseDifficulty
 	local bonusStats = operationInfo.bonusStats
@@ -43,6 +44,7 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 		local multicraft = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT))
 		local resourcefulness = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS))
 		local craftingspeed = string.lower(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED))
+		print(CraftSim.LOCAL)
 		if statName == craftingspeed then
 			self.craftingspeed:SetValueByPercent(statInfo.ratingPct / 100)
 		elseif statName == inspiration then
