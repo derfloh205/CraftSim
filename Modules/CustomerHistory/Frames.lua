@@ -8,7 +8,7 @@ CraftSim.CUSTOMER_HISTORY.frame = nil
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
-    local sizeX=1000
+    local sizeX=1050
     local sizeY=500
     CraftSim.CUSTOMER_HISTORY.frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame,
@@ -75,10 +75,24 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             end
         })
 
+        frame.content.purgeCustomers = CraftSim.GGUI.Button{
+            parent=frame.content, anchorParent=frame.content.customerList.frame, anchorA="BOTTOMLEFT", anchorB="TOPLEFT", offsetY=20,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_NO_TIP_LABEL), adjustWidth=true,
+            clickCallback=function ()
+                StaticPopup_Show("CRAFT_SIM_CUSTOMER_HISTORY_PURGE_ZERO_TIP_CONFIRMATION")
+            end
+        }
+
         frame.content.customerName = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content, anchorA="TOP", anchorB="TOP",
-            text="CustomerName", offsetX=100, offsetY=-50,
+            text="CustomerName", offsetX=80, offsetY=-50, scale=1.5,
         })
+
+        frame.content.whisperButton = CraftSim.GGUI.Button{
+            parent=frame.content, anchorParent=frame.content.customerName.frame,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_WHISPER_BUTTON_LABEL), adjustWidth=true,
+            anchorA="LEFT", anchorB="RIGHT", offsetX=10,
+        }
 
         local chatMessageColumnWidth=450
 
@@ -146,7 +160,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             {
                 label ="Customer Reagents", 
                 width=150,
-                justifyOptions={type="H", align="RIGHT"}
+                justifyOptions={type="H", align="CENTER"}
             },
             {
                 label ="Note", -- Customer Note
@@ -216,14 +230,10 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
             customerColumn.text:SetText(customerHistory.customer)
             tipColumn.text:SetText(CraftSim.GUTIL:FormatMoney(customerHistory.totalTip))
             removeColumn.removeButton.clickCallback = function ()
-                CraftSim.CUSTOMER_HISTORY.DB:RemoveCustomerHistory(customerHistory)
-                CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateDisplay()
-                if row == CraftSim.CUSTOMER_HISTORY.frame.content.customerList.selectedRow then
-                    CraftSim.CUSTOMER_HISTORY.frame.content.customerList:SelectRow(1)
-                end
+                StaticPopup_Show("CRAFT_SIM_CUSTOMER_HISTORY_REMOVE_CUSTOMER_CONFIRMATION", nil, nil, {row=row, customerHistory=customerHistory})
             end
         end)
-    end
+    end 
 
     customerList:UpdateDisplay(function (rowA, rowB)
         return rowA.customerHistory.totalTip >= rowB.customerHistory.totalTip
@@ -238,7 +248,11 @@ end
 function CraftSim.CUSTOMER_HISTORY.FRAMES:OnCustomerSelected(customerHistory)
     ---@type GGUI.Text
     local customerName = CraftSim.CUSTOMER_HISTORY.frame.content.customerName
+    local fullName = customerHistory.customer .. "-" .. customerHistory.realm
     customerName:SetText(customerHistory.customer .. "-" .. customerHistory.realm)
+    CraftSim.CUSTOMER_HISTORY.frame.content.whisperButton.clickCallback = function ()
+        CraftSim.CUSTOMER_HISTORY:StartWhisper(fullName)
+    end
 
     CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerChatHistory(customerHistory.customer, customerHistory.chatHistory)
     CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerCraftHistory(customerHistory.craftHistory)

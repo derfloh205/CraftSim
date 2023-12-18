@@ -16,7 +16,7 @@ CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
 --- if canCraft and such functions are not called by craftqueue it should be nil
 CraftSim.CRAFTQ.itemCountCache = nil
 
-CraftSim.CRAFTQ.useAuctionatorShoppingListAPI = false
+CraftSim.CRAFTQ.useAuctionatorShoppingListAPI = true
 
 local systemPrint=print
 local print=CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)

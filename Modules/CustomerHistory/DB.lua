@@ -94,6 +94,14 @@ function CraftSim.CUSTOMER_HISTORY.DB:RemoveCustomerHistory(customerHistory)
     CraftSimCustomerHistoryV2[customerHistory.customer .. "-" .. customerHistory.realm] = nil
 end
 
+function CraftSim.CUSTOMER_HISTORY.DB:PurgeZeroTipCustomers()
+    for key, customerHistory in pairs(CraftSimCustomerHistoryV2) do
+        if customerHistory.totalTip <= 0 then
+            CraftSimCustomerHistoryV2[key] = nil
+        end
+    end
+end
+
 
 -- MIGRATIONS
 

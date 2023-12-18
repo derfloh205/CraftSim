@@ -1,31 +1,34 @@
 CraftSimAddonName, CraftSim = ...
 
 CraftSim.LOCAL = {}
+CraftSim.LOCAL.LOCAL_CLIENT = {}
+CraftSim.LOCAL.LOCAL_EN = {}
 
 function CraftSim.LOCAL:Init()
     local currentLocale = GetLocale()
+    CraftSim.LOCAL.LOCAL_EN = CraftSim.LOCAL_EN:GetData() -- always load english locals for fallback translations
     if currentLocale == CraftSim.CONST.LOCALES.EN then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_EN
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL.LOCAL_EN
     elseif currentLocale == CraftSim.CONST.LOCALES.DE then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_DE
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_DE
     elseif currentLocale == CraftSim.CONST.LOCALES.IT then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_IT
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_IT
     elseif currentLocale == CraftSim.CONST.LOCALES.RU then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_RU
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_RU
     elseif currentLocale == CraftSim.CONST.LOCALES.PT then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_PT
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_PT
     elseif currentLocale == CraftSim.CONST.LOCALES.ES then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_ES
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_ES
     elseif currentLocale == CraftSim.CONST.LOCALES.FR then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_FR
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_FR
     elseif currentLocale == CraftSim.CONST.LOCALES.MX then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_ES
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_ES
     elseif currentLocale == CraftSim.CONST.LOCALES.KO then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_KO
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_KO
     elseif currentLocale == CraftSim.CONST.LOCALES.TW then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_TW
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_TW
     elseif currentLocale == CraftSim.CONST.LOCALES.CN then
-        CraftSim.LOCAL.LOCAL = CraftSim.LOCAL_CN
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_CN
     else
         error("CraftSim Error: Client not supported: " .. tostring(currentLocale)) 
     end
@@ -33,10 +36,10 @@ end
 
 ---@param ID CraftSim.LOCALIZATION_IDS
 function CraftSim.LOCAL:GetText(ID)
-    local localizedText = CraftSim.LOCAL.LOCAL:GetData()[ID]
+    local localizedText = CraftSim.LOCAL.LOCAL_CLIENT[ID]
 
     if not localizedText then
-        local englishtext = CraftSim.LOCAL_EN:GetData()[ID]
+        local englishtext = CraftSim.LOCAL.LOCAL_EN[ID]
         return englishtext -- default to english
     else
         return localizedText

@@ -404,6 +404,9 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.CUSTOMER_HISTORY:Init()
 		CraftSim.CRAFTDATA:Init()
 
+		CraftSim.OPTIONS:Init()
+
+
 		CraftSim.FRAME:RestoreModulePositions()
 	end
 end
@@ -493,7 +496,6 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 	end
 
 	CraftSim.PRICE_API:InitPriceSource()
-	CraftSim.OPTIONS:Init()
 	--CraftSim.MAIN:HandleCollapsedFrameSave()
 
 	-- show one time note

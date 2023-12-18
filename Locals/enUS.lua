@@ -82,9 +82,9 @@ function CraftSim.LOCAL_EN:GetData()
         "summing to 100% (Which would mean that every case is covered)\n" ..
         "And for this we would need to calculate " .. f.l("every") .. " possible outcome of a craft\n\n" ..
         "Like: \n" ..
-        f.p .. "What if " .. f.bb("nothing") .. " procs?" ..
-        f.p .. "What if " .. f.bb("everything") .. " procs?" ..
-        f.p .. "What if only " .. f.bb("Inspiration") .. " and " .. f.bb("Multicraft") .. " procs?" ..
+        f.p .. "What if " .. f.bb("nothing") .. " procs?\n" ..
+        f.p .. "What if " .. f.bb("everything") .. " procs?\n" ..
+        f.p .. "What if only " .. f.bb("Inspiration") .. " and " .. f.bb("Multicraft") .. " procs?\n" ..
         f.p .. "And so on..\n\n" ..
         "For a recipe that considers all three procs, that would be 2 to the power of 3 outcome possibilities, which is a neat 8.\n" ..
         "To get the chance of only " .. f.bb("Inspiration") .. " occuring, we have to consider all other procs!\n" ..
@@ -494,5 +494,13 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP] = "If this is toggled off, the recipe will be restocked based on the general options above",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_PROFIT_LABEL] = "Total Ø Profit:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL] = "Total Crafting Costs:",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_WHISPER_BUTTON_LABEL] = "Whisper..",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_NO_TIP_LABEL] = "Remove 0 Tip Customers",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_ZERO_TIPS_CONFIRMATION_POPUP] = "Are you sure you want to delete all data from customers with 0 total tip?",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_DELETE_CUSTOMER_CONFIRMATION_POPUP] = "Are you sure you want to delete all data from this customer?",
+
+        -- static popups
+        [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",
+        [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "No",
     }
 end
