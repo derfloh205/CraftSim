@@ -669,6 +669,9 @@ function CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
 end
 
 function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
+    if not CraftSim.CRAFTQ.FRAMES.frame then
+        return
+    end
     if CraftSim.MAIN.currentRecipeData then
         local recipeData = CraftSim.MAIN.currentRecipeData
         local restockOptionsTab = CraftSim.CRAFTQ.frame.content.restockOptionsTab
