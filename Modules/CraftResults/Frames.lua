@@ -189,7 +189,11 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
 
     -- sort craftedItems by .. rareness?
     craftResultItems = CraftSim.GUTIL:Sort(craftResultItems, function(a, b) 
-        return a.item:GetItemQuality() > b.item:GetItemQuality()
+        local rarityA = a.item:GetItemQuality()
+        local rarityB = b.item:GetItemQuality()
+        if rarityA and rarityB then
+            return a.item:GetItemQuality() > b.item:GetItemQuality()
+        end
     end)
 
     local craftedItemsText = ""
