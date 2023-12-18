@@ -79,7 +79,14 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             parent=frame.content, anchorParent=frame.content.customerList.frame, anchorA="BOTTOMLEFT", anchorB="TOPLEFT", offsetY=20,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_NO_TIP_LABEL), adjustWidth=true,
             clickCallback=function ()
-                StaticPopup_Show("CRAFT_SIM_CUSTOMER_HISTORY_PURGE_ZERO_TIP_CONFIRMATION")
+                CraftSim.GGUI:ShowPopup({
+                    sizeY=120, title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE),
+                    text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_ZERO_TIPS_CONFIRMATION_POPUP),
+                    anchorParent=frame.content.purgeCustomers.frame, anchorA="CENTER", anchorB="CENTER",
+                    onAccept=function ()
+                        CraftSim.CUSTOMER_HISTORY:PurgeZeroTipCustomers()
+                    end
+                })
             end
         }
 
@@ -230,7 +237,14 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
             customerColumn.text:SetText(customerHistory.customer)
             tipColumn.text:SetText(CraftSim.GUTIL:FormatMoney(customerHistory.totalTip))
             removeColumn.removeButton.clickCallback = function ()
-                StaticPopup_Show("CRAFT_SIM_CUSTOMER_HISTORY_REMOVE_CUSTOMER_CONFIRMATION", nil, nil, {row=row, customerHistory=customerHistory})
+                CraftSim.GGUI:ShowPopup({
+                    sizeY=120, title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_DELETE_CUSTOMER_POPUP_TITLE),
+                    anchorParent=removeColumn.removeButton.frame, anchorA="CENTER", anchorB="CENTER",
+                    onAccept=function ()
+                        CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
+                    end, text=string.format(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_DELETE_CUSTOMER_CONFIRMATION_POPUP), customerHistory.customer)
+                })
+
             end
         end)
     end 

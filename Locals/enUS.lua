@@ -496,8 +496,10 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL] = "Total Crafting Costs:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_WHISPER_BUTTON_LABEL] = "Whisper..",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_NO_TIP_LABEL] = "Remove 0 Tip Customers",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_ZERO_TIPS_CONFIRMATION_POPUP] = "Are you sure you want to delete all data from customers with 0 total tip?",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_DELETE_CUSTOMER_CONFIRMATION_POPUP] = "Are you sure you want to delete all data from this customer?",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_ZERO_TIPS_CONFIRMATION_POPUP] = "Are you sure you want to delete all data\nfrom customers with 0 total tip?",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_DELETE_CUSTOMER_CONFIRMATION_POPUP] = "Are you sure you want to delete\nall data for %s?",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_DELETE_CUSTOMER_POPUP_TITLE] = "Delete Customer History",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] = "Delete 0 Tip Customer History",
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",

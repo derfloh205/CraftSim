@@ -17,32 +17,6 @@ function CraftSim.CUSTOMER_HISTORY:Init()
             CraftSimOptions.CustomerHistoryMigrationDone = true
         end
     end
-
-    StaticPopupDialogs["CRAFT_SIM_CUSTOMER_HISTORY_PURGE_ZERO_TIP_CONFIRMATION"] = {
-		text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_ZERO_TIPS_CONFIRMATION_POPUP),
-		button1 = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATIC_POPUPS_YES),
-		button2 = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATIC_POPUPS_NO),
-		OnAccept = function(_)
-			CraftSim.CUSTOMER_HISTORY:PurgeZeroTipCustomers()
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = true,
-		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-	}
-
-    StaticPopupDialogs["CRAFT_SIM_CUSTOMER_HISTORY_REMOVE_CUSTOMER_CONFIRMATION"] = {
-		text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_DELETE_CUSTOMER_CONFIRMATION_POPUP),
-		button1 = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATIC_POPUPS_YES),
-		button2 = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATIC_POPUPS_NO),
-		OnAccept = function(_, data)
-			CraftSim.CUSTOMER_HISTORY:RemoveCustomer(data.row, data.customerHistory)
-		end,
-		timeout = 0,
-		whileDead = true,
-		hideOnEscape = true,
-		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-	}
 end
 
 function CraftSim.CUSTOMER_HISTORY:CHAT_MSG_WHISPER(message, fullSenderName)
@@ -128,10 +102,7 @@ function CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(fullName)
 end
 
 function CraftSim.CUSTOMER_HISTORY:StartWhisper(name)
-    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.editBox then
-        DEFAULT_CHAT_FRAME.editBox:SetText("/w " .. tostring(name))
-        DEFAULT_CHAT_FRAME.editBox:SetFocus()
-    end
+    ChatFrame_SendTell(name)
 end
 
 function CraftSim.CUSTOMER_HISTORY:PurgeZeroTipCustomers()
