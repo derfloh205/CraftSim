@@ -12,10 +12,12 @@ CraftSimDEBUG_PRICE_API = {name = "Debug"}
 CraftSimDebugData = CraftSimDebugData or {}
 CraftSim.PRICE_APIS.available = true
 
+local systemPrint = print
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_APIS)
 
 function CraftSim.PRICE_API:InitPriceSource()
     local loadedSources = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
+    systemPrint("loaded sources: " .. #loadedSources)
 
     if #loadedSources == 0 then
         CraftSim.UTIL:SystemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:",CraftSim.GUTIL.COLORS.BRIGHT_BLUE) .. " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM))
@@ -59,7 +61,7 @@ end
 function CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
     local loadedAddons = {}
     for _, addonName in pairs(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS) do
-        if IsAddOnLoaded(addonName) then
+        if select(2, C_AddOns.IsAddOnLoaded(addonName)) then
             table.insert(loadedAddons, addonName)
         end
     end
@@ -67,9 +69,8 @@ function CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
 end
 
 function CraftSim.PRICE_APIS:IsPriceApiAddonLoaded()
-    local loaded = false
     for _, name in pairs(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS) do
-        if IsAddOnLoaded(name) then
+        if select(2, C_AddOns.IsAddOnLoaded(name)) then
             return true
         end
     end
@@ -77,7 +78,6 @@ function CraftSim.PRICE_APIS:IsPriceApiAddonLoaded()
 end
 
 function CraftSim.PRICE_APIS:IsAddonPriceApiAddon(addon_name)
-    local loading = false
     for _, name in pairs(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS) do
         if addon_name == name then
             return true
@@ -87,10 +87,10 @@ function CraftSim.PRICE_APIS:IsAddonPriceApiAddon(addon_name)
 end
 
 function CraftSim.PRICE_APIS:InitAvailablePriceAPI()
-    local _, tsmLoaded = IsAddOnLoaded(CraftSimTSM.name)
-    local _, auctionatorLoaded = IsAddOnLoaded(CraftSimAUCTIONATOR.name)
-    local _, recrystallizeLoaded = IsAddOnLoaded(CraftSimRECRYSTALLIZE.name)
-    local _, exchangeLoaded = IsAddOnLoaded(CraftSimEXCHANGE.name)
+    local _, tsmLoaded = C_AddOns.IsAddOnLoaded(CraftSimTSM.name)
+    local _, auctionatorLoaded = C_AddOns.IsAddOnLoaded(CraftSimAUCTIONATOR.name)
+    local _, recrystallizeLoaded = C_AddOns.IsAddOnLoaded(CraftSimRECRYSTALLIZE.name)
+    local _, exchangeLoaded = C_AddOns.IsAddOnLoaded(CraftSimEXCHANGE.name)
     if tsmLoaded then
         CraftSim.PRICE_API = CraftSimTSM
     elseif auctionatorLoaded then

@@ -359,6 +359,8 @@ end
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
 		CraftSim.LOCAL:Init()
+		CraftSim.PRICE_API:InitPriceSource()
+
 		CraftSim.MAIN:handleCraftSimOptionsUpdates()
 
 		CraftSim.FRAME:InitDebugFrame()
@@ -387,7 +389,6 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
 		CraftSim.MAIN:HookToProfessionsFrame()
-		--CraftSim.FRAME:HandleAuctionatorOverlaps()
 		CraftSim.MAIN:HandleAuctionatorHooks()
 		CraftSim.MAIN:InitCraftRecipeHooks()
 		CraftSim.ACCOUNTSYNC:Init()
@@ -494,9 +495,6 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
 		end
 	end
-
-	CraftSim.PRICE_API:InitPriceSource()
-	--CraftSim.MAIN:HandleCollapsedFrameSave()
 
 	-- show one time note
 	if CraftSimOptions.optionsShowNews then
