@@ -117,6 +117,22 @@ CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS = {
     1526, -- Cooking
 }
 
+-- that are not within a quest plan category
+CraftSim.CONST.QUEST_RECIPE_IDS = {
+    -- Heart in a Bottle
+    377984, -- Herbalism
+    377989, -- Leatherworking   
+    377987, -- Mining
+    377978, -- Alchemy
+    377982, -- Enchanting
+    377988, -- Skinning
+    377981, -- Blacksmithing
+    377915, -- Jewelcrafting
+    377983, -- Engineering
+    377985, -- Inscription
+    377986, -- Tailoring
+}
+
 ---@enum CraftSim.DEBUG_IDS
 CraftSim.CONST.DEBUG_IDS = {
     MAIN = "MAIN",

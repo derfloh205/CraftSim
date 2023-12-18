@@ -42,6 +42,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.averageProfitCached = nil
     ---@type number | nil
     self.relativeProfitCached = nil
+    self.isQuestRecipe = tContains(CraftSim.CONST.QUEST_RECIPE_IDS, recipeID)
 
     if recipeInfo.hyperlink then
         local subclassID = select(7, GetItemInfoInstant(recipeInfo.hyperlink))
@@ -378,9 +379,13 @@ end
 --- Optimizes the recipeData's reagents for highest quality / cheapest reagents.
 ---@param optimizeInspiration boolean
 function CraftSim.RecipeData:OptimizeReagents(optimizeInspiration)
+    -- do not optimize quest recipes
+    if self.isQuestRecipe then
+        return
+    end
     local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, optimizeInspiration)
     self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
-    self:Update() -- TODO: only update if reagents have changed
+    self:Update()
 end
 
 ---Optimizes the recipeData's professionGearSet by the given mode.

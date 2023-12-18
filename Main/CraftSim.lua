@@ -576,7 +576,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
     local recipeInfo =  C_TradeSkillUI.GetRecipeInfo(CraftSim.MAIN.currentRecipeID)
 
 	if not recipeInfo or recipeInfo.isGatheringRecipe then
-		print("gathering recipe: hide frames")
 		-- hide all modules
 		CraftSim.MAIN:HideAllFrames(true)
 		return
