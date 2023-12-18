@@ -1,4 +1,4 @@
-local _, CraftSim = ...
+local addonName, CraftSim = ...
 
 ---@class CraftSim.CRAFTQ : Frame
 CraftSim.CRAFTQ = CraftSim.GUTIL:CreateRegistreeForEvents({"TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED"})
@@ -55,7 +55,7 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
             print("item: " .. tostring(purchasedItem.item:GetItemLink()))
             print("quantity: " .. tostring(purchasedItem.quantity))
 
-            local success, result = pcall(Auctionator.API.v1.GetShoppingListItems,CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
+            local success, result = pcall(Auctionator.API.v1.GetShoppingListItems,addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
             if not success then
                 print("Error calling GetShoppingListItems:\n" .. tostring(result))
                 return
@@ -67,7 +67,7 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
                 isExact=true,
                 tier=itemQualityID,
             }
-            local searchString = Auctionator.API.v1.ConvertToSearchString(CraftSimAddonName, searchTerms)
+            local searchString = Auctionator.API.v1.ConvertToSearchString(addonName, searchTerms)
             local oldSearchString = CraftSim.GUTIL:Find(result, function(r) 
                 return CraftSim.GUTIL:StringStartsWith(r, searchString) 
             end)
@@ -76,20 +76,20 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
                 return
             end
 
-            local oldTerms = Auctionator.API.v1.ConvertFromSearchString(CraftSimAddonName, oldSearchString)
+            local oldTerms = Auctionator.API.v1.ConvertFromSearchString(addonName, oldSearchString)
 
             -- modify original line by updated quantity
             local newQuantity = oldTerms.quantity - purchasedItem.quantity
 
             if newQuantity > 0 then
                 searchTerms.quantity = newQuantity
-                local newSearchString = Auctionator.API.v1.ConvertToSearchString(CraftSimAddonName, searchTerms)
+                local newSearchString = Auctionator.API.v1.ConvertToSearchString(addonName, searchTerms)
                 -- adapt
-                Auctionator.API.v1.AlterShoppingListItem(CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, 
+                Auctionator.API.v1.AlterShoppingListItem(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, 
                 oldSearchString, newSearchString)
             else
                 -- remove
-                Auctionator.API.v1.DeleteShoppingListItem(CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, oldSearchString)
+                Auctionator.API.v1.DeleteShoppingListItem(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, oldSearchString)
             end
 
             CraftSim.CRAFTQ.purchasedItem = nil -- reset
@@ -309,10 +309,10 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
         if searchTerm.quantity == 0 then
             return nil -- do not put into table
         end
-        local searchString = Auctionator.API.v1.ConvertToSearchString(CraftSimAddonName, searchTerm)
+        local searchString = Auctionator.API.v1.ConvertToSearchString(addonName, searchTerm)
         return searchString
     end)
-    Auctionator.API.v1.CreateShoppingList(CraftSimAddonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
+    Auctionator.API.v1.CreateShoppingList(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
    
     CraftSim.UTIL:StopProfiling("CreateAuctionatorShopping")
 end
