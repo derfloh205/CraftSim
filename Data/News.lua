@@ -9,6 +9,8 @@ function CraftSim.NEWS:GET_NEWS()
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("12.0.3"),
+        f.p .. "Hotfixes regarding " ..f.bb("CustomerHistory") .. " Data Migration",
         newP("12.0.0"),
         f.P .. "Reworked " .. f.bb("Customer History") .. ". Now includes:",
         f.a .. "- " .. f.g("A Whisper Button"),

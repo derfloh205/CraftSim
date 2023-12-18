@@ -58,7 +58,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 
                 customerColumn.text = CraftSim.GGUI.Text({
                     parent=customerColumn, anchorParent=customerColumn, anchorA="LEFT", anchorB="LEFT", offsetX=2,
-                    justifyOptions={type="H", align="LEFT"}, text="CustomerName", scale=rowContentScale
+                    justifyOptions={type="H", align="LEFT"}, text="", scale=rowContentScale
                 })
                 tipColumn.text = CraftSim.GGUI.Text({
                     parent=tipColumn, anchorParent=tipColumn, anchorA="RIGHT", anchorB="RIGHT", offsetX=-10,
@@ -92,7 +92,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 
         frame.content.customerName = CraftSim.GGUI.Text({
             parent=frame.content, anchorParent=frame.content, anchorA="TOP", anchorB="TOP",
-            text="CustomerName", offsetX=80, offsetY=-50, scale=1.5,
+            text="", offsetX=80, offsetY=-50, scale=1.5,
         })
 
         frame.content.whisperButton = CraftSim.GGUI.Button{
@@ -235,7 +235,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
             local removeColumn = columns[3] 
             row.customerHistory = customerHistory
             customerColumn.text:SetText(customerHistory.customer)
-            tipColumn.text:SetText(CraftSim.GUTIL:FormatMoney(customerHistory.totalTip))
+            tipColumn.text:SetText(CraftSim.GUTIL:FormatMoney(customerHistory.totalTip or 0))
             removeColumn.removeButton.clickCallback = function ()
                 CraftSim.GGUI:ShowPopup({
                     sizeY=120, title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_DELETE_CUSTOMER_POPUP_TITLE),

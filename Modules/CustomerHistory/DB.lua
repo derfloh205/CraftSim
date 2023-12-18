@@ -136,6 +136,7 @@ function CraftSim.CUSTOMER_HISTORY.DB:MigrateDataV2()
                     return chatMessage
                 end)
     
+                local totalTip = 0
                 customerHistory.craftHistory = CraftSim.GUTIL:Map(customerHistoryLegacy.history, 
                 ---@param historyLegacy CraftSim.CustomerHistory.Craft.Legacy | CraftSim.CustomerHistory.ChatMessage.Legacy
                 function (historyLegacy)
@@ -158,10 +159,12 @@ function CraftSim.CUSTOMER_HISTORY.DB:MigrateDataV2()
                         reagents = historyLegacy.reagents,
                         tip = historyLegacy.commission
                     }
+                    totalTip = totalTip + craft.tip
                     return craft
                 end)
     
                 customerHistory.totalOrders = #customerHistory.craftHistory
+                customerHistory.totalTip = totalTip
     
                 CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
             end
