@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GGUI = CraftSim.GGUI
+
 CraftSim.CUSTOMER_HISTORY.FRAMES = {}
 CraftSim.CUSTOMER_HISTORY.timeoutSeconds = 5
 
@@ -11,7 +13,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HIST
 function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     local sizeX=1050
     local sizeY=500
-    CraftSim.CUSTOMER_HISTORY.frame = CraftSim.GGUI.Frame({
+    CraftSim.CUSTOMER_HISTORY.frame = GGUI.Frame({
         parent=ProfessionsFrame,
         anchorParent=ProfessionsFrame,
         sizeX=sizeX,sizeY=sizeY,
@@ -46,9 +48,9 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
                 justifyOptions={type="H", align="CENTER"}
             }
         }
-        frame.content.customerList = CraftSim.GGUI.FrameList({  
-            sizeY=400, columnOptions=columnOptionsCustomerList, parent=frame.content, anchorParent=frame.content, anchorA="TOPLEFT", anchorB="TOPLEFT", 
-            offsetY=-70, offsetX=30, selectableRows=true, rowHeight=20,
+        frame.content.customerList = GGUI.FrameList({  
+            sizeY=390, columnOptions=columnOptionsCustomerList, parent=frame.content, anchorParent=frame.content, anchorA="TOPLEFT", anchorB="TOPLEFT", 
+            offsetY=-80, offsetX=30, selectableRows=true, rowHeight=20,
             showHeaderLine=true,
             rowConstructor = function (columns)
                 local customerColumn = columns[1]
@@ -57,15 +59,15 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 
                 local rowContentScale = 0.9
 
-                customerColumn.text = CraftSim.GGUI.Text({
+                customerColumn.text = GGUI.Text({
                     parent=customerColumn, anchorParent=customerColumn, anchorA="LEFT", anchorB="LEFT", offsetX=2,
                     justifyOptions={type="H", align="LEFT"}, text="", scale=rowContentScale
                 })
-                tipColumn.text = CraftSim.GGUI.Text({
+                tipColumn.text = GGUI.Text({
                     parent=tipColumn, anchorParent=tipColumn, anchorA="RIGHT", anchorB="RIGHT", offsetX=-10,
                     justifyOptions={type="H", align="RIGHT"}, text=CraftSim.GUTIL:FormatMoney(0), scale=rowContentScale
                 })
-                removeColumn.removeButton = CraftSim.GGUI.Button({
+                removeColumn.removeButton = GGUI.Button({
                     parent=removeColumn, anchorParent=removeColumn, scale = 0.8,
                     label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.15),
                     sizeX=25, clickCallback = nil -- set dynamically in Add
@@ -76,13 +78,13 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             end
         })
 
-        frame.content.purgeCustomers = CraftSim.GGUI.Button{
+        frame.content.purgeCustomers = GGUI.Button{
             parent=frame.content, anchorParent=frame.content.customerList.frame, anchorA="BOTTOMLEFT", anchorB="TOPLEFT", offsetY=20,
-            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_NO_TIP_LABEL), adjustWidth=true,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_NO_TIP_LABEL), adjustWidth=true,
             clickCallback=function ()
-                CraftSim.GGUI:ShowPopup({
-                    sizeY=120, title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE),
-                    text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_PURGE_ZERO_TIPS_CONFIRMATION_POPUP),
+                GGUI:ShowPopup({
+                    sizeY=120, title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE),
+                    text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP),
                     anchorParent=frame.content.purgeCustomers.frame, anchorA="CENTER", anchorB="CENTER",
                     onAccept=function ()
                         CraftSim.CUSTOMER_HISTORY:PurgeZeroTipCustomers()
@@ -91,14 +93,29 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             end
         }
 
-        frame.content.customerName = CraftSim.GGUI.Text({
+        frame.content.autoPurgeInput = GGUI.NumericInput{
+            parent=frame.content, anchorParent=frame.content.purgeCustomers.frame, anchorA = "BOTTOMLEFT", anchorB="TOPLEFT",
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL), offsetX=7,
+            sizeX = 50, minValue = 0, onNumberValidCallback=function (numericInput)
+                local value = tonumber(numericInput.currentValue)
+                CraftSimOptions.customerHistoryAutoPurgeInterval = value
+            end, initialValue=CraftSimOptions.customerHistoryAutoPurgeInterval
+        }
+
+        frame.content.autoPurgeInputLabel = GGUI.Text{parent=frame.content, anchorParent=frame.content.autoPurgeInput.textInput.frame, anchorA="LEFT", anchorB="RIGHT", 
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL), offsetX=5}
+
+        GGUI.HelpIcon{parent=frame.content, anchorParent=frame.content.autoPurgeInputLabel.frame, anchorA="LEFT", anchorB="RIGHT", 
+        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP)}
+
+        frame.content.customerName = GGUI.Text({
             parent=frame.content, anchorParent=frame.content, anchorA="TOP", anchorB="TOP",
             text="", offsetX=80, offsetY=-50, scale=1.5,
         })
 
-        frame.content.whisperButton = CraftSim.GGUI.Button{
+        frame.content.whisperButton = GGUI.Button{
             parent=frame.content, anchorParent=frame.content.customerName.frame,
-            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_WHISPER_BUTTON_LABEL), adjustWidth=true,
+            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_WHISPER_BUTTON_LABEL), adjustWidth=true,
             anchorA="LEFT", anchorB="RIGHT", offsetX=10,
         }
 
@@ -123,7 +140,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             }
         }
 
-        frame.content.chatMessageList = CraftSim.GGUI.FrameList({
+        frame.content.chatMessageList = GGUI.FrameList({
             parent=frame.content, anchorParent=frame.content.customerName.frame, anchorA="TOP", anchorB="BOTTOM", offsetY=-8,
             columnOptions=columnOptionsChatFrame, showHeaderLine = true, rowHeight=20, sizeY=200,
             rowConstructor=function (columns)
@@ -131,20 +148,20 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
                 local senderColumn = columns[2]
                 local messageColumn = columns[3]
                 
-                timeColumn.text = CraftSim.GGUI.Text({
+                timeColumn.text = GGUI.Text({
                     parent=timeColumn, anchorParent=timeColumn, anchorA="RIGHT",
                     anchorB="RIGHT", justifyOptions={type="H", align="RIGHT"}, text="Timestamp"                
                 })
-                senderColumn.text = CraftSim.GGUI.Text({
+                senderColumn.text = GGUI.Text({
                     parent=senderColumn, anchorParent=senderColumn, anchorA="RIGHT",
                     anchorB="RIGHT", justifyOptions={type="H", align="RIGHT"}, text="Sender"                
                 })
-                messageColumn.text = CraftSim.GGUI.Text({
+                messageColumn.text = GGUI.Text({
                     parent=messageColumn, anchorParent=messageColumn, anchorA="TOPLEFT",
                     anchorB="TOPLEFT", justifyOptions={type="HV", alignH="LEFT", alignV="LEFT"}, text="Message", fixedWidth=chatMessageColumnWidth, offsetY=-4.1,                
                 })
 
-                CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(messageColumn)
+                GGUI:EnableHyperLinksForFrameAndChilds(messageColumn)
             end
         })
 
@@ -177,7 +194,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             }
         }
 
-        frame.content.craftList = CraftSim.GGUI.FrameList({
+        frame.content.craftList = GGUI.FrameList({
             parent=frame.content, anchorParent=frame.content.chatMessageList.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=-30,
             columnOptions=columnOptionsCraftList, showHeaderLine = true, rowHeight=20, sizeY=150,
             rowConstructor=function (columns)
@@ -187,27 +204,27 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
                 local reagentColumn = columns[4]
                 local noteColumn = columns[5]
                 
-                timeColumn.text = CraftSim.GGUI.Text({
+                timeColumn.text = GGUI.Text({
                     parent=timeColumn, anchorParent=timeColumn, anchorA="LEFT",
                     anchorB="LEFT", justifyOptions={type="H", align="LEFT"}, text="Timestamp"                
                 })
-                resultColumn.text = CraftSim.GGUI.Text({
+                resultColumn.text = GGUI.Text({
                     parent=resultColumn, anchorParent=resultColumn, anchorA="RIGHT",
                     anchorB="RIGHT", justifyOptions={type="H", align="LEFT"}, text="ResultLink"                
                 })
-                tipColumn.text = CraftSim.GGUI.Text({
+                tipColumn.text = GGUI.Text({
                     parent=tipColumn, anchorParent=tipColumn, anchorA="RIGHT",
                     anchorB="RIGHT", justifyOptions={type="H", align="RIGHT"}, text="Tip",                
                 })
-                reagentColumn.icon = CraftSim.GGUI.HelpIcon({
+                reagentColumn.icon = GGUI.HelpIcon({
                     parent=reagentColumn, anchorParent=reagentColumn, text="Reagents",                
                 })
 
-                noteColumn.icon = CraftSim.GGUI.HelpIcon{
+                noteColumn.icon = GGUI.HelpIcon{
                     parent=noteColumn, anchorParent=noteColumn, text="SomeNote"
                 }
 
-                CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(resultColumn)
+                GGUI:EnableHyperLinksForFrameAndChilds(resultColumn)
             end
         })
     end
@@ -238,12 +255,12 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
             customerColumn.text:SetText(customerHistory.customer)
             tipColumn.text:SetText(CraftSim.GUTIL:FormatMoney(customerHistory.totalTip or 0))
             removeColumn.removeButton.clickCallback = function ()
-                CraftSim.GGUI:ShowPopup({
-                    sizeY=120, title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_DELETE_CUSTOMER_POPUP_TITLE),
+                GGUI:ShowPopup({
+                    sizeY=120, title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE),
                     anchorParent=removeColumn.removeButton.frame, anchorA="CENTER", anchorB="CENTER",
                     onAccept=function ()
                         CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
-                    end, text=string.format(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_DELETE_CUSTOMER_CONFIRMATION_POPUP), customerHistory.customer)
+                    end, text=string.format(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP), customerHistory.customer)
                 })
 
             end
@@ -256,6 +273,19 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
 
     if not customerList.selectedRow then
         customerList:SelectRow(1)
+    end
+
+    local hideCustomerInfo = not CraftSimCustomerHistoryV2 or CraftSim.GUTIL:Count(CraftSimCustomerHistoryV2) == 0
+    if hideCustomerInfo then
+        CraftSim.CUSTOMER_HISTORY.frame.content.customerName:Hide()
+        CraftSim.CUSTOMER_HISTORY.frame.content.whisperButton:Hide()
+        CraftSim.CUSTOMER_HISTORY.frame.content.craftList:Hide()
+        CraftSim.CUSTOMER_HISTORY.frame.content.chatMessageList:Hide()
+    else
+        CraftSim.CUSTOMER_HISTORY.frame.content.customerName:Show()
+        CraftSim.CUSTOMER_HISTORY.frame.content.whisperButton:Show()
+        CraftSim.CUSTOMER_HISTORY.frame.content.craftList:Show()
+        CraftSim.CUSTOMER_HISTORY.frame.content.chatMessageList:Show()
     end
 end
 

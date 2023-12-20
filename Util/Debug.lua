@@ -5,6 +5,7 @@ CraftSim_DEBUG = {}
 
 CraftSim_DEBUG.isMute = false
 
+--- Used for debugging mostly
 ---@return CraftSim CraftSim
 function CraftSim_DEBUG:RUN()
     return CraftSim
@@ -244,4 +245,52 @@ function CraftSim_DEBUG:GGUITest()
     })
 
 
+end
+
+---@param duplicateAmount number
+---@param tip number
+function CraftSim_DEBUG:DuplicateTestDataForCustomerHistoryLegacy(duplicateAmount, tip)
+    tip = tip or 0
+    local playerRealm = GetRealmName()
+    if CraftSimCustomerHistory and CraftSimCustomerHistory.realm and CraftSimCustomerHistory.realm[playerRealm] then
+
+        ---@type table<string, CraftSim.CustomerHistory.Legacy>
+        local realmData = CraftSimCustomerHistory.realm[playerRealm]
+        for customerKey, customerHistory in pairs(realmData) do
+            if type(customerHistory) == 'table' then
+
+                -- multiply chatHistory and craftHistory to the 200 to generate some data
+                if customerHistory.history and #customerHistory.history > 1 then
+                    local chatHistoryEntry = CraftSim.GUTIL:Find(customerHistory.history, function(h) return h.from or h.to end)
+                    ---@type CraftSim.CustomerHistory.Craft.Legacy
+                    local craftHistoryEntry = CraftSim.GUTIL:Find(customerHistory.history, function(h) return h.crafted end)
+                    customerHistory.history = {}
+                    craftHistoryEntry.commission = 0
+                    craftHistoryEntry.timestamp = 1702625675325
+                    while #customerHistory.history < 200 do
+                        table.insert(customerHistory.history, chatHistoryEntry)
+                        table.insert(customerHistory.history, craftHistoryEntry)
+                    end
+                end
+
+                -- then take this history and put it into the history the given amount of time
+                CraftSimCustomerHistory.realm[playerRealm] = {}
+                local tipAlternator = 5
+                for i=1, duplicateAmount do
+                    local newKey = "Customer" .. i .. "-" .. playerRealm
+                    ---@type CraftSim.CustomerHistory.Legacy
+                    CraftSimCustomerHistory.realm[playerRealm][newKey] = CopyTable(customerHistory)
+
+                    if i % tipAlternator == 0 then
+                        local firstCraft, index = CraftSim.GUTIL:Find(CraftSimCustomerHistory.realm[playerRealm][newKey].history, function (h) return h.crafted end)
+                        local craft = CopyTable(firstCraft)
+                        craft.commission = tip
+                        CraftSimCustomerHistory.realm[playerRealm][newKey].history[index] = craft
+                    end
+                end
+
+                return -- only once
+            end
+        end
+    end
 end

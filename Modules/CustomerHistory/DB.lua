@@ -1,6 +1,9 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+---@class CraftSim.CUSTOMER_HISTORY
+CraftSim.CUSTOMER_HISTORY = CraftSim.CUSTOMER_HISTORY
+
 ---@class CraftSim.CUSTOMER_HISTORY.DB
 CraftSim.CUSTOMER_HISTORY.DB = {}
 
@@ -19,18 +22,6 @@ CraftSim.CUSTOMER_HISTORY.DB = {}
 ---@field from string? message if from player
 ---@field to string? message if from customer
 ---@field timestamp number ms unix ts
-
---[[
-    function CraftSim.CUSTOMER_HISTORY:HandleWhisper(event, message, customer, ...)
-    self.db.realm[customer] = self.db.realm[customer] or {}
-    self.db.realm[customer].history = self.db.realm[customer].history or {}
-    if (event == "CHAT_MSG_WHISPER") then
-        print("Received whisper from " .. customer .. " with message: " .. message)
-        table.insert(self.db.realm[customer].history, {from = message, timestamp = math.floor((time()+GetTime()%1)*1000)})
-    elseif (event == "CHAT_MSG_WHISPER_INFORM") then
-        print("Sent whisper to " .. customer .. " with message: " .. message)
-        table.insert(self.db.realm[customer].history, {to = message, timestamp = math.floor((time()+GetTime()%1)*1000)})
-]]
 
 local DB_VERSION = 2
 --- V2
@@ -96,18 +87,19 @@ function CraftSim.CUSTOMER_HISTORY.DB:RemoveCustomerHistory(customerHistory)
 end
 
 function CraftSim.CUSTOMER_HISTORY.DB:PurgeZeroTipCustomers()
-    for key, customerHistory in pairs(CraftSimCustomerHistoryV2) do
+    for key, customerHistory in pairs(CraftSimCustomerHistoryV2 or {}) do
         if customerHistory.totalTip <= 0 then
             CraftSimCustomerHistoryV2[key] = nil
         end
     end
 end
 
-
 -- MIGRATIONS
 
 function CraftSim.CUSTOMER_HISTORY.DB:MigrateDataV2()
     print("Starting CustomerHistoryLegacy Migration")
+    -- force a purge of zero tip customers for players who did not apply the workaround but still have problems with bloated history
+    CraftSim.CUSTOMER_HISTORY:PurgeZeroTipCustomers()
     local playerRealm = GetRealmName()
     
     if CraftSimCustomerHistory and CraftSimCustomerHistory.realm and CraftSimCustomerHistory.realm[playerRealm] then
@@ -116,6 +108,7 @@ function CraftSim.CUSTOMER_HISTORY.DB:MigrateDataV2()
         local realmData = CraftSimCustomerHistory.realm[playerRealm]
         for customerName, customerHistoryLegacy in pairs(realmData) do
             if type(customerHistoryLegacy) == "table" then
+                -- only migrate customer
                 print("Migrating Customer: " .. tostring(customerName))
                 local name, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(customerName)
                 -- create customer history v2 in new db
@@ -166,8 +159,12 @@ function CraftSim.CUSTOMER_HISTORY.DB:MigrateDataV2()
     
                 customerHistory.totalOrders = #customerHistory.craftHistory
                 customerHistory.totalTip = totalTip
-    
-                CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
+
+                -- if the total tip is zero do not migrate
+
+                if customerHistory.totalTip and customerHistory.totalTip > 0 then 
+                    CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
+                end
             end
         end
     end

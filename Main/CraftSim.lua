@@ -152,6 +152,8 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold = CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold or 0
 		CraftSimOptions.craftQueueGeneralRestockRestockAmount = CraftSimOptions.craftQueueGeneralRestockRestockAmount or 1
 		CraftSimOptions.craftQueueRestockPerRecipeOptions = CraftSimOptions.craftQueueRestockPerRecipeOptions or {}
+		CraftSimOptions.customerHistoryAutoPurgeInterval = CraftSimOptions.customerHistoryAutoPurgeInterval or 2
+		CraftSimOptions.customerHistoryAutoPurgeLastPurge = CraftSimOptions.customerHistoryAutoPurgeLastPurge or nil
 		
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
