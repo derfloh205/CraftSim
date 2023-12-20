@@ -82,7 +82,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     -- Cooking
     [197765] = {resourcefulness = 110}, -- Impossible Sharp Cutting Knife
     [197764] = {multicraft = 90}, -- Salad on the Side
-    [194902] = {}, -- Chocolate TODO: implement the serving increase
+    [194902] = {multicraft = math.huge}, -- Ooey-Gooey Chocolate: max out multicraft (limited to 100% in professionstats)
 
     -- Alchemy
     [191520] = {inspiration = 30, multicraft = 27, qualityID = 1}, -- Potion Augmentation

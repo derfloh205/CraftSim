@@ -320,12 +320,6 @@ function CraftSim.UTIL:toBits(num, bits)
     return t
 end
 
-function CraftSim.UTIL:HashTable(t)
-    local serializedData = CraftSim.ACCOUNTSYNC:Serialize(data)
-	local compressedData, compressError = LibCompress:Compress(serializedData)
-    return compressedData
-end
-
 local profilings = {}
 function CraftSim.UTIL:StartProfiling(label)
     local time = debugprofilestop();
@@ -444,4 +438,26 @@ function CraftSim.UTIL:HasProfession(professionID)
             return true
         end
     end
+end
+
+function CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID)
+	local qualityIDs = {}
+	for i = 1, 3, 1 do
+		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeID, craftingReagentInfoTbl, allocationItemGUID, i)
+		table.insert(qualityIDs, outputItemData.itemID)
+	end
+	 return qualityIDs
+end
+
+function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID, maxQuality)
+	local linksByQuality = {}
+	local max = 8
+	if maxQuality then
+		max = 3 + maxQuality
+	end
+	for i = 4, max, 1 do
+		local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeID, craftingReagentInfoTbl, allocationItemGUID, i)
+		table.insert(linksByQuality, outputItemData.hyperlink)
+	end
+	 return linksByQuality
 end

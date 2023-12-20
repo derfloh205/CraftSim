@@ -75,6 +75,10 @@ function CraftSim.ReagentData:GetProfessionStatsByOptionals()
         totalStats:add(stat)
     end)
 
+    -- since ooey gooey chocolate gives us math.huge on multicraft we need to limit it to 100%
+    totalStats.multicraft.value = math.min(1 / CraftSim.CONST.PERCENT_MODS.MULTICRAFT, totalStats.multicraft.value)
+    
+
     return totalStats
 end
 

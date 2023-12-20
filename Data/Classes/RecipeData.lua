@@ -100,6 +100,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
 
     self.hasQualityReagents = qualityReagents > 0
 
+    self.hasReagents = #self.reagentData.requiredReagents > 0
+
     self.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
 
     -- EXCEPTION for Sturdy Expedition Shovel - 388279
@@ -345,6 +347,9 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     -- finally add any custom modifiers
     self.professionStats:add(self.professionStatModifiers)
     -- its the only one which uses "extraValueAfterFactor"
+
+    -- since ooey gooey chocolate gives us math.huge on multicraft we need to limit it to 100%
+    self.professionStats.multicraft.value = math.min(1 / CraftSim.CONST.PERCENT_MODS.MULTICRAFT, self.professionStats.multicraft.value)
 end
 
 --- Updates professionStats based on reagentData and professionGearSet -> Then updates resultData based on professionStats -> Then updates priceData based on resultData

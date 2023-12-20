@@ -78,13 +78,13 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
     elseif recipeData.isGear then
-        local itemLinks = CraftSim.DATAEXPORT:GetDifferentQualitiesByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, recipeData.allocationItemGUID, recipeData.maxQuality)
+        local itemLinks = CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, recipeData.allocationItemGUID, recipeData.maxQuality)
     
         for _, itemLink in pairs(itemLinks) do
             table.insert(self.itemsByQuality, Item:CreateFromItemLink(itemLink))
         end
     else 
-        local itemIDs = CraftSim.DATAEXPORT:GetDifferentQualityIDsByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, recipeData.allocationItemGUID)
+        local itemIDs = CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, recipeData.allocationItemGUID)
         for _, itemID in pairs(itemIDs) do
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end

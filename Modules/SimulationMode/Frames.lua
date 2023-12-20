@@ -827,9 +827,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftBonusTitle, recipeData.supportsMulticraft)
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftBonusValue, recipeData.supportsMulticraft)
     if recipeData.supportsMulticraft then
-        local baseMulticraft = professionStats.multicraft.value - professionStatsMod.multicraft.value
+        local baseMulticraft = CraftSim.GUTIL:Round(professionStats.multicraft.value - professionStatsMod.multicraft.value, 1)
         local percentText = CraftSim.GUTIL:Round(professionStats.multicraft:GetPercent(), 1) .. "%"
-        detailsFrame.content.multicraftValue:SetText(professionStats.multicraft.value .. " (" .. baseMulticraft .."+"..professionStatsMod.multicraft.value .. ") " .. percentText)
+        detailsFrame.content.multicraftValue:SetText(CraftSim.GUTIL:Round(professionStats.multicraft.value, 1) .. " (" .. baseMulticraft .."+"..professionStatsMod.multicraft.value .. ") " .. percentText)
 
         detailsFrame.content.multicraftBonusValue:SetText(professionStats.multicraft.extraFactor*100 .. "%")
     end
@@ -1138,11 +1138,11 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         bestQBox = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.AllocateBestQualityCheckBox
         specializationInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
-        CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive)
+        CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive and recipeData.hasReagents)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.OptionalReagents, not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
     else
         bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
-        CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive)
+        CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents, not CraftSim.SIMULATION_MODE.isActive and recipeData.hasReagents)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.OptionalReagents, not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
         specializationInfoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
     end
