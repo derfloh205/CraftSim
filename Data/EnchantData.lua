@@ -1,4 +1,5 @@
-local CraftSimAddonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
 
 CraftSim.ENCHANT_RECIPE_DATA = {
     [388930] = {name = "Writ of Critical Strike", q1 = 199957, q2 = 199999, q3 = 200041},

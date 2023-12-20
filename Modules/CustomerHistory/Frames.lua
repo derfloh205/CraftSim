@@ -1,4 +1,5 @@
-local CraftSimAddonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
 
 CraftSim.CUSTOMER_HISTORY.FRAMES = {}
 CraftSim.CUSTOMER_HISTORY.timeoutSeconds = 5

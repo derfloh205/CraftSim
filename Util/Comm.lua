@@ -1,4 +1,5 @@
-local CraftSimAddonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
 
 CraftSim.COMM = LibStub("AceAddon-3.0"):NewAddon("CraftSim.COMM", "AceComm-3.0", "AceSerializer-3.0")
 

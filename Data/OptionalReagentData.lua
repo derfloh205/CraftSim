@@ -1,4 +1,5 @@
-local _, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
 
 CraftSim.OPTIONAL_REAGENT_DATA = {
     -- Lesser Illustrious Insight

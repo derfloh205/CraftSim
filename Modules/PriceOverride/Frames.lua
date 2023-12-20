@@ -1,4 +1,5 @@
-local CraftSimAddonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
 
 ---@class CraftSim.PRICE_OVERRIDE.overrideDropdownData
 ---@field item ItemMixin

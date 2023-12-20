@@ -7,7 +7,8 @@
 -- the terms of the MIT license. See LICENSE for details.
 --
 
-local _, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
 
 local Object = {}
 Object.__index = Object

@@ -1,4 +1,5 @@
-local CraftSimAddonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
 
 CraftSim.REAGENT_DATA = {
 [191476] = { name = "Draconic Vial", weight = 11},

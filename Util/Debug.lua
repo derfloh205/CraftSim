@@ -1,8 +1,14 @@
-local CraftSimAddonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
 
 CraftSim_DEBUG = {}
 
 CraftSim_DEBUG.isMute = false
+
+---@return CraftSim CraftSim
+function CraftSim_DEBUG:RUN()
+    return CraftSim
+end
 
 function CraftSim_DEBUG:PrintRecipeIDs(recipeID)
     recipeID = recipeID or CraftSim.MAIN.currentRecipeData.recipeID

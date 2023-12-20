@@ -1,4 +1,6 @@
-local CraftSimAddonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
+local CraftSimAddonName = select(1, ...)
 
 CraftSim.CONTROL_PANEL.FRAMES = {}
 

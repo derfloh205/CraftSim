@@ -1,4 +1,6 @@
-local CraftSimAddonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
+local CraftSimAddonName = select(1, ...)
 
 ---@class CraftSim.MAIN : Frame
 CraftSim.MAIN = CreateFrame("Frame", "CraftSimAddon")
@@ -358,10 +360,11 @@ end
 
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
+		CraftSim.MAIN:handleCraftSimOptionsUpdates()
+
 		CraftSim.LOCAL:Init()
 		CraftSim.PRICE_API:InitPriceSource()
 
-		CraftSim.MAIN:handleCraftSimOptionsUpdates()
 
 		CraftSim.FRAME:InitDebugFrame()
 		CraftSim.AVERAGEPROFIT.FRAMES:Init()

@@ -1,4 +1,6 @@
-local CraftSimAddonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
+local CraftSimAddonName = select(1, ...)
 
 CraftSim.UTIL = {}
 
@@ -71,7 +73,7 @@ function CraftSim.UTIL:GetResourcefulnessPercentByStat(stat)
 end
 
 function CraftSim.UTIL:IsMyVersionHigher(versionB)
-    local versionA = GetAddOnMetadata(CraftSimAddonName, "Version") or ""
+    local versionA = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version") or ""
     local subVersionsA = strsplittable(".", versionA)
     local subVersionsB = strsplittable(".", versionB)
 

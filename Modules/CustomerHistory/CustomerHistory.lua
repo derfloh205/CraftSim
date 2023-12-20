@@ -1,4 +1,5 @@
-local CraftSimAddonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
 
 ---@class CraftSim.CUSTOMER_HISTORY : Frame
 CraftSim.CUSTOMER_HISTORY = CraftSim.GUTIL:CreateRegistreeForEvents(

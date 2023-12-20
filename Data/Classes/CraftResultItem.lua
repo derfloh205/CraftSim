@@ -1,4 +1,5 @@
-local _, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
 
 ---@class CraftSim.CraftResultItem
 CraftSim.CraftResultItem = CraftSim.Object:extend()
