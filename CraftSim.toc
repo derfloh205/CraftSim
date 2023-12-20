@@ -99,6 +99,7 @@ Locals/ruRU.lua
 Locals/ptBR.lua
 Locals/frFR.lua
 Locals/esES.lua
+Locals/esMX.lua
 Locals/koKR.lua
 Locals/zhTW.lua
 Locals/zhCN.lua
