@@ -52,8 +52,8 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
 
         local columnOptions = {
             {
-                label="", -- jump to recipe button
-                width=50,
+                label="", -- edit button
+                width=27,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
@@ -105,25 +105,36 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         queueTab.content.craftList = CraftSim.GGUI.FrameList({
             parent = queueTab.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP",
             showHeaderLine=true, scale=0.95, showBorder=true,
+            selectionOptions = {
+                hoverRGBA={1, 1, 1, 0.1},
+                noSelectionColor=true,
+                selectionCallback=function (row)
+                    ---@type CraftSim.CraftQueueItem
+                    local craftQueueItem = row.craftQueueItem
+                    if craftQueueItem then
+                        if craftQueueItem.correctProfessionOpen and craftQueueItem.recipeData then
+                            C_TradeSkillUI.OpenRecipe(craftQueueItem.recipeData.recipeID)
+                        end
+                    end
+                end
+            },
             sizeY=230, offsetY=-90,
             columnOptions=columnOptions,
             rowConstructor=function (columns)
-                local switchToRecipeColumn = columns[1]
+                local editButtonColumn = columns[1]
                 local recipeColumn = columns[2] 
                 local averageProfitColumn = columns[3]
                 local craftingCostsColumn = columns[4]
                 local reagentInfoColumn = columns[5]
                 local topGearColumn = columns[6]
-                local craftableColumn = columns[7]
+                local craftAbleColumn = columns[7]
                 local craftAmountColumn = columns[8] 
                 local craftButtonColumn = columns[9]
                 local removeRowColumn = columns[10]
 
-                switchToRecipeColumn.switchButton = CraftSim.GGUI.Button({
-                    parent=switchToRecipeColumn,anchorParent=switchToRecipeColumn, sizeX=25, sizeY=25,
-                    label="->", clickCallback=function (gButton) 
-                        C_TradeSkillUI.OpenRecipe(gButton.recipeID)
-                    end
+                editButtonColumn.editButton = CraftSim.GGUI.Button({
+                    parent=editButtonColumn, anchorParent=editButtonColumn, sizeX=25, sizeY=25,
+                    label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.EDIT_PEN, 0.7),
                 })
 
                 recipeColumn.text = CraftSim.GGUI.Text({
@@ -178,8 +189,8 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
                     topGearColumn.equippedText:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
                 end
 
-                craftableColumn.text = CraftSim.GGUI.Text({
-                    parent=craftableColumn, anchorParent=craftableColumn
+                craftAbleColumn.text = CraftSim.GGUI.Text({
+                    parent=craftAbleColumn, anchorParent=craftAbleColumn
                 })
 
                 craftAmountColumn.input = CraftSim.GGUI.NumericInput({
@@ -489,7 +500,6 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
     local totalAverageProfit = 0
     local totalCraftingCosts = 0
-    local totalReagents = {}
 
     CraftSim.UTIL:StartProfiling("- FrameListUpdate Add Rows")
     for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
@@ -500,7 +510,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             local profilingID = "- FrameListUpdate Add Recipe: " .. craftQueueItem.recipeData.recipeName
             CraftSim.UTIL:StartProfiling(profilingID)
             local columns = row.columns
-            local switchToRecipeColumn = columns[1]
+            local editButtonColumn = columns[1]
             local recipeColumn = columns[2] 
             local averageProfitColumn = columns[3]
             local craftingCostsColumn = columns[4]
@@ -511,8 +521,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             local craftButtonColumn = columns[9]
             local removeRowColumn = columns[10]
 
-            switchToRecipeColumn.switchButton:SetEnabled(craftQueueItem.correctProfessionOpen)
-            switchToRecipeColumn.switchButton.recipeID = recipeData.recipeID
+            row.craftQueueItem = craftQueueItem
 
             -- update price data and profit?
             recipeData.priceData:Update()

@@ -97,10 +97,6 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
 
         local columnOptions = {
             {
-                -- switch to recipe button
-                width=40,
-            },
-            {
                 label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER),
                 width=150,
             },
@@ -141,22 +137,25 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
             showHeaderLine=true,
             sizeY=250, offsetY=-25,
             columnOptions=columnOptions,
-            rowConstructor=function (columns)
-                local switchToRecipeColumn = columns[1] 
-                local recipeColumn = columns[2]
-                local learnedColumn = columns[3]
-                local expectedResultColumn = columns[4] 
-                local highestResultColumn = columns[5] 
-                local averageProfitColumn = columns[6] 
-                local topGearColumn = columns[7] 
-                local countColumn = columns[8]
-
-                switchToRecipeColumn.switchButton = CraftSim.GGUI.Button({
-                    parent=switchToRecipeColumn,anchorParent=switchToRecipeColumn, sizeX=25, sizeY=25,
-                    label="->", clickCallback=function (gButton) 
-                        C_TradeSkillUI.OpenRecipe(gButton.recipeID)
+            selectionOptions = {
+                hoverRGBA={1, 1, 1, 0.1},
+                noSelectionColor=true,
+                selectionCallback=function (row)
+                    ---@type CraftSim.RecipeData
+                    local recipeData = row.recipeData
+                    if recipeData then
+                        C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
                     end
-                })
+                end
+            },
+            rowConstructor=function (columns)
+                local recipeColumn = columns[1]
+                local learnedColumn = columns[2]
+                local expectedResultColumn = columns[3] 
+                local highestResultColumn = columns[4] 
+                local averageProfitColumn = columns[5] 
+                local topGearColumn = columns[6] 
+                local countColumn = columns[7]
 
                 recipeColumn.text = CraftSim.GGUI.Text({
                     parent=recipeColumn,anchorParent=recipeColumn,anchorA="LEFT",anchorB="LEFT", justifyOptions={type="H",align="LEFT"}, scale=0.9,
@@ -247,16 +246,15 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
     function(row) 
         local columns = row.columns
 
-        local switchToRecipeColumn = columns[1] 
-        local recipeColumn = columns[2]
-        local learnedColumn = columns[3]
-        local expectedResultColumn = columns[4] 
-        local highestResultColumn = columns[5] 
-        local averageProfitColumn = columns[6] 
-        local topGearColumn = columns[7] 
-        local countColumn = columns[8]
+        local recipeColumn = columns[1]
+        local learnedColumn = columns[2]
+        local expectedResultColumn = columns[3] 
+        local highestResultColumn = columns[4] 
+        local averageProfitColumn = columns[5] 
+        local topGearColumn = columns[6] 
+        local countColumn = columns[7]
 
-        switchToRecipeColumn.switchButton.recipeID = recipeData.recipeID
+        row.recipeData = recipeData
 
         local recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
 

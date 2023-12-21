@@ -31,4 +31,5 @@ CraftSim.MEDIA.IMAGES = {
     PIXEL_HEART = {file="pixelHeart.blp", dimensions={x=64,y=64}},
     KOFI = {file="kofi.blp", dimensions={x=64,y=64}},
     PAYPAL = {file="paypal.blp", dimensions={x=64,y=64}},
+    EDIT_PEN = {file="edit.blp", dimensions={x=25, y=25}},
 }
