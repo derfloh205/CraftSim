@@ -2,6 +2,8 @@
 local CraftSim = select(2, ...)
 local CraftSimAddonName = select(1, ...)
 
+CraftSim.LibCompress = LibStub:GetLibrary("LibCompress")
+
 ---@class CraftSim.MAIN : Frame
 CraftSim.MAIN = CreateFrame("Frame", "CraftSimAddon")
 CraftSim.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
@@ -569,7 +571,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS)
 	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
 
-	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
+	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild()  then
 		CraftSim.MAIN:HideAllFrames()
 		return
 	end

@@ -3,13 +3,23 @@ local CraftSim = select(2, ...)
 
 CraftSim.NEWS = {}
 
-function CraftSim.NEWS:GET_NEWS()
+---@param itemMap table<string, ItemMixin>
+function CraftSim.NEWS:GET_NEWS(itemMap)
     -- minimize names to make manual formatting easier :p
     local f = CraftSim.UTIL:GetFormatter()
     local function newP(v) return f.l("\n                                   --- Version " .. v .. " ---\n") end
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("12.2.0"),
+        f.s .. f.g("zhTW Locals Update"),
+        f.a .. "- Thanks to " .. f.bb("https://github.com/class2u") .. " !",
+        f.s .. f.g("esMX Locals Added"),
+        f.a .. "- Thanks to " .. f.bb("lore") .. " from the CraftSim Discord!",
+        f.s .. f.bb("Cooking ") .. "now considers " .. itemMap.chocolate:GetItemLink(),
+        f.a .. "setting multicraft to 100%",
+        f.p .. "Fixed a small visual bug regarding blizzards 'Reagents:' header",
+        f.p .. f.patreon("Supporter List Update"),
         newP("12.1.0"),
         f.s .. f.bb("Customer History"),
         f.a .. "- Reset and Restarted the migration of old data",
@@ -98,22 +108,23 @@ function CraftSim.NEWS:GET_NEWS()
     return table.concat(news, "\n")
 end
 
-function CraftSim.NEWS:GetChecksum()
+---@param newsText string
+function CraftSim.NEWS:GetChecksum(newsText)
     local checksum = 0
-    local newsString = CraftSim.NEWS:GET_NEWS()
     local checkSumBitSize = 256
 
     -- Iterate through each character in the string
-    for i = 1, #newsString do
-        checksum = (checksum + string.byte(newsString, i)) % checkSumBitSize
+    for i = 1, #newsText do
+        checksum = (checksum + string.byte(newsText, i)) % checkSumBitSize
     end
 
     return checksum
 end
 
+---@param newsText string
 ---@return string | nil newChecksum newChecksum when news should be shown, otherwise nil
-function CraftSim.NEWS:IsNewsUpdate()
-    local newChecksum = CraftSim.NEWS:GetChecksum()
+function CraftSim.NEWS:IsNewsUpdate(newsText)
+    local newChecksum = CraftSim.NEWS:GetChecksum(newsText)
     local oldChecksum = CraftSimOptions.newsChecksum
     if newChecksum ~= oldChecksum then
         return newChecksum
@@ -121,19 +132,26 @@ function CraftSim.NEWS:IsNewsUpdate()
     return nil
 end
 
+---@param force boolean wether to skip the checksum verification
+---@async
 function CraftSim.NEWS:ShowNews(force)
-    local infoText = CraftSim.NEWS:GET_NEWS()
-    local newChecksum = CraftSim.NEWS:IsNewsUpdate()
-    if newChecksum == nil and (not force) then
-       return 
-    end
-
-    CraftSimOptions.newsChecksum = newChecksum
-
-    local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.INFO)
-    -- resize
-    infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
-    infoFrame.originalX = CraftSim.CONST.infoBoxSizeX
-    infoFrame.originalY = CraftSim.CONST.infoBoxSizeY
-    infoFrame.showInfo(infoText)
+    local itemMap = {
+        chocolate=Item:CreateFromItemID(194902),
+    }
+    CraftSim.GUTIL:ContinueOnAllItemsLoaded(CraftSim.GUTIL:Map(itemMap, function(i) return i end), function ()
+        local newsText = CraftSim.NEWS:GET_NEWS(itemMap)
+        local newChecksum = CraftSim.NEWS:IsNewsUpdate(newsText)
+        if newChecksum == nil and (not force) then
+           return 
+        end
+    
+        CraftSimOptions.newsChecksum = newChecksum
+    
+        local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.INFO)
+        -- resize
+        infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
+        infoFrame.originalX = CraftSim.CONST.infoBoxSizeX
+        infoFrame.originalY = CraftSim.CONST.infoBoxSizeY
+        infoFrame.showInfo(newsText)
+    end)
 end

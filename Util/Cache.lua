@@ -138,7 +138,7 @@ function CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeID)
                 recipeMapForProfession[recipeID] = professionID
 
                 if recipeInfo and not recipeInfo.isEnchantingRecipe and not recipeInfo.isGatheringRecipe and not tContains(CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS, recipeInfo.categoryID) then
-                    local itemIDs = CraftSim.DATAEXPORT:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, {})
+                    local itemIDs = CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, {})
                     itemIDs = CraftSim.GUTIL:ToSet(itemIDs) -- to consider gear where all qualities have the same itemID
 
                     table.foreach(itemIDs, function (_, itemID)

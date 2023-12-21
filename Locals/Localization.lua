@@ -23,7 +23,7 @@ function CraftSim.LOCAL:Init()
     elseif currentLocale == CraftSim.CONST.LOCALES.FR then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_FR:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.MX then
-        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_ES:GetData()
+        CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_MX:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.KO then
         CraftSim.LOCAL.LOCAL_CLIENT = CraftSim.LOCAL_KO:GetData()
     elseif currentLocale == CraftSim.CONST.LOCALES.TW then
