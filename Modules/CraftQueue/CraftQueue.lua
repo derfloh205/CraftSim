@@ -1,4 +1,8 @@
-local addonName, CraftSim = ...
+---@class CraftSim
+local CraftSim = select(2, ...)
+local addonName = select(1, ...)
+
+local GGUI = CraftSim.GGUI
 
 ---@class CraftSim.CRAFTQ : Frame
 CraftSim.CRAFTQ = CraftSim.GUTIL:CreateRegistreeForEvents({"TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED"})
@@ -445,5 +449,15 @@ function CraftSim.CRAFTQ:AddOpenRecipe()
         return
     end
 
-    CraftSim.CRAFTQ:AddRecipe(recipeData)
+    -- needs to be a copy or we modify it when we edit it in the queue..
+    CraftSim.CRAFTQ:AddRecipe(recipeData:Copy())
+end
+
+function CraftSim.CRAFTQ:OnRecipeEditSave()
+    -- TODO
+    print("OnRecipeEditSave")
+    ---@type CraftSim.CRAFTQ.EditRecipeFrame
+    local editRecipeFrame = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
+
+    editRecipeFrame:Hide()
 end

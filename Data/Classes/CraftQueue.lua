@@ -66,10 +66,17 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.CraftQueueItem | nil craftQueueItem, number? index
 function CraftSim.CraftQueue:FindRecipe(recipeData)
+    -- local craftQueueItem, index = CraftSim.GUTIL:Find(self.craftQueueItems, 
+    -- ---@param cqi CraftSim.CraftQueueItem
+    -- function (cqi)
+    --     return cqi.recipeData:EqualCraftSetup(recipeData)
+    -- end)
+    -- return craftQueueItem, index
+    
     local craftQueueItem, index = CraftSim.GUTIL:Find(self.craftQueueItems, 
     ---@param cqi CraftSim.CraftQueueItem
     function (cqi)
-        return cqi.recipeData:EqualCraftSetup(recipeData)
+        return cqi.recipeData.recipeID == recipeData.recipeID
     end)
     return craftQueueItem, index
 end

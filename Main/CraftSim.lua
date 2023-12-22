@@ -367,10 +367,14 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.MAIN:handleCraftSimOptionsUpdates()
 
 		CraftSim.LOCAL:Init()
+		CraftSim.FRAME:InitDebugFrame()
+		CraftSim.GGUI:InitializePopup({
+			backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+			sizeX=300, sizeY=300, title="CraftSim Popup", frameID=CraftSim.CONST.FRAMES.POPUP,
+		})
 		CraftSim.PRICE_API:InitPriceSource()
 
 
-		CraftSim.FRAME:InitDebugFrame()
 		CraftSim.AVERAGEPROFIT.FRAMES:Init()
 		CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
 		CraftSim.TOPGEAR.FRAMES:Init()
@@ -403,10 +407,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 
 		CraftSim.CONTROL_PANEL.FRAMES:Init()
 		CraftSim.MAIN:InitStaticPopups()
-		CraftSim.GGUI:InitializePopup({
-			backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-			sizeX=300, sizeY=300, title="CraftSim Popup", frameID=CraftSim.CONST.FRAMES.POPUP,
-		})
+		
 
 		CraftSim.CUSTOMER_SERVICE:Init()
 		CraftSim.CUSTOMER_HISTORY:Init()

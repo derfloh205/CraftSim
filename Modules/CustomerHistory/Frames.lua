@@ -50,7 +50,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         }
         frame.content.customerList = GGUI.FrameList({  
             sizeY=390, columnOptions=columnOptionsCustomerList, parent=frame.content, anchorParent=frame.content, anchorA="TOPLEFT", anchorB="TOPLEFT", 
-            offsetY=-80, offsetX=30, selectableRows=true, rowHeight=20,
+            offsetY=-80, offsetX=30, rowHeight=20,
             showHeaderLine=true,
             rowConstructor = function (columns)
                 local customerColumn = columns[1]
@@ -73,9 +73,11 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
                     sizeX=25, clickCallback = nil -- set dynamically in Add
                 })
             end,
-            selectionCallback=function (row)
-                CraftSim.CUSTOMER_HISTORY.FRAMES:OnCustomerSelected(row.customerHistory)
-            end
+            selectionOptions={
+                selectionCallback=function (row)
+                    CraftSim.CUSTOMER_HISTORY.FRAMES:OnCustomerSelected(row.customerHistory)
+                end
+            }
         })
 
         frame.content.purgeCustomers = GGUI.Button{

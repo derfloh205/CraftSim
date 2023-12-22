@@ -3,6 +3,8 @@ local CraftSim = select(2, ...)
 
 CraftSim.NEWS = {}
 
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.NEWS)
+
 ---@param itemMap table<string, ItemMixin>
 function CraftSim.NEWS:GET_NEWS(itemMap)
     -- minimize names to make manual formatting easier :p
@@ -11,6 +13,16 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("12.2.1"),
+        f.P .. f.bb("CraftQueue"),
+        f.a .. "- The same recipe can now " .. f.r("not"), 
+        f.a .. "  have multiple entries in the craft queue",
+        f.a .. "- Rows can now be clicked to jump to a recipe instead",
+        f.a .. "  of having to click on the little arrow button",
+        f.s .. f.bb("RecipeScan"),
+        f.a .. "- Rows can now be clicked to jump to a recipe instead",
+        f.a .. "  of having to click on the little arrow button",
+        f.a .. "Fixed a bug where reagents are not showing for salvage recipes",
         newP("12.2.0"),
         f.s .. f.g("zhTW Locals Update"),
         f.a .. "- Thanks to " .. f.bb("https://github.com/class2u") .. " !",
@@ -113,10 +125,18 @@ function CraftSim.NEWS:GetChecksum(newsText)
     local checksum = 0
     local checkSumBitSize = 256
 
+    -- replace each itemLink with a generic string so there are no differences between characters in the checksum
+    -- for _, item in pairs(itemMap) do
+    -- end
+    newsText = string.gsub(newsText, "|cff%x+|Hitem:.+|h|r", "[LINK]")
+
     -- Iterate through each character in the string
     for i = 1, #newsText do
         checksum = (checksum + string.byte(newsText, i)) % checkSumBitSize
     end
+
+    -- print("replacing links in newstext:")
+    -- print(newsText)
 
     return checksum
 end
@@ -145,6 +165,7 @@ function CraftSim.NEWS:ShowNews(force)
            return 
         end
     
+        print("showing news, old / new cs: " .. tostring(CraftSimOptions.newsChecksum) .. "/" .. tostring(newChecksum))
         CraftSimOptions.newsChecksum = newChecksum
     
         local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.INFO)

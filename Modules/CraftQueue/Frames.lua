@@ -1,17 +1,23 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GGUI = CraftSim.GGUI
+
+---@class CraftSim.CRAFTQ
+CraftSim.CRAFTQ = CraftSim.CRAFTQ
+
+---@class CraftSim.CRAFTQ.FRAMES
 CraftSim.CRAFTQ.FRAMES = {}
 
 local print=CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 
-function  CraftSim.CRAFTQ.FRAMES:Init()
+function CraftSim.CRAFTQ.FRAMES:Init()
     local sizeX=1000
     local sizeY=420
 
     ---@class CraftSim.CraftQueue.Frame : GGUI.Frame
-    CraftSim.CRAFTQ.frame = CraftSim.GGUI.Frame({
+    CraftSim.CRAFTQ.frame = GGUI.Frame({
             parent=ProfessionsFrame.CraftingPage.SchematicForm, 
             anchorParent=ProfessionsFrame.CraftingPage.SchematicForm,
             sizeX=sizeX,sizeY=sizeY,
@@ -20,7 +26,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             collapseable=true,
             closeable=true,
             moveable=true,
-            frameStrata="DIALOG",
+            frameStrata="HIGH",
             backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
             onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesCraftQueue"),
             frameTable=CraftSim.MAIN.FRAMES,
@@ -33,14 +39,17 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         local tabContentSizeX = 930
         local tabContentSizeY = 330
 
+        ---@class CraftSim.CraftQueue.Frame.Content : Frame
+        frame.content = frame.content
+
         ---@type GGUI.Tab
-        frame.content.queueTab = CraftSim.GGUI.Tab({
+        frame.content.queueTab = GGUI.Tab({
             buttonOptions={parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="BOTTOM", offsetX=-62, offsetY=-20, 
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL), adjustWidth=true},
             parent=frame.content,anchorParent=frame.content, sizeX=tabContentSizeX, sizeY=tabContentSizeY, canBeEnabled=true, offsetY=-30,
         })
         ---@type GGUI.Tab
-        frame.content.restockOptionsTab = CraftSim.GGUI.Tab({
+        frame.content.restockOptionsTab = GGUI.Tab({
             buttonOptions={parent=frame.content, anchorParent=frame.content.queueTab.button.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=5, 
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL), adjustWidth=true},
             parent=frame.content,anchorParent=frame.content, sizeX=tabContentSizeX, sizeY=tabContentSizeY, canBeEnabled=true, offsetY=-30,
@@ -48,12 +57,12 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         local restockOptionsTab = frame.content.restockOptionsTab
         local queueTab = frame.content.queueTab
 
-        CraftSim.GGUI.TabSystem({queueTab, restockOptionsTab})
+        GGUI.TabSystem({queueTab, restockOptionsTab})
 
         local columnOptions = {
             {
-                label="", -- jump to recipe button
-                width=50,
+                label="", -- edit button
+                width=35,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
@@ -102,31 +111,42 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         }
 
         ---@type GGUI.FrameList
-        queueTab.content.craftList = CraftSim.GGUI.FrameList({
+        queueTab.content.craftList = GGUI.FrameList({
             parent = queueTab.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP",
             showHeaderLine=true, scale=0.95, showBorder=true,
+            selectionOptions = {
+                hoverRGBA={1, 1, 1, 0.1},
+                noSelectionColor=true,
+                selectionCallback=function (row)
+                    ---@type CraftSim.CraftQueueItem
+                    local craftQueueItem = row.craftQueueItem
+                    if craftQueueItem then
+                        if craftQueueItem.correctProfessionOpen and craftQueueItem.recipeData then
+                            C_TradeSkillUI.OpenRecipe(craftQueueItem.recipeData.recipeID)
+                        end
+                    end
+                end
+            },
             sizeY=230, offsetY=-90,
             columnOptions=columnOptions,
             rowConstructor=function (columns)
-                local switchToRecipeColumn = columns[1]
+                local editButtonColumn = columns[1]
                 local recipeColumn = columns[2] 
                 local averageProfitColumn = columns[3]
                 local craftingCostsColumn = columns[4]
                 local reagentInfoColumn = columns[5]
                 local topGearColumn = columns[6]
-                local craftableColumn = columns[7]
+                local craftAbleColumn = columns[7]
                 local craftAmountColumn = columns[8] 
                 local craftButtonColumn = columns[9]
                 local removeRowColumn = columns[10]
 
-                switchToRecipeColumn.switchButton = CraftSim.GGUI.Button({
-                    parent=switchToRecipeColumn,anchorParent=switchToRecipeColumn, sizeX=25, sizeY=25,
-                    label="->", clickCallback=function (gButton) 
-                        C_TradeSkillUI.OpenRecipe(gButton.recipeID)
-                    end
+                editButtonColumn.editButton = GGUI.Button({
+                    parent=editButtonColumn, anchorParent=editButtonColumn, sizeX=25, sizeY=25,
+                    label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.EDIT_PEN, 0.7),
                 })
 
-                recipeColumn.text = CraftSim.GGUI.Text({
+                recipeColumn.text = GGUI.Text({
                     parent=recipeColumn,anchorParent=recipeColumn,anchorA="LEFT",anchorB="LEFT", justifyOptions={type="H",align="LEFT"}, scale=0.9,
                     fixedWidth=recipeColumn:GetWidth(), wrap=true,
                 })
@@ -134,38 +154,38 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
                 local iconSize = 23
                 
                 ---@type GGUI.Text | GGUI.Widget
-                averageProfitColumn.text = CraftSim.GGUI.Text(
+                averageProfitColumn.text = GGUI.Text(
                 { 
                     parent=averageProfitColumn,anchorParent=averageProfitColumn, anchorA="LEFT", anchorB="LEFT", scale = 0.9,
 
                 })
                 ---@type GGUI.Text | GGUI.Widget
-                craftingCostsColumn.text = CraftSim.GGUI.Text(
+                craftingCostsColumn.text = GGUI.Text(
                 { 
                     parent=craftingCostsColumn,anchorParent=craftingCostsColumn, anchorA="RIGHT", anchorB="RIGHT", scale = 0.9, justifyOptions={type="H",align="RIGHT"}
 
                 })
 
-                reagentInfoColumn.reagentInfoButton = CraftSim.GGUI.HelpIcon({
+                reagentInfoColumn.reagentInfoButton = GGUI.HelpIcon({
                     parent=reagentInfoColumn, anchorParent=reagentInfoColumn,
                     text="No Data", label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_REAGENT_INFO_BUTTON_LABEL)
                 })
 
-                topGearColumn.gear2Icon = CraftSim.GGUI.Icon({
+                topGearColumn.gear2Icon = GGUI.Icon({
                     parent=topGearColumn, anchorParent=topGearColumn, sizeX=iconSize,sizeY=iconSize, qualityIconScale=1.2,
                 })
 
-                topGearColumn.gear1Icon = CraftSim.GGUI.Icon({
+                topGearColumn.gear1Icon = GGUI.Icon({
                     parent=topGearColumn, anchorParent=topGearColumn.gear2Icon.frame, anchorA="RIGHT", anchorB="LEFT", sizeX=iconSize,sizeY=iconSize, qualityIconScale=1.2, offsetX=-5,
                 })
-                topGearColumn.toolIcon = CraftSim.GGUI.Icon({
+                topGearColumn.toolIcon = GGUI.Icon({
                     parent=topGearColumn, anchorParent=topGearColumn.gear2Icon.frame, anchorA="LEFT", anchorB="RIGHT", sizeX=iconSize,sizeY=iconSize, qualityIconScale=1.2, offsetX=5
                 })
-                topGearColumn.equippedText = CraftSim.GGUI.Text({
+                topGearColumn.equippedText = GGUI.Text({
                     parent=topGearColumn, anchorParent=topGearColumn
                 })
 
-                topGearColumn.equipButton = CraftSim.GGUI.Button({
+                topGearColumn.equipButton = GGUI.Button({
                     parent=topGearColumn, anchorParent=topGearColumn.toolIcon.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=2,
                     label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_EQUIP), clickCallback = nil, -- will be set in Add dynamically
                     adjustWidth=true,
@@ -178,22 +198,22 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
                     topGearColumn.equippedText:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
                 end
 
-                craftableColumn.text = CraftSim.GGUI.Text({
-                    parent=craftableColumn, anchorParent=craftableColumn
+                craftAbleColumn.text = GGUI.Text({
+                    parent=craftAbleColumn, anchorParent=craftAbleColumn
                 })
 
-                craftAmountColumn.input = CraftSim.GGUI.NumericInput({
+                craftAmountColumn.input = GGUI.NumericInput({
                     parent=craftAmountColumn, anchorParent = craftAmountColumn, sizeX=50, borderAdjustWidth=1.13,
                     minValue=1, initialValue=1, onNumberValidCallback=nil -- set dynamically on Add
                 })
 
-                craftButtonColumn.craftButton = CraftSim.GGUI.Button({
+                craftButtonColumn.craftButton = GGUI.Button({
                     parent=craftButtonColumn, anchorParent=craftButtonColumn,
                     label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL),
                     adjustWidth=true, secure=true,
                 })
 
-                removeRowColumn.removeButton = CraftSim.GGUI.Button({
+                removeRowColumn.removeButton = GGUI.Button({
                     parent=removeRowColumn, anchorParent=removeRowColumn,
                     label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.1),
                     sizeX=25, clickCallback = nil -- set dynamically in Add
@@ -204,7 +224,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         local craftQueueButtonsOffsetY=-5
 
         ---@type GGUI.Button
-        queueTab.content.importRecipeScanButton = CraftSim.GGUI.Button({
+        queueTab.content.importRecipeScanButton = GGUI.Button({
             parent=queueTab.content, anchorParent=queueTab.content.craftList.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=craftQueueButtonsOffsetY, offsetX=0,
             adjustWidth=true,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL), clickCallback=function ()
@@ -213,7 +233,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         })
 
         ---@type GGUI.Button
-        queueTab.content.addCurrentRecipeButton = CraftSim.GGUI.Button({
+        queueTab.content.addCurrentRecipeButton = GGUI.Button({
             parent=queueTab.content, anchorParent=queueTab.content.importRecipeScanButton.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=0,
             adjustWidth=true,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL), clickCallback=function ()
@@ -222,7 +242,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         })
 
         ---@type GGUI.Button
-        queueTab.content.clearAllButton = CraftSim.GGUI.Button({
+        queueTab.content.clearAllButton = GGUI.Button({
             parent=queueTab.content, anchorParent=queueTab.content.addCurrentRecipeButton.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=0,
             adjustWidth=true,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL), clickCallback=function ()
@@ -231,7 +251,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         })
 
         ---@type GGUI.Button
-        queueTab.content.craftNextButton = CraftSim.GGUI.Button({
+        queueTab.content.craftNextButton = GGUI.Button({
             parent=queueTab.content, anchorParent=queueTab.content.craftList.frame, anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", offsetY=craftQueueButtonsOffsetY, offsetX=0,
             adjustWidth=true,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL), clickCallback=nil
@@ -240,7 +260,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
 
         if select(2, C_AddOns.IsAddOnLoaded(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS[2])) then
             ---@type GGUI.Button
-            queueTab.content.createAuctionatorShoppingList = CraftSim.GGUI.Button({
+            queueTab.content.createAuctionatorShoppingList = GGUI.Button({
                 parent=queueTab.content, anchorParent=queueTab.content, anchorA="BOTTOM", anchorB="BOTTOM", adjustWidth=true, offsetY=0,
                 clickCallback=function ()
                     CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
@@ -251,22 +271,25 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
 
         -- summaries
 
-        queueTab.content.totalAverageProfitLabel = CraftSim.GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.importRecipeScanButton.frame,
+        queueTab.content.totalAverageProfitLabel = GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.importRecipeScanButton.frame,
             scale=0.9*0.9, anchorA="LEFT", anchorB="RIGHT", offsetX=10, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_PROFIT_LABEL),
             justifyOptions={type="H", align="RIGHT"}
         })
-        queueTab.content.totalAverageProfit = CraftSim.GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.totalAverageProfitLabel.frame,
+        queueTab.content.totalAverageProfit = GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.totalAverageProfitLabel.frame,
             scale=0.9*0.9, anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.GUTIL:FormatMoney(0, true),
             justifyOptions={type="H", align="LEFT"}
         })
-        queueTab.content.totalCraftingCostsLabel = CraftSim.GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.totalAverageProfitLabel.frame,
+        queueTab.content.totalCraftingCostsLabel = GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.totalAverageProfitLabel.frame,
             scale=0.9*0.9, anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", offsetY=-19, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL),
             justifyOptions={type="H", align="RIGHT"}
         })
-        queueTab.content.totalCraftingCosts = CraftSim.GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.totalCraftingCostsLabel.frame,
+        queueTab.content.totalCraftingCosts = GGUI.Text({parent=queueTab.content, anchorParent=queueTab.content.totalCraftingCostsLabel.frame,
             scale=0.9*0.9, anchorA="LEFT", anchorB="RIGHT", offsetX=5, text=CraftSim.GUTIL:FormatMoney(0, true),
             justifyOptions={type="H", align="RIGHT"}
         })
+
+        
+        queueTab.content.editRecipeFrame = CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(queueTab.content, frame.content)
 
         -- restock Options
 
@@ -275,16 +298,16 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         restockOptionsTab.content.generalOptionsFrame:SetPoint("TOP", restockOptionsTab.content, "TOP", 0, -50)
         local generalOptionsFrame = restockOptionsTab.content.generalOptionsFrame
 
-        generalOptionsFrame.title = CraftSim.GGUI.Text{
+        generalOptionsFrame.title = GGUI.Text{
             parent=generalOptionsFrame, anchorParent=generalOptionsFrame, anchorA="TOP", anchorB="TOP",
             text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_OPTIONS_LABEL), scale=1.2,
         }
 
-        local profitMarginLabel = CraftSim.GGUI.Text({parent=generalOptionsFrame, anchorParent=generalOptionsFrame, 
+        local profitMarginLabel = GGUI.Text({parent=generalOptionsFrame, anchorParent=generalOptionsFrame, 
             anchorA="TOP", anchorB="TOP", text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL), 
             offsetX=-25, offsetY=-30})
 
-        generalOptionsFrame.profitMarginThresholdInput = CraftSim.GGUI.NumericInput({
+        generalOptionsFrame.profitMarginThresholdInput = GGUI.NumericInput({
             parent=generalOptionsFrame, anchorParent=profitMarginLabel.frame, initialValue = CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0, 
             anchorA="LEFT", anchorB="RIGHT", offsetX=10,
             allowDecimals=true,minValue=-math.huge,
@@ -294,15 +317,15 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             end
         })
         -- %
-        CraftSim.GGUI.Text({parent=generalOptionsFrame, anchorParent=generalOptionsFrame.profitMarginThresholdInput.textInput.frame, 
+        GGUI.Text({parent=generalOptionsFrame, anchorParent=generalOptionsFrame.profitMarginThresholdInput.textInput.frame, 
             anchorA="LEFT", anchorB="RIGHT", text="%", offsetX=2})        
 
-        generalOptionsFrame.restockAmountLabel = CraftSim.GGUI.Text({parent=generalOptionsFrame, anchorParent=profitMarginLabel.frame, 
+        generalOptionsFrame.restockAmountLabel = GGUI.Text({parent=generalOptionsFrame, anchorParent=profitMarginLabel.frame, 
             anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_AMOUNT_LABEL),
             offsetY=-10,
         })
 
-        generalOptionsFrame.restockAmountInput = CraftSim.GGUI.NumericInput{
+        generalOptionsFrame.restockAmountInput = GGUI.NumericInput{
             parent=generalOptionsFrame, anchorParent=generalOptionsFrame.restockAmountLabel.frame, 
             initialValue = tonumber(CraftSimOptions.craftQueueGeneralRestockRestockAmount) or 1, 
             anchorA="LEFT", anchorB="RIGHT", offsetX=10, minValue=1,
@@ -318,19 +341,19 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         local function createQualityCheckbox(p, a, qualityID, oX, oY)
             oX = oX or -2
             oY = oY or -2.8
-            return CraftSim.GGUI.Checkbox{
+            return GGUI.Checkbox{
                 parent=p, anchorParent=a, 
                 anchorA="LEFT", anchorB="RIGHT", offsetX=qualityCheckboxBaseOffsetX+qualityCheckboxSpacingX*(qualityID-1), 
                 label=CraftSim.GUTIL:GetQualityIconString(qualityID, qualityIconSize, qualityIconSize, oX, oY)}
         end
 
         -- always create the inputs and such but only show when tsm is loaded
-        generalOptionsFrame.saleRateTitle = CraftSim.GGUI.Text{parent=generalOptionsFrame, anchorParent=generalOptionsFrame.restockAmountLabel.frame, 
+        generalOptionsFrame.saleRateTitle = GGUI.Text{parent=generalOptionsFrame, anchorParent=generalOptionsFrame.restockAmountLabel.frame, 
             anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", offsetY=-10,
             text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL)
         }
 
-        generalOptionsFrame.saleRateInput = CraftSim.GGUI.NumericInput{
+        generalOptionsFrame.saleRateInput = GGUI.NumericInput{
             parent=generalOptionsFrame, anchorParent=generalOptionsFrame.saleRateTitle.frame, initialValue = CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold or 0, 
             anchorA="LEFT", anchorB="RIGHT", offsetX=10,
             allowDecimals=true,minValue=0,
@@ -340,7 +363,7 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
             end
         }
 
-        generalOptionsFrame.saleRateHelpIcon = CraftSim.GGUI.HelpIcon{parent=generalOptionsFrame, anchorParent=generalOptionsFrame.saleRateTitle.frame, 
+        generalOptionsFrame.saleRateHelpIcon = GGUI.HelpIcon{parent=generalOptionsFrame, anchorParent=generalOptionsFrame.saleRateTitle.frame, 
             anchorA="RIGHT", anchorB="LEFT", offsetX=-2, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL)
         }
         
@@ -354,41 +377,41 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         ---@type number | nil
         recipeOptionsFrame.recipeID = nil
 
-        recipeOptionsFrame.recipeTitle = CraftSim.GGUI.Text({parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame,
+        recipeOptionsFrame.recipeTitle = GGUI.Text({parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame,
             anchorA="TOP", anchorB="TOP", justifyOptions={type='H', align="LEFT"}, scale=1.2})
 
-        local enableRecipeLabel = CraftSim.GGUI.Text{parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame, 
+        local enableRecipeLabel = GGUI.Text{parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame, 
         anchorA="TOP", anchorB="BOTTOM", text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_LABEL), 
         offsetY=10, offsetX=0}
 
-        recipeOptionsFrame.enableRecipeCheckbox = CraftSim.GGUI.Checkbox{
+        recipeOptionsFrame.enableRecipeCheckbox = GGUI.Checkbox{
             parent=recipeOptionsFrame, anchorParent=enableRecipeLabel.frame, anchorA="LEFT", anchorB="RIGHT", 
             tooltip=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP), offsetX=15,
         }
-        local recipeProfitMarginLabel = CraftSim.GGUI.Text({parent=recipeOptionsFrame, anchorParent=enableRecipeLabel.frame, 
+        local recipeProfitMarginLabel = GGUI.Text({parent=recipeOptionsFrame, anchorParent=enableRecipeLabel.frame, 
             anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL),
             offsetY=-10, 
             })
 
-        recipeOptionsFrame.profitMarginThresholdInput = CraftSim.GGUI.NumericInput({
+        recipeOptionsFrame.profitMarginThresholdInput = GGUI.NumericInput({
         parent=recipeOptionsFrame, anchorParent=recipeProfitMarginLabel.frame, initialValue = 0, 
         anchorA="LEFT", anchorB="RIGHT", offsetX=10,
         allowDecimals=true,minValue=-math.huge,
         sizeX=40, borderAdjustWidth=1.2})
 
         -- %
-        CraftSim.GGUI.Text({parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame.profitMarginThresholdInput.textInput.frame, 
+        GGUI.Text({parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame.profitMarginThresholdInput.textInput.frame, 
             anchorA="LEFT", anchorB="RIGHT", text="%", offsetX=2})  
 
-        recipeOptionsFrame.restockAmountLabel = CraftSim.GGUI.Text{parent=recipeOptionsFrame, anchorParent=recipeProfitMarginLabel.frame,
+        recipeOptionsFrame.restockAmountLabel = GGUI.Text{parent=recipeOptionsFrame, anchorParent=recipeProfitMarginLabel.frame,
             anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_AMOUNT_LABEL),
             offsetY=-10,
         }
-        CraftSim.GGUI.HelpIcon{parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame.restockAmountLabel.frame, 
+        GGUI.HelpIcon{parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame.restockAmountLabel.frame, 
             anchorA="RIGHT", anchorB="LEFT", offsetX=-2, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_RESTOCK_TOOLTIP)
         }
 
-        recipeOptionsFrame.restockAmountInput = CraftSim.GGUI.NumericInput{
+        recipeOptionsFrame.restockAmountInput = GGUI.NumericInput{
             parent=recipeOptionsFrame, anchorParent=recipeOptionsFrame.restockAmountLabel.frame, initialValue = 1, 
             anchorA="LEFT", anchorB="RIGHT", offsetX=10, minValue=1,
             sizeX=40, borderAdjustWidth=1.2, onNumberValidCallback=nil -- set dynamically
@@ -409,19 +432,19 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
         local tsmSaleRateFrame = recipeOptionsFrame.tsmSaleRateFrame
 
         -- always create the inputs and such but only show when tsm is loaded
-        tsmSaleRateFrame.saleRateTitle = CraftSim.GGUI.Text{parent=tsmSaleRateFrame, anchorParent=recipeOptionsFrame.restockAmountLabel.frame, 
+        tsmSaleRateFrame.saleRateTitle = GGUI.Text{parent=tsmSaleRateFrame, anchorParent=recipeOptionsFrame.restockAmountLabel.frame, 
             anchorA="TOPRIGHT", anchorB="BOTTOMRIGHT", offsetY=-10,
             text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL)
         }
 
-        tsmSaleRateFrame.saleRateInput = CraftSim.GGUI.NumericInput{
+        tsmSaleRateFrame.saleRateInput = GGUI.NumericInput{
             parent=tsmSaleRateFrame, anchorParent=tsmSaleRateFrame.saleRateTitle.frame, initialValue = 0, 
             anchorA="LEFT", anchorB="RIGHT", offsetX=10,
             allowDecimals=true,minValue=0,
             sizeX=40, borderAdjustWidth=1.2, onNumberValidCallback=nil -- set dynamically
         }
 
-        tsmSaleRateFrame.helpIcon = CraftSim.GGUI.HelpIcon{parent=tsmSaleRateFrame, anchorParent=tsmSaleRateFrame.saleRateTitle.frame, 
+        tsmSaleRateFrame.helpIcon = GGUI.HelpIcon{parent=tsmSaleRateFrame, anchorParent=tsmSaleRateFrame.saleRateTitle.frame, 
             anchorA="RIGHT", anchorB="LEFT", offsetX=-2, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP)
         }
         
@@ -435,6 +458,48 @@ function  CraftSim.CRAFTQ.FRAMES:Init()
     end
 
     createContent(CraftSim.CRAFTQ.frame)
+end
+
+---@param parent frame  
+---@param anchorParent Region
+---@return CraftSim.CRAFTQ.EditRecipeFrame editRecipeFrame
+function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
+    local editFrameX = 500
+    local editFrameY = 300
+    ---@class CraftSim.CRAFTQ.EditRecipeFrame : GGUI.Frame
+    local editRecipeFrame = GGUI.Frame{
+        parent=parent, anchorParent=anchorParent,
+        sizeX=editFrameX, sizeY=editFrameY, backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS, 
+        frameID=CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE, frameTable=CraftSim.MAIN.FRAMES,
+        title= CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_TITLE),
+        frameStrata="DIALOG", closeable=true,
+    }
+
+    editRecipeFrame.content.saveButton = GGUI.Button{
+        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content, 
+        anchorA="BOTTOM", anchorB="BOTTOM", label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_SAVE), adjustWidth=true,
+        offsetY=30,
+        clickCallback=function ()
+            CraftSim.CRAFTQ:OnRecipeEditSave()
+        end
+    }
+
+    editRecipeFrame.content.optimizeReagents = GGUI.Button{
+        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content, anchorA="RIGHT", anchorB="RIGHT", offsetX=-20,
+        offsetX=10, label="Optimize Reagents", adjustWidth=true,
+        clickCallback=function ()
+            if editRecipeFrame.recipeData then
+                editRecipeFrame.recipeData:OptimizeReagents(true)
+                CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
+            end
+        end
+    }
+
+    --- the current recipe data that is edited
+    ---@type CraftSim.RecipeData
+    editRecipeFrame.recipeData = nil
+    editRecipeFrame:Hide()
+    return editRecipeFrame
 end
 
 function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
@@ -489,7 +554,6 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
     local totalAverageProfit = 0
     local totalCraftingCosts = 0
-    local totalReagents = {}
 
     CraftSim.UTIL:StartProfiling("- FrameListUpdate Add Rows")
     for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
@@ -500,7 +564,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             local profilingID = "- FrameListUpdate Add Recipe: " .. craftQueueItem.recipeData.recipeName
             CraftSim.UTIL:StartProfiling(profilingID)
             local columns = row.columns
-            local switchToRecipeColumn = columns[1]
+            local editButtonColumn = columns[1]
             local recipeColumn = columns[2] 
             local averageProfitColumn = columns[3]
             local craftingCostsColumn = columns[4]
@@ -511,8 +575,15 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             local craftButtonColumn = columns[9]
             local removeRowColumn = columns[10]
 
-            switchToRecipeColumn.switchButton:SetEnabled(craftQueueItem.correctProfessionOpen)
-            switchToRecipeColumn.switchButton.recipeID = recipeData.recipeID
+            row.craftQueueItem = craftQueueItem
+
+            editButtonColumn.editButton.clickCallback = function ()
+                print("show edit recipe frame")
+                CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrame(craftQueueItem)
+                CraftSim.CRAFTQ.frame.content.queueTab.content.editRecipeFrame:Show()
+            end
+
+            editButtonColumn.editButton:Hide() -- temp
 
             -- update price data and profit?
             recipeData.priceData:Update()
@@ -670,7 +741,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
 end
 
 function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
-    if not CraftSim.CRAFTQ.FRAMES.frame then
+    if not CraftSim.CRAFTQ.frame then
         return
     end
     if CraftSim.MAIN.currentRecipeData then
@@ -751,7 +822,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
             tsmSaleRateFrame:Hide()
         end
     else
-        local restockOptionsTab = CraftSim.CRAFTQ.FRAMES.frame.content.restockOptionsTab
+        local restockOptionsTab = CraftSim.CRAFTQ.frame.content.restockOptionsTab
         local recipeOptionsFrame = restockOptionsTab.content.recipeOptionsFrame
         recipeOptionsFrame:Hide()
     end
@@ -760,4 +831,11 @@ end
 function CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
     CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
     CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
+end
+
+---@param craftQueueItem CraftSim.CraftQueueItem
+function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrame(craftQueueItem)
+    ---@type CraftSim.CRAFTQ.EditRecipeFrame
+    local editRecipeFrame = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
+    editRecipeFrame.recipeData = craftQueueItem.recipeData
 end
