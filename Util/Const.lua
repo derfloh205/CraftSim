@@ -165,6 +165,7 @@ CraftSim.CONST.DEBUG_IDS = {
     PRICE_APIS = "PRICE_APIS",
     CONTROL_PANEL = "CONTROL_PANEL",
     CRAFTQ = "CRAFTQ",
+    NEWS = "NEWS",
 }
 
 CraftSim.CONST.ERROR = {
