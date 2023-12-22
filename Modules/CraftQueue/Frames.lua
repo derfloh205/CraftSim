@@ -466,7 +466,7 @@ end
 ---@return CraftSim.CRAFTQ.EditRecipeFrame editRecipeFrame
 function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
     local editFrameX = 500
-    local editFrameY = 300
+    local editFrameY = 320
     ---@class CraftSim.CRAFTQ.EditRecipeFrame : GGUI.Frame
     local editRecipeFrame = GGUI.Frame{
         parent=parent, anchorParent=anchorParent,
@@ -579,7 +579,6 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
         reagentFrame.IsRequiredQuantity = function()
             local total = reagentFrame:GetTotalQuantity()
             if reagentFrame.reagent then
-                print(" check required quantity: " .. total .. " == " .. reagentFrame.reagent.requiredQuantity)
                 return total == reagentFrame.reagent.requiredQuantity
             else
                 return false
@@ -589,33 +588,27 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
         ---@param reagentInput CraftSim.CRAFTQ.FRAMES.ReagentInput
         local function onReagentInput(reagentInput)
             if reagentFrame:IsRequiredQuantity() then
-                print("IsRequiredQuantity")
                 -- reagentFrame.maxQuantityLabel:SetText("test")
                 reagentFrame.maxQuantityLabel:SetColor(GUTIL.COLORS.WHITE)
-                print("set white")
                 
                 -- if all reagentFrames are valid, update recipe
                 if editRecipeFrame:ValidateReagentQuantities() then
-                    print("all reagents valid!")
                     editRecipeFrame:UpdateReagentQuantities()
+                    editRecipeFrame.craftQueueItem.recipeData:Update()
                     CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                     CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
                 end
             else
-                print("not IsRequiredQuantity")
                 -- adapt input if its too much
                 local total = reagentFrame:GetTotalQuantity()
                 local max = reagentFrame.reagent.requiredQuantity
-                print(total .. ">" .. max)
                 if total > max then
                     local newQuantity = reagentInput.currentValue - (total - max)
                     reagentInput.textInput:SetText(newQuantity)
                     reagentInput.currentValue = newQuantity
                     reagentFrame.maxQuantityLabel:SetColor(GUTIL.COLORS.WHITE)
-                    print("set white")
                 else
                     reagentFrame.maxQuantityLabel:SetColor(GUTIL.COLORS.RED)
-                    print("set red")
                 end
             end
         end
@@ -650,46 +643,84 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
 
     for i=0, numReagentFrames-1 do table.insert(editRecipeFrame.content.reagentFrames, createReagentFrame(i)) end
 
+    local oRFrameX=100
+    local oRFrameY=65
+    local optionalReagentsFrame = CreateFrame("frame", nil, editRecipeFrame.content)
+    optionalReagentsFrame:SetSize(oRFrameX, oRFrameY)
+    optionalReagentsFrame:SetPoint("TOPLEFT", editRecipeFrame.content.q3Button.frame, "TOPRIGHT", 60, -2)
+
+    optionalReagentsFrame.collapse = function ()
+        optionalReagentsFrame:SetSize(oRFrameX, 0.1)
+    end
+    optionalReagentsFrame.decollapse = function ()
+        optionalReagentsFrame:SetSize(oRFrameX, oRFrameY)
+    end
+    optionalReagentsFrame.SetCollapsed = function (self, collapse)
+        if collapse then
+            optionalReagentsFrame.collapse()
+        else
+            optionalReagentsFrame.decollapse()
+        end
+    end
+
+    editRecipeFrame.content.optionalReagentsFrame = optionalReagentsFrame
+
     -- optional reagent slots
     editRecipeFrame.content.optionalReagentsTitle = GGUI.Text{
-        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.q3Button.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=60, offsetY=1,
+        parent=optionalReagentsFrame, anchorParent=optionalReagentsFrame, anchorA="TOPLEFT", anchorB="TOPLEFT",
         text="Optional Reagents", justifyOptions={type="H", align="LEFT"}
     }
-    ---@type GGUI.ItemSelector[]
+    ---@class CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector : GGUI.ItemSelector
+    ---@field slot CraftSim.OptionalReagentSlot?
+
+    ---@type CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector[]
     editRecipeFrame.content.optionalReagentSelectors = {}
     local itemSelectorSizeX = 25
     local itemSelectorSizeY = 25
     local itemSelectorBaseOffsetX = 0
     local itemSelectorBaseOffsetY = -10
     local itemSelectorSpacingX = itemSelectorSizeX + 5
-    local function CreateItemSelector(anchorParent, saveTable)
+    local function CreateItemSelector(parent, anchorParent, saveTable, onSelectCallback, anchorA, anchorB, offsetX, offsetY)
         local numSelectors = #saveTable
         table.insert(saveTable, GGUI.ItemSelector{
-            parent=editRecipeFrame.content, anchorParent=anchorParent, anchorA="TOPLEFT", anchorB="BOTTOMLEFT",
+            parent=parent, anchorParent=anchorParent, anchorA="TOPLEFT", anchorB="BOTTOMLEFT",
             offsetX=itemSelectorBaseOffsetX + itemSelectorSpacingX*numSelectors,
             offsetY=itemSelectorBaseOffsetY,
             sizeX=itemSelectorSizeX, sizeY=itemSelectorSizeY, selectionFrameOptions = {
                 backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-                title="Select"
-            },
+                title="Select", anchorA=anchorA, anchorB=anchorB, offsetX=offsetX, offsetY=offsetY
+            }, 
+            emptyIcon = 'tradeskills-icon-add', isAtlas=true, onSelectCallback=onSelectCallback
         })
+    end
+
+    ---@param itemSelector CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector
+    ---@param item ItemMixin?
+    local function OnSelectOptionalReagent(itemSelector, item)
+        if itemSelector and itemSelector.slot then
+            print("setting reagent: " .. tostring(item and item:GetItemLink()))
+            itemSelector.slot:SetReagent((item and item:GetItemID()) or nil)
+            editRecipeFrame.craftQueueItem.recipeData:Update()
+            CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
+            CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+        end
     end
 
     local numOptionalReagentSelectors = 3
     for _=1, numOptionalReagentSelectors do 
-        CreateItemSelector(editRecipeFrame.content.optionalReagentsTitle.frame, editRecipeFrame.content.optionalReagentSelectors) 
+        CreateItemSelector(optionalReagentsFrame, editRecipeFrame.content.optionalReagentsTitle.frame, editRecipeFrame.content.optionalReagentSelectors, OnSelectOptionalReagent) 
     end
 
     editRecipeFrame.content.finishingReagentsTitle = GGUI.Text{
-        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.optionalReagentsTitle.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=-50,
+        parent=editRecipeFrame.content, anchorParent=optionalReagentsFrame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT",
         text="Finishing Reagents", justifyOptions={type="H", align="LEFT"}
     }
 
-    ---@type GGUI.ItemSelector[]
+    ---@type CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector[]
     editRecipeFrame.content.finishingReagentSelectors = {}
     local numFinishingReagentSelectors = 3
     for _=1, numFinishingReagentSelectors do 
-        CreateItemSelector(editRecipeFrame.content.finishingReagentsTitle.frame, editRecipeFrame.content.finishingReagentSelectors) 
+        CreateItemSelector(editRecipeFrame.content, editRecipeFrame.content.finishingReagentsTitle.frame, editRecipeFrame.content.finishingReagentSelectors, OnSelectOptionalReagent) 
     end
 
     editRecipeFrame.content.professionGearTitle = GGUI.Text{
@@ -697,15 +728,43 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
         text="Profession Gear", justifyOptions={type="H", align="LEFT"}
     }
 
-    ---@type GGUI.ItemSelector[]
+    ---@class CraftSim.CRAFTQ.EditRecipeFrame.ProfessionGearSelector : GGUI.ItemSelector
+    ---@field professionGear CraftSim.ProfessionGear?
+
+    ---@type CraftSim.CRAFTQ.EditRecipeFrame.ProfessionGearSelector[]
     editRecipeFrame.content.professionGearSelectors = {}
 
+    ---@param itemSelector CraftSim.CRAFTQ.EditRecipeFrame.ProfessionGearSelector
+    ---@param item ItemMixin?
+    local function OnSelectProfessionGear(itemSelector, item)
+        print("on select professiongear: " .. tostring(item and item:GetItemLink()))
+        if itemSelector and itemSelector.professionGear then
+            if item then
+                print("setting gear: " .. tostring(item:GetItemLink()))
+                item:ContinueOnItemLoad(function ()
+                    itemSelector.professionGear:SetItem(item:GetItemLink())
+                    editRecipeFrame.craftQueueItem.recipeData.professionGearSet:UpdateProfessionStats()
+                    editRecipeFrame.craftQueueItem.recipeData:Update()
+                    CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
+                    CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                end)
+            else
+                print("setting gear to no gear")
+                itemSelector.professionGear:SetItem(nil)
+                editRecipeFrame.craftQueueItem.recipeData.professionGearSet:UpdateProfessionStats()
+                editRecipeFrame.craftQueueItem.recipeData:Update()
+                CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
+                CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+            end
+        end
+    end
+
     for _=1, 3 do
-        CreateItemSelector(editRecipeFrame.content.professionGearTitle.frame, editRecipeFrame.content.professionGearSelectors) 
+        CreateItemSelector(editRecipeFrame.content, editRecipeFrame.content.professionGearTitle.frame, editRecipeFrame.content.professionGearSelectors, OnSelectProfessionGear, "TOPRIGHT", "TOPLEFT", 0, -25) 
     end
 
     editRecipeFrame.content.optimizeReagents = GGUI.Button{
-        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.finishingReagentsTitle.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=20,
+        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.professionGearTitle.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=-50,
         label="Optimize Profit", adjustWidth=true,
         clickCallback=function ()
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
@@ -731,6 +790,28 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
     editRecipeFrame.content.averageProfitValue = GGUI.Text{
         parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.averageProfitTitle.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=5,
         text=GUTIL:FormatMoney(0, true), justifyOptions={type="H", align="LEFT"}, scale=0.9, offsetY=-1,
+    }
+
+    editRecipeFrame.content.resultTitle = GGUI.Text{
+        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.optimizeReagents.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT",
+        offsetY=-5, text="Results", 
+    }
+    local resultItemSize=25
+    editRecipeFrame.content.expectedItemIcon = GGUI.Icon{
+        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.resultTitle.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", 
+        offsetY=-10, sizeX=resultItemSize, sizeY=resultItemSize
+    }
+    editRecipeFrame.content.expectedItemChance = GGUI.Text{
+        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.expectedItemIcon.frame, anchorA="LEFT", anchorB="RIGHT", 
+        offsetX=10, text="?? %"
+    }
+    editRecipeFrame.content.upgradeItemIcon = GGUI.Icon{
+        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.expectedItemIcon.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", 
+        offsetY=-10, sizeX=resultItemSize, sizeY=resultItemSize
+    }
+    editRecipeFrame.content.upgradeItemChance = GGUI.Text{
+        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.upgradeItemIcon.frame, anchorA="LEFT", anchorB="RIGHT", 
+        offsetX=10, text="?? %"
     }
 
     editRecipeFrame:Hide()
@@ -1132,10 +1213,12 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
 
     -- optionals
     local optionalSelectors = editRecipeFrame.content.optionalReagentSelectors
+    editRecipeFrame.content.optionalReagentsFrame:SetCollapsed(#recipeData.reagentData.optionalReagentSlots == 0 )
     editRecipeFrame.content.optionalReagentsTitle:SetVisible(#recipeData.reagentData.optionalReagentSlots > 0 )
     for selectorIndex, selector in pairs(optionalSelectors) do
         local optionalSlot = recipeData.reagentData.optionalReagentSlots[selectorIndex]
         if optionalSlot then
+            selector.slot = optionalSlot
             selector:SetItems(GUTIL:Map(optionalSlot.possibleReagents, function(pR) return pR.item end))
             if optionalSlot.activeReagent then
                 selector:SetSelectedItem(optionalSlot.activeReagent.item)
@@ -1154,6 +1237,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
     for selectorIndex, selector in pairs(finishingSelectors) do
         local finishingSlot = recipeData.reagentData.finishingReagentSlots[selectorIndex]
         if finishingSlot then
+            selector.slot = finishingSlot
             selector:SetItems(GUTIL:Map(finishingSlot.possibleReagents, function(pR) return pR.item end))
             if finishingSlot.activeReagent then
                 selector:SetSelectedItem(finishingSlot.activeReagent.item)
@@ -1162,6 +1246,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
             end
             selector:Show()
         else
+            selector.slot = nil
             selector:Hide()
         end
     end
@@ -1173,15 +1258,66 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
     if not recipeData.isCooking then
 
         gearSelectors[1]:SetSelectedItem(professionGearSet.gear1.item)
+        gearSelectors[1].professionGear = professionGearSet.gear1
         gearSelectors[1]:Show()
         gearSelectors[2]:SetSelectedItem(professionGearSet.gear2.item)
+        gearSelectors[2].professionGear = professionGearSet.gear2
         gearSelectors[3]:SetSelectedItem(professionGearSet.tool.item)
+        gearSelectors[3].professionGear = professionGearSet.tool
 
-        -- fill the selectors with profession items from the players bag but exclude for each selector all items that are selected?
+        -- fill the selectors with profession items from the players bag but exclude for each selector all items that are selected
+        local inventoryGear =  CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
+        local equippedGear = CraftSim.ProfessionGearSet(recipeData.professionData.professionInfo.profession)
+        equippedGear:LoadCurrentEquippedSet()
+        local equippedGearList = CraftSim.GUTIL:Filter(equippedGear:GetProfessionGearList(), function(gear) return gear and gear.item ~= nil end)
+        local allGear = CraftSim.GUTIL:Concat({inventoryGear, equippedGearList})
+
+        local gearSlotItems = GUTIL:Filter(allGear, function (gear) 
+            local isGearItem = gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType
+            if not isGearItem then
+                return false
+            end
+
+            if gearSelectors[1].professionGear:Equals(gear) or gearSelectors[2].professionGear:Equals(gear) then
+                return false
+            end
+            return true
+        end)
+        local toolSlotItems = GUTIL:Filter(allGear, function (gear) 
+            local isToolItem = gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType
+            if not isToolItem then
+                return false
+            end
+
+            if gearSelectors[3].professionGear:Equals(gear) then
+                return false
+            end
+            return true
+        end)
+
+        gearSelectors[1]:SetItems(GUTIL:Map(gearSlotItems, function(g) return g.item end))
+        gearSelectors[2]:SetItems(GUTIL:Map(gearSlotItems, function(g) return g.item end))
+        gearSelectors[3]:SetItems(GUTIL:Map(toolSlotItems, function(g) return g.item end))
 
     else
         gearSelectors[1]:Hide()
+        gearSelectors[1].professionGear = nil
         gearSelectors[2]:SetSelectedItem(professionGearSet.gear2.item)
+        gearSelectors[2].professionGear = professionGearSet.gear2
         gearSelectors[3]:SetSelectedItem(professionGearSet.tool.item)
+        gearSelectors[3].professionGear = professionGearSet.tool
+    end
+
+    editRecipeFrame.content.expectedItemIcon:SetItem(recipeData.resultData.expectedItem)
+    editRecipeFrame.content.expectedItemChance:SetText(GUTIL:Round((1 - recipeData.resultData.chanceUpgrade)*100, 1) .. " %")
+    
+    if recipeData.resultData.expectedItemUpgrade and recipeData.resultData.expectedItemUpgrade~=recipeData.resultData.expectedItem then
+        editRecipeFrame.content.upgradeItemIcon:Show()
+        editRecipeFrame.content.upgradeItemChance:Show()
+        editRecipeFrame.content.upgradeItemIcon:SetItem(recipeData.resultData.expectedItemUpgrade)
+        editRecipeFrame.content.upgradeItemChance:SetText(GUTIL:Round((recipeData.resultData.chanceUpgrade)*100, 1) .. " %")
+    else
+        editRecipeFrame.content.upgradeItemIcon:Hide()
+        editRecipeFrame.content.upgradeItemChance:Hide()
     end
 end

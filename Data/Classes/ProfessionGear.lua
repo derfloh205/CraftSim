@@ -22,6 +22,8 @@ end
 function CraftSim.ProfessionGear:SetItem(itemLink)
 
 	if not itemLink then
+		self.professionStats:Clear()
+		self.item = nil
 		return
 	end
 

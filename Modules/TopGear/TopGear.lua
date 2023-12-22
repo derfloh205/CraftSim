@@ -163,7 +163,7 @@ function CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutations(totalCombos, isCook
     return uniqueCombos
 end
 
----@return CraftSim.ProfessionGearSet[] inventoryGear
+---@return CraftSim.ProfessionGear[] inventoryGear
 function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
 	local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
 	local inventoryGear = {}
