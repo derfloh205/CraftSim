@@ -583,6 +583,8 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                 CraftSim.CRAFTQ.frame.content.queueTab.content.editRecipeFrame:Show()
             end
 
+            editButtonColumn.editButton:Hide() -- temp
+
             -- update price data and profit?
             recipeData.priceData:Update()
             recipeData:GetAverageProfit()
