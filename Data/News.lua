@@ -13,6 +13,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("12.3.0"),
+        f.P .. "",
         newP("12.2.1"),
         f.P .. f.bb("CraftQueue"),
         f.a .. "- The same recipe can now " .. f.r("not"), 
@@ -22,7 +24,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.s .. f.bb("RecipeScan"),
         f.a .. "- Rows can now be clicked to jump to a recipe instead",
         f.a .. "  of having to click on the little arrow button",
-        f.a .. "Fixed a bug where reagents are not showing for salvage recipes",
+        f.p .. "Fixed a bug where reagents are not showing for salvage recipes",
         newP("12.2.0"),
         f.s .. f.g("zhTW Locals Update"),
         f.a .. "- Thanks to " .. f.bb("https://github.com/class2u") .. " !",
