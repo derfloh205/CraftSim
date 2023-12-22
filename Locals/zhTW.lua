@@ -503,6 +503,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP] = "如果此選項為關閉，將根據上述的一般選項進補貨",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_PROFIT_LABEL] = "總計 Φ 利潤:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL] = "總計製造成本:",
+		[CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_TITLE] = "編輯配方",
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "是",
