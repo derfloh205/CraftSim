@@ -1314,6 +1314,39 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
         gearSelectors[2].professionGear = professionGearSet.gear2
         gearSelectors[3]:SetSelectedItem(professionGearSet.tool.item)
         gearSelectors[3].professionGear = professionGearSet.tool
+
+        -- fill the selectors with profession items from the players bag but exclude for each selector all items that are selected
+        local inventoryGear =  CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
+        local equippedGear = CraftSim.ProfessionGearSet(recipeData.professionData.professionInfo.profession)
+        equippedGear:LoadCurrentEquippedSet()
+        local equippedGearList = CraftSim.GUTIL:Filter(equippedGear:GetProfessionGearList(), function(gear) return gear and gear.item ~= nil end)
+        local allGear = CraftSim.GUTIL:Concat({inventoryGear, equippedGearList})
+
+        local gearSlotItems = GUTIL:Filter(allGear, function (gear) 
+            local isGearItem = gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType
+            if not isGearItem then
+                return false
+            end
+
+            if gearSelectors[2].professionGear:Equals(gear) then
+                return false
+            end
+            return true
+        end)
+        local toolSlotItems = GUTIL:Filter(allGear, function (gear) 
+            local isToolItem = gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionToolType
+            if not isToolItem then
+                return false
+            end
+
+            if gearSelectors[3].professionGear:Equals(gear) then
+                return false
+            end
+            return true
+        end)
+
+        gearSelectors[2]:SetItems(GUTIL:Map(gearSlotItems, function(g) return g.item end))
+        gearSelectors[3]:SetItems(GUTIL:Map(toolSlotItems, function(g) return g.item end))
     end
 
     local resultData = recipeData.resultData

@@ -166,6 +166,7 @@ end
 ---@return CraftSim.ProfessionGear[] inventoryGear
 function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
 	local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
+    print("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
 	local inventoryGear = {}
 
 	for bag=BANK_CONTAINER, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
