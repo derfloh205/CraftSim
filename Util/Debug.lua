@@ -294,3 +294,30 @@ function CraftSim_DEBUG:DuplicateTestDataForCustomerHistoryLegacy(duplicateAmoun
         end
     end
 end
+
+function CraftSim_DEBUG:FrameDistributedIterationTest()
+    local someTable = {}
+
+    for i = 1, 1000 do
+        someTable["someKey" .. i] = {
+            someValue = i
+        }
+    end
+
+    CraftSim.GUTIL:FrameDistributedIteration(someTable, function (key, value)
+        print("Hello from " .. tostring(key) .. ": " .. tostring(value.someValue))
+    end, 
+    function ()
+        print("I am finally finished!")
+    end, 
+    function (key, value)
+        if IsMouseButtonDown("LeftButton") then
+            return false
+        end
+        return true
+    end, 100)
+end
+
+function CraftSim_DEBUG:AddonTest()
+    
+end

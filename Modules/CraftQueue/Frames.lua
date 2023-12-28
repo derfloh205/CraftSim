@@ -466,7 +466,7 @@ end
 ---@return CraftSim.CRAFTQ.EditRecipeFrame editRecipeFrame
 function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
     local editFrameX = 500
-    local editFrameY = 320
+    local editFrameY = 330
     ---@class CraftSim.CRAFTQ.EditRecipeFrame : GGUI.Frame
     local editRecipeFrame = GGUI.Frame{
         parent=parent, anchorParent=anchorParent,
@@ -799,15 +799,23 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
     local resultItemSize=25
     editRecipeFrame.content.expectedItemIcon = GGUI.Icon{
         parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.resultTitle.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", 
-        offsetY=-10, sizeX=resultItemSize, sizeY=resultItemSize
+        offsetY=-5, sizeX=resultItemSize, sizeY=resultItemSize,
     }
     editRecipeFrame.content.expectedItemChance = GGUI.Text{
         parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.expectedItemIcon.frame, anchorA="LEFT", anchorB="RIGHT", 
         offsetX=10, text="?? %"
     }
-    editRecipeFrame.content.upgradeItemIcon = GGUI.Icon{
+    editRecipeFrame.content.inspirationItemIcon = GGUI.Icon{
         parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.expectedItemIcon.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", 
-        offsetY=-10, sizeX=resultItemSize, sizeY=resultItemSize
+        offsetY=-5, sizeX=resultItemSize, sizeY=resultItemSize,
+    }
+    editRecipeFrame.content.inspirationItemChance = GGUI.Text{
+        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.inspirationItemIcon.frame, anchorA="LEFT", anchorB="RIGHT", 
+        offsetX=10, text="?? %"
+    }
+    editRecipeFrame.content.upgradeItemIcon = GGUI.Icon{
+        parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.inspirationItemIcon.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", 
+        offsetY=-5, sizeX=resultItemSize, sizeY=resultItemSize,
     }
     editRecipeFrame.content.upgradeItemChance = GGUI.Text{
         parent=editRecipeFrame.content, anchorParent=editRecipeFrame.content.upgradeItemIcon.frame, anchorA="LEFT", anchorB="RIGHT", 
@@ -1308,16 +1316,71 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
         gearSelectors[3].professionGear = professionGearSet.tool
     end
 
-    editRecipeFrame.content.expectedItemIcon:SetItem(recipeData.resultData.expectedItem)
-    editRecipeFrame.content.expectedItemChance:SetText(GUTIL:Round((1 - recipeData.resultData.chanceUpgrade)*100, 1) .. " %")
+    local resultData = recipeData.resultData
+
+    editRecipeFrame.content.expectedItemIcon:SetItem(resultData.expectedItem)
     
-    if recipeData.resultData.expectedItemUpgrade and recipeData.resultData.expectedItemUpgrade~=recipeData.resultData.expectedItem then
-        editRecipeFrame.content.upgradeItemIcon:Show()
-        editRecipeFrame.content.upgradeItemChance:Show()
-        editRecipeFrame.content.upgradeItemIcon:SetItem(recipeData.resultData.expectedItemUpgrade)
-        editRecipeFrame.content.upgradeItemChance:SetText(GUTIL:Round((recipeData.resultData.chanceUpgrade)*100, 1) .. " %")
-    else
+    
+    -- case no upgrade possible
+    if resultData.expectedQualityUpgrade == resultData.expectedQuality then
+        -- hide other two icons and chance labels
+        editRecipeFrame.content.inspirationItemIcon:Hide()
+        editRecipeFrame.content.inspirationItemChance:Hide()
         editRecipeFrame.content.upgradeItemIcon:Hide()
         editRecipeFrame.content.upgradeItemChance:Hide()
+
+        editRecipeFrame.content.expectedItemChance:SetText("100 %")
+    end
+
+    -- case highest quality upgrade is one quality higher
+    if resultData.expectedQualityUpgrade == resultData.expectedQuality + 1 then
+        -- only show second icon with the highest possible result
+        editRecipeFrame.content.inspirationItemIcon:Show()
+        editRecipeFrame.content.inspirationItemChance:Show()
+        editRecipeFrame.content.upgradeItemIcon:Hide()
+        editRecipeFrame.content.upgradeItemChance:Hide()
+
+        editRecipeFrame.content.inspirationItemIcon:SetItem(resultData.expectedItemUpgrade)
+        editRecipeFrame.content.inspirationItemChance:SetText(GUTIL:Round((resultData.chanceUpgrade)*100, 1) .. " %")
+
+        editRecipeFrame.content.expectedItemChance:SetText(GUTIL:Round((1-resultData.chanceUpgrade)*100, 1) .. " %")
+    end
+
+    -- case highest quality is two qualities higher and inspirationQuality is one quality higher (meaning we can skip with inspirationHSV)
+    if resultData.expectedQualityUpgrade == resultData.expectedQuality + 2 and
+        resultData.expectedQualityInspiration == resultData.expectedQuality + 1 then
+        -- show all three items
+        editRecipeFrame.content.inspirationItemIcon:Show()
+        editRecipeFrame.content.inspirationItemChance:Show()
+        editRecipeFrame.content.upgradeItemIcon:Show()
+        editRecipeFrame.content.upgradeItemChance:Show()
+
+        editRecipeFrame.content.inspirationItemIcon:SetItem(resultData.expectedItemInspiration)
+        editRecipeFrame.content.inspirationItemChance:SetText(GUTIL:Round((resultData.chanceInspiration)*100, 1) .. " %")
+
+        editRecipeFrame.content.upgradeItemIcon:SetItem(resultData.expectedItemInspirationHSVSkip)
+        editRecipeFrame.content.upgradeItemChance:SetText(GUTIL:Round((resultData.chanceInspirationHSVSkip)*100, 1) .. " %")
+
+        editRecipeFrame.content.expectedItemChance:SetText(GUTIL:Round((1-resultData.chanceInspiration+resultData.chanceInspirationHSVSkip)*100, 1) .. " %")
+    end
+
+    --- case highest quality is two qualities higher, inspirationQuality is also two qualities higher but hsv is one quality higher
+    if resultData.expectedQualityUpgrade == resultData.expectedQuality + 2 and
+        resultData.expectedQualityInspiration == resultData.expectedQuality + 2 and
+        resultData.expectedQualityHSV == resultData.expectedQuality + 1 then
+        -- show all three items
+        editRecipeFrame.content.inspirationItemIcon:Show()
+        editRecipeFrame.content.inspirationItemChance:Show()
+        editRecipeFrame.content.upgradeItemIcon:Show()
+        editRecipeFrame.content.upgradeItemChance:Show()
+
+        editRecipeFrame.content.inspirationItemIcon:SetItem(resultData.expectedItemHSV)
+        editRecipeFrame.content.inspirationItemChance:SetText(GUTIL:Round((resultData.chanceHSV)*100, 1) .. " %")
+
+        editRecipeFrame.content.upgradeItemIcon:SetItem(resultData.expectedItemUpgrade)
+        editRecipeFrame.content.upgradeItemChance:SetText(GUTIL:Round((resultData.chanceUpgrade)*100, 1) .. " %")
+
+        editRecipeFrame.content.expectedItemChance:SetText(GUTIL:Round((1-resultData.chanceUpgrade+resultData.chanceHSV)*100, 1) .. " %")
+
     end
 end
