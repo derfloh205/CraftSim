@@ -306,18 +306,13 @@ function CraftSim_DEBUG:FrameDistributedIterationTest()
 
     CraftSim.GUTIL:FrameDistributedIteration(someTable, function (key, value)
         print("Hello from " .. tostring(key) .. ": " .. tostring(value.someValue))
+
+        if IsMouseButtonDown("LeftButton") then
+            print("command to stop!")
+            return false
+        end
     end, 
     function ()
         print("I am finally finished!")
-    end, 
-    function (key, value)
-        if IsMouseButtonDown("LeftButton") then
-            return false
-        end
-        return true
-    end, 100)
-end
-
-function CraftSim_DEBUG:AddonTest()
-    
+    end, 300, 1000)
 end

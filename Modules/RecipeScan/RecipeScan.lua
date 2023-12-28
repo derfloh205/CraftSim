@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 CraftSim.RECIPE_SCAN = {}
 
-CraftSim.RECIPE_SCAN.scanInterval = 0.01
+CraftSim.RECIPE_SCAN.scanInterval = 0
 CraftSim.RECIPE_SCAN.frame = nil
 CraftSim.RECIPE_SCAN.isScanning = false
 
