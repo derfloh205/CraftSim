@@ -1,8 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@type GGUI
-CraftSim.GGUI = LibStub:GetLibrary("GGUI")
+---@type GGUI-2.0
+CraftSim.GGUI = LibStub:GetLibrary("GGUI-2.0")
 
----@type GUTIL
-CraftSim.GUTIL = LibStub:GetLibrary("GUTIL")
+---@type GUTIL-2.0
+CraftSim.GUTIL = LibStub:GetLibrary("GUTIL-2.0")
