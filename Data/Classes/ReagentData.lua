@@ -1,6 +1,6 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
----@type GUTIL
+
 local GUTIL = CraftSim.GUTIL
 
 

@@ -376,6 +376,8 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
 
     -- should be 0 for scan
     local reagentSkillContribution = recipeData.reagentData:GetSkillFromRequiredReagents()
+    --local skillsFromOptionalReagents = recipeData.reagentData:GetProfessionStatsByOptionals().skill.value
+    --local totalBaseSkill = skillsFromOptionalReagents + recipeData.professionStats.skill.value
     local skillWithoutReagentIncrease = recipeData.professionStats.skill.value - reagentSkillContribution
     print("in Simulation Mode: " .. tostring(recipeData.isSimulationModeData ~= nil))
     print("skill total: " .. tostring(recipeData.professionStats.skill.value))
