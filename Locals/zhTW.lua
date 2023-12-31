@@ -334,8 +334,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "材料品質 1",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "材料品質 2",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "材料品質 3",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OG] = "結果最佳化",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OI] = "靈感最佳化",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "結果最佳化",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim 最佳裝備",

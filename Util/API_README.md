@@ -16,11 +16,10 @@ See [RecipeData.lua](../Data/Classes/RecipeData.lua)
 This processes all changes done to the recipeData and updates its resultData and professionStats.
 It is important to call this after you change professionGearSet or reagentData. Some methods call it automatically.
 
-### recipeData:OptimizeProfit(optimizeInspiration?: boolean)
+### recipeData:OptimizeProfit()
 
 Optimizes reagentData and professionGearSet in order to achieve the highest possible profit for this recipe. Automatically calls Update().
 
-*optimizeInspiration* can be set to optimize for reaching the highest possible inspiration breakpoint.
 Automatically calls Update()
 
 ### recipeData:GetAverageProfit()
@@ -29,11 +28,10 @@ Calculates the average profit based on professionGearSet, reagentData, resultDat
 
 It has two return values. The first is the average profit in copper and the second is a table containing the 'Proc to Profit' probability distribution of the recipe.
 
-### recipeData:OptimizeQuality(optimizeInspiration?: boolean)
+### recipeData:OptimizeQuality()
 
 Optimizes reagentData and professionGearSet in order to achieve the highest possible quality. 
 
-*optimizeInspiration* can be set to optimize for reaching the highest possible inspiration breakpoint.
 Automatically calls Update()
 
 ### recipeData:OptimizeGear(mode: string)
@@ -47,11 +45,10 @@ Possible modes are
 - "Top Resourcefulness"
 - "Top Crafting Speed"
 
-### recipeData:OptimizeReagents(optimizeInspiration?: boolean)
+### recipeData:OptimizeReagents()
 
 Optimizes the quality based required reagents for highest achievable quality with lowest cost.
 
-*optimizeInspiration* can be set to optimize for reaching the highest possible inspiration breakpoint.
 Automatically calls Update()
 
 ### recipeData:SetAllReagentsBySchematicForm()

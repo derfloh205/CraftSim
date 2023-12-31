@@ -14,7 +14,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("12.3.1"),
-        f.p .. "",
+        f.p .. f.g("Overhauled Optimization of Reagents"),
+        f.a .. "- Any toggle between " .. f.bb("Guaranteed") .. " and " .. f.bb("Inspiration - Optimization"),
+        f.a .. "- is now gone. " .. f.l("CraftSim") .. " will automatically optimize for both and",
+        f.a .. "- choose the one reaching the higher quality" ..
         f.p .. f.patreon("Supporter List Update"),
         newP("12.3.0"),
         f.P .. "Recipes can now be " .. f.g("edited") .. " directly in the " .. f.bb("CraftQueue"),

@@ -26,7 +26,6 @@ CraftSimOptions = CraftSimOptions or {
 	detailedCraftingInfoTooltip = true,
 	syncTarget = nil,
 	openLastRecipe = true,
-	materialSuggestionInspirationThreshold = false,
 	topGearAutoUpdate = false,
 	optionsShowNews = true,
 
@@ -134,7 +133,6 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
 		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
 		CraftSimOptions.showProfitPercentage = CraftSimOptions.showProfitPercentage or false
-		CraftSimOptions.materialSuggestionInspirationThreshold = CraftSimOptions.materialSuggestionInspirationThreshold or false
 		CraftSimOptions.transparencyMaterials = CraftSimOptions.transparencyMaterials or 1
 		CraftSimOptions.transparencyStatWeights = CraftSimOptions.transparencyStatWeights or 1
 		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
@@ -738,7 +736,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showMaterialOptimization then
 		CraftSim.UTIL:StartProfiling("Reagent Optimization")
-		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, CraftSimOptions.materialSuggestionInspirationThreshold)
+		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
 		CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, optimizationResult, exportMode)
 		CraftSim.UTIL:StopProfiling("Reagent Optimization")
 	end

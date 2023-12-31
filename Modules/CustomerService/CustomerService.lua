@@ -203,7 +203,6 @@ end
 function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateRequest(payload)
     local recipeID = payload.recipeID
     local customer = payload.customer
-    local optimizeInspiration = not payload.highestGuaranteed
     local optionalReagents = payload.optionalReagents
 
     print("OnRecipeUpdateRequest")
@@ -217,7 +216,7 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateRequest(payload)
     if optionalReagents then
         recipeData:SetOptionalReagents(optionalReagents)
     end
-    recipeData:OptimizeQuality(optimizeInspiration)
+    recipeData:OptimizeQuality()
 
     print("result:")
     print(recipeData.resultData, true)

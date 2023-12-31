@@ -44,17 +44,6 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
 
     local function createContent(frame)
     
-        frame.content.inspirationCheck = CreateFrame("CheckButton", nil, frame.content, "ChatConfigCheckButtonTemplate")
-        frame.content.inspirationCheck:SetPoint("TOP", frame.title.frame, -90, -20)
-        frame.content.inspirationCheck.Text:SetText(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT))
-        frame.content.inspirationCheck.tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP)
-        frame.content.inspirationCheck:SetChecked(CraftSimOptions.materialSuggestionInspirationThreshold)
-        frame.content.inspirationCheck:HookScript("OnClick", function(_, btn, down)
-            local checked = frame.content.inspirationCheck:GetChecked()
-            CraftSimOptions.materialSuggestionInspirationThreshold = checked
-            CraftSim.MAIN:TriggerModulesErrorSafe() -- TODO: if this is not performant enough, try to only recalc the material stuff not all, lazy solution for now
-        end)
-    
         frame.content.qualityText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         frame.content.qualityText:SetPoint("TOP", frame.title.frame, "TOP", 0, -45)
         frame.content.qualityText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY))
@@ -209,11 +198,9 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
         materialFrame.content.qualityIcon:SetQuality(optimizationResult.qualityID)
         materialFrame.content.qualityIcon:Show()
         materialFrame.content.qualityText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY))
-        materialFrame.content.inspirationCheck:Show()
     else
         materialFrame.content.qualityIcon:Hide()
         materialFrame.content.qualityText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_CHEAPER))
-        materialFrame.content.inspirationCheck:Hide()
     end
     for frameIndex = 1, #materialFrame.content.reagentFrames.rows, 1 do
         local reagent = optimizationResult.reagents[frameIndex]

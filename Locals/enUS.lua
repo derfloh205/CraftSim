@@ -334,8 +334,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Materials Quality 1",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Materials Quality 2",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Materials Quality 3",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OG] = "Optimize for Guaranteed",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OI] = "Optimize for Inspiration",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Optimize Reagents",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",

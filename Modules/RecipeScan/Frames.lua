@@ -26,7 +26,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
     local function createContent(frame)
         frame:Hide()
 
-        local initialScanModeValue = CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
+        local initialScanModeValue = CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
         local initialScanModeLabel = CraftSim.LOCAL:GetText(CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP[initialScanModeValue])
 
         frame.content.scanMode = CraftSim.GGUI.Dropdown({

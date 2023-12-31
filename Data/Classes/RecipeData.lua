@@ -383,13 +383,12 @@ function CraftSim.RecipeData:Copy()
 end
 
 --- Optimizes the recipeData's reagents for highest quality / cheapest reagents.
----@param optimizeInspiration boolean
-function CraftSim.RecipeData:OptimizeReagents(optimizeInspiration)
+function CraftSim.RecipeData:OptimizeReagents()
     -- do not optimize quest recipes
     if self.isQuestRecipe then
         return
     end
-    local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, optimizeInspiration)
+    local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self)
     self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
     self:Update()
 end
@@ -418,19 +417,17 @@ function CraftSim.RecipeData:GetAverageProfit()
 end
 
 ---Optimizes the recipeData's reagents and gear for highest profit
----@param optimizeInspiration boolean
-function CraftSim.RecipeData:OptimizeProfit(optimizeInspiration)
-    self:OptimizeReagents(optimizeInspiration)
+function CraftSim.RecipeData:OptimizeProfit()
+    self:OptimizeReagents()
     self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
     -- need another because it could be that the optimized gear makes it possible to use cheaper reagents
-    self:OptimizeReagents(optimizeInspiration) 
+    self:OptimizeReagents() 
 end
 
 ---Optimizes the recipeData's reagents and gear for highest quality
----@param optimizeInspiration boolean
-function CraftSim.RecipeData:OptimizeQuality(optimizeInspiration)
+function CraftSim.RecipeData:OptimizeQuality()
     self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.SKILL))
-    self:OptimizeReagents(optimizeInspiration)
+    self:OptimizeReagents()
 end
 
 ---@param idLinkOrMixin number | string | ItemMixin
