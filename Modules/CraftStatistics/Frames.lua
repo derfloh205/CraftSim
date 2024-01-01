@@ -110,7 +110,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
 
         frame.content.chanceByQualityTable = CraftSim.GGUI.FrameList({
             parent=frame.content, anchorParent=frame.content.craftsTextTop.frame, anchorA="TOP", anchorB="BOTTOM", offsetY=-60,
-            showHeaderLine=true, sizeY=130,
+            showBorder=true, sizeY=130,
             columnOptions={
                 {
                     label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER),
@@ -229,7 +229,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
         expandFrame.probabilityTable = CraftSim.GGUI.FrameList({
             parent=expandFrame, 
             sizeY=188, anchorA="TOP", anchorB="BOTTOM", anchorParent=expandFrame.probabilityTableTitle.frame,
-            showHeaderLine = true, offsetY=-30,
+            showBorder = true, offsetY=-30,
             columnOptions={
                 {
                     label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER),

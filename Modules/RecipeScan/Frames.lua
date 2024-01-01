@@ -134,7 +134,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         ---@type GGUI.FrameList | GGUI.Widget
         frame.content.resultList = CraftSim.GGUI.FrameList({
             parent = frame.content, anchorParent=frame.content.scanButton.frame, anchorA="TOP", anchorB="BOTTOM",
-            showHeaderLine=true,
+            showBorder=true,
             sizeY=250, offsetY=-25,
             columnOptions=columnOptions,
             selectionOptions = {

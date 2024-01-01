@@ -53,7 +53,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         ---@type GGUI.FrameList | GGUI.Widget
         frame.content.priceDetailsList = CraftSim.GGUI.FrameList({
             parent=frame.content,anchorParent=frame.title.frame,anchorA="TOP",anchorB="BOTTOM",offsetY=-30, offsetX=-10,
-            sizeY=140, showHeaderLine=true,
+            sizeY=140,
             columnOptions={
                 {
                     label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH),

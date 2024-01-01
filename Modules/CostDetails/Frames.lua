@@ -66,11 +66,11 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
 
         frame.content.reagentList = CraftSim.GGUI.FrameList({
             parent=frame.content, anchorParent=frame.content, anchorA="TOP", anchorB="TOP", offsetY=-100, 
-            sizeY=150, showHeaderLine=true, offsetX=-10,
+            sizeY=150, showBorder=true, offsetX=-10,
             columnOptions = {
                 {
                     label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER),
-                    width=60,
+                    width=40,
                     justifyOptions={type="H", align="CENTER"}
                 },
                 {

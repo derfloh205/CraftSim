@@ -114,7 +114,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
         ---@type GGUI.FrameList
         queueTab.content.craftList = GGUI.FrameList({
             parent = queueTab.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP",
-            showHeaderLine=true, scale=0.95, showBorder=true,
+            scale=0.95, showBorder=true,
             selectionOptions = {
                 hoverRGBA={1, 1, 1, 0.1},
                 noSelectionColor=true,

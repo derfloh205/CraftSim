@@ -51,7 +51,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         frame.content.customerList = GGUI.FrameList({  
             sizeY=390, columnOptions=columnOptionsCustomerList, parent=frame.content, anchorParent=frame.content, anchorA="TOPLEFT", anchorB="TOPLEFT", 
             offsetY=-80, offsetX=30, rowHeight=20,
-            showHeaderLine=true,
+            showBorder=true,
             rowConstructor = function (columns)
                 local customerColumn = columns[1]
                 local tipColumn = columns[2] 
@@ -144,7 +144,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 
         frame.content.chatMessageList = GGUI.FrameList({
             parent=frame.content, anchorParent=frame.content.customerName.frame, anchorA="TOP", anchorB="BOTTOM", offsetY=-8,
-            columnOptions=columnOptionsChatFrame, showHeaderLine = true, rowHeight=20, sizeY=200,
+            columnOptions=columnOptionsChatFrame, showBorder=true, rowHeight=20, sizeY=200,
             rowConstructor=function (columns)
                 local timeColumn = columns[1]
                 local senderColumn = columns[2]
@@ -198,7 +198,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 
         frame.content.craftList = GGUI.FrameList({
             parent=frame.content, anchorParent=frame.content.chatMessageList.frame, anchorA="TOPLEFT", anchorB="BOTTOMLEFT", offsetY=-30,
-            columnOptions=columnOptionsCraftList, showHeaderLine = true, rowHeight=20, sizeY=150,
+            columnOptions=columnOptionsCraftList, showBorder = true, rowHeight=20, sizeY=150,
             rowConstructor=function (columns)
                 local timeColumn = columns[1]
                 local resultColumn = columns[2]

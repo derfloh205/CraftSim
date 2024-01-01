@@ -40,7 +40,7 @@ function CraftSim.SUPPORTERS.FRAMES:Init()
 
         frame.content.supportersList = CraftSim.GGUI.FrameList({
             parent=frame.content,anchorParent=frame.content.donateBox,offsetY=-30,anchorA="TOP",anchorB="BOTTOM",
-            sizeY=350, showHeaderLine = true, rowHeight=60,
+            sizeY=350, rowHeight=60, showBorder = true,
             columnOptions={
                 {
                     label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_DATE),
