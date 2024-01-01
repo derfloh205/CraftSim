@@ -86,13 +86,25 @@ CraftSim.CONST.FRAMES = {
     CRAFT_QUEUE_EDIT_RECIPE = "CRAFT_QUEUE_EDIT_RECIPE",
 }
 
-CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS = {
+CraftSim.CONST.OLD_BACKDROP_OPTIONS = {
     bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
     borderOptions = {
         edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
         edgeSize = 16,
         insets = { left = 8, right = 6, top = 8, bottom = 8 },
     }
+}
+CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS = {
+    bgFile = "Interface\\Buttons\\WHITE8X8",
+    borderOptions = {
+        edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+        edgeSize = 16,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 },
+    },
+    colorR = 0,
+    colorG = 0,
+    colorB = 0,
+    colorA = 1,
 }
 
 CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
