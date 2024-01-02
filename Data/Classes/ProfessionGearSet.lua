@@ -122,18 +122,11 @@ function CraftSim.ProfessionGearSet:IsEquipped()
 end
 
 local function findFreeBag()
-    local bagIndex = nil
-    if C_Container.GetContainerNumFreeSlots(0) >= 1 then
-        bagIndex = 0
-    else
-        for bagIndex2 = 1, NUM_BAG_SLOTS do
-            if C_Container.GetContainerNumFreeSlots(bagIndex2) >= 1 then
-                bagIndex = bagIndex2
-                break
-            end
+    for bagIndex = 0, NUM_BAG_SLOTS do
+        if C_Container.GetContainerNumFreeSlots(bagIndex) >= 1 then
+            return bagIndex
         end
     end
-    return bagIndex
 end
 
 local function putInventoryItemIntoBag(inventorySlot)
