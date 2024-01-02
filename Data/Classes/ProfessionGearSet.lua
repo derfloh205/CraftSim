@@ -121,14 +121,45 @@ function CraftSim.ProfessionGearSet:IsEquipped()
     return self:Equals(equippedSet)
 end
 
+local function findFreeBag()
+    local bagIndex = nil
+    if C_Container.GetContainerNumFreeSlots(0) >= 1 then
+        bagIndex = 0
+    else
+        for bagIndex2 = 1, NUM_BAG_SLOTS do
+            if C_Container.GetContainerNumFreeSlots(bagIndex2) >= 1 then
+                bagIndex = bagIndex2
+                break
+            end
+        end
+    end
+    return bagIndex
+end
+
+local function putInventoryItemIntoBag(inventorySlot)
+    local freeBagIndex = findFreeBag()
+    if freeBagIndex ~= nil then
+        PickupInventoryItem(inventorySlot)
+        if freeBagIndex == 0 then
+            PutItemInBackpack()
+        else
+            PutItemInBag(19 + freeBagIndex)
+        end
+    end
+end
+
 function CraftSim.ProfessionGearSet:Equip()
     CraftSim.TOPGEAR.IsEquipping = true
-    CraftSim.TOPGEAR:UnequipProfessionItems(self.professionID)
-    C_Timer.After(1, function ()
-        for _, professionGear in pairs(self:GetProfessionGearList()) do
+    C_Timer.After(1, function()
+        for index, professionGear in ipairs(self:GetProfessionGearList()) do
             if professionGear.item then
                 CraftSim.GUTIL:EquipItemByLink(professionGear.item:GetItemLink())
                 EquipPendingItem(0)
+            else
+                local professionSlots = C_TradeSkillUI.GetProfessionSlots(
+                    self
+                    .professionID)
+                putInventoryItemIntoBag(professionSlots[index])
             end
         end
 
