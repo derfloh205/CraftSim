@@ -136,7 +136,7 @@ local function putInventoryItemIntoBag(inventorySlot)
         if freeBagIndex == 0 then
             PutItemInBackpack()
         else
-            PutItemInBag(19 + freeBagIndex)
+            PutItemInBag(CONTAINER_BAG_OFFSET + freeBagIndex)
         end
     end
 end
