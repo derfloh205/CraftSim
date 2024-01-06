@@ -13,6 +13,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("12.4.0"),
+        f.s .. "Thanks to " .. f.bb("https://github.com/SanjoSolutions") .. " for ",
+        f.a .. "- Fixing the 'Bag is full' error when equipping Top Gear",
+        f.a .. "- Fixing a rounding error when comparing gear sets",
         newP("12.3.3"),
         f.P .. f.g("Visual Updates") ..
         newP("12.3.2"),
