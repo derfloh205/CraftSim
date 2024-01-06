@@ -19,6 +19,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.s .. "Thanks to " .. f.bb("https://github.com/vmokok") .. " for",
         f.p .. "adding a " .. f.g("'Only Favorites'") .. " option to the " .. f.bb("Recipe Scan"),
         f.p .. "Added a " .. f.g("Minimap Icon") .. " that opens the Addon Options",
+        f.p .. "The " .. f.bb("CraftQueue") .. " module now uses default blizzard tabs",
+        f.a .. "to navigate between Craft Queue and Restock Options",
         newP("12.3.3"),
         f.P .. f.g("Visual Updates") ..
         newP("12.3.2"),

@@ -43,22 +43,23 @@ function CraftSim.CRAFTQ.FRAMES:Init()
         ---@class CraftSim.CraftQueue.Frame.Content : Frame
         frame.content = frame.content
 
-        ---@type GGUI.Tab
-        frame.content.queueTab = GGUI.Tab({
-            buttonOptions={parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="BOTTOM", offsetX=-62, offsetY=-20, 
+        ---@type GGUI.BlizzardTab
+        frame.content.queueTab = GGUI.BlizzardTab({
+            buttonOptions={parent=frame.content, anchorParent=frame.content, 
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL), adjustWidth=true},
             parent=frame.content,anchorParent=frame.content, sizeX=tabContentSizeX, sizeY=tabContentSizeY, canBeEnabled=true, offsetY=-30,
+            initialTab=true,
         })
-        ---@type GGUI.Tab
-        frame.content.restockOptionsTab = GGUI.Tab({
-            buttonOptions={parent=frame.content, anchorParent=frame.content.queueTab.button.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=5, 
+        ---@type GGUI.BlizzardTab
+        frame.content.restockOptionsTab = GGUI.BlizzardTab({
+            buttonOptions={parent=frame.content, anchorParent=frame.content.queueTab.button, anchorA="LEFT", anchorB="RIGHT", 
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL), adjustWidth=true},
             parent=frame.content,anchorParent=frame.content, sizeX=tabContentSizeX, sizeY=tabContentSizeY, canBeEnabled=true, offsetY=-30,
         })
         local restockOptionsTab = frame.content.restockOptionsTab
         local queueTab = frame.content.queueTab
 
-        GGUI.TabSystem({queueTab, restockOptionsTab})
+        GGUI.BlizzardTabSystem({queueTab, restockOptionsTab})
 
         local columnOptions = {
             {
@@ -128,7 +129,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     end
                 end
             },
-            sizeY=230, offsetY=-90,
+            sizeY=230, offsetY=-70,
             columnOptions=columnOptions,
             rowConstructor=function (columns)
                 local editButtonColumn = columns[1]
@@ -296,7 +297,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
 
         restockOptionsTab.content.generalOptionsFrame = CreateFrame("frame", nil, restockOptionsTab.content)
         restockOptionsTab.content.generalOptionsFrame:SetSize(150, 50)
-        restockOptionsTab.content.generalOptionsFrame:SetPoint("TOP", restockOptionsTab.content, "TOP", 0, -50)
+        restockOptionsTab.content.generalOptionsFrame:SetPoint("TOP", restockOptionsTab.content, "TOP", 0, -10)
         local generalOptionsFrame = restockOptionsTab.content.generalOptionsFrame
 
         generalOptionsFrame.title = GGUI.Text{
