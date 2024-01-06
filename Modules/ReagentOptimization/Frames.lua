@@ -7,7 +7,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIM
 
 function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     local sizeX = 310
-    local sizeY = 270
+    local sizeY = 250
     local offsetX = -5
     local offsetY = -125
 
@@ -44,22 +44,23 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
 
     local function createContent(frame)
     
-        frame.content.qualityText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        frame.content.qualityText:SetPoint("TOP", frame.title.frame, "TOP", 0, -45)
-        frame.content.qualityText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY))
+        frame.content.qualityText = CraftSim.GGUI.Text{
+            parent = frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-25,
+            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY)
+        }
     
         frame.content.qualityIcon = CraftSim.GGUI.QualityIcon({
-            parent=frame.content,anchorParent=frame.content.qualityText,anchorA="LEFT",anchorB="RIGHT",offsetX=3,
+            parent=frame.content,anchorParent=frame.content.qualityText.frame,anchorA="LEFT",anchorB="RIGHT",offsetX=3,
             sizeX=25,sizeY=25,
         })
     
         frame.content.allocateButton = CraftSim.GGUI.Button({
-            parent=frame.content,anchorParent=frame.content.qualityText, anchorA="TOP", anchorB="TOP", offsetY=-20,
+            parent=frame.content,anchorParent=frame.content.qualityText.frame, anchorA="TOP", anchorB="TOP", offsetY=-20,
             label="Assign",sizeX=15,sizeY=20,adjustWidth=true,
         })
     
         frame.content.allocateText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        frame.content.allocateText:SetPoint("TOP", frame.content.qualityText, "TOP", 0, -20)	
+        frame.content.allocateText:SetPoint("TOP", frame.content.qualityText.frame, "TOP", 0, -20)	
         frame.content.allocateText:SetText("")
     
         frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
