@@ -10,6 +10,11 @@ CraftSim.CUSTOMER_HISTORY.frame = nil
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
 
+---@param LOCALIZATION_ID CraftSim.LOCALIZATION_IDS
+local function L(LOCALIZATION_ID)
+    return CraftSim.LOCAL:GetText(LOCALIZATION_ID)
+end
+
 function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     local sizeX=1050
     local sizeY=500
@@ -18,7 +23,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         anchorParent=ProfessionsFrame,
         sizeX=sizeX,sizeY=sizeY,
         frameID=CraftSim.CONST.FRAMES.CUSTOMER_HISTORY,
-        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TITLE),
+        title=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TITLE),
         collapseable=true,
         closeable=true,
         moveable=true,
@@ -35,15 +40,15 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         ---@type GGUI.FrameList.ColumnOption[]
         local columnOptionsCustomerList = {
             {
-                label="Customer",
+                label=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CUSTOMER_HEADER),
                 width=100,
             },
             {
-                label ="Total Tip",
+                label =L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP_HEADER),
                 width=70,
             },
             {
-                label="", -- remove column
+                label="", -- the remove column
                 width=30,
                 justifyOptions={type="H", align="CENTER"}
             }
@@ -82,11 +87,11 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 
         frame.content.purgeCustomers = GGUI.Button{
             parent=frame.content, anchorParent=frame.content.customerList.frame, anchorA="BOTTOMLEFT", anchorB="TOPLEFT", offsetY=20,
-            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_NO_TIP_LABEL), adjustWidth=true,
+            label=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_NO_TIP_LABEL), adjustWidth=true,
             clickCallback=function ()
                 GGUI:ShowPopup({
-                    sizeY=120, title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE),
-                    text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP),
+                    sizeY=120, title=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE),
+                    text=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP),
                     anchorParent=frame.content.purgeCustomers.frame, anchorA="CENTER", anchorB="CENTER",
                     onAccept=function ()
                         CraftSim.CUSTOMER_HISTORY:PurgeZeroTipCustomers()
@@ -97,7 +102,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 
         frame.content.autoPurgeInput = GGUI.NumericInput{
             parent=frame.content, anchorParent=frame.content.purgeCustomers.frame, anchorA = "BOTTOMLEFT", anchorB="TOPLEFT",
-            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL), offsetX=7,
+            label=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL), offsetX=7,
             sizeX = 50, minValue = 0, onNumberValidCallback=function (numericInput)
                 local value = tonumber(numericInput.currentValue)
                 CraftSimOptions.customerHistoryAutoPurgeInterval = value
@@ -105,10 +110,10 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         }
 
         frame.content.autoPurgeInputLabel = GGUI.Text{parent=frame.content, anchorParent=frame.content.autoPurgeInput.textInput.frame, anchorA="LEFT", anchorB="RIGHT", 
-        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL), offsetX=5}
+        text=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL), offsetX=5}
 
         GGUI.HelpIcon{parent=frame.content, anchorParent=frame.content.autoPurgeInputLabel.frame, anchorA="LEFT", anchorB="RIGHT", 
-        text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP)}
+        text=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP)}
 
         frame.content.customerName = GGUI.Text({
             parent=frame.content, anchorParent=frame.content, anchorA="TOP", anchorB="TOP",
@@ -117,7 +122,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
 
         frame.content.whisperButton = GGUI.Button{
             parent=frame.content, anchorParent=frame.content.customerName.frame,
-            label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_WHISPER_BUTTON_LABEL), adjustWidth=true,
+            label=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_WHISPER_BUTTON_LABEL), adjustWidth=true,
             anchorA="LEFT", anchorB="RIGHT", offsetX=10,
         }
 
@@ -170,27 +175,27 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         ---@type GGUI.FrameList.ColumnOption[]
         local columnOptionsCraftList = {
             {
-                label="Date", -- Timestamp
+                label=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_DATE_HEADER), -- Timestamp
                 width=100,
                 justifyOptions={type="H", align="LEFT"}
             },
             {
-                label="Result", -- Result
+                label=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_RESULT_HEADER), -- Result
                 width=250,
                 justifyOptions={type="H", align="RIGHT"}
             },
             {
-                label ="Tip", -- Tip
+                label =L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_TIP_HEADER), -- Tip
                 width=100,
                 justifyOptions={type="H", align="RIGHT"}
             },
             {
-                label ="Customer Reagents", 
+                label =L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_CUSTOMER_REAGENTS_HEADER), 
                 width=150,
                 justifyOptions={type="H", align="CENTER"}
             },
             {
-                label ="Note", -- Customer Note
+                label =L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_CUSTOMER_NOTE_HEADER), -- Customer Note
                 width=50,
                 justifyOptions={type="H", align="CENTER"}
             }
@@ -258,11 +263,11 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
             tipColumn.text:SetText(CraftSim.GUTIL:FormatMoney(customerHistory.totalTip or 0))
             removeColumn.removeButton.clickCallback = function ()
                 GGUI:ShowPopup({
-                    sizeY=120, title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE),
+                    sizeY=120, title=L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE),
                     anchorParent=removeColumn.removeButton.frame, anchorA="CENTER", anchorB="CENTER",
                     onAccept=function ()
                         CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
-                    end, text=string.format(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP), customerHistory.customer)
+                    end, text=string.format(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP), customerHistory.customer)
                 })
 
             end
