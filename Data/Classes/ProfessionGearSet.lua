@@ -57,6 +57,14 @@ function CraftSim.ProfessionGearSet:GetProfessionGearList()
     end
 end
 
+function CraftSim.ProfessionGearSet:GetProfessionGearListInOrder()
+    if self.isCooking then
+        return {self.gear2, self.tool}
+    else
+        return {self.gear1, self.gear2, self.tool}
+    end
+end
+
 function CraftSim.ProfessionGearSet:Equals(professionGearSet)
     if self.isCooking ~= professionGearSet.isCooking then
         return false
@@ -143,20 +151,14 @@ end
 
 function CraftSim.ProfessionGearSet:Equip()
     CraftSim.TOPGEAR.IsEquipping = true
-    C_Timer.After(1, function()
-        for index, professionGear in ipairs(self:GetProfessionGearList()) do
+    CraftSim.TOPGEAR:UnequipProfessionItems(self.professionID)
+    C_Timer.After(1, function ()
+        for _, professionGear in pairs(self:GetProfessionGearList()) do
             if professionGear.item then
                 CraftSim.GUTIL:EquipItemByLink(professionGear.item:GetItemLink())
                 EquipPendingItem(0)
-            else
-                local professionSlots = C_TradeSkillUI.GetProfessionSlots(
-                    self
-                    .professionID)
-                putInventoryItemIntoBag(professionSlots[index])
             end
         end
-
-        CraftSim.TOPGEAR.IsEquipping = false
     end)
 end
 
