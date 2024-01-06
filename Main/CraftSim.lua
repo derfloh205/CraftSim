@@ -54,6 +54,7 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanIncludeSoulbound = false,
 	recipeScanIncludeGear = false,
 	recipeScanIncludeNotLearned = false,
+    recipeScanOnlyFavorites = false,
 	recipeScanOptimizeProfessionTools = false,
 
 	-- profit calc
