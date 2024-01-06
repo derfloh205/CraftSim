@@ -57,11 +57,11 @@ function CraftSim.ProfessionGearSet:GetProfessionGearList()
     end
 end
 
-function CraftSim.ProfessionGearSet:GetProfessionGearListInOrder()
+function CraftSim.ProfessionGearSet:GetProfessionGearListOrderedRight()
     if self.isCooking then
-        return {self.gear2, self.tool}
+        return {self.tool, self.gear2}
     else
-        return {self.gear1, self.gear2, self.tool}
+        return {self.tool, self.gear2, self.gear1}
     end
 end
 
@@ -129,36 +129,21 @@ function CraftSim.ProfessionGearSet:IsEquipped()
     return self:Equals(equippedSet)
 end
 
-local function findFreeBag()
-    for bagIndex = 0, NUM_BAG_SLOTS do
-        if C_Container.GetContainerNumFreeSlots(bagIndex) >= 1 then
-            return bagIndex
-        end
-    end
-end
-
-local function putInventoryItemIntoBag(inventorySlot)
-    local freeBagIndex = findFreeBag()
-    if freeBagIndex ~= nil then
-        PickupInventoryItem(inventorySlot)
-        if freeBagIndex == 0 then
-            PutItemInBackpack()
-        else
-            PutItemInBag(CONTAINER_BAG_OFFSET + freeBagIndex)
-        end
-    end
-end
-
 function CraftSim.ProfessionGearSet:Equip()
     CraftSim.TOPGEAR.IsEquipping = true
     CraftSim.TOPGEAR:UnequipProfessionItems(self.professionID)
     C_Timer.After(1, function ()
-        for _, professionGear in pairs(self:GetProfessionGearList()) do
+
+        for index, professionGear in ipairs(self:GetProfessionGearList()) do
+            print("equipping slot: " .. index)
             if professionGear.item then
+                print("equipping item: " .. tostring(professionGear.item:GetItemLink()))
                 CraftSim.GUTIL:EquipItemByLink(professionGear.item:GetItemLink())
                 EquipPendingItem(0)
             end
         end
+
+        CraftSim.TOPGEAR.IsEquipping = false
     end)
 end
 

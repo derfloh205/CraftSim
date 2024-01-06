@@ -14,8 +14,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("12.4.0"),
-        f.s .. "Thanks to " .. f.bb("https://github.com/SanjoSolutions") .. " for ",
-        f.a .. "- Fixing the 'Bag is full' error when equipping Top Gear",
+        f.s .. "Thanks to " .. f.bb("https://github.com/SanjoSolutions") .. " for",
+        f.a .. "fixing a rounding error in Top Gear comparison",
         newP("12.3.3"),
         f.P .. f.g("Visual Updates") ..
         newP("12.3.2"),

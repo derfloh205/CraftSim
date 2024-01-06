@@ -22,7 +22,6 @@ end
 
 function CraftSim.TOPGEAR:UnequipProfessionItems(professionID)
     local professionSlots = C_TradeSkillUI.GetProfessionSlots(professionID)
-    -- TODO: factor in remaining inventory space?
 
     for _, currentSlot in pairs(professionSlots) do
         PickupInventoryItem(currentSlot)
