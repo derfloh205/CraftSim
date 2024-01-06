@@ -336,7 +336,8 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
         end)
         results = CraftSim.GUTIL:Filter(results, function (result)
             -- should have at least 1 copper profit (and not some small decimal)
-            return result.relativeProfit >= 1
+            local gold, silver, copper = CraftSim.GUTIL:GetMoneyValuesFromCopper(result.relativeProfit)
+            return (gold + silver + copper) > 0
         end)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.INSPIRATION) then
         print("Top Gear Mode: Inspiration")
