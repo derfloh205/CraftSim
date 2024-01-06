@@ -16,6 +16,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("12.4.0"),
         f.s .. "Thanks to " .. f.bb("https://github.com/SanjoSolutions") .. " for",
         f.a .. "fixing a rounding error in Top Gear comparison",
+        f.s .. "Thanks to " .. f.bb("https://github.com/vmokok") .. " for",
+        f.p .. "adding a " .. f.g("'Only Favorites'") .. " option to the " .. f.bb("Recipe Scan"),
         f.p .. "Added a " .. f.g("Minimap Icon") .. " that opens the Addon Options",
         newP("12.3.3"),
         f.P .. f.g("Visual Updates") ..
