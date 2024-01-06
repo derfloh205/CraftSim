@@ -363,6 +363,7 @@ end
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
 		CraftSim.MAIN:handleCraftSimOptionsUpdates()
+		CraftSim.MAIN:InitializeMinimapButton()
 
 		CraftSim.LOCAL:Init()
 		CraftSim.FRAME:InitDebugFrame()
@@ -768,4 +769,24 @@ end
 
 function CraftSim_OnAddonCompartmentClick()
 	InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+end
+
+function CraftSim.MAIN:InitializeMinimapButton()
+	local LibIcon = LibStub("LibDBIcon-1.0")
+	local ldb = LibStub("LibDataBroker-1.1"):NewDataObject("CraftSimLDB", {
+		type = "data source",
+		--tooltip = "CraftSim",
+		label = "CraftSim",
+		tocname = "CraftSim",
+		icon = "Interface\\Addons\\CraftSim\\Media\\Images\\craftsim",
+		OnClick = function() 
+			-- local historyFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.HISTORY_FRAME)
+			print("clicked!")
+			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+		end,
+		})
+
+		CraftSimLibIconDB = CraftSimLibIconDB or {}
+	
+		LibIcon:Register("CraftSim", ldb, CraftSimLibIconDB)
 end
