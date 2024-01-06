@@ -782,7 +782,6 @@ function CraftSim.MAIN:InitializeMinimapButton()
 		icon = "Interface\\Addons\\CraftSim\\Media\\Images\\craftsim",
 		OnClick = function() 
 			-- local historyFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.HISTORY_FRAME)
-			print("clicked!")
 			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
 		end,
 		})
