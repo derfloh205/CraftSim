@@ -330,11 +330,13 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP] = "依據和製造花費相關的利潤排序利潤清單。\n(需要重新掃描)",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX] = "使用" .. f.bb("洞見") .. " (如果可以的話)",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP] = "如果配方允許，使用" .. f.bb("卓越洞見") .. "或\n" .. f.bb("次級卓越洞見") .. "作為選擇性的材料。",
+		[CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX] = "只有最愛",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP] = "只掃描最愛的配方",
 		[CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "已裝備",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "材料品質 1",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "材料品質 2",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "材料品質 3",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "結果最佳化",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "最佳化材料",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim 最佳裝備",
@@ -452,12 +454,19 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_BUTTON] = "移除客戶",
 		[CraftSim.CONST.TEXT.CUSTOMER_HISTORY_WHISPER_BUTTON_LABEL] = "密語..",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_NO_TIP_LABEL] = "移除 0 小費客戶",
-        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP] = "是否確定要刪除總計小費為 0 的所有客戶資料?",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP] = "是否確定要刪除小費總計為 0 的所有客戶資料?",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP] = "是否確定要刪除 %s 的所有資料?",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE] = "刪除客戶歷史記錄",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] = "刪除 0 小費客戶歷史記錄",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL] = "自動移除天數",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP] = "CraftSim 會在每次登入後，自動刪除上次刪除後 X 天的所有 0 小費客戶。\n設為 0 時，CraftSim 將完全不會自動刪除。",
+		[CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CUSTOMER_HEADER] = "客戶",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP_HEADER] = "小費總計",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_DATE_HEADER] = "日期",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_RESULT_HEADER] = "結果",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_TIP_HEADER] = "小費",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_CUSTOMER_REAGENTS_HEADER] = "客戶材料",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_CUSTOMER_NOTE_HEADER] = "備註",
 		
 		 -- Craft Queue
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TITLE] = "CraftSim 製造排程",
@@ -502,7 +511,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP] = "如果此選項為關閉，將根據上述的一般選項進補貨",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_PROFIT_LABEL] = "總計 Φ 利潤:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL] = "總計製造成本:",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_TITLE] = "編輯配方",
+		[CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_TITLE] = "編輯配方",
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "是",
