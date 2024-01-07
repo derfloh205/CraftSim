@@ -1,6 +1,9 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
+---@class CraftSim.REAGENT_OPTIMIZATION
 CraftSim.REAGENT_OPTIMIZATION = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
@@ -186,7 +189,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
         end
     end
 
-    local results = CraftSim.GUTIL:Map(outResult, function(result) return CraftSim.ReagentOptimizationResult(recipeData, result) end)
+    local results = GUTIL:Map(outResult, function(result) return CraftSim.ReagentOptimizationResult(recipeData, result) end)
 
     return results
 end
@@ -269,9 +272,8 @@ end
 
 -- By Liqorice's knapsack solution
 ---@param recipeData CraftSim.RecipeData
----@param optimizeInspiration? boolean
 ---@return CraftSim.ReagentOptimizationResult?
-function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, optimizeInspiration)    
+function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)    
     if not recipeData.hasQualityReagents then
         return nil
     end
@@ -290,7 +292,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
     end
 
     -- Create Knapsacks for required reagents with different Qualities
-    local requiredReagents = CraftSim.GUTIL:Filter(recipeData.reagentData.requiredReagents, function (reagent)
+    local requiredReagents = GUTIL:Filter(recipeData.reagentData.requiredReagents, function (reagent)
         return reagent.hasQuality
     end)
 
@@ -305,7 +307,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
     end
 
     --print(" calculating gcd of " .. unpack(mWeight))
-    local weightGCD = CraftSim.GUTIL:Fold(mWeight, function(a, b) 
+    local weightGCD = GUTIL:Fold(mWeight, function(a, b) 
         --print("fold " .. a .. " and " .. b)
         return CraftSim.REAGENT_OPTIMIZATION:GetGCD(a, b)
     end, true)
@@ -343,7 +345,6 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
 
     -- Calculate ArrayBP (The skill breakpoints)
     local numBP = 0
-    local arrayBP = {}
     
     local craftingDifficultyBP = nil
     if recipeData.maxQuality == 3 then
@@ -376,74 +377,93 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
 
     -- should be 0 for scan
     local reagentSkillContribution = recipeData.reagentData:GetSkillFromRequiredReagents()
+    --local skillsFromOptionalReagents = recipeData.reagentData:GetProfessionStatsByOptionals().skill.value
+    --local totalBaseSkill = skillsFromOptionalReagents + recipeData.professionStats.skill.value
     local skillWithoutReagentIncrease = recipeData.professionStats.skill.value - reagentSkillContribution
     print("in Simulation Mode: " .. tostring(recipeData.isSimulationModeData ~= nil))
     print("skill total: " .. tostring(recipeData.professionStats.skill.value))
     print("skill without reagents: " .. tostring(skillWithoutReagentIncrease))
-    print("reagentSkillContribution: " .. tostring(reagentSkillContribution))
+
+    print("skillWithoutReagentIncrease" .. tostring(skillWithoutReagentIncrease))
+
 
     local expectedQualityWithoutReagents = CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skillWithoutReagentIncrease)
 
-    for i = 0, numBP - 1, 1 do
-        --print("checking BP: " .. tostring(craftingDifficultyBP[i]))
-        local extraSkillPoint = 0
-        if CraftSimOptions.breakPointOffset then
-            extraSkillPoint = 1
-        end
-        local skillBreakpoint = craftingDifficultyBP[i] * recipeData.professionStats.recipeDifficulty.value + extraSkillPoint
-        
-        local inspirationBonusSkill = 0
-        if recipeData.supportsInspiration then
-            if optimizeInspiration then
-                inspirationBonusSkill = recipeData.professionStats.inspiration:GetExtraValueByFactor()
-            else
-                inspirationBonusSkill = (CraftSimOptions.materialSuggestionInspirationThreshold and recipeData.professionStats.inspiration:GetExtraValueByFactor()) or 0
-            end
+    print("expectedQualityWithoutReagents: " .. tostring(expectedQualityWithoutReagents))
 
-            skillBreakpoint = skillBreakpoint - inspirationBonusSkill -- make it easier to reach 
-        end
-        print("skill BP: " .. skillBreakpoint)
-        arrayBP[i] = skillBreakpoint - skillWithoutReagentIncrease
-        --print("skill needed for this breakpoint:" .. arrayBP[i])
-        -- If skill already meets or exceeds this BP...
-        if arrayBP[i] <= 0 then  -- ...then no skill bonus is needed to reach this breakpoint
-            arrayBP[i] = 0
-            -- ...and all breakpoints lower than this one are unreachable
-            -- CraftSim specific: no need to translate index cause it is based on i
-            for j = (i + 1), (numBP - 1), 1 do
-                arrayBP[j] = -1 -- cannot reach this quality
+    local function calculateArrayBP(playerSkill)
+        local arrayBP = {}
+        for i = 0, numBP - 1, 1 do
+            local extraSkillPoint = (CraftSimOptions.breakPointOffset and 1) or 0
+            local skillBreakpoint = craftingDifficultyBP[i] * recipeData.professionStats.recipeDifficulty.value + extraSkillPoint
+            
+            print("skill BP: " .. skillBreakpoint)
+            arrayBP[i] = skillBreakpoint - playerSkill
+            -- If skill already meets or exceeds this BP...
+            if arrayBP[i] <= 0 then  -- ...then no skill bonus is needed to reach this breakpoint
+                arrayBP[i] = 0
+                -- ...and all breakpoints lower than this one are unreachable
+                -- CraftSim specific: no need to translate index cause it is based on i
+                for j = (i + 1), (numBP - 1), 1 do
+                    arrayBP[j] = -1 -- cannot reach this quality
+                end
+                break -- exit for I guess means break.. and not continue
             end
-            break -- exit for I guess means break.. and not continue
+            
+            -- not 100% clear where blizzard has landed on rounding errors, need to check this at some point
+            -- we want our array of BP's to be expressed not as skill numbers but as a fraction of
+            -- the recipeMaxSkillBonus. This way when later looking at optimizing for material weights we
+            -- can use the BP% x maxWeight as our markers
+            arrayBP[i] = arrayBP[i] / recipeMaxSkillBonus
+            
+            if arrayBP[i] > 1 then -- Can't reach this high even with all Q3 materials
+                arrayBP[i] = -1
+            end
         end
-        
-        -- not 100% clear where blizzard has landed on rounding errors, need to check this at some point
-        -- we want our array of BP's to be expressed not as skill numbers but as a fraction of
-        -- the recipeMaxSkillBonus. This way when later looking at optimizing for material weights we
-        -- can use the BP% x maxWeight as our markers
-        arrayBP[i] = arrayBP[i] / recipeMaxSkillBonus
-        
-        if arrayBP[i] > 1 then -- Can't reach this high even with all Q3 materials
-            arrayBP[i] = -1
-        end
+
+        return arrayBP
     end
 
-    -- print("ksItems: ")
-    -- for k, v in pairs(ksItems) do
-    --     print(v.name .. ": ")
-    --     print("weight: " .. tostring(v.mWeight))
-    -- end
+    local arrayBPNoInspiration = calculateArrayBP(skillWithoutReagentIncrease)
+
+    print("arrayBPNoInspiration: ", false, true)
+    print(arrayBPNoInspiration, true)
+    
 
 
+    CraftSim.UTIL:StartProfiling("optimizeKnapsack")
     -- Optimize Knapsack
-    local results = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP, recipeData)  
+    local resultsNoInspiration = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBPNoInspiration, recipeData)  
 
     -- remove any result that maps to the expected quality without reagent increase
     -- NEW: any that is below! Same is fine
-    local results = CraftSim.GUTIL:Filter(results, function(result) 
+    local results = GUTIL:Filter(resultsNoInspiration, function(result) 
         return result.qualityID >= expectedQualityWithoutReagents
     end)
-    
-    local bestResult = results[1]--results[#results]
 
-    return bestResult
+    local bestResultNoInspiration = results[1]
+
+    if recipeData.supportsInspiration then
+        local arrayBPInspiration = calculateArrayBP(skillWithoutReagentIncrease + recipeData.professionStats.inspiration:GetExtraValueByFactor())
+        print("arrayBPInspiration: ", false, true)
+        print(arrayBPInspiration, true)
+        local resultsInspiration = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBPInspiration, recipeData)  
+        local results = GUTIL:Filter(resultsInspiration, function(result) 
+            return result.qualityID >= expectedQualityWithoutReagents
+        end)
+    
+        local bestResultInspiration = results[1]
+
+        -- check if inspiration result is better than the noinspiration one
+        -- if it would be the same qualityID then the optimization for guaranteed is better
+
+        if bestResultInspiration.qualityID > bestResultNoInspiration.qualityID then
+            CraftSim.UTIL:StopProfiling("optimizeKnapsack")
+            print("taking inspiration result as best result")
+            return bestResultInspiration
+        end
+    end
+    CraftSim.UTIL:StopProfiling("optimizeKnapsack")
+    print("taking guaranteed result as best result")
+    return bestResultNoInspiration
 end

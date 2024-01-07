@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 CraftSim.RECIPE_SCAN = {}
 
-CraftSim.RECIPE_SCAN.scanInterval = 0.01
+CraftSim.RECIPE_SCAN.scanInterval = 0
 CraftSim.RECIPE_SCAN.frame = nil
 CraftSim.RECIPE_SCAN.isScanning = false
 
@@ -12,16 +12,14 @@ CraftSim.RECIPE_SCAN.SCAN_MODES = {
     Q1 = "Q1",
     Q2 = "Q2",
     Q3 = "Q3",
-    OPTIMIZE_G = "OPTIMIZE_G",
-    OPTIMIZE_I = "OPTIMIZE_I",
+    OPTIMIZE = "OPTIMIZE",
 }
 ---@type table<CraftSim.RecipeScanModes, CraftSim.LOCALIZATION_IDS>
 CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP = {
     Q1 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1, 
     Q2 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2, 
     Q3 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3, 
-    OPTIMIZE_G = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OG, 
-    OPTIMIZE_I = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OI
+    OPTIMIZE = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE, 
 }
 
     ---@type CraftSim.RecipeData[]
@@ -178,6 +176,9 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
     if tContains(CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS, recipeInfo.categoryID) then
         return false
     end
+    if CraftSimOptions.recipeScanOnlyFavorites and not recipeInfo.favorite then
+        return false
+    end
     ---@diagnostic disable-next-line: missing-parameter
     local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
     local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
@@ -266,10 +267,8 @@ function CraftSim.RECIPE_SCAN:StartScan()
         --optimize top gear first cause optimized reagents might change depending on the gear
         if CraftSimOptions.recipeScanOptimizeProfessionTools then
             CraftSim.UTIL:StartProfiling("Optimize ALL: SCAN")
-            local optimizeG = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G
-            local optimizeI = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
-            if optimizeG or optimizeI then
-                recipeData:OptimizeProfit(optimizeI)
+            if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
+                recipeData:OptimizeProfit()
             else
                 CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
                 recipeData:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
@@ -309,8 +308,7 @@ function CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
         recipeData.reagentData:SetReagentsMaxByQuality(2)
     elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3 then
         recipeData.reagentData:SetReagentsMaxByQuality(3)
-    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_G or scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I then
-        local optimizeInspiration = scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
-        recipeData:OptimizeReagents(optimizeInspiration)
+    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
+        recipeData:OptimizeReagents()
     end
 end

@@ -26,7 +26,6 @@ CraftSimOptions = CraftSimOptions or {
 	detailedCraftingInfoTooltip = true,
 	syncTarget = nil,
 	openLastRecipe = true,
-	materialSuggestionInspirationThreshold = false,
 	topGearAutoUpdate = false,
 	optionsShowNews = true,
 
@@ -55,6 +54,7 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanIncludeSoulbound = false,
 	recipeScanIncludeGear = false,
 	recipeScanIncludeNotLearned = false,
+    recipeScanOnlyFavorites = false,
 	recipeScanOptimizeProfessionTools = false,
 
 	-- profit calc
@@ -134,7 +134,6 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
 		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
 		CraftSimOptions.showProfitPercentage = CraftSimOptions.showProfitPercentage or false
-		CraftSimOptions.materialSuggestionInspirationThreshold = CraftSimOptions.materialSuggestionInspirationThreshold or false
 		CraftSimOptions.transparencyMaterials = CraftSimOptions.transparencyMaterials or 1
 		CraftSimOptions.transparencyStatWeights = CraftSimOptions.transparencyStatWeights or 1
 		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
@@ -365,6 +364,7 @@ end
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
 		CraftSim.MAIN:handleCraftSimOptionsUpdates()
+		CraftSim.MAIN:InitializeMinimapButton()
 
 		CraftSim.LOCAL:Init()
 		CraftSim.FRAME:InitDebugFrame()
@@ -738,7 +738,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO, showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showMaterialOptimization then
 		CraftSim.UTIL:StartProfiling("Reagent Optimization")
-		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, CraftSimOptions.materialSuggestionInspirationThreshold)
+		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
 		CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, optimizationResult, exportMode)
 		CraftSim.UTIL:StopProfiling("Reagent Optimization")
 	end
@@ -770,4 +770,23 @@ end
 
 function CraftSim_OnAddonCompartmentClick()
 	InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+end
+
+function CraftSim.MAIN:InitializeMinimapButton()
+	local LibIcon = LibStub("LibDBIcon-1.0")
+	local ldb = LibStub("LibDataBroker-1.1"):NewDataObject("CraftSimLDB", {
+		type = "data source",
+		--tooltip = "CraftSim",
+		label = "CraftSim",
+		tocname = "CraftSim",
+		icon = "Interface\\Addons\\CraftSim\\Media\\Images\\craftsim",
+		OnClick = function() 
+			-- local historyFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.HISTORY_FRAME)
+			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+		end,
+		})
+
+		CraftSimLibIconDB = CraftSimLibIconDB or {}
+	
+		LibIcon:Register("CraftSim", ldb, CraftSimLibIconDB)
 end

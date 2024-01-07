@@ -26,7 +26,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
     local function createContent(frame)
         frame:Hide()
 
-        local initialScanModeValue = CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE_I
+        local initialScanModeValue = CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
         local initialScanModeLabel = CraftSim.LOCAL:GetText(CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP[initialScanModeValue])
 
         frame.content.scanMode = CraftSim.GGUI.Dropdown({
@@ -67,17 +67,22 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         frame.content.includeSoulboundCB = CraftSim.FRAME:CreateCheckbox(
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND),
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP),
-            "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode.frame, "RIGHT", "LEFT", -250, 0)
+            "recipeScanIncludeSoulbound", frame.content, frame.content.scanMode.frame, "RIGHT", "LEFT", -270, 10)
 
         frame.content.includeNotLearnedCB = CraftSim.FRAME:CreateCheckbox(
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED),
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_NOT_LEARNED_TOOLTIP),
-            "recipeScanIncludeNotLearned", frame.content, frame.content.includeSoulboundCB, "BOTTOMLEFT", "TOPLEFT", 0, 0)
+            "recipeScanIncludeNotLearned", frame.content, frame.content.includeSoulboundCB, "BOTTOMLEFT", "TOPLEFT", 0, -5)
 
         frame.content.includeGearCB = CraftSim.FRAME:CreateCheckbox(
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR),
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP),
-            "recipeScanIncludeGear", frame.content, frame.content.includeSoulboundCB, "TOPLEFT", "BOTTOMLEFT", 0, 0)
+            "recipeScanIncludeGear", frame.content, frame.content.includeSoulboundCB, "TOPLEFT", "BOTTOMLEFT", 0, 5)
+
+        frame.content.onlyFavorites = CraftSim.FRAME:CreateCheckbox(
+            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX),
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP), 
+            "recipeScanOnlyFavorites", frame.content, frame.content.includeGearCB, "TOPLEFT", "BOTTOMLEFT", 0, 5)
 
         frame.content.optimizeProfessionToolsCB = CraftSim.FRAME:CreateCheckbox(
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS),
@@ -134,7 +139,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         ---@type GGUI.FrameList | GGUI.Widget
         frame.content.resultList = CraftSim.GGUI.FrameList({
             parent = frame.content, anchorParent=frame.content.scanButton.frame, anchorA="TOP", anchorB="BOTTOM",
-            showHeaderLine=true,
+            showBorder=true,
             sizeY=250, offsetY=-25,
             columnOptions=columnOptions,
             selectionOptions = {

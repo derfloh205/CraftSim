@@ -330,12 +330,13 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP] = "Sort the profit list by profit relative to crafting costs.\n(Requires a new scan)",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX] = "Use " .. f.bb("Insight") .. " if possible",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP] = "Use " .. f.bb("Illustrious Insight") .. " or\n" .. f.bb("Lesser Illustrious Insight") .. " as optional reagent for recipes that allow it.",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX] = "Only Favorites",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP] = "Scan only your favorite recipes",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Equipped",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Materials Quality 1",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Materials Quality 2",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Materials Quality 3",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OG] = "Optimize for Guaranteed",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OI] = "Optimize for Inspiration",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Optimize Reagents",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",
@@ -459,6 +460,13 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] = "Delete 0 Tip Customer History",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL] = "Auto Remove Interval (Days)",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP] = "CraftSim will automatically delete all 0 tip customers when you login after X days of the last deletion.\nIf set to 0, CraftSim will never delete automatically.",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CUSTOMER_HEADER] = "Customer",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TOTAL_TIP_HEADER] = "Total Tip",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_DATE_HEADER] = "Date",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_RESULT_HEADER] = "Result",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_TIP_HEADER] = "Tip",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_CUSTOMER_REAGENTS_HEADER] = "Customer Reagents",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_HISTORY_CUSTOMER_NOTE_HEADER] = "Note",
 
 
         -- Craft Queue

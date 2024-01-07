@@ -394,7 +394,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
     expandFrame.dataList = CraftSim.GGUI.FrameList({
         parent=expandFrame, 
         sizeY=170, anchorA="TOP", anchorB="TOP", anchorParent=expandFrame,
-        showHeaderLine = true,
+        showBorder = true,
         columnOptions={
             {
                 label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_DATA_ITEM_HEADER),
