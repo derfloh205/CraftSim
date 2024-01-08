@@ -3,6 +3,8 @@ local CraftSim = select(2, ...)
 local CraftSimAddonName = select(1, ...)
 
 CraftSim.LibCompress = LibStub:GetLibrary("LibCompress")
+CraftSim.LibIcon = LibStub("LibDBIcon-1.0")
+
 
 ---@class CraftSim.MAIN : Frame
 CraftSim.MAIN = CreateFrame("Frame", "CraftSimAddon")
@@ -28,6 +30,7 @@ CraftSimOptions = CraftSimOptions or {
 	openLastRecipe = true,
 	topGearAutoUpdate = false,
 	optionsShowNews = true,
+	optionsHideMinimapButton = false,
 
 	-- modules
 	modulesMaterials = true,
@@ -773,7 +776,6 @@ function CraftSim_OnAddonCompartmentClick()
 end
 
 function CraftSim.MAIN:InitializeMinimapButton()
-	local LibIcon = LibStub("LibDBIcon-1.0")
 	local ldb = LibStub("LibDataBroker-1.1"):NewDataObject("CraftSimLDB", {
 		type = "data source",
 		--tooltip = "CraftSim",
@@ -788,5 +790,11 @@ function CraftSim.MAIN:InitializeMinimapButton()
 
 		CraftSimLibIconDB = CraftSimLibIconDB or {}
 	
-		LibIcon:Register("CraftSim", ldb, CraftSimLibIconDB)
+		CraftSim.LibIcon:Register("CraftSim", ldb, CraftSimLibIconDB)
+
+		RunNextFrame( function() 
+			if CraftSimOptions.optionsHideMinimapButton then
+				CraftSim.LibIcon:Hide("CraftSim")
+			end
+		end)
 end

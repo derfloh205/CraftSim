@@ -1,7 +1,6 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@type GGUI
 local GGUI = CraftSim.GGUI
 
 CraftSim.OPTIONS = {}
@@ -336,6 +335,23 @@ function CraftSim.OPTIONS:Init()
     "BOTTOMLEFT",
     0,
     0)
+
+    local hideMinimapButtonCheckbox = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_CHECKBOX),
+    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP),
+    "optionsHideMinimapButton",
+    generalTab.content,
+    showNewsCheckbox,
+    "TOPLEFT",
+    "BOTTOMLEFT",
+    0,
+    0,
+    function (checked)
+        if checked then
+            CraftSim.LibIcon:Hide("CraftSim")
+        else
+            CraftSim.LibIcon:Show("CraftSim")
+        end
+    end)
 
     local detailedTooltips = CraftSim.FRAME:CreateCheckbox(" " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP),
     CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP),

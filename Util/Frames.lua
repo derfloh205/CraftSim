@@ -379,7 +379,7 @@ function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initial
 end
 
 --> in GGUI.Checkbox
-function CraftSim.FRAME:CreateCheckbox(label, description, optionName, parent, anchorParent, anchorA, anchorB, offsetX, offsetY)
+function CraftSim.FRAME:CreateCheckbox(label, description, optionName, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, onClick)
     local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
     checkBox:SetHitRectInsets(0, 0, 0, 0); -- see https://wowpedia.fandom.com/wiki/API_Frame_SetHitRectInsets
 	checkBox:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
@@ -390,6 +390,10 @@ function CraftSim.FRAME:CreateCheckbox(label, description, optionName, parent, a
 	checkBox:HookScript("OnClick", function(_, btn, down)
 		local checked = checkBox:GetChecked()
 		CraftSimOptions[optionName] = checked
+
+        if onClick then
+            onClick(checked)
+        end
 	end)
 
     return checkBox

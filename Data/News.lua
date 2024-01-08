@@ -14,6 +14,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("12.4.0"),
+        f.s .. f.g("zhTW Locals Update"),
+        f.a .. "- Thanks to " .. f.bb("https://github.com/class2u") .. " !",
         f.s .. "Thanks to " .. f.bb("https://github.com/SanjoSolutions") .. " for",
         f.a .. "fixing a rounding error in Top Gear comparison",
         f.s .. "Thanks to " .. f.bb("https://github.com/vmokok") .. " for",
@@ -21,6 +23,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.p .. "Added a " .. f.g("Minimap Icon") .. " that opens the Addon Options",
         f.p .. "The " .. f.bb("CraftQueue") .. " module now uses default blizzard tabs",
         f.a .. "to navigate between Craft Queue and Restock Options",
+        f.p .. "Added an option to hide the new " .. f.bb("Minimap Button"),
         newP("12.3.3"),
         f.P .. f.g("Visual Updates") ..
         newP("12.3.2"),
