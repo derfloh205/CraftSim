@@ -211,7 +211,7 @@ function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(optimizationResult)
             end
         end
     
-        CraftSim.MAIN:TriggerModulesErrorSafe()
+        CraftSim.MAIN:TriggerModuleUpdate()
     end
 end
 

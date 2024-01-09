@@ -135,9 +135,7 @@ function CraftSim.ProfessionGearSet:Equip()
     C_Timer.After(1, function ()
 
         for index, professionGear in ipairs(self:GetProfessionGearList()) do
-            print("equipping slot: " .. index)
             if professionGear.item then
-                print("equipping item: " .. tostring(professionGear.item:GetItemLink()))
                 CraftSim.GUTIL:EquipItemByLink(professionGear.item:GetItemLink())
                 EquipPendingItem(0)
             end

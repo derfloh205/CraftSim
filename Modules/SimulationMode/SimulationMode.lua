@@ -15,7 +15,7 @@ function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()
 
     CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData() -- revert
-    CraftSim.MAIN:TriggerModulesErrorSafe()
+    CraftSim.MAIN:TriggerModuleUpdate()
 end
 
 function CraftSim.SIMULATION_MODE:MaxSpecData()
@@ -30,7 +30,7 @@ function CraftSim.SIMULATION_MODE:MaxSpecData()
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
     CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData() -- update
-    CraftSim.MAIN:TriggerModulesErrorSafe()
+    CraftSim.MAIN:TriggerModuleUpdate()
 end
 
 function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
@@ -71,14 +71,14 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
 
-    CraftSim.MAIN:TriggerModulesErrorSafe()
+    CraftSim.MAIN:TriggerModuleUpdate()
 end
 
 function CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
     if not userInput then
         return
     end
-    CraftSim.MAIN:TriggerModulesErrorSafe()
+    CraftSim.MAIN:TriggerModuleUpdate()
 end
 
 function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
@@ -101,7 +101,7 @@ function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
         inputBox:SetText(inputNumber)
     end
 
-    CraftSim.MAIN:TriggerModulesErrorSafe()
+    CraftSim.MAIN:TriggerModuleUpdate()
 end
 
 function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
@@ -124,7 +124,7 @@ function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
         end
     end
 
-    CraftSim.MAIN:TriggerModulesErrorSafe()
+    CraftSim.MAIN:TriggerModuleUpdate()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
@@ -238,5 +238,5 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 
     -- recalculate modules
-    CraftSim.MAIN:TriggerModulesErrorSafe()
+    CraftSim.MAIN:TriggerModuleUpdate()
 end

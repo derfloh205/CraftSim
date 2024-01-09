@@ -61,7 +61,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
         offsetX=10, offsetY=-10, adjustWidth=true,
         clickCallback=function ()
             CraftSim.CRAFTDATA:DeleteAll()
-            CraftSim.MAIN:TriggerModulesErrorSafe() -- refresh all modules since it may be possible that we delete craftdata that is used here
+            CraftSim.MAIN:TriggerModuleUpdate() -- refresh all modules since it may be possible that we delete craftdata that is used here
         end
     })
     ---@type GGUI.Button | GGUI.Widget
@@ -206,7 +206,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
                 CraftSim.CRAFTDATA:UpdateCraftData(selectedItem)
                 --CraftSim.CRAFTDATA.FRAMES:UpdateDataFrame(selectedItem)
 
-                CraftSim.MAIN:TriggerModulesErrorSafe()
+                CraftSim.MAIN:TriggerModuleUpdate()
             end
         end,
         initialStatus="SAVE",
@@ -241,7 +241,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
             local selectedItem = craftDataFrame.content.resultsDropdown.selectedValue
             if selectedItem then
                 CraftSim.CRAFTDATA:DeleteForItem(selectedItem)
-                CraftSim.MAIN:TriggerModulesErrorSafe()
+                CraftSim.MAIN:TriggerModuleUpdate()
             end
         end
     })
@@ -464,7 +464,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
                     ---@type CraftSim.CraftData
                     local craftData = gButton.craftData
                     craftData:SetActive()
-                    CraftSim.MAIN:TriggerModulesErrorSafe()
+                    CraftSim.MAIN:TriggerModuleUpdate()
                 end
             })
 
@@ -488,7 +488,7 @@ function CraftSim.CRAFTDATA.FRAMES:Init()
                 clickCallback=function(gButton)
                     ---@type CraftSim.CraftData
                     gButton.craftData:Delete()
-                    CraftSim.MAIN:TriggerModulesErrorSafe()
+                    CraftSim.MAIN:TriggerModuleUpdate()
                 end
             })
         end,

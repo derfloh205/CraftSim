@@ -571,7 +571,7 @@ function CraftSim.FRAME:InitDebugFrame()
         lastHook = controlPanel.content.debugIDSFrame["checkboxID_" .. featureToggleID]
 
         controlPanel.content.debugIDSFrame["checkboxID_" .. featureToggleID]:HookScript("OnClick", function ()
-            CraftSim.MAIN:TriggerModulesErrorSafe()
+            CraftSim.MAIN:TriggerModuleUpdate()
         end)
     end
 

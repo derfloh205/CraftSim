@@ -107,6 +107,17 @@ CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS = {
     colorA = 1,
 }
 
+CraftSim.CONST.BACKDROPS = {
+    OPTIONS_CONTENT_FRAME = {
+        --bgFile = "Interface\\Buttons\\WHITE8X8",
+        borderOptions = {
+            edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+            edgeSize = 16,
+            insets = { left = 3, right = 3, top = 3, bottom = 3 },
+        }
+    }
+}    
+
 CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
     1566, -- Blacksmithing,
     1582, -- Alchemy

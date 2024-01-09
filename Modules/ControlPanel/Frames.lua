@@ -32,7 +32,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         offsetY)
         cb:HookScript("OnClick", function() 
             local checked= frame.content[optionVariable]:GetChecked()
-            CraftSim.MAIN:TriggerModulesErrorSafe()
+            CraftSim.MAIN:TriggerModuleUpdate()
             if optionalFrameToToggle then
                 CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, optionalFrameToToggle):SetVisible(checked)
             end

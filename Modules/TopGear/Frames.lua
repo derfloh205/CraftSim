@@ -51,7 +51,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC_TOOLTIP),
             "topGearAutoUpdate", frame.content, frame.content, "TOP", "TOP", -40, -33)
             frame.content.autoUpdateCB:HookScript("OnClick", function() 
-                CraftSim.MAIN:TriggerModulesErrorSafe(false)
+                CraftSim.MAIN:TriggerModuleUpdate(false)
             end)
         frame.content.gear1Icon = CraftSim.GGUI.Icon({
             parent=frame.content,

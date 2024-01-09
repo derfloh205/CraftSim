@@ -126,7 +126,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
             clickCallback=function ()
                 CraftSim.PRICE_OVERRIDE:SaveOverrideData(frame.recipeID, frame.currentDropdownData)
                 overrideOptions:updateButtonStatus()
-                CraftSim.MAIN:TriggerModulesErrorSafe()
+                CraftSim.MAIN:TriggerModuleUpdate()
             end,
             initialStatus="READY",
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVE),
@@ -155,7 +155,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                 CraftSim.PRICE_OVERRIDE:RemoveOverrideData(frame.recipeID, frame.currentDropdownData)
                 overrideOptions:updateButtonStatus()
                 overrideOptions.currencyInputGold:SetValue(0)
-                CraftSim.MAIN:TriggerModulesErrorSafe()
+                CraftSim.MAIN:TriggerModuleUpdate()
             end,
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_REMOVE),
         })
@@ -180,7 +180,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                 if frame.currentDropdownData then
                     overrideOptions:updateButtonStatus()
                 end
-                CraftSim.MAIN:TriggerModulesErrorSafe()
+                CraftSim.MAIN:TriggerModuleUpdate()
             end
         })
 

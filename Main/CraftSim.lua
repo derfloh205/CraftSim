@@ -117,9 +117,9 @@ function CraftSim.MAIN:COMBAT_LOG_EVENT_UNFILTERED(event)
 					if CraftSim.MAIN.currentRecipeID then
 						local isWorkOrder = ProfessionsFrame.OrdersPage:IsVisible()
 						if isWorkOrder then
-							CraftSim.MAIN:TriggerModulesErrorSafe(false)
+							CraftSim.MAIN:TriggerModuleUpdate(false)
 						else
-							CraftSim.MAIN:TriggerModulesErrorSafe(false)
+							CraftSim.MAIN:TriggerModuleUpdate(false)
 						end
 					end
 				end
@@ -196,7 +196,7 @@ local hookedEvent = false
 
 local freshLoginRecall = true
 local lastCallTime = 0
-function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
+function CraftSim.MAIN:TriggerModuleUpdate(isInit)
 
 	local callTime = GetTime()
 	if lastCallTime == callTime then
@@ -215,7 +215,7 @@ function CraftSim.MAIN:TriggerModulesErrorSafe(isInit)
 		freshLoginRecall = false
 		-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
 		C_Timer.After(0.1, function()
-			CraftSim.MAIN:TriggerModulesErrorSafe(true)
+			CraftSim.MAIN:TriggerModuleUpdate(true)
 		end)
 	end
 
@@ -233,7 +233,7 @@ function CraftSim.MAIN:HookToEvent()
 	local function Update(self)
 		if CraftSim.MAIN.currentRecipeID then
 			print("Update: " .. tostring(CraftSim.MAIN.currentRecipeID))
-			CraftSim.MAIN:TriggerModulesErrorSafe(false)
+			CraftSim.MAIN:TriggerModuleUpdate(false)
 		end
 	end
 
@@ -265,7 +265,7 @@ function CraftSim.MAIN:HookToEvent()
 			end
 
 			CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionInfo.profession)
-			CraftSim.MAIN:TriggerModulesErrorSafe(true)
+			CraftSim.MAIN:TriggerModuleUpdate(true)
 			CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeInfo.recipeID)
 		else
 			print("Hide all frames recipeInfo nil")
@@ -428,7 +428,7 @@ function CraftSim.MAIN:HandleAuctionatorHooks()
 	if Auctionator then
 		Auctionator.API.v1.RegisterForDBUpdate(CraftSimAddonName, function()
 			print("Auctionator DB Update")
-			CraftSim.MAIN:TriggerModulesErrorSafe(false)
+			CraftSim.MAIN:TriggerModuleUpdate(false)
 		end)
 	end
 end

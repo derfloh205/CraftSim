@@ -48,13 +48,14 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             buttonOptions={parent=frame.content, anchorParent=frame.content, 
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL), adjustWidth=true},
             parent=frame.content,anchorParent=frame.content, sizeX=tabContentSizeX, sizeY=tabContentSizeY, canBeEnabled=true, offsetY=-30,
-            initialTab=true,
+            initialTab=true, top=true,
         })
         ---@type GGUI.BlizzardTab
         frame.content.restockOptionsTab = GGUI.BlizzardTab({
             buttonOptions={parent=frame.content, anchorParent=frame.content.queueTab.button, anchorA="LEFT", anchorB="RIGHT", 
             label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL), adjustWidth=true},
-            parent=frame.content,anchorParent=frame.content, sizeX=tabContentSizeX, sizeY=tabContentSizeY, canBeEnabled=true, offsetY=-30,
+            parent=frame.content,anchorParent=frame.content, sizeX=tabContentSizeX, sizeY=tabContentSizeY, canBeEnabled=true, offsetY=-30, 
+            top=true,
         })
         local restockOptionsTab = frame.content.restockOptionsTab
         local queueTab = frame.content.queueTab
