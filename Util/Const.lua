@@ -115,6 +115,13 @@ CraftSim.CONST.BACKDROPS = {
             edgeSize = 16,
             insets = { left = 3, right = 3, top = 3, bottom = 3 },
         }
+    },
+    DEBUG = {
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        colorR = 1,
+        colorG = 1,
+        colorB = 1,
+        colorA = 0.5,
     }
 }    
 
@@ -1060,4 +1067,9 @@ CraftSim.CONST.MAX_KNOWLEDGEPOINTS = {
     MINING=455,
     SKINNING=400,
     TAILORING=630,
+}
+
+
+CraftSim.CONST.ATLAS_TEXTURES = {
+    TRADESKILL_ICON_ADD = 'tradeskills-icon-add'
 }

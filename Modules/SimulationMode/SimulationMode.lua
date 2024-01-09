@@ -1,6 +1,9 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
+---@class CraftSim.SIMULATION_MODE
 CraftSim.SIMULATION_MODE = {}
 
 CraftSim.SIMULATION_MODE.isActive = false
@@ -54,7 +57,7 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
 
     -- update specdata
     ---@type CraftSim.NodeData
-    local nodeData = CraftSim.GUTIL:Find(CraftSim.SIMULATION_MODE.specializationData.nodeData, function(nodeData) return nodeData.nodeID == nodeModFrame.nodeID end)
+    local nodeData = GUTIL:Find(CraftSim.SIMULATION_MODE.specializationData.nodeData, function(nodeData) return nodeData.nodeID == nodeModFrame.nodeID end)
     if not nodeData then
         return
     end
@@ -185,7 +188,11 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     print("Update Reagent Input Frames:")
 
     local simulationModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+
+    ---@type CraftSim.SimulationMode.ReagentOverwriteFrame
     local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
+
+    reagentOverwriteFrame:SetStatus(tostring(GUTIL:Count(recipeData.reagentData.requiredReagents, function(r) return r.hasQuality end)))
 
     --required
     local reagentList = {}
@@ -204,8 +211,8 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     recipeData.reagentData:ClearOptionalReagents()
 
     local itemIDs = {}
-    for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentFrames) do
-        local itemID = dropdown.selectedValue
+    for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
+        local itemID = dropdown.selectedItem and dropdown.selectedItem:GetItemID()
         if itemID then
             table.insert(itemIDs, itemID)
         end
@@ -231,7 +238,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     -- update frame visiblity and initialize the input fields
     CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames(CraftSim.SIMULATION_MODE.recipeData)
-    CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns(CraftSim.SIMULATION_MODE.recipeData)
+    CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentItemSelectors(CraftSim.SIMULATION_MODE.recipeData)
     CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
 
     -- -- update simulation recipe data and frontend

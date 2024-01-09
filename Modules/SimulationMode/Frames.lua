@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 local GGUI = CraftSim.GGUI
+local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.SIMULATION_MODE.FRAMES
 CraftSim.SIMULATION_MODE.FRAMES = {}
@@ -37,16 +38,56 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             schematicForm, schematicForm.Details, "BOTTOM", "TOP", -65, 40)
         
         frames.toggleButton:Hide()
+
+        local baseSizeY = 50
+        local spacingY = 50
+        local sizeY_1 = baseSizeY
+        local sizeY_2 = baseSizeY + spacingY
+        local sizeY_3 = baseSizeY + spacingY*2
+        local sizeY_4 = baseSizeY + spacingY*3
+        local sizeY_5 = baseSizeY + spacingY*4
+        local sizeY_6 = baseSizeY + spacingY*5
     
         -- REAGENT OVERWRITE FRAMES
         ---@class CraftSim.SimulationMode.ReagentOverwriteFrame : GGUI.Frame
         local reagentOverwriteFrame = GGUI.Frame{
-            parent=schematicForm, anchorParent=schematicForm.Reagents, anchorA="TOPLEFT", anchorB="TOPLEFT", offsetX=-40, offsetY=-35,
-            sizeX=200, sizeY=400
+            parent=schematicForm, anchorParent=schematicForm.Reagents, anchorA="TOPLEFT", anchorB="TOPLEFT", offsetX=0, offsetY=0,
+            sizeX=250, sizeY=baseSizeY,
+            initialStatusID="0",
         }
+        reagentOverwriteFrame:SetStatusList({
+            {
+                statusID="0",
+                sizeY=sizeY_1,
+            },
+            {
+                statusID="1",
+                sizeY=sizeY_1,
+            },
+            {
+                statusID="2",
+                sizeY=sizeY_2,
+            },
+            {
+                statusID="3",
+                sizeY=sizeY_3,
+            },
+            {
+                statusID="4",
+                sizeY=sizeY_4,
+            },
+            {
+                statusID="5",
+                sizeY=sizeY_5,
+            },
+            {
+                statusID="6",
+                sizeY=sizeY_6,
+            },
+        })
         reagentOverwriteFrame:Hide()
     
-        local baseX = 10
+        local baseX = 15
         local inputOffsetX = 50
 
         ---@class CraftSim.SimulationMode.ReagentOverwriteFrame.Content
@@ -54,40 +95,43 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     
         reagentOverwriteFrame.content.qualityIcon1 = GGUI.QualityIcon({
             parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.content,sizeX=20,sizeY=20,anchorA="TOP",anchorB="TOP",
-            offsetX=baseX-15,offsetY=15, initialQuality=1,
+            offsetX=baseX-63, offsetY=15, initialQuality=1,
         })
         reagentOverwriteFrame.content.quality1Button = GGUI.Button({
-            parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.content.qualityIcon1.frame,anchorA="BOTTOM", anchorB="TOP",
-            sizeX=20,sizeY=20,label="->",
+            parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.content,anchorA="TOP", anchorB="TOP",
+            sizeX=25,sizeY=25,label=GUTIL:GetQualityIconString(1, 20, 20),
+            offsetX=baseX-63, offsetY=15,
             clickCallback=function() 
                 CraftSim.SIMULATION_MODE:AllocateAllByQuality(1)
             end
         })
         reagentOverwriteFrame.content.qualityIcon2 = GGUI.QualityIcon({
             parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.content,sizeX=20,sizeY=20,anchorA="TOP",anchorB="TOP",
-            offsetX=baseX+inputOffsetX - 15,offsetY=15, initialQuality=2,
+            offsetX=baseX+inputOffsetX - 63, offsetY=15, initialQuality=2,
         })
         reagentOverwriteFrame.content.quality2Button = GGUI.Button({
-            parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.content.qualityIcon2.frame,anchorA="BOTTOM", anchorB="TOP",
-            sizeX=20,sizeY=20,label="->",
+            parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.content,anchorA="TOP", anchorB="TOP",
+            sizeX=25,sizeY=25,label=GUTIL:GetQualityIconString(2, 20, 20),
+            offsetX=baseX+inputOffsetX - 63,offsetY=15,
             clickCallback=function() 
                 CraftSim.SIMULATION_MODE:AllocateAllByQuality(2)
             end
         })
         reagentOverwriteFrame.content.qualityIcon3 = GGUI.QualityIcon({
             parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.content,sizeX=20,sizeY=20,anchorA="TOP",anchorB="TOP",
-            offsetX=baseX+inputOffsetX*2 - 15,offsetY=15, initialQuality=3,
+            offsetX=baseX+inputOffsetX*2 - 63, offsetY=15, initialQuality=3,
         })
         reagentOverwriteFrame.content.quality3Button = GGUI.Button({
-            parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.content.qualityIcon3.frame,anchorA="BOTTOM", anchorB="TOP",
-            sizeX=20,sizeY=20,label="->",
+            parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.content,anchorA="TOP", anchorB="TOP",
+            sizeX=25,sizeY=25,label=GUTIL:GetQualityIconString(3, 20, 20),
+            offsetX=baseX+inputOffsetX*2 - 63, offsetY=15,
             clickCallback=function() 
                 CraftSim.SIMULATION_MODE:AllocateAllByQuality(3)
             end
         })
         reagentOverwriteFrame.content.clearAllocationsButton = GGUI.Button({
             parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.content.quality3Button.frame, anchorA="LEFT", anchorB="RIGHT",
-            offsetX=inputOffsetX - 30, label="Clear", adjustWidth=true, sizeX=0,sizeY=20,
+            offsetX=inputOffsetX - 30, label="Clear", adjustWidth=true, sizeX=10,sizeY=25,
             clickCallback=function() 
                 CraftSim.SIMULATION_MODE:AllocateAllByQuality(0)
             end
@@ -95,37 +139,42 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
     
         reagentOverwriteFrame.reagentOverwriteInputs = {}
     
+        local reagentOverwriteFrameOffsetX = 50
         local offsetY = -45
     
-        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, 0, 0, baseX, inputOffsetX))
-        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, 0, offsetY, baseX, inputOffsetX))
-        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, 0, offsetY*2, baseX, inputOffsetX))
-        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, 0, offsetY*3, baseX, inputOffsetX))
-        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, 0, offsetY*4, baseX, inputOffsetX))
-        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, 0, offsetY*5, baseX, inputOffsetX))
+        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, reagentOverwriteFrameOffsetX, 0, baseX, inputOffsetX))
+        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, reagentOverwriteFrameOffsetX, offsetY, baseX, inputOffsetX))
+        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, reagentOverwriteFrameOffsetX, offsetY*2, baseX, inputOffsetX))
+        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, reagentOverwriteFrameOffsetX, offsetY*3, baseX, inputOffsetX))
+        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, reagentOverwriteFrameOffsetX, offsetY*4, baseX, inputOffsetX))
+        table.insert(reagentOverwriteFrame.reagentOverwriteInputs, CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content, reagentOverwriteFrameOffsetX, offsetY*5, baseX, inputOffsetX))
         
         frames.reagentOverwriteFrame = reagentOverwriteFrame
     
-        local function CreateReagentInputDropdown(offsetY)
-            local optionalReagentDropdown = GGUI.Dropdown({
-                parent=reagentOverwriteFrame.content, anchorParent=schematicForm.OptionalReagents, anchorA="TOPLEFT",anchorB="TOPLEFT",
-                offsetX=30, offsetY=offsetY + 20, width=120,
-                clickCallback=function (_, _, value)
+        local function CreateOptionalReagentItemSelector(offsetX)
+            local optionalReagentDropdown = GGUI.ItemSelector({
+                parent=reagentOverwriteFrame.content, anchorParent=reagentOverwriteFrame.frame, anchorA="TOPLEFT",anchorB="BOTTOMLEFT",
+                offsetX=10+offsetX, sizeX=30, sizeY=30, emptyIcon=CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD,
+                selectionFrameOptions={
+                    backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+                    scale=1.2,
+                },
+                onSelectCallback=function ()
                     CraftSim.MAIN:TriggerModuleUpdate()
                 end
             })
             return optionalReagentDropdown
         end
     
-        reagentOverwriteFrame.optionalReagentFrames = {}
-        local dropdownSpacingY = -38
-        table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(0))
-        table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY))
-        table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*2))
-        table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*3))
-        table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*4))
-        table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*5))
-        table.insert(reagentOverwriteFrame.optionalReagentFrames, CreateReagentInputDropdown(dropdownSpacingY*6))
+        ---@type GGUI.ItemSelector[]
+        reagentOverwriteFrame.optionalReagentItemSelectors = {}
+        local dropdownSpacingX = 35
+        table.insert(reagentOverwriteFrame.optionalReagentItemSelectors, CreateOptionalReagentItemSelector(0))
+        table.insert(reagentOverwriteFrame.optionalReagentItemSelectors, CreateOptionalReagentItemSelector(dropdownSpacingX))
+        table.insert(reagentOverwriteFrame.optionalReagentItemSelectors, CreateOptionalReagentItemSelector(dropdownSpacingX*2))
+        table.insert(reagentOverwriteFrame.optionalReagentItemSelectors, CreateOptionalReagentItemSelector(dropdownSpacingX*3))
+        table.insert(reagentOverwriteFrame.optionalReagentItemSelectors, CreateOptionalReagentItemSelector(dropdownSpacingX*4))
+        table.insert(reagentOverwriteFrame.optionalReagentItemSelectors, CreateOptionalReagentItemSelector(dropdownSpacingX*5))
 
         
         -- DETAILS FRAME
@@ -540,12 +589,12 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
                     --print("currentValue: " .. tostring(currentValue))
                     if threshold.rank and threshold.rank <= currentValue then
                     -- print("color green")
-                        thresholdText:SetText(CraftSim.GUTIL:ColorizeText(threshold.originalText or "", CraftSim.GUTIL.COLORS.GREEN))
-                        thresholdRankText:SetText(CraftSim.GUTIL:ColorizeText(threshold.rank or "", CraftSim.GUTIL.COLORS.GREEN))
+                        thresholdText:SetText(GUTIL:ColorizeText(threshold.originalText or "", GUTIL.COLORS.GREEN))
+                        thresholdRankText:SetText(GUTIL:ColorizeText(threshold.rank or "", GUTIL.COLORS.GREEN))
                     else
                         --print("color grey")
-                        thresholdText:SetText(CraftSim.GUTIL:ColorizeText(threshold.originalText or "", CraftSim.GUTIL.COLORS.GREY))
-                        thresholdRankText:SetText(CraftSim.GUTIL:ColorizeText(threshold.rank or "", CraftSim.GUTIL.COLORS.GREY))
+                        thresholdText:SetText(GUTIL:ColorizeText(threshold.originalText or "", GUTIL.COLORS.GREY))
+                        thresholdRankText:SetText(GUTIL:ColorizeText(threshold.rank or "", GUTIL.COLORS.GREY))
                     end
                 end
             end
@@ -752,7 +801,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLay
 
     if tab then
         local nodeModFrames = tab.content.nodeModFrames
-        local relevantModFrames = CraftSim.GUTIL:Filter(nodeModFrames, function(nodeModFrame) 
+        local relevantModFrames = GUTIL:Filter(nodeModFrames, function(nodeModFrame) 
             return nodeModFrame.layer == layer and nodeModFrame.layerMaxNodes == layerMaxNodes
         end)
 
@@ -764,7 +813,7 @@ end
 
 function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame, offsetX, offsetY, baseX, inputOffsetX)
     local overwriteInput = CreateFrame("frame", nil, reagentOverwriteFrame)
-    overwriteInput:SetPoint("TOP", reagentOverwriteFrame, "TOP", offsetX, offsetY)
+    overwriteInput:SetPoint("TOPLEFT", reagentOverwriteFrame, "TOPLEFT", offsetX, offsetY)
     overwriteInput:SetSize(50, 50)
     
     overwriteInput.icon = GGUI.Icon({
@@ -815,7 +864,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationMod, recipeData.supportsInspiration)
     if recipeData.supportsInspiration then
         local baseInspiration = professionStats.inspiration.value - professionStatsMod.inspiration.value
-        local percentText = CraftSim.GUTIL:Round(professionStats.inspiration:GetPercent(), 1) .. "%"
+        local percentText = GUTIL:Round(professionStats.inspiration:GetPercent(), 1) .. "%"
         detailsFrame.content.inspirationValue:SetText(professionStats.inspiration.value .. " (" .. baseInspiration .."+"..professionStatsMod.inspiration.value .. ") " .. percentText)
     end
 
@@ -826,8 +875,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationSkillMod, recipeData.supportsInspiration)
     if recipeData.supportsInspiration then
         local baseInspirationSkill = professionStats.inspiration.extraValue
-        detailsFrame.content.inspirationSkillValue:SetText(CraftSim.GUTIL:Round(professionStats.inspiration:GetExtraValueByFactor(), 1) .. " (" .. CraftSim.GUTIL:Round(baseInspirationSkill, 1) ..
-        "*" .. CraftSim.GUTIL:Round(1+professionStats.inspiration.extraFactor, 2) .."+"..professionStatsMod.inspiration.extraValueAfterFactor .. ")")
+        detailsFrame.content.inspirationSkillValue:SetText(GUTIL:Round(professionStats.inspiration:GetExtraValueByFactor(), 1) .. " (" .. GUTIL:Round(baseInspirationSkill, 1) ..
+        "*" .. GUTIL:Round(1+professionStats.inspiration.extraFactor, 2) .."+"..professionStatsMod.inspiration.extraValueAfterFactor .. ")")
     end
 
     -- Multicraft Display
@@ -838,9 +887,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftBonusTitle, recipeData.supportsMulticraft)
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftBonusValue, recipeData.supportsMulticraft)
     if recipeData.supportsMulticraft then
-        local baseMulticraft = CraftSim.GUTIL:Round(professionStats.multicraft.value - professionStatsMod.multicraft.value, 1)
-        local percentText = CraftSim.GUTIL:Round(professionStats.multicraft:GetPercent(), 1) .. "%"
-        detailsFrame.content.multicraftValue:SetText(CraftSim.GUTIL:Round(professionStats.multicraft.value, 1) .. " (" .. baseMulticraft .."+"..professionStatsMod.multicraft.value .. ") " .. percentText)
+        local baseMulticraft = GUTIL:Round(professionStats.multicraft.value - professionStatsMod.multicraft.value, 1)
+        local percentText = GUTIL:Round(professionStats.multicraft:GetPercent(), 1) .. "%"
+        detailsFrame.content.multicraftValue:SetText(GUTIL:Round(professionStats.multicraft.value, 1) .. " (" .. baseMulticraft .."+"..professionStatsMod.multicraft.value .. ") " .. percentText)
 
         detailsFrame.content.multicraftBonusValue:SetText(professionStats.multicraft.extraFactor*100 .. "%")
     end
@@ -854,8 +903,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.resourcefulnessBonusValue, recipeData.supportsResourcefulness)
     if recipeData.supportsResourcefulness then
         local baseResourcefulness = professionStats.resourcefulness.value - professionStatsMod.resourcefulness.value
-        local percentText = CraftSim.GUTIL:Round(professionStats.resourcefulness:GetPercent(), 1) .. "%"
-        detailsFrame.content.resourcefulnessValue:SetText(CraftSim.GUTIL:Round(professionStats.resourcefulness.value) .. " (" .. CraftSim.GUTIL:Round(baseResourcefulness) .."+".. CraftSim.GUTIL:Round(professionStatsMod.resourcefulness.value) .. ") " .. percentText)
+        local percentText = GUTIL:Round(professionStats.resourcefulness:GetPercent(), 1) .. "%"
+        detailsFrame.content.resourcefulnessValue:SetText(GUTIL:Round(professionStats.resourcefulness.value) .. " (" .. GUTIL:Round(baseResourcefulness) .."+".. GUTIL:Round(professionStatsMod.resourcefulness.value) .. ") " .. percentText)
         
         detailsFrame.content.resourcefulnessBonusValue:SetText(professionStats.resourcefulness.extraFactor*100 .. "%")
     end
@@ -895,22 +944,22 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
             local missingSkillInspiration = nextQualityThreshold - (professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor())
             missingSkill = missingSkill > 0 and missingSkill or 0
             missingSkillInspiration = missingSkillInspiration > 0 and missingSkillInspiration or 0
-            qualityFrame.nextQualityMissingSkillValue:SetText(CraftSim.GUTIL:Round(missingSkill, 1))
-            local missingSkillText = CraftSim.GUTIL:ColorizeText(CraftSim.GUTIL:Round(missingSkillInspiration, 1), 
-            missingSkillInspiration == 0 and CraftSim.GUTIL.COLORS.GREEN or CraftSim.GUTIL.COLORS.RED)
-            local nextQualityIconText = CraftSim.GUTIL:GetQualityIconString(recipeData.resultData.expectedQuality + 1, 20, 20)
+            qualityFrame.nextQualityMissingSkillValue:SetText(GUTIL:Round(missingSkill, 1))
+            local missingSkillText = GUTIL:ColorizeText(GUTIL:Round(missingSkillInspiration, 1), 
+            missingSkillInspiration == 0 and GUTIL.COLORS.GREEN or GUTIL.COLORS.RED)
+            local nextQualityIconText = GUTIL:GetQualityIconString(recipeData.resultData.expectedQuality + 1, 20, 20)
             qualityFrame.nextQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. nextQualityIconText)
             qualityFrame.nextQualityMissingSkillInspirationValue:SetText(missingSkillText)
             qualityFrame.nextQualityIcon:SetQuality(recipeData.resultData.expectedQuality + 1)
             qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[recipeData.resultData.expectedQuality])
             
             if canSkipQuality then
-                local skipQualityIconText = CraftSim.GUTIL:GetQualityIconString(recipeData.resultData.expectedQuality + 2, 20, 20)
+                local skipQualityIconText = GUTIL:GetQualityIconString(recipeData.resultData.expectedQuality + 2, 20, 20)
                 local skipQualityThreshold = thresholds[recipeData.resultData.expectedQuality + 1]
                 local missingSkillInspirationSkip = skipQualityThreshold - (professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor())
                 missingSkillInspirationSkip = missingSkillInspirationSkip > 0 and missingSkillInspirationSkip or 0
-                local missinSkillText = CraftSim.GUTIL:ColorizeText(CraftSim.GUTIL:Round(missingSkillInspirationSkip, 1), 
-                missingSkillInspirationSkip == 0 and CraftSim.GUTIL.COLORS.GREEN or CraftSim.GUTIL.COLORS.RED)
+                local missinSkillText = GUTIL:ColorizeText(GUTIL:Round(missingSkillInspirationSkip, 1), 
+                missingSkillInspirationSkip == 0 and GUTIL.COLORS.GREEN or GUTIL.COLORS.RED)
                 qualityFrame.skipQualityMissingSkillInspirationValue:SetText(missinSkillText)
                 qualityFrame.skipQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL) .. " " .. skipQualityIconText)
             end
@@ -921,14 +970,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
         local skillNoReagents = professionStats.skill.value - reagentSkillIncrease
         local professionStatsOptionals = recipeData.reagentData:GetProfessionStatsByOptionals()
         local fullRecipeDifficulty = recipeData.professionStats.recipeDifficulty.value
-        detailsFrame.content.recipeDifficultyValue:SetText(CraftSim.GUTIL:Round(fullRecipeDifficulty, 1) .. " (" .. baseProfessionStats.recipeDifficulty.value .. "+" .. professionStatsOptionals.recipeDifficulty.value .. "+" .. professionStatsMod.recipeDifficulty.value  .. ")")
-        detailsFrame.content.baseSkillValue:SetText(CraftSim.GUTIL:Round(professionStats.skill.value, 1) .. " (" .. CraftSim.GUTIL:Round(skillNoReagents, 1) .. "+" .. CraftSim.GUTIL:Round(reagentSkillIncrease, 1) .. "+" .. professionStatsMod.skill.value ..")")
+        detailsFrame.content.recipeDifficultyValue:SetText(GUTIL:Round(fullRecipeDifficulty, 1) .. " (" .. baseProfessionStats.recipeDifficulty.value .. "+" .. professionStatsOptionals.recipeDifficulty.value .. "+" .. professionStatsMod.recipeDifficulty.value  .. ")")
+        detailsFrame.content.baseSkillValue:SetText(GUTIL:Round(professionStats.skill.value, 1) .. " (" .. GUTIL:Round(skillNoReagents, 1) .. "+" .. GUTIL:Round(reagentSkillIncrease, 1) .. "+" .. professionStatsMod.skill.value ..")")
         
         if recipeData.hasQualityReagents then
             local maxSkillFactor = recipeData.reagentData:GetMaxSkillFactor()
             local maxReagentSkillIncrease = baseProfessionStats.recipeDifficulty.value * maxSkillFactor
-            detailsFrame.content.reagentSkillIncreaseValue:SetText(CraftSim.GUTIL:Round(reagentSkillIncrease, 0) .. " / " .. CraftSim.GUTIL:Round(maxReagentSkillIncrease, 0))
-            detailsFrame.content.reagentMaxFactorValue:SetText(CraftSim.GUTIL:Round(maxSkillFactor*100, 1) .. " %")
+            detailsFrame.content.reagentSkillIncreaseValue:SetText(GUTIL:Round(reagentSkillIncrease, 0) .. " / " .. GUTIL:Round(maxReagentSkillIncrease, 0))
+            detailsFrame.content.reagentMaxFactorValue:SetText(GUTIL:Round(maxSkillFactor*100, 1) .. " %")
         end
     end
 end
@@ -1005,7 +1054,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
                         label = label .. "MCI+" .. (professionStats.multicraft.extraFactor*100) .. "% "
                     end
                     if professionStats.resourcefulness.value > 0 then
-                        label = label .. "R+" .. CraftSim.GUTIL:Round(professionStats.resourcefulness.value) .. " "
+                        label = label .. "R+" .. GUTIL:Round(professionStats.resourcefulness.value) .. " "
                     end
                     if professionStats.resourcefulness.extraFactor > 0 then
                         label = label .. "RI+" .. (professionStats.resourcefulness.extraFactor*100) .. "% "
@@ -1049,7 +1098,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
         initNode(baseNodeData, 1, numNodesPerLayer) 
     end
 
-    local baseNodeNames = CraftSim.GUTIL:Map(specializationData.baseNodeData, function(baseNodeData) return baseNodeData.nodeName end)
+    local baseNodeNames = GUTIL:Map(specializationData.baseNodeData, function(baseNodeData) return baseNodeData.nodeName end)
 
     for i = 1, 4, 1 do
         local specTabName = baseNodeNames[i]
@@ -1066,67 +1115,33 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentDropdowns(recipeData)
+function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentItemSelectors(recipeData)
     local optionalReagentSlots = recipeData.reagentData.optionalReagentSlots
     local finishingReagentSlots = recipeData.reagentData.finishingReagentSlots
 
-    local function convertReagentListToDropdownListData(optionalReagentsList)
-        local dropDownListData = {{label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_NONE), value = nil}}
-        for _, optionalReagent in pairs(optionalReagentsList) do
-            table.insert(dropDownListData, {
-                label = optionalReagent.item:GetItemLink(),
-                value = optionalReagent.item:GetItemID(),
-            })
-        end
-        return dropDownListData
-    end
-
     local simModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
 
+    ---@type CraftSim.SimulationMode.ReagentOverwriteFrame
     local reagentOverwriteFrame = simModeFrames.reagentOverwriteFrame
 
     -- init dropdowns
-    for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentFrames) do
-        dropdown.isOptional = false
-        dropdown.isFinishing = false
-        dropdown.slotIndex = nil
-        dropdown.selectedValue = nil
-        dropdown:Hide()
+    for _, itemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
+        itemSelector:SetItems(nil)
+        itemSelector:SetSelectedItem(nil)
+        itemSelector:Hide()
     end
 
-    local dropdownIndex = 1
+    local selectorIndex = 1
 
-    -- optionals
-    for slotIndex, optionalReagentSlot in pairs(optionalReagentSlots) do
-        local currentDropdown = reagentOverwriteFrame.optionalReagentFrames[dropdownIndex]
-        local dropdownlist = convertReagentListToDropdownListData(optionalReagentSlot.possibleReagents)
-        currentDropdown:Show()
-        currentDropdown.slotIndex = slotIndex
-        currentDropdown.isOptional = true
-        currentDropdown:SetLabel(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_OPTIONAL) .. slotIndex)
-        dropdownIndex = dropdownIndex + 1
-        currentDropdown.selectedValue = optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item:GetItemID()
-        if currentDropdown.selectedValue then
-            currentDropdown:SetData({data=dropdownlist, initialValue=optionalReagentSlot.activeReagent.item:GetItemLink()})
-        else
-            currentDropdown:SetData({data=dropdownlist, initialValue=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_NONE)})
-        end
-    end
-    -- finishing
-    for slotIndex, optionalReagentSlot in pairs(finishingReagentSlots) do
-        local currentDropdown = reagentOverwriteFrame.optionalReagentFrames[dropdownIndex]
-        local dropdownlist = convertReagentListToDropdownListData(optionalReagentSlot.possibleReagents)
-        currentDropdown:Show()
-        currentDropdown.slotIndex = slotIndex 
-        currentDropdown.isFinishing = true
-        currentDropdown:SetLabel(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_FINISHING) .. slotIndex)
-        dropdownIndex = dropdownIndex + 1
-        currentDropdown.selectedValue = optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item:GetItemID()
-        if currentDropdown.selectedValue then
-            currentDropdown:SetData({data=dropdownlist, initialValue=optionalReagentSlot.activeReagent.item:GetItemLink()})
-        else
-            currentDropdown:SetData({data=dropdownlist, initialValue=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_NONE)})
-        end
+    for _, optionalReagentSlot in pairs(GUTIL:Concat({optionalReagentSlots, finishingReagentSlots})) do
+        local currentSelector = reagentOverwriteFrame.optionalReagentItemSelectors[selectorIndex]
+        local possibleReagents = GUTIL:Map(optionalReagentSlot.possibleReagents, function (reagent)
+            return reagent.item
+        end)
+        currentSelector:Show()
+        selectorIndex = selectorIndex + 1
+        currentSelector:SetItems(possibleReagents)
+        currentSelector:SetSelectedItem(optionalReagentSlot.activeReagent and optionalReagentSlot.activeReagent.item)
     end
 end
 
@@ -1183,7 +1198,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
 
     if not CraftSim.SIMULATION_MODE.isActive then
         -- only hide, they will be shown automatically if available
-        for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentFrames) do
+        for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
             print("hide dropdown: " .. tostring(dropdown))
             CraftSim.FRAME:ToggleFrame(dropdown, false)
         end
@@ -1208,7 +1223,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames(recipeData)
     -- set non quality reagents to max allocations
 
     -- filter out non quality reagents
-    local qualityReagents = CraftSim.GUTIL:Filter(recipeData.reagentData.requiredReagents, function(reagent) 
+    local qualityReagents = GUTIL:Filter(recipeData.reagentData.requiredReagents, function(reagent) 
         return reagent.hasQuality
     end)
     -- reagent overwrites

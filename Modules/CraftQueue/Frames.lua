@@ -692,7 +692,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
                 backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
                 title="Select", anchorA=anchorA, anchorB=anchorB, offsetX=offsetX, offsetY=offsetY
             }, 
-            emptyIcon = 'tradeskills-icon-add', isAtlas=true, onSelectCallback=onSelectCallback
+            emptyIcon = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD, isAtlas=true, onSelectCallback=onSelectCallback
         })
     end
 
