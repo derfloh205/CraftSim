@@ -13,6 +13,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("12.4.1"),
+        f.p .. "Fixed an error when CraftSim is the only addon using LibDBIcon",
         newP("12.4.0"),
         f.P .. "Reworked the " .. f.g("Optional Item Selectors") .. " in " .. f.bb("Simulation Mode"),
         f.s .. f.g("zhTW Locals Update"),
