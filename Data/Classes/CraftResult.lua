@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 ---@class CraftSim.CraftResult
+---@overload fun(recipeData: CraftSim.RecipeData, craftingItemResultData: CraftingItemResultData): CraftSim.CraftResult
 CraftSim.CraftResult = CraftSim.Object:extend()
 
 ---@param recipeData CraftSim.RecipeData
