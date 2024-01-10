@@ -227,15 +227,23 @@ function CraftSim.CRAFT_RESULTS:CollectData(recipeData, craftResult)
     collectData.yieldDistribution = collectData.yieldDistribution or {}
     collectData.yieldFactors = collectData.yieldFactors or {}
 
+    local tastyHatchlingsTreat = 381380 -- yields 2
+    local blubberyMuffin = 381377 -- yields 3
+    local twiceBakedPotato = 381365 -- yields 4
+    local charitableCheddar = 407100 -- yields 5
 
     -- yield data collection for item amount
-    if recipeData.isCooking and recipeData.recipeID == 381365 then
+    if recipeData.isCooking and recipeData.recipeID == twiceBakedPotato then
         collectData.craftsTotal = collectData.craftsTotal + 1
         local quantity = craftResult.craftResultItems[1].quantity
         collectData.yieldDistribution[quantity] =  collectData.yieldDistribution[quantity] or 0
         collectData.yieldDistribution[quantity] = collectData.yieldDistribution[quantity] + 1
 
-        collectData.yieldFactors[quantity] = GUTIL:Round(collectData.yieldDistribution[quantity] / collectData.craftsTotal, 3)
+
+        -- update all cause craftsTotal changed
+        for quantity, _ in pairs(collectData.yieldDistribution) do
+            collectData.yieldFactors[quantity] = GUTIL:Round(collectData.yieldDistribution[quantity] / collectData.craftsTotal, 3)
+        end
 
         print("-- #" .. collectData.craftsTotal, false, true)
         print(collectData.yieldFactors, true)
