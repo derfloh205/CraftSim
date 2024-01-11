@@ -12,6 +12,8 @@ CraftSim.CRAFT_BUFFS.FRAMES = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.BUFFDATA)
 
+---@type table<string, boolean>
+CraftSim.CRAFT_BUFFS.simulatedBuffs = {}
 function CraftSim.CRAFT_BUFFS.FRAMES:Init()
     local sizeX=330
     local sizeY=200
@@ -59,8 +61,25 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
         ---@class CraftSim.CRAFT_BUFFS.FRAME.CONTENT: Frame
         frame.content = frame.content
 
+        frame.content.simulateBuffSelector = GGUI.CheckboxSelector{
+            buttonOptions={
+                parent=frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="BOTTOM", offsetY=-5,
+                adjustWidth=true, sizeX=15, label="Simulate Buffs"
+            },
+            selectionFrameOptions = {
+                backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS, closeable=true,
+                sizeX=330, anchorA="BOTTOM", anchorB="TOP",
+            },
+            savedVariablesTable=CraftSim.CRAFT_BUFFS.simulatedBuffs,
+            onSelectCallback=function ()
+                CraftSim.MAIN:TriggerModuleUpdate()
+            end
+        }
+
+        frame.content.simulateBuffSelector:SetEnabled(false)
+
         frame.content.buffList = GGUI.FrameList{
-            parent=frame.content, anchorParent=frame.title.frame, anchorA = "TOP", anchorB="BOTTOM", sizeY = 147, offsetY=-10, showBorder=true,
+            parent=frame.content, anchorParent=frame.content.simulateBuffSelector.button.frame, anchorA = "TOP", anchorB="BOTTOM", sizeY = 127, offsetY=-5, showBorder=true,
             offsetX=-10, selectionOptions={noSelectionColor=true, hoverRGBA={1, 1, 1, 0.3}}, rowHeight=20,
             columnOptions = {
                 {
@@ -137,6 +156,7 @@ function CraftSim.CRAFT_BUFFS.FRAMES:UpdateDisplay(recipeData, exportMode)
     local craftBuffsContent = craftbuffsFrame.content
 
     craftBuffsContent.buffList:Remove()
+    craftBuffsContent.simulateBuffSelector:SetItems()
 
     local buffData = recipeData.buffData
 
@@ -178,4 +198,14 @@ function CraftSim.CRAFT_BUFFS.FRAMES:UpdateDisplay(recipeData, exportMode)
 
         return false
     end)
+
+    craftBuffsContent.simulateBuffSelector:SetItems(GUTIL:Map(buffData.buffs, function (buff)
+        ---@type GGUI.CheckboxSelector.CheckboxItem
+        local checkboxItem = {
+            name = buff.name,
+            initialValue = buff.active,
+            savedVariableProperty = tostring(buff.buffID .. ":" .. (buff.qualityID or 0)),
+        }
+        return checkboxItem
+    end))
 end

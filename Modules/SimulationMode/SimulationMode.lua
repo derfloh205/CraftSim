@@ -224,8 +224,34 @@ end
 function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
     CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
+    CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
     CraftSim.SIMULATION_MODE.recipeData:Update() -- update recipe Data by modifiers/reagents and such
     CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
+end
+
+function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
+    local recipeData = CraftSim.SIMULATION_MODE.recipeData
+
+    if not recipeData then return end
+
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+
+    local craftBuffsFrame
+    if exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER then
+        craftBuffsFrame = CraftSim.CRAFT_BUFFS.frame
+    else
+        craftBuffsFrame = CraftSim.CRAFT_BUFFS.frameWO
+    end
+
+    if not craftBuffsFrame then return end
+
+    local simulateBuffSelector = craftBuffsFrame.content.simulateBuffSelector
+
+    for buffName, active in pairs(simulateBuffSelector.selectedValues) do
+        recipeData.buffData:SetBuffActiveByName(buffName, active)
+    end
+
+    recipeData.buffData:UpdateProfessionStats()
 end
 
 function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)

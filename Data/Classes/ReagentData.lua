@@ -363,6 +363,16 @@ function CraftSim.ReagentData:GetCraftableAmount()
     return minFit
 end
 
+--- if one of the given item ids is a reagent used in the recipe, this returns true
+---@param reagentItemIDs number[] 
+---@return boolean
+function CraftSim.ReagentData:HasOneOfReagents(reagentItemIDs)
+    return GUTIL:Some(self.requiredReagents, 
+        function(reagent) 
+            return tContains(reagentItemIDs, reagent.items[1].item:GetItemID())  
+        end)
+end
+
 --- convert required and finished reagents to string that is displayable in a tooltip
 ---@param multiplier number? default: 1
 function CraftSim.ReagentData:GetTooltipText(multiplier)

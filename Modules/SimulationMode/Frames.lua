@@ -1174,6 +1174,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
         specializationInfoFrame = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO)
     end
     specializationInfoFrame.content.knowledgePointSimulationButton:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
+    CraftSim.CRAFT_BUFFS.frame.content.simulateBuffSelector:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
     if not CraftSim.SIMULATION_MODE.isActive then
         GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM):Hide()
     end
