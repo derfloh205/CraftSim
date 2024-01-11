@@ -461,3 +461,10 @@ function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craft
 	end
 	 return linksByQuality
 end
+
+---@return fun(ID: CraftSim.LOCALIZATION_IDS): string
+function CraftSim.UTIL:GetLocalizer()
+    return function (ID)
+        return CraftSim.LOCAL:GetText(ID)
+    end
+end

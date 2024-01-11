@@ -124,6 +124,9 @@ function CraftSim.FRAME:RestoreModulePositions()
     materialOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFTDATA.frame:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
+
+    CraftSim.CRAFT_BUFFS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
+    CraftSim.CRAFT_BUFFS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForme)
 end
 
 function CraftSim.FRAME:ResetFrames()

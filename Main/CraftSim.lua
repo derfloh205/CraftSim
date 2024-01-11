@@ -45,6 +45,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesCustomerHistory = false,
 	modulesCostDetails = false,
 	modulesCraftQueue = false,
+	modulesCraftBuffs = true,
 
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
@@ -179,6 +180,9 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.modulesSpecInfo == nil then
 			CraftSimOptions.modulesSpecInfo = true
+		end
+		if CraftSimOptions.modulesCraftBuffs == nil then
+			CraftSimOptions.modulesCraftBuffs = true
 		end
 		if CraftSimOptions.customerServiceAllowAutoResult == nil then
 			CraftSimOptions.customerServiceAllowAutoResult = true
@@ -399,6 +403,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.SUPPORTERS.FRAMES:Init()
 		CraftSim.CRAFTQ.FRAMES:Init()
 		CraftSim.CRAFTQ:InitializeCraftQueue()
+		CraftSim.CRAFT_BUFFS.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -574,6 +579,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
 	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS)
 	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+	local craftBuffsFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS)
+	local craftBuffsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER)
 
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild()  then
 		CraftSim.MAIN:HideAllFrames()
@@ -594,8 +601,10 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 
 	print("Export Mode: " .. tostring(exportMode))
 
+	---@type CraftSim.RecipeData
 	local recipeData = nil
 	if CraftSim.SIMULATION_MODE.isActive and CraftSim.SIMULATION_MODE.recipeData then
+		---@type CraftSim.RecipeData
 		recipeData = CraftSim.SIMULATION_MODE.recipeData
 		CraftSim.MAIN.currentRecipeData = CraftSim.SIMULATION_MODE.recipeData
 	else
@@ -641,6 +650,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	local showCraftData = true
 	local showCostDetails = true
 	local showCraftQueue = true
+	local showCraftBuffs = true
 
 
 	if recipeData.supportsCraftingStats then
@@ -671,6 +681,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	showCraftData = showCraftData and CraftSimOptions.modulesCraftData
 	showCostDetails = showCostDetails and CraftSimOptions.modulesCostDetails
 	showCraftQueue = showCraftQueue and CraftSimOptions.modulesCraftQueue
+	showCraftBuffs = showCraftBuffs and CraftSimOptions.modulesCraftBuffs
 
 	CraftSim.FRAME:ToggleFrame(CraftSim.RECIPE_SCAN.frame, showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTQ.frame, showCraftQueue)
@@ -768,7 +779,12 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 		CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
 	end
 
-	
+	-- CraftBuffs Module
+	CraftSim.FRAME:ToggleFrame(craftBuffsFrame, showCraftBuffs and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+	CraftSim.FRAME:ToggleFrame(craftBuffsFrameWO, showCraftBuffs and recipeData and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showCraftBuffs then
+		CraftSim.CRAFT_BUFFS.FRAMES:UpdateDisplay(recipeData, exportMode)
+	end
 end
 
 function CraftSim_OnAddonCompartmentClick()

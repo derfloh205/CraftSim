@@ -91,6 +91,9 @@ Modules/CostDetails/Frames.lua
 Modules/Supporters/Supporters.lua
 Modules/Supporters/Frames.lua
 
+Modules/CraftBuffs/CraftBuffs.lua
+Modules/CraftBuffs/Frames.lua
+
 Locals/Localization.lua
 Locals/enUS.lua
 Locals/deDE.lua
@@ -150,6 +153,7 @@ Data/Classes/CraftSessionData.lua
 Data/Classes/CraftRecipeData.lua
 Data/Classes/JSONBuilder.lua
 Data/Classes/BuffData.lua
+Data/Classes/Buff.lua
 Data/Classes/CraftData.lua
 Data/Classes/CraftQueue.lua
 Data/Classes/CraftQueueItem.lua

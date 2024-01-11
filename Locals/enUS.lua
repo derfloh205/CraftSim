@@ -427,6 +427,8 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP] = "Module that offers various options to interact with potential customers",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL] = "Customer History",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP] = "Module that provides a history of conversations with customers, crafted items and commissions",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL] = "Craft Buffs",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP] = "Module that shows you your active and missing Craft Buffs",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Reset Frame Positions",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Options",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "News",
@@ -515,6 +517,10 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_PROFIT_LABEL] = "Total Ø Profit:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL] = "Total Crafting Costs:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_TITLE] = "Edit Recipe",
+
+        -- craft buffs
+
+        [CraftSim.CONST.TEXT.CRAFT_BUFFS_TITLE] = "CraftSim Craft Buffs",
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",

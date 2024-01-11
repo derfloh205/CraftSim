@@ -88,9 +88,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
         print("No RecipeData created: SchematicInfo not found")
         return
     end
-        ---@type CraftSim.BuffData
-    self.buffData = CraftSim.BuffData()
-    self.buffData:Update()
+    
     ---@type CraftSim.ReagentData
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
 
@@ -143,6 +141,11 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     equippedProfessionGearSet:LoadCurrentEquippedSet()
     
     self.baseProfessionStats:subtract(equippedProfessionGearSet.professionStats)
+
+    ---@type CraftSim.BuffData
+    self.buffData = CraftSim.BuffData(self)
+    self.buffData:Update()
+    
     self.baseProfessionStats:subtract(self.buffData.professionStats)
     -- As we dont know in this case what the factors are without gear and reagents and such
     -- we set them to 0 and let them accumulate in UpdateProfessionStats

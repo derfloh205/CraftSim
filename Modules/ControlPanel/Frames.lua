@@ -7,6 +7,7 @@ CraftSim.CONTROL_PANEL.FRAMES = {}
 function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local currentVersion = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
 
+    ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
     local frame = CraftSim.GGUI.Frame({
         parent=ProfessionsFrame, anchorParent=ProfessionsFrame,anchorA="BOTTOM",anchorB="TOP",offsetY=-5,
         sizeX=950,sizeY=125,frameID=CraftSim.CONST.FRAMES.CONTROL_PANEL, 
@@ -45,6 +46,9 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local cbBaseOffsetX = 20
     local cbBaseOffsetY = -30
     local cbSpacingY = -20
+
+    ---@class CraftSim.CONTROL_PANEL.FRAME.CONTENT
+    frame.content = frame.content
 
     frame.content.newsButton = CraftSim.GGUI.Button({
         label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS),
@@ -142,6 +146,10 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     frame.content.modulesCraftData = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_LABEL), 
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_TOOLTIP),
         "TOP", frame.content.modulesPriceOverride, "TOP", 0, cbSpacingY, "modulesCraftData")
+
+    frame.content.modulesCraftBuffs = createModuleCheckbox(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL),
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP),
+        "TOP", frame.content.modulesCraftData, "TOP", 0, cbSpacingY, "modulesCraftBuffs")
 
     -- 3. Column
 
