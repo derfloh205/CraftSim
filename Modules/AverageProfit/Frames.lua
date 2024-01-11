@@ -137,10 +137,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts,
     else
         statweightFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS)
     end
-    if statWeights == nil then
-        -- statweightFrame.content.statText:SetText("")
-        -- statweightFrame.content.valueText:SetText("")
-    else
+    if statWeights ~= nil then
         local statText = ""
         local valueText = ""
 
