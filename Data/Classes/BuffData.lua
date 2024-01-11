@@ -7,7 +7,9 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(recipeData: CraftSim.RecipeData): CraftSim.BuffData
 CraftSim.BuffData = CraftSim.Object:extend()
 
-local debug = true
+local L = CraftSim.UTIL:GetLocalizer()
+
+local debug = false
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.BUFFDATA)
 
@@ -22,7 +24,7 @@ function CraftSim.BuffData:new(recipeData)
 end
 
 function CraftSim.BuffData:CreateBuffsByRecipeData()
-    -- by professionID
+    -- by professionID and professionStats
     if self.recipeData.supportsInspiration then
         --- General Buffs
         local incenseStats = CraftSim.ProfessionStats()
@@ -65,6 +67,12 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
             index = 1,
             value = 30
         }, CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS_SPELL_Q3))
+    end
+
+    if self.recipeData.isCooking then
+        -- cooking hat toy
+        table.insert(self.buffs, CraftSim.Buff(CraftSim.CONST.BUFF_IDS.CHEFS_HAT, CraftSim.ProfessionStats(), nil, nil, nil, 
+        L(CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP)))
     end
 end
 

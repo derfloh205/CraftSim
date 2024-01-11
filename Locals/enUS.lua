@@ -521,6 +521,7 @@ greater or equal the configured sale rate threshold.
         -- craft buffs
 
         [CraftSim.CONST.TEXT.CRAFT_BUFFS_TITLE] = "CraftSim Craft Buffs",
+        [CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP] = f.bb("Wrath of the Lich King Toy.") .. "\nRequires Northrend Cooking\nSets Crafting Speed to " .. f.g("0.5 seconds"),
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",

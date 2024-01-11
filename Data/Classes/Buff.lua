@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.BUFFDATA)
 
 ---@class CraftSim.Buff
----@overload fun(buffID: CraftSim.BuffID, professionStats:CraftSim.ProfessionStats, qualityID: number?, valuePointData: CraftSim.Buff.ValuePointData?, displayBuffID: number?): CraftSim.Buff
+---@overload fun(buffID: CraftSim.BuffID, professionStats:CraftSim.ProfessionStats, qualityID: number?, valuePointData: CraftSim.Buff.ValuePointData?, displayBuffID: number?, customTooltip: string?): CraftSim.Buff
 CraftSim.Buff = CraftSim.Object:extend()
 
 ---@param buffID CraftSim.BuffID
@@ -14,7 +14,8 @@ CraftSim.Buff = CraftSim.Object:extend()
 ---@param qualityID number?
 ---@param valuePointData CraftSim.Buff.ValuePointData?
 ---@param displayBuffID number? if the buff to display is a different one than the one to recognize the aura
-function CraftSim.Buff:new(buffID, professionStats, qualityID, valuePointData, displayBuffID)
+---@param customTooltip string? 
+function CraftSim.Buff:new(buffID, professionStats, qualityID, valuePointData, displayBuffID, customTooltip)
     ---@type CraftSim.ProfessionStats
     self.professionStats = professionStats
     local spellInfo = {GetSpellInfo(buffID)}
@@ -28,6 +29,7 @@ function CraftSim.Buff:new(buffID, professionStats, qualityID, valuePointData, d
     self.buffID = buffID
     self.displayBuffID = displayBuffID or buffID
     self.active = false
+    self.customTooltip = customTooltip
 end
 
 ---@class CraftSim.Buff.ValuePointData

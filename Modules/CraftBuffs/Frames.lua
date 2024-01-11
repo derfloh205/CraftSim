@@ -161,7 +161,7 @@ function CraftSim.CRAFT_BUFFS.FRAMES:UpdateDisplay(recipeData, exportMode)
             row.tooltipOptions = {
                 anchor = "ANCHOR_CURSOR",
                 owner = row.frame,
-                text = currentStats:GetTooltipText(buff.professionStats)
+                text = buff.customTooltip or currentStats:GetTooltipText(buff.professionStats)
             }
         end)
     end
