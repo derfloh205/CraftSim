@@ -23,6 +23,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- This allows for more scan options to be added in future updates",
         f.a .. "- The selected scan mode now persists over sessions",
         f.a .. "- " .. f.bb("Recipe Reagents ") .. "are now shown on mouse hover",
+        f.P .. f.g("Craft Queue"),
+        f.a .. "- " .. f.bb("Recipe Reagents ") .. "are now shown on mouse hover",
         f.p .. f.g("Stat Weights") .. " display is now rounded to the copper",
         newP("12.4.1"),
         f.p .. "Fixed an error when CraftSim is the only addon using LibDBIcon",

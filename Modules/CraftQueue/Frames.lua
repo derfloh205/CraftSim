@@ -85,11 +85,6 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                 justifyOptions={type="H", align="RIGHT"}
             },
             {
-                label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_REAGENT_INFO_HEADER),
-                width=75,
-                justifyOptions={type="H", align="CENTER"}
-            },
-            {
                 label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER), -- here a button is needed to switch to the top gear for this recipe
                 width=110,
                 justifyOptions={type="H", align="CENTER"}
@@ -140,12 +135,11 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                 local recipeColumn = columns[2] 
                 local averageProfitColumn = columns[3]
                 local craftingCostsColumn = columns[4]
-                local reagentInfoColumn = columns[5]
-                local topGearColumn = columns[6]
-                local craftAbleColumn = columns[7]
-                local craftAmountColumn = columns[8] 
-                local craftButtonColumn = columns[9]
-                local removeRowColumn = columns[10]
+                local topGearColumn = columns[5]
+                local craftAbleColumn = columns[6]
+                local craftAmountColumn = columns[7] 
+                local craftButtonColumn = columns[8]
+                local removeRowColumn = columns[9]
 
                 editButtonColumn.editButton = GGUI.Button({
                     parent=editButtonColumn, anchorParent=editButtonColumn, sizeX=25, sizeY=25,
@@ -170,11 +164,6 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                 { 
                     parent=craftingCostsColumn,anchorParent=craftingCostsColumn, anchorA="RIGHT", anchorB="RIGHT", scale = 0.9, justifyOptions={type="H",align="RIGHT"}
 
-                })
-
-                reagentInfoColumn.reagentInfoButton = GGUI.HelpIcon({
-                    parent=reagentInfoColumn, anchorParent=reagentInfoColumn,
-                    text="No Data", label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_REAGENT_INFO_BUTTON_LABEL)
                 })
 
                 topGearColumn.gear2Icon = GGUI.Icon({
@@ -897,12 +886,11 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             local recipeColumn = columns[2] 
             local averageProfitColumn = columns[3]
             local craftingCostsColumn = columns[4]
-            local reagentInfoColumn = columns[5]
-            local topGearColumn = columns[6]
-            local craftAbleColumn = columns[7]
-            local craftAmountColumn = columns[8] 
-            local craftButtonColumn = columns[9]
-            local removeRowColumn = columns[10]
+            local topGearColumn = columns[5]
+            local craftAbleColumn = columns[6]
+            local craftAmountColumn = columns[7] 
+            local craftButtonColumn = columns[8]
+            local removeRowColumn = columns[9]
 
             row.craftQueueItem = craftQueueItem
 
@@ -927,7 +915,11 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
             craftingCostsColumn.text:SetText(f.r(GUTIL:FormatMoney(craftingCosts)))
 
-            reagentInfoColumn.reagentInfoButton:SetText(recipeData.reagentData:GetTooltipText(craftQueueItem.amount))
+            row.tooltipOptions = {
+                text=recipeData.reagentData:GetTooltipText(craftQueueItem.amount),
+                owner=row.frame,
+                anchor="ANCHOR_CURSOR",
+            }
     
             if craftQueueItem.gearEquipped then
                 topGearColumn.equippedText:Show()
