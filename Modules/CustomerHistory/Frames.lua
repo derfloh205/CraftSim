@@ -275,7 +275,11 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
     end 
 
     customerList:UpdateDisplay(function (rowA, rowB)
-        return rowA.customerHistory.totalTip >= rowB.customerHistory.totalTip
+        if rowA.customerHistory.totalTip and rowB.customerHistory.totalTip then
+            return rowA.customerHistory.totalTip >= rowB.customerHistory.totalTip
+        else
+            return false
+        end
     end)
 
     if not customerList.selectedRow then
