@@ -27,19 +27,16 @@ CraftSim.RECIPE_SCAN.currentResults = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
-function CraftSim.RECIPE_SCAN:GetScanMode()
-    local RecipeScanFrame = CraftSim.RECIPE_SCAN.frame
-    return RecipeScanFrame.content.scanMode.selectedValue
-end
-
 function CraftSim.RECIPE_SCAN:ToggleScanButton(value)
     local frame = CraftSim.RECIPE_SCAN.frame
-    frame.content.scanButton:SetEnabled(value)
-    frame.content.cancelScanButton:SetVisible(not value)
+    local recipeScanTab = frame.content.recipeScanTab
+    local content = recipeScanTab.content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
+    content.scanButton:SetEnabled(value)
+    content.cancelScanButton:SetVisible(not value)
     if not value then
-        frame.content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) .. " 0%")
+        content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) .. " 0%")
     else
-        frame.content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_RECIPIES))
+        content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_RECIPIES))
     end
 end
 
@@ -48,7 +45,9 @@ function CraftSim.RECIPE_SCAN:UpdateScanPercent(currentProgress, maxProgress)
 
     if currentPercentage % 1 == 0 then
         local frame = CraftSim.RECIPE_SCAN.frame
-        frame.content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) .. " " .. currentPercentage .. "%")
+        local recipeScanTab = frame.content.recipeScanTab
+        local content = recipeScanTab.content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
+        content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) .. " " .. currentPercentage .. "%")
     end
 end
 
@@ -220,8 +219,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
     CraftSim.RECIPE_SCAN.currentResults = {}
     CraftSim.RECIPE_SCAN.isScanning = true
     
-    local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
-    print("Scan Mode: " .. tostring(scanMode))
+    print("Scan Mode: " .. tostring(CraftSimOptions.recipeScanScanMode))
     local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
     local recipeInfos = CraftSim.GUTIL:Map(recipeIDs, function(recipeID) 
         return C_TradeSkillUI.GetRecipeInfo(recipeID)
@@ -266,8 +264,9 @@ function CraftSim.RECIPE_SCAN:StartScan()
 
         --optimize top gear first cause optimized reagents might change depending on the gear
         if CraftSimOptions.recipeScanOptimizeProfessionTools then
+            print("Optimizing Gear...")
             CraftSim.UTIL:StartProfiling("Optimize ALL: SCAN")
-            if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
+            if CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
                 recipeData:OptimizeProfit()
             else
                 CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
@@ -300,15 +299,13 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
-    local scanMode = CraftSim.RECIPE_SCAN:GetScanMode()
-
-    if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q1 then
+    if CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q1 then
         recipeData.reagentData:SetReagentsMaxByQuality(1)
-    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q2 then
+    elseif CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q2 then
         recipeData.reagentData:SetReagentsMaxByQuality(2)
-    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3 then
+    elseif CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3 then
         recipeData.reagentData:SetReagentsMaxByQuality(3)
-    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
+    elseif CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
         recipeData:OptimizeReagents()
     end
 end

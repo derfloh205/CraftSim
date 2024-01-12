@@ -60,6 +60,7 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanIncludeNotLearned = false,
     recipeScanOnlyFavorites = false,
 	recipeScanOptimizeProfessionTools = false,
+	recipeScanScanMode = nil,
 
 	-- profit calc
 	customMulticraftConstant = CraftSim.CONST.MULTICRAFT_CONSTANT,
@@ -159,6 +160,7 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.craftQueueRestockPerRecipeOptions = CraftSimOptions.craftQueueRestockPerRecipeOptions or {}
 		CraftSimOptions.customerHistoryAutoPurgeInterval = CraftSimOptions.customerHistoryAutoPurgeInterval or 2
 		CraftSimOptions.customerHistoryAutoPurgeLastPurge = CraftSimOptions.customerHistoryAutoPurgeLastPurge or nil
+		CraftSimOptions.recipeScanScanMode = CraftSimOptions.recipeScanScanMode or CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
 		
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
