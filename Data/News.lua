@@ -29,6 +29,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.P .. f.g("Craft Queue"),
         f.a .. "- " .. f.bb("Recipe Reagents ") .. "are now shown on mouse hover",
         f.p .. f.g("Stat Weights") .. " display is now rounded to the copper",
+        f.p .. "Recolored the " .. f.bb("Expected Costs per Item") .. " in the " .. f.g("Statistics List"),
+        f.p .. "New visuals for " .. f.bb("Help Icons"),
         newP("12.4.1"),
         f.p .. "Fixed an error when CraftSim is the only addon using LibDBIcon",
         newP("12.4.0"),
