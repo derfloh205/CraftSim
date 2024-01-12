@@ -26,6 +26,8 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
     local function createContent(frame)
         frame:Hide()
 
+        -- frame.content.recipeScanTab = 
+
         local initialScanModeValue = CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
         local initialScanModeLabel = CraftSim.LOCAL:GetText(CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP[initialScanModeValue])
 

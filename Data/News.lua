@@ -17,6 +17,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.P .. "New Module: " .. f.g("Craft Buffs"),
         f.a .. "- List all available crafting buffs relevant for this recipe",
         f.a .. "- Including status, spell tooltip and possible profession stats",
+        f.a .. "- Buffs can now be simulated in " .. f.bb("Simulation Mode"),
         f.p .. f.bb("Stat Weights") .. " display is now rounded to the copper",
         f.a .. "- We no petrol company..",
         newP("12.4.1"),
