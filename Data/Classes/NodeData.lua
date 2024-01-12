@@ -1,6 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.NodeData
 CraftSim.NodeData = CraftSim.Object:extend()
@@ -29,8 +30,20 @@ function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData, parentNode)
     ---@type CraftSim.NodeRule[]
     self.nodeRules = {}
 
-    local configID = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)
-    local nodeInfo = C_Traits.GetNodeInfo(configID, self.nodeID)
+    self.configID  = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)
+    local nodeInfo = C_Traits.GetNodeInfo(self.configID, self.nodeID)
+    self.entryIDs = nodeInfo.entryIDs
+    self.entryInfos = GUTIL:Map(self.entryIDs, function (entryID)
+        return C_Traits.GetEntryInfo(self.configID, entryID)
+    end)
+    self.definitionInfos = GUTIL:Map(self.entryInfos, function (entryInfo)
+        return C_Traits.GetDefinitionInfo(entryInfo.definitionID)
+    end)
+    if self.definitionInfos[1] then
+        self.icon = self.definitionInfos[1].overrideIcon
+    end
+
+    self.perkInfos = C_ProfSpecs.GetPerksForPath(self.nodeID)
 
     if (nodeInfo) then
         self.active = nodeInfo.activeRank > 0
@@ -58,9 +71,9 @@ function CraftSim.NodeData:Debug()
 
     for _, childNode in pairs(self.childNodes) do
         local lines = childNode:Debug()
-        lines = CraftSim.GUTIL:Map(lines, function(line) return "-" .. line end)
+        lines = GUTIL:Map(lines, function(line) return "-" .. line end)
 
-        debugLines = CraftSim.GUTIL:Concat({debugLines, lines})
+        debugLines = GUTIL:Concat({debugLines, lines})
     end
     return debugLines
 end
@@ -70,7 +83,7 @@ function CraftSim.NodeData:UpdateAffectance()
         nodeRule:UpdateAffectance()
     end
     -- if at least one rule node of the node affects the recipe, the node affects the recipe
-    self.affectsRecipe = CraftSim.GUTIL:Count(self.nodeRules, function (nr) return nr.affectsRecipe end) > 0
+    self.affectsRecipe = GUTIL:Count(self.nodeRules, function (nr) return nr.affectsRecipe end) > 0
 
     if self.affectsRecipe and self.rank > -1 then
         self.active = true
@@ -115,6 +128,30 @@ function CraftSim.NodeData:UpdateProfessionStats()
     end
 end
 
+---@return string
+function CraftSim.NodeData:GetTooltipText()
+    local header = GUTIL:IconToText(self.icon, 30, 30) .. " " .. self.nodeName
+    local tooltipText = header .. "\n\n" .. GUTIL:ColorizeText(tostring(C_ProfSpecs.GetDescriptionForPath(self.nodeID)), GUTIL.COLORS.WHITE) 
+    for _, perkInfo in ipairs(self.perkInfos) do
+        local unlockRank = C_ProfSpecs.GetUnlockRankForPerk(perkInfo.perkID)
+        local rankText = "Rank " .. unlockRank .. ":\n"
+        local perkDescription = C_ProfSpecs.GetDescriptionForPerk(perkInfo.perkID)
+
+        if self.rank >= unlockRank then
+            rankText = GUTIL:ColorizeText(rankText, GUTIL.COLORS.GREEN)
+            perkDescription = GUTIL:ColorizeText(perkDescription, GUTIL.COLORS.WHITE)
+        else
+            rankText = GUTIL:ColorizeText(rankText, GUTIL.COLORS.GREY)
+            perkDescription = GUTIL:ColorizeText(perkDescription, GUTIL.COLORS.GREY)
+        end
+        tooltipText = tooltipText .. "\n\n" .. rankText .. perkDescription
+    end
+
+    tooltipText = tooltipText .. "\n\nTotal Stats from Talent:\n" .. GUTIL:ColorizeText(self.professionStats:GetTooltipText(self.maxProfessionStats), GUTIL.COLORS.WHITE)
+
+    return tooltipText
+end
+
 function CraftSim.NodeData:GetJSON(indent)
     indent = indent or 0
     local jb = CraftSim.JSONBuilder(indent)
@@ -129,7 +166,7 @@ function CraftSim.NodeData:GetJSON(indent)
     jb:Add("idMapping", self.idMapping)
     jb:Add("parentNodeID", (self.parentNode and self.parentNode.nodeID) or nil)
     jb:AddList("nodeRules", self.nodeRules)
-    jb:AddList("childNodeIDs", CraftSim.GUTIL:Map(self.childNodes, function(cn) return cn.nodeID end), true)
+    jb:AddList("childNodeIDs", GUTIL:Map(self.childNodes, function(cn) return cn.nodeID end), true)
     jb:End()
     return jb.json
 end

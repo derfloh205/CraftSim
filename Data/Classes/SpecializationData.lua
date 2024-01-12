@@ -16,9 +16,9 @@ function CraftSim.SpecializationData:new(recipeData)
     self.professionStats = CraftSim.ProfessionStats()
     ---@type CraftSim.ProfessionStats
     self.maxProfessionStats = CraftSim.ProfessionStats()
-    ---@type CraftSim.NodeData
+    ---@type CraftSim.NodeData[]
     self.nodeData = {}
-    ---@type CraftSim.NodeData
+    ---@type CraftSim.NodeData[]
     self.baseNodeData = {} -- needed for spec sim tree buildup
     ---@type number[][]
     self.numNodesPerLayer = {} -- needed for spec sim tree buildup

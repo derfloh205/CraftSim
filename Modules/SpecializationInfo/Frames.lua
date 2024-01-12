@@ -83,11 +83,11 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
             rowHeight=20, offsetX=-25, offsetY=-15, scale=1.2,
             columnOptions={
                 {
-                    label="Name", -- node name
+                    label="", -- node name
                     width=170,
                 },
                 {
-                    label="Ranks", -- node ranks
+                    label="", -- node ranks
                     width = 60,
                 }
             },

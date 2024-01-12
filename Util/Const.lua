@@ -128,6 +128,8 @@ CraftSim.CONST.BACKDROPS = {
     }
 }    
 
+CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA = {1, 1, 1, 0.3}
+
 CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
     1566, -- Blacksmithing,
     1582, -- Alchemy

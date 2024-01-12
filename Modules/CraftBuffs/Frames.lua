@@ -80,7 +80,7 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
 
         frame.content.buffList = GGUI.FrameList{
             parent=frame.content, anchorParent=frame.content.simulateBuffSelector.button.frame, anchorA = "TOP", anchorB="BOTTOM", sizeY = 127, offsetY=-5, showBorder=true,
-            offsetX=-10, selectionOptions={noSelectionColor=true, hoverRGBA={1, 1, 1, 0.3}}, rowHeight=20,
+            offsetX=-10, selectionOptions={noSelectionColor=true, hoverRGBA=CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA}, rowHeight=20,
             columnOptions = {
                 {
                     label = "", -- Buffstatus
