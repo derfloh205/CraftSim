@@ -230,6 +230,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
+    local print = CraftSim.UTIL:SetDebugPrint("BUFFDATA")
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
 
     if not recipeData then return end
@@ -247,10 +248,7 @@ function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
 
     local simulateBuffSelector = craftBuffsFrame.content.simulateBuffSelector
 
-    for buffName, active in pairs(simulateBuffSelector.selectedValues) do
-        recipeData.buffData:SetBuffActiveByName(buffName, active)
-    end
-
+    recipeData.buffData:SetBuffsByUIDToValueMap(simulateBuffSelector.selectedValues)
     recipeData.buffData:UpdateProfessionStats()
 end
 

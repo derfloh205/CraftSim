@@ -54,6 +54,12 @@ function CraftSim.Buff:Update()
     end
 end
 
+--- returns a unique id as string for this buff and its quality
+---@return string uuid
+function CraftSim.Buff:GetUID()
+    return self.buffID .. ":" .. (self.qualityID or 0)
+end
+
 function CraftSim.Buff:Debug()
     local debugLines = {
         "Name: " .. tostring(self.name),

@@ -204,7 +204,8 @@ function CraftSim.CRAFT_BUFFS.FRAMES:UpdateDisplay(recipeData, exportMode)
         local checkboxItem = {
             name = buff.name,
             initialValue = buff.active,
-            savedVariableProperty = tostring(buff.buffID .. ":" .. (buff.qualityID or 0)),
+            savedVariableProperty = buff:GetUID(),
+            selectionID = buff:GetUID(),
         }
         return checkboxItem
     end))

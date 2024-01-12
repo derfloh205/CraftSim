@@ -136,14 +136,22 @@ function CraftSim.BuffData:Update()
     self:UpdateProfessionStats()
 end
 
----@param buffName string
+---@param UIDToValueMap table<string, boolean> -- buffUID -> active
+function CraftSim.BuffData:SetBuffsByUIDToValueMap(UIDToValueMap)
+    for buffUID, active in pairs(UIDToValueMap) do
+        self:SetBuffByUID(buffUID, active)
+    end
+end
+
+---@param buffUID string
 ---@param active boolean
-function CraftSim.BuffData:SetBuffActiveByName(buffName, active)
+function CraftSim.BuffData:SetBuffByUID(buffUID, active)
     local buff = GUTIL:Find(self.buffs, function (buff)
-        return buff.name == buffName
+        return buff:GetUID() == buffUID
     end)
 
     if buff then
+        print("Setting " .. buff.name .. ": " .. tostring(active))
         buff.active = active
     end
 end
