@@ -174,134 +174,134 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
     return {
         -- LEATHERWORKING DISCIPLINE
         LEATHERWORKING_DISCIPLINE_1 = {
-            childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
+            childNodeIDs = { "SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1" },
             nodeID = 31184,
             equalsSkill = true,
-	    idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         LEATHERWORKING_DISCIPLINE_2 = {
-            childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
+            childNodeIDs = { "SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1" },
             nodeID = 31184,
             threshold = 0,
             skill = 5,
-	    idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         LEATHERWORKING_DISCIPLINE_3 = {
-            childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
+            childNodeIDs = { "SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1" },
             nodeID = 31184,
             threshold = 10,
             skill = 5,
-	    idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         LEATHERWORKING_DISCIPLINE_4 = {
-            childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
+            childNodeIDs = { "SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1" },
             nodeID = 31184,
             threshold = 20,
             skill = 10,
-	    idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         LEATHERWORKING_DISCIPLINE_5 = {
-            childNodeIDs = {"SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1"},
+            childNodeIDs = { "SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1" },
             nodeID = 31184,
             threshold = 30,
             inspiration = 15,
             resourcefulness = 15,
             craftingspeedBonusFactor = 0.20,
-	    idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHEAR_MASTERY_OF_LEATHER_1 = {
             nodeID = 31183,
             equalsResourcefulness = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHEAR_MASTERY_OF_LEATHER_2 = {
             nodeID = 31183,
             threshold = 0,
             resourcefulnessExtraItemsFactor = 0.05,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHEAR_MASTERY_OF_LEATHER_3 = {
             nodeID = 31183,
             threshold = 5,
             resourcefulness = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHEAR_MASTERY_OF_LEATHER_4 = {
             nodeID = 31183,
             threshold = 10,
             resourcefulnessExtraItemsFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHEAR_MASTERY_OF_LEATHER_5 = {
             nodeID = 31183,
             threshold = 15,
             resourcefulness = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHEAR_MASTERY_OF_LEATHER_6 = {
             nodeID = 31183,
             threshold = 20,
             resourcefulnessExtraItemsFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHEAR_MASTERY_OF_LEATHER_7 = {
             nodeID = 31183,
             threshold = 25,
             resourcefulness = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHEAR_MASTERY_OF_LEATHER_8 = {
             nodeID = 31183,
             threshold = 30,
             resourcefulnessExtraItemsFactor = 0.25,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_1 = {
             nodeID = 31182,
             equalsInspiration = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_2 = {
             nodeID = 31182,
             threshold = 0,
             inspirationBonusSkillFactor = 0.05,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_3 = {
             nodeID = 31182,
             threshold = 5,
             inspiration = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_4 = {
             nodeID = 31182,
             threshold = 10,
             inspirationBonusSkillFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_5 = {
             nodeID = 31182,
             threshold = 15,
             inspiration = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_6 = {
             nodeID = 31182,
             threshold = 20,
             inspirationBonusSkillFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_7 = {
             nodeID = 31182,
             threshold = 25,
             inspiration = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_8 = {
             nodeID = 31182,
             threshold = 30,
             inspirationBonusSkillFactor = 0.25,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         BONDING_AND_STITCHING_1 = {
             nodeID = 31181,
@@ -396,10 +396,10 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
                 },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
                 },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS,
                 },
             },
@@ -417,15 +417,15 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
         CURING_AND_TANNING_3 = {
             nodeID = 31180,
             threshold = 5,
-            inspiration =10,
+            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
                 },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
                 },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS,
                 },
             },
@@ -448,10 +448,10 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
                 },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.LEATHER_REAGENTS,
                 },
-		        [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
+                [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.OPTIONAL_REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.OPTIONAL_REAGENTS,
                 },
             },
@@ -466,9 +466,9 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 },
             },
         },
-        -- Primordial Leatherworking 
+        -- Primordial Leatherworking
         PRIMORDIAL_LEATHERWORKING_1 = { -- mapped
-            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            childNodeIDs = { "ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1" },
             nodeID = 31146,
             equalsSkill = true,
             idMapping = {
@@ -489,19 +489,19 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
         PRIMORDIAL_LEATHERWORKING_2 = {
-            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            childNodeIDs = { "ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1" },
             nodeID = 31146,
             threshold = 0,
             inspiration = 5,
@@ -523,19 +523,19 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
         PRIMORDIAL_LEATHERWORKING_3 = {
-            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            childNodeIDs = { "ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1" },
             nodeID = 31146,
             threshold = 5,
             resourcefulness = 5,
@@ -557,19 +557,19 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
         PRIMORDIAL_LEATHERWORKING_4 = {
-            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            childNodeIDs = { "ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1" },
             nodeID = 31146,
             threshold = 15,
             inspiration = 5,
@@ -591,19 +591,19 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
         PRIMORDIAL_LEATHERWORKING_5 = {
-            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            childNodeIDs = { "ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1" },
             nodeID = 31146,
             threshold = 25,
             resourcefulness = 5,
@@ -625,19 +625,19 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
         PRIMORDIAL_LEATHERWORKING_6 = {
-            childNodeIDs = {"ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1"},
+            childNodeIDs = { "ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1" },
             nodeID = 31146,
             threshold = 35,
             craftingspeedBonusFactor = 0.15,
@@ -659,15 +659,15 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
         ELEMENTAL_MASTERY_1 = {
@@ -682,7 +682,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
             },
         },
         ELEMENTAL_MASTERY_2 = {
@@ -698,7 +698,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
             },
         },
         ELEMENTAL_MASTERY_3 = {
@@ -714,7 +714,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
             },
         },
         ELEMENTAL_MASTERY_4 = {
@@ -730,7 +730,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
             },
         },
         ELEMENTAL_MASTERY_5 = {
@@ -746,7 +746,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             exceptionRecipeIDs = {
                 375178, -- Earthshine Scales
                 375174, -- Mireslush Hide
-		        375161, -- Frosted Armor Kit
+                375161, -- Frosted Armor Kit
             },
         },
         BESTIAL_PRIMACY_1 = {
@@ -763,7 +763,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
             },
         },
         BESTIAL_PRIMACY_2 = {
@@ -781,7 +781,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
             },
         },
         BESTIAL_PRIMACY_3 = {
@@ -799,7 +799,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
             },
         },
         BESTIAL_PRIMACY_4 = {
@@ -817,7 +817,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
             },
         },
         BESTIAL_PRIMACY_5 = {
@@ -835,7 +835,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375180, -- Infurious Scales
                 375176, -- Infurious Hide
                 375159, -- Fang Adornments
-		        375162, -- Fierce Armor Kit
+                375162, -- Fierce Armor Kit
             },
         },
         DECAYING_GRASP_1 = {
@@ -851,7 +851,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
         DECAYING_GRASP_2 = {
@@ -868,7 +868,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
         DECAYING_GRASP_3 = {
@@ -885,7 +885,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
         DECAYING_GRASP_4 = {
@@ -902,7 +902,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
         DECAYING_GRASP_5 = {
@@ -919,12 +919,12 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375179, -- Frostbite Scales
                 375173, -- Stonecrust Hide
                 375160, -- Toxified Armor Patch
-		        375199, -- Witherrot Tome
+                375199, -- Witherrot Tome
             },
         },
-        -- Leather Armor Crafting 
+        -- Leather Armor Crafting
         LEATHER_ARMOR_CRAFTING_1 = { --mapped
-            childNodeIDs = {"SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1"},
+            childNodeIDs = { "SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1" },
             nodeID = 28546,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -971,10 +971,10 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
                 375142, -- (Epic Decayed) Slimy Expulsion Boots
                 375143, -- (Epic Decayed) Toxic Thorn Footwraps
-            },   
+            },
         },
         LEATHER_ARMOR_CRAFTING_2 = {
-            childNodeIDs = {"SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1"},
+            childNodeIDs = { "SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1" },
             nodeID = 28546,
             threshold = 5,
             inspiration = 5,
@@ -1022,10 +1022,10 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
                 375142, -- (Epic Decayed) Slimy Expulsion Boots
                 375143, -- (Epic Decayed) Toxic Thorn Footwraps
-            },   
+            },
         },
         LEATHER_ARMOR_CRAFTING_3 = {
-            childNodeIDs = {"SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1"},
+            childNodeIDs = { "SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1" },
             nodeID = 28546,
             threshold = 15,
             resourcefulness = 5,
@@ -1073,10 +1073,10 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
                 375142, -- (Epic Decayed) Slimy Expulsion Boots
                 375143, -- (Epic Decayed) Toxic Thorn Footwraps
-            },   
+            },
         },
         LEATHER_ARMOR_CRAFTING_4 = {
-            childNodeIDs = {"SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1"},
+            childNodeIDs = { "SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1" },
             nodeID = 28546,
             threshold = 25,
             inspiration = 5,
@@ -1124,10 +1124,10 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
                 375142, -- (Epic Decayed) Slimy Expulsion Boots
                 375143, -- (Epic Decayed) Toxic Thorn Footwraps
-            },   
+            },
         },
         LEATHER_ARMOR_CRAFTING_5 = {
-            childNodeIDs = {"SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1"},
+            childNodeIDs = { "SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1" },
             nodeID = 28546,
             threshold = 30,
             inspiration = 15,
@@ -1177,10 +1177,10 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
                 375142, -- (Epic Decayed) Slimy Expulsion Boots
                 375143, -- (Epic Decayed) Toxic Thorn Footwraps
-            },   
+            },
         },
         SHAPED_LEATHER_ARMOR_1 = { -- mapped
-            childNodeIDs = {"CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1"},
+            childNodeIDs = { "CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1" },
             nodeID = 28545,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -1208,7 +1208,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         SHAPED_LEATHER_ARMOR_2 = {
-            childNodeIDs = {"CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1"},
+            childNodeIDs = { "CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1" },
             nodeID = 28545,
             threshold = 5,
             inspiration = 10,
@@ -1236,7 +1236,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         SHAPED_LEATHER_ARMOR_3 = {
-            childNodeIDs = {"CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1"},
+            childNodeIDs = { "CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1" },
             nodeID = 28545,
             threshold = 15,
             resourcefulness = 10,
@@ -1264,7 +1264,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         SHAPED_LEATHER_ARMOR_4 = {
-            childNodeIDs = {"CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1"},
+            childNodeIDs = { "CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1" },
             nodeID = 28545,
             threshold = 25,
             inspiration = 10,
@@ -1467,7 +1467,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         EMBROIDERED_LEATHER_ARMOR_1 = { -- mapped
-            childNodeIDs = {"LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1"},
+            childNodeIDs = { "LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1" },
             nodeID = 28540,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -1496,7 +1496,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         EMBROIDERED_LEATHER_ARMOR_2 = {
-            childNodeIDs = {"LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1"},
+            childNodeIDs = { "LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1" },
             nodeID = 28540,
             threshold = 5,
             inspiration = 10,
@@ -1525,7 +1525,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         EMBROIDERED_LEATHER_ARMOR_3 = {
-            childNodeIDs = {"LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1"},
+            childNodeIDs = { "LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1" },
             nodeID = 28540,
             threshold = 15,
             resourcefulness = 10,
@@ -1554,7 +1554,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         EMBROIDERED_LEATHER_ARMOR_4 = {
-            childNodeIDs = {"LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1"},
+            childNodeIDs = { "LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1" },
             nodeID = 28540,
             threshold = 25,
             inspiration = 10,
@@ -1764,7 +1764,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
         },
         -- Mail Armor Crafting
         MAIL_ARMOR_CRAFTING_1 = { --mapped
-            childNodeIDs = {"LARGE_MAIL_1", "INTRICATE_MAIL_1"},
+            childNodeIDs = { "LARGE_MAIL_1", "INTRICATE_MAIL_1" },
             nodeID = 28438,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -1813,7 +1813,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         MAIL_ARMOR_CRAFTING_2 = {
-            childNodeIDs = {"LARGE_MAIL_1", "INTRICATE_MAIL_1"},
+            childNodeIDs = { "LARGE_MAIL_1", "INTRICATE_MAIL_1" },
             nodeID = 28438,
             threshold = 5,
             inspiration = 5,
@@ -1863,7 +1863,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         MAIL_ARMOR_CRAFTING_3 = {
-            childNodeIDs = {"LARGE_MAIL_1", "INTRICATE_MAIL_1"},
+            childNodeIDs = { "LARGE_MAIL_1", "INTRICATE_MAIL_1" },
             nodeID = 28438,
             threshold = 15,
             resourcefulness = 5,
@@ -1913,7 +1913,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         MAIL_ARMOR_CRAFTING_4 = {
-            childNodeIDs = {"LARGE_MAIL_1", "INTRICATE_MAIL_1"},
+            childNodeIDs = { "LARGE_MAIL_1", "INTRICATE_MAIL_1" },
             nodeID = 28438,
             threshold = 25,
             inspiration = 5,
@@ -1963,7 +1963,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         MAIL_ARMOR_CRAFTING_5 = {
-            childNodeIDs = {"LARGE_MAIL_1", "INTRICATE_MAIL_1"},
+            childNodeIDs = { "LARGE_MAIL_1", "INTRICATE_MAIL_1" },
             nodeID = 28438,
             threshold = 30,
             inspiration = 15,
@@ -2015,7 +2015,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         LARGE_MAIL_1 = { -- mapped
-            childNodeIDs = {"MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1"},
+            childNodeIDs = { "MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1" },
             nodeID = 28437,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -2041,7 +2041,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         LARGE_MAIL_2 = {
-            childNodeIDs = {"MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1"},
+            childNodeIDs = { "MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1" },
             nodeID = 28437,
             threshold = 5,
             inspiration = 10,
@@ -2067,7 +2067,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         LARGE_MAIL_3 = {
-            childNodeIDs = {"MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1"},
+            childNodeIDs = { "MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1" },
             nodeID = 28437,
             threshold = 15,
             resourcefulness = 10,
@@ -2093,7 +2093,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         LARGE_MAIL_4 = {
-            childNodeIDs = {"MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1"},
+            childNodeIDs = { "MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1" },
             nodeID = 28437,
             threshold = 25,
             inspiration = 10,
@@ -2115,7 +2115,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
                 -- bracers
                 375107, -- (Rare) Trailblazer's Scale Bracers
                 375124, -- (Epic) Flame-Touched Cuffs
-                375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs  
+                375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
             },
         },
         MAIL_SHIRTS_1 = {
@@ -2287,7 +2287,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         INTRICATE_MAIL_1 = { -- mapped
-            childNodeIDs = {"GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1"},
+            childNodeIDs = { "GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1" },
             nodeID = 28432,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -2317,7 +2317,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         INTRICATE_MAIL_2 = {
-            childNodeIDs = {"GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1"},
+            childNodeIDs = { "GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1" },
             nodeID = 28432,
             threshold = 5,
             inspiration = 10,
@@ -2347,7 +2347,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         INTRICATE_MAIL_3 = {
-            childNodeIDs = {"GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1"},
+            childNodeIDs = { "GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1" },
             nodeID = 28432,
             threshold = 15,
             resourcefulness = 10,
@@ -2377,7 +2377,7 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             },
         },
         INTRICATE_MAIL_4 = {
-            childNodeIDs = {"GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1"},
+            childNodeIDs = { "GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1" },
             nodeID = 28432,
             threshold = 25,
             inspiration = 10,

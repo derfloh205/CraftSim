@@ -112,146 +112,146 @@ end
 function CraftSim.JEWELCRAFTING_DATA:GetData()
     return {
         TOOLSET_MASTERY_1 = { -- all mapped
-            childNodeIDs = {"SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1"},
+            childNodeIDs = { "SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1" },
             equalsSkill = true,
             nodeID = 28672,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TOOLSET_MASTERY_2 = {
-            childNodeIDs = {"SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1"},
+            childNodeIDs = { "SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1" },
             threshold = 0,
             craftingspeedBonusFactor = 0.10,
             nodeID = 28672,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TOOLSET_MASTERY_3 = {
-            childNodeIDs = {"SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1"},
+            childNodeIDs = { "SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1" },
             threshold = 5,
             skill = 3,
             nodeID = 28672,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TOOLSET_MASTERY_4 = {
-            childNodeIDs = {"SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1"},
+            childNodeIDs = { "SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1" },
             threshold = 15,
             skill = 4,
             nodeID = 28672,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TOOLSET_MASTERY_5 = {
-            childNodeIDs = {"SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1"},
+            childNodeIDs = { "SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1" },
             threshold = 25,
             skill = 3,
             nodeID = 28672,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TOOLSET_MASTERY_6 = {
-            childNodeIDs = {"SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1"},
+            childNodeIDs = { "SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1" },
             threshold = 30,
             inspiration = 10,
             resourcefulness = 10,
             craftingspeedBonusFactor = 0.10,
             nodeID = 28672,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SAVING_SLIVERS_1 = {
             nodeID = 81119,
             equalsResourcefulness = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SAVING_SLIVERS_2 = {
             nodeID = 81119,
             threshold = 0,
             resourcefulnessExtraItemsFactor = 0.05,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SAVING_SLIVERS_3 = {
             nodeID = 81119,
             threshold = 5,
             resourcefulness = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SAVING_SLIVERS_4 = {
             nodeID = 81119,
             threshold = 10,
             resourcefulnessExtraItemsFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SAVING_SLIVERS_5 = {
             nodeID = 81119,
             threshold = 15,
             resourcefulness = 15,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SAVING_SLIVERS_6 = {
             nodeID = 81119,
             threshold = 20,
             resourcefulnessExtraItemsFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SAVING_SLIVERS_7 = {
             nodeID = 81119,
             threshold = 25,
             resourcefulness = 15,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SAVING_SLIVERS_8 = {
             nodeID = 81119,
             threshold = 30,
             resourcefulnessExtraItemsFactor = 0.25,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         BRILLIANT_BAUBLING_1 = {
             nodeID = 81118,
             equalsInspiration = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         BRILLIANT_BAUBLING_2 = {
             nodeID = 81118,
             threshold = 0,
             inspirationBonusSkillFactor = 0.05,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         BRILLIANT_BAUBLING_3 = {
             nodeID = 81118,
             threshold = 5,
             inspiration = 15,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         BRILLIANT_BAUBLING_4 = {
             nodeID = 81118,
             threshold = 10,
             inspirationBonusSkillFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         BRILLIANT_BAUBLING_5 = {
             nodeID = 81118,
             threshold = 15,
             inspiration = 15,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         BRILLIANT_BAUBLING_6 = {
             nodeID = 81118,
             threshold = 20,
             inspirationBonusSkillFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         BRILLIANT_BAUBLING_7 = {
             nodeID = 81118,
             threshold = 25,
             inspiration = 15,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         BRILLIANT_BAUBLING_8 = {
             nodeID = 81118,
             threshold = 30,
             inspirationBonusSkillFactor = 0.25,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
-        
+
         FACETING_1 = { -- air mapped, earth mapped, fire mapped, frost mapped
             nodeID = 28660,
-            childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            childNodeIDs = { "AIR_1", "EARTH_1", "FIRE_1", "FROST_1" },
             equalsSkill = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
@@ -269,7 +269,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.FROST_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
-                
+
             },
             exceptionRecipeIDs = {
                 374467, -- Primalist Air,
@@ -282,7 +282,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28660,
             threshold = 5,
             inspiration = 5,
-            childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            childNodeIDs = { "AIR_1", "EARTH_1", "FIRE_1", "FROST_1" },
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -299,7 +299,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.FROST_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
-                
+
             },
             exceptionRecipeIDs = {
                 374467, -- Primalist Air,
@@ -312,7 +312,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28660,
             threshold = 15,
             resourcefulness = 5,
-            childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            childNodeIDs = { "AIR_1", "EARTH_1", "FIRE_1", "FROST_1" },
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -329,7 +329,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.FROST_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
-                
+
             },
             exceptionRecipeIDs = {
                 374467, -- Primalist Air,
@@ -342,7 +342,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28660,
             threshold = 25,
             multicraft = 20,
-            childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            childNodeIDs = { "AIR_1", "EARTH_1", "FIRE_1", "FROST_1" },
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -359,7 +359,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.FROST_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
-                
+
             },
             exceptionRecipeIDs = {
                 374467, -- Primalist Air,
@@ -372,7 +372,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28660,
             threshold = 35,
             skill = 5,
-            childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            childNodeIDs = { "AIR_1", "EARTH_1", "FIRE_1", "FROST_1" },
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -389,7 +389,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.FROST_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
-                
+
             },
             exceptionRecipeIDs = {
                 374467, -- Primalist Air,
@@ -402,7 +402,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             nodeID = 28660,
             threshold = 40,
             craftingspeedBonusFactor = 0.10,
-            childNodeIDs = {"AIR_1", "EARTH_1", "FIRE_1", "FROST_1"},
+            childNodeIDs = { "AIR_1", "EARTH_1", "FIRE_1", "FROST_1" },
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -419,7 +419,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.FROST_GEMS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
                 }
-                
+
             },
             exceptionRecipeIDs = {
                 374467, -- Primalist Air,
@@ -688,7 +688,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         },
         -- Setting
         SETTING_1 = { -- jewelry mapped, carving mapped
-            childNodeIDs = {"JEWELRY_1", "CARVING_1"},
+            childNodeIDs = { "JEWELRY_1", "CARVING_1" },
             nodeID = 28728,
             equalsSkill = true,
             idMapping = {
@@ -720,7 +720,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         SETTING_2 = {
-            childNodeIDs = {"JEWELRY_1", "CARVING_1"},
+            childNodeIDs = { "JEWELRY_1", "CARVING_1" },
             nodeID = 28728,
             threshold = 5,
             inspiration = 5,
@@ -750,7 +750,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         SETTING_3 = {
-            childNodeIDs = {"JEWELRY_1", "CARVING_1"},
+            childNodeIDs = { "JEWELRY_1", "CARVING_1" },
             nodeID = 28728,
             threshold = 15,
             resourcefulness = 5,
@@ -780,7 +780,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         SETTING_4 = {
-            childNodeIDs = {"JEWELRY_1", "CARVING_1"},
+            childNodeIDs = { "JEWELRY_1", "CARVING_1" },
             nodeID = 28728,
             threshold = 25,
             inspiration = 5,
@@ -810,7 +810,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         JEWELRY_1 = { -- necks mapped, rings mapped
-            childNodeIDs = {"NECKLACES_1", "RINGS_1"},
+            childNodeIDs = { "NECKLACES_1", "RINGS_1" },
             nodeID = 28727,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -828,7 +828,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         JEWELRY_2 = {
-            childNodeIDs = {"NECKLACES_1", "RINGS_1"},
+            childNodeIDs = { "NECKLACES_1", "RINGS_1" },
             nodeID = 28727,
             threshold = 0,
             resourcefulness = 5,
@@ -847,7 +847,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         JEWELRY_3 = {
-            childNodeIDs = {"NECKLACES_1", "RINGS_1"},
+            childNodeIDs = { "NECKLACES_1", "RINGS_1" },
             nodeID = 28727,
             threshold = 5,
             skill = 5,
@@ -866,7 +866,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         CARVING_1 = { -- idols mapped, stone mapped
-            childNodeIDs = {"IDOLS_1", "STONE_1"},
+            childNodeIDs = { "IDOLS_1", "STONE_1" },
             nodeID = 28724,
             equalsSkill = true,
             idMapping = {
@@ -879,7 +879,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         CARVING_2 = {
-            childNodeIDs = {"IDOLS_1", "STONE_1"},
+            childNodeIDs = { "IDOLS_1", "STONE_1" },
             nodeID = 28724,
             threshold = 0,
             resourcefulness = 5,
@@ -893,7 +893,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         CARVING_3 = {
-            childNodeIDs = {"IDOLS_1", "STONE_1"},
+            childNodeIDs = { "IDOLS_1", "STONE_1" },
             nodeID = 28724,
             threshold = 5,
             skill = 5,
@@ -907,7 +907,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         CARVING_4 = {
-            childNodeIDs = {"IDOLS_1", "STONE_1"},
+            childNodeIDs = { "IDOLS_1", "STONE_1" },
             nodeID = 28724,
             threshold = 15,
             skill = 5,
@@ -921,7 +921,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
             },
         },
         CARVING_5 = {
-            childNodeIDs = {"IDOLS_1", "STONE_1"},
+            childNodeIDs = { "IDOLS_1", "STONE_1" },
             nodeID = 28724,
             threshold = 25,
             resourcefulness = 5,
@@ -1179,7 +1179,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         },
         ENTERPRISING_1 = { -- p mapped, extra mapped, glass mapped
             nodeID = 28610,
-            childNodeIDs = {"PROSPECTING_1", "EXTRAVAGANCIES_1", "GLASSWARE_1"},
+            childNodeIDs = { "PROSPECTING_1", "EXTRAVAGANCIES_1", "GLASSWARE_1" },
             equalsSkill = true,
             exceptionRecipeIDs = {
                 374627, -- prospecting
@@ -1198,7 +1198,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         },
         ENTERPRISING_2 = {
             nodeID = 28610,
-            childNodeIDs = {"PROSPECTING_1", "EXTRAVAGANCIES_1", "GLASSWARE_1"},
+            childNodeIDs = { "PROSPECTING_1", "EXTRAVAGANCIES_1", "GLASSWARE_1" },
             threshold = 5,
             inspiration = 5,
             exceptionRecipeIDs = {
@@ -1218,7 +1218,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
         },
         ENTERPRISING_3 = {
             nodeID = 28610,
-            childNodeIDs = {"PROSPECTING_1", "EXTRAVAGANCIES_1", "GLASSWARE_1"},
+            childNodeIDs = { "PROSPECTING_1", "EXTRAVAGANCIES_1", "GLASSWARE_1" },
             threshold = 25,
             resourcefulness = 5,
             exceptionRecipeIDs = {
@@ -1524,7 +1524,7 @@ function CraftSim.JEWELCRAFTING_DATA:GetData()
                 374477, -- Draconic Vial
             },
             threshold = 40,
-            multicraft = 10, 
+            multicraft = 10,
         },
     }
 end

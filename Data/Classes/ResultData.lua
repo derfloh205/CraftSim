@@ -50,7 +50,7 @@ function CraftSim.ResultData:new(recipeData)
     self.chanceByQuality = {}
 
     ---@type number[] if an item is unreachable the expected crafts are nil
-    self.expectedCraftsByQuality = {} 
+    self.expectedCraftsByQuality = {}
 
     self:UpdatePossibleResultItems()
 end
@@ -78,13 +78,15 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
     elseif recipeData.isGear then
-        local itemLinks = CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, recipeData.allocationItemGUID, recipeData.maxQuality)
-    
+        local itemLinks = CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeData.recipeID,
+            craftingReagentInfoTbl, recipeData.allocationItemGUID, recipeData.maxQuality)
+
         for _, itemLink in pairs(itemLinks) do
             table.insert(self.itemsByQuality, Item:CreateFromItemLink(itemLink))
         end
-    else 
-        local itemIDs = CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeData.recipeID, craftingReagentInfoTbl, recipeData.allocationItemGUID)
+    else
+        local itemIDs = CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeData.recipeID,
+            craftingReagentInfoTbl, recipeData.allocationItemGUID)
         for _, itemID in pairs(itemIDs) do
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
@@ -92,14 +94,14 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
 
     if not recipeData.isGear and self.itemsByQuality[1] and self.itemsByQuality[2] then
         if self.itemsByQuality[1]:GetItemID() == self.itemsByQuality[2]:GetItemID() then
-            self.itemsByQuality = {self.itemsByQuality[1]} -- force one of an item (illustrious insight e.g. has always 3 items in it for whatever reason)
+            self.itemsByQuality = { self.itemsByQuality[1] } -- force one of an item (illustrious insight e.g. has always 3 items in it for whatever reason)
         end
     end
 end
 
 --- Updates based on professionStats and reagentData
 function CraftSim.ResultData:Update()
-    local recipeData = self.recipeData   
+    local recipeData = self.recipeData
 
     if recipeData.isGear then
         self:UpdatePossibleResultItems()
@@ -114,7 +116,8 @@ function CraftSim.ResultData:Update()
 
     -- TODO: new util function? V2 ?
     local function expectedQualityBySkill(skill, maxQuality, recipeDifficulty)
-        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(maxQuality, recipeDifficulty, CraftSimOptions.breakPointOffset)
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(maxQuality, recipeDifficulty,
+            CraftSimOptions.breakPointOffset)
         local expectedQuality = 1
 
         for _, threshold in pairs(thresholds) do
@@ -134,7 +137,8 @@ function CraftSim.ResultData:Update()
         return
     end
 
-    self.expectedQuality = expectedQualityBySkill(professionStats.skill.value, recipeData.maxQuality, professionStats.recipeDifficulty.value)
+    self.expectedQuality = expectedQualityBySkill(professionStats.skill.value, recipeData.maxQuality,
+        professionStats.recipeDifficulty.value)
     self.expectedItem = self.itemsByQuality[self.expectedQuality]
 
     local hsvInfo = CraftSim.CALC:GetHSVInfo(self.recipeData)
@@ -142,7 +146,8 @@ function CraftSim.ResultData:Update()
     self.hsvInfo = hsvInfo
 
     local skillInspiration = professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor()
-    local qualityInspiration = expectedQualityBySkill(skillInspiration, recipeData.maxQuality, professionStats.recipeDifficulty.value)
+    local qualityInspiration = expectedQualityBySkill(skillInspiration, recipeData.maxQuality,
+        professionStats.recipeDifficulty.value)
 
     local qualityHSV = self.expectedQuality
     local qualityInspirationHSV = qualityInspiration
@@ -166,7 +171,7 @@ function CraftSim.ResultData:Update()
     -- expectedQualityWithInspirationAndHSV = 1
     --> qualityInspirationHSV = 1
     --> qualityInspirationHSVSkip = 1
-    
+
     -- case #2
     -- expected = 1
     -- qualityHSV = 1
@@ -208,7 +213,8 @@ function CraftSim.ResultData:Update()
     --> qualityInspirationHSVSkip = 3
 
     -- TODO: rename to highest quality Upgrade
-    self.expectedQualityUpgrade = math.max(self.expectedQuality, qualityInspiration, qualityHSV, qualityInspirationHSV, qualityInspirationHSVSkip)
+    self.expectedQualityUpgrade = math.max(self.expectedQuality, qualityInspiration, qualityHSV, qualityInspirationHSV,
+        qualityInspirationHSVSkip)
     self.expectedQualityInspiration = qualityInspiration
     self.expectedQualityHSV = qualityHSV
     self.expectedQualityInspirationHSV = qualityInspirationHSV
@@ -231,7 +237,7 @@ function CraftSim.ResultData:Update()
     self.chanceInspirationHSV = self.hsvInfo.chanceNextQuality * self.chanceInspiration
     self.chanceInspirationHSVSkip = self.hsvInfo.chanceSkipQuality * self.chanceInspiration
 
-    -- refactor below with hsvInfo 
+    -- refactor below with hsvInfo
     self.expectedCraftsByQuality = {}
     self.chanceByQuality = {}
 
@@ -244,22 +250,22 @@ function CraftSim.ResultData:Update()
                 if quality ~= qualityHSV and quality == qualityInspiration then
                     -- just reachable by inspiration
                     self.chanceByQuality[quality] = self.chanceInspiration
-                elseif quality == qualityHSV and quality == qualityInspiration then 
+                elseif quality == qualityHSV and quality == qualityInspiration then
                     -- reachable by hsv or inspiration or both
-                    self.chanceByQuality[quality] = 
-                    self.hsvInfo.chanceNextQuality * self.chanceInspiration + 
-                    (1-self.hsvInfo.chanceNextQuality) * self.chanceInspiration +
-                    self.hsvInfo.chanceNextQuality * (1-self.chanceInspiration)
+                    self.chanceByQuality[quality] =
+                        self.hsvInfo.chanceNextQuality * self.chanceInspiration +
+                        (1 - self.hsvInfo.chanceNextQuality) * self.chanceInspiration +
+                        self.hsvInfo.chanceNextQuality * (1 - self.chanceInspiration)
                 elseif quality == qualityHSV and quality ~= qualityInspiration then
                     -- if we get the quality via hsv but inspiration alone skips it
                     self.chanceByQuality[quality] = self.hsvInfo.chanceNextQuality
                 elseif quality ~= qualityHSV and quality ~= qualityInspiration and quality == qualityInspirationHSV then
                     -- only reachable with hsv and inspiration together
                     self.chanceByQuality[quality] = self.chanceInspirationHSV
-                else 
+                else
                     -- if none of the above holds, chance to reach the quality is 0
                     self.chanceByQuality[quality] = 0
-                end 
+                end
             elseif quality == self.expectedQuality + 2 then
                 if quality == qualityInspiration then
                     -- inspiration skips us directly to this quality, then its just the inspiration chance
@@ -267,7 +273,7 @@ function CraftSim.ResultData:Update()
                 elseif quality == qualityInspirationHSVSkip then
                     -- we can only reach the quality with inspiration and hsv skip chance
                     self.chanceByQuality[quality] = self.chanceInspirationHSVSkip
-                else 
+                else
                     -- if none of the above holds, chance to reach the quality is 0
                     self.chanceByQuality[quality] = 0
                 end
@@ -288,12 +294,12 @@ function CraftSim.ResultData:Update()
     self.chanceByQuality[self.expectedQuality] = 1
     if self.expectedQuality + 1 <= self.recipeData.maxQuality then
         self.chanceByQuality[self.expectedQuality] = self.chanceByQuality
-          [self.expectedQuality] - self.chanceByQuality
-          [self.expectedQuality + 1]
+            [self.expectedQuality] - self.chanceByQuality
+            [self.expectedQuality + 1]
         if self.expectedQuality + 2 <= self.recipeData.maxQuality then
             self.chanceByQuality[self.expectedQuality] = self.chanceByQuality
-              [self.expectedQuality] -
-              self.chanceByQuality[self.expectedQuality + 2]
+                [self.expectedQuality] -
+                self.chanceByQuality[self.expectedQuality + 2]
         end
     end
 
@@ -312,9 +318,9 @@ function CraftSim.ResultData:Debug()
         table.insert(debugLines, "Possible Result Q" .. q .. " " .. (item:GetItemLink() or item:GetItemID()))
     end
     for q, chance in pairs(self.chanceByQuality) do
-        table.insert(debugLines, "Q" .. q .. " Chance: " .. chance*100 .. " %")
+        table.insert(debugLines, "Q" .. q .. " Chance: " .. chance * 100 .. " %")
     end
-    return CraftSim.GUTIL:Concat({debugLines, 
+    return CraftSim.GUTIL:Concat({ debugLines,
         {
             "expectedQuality: " .. tostring(self.expectedQuality),
             "expectedQualityUpgrade: " .. tostring(self.expectedQualityUpgrade),
@@ -325,22 +331,25 @@ function CraftSim.ResultData:Debug()
             "expectedItem: " .. tostring(self.expectedItem and self.expectedItem:GetItemLink()),
             "expectedItemUpgrade: " .. tostring(self.expectedItemUpgrade and self.expectedItemUpgrade:GetItemLink()),
             "canUpgradeQuality: " .. tostring(self.canUpgradeQuality),
-            "expectedItemInspiration: " .. tostring(self.expectedItemInspiration and self.expectedItemInspiration:GetItemLink()),
+            "expectedItemInspiration: " ..
+            tostring(self.expectedItemInspiration and self.expectedItemInspiration:GetItemLink()),
             "expectedItemHSV: " .. tostring(self.expectedItemHSV and self.expectedItemHSV:GetItemLink()),
-            "expectedItemInspirationHSV: " .. tostring(self.expectedItemInspirationHSV and self.expectedItemInspirationHSV:GetItemLink()),
-            "expectedItemInspirationHSVSkip: " .. tostring(self.expectedItemInspirationHSVSkip and self.expectedItemInspirationHSVSkip:GetItemLink()),
-            "chanceUpgrade: " .. tostring(self.chanceUpgrade*100) .. "%", 
-            "chanceInspiration: " .. tostring(self.chanceInspiration*100) .. "%", 
-            "chanceHSV: " .. tostring(self.chanceHSV*100) .. "%", 
-            "chanceInspirationHSV: " .. tostring(self.chanceInspirationHSV*100) .. "%", 
-            "chanceInspirationHSVSkip: " .. tostring(self.chanceInspirationHSVSkip*100) .. "%", 
+            "expectedItemInspirationHSV: " ..
+            tostring(self.expectedItemInspirationHSV and self.expectedItemInspirationHSV:GetItemLink()),
+            "expectedItemInspirationHSVSkip: " ..
+            tostring(self.expectedItemInspirationHSVSkip and self.expectedItemInspirationHSVSkip:GetItemLink()),
+            "chanceUpgrade: " .. tostring(self.chanceUpgrade * 100) .. "%",
+            "chanceInspiration: " .. tostring(self.chanceInspiration * 100) .. "%",
+            "chanceHSV: " .. tostring(self.chanceHSV * 100) .. "%",
+            "chanceInspirationHSV: " .. tostring(self.chanceInspirationHSV * 100) .. "%",
+            "chanceInspirationHSVSkip: " .. tostring(self.chanceInspirationHSVSkip * 100) .. "%",
         }
     })
 end
 
 function CraftSim.ResultData:Copy(recipeData)
     local copy = CraftSim.ResultData(recipeData)
-    return  copy
+    return copy
 end
 
 ---@class CraftSim.ResultData.Serialized
@@ -364,7 +373,7 @@ end
 --- Make sure that the items are loaded before serializing or the links are empty
 function CraftSim.ResultData:Serialize()
     local serialized = {}
-    serialized.itemLinksByQuality = CraftSim.GUTIL:Map(self.itemsByQuality, function (item)
+    serialized.itemLinksByQuality = CraftSim.GUTIL:Map(self.itemsByQuality, function(item)
         return item:GetItemLink()
     end)
     serialized.expectedQuality = self.expectedQuality
@@ -375,9 +384,11 @@ function CraftSim.ResultData:Serialize()
     serialized.canUpgradeQuality = self.canUpgradeQuality
     serialized.expectedItemLink = (self.expectedItem and self.expectedItem:GetItemLink()) or nil
     serialized.expectedItemLinkUpgrade = (self.expectedItemUpgrade and self.expectedItemUpgrade:GetItemLink()) or nil
-    serialized.expectedItemLinkInspiration = (self.expectedItemInspiration and self.expectedItemInspiration:GetItemLink()) or nil
+    serialized.expectedItemLinkInspiration = (self.expectedItemInspiration and self.expectedItemInspiration:GetItemLink()) or
+        nil
     serialized.expectedItemLinkHSV = (self.expectedItemHSV and self.expectedItemHSV:GetItemLink()) or nil
-    serialized.expectedItemLinkInspirationHSV = (self.expectedItemInspirationHSV and self.expectedItemInspirationHSV:GetItemLink()) or nil
+    serialized.expectedItemLinkInspirationHSV = (self.expectedItemInspirationHSV and self.expectedItemInspirationHSV:GetItemLink()) or
+        nil
     serialized.chanceUpgrade = self.chanceUpgrade
     serialized.chanceInspiration = self.chanceInspiration
     serialized.chanceHSV = self.chanceHSV
@@ -390,7 +401,7 @@ end
 ---@return CraftSim.ResultData
 function CraftSim.ResultData:Deserialize(serializedResultData)
     local deserialized = CraftSim.ResultData()
-    deserialized.itemsByQuality = CraftSim.GUTIL:Map(serializedResultData.itemLinksByQuality, function (itemLink)
+    deserialized.itemsByQuality = CraftSim.GUTIL:Map(serializedResultData.itemLinksByQuality, function(itemLink)
         return Item:CreateFromItemLink(itemLink)
     end)
     deserialized.expectedQuality = tonumber(serializedResultData.expectedQuality)
@@ -403,11 +414,16 @@ function CraftSim.ResultData:Deserialize(serializedResultData)
     deserialized.chanceHSV = tonumber(serializedResultData.chanceHSV)
     deserialized.chanceInspirationHSV = tonumber(serializedResultData.chanceInspirationHSV)
     deserialized.canUpgradeQuality = not not serializedResultData.canUpgradeQuality
-    deserialized.expectedItem = (serializedResultData.expectedItemLink and deserialized.itemsByQuality[deserialized.expectedQuality]) or nil
-    deserialized.expectedItemUpgrade = (serializedResultData.expectedItemLinkUpgrade and deserialized.itemsByQuality[deserialized.expectedQualityUpgrade]) or nil
-    deserialized.expectedItemInspiration = (serializedResultData.expectedItemLinkInspiration and deserialized.itemsByQuality[deserialized.expectedQualityInspiration]) or nil
-    deserialized.expectedItemHSV = (serializedResultData.expectedItemLinkHSV and deserialized.itemsByQuality[deserialized.expectedQualityHSV]) or nil
-    deserialized.expectedItemInspirationHSV = (serializedResultData.expectedItemLinkInspirationHSV and deserialized.itemsByQuality[deserialized.expectedQualityInspirationHSV]) or nil
+    deserialized.expectedItem = (serializedResultData.expectedItemLink and deserialized.itemsByQuality[deserialized.expectedQuality]) or
+        nil
+    deserialized.expectedItemUpgrade = (serializedResultData.expectedItemLinkUpgrade and deserialized.itemsByQuality[deserialized.expectedQualityUpgrade]) or
+        nil
+    deserialized.expectedItemInspiration = (serializedResultData.expectedItemLinkInspiration and deserialized.itemsByQuality[deserialized.expectedQualityInspiration]) or
+        nil
+    deserialized.expectedItemHSV = (serializedResultData.expectedItemLinkHSV and deserialized.itemsByQuality[deserialized.expectedQualityHSV]) or
+        nil
+    deserialized.expectedItemInspirationHSV = (serializedResultData.expectedItemLinkInspirationHSV and deserialized.itemsByQuality[deserialized.expectedQualityInspirationHSV]) or
+        nil
     return deserialized
 end
 
@@ -416,21 +432,29 @@ function CraftSim.ResultData:GetJSON(indent)
     local jb = CraftSim.JSONBuilder(indent)
     jb:Begin()
     local itemList = {}
-    table.foreach(self.itemsByQuality, function (_, item)
+    table.foreach(self.itemsByQuality, function(_, item)
         table.insert(itemList, tostring(CraftSim.GUTIL:GetItemStringFromLink(item:GetItemLink())))
     end)
-    
+
     jb:AddList("itemsByQuality", itemList)
     jb:Add("expectedQuality", self.expectedQuality)
     jb:Add("expectedQualityInspiration", self.expectedQualityInspiration)
     jb:Add("expectedQualityHSV", self.expectedQualityHSV)
     jb:Add("expectedQualityInspirationHSV", self.expectedQualityInspirationHSV)
     jb:Add("expectedQualityUpgrade", self.expectedQualityUpgrade)
-    jb:Add("expectedItem", (self.expectedItem and CraftSim.GUTIL:GetItemStringFromLink(self.expectedItem:GetItemLink())) or nil)
-    jb:Add("expectedItemUpgrade", (self.expectedItemUpgrade and CraftSim.GUTIL:GetItemStringFromLink(self.expectedItemUpgrade:GetItemLink())) or nil)
-    jb:Add("expectedItemInspiration", (self.expectedItemInspiration and CraftSim.GUTIL:GetItemStringFromLink(self.expectedItemInspiration:GetItemLink())) or nil)
-    jb:Add("expectedItemHSV", (self.expectedItemHSV and CraftSim.GUTIL:GetItemStringFromLink(self.expectedItemHSV:GetItemLink())) or nil)
-    jb:Add("expectedItemInspirationHSV", (self.expectedItemInspirationHSV and CraftSim.GUTIL:GetItemStringFromLink(self.expectedItemInspirationHSV:GetItemLink())) or nil)
+    jb:Add("expectedItem",
+        (self.expectedItem and CraftSim.GUTIL:GetItemStringFromLink(self.expectedItem:GetItemLink())) or nil)
+    jb:Add("expectedItemUpgrade",
+        (self.expectedItemUpgrade and CraftSim.GUTIL:GetItemStringFromLink(self.expectedItemUpgrade:GetItemLink())) or
+        nil)
+    jb:Add("expectedItemInspiration",
+        (self.expectedItemInspiration and CraftSim.GUTIL:GetItemStringFromLink(self.expectedItemInspiration:GetItemLink())) or
+        nil)
+    jb:Add("expectedItemHSV",
+        (self.expectedItemHSV and CraftSim.GUTIL:GetItemStringFromLink(self.expectedItemHSV:GetItemLink())) or nil)
+    jb:Add("expectedItemInspirationHSV",
+        (self.expectedItemInspirationHSV and CraftSim.GUTIL:GetItemStringFromLink(self.expectedItemInspirationHSV:GetItemLink())) or
+        nil)
     jb:Add("canUpgradeQuality", self.canUpgradeQuality)
     jb:Add("canUpgradeInspiration", self.canUpgradeInspiration)
     jb:Add("canUpgradeHSV", self.canUpgradeHSV)

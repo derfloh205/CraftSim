@@ -35,8 +35,7 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult)
     self.totalSavedCosts = self.totalSavedCosts + craftResult.savedCosts
     self.totalExpectedSavedCosts = self.totalExpectedSavedCosts + craftResult.expectedAverageSavedCosts
 
-    table.foreach(craftResult.craftResultItems, function (_, craftResultItemA)
-
+    table.foreach(craftResult.craftResultItems, function(_, craftResultItemA)
         self.numMulticraftExtraItems = self.numMulticraftExtraItems + craftResultItemA.quantityMulticraft
 
         local found = CraftSim.GUTIL:Find(self.totalItems, function(craftResultItemB)
@@ -57,8 +56,8 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult)
         -- we do not need to increase quantity as this would have been already done in the CraftSessionData Constructor
     end)
 
-    table.foreach(craftResult.savedReagents, function (_, savedReagentA)
-        local savedReagentB = CraftSim.GUTIL:Find(self.totalItems, function(savedReagentB) 
+    table.foreach(craftResult.savedReagents, function(_, savedReagentA)
+        local savedReagentB = CraftSim.GUTIL:Find(self.totalItems, function(savedReagentB)
             return savedReagentA.item:GetItemID() == savedReagentB.item:GetItemID()
         end)
 
@@ -66,7 +65,7 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult)
             table.insert(self.totalSavedReagents, savedReagentA)
         end
         -- we do not need to increase quantity as this would have been already done in the CraftSessionData Constructor
-    end) 
+    end)
 
     table.insert(self.craftResults, craftResult)
 end

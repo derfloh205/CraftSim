@@ -60,8 +60,8 @@ end
 ---@param recipeData CraftSim.RecipeData?
 ---@return CraftSim.Buff chefsHat
 function CraftSim.CRAFT_BUFFS:CreateChefsHatBuff(recipeData)
-    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.CHEFS_HAT, CraftSim.ProfessionStats(), nil, nil, nil, 
-    L(CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP))
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.CHEFS_HAT, CraftSim.ProfessionStats(), nil, nil, nil,
+        L(CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP))
 end
 
 ---@param recipeData CraftSim.RecipeData?
@@ -72,6 +72,7 @@ function CraftSim.CRAFT_BUFFS:CreateElementalShatterFireBuff(recipeData)
 
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.ELEMENTAL_SHATTER_FIRE, shatterStats)
 end
+
 ---@param recipeData CraftSim.RecipeData?
 ---@return CraftSim.Buff elementalShatter
 function CraftSim.CRAFT_BUFFS:CreateElementalShatterFrostBuff(recipeData)
@@ -80,6 +81,7 @@ function CraftSim.CRAFT_BUFFS:CreateElementalShatterFrostBuff(recipeData)
 
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.ELEMENTAL_SHATTER_FROST, shatterStats)
 end
+
 ---@param recipeData CraftSim.RecipeData?
 ---@return CraftSim.Buff elementalShatter
 function CraftSim.CRAFT_BUFFS:CreateElementalShatterEarthBuff(recipeData)
@@ -88,6 +90,7 @@ function CraftSim.CRAFT_BUFFS:CreateElementalShatterEarthBuff(recipeData)
 
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.ELEMENTAL_SHATTER_EARTH, shatterStats)
 end
+
 ---@param recipeData CraftSim.RecipeData?
 ---@return CraftSim.Buff elementalShatter
 function CraftSim.CRAFT_BUFFS:CreateElementalShatterAirBuff(recipeData)
@@ -96,6 +99,7 @@ function CraftSim.CRAFT_BUFFS:CreateElementalShatterAirBuff(recipeData)
 
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.ELEMENTAL_SHATTER_AIR, shatterStats)
 end
+
 ---@param recipeData CraftSim.RecipeData?
 ---@return CraftSim.Buff elementalShatter
 function CraftSim.CRAFT_BUFFS:CreateElementalShatterOrderBuff(recipeData)
@@ -122,7 +126,7 @@ function CraftSim.CRAFT_BUFFS:CreateQuickPhialBuffs(recipeData)
     local quickPhialQ2Stats = CraftSim.ProfessionStats()
     quickPhialQ2Stats.craftingspeed:SetValueByPercent(0.24)
 
-    table.insert(buffs, CraftSim.Buff(recipeData,CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS, quickPhialQ2Stats, 2, {
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS, quickPhialQ2Stats, 2, {
         index = 1,
         value = 24
     }, CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS_SPELL_Q2))
@@ -131,7 +135,7 @@ function CraftSim.CRAFT_BUFFS:CreateQuickPhialBuffs(recipeData)
     local quickPhialQ3Stats = CraftSim.ProfessionStats()
     quickPhialQ3Stats.craftingspeed:SetValueByPercent(0.30)
 
-    table.insert(buffs, CraftSim.Buff(recipeData,CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS, quickPhialQ3Stats, 3, {
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS, quickPhialQ3Stats, 3, {
         index = 1,
         value = 30
     }, CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS_SPELL_Q3))

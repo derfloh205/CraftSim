@@ -36,7 +36,7 @@ function CraftSim.OptionalReagent:Debug()
 end
 
 function CraftSim.OptionalReagent:Copy()
-    local copy = CraftSim.OptionalReagent({itemID = self.item:GetItemID()})
+    local copy = CraftSim.OptionalReagent({ itemID = self.item:GetItemID() })
     return copy
 end
 

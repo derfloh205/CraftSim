@@ -12,77 +12,109 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     local offsetY = -125
 
     local frameWO = CraftSim.GGUI.Frame({
-        parent=ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
-        anchorParent=ProfessionsFrame, 
-        sizeX=sizeX,sizeY=sizeY,
-        frameID=CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER, 
-        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_TITLE) .. " " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
-        collapseable=true,
-        closeable=true,
-        moveable=true,
-        anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",offsetX=offsetX, offsetY=offsetY,
-        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesMaterials"),
-        frameTable=CraftSim.MAIN.FRAMES,
-        frameConfigTable=CraftSimGGUIConfig,
+        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails,
+        anchorParent = ProfessionsFrame,
+        sizeX = sizeX,
+        sizeY = sizeY,
+        frameID = CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER,
+        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_TITLE) ..
+            " " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+        collapseable = true,
+        closeable = true,
+        moveable = true,
+        anchorA = "BOTTOMLEFT",
+        anchorB = "BOTTOMRIGHT",
+        offsetX = offsetX,
+        offsetY = offsetY,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesMaterials"),
+        frameTable = CraftSim.MAIN.FRAMES,
+        frameConfigTable = CraftSimGGUIConfig,
     })
     local frameNO_WO = CraftSim.GGUI.Frame({
-        parent=ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent=ProfessionsFrame, 
-        sizeX=sizeX,sizeY=sizeY,
-        frameID=CraftSim.CONST.FRAMES.MATERIALS, 
-        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_TITLE),
-        collapseable=true,
-        closeable=true,
-        moveable=true,
-        anchorA="BOTTOMLEFT",anchorB="BOTTOMRIGHT",offsetX=offsetX, offsetY=offsetY,
-        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback=CraftSim.FRAME:HandleModuleClose("modulesMaterials"),
-        frameTable=CraftSim.MAIN.FRAMES,
-        frameConfigTable=CraftSimGGUIConfig,
+        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorParent = ProfessionsFrame,
+        sizeX = sizeX,
+        sizeY = sizeY,
+        frameID = CraftSim.CONST.FRAMES.MATERIALS,
+        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_TITLE),
+        collapseable = true,
+        closeable = true,
+        moveable = true,
+        anchorA = "BOTTOMLEFT",
+        anchorB = "BOTTOMRIGHT",
+        offsetX = offsetX,
+        offsetY = offsetY,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesMaterials"),
+        frameTable = CraftSim.MAIN.FRAMES,
+        frameConfigTable = CraftSimGGUIConfig,
     })
 
     local function createContent(frame)
-    
-        frame.content.qualityText = CraftSim.GGUI.Text{
-            parent = frame.content, anchorParent=frame.title.frame, anchorA="TOP", anchorB="TOP", offsetY=-25,
-            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY)
+        frame.content.qualityText = CraftSim.GGUI.Text {
+            parent = frame.content, anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "TOP", offsetY = -25,
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY)
         }
-    
+
         frame.content.qualityIcon = CraftSim.GGUI.QualityIcon({
-            parent=frame.content,anchorParent=frame.content.qualityText.frame,anchorA="LEFT",anchorB="RIGHT",offsetX=3,
-            sizeX=25,sizeY=25,
+            parent = frame.content,
+            anchorParent = frame.content.qualityText.frame,
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
+            offsetX = 3,
+            sizeX = 25,
+            sizeY = 25,
         })
-    
+
         frame.content.allocateButton = CraftSim.GGUI.Button({
-            parent=frame.content,anchorParent=frame.content.qualityText.frame, anchorA="TOP", anchorB="TOP", offsetY=-20,
-            label="Assign",sizeX=15,sizeY=20,adjustWidth=true,
+            parent = frame.content,
+            anchorParent = frame.content.qualityText.frame,
+            anchorA = "TOP",
+            anchorB = "TOP",
+            offsetY = -20,
+            label = "Assign",
+            sizeX = 15,
+            sizeY = 20,
+            adjustWidth = true,
         })
-    
+
         frame.content.allocateText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        frame.content.allocateText:SetPoint("TOP", frame.content.qualityText.frame, "TOP", 0, -20)	
+        frame.content.allocateText:SetPoint("TOP", frame.content.qualityText.frame, "TOP", 0, -20)
         frame.content.allocateText:SetText("")
-    
+
         frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         frame.content.infoText:SetPoint("CENTER", frame.content, "CENTER", 0, 0)
         frame.content.infoText.NoCombinationFound = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION)
         frame.content.infoText.SameCombination = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION)
         frame.content.infoText:SetText(frame.content.infoText.NoCombinationFound)
-    
+
         local iconsOffsetY = -25
         local iconsSpacingY = 25
-    
+
         frame.content.reagentFrames = {}
         frame.content.reagentFrames.rows = {}
         frame.content.reagentFrames.numReagents = 0
         local iconSize = 30
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY, iconSize))
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY - iconsSpacingY, iconSize))
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY - iconsSpacingY*2, iconSize))
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY - iconsSpacingY*3, iconSize))
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY - iconsSpacingY*4, iconSize))
-        table.insert(frame.content.reagentFrames.rows, CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame, iconsOffsetY - iconsSpacingY*5, iconSize))
-    
+        table.insert(frame.content.reagentFrames.rows,
+            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+                iconsOffsetY, iconSize))
+        table.insert(frame.content.reagentFrames.rows,
+            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+                iconsOffsetY - iconsSpacingY, iconSize))
+        table.insert(frame.content.reagentFrames.rows,
+            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+                iconsOffsetY - iconsSpacingY * 2, iconSize))
+        table.insert(frame.content.reagentFrames.rows,
+            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+                iconsOffsetY - iconsSpacingY * 3, iconSize))
+        table.insert(frame.content.reagentFrames.rows,
+            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+                iconsOffsetY - iconsSpacingY * 4, iconSize))
+        table.insert(frame.content.reagentFrames.rows,
+            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+                iconsOffsetY - iconsSpacingY * 5, iconSize))
+
         frame:Hide()
     end
 
@@ -101,19 +133,34 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(parent, hookFra
     local reagentIconsOffsetX = 70
 
     reagentFrame.q1Icon = CraftSim.GGUI.Icon({
-        parent=reagentFrame, anchorParent=reagentFrame,
-        sizeX=25, sizeY=25, anchorA="LEFT", anchorB="LEFT",
-        offsetX=reagentRowOffsetX, qualityIconScale=1.6,
+        parent = reagentFrame,
+        anchorParent = reagentFrame,
+        sizeX = 25,
+        sizeY = 25,
+        anchorA = "LEFT",
+        anchorB = "LEFT",
+        offsetX = reagentRowOffsetX,
+        qualityIconScale = 1.6,
     })
     reagentFrame.q2Icon = CraftSim.GGUI.Icon({
-        parent=reagentFrame, anchorParent=reagentFrame,
-        sizeX=25, sizeY=25, anchorA="LEFT", anchorB="LEFT",
-        offsetX=reagentRowOffsetX + reagentIconsOffsetX,qualityIconScale=1.6,
+        parent = reagentFrame,
+        anchorParent = reagentFrame,
+        sizeX = 25,
+        sizeY = 25,
+        anchorA = "LEFT",
+        anchorB = "LEFT",
+        offsetX = reagentRowOffsetX + reagentIconsOffsetX,
+        qualityIconScale = 1.6,
     })
     reagentFrame.q3Icon = CraftSim.GGUI.Icon({
-        parent=reagentFrame, anchorParent=reagentFrame,
-        sizeX=25, sizeY=25, anchorA="LEFT", anchorB="LEFT",
-        offsetX=reagentRowOffsetX + reagentIconsOffsetX*2,qualityIconScale=1.6,
+        parent = reagentFrame,
+        anchorParent = reagentFrame,
+        sizeX = 25,
+        sizeY = 25,
+        anchorA = "LEFT",
+        anchorB = "LEFT",
+        offsetX = reagentRowOffsetX + reagentIconsOffsetX * 2,
+        qualityIconScale = 1.6,
     })
 
     reagentFrame.q1text = reagentFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -132,7 +179,6 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(parent, hookFra
     return reagentFrame
 end
 
-
 ---@param recipeData CraftSim.RecipeData
 ---@param optimizationResult? CraftSim.ReagentOptimizationResult
 ---@param exportMode number
@@ -148,7 +194,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
     if optimizationResult then
         isSameAllocation = optimizationResult:IsAllocated(recipeData)
     end
-    
+
     if optimizationResult == nil or isSameAllocation then
         materialFrame.content.infoText:Show()
         if isSameAllocation then
@@ -176,7 +222,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
         materialFrame.content.allocateButton:SetEnabled(CraftSim.SIMULATION_MODE.isActive)
         if CraftSim.SIMULATION_MODE.isActive then
             materialFrame.content.allocateButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_ASSIGN))
-            materialFrame.content.allocateButton:SetScript("OnClick", function(self) 
+            materialFrame.content.allocateButton:SetScript("OnClick", function(self)
                 -- uncheck best quality box if checked
                 local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
                 if bestQBox:GetChecked() then
@@ -188,9 +234,11 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
             materialFrame.content.allocateText:Show()
             materialFrame.content.allocateButton:Hide()
             if hasItems then
-                materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_AVAILABLE), CraftSim.GUTIL.COLORS.GREEN))
+                materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText(
+                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_AVAILABLE), CraftSim.GUTIL.COLORS.GREEN))
             else
-                materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_MISSING), CraftSim.GUTIL.COLORS.RED))
+                materialFrame.content.allocateText:SetText(CraftSim.GUTIL:ColorizeText(
+                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_MISSING), CraftSim.GUTIL.COLORS.RED))
             end
         end
     end
@@ -219,7 +267,6 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
             materialFrame.content.reagentFrames.rows[frameIndex].q3text:SetText(q3Item.quantity)
 
             materialFrame.content.reagentFrames.rows[frameIndex]:Show()
-
         else
             materialFrame.content.reagentFrames.rows[frameIndex]:Hide()
         end

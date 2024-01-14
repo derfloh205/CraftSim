@@ -15,7 +15,7 @@ CraftSim.CONST.PERCENT_MODS = {
     INSPIRATION = 0.001,
     MULTICRAFT = 0.0009,
     RESOURCEFULNESS = 0.00111,
-    CRAFTINGSPEED = 0.002,  
+    CRAFTINGSPEED = 0.002,
 }
 
 -- some dummy recipes are not flagged as dummy ..........
@@ -28,7 +28,7 @@ CraftSim.CONST.ALCHEMICAL_EXPERIMENTATION_RECIPE_IDS = {
     370743, -- basic potion
     370747, -- adv phial
     370745, -- adv potion
-    60893, -- northrend research
+    60893,  -- northrend research
 }
 
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
@@ -126,9 +126,24 @@ CraftSim.CONST.BACKDROPS = {
         colorB = 1,
         colorA = 0.5,
     }
-}    
+}
 
-CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA = {1, 1, 1, 0.3}
+CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA = { 1, 1, 1, 0.3 }
+
+
+---@enum CraftSim.EXPANSION_IDS
+CraftSim.CONST.EXPANSION_IDS = {
+    VANILLA = 0,
+    THE_BURNING_CRUSADE = 1,
+    WRATH_OF_THE_LICH_KING = 2,
+    CATACLYSM = 3,
+    MISTS_OF_PANDARIA = 4,
+    WARLORDS_OF_DRAENOR = 5,
+    LEGION = 6,
+    BATTLE_FOR_AZEROTH = 7,
+    SHADOWLANDS = 8,
+    DRAGONFLIGHT = 9,
+}
 
 CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
     1566, -- Blacksmithing,
@@ -145,20 +160,20 @@ CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS = {
 CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS = {
     1688, 1522, -- Blacksmithing
     1687, 1525, -- Alchemy
-    1693, -- Leatherworking
-    1686, -- Jewelcrafting
+    1693,       -- Leatherworking
+    1686,       -- Jewelcrafting
     1690, 1527, -- Enchanting
-    1692, -- Inscription
+    1692,       -- Inscription
     1696, 1532, -- Tailoring
     1691, 1528, -- Engineering
-    1526, -- Cooking
+    1526,       -- Cooking
 }
 
 -- that are not within a quest plan category
 CraftSim.CONST.QUEST_RECIPE_IDS = {
     -- Heart in a Bottle
     377984, -- Herbalism
-    377989, -- Leatherworking   
+    377989, -- Leatherworking
     377987, -- Mining
     377978, -- Alchemy
     377982, -- Enchanting
@@ -225,7 +240,7 @@ CraftSim.CONST.PROFESSIONTOOL_INV_TYPES = {
 --     TOOL = "PROF0TOOLSLOT",
 --     GEAR0 = "PROF0GEAR0SLOT",
 --     GEAR1 = "PROF0GEAR1SLOT"
---     }, 
+--     },
 --     {
 --         TOOL = "PROF1TOOLSLOT",
 --         GEAR0 = "PROF1GEAR0SLOT",
@@ -253,12 +268,12 @@ CraftSim.CONST.STAT_MAP = {
 CraftSim.CONST.EMPTY_SLOT_LINK = "empty"
 CraftSim.CONST.EMPTY_SLOT_TEXTURE = "Interface\\containerframe\\bagsitemslot2x"
 
-CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS = {"TradeSkillMaster", "Auctionator", "RECrystallize", "OribosExchange"}
+CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS = { "TradeSkillMaster", "Auctionator", "RECrystallize", "OribosExchange" }
 
 CraftSim.CONST.REAGENT_TYPE = {
-	OPTIONAL = 0,
-	REQUIRED = 1,
-	FINISHING_REAGENT = 2
+    OPTIONAL = 0,
+    REQUIRED = 1,
+    FINISHING_REAGENT = 2
 }
 
 CraftSim.CONST.AUCTION_HOUSE_CUT = 0.95
@@ -268,15 +283,15 @@ CraftSim.CONST.ENCHANTING_VELLUM_ID = 38682
 CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION = "first(DBRecent, DBMinbuyout)"
 
 CraftSim.CONST.RECIPE_TYPES = {
-    GEAR = 0, -- like blue gear
-    SOULBOUND_GEAR = 1, -- like purple gear
+    GEAR = 0,                -- like blue gear
+    SOULBOUND_GEAR = 1,      -- like purple gear
     NO_QUALITY_MULTIPLE = 2, -- like transmuted air
-    NO_QUALITY_SINGLE = 3, -- like repair hammer
-    MULTIPLE = 4, -- like potions..
-    SINGLE = 5, -- like omnium draconis
-    NO_CRAFT_OPERATION = 6, -- like reclaim from alchemy or old world stuff
+    NO_QUALITY_SINGLE = 3,   -- like repair hammer
+    MULTIPLE = 4,            -- like potions..
+    SINGLE = 5,              -- like omnium draconis
+    NO_CRAFT_OPERATION = 6,  -- like reclaim from alchemy or old world stuff
     GATHERING = 7,
-    NO_ITEM = 8, -- like phial experimentation
+    NO_ITEM = 8,             -- like phial experimentation
     ENCHANT = 9,
 }
 
@@ -413,10 +428,10 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
         OPTIONAL_REAGENTS = 1673,
         FINISHING_REAGENTS = 1671,
         PROFESSION_EQUIPMENT = 1606,
-        SPELLTHREAD = 1672, -- Leg enchants for casters
+        SPELLTHREAD = 1672,         -- Leg enchants for casters
         BAGS = 1674,
         ASSORTED_EMBROIDERY = 1670, -- Toys, Bandages & Banners stuff
-        EXPERIMENTS = 1667, -- Two recipes to break your tool and get a set of daggers
+        EXPERIMENTS = 1667,         -- Two recipes to break your tool and get a set of daggers
 
         -- Armor
         ARMOR = 1662,
@@ -454,23 +469,23 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         SHIELDS = 6,
     },
     ALCHEMY = {
-        PHIALS = 3, -- "Flask"
+        PHIALS = 3,   -- "Flask"
         POTIONS = 1,
         REAGENT = 11, -- "Other"
         FINISHING_REAGENT = 19,
         OPTIONAL_REAGENTS = 18,
-        INCENSE = 8, -- "other"
-        ELEMENTAL = 10, -- transmutations
+        INCENSE = 8,                -- "other"
+        ELEMENTAL = 10,             -- transmutations
         EXPLOSIVES_AND_DEVICES = 0, -- transmutations
-        MISC = 0, -- trinket
+        MISC = 0,                   -- trinket
     },
     ENCHANTING = {
         FINISHING_REAGENTS = 19,
         RODS = 8,
         WANDS = 19,
-        ILLUSIONS = 8, -- weapon enchantment transmogs and toys
+        ILLUSIONS = 8,           -- weapon enchantment transmogs and toys
         ILLUSORY_ADORNMENTS = 2, -- temporary shoulder glows
-        SCEPTERS = 14, -- scepters of spectacle
+        SCEPTERS = 14,           -- scepters of spectacle
         SHATTERS = 4,
         COMPANION_PETS = 2,
 
@@ -487,11 +502,11 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         PARTS = 1,
         EXPLOSIVES_AND_DEVICES = 0, -- Explosives, S.A.V.I.O.R, Rummage Through Scrap
         FINISHING_REAGENTS = 19,
-        OPTIONAL_REAGENTS = 18, -- Safety Components, Cogwheels, Magazine of Healing Darts
-        TWO_HANDED_WEAPON = 12, -- Scopes
-        OTHER = 9, -- Tinkers, Fireworks, most Devices
-        OTHER2 = 8, -- Ammo, Portable Alchemy/Engineering Benches
-        OTHER_BOMB_CRATES = 4, -- Bomb Crates
+        OPTIONAL_REAGENTS = 18,     -- Safety Components, Cogwheels, Magazine of Healing Darts
+        TWO_HANDED_WEAPON = 12,     -- Scopes
+        OTHER = 9,                  -- Tinkers, Fireworks, most Devices
+        OTHER2 = 8,                 -- Ammo, Portable Alchemy/Engineering Benches
+        OTHER_BOMB_CRATES = 4,      -- Bomb Crates
         COMPANION_PETS = 2,
 
         -- Goggles/Bracers (Armor)
@@ -512,10 +527,10 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
 
     },
     LEATHERWORKING = {
-        DRUMS = 8, -- Drums
-        MISC = 14, -- Armor Kits
+        DRUMS = 8,         -- Drums
+        MISC = 14,         -- Armor Kits
         MISCELLANEOUS = 0, -- Witherrot Tome
-        OTHER = 4, -- Toys
+        OTHER = 4,         -- Toys
 
         -- Armor
         LEATHER = 2,
@@ -536,7 +551,7 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
 
         -- Reagents
         OPTIONAL_REAGENTS = 18, -- Fang Adornments, Toxified Armor Patch (Optional Reagents)
-        LEATHER_REAGENTS = 6, -- Hides, Scales (Reagents)
+        LEATHER_REAGENTS = 6,   -- Hides, Scales (Reagents)
     },
     INSCRIPTION = {
         MILLING = 11,
@@ -631,7 +646,7 @@ CraftSim.CONST.TEXT = {
     INSPIRATION_EXPLANATION_TOOLTIP = 14,
     MULTICRAFT_EXPLANATION_TOOLTIP = 15,
     REAGENTSKILL_EXPLANATION_TOOLTIP = 17,
-    
+
     -- required stuff
     STAT_INSPIRATION = 18,
     STAT_MULTICRAFT = 19,
@@ -641,7 +656,7 @@ CraftSim.CONST.TEXT = {
     ENCHANTED_MATCH_STRING = 24,
     --
 
-    -- optional: 
+    -- optional:
     STAT_SKILL = 25,
     STAT_MULTICRAFT_BONUS = 26,
     STAT_RESOURCEFULNESS_BONUS = 27,
@@ -670,7 +685,7 @@ CraftSim.CONST.TEXT = {
     POPUP_NO_PRICE_SOURCE_TITLE = 61,
     POPUP_NO_PRICE_SOURCE_WARNING = 62,
     POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS = 63,
-    
+
     SIMULATION_MODE_NONE = 64,
     SIMULATION_MODE_LABEL = 65,
     SIMULATION_MODE_TITLE = 66,
@@ -719,9 +734,9 @@ CraftSim.CONST.TEXT = {
     CONTROL_PANEL_MODULES_TOP_GEAR_LABEL = 150,
     CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP = 151,
     CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL = "CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL",
-    CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP ="CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP",
-    CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL ="CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL",
-    CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP ="CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP",
+    CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP = "CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP",
+    CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL = "CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL",
+    CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP = "CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP",
     CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL = 152,
     CONTROL_PANEL_MODULES_PRICE_DETAILS_TOOLTIP = 153,
     CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL = 154,
@@ -786,7 +801,7 @@ CraftSim.CONST.TEXT = {
     CRAFT_RESULTS_SAVED_REAGENTS = 274,
     CRAFT_RESULTS_DISABLE_CHECKBOX = "CRAFTRESULTS_DISABLE_CHECKBOX",
     CRAFT_RESULTS_DISABLE_CHECKBOX_TOOLTIP = "CRAFTRESULTS_DISABLE_CHECKBOX_TOOLTIP",
-    
+
     MATERIALS_TITLE = 300,
     MATERIALS_INSPIRATION_BREAKPOINT = 301,
     MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP = 302,
@@ -797,7 +812,7 @@ CraftSim.CONST.TEXT = {
     MATERIALS_BEST_COMBINATION = 307,
     MATERIALS_NO_COMBINATION = 308,
     MATERIALS_ASSIGN = 309,
-    
+
     STAT_WEIGHTS_TITLE = 350,
     STAT_WEIGHTS_EXPLANATION_TITLE = 351,
     STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON = 352,
@@ -990,7 +1005,8 @@ CraftSim.CONST.TEXT = {
     CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP = "CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP",
     CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP = "CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP",
     CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE = "CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE",
-    CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE = "CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE",
+    CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE =
+    "CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE",
     CUSTOMER_HISTORY_CUSTOMER_HEADER = "CUSTOMER_HISTORY_CUSTOMER_HEADER",
     CUSTOMER_HISTORY_TOTAL_TIP_HEADER = "CUSTOMER_HISTORY_TOTAL_TIP_HEADER",
     CUSTOMER_HISTORY_CRAFT_HISTORY_DATE_HEADER = "CUSTOMER_HISTORY_CRAFT_HISTORY_DATE_HEADER",
@@ -1000,7 +1016,7 @@ CraftSim.CONST.TEXT = {
     CUSTOMER_HISTORY_CRAFT_HISTORY_CUSTOMER_NOTE_HEADER = "CUSTOMER_HISTORY_CRAFT_HISTORY_CUSTOMER_NOTE_HEADER",
 
     CRAFT_QUEUE_TITLE = "CRAFT_QUEUE_TITLE",
-    CRAFT_QUEUE_CRAFT_AMOUNT_LEFT_HEADER= "CRAFT_QUEUE_CRAFT_AMOUNT_LEFT_HEADER",
+    CRAFT_QUEUE_CRAFT_AMOUNT_LEFT_HEADER = "CRAFT_QUEUE_CRAFT_AMOUNT_LEFT_HEADER",
     CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER = "CRAFT_QUEUE_CRAFT_PROFESSION_GEAR_HEADER",
     CRAFT_QUEUE_CRAFTING_COSTS_HEADER = "CRAFT_QUEUE_CRAFTING_COSTS_HEADER",
     CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL = "CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL",
@@ -1018,7 +1034,8 @@ CraftSim.CONST.TEXT = {
     CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL = "CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL",
     CRAFT_QUEUE_QUEUE_TAB_LABEL = "CRAFT_QUEUE_QUEUE_TAB_LABEL",
     CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL = "CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL",
-    CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL = "CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL",
+    CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL =
+    "CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL",
     CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL = "CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL",
     CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP = "CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP",
     CRAFT_QUEUE_RESTOCK_OPTIONS_AMOUNT_LABEL = "CRAFT_QUEUE_RESTOCK_OPTIONS_AMOUNT_LABEL",
@@ -1026,7 +1043,8 @@ CraftSim.CONST.TEXT = {
     CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_LABEL = "CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_LABEL",
     CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP = "CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP",
     CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_OPTIONS_LABEL = "CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_OPTIONS_LABEL",
-    CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL = "CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL",
+    CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL =
+    "CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL",
     CRAFT_QUEUE_TOTAL_PROFIT_LABEL = "CRAFT_QUEUE_TOTAL_PROFIT_LABEL",
     CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL = "CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL",
     CRAFT_QUEUE_EDIT_RECIPE_TITLE = "CRAFT_QUEUE_EDIT_RECIPE_TITLE",
@@ -1038,7 +1056,7 @@ CraftSim.CONST.TEXT = {
     STATIC_POPUPS_NO = "STATIC_POPUPS_NO",
 }
 
-CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function() 
+CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function()
     return {
         Enum.Profession.Alchemy,
         Enum.Profession.Blacksmithing,
@@ -1067,7 +1085,7 @@ CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING = {
 }
 
 CraftSim.CONST.EXCEPTION_ORDER_ITEM_IDS = {
-    [382363] = {198236, 198237, 198238}
+    [382363] = { 198236, 198237, 198238 }
 }
 
 CraftSim.CONST.SPECIAL_TOOL_STATS = {
@@ -1086,17 +1104,17 @@ CraftSim.CONST.ITEM_IDS = {
 CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME = 'CraftSim CraftQueue'
 
 CraftSim.CONST.MAX_KNOWLEDGEPOINTS = {
-    ALCHEMY=510,
-    BLACKSMITHING=800,
-    ENCHANTING=565,
-    ENGINEERING=525,
-    HERBALISM=520,
-    INSCRIPTION=680,
-    JEWELCRAFTING=630,
-    LEATHERWORKING=750,
-    MINING=455,
-    SKINNING=400,
-    TAILORING=630,
+    ALCHEMY = 510,
+    BLACKSMITHING = 800,
+    ENCHANTING = 565,
+    ENGINEERING = 525,
+    HERBALISM = 520,
+    INSCRIPTION = 680,
+    JEWELCRAFTING = 630,
+    LEATHERWORKING = 750,
+    MINING = 455,
+    SKINNING = 400,
+    TAILORING = 630,
 }
 
 

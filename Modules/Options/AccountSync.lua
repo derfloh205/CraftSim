@@ -44,6 +44,6 @@ end
 
 function CraftSim.ACCOUNTSYNC:SynchronizeOptions()
     local target = CraftSimOptions.syncTarget
-    CraftSim.COMM:SendData(OPTIONS_SYNC_PREFIX, CraftSimOptions, "WHISPER", target, CraftSim.ACCOUNTSYNC.UpdateSendingProgress)
+    CraftSim.COMM:SendData(OPTIONS_SYNC_PREFIX, CraftSimOptions, "WHISPER", target,
+        CraftSim.ACCOUNTSYNC.UpdateSendingProgress)
 end
-

@@ -58,7 +58,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.P .. "Recipes can now be " .. f.g("edited") .. " directly in the " .. f.bb("CraftQueue"),
         newP("12.2.1"),
         f.P .. f.bb("CraftQueue"),
-        f.a .. "- The same recipe can now " .. f.r("not"), 
+        f.a .. "- The same recipe can now " .. f.r("not"),
         f.a .. "  have multiple entries in the craft queue",
         f.a .. "- Rows can now be clicked to jump to a recipe instead",
         f.a .. "  of having to click on the little arrow button",
@@ -86,14 +86,14 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "  This should keep the data amount low while occasionally",
         f.a .. "  removing any data that does not belong to 'real' customers",
         newP("12.0.5"),
-        f.p .. "Hotfixes regarding " ..f.bb("CustomerHistory") .. " Data Migration",
+        f.p .. "Hotfixes regarding " .. f.bb("CustomerHistory") .. " Data Migration",
         f.p .. "Added price source addons to optional deps......",
         f.p .. "Fixed average profit not correctly calculated",
         f.a .. "for non english clients",
         newP("12.0.0"),
         f.P .. "Reworked " .. f.bb("Customer History") .. ". Now includes:",
         f.a .. "- " .. f.g("A Whisper Button"),
-        f.a .. "- Separated and more clear " ..f.g("Craft and Chat History"),
+        f.a .. "- Separated and more clear " .. f.g("Craft and Chat History"),
         f.a .. "- " .. f.g("Bulk deletion") .. " of all 'customers' with 0 tips",
         f.a .. "- " .. "A better reactive list of your customers sorted by total tip",
         f.P .. f.g("Modules now load faster (~100ms)") .. " due to a refactor",
@@ -130,7 +130,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.P .. f.bb("CraftQueue") .. " now has configureable " .. f.g("Restock Options"),
         f.a .. "affecting " .. f.bb("Restock from Recipe Scan") .. " Behaviour",
         f.a .. "This includes " .. f.g("Restock Amount") .. " and thresholds",
-        f.a .. "like " .. f.g("Profit Margin") .." and " .. f.g("Sale Rate"),
+        f.a .. "like " .. f.g("Profit Margin") .. " and " .. f.g("Sale Rate"),
         f.a .. f.bb("Sale Rate Thresholds") .. " are only available if TSM is loaded!",
         f.s .. f.bb("CraftQueue") .. " now shows average profit margin per recipe",
         f.p .. f.bb("PriceDetails:") .. " fixed a bug where not all qualities were listed",
@@ -199,18 +199,18 @@ end
 ---@async
 function CraftSim.NEWS:ShowNews(force)
     local itemMap = {
-        chocolate=Item:CreateFromItemID(194902),
+        chocolate = Item:CreateFromItemID(194902),
     }
-    CraftSim.GUTIL:ContinueOnAllItemsLoaded(CraftSim.GUTIL:Map(itemMap, function(i) return i end), function ()
+    CraftSim.GUTIL:ContinueOnAllItemsLoaded(CraftSim.GUTIL:Map(itemMap, function(i) return i end), function()
         local newsText = CraftSim.NEWS:GET_NEWS(itemMap)
         local newChecksum = CraftSim.NEWS:IsNewsUpdate(newsText)
         if newChecksum == nil and (not force) then
-           return 
+            return
         end
-    
+
         print("showing news, old / new cs: " .. tostring(CraftSimOptions.newsChecksum) .. "/" .. tostring(newChecksum))
         CraftSimOptions.newsChecksum = newChecksum
-    
+
         local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.INFO)
         -- resize
         infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)

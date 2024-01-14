@@ -7,11 +7,11 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
 
 -- https://math.stackexchange.com/questions/888165/abramowitz-and-stegun-approximation-for-cumulative-normal-distribution
 function CraftSim.STATISTICS:CDF(q, mu, sd)
-    local function Phi ( z )
-        local pdfx = 1/(math.sqrt(2*math.pi)) * math.exp ( -z*z/2 )
-        local t = 1 / (1+0.2316419*z)
-        return ( 1 - pdfx*(0.319381530*t - 0.356563782*t^2
-                    + 1.781477937*t^3 - 1.821255978*t^4 + 1.330274429*t^5) )
+    local function Phi(z)
+        local pdfx = 1 / (math.sqrt(2 * math.pi)) * math.exp(-z * z / 2)
+        local t = 1 / (1 + 0.2316419 * z)
+        return (1 - pdfx * (0.319381530 * t - 0.356563782 * t ^ 2
+            + 1.781477937 * t ^ 3 - 1.821255978 * t ^ 4 + 1.330274429 * t ^ 5))
     end
 
     local zValue = (q - mu) / sd
@@ -28,7 +28,7 @@ end
 function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
     local meanOneCraft = 0
 
-    probabilityTable = CraftSim.GUTIL:Filter(probabilityTable, function (entry)
+    probabilityTable = CraftSim.GUTIL:Filter(probabilityTable, function(entry)
         return entry.chance > 0
     end)
 
@@ -52,31 +52,32 @@ function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityT
         return 0
     end
 
-    
+
 
     local standardDeviation = 0
 
     for _, probability in pairs(probabilityTable) do
-        standardDeviation = standardDeviation + (probability.profit - meanOneCraft)^2
+        standardDeviation = standardDeviation + (probability.profit - meanOneCraft) ^ 2
     end
 
     standardDeviation = standardDeviation / #probabilityTable
 
     standardDeviation = math.sqrt(standardDeviation)
     local standardDeviationNumCrafts = math.sqrt(numCrafts) * standardDeviation
-    local meanNumCrafts = meanOneCraft*numCrafts
+    local meanNumCrafts = meanOneCraft * numCrafts
 
     print("mean (profit) of 1 craft: " .. CraftSim.GUTIL:FormatMoney(meanOneCraft, true))
-    print("mean (profit) of "..numCrafts.." crafts: " .. CraftSim.GUTIL:FormatMoney(meanNumCrafts, true))
+    print("mean (profit) of " .. numCrafts .. " crafts: " .. CraftSim.GUTIL:FormatMoney(meanNumCrafts, true))
     print("standardDeviation 1 craft: " .. CraftSim.GUTIL:FormatMoney(standardDeviation, true))
-    print("standardDeviation "..numCrafts.." crafts: " .. CraftSim.GUTIL:FormatMoney(standardDeviationNumCrafts, true))
+    print("standardDeviation " .. numCrafts ..
+        " crafts: " .. CraftSim.GUTIL:FormatMoney(standardDeviationNumCrafts, true))
 
 
     -- CDF:
     -- test override:
     --meanNumCrafts = 5
     --standardDeviationNumCrafts = 1
-    
+
     print("CDF of: " .. tostring(meanNumCrafts) .. ", " .. tostring(standardDeviationNumCrafts))
     local cdfResult = CraftSim.STATISTICS:CDF(0, meanNumCrafts, standardDeviationNumCrafts)
     print("result: " .. tostring(cdfResult))

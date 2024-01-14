@@ -10,7 +10,8 @@ CraftSim.TopGearResult = CraftSim.Object:extend()
 ---@param relativeStats CraftSim.ProfessionStats
 ---@param expectedQuality number
 ---@param expectedQualityUpgrade number
-function CraftSim.TopGearResult:new(professionGearSet, averageProfit, relativeProfit, relativeStats, expectedQuality, expectedQualityUpgrade)
+function CraftSim.TopGearResult:new(professionGearSet, averageProfit, relativeProfit, relativeStats, expectedQuality,
+                                    expectedQualityUpgrade)
     self.relativeStats = relativeStats
     self.professionGearSet = professionGearSet
     self.averageProfit = averageProfit
@@ -29,9 +30,9 @@ function CraftSim.TopGearResult:Debug()
         "Profession Gear Set:"
     }
 
-    debugLines = CraftSim.GUTIL:Concat({debugLines, self.professionGearSet:Debug()})
+    debugLines = CraftSim.GUTIL:Concat({ debugLines, self.professionGearSet:Debug() })
 
     table.insert(debugLines, "Relative Stats:")
-    debugLines = CraftSim.GUTIL:Concat({debugLines, self.relativeStats:Debug()})
+    debugLines = CraftSim.GUTIL:Concat({ debugLines, self.relativeStats:Debug() })
     return debugLines
 end

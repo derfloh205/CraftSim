@@ -9,7 +9,6 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 ---@param itemID number
 ---@param qualityID number?
 function CraftSim.ReagentItem:new(itemID, qualityID)
-
     -- consider possible exception mappings
     itemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[itemID] or itemID
 
@@ -36,7 +35,8 @@ end
 
 function CraftSim.ReagentItem:Debug()
     return {
-        tostring(((self.item and (self.item:GetItemLink() or self.item:GetItemID())) or "None") .. " x " .. self.quantity),
+        tostring(((self.item and (self.item:GetItemLink() or self.item:GetItemID())) or "None") .. " x " .. self
+            .quantity),
     }
 end
 
@@ -71,7 +71,8 @@ end
 --- STATIC
 ---@param serializedReagentItem CraftSim.ReagentItem.Serialized
 function CraftSim.ReagentItem:Deserialize(serializedReagentItem)
-    local deserialized = CraftSim.ReagentItem(tonumber(serializedReagentItem.itemID), tonumber(serializedReagentItem.qualityID))
+    local deserialized = CraftSim.ReagentItem(tonumber(serializedReagentItem.itemID),
+        tonumber(serializedReagentItem.qualityID))
     deserialized.quantity = tonumber(serializedReagentItem.quantity)
     return deserialized
 end

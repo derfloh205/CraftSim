@@ -53,44 +53,51 @@ end
 
 -- Used by Inspiration only
 function CraftSim.ProfessionStat:GetExtraValueByFactor()
-    return (self.extraValue*(1+self.extraFactor)) + self.extraValueAfterFactor
+    return (self.extraValue * (1 + self.extraFactor)) + self.extraValueAfterFactor
 end
 
 ---@param value number
 function CraftSim.ProfessionStat:addValue(value)
     self.value = self.value + value
 end
+
 ---@param factor number
 function CraftSim.ProfessionStat:addFactor(factor)
     self.extraFactor = self.extraFactor + factor
 end
+
 ---@param extraValue number
 function CraftSim.ProfessionStat:addExtraValue(extraValue)
     self.extraValue = self.extraValue + extraValue
 end
+
 ---@param extraValueAfterFactor number
 function CraftSim.ProfessionStat:addExtraValueAfterFactor(extraValueAfterFactor)
     self.extraValueAfterFactor = self.extraValueAfterFactor + extraValueAfterFactor
 end
+
 ---@param value number
 function CraftSim.ProfessionStat:subtractValue(value)
     self.value = self.value - value
 end
+
 ---@param factor number
 function CraftSim.ProfessionStat:subtractFactor(factor)
     self.extraFactor = self.extraFactor - factor
 end
+
 ---@param extraValue number
 function CraftSim.ProfessionStat:subtractExtraValue(extraValue)
     self.extraValue = self.extraValue - extraValue
 end
+
 ---@param extraValueAfterFactor number
 function CraftSim.ProfessionStat:subtractExtraValueAfterFactor(extraValueAfterFactor)
     self.extraValueAfterFactor = self.extraValueAfterFactor - extraValueAfterFactor
 end
 
 function CraftSim.ProfessionStat:GetJSON(indent)
-	indent = indent or 0
+    indent = indent or 0
     local jb = CraftSim.JSONBuilder(indent)
     jb:Begin()
     jb:Add("name", self.name)

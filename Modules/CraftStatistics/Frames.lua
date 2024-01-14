@@ -12,53 +12,56 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
 function CraftSim.STATISTICS.FRAMES:Init()
     local sizeX = 700
     local sizeYExpanded = 630
-    local sizeYRetracted = 350 
+    local sizeYRetracted = 350
 
     local frameNO_WO = GGUI.Frame({
-        parent=GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame, 
-        sizeX=sizeX,sizeY=sizeYRetracted,
-        frameID=CraftSim.CONST.FRAMES.STATISTICS, 
-        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_TITLE),
-        collapseable=true,
-        closeable=true,
-        moveable=true,
-        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameStrata="DIALOG",
-        initialStatusID="RETRACTED",
-        frameTable=CraftSim.MAIN.FRAMES,
-        frameConfigTable=CraftSimGGUIConfig,
+        parent = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS).frame,
+        sizeX = sizeX,
+        sizeY = sizeYRetracted,
+        frameID = CraftSim.CONST.FRAMES.STATISTICS,
+        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_TITLE),
+        collapseable = true,
+        closeable = true,
+        moveable = true,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata = "DIALOG",
+        initialStatusID = "RETRACTED",
+        frameTable = CraftSim.MAIN.FRAMES,
+        frameConfigTable = CraftSimGGUIConfig,
     })
 
     local frameWO = GGUI.Frame({
-        parent=GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER).frame, 
-        sizeX=sizeX,sizeY=sizeYRetracted,
-        frameID=CraftSim.CONST.FRAMES.STATISTICS_WORKORDER, 
-        title=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_TITLE) .. " " .. GUTIL:ColorizeText("WO", GUTIL.COLORS.GREY),
-        collapseable=true,
-        closeable=true,
-        moveable=true,
-        backdropOptions=CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameStrata="DIALOG",
-        initialStatusID="RETRACTED",
-        frameTable=CraftSim.MAIN.FRAMES,
-        frameConfigTable=CraftSimGGUIConfig,
+        parent = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS_WORK_ORDER).frame,
+        sizeX = sizeX,
+        sizeY = sizeYRetracted,
+        frameID = CraftSim.CONST.FRAMES.STATISTICS_WORKORDER,
+        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_TITLE) ..
+            " " .. GUTIL:ColorizeText("WO", GUTIL.COLORS.GREY),
+        collapseable = true,
+        closeable = true,
+        moveable = true,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        frameStrata = "DIALOG",
+        initialStatusID = "RETRACTED",
+        frameTable = CraftSim.MAIN.FRAMES,
+        frameConfigTable = CraftSimGGUIConfig,
     })
 
 
     local function createContent(frame, statweightFrameID)
-
-        frame.frame.closeButton:HookScript("OnClick", function(self) 
-            GGUI:GetFrame(CraftSim.MAIN.FRAMES, statweightFrameID).content.statisticsButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON))
+        frame.frame.closeButton:HookScript("OnClick", function(self)
+            GGUI:GetFrame(CraftSim.MAIN.FRAMES, statweightFrameID).content.statisticsButton:SetText(CraftSim.LOCAL
+                :GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON))
         end)
 
         frame:SetStatusList({
             {
-                statusID="RETRACTED",
-                sizeY=sizeYRetracted,
+                statusID = "RETRACTED",
+                sizeY = sizeYRetracted,
             },
             {
-                statusID="EXPANDED",
-                sizeY=sizeYExpanded,
+                statusID = "EXPANDED",
+                sizeY = sizeYExpanded,
             },
         })
 
@@ -66,27 +69,50 @@ function CraftSim.STATISTICS.FRAMES:Init()
 
         ---@type GGUI.Text | GGUI.Widget
         frame.content.expectedProfitTitle = GGUI.Text({
-            parent=frame.content,anchorParent=frame.title.frame,
-            anchorA="TOP", anchorB="BOTTOM", offsetY=-30, text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT)
+            parent = frame.content,
+            anchorParent = frame.title.frame,
+            anchorA = "TOP",
+            anchorB = "BOTTOM",
+            offsetY = -30,
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT)
         })
         ---@type GGUI.Text | GGUI.Widget
         frame.content.expectedProfitValue = GGUI.Text({
-            parent=frame.content,anchorParent=frame.content.expectedProfitTitle.frame,
-            anchorA="TOP", anchorB="BOTTOM", offsetY=-10,
+            parent = frame.content,
+            anchorParent = frame.content.expectedProfitTitle.frame,
+            anchorA = "TOP",
+            anchorB = "BOTTOM",
+            offsetY = -10,
         })
         ---@type GGUI.Text | GGUI.Widget
         frame.content.craftsTextTop = GGUI.Text({
-            parent=frame.content,anchorParent=frame.content.expectedProfitValue.frame,
-            anchorA="TOP", anchorB="BOTTOM", offsetY=-30, 
-            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CHANCE_OF) .. GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_PROFIT) .. " > 0", GUTIL.COLORS.GREEN) .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_AFTER),
+            parent = frame.content,
+            anchorParent = frame.content.expectedProfitValue.frame,
+            anchorA = "TOP",
+            anchorB = "BOTTOM",
+            offsetY = -30,
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CHANCE_OF) ..
+                GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_PROFIT) .. " > 0",
+                    GUTIL.COLORS.GREEN) .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_AFTER),
         })
 
         ---@type GGUI.NumericInput
         frame.content.numCraftsInput = GGUI.NumericInput({
-            parent=frame.content, anchorParent=frame.content.craftsTextTop.frame,
-            anchorA="TOP",anchorB="BOTTOM", offsetX=-40, offsetY=-10, sizeX=50, sizeY=25, initialValue=1,
-            allowDecimals=false, minValue=1, incrementOneButtons=true,borderAdjustWidth=1.15, borderAdjustHeight=1.05,
-            onNumberValidCallback = function ()
+            parent = frame.content,
+            anchorParent = frame.content.craftsTextTop.frame,
+            anchorA = "TOP",
+            anchorB = "BOTTOM",
+            offsetX = -40,
+            offsetY = -10,
+            sizeX = 50,
+            sizeY = 25,
+            initialValue = 1,
+            allowDecimals = false,
+            minValue = 1,
+            incrementOneButtons = true,
+            borderAdjustWidth = 1.15,
+            borderAdjustHeight = 1.05,
+            onNumberValidCallback = function()
                 local recipeData = CraftSim.MAIN.currentRecipeData
                 if not recipeData then
                     return
@@ -96,53 +122,72 @@ function CraftSim.STATISTICS.FRAMES:Init()
         })
 
         frame.content.cdfExplanation = GGUI.HelpIcon({
-            parent=frame.content,anchorParent=frame.content.numCraftsInput.textInput.frame,
-            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION), anchorA="RIGHT", anchorB="LEFT", offsetX=-10, offsetY=1,
+            parent = frame.content,
+            anchorParent = frame.content.numCraftsInput.textInput.frame,
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION),
+            anchorA = "RIGHT",
+            anchorB = "LEFT",
+            offsetX = -10,
+            offsetY = 1,
         })
 
         ---@type GGUI.Text | GGUI.Widget
         frame.content.craftsTextBottom = GGUI.Text({
-            parent=frame.content, anchorParent=frame.content.numCraftsInput.textInput.frame, offsetX=20,
-            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CRAFTS), anchorA="LEFT", anchorB="RIGHT",
+            parent = frame.content,
+            anchorParent = frame.content.numCraftsInput.textInput.frame,
+            offsetX = 20,
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CRAFTS),
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
         })
 
         ---@type GGUI.Text | GGUI.Widget
         frame.content.probabilityValue = GGUI.Text({
-            parent=frame.content, anchorParent=frame.content.craftsTextBottom.frame, offsetX=1,
-            text="0%", justifyOptions= {type="H", align="LEFT"}, anchorA="LEFT", anchorB="RIGHT",
+            parent = frame.content,
+            anchorParent = frame.content.craftsTextBottom.frame,
+            offsetX = 1,
+            text = "0%",
+            justifyOptions = { type = "H", align = "LEFT" },
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
         })
 
         frame.content.chanceByQualityTable = GGUI.FrameList({
-            parent=frame.content, anchorParent=frame.content.craftsTextTop.frame, anchorA="TOP", anchorB="BOTTOM", offsetY=-60,
-            showBorder=true, sizeY=130,
-            columnOptions={
+            parent = frame.content,
+            anchorParent = frame.content.craftsTextTop.frame,
+            anchorA = "TOP",
+            anchorB = "BOTTOM",
+            offsetY = -60,
+            showBorder = true,
+            sizeY = 130,
+            columnOptions = {
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER),
-                    width=60,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER),
+                    width = 60,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER),
-                    width=70,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER),
+                    width = 70,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER),
-                    width=130,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER),
+                    width = 130,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER),
-                    width=170,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER),
+                    width = 170,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER),
-                    width=150,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER),
+                    width = 150,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 }
             },
-            rowConstructor=function (columns)
+            rowConstructor = function(columns)
                 local qualityRow = columns[1]
                 local chanceRow = columns[2]
                 local craftsRow = columns[3]
@@ -150,7 +195,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
                 local expectedCostsWithReturnRow = columns[5]
 
                 qualityRow.text = GGUI.Text({
-                    parent=qualityRow,anchorParent=qualityRow,
+                    parent = qualityRow, anchorParent = qualityRow,
                 })
                 function qualityRow:SetQuality(qualityID)
                     if qualityID then
@@ -161,33 +206,46 @@ function CraftSim.STATISTICS.FRAMES:Init()
                 end
 
                 chanceRow.text = GGUI.Text({
-                    parent=chanceRow, anchorParent=chanceRow,
+                    parent = chanceRow, anchorParent = chanceRow,
                 })
 
                 craftsRow.text = GGUI.Text({
-                    parent=craftsRow, anchorParent=craftsRow
+                    parent = craftsRow, anchorParent = craftsRow
                 })
 
                 expectedCostsRow.text = GGUI.Text({
-                    parent=expectedCostsRow, anchorParent=expectedCostsRow,
+                    parent = expectedCostsRow, anchorParent = expectedCostsRow,
                 })
 
                 expectedCostsWithReturnRow.text = GGUI.Text({
-                    parent=expectedCostsWithReturnRow, anchorParent=expectedCostsWithReturnRow
+                    parent = expectedCostsWithReturnRow, anchorParent = expectedCostsWithReturnRow
                 })
             end
         })
 
         frame.content.statisticsExplanationIcon = GGUI.HelpIcon(
-            {parent=frame.content,anchorParent=frame.content.chanceByQualityTable.frame, anchorA="BOTTOMLEFT", anchorB="TOPRIGHT",
-            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPLANATION_ICON),
-            offsetY=5, offsetX=-3})
+            {
+                parent = frame.content,
+                anchorParent = frame.content.chanceByQualityTable.frame,
+                anchorA = "BOTTOMLEFT",
+                anchorB = "TOPRIGHT",
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPLANATION_ICON),
+                offsetY = 5,
+                offsetX = -3
+            })
 
         frame.content.expandButton = GGUI.Button({
-            parent=frame.content,anchorParent=frame.frame, anchorA="BOTTOM", anchorB="BOTTOM",
-            label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_DOWN, 0.4), sizeX=15, sizeY=20, offsetY=10, adjustWidth = true,
-            initialStatusID="DOWN",
-            clickCallback=function ()
+            parent = frame.content,
+            anchorParent = frame.frame,
+            anchorA = "BOTTOM",
+            anchorB = "BOTTOM",
+            label = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_DOWN, 0.4),
+            sizeX = 15,
+            sizeY = 20,
+            offsetY = 10,
+            adjustWidth = true,
+            initialStatusID = "DOWN",
+            clickCallback = function()
                 if frame:GetStatus() == "RETRACTED" then
                     frame:SetStatus("EXPANDED")
                     frame.content.expandButton:SetStatus("UP")
@@ -200,77 +258,88 @@ function CraftSim.STATISTICS.FRAMES:Init()
             end
         })
 
-        
+
 
         frame.content.expandButton:SetStatusList({
             {
-                statusID="UP",
-                label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_UP, 0.4),
+                statusID = "UP",
+                label = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_UP, 0.4),
             },
             {
-                statusID="DOWN",
-                label=CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_DOWN, 0.4),
+                statusID = "DOWN",
+                label = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.ARROW_DOWN, 0.4),
             }
         })
 
         frame.content.expandFrame = CreateFrame("Frame", nil, frame.content)
         local expandFrame = frame.content.expandFrame
         expandFrame:SetSize(frame:GetWidth(), sizeYExpanded - sizeYRetracted)
-        expandFrame:SetPoint("TOP", frame.content, "TOP", 0, - sizeYRetracted)
+        expandFrame:SetPoint("TOP", frame.content, "TOP", 0, -sizeYRetracted)
         expandFrame:Hide()
 
         expandFrame.probabilityTableTitle = GGUI.Text({
-            parent=expandFrame, anchorParent=expandFrame, anchorA="TOP", anchorB="TOP",
-            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE)
+            parent = expandFrame,
+            anchorParent = expandFrame,
+            anchorA = "TOP",
+            anchorB = "TOP",
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE)
         })
 
         GGUI.HelpIcon({
-            parent=expandFrame, anchorParent=expandFrame.probabilityTableTitle.frame, anchorA="LEFT", anchorB="RIGHT", offsetX=5,
-            text=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION)
+            parent = expandFrame,
+            anchorParent = expandFrame.probabilityTableTitle.frame,
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
+            offsetX = 5,
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION)
         })
 
         ---@type GGUI.FrameList | GGUI.Widget
         expandFrame.probabilityTable = GGUI.FrameList({
-            parent=expandFrame, 
-            sizeY=188, anchorA="TOP", anchorB="BOTTOM", anchorParent=expandFrame.probabilityTableTitle.frame,
-            showBorder = true, offsetY=-30,
-            columnOptions={
+            parent = expandFrame,
+            sizeY = 188,
+            anchorA = "TOP",
+            anchorB = "BOTTOM",
+            anchorParent = expandFrame.probabilityTableTitle.frame,
+            showBorder = true,
+            offsetY = -30,
+            columnOptions = {
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER),
-                    width=70,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER),
+                    width = 70,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_INSPIRATION_HEADER),
-                    width=80,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_INSPIRATION_HEADER),
+                    width = 80,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER),
-                    width=110,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER),
+                    width = 110,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER),
-                    width=110,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER),
+                    width = 110,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_HSV_NEXT),
-                    width=70,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_HSV_NEXT),
+                    width = 70,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP),
-                    width=70,
-                    justifyOptions={type="H", align="CENTER"},
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP),
+                    width = 70,
+                    justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label=CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER),
-                    width=120,
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER),
+                    width = 120,
                 },
             },
-            rowConstructor=function (columns)
+            rowConstructor = function(columns)
                 local chanceColumn = columns[1]
                 local inspirationColumn = columns[2]
                 local multicraftColumn = columns[3]
@@ -278,30 +347,39 @@ function CraftSim.STATISTICS.FRAMES:Init()
                 local hsvNextColumn = columns[5]
                 local hsvSkipColumn = columns[6]
                 local profitColumn = columns[7]
-    
+
                 ---@type GGUI.Text | GGUI.Widget
                 chanceColumn.text = GGUI.Text({
-                    parent=chanceColumn, anchorParent=chanceColumn,
-                    text="100%", justifyOptions={type="H", align="CENTER"},
+                    parent = chanceColumn,
+                    anchorParent = chanceColumn,
+                    text = "100%",
+                    justifyOptions = { type = "H", align = "CENTER" },
                 })
 
                 ---@type GGUI.Text | GGUI.Widget
                 profitColumn.text = GGUI.Text({
-                    parent=profitColumn, anchorParent=profitColumn,
-                    text=GUTIL:FormatMoney(11312313, true), justifyOptions={type="H", align="LEFT"},
+                    parent = profitColumn,
+                    anchorParent = profitColumn,
+                    text = GUTIL:FormatMoney(11312313, true),
+                    justifyOptions = { type = "H", align = "LEFT" },
                 })
 
-                local booleanColumns = {inspirationColumn, multicraftColumn, resourcefulnessColumn, hsvNextColumn, hsvSkipColumn}
+                local booleanColumns = { inspirationColumn, multicraftColumn, resourcefulnessColumn, hsvNextColumn,
+                    hsvSkipColumn }
 
-                local check = GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125), GUTIL.COLORS.GREEN)
-                local cross = GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125), GUTIL.COLORS.RED)
+                local check = GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125),
+                    GUTIL.COLORS.GREEN)
+                local cross = GUTIL:ColorizeText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125),
+                    GUTIL.COLORS.RED)
                 local dash = GUTIL:ColorizeText("-", GUTIL.COLORS.GREY)
 
                 for _, column in pairs(booleanColumns) do
                     ---@type GGUI.Text | GGUI.Widget
                     column.text = GGUI.Text({
-                        parent=column, anchorParent=column,
-                        text=cross, justifyOptions={type="H", align="CENTER"},
+                        parent = column,
+                        anchorParent = column,
+                        text = cross,
+                        justifyOptions = { type = "H", align = "CENTER" },
                     })
 
                     function column:SetChecked(value)
@@ -343,7 +421,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
             expectedCrafts = GUTIL:Round(recipeData.resultData.expectedCraftsByQuality[qualityID], 2)
         end
 
-        statisticsFrame.content.chanceByQualityTable:Add(function (row) 
+        statisticsFrame.content.chanceByQualityTable:Add(function(row)
             local qualityRow = row.columns[1]
             local chanceRow = row.columns[2]
             local craftsRow = row.columns[3]
@@ -351,13 +429,14 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
             local expectedCostsWithReturnRow = row.columns[5]
 
             qualityRow:SetQuality(qualityID)
-            chanceRow.text:SetText(GUTIL:Round(chance*100, 2) .. "%")
+            chanceRow.text:SetText(GUTIL:Round(chance * 100, 2) .. "%")
             craftsRow.text:SetText(expectedCrafts)
 
             local expectedCostsForQuality = recipeData.priceData.expectedCostsByQuality[qualityID]
 
             if expectedCostsForQuality then
-                expectedCostsRow.text:SetText(GUTIL:ColorizeText(GUTIL:FormatMoney(expectedCostsForQuality), GUTIL.COLORS.RED))
+                expectedCostsRow.text:SetText(GUTIL:ColorizeText(GUTIL:FormatMoney(expectedCostsForQuality),
+                    GUTIL.COLORS.RED))
                 -- Consider selling on average one item of a lower quality per attempted crafts before reaching this quality (the rounded down integer)
                 local expectedSellReturnForQuality = 0
                 if qualityID > 1 then
@@ -366,12 +445,13 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
                     -- update: just minus one to get the average crafts before the final average craft that reaches the desired quality
                     -- e.g: if the expected is 1.05 then the average sell value for lower quality of that is weighted with 0.05 which seems about right
                     local expectedCraftsForQuality = recipeData.resultData.expectedCraftsByQuality[qualityID] or 0
-                    local priceForLastQuality = recipeData.priceData.qualityPriceList[qualityID-1] or 0
+                    local priceForLastQuality = recipeData.priceData.qualityPriceList[qualityID - 1] or 0
                     expectedSellReturnForQuality = (expectedCraftsForQuality - 1) * priceForLastQuality
                     expectedSellReturnForQuality = expectedSellReturnForQuality * CraftSim.CONST.AUCTION_HOUSE_CUT
                 end
 
-                expectedCostsWithReturnRow.text:SetText(GUTIL:ColorizeText(GUTIL:FormatMoney(expectedCostsForQuality - expectedSellReturnForQuality), GUTIL.COLORS.RED))
+                expectedCostsWithReturnRow.text:SetText(GUTIL:ColorizeText(
+                    GUTIL:FormatMoney(expectedCostsForQuality - expectedSellReturnForQuality), GUTIL.COLORS.RED))
             else
                 expectedCostsRow.text:SetText("-")
                 expectedCostsWithReturnRow.text:SetText("-");
@@ -385,7 +465,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
     statisticsFrame.content.expandFrame.probabilityTable:Remove()
 
     for _, probabilityInfo in pairs(probabilityTable) do
-        statisticsFrame.content.expandFrame.probabilityTable:Add(function(row) 
+        statisticsFrame.content.expandFrame.probabilityTable:Add(function(row)
             local chanceColumn = row.columns[1]
             local inspirationColumn = row.columns[2]
             local multicraftColumn = row.columns[3]
@@ -393,9 +473,9 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
             local hsvNextColumn = row.columns[5]
             local hsvSkipColumn = row.columns[6]
             local profitColumn = row.columns[7]
-    
+
             row.chance = probabilityInfo.chance
-            chanceColumn.text:SetText(GUTIL:Round(row.chance*100, 2) .. "%")
+            chanceColumn.text:SetText(GUTIL:Round(row.chance * 100, 2) .. "%")
             profitColumn.text:SetText(GUTIL:FormatMoney(probabilityInfo.profit, true))
 
             if recipeData.supportsInspiration then
@@ -406,7 +486,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
                 else
                     hsvNextColumn:SetIrrelevant()
                 end
-                
+
                 if recipeData.resultData.hsvInfo.chanceSkipQuality > 0 then
                     hsvSkipColumn:SetChecked(probabilityInfo.hsvSkip)
                 else
@@ -428,13 +508,13 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
                 resourcefulnessColumn:SetIrrelevant()
             end
         end)
-    end 
+    end
 
-    statisticsFrame.content.expandFrame.probabilityTable:UpdateDisplay(function (rowA, rowB)
+    statisticsFrame.content.expandFrame.probabilityTable:UpdateDisplay(function(rowA, rowB)
         return rowA.chance > rowB.chance
     end)
 
-    local numCrafts=statisticsFrame.content.numCraftsInput.currentValue
+    local numCrafts = statisticsFrame.content.numCraftsInput.currentValue
 
     local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
 

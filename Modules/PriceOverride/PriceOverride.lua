@@ -9,7 +9,7 @@ CraftSim.PRICE_OVERRIDE = {}
 
 ---@type CraftSim.PriceOverride
 CraftSimPriceOverridesV2 = CraftSimPriceOverridesV2 or {
-    globalOverrides = {}, -- mapped itemID -> data
+    globalOverrides = {},       -- mapped itemID -> data
     recipeResultOverrides = {}, -- mapped recipeID -> resultQualityID -> data
 }
 
@@ -33,7 +33,8 @@ end
 
 ---@param overrideData CraftSim.PriceOverrideData
 function CraftSim.PRICE_OVERRIDE:SetResultOverride(overrideData)
-    CraftSimPriceOverridesV2.recipeResultOverrides[overrideData.recipeID] = CraftSimPriceOverridesV2.recipeResultOverrides[overrideData.recipeID] or {}
+    CraftSimPriceOverridesV2.recipeResultOverrides[overrideData.recipeID] = CraftSimPriceOverridesV2
+        .recipeResultOverrides[overrideData.recipeID] or {}
     CraftSimPriceOverridesV2.recipeResultOverrides[overrideData.recipeID][overrideData.qualityID] = overrideData
 end
 
@@ -49,7 +50,7 @@ end
 
 ---@param itemID number
 ---@return number? price nil when no override exists
-function CraftSim.PRICE_OVERRIDE:GetGlobalOverridePrice(itemID) 
+function CraftSim.PRICE_OVERRIDE:GetGlobalOverridePrice(itemID)
     local overrideData = CraftSimPriceOverridesV2.globalOverrides[itemID]
 
     if overrideData then
@@ -60,7 +61,7 @@ end
 ---@param recipeID number
 ---@param qualityID number
 ---@return number? price nil when no override exists
-function CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(recipeID, qualityID) 
+function CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(recipeID, qualityID)
     local overrideRecipeData = CraftSimPriceOverridesV2.recipeResultOverrides[recipeID]
 
     if overrideRecipeData then
@@ -79,17 +80,18 @@ function CraftSim.PRICE_OVERRIDE:GetResultOverride(recipeID, qualityID)
         return overrideRecipeData[qualityID]
     end
 end
+
 function CraftSim.PRICE_OVERRIDE:GetGlobalOverride(itemID)
     return CraftSimPriceOverridesV2.globalOverrides[itemID]
 end
 
 ---@param overrideDropdownData CraftSim.PRICE_OVERRIDE.overrideDropdownData
 function CraftSim.PRICE_OVERRIDE:SaveOverrideData(recipeID, overrideDropdownData)
-    
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local priceOverrideFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
+        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES
+            .PRICE_OVERRIDE_WORK_ORDER)
     else
         priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
     end
@@ -102,7 +104,7 @@ function CraftSim.PRICE_OVERRIDE:SaveOverrideData(recipeID, overrideDropdownData
         qualityID = overrideDropdownData.qualityID,
         price = price,
     }
-    
+
     if overrideDropdownData.isResult then
         CraftSim.PRICE_OVERRIDE:SetResultOverride(overrideData)
     else

@@ -12,9 +12,10 @@ function CraftSim.AVERAGEPROFIT:GetQualityThresholds(maxQuality, recipeDifficult
     if maxQuality == 1 then
         return {}
     elseif maxQuality == 3 then
-        return {recipeDifficulty*0.5 + offset, recipeDifficulty + offset}
+        return { recipeDifficulty * 0.5 + offset, recipeDifficulty + offset }
     elseif maxQuality == 5 then
-        return {recipeDifficulty*0.2 + offset, recipeDifficulty*0.5 + offset, recipeDifficulty*0.8 + offset, recipeDifficulty + offset}
+        return { recipeDifficulty * 0.2 + offset, recipeDifficulty * 0.5 + offset, recipeDifficulty * 0.8 + offset,
+            recipeDifficulty + offset }
     end
 end
 
@@ -78,7 +79,8 @@ end
 ---@param skill number
 function CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skill)
     local expectedQuality = 1
-    local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeData.professionStats.recipeDifficulty.value, CraftSimOptions.breakPointOffset)
+    local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality,
+        recipeData.professionStats.recipeDifficulty.value, CraftSimOptions.breakPointOffset)
 
     for _, threshold in pairs(thresholds) do
         if skill >= threshold then

@@ -16,27 +16,27 @@ function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData, parentNode)
     if not recipeData then
         return
     end
-    self.parentNode = parentNode
-    self.recipeData = recipeData
+    self.parentNode         = parentNode
+    self.recipeData         = recipeData
     ---@type CraftSim.NodeData[]
-    self.childNodes = {}
-    self.nodeName = nodeName
+    self.childNodes         = {}
+    self.nodeName           = nodeName
     ---@type number
-    self.nodeID = nodeRulesData[1].nodeID
+    self.nodeID             = nodeRulesData[1].nodeID
     ---@type CraftSim.ProfessionStats
-    self.professionStats = CraftSim.ProfessionStats()
+    self.professionStats    = CraftSim.ProfessionStats()
     ---@type CraftSim.ProfessionStats
     self.maxProfessionStats = CraftSim.ProfessionStats()
     ---@type CraftSim.NodeRule[]
-    self.nodeRules = {}
+    self.nodeRules          = {}
 
-    self.configID  = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)
-    local nodeInfo = C_Traits.GetNodeInfo(self.configID, self.nodeID)
-    self.entryIDs = nodeInfo.entryIDs
-    self.entryInfos = GUTIL:Map(self.entryIDs, function (entryID)
+    self.configID           = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)
+    local nodeInfo          = C_Traits.GetNodeInfo(self.configID, self.nodeID)
+    self.entryIDs           = nodeInfo.entryIDs
+    self.entryInfos         = GUTIL:Map(self.entryIDs, function(entryID)
         return C_Traits.GetEntryInfo(self.configID, entryID)
     end)
-    self.definitionInfos = GUTIL:Map(self.entryInfos, function (entryInfo)
+    self.definitionInfos    = GUTIL:Map(self.entryInfos, function(entryInfo)
         return C_Traits.GetDefinitionInfo(entryInfo.definitionID)
     end)
     if self.definitionInfos[1] then
@@ -55,7 +55,7 @@ function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData, parentNode)
         self.maxRank = 0
     end
 
-    table.foreach(nodeRulesData, function (_, nodeRuleData)
+    table.foreach(nodeRulesData, function(_, nodeRuleData)
         table.insert(self.nodeRules, CraftSim.NodeRule(self.recipeData, nodeRuleData, self))
     end)
 end
@@ -73,7 +73,7 @@ function CraftSim.NodeData:Debug()
         local lines = childNode:Debug()
         lines = GUTIL:Map(lines, function(line) return "-" .. line end)
 
-        debugLines = GUTIL:Concat({debugLines, lines})
+        debugLines = GUTIL:Concat({ debugLines, lines })
     end
     return debugLines
 end
@@ -83,7 +83,7 @@ function CraftSim.NodeData:UpdateAffectance()
         nodeRule:UpdateAffectance()
     end
     -- if at least one rule node of the node affects the recipe, the node affects the recipe
-    self.affectsRecipe = GUTIL:Count(self.nodeRules, function (nr) return nr.affectsRecipe end) > 0
+    self.affectsRecipe = GUTIL:Count(self.nodeRules, function(nr) return nr.affectsRecipe end) > 0
 
     if self.affectsRecipe and self.rank > -1 then
         self.active = true
@@ -91,8 +91,6 @@ function CraftSim.NodeData:UpdateAffectance()
 end
 
 function CraftSim.NodeData:UpdateProfessionStats()
-    
-
     -- always clear stats even if not affected or active
     -- this is important so that stats change to 0 when its not active anymore in the simulator!
     self.professionStats:Clear()
@@ -106,7 +104,7 @@ function CraftSim.NodeData:UpdateProfessionStats()
         print("NodeData: Update Stats of Node: " .. self.nodeName)
     end
 
-    for i, nodeRule in pairs(self.nodeRules) do       
+    for i, nodeRule in pairs(self.nodeRules) do
         -- only use rules that affect the recipe
         if nodeRule.affectsRecipe then
             -- for maxProfessionStats always use max rank
@@ -131,7 +129,8 @@ end
 ---@return string
 function CraftSim.NodeData:GetTooltipText()
     local header = GUTIL:IconToText(self.icon, 30, 30) .. " " .. self.nodeName
-    local tooltipText = header .. "\n\n" .. GUTIL:ColorizeText(tostring(C_ProfSpecs.GetDescriptionForPath(self.nodeID)), GUTIL.COLORS.WHITE) 
+    local tooltipText = header ..
+        "\n\n" .. GUTIL:ColorizeText(tostring(C_ProfSpecs.GetDescriptionForPath(self.nodeID)), GUTIL.COLORS.WHITE)
     for _, perkInfo in ipairs(self.perkInfos) do
         local unlockRank = C_ProfSpecs.GetUnlockRankForPerk(perkInfo.perkID)
         local rankText = "Rank " .. unlockRank .. ":\n"
@@ -147,7 +146,9 @@ function CraftSim.NodeData:GetTooltipText()
         tooltipText = tooltipText .. "\n\n" .. rankText .. perkDescription
     end
 
-    tooltipText = tooltipText .. "\n\nTotal Stats from Talent:\n" .. GUTIL:ColorizeText(self.professionStats:GetTooltipText(self.maxProfessionStats), GUTIL.COLORS.WHITE)
+    tooltipText = tooltipText ..
+        "\n\nTotal Stats from Talent:\n" ..
+        GUTIL:ColorizeText(self.professionStats:GetTooltipText(self.maxProfessionStats), GUTIL.COLORS.WHITE)
 
     return tooltipText
 end

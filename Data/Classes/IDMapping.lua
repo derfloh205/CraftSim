@@ -56,7 +56,7 @@ function CraftSim.IDMapping:AffectsRecipe()
     if CraftSim.GUTIL:Find(self.categories, function(c) return c.categoryID == CraftSim.CONST.RECIPE_CATEGORIES.ALL end) then
         return true
     end
-    
+
     -- for all categories check if its subtypes contain the recipesubtype or all
     -- if the specific categoryID to subtypeIDs combination matches it matches
     for _, idCategory in pairs(self.categories) do

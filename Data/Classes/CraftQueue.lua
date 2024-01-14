@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 ---@class CraftSim.CraftQueue
 CraftSim.CraftQueue = CraftSim.Object:extend()
 
-local print=CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 function CraftSim.CraftQueue:new()
     ---@type CraftSim.CraftQueueItem[]
@@ -26,15 +26,14 @@ function CraftSim.CraftQueue:AddRecipe(recipeData, amount)
             if reagent:GetTotalQuantity() < reagent.requiredQuantity then
                 reagent:SetCheapestQualityMax()
             end
-
         end
     end
-    
+
     local craftQueueItem = self:FindRecipe(recipeData)
 
     if craftQueueItem then
         -- only increase amount
-        craftQueueItem.amount =  craftQueueItem.amount + amount
+        craftQueueItem.amount = craftQueueItem.amount + amount
     else
         -- create a new queue item
         table.insert(self.craftQueueItems, CraftSim.CraftQueueItem(recipeData, amount))
@@ -55,7 +54,7 @@ function CraftSim.CraftQueue:SetAmount(recipeData, amount, relative)
         else
             craftQueueItem.amount = amount
         end
-        
+
         -- if amount is <= 0 then remove recipe from queue
         if craftQueueItem.amount <= 0 then
             self.craftQueueItems[index] = nil
@@ -66,17 +65,17 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.CraftQueueItem | nil craftQueueItem, number? index
 function CraftSim.CraftQueue:FindRecipe(recipeData)
-    -- local craftQueueItem, index = CraftSim.GUTIL:Find(self.craftQueueItems, 
+    -- local craftQueueItem, index = CraftSim.GUTIL:Find(self.craftQueueItems,
     -- ---@param cqi CraftSim.CraftQueueItem
     -- function (cqi)
     --     return cqi.recipeData:EqualCraftSetup(recipeData)
     -- end)
     -- return craftQueueItem, index
-    
-    local craftQueueItem, index = CraftSim.GUTIL:Find(self.craftQueueItems, 
-    ---@param cqi CraftSim.CraftQueueItem
-    function (cqi)
-        return cqi.recipeData.recipeID == recipeData.recipeID
-    end)
+
+    local craftQueueItem, index = CraftSim.GUTIL:Find(self.craftQueueItems,
+        ---@param cqi CraftSim.CraftQueueItem
+        function(cqi)
+            return cqi.recipeData.recipeID == recipeData.recipeID
+        end)
     return craftQueueItem, index
 end

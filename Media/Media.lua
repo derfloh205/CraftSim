@@ -22,14 +22,14 @@ function CraftSim.MEDIA:GetAsTextIcon(image, scale)
 end
 
 CraftSim.MEDIA.IMAGES = {
-    EXPECTED_VALUE = {file="expectedValue.blp",dimensions={x=128,y=32}},
-    FALSE = {file="false.blp",dimensions={x=128,y=128}},
-    TRUE = {file="true.blp",dimensions={x=128,y=128}},
-    HSV_EXAMPLE = {file="hsvVisualization.blp",dimensions={x=256,y=64}},
-    ARROW_UP = {file="upArrow.blp", dimensions={x=64,y=64}},
-    ARROW_DOWN = {file="downArrow.blp", dimensions={x=64,y=64}},
-    PIXEL_HEART = {file="pixelHeart.blp", dimensions={x=64,y=64}},
-    KOFI = {file="kofi.blp", dimensions={x=64,y=64}},
-    PAYPAL = {file="paypal.blp", dimensions={x=64,y=64}},
-    EDIT_PEN = {file="edit.blp", dimensions={x=25, y=25}},
+    EXPECTED_VALUE = { file = "expectedValue.blp", dimensions = { x = 128, y = 32 } },
+    FALSE = { file = "false.blp", dimensions = { x = 128, y = 128 } },
+    TRUE = { file = "true.blp", dimensions = { x = 128, y = 128 } },
+    HSV_EXAMPLE = { file = "hsvVisualization.blp", dimensions = { x = 256, y = 64 } },
+    ARROW_UP = { file = "upArrow.blp", dimensions = { x = 64, y = 64 } },
+    ARROW_DOWN = { file = "downArrow.blp", dimensions = { x = 64, y = 64 } },
+    PIXEL_HEART = { file = "pixelHeart.blp", dimensions = { x = 64, y = 64 } },
+    KOFI = { file = "kofi.blp", dimensions = { x = 64, y = 64 } },
+    PAYPAL = { file = "paypal.blp", dimensions = { x = 64, y = 64 } },
+    EDIT_PEN = { file = "edit.blp", dimensions = { x = 25, y = 25 } },
 }

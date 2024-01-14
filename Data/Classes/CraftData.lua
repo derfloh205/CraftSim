@@ -13,8 +13,8 @@ CraftSim.CraftData = CraftSim.Object:extend()
 ---@param itemLink string -- the full item link of that item
 ---@param recipeID number
 ---@param professionID number
-function CraftSim.CraftData:new(expectedCrafts, chance, requiredReagents, optionalReagents, crafterName, crafterClass, 
-    resChance, resExtraFactor, avgItemAmount, itemLink, recipeID, professionID)
+function CraftSim.CraftData:new(expectedCrafts, chance, requiredReagents, optionalReagents, crafterName, crafterClass,
+                                resChance, resExtraFactor, avgItemAmount, itemLink, recipeID, professionID)
     self.expectedCrafts = expectedCrafts
     self.requiredReagents = requiredReagents
     self.optionalReagents = optionalReagents
@@ -36,20 +36,22 @@ end
 function CraftSim.CraftData:SetActive()
     --print("Set CraftData as active")
     CraftSimCraftData[self.recipeID] = CraftSimCraftData[self.recipeID] or {}
-    CraftSimCraftData[self.recipeID][self.unifiedItemString] = CraftSimCraftData[self.recipeID][self.unifiedItemString] or {
-        activeData = nil,
-        dataPerCrafter = {}
-    }
+    CraftSimCraftData[self.recipeID][self.unifiedItemString] = CraftSimCraftData[self.recipeID][self.unifiedItemString] or
+        {
+            activeData = nil,
+            dataPerCrafter = {}
+        }
     CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData = self:Serialize()
 end
 
 ---@return boolean isActive
 function CraftSim.CraftData:IsActive()
     CraftSimCraftData[self.recipeID] = CraftSimCraftData[self.recipeID] or {}
-    CraftSimCraftData[self.recipeID][self.unifiedItemString] = CraftSimCraftData[self.recipeID][self.unifiedItemString] or {
-        activeData = nil,
-        dataPerCrafter = {}
-    }
+    CraftSimCraftData[self.recipeID][self.unifiedItemString] = CraftSimCraftData[self.recipeID][self.unifiedItemString] or
+        {
+            activeData = nil,
+            dataPerCrafter = {}
+        }
     if CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData then
         return CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData.crafterName == self.crafterName
     end
@@ -59,10 +61,11 @@ end
 
 function CraftSim.CraftData:Delete()
     CraftSimCraftData[self.recipeID] = CraftSimCraftData[self.recipeID] or {}
-    CraftSimCraftData[self.recipeID][self.unifiedItemString] = CraftSimCraftData[self.recipeID][self.unifiedItemString] or {
-        activeData = nil,
-        dataPerCrafter = {}
-    }
+    CraftSimCraftData[self.recipeID][self.unifiedItemString] = CraftSimCraftData[self.recipeID][self.unifiedItemString] or
+        {
+            activeData = nil,
+            dataPerCrafter = {}
+        }
     CraftSimCraftData[self.recipeID][self.unifiedItemString].dataPerCrafter[self.crafterName] = nil
     if CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData then
         if CraftSimCraftData[self.recipeID][self.unifiedItemString].activeData.crafterName == self.crafterName then
@@ -73,7 +76,6 @@ end
 
 --- STATIC careful: will not return the precise item if its not loaded and we cannot fetch the itemstring
 function CraftSim.CraftData:GetActiveCraftDataByItem(item)
-
     local itemToRecipe = CraftSim.CACHE:GetCacheEntryByGameVersion(CraftSimRecipeMap, "itemToRecipe")
     local itemLink = item:GetItemLink()
     local itemID = item:GetItemID()
@@ -97,16 +99,16 @@ function CraftSim.CraftData:GetActiveCraftDataByItem(item)
                 end
             end
         end
-        return nil     
+        return nil
     else
         for _, recipeItemList in pairs(CraftSimCraftData) do
             for _, itemCraftData in pairs(recipeItemList) do
                 if itemCraftData.activeData then
                     local itemIDSaved = CraftSim.GUTIL:GetItemIDByLink(itemCraftData.activeData.itemLink)
-    
+
                     if itemIDSaved == itemID then
                         return itemCraftData.activeData
-                    end 
+                    end
                 end
             end
         end
@@ -146,10 +148,10 @@ function CraftSim.CraftData:Serialize()
     serialized.itemLink = self.itemLink
     serialized.recipeID = self.recipeID
     serialized.professionID = self.professionID
-    serialized.requiredReagents = CraftSim.GUTIL:Map(self.requiredReagents, function (reagent)
+    serialized.requiredReagents = CraftSim.GUTIL:Map(self.requiredReagents, function(reagent)
         return reagent:Serialize()
     end)
-    serialized.optionalReagents = CraftSim.GUTIL:Map(self.optionalReagents, function (reagent)
+    serialized.optionalReagents = CraftSim.GUTIL:Map(self.optionalReagents, function(reagent)
         return reagent:Serialize()
     end)
 
@@ -162,15 +164,16 @@ function CraftSim.CraftData:GetCraftingCosts()
     local totalCosts = 0
     local requiredCosts = 0
 
-    table.foreach(self.requiredReagents, function (_, reagent)
-        table.foreach(reagent.items, function (_, reagentItem)
-            local itemCosts = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true) * reagentItem.quantity
+    table.foreach(self.requiredReagents, function(_, reagent)
+        table.foreach(reagent.items, function(_, reagentItem)
+            local itemCosts = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true) *
+                reagentItem.quantity
             totalCosts = totalCosts + itemCosts
             requiredCosts = requiredCosts + itemCosts
         end)
     end)
 
-    table.foreach(self.optionalReagents, function (_, optionalReagent)
+    table.foreach(self.optionalReagents, function(_, optionalReagent)
         totalCosts = totalCosts + CraftSim.PRICEDATA:GetMinBuyoutByItemID(optionalReagent.item:GetItemID(), true)
     end)
 
@@ -180,29 +183,29 @@ end
 function CraftSim.CraftData:GetExpectedCosts()
     local craftingCosts, craftingCostsRequired = self:GetCraftingCosts()
     return CraftSim.CALC:CalculateExpectedCosts(
-                self.expectedCrafts, self.chance, self.resChance, 
-                self.resExtraFactor, self.avgItemAmount, craftingCosts, craftingCostsRequired)
+        self.expectedCrafts, self.chance, self.resChance,
+        self.resExtraFactor, self.avgItemAmount, craftingCosts, craftingCostsRequired)
 end
 
 ---@param serialized CraftSim.CraftData.Serialized
 ---@return CraftSim.CraftData
 function CraftSim.CraftData:Deserialize(serialized)
-    local requiredReagents = CraftSim.GUTIL:Map(serialized.requiredReagents, function (serializedReagent)
+    local requiredReagents = CraftSim.GUTIL:Map(serialized.requiredReagents, function(serializedReagent)
         return CraftSim.Reagent:Deserialize(serializedReagent)
     end)
-    local optionalReagents = CraftSim.GUTIL:Map(serialized.optionalReagents, function (serializedReagent)
+    local optionalReagents = CraftSim.GUTIL:Map(serialized.optionalReagents, function(serializedReagent)
         return CraftSim.OptionalReagent:Deserialize(serializedReagent)
     end)
 
     return CraftSim.CraftData(
-        serialized.expectedCrafts, 
-        serialized.chance, 
-        requiredReagents, 
-        optionalReagents, 
-        serialized.crafterName, 
-        serialized.crafterClass, 
-        serialized.resChance, 
-        serialized.resExtraFactor, 
+        serialized.expectedCrafts,
+        serialized.chance,
+        requiredReagents,
+        optionalReagents,
+        serialized.crafterName,
+        serialized.crafterClass,
+        serialized.resChance,
+        serialized.resExtraFactor,
         serialized.avgItemAmount,
         serialized.itemLink,
         serialized.recipeID,

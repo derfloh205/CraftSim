@@ -19,7 +19,7 @@ function CraftSim.SpecializationData:new(recipeData)
     ---@type CraftSim.NodeData[]
     self.nodeData = {}
     ---@type CraftSim.NodeData[]
-    self.baseNodeData = {} -- needed for spec sim tree buildup
+    self.baseNodeData = {}     -- needed for spec sim tree buildup
     ---@type number[][]
     self.numNodesPerLayer = {} -- needed for spec sim tree buildup
 
@@ -33,7 +33,7 @@ function CraftSim.SpecializationData:new(recipeData)
     local professionRuleNodes = CraftSim.SPEC_DATA:RULE_NODES()[recipeData.professionData.professionInfo.profession]
     local baseRuleNodes = CraftSim.SPEC_DATA:BASE_RULE_NODES()[recipeData.professionData.professionInfo.profession]
 
-    local baseRuleNodeIDs = CraftSim.GUTIL:Map(baseRuleNodes, function (nameID)
+    local baseRuleNodeIDs = CraftSim.GUTIL:Map(baseRuleNodes, function(nameID)
         local ruleNode = professionRuleNodes[nameID]
         if ruleNode then
             return ruleNode.nodeID
@@ -44,11 +44,12 @@ function CraftSim.SpecializationData:new(recipeData)
 
     local baseNodeIndex = 1
     local function parseNode(nodeID, parentNodeData, layer)
-        local ruleNodes = CraftSim.GUTIL:Filter(professionRuleNodes, function (n) return n.nodeID == nodeID end)
+        local ruleNodes = CraftSim.GUTIL:Filter(professionRuleNodes, function(n) return n.nodeID == nodeID end)
         local nodeName = CraftSim.LOCAL:GetText(nodeID);
-        
+
         if not nodeName then
-        	nodeName = CraftSim.GUTIL:Find(nodeNameData, function (nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
+            nodeName = CraftSim.GUTIL:Find(nodeNameData,
+                function(nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
         end
         local nodeData = CraftSim.NodeData(self.recipeData, nodeName, ruleNodes, parentNodeData)
 
@@ -62,7 +63,7 @@ function CraftSim.SpecializationData:new(recipeData)
 
         self.professionStats:add(nodeData.professionStats)
         self.maxProfessionStats:add(nodeData.maxProfessionStats)
-        
+
         table.insert(self.nodeData, nodeData)
 
         local childNodeNameIDs = ruleNodes[1].childNodeIDs
@@ -108,11 +109,11 @@ function CraftSim.SpecializationData:Debug()
 
     for _, nodeData in pairs(self.baseNodeData) do
         local lines = nodeData:Debug()
-        lines = CraftSim.GUTIL:Map(lines, function (line)
+        lines = CraftSim.GUTIL:Map(lines, function(line)
             return "-" .. line
         end)
 
-        debugLines = CraftSim.GUTIL:Concat({debugLines, lines})
+        debugLines = CraftSim.GUTIL:Concat({ debugLines, lines })
     end
 
     table.insert(debugLines, "Stats from Specializations:")
@@ -120,7 +121,7 @@ function CraftSim.SpecializationData:Debug()
     local lines = self.professionStats:Debug()
     lines = CraftSim.GUTIL:Map(lines, function(line) return "-" .. line end)
 
-    debugLines = CraftSim.GUTIL:Concat({debugLines, lines})
+    debugLines = CraftSim.GUTIL:Concat({ debugLines, lines })
 
     return debugLines
 end
@@ -139,7 +140,7 @@ function CraftSim.SpecializationData:Copy()
         nodeDataA:UpdateProfessionStats()
         copy.professionStats:add(nodeDataA.professionStats)
     end
-    
+
     return copy
 end
 
@@ -150,9 +151,9 @@ function CraftSim.SpecializationData:GetJSON(indent)
     jb:Add("isImplemented", self.isImplemented)
     jb:AddList("nodeData", self.nodeData)
     local layernumlist = {}
-    table.foreach(self.numNodesPerLayer, function (index, value)
+    table.foreach(self.numNodesPerLayer, function(index, value)
         local listString = "["
-        table.foreach(value, function (index, v)
+        table.foreach(value, function(index, v)
             if index < #value then
                 listString = listString .. v .. ","
             else

@@ -72,9 +72,9 @@ function CraftSim.CUSTOMER_HISTORY.DB:GetCustomerHistory(customer, realm)
     }
     return CraftSimCustomerHistoryV2[customer .. "-" .. realm] or defaultCustomerHistory
 end
+
 ---@param customerHistory CraftSim.CustomerHistory
 function CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
-
     --- limit chat history to a certain amount of messages
     CraftSim.GUTIL:TrimTable(customerHistory.chatHistory, CraftSimOptions.maxHistoryEntriesPerClient, true)
 
@@ -101,9 +101,8 @@ function CraftSim.CUSTOMER_HISTORY.DB:MigrateDataV2()
     -- force a purge of zero tip customers for players who did not apply the workaround but still have problems with bloated history
     CraftSim.CUSTOMER_HISTORY:PurgeZeroTipCustomers()
     local playerRealm = GetRealmName()
-    
-    if CraftSimCustomerHistory and CraftSimCustomerHistory.realm and CraftSimCustomerHistory.realm[playerRealm] then
 
+    if CraftSimCustomerHistory and CraftSimCustomerHistory.realm and CraftSimCustomerHistory.realm[playerRealm] then
         ---@type table<string, CraftSim.CustomerHistory.Legacy>
         local realmData = CraftSimCustomerHistory.realm[playerRealm]
         for customerName, customerHistoryLegacy in pairs(realmData) do
@@ -113,56 +112,59 @@ function CraftSim.CUSTOMER_HISTORY.DB:MigrateDataV2()
                 local name, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(customerName)
                 -- create customer history v2 in new db
                 local customerHistory = CraftSim.CUSTOMER_HISTORY.DB:GetCustomerHistory(name, realm)
-    
+
                 customerHistory.totalTip = customerHistoryLegacy.totalTip
-                customerHistory.chatHistory = CraftSim.GUTIL:Map(customerHistoryLegacy.history, 
-                ---@param historyLegacy CraftSim.CustomerHistory.Craft.Legacy | CraftSim.CustomerHistory.ChatMessage.Legacy
-                function (historyLegacy)
-                    if historyLegacy.crafted then
-                        return nil
-                    end
-                    ---@type CraftSim.CustomerHistory.ChatMessage
-                    local chatMessage = {
-                        content = historyLegacy.from or historyLegacy.to,
-                        timestamp = math.floor(historyLegacy.timestamp / 1000),
-                        fromPlayer = historyLegacy.to ~= nil,
-                    }
-                    return chatMessage
-                end)
-    
+                customerHistory.chatHistory = CraftSim.GUTIL:Map(customerHistoryLegacy.history,
+                    ---@param historyLegacy CraftSim.CustomerHistory.Craft.Legacy | CraftSim.CustomerHistory.ChatMessage.Legacy
+                    function(historyLegacy)
+                        if historyLegacy.crafted then
+                            return nil
+                        end
+                        ---@type CraftSim.CustomerHistory.ChatMessage
+                        local chatMessage = {
+                            content = historyLegacy.from or historyLegacy.to,
+                            timestamp = math.floor(historyLegacy.timestamp / 1000),
+                            fromPlayer = historyLegacy.to ~= nil,
+                        }
+                        return chatMessage
+                    end)
+
                 local totalTip = 0
-                customerHistory.craftHistory = CraftSim.GUTIL:Map(customerHistoryLegacy.history, 
-                ---@param historyLegacy CraftSim.CustomerHistory.Craft.Legacy | CraftSim.CustomerHistory.ChatMessage.Legacy
-                function (historyLegacy)
-                    if historyLegacy.from or historyLegacy.to then
-                        return nil
-                    end
-                    local reagentState = Enum.CraftingOrderReagentsType.All
-                    if not historyLegacy.reagents or #historyLegacy.reagents == 0 then
-                        reagentState = Enum.CraftingOrderReagentsType.None
-                    end 
-                    if CraftSim.GUTIL:Some(historyLegacy.reagents, function(r) return r.source == Enum.CraftingOrderReagentSource.Customer end) then
-                        reagentState = Enum.CraftingOrderReagentsType.Some
-                    end
-                    ---@type CraftSim.CustomerHistory.Craft
-                    local craft = {
-                        customerNotes = "",
-                        timestamp = math.floor(historyLegacy.timestamp / 1000),
-                        itemLink = historyLegacy.crafted,
-                        reagentState = reagentState,
-                        reagents = historyLegacy.reagents,
-                        tip = historyLegacy.commission
-                    }
-                    totalTip = totalTip + craft.tip
-                    return craft
-                end)
-    
+                customerHistory.craftHistory = CraftSim.GUTIL:Map(customerHistoryLegacy.history,
+                    ---@param historyLegacy CraftSim.CustomerHistory.Craft.Legacy | CraftSim.CustomerHistory.ChatMessage.Legacy
+                    function(historyLegacy)
+                        if historyLegacy.from or historyLegacy.to then
+                            return nil
+                        end
+                        local reagentState = Enum.CraftingOrderReagentsType.All
+                        if not historyLegacy.reagents or #historyLegacy.reagents == 0 then
+                            reagentState = Enum.CraftingOrderReagentsType.None
+                        end
+                        if CraftSim.GUTIL:Some(historyLegacy.reagents, function(r)
+                                return r.source ==
+                                    Enum.CraftingOrderReagentSource.Customer
+                            end) then
+                            reagentState = Enum.CraftingOrderReagentsType.Some
+                        end
+                        ---@type CraftSim.CustomerHistory.Craft
+                        local craft = {
+                            customerNotes = "",
+                            timestamp = math.floor(historyLegacy.timestamp / 1000),
+                            itemLink = historyLegacy.crafted,
+                            reagentState = reagentState,
+                            reagents = historyLegacy.reagents,
+                            tip = historyLegacy.commission
+                        }
+                        totalTip = totalTip + craft.tip
+                        return craft
+                    end)
+
                 customerHistory.totalOrders = #customerHistory.craftHistory
                 customerHistory.totalTip = totalTip
 
                 -- if the total tip is zero do not migrate
 
-                if customerHistory.totalTip and customerHistory.totalTip > 0 then 
+                if customerHistory.totalTip and customerHistory.totalTip > 0 then
                     CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
                 end
             end

@@ -105,18 +105,18 @@ function CraftSim.Reagent:Debug()
     }
 
     if self.hasQuality then
-        table.foreach(self.items, function (_, reagentItem)
-            debugLines = CraftSim.GUTIL:Concat({debugLines, reagentItem:Debug()})
+        table.foreach(self.items, function(_, reagentItem)
+            debugLines = CraftSim.GUTIL:Concat({ debugLines, reagentItem:Debug() })
         end)
     else
-        debugLines = CraftSim.GUTIL:Concat({debugLines, self.items[1]:Debug()})
+        debugLines = CraftSim.GUTIL:Concat({ debugLines, self.items[1]:Debug() })
     end
 
     return debugLines
 end
 
 function CraftSim.Reagent:Clear()
-    table.foreach(self.items, function (_, reagentItem)
+    table.foreach(self.items, function(_, reagentItem)
         reagentItem:Clear()
     end)
 end
@@ -148,7 +148,7 @@ function CraftSim.Reagent:HasItems(multiplier)
 
     -- check if the allocated quantity is enough to satisfy the required quantity (times multiplier)
     totalQuantity = totalQuantity * multiplier
-    local requiredQuantity = self.requiredQuantity*multiplier
+    local requiredQuantity = self.requiredQuantity * multiplier
     local hasRequiredTotalQuantity = totalQuantity >= requiredQuantity
 
     return hasRequiredTotalQuantity
@@ -173,7 +173,7 @@ function CraftSim.Reagent:HasQuantityXTimes()
         end
     end
 
-    return currentMinTimes 
+    return currentMinTimes
 end
 
 function CraftSim.Reagent:SetCheapestQualityMax()
@@ -198,8 +198,6 @@ function CraftSim.Reagent:SetCheapestQualityMax()
     end
 end
 
-
-
 ---@class CraftSim.Reagent.Serialized
 ---@field hasQuality boolean
 ---@field requiredQuantity number
@@ -211,7 +209,7 @@ function CraftSim.Reagent:Serialize()
     serialized.hasQuality = self.hasQuality
     serialized.requiredQuantity = self.requiredQuantity
     serialized.dataSlotIndex = self.dataSlotIndex
-    serialized.items = CraftSim.GUTIL:Map(self.items, function (reagentItem)
+    serialized.items = CraftSim.GUTIL:Map(self.items, function(reagentItem)
         return reagentItem:Serialize()
     end)
     return serialized
@@ -225,7 +223,7 @@ function CraftSim.Reagent:Deserialize(serializedReagent)
     reagent.hasQuality = not not serializedReagent.hasQuality
     reagent.requiredQuantity = tonumber(serializedReagent.requiredQuantity)
     reagent.dataSlotIndex = tonumber(serializedReagent.dataSlotIndex)
-    reagent.items = CraftSim.GUTIL:Map(serializedReagent.items, function (serializedReagentItem)
+    reagent.items = CraftSim.GUTIL:Map(serializedReagent.items, function(serializedReagentItem)
         return CraftSim.ReagentItem:Deserialize(serializedReagentItem)
     end)
     return reagent

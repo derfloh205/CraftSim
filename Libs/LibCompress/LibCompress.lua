@@ -51,12 +51,12 @@ local bit_rshift = bit.rshift
 --------------------------------------------------------------------------------
 -- Cleanup
 
-local tables = {} -- tables that may be cleaned have to be kept here
+local tables = {}          -- tables that may be cleaned have to be kept here
 local tables_to_clean = {} -- list of tables by name (string) that may be reset to {} after a timeout
 
 -- tables that may be erased
 local function cleanup()
-	for k,v in pairs(tables_to_clean) do
+	for k, v in pairs(tables_to_clean) do
 		tables[k] = {}
 		tables_to_clean[k] = nil
 	end
@@ -80,7 +80,7 @@ local function setCleanupTables(...)
 	if not LibCompress.frame:IsShown() then
 		LibCompress.frame:Show()
 	end
-	for i = 1, select("#",...) do
+	for i = 1, select("#", ...) do
 		tables_to_clean[(select(i, ...))] = true
 	end
 end
@@ -103,11 +103,11 @@ local function encode(x)
 	end
 
 	bytes[#bytes + 1] = x % 255
-	x=math.floor(x/255)
+	x = math.floor(x / 255)
 
 	while x > 0 do
 		bytes[#bytes + 1] = x % 255
-		x=math.floor(x/255)
+		x = math.floor(x / 255)
 	end
 	if #bytes == 1 and bytes[1] > 0 and bytes[1] < 250 then
 		return string_char(bytes[1])
@@ -149,7 +149,7 @@ function LibCompress:CompressLZW(uncompressed)
 			dict[k] = nil
 		end
 
-		local result = {"\002"}
+		local result = { "\002" }
 		local w = ''
 		local ressize = 1
 
@@ -159,7 +159,7 @@ function LibCompress:CompressLZW(uncompressed)
 
 		for i = 1, #uncompressed do
 			local c = uncompressed:sub(i, i)
-			local wc = w..c
+			local wc = w .. c
 			if dict[wc] then
 				w = wc
 			else
@@ -181,7 +181,7 @@ function LibCompress:CompressLZW(uncompressed)
 		if (#uncompressed + 1) > ressize then
 			return table_concat(result)
 		else
-			return string_char(1)..uncompressed
+			return string_char(1) .. uncompressed
 		end
 	else
 		return nil, "Can only compress strings"
@@ -194,7 +194,7 @@ end
 function LibCompress:DecompressLZW(compressed)
 	if type(compressed) == "string" then
 		if compressed:sub(1, 1) ~= "\002" then
-			return nil, "Can only decompress LZW compressed data ("..tostring(compressed:sub(1, 1))..")"
+			return nil, "Can only decompress LZW compressed data (" .. tostring(compressed:sub(1, 1)) .. ")"
 		end
 
 		compressed = compressed:sub(2)
@@ -220,9 +220,9 @@ function LibCompress:DecompressLZW(compressed)
 		while t <= #compressed do
 			k, delta = decode(compressed, t)
 			t = t + delta
-			entry = dict[k] or (w..w:sub(1, 1))
+			entry = dict[k] or (w .. w:sub(1, 1))
 			result[#result + 1] = entry
-			dict[dict_size] = w..entry:sub(1, 1)
+			dict[dict_size] = w .. entry:sub(1, 1)
 			dict_size = dict_size + 1
 			w = entry
 		end
@@ -231,7 +231,6 @@ function LibCompress:DecompressLZW(compressed)
 		return nil, "Can only uncompress strings"
 	end
 end
-
 
 --------------------------------------------------------------------------------
 -- Huffman codec
@@ -254,13 +253,13 @@ local function escape_code(code, length)
 	local escaped_code = 0
 	local b
 	local l = 0
-	for i = length -1, 0, - 1 do
+	for i = length - 1, 0, -1 do
 		b = bit_band(code, bit_lshift(1, i)) == 0 and 0 or 1
 		escaped_code = bit_lshift(escaped_code, 1 + b) + b
 		l = l + b
 	end
 	if length + l > 32 then
-		return nil, "escape overflow ("..(length + l)..")"
+		return nil, "escape overflow (" .. (length + l) .. ")"
 	end
 	return escaped_code, length + l
 end
@@ -272,9 +271,10 @@ local compressed_size = 0
 local remainder
 local remainder_length
 local function addBits(tbl, code, length)
-	if remainder_length+length >= 32 then
+	if remainder_length + length >= 32 then
 		-- we have at least 4 bytes to store; bulk it
-		remainder = remainder + bit_lshift(code, remainder_length) -- this overflows! Top part of code is lost (but we handle it below)
+		remainder = remainder +
+			bit_lshift(code, remainder_length) -- this overflows! Top part of code is lost (but we handle it below)
 		-- remainder now holds 4 full bytes to store. So lets do it.
 		compressed_size = compressed_size + 1
 		tbl[compressed_size] = string_char(bit_band(remainder, 255)) ..
@@ -283,16 +283,17 @@ local function addBits(tbl, code, length)
 			string_char(bit_band(bit_rshift(remainder, 24), 255))
 		remainder = 0
 		code = bit_rshift(code, 32 - remainder_length)
-		length =  remainder_length + length - 32
+		length = remainder_length + length - 32
 		remainder_length = 0
 	end
-	if remainder_length+length >= 16 then
+	if remainder_length + length >= 16 then
 		-- we have at least 2 bytes to store; bulk it
 		remainder = remainder + bit_lshift(code, remainder_length)
 		remainder_length = length + remainder_length
 		-- remainder now holds at least 2 full bytes to store. So lets do it.
 		compressed_size = compressed_size + 1
-		tbl[compressed_size] = string_char(bit_band(remainder, 255)) .. string_char(bit_band(bit_rshift(remainder, 8), 255))
+		tbl[compressed_size] = string_char(bit_band(remainder, 255)) ..
+			string_char(bit_band(bit_rshift(remainder, 8), 255))
 		remainder = bit_rshift(remainder, 16)
 		code = remainder
 		length = remainder_length - 16
@@ -305,7 +306,7 @@ local function addBits(tbl, code, length)
 		compressed_size = compressed_size + 1
 		tbl[compressed_size] = string_char(bit_band(remainder, 255))
 		remainder = bit_rshift(remainder, 8)
-		remainder_length = remainder_length -8
+		remainder_length = remainder_length - 8
 	end
 end
 
@@ -334,7 +335,7 @@ function LibCompress:CompressHuffman(uncompressed)
 	local leaf
 	local symbols = {}
 	for symbol, weight in pairs(hist) do
-		leaf = { symbol=string_char(symbol), weight=weight }
+		leaf = { symbol = string_char(symbol), weight = weight }
 		symbols[symbol] = leaf
 		table_insert(leafs, leaf)
 	end
@@ -404,7 +405,7 @@ function LibCompress:CompressHuffman(uncompressed)
 			c2 = leaf2,
 			weight = leaf1.weight + leaf2.weight
 		}
-		table_insert(huff,newNode)
+		table_insert(huff, newNode)
 	end
 
 	if #leafs > 0 then
@@ -455,10 +456,10 @@ function LibCompress:CompressHuffman(uncompressed)
 	-- Header: byte 0 = #leafs, bytes 1-3 = size of uncompressed data
 	-- max 2^24 bytes
 	length = string_len(uncompressed)
-	compressed[2] = string_char(bit_band(nLeafs -1, 255))	-- number of leafs
-	compressed[3] = string_char(bit_band(length, 255))			-- bit 0-7
-	compressed[4] = string_char(bit_band(bit_rshift(length, 8), 255))	-- bit 8-15
-	compressed[5] = string_char(bit_band(bit_rshift(length, 16), 255))	-- bit 16-23
+	compressed[2] = string_char(bit_band(nLeafs - 1, 255))          -- number of leafs
+	compressed[3] = string_char(bit_band(length, 255))              -- bit 0-7
+	compressed[4] = string_char(bit_band(bit_rshift(length, 8), 255)) -- bit 8-15
+	compressed[5] = string_char(bit_band(bit_rshift(length, 16), 255)) -- bit 16-23
 	compressed_size = 5
 
 	-- create symbol/code map
@@ -499,7 +500,7 @@ function LibCompress:CompressHuffman(uncompressed)
 
 	-- is compression worth it? If not, return uncompressed data.
 	if (#uncompressed + 1) <= #compressed_string then
-		return "\001"..uncompressed
+		return "\001" .. uncompressed
 	end
 
 	setCleanupTables("Huffman_compressed", "Huffman_large_compressed")
@@ -509,7 +510,7 @@ end
 -- lookuptable (cached between calls)
 local lshiftMask = {}
 setmetatable(lshiftMask, {
-	__index = function (t, k)
+	__index = function(t, k)
 		local v = bit_lshift(1, k)
 		rawset(t, k, v)
 		return v
@@ -519,8 +520,8 @@ setmetatable(lshiftMask, {
 -- lookuptable (cached between calls)
 local lshiftMinusOneMask = {}
 setmetatable(lshiftMinusOneMask, {
-	__index = function (t, k)
-		local v = bit_lshift(1, k) -  1
+	__index = function(t, k)
+		local v = bit_lshift(1, k) - 1
 		rawset(t, k, v)
 		return v
 	end
@@ -544,7 +545,7 @@ local function lshift64(value_high, value, lshift_amount)
 		return 0, 0
 	end
 	if lshift_amount < 32 then
-		return bit_bor(bit_lshift(value_high, lshift_amount), bit_rshift(value, 32-lshift_amount)),
+		return bit_bor(bit_lshift(value_high, lshift_amount), bit_rshift(value, 32 - lshift_amount)),
 			bit_lshift(value, lshift_amount)
 	end
 	-- 32-63 bit shift
@@ -561,7 +562,7 @@ local function rshift64(value_high, value, rshift_amount)
 	end
 	if rshift_amount < 32 then
 		return bit_rshift(value_high, rshift_amount),
-			bit_bor(bit_lshift(value_high, 32-rshift_amount), bit_rshift(value, rshift_amount))
+			bit_bor(bit_lshift(value_high, 32 - rshift_amount), bit_rshift(value, rshift_amount))
 	end
 	-- 32-63 bit shift
 	return 0,
@@ -573,20 +574,22 @@ local function getCode2(bitfield_high, bitfield, field_len)
 		-- [bitfield_high..bitfield]: bit 0 is right most in bitfield. bit <field_len-1> is left most in bitfield_high
 		local b1, b2, remainder_high, remainder
 		for i = 0, field_len - 2 do
-			b1 = i <= 31 and bit_band(bitfield, bit_lshift(1, i)) or bit_band(bitfield_high, bit_lshift(1, i)) -- for shifts, 32 = 0 (5 bit used)
-			b2 = (i+1) <= 31 and bit_band(bitfield, bit_lshift(1, i+1)) or bit_band(bitfield_high, bit_lshift(1, i+1))
+			b1 = i <= 31 and bit_band(bitfield, bit_lshift(1, i)) or
+				bit_band(bitfield_high, bit_lshift(1, i)) -- for shifts, 32 = 0 (5 bit used)
+			b2 = (i + 1) <= 31 and bit_band(bitfield, bit_lshift(1, i + 1)) or
+				bit_band(bitfield_high, bit_lshift(1, i + 1))
 			if not (b1 == 0) and not (b2 == 0) then
 				-- found 2 bits set right after each other (stop bits) with i pointing at the first stop bit
 				-- return the two bitfields separated by the two stopbits (3 values for each: bitfield_high, bitfield, field_len)
 				-- bits left: field_len - (i+2)
-				remainder_high, remainder = rshift64(bitfield_high, bitfield, i+2)
+				remainder_high, remainder = rshift64(bitfield_high, bitfield, i + 2)
 				-- first bitfield is the lower part
-				return (i-1) >= 32 and bit_band(bitfield_high, bit_lshift(1, i) - 1) or 0,
+				return (i - 1) >= 32 and bit_band(bitfield_high, bit_lshift(1, i) - 1) or 0,
 					i >= 32 and bitfield or bit_band(bitfield, bit_lshift(1, i) - 1),
 					i,
 					remainder_high,
 					remainder,
-					field_len-(i+2)
+					field_len - (i + 2)
 			end
 		end
 	end
@@ -599,7 +602,7 @@ local function unescape_code(code, code_len)
 	local l = 0
 	local i = 0
 	while i < code_len do
-		b = bit_band( code, lshiftMask[i])
+		b = bit_band(code, lshiftMask[i])
 		if not (b == 0) then
 			unescaped_code = bit_bor(unescaped_code, lshiftMask[l])
 			i = i + 1
@@ -626,7 +629,7 @@ function LibCompress:DecompressHuffman(compressed)
 		return compressed:sub(2) --return uncompressed data
 	end
 	if not (info_byte == 3) then
-		return nil, "Can only decompress Huffman compressed data ("..tostring(info_byte)..")"
+		return nil, "Can only decompress Huffman compressed data (" .. tostring(info_byte) .. ")"
 	end
 
 	local num_symbols = string_byte(string_sub(compressed, 2, 2)) + 1
@@ -644,7 +647,7 @@ function LibCompress:DecompressHuffman(compressed)
 	local bitfield_len = 0
 	local map = {} -- only table not reused in Huffman decode.
 	setmetatable(map, {
-		__index = function (t, k)
+		__index = function(t, k)
 			local v = {}
 			rawset(t, k, v)
 			return v
@@ -674,11 +677,12 @@ function LibCompress:DecompressHuffman(compressed)
 			bitfield_len = bitfield_len - 8
 			state = 1 -- search for code now
 		else
-			code_high, code, code_len, _bitfield_high, _bitfield, _bitfield_len = getCode2(bitfield_high, bitfield, bitfield_len)
+			code_high, code, code_len, _bitfield_high, _bitfield, _bitfield_len = getCode2(bitfield_high, bitfield,
+				bitfield_len)
 			if code_high then
 				bitfield_high, bitfield, bitfield_len = _bitfield_high, _bitfield, _bitfield_len
 				if code_len > 32 then
-					return nil, "Unsupported symbol code length ("..code_len..")"
+					return nil, "Unsupported symbol code length (" .. code_len .. ")"
 				end
 				c, cl = unescape_code(code, code_len)
 				map[cl][c] = string_char(symbol)
@@ -696,7 +700,7 @@ function LibCompress:DecompressHuffman(compressed)
 	-- But do return an empty table to prevent runtime errors. (instead of returning nil)
 	local mt = {}
 	setmetatable(map, {
-		__index = function (t, k)
+		__index = function(t, k)
 			return mt
 		end
 	})
@@ -714,7 +718,7 @@ function LibCompress:DecompressHuffman(compressed)
 
 	while true do
 		if test_code_len <= bitfield_len then
-			test_code = bit_band( bitfield, lshiftMinusOneMask[test_code_len])
+			test_code = bit_band(bitfield, lshiftMinusOneMask[test_code_len])
 			symbol = map[test_code_len][test_code]
 
 			if symbol then
@@ -739,7 +743,7 @@ function LibCompress:DecompressHuffman(compressed)
 			else
 				test_code_len = test_code_len + 1
 				if test_code_len > maxCodeLen then
-					return nil, "Decompression error at "..tostring(i).."/"..tostring(#compressed)
+					return nil, "Decompression error at " .. tostring(i) .. "/" .. tostring(#compressed)
 				end
 			end
 		else
@@ -754,7 +758,8 @@ function LibCompress:DecompressHuffman(compressed)
 	end
 
 	setCleanupTables("Huffman_uncompressed", "Huffman_large_uncompressed")
-	return table_concat(large_uncompressed, "", 1, large_uncompressed_size)..table_concat(uncompressed, "", 1, uncompressed_size)
+	return table_concat(large_uncompressed, "", 1, large_uncompressed_size) ..
+		table_concat(uncompressed, "", 1, uncompressed_size)
 end
 
 --------------------------------------------------------------------------------
@@ -764,7 +769,7 @@ function LibCompress:Store(uncompressed)
 	if type(uncompressed) ~= "string" then
 		return nil, "Can only compress strings"
 	end
-	return "\001"..uncompressed
+	return "\001" .. uncompressed
 end
 
 function LibCompress:DecompressUncompressed(data)
@@ -809,7 +814,7 @@ function LibCompress:Decompress(data)
 	if decompression_methods[header_info] then
 		return decompression_methods[header_info](self, data)
 	else
-		return nil, "Unknown compression method ("..tostring(header_info)..")"
+		return nil, "Unknown compression method (" .. tostring(header_info) .. ")"
 	end
 end
 
@@ -867,7 +872,7 @@ local gsub_escape_table = {
 }
 
 local function escape_for_gsub(str)
-	return str:gsub("([%z%(%)%.%%%+%-%*%?%[%]%^%$])",  gsub_escape_table)
+	return str:gsub("([%z%(%)%.%%%+%-%*%?%[%]%^%$])", gsub_escape_table)
 end
 
 function LibCompress:GetEncodeTable(reservedChars, escapeChars, mapChars)
@@ -889,7 +894,7 @@ function LibCompress:GetEncodeTable(reservedChars, escapeChars, mapChars)
 	end
 
 	-- list of characters that must be encoded
-	local encodeBytes = reservedChars..escapeChars..mapChars
+	local encodeBytes = reservedChars .. escapeChars .. mapChars
 
 	-- build list of bytes not available as a suffix to a prefix byte
 	local taken = {}
@@ -922,10 +927,12 @@ function LibCompress:GetEncodeTable(reservedChars, escapeChars, mapChars)
 			decode_translate[to] = from
 			table_insert(decode_search, to)
 		end
-		codecTable["decode_search"..tostring(escapeCharIndex)] = "([".. escape_for_gsub(table_concat(decode_search)).."])"
-		codecTable["decode_translate"..tostring(escapeCharIndex)] = decode_translate
-		table_insert(decode_func_string, "str = str:gsub(self.decode_search"..tostring(escapeCharIndex)..", self.decode_translate"..tostring(escapeCharIndex)..");")
-
+		codecTable["decode_search" .. tostring(escapeCharIndex)] = "([" ..
+			escape_for_gsub(table_concat(decode_search)) .. "])"
+		codecTable["decode_translate" .. tostring(escapeCharIndex)] = decode_translate
+		table_insert(decode_func_string,
+			"str = str:gsub(self.decode_search" ..
+			tostring(escapeCharIndex) .. ", self.decode_translate" .. tostring(escapeCharIndex) .. ");")
 	end
 
 	-- map single byte to double-byte
@@ -941,12 +948,15 @@ function LibCompress:GetEncodeTable(reservedChars, escapeChars, mapChars)
 			while r >= 256 or taken[string_char(r)] do
 				r = r + 1
 				if r > 255 then -- switch to next escapeChar
-					codecTable["decode_search"..tostring(escapeCharIndex)] = escape_for_gsub(escapeChar).."([".. escape_for_gsub(table_concat(decode_search)).."])"
-					codecTable["decode_translate"..tostring(escapeCharIndex)] = decode_translate
-					table_insert(decode_func_string, "str = str:gsub(self.decode_search"..tostring(escapeCharIndex)..", self.decode_translate"..tostring(escapeCharIndex)..");")
+					codecTable["decode_search" .. tostring(escapeCharIndex)] = escape_for_gsub(escapeChar) ..
+						"([" .. escape_for_gsub(table_concat(decode_search)) .. "])"
+					codecTable["decode_translate" .. tostring(escapeCharIndex)] = decode_translate
+					table_insert(decode_func_string,
+						"str = str:gsub(self.decode_search" ..
+						tostring(escapeCharIndex) .. ", self.decode_translate" .. tostring(escapeCharIndex) .. ");")
 
-					escapeCharIndex  = escapeCharIndex + 1
-					escapeChar = string_sub(escapeChars, escapeCharIndex, escapeCharIndex)
+					escapeCharIndex = escapeCharIndex + 1
+					escapeChar      = string_sub(escapeChars, escapeCharIndex, escapeCharIndex)
 
 					if escapeChar == "" then -- we are out of escape chars and we need more!
 						return nil, "Out of escape characters"
@@ -957,7 +967,7 @@ function LibCompress:GetEncodeTable(reservedChars, escapeChars, mapChars)
 					decode_translate = {}
 				end
 			end
-			encode_translate[c] = escapeChar..string_char(r)
+			encode_translate[c] = escapeChar .. string_char(r)
 			table_insert(encode_search, c)
 			decode_translate[string_char(r)] = c
 			table_insert(decode_search, string_char(r))
@@ -966,19 +976,23 @@ function LibCompress:GetEncodeTable(reservedChars, escapeChars, mapChars)
 	end
 
 	if r > 0 then
-		codecTable["decode_search"..tostring(escapeCharIndex)] = escape_for_gsub(escapeChar).."([".. escape_for_gsub(table_concat(decode_search)).."])"
-		codecTable["decode_translate"..tostring(escapeCharIndex)] = decode_translate
-		table_insert(decode_func_string, "str = str:gsub(self.decode_search"..tostring(escapeCharIndex)..", self.decode_translate"..tostring(escapeCharIndex)..");")
+		codecTable["decode_search" .. tostring(escapeCharIndex)] = escape_for_gsub(escapeChar) ..
+			"([" .. escape_for_gsub(table_concat(decode_search)) .. "])"
+		codecTable["decode_translate" .. tostring(escapeCharIndex)] = decode_translate
+		table_insert(decode_func_string,
+			"str = str:gsub(self.decode_search" ..
+			tostring(escapeCharIndex) .. ", self.decode_translate" .. tostring(escapeCharIndex) .. ");")
 	end
 
 	-- change last line from "str = ...;" to "return ...;";
 	decode_func_string[#decode_func_string] = decode_func_string[#decode_func_string]:gsub("str = (.*);", "return %1;")
-	decode_func_string = "return function(self, str) "..table_concat(decode_func_string).." end"
+	decode_func_string = "return function(self, str) " .. table_concat(decode_func_string) .. " end"
 
-	encode_search = "([".. escape_for_gsub(table_concat(encode_search)).."])"
-	decode_search = escape_for_gsub(escapeChars).."([".. escape_for_gsub(table_concat(decode_search)).."])"
+	encode_search = "([" .. escape_for_gsub(table_concat(encode_search)) .. "])"
+	decode_search = escape_for_gsub(escapeChars) .. "([" .. escape_for_gsub(table_concat(decode_search)) .. "])"
 
-	encode_func = assert(loadstring("return function(self, str) return str:gsub(self.encode_search, self.encode_translate); end"))()
+	encode_func = assert(loadstring(
+		"return function(self, str) return str:gsub(self.encode_search, self.encode_translate); end"))()
 	decode_func = assert(loadstring(decode_func_string))()
 	codecTable.encode_search = encode_search
 	codecTable.encode_translate = encode_translate
@@ -992,7 +1006,7 @@ function LibCompress:GetEncodeTable(reservedChars, escapeChars, mapChars)
 end
 
 -- Addons: Call this only once and reuse the returned table for all encodings/decodings.
-function LibCompress:GetAddonEncodeTable(reservedChars, escapeChars, mapChars )
+function LibCompress:GetAddonEncodeTable(reservedChars, escapeChars, mapChars)
 	reservedChars = reservedChars or ""
 	escapeChars = escapeChars or ""
 	mapChars = mapChars or ""
@@ -1001,7 +1015,7 @@ function LibCompress:GetAddonEncodeTable(reservedChars, escapeChars, mapChars )
 	if escapeChars == "" then
 		escapeChars = "\001"
 	end
-	return self:GetEncodeTable( (reservedChars or "").."\000", escapeChars, mapChars)
+	return self:GetEncodeTable((reservedChars or "") .. "\000", escapeChars, mapChars)
 end
 
 -- Addons: Call this only once and reuse the returned table for all encodings/decodings.
@@ -1028,7 +1042,7 @@ function LibCompress:GetChatEncodeTable(reservedChars, escapeChars, mapChars)
 		table_insert(r, string_char(i))
 	end
 
-	reservedChars = "sS\000\010\013\124%"..table_concat(r)..(reservedChars or "")
+	reservedChars = "sS\000\010\013\124%" .. table_concat(r) .. (reservedChars or "")
 	if escapeChars == "" then
 		escapeChars = "\029\031"
 	end
@@ -1062,7 +1076,7 @@ function LibCompress:Encode7bit(str)
 			encoded_size = encoded_size + 1
 			tbl[encoded_size] = string_char(bit_band(remainder, 127))
 			remainder = bit_rshift(remainder, 7)
-			remainder_length = remainder_length -7
+			remainder_length = remainder_length - 7
 		end
 	end
 
@@ -1092,7 +1106,7 @@ function LibCompress:Decode7bit(str)
 			bitfield_len = bitfield_len - 8
 		end
 		ch = string_byte(str, i)
-		bitfield=bitfield + bit_lshift(ch or 0, bitfield_len)
+		bitfield = bitfield + bit_lshift(ch or 0, bitfield_len)
 		bitfield_len = bitfield_len + 7
 		if i > length then
 			break
@@ -1137,38 +1151,264 @@ and/or fitness for purpose.
 --// FCS-16 algorithm implemented as described in RFC 1331
 local FCSINIT16 = 65535
 --// Fast 16 bit FCS lookup table
-local fcs16tab = { [0]=0, 4489, 8978, 12955, 17956, 22445, 25910, 29887,
-	35912, 40385, 44890, 48851, 51820, 56293, 59774, 63735,
-	4225, 264, 13203, 8730, 22181, 18220, 30135, 25662,
-	40137, 36160, 49115, 44626, 56045, 52068, 63999, 59510,
-	8450, 12427, 528, 5017, 26406, 30383, 17460, 21949,
-	44362, 48323, 36440, 40913, 60270, 64231, 51324, 55797,
-	12675, 8202, 4753, 792, 30631, 26158, 21685, 17724,
-	48587, 44098, 40665, 36688, 64495, 60006, 55549, 51572,
-	16900, 21389, 24854, 28831, 1056, 5545, 10034, 14011,
-	52812, 57285, 60766, 64727, 34920, 39393, 43898, 47859,
-	21125, 17164, 29079, 24606, 5281, 1320, 14259, 9786,
-	57037, 53060, 64991, 60502, 39145, 35168, 48123, 43634,
-	25350, 29327, 16404, 20893, 9506, 13483, 1584, 6073,
-	61262, 65223, 52316, 56789, 43370, 47331, 35448, 39921,
-	29575, 25102, 20629, 16668, 13731, 9258, 5809, 1848,
-	65487, 60998, 56541, 52564, 47595, 43106, 39673, 35696,
-	33800, 38273, 42778, 46739, 49708, 54181, 57662, 61623,
-	2112, 6601, 11090, 15067, 20068, 24557, 28022, 31999,
-	38025, 34048, 47003, 42514, 53933, 49956, 61887, 57398,
-	6337, 2376, 15315, 10842, 24293, 20332, 32247, 27774,
-	42250, 46211, 34328, 38801, 58158, 62119, 49212, 53685,
-	10562, 14539, 2640, 7129, 28518, 32495, 19572, 24061,
-	46475, 41986, 38553, 34576, 62383, 57894, 53437, 49460,
-	14787, 10314, 6865, 2904, 32743, 28270, 23797, 19836,
-	50700, 55173, 58654, 62615, 32808, 37281, 41786, 45747,
-	19012, 23501, 26966, 30943, 3168, 7657, 12146, 16123,
-	54925, 50948, 62879, 58390, 37033, 33056, 46011, 41522,
-	23237, 19276, 31191, 26718, 7393, 3432, 16371, 11898,
-	59150, 63111, 50204, 54677, 41258, 45219, 33336, 37809,
-	27462, 31439, 18516, 23005, 11618, 15595, 3696, 8185,
-	63375, 58886, 54429, 50452, 45483, 40994, 37561, 33584,
-	31687, 27214, 22741, 18780, 15843, 11370, 7921, 3960 }
+local fcs16tab = {
+	[0] = 0,
+	4489,
+	8978,
+	12955,
+	17956,
+	22445,
+	25910,
+	29887,
+	35912,
+	40385,
+	44890,
+	48851,
+	51820,
+	56293,
+	59774,
+	63735,
+	4225,
+	264,
+	13203,
+	8730,
+	22181,
+	18220,
+	30135,
+	25662,
+	40137,
+	36160,
+	49115,
+	44626,
+	56045,
+	52068,
+	63999,
+	59510,
+	8450,
+	12427,
+	528,
+	5017,
+	26406,
+	30383,
+	17460,
+	21949,
+	44362,
+	48323,
+	36440,
+	40913,
+	60270,
+	64231,
+	51324,
+	55797,
+	12675,
+	8202,
+	4753,
+	792,
+	30631,
+	26158,
+	21685,
+	17724,
+	48587,
+	44098,
+	40665,
+	36688,
+	64495,
+	60006,
+	55549,
+	51572,
+	16900,
+	21389,
+	24854,
+	28831,
+	1056,
+	5545,
+	10034,
+	14011,
+	52812,
+	57285,
+	60766,
+	64727,
+	34920,
+	39393,
+	43898,
+	47859,
+	21125,
+	17164,
+	29079,
+	24606,
+	5281,
+	1320,
+	14259,
+	9786,
+	57037,
+	53060,
+	64991,
+	60502,
+	39145,
+	35168,
+	48123,
+	43634,
+	25350,
+	29327,
+	16404,
+	20893,
+	9506,
+	13483,
+	1584,
+	6073,
+	61262,
+	65223,
+	52316,
+	56789,
+	43370,
+	47331,
+	35448,
+	39921,
+	29575,
+	25102,
+	20629,
+	16668,
+	13731,
+	9258,
+	5809,
+	1848,
+	65487,
+	60998,
+	56541,
+	52564,
+	47595,
+	43106,
+	39673,
+	35696,
+	33800,
+	38273,
+	42778,
+	46739,
+	49708,
+	54181,
+	57662,
+	61623,
+	2112,
+	6601,
+	11090,
+	15067,
+	20068,
+	24557,
+	28022,
+	31999,
+	38025,
+	34048,
+	47003,
+	42514,
+	53933,
+	49956,
+	61887,
+	57398,
+	6337,
+	2376,
+	15315,
+	10842,
+	24293,
+	20332,
+	32247,
+	27774,
+	42250,
+	46211,
+	34328,
+	38801,
+	58158,
+	62119,
+	49212,
+	53685,
+	10562,
+	14539,
+	2640,
+	7129,
+	28518,
+	32495,
+	19572,
+	24061,
+	46475,
+	41986,
+	38553,
+	34576,
+	62383,
+	57894,
+	53437,
+	49460,
+	14787,
+	10314,
+	6865,
+	2904,
+	32743,
+	28270,
+	23797,
+	19836,
+	50700,
+	55173,
+	58654,
+	62615,
+	32808,
+	37281,
+	41786,
+	45747,
+	19012,
+	23501,
+	26966,
+	30943,
+	3168,
+	7657,
+	12146,
+	16123,
+	54925,
+	50948,
+	62879,
+	58390,
+	37033,
+	33056,
+	46011,
+	41522,
+	23237,
+	19276,
+	31191,
+	26718,
+	7393,
+	3432,
+	16371,
+	11898,
+	59150,
+	63111,
+	50204,
+	54677,
+	41258,
+	45219,
+	33336,
+	37809,
+	27462,
+	31439,
+	18516,
+	23005,
+	11618,
+	15595,
+	3696,
+	8185,
+	63375,
+	58886,
+	54429,
+	50452,
+	45483,
+	40994,
+	37561,
+	33584,
+	31687,
+	27214,
+	22741,
+	18780,
+	15843,
+	11370,
+	7921,
+	3960
+}
 
 function LibCompress:fcs16init()
 	return FCSINIT16
@@ -1177,14 +1417,15 @@ end
 function LibCompress:fcs16update(uFcs16, pBuffer)
 	local length = string_len(pBuffer)
 	for i = 1, length do
-		uFcs16 = bit_bxor(bit_rshift(uFcs16,8), fcs16tab[bit_band(bit_bxor(uFcs16, string_byte(pBuffer, i)), 255)])
+		uFcs16 = bit_bxor(bit_rshift(uFcs16, 8), fcs16tab[bit_band(bit_bxor(uFcs16, string_byte(pBuffer, i)), 255)])
 	end
 	return uFcs16
 end
 
 function LibCompress:fcs16final(uFcs16)
-	return bit_bxor(uFcs16,65535)
+	return bit_bxor(uFcs16, 65535)
 end
+
 -- END OF FCS16
 
 --[[/*
@@ -1205,38 +1446,264 @@ and/or fitness for purpose.
 local FCSINIT32 = -1
 
 --// Fast 32 bit FCS lookup table
-local fcs32tab = { [0] = 0, 1996959894, -301047508, -1727442502, 124634137, 1886057615, -379345611, -1637575261,
-	249268274, 2044508324, -522852066, -1747789432, 162941995, 2125561021, -407360249, -1866523247,
-	498536548, 1789927666, -205950648, -2067906082, 450548861, 1843258603, -187386543, -2083289657,
-	325883990, 1684777152, -43845254, -1973040660, 335633487, 1661365465, -99664541, -1928851979,
-	997073096, 1281953886, -715111964, -1570279054, 1006888145, 1258607687, -770865667, -1526024853,
-	901097722, 1119000684, -608450090, -1396901568, 853044451, 1172266101, -589951537, -1412350631,
-	651767980, 1373503546, -925412992, -1076862698, 565507253, 1454621731, -809855591, -1195530993,
-	671266974, 1594198024, -972236366, -1324619484, 795835527, 1483230225, -1050600021, -1234817731,
-	1994146192, 31158534, -1731059524, -271249366, 1907459465, 112637215, -1614814043, -390540237,
-	2013776290, 251722036, -1777751922, -519137256, 2137656763, 141376813, -1855689577, -429695999,
-	1802195444, 476864866, -2056965928, -228458418, 1812370925, 453092731, -2113342271, -183516073,
-	1706088902, 314042704, -1950435094, -54949764, 1658658271, 366619977, -1932296973, -69972891,
-	1303535960, 984961486, -1547960204, -725929758, 1256170817, 1037604311, -1529756563, -740887301,
-	1131014506, 879679996, -1385723834, -631195440, 1141124467, 855842277, -1442165665, -586318647,
-	1342533948, 654459306, -1106571248, -921952122, 1466479909, 544179635, -1184443383, -832445281,
-	1591671054, 702138776, -1328506846, -942167884, 1504918807, 783551873, -1212326853, -1061524307,
-	-306674912, -1698712650, 62317068, 1957810842, -355121351, -1647151185, 81470997, 1943803523,
-	-480048366, -1805370492, 225274430, 2053790376, -468791541, -1828061283, 167816743, 2097651377,
-	-267414716, -2029476910, 503444072, 1762050814, -144550051, -2140837941, 426522225, 1852507879,
-	-19653770, -1982649376, 282753626, 1742555852, -105259153, -1900089351, 397917763, 1622183637,
-	-690576408, -1580100738, 953729732, 1340076626, -776247311, -1497606297, 1068828381, 1219638859,
-	-670225446, -1358292148, 906185462, 1090812512, -547295293, -1469587627, 829329135, 1181335161,
-	-882789492, -1134132454, 628085408, 1382605366, -871598187, -1156888829, 570562233, 1426400815,
-	-977650754, -1296233688, 733239954, 1555261956, -1026031705, -1244606671, 752459403, 1541320221,
-	-1687895376, -328994266, 1969922972, 40735498, -1677130071, -351390145, 1913087877, 83908371,
-	-1782625662, -491226604, 2075208622, 213261112, -1831694693, -438977011, 2094854071, 198958881,
-	-2032938284, -237706686, 1759359992, 534414190, -2118248755, -155638181, 1873836001, 414664567,
-	-2012718362, -15766928, 1711684554, 285281116, -1889165569, -127750551, 1634467795, 376229701,
-	-1609899400, -686959890, 1308918612, 956543938, -1486412191, -799009033, 1231636301, 1047427035,
-	-1362007478, -640263460, 1088359270, 936918000, -1447252397, -558129467, 1202900863, 817233897,
-	-1111625188, -893730166, 1404277552, 615818150, -1160759803, -841546093, 1423857449, 601450431,
-	-1285129682, -1000256840, 1567103746, 711928724, -1274298825, -1022587231, 1510334235, 755167117 }
+local fcs32tab = {
+	[0] = 0,
+	1996959894,
+	-301047508,
+	-1727442502,
+	124634137,
+	1886057615,
+	-379345611,
+	-1637575261,
+	249268274,
+	2044508324,
+	-522852066,
+	-1747789432,
+	162941995,
+	2125561021,
+	-407360249,
+	-1866523247,
+	498536548,
+	1789927666,
+	-205950648,
+	-2067906082,
+	450548861,
+	1843258603,
+	-187386543,
+	-2083289657,
+	325883990,
+	1684777152,
+	-43845254,
+	-1973040660,
+	335633487,
+	1661365465,
+	-99664541,
+	-1928851979,
+	997073096,
+	1281953886,
+	-715111964,
+	-1570279054,
+	1006888145,
+	1258607687,
+	-770865667,
+	-1526024853,
+	901097722,
+	1119000684,
+	-608450090,
+	-1396901568,
+	853044451,
+	1172266101,
+	-589951537,
+	-1412350631,
+	651767980,
+	1373503546,
+	-925412992,
+	-1076862698,
+	565507253,
+	1454621731,
+	-809855591,
+	-1195530993,
+	671266974,
+	1594198024,
+	-972236366,
+	-1324619484,
+	795835527,
+	1483230225,
+	-1050600021,
+	-1234817731,
+	1994146192,
+	31158534,
+	-1731059524,
+	-271249366,
+	1907459465,
+	112637215,
+	-1614814043,
+	-390540237,
+	2013776290,
+	251722036,
+	-1777751922,
+	-519137256,
+	2137656763,
+	141376813,
+	-1855689577,
+	-429695999,
+	1802195444,
+	476864866,
+	-2056965928,
+	-228458418,
+	1812370925,
+	453092731,
+	-2113342271,
+	-183516073,
+	1706088902,
+	314042704,
+	-1950435094,
+	-54949764,
+	1658658271,
+	366619977,
+	-1932296973,
+	-69972891,
+	1303535960,
+	984961486,
+	-1547960204,
+	-725929758,
+	1256170817,
+	1037604311,
+	-1529756563,
+	-740887301,
+	1131014506,
+	879679996,
+	-1385723834,
+	-631195440,
+	1141124467,
+	855842277,
+	-1442165665,
+	-586318647,
+	1342533948,
+	654459306,
+	-1106571248,
+	-921952122,
+	1466479909,
+	544179635,
+	-1184443383,
+	-832445281,
+	1591671054,
+	702138776,
+	-1328506846,
+	-942167884,
+	1504918807,
+	783551873,
+	-1212326853,
+	-1061524307,
+	-306674912,
+	-1698712650,
+	62317068,
+	1957810842,
+	-355121351,
+	-1647151185,
+	81470997,
+	1943803523,
+	-480048366,
+	-1805370492,
+	225274430,
+	2053790376,
+	-468791541,
+	-1828061283,
+	167816743,
+	2097651377,
+	-267414716,
+	-2029476910,
+	503444072,
+	1762050814,
+	-144550051,
+	-2140837941,
+	426522225,
+	1852507879,
+	-19653770,
+	-1982649376,
+	282753626,
+	1742555852,
+	-105259153,
+	-1900089351,
+	397917763,
+	1622183637,
+	-690576408,
+	-1580100738,
+	953729732,
+	1340076626,
+	-776247311,
+	-1497606297,
+	1068828381,
+	1219638859,
+	-670225446,
+	-1358292148,
+	906185462,
+	1090812512,
+	-547295293,
+	-1469587627,
+	829329135,
+	1181335161,
+	-882789492,
+	-1134132454,
+	628085408,
+	1382605366,
+	-871598187,
+	-1156888829,
+	570562233,
+	1426400815,
+	-977650754,
+	-1296233688,
+	733239954,
+	1555261956,
+	-1026031705,
+	-1244606671,
+	752459403,
+	1541320221,
+	-1687895376,
+	-328994266,
+	1969922972,
+	40735498,
+	-1677130071,
+	-351390145,
+	1913087877,
+	83908371,
+	-1782625662,
+	-491226604,
+	2075208622,
+	213261112,
+	-1831694693,
+	-438977011,
+	2094854071,
+	198958881,
+	-2032938284,
+	-237706686,
+	1759359992,
+	534414190,
+	-2118248755,
+	-155638181,
+	1873836001,
+	414664567,
+	-2012718362,
+	-15766928,
+	1711684554,
+	285281116,
+	-1889165569,
+	-127750551,
+	1634467795,
+	376229701,
+	-1609899400,
+	-686959890,
+	1308918612,
+	956543938,
+	-1486412191,
+	-799009033,
+	1231636301,
+	1047427035,
+	-1362007478,
+	-640263460,
+	1088359270,
+	936918000,
+	-1447252397,
+	-558129467,
+	1202900863,
+	817233897,
+	-1111625188,
+	-893730166,
+	1404277552,
+	615818150,
+	-1160759803,
+	-841546093,
+	1423857449,
+	601450431,
+	-1285129682,
+	-1000256840,
+	1567103746,
+	711928724,
+	-1274298825,
+	-1022587231,
+	1510334235,
+	755167117
+}
 
 function LibCompress:fcs32init()
 	return FCSINIT32

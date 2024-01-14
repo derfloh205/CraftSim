@@ -21,7 +21,7 @@ if not AceEvent then return end
 local pairs = pairs
 
 AceEvent.frame = AceEvent.frame or CreateFrame("Frame", "AceEvent30Frame") -- our event frame
-AceEvent.embeds = AceEvent.embeds or {} -- what objects embed this lib
+AceEvent.embeds = AceEvent.embeds or {}                                    -- what objects embed this lib
 
 -- APIs and registry for blizzard events, using CallbackHandler lib
 if not AceEvent.events then
@@ -36,7 +36,6 @@ end
 function AceEvent.events:OnUnused(target, eventname)
 	AceEvent.frame:UnregisterEvent(eventname)
 end
-
 
 -- APIs and registry for IPC messages, using CallbackHandler lib
 if not AceEvent.messages then

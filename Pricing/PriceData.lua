@@ -60,7 +60,7 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
                 -- if no ahPrice could be found but we have craftData, use craftData
                 priceInfo.isCraftData = true
                 priceInfo.noAHPriceFound = true
-                return priceInfo.craftDataExpectedCosts, priceInfo                
+                return priceInfo.craftDataExpectedCosts, priceInfo
             end
 
             if priceInfo.ahPrice <= priceInfo.craftDataExpectedCosts then
@@ -87,7 +87,7 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink, isReagent)
     if not CraftSim.PRICE_APIS.available then
         return 0
     end
-    
+
     local minbuyout = CraftSim.PRICE_API:GetMinBuyoutByItemLink(itemLink, isReagent)
     if minbuyout == nil then
         if CraftSim.PRICEDATA.noPriceDataLinks[itemLink] == nil then

@@ -6,7 +6,7 @@ local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.CRAFTQ : Frame
-CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({"TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED"})
+CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED" })
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
@@ -23,8 +23,8 @@ CraftSim.CRAFTQ.itemCountCache = nil
 
 CraftSim.CRAFTQ.useAuctionatorShoppingListAPI = true
 
-local systemPrint=print
-local print=CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+local systemPrint = print
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 --- cache for OnConfirmCommoditiesPurchase -> COMMODITY_PURCHASE_SUCCEEDED flow
 ---@class CraftSim.CraftQueue.purchasedItem
@@ -40,7 +40,7 @@ function CraftSim.CRAFTQ:OnConfirmCommoditiesPurchase(itemID, boughtQuantity)
     end
 
     CraftSim.CRAFTQ.purchasedItem = {
-        item=Item:CreateFromItemID(itemID),
+        item = Item:CreateFromItemID(itemID),
         quantity = boughtQuantity
     }
 end
@@ -54,13 +54,14 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
         return -- if Auctionator is not up to date, do nothing
     end
     if CraftSim.CRAFTQ.purchasedItem then
-        GUTIL:ContinueOnAllItemsLoaded({CraftSim.CRAFTQ.purchasedItem.item}, function ()
+        GUTIL:ContinueOnAllItemsLoaded({ CraftSim.CRAFTQ.purchasedItem.item }, function()
             local purchasedItem = CraftSim.CRAFTQ.purchasedItem
             print("commodity purchase successfull")
             print("item: " .. tostring(purchasedItem.item:GetItemLink()))
             print("quantity: " .. tostring(purchasedItem.quantity))
 
-            local success, result = pcall(Auctionator.API.v1.GetShoppingListItems,addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
+            local success, result = pcall(Auctionator.API.v1.GetShoppingListItems, addonName,
+                CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
             if not success then
                 print("Error calling GetShoppingListItems:\n" .. tostring(result))
                 return
@@ -68,13 +69,13 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
 
             local itemQualityID = GUTIL:GetQualityIDFromLink(purchasedItem.item:GetItemLink())
             local searchTerms = {
-                searchString=purchasedItem.item:GetItemName(),
-                isExact=true,
-                tier=itemQualityID,
+                searchString = purchasedItem.item:GetItemName(),
+                isExact = true,
+                tier = itemQualityID,
             }
             local searchString = Auctionator.API.v1.ConvertToSearchString(addonName, searchTerms)
-            local oldSearchString = GUTIL:Find(result, function(r) 
-                return GUTIL:StringStartsWith(r, searchString) 
+            local oldSearchString = GUTIL:Find(result, function(r)
+                return GUTIL:StringStartsWith(r, searchString)
             end)
             if not oldSearchString then
                 print("item could not be found in shopping list")
@@ -90,11 +91,12 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
                 searchTerms.quantity = newQuantity
                 local newSearchString = Auctionator.API.v1.ConvertToSearchString(addonName, searchTerms)
                 -- adapt
-                Auctionator.API.v1.AlterShoppingListItem(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, 
-                oldSearchString, newSearchString)
+                Auctionator.API.v1.AlterShoppingListItem(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME,
+                    oldSearchString, newSearchString)
             else
                 -- remove
-                Auctionator.API.v1.DeleteShoppingListItem(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, oldSearchString)
+                Auctionator.API.v1.DeleteShoppingListItem(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME,
+                    oldSearchString)
             end
 
             CraftSim.CRAFTQ.purchasedItem = nil -- reset
@@ -107,7 +109,7 @@ function CraftSim.CRAFTQ:InitializeCraftQueue()
     CraftSim.CRAFTQ.craftQueue = CraftSim.CraftQueue({})
 
     -- hook onto auction buy confirm function
-    hooksecurefunc(C_AuctionHouse, "ConfirmCommoditiesPurchase", function (itemID, quantity)
+    hooksecurefunc(C_AuctionHouse, "ConfirmCommoditiesPurchase", function(itemID, quantity)
         CraftSim.CRAFTQ:OnConfirmCommoditiesPurchase(itemID, quantity)
     end)
 end
@@ -144,9 +146,11 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
         -- use general options
         local profitThresholdReached = false
         if recipeData.relativeProfitCached then
-            profitThresholdReached = recipeData.relativeProfitCached >= (CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0)
+            profitThresholdReached = recipeData.relativeProfitCached >=
+                (CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0)
         end
-        local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, nil, CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold)
+        local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, nil,
+            CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold)
         print("profitThresholdReached: " .. tostring(profitThresholdReached))
         print("saleRateReached: " .. tostring(saleRateReached))
         local include = profitThresholdReached and saleRateReached
@@ -165,7 +169,8 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
         profitMarginReached = recipeData.relativeProfitCached >= (restockOptions.profitMarginThreshold)
     end
 
-    local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, restockOptions.saleRatePerQuality, restockOptions.saleRateThreshold)
+    local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, restockOptions
+        .saleRatePerQuality, restockOptions.saleRateThreshold)
 
     print("profitMarginReached: " .. tostring(profitMarginReached))
     print("saleRateReached: " .. tostring(saleRateReached))
@@ -199,13 +204,13 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                 end
             end
         end
-        
+
         if restockAmount > 0 then
             CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, restockAmount)
         end
     end
 
-    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()    
+    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -228,8 +233,9 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
     print("CraftSim.CRAFTQ:CreateAuctionatorShoppingList", false, true)
     if CraftSim.CRAFTQ.useAuctionatorShoppingListAPI and not Auctionator.API.v1.ConvertToSearchString then
         local f = CraftSim.UTIL:GetFormatter()
-        systemPrint(f.r("Error:") .. f.l(" CraftSim") .. " relies on the newest version of " .. 
-        f.bb("Auctionator") .. " to create ShoppingLists. Please make sure your " .. f.bb("Auctionator") .. " addon is up to date!")
+        systemPrint(f.r("Error:") .. f.l(" CraftSim") .. " relies on the newest version of " ..
+            f.bb("Auctionator") ..
+            " to create ShoppingLists. Please make sure your " .. f.bb("Auctionator") .. " addon is up to date!")
         return
     end
 
@@ -246,7 +252,8 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
                         qualityID = nil,
                         quantity = 0
                     }
-                    reagentMap[reagentItem.item:GetItemID()].quantity = reagentMap[reagentItem.item:GetItemID()].quantity + (reagentItem.quantity * craftQueueItem.amount)
+                    reagentMap[reagentItem.item:GetItemID()].quantity = reagentMap[reagentItem.item:GetItemID()]
+                        .quantity + (reagentItem.quantity * craftQueueItem.amount)
                     reagentMap[reagentItem.item:GetItemID()].qualityID = qualityID
                 end
             else
@@ -256,7 +263,8 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
                     qualityID = nil,
                     quantity = 0
                 }
-                reagentMap[reagentItem.item:GetItemID()].quantity = reagentMap[reagentItem.item:GetItemID()].quantity + (reagentItem.quantity * craftQueueItem.amount)
+                reagentMap[reagentItem.item:GetItemID()].quantity = reagentMap[reagentItem.item:GetItemID()].quantity +
+                    (reagentItem.quantity * craftQueueItem.amount)
                 print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
                 print("quantity: " .. tostring(reagentMap[reagentItem.item:GetItemID()].quantity))
             end
@@ -269,7 +277,8 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
                     qualityID = optionalReagent.qualityID,
                     quantity = 0
                 }
-                reagentMap[optionalReagent.item:GetItemID()].quantity = reagentMap[optionalReagent.item:GetItemID()].quantity + craftQueueItem.amount
+                reagentMap[optionalReagent.item:GetItemID()].quantity = reagentMap[optionalReagent.item:GetItemID()]
+                    .quantity + craftQueueItem.amount
             end
         end
     end
@@ -277,7 +286,7 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
     if not CraftSim.CRAFTQ.useAuctionatorShoppingListAPI then
         print("NOT Using Auctionator new API")
         -- create shoppinglist import string?
-            -- format: Test^"Frostfire Alloy";;0;0;0;0;0;0;0;0;;3;;#;;99
+        -- format: Test^"Frostfire Alloy";;0;0;0;0;0;0;0;0;;3;;#;;99
         local shoppingListImportString = CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME
 
         for itemID, info in pairs(reagentMap) do
@@ -289,7 +298,8 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
                 print(tostring(info.itemName) .. " quantity: " .. tostring(info.quantity))
                 print(tostring(info.itemName) .. " neededItemCount: " .. tostring(neededItemCount))
                 if neededItemCount > 0 then
-                    local itemShoppingListString = CraftSim.CRAFTQ:GetAuctionatorShoppingListItemString(info.itemName, info.qualityID, neededItemCount)
+                    local itemShoppingListString = CraftSim.CRAFTQ:GetAuctionatorShoppingListItemString(info.itemName,
+                        info.qualityID, neededItemCount)
                     print("add to shopping list: " .. tostring(itemShoppingListString))
                     shoppingListImportString = shoppingListImportString .. '^' .. itemShoppingListString
                 end
@@ -299,7 +309,8 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
         end
 
         -- delete old list only if it exists to refresh contents instead of adding them
-        local listExists = Auctionator.Shopping.ListManager:GetIndexForName(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
+        local listExists = Auctionator.Shopping.ListManager:GetIndexForName(CraftSim.CONST
+            .AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
         if listExists then
             Auctionator.Shopping.ListManager:Delete(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
         end
@@ -311,7 +322,7 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
     print("Using Auctionator new API")
 
     --- convert to Auctionator Search Strings and deduct item count
-    local searchStrings = GUTIL:Map(reagentMap, function (info, itemID)
+    local searchStrings = GUTIL:Map(reagentMap, function(info, itemID)
         if GUTIL:isItemSoulbound(itemID) then
             return nil
         end
@@ -329,7 +340,7 @@ function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
         return searchString
     end)
     Auctionator.API.v1.CreateShoppingList(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
-   
+
     CraftSim.UTIL:StopProfiling("CreateAuctionatorShopping")
 end
 
@@ -357,7 +368,7 @@ end
 ---@param quantity number?
 ---@return string auctionatorShoppingListItemString
 function CraftSim.CRAFTQ:GetAuctionatorShoppingListItemString(itemName, qualityID, quantity)
-    return '"'..itemName..'"' .. ';;0;0;0;0;0;0;0;0;;'..(qualityID or '#')..';;' .. (quantity or '')
+    return '"' .. itemName .. '"' .. ';;0;0;0;0;0;0;0;0;;' .. (qualityID or '#') .. ';;' .. (quantity or '')
 end
 
 ---@return string name
@@ -380,13 +391,13 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFTQ:IsRecipeQueueable(recipeData)
-    return 
-    recipeData.learned and
-    not recipeData.isRecraft and
-    not recipeData.isSalvageRecipe and
-    not recipeData.isBaseRecraftRecipe and
-    recipeData.resultData.itemsByQuality[1] and -- needs at least one result
-    not recipeData.isAlchemicalExperimentation
+    return
+        recipeData.learned and
+        not recipeData.isRecraft and
+        not recipeData.isSalvageRecipe and
+        not recipeData.isBaseRecraftRecipe and
+        recipeData.resultData.itemsByQuality[1] and -- needs at least one result
+        not recipeData.isAlchemicalExperimentation
 end
 
 ---@class CraftSim.CraftQueue.RestockRecipeOption
@@ -400,7 +411,8 @@ end
 ---@param recipeID number
 ---@return CraftSim.CraftQueue.RestockRecipeOption
 function CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeID)
-    CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID] = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID] or {}
+    CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID] = CraftSimOptions.craftQueueRestockPerRecipeOptions
+        [recipeID] or {}
     return {
         enabled = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].enabled or false,
         profitMarginThreshold = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].profitMarginThreshold or 0,
@@ -416,7 +428,7 @@ end
 ---@param saleRateThreshold number
 ---@private
 function CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, usedQualitiesTable, saleRateThreshold)
-    usedQualitiesTable = usedQualitiesTable or {true, true, true, true, true}
+    usedQualitiesTable = usedQualitiesTable or { true, true, true, true, true }
     local allOff = not GUTIL:Some(usedQualitiesTable, function(v) return v end)
     if allOff then
         print("No quality checked -> sale rate true")
@@ -435,7 +447,7 @@ function CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, usedQualiti
             print("itemSaleRate: " .. tostring(itemSaleRate))
             print("saleRateThreshold: " .. tostring(saleRateThreshold))
             if itemSaleRate >= saleRateThreshold then
-                print("sale reate reached for quality: " ..tostring(qualityID))
+                print("sale reate reached for quality: " .. tostring(qualityID))
                 return true
             end
         end

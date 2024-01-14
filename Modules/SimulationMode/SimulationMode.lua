@@ -41,7 +41,7 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
     if not userInput or not recipeData then
         return
     end
-    
+
     local inputNumber = CraftSim.UTIL:ValidateNumberInput(nodeModFrame.input, true)
 
     print("startinput after validation: " .. inputNumber)
@@ -57,7 +57,8 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
 
     -- update specdata
     ---@type CraftSim.NodeData
-    local nodeData = GUTIL:Find(CraftSim.SIMULATION_MODE.specializationData.nodeData, function(nodeData) return nodeData.nodeID == nodeModFrame.nodeID end)
+    local nodeData = GUTIL:Find(CraftSim.SIMULATION_MODE.specializationData.nodeData,
+        function(nodeData) return nodeData.nodeID == nodeModFrame.nodeID end)
     if not nodeData then
         return
     end
@@ -112,11 +113,10 @@ function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
     local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
 
     for _, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
-
         if currentInput.isActive then
             for i = 1, 3, 1 do
                 local allocationForQuality = 0
-                if i == qualityID then 
+                if i == qualityID then
                     allocationForQuality = currentInput["inputq" .. i].requiredQuantityValue
                 elseif qualityID == 0 then
                     allocationForQuality = 0
@@ -172,7 +172,7 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
         local multicraftMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.multicraftMod, true)
         recipeData.professionStatModifiers.multicraft:addValue(multicraftMod)
     end
-    
+
     if recipeData.supportsResourcefulness then
         local resourcefulnessMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.resourcefulnessMod, true)
         recipeData.professionStatModifiers.resourcefulness:addValue(resourcefulnessMod)
@@ -192,16 +192,20 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     ---@type CraftSim.SimulationMode.ReagentOverwriteFrame
     local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
 
-    reagentOverwriteFrame:SetStatus(tostring(GUTIL:Count(recipeData.reagentData.requiredReagents, function(r) return r.hasQuality end)))
+    reagentOverwriteFrame:SetStatus(tostring(GUTIL:Count(recipeData.reagentData.requiredReagents,
+        function(r) return r.hasQuality end)))
 
     --required
     local reagentList = {}
     -- update item allocations based on inputfields
     for _, overwriteInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
         if overwriteInput.isActive then
-            table.insert(reagentList, CraftSim.ReagentListItem(overwriteInput.inputq1.itemID, overwriteInput.inputq1:GetNumber()))
-            table.insert(reagentList, CraftSim.ReagentListItem(overwriteInput.inputq2.itemID, overwriteInput.inputq2:GetNumber()))
-            table.insert(reagentList, CraftSim.ReagentListItem(overwriteInput.inputq3.itemID, overwriteInput.inputq3:GetNumber()))
+            table.insert(reagentList,
+                CraftSim.ReagentListItem(overwriteInput.inputq1.itemID, overwriteInput.inputq1:GetNumber()))
+            table.insert(reagentList,
+                CraftSim.ReagentListItem(overwriteInput.inputq2.itemID, overwriteInput.inputq2:GetNumber()))
+            table.insert(reagentList,
+                CraftSim.ReagentListItem(overwriteInput.inputq3.itemID, overwriteInput.inputq3:GetNumber()))
         end
     end
 
@@ -258,7 +262,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     if not recipeData.isCooking and not recipeData.isOldWorldRecipe then
         CraftSim.SIMULATION_MODE.specializationData = recipeData.specializationData:Copy()
     end
-    
+
     -- update frame visiblity and initialize the input fields
     CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames(CraftSim.SIMULATION_MODE.recipeData)

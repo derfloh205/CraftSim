@@ -36,7 +36,7 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
             print(recipeData.resultData.chanceByQuality, true)
 
             ---@type CraftSim.Reagent[]
-            local requiredReagents = CraftSim.GUTIL:Map(recipeData.reagentData.requiredReagents, function (reagent)
+            local requiredReagents = CraftSim.GUTIL:Map(recipeData.reagentData.requiredReagents, function(reagent)
                 return reagent:Copy()
             end)
 
@@ -44,15 +44,16 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
                 if not reagent.hasQuality then
                     reagent.items[1].quantity = reagent.requiredQuantity
                 else
-                    local totalQuantity = reagent.items[1].quantity + reagent.items[2].quantity + reagent.items[3].quantity
-                    
+                    local totalQuantity = reagent.items[1].quantity + reagent.items[2].quantity +
+                        reagent.items[3].quantity
+
                     if totalQuantity < reagent.requiredQuantity then
                         if totalQuantity == 0 then
                             -- use q2
                             reagent.items[2].quantity = reagent.requiredQuantity
                         else
                             -- use the one thats showing
-                            local reagentItem = CraftSim.GUTIL:Find(reagent.items, function (reagentItem)
+                            local reagentItem = CraftSim.GUTIL:Find(reagent.items, function(reagentItem)
                                 return reagentItem.quantity > 0
                             end)
 
@@ -76,27 +77,29 @@ function CraftSim.CRAFTDATA:UpdateCraftData(item)
             if recipeData.supportsMulticraft then
                 local extraItemsMC = select(2, CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData))
                 local mcChance = recipeData.professionStats.multicraft:GetPercent(true)
-                local mcUpgradeChance = mcChance*chance
-                local avgExtraItemsOnMCUpgrade = mcUpgradeChance*extraItemsMC
+                local mcUpgradeChance = mcChance * chance
+                local avgExtraItemsOnMCUpgrade = mcUpgradeChance * extraItemsMC
                 avgItemAmount = recipeData.baseItemAmount + avgExtraItemsOnMCUpgrade
             end
 
-            local craftData = CraftSim.CraftData(expectedCrafts, chance, 
-            requiredReagents, optionalReagents, crafterName, 
-            crafterClass, resChance, resExtraFactor, avgItemAmount, item:GetItemLink(),
-            recipeData.recipeID, recipeData.professionData.professionInfo.profession)
+            local craftData = CraftSim.CraftData(expectedCrafts, chance,
+                requiredReagents, optionalReagents, crafterName,
+                crafterClass, resChance, resExtraFactor, avgItemAmount, item:GetItemLink(),
+                recipeData.recipeID, recipeData.professionData.professionInfo.profession)
 
             if craftData.unifiedItemString then
                 ---@type CraftSim.CraftDataRecipeSave[]
                 CraftSimCraftData[recipeData.recipeID] = CraftSimCraftData[recipeData.recipeID] or {}
                 ---@type CraftSim.CraftDataRecipeSave
-                CraftSimCraftData[recipeData.recipeID][craftData.unifiedItemString] = CraftSimCraftData[recipeData.recipeID][craftData.unifiedItemString] or {
-                    activeData = nil,
-                    dataPerCrafter = {},
-                }
+                CraftSimCraftData[recipeData.recipeID][craftData.unifiedItemString] = CraftSimCraftData
+                    [recipeData.recipeID][craftData.unifiedItemString] or {
+                        activeData = nil,
+                        dataPerCrafter = {},
+                    }
                 local serializedData = craftData:Serialize()
                 CraftSimCraftData[recipeData.recipeID][craftData.unifiedItemString].activeData = serializedData
-                CraftSimCraftData[recipeData.recipeID][craftData.unifiedItemString].dataPerCrafter[crafterName] = serializedData
+                CraftSimCraftData[recipeData.recipeID][craftData.unifiedItemString].dataPerCrafter[crafterName] =
+                    serializedData
             end
         end
     end
@@ -122,34 +125,34 @@ function CraftSim.CRAFTDATA.OnCraftDataReceived(craftDataMessage)
 
     local targetItem = Item:CreateFromItemLink(craftDataSerialized.itemLink)
 
-    targetItem:ContinueOnItemLoad(function ()
+    targetItem:ContinueOnItemLoad(function()
         -- popup that asks to add craft data
         -- first adjust it
         local craftData = CraftSim.CraftData:Deserialize(craftDataSerialized)
         local crafter = C_ClassColor.GetClassColor(craftData.crafterClass):WrapTextInColorCode(craftData.crafterName)
-        local sender = C_ClassColor.GetClassColor(craftDataMessage.senderClass):WrapTextInColorCode(craftDataMessage.senderName)
-        local formattedChance = CraftSim.GUTIL:Round(craftData.chance*100) .. "%"
+        local sender = C_ClassColor.GetClassColor(craftDataMessage.senderClass):WrapTextInColorCode(craftDataMessage
+            .senderName)
+        local formattedChance = CraftSim.GUTIL:Round(craftData.chance * 100) .. "%"
         local expectedCosts = CraftSim.GUTIL:FormatMoney(craftData:GetExpectedCosts())
         local expectedCrafts = CraftSim.GUTIL:Round(craftData.expectedCrafts, 1)
         local text = sender .. "\n\nwants to share " .. f.bb("Craft Data") .. " with you!" ..
-        "\nDo you want to add this to your Craft Data for this item?\n\n" ..
-        "Item: " .. targetItem:GetItemLink() .. "\n" ..
-        "Crafter: " .. crafter .. "\n" ..
-        "Chance: " .. formattedChance .. "\n" ..
-        "Expected Crafts: " .. expectedCrafts .. "\n" ..
-        "Expected Costs: " .. expectedCosts
+            "\nDo you want to add this to your Craft Data for this item?\n\n" ..
+            "Item: " .. targetItem:GetItemLink() .. "\n" ..
+            "Crafter: " .. crafter .. "\n" ..
+            "Chance: " .. formattedChance .. "\n" ..
+            "Expected Crafts: " .. expectedCrafts .. "\n" ..
+            "Expected Costs: " .. expectedCosts
 
         CraftSim.GGUI:ShowPopup({
-            title="Incoming CraftSim Craft Data", 
-            text=text, 
-            onAccept=function ()
+            title = "Incoming CraftSim Craft Data",
+            text = text,
+            onAccept = function()
                 CraftSim.CRAFTDATA:AddReceivedCraftData(craftDataSerialized)
             end,
-            sizeX=400,
-            sizeY=210,
+            sizeX = 400,
+            sizeY = 210,
         })
     end)
-
 end
 
 ---@param craftDataSerialized CraftSim.CraftData.Serialized
@@ -193,6 +196,7 @@ function CraftSim.CRAFTDATA:DeleteForRecipe()
 
     CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()
 end
+
 function CraftSim.CRAFTDATA:DeleteForItem(item)
     local recipeData = CraftSim.MAIN.currentRecipeData
 
@@ -203,9 +207,10 @@ function CraftSim.CRAFTDATA:DeleteForItem(item)
             CraftSimCraftData[recipeData.recipeID][itemString] = nil
         end
     end
-    
+
     CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()
 end
+
 function CraftSim.CRAFTDATA:DeleteAll()
     CraftSimCraftData = {}
     CraftSim.CRAFTDATA.FRAMES:UpdateCraftDataList()

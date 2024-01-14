@@ -15,11 +15,11 @@ CraftSim.Buff = CraftSim.Object:extend()
 ---@param qualityID number?
 ---@param valuePointData CraftSim.Buff.ValuePointData?
 ---@param displayBuffID number? if the buff to display is a different one than the one to recognize the aura
----@param customTooltip string? 
+---@param customTooltip string?
 function CraftSim.Buff:new(recipeData, buffID, professionStats, qualityID, valuePointData, displayBuffID, customTooltip)
     ---@type CraftSim.ProfessionStats
     self.professionStats = professionStats
-    local spellInfo = {GetSpellInfo(buffID)}
+    local spellInfo = { GetSpellInfo(buffID) }
     local qualityIcon = ""
     self.valuePointData = valuePointData
     self.qualityID = qualityID
@@ -69,11 +69,10 @@ function CraftSim.Buff:Debug()
 
     local statLines = self.professionStats:Debug()
     statLines = CraftSim.GUTIL:Map(statLines, function(line) return "-" .. line end)
-    debugLines = CraftSim.GUTIL:Concat({debugLines, statLines})
+    debugLines = CraftSim.GUTIL:Concat({ debugLines, statLines })
 
     return debugLines
 end
-
 
 function CraftSim.Buff:GetJSON(indent)
     indent = indent or 0

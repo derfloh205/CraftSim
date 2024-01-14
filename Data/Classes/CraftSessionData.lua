@@ -24,10 +24,10 @@ end
 function CraftSim.CraftSessionData:GetCraftRecipeData(recipeID)
     print("GetCraftRecipeData: " .. tostring(recipeID))
     print("numRecipeData: " .. #self.craftRecipeData)
-    table.foreach(self.craftRecipeData, function (_, data)
+    table.foreach(self.craftRecipeData, function(_, data)
         print("data recipe id: " .. tostring(data.recipeID))
     end)
-    return CraftSim.GUTIL:Find(self.craftRecipeData, function (craftRecipeData)
+    return CraftSim.GUTIL:Find(self.craftRecipeData, function(craftRecipeData)
         return craftRecipeData.recipeID == recipeID
     end)
 end
@@ -48,7 +48,7 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
     self.totalProfit = self.totalProfit + craftResult.profit
 
     for _, craftResultItemA in pairs(craftResult.craftResultItems) do
-        local craftResultItemB = CraftSim.GUTIL:Find(self.totalItems, function(craftResultItemB) 
+        local craftResultItemB = CraftSim.GUTIL:Find(self.totalItems, function(craftResultItemB)
             local itemLinkA = craftResultItemA.item:GetItemLink() -- for gear its possible to match by itemlink
             local itemLinkB = craftResultItemB.item:GetItemLink()
             local itemIDA = craftResultItemA.item:GetItemID()
@@ -63,15 +63,17 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
 
         if craftResultItemB then
             -- as this should be the same reference, this is also updated in the CraftRecipeData
-            craftResultItemB.quantity = craftResultItemB.quantity + (craftResultItemA.quantity + craftResultItemA.quantityMulticraft)
-            craftResultItemB.quantityMulticraft = craftResultItemB.quantityMulticraft + craftResultItemA.quantityMulticraft
+            craftResultItemB.quantity = craftResultItemB.quantity +
+                (craftResultItemA.quantity + craftResultItemA.quantityMulticraft)
+            craftResultItemB.quantityMulticraft = craftResultItemB.quantityMulticraft +
+                craftResultItemA.quantityMulticraft
         else
             table.insert(self.totalItems, craftResultItemA)
         end
     end
 
     for _, savedReagentA in pairs(craftResult.savedReagents) do
-        local savedReagentB = CraftSim.GUTIL:Find(self.totalSavedReagents, function(savedReagentB) 
+        local savedReagentB = CraftSim.GUTIL:Find(self.totalSavedReagents, function(savedReagentB)
             return savedReagentA.item:GetItemID() == savedReagentB.item:GetItemID()
         end)
 

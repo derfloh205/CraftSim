@@ -10,9 +10,9 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COMM)
 
 local function encodeData(data)
     local serializedData = CraftSim.COMM:Serialize(data)
-	local compressedData, compressError = CraftSim.LibCompress:Compress(serializedData)
-	local encodedData = CraftSim.LibCompress:GetAddonEncodeTable():Encode(compressedData)
-	return encodedData
+    local compressedData, compressError = CraftSim.LibCompress:Compress(serializedData)
+    local encodedData = CraftSim.LibCompress:GetAddonEncodeTable():Encode(compressedData)
+    return encodedData
 end
 
 local function decodeData(payload)

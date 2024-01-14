@@ -29,9 +29,7 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
         local reagentType = reagentSlotSchematic.reagentType
         -- for now only consider the required reagents
         if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
-
             table.insert(self.requiredReagents, CraftSim.Reagent(reagentSlotSchematic))
-        
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
             table.insert(self.optionalReagentSlots, CraftSim.OptionalReagentSlot(self.recipeData, reagentSlotSchematic))
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT then
@@ -43,41 +41,40 @@ end
 ---Serializes the required reagents list for sending via the addon channel
 ---@return CraftSim.Reagent.Serialized[]
 function CraftSim.ReagentData:SerializeReagents()
-    return GUTIL:Map(self.requiredReagents, function (reagent)
+    return GUTIL:Map(self.requiredReagents, function(reagent)
         return reagent:Serialize()
     end)
 end
 
 function CraftSim.ReagentData:SerializeOptionalReagentSlots()
-    return GUTIL:Map(self.optionalReagentSlots, function (slot)
+    return GUTIL:Map(self.optionalReagentSlots, function(slot)
         return slot:Serialize()
     end)
 end
 
 function CraftSim.ReagentData:SerializeFinishingReagentSlots()
-    return GUTIL:Map(self.finishingReagentSlots, function (slot)
+    return GUTIL:Map(self.finishingReagentSlots, function(slot)
         return slot:Serialize()
     end)
 end
 
-
 function CraftSim.ReagentData:GetProfessionStatsByOptionals()
     local totalStats = CraftSim.ProfessionStats()
 
-    local optionalStats = GUTIL:Map(GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots}), 
-        function (slot)
+    local optionalStats = GUTIL:Map(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots }),
+        function(slot)
             if slot.activeReagent then
                 return slot.activeReagent.professionStats
             end
         end)
 
-    table.foreach(optionalStats, function (_, stat)
+    table.foreach(optionalStats, function(_, stat)
         totalStats:add(stat)
     end)
 
     -- since ooey gooey chocolate gives us math.huge on multicraft we need to limit it to 100%
     totalStats.multicraft.value = math.min(1 / CraftSim.CONST.PERCENT_MODS.MULTICRAFT, totalStats.multicraft.value)
-    
+
 
     return totalStats
 end
@@ -86,7 +83,7 @@ end
 function CraftSim.ReagentData:GetReagentQualityIDByItemID(itemID)
     local qualityID = 0
     for _, reagent in pairs(self.requiredReagents) do
-        local reagentItem = GUTIL:Find(reagent.items, function (reagentItem)
+        local reagentItem = GUTIL:Find(reagent.items, function(reagentItem)
             return reagentItem.item:GetItemID() == itemID
         end)
         if reagentItem then
@@ -98,18 +95,17 @@ end
 
 ---@return CraftingReagentInfo[]
 function CraftSim.ReagentData:GetCraftingReagentInfoTbl()
-
     local required = self:GetRequiredCraftingReagentInfoTbl()
     local optionals = self:GetOptionalCraftingReagentInfoTbl()
 
-    return GUTIL:Concat({required, optionals})
+    return GUTIL:Concat({ required, optionals })
 end
 
 function CraftSim.ReagentData:GetOptionalCraftingReagentInfoTbl()
     local craftingReagentInfoTbl = {}
 
     -- optional/finishing
-    for _, slot in pairs(GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
+    for _, slot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
         local craftingReagentInfo = slot:GetCraftingReagentInfo()
         if craftingReagentInfo then
             table.insert(craftingReagentInfoTbl, craftingReagentInfo)
@@ -125,7 +121,7 @@ function CraftSim.ReagentData:GetRequiredCraftingReagentInfoTbl()
     -- required
     for _, reagent in pairs(self.requiredReagents) do
         local craftingReagentInfos = reagent:GetCraftingReagentInfos()
-        craftingReagentInfoTbl = GUTIL:Concat({craftingReagentInfoTbl, craftingReagentInfos})
+        craftingReagentInfoTbl = GUTIL:Concat({ craftingReagentInfoTbl, craftingReagentInfos })
     end
 
     return craftingReagentInfoTbl
@@ -135,9 +131,9 @@ end
 function CraftSim.ReagentData:GetActiveOptionalReagents()
     local activeReagents = {}
 
-    local allSlots = GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})
+    local allSlots = GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })
 
-    table.foreach(allSlots, function (_, slot)
+    table.foreach(allSlots, function(_, slot)
         if slot.activeReagent then
             table.insert(activeReagents, slot.activeReagent)
         end
@@ -149,10 +145,10 @@ end
 --- Sets a optional Reagent active in a recipe if supported, if not does nothing
 ---@param itemID number
 function CraftSim.ReagentData:SetOptionalReagent(itemID)
-    for _, slot in pairs(GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
-        local optionalReagent = GUTIL:Find(slot.possibleReagents, 
-            function (optionalReagent) 
-                return optionalReagent.item:GetItemID() == itemID 
+    for _, slot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
+        local optionalReagent = GUTIL:Find(slot.possibleReagents,
+            function(optionalReagent)
+                return optionalReagent.item:GetItemID() == itemID
             end)
 
         if optionalReagent then
@@ -163,7 +159,7 @@ function CraftSim.ReagentData:SetOptionalReagent(itemID)
 end
 
 function CraftSim.ReagentData:ClearOptionalReagents()
-    for _, slot in pairs(GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
+    for _, slot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
         slot.activeReagent = nil
     end
 end
@@ -178,7 +174,7 @@ function CraftSim.ReagentData:HasOptionalReagents()
 end
 
 function CraftSim.ReagentData:GetMaxSkillFactor()
-    local maxQualityReagentsCraftingTbl = GUTIL:Map(self.requiredReagents, function(rr) 
+    local maxQualityReagentsCraftingTbl = GUTIL:Map(self.requiredReagents, function(rr)
         return rr:GetCraftingReagentInfoByQuality(3, true)
     end)
 
@@ -189,15 +185,17 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
     local baseOperationInfo = nil
     local operationInfoWithReagents = nil
     if self.recipeData.orderData then
-        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {}, self.recipeData.orderData.orderID)
-        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID)
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
+            self.recipeData.orderData.orderID)
+        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID,
+            maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID)
     else
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)
-        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, maxQualityReagentsCraftingTbl, self.recipeData.allocationItemGUID)
+        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, maxQualityReagentsCraftingTbl,
+            self.recipeData.allocationItemGUID)
     end
 
     if baseOperationInfo and operationInfoWithReagents then
-        
         local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
         local skillWithReagents = operationInfoWithReagents.baseSkill + operationInfoWithReagents.bonusSkill
 
@@ -225,19 +223,21 @@ function CraftSim.ReagentData:GetSkillFromRequiredReagents()
     local baseOperationInfo = nil
     local operationInfoWithReagents = nil
     if self.recipeData.orderData then
-        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {}, self.recipeData.orderData.orderID)
-        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, requiredTbl, self.recipeData.orderData.orderID)
-    else    
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
+            self.recipeData.orderData.orderID)
+        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, requiredTbl,
+            self.recipeData.orderData.orderID)
+    else
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)
-        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, requiredTbl, self.recipeData.allocationItemGUID)
+        operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, requiredTbl,
+            self.recipeData.allocationItemGUID)
     end
 
     if baseOperationInfo and operationInfoWithReagents then
-        
-            local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
-            local skillWithReagents = operationInfoWithReagents.baseSkill + operationInfoWithReagents.bonusSkill
+        local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
+        local skillWithReagents = operationInfoWithReagents.baseSkill + operationInfoWithReagents.bonusSkill
 
-            return skillWithReagents - baseSkill
+        return skillWithReagents - baseSkill
     end
     print("ReagentData: Could not determine required reagent skill: operationInfos nil")
     return 0
@@ -254,7 +254,8 @@ function CraftSim.ReagentData:EqualsQualityReagents(reagents)
         for itemIndex, reagentItemA in pairs(reagentA.items) do
             local reagentItemB = reagentB.items[itemIndex]
 
-            print("compare items: " .. tostring(reagentItemA.item:GetItemLink()) .. " - " .. tostring(reagentItemB.item:GetItemLink()))
+            print("compare items: " ..
+                tostring(reagentItemA.item:GetItemLink()) .. " - " .. tostring(reagentItemB.item:GetItemLink()))
             print("quantities: " .. tostring(reagentItemA.quantity) .. " - " .. tostring(reagentItemB.quantity))
 
             if reagentItemA.item:GetItemID() ~= reagentItemB.item:GetItemID() then
@@ -276,7 +277,7 @@ function CraftSim.ReagentData:SetReagentsMaxByQuality(qualityID)
     if not qualityID or qualityID < 1 or qualityID > 3 then
         error("CraftSim.ReagentData:SetReagentsMaxByQuality(qualityID) -> qualityID has to be between 1 and 3")
     end
-    table.foreach(self.requiredReagents, function (_, reagent)
+    table.foreach(self.requiredReagents, function(_, reagent)
         if reagent.hasQuality then
             reagent:Clear()
             reagent.items[qualityID].quantity = reagent.requiredQuantity
@@ -293,7 +294,7 @@ function CraftSim.ReagentData:SetReagentsByOptimizationResult(optimizationResult
     end
     local reagentItemList = optimizationResult:GetReagentItemList()
     self.recipeData:SetReagents(reagentItemList)
-    
+
     -- always set nonquality reagents to max
     self.recipeData:SetNonQualityReagentsMax()
 end
@@ -302,17 +303,17 @@ function CraftSim.ReagentData:HasEnough(multiplier)
     multiplier = multiplier or 1
     -- check required, optional and finished reagents if the player has enough times multiplier in his inventory and bank
 
-    local hasRequiredReagents = GUTIL:Every(self.requiredReagents, 
-    ---@param requiredReagent CraftSim.Reagent
-    function (requiredReagent)
-        return requiredReagent:HasItems(multiplier)
-    end)
+    local hasRequiredReagents = GUTIL:Every(self.requiredReagents,
+        ---@param requiredReagent CraftSim.Reagent
+        function(requiredReagent)
+            return requiredReagent:HasItems(multiplier)
+        end)
 
-    local hasOptionalReagents = GUTIL:Every(GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots}), 
-    ---@param optionalReagentSlot CraftSim.OptionalReagentSlot
-    function (optionalReagentSlot)
-        return optionalReagentSlot:HasItem(multiplier)
-    end)
+    local hasOptionalReagents = GUTIL:Every(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots }),
+        ---@param optionalReagentSlot CraftSim.OptionalReagentSlot
+        function(optionalReagentSlot)
+            return optionalReagentSlot:HasItem(multiplier)
+        end)
 
     local hasVellumIfneeded = true
 
@@ -321,35 +322,35 @@ function CraftSim.ReagentData:HasEnough(multiplier)
         hasVellumIfneeded = itemCount >= multiplier
     end
 
-    
+
     return hasRequiredReagents and hasOptionalReagents and hasVellumIfneeded
 end
 
 function CraftSim.ReagentData:GetCraftableAmount()
-    
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
     print("getCraftable amount", false, true)
-    
+
     local currentMinimumReagentFit = math.huge
-    for _, requiredReagent in pairs(self.requiredReagents) do 
+    for _, requiredReagent in pairs(self.requiredReagents) do
         if not requiredReagent:HasItems() then
             return 0
         end
         currentMinimumReagentFit = math.min(requiredReagent:HasQuantityXTimes(), currentMinimumReagentFit)
     end
-    
+
     print("minimum required fit: " .. tostring(currentMinimumReagentFit))
-    
+
     local currentMinimumReagentFitOptional = math.huge
-    for _, optionalReagentSlot in pairs(GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do 
+    for _, optionalReagentSlot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
         if not optionalReagentSlot:HasItem() then
             return 0
         end
-        currentMinimumReagentFitOptional = math.min(optionalReagentSlot:HasQuantityXTimes(), currentMinimumReagentFitOptional)
+        currentMinimumReagentFitOptional = math.min(optionalReagentSlot:HasQuantityXTimes(),
+            currentMinimumReagentFitOptional)
     end
     print("minimum optional fit: " .. tostring(currentMinimumReagentFitOptional))
-    
+
     local vellumMinimumFit = math.huge
     if self.recipeData.isEnchantingRecipe then
         local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(CraftSim.CONST.ENCHANTING_VELLUM_ID, false, false, true)
@@ -364,12 +365,12 @@ function CraftSim.ReagentData:GetCraftableAmount()
 end
 
 --- if one of the given item ids is a reagent used in the recipe, this returns true
----@param reagentItemIDs number[] 
+---@param reagentItemIDs number[]
 ---@return boolean
 function CraftSim.ReagentData:HasOneOfReagents(reagentItemIDs)
-    return GUTIL:Some(self.requiredReagents, 
-        function(reagent) 
-            return tContains(reagentItemIDs, reagent.items[1].item:GetItemID())  
+    return GUTIL:Some(self.requiredReagents,
+        function(reagent)
+            return tContains(reagentItemIDs, reagent.items[1].item:GetItemID())
         end)
 end
 
@@ -385,26 +386,31 @@ function CraftSim.ReagentData:GetTooltipText(multiplier)
         local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
         text = text .. inlineIcon
         if not requiredReagent.hasQuality then
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(requiredReagent.items[1].item:GetItemID(), true, false, true)
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(requiredReagent.items[1].item:GetItemID(), true,
+                false, true)
             print("- tooltiptext for: " .. tostring(requiredReagent.items[1].item:GetItemName()))
             print("- - player item count: " .. tostring(itemCount))
             print("- - allocated quantity: " .. tostring(requiredReagent.items[1].quantity))
-            local quantityText = GUTIL:ColorizeText(tostring(requiredReagent.requiredQuantity*multiplier) .. "(" .. tostring(itemCount) .. ")", GUTIL.COLORS.RED)
+            local quantityText = GUTIL:ColorizeText(
+                tostring(requiredReagent.requiredQuantity * multiplier) .. "(" .. tostring(itemCount) .. ")",
+                GUTIL.COLORS.RED)
 
-            if itemCount >= (requiredReagent.requiredQuantity*multiplier) then
-                quantityText = GUTIL:ColorizeText(tostring(requiredReagent.requiredQuantity*multiplier), GUTIL.COLORS.GREEN)
+            if itemCount >= (requiredReagent.requiredQuantity * multiplier) then
+                quantityText = GUTIL:ColorizeText(tostring(requiredReagent.requiredQuantity * multiplier),
+                    GUTIL.COLORS.GREEN)
             end
 
             text = text .. " x " .. quantityText .. "\n"
         else
             local totalCount = requiredReagent:GetTotalQuantity()
-            local totalCountOK = totalCount*multiplier >= requiredReagent.requiredQuantity*multiplier
+            local totalCountOK = totalCount * multiplier >= requiredReagent.requiredQuantity * multiplier
             for qualityID, reagentItem in pairs(requiredReagent.items) do
                 local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(reagentItem.item:GetItemID(), true, false, true)
-                local quantityText = GUTIL:ColorizeText(tostring(reagentItem.quantity*multiplier) .. "(" .. tostring(itemCount) .. ")", GUTIL.COLORS.RED)
+                local quantityText = GUTIL:ColorizeText(
+                    tostring(reagentItem.quantity * multiplier) .. "(" .. tostring(itemCount) .. ")", GUTIL.COLORS.RED)
 
-                if itemCount >= reagentItem.quantity*multiplier or (reagentItem.quantity == 0 and totalCountOK) then
-                    quantityText = GUTIL:ColorizeText(tostring(reagentItem.quantity*multiplier), GUTIL.COLORS.GREEN)
+                if itemCount >= reagentItem.quantity * multiplier or (reagentItem.quantity == 0 and totalCountOK) then
+                    quantityText = GUTIL:ColorizeText(tostring(reagentItem.quantity * multiplier), GUTIL.COLORS.GREEN)
                 end
                 local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
                 text = text .. qualityIcon .. quantityText .. "   "
@@ -412,15 +418,17 @@ function CraftSim.ReagentData:GetTooltipText(multiplier)
             text = text .. "\n"
         end
     end
-    for _, optionalReagentSlot in pairs(GUTIL:Concat({self.optionalReagentSlots, self.finishingReagentSlots})) do
+    for _, optionalReagentSlot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
         ---@type CraftSim.OptionalReagentSlot
-        optionalReagentSlot = optionalReagentSlot 
+        optionalReagentSlot = optionalReagentSlot
         if optionalReagentSlot.activeReagent then
             local reagentIcon = optionalReagentSlot.activeReagent.item:GetItemIcon()
             local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
             text = text .. inlineIcon
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(optionalReagentSlot.activeReagent.item:GetItemID(), true, false, true)
-            local quantityText = GUTIL:ColorizeText(tostring(multiplier) .. "(" .. tostring(itemCount) .. ")", GUTIL.COLORS.RED)
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(optionalReagentSlot.activeReagent.item:GetItemID(),
+                true, false, true)
+            local quantityText = GUTIL:ColorizeText(tostring(multiplier) .. "(" .. tostring(itemCount) .. ")",
+                GUTIL.COLORS.RED)
             if itemCount >= multiplier then
                 quantityText = GUTIL:ColorizeText(tostring(multiplier), GUTIL.COLORS.GREEN)
             end
@@ -441,25 +449,29 @@ function CraftSim.ReagentData:Debug()
         local q3 = 0
         if reagent.hasQuality then
             q1 = reagent.items[1].quantity
-            q2 = reagent.items[2].quantity  
+            q2 = reagent.items[2].quantity
             q3 = reagent.items[3].quantity
-            table.insert(debugLines, (reagent.items[1].item:GetItemLink() or reagent.items[1].item:GetItemID()) .. " " .. q1 .. " | " .. q2 .. " | " .. q3 .. " / " .. reagent.requiredQuantity)
+            table.insert(debugLines,
+                (reagent.items[1].item:GetItemLink() or reagent.items[1].item:GetItemID()) ..
+                " " .. q1 .. " | " .. q2 .. " | " .. q3 .. " / " .. reagent.requiredQuantity)
         else
-            table.insert(debugLines, (reagent.items[1].item:GetItemLink() or reagent.items[1].item:GetItemID()) .. " " .. q1 .. " / " .. reagent.requiredQuantity)
+            table.insert(debugLines,
+                (reagent.items[1].item:GetItemLink() or reagent.items[1].item:GetItemID()) ..
+                " " .. q1 .. " / " .. reagent.requiredQuantity)
         end
     end
 
     table.insert(debugLines, "Optional Reagent Slots: " .. tostring(#self.optionalReagentSlots))
     for i, slot in pairs(self.optionalReagentSlots) do
-        debugLines = GUTIL:Concat({debugLines, slot:Debug()})
+        debugLines = GUTIL:Concat({ debugLines, slot:Debug() })
     end
-    table.insert(debugLines, "Finishing Reagent Slots: ".. tostring(#self.finishingReagentSlots))
+    table.insert(debugLines, "Finishing Reagent Slots: " .. tostring(#self.finishingReagentSlots))
     for i, slot in pairs(self.finishingReagentSlots) do
-        debugLines = GUTIL:Concat({debugLines, slot:Debug()})
+        debugLines = GUTIL:Concat({ debugLines, slot:Debug() })
     end
 
     table.insert(debugLines, "Salvage Reagent Slot: " .. tostring(#self.salvageReagentSlot.possibleItems))
-    debugLines = GUTIL:Concat({debugLines, self.salvageReagentSlot:Debug()})
+    debugLines = GUTIL:Concat({ debugLines, self.salvageReagentSlot:Debug() })
 
     return debugLines
 end

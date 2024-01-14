@@ -11,7 +11,7 @@ LibStub.IterateLibraries = nil
 
 loadfile("../LibStub.lua")()
 
-assert(type(LibStub.IterateLibraries)=="function")
+assert(type(LibStub.IterateLibraries) == "function")
 
 
 -- Now pretend that we're the same version -- :IterateLibraries should NOT be re-created

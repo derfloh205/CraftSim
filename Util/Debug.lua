@@ -35,9 +35,9 @@ function CraftSim_DEBUG:PrintRecipeIDs(recipeID)
     local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType,
     itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType,
     expacID, setID, isCraftingReagent
-    = GetItemInfo(itemID) 
+                                      = GetItemInfo(itemID)
     ---@diagnostic disable-next-line: missing-parameter
-    local data = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
+    local data                        = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
 
     print("--")
     print("RecipeID: " .. recipeInfo.recipeID)
@@ -54,27 +54,26 @@ function CraftSim_DEBUG:CompareStatData()
     local function print(text, r, l) -- override
         CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SPECDATA, r, l)
     end
-    
 end
 
 function CraftSim_DEBUG:TestAllocationSkillFetchV2()
     CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSim.MAIN.currentRecipeData)
 end
+
 function CraftSim_DEBUG:TestAllocationSkillFetchV1()
-    local skillIncrease = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncreaseOLD(CraftSim.MAIN.currentRecipeData)
+    local skillIncrease = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncreaseOLD(CraftSim.MAIN
+        .currentRecipeData)
     print("Skill Increase: " .. tostring(skillIncrease))
 end
 
 function CraftSim_DEBUG:TestMaxReagentIncreaseFactor()
-   print("Factor: " .. CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(CraftSim.MAIN.currentRecipeData))
+    print("Factor: " .. CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(CraftSim.MAIN.currentRecipeData))
 end
 
 function CraftSim_DEBUG:CheckSpecNode(nodeID)
-
     local function print(text, r, l) -- override
         CraftSim_DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SPECDATA, r, l)
     end
-
 end
 
 function CraftSim_DEBUG:print(debugOutput, debugID, recursive, printLabel, level)
@@ -87,6 +86,7 @@ function CraftSim_DEBUG:print(debugOutput, debugID, recursive, printLabel, level
         end
     end
 end
+
 function CraftSim_DEBUG:InspectTable(table)
     local loaded = C_AddOns.LoadAddOn("Blizzard_DebugTools")
     if table and type(table) == "table" and loaded then
@@ -99,7 +99,7 @@ end
 function CraftSim_DEBUG:exampleAPIUsage(recipeID)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
     local recipeData = CraftSim.RecipeData(recipeID)
-    
+
     local reagentList = { -- draconium ore q1 q2 q3
         {
             itemID = 189143,
@@ -139,26 +139,26 @@ end
 
 function CraftSim_DEBUG:GGUITest()
     local testFrame = CraftSim.GGUI.Frame({
-        title="DEBUG TEST",
-        sizeX= 300,
-        sizeY= 300,
+        title = "DEBUG TEST",
+        sizeX = 300,
+        sizeY = 300,
         backdropOptions = {
-            bgFile="Interface\\CharacterFrame\\UI-Party-Background",
+            bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
         },
-        closeable=true,
-        collapseable=true,
-        moveable=true,
-        scrollableContent=true,
-        frameTable=CraftSim.MAIN.FRAMES,
-        frameConfigTable=CraftSimGGUIConfig,
+        closeable = true,
+        collapseable = true,
+        moveable = true,
+        scrollableContent = true,
+        frameTable = CraftSim.MAIN.FRAMES,
+        frameConfigTable = CraftSimGGUIConfig,
     })
 
     local testIcon = CraftSim.GGUI.Icon({
-        parent=testFrame.content,
-        anchorParent=testFrame.content,
-        anchorA="TOP",
-        anchorB="TOP",
-        offsetY=-50
+        parent = testFrame.content,
+        anchorParent = testFrame.content,
+        anchorA = "TOP",
+        anchorB = "TOP",
+        offsetY = -50
     })
 
     local testID = 191500
@@ -166,32 +166,35 @@ function CraftSim_DEBUG:GGUITest()
 
 
     local testDropdown = CraftSim.GGUI.Dropdown({
-        parent=testFrame.content,
-        anchorParent=testIcon.frame,
-        anchorA="TOP",
-        anchorB="BOTTOM",
-        initialData= {{label="Test1", value=1}, {label="Test2", value=2}, {label="TestCategory", isCategory=true, value={{label="Test1", value={someTable=1}}, {label="Test2", value=2}}}},
-        clickCallback = function(_, label, value) print("clicked on: " .. tostring(label) .. " with value " .. tostring(value)) end
+        parent = testFrame.content,
+        anchorParent = testIcon.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        initialData = { { label = "Test1", value = 1 }, { label = "Test2", value = 2 }, { label = "TestCategory", isCategory = true, value = { { label = "Test1", value = { someTable = 1 } }, { label = "Test2", value = 2 } } } },
+        clickCallback = function(_, label, value)
+            print("clicked on: " ..
+                tostring(label) .. " with value " .. tostring(value))
+        end
     })
 
     local testText = CraftSim.GGUI.Text({
-        parent=testFrame.content,
-        anchorParent=testDropdown.frame,
-        anchorA="TOP",
-        anchorB="BOTTOM",
-        offsetY=-10,
-        text="Test!!!"
+        parent = testFrame.content,
+        anchorParent = testDropdown.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        offsetY = -10,
+        text = "Test!!!"
     })
 
     local testButton = CraftSim.GGUI.Button({
-        parent=testFrame.content,
-        anchorParent=testText.frame,
-        anchorA="TOP",
-        anchorB="BOTTOM",
-        label="Test Button 1",
-        adjustWidth=true,
-        initialStatusID="1",
-        clickCallback = function(button) 
+        parent = testFrame.content,
+        anchorParent = testText.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        label = "Test Button 1",
+        adjustWidth = true,
+        initialStatusID = "1",
+        clickCallback = function(button)
             local statusID = button:GetStatus()
             if statusID == "1" then
                 button:SetStatus("2")
@@ -207,44 +210,42 @@ function CraftSim_DEBUG:GGUITest()
 
     testButton:SetStatusList({
         {
-            statusID="1",
-            anchorA="TOP",
-            anchorB="BOTTOM",
-            label="Test Button 1",
+            statusID = "1",
+            anchorA = "TOP",
+            anchorB = "BOTTOM",
+            label = "Test Button 1",
         },
         {
-            statusID="2",
-            anchorA="LEFT",
-            anchorB="RIGHT",
-            label="Test Button 2",
+            statusID = "2",
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
+            label = "Test Button 2",
         },
         {
-            statusID="3",
-            anchorA="BOTTOM",
-            anchorB="TOP",
-            label="Test Button 3",
+            statusID = "3",
+            anchorA = "BOTTOM",
+            anchorB = "TOP",
+            label = "Test Button 3",
         },
         {
-            statusID="4",
-            anchorA="RIGHT",
-            anchorB="LEFT",
-            label="Test Button 4",
+            statusID = "4",
+            anchorA = "RIGHT",
+            anchorB = "LEFT",
+            label = "Test Button 4",
         },
     })
 
     local numericInput = CraftSim.GGUI.NumericInput({
-        parent=testFrame.frame,
-        anchorParent=testButton.frame,
-        anchorA="TOP",
-        anchorB="BOTTOM",
-        incrementOneButtons=true,
-        maxValue=10,
-        minValue=0,
-        borderAdjustWidth=0.95,
-        borderWidth=25,
+        parent = testFrame.frame,
+        anchorParent = testButton.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        incrementOneButtons = true,
+        maxValue = 10,
+        minValue = 0,
+        borderAdjustWidth = 0.95,
+        borderWidth = 25,
     })
-
-
 end
 
 ---@param duplicateAmount number
@@ -253,17 +254,17 @@ function CraftSim_DEBUG:DuplicateTestDataForCustomerHistoryLegacy(duplicateAmoun
     tip = tip or 0
     local playerRealm = GetRealmName()
     if CraftSimCustomerHistory and CraftSimCustomerHistory.realm and CraftSimCustomerHistory.realm[playerRealm] then
-
         ---@type table<string, CraftSim.CustomerHistory.Legacy>
         local realmData = CraftSimCustomerHistory.realm[playerRealm]
         for customerKey, customerHistory in pairs(realmData) do
             if type(customerHistory) == 'table' then
-
                 -- multiply chatHistory and craftHistory to the 200 to generate some data
                 if customerHistory.history and #customerHistory.history > 1 then
-                    local chatHistoryEntry = CraftSim.GUTIL:Find(customerHistory.history, function(h) return h.from or h.to end)
+                    local chatHistoryEntry = CraftSim.GUTIL:Find(customerHistory.history,
+                        function(h) return h.from or h.to end)
                     ---@type CraftSim.CustomerHistory.Craft.Legacy
-                    local craftHistoryEntry = CraftSim.GUTIL:Find(customerHistory.history, function(h) return h.crafted end)
+                    local craftHistoryEntry = CraftSim.GUTIL:Find(customerHistory.history,
+                        function(h) return h.crafted end)
                     customerHistory.history = {}
                     craftHistoryEntry.commission = 0
                     craftHistoryEntry.timestamp = 1702625675325
@@ -276,13 +277,14 @@ function CraftSim_DEBUG:DuplicateTestDataForCustomerHistoryLegacy(duplicateAmoun
                 -- then take this history and put it into the history the given amount of time
                 CraftSimCustomerHistory.realm[playerRealm] = {}
                 local tipAlternator = 5
-                for i=1, duplicateAmount do
+                for i = 1, duplicateAmount do
                     local newKey = "Customer" .. i .. "-" .. playerRealm
                     ---@type CraftSim.CustomerHistory.Legacy
                     CraftSimCustomerHistory.realm[playerRealm][newKey] = CopyTable(customerHistory)
 
                     if i % tipAlternator == 0 then
-                        local firstCraft, index = CraftSim.GUTIL:Find(CraftSimCustomerHistory.realm[playerRealm][newKey].history, function (h) return h.crafted end)
+                        local firstCraft, index = CraftSim.GUTIL:Find(
+                            CraftSimCustomerHistory.realm[playerRealm][newKey].history, function(h) return h.crafted end)
                         local craft = CopyTable(firstCraft)
                         craft.commission = tip
                         CraftSimCustomerHistory.realm[playerRealm][newKey].history[index] = craft
@@ -304,15 +306,15 @@ function CraftSim_DEBUG:FrameDistributedIterationTest()
         }
     end
 
-    CraftSim.GUTIL:FrameDistributedIteration(someTable, function (key, value)
-        print("Hello from " .. tostring(key) .. ": " .. tostring(value.someValue))
+    CraftSim.GUTIL:FrameDistributedIteration(someTable, function(key, value)
+            print("Hello from " .. tostring(key) .. ": " .. tostring(value.someValue))
 
-        if IsMouseButtonDown("LeftButton") then
-            print("command to stop!")
-            return false
-        end
-    end, 
-    function ()
-        print("I am finally finished!")
-    end, 300, 1000)
+            if IsMouseButtonDown("LeftButton") then
+                print("command to stop!")
+                return false
+            end
+        end,
+        function()
+            print("I am finally finished!")
+        end, 300, 1000)
 end

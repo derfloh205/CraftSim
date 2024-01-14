@@ -57,10 +57,10 @@ function CraftSim.CACHE:GetCacheEntryByVersion(cache, entryID)
         wipe(cache)
         cache.version = currentVersion
         cache.data = {}
-         print("cache now:")
-         print(cache, true)
+        print("cache now:")
+        print(cache, true)
     end
-        
+
     if cache.data[entryID] then
         print("return from cache")
         return cache.data[entryID]
@@ -81,7 +81,7 @@ function CraftSim.CACHE:GetCacheEntryByGameVersion(cache, entryID)
         cache.version = gameVersion
         cache.data = {}
     end
-        
+
     if cache.data[entryID] then
         print("return from cache")
         return cache.data[entryID]
@@ -104,6 +104,7 @@ function CraftSim.CACHE:AddCacheEntryByVersion(cache, entryID, data)
 
     cache.data[entryID] = data
 end
+
 --- By Game Version
 function CraftSim.CACHE:AddCacheEntryByGameVersion(cache, entryID, data)
     local gameVersion = select(4, GetBuildInfo())
@@ -123,7 +124,6 @@ end
 function CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeID)
     local professionID = professionInfo.profession
     if professionInfo and professionID then
-        
         --- only need to check one of the lists
         local recipeToProfession = CraftSim.CACHE:GetCacheEntryByGameVersion(CraftSimRecipeMap, "recipeToProfession")
         if not recipeToProfession or not recipeToProfession[recipeID] then
@@ -133,7 +133,7 @@ function CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeID)
             local recipeMapForItems = {}
             local recipeMapForProfession = {}
             local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
-            table.foreach(recipeIDs, function (_, recipeID)
+            table.foreach(recipeIDs, function(_, recipeID)
                 local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
                 recipeMapForProfession[recipeID] = professionID
 
@@ -141,7 +141,7 @@ function CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeID)
                     local itemIDs = CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, {})
                     itemIDs = CraftSim.GUTIL:ToSet(itemIDs) -- to consider gear where all qualities have the same itemID
 
-                    table.foreach(itemIDs, function (_, itemID)
+                    table.foreach(itemIDs, function(_, itemID)
                         recipeMapForItems[itemID] = recipeID
                     end)
                 end
@@ -169,7 +169,7 @@ function CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRe
         for _, recipeID in ipairs(professionRecipeIDs) do
             C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
         end
-        
+
         table.insert(CraftSimLoadedProfessionRecipes, professionID)
         CraftSim.UTIL:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
     end

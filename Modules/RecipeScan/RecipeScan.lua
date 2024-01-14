@@ -16,13 +16,13 @@ CraftSim.RECIPE_SCAN.SCAN_MODES = {
 }
 ---@type table<CraftSim.RecipeScanModes, CraftSim.LOCALIZATION_IDS>
 CraftSim.RECIPE_SCAN.SCAN_MODES_TRANSLATION_MAP = {
-    Q1 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1, 
-    Q2 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2, 
-    Q3 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3, 
-    OPTIMIZE = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE, 
+    Q1 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1,
+    Q2 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2,
+    Q3 = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3,
+    OPTIMIZE = CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE,
 }
 
-    ---@type CraftSim.RecipeData[]
+---@type CraftSim.RecipeData[]
 CraftSim.RECIPE_SCAN.currentResults = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
@@ -47,7 +47,8 @@ function CraftSim.RECIPE_SCAN:UpdateScanPercent(currentProgress, maxProgress)
         local frame = CraftSim.RECIPE_SCAN.frame
         local recipeScanTab = frame.content.recipeScanTab
         local content = recipeScanTab.content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
-        content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) .. " " .. currentPercentage .. "%")
+        content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) ..
+            " " .. currentPercentage .. "%")
     end
 end
 
@@ -87,7 +88,6 @@ function CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCache()
 end
 
 function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
-
     local itemID = resultItem:GetItemID()
 
     print("Searching for Recipe with result: " .. tostring(itemID))
@@ -104,20 +104,21 @@ function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
         end
     end
 
-    local recipeInfos = CraftSim.GUTIL:Map(recipeIDs, function(recipeID) 
+    local recipeInfos = CraftSim.GUTIL:Map(recipeIDs, function(recipeID)
         return C_TradeSkillUI.GetRecipeInfo(recipeID)
     end)
 
     -- check learned recipes for recipe with this item as result
-    local foundRecipeInfo = CraftSim.GUTIL:Find(recipeInfos, function(recipeInfo) 
+    local foundRecipeInfo = CraftSim.GUTIL:Find(recipeInfos, function(recipeInfo)
         if not recipeInfo.learned then
             return false
         end
         ---@diagnostic disable-next-line: missing-parameter
         local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-        local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
+        local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS,
+            recipeCategoryInfo.parentCategoryID)
         if isDragonIsleRecipe and recipeInfo.isEnchantingRecipe then
-            local foundEnchant, recipeID = CraftSim.GUTIL:Find(CraftSim.ENCHANT_RECIPE_DATA, function (enchantData) 
+            local foundEnchant, recipeID = CraftSim.GUTIL:Find(CraftSim.ENCHANT_RECIPE_DATA, function(enchantData)
                 return enchantData.q1 == itemID or enchantData.q2 == itemID or enchantData.q3 == itemID
             end)
             if foundEnchant then
@@ -144,7 +145,6 @@ function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
                 if outputQ3.itemID == itemID then
                     return true
                 end
-
             end
         end
         return false
@@ -205,7 +205,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
                 if not CraftSimOptions.recipeScanIncludeGear and isGear then
                     return false
                 end
-                
+
                 return true
             end
             return false
@@ -215,20 +215,18 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
 end
 
 function CraftSim.RECIPE_SCAN:StartScan()
-
     CraftSim.RECIPE_SCAN.currentResults = {}
     CraftSim.RECIPE_SCAN.isScanning = true
-    
+
     print("Scan Mode: " .. tostring(CraftSimOptions.recipeScanScanMode))
     local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
-    local recipeInfos = CraftSim.GUTIL:Map(recipeIDs, function(recipeID) 
+    local recipeInfos = CraftSim.GUTIL:Map(recipeIDs, function(recipeID)
         return C_TradeSkillUI.GetRecipeInfo(recipeID)
     end)
     recipeInfos = CraftSim.GUTIL:Filter(recipeInfos, CraftSim.RECIPE_SCAN.FilterRecipes)
     local currentIndex = 1
 
     local function scanRecipesByInterval()
-
         -- check if scan was ended
         if not CraftSim.RECIPE_SCAN.isScanning then
             return
@@ -246,7 +244,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
         print("recipeID: " .. tostring(recipeInfo.recipeID), false, true)
         print("recipeName: " .. tostring(recipeInfo.name))
         print("isEnchant: " .. tostring(recipeInfo.isEnchantingRecipe))
-        
+
         --- @type CraftSim.RecipeData
         local recipeData = CraftSim.RecipeData(recipeInfo.recipeID);
 
@@ -279,7 +277,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
 
         local function continueScan()
             CraftSim.UTIL:StopProfiling("Single Recipe Scan")
-            CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData) 
+            CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
 
             table.insert(CraftSim.RECIPE_SCAN.currentResults, recipeData)
 

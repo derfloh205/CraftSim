@@ -10,7 +10,7 @@ function CraftSim.TOOLTIP:Init()
     end
     hooked = true
 
-    -- local function OnTooltipSetItem(tooltip, data) 
+    -- local function OnTooltipSetItem(tooltip, data)
     --     if not tooltip.GetItem then
     --         return
     --     end
@@ -43,7 +43,7 @@ function CraftSim.TOOLTIP:Init()
     --     elseif tooltipData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_ITEM and tooltipData.recipeType ~= CraftSim.CONST.RECIPE_TYPES.NO_CRAFT_OPERATION then
     --         resultValue = CraftSim.PRICEDATA:GetMinBuyoutByItemID(tooltipData.result.itemIDs[tooltipData.expectedQuality]) * tooltipData.baseItemAmount
     --     end
-        
+
     --     local profitByCraft = resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT - craftingCostPerCraft
 
     --     local titleLine = "CraftSim"

@@ -28,7 +28,7 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
     self.gearEquipped = self.recipeData.professionGearSet:IsEquipped() or false
     self.correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
     self.notOnCooldown = not self.recipeData:GetCooldownInformation().onCooldown
-    
+
     self.allowedToCraft = self.canCraftOnce and self.gearEquipped and self.correctProfessionOpen and self.notOnCooldown
     CraftSim.UTIL:StopProfiling('CraftSim.CraftQueueItem:CalculateCanCraft')
 end

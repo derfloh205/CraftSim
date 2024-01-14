@@ -12,7 +12,8 @@ function CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
 
     local savedCosts = 0
     if recipeData.supportsResourcefulness then
-        savedCosts = CraftSim.CALC:CalculateResourcefulnessSavedCosts(extraSavedItemsFactor, priceData.craftingCostsRequired)
+        savedCosts = CraftSim.CALC:CalculateResourcefulnessSavedCosts(extraSavedItemsFactor,
+            priceData.craftingCostsRequired)
     end
 
     return savedCosts
@@ -26,17 +27,17 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return number hsvChance -- not in decimal!
 ---@return boolean withInspirationOnly -- only if it procs together with inspiration, the inspiration chance has to be factored in afterwards
-function CraftSim.CALC:getHSVChance(recipeData) 
+function CraftSim.CALC:getHSVChance(recipeData)
     print("HSV Chance calc")
     if recipeData.maxQuality and recipeData.resultData.expectedQuality < recipeData.maxQuality then
-        
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
-        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty, CraftSimOptions.breakPointOffset)
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty,
+            CraftSimOptions.breakPointOffset)
         local upperThreshold = thresholds[recipeData.resultData.expectedQuality]
-        
+
         local playerSkill = recipeData.professionStats.skill.value
-        
+
         local skillDiff = upperThreshold - playerSkill
         local relativeToDifficulty = skillDiff / (baseRecipeDifficulty / 100)
 
@@ -55,7 +56,7 @@ function CraftSim.CALC:getHSVChance(recipeData)
                 if relativeToDifficulty < 5 then
                     -- together with hsv we can reach the threshold
                     -- calculate chance for this and mark as hsv with inspiration only
-                    local hsvChance = (5-relativeToDifficulty) / 5
+                    local hsvChance = (5 - relativeToDifficulty) / 5
                     return hsvChance, true
                 end
             end
@@ -63,7 +64,7 @@ function CraftSim.CALC:getHSVChance(recipeData)
             return 0, false
         end
 
-        local hsvChance = (5-relativeToDifficulty) / 5
+        local hsvChance = (5 - relativeToDifficulty) / 5
 
         return hsvChance, false
     else
@@ -71,7 +72,6 @@ function CraftSim.CALC:getHSVChance(recipeData)
         return 0, false
     end
 end
-
 
 ---Returns a table with information about the hsv interaction for the given recipe
 ---@param recipeData CraftSim.RecipeData
@@ -87,14 +87,14 @@ function CraftSim.CALC:GetHSVInfo(recipeData)
     }
 
     if recipeData.maxQuality and recipeData.resultData.expectedQuality < recipeData.maxQuality then
-        
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
-        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty, CraftSimOptions.breakPointOffset)
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty,
+            CraftSimOptions.breakPointOffset)
         local upperThreshold = thresholds[recipeData.resultData.expectedQuality]
-        
+
         local playerSkill = recipeData.professionStats.skill.value
-        
+
         local skillDiff = upperThreshold - playerSkill
         local relativeToDifficulty = skillDiff / (baseRecipeDifficulty / 100)
 
@@ -117,16 +117,17 @@ function CraftSim.CALC:GetHSVInfo(recipeData)
             end
         end
 
-        hsvInfo.chanceNextQuality = math.max((5-relativeToDifficulty) / 5, 0)
+        hsvInfo.chanceNextQuality = math.max((5 - relativeToDifficulty) / 5, 0)
     end
 
     if recipeData.maxQuality and recipeData.resultData.expectedQuality + 1 < recipeData.maxQuality then
         -- if it is possible to skip, check if we can skip a quality with inspiration + hsv
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
-        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty, CraftSimOptions.breakPointOffset)
+        local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty,
+            CraftSimOptions.breakPointOffset)
         local skipThreshold = thresholds[recipeData.resultData.expectedQuality + 1]
-        
+
         local playerSkill = recipeData.professionStats.skill.value
         local skillWithInspiration = playerSkill + recipeData.professionStats.inspiration:GetExtraValueByFactor()
 
@@ -137,7 +138,7 @@ function CraftSim.CALC:GetHSVInfo(recipeData)
 
             if relativeToDifficulty < 5 then
                 -- hsv + inspiration can skip a quality
-                hsvInfo.chanceSkipQuality = (5-relativeToDifficulty) / 5
+                hsvInfo.chanceSkipQuality = (5 - relativeToDifficulty) / 5
                 hsvInfo.canSkipQualityWithInspiration = true
             end
         end
@@ -158,30 +159,33 @@ function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
         return recipeData.baseItemAmount, 0
     end
 
-    local maxExtraItems = (CraftSimOptions.customMulticraftConstant*recipeData.baseItemAmount) * recipeData.professionStats.multicraft:GetExtraFactor(true)
-    local expectedExtraItems = (1 + maxExtraItems) / 2 
+    local maxExtraItems = (CraftSimOptions.customMulticraftConstant * recipeData.baseItemAmount) *
+        recipeData.professionStats.multicraft:GetExtraFactor(true)
+    local expectedExtraItems = (1 + maxExtraItems) / 2
     local expectedItems = recipeData.baseItemAmount + expectedExtraItems
 
     return expectedItems, expectedExtraItems
 end
 
-function CraftSim.CALC:CalculateExpectedCosts(expectedCrafts, chance, resChance, resExtraFactor, avgItemAmount, craftingCosts, requiredCraftingCosts)
-    local avgSavedCostsRes = CraftSim.CALC:CalculateResourcefulnessSavedCosts(resExtraFactor, requiredCraftingCosts) * resChance
+function CraftSim.CALC:CalculateExpectedCosts(expectedCrafts, chance, resChance, resExtraFactor, avgItemAmount,
+                                              craftingCosts, requiredCraftingCosts)
+    local avgSavedCostsRes = CraftSim.CALC:CalculateResourcefulnessSavedCosts(resExtraFactor, requiredCraftingCosts) *
+        resChance
     if chance == 1 then
         return (craftingCosts - avgSavedCostsRes) / avgItemAmount
     elseif chance > 0 then
-        return ((craftingCosts- avgSavedCostsRes) * expectedCrafts) / avgItemAmount
+        return ((craftingCosts - avgSavedCostsRes) * expectedCrafts) / avgItemAmount
     end
 end
 
 ---@class CraftSim.ProbabilityInfo
----@field inspiration? boolean 
----@field multicraft? boolean 
----@field hsvNext? boolean 
----@field hsvSkip? boolean 
----@field resourcefulness? boolean 
----@field chance number 
----@field profit number 
+---@field inspiration? boolean
+---@field multicraft? boolean
+---@field hsvNext? boolean
+---@field hsvSkip? boolean
+---@field resourcefulness? boolean
+---@field chance number
+---@field profit number
 
 --- Do not forget to update Price Data first
 ---@param recipeData CraftSim.RecipeData
@@ -196,16 +200,18 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
     local priceData = recipeData.priceData
     local professionStats = recipeData.professionStats
     if not recipeData.supportsCraftingStats then
-        local resultValue = ((priceData.qualityPriceList[1] or 0) * recipeData.baseItemAmount) * CraftSim.CONST.AUCTION_HOUSE_CUT
+        local resultValue = ((priceData.qualityPriceList[1] or 0) * recipeData.baseItemAmount) *
+            CraftSim.CONST.AUCTION_HOUSE_CUT
         local profit = resultValue - priceData.craftingCosts
 
-        local probabilityTable = {{chance=1, profit=profit}}
+        local probabilityTable = { { chance = 1, profit = profit } }
         return profit, probabilityTable
     end
 
     local comissionProfit = 0
     if recipeData.orderData then
-        comissionProfit = (tonumber(recipeData.orderData.tipAmount) or 0) - (tonumber(recipeData.orderData.consortiumCut) or 0)
+        comissionProfit = (tonumber(recipeData.orderData.tipAmount) or 0) -
+            (tonumber(recipeData.orderData.consortiumCut) or 0)
 
         -- we also need to consider any saved crafting costs from provided materials from the customer and the comission
         for _, reagentdata in ipairs(recipeData.orderData.reagents) do
@@ -214,8 +220,8 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         end
     end
 
-    -- for work orders we do not need to consider auction house cut but we can add the comissionProfit    
-    local function adaptResultValue(value) 
+    -- for work orders we do not need to consider auction house cut but we can add the comissionProfit
+    local function adaptResultValue(value)
         if recipeData.orderData and comissionProfit > 0 then
             return comissionProfit
         else
@@ -268,21 +274,20 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         for currentCombination = 0, bitMaxNumber, 1 do
             local bits = CraftSim.UTIL:toBits(currentCombination, numBits)
             table.insert(totalCombinations, bits)
-        end 
+        end
 
         for _, combination in pairs(totalCombinations) do
-
             local INSP = combination[1] == 1
             local MC = combination[2] == 1
             local HSV_NEXT = combination[3] == 1
             local HSV_SKIP = combination[4] == 1
             local RES = combination[5] == 1
 
-            local p_Insp = (INSP and inspChance) or (1-inspChance)
-            local p_MC = (MC and mcChance) or (1-mcChance)
-            local p_HSV_Next = (HSV_NEXT and hsvInfo.chanceNextQuality) or (1-hsvInfo.chanceNextQuality)
-            local p_HSV_Skip = (HSV_SKIP and hsvInfo.chanceSkipQuality) or (1-hsvInfo.chanceSkipQuality)
-            local p_Res = (RES and resChance) or (1-resChance)
+            local p_Insp = (INSP and inspChance) or (1 - inspChance)
+            local p_MC = (MC and mcChance) or (1 - mcChance)
+            local p_HSV_Next = (HSV_NEXT and hsvInfo.chanceNextQuality) or (1 - hsvInfo.chanceNextQuality)
+            local p_HSV_Skip = (HSV_SKIP and hsvInfo.chanceSkipQuality) or (1 - hsvInfo.chanceSkipQuality)
+            local p_Res = (RES and resChance) or (1 - resChance)
 
             local combinationChance = p_Insp * p_MC * p_Res * p_HSV_Next * p_HSV_Skip
 
@@ -314,84 +319,104 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
             print("subCombination: " .. tostring(subCombination))
             -- - INSP, - MC, - HSV_NEXT, - HSV_SKIP
             if subCombination == "0000" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
+                    recipeData.baseItemAmount)
 
-            -- - INSP, - MC, - HSV_NEXT, + HSV_SKIP
+                -- - INSP, - MC, - HSV_NEXT, + HSV_SKIP
             elseif subCombination == "0001" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
-            
-                
-            -- - INSP, - MC, + HSV_NEXT, - HSV_SKIP
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
+                    recipeData.baseItemAmount)
+
+
+                -- - INSP, - MC, + HSV_NEXT, - HSV_SKIP
             elseif subCombination == "0010" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) *
+                    recipeData.baseItemAmount)
 
-            -- - INSP, - MC, + HSV_NEXT, + HSV_SKIP
+                -- - INSP, - MC, + HSV_NEXT, + HSV_SKIP
             elseif subCombination == "0011" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) *
+                    recipeData.baseItemAmount)
 
-            -- - INSP, + MC, - HSV_NEXT, - HSV_SKIP 
+                -- - INSP, + MC, - HSV_NEXT, - HSV_SKIP
             elseif subCombination == "0100" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * expectedItems)
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
+                    expectedItems)
 
-            -- - INSP, + MC, - HSV_NEXT, + HSV_SKIP 
+                -- - INSP, + MC, - HSV_NEXT, + HSV_SKIP
             elseif subCombination == "0101" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * expectedItems)
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
+                    expectedItems)
 
-            -- - INSP, + MC, + HSV_NEXT, - HSV_SKIP 
+                -- - INSP, + MC, + HSV_NEXT, - HSV_SKIP
             elseif subCombination == "0110" then
                 resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * expectedItems)
 
-            -- - INSP, + MC, + HSV_NEXT, + HSV_SKIP 
+                -- - INSP, + MC, + HSV_NEXT, + HSV_SKIP
             elseif subCombination == "0111" then
                 resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * expectedItems)
 
-            -- + INSP, - MC, - HSV_NEXT, - HSV_SKIP 
+                -- + INSP, - MC, - HSV_NEXT, - HSV_SKIP
             elseif subCombination == "1000" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) *
+                    recipeData.baseItemAmount)
 
-            -- + INSP, - MC, - HSV_NEXT, + HSV_SKIP 
+                -- + INSP, - MC, - HSV_NEXT, + HSV_SKIP
             elseif subCombination == "1001" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) *
+                    recipeData.baseItemAmount)
 
-            -- + INSP, - MC, + HSV_NEXT, - HSV_SKIP 
+                -- + INSP, - MC, + HSV_NEXT, - HSV_SKIP
             elseif subCombination == "1010" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) *
+                    recipeData.baseItemAmount)
 
-            -- + INSP, - MC, + HSV_NEXT, + HSV_SKIP -> special case, depends on which of the two hsv values inspiration is affecting
+                -- + INSP, - MC, + HSV_NEXT, + HSV_SKIP -> special case, depends on which of the two hsv values inspiration is affecting
             elseif subCombination == "1011" then
                 if hsvInfo.nextQualityWithInspirationOnly then
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) * recipeData.baseItemAmount)
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) *
+                        recipeData.baseItemAmount)
                 elseif hsvInfo.canSkipQualityWithInspiration then
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) * recipeData.baseItemAmount)
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) *
+                        recipeData.baseItemAmount)
                 else -- if inspiration is not affecting any of the hsv values then its just a normal inspiration proc
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) *
+                        recipeData.baseItemAmount)
                 end
 
-            -- + INSP, + MC, - HSV_NEXT, - HSV_SKIP
+                -- + INSP, + MC, - HSV_NEXT, - HSV_SKIP
             elseif subCombination == "1100" then
                 resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * expectedItems)
 
-            -- + INSP, + MC, - HSV_NEXT, + HSV_SKIP
+                -- + INSP, + MC, - HSV_NEXT, + HSV_SKIP
             elseif subCombination == "1101" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) * expectedItems)
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) *
+                    expectedItems)
 
-            -- + INSP, + MC, + HSV_NEXT, - HSV_SKIP
+                -- + INSP, + MC, + HSV_NEXT, - HSV_SKIP
             elseif subCombination == "1110" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) * expectedItems)
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) *
+                    expectedItems)
 
-            -- + INSP, + MC, + HSV_NEXT, + HSV_SKIP -> special case, depends on which of the two hsv values inspiration is affecting
+                -- + INSP, + MC, + HSV_NEXT, + HSV_SKIP -> special case, depends on which of the two hsv values inspiration is affecting
             elseif subCombination == "1111" then
                 if hsvInfo.nextQualityWithInspirationOnly then
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) * expectedItems)
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) *
+                        expectedItems)
                 elseif hsvInfo.canSkipQualityWithInspiration then
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) * expectedItems)
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) *
+                        expectedItems)
                 else -- if inspiration is not affecting any of the hsv values then its just a normal inspiration proc
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * expectedItems)
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) *
+                        expectedItems)
                 end
             end
-            
+
             combinationProfit = resultValue - craftingCosts
-            print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
+            print(table.concat(combination, "") ..
+                ":" ..
+                CraftSim.GUTIL:Round(combinationChance * 100, 2) ..
+                "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 inspiration = INSP,
                 multicraft = MC,
@@ -407,11 +432,12 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         local expectedProfit = 0
         for _, entry in pairs(probabilityTable) do
             probabilitySum = probabilitySum + entry.chance
-            expectedProfit = expectedProfit + (entry.profit*entry.chance)
+            expectedProfit = expectedProfit + (entry.profit * entry.chance)
         end
 
         if tostring(probabilitySum) ~= "1" then
-            print(CraftSim.GUTIL:ColorizeText("WARNING: ", CraftSim.GUTIL.COLORS.RED) .. "Probability Sum not 1 -> " .. probabilitySum )
+            print(CraftSim.GUTIL:ColorizeText("WARNING: ", CraftSim.GUTIL.COLORS.RED) ..
+                "Probability Sum not 1 -> " .. probabilitySum)
         end
         print("ExpectedProfit: " .. CraftSim.GUTIL:FormatMoney(expectedProfit, true))
 
@@ -435,14 +461,14 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         for currentCombination = 0, bitMaxNumber, 1 do
             local bits = CraftSim.UTIL:toBits(currentCombination, numBits)
             table.insert(totalCombinations, bits)
-        end 
+        end
 
         for _, combination in pairs(totalCombinations) do
             local MC = combination[1] == 1
             local RES = combination[2] == 1
 
-            local p_MC = (MC and mcChance) or (1-mcChance)
-            local p_Res = (RES and resChance) or (1-resChance)
+            local p_MC = (MC and mcChance) or (1 - mcChance)
+            local p_Res = (RES and resChance) or (1 - resChance)
 
             local combinationChance = p_MC * p_Res
 
@@ -453,11 +479,13 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
 
             -- if mc
             if MC then
-                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * expectedItems)
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
+                    expectedItems)
             elseif not MC then
-                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
+                    recipeData.baseItemAmount)
             end
-            
+
             combinationProfit = resultValue - craftingCosts
             --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
@@ -472,7 +500,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         local expectedProfit = 0
         for _, entry in pairs(probabilityTable) do
             probabilitySum = probabilitySum + entry.chance
-            expectedProfit = expectedProfit + (entry.profit*entry.chance)
+            expectedProfit = expectedProfit + (entry.profit * entry.chance)
         end
 
         print("Probability Sum: " .. tostring(probabilitySum))
@@ -495,7 +523,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         local qualityWithInspirationHSVNext = recipeData.resultData.expectedQualityInspirationHSV
         local qualityWithInspirationHSVSkip = recipeData.resultData.expectedQualityInspirationHSVSkip
         local qualityWithHSV = recipeData.resultData.expectedQualityHSV
-        
+
         -- get all possible craft results (for resourcefulness take avg) and their profits
         -- to build the probability distribution with p(x) = x where x is the profit
 
@@ -516,7 +544,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         for currentCombination = 0, bitMaxNumber, 1 do
             local bits = CraftSim.UTIL:toBits(currentCombination, numBits)
             table.insert(totalCombinations, bits)
-        end 
+        end
 
         for _, combination in pairs(totalCombinations) do
             local INSP = combination[1] == 1
@@ -524,14 +552,14 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
             local HSV_SKIP = combination[3] == 1
             local RES = combination[4] == 1
 
-            local p_Insp = (INSP and inspChance) or (1-inspChance)
-            local p_HSV_Next = (HSV_NEXT and hsvInfo.chanceNextQuality) or (1-hsvInfo.chanceNextQuality)
-            local p_HSV_Skip = (HSV_SKIP and hsvInfo.chanceSkipQuality) or (1-hsvInfo.chanceSkipQuality)
-            local p_Res = (RES and resChance) or (1-resChance)
+            local p_Insp = (INSP and inspChance) or (1 - inspChance)
+            local p_HSV_Next = (HSV_NEXT and hsvInfo.chanceNextQuality) or (1 - hsvInfo.chanceNextQuality)
+            local p_HSV_Skip = (HSV_SKIP and hsvInfo.chanceSkipQuality) or (1 - hsvInfo.chanceSkipQuality)
+            local p_Res = (RES and resChance) or (1 - resChance)
 
             local combinationChance = p_Insp * p_Res * p_HSV_Next * p_HSV_Skip
 
-            local craftingCosts = priceData.craftingCosts- ((RES and savedCostsByRes) or 0)
+            local craftingCosts = priceData.craftingCosts - ((RES and savedCostsByRes) or 0)
 
             local combinationProfit = 0
             local resultValue = 0
@@ -551,43 +579,53 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
             print("subCombination: " .. tostring(subCombination))
             -- - INSP - HSV_NEXT, - HSV_SKIP
             if subCombination == "000" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
+                    recipeData.baseItemAmount)
 
-            -- - INSP - HSV_NEXT, + HSV_SKIP
+                -- - INSP - HSV_NEXT, + HSV_SKIP
             elseif subCombination == "001" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
+                    recipeData.baseItemAmount)
 
-            -- - INSP + HSV_NEXT, - HSV_SKIP
+                -- - INSP + HSV_NEXT, - HSV_SKIP
             elseif subCombination == "010" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) *
+                    recipeData.baseItemAmount)
 
-            -- - INSP + HSV_NEXT, + HSV_SKIP
+                -- - INSP + HSV_NEXT, + HSV_SKIP
             elseif subCombination == "011" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) * recipeData.baseItemAmount)
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithHSV] or 0) *
+                    recipeData.baseItemAmount)
 
-            -- + INSP - HSV_NEXT, - HSV_SKIP
+                -- + INSP - HSV_NEXT, - HSV_SKIP
             elseif subCombination == "100" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
-            
-            -- + INSP - HSV_NEXT, + HSV_SKIP
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) *
+                    recipeData.baseItemAmount)
+
+                -- + INSP - HSV_NEXT, + HSV_SKIP
             elseif subCombination == "101" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) * recipeData.baseItemAmount)
-            
-            -- + INSP + HSV_NEXT, - HSV_SKIP
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) *
+                    recipeData.baseItemAmount)
+
+                -- + INSP + HSV_NEXT, - HSV_SKIP
             elseif subCombination == "110" then
-                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) * recipeData.baseItemAmount)
-            
-            -- + INSP + HSV_NEXT, + HSV_SKIP
+                resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) *
+                    recipeData.baseItemAmount)
+
+                -- + INSP + HSV_NEXT, + HSV_SKIP
             elseif subCombination == "111" then
                 if hsvInfo.nextQualityWithInspirationOnly then
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) * recipeData.baseItemAmount)
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVNext] or 0) *
+                        recipeData.baseItemAmount)
                 elseif hsvInfo.canSkipQualityWithInspiration then
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) * recipeData.baseItemAmount)
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspirationHSVSkip] or 0) *
+                        recipeData.baseItemAmount)
                 else -- if inspiration is not affecting any of the hsv values then its just a normal inspiration proc
-                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) * recipeData.baseItemAmount)
+                    resultValue = adaptResultValue((priceData.qualityPriceList[qualityWithInspiration] or 0) *
+                        recipeData.baseItemAmount)
                 end
             end
-            
+
             combinationProfit = resultValue - craftingCosts
             --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
@@ -604,7 +642,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         local expectedProfit = 0
         for _, entry in pairs(probabilityTable) do
             probabilitySum = probabilitySum + entry.chance
-            expectedProfit = expectedProfit + (entry.profit*entry.chance)
+            expectedProfit = expectedProfit + (entry.profit * entry.chance)
         end
 
         print("Probability Sum: " .. tostring(probabilitySum))
@@ -615,7 +653,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         -- no insp no hsv
         local resChance = professionStats.resourcefulness:GetPercent(true)
         local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
-        
+
         -- get all possible craft results (for resourcefulness take avg) and their profits
         -- to build the probability distribution with p(x) = x where x is the profit
 
@@ -630,22 +668,23 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         for currentCombination = 0, bitMaxNumber, 1 do
             local bits = CraftSim.UTIL:toBits(currentCombination, numBits)
             table.insert(totalCombinations, bits)
-        end 
+        end
 
         for _, combination in pairs(totalCombinations) do
             local RES = combination[1] == 1
 
-            local p_Res = (RES and resChance) or (1-resChance)
+            local p_Res = (RES and resChance) or (1 - resChance)
 
             local combinationChance = p_Res
 
-            local craftingCosts = priceData.craftingCosts- ((RES and savedCostsByRes) or 0)
+            local craftingCosts = priceData.craftingCosts - ((RES and savedCostsByRes) or 0)
 
             local combinationProfit = 0
             local resultValue = 0
 
-            resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) * recipeData.baseItemAmount)
-            
+            resultValue = adaptResultValue((priceData.qualityPriceList[recipeData.resultData.expectedQuality] or 0) *
+                recipeData.baseItemAmount)
+
             combinationProfit = resultValue - craftingCosts
             --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
@@ -659,7 +698,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         local expectedProfit = 0
         for _, entry in pairs(probabilityTable) do
             probabilitySum = probabilitySum + entry.chance
-            expectedProfit = expectedProfit + (entry.profit*entry.chance)
+            expectedProfit = expectedProfit + (entry.profit * entry.chance)
         end
 
         print("Probability Sum: " .. tostring(probabilitySum))
@@ -673,7 +712,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
     end
 
     print(CraftSim.GUTIL:ColorizeText("Szenario not implemented yet", CraftSim.GUTIL.COLORS.RED), false, true)
-    
+
 
     return 0, {}
 end

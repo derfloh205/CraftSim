@@ -148,47 +148,47 @@ end
 function CraftSim.TAILORING_DATA:GetData()
     return {
         TAILORING_MASTERY_1 = { -- all mapped
-            childNodeIDs = {"CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
+            childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
             nodeID = 40008,
             equalsSkill = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TAILORING_MASTERY_2 = {
-            childNodeIDs = {"CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
+            childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
             nodeID = 40008,
             threshold = 0,
             skill = 3,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TAILORING_MASTERY_3 = {
-            childNodeIDs = {"CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
+            childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
             nodeID = 40008,
             threshold = 5,
             skill = 2,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TAILORING_MASTERY_4 = {
-            childNodeIDs = {"CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
+            childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
             nodeID = 40008,
             threshold = 15,
             skill = 3,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TAILORING_MASTERY_5 = {
-            childNodeIDs = {"CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
+            childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
             nodeID = 40008,
             threshold = 25,
             skill = 2,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TAILORING_MASTERY_6 = {
-            childNodeIDs = {"CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
+            childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
             nodeID = 40008,
             threshold = 30,
             inspiration = 15,
             resourcefulness = 15,
             craftingspeedBonusFactor = 0.15,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         CLOTH_COLLECTION_1 = {
             nodeID = 40007,
@@ -196,99 +196,99 @@ function CraftSim.TAILORING_DATA:GetData()
         SPARING_SEWING_1 = {
             nodeID = 40006,
             equalsResourcefulness = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SPARING_SEWING_2 = {
             nodeID = 40006,
             threshold = 0,
             resourcefulnessExtraItemsFactor = 0.05,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SPARING_SEWING_3 = {
             nodeID = 40006,
             threshold = 5,
             resourcefulness = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SPARING_SEWING_4 = {
             nodeID = 40006,
             threshold = 10,
             resourcefulnessExtraItemsFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SPARING_SEWING_5 = {
             nodeID = 40006,
             threshold = 15,
             resourcefulness = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SPARING_SEWING_6 = {
             nodeID = 40006,
             threshold = 20,
             resourcefulnessExtraItemsFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SPARING_SEWING_7 = {
             nodeID = 40006,
             threshold = 25,
             resourcefulness = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SPARING_SEWING_8 = {
             nodeID = 40006,
             threshold = 30,
             resourcefulnessExtraItemsFactor = 0.25,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_1 = {
             nodeID = 40005,
             equalsInspiration = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_2 = {
             nodeID = 40005,
             threshold = 0,
             inspirationBonusSkillFactor = 0.05,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_3 = {
             nodeID = 40005,
             threshold = 5,
             inspiration = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_4 = {
             nodeID = 40005,
             threshold = 10,
             inspirationBonusSkillFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_5 = {
             nodeID = 40005,
             threshold = 15,
             inspiration = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_6 = {
             nodeID = 40005,
             threshold = 20,
             inspirationBonusSkillFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_7 = {
             nodeID = 40005,
             threshold = 25,
             inspiration = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_8 = {
             nodeID = 40005,
             threshold = 30,
             inspirationBonusSkillFactor = 0.25,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
-        TEXTILES_1 = { -- spinning mapped, waeving mapped, embroidery mapped 
-            childNodeIDs = {"SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
+        TEXTILES_1 = { -- spinning mapped, waeving mapped, embroidery mapped
+            childNodeIDs = { "SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
             nodeID = 40038,
             equalsSkill = true,
             idMapping = {
@@ -318,7 +318,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         TEXTILES_2 = {
-            childNodeIDs = {"SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
+            childNodeIDs = { "SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
             nodeID = 40038,
             threshold = 0,
             inspiration = 5,
@@ -349,7 +349,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         TEXTILES_3 = {
-            childNodeIDs = {"SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
+            childNodeIDs = { "SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
             nodeID = 40038,
             threshold = 10,
             craftingspeed = 20,
@@ -380,7 +380,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         TEXTILES_4 = {
-            childNodeIDs = {"SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
+            childNodeIDs = { "SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
             nodeID = 40038,
             threshold = 20,
             resourcefulness = 5,
@@ -693,7 +693,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         DRACONIC_NEEDLEWORK_1 = { -- azure mapped, chrono mapped
-            childNodeIDs = {"AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1"},
+            childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
             nodeID = 40074,
             equalsSkill = true,
             idMapping = {
@@ -722,7 +722,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         DRACONIC_NEEDLEWORK_2 = {
-            childNodeIDs = {"AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1"},
+            childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
             nodeID = 40074,
             threshold = 5,
             inspiration = 5,
@@ -752,7 +752,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         DRACONIC_NEEDLEWORK_3 = {
-            childNodeIDs = {"AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1"},
+            childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
             nodeID = 40074,
             threshold = 10,
             resourcefulness = 5,
@@ -782,7 +782,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         DRACONIC_NEEDLEWORK_4 = {
-            childNodeIDs = {"AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1"},
+            childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
             nodeID = 40074,
             threshold = 20,
             resourcefulness = 5,
@@ -812,7 +812,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         DRACONIC_NEEDLEWORK_5 = {
-            childNodeIDs = {"AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1"},
+            childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
             nodeID = 40074,
             threshold = 25,
             inspiration = 5,
@@ -842,7 +842,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         AZUREWEAVE_TAILORING_1 = { -- azure mapped
-            childNodeIDs = {"AZUREWEAVING_1"},
+            childNodeIDs = { "AZUREWEAVING_1" },
             nodeID = 40073,
             equalsSkill = true,
             idMapping = {
@@ -860,7 +860,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         AZUREWEAVE_TAILORING_2 = {
-            childNodeIDs = {"AZUREWEAVING_1"},
+            childNodeIDs = { "AZUREWEAVING_1" },
             nodeID = 40073,
             threshold = 5,
             inspiration = 10,
@@ -879,7 +879,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         AZUREWEAVE_TAILORING_3 = {
-            childNodeIDs = {"AZUREWEAVING_1"},
+            childNodeIDs = { "AZUREWEAVING_1" },
             nodeID = 40073,
             threshold = 20,
             resourcefulness = 10,
@@ -898,7 +898,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         AZUREWEAVE_TAILORING_4 = {
-            childNodeIDs = {"AZUREWEAVING_1"},
+            childNodeIDs = { "AZUREWEAVING_1" },
             nodeID = 40073,
             threshold = 25,
             inspiration = 10,
@@ -948,7 +948,7 @@ function CraftSim.TAILORING_DATA:GetData()
             }
         },
         CHRONOCLOTH_TAILORING_1 = { -- time mapped
-            childNodeIDs = {"TIMEWEAVING_1"},
+            childNodeIDs = { "TIMEWEAVING_1" },
             nodeID = 40071,
             equalsSkill = true,
             idMapping = {
@@ -967,7 +967,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         CHRONOCLOTH_TAILORING_2 = {
-            childNodeIDs = {"TIMEWEAVING_1"},
+            childNodeIDs = { "TIMEWEAVING_1" },
             nodeID = 40071,
             threshold = 5,
             inspiration = 10,
@@ -986,7 +986,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         CHRONOCLOTH_TAILORING_3 = {
-            childNodeIDs = {"TIMEWEAVING_1"},
+            childNodeIDs = { "TIMEWEAVING_1" },
             nodeID = 40071,
             threshold = 20,
             resourcefulness = 10,
@@ -1005,7 +1005,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         CHRONOCLOTH_TAILORING_4 = {
-            childNodeIDs = {"TIMEWEAVING_1"},
+            childNodeIDs = { "TIMEWEAVING_1" },
             nodeID = 40071,
             threshold = 25,
             inspiration = 10,
@@ -1055,7 +1055,7 @@ function CraftSim.TAILORING_DATA:GetData()
             }
         },
         GARMENTCRAFTING_1 = { -- ow mapped, outfits mapped, embelishments mapped
-            childNodeIDs = {"OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1"},
+            childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
             nodeID = 40226,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -1136,7 +1136,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         GARMENTCRAFTING_2 = {
-            childNodeIDs = {"OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1"},
+            childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
             nodeID = 40226,
             threshold = 0,
             skill = 10,
@@ -1218,7 +1218,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         GARMENTCRAFTING_3 = {
-            childNodeIDs = {"OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1"},
+            childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
             nodeID = 40226,
             threshold = 10,
             inspiration = 5,
@@ -1300,7 +1300,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         GARMENTCRAFTING_4 = {
-            childNodeIDs = {"OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1"},
+            childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
             nodeID = 40226,
             threshold = 20,
             resourcefulness = 5,
@@ -1382,7 +1382,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         GARMENTCRAFTING_5 = {
-            childNodeIDs = {"OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1"},
+            childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
             nodeID = 40226,
             threshold = 30,
             inspiration = 10,
@@ -1466,7 +1466,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         OUTERWEAR_1 = { -- gloves mapped, footwear mapped, hats mapped, cloaks mapped
-            childNodeIDs = {"GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1"},
+            childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
             nodeID = 40222,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -1508,7 +1508,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         OUTERWEAR_2 = {
-            childNodeIDs = {"GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1"},
+            childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
             nodeID = 40222,
             threshold = 5,
             inspiration = 10,
@@ -1551,7 +1551,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         OUTERWEAR_3 = {
-            childNodeIDs = {"GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1"},
+            childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
             nodeID = 40222,
             threshold = 15,
             resourcefulness = 10,
@@ -1594,7 +1594,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         OUTERWEAR_4 = {
-            childNodeIDs = {"GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1"},
+            childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
             nodeID = 40222,
             threshold = 35,
             resourcefulness = 10,
@@ -1637,7 +1637,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         OUTERWEAR_5 = {
-            childNodeIDs = {"GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1"},
+            childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
             nodeID = 40222,
             threshold = 45,
             inspiration = 10,
@@ -1798,7 +1798,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         OUTFITS_1 = { -- robes mapped, leggings mapped
-            childNodeIDs = {"ROBES_1", "LEGGINGS_1"},
+            childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
             nodeID = 40225,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -1826,7 +1826,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         OUTFITS_2 = {
-            childNodeIDs = {"ROBES_1", "LEGGINGS_1"},
+            childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
             nodeID = 40225,
             threshold = 5,
             skill = 5,
@@ -1854,7 +1854,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         OUTFITS_3 = {
-            childNodeIDs = {"ROBES_1", "LEGGINGS_1"},
+            childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
             nodeID = 40225,
             threshold = 15,
             inspiration = 10,
@@ -1882,7 +1882,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         OUTFITS_4 = {
-            childNodeIDs = {"ROBES_1", "LEGGINGS_1"},
+            childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
             nodeID = 40225,
             threshold = 25,
             skill = 5,
@@ -1910,7 +1910,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         OUTFITS_5 = {
-            childNodeIDs = {"ROBES_1", "LEGGINGS_1"},
+            childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
             nodeID = 40225,
             threshold = 35,
             resourcefulness = 10,
@@ -2002,7 +2002,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         EMBELLISHMENTS_1 = { -- mantles mapped, armbands mapped, belts mapped
-            childNodeIDs = {"MANTLES_1", "ARMBANDS_1", "BELTS_1"},
+            childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
             nodeID = 40217,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -2027,7 +2027,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         EMBELLISHMENTS_2 = {
-            childNodeIDs = {"MANTLES_1", "ARMBANDS_1", "BELTS_1"},
+            childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
             nodeID = 40217,
             threshold = 5,
             skill = 5,
@@ -2052,7 +2052,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         EMBELLISHMENTS_3 = {
-            childNodeIDs = {"MANTLES_1", "ARMBANDS_1", "BELTS_1"},
+            childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
             nodeID = 40217,
             threshold = 15,
             inspiration = 10,
@@ -2077,7 +2077,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         EMBELLISHMENTS_4 = {
-            childNodeIDs = {"MANTLES_1", "ARMBANDS_1", "BELTS_1"},
+            childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
             nodeID = 40217,
             threshold = 25,
             resourcefulness = 10,
@@ -2102,7 +2102,7 @@ function CraftSim.TAILORING_DATA:GetData()
             },
         },
         EMBELLISHMENTS_5 = {
-            childNodeIDs = {"MANTLES_1", "ARMBANDS_1", "BELTS_1"},
+            childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
             nodeID = 40217,
             threshold = 35,
             skill = 5,

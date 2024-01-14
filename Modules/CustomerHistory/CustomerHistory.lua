@@ -5,7 +5,7 @@ local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.CUSTOMER_HISTORY : Frame
 CraftSim.CUSTOMER_HISTORY = GUTIL:CreateRegistreeForEvents(
-    {"CHAT_MSG_WHISPER", "CHAT_MSG_WHISPER_INFORM", "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE"}
+    { "CHAT_MSG_WHISPER", "CHAT_MSG_WHISPER_INFORM", "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE" }
 )
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
@@ -33,6 +33,7 @@ function CraftSim.CUSTOMER_HISTORY:CHAT_MSG_WHISPER(message, fullSenderName)
     -- message = "Hello again! I thought maybe I should write a really long message to test the capacity for the the customer history and to see if the message will clip out or not. So anyway this is a really long message. Hi."
     CraftSim.CUSTOMER_HISTORY:OnWhisper(sender, realm, message, false)
 end
+
 function CraftSim.CUSTOMER_HISTORY:CHAT_MSG_WHISPER_INFORM(message, _, _, _, fullTargetName)
     local target, targetRealm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(fullTargetName)
 
@@ -53,9 +54,9 @@ function CraftSim.CUSTOMER_HISTORY:OnWhisper(customer, customerRealm, message, f
     local customerHistory = CraftSim.CUSTOMER_HISTORY.DB:GetCustomerHistory(customer, customerRealm)
     ---@type CraftSim.CustomerHistory.ChatMessage
     local chatMessage = {
-        content=message,
-        fromPlayer=fromPlayer,
-        timestamp=C_DateAndTime.GetServerTimeLocal()
+        content = message,
+        fromPlayer = fromPlayer,
+        timestamp = C_DateAndTime.GetServerTimeLocal()
     }
     table.insert(customerHistory.chatHistory, chatMessage)
     CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
@@ -72,7 +73,7 @@ function CraftSim.CUSTOMER_HISTORY:CRAFTINGORDERS_FULFILL_ORDER_RESPONSE(result,
     if claimedOrder then
         print("Claimed Order: ", false, true)
         print(claimedOrder, true)
-        local customer, realm =  CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(claimedOrder.customerName)
+        local customer, realm = CraftSim.CUSTOMER_HISTORY:GetNameAndRealm(claimedOrder.customerName)
         local customerHistory = CraftSim.CUSTOMER_HISTORY.DB:GetCustomerHistory(customer, realm)
         ---@type CraftSim.CustomerHistory.Craft
         local customerCraft = {
@@ -146,4 +147,3 @@ function CraftSim.CUSTOMER_HISTORY:AutoPurge()
         end
     end
 end
-

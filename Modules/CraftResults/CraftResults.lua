@@ -5,7 +5,7 @@ local GUTIL = CraftSim.GUTIL
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
 ---@class CraftSim.CRAFT_RESULTS : Frame
-CraftSim.CRAFT_RESULTS = GUTIL:CreateRegistreeForEvents({"TRADE_SKILL_ITEM_CRAFTED_RESULT"})
+CraftSim.CRAFT_RESULTS = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT" })
 
 ---@type CraftSim.RecipeData
 CraftSim.CRAFT_RESULTS.currentRecipeData = nil
@@ -16,12 +16,11 @@ local dataCollect = true
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
-
     --- triggered by enchants and not salvage crafts
 
     if CraftSim.MAIN.currentRecipeData then
         local recipeData = CraftSim.MAIN.currentRecipeData
-        -- if the open recipe is a recraft recipe than take this as current craft results recipe data instead 
+        -- if the open recipe is a recraft recipe than take this as current craft results recipe data instead
         -- because this will not be able to be triggered by the craftqueue!
         if recipeData.isRecraft then
             CraftSim.CRAFT_RESULTS.currentRecipeData = recipeData
@@ -35,7 +34,7 @@ end
 function CraftSim.CRAFT_RESULTS:OnCraftSalvage()
     if CraftSim.MAIN.currentRecipeData then
         local recipeData = CraftSim.MAIN.currentRecipeData
-        -- if the open recipe is a salvage or recraft recipe than take this as current craft results recipe data instead 
+        -- if the open recipe is a salvage or recraft recipe than take this as current craft results recipe data instead
         -- because this will not be able to be triggered by the craftqueue!
         if recipeData.isSalvageRecipe then
             CraftSim.CRAFT_RESULTS.currentRecipeData = recipeData
@@ -56,13 +55,13 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
 
     if collectingResults then
         collectingResults = false
-        C_Timer.After(0.1, function() 
+        C_Timer.After(0.1, function()
             CraftSim.CRAFT_RESULTS:processCraftResults()
         end)
     end
 end
 
-function CraftSim.CRAFT_RESULTS:ExportJSON() 
+function CraftSim.CRAFT_RESULTS:ExportJSON()
     local sessionData = CraftSim.CRAFT_RESULTS.currentSessionData
 
     return sessionData:GetJSON()
@@ -90,7 +89,8 @@ function CraftSim.CRAFT_RESULTS:AddCraftData(craftResult)
     CraftSim.CRAFT_RESULTS.currentSessionData:AddCraftResult(craftResult)
 
     -- update frames
-    craftResultFrame.content.totalProfitAllValue:SetText(GUTIL:FormatMoney(CraftSim.CRAFT_RESULTS.currentSessionData.totalProfit, true))
+    craftResultFrame.content.totalProfitAllValue:SetText(GUTIL:FormatMoney(
+        CraftSim.CRAFT_RESULTS.currentSessionData.totalProfit, true))
 
     CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
 end
@@ -109,22 +109,25 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
             local qualityID = savedReagent.qualityID
             local iconAsText = GUTIL:IconToText(savedReagent.item:GetItemIcon(), 25)
             local qualityAsText = (qualityID > 0 and GUTIL:GetQualityIconString(qualityID, 20, 20)) or ""
-            resourcesText = resourcesText .. "\n" .. iconAsText .. " " .. savedReagent.quantity .. " ".. qualityAsText
+            resourcesText = resourcesText .. "\n" .. iconAsText .. " " .. savedReagent.quantity .. " " .. qualityAsText
         end
     end
 
-    local roundedProfit = GUTIL:Round(craftResult.profit*10000) / 10000
+    local roundedProfit = GUTIL:Round(craftResult.profit * 10000) / 10000
     local profitText = GUTIL:FormatMoney(roundedProfit, true)
     local chanceText = ""
 
     if not recipeData.isSalvageRecipe and recipeData.supportsCraftingStats then
-       chanceText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_5) .. GUTIL:Round(craftResult.craftingChance*100, 1) .. "%\n" 
+        chanceText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_5) ..
+            GUTIL:Round(craftResult.craftingChance * 100, 1) .. "%\n"
     end
 
     local resultsText = ""
     if #craftResult.craftResultItems > 0 then
         for _, craftResultItem in pairs(craftResult.craftResultItems) do
-            resultsText = resultsText .. craftResultItem.quantity .. " x " .. (craftResultItem.item:GetItemLink() or recipeData.recipeName) .. "\n"
+            resultsText = resultsText ..
+                craftResultItem.quantity ..
+                " x " .. (craftResultItem.item:GetItemLink() or recipeData.recipeName) .. "\n"
         end
     else
         resultsText = resultsText .. recipeData.recipeName .. "\n"
@@ -133,17 +136,18 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     local multicraftExtraItemsText = ""
     for _, craftResultItem in pairs(craftResult.craftResultItems) do
         if craftResultItem.quantityMulticraft > 0 then
-            multicraftExtraItemsText = multicraftExtraItemsText .. craftResultItem.quantityMulticraft .. " x " .. craftResultItem.item:GetItemLink() .. "\n"
+            multicraftExtraItemsText = multicraftExtraItemsText ..
+                craftResultItem.quantityMulticraft .. " x " .. craftResultItem.item:GetItemLink() .. "\n"
         end
     end
 
     local newText =
-    resultsText ..
-    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_1) .. profitText .. "\n" ..
-    chanceText ..
-    ((craftResult.triggeredInspiration and GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_2) .. "\n", GUTIL.COLORS.LEGENDARY)) or "") ..
-    ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
-    ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
+        resultsText ..
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_1) .. profitText .. "\n" ..
+        chanceText ..
+        ((craftResult.triggeredInspiration and GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_2) .. "\n", GUTIL.COLORS.LEGENDARY)) or "") ..
+        ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
+        ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
 
     craftResultFrame.content.scrollingMessageFrame:AddMessage("\n" .. newText)
 
@@ -155,18 +159,19 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param craftResult CraftSim.CraftResult
 ---@return number
-function CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, craftResult) 
+function CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, craftResult)
     local craftingCosts = recipeData.priceData.craftingCosts
 
     local savedCosts = 0
-    table.foreach(craftResult.savedReagents, function (_, craftResultSavedReagent)
+    table.foreach(craftResult.savedReagents, function(_, craftResultSavedReagent)
         savedCosts = savedCosts + craftResultSavedReagent.savedCosts
     end)
 
     local resultValue = 0
     for _, craftResultItem in pairs(craftResult.craftResultItems) do
         local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
-        resultValue = resultValue + (CraftSim.PRICEDATA:GetMinBuyoutByItemLink(craftResultItem.item:GetItemLink()) or 0) * quantity
+        resultValue = resultValue +
+            (CraftSim.PRICEDATA:GetMinBuyoutByItemLink(craftResultItem.item:GetItemLink()) or 0) * quantity
     end
 
     local craftProfit = (resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - (craftingCosts - savedCosts)
@@ -204,14 +209,14 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
 
     print("Craft Result: ")
     print(craftResult)
-    
-    local itemsToLoad = GUTIL:Map(craftResult.savedReagents, function (savedReagent)
+
+    local itemsToLoad = GUTIL:Map(craftResult.savedReagents, function(savedReagent)
         return savedReagent.item
     end)
     CraftSim.UTIL:StopProfiling("PROCESS_CRAFT_RESULTS")
-    GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function ()
+    GUTIL:ContinueOnAllItemsLoaded(itemsToLoad, function()
         CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
-    end) 
+    end)
 end
 
 local collectData = {}
@@ -228,24 +233,25 @@ function CraftSim.CRAFT_RESULTS:CollectData(recipeData, craftResult)
     collectData.yieldFactors = collectData.yieldFactors or {}
 
     local tastyHatchlingsTreat = 381380 -- yields 2
-    local blubberyMuffin = 381377 -- yields 3
-    local twiceBakedPotato = 381365 -- yields 4
-    local charitableCheddar = 407100 -- yields 5
+    local blubberyMuffin = 381377       -- yields 3
+    local twiceBakedPotato = 381365     -- yields 4
+    local charitableCheddar = 407100    -- yields 5
 
     -- yield data collection for item amount
     if recipeData.isCooking and recipeData.recipeID == twiceBakedPotato then
         collectData.craftsTotal = collectData.craftsTotal + 1
         local quantity = craftResult.craftResultItems[1].quantity
-        collectData.yieldDistribution[quantity] =  collectData.yieldDistribution[quantity] or 0
+        collectData.yieldDistribution[quantity] = collectData.yieldDistribution[quantity] or 0
         collectData.yieldDistribution[quantity] = collectData.yieldDistribution[quantity] + 1
 
 
         -- update all cause craftsTotal changed
         for quantity, _ in pairs(collectData.yieldDistribution) do
-            collectData.yieldFactors[quantity] = GUTIL:Round(collectData.yieldDistribution[quantity] / collectData.craftsTotal, 3)
+            collectData.yieldFactors[quantity] = GUTIL:Round(
+                collectData.yieldDistribution[quantity] / collectData.craftsTotal, 3)
         end
 
         print("-- #" .. collectData.craftsTotal, false, true)
         print(collectData.yieldFactors, true)
-    end 
+    end
 end

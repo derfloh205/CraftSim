@@ -24,7 +24,6 @@ function CraftSim.BuffData:new(recipeData)
 end
 
 function CraftSim.BuffData:CreateBuffsByRecipeData()
-
     -- by professionID and professionStats
     if self.recipeData.supportsInspiration then
         --- General Buffs
@@ -49,31 +48,30 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
     if self.recipeData.supportsQualities then
         --- enchanting
         if self.recipeData.professionData.professionInfo.profession == Enum.Profession.Enchanting then
-
             -- elemental shatter fire
-            if self.recipeData.reagentData:HasOneOfReagents({190320, 190321}) then
+            if self.recipeData.reagentData:HasOneOfReagents({ 190320, 190321 }) then
                 table.insert(self.buffs, CraftSim.CRAFT_BUFFS:CreateElementalShatterFireBuff(self.recipeData))
             end
 
             -- elemental shatter frost
-            if self.recipeData.reagentData:HasOneOfReagents({190328, 190329}) then
+            if self.recipeData.reagentData:HasOneOfReagents({ 190328, 190329 }) then
                 table.insert(self.buffs, CraftSim.CRAFT_BUFFS:CreateElementalShatterFrostBuff(self.recipeData))
             end
 
-             -- elemental shatter earth
-            if self.recipeData.reagentData:HasOneOfReagents({190316, 190315}) then
+            -- elemental shatter earth
+            if self.recipeData.reagentData:HasOneOfReagents({ 190316, 190315 }) then
                 table.insert(self.buffs, CraftSim.CRAFT_BUFFS:CreateElementalShatterEarthBuff(self.recipeData))
             end
 
             -- elemental shatter air
-           if self.recipeData.reagentData:HasOneOfReagents({190326, 190327}) then
-               table.insert(self.buffs, CraftSim.CRAFT_BUFFS:CreateElementalShatterAirBuff(self.recipeData))
-           end
+            if self.recipeData.reagentData:HasOneOfReagents({ 190326, 190327 }) then
+                table.insert(self.buffs, CraftSim.CRAFT_BUFFS:CreateElementalShatterAirBuff(self.recipeData))
+            end
 
             -- elemental shatter order
-           if self.recipeData.reagentData:HasOneOfReagents({391812, 190324}) then
-               table.insert(self.buffs, CraftSim.CRAFT_BUFFS:CreateElementalShatterOrderBuff(self.recipeData))
-           end
+            if self.recipeData.reagentData:HasOneOfReagents({ 391812, 190324 }) then
+                table.insert(self.buffs, CraftSim.CRAFT_BUFFS:CreateElementalShatterOrderBuff(self.recipeData))
+            end
         end
     end
 end
@@ -110,7 +108,7 @@ end
 ---@param buffUID string
 ---@param active boolean
 function CraftSim.BuffData:SetBuffByUID(buffUID, active)
-    local buff = GUTIL:Find(self.buffs, function (buff)
+    local buff = GUTIL:Find(self.buffs, function(buff)
         return buff:GetUID() == buffUID
     end)
 
@@ -125,15 +123,14 @@ function CraftSim.BuffData:Debug()
         "Buffs: ",
     }
 
-    local statLines = GUTIL:Map(self.buffs, function (buff)
+    local statLines = GUTIL:Map(self.buffs, function(buff)
         return buff:Debug()
     end)
     statLines = CraftSim.GUTIL:Map(statLines, function(line) return "-" .. line end)
-    debugLines = CraftSim.GUTIL:Concat({debugLines, statLines})
+    debugLines = CraftSim.GUTIL:Concat({ debugLines, statLines })
 
     return debugLines
 end
-
 
 function CraftSim.BuffData:GetJSON(indent)
     indent = indent or 0

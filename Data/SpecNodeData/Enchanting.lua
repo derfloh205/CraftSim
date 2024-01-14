@@ -113,7 +113,7 @@ end
 function CraftSim.ENCHANTING_DATA:GetData()
     return {
         ENCHANTMENT_1 = { -- primal mapped, material mapped
-            childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
+            childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
             nodeID = 64143,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -155,7 +155,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         ENCHANTMENT_2 = {
-            childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
+            childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
             nodeID = 64143,
             threshold = 0,
             skill = 5,
@@ -198,7 +198,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         ENCHANTMENT_3 = {
-            childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
+            childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
             nodeID = 64143,
             threshold = 5,
             inspiration = 5,
@@ -241,7 +241,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         ENCHANTMENT_4 = {
-            childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
+            childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
             nodeID = 64143,
             threshold = 15,
             resourcefulness = 5,
@@ -284,7 +284,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         ENCHANTMENT_5 = {
-            childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
+            childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
             nodeID = 64143,
             threshold = 25,
             inspiration = 5,
@@ -328,7 +328,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         ENCHANTMENT_6 = {
-            childNodeIDs = {"PRIMAL_1", "MATERIAL_MANIPULATION_1"},
+            childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
             nodeID = 64143,
             threshold = 30,
             skill = 10,
@@ -372,7 +372,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         PRIMAL_1 = { -- burning mapped, earthen mapped, sophic mapped, frozen mapped, wafting mapped
-            childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
+            childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
             nodeID = 64142,
             equalsSkill = true,
             exceptionRecipeIDs = {
@@ -394,7 +394,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         PRIMAL_2 = {
-            childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
+            childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
             nodeID = 64142,
             threshold = 5,
             inspiration = 5,
@@ -417,7 +417,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         PRIMAL_3 = {
-            childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
+            childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
             nodeID = 64142,
             threshold = 15,
             resourcefulness = 5,
@@ -440,7 +440,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         PRIMAL_4 = {
-            childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
+            childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
             nodeID = 64142,
             threshold = 25,
             skill = 5,
@@ -463,7 +463,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         PRIMAL_5 = {
-            childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
+            childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
             nodeID = 64142,
             threshold = 30,
             inspiration = 10,
@@ -486,7 +486,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         PRIMAL_6 = {
-            childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
+            childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
             nodeID = 64142,
             threshold = 40,
             skill = 10,
@@ -509,7 +509,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         PRIMAL_7 = {
-            childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
+            childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
             nodeID = 64142,
             threshold = 45,
             resourcefulness = 10,
@@ -532,7 +532,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         PRIMAL_8 = {
-            childNodeIDs = {"BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1"},
+            childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
             nodeID = 64142,
             threshold = 50,
             craftingspeedBonusFactor = 0.10,
@@ -555,7 +555,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         MATERIAL_MANIPULATION_1 = { -- adaptive mapped, artistry mapped, magical mapped
-            childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
+            childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
             nodeID = 64136,
             equalsSkill = true,
             idMapping = {
@@ -580,7 +580,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         MATERIAL_MANIPULATION_2 = {
-            childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
+            childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
             nodeID = 64136,
             threshold = 0,
             resourcefulness = 5,
@@ -606,7 +606,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         MATERIAL_MANIPULATION_3 = {
-            childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
+            childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
             nodeID = 64136,
             threshold = 5,
             skill = 5,
@@ -632,7 +632,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         MATERIAL_MANIPULATION_4 = {
-            childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
+            childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
             nodeID = 64136,
             threshold = 15,
             inspiration = 5,
@@ -658,7 +658,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         MATERIAL_MANIPULATION_5 = {
-            childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
+            childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
             nodeID = 64136,
             threshold = 20,
             skill = 5,
@@ -684,7 +684,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         MATERIAL_MANIPULATION_6 = {
-            childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
+            childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
             nodeID = 64136,
             threshold = 30,
             resourcefulness = 10,
@@ -710,7 +710,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         MATERIAL_MANIPULATION_7 = {
-            childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
+            childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
             nodeID = 64136,
             threshold = 35,
             skill = 10,
@@ -736,7 +736,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         MATERIAL_MANIPULATION_8 = {
-            childNodeIDs = {"ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1"},
+            childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
             nodeID = 64136,
             threshold = 40,
             inspiration = 10,
@@ -1057,11 +1057,11 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         INSIGHT_OF_THE_BLUE_1 = { -- draconic mapped, primal mapped
-            childNodeIDs = {"DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1"},
+            childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
             nodeID = 68402,
         },
         INSIGHT_OF_THE_BLUE_2 = {
-            childNodeIDs = {"DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1"},
+            childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
             nodeID = 68402,
             threshold = 5,
             resourcefulness = 5,
@@ -1097,7 +1097,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         INSIGHT_OF_THE_BLUE_3 = {
-            childNodeIDs = {"DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1"},
+            childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
             nodeID = 68402,
             threshold = 15,
             inspiration = 5,
@@ -1133,7 +1133,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         INSIGHT_OF_THE_BLUE_4 = {
-            childNodeIDs = {"DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1"},
+            childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
             nodeID = 68402,
             threshold = 20,
             skill = 5,
@@ -1169,7 +1169,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         INSIGHT_OF_THE_BLUE_5 = {
-            childNodeIDs = {"DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1"},
+            childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
             nodeID = 68402,
             threshold = 30,
             resourcefulness = 5,
@@ -1205,7 +1205,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         INSIGHT_OF_THE_BLUE_6 = {
-            childNodeIDs = {"DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1"},
+            childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
             nodeID = 68402,
             threshold = 40,
             inspiration = 5,
@@ -1241,7 +1241,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             },
         },
         INSIGHT_OF_THE_BLUE_7 = {
-            childNodeIDs = {"DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1"},
+            childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
             nodeID = 68402,
             threshold = 45,
             skill = 10,
@@ -1543,53 +1543,53 @@ function CraftSim.ENCHANTING_DATA:GetData()
                 }
             },
         },
-        RODS_RUNES_AND_RUSES_1 = { -- mapped all 
-            childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
+        RODS_RUNES_AND_RUSES_1 = { -- mapped all
+            childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
             nodeID = 68445,
             equalsSkill = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RODS_RUNES_AND_RUSES_2 = {
-            childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
+            childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
             nodeID = 68445,
             threshold = 0,
             craftingspeedBonusFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RODS_RUNES_AND_RUSES_3 = {
-            childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
+            childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
             nodeID = 68445,
             threshold = 5,
             skill = 5,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RODS_RUNES_AND_RUSES_4 = {
-            childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
+            childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
             nodeID = 68445,
             threshold = 15,
             skill = 5,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RODS_RUNES_AND_RUSES_5 = {
-            childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
+            childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
             nodeID = 68445,
             threshold = 25,
             craftingspeedBonusFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RODS_RUNES_AND_RUSES_6 = {
-            childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
+            childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
             nodeID = 68445,
             threshold = 35,
             skill = 5,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RODS_RUNES_AND_RUSES_7 = {
-            childNodeIDs = {"RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1"},
+            childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
             nodeID = 68445,
             threshold = 40,
             skill = 10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RODS_AND_WANDS_1 = {
             nodeID = 68444,
@@ -1731,13 +1731,13 @@ function CraftSim.ENCHANTING_DATA:GetData()
         INSPIRED_DEVOTION_1 = {
             nodeID = 68441,
             equalsInspiration = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRED_DEVOTION_2 = {
             nodeID = 68441,
             threshold = 0,
             inspirationBonusSkillFactor = 0.05,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRED_DEVOTION_3 = {
             nodeID = 68441,
@@ -1749,7 +1749,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
                 389293, -- Haste
                 389294, -- Mastery
                 389295, -- Vers
-                -- Bracer Devotions 
+                -- Bracer Devotions
                 389301, -- Avoidance
                 389303, -- Leech
                 389304, -- Speed
@@ -1765,7 +1765,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 68441,
             threshold = 10,
             inspirationBonusSkillFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRED_DEVOTION_5 = {
             nodeID = 68441,
@@ -1793,7 +1793,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 68441,
             threshold = 20,
             inspirationBonusSkillFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRED_DEVOTION_7 = {
             nodeID = 68441,
@@ -1821,18 +1821,18 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 68441,
             threshold = 30,
             inspirationBonusSkillFactor = 0.25,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RESOURCEFUL_WRIT_1 = {
             nodeID = 68442,
             equalsResourcefulness = true,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RESOURCEFUL_WRIT_2 = {
             nodeID = 68442,
             threshold = 0,
             resourcefulnessExtraItemsFactor = 0.05,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RESOURCEFUL_WRIT_3 = {
             nodeID = 68442,
@@ -1864,7 +1864,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 68442,
             threshold = 10,
             resourcefulnessExtraItemsFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RESOURCEFUL_WRIT_5 = {
             nodeID = 68442,
@@ -1896,7 +1896,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 68442,
             threshold = 20,
             resourcefulnessExtraItemsFactor = 0.10,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RESOURCEFUL_WRIT_7 = {
             nodeID = 68442,
@@ -1928,7 +1928,7 @@ function CraftSim.ENCHANTING_DATA:GetData()
             nodeID = 68442,
             threshold = 30,
             resourcefulnessExtraItemsFactor = 0.25,
-            idMapping = {[CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {}},
+            idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         }
     }
 end

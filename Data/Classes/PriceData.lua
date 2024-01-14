@@ -76,9 +76,9 @@ function CraftSim.PriceData:Update()
 
         -- optionals and finishing
         local activeOptionalReagents = CraftSim.GUTIL:Concat({
-                CraftSim.GUTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeReagent end),
-                CraftSim.GUTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeReagent end),
-            })
+            CraftSim.GUTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeReagent end),
+            CraftSim.GUTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeReagent end),
+        })
         print("num active optionals: " .. #activeOptionalReagents)
         for _, activeOptionalReagent in pairs(activeOptionalReagents) do
             if activeOptionalReagent then
@@ -95,9 +95,11 @@ function CraftSim.PriceData:Update()
         -- if its not gear we get the price by id
         local itemPrice = 0
         if self.recipeData.isGear then
-            itemPrice = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or CraftSim.PRICEDATA:GetMinBuyoutByItemLink(item:GetItemLink())
+            itemPrice = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
+                CraftSim.PRICEDATA:GetMinBuyoutByItemLink(item:GetItemLink())
         else
-            itemPrice = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or CraftSim.PRICEDATA:GetMinBuyoutByItemID(item:GetItemID())
+            itemPrice = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
+                CraftSim.PRICEDATA:GetMinBuyoutByItemID(item:GetItemID())
         end
         table.insert(self.qualityPriceList, itemPrice)
     end
@@ -105,7 +107,8 @@ function CraftSim.PriceData:Update()
     local avgSavedCostsRes = 0
     if self.recipeData.supportsResourcefulness then
         -- in this case we need the average saved costs per craft
-        avgSavedCostsRes = CraftSim.CALC:getResourcefulnessSavedCosts(self.recipeData) * self.recipeData.professionStats.resourcefulness:GetPercent(true)
+        avgSavedCostsRes = CraftSim.CALC:getResourcefulnessSavedCosts(self.recipeData) *
+            self.recipeData.professionStats.resourcefulness:GetPercent(true)
     end
     for qualityID, chance in pairs(self.recipeData.resultData.chanceByQuality) do
         local baseAmount = self.recipeData.baseItemAmount
@@ -119,17 +122,19 @@ function CraftSim.PriceData:Update()
         end
 
         if chance == 1 then
-            self.expectedCostsByQuality[qualityID] = (self.craftingCosts - avgSavedCostsRes) / averageItemAmountForUpgrade
+            self.expectedCostsByQuality[qualityID] = (self.craftingCosts - avgSavedCostsRes) /
+                averageItemAmountForUpgrade
         elseif chance > 0 then
             local expectedCrafts = self.recipeData.resultData.expectedCraftsByQuality[qualityID]
             self.expectedCostsByQuality[qualityID] = CraftSim.CALC:CalculateExpectedCosts(
-                expectedCrafts, chance, self.recipeData.professionStats.resourcefulness:GetPercent(true), 
-                self.recipeData.professionStats.resourcefulness:GetExtraFactor(true), averageItemAmountForUpgrade, self.craftingCosts, self.craftingCostsRequired)
+                expectedCrafts, chance, self.recipeData.professionStats.resourcefulness:GetPercent(true),
+                self.recipeData.professionStats.resourcefulness:GetExtraFactor(true), averageItemAmountForUpgrade,
+                self.craftingCosts, self.craftingCostsRequired)
         end
     end
 end
 
-function CraftSim.PriceData:Debug() 
+function CraftSim.PriceData:Debug()
     local debugLines = {
         "PriceData: ",
         "Crafting Costs: " .. CraftSim.GUTIL:FormatMoney(self.craftingCosts),
