@@ -13,6 +13,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("12.5.3"),
+        f.p .. "Hotfix for missing 6th optional reagent slot in " .. f.bb("Simulation Mode"),
         newP("12.5.2"),
         f.P .. "New Module: " .. f.g("Craft Buffs"),
         f.a .. "- List all available crafting buffs relevant for this recipe",
