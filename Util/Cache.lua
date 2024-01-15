@@ -14,8 +14,6 @@ end
 
 -- SavedVars
 CraftSimRecipeIDs = CraftSimRecipeIDs or {}
-CraftSimProfessionSkillLineIDCache = CraftSimProfessionSkillLineIDCache or {}
-CraftSimLoadedProfessionRecipes = CraftSimLoadedProfessionRecipes or {}
 
 ---@class CraftSim.RecipeMap
 ---@field itemToRecipe? number[]
@@ -23,9 +21,6 @@ CraftSimLoadedProfessionRecipes = CraftSimLoadedProfessionRecipes or {}
 
 ---@type CraftSim.RecipeMap
 CraftSimRecipeMap = CraftSimRecipeMap or {}
-
--- session caches
-CraftSim.CACHE.SpecDataStatsByRecipeID = {}
 
 function CraftSim.CACHE:GetFromCache(cache, entryID)
     return cache[entryID]
@@ -41,8 +36,6 @@ end
 
 function CraftSim.CACHE:ClearAll()
     CraftSimRecipeIDs = {}
-    CraftSim.CACHE.SpecDataStatsByRecipeID = {}
-    CraftSimProfessionSkillLineIDCache = {}
 end
 
 ---@return any?
