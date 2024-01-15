@@ -61,7 +61,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         self.recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID) -- only partial info is returned when not the crafter, so we need to cache it
         CraftSimRecipeDataCache.recipeInfoCache[crafterUID][self.recipeID] = self.recipeInfo
     else
-        self.recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[recipeID][self.recipeID]
+        self.recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][self.recipeID]
         if not self.recipeInfo then
             self.recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
             self.recipeInfoCached = false
