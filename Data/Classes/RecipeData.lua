@@ -29,9 +29,10 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         self.crafterClass = select(2, UnitClass("player"))
     end
 
-    -- imporant for recipedata of alts to check if data was cached
+    -- important for recipedata of alts to check if data was cached
     self.specializationDataCached = false
     self.operationInfoCached = false
+    self.professionGearCached = false
 
     if not recipeID then
         return -- e.g. when deserializing
@@ -189,6 +190,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@type CraftSim.PriceData
     self.priceData = CraftSim.PriceData(self)
     self.priceData:Update()
+
+    self.isCrafterInfoCached = self:IsCrafterInfoCached()
 end
 
 ---@param reagentList CraftSim.ReagentListItem[]
@@ -716,4 +719,12 @@ function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
         CraftSimSpecializationDataCache[crafterUID][self.recipeID] = specializationData:Serialize()
         return specializationData
     end
+end
+
+function CraftSim.RecipeData:IsCrafterInfoCached()
+    if self:IsCrafter() then
+        return true
+    end
+
+    return self.professionGearCached and self.specializationDataCached and self.operationInfoCached
 end

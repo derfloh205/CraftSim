@@ -24,6 +24,7 @@ CraftSimSpecializationDataCache = CraftSimSpecializationDataCache or {}
 ---@field tool string?
 
 ---@class CraftSim.ProfessionGearCacheData
+---@field cached boolean
 ---@field equippedGear CraftSim.ProfessionGearCacheData.EquippedGear
 ---@field availableProfessionGear? string[] -- list of itemlinks
 
@@ -31,6 +32,7 @@ CraftSimSpecializationDataCache = CraftSimSpecializationDataCache or {}
 CraftSimProfessionGearCache = CraftSimProfessionGearCache or {}
 
 CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
+    cached = false,
     equippedGear = {
         tool = nil,
         gear1 = nil,

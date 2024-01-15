@@ -199,10 +199,13 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
         .availableProfessionGear = GUTIL:ToSet(CraftSimProfessionGearCache[crafterGUID]
             [recipeData.professionData.professionInfo.profession]
             .availableProfessionGear)
+        CraftSimProfessionGearCache[crafterGUID][recipeData.professionData.professionInfo.profession].cached = true
         return inventoryGear
     else
         local professionGearCacheData = CraftSimProfessionGearCache[crafterGUID]
             [recipeData.professionData.professionInfo.profession]
+
+        recipeData.professionGearCached = professionGearCacheData.cached
 
         return GUTIL:Map(professionGearCacheData.availableProfessionGear,
             function(itemLink)
