@@ -131,8 +131,7 @@ function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
             if not isQuestRecipe then
                 ---@diagnostic disable-next-line: missing-parameter
                 local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-                local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS,
-                    recipeCategoryInfo.parentCategoryID)
+                local isDragonIsleRecipe = CraftSim.UTIL:IsDragonflightRecipe(recipeInfo.recipeID)
                 local isRelevantItemLevel = recipeInfo.itemLevel > 1
                 if isDragonIsleRecipe and isRelevantItemLevel then
                     local iconAsText = CraftSim.GUTIL:IconToText(recipeInfo.icon, 20)

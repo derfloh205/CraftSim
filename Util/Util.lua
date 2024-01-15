@@ -425,6 +425,18 @@ function CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, craf
     return qualityIDs
 end
 
+---@param recipeID number
+function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
+    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+    if recipeInfo then
+        local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
+        return C_TradeSkillUI.IsRecipeInSkillLine(recipeInfo.recipeID,
+            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT)
+    end
+
+    return false
+end
+
 function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID,
                                                                  maxQuality)
     local linksByQuality = {}

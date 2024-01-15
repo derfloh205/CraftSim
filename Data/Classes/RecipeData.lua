@@ -11,8 +11,17 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 ---@param isWorkOrder? boolean
 ---@return CraftSim.RecipeData?
 function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
+    -- important to set first so self:IsCrafter() can be used
+    self.crafter, self.crafterRealm = UnitNameUnmodified("player")
+    self.crafterClass = select(2, UnitClass("player"))
+
+    if not recipeID then
+        return -- e.g. when deserializing
+    end
+
     ---@type CraftSim.ProfessionData
-    self.professionData = CraftSim.ProfessionData(recipeID)
+    self.professionData = CraftSim.ProfessionData(self, recipeID)
+
 
     if isWorkOrder then
         ---@type CraftingOrderInfo
@@ -22,7 +31,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
         print(self.orderData, true)
     end
 
-    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID) -- also works if player does not have the profession!
 
     if not recipeInfo then
         print("Could not create recipeData: recipeInfo nil")
@@ -46,9 +55,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
         self.subtypeID = subclassID
     end
 
-    local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-    self.isOldWorldRecipe = recipeCategoryInfo == nil or
-        not tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
+    self.isOldWorldRecipe = not C_TradeSkillUI.IsRecipeInSkillLine(self.recipeID,
+        CraftSim.CONST.TRADESKILLLINEIDS[self.professionData.professionInfo.profession].DRAGONFLIGHT)
     self.isRecraft = isRecraft or false
     self.isSimulationModeData = false
     self.learned = recipeInfo.learned or false
@@ -70,9 +78,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     self.supportsMulticraft = false
     self.supportsResourcefulness = false
     self.supportsCraftingspeed = true -- this is always supported (but does not show in details UI when 0)
-
-    self.crafter, self.crafterRealm = UnitNameUnmodified("player")
-    self.crafterClass = select(2, UnitClass("player"))
 
     if not self.isCooking then
         ---@type CraftSim.SpecializationData?
@@ -512,6 +517,15 @@ function CraftSim.RecipeData:GetJSON(indent)
     jb:End()
 
     return jb.json
+end
+
+---@return boolean
+function CraftSim.RecipeData:IsCrafter()
+    local crafter, crafterRealm = UnitNameUnmodified("player")
+
+    crafterRealm = crafterRealm or GetNormalizedRealmName()
+
+    return self.crafter == crafter and self.crafterRealm == crafterRealm
 end
 
 function CraftSim.RecipeData:GetForgeFinderExport(indent)

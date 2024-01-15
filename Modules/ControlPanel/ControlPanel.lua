@@ -54,9 +54,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
 
             -- finally check if its a dragon isle recipe
 
-            local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-            local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS,
-                recipeCategoryInfo.parentCategoryID)
+            local isDragonIsleRecipe = CraftSim.UTIL:IsDragonflightRecipe(recipeInfo.recipeID)
             if not isDragonIsleRecipe then
                 return false
             end

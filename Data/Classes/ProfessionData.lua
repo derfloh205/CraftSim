@@ -4,9 +4,13 @@ local CraftSim = select(2, ...)
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 ---@class CraftSim.ProfessionData
+---@overload fun(recipeData: CraftSim.RecipeData, recipeID:number) : CraftSim.ProfessionData
 CraftSim.ProfessionData = CraftSim.Object:extend()
 
-function CraftSim.ProfessionData:new(recipeID)
+---@param recipeData CraftSim.RecipeData
+---@param recipeID number
+function CraftSim.ProfessionData:new(recipeData, recipeID)
+	self.recipeData = recipeData
 	self.professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
 	self.skillLineID = self.professionInfo.professionID
 end

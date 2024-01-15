@@ -97,9 +97,9 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
     if CraftSimOptions.recipeScanOnlyFavorites and not recipeInfo.favorite then
         return false
     end
+
     ---@diagnostic disable-next-line: missing-parameter
-    local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-    local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS, recipeCategoryInfo.parentCategoryID)
+    local isDragonIsleRecipe = CraftSim.UTIL:IsDragonflightRecipe(recipeInfo.recipeID)
     if isDragonIsleRecipe and recipeInfo.isEnchantingRecipe then
         return true
     end
