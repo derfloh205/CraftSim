@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 ---@class CraftSim.RecipeData
 ---@overload fun(recipeID: number, isRecraft:boolean?, isWorkOrder:boolean?, crafterData:CraftSim.CrafterData?): CraftSim.RecipeData
 CraftSim.RecipeData = CraftSim.Object:extend()
@@ -10,7 +12,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 ---@class CraftSim.CrafterData
 ---@field name string
 ---@field realm string
----@field class ClassFile
+---@field class ClassFile?
 
 ---@param recipeID number
 ---@param isRecraft? boolean
@@ -18,6 +20,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 ---@param crafterData? CraftSim.CrafterData
 ---@return CraftSim.RecipeData?
 function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
+    self.recipeID = recipeID
     -- important to set first so self:IsCrafter() can be used
     if crafterData then
         self.crafter = crafterData.name
@@ -28,6 +31,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         self.crafterRealm = self.crafterRealm or GetNormalizedRealmName()
         self.crafterClass = select(2, UnitClass("player"))
     end
+
+    local crafterUID = self.crafter .. "-" .. self.crafterRealm
 
     -- important for recipedata of alts to check if data was cached
     self.specializationDataCached = false
@@ -50,17 +55,30 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         print(self.orderData, true)
     end
 
-    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID) -- also works if player does not have the profession!
+    CraftSimRecipeDataCache.recipeInfoCache[crafterUID] = CraftSimRecipeDataCache.recipeInfoCache[crafterUID] or {}
 
-    if not recipeInfo then
+    if self:IsCrafter() then
+        self.recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID) -- only partial info is returned when not the crafter, so we need to cache it
+        CraftSimRecipeDataCache.recipeInfoCache[crafterUID][self.recipeID] = self.recipeInfo
+    else
+        self.recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[recipeID][self.recipeID]
+        if not self.recipeInfo then
+            self.recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+            self.recipeInfoCached = false
+        else
+            self.recipeInfoCached = true
+        end
+    end
+
+
+    if not self.recipeInfo then
         print("Could not create recipeData: recipeInfo nil")
         return nil
     end
 
-    self.recipeID = recipeID
-    self.isBaseRecraftRecipe = CraftSim.GUTIL:Some(CraftSim.CONST.BASE_RECRAFT_RECIPE_IDS,
+    self.isBaseRecraftRecipe = GUTIL:Some(CraftSim.CONST.BASE_RECRAFT_RECIPE_IDS,
         function(id) return id == recipeID end)
-    self.categoryID = recipeInfo.categoryID
+    self.categoryID = self.recipeInfo.categoryID
     --- Will be set when something calculates the average profit of this recipe or updates the whole recipe, can be used to access it without recalculating everything
     ---@type number | nil
     self.averageProfitCached = nil
@@ -68,8 +86,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.relativeProfitCached = nil
     self.isQuestRecipe = tContains(CraftSim.CONST.QUEST_RECIPE_IDS, recipeID)
 
-    if recipeInfo.hyperlink then
-        local subclassID = select(7, GetItemInfoInstant(recipeInfo.hyperlink))
+    if self.recipeInfo.hyperlink then
+        local subclassID = select(7, GetItemInfoInstant(self.recipeInfo.hyperlink))
         ---@type number?
         self.subtypeID = subclassID
     end
@@ -77,20 +95,20 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.isOldWorldRecipe = not CraftSim.UTIL:IsDragonflightRecipe(recipeID)
     self.isRecraft = isRecraft or false
     self.isSimulationModeData = false
-    self.learned = recipeInfo.learned or false
-    self.numSkillUps = recipeInfo.numSkillUps
-    self.recipeIcon = recipeInfo.icon
-    self.recipeName = recipeInfo.name
-    self.supportsQualities = recipeInfo.supportsQualities or false
-    self.supportsCraftingStats = recipeInfo.supportsCraftingStats or false
-    self.isEnchantingRecipe = recipeInfo.isEnchantingRecipe or false
+    self.learned = self.recipeInfo.learned or false
+    self.numSkillUps = self.recipeInfo.numSkillUps
+    self.recipeIcon = self.recipeInfo.icon
+    self.recipeName = self.recipeInfo.name
+    self.supportsQualities = self.recipeInfo.supportsQualities or false
+    self.supportsCraftingStats = self.recipeInfo.supportsCraftingStats or false
+    self.isEnchantingRecipe = self.recipeInfo.isEnchantingRecipe or false
     self.isCooking = self.professionData.professionInfo.profession == Enum.Profession.Cooking
-    self.isSalvageRecipe = recipeInfo.isSalvageRecipe or false
+    self.isSalvageRecipe = self.recipeInfo.isSalvageRecipe or false
     self.isAlchemicalExperimentation = tContains(CraftSim.CONST.ALCHEMICAL_EXPERIMENTATION_RECIPE_IDS, recipeID)
     ---@type string?
     self.allocationItemGUID = nil
-    self.maxQuality = recipeInfo.maxQuality
-    self.isGear = recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil
+    self.maxQuality = self.recipeInfo.maxQuality
+    self.isGear = self.recipeInfo.hasSingleItemOutput and self.recipeInfo.qualityIlvlBonuses ~= nil
 
     self.supportsInspiration = false
     self.supportsMulticraft = false
@@ -111,7 +129,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@type CraftSim.ReagentData
     self.reagentData = CraftSim.ReagentData(self, schematicInfo)
 
-    local qualityReagents = CraftSim.GUTIL:Count(self.reagentData.requiredReagents, function(reagent)
+    local qualityReagents = GUTIL:Count(self.reagentData.requiredReagents, function(reagent)
         return reagent.hasQuality
     end)
 
@@ -127,7 +145,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         self.baseItemAmount = 1
     end
 
-    self.isSoulbound = (schematicInfo.outputItemID and CraftSim.GUTIL:isItemSoulbound(schematicInfo.outputItemID)) or
+    self.isSoulbound = (schematicInfo.outputItemID and GUTIL:isItemSoulbound(schematicInfo.outputItemID)) or
         false
 
     ---@type CraftSim.ProfessionGearSet
@@ -158,14 +176,14 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         self.maxQuality)
 
     -- subtract stats from current set to get base stats
-
     if self:IsCrafter() then
         self.professionGearSet:LoadCurrentEquippedSet()
-        -- cache available profession gear by calling this once
-        CraftSim.TOPGEAR:GetProfessionGearFromInventory(self)
     else
         self.professionGearSet:LoadCurrentEquippedSet(crafterData)
     end
+
+    -- cache available profession gear by calling this once
+    CraftSim.TOPGEAR:GetProfessionGearFromInventory(self)
 
     self.baseProfessionStats:subtract(self.professionGearSet.professionStats)
 
@@ -192,6 +210,17 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.priceData:Update()
 
     self.isCrafterInfoCached = self:IsCrafterInfoCached()
+
+    if self:IsCrafter() and not crafterData then
+        local crafterUID = self.crafter .. "-" .. self.crafterRealm
+        CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] = CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] or {}
+        CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] =
+            CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] or {}
+        table.insert(CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession],
+            self.recipeID)
+        CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] = GUTIL:ToSet(
+            CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession])
+    end
 end
 
 ---@param reagentList CraftSim.ReagentListItem[]
@@ -201,7 +230,7 @@ function CraftSim.RecipeData:SetReagents(reagentList)
     for _, reagent in pairs(self.reagentData.requiredReagents) do
         local totalQuantity = 0
         for _, reagentItem in pairs(reagent.items) do
-            local listReagent = CraftSim.GUTIL:Find(reagentList,
+            local listReagent = GUTIL:Find(reagentList,
                 function(listReagent) return listReagent.itemID == reagentItem.item:GetItemID() end)
             if listReagent then
                 reagentItem.quantity = listReagent.quantity
@@ -218,13 +247,13 @@ end
 ---@param craftingReagentInfoTbl CraftingReagentInfo[]
 function CraftSim.RecipeData:SetReagentsByCraftingReagentInfoTbl(craftingReagentInfoTbl)
     ---@type CraftingReagentInfo[], CraftingReagentInfo[]
-    local optionalReagents, requiredReagents = CraftSim.GUTIL:Split(craftingReagentInfoTbl,
+    local optionalReagents, requiredReagents = GUTIL:Split(craftingReagentInfoTbl,
         ---@param craftingReagentInfo CraftingReagentInfo
         function(craftingReagentInfo)
             return CraftSim.OPTIONAL_REAGENT_DATA[craftingReagentInfo.itemID] ~= nil
         end)
 
-    local optionalReagentIDs = CraftSim.GUTIL:Map(optionalReagents,
+    local optionalReagentIDs = GUTIL:Map(optionalReagents,
         function(optionalReagentInfo) return optionalReagentInfo.itemID end)
 
     self:SetOptionalReagents(optionalReagentIDs)
@@ -290,7 +319,7 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
                 for _, craftSimReagent in pairs(self.reagentData.requiredReagents) do
                     -- consider possible exception mappings
                     local itemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[reagent.itemID] or reagent.itemID
-                    craftSimReagentItem = CraftSim.GUTIL:Find(craftSimReagent.items,
+                    craftSimReagentItem = GUTIL:Find(craftSimReagent.items,
                         function(cr) return cr.item:GetItemID() == itemID end)
                     if craftSimReagentItem then
                         break
@@ -450,7 +479,7 @@ end
 function CraftSim.RecipeData:GetAverageProfit()
     local averageProfit, probabilityTable = CraftSim.CALC:GetAverageProfit(self)
     self.averageProfitCached = averageProfit
-    self.relativeProfitCached = CraftSim.GUTIL:GetPercentRelativeTo(averageProfit, self.priceData.craftingCosts)
+    self.relativeProfitCached = GUTIL:GetPercentRelativeTo(averageProfit, self.priceData.craftingCosts)
     return averageProfit, probabilityTable
 end
 
@@ -563,7 +592,7 @@ function CraftSim.RecipeData:GetForgeFinderExport(indent)
     local jb = CraftSim.JSONBuilder(indent)
 
     jb:Begin()
-    jb:AddList("itemIDs", CraftSim.GUTIL:Map(self.resultData.itemsByQuality, function(item)
+    jb:AddList("itemIDs", GUTIL:Map(self.resultData.itemsByQuality, function(item)
         return item:GetItemID()
     end))
     local reagents = {}
@@ -616,7 +645,7 @@ function CraftSim.RecipeData:Craft(amount)
     local craftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
 
     if self.isEnchantingRecipe then
-        local vellumLocation = CraftSim.GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
+        local vellumLocation = GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
         if vellumLocation then
             C_TradeSkillUI.CraftEnchant(self.recipeID, amount, craftingReagentInfoTbl, vellumLocation)
         end
@@ -683,11 +712,11 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
     ---@type CraftingOperationInfo
     local operationInfo = nil
     local crafterUID = self.crafter .. "-" .. self.crafterRealm
-    CraftSimOperationInfoCache[crafterUID] = CraftSimOperationInfoCache[crafterUID] or {}
+    CraftSimRecipeDataCache.operationInfoCache[crafterUID] = CraftSimRecipeDataCache.operationInfoCache[crafterUID] or {}
     if not self:IsCrafter() then
         -- if nothing is cached yet get an empty operationInfo
 
-        operationInfo = CraftSimOperationInfoCache[crafterUID][self.recipeID]
+        operationInfo = CraftSimRecipeDataCache.operationInfoCache[crafterUID][self.recipeID]
 
         if operationInfo then
             self.operationInfoCached = true
@@ -696,7 +725,7 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
         end
     else
         operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
-        CraftSimOperationInfoCache[crafterUID][self.recipeID] = operationInfo
+        CraftSimRecipeDataCache.operationInfoCache[crafterUID][self.recipeID] = operationInfo
     end
 
     return operationInfo
@@ -705,10 +734,11 @@ end
 function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
     local crafterUID = self.crafter .. "-" .. self.crafterRealm
 
-    CraftSimSpecializationDataCache[crafterUID] = CraftSimSpecializationDataCache[crafterUID] or {}
+    CraftSimRecipeDataCache.specializationDataCache[crafterUID] = CraftSimRecipeDataCache.specializationDataCache
+        [crafterUID] or {}
 
     if not self:IsCrafter() then
-        local specializationDataSerialized = CraftSimSpecializationDataCache[crafterUID][self.recipeID]
+        local specializationDataSerialized = CraftSimRecipeDataCache.specializationDataCache[crafterUID][self.recipeID]
         if specializationDataSerialized then
             self.specializationDataCached = true
             return CraftSim.SpecializationData:Deserialize(specializationDataSerialized, self)
@@ -716,7 +746,7 @@ function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
         return CraftSim.SpecializationData(self) -- will initialize without stats and nodeinfo
     else
         local specializationData = CraftSim.SpecializationData(self)
-        CraftSimSpecializationDataCache[crafterUID][self.recipeID] = specializationData:Serialize()
+        CraftSimRecipeDataCache.specializationDataCache[crafterUID][self.recipeID] = specializationData:Serialize()
         return specializationData
     end
 end
@@ -726,5 +756,6 @@ function CraftSim.RecipeData:IsCrafterInfoCached()
         return true
     end
 
-    return self.professionGearCached and self.specializationDataCached and self.operationInfoCached
+    return self.professionGearCached and self.specializationDataCached and self.operationInfoCached and
+        self.recipeInfoCached
 end

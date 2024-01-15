@@ -427,7 +427,7 @@ end
 
 ---@param recipeID number
 function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
-    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+    local recipeInfo = CraftSimRecipeDataCache.cachedRecipeIDs[recipeID] or C_TradeSkillUI.GetRecipeInfo(recipeID)
     if recipeInfo then
         local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
         return C_TradeSkillUI.IsRecipeInSkillLine(recipeInfo.recipeID,

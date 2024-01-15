@@ -322,17 +322,23 @@ function CraftSim_DEBUG:FrameDistributedIterationTest()
         end, 300, 1000)
 end
 
----@param recipeID number
----@param crafterData CraftSim.CrafterData
-function CraftSim_DEBUG:RecipeDataAltTest(recipeID, crafterData)
-    local recipeData = CraftSimAPI:GetRecipeData(recipeID, nil, nil, crafterData)
+function CraftSim_DEBUG:CachedRecipesTest()
+    for crafter, professions in pairs(CraftSimRecipeDataCache.cachedRecipeIDs) do
+        print("Recipes from: " .. tostring(crafter))
+        local name, realm = strsplit("-", crafter)
+        for _, recipeIDs in pairs(professions) do
+            for _, recipeID in pairs(recipeIDs) do
+                local recipeData = CraftSim.RecipeData(recipeID, nil, nil, { name = name, realm = realm })
 
-    recipeData:OptimizeProfit()
+                recipeData:OptimizeProfit()
 
-    recipeData:Update()
+                recipeData:Update()
 
-    print("profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true))
-    if DevTool then
-        DevTool:AddData(recipeData, "RecipeDataAltTest")
+                print("- " ..
+                    tostring(recipeData.recipeName) .. ": " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true))
+
+                DevTool:AddData(recipeData, recipeData.recipeName)
+            end
+        end
     end
 end

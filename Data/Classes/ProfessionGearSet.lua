@@ -28,9 +28,10 @@ end
 function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet(crafterData)
     if not crafterData then
         local crafterUID = select(1, UnitNameUnmodified("player")) .. "-" .. GetNormalizedRealmName()
-        CraftSimProfessionGearCache[crafterUID] = CraftSimProfessionGearCache[crafterUID] or {}
-        CraftSimProfessionGearCache[crafterUID][self.professionID] =
-            CraftSimProfessionGearCache[crafterUID][self.professionID] or
+        CraftSimRecipeDataCache.professionGearCache[crafterUID] = CraftSimRecipeDataCache.professionGearCache
+        [crafterUID] or {}
+        CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] =
+            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] or
             CopyTable(CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
         if self.isCooking then
             local tool = GetInventoryItemLink("player", self.professionGearSlots[1])
@@ -38,8 +39,8 @@ function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet(crafterData)
             self.tool:SetItem(tool)
             self.gear2:SetItem(gear2)
 
-            CraftSimProfessionGearCache[crafterUID][self.professionID].equippedGear.tool = tool
-            CraftSimProfessionGearCache[crafterUID][self.professionID].equippedGear.gear2 = gear2
+            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear.tool = tool
+            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear.gear2 = gear2
         else
             local tool = GetInventoryItemLink("player", self.professionGearSlots[1])
             local gear1 = GetInventoryItemLink("player", self.professionGearSlots[2])
@@ -47,17 +48,18 @@ function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet(crafterData)
             self.tool:SetItem(tool)
             self.gear1:SetItem(gear1)
             self.gear2:SetItem(gear2)
-            CraftSimProfessionGearCache[crafterUID][self.professionID].equippedGear.tool = tool
-            CraftSimProfessionGearCache[crafterUID][self.professionID].equippedGear.gear1 = gear1
-            CraftSimProfessionGearCache[crafterUID][self.professionID].equippedGear.gear2 = gear2
+            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear.tool = tool
+            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear.gear1 = gear1
+            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear.gear2 = gear2
         end
     else
         local crafterUID = crafterData.name .. "-" .. crafterData.realm
-        CraftSimProfessionGearCache[crafterUID] = CraftSimProfessionGearCache[crafterUID] or {}
-        CraftSimProfessionGearCache[crafterUID][self.professionID] =
-            CraftSimProfessionGearCache[crafterUID][self.professionID] or
+        CraftSimRecipeDataCache.professionGearCache[crafterUID] = CraftSimRecipeDataCache.professionGearCache
+        [crafterUID] or {}
+        CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] =
+            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] or
             CopyTable(CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
-        local professionGearCacheData = CraftSimProfessionGearCache[crafterUID][self.professionID]
+        local professionGearCacheData = CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID]
         if professionGearCacheData then
             if self.isCooking then
                 self.tool:SetItem(professionGearCacheData.equippedGear.tool)

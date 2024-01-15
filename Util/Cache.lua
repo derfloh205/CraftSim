@@ -13,10 +13,7 @@ local function print(text, recursive, l) -- override
 end
 
 -- SavedVars
-CraftSimRecipeIDs = CraftSimRecipeIDs or {}                   -- itemToRecipe cache
-CraftSimOperationInfoCache = CraftSimOperationInfoCache or {} -- saves professionStats of characters for recipes
----@type table<string, table<number, CraftSim.SpecializationData.Serialized>?>
-CraftSimSpecializationDataCache = CraftSimSpecializationDataCache or {}
+CraftSimRecipeIDs = CraftSimRecipeIDs or {} -- itemToRecipe cache
 
 ---@class CraftSim.ProfessionGearCacheData.EquippedGear
 ---@field gear1 string?
@@ -28,8 +25,19 @@ CraftSimSpecializationDataCache = CraftSimSpecializationDataCache or {}
 ---@field equippedGear CraftSim.ProfessionGearCacheData.EquippedGear
 ---@field availableProfessionGear? string[] -- list of itemlinks
 
----@type table<string, table<number, CraftSim.ProfessionGearCacheData>?>
-CraftSimProfessionGearCache = CraftSimProfessionGearCache or {}
+---@class CraftSim.RecipeDataCache
+---@field cachedRecipeIDs table<string, table<number, number[]>> table<crafterGUID, table<profession, recipeID[]>
+---@field recipeInfoCache table<string, table<number, TradeSkillRecipeInfo>> table<crafterGUID, table<recipeiD, TradeSkillRecipeInfo>
+---@field operationInfoCache table<string, table<number, CraftingOperationInfo>> table<crafterGUID, table<recipeID, CraftingOperationInfo>>
+---@field specializationDataCache table<string, table<number, CraftSim.SpecializationData.Serialized>?> table<crafterGUID, table<recipeID, CraftSim.SpecializationData.Serialized>>
+---@field professionGearCache table<string, table<number, CraftSim.ProfessionGearCacheData>> table<crafterGUID, table<profession, CraftSim.ProfessionGearCacheData>>
+CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
+    cachedRecipeIDs = {},
+    recipeInfoCache = {},
+    operationInfoCache = {},
+    specializationDataCache = {},
+    professionGearCache = {},
+}
 
 CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
     cached = false,

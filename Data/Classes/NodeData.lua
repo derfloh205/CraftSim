@@ -232,7 +232,6 @@ function CraftSim.NodeData:Deserialize(serializedData, recipeData, nodeIDMap, pr
     end
 
     nodeData:UpdateAffectance()
-    nodeData:UpdateProfessionStats()
 
     return nodeData
 end

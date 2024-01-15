@@ -47,7 +47,7 @@ end
 
 function CraftSim.NodeRule:UpdateAffectance()
     self.affectsRecipe = self.idMapping:AffectsRecipe()
-    --print(self.nodeData.nodeName .. "-Rule affects recipe: " .. tostring(self.affectsRecipe))
+    print(self.nodeData.nodeName .. "-Rule affects recipe: " .. tostring(self.affectsRecipe))
 end
 
 ---@param rank number

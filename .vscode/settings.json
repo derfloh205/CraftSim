@@ -48,7 +48,6 @@
         "RunNextFrame",
         "ChatFrame_SendTell",
         "CraftSimCustomerHistory",
-        "CraftSimSpecializationDataCache",
         "DevTool"
     ],
     "Lua.diagnostics.disable": [
