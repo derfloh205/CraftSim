@@ -61,7 +61,9 @@ function CraftSim.RECIPE_SCAN:EndScan()
     CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay() -- TODO: maybe only the button...
 end
 
-function CraftSim.RECIPE_SCAN:GetProfessionIDByRecipeID(recipeID)
+---@param recipeID number
+---@return Enum.Profession? profession
+function CraftSim.RECIPE_SCAN:GetProfessionByRecipeID(recipeID)
     for professionID, recipeIDs in pairs(CraftSimRecipeIDs.data) do
         if tContains(recipeIDs, recipeID) then
             return professionID
@@ -73,89 +75,6 @@ end
 
 function CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCacheByProfessionID(professionID)
     return CraftSimRecipeIDs.data[professionID]
-end
-
-function CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCache()
-    local recipeIDs = {}
-
-    for professionID, professionRecipeIDs in pairs(CraftSimRecipeIDs.data) do
-        for _, recipeID in pairs(professionRecipeIDs) do
-            table.insert(recipeIDs, recipeID)
-        end
-    end
-
-    return recipeIDs
-end
-
-function CraftSim.RECIPE_SCAN:GetRecipeInfoByResult(resultItem)
-    local itemID = resultItem:GetItemID()
-
-    print("Searching for Recipe with result: " .. tostring(itemID))
-
-    local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
-
-    if not recipeIDs or #recipeIDs == 0 then
-        recipeIDs = CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCache()
-
-        -- if still not, return nil
-        if not recipeIDs or #recipeIDs == 0 then
-            print("CraftSim: ProfessionRecipes not cached yet")
-            return nil
-        end
-    end
-
-    local recipeInfos = CraftSim.GUTIL:Map(recipeIDs, function(recipeID)
-        return C_TradeSkillUI.GetRecipeInfo(recipeID)
-    end)
-
-    -- check learned recipes for recipe with this item as result
-    local foundRecipeInfo = CraftSim.GUTIL:Find(recipeInfos, function(recipeInfo)
-        if not recipeInfo.learned then
-            return false
-        end
-        ---@diagnostic disable-next-line: missing-parameter
-        local recipeCategoryInfo = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-        local isDragonIsleRecipe = tContains(CraftSim.CONST.DRAGON_ISLES_CATEGORY_IDS,
-            recipeCategoryInfo.parentCategoryID)
-        if isDragonIsleRecipe and recipeInfo.isEnchantingRecipe then
-            local foundEnchant, recipeID = CraftSim.GUTIL:Find(CraftSim.ENCHANT_RECIPE_DATA, function(enchantData)
-                return enchantData.q1 == itemID or enchantData.q2 == itemID or enchantData.q3 == itemID
-            end)
-            if foundEnchant then
-                print("found as enchant")
-                return true
-            end
-        end
-        if isDragonIsleRecipe then
-            if recipeInfo.hyperlink then
-                local outputQ1 = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, {}, nil, 1)
-
-                if outputQ1.itemID == itemID then
-                    return true
-                end
-
-                local outputQ2 = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, {}, nil, 2)
-
-                if outputQ2.itemID == itemID then
-                    return true
-                end
-
-                local outputQ3 = C_TradeSkillUI.GetRecipeOutputItemData(recipeInfo.recipeID, {}, nil, 3)
-
-                if outputQ3.itemID == itemID then
-                    return true
-                end
-            end
-        end
-        return false
-    end)
-
-    if foundRecipeInfo then
-        print("Found Recipe: " .. foundRecipeInfo.name)
-        return foundRecipeInfo
-    end
-
-    return nil
 end
 
 ---@param recipeInfo TradeSkillRecipeInfo

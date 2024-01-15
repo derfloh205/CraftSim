@@ -22,12 +22,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
         print(self.orderData, true)
     end
 
-    if not self.professionData.isLoaded then
-        print("Could not create recipeData: professionData not loaded")
-        return nil
-    end
-
-
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
 
     if not recipeInfo then

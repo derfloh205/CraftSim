@@ -14,7 +14,6 @@ end
 
 -- SavedVars
 CraftSimRecipeIDs = CraftSimRecipeIDs or {}
-CraftSimProfessionInfoCache = CraftSimProfessionInfoCache or {}
 CraftSimProfessionSkillLineIDCache = CraftSimProfessionSkillLineIDCache or {}
 CraftSimLoadedProfessionRecipes = CraftSimLoadedProfessionRecipes or {}
 
@@ -42,7 +41,6 @@ end
 
 function CraftSim.CACHE:ClearAll()
     CraftSimRecipeIDs = {}
-    CraftSimProfessionInfoCache = {}
     CraftSim.CACHE.SpecDataStatsByRecipeID = {}
     CraftSimProfessionSkillLineIDCache = {}
 end

@@ -114,7 +114,7 @@ function CraftSim.CRAFTDATA.OnCraftDataReceived(craftDataMessage)
 
     local f = CraftSim.UTIL:GetFormatter()
 
-    local hasProfession = CraftSim.UTIL:HasProfession(craftDataSerialized.professionID)
+    local hasProfession = C_TradeSkillUI.IsRecipeProfessionLearned(craftDataSerialized.recipeID)
 
     print("received profID: " .. tostring(craftDataSerialized.professionID))
 
