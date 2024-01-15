@@ -1,6 +1,9 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
+---@class CraftSim.DEBUG
 CraftSim_DEBUG = {}
 
 CraftSim_DEBUG.isMute = false
@@ -317,4 +320,19 @@ function CraftSim_DEBUG:FrameDistributedIterationTest()
         function()
             print("I am finally finished!")
         end, 300, 1000)
+end
+
+---@param recipeID number
+---@param crafterData CraftSim.CrafterData
+function CraftSim_DEBUG:RecipeDataAltTest(recipeID, crafterData)
+    local recipeData = CraftSimAPI:GetRecipeData(recipeID, nil, nil, crafterData)
+
+    recipeData:OptimizeProfit()
+
+    recipeData:Update()
+
+    print("profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true))
+    if DevTool then
+        DevTool:AddData(recipeData, "RecipeDataAltTest")
+    end
 end

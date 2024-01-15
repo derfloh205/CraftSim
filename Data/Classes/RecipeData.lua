@@ -2,18 +2,36 @@
 local CraftSim = select(2, ...)
 
 ---@class CraftSim.RecipeData
+---@overload fun(recipeID: number, isRecraft:boolean?, isWorkOrder:boolean?, crafterData:CraftSim.CrafterData?): CraftSim.RecipeData
 CraftSim.RecipeData = CraftSim.Object:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
+---@class CraftSim.CrafterData
+---@field name string
+---@field realm string
+---@field class ClassFile
+
 ---@param recipeID number
 ---@param isRecraft? boolean
 ---@param isWorkOrder? boolean
+---@param crafterData? CraftSim.CrafterData
 ---@return CraftSim.RecipeData?
-function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
+function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     -- important to set first so self:IsCrafter() can be used
-    self.crafter, self.crafterRealm = UnitNameUnmodified("player")
-    self.crafterClass = select(2, UnitClass("player"))
+    if crafterData then
+        self.crafter = crafterData.name
+        self.crafterRealm = crafterData.realm
+        self.crafterClass = crafterData.class
+    else
+        self.crafter, self.crafterRealm = UnitNameUnmodified("player")
+        self.crafterRealm = self.crafterRealm or GetNormalizedRealmName()
+        self.crafterClass = select(2, UnitClass("player"))
+    end
+
+    -- imporant for recipedata of alts to check if data was cached
+    self.specializationDataCached = false
+    self.operationInfoCached = false
 
     if not recipeID then
         return -- e.g. when deserializing
@@ -55,8 +73,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
         self.subtypeID = subclassID
     end
 
-    self.isOldWorldRecipe = not C_TradeSkillUI.IsRecipeInSkillLine(self.recipeID,
-        CraftSim.CONST.TRADESKILLLINEIDS[self.professionData.professionInfo.profession].DRAGONFLIGHT)
+    self.isOldWorldRecipe = not CraftSim.UTIL:IsDragonflightRecipe(recipeID)
     self.isRecraft = isRecraft or false
     self.isSimulationModeData = false
     self.learned = recipeInfo.learned or false
@@ -81,10 +98,10 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
 
     if not self.isCooking then
         ---@type CraftSim.SpecializationData?
-        self.specializationData = CraftSim.SpecializationData(self)
+        self.specializationData = self:GetSpecializationDataForRecipeCrafter()
     end
 
-    local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft)
+    local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft) -- is working even if profession is not learned on the character!
     if not schematicInfo then
         print("No RecipeData created: SchematicInfo not found")
         return
@@ -119,7 +136,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
     if self.orderData then
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {}, self.orderData.orderID)
     else
-        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
+        baseOperationInfo = self:GetCraftingOperationInfoForRecipeCrafter()
     end
 
     ---@type CraftSim.ProfessionStats
@@ -140,14 +157,23 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder)
         self.maxQuality)
 
     -- subtract stats from current set to get base stats
-    local equippedProfessionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
-    equippedProfessionGearSet:LoadCurrentEquippedSet()
 
-    self.baseProfessionStats:subtract(equippedProfessionGearSet.professionStats)
+    if self:IsCrafter() then
+        self.professionGearSet:LoadCurrentEquippedSet()
+        -- cache available profession gear by calling this once
+        CraftSim.TOPGEAR:GetProfessionGearFromInventory(self)
+    else
+        self.professionGearSet:LoadCurrentEquippedSet(crafterData)
+    end
+
+    self.baseProfessionStats:subtract(self.professionGearSet.professionStats)
 
     ---@type CraftSim.BuffData
     self.buffData = CraftSim.BuffData(self)
-    self.buffData:Update()
+    -- no need to search for craft buffs when I am not even the crafter
+    if self:IsCrafter() then
+        self.buffData:Update()
+    end
 
     self.baseProfessionStats:subtract(self.buffData.professionStats)
     -- As we dont know in this case what the factors are without gear and reagents and such
@@ -525,7 +551,8 @@ function CraftSim.RecipeData:IsCrafter()
 
     crafterRealm = crafterRealm or GetNormalizedRealmName()
 
-    return self.crafter == crafter and self.crafterRealm == crafterRealm
+    return self.crafter == crafter and self.crafterRealm == crafterRealm and
+        C_TradeSkillUI.IsRecipeProfessionLearned(self.recipeID)
 end
 
 function CraftSim.RecipeData:GetForgeFinderExport(indent)
@@ -645,4 +672,48 @@ function CraftSim.RecipeData:GetCooldownInformation()
         spellEnabled = enabled,
         cooldownMod = mod or 1
     }
+end
+
+--- Returns either the current characters CraftingOperationInfo or the cached info from the recipe's crafter
+---@return CraftingOperationInfo
+function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
+    ---@type CraftingOperationInfo
+    local operationInfo = nil
+    local crafterUID = self.crafter .. "-" .. self.crafterRealm
+    CraftSimOperationInfoCache[crafterUID] = CraftSimOperationInfoCache[crafterUID] or {}
+    if not self:IsCrafter() then
+        -- if nothing is cached yet get an empty operationInfo
+
+        operationInfo = CraftSimOperationInfoCache[crafterUID][self.recipeID]
+
+        if operationInfo then
+            self.operationInfoCached = true
+        else
+            operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
+        end
+    else
+        operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
+        CraftSimOperationInfoCache[crafterUID][self.recipeID] = operationInfo
+    end
+
+    return operationInfo
+end
+
+function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
+    local crafterUID = self.crafter .. "-" .. self.crafterRealm
+
+    CraftSimSpecializationDataCache[crafterUID] = CraftSimSpecializationDataCache[crafterUID] or {}
+
+    if not self:IsCrafter() then
+        local specializationDataSerialized = CraftSimSpecializationDataCache[crafterUID][self.recipeID]
+        if specializationDataSerialized then
+            self.specializationDataCached = true
+            return CraftSim.SpecializationData:Deserialize(specializationDataSerialized, self)
+        end
+        return CraftSim.SpecializationData(self) -- will initialize without stats and nodeinfo
+    else
+        local specializationData = CraftSim.SpecializationData(self)
+        CraftSimSpecializationDataCache[crafterUID][self.recipeID] = specializationData:Serialize()
+        return specializationData
+    end
 end

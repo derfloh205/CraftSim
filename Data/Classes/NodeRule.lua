@@ -5,13 +5,17 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 
 ---@class CraftSim.NodeRule
+---@overload fun(recipeData: CraftSim.RecipeData?, nodeRuleData: table, nodeData: CraftSim.NodeData):CraftSim.NodeRule
 CraftSim.NodeRule = CraftSim.Object:extend()
 
----@param recipeData CraftSim.RecipeData
+---@param recipeData CraftSim.RecipeData?
 ---@param nodeRuleData table
 ---@param nodeData CraftSim.NodeData
 function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.affectsRecipe = false
+    if not recipeData then
+        return
+    end
     self.nodeData = nodeData
     ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
@@ -39,8 +43,6 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or false
     self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or false
     self.equalsPotionExperimentationChanceFactor = nodeRuleData.equalsPotionExperimentationChanceFactor or false
-
-    --self:UpdateProfessionStatsByRank(nodeData.rank)
 end
 
 function CraftSim.NodeRule:UpdateAffectance()

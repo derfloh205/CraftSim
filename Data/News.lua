@@ -14,6 +14,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("12.5.4"),
+        f.P .. "Building the foundations for cross character recipe simulations",
         newP("12.5.3"),
         f.p .. "Hotfix for missing 6th optional reagent slot in " .. f.bb("Simulation Mode"),
         newP("12.5.2"),

@@ -47,7 +47,9 @@
         "DisplayTableInspectorWindow",
         "RunNextFrame",
         "ChatFrame_SendTell",
-        "CraftSimCustomerHistory"
+        "CraftSimCustomerHistory",
+        "CraftSimSpecializationDataCache",
+        "DevTool"
     ],
     "Lua.diagnostics.disable": [
         "missing-parameter",

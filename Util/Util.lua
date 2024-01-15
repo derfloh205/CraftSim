@@ -445,7 +445,7 @@ function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craft
         max = 3 + maxQuality
     end
     for i = 4, max, 1 do
-        local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeID, craftingReagentInfoTbl,
+        local outputItemData = C_TradeSkillUI.GetRecipeOutputItemData(recipeID, craftingReagentInfoTbl, -- seems to also work if character does not have the profession!
             allocationItemGUID, i)
         table.insert(linksByQuality, outputItemData.hyperlink)
     end

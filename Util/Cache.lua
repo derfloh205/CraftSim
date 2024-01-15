@@ -13,7 +13,31 @@ local function print(text, recursive, l) -- override
 end
 
 -- SavedVars
-CraftSimRecipeIDs = CraftSimRecipeIDs or {}
+CraftSimRecipeIDs = CraftSimRecipeIDs or {}                   -- itemToRecipe cache
+CraftSimOperationInfoCache = CraftSimOperationInfoCache or {} -- saves professionStats of characters for recipes
+---@type table<string, table<number, CraftSim.SpecializationData.Serialized>?>
+CraftSimSpecializationDataCache = CraftSimSpecializationDataCache or {}
+
+---@class CraftSim.ProfessionGearCacheData.EquippedGear
+---@field gear1 string?
+---@field gear2 string?
+---@field tool string?
+
+---@class CraftSim.ProfessionGearCacheData
+---@field equippedGear CraftSim.ProfessionGearCacheData.EquippedGear
+---@field availableProfessionGear? string[] -- list of itemlinks
+
+---@type table<string, table<number, CraftSim.ProfessionGearCacheData>?>
+CraftSimProfessionGearCache = CraftSimProfessionGearCache or {}
+
+CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
+    equippedGear = {
+        tool = nil,
+        gear1 = nil,
+        gear2 = nil,
+    },
+    availableProfessionGear = {},
+}
 
 ---@class CraftSim.RecipeMap
 ---@field itemToRecipe? number[]

@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 ---@class CraftSim.ProfessionGearSet
+---@overload fun(professionID: Enum.Profession) : CraftSim.ProfessionGearSet
 CraftSim.ProfessionGearSet = CraftSim.Object:extend()
 
 ---@param professionID number
@@ -23,14 +24,50 @@ function CraftSim.ProfessionGearSet:new(professionID)
     self.professionStats = CraftSim.ProfessionStats()
 end
 
-function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet()
-    if self.isCooking then
-        self.tool:SetItem(GetInventoryItemLink("player", self.professionGearSlots[1]))
-        self.gear2:SetItem(GetInventoryItemLink("player", self.professionGearSlots[2]))
+---@param crafterData CraftSim.CrafterData?
+function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet(crafterData)
+    if not crafterData then
+        local crafterUID = select(1, UnitNameUnmodified("player")) .. "-" .. GetNormalizedRealmName()
+        CraftSimProfessionGearCache[crafterUID] = CraftSimProfessionGearCache[crafterUID] or {}
+        CraftSimProfessionGearCache[crafterUID][self.professionID] =
+            CraftSimProfessionGearCache[crafterUID][self.professionID] or
+            CopyTable(CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
+        if self.isCooking then
+            local tool = GetInventoryItemLink("player", self.professionGearSlots[1])
+            local gear2 = GetInventoryItemLink("player", self.professionGearSlots[2])
+            self.tool:SetItem(tool)
+            self.gear2:SetItem(gear2)
+
+            CraftSimProfessionGearCache[crafterUID][self.professionID].equippedGear.tool = tool
+            CraftSimProfessionGearCache[crafterUID][self.professionID].equippedGear.gear2 = gear2
+        else
+            local tool = GetInventoryItemLink("player", self.professionGearSlots[1])
+            local gear1 = GetInventoryItemLink("player", self.professionGearSlots[2])
+            local gear2 = GetInventoryItemLink("player", self.professionGearSlots[3])
+            self.tool:SetItem(tool)
+            self.gear1:SetItem(gear1)
+            self.gear2:SetItem(gear2)
+            CraftSimProfessionGearCache[crafterUID][self.professionID].equippedGear.tool = tool
+            CraftSimProfessionGearCache[crafterUID][self.professionID].equippedGear.gear1 = gear1
+            CraftSimProfessionGearCache[crafterUID][self.professionID].equippedGear.gear2 = gear2
+        end
     else
-        self.tool:SetItem(GetInventoryItemLink("player", self.professionGearSlots[1]))
-        self.gear1:SetItem(GetInventoryItemLink("player", self.professionGearSlots[2]))
-        self.gear2:SetItem(GetInventoryItemLink("player", self.professionGearSlots[3]))
+        local crafterUID = crafterData.name .. "-" .. crafterData.realm
+        CraftSimProfessionGearCache[crafterUID] = CraftSimProfessionGearCache[crafterUID] or {}
+        CraftSimProfessionGearCache[crafterUID][self.professionID] =
+            CraftSimProfessionGearCache[crafterUID][self.professionID] or
+            CopyTable(CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
+        local professionGearCacheData = CraftSimProfessionGearCache[crafterUID][self.professionID]
+        if professionGearCacheData then
+            if self.isCooking then
+                self.tool:SetItem(professionGearCacheData.equippedGear.tool)
+                self.gear2:SetItem(professionGearCacheData.equippedGear.gear2)
+            else
+                self.tool:SetItem(professionGearCacheData.equippedGear.tool)
+                self.gear1:SetItem(professionGearCacheData.equippedGear.gear1)
+                self.gear2:SetItem(professionGearCacheData.equippedGear.gear2)
+            end
+        end
     end
 
     self:UpdateProfessionStats()
@@ -121,9 +158,10 @@ function CraftSim.ProfessionGearSet:Equals(professionGearSet)
     end
 end
 
-function CraftSim.ProfessionGearSet:IsEquipped()
+---@param crafterData CraftSim.CrafterData?
+function CraftSim.ProfessionGearSet:IsEquipped(crafterData)
     local equippedSet = CraftSim.ProfessionGearSet(self.professionID)
-    equippedSet:LoadCurrentEquippedSet()
+    equippedSet:LoadCurrentEquippedSet(crafterData)
 
     return self:Equals(equippedSet)
 end

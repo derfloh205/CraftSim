@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 ---@class CraftSim.ProfessionGear
+---@overload fun():CraftSim.ProfessionGear
 CraftSim.ProfessionGear = CraftSim.Object:extend()
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
@@ -19,6 +20,7 @@ function CraftSim.ProfessionGear:Equals(professionGear)
 	return self.item:GetItemLink() == professionGear.item:GetItemLink()
 end
 
+---@param itemLink string?
 function CraftSim.ProfessionGear:SetItem(itemLink)
 	if not itemLink then
 		self.professionStats:Clear()

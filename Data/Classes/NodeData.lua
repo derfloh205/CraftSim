@@ -4,12 +4,14 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.NodeData
+---@overload fun(recipeData: CraftSim.RecipeData?, nodeName: string?, nodeRulesData: table?, parentNode:CraftSim.NodeData?): CraftSim.NodeData
 CraftSim.NodeData = CraftSim.Object:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
----@param nodeRulesData table[]
----@param recipeData CraftSim.RecipeData
+---@param recipeData CraftSim.RecipeData?
+---@param nodeName string
+---@param nodeRulesData table
 ---@param parentNode CraftSim.NodeData
 function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData, parentNode)
     self.affectsRecipe = false
@@ -36,11 +38,11 @@ function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData, parentNode)
     self.entryInfos         = GUTIL:Map(self.entryIDs, function(entryID)
         return C_Traits.GetEntryInfo(self.configID, entryID)
     end)
-    self.definitionInfos    = GUTIL:Map(self.entryInfos, function(entryInfo)
+    local definitionInfos   = GUTIL:Map(self.entryInfos, function(entryInfo)
         return C_Traits.GetDefinitionInfo(entryInfo.definitionID)
     end)
-    if self.definitionInfos[1] then
-        self.icon = self.definitionInfos[1].overrideIcon
+    if definitionInfos[1] then
+        self.icon = definitionInfos[1].overrideIcon
     end
 
     self.perkInfos = C_ProfSpecs.GetPerksForPath(self.nodeID)
@@ -99,11 +101,6 @@ function CraftSim.NodeData:UpdateProfessionStats()
         return
     end
 
-    --- DEBUG
-    if self.nodeName == "Curing and Tanning" then
-        print("NodeData: Update Stats of Node: " .. self.nodeName)
-    end
-
     for i, nodeRule in pairs(self.nodeRules) do
         -- only use rules that affect the recipe
         if nodeRule.affectsRecipe then
@@ -117,12 +114,6 @@ function CraftSim.NodeData:UpdateProfessionStats()
                 self.professionStats:add(nodeRule.professionStats)
             end
         end
-    end
-
-    --- DEBUG
-    if self.nodeName == "Curing and Tanning" then
-        print("NodeData: Stats from node after update: ")
-        print(self.professionStats, true, nil, 1)
     end
 end
 
@@ -170,4 +161,78 @@ function CraftSim.NodeData:GetJSON(indent)
     jb:AddList("childNodeIDs", GUTIL:Map(self.childNodes, function(cn) return cn.nodeID end), true)
     jb:End()
     return jb.json
+end
+
+---@class CraftSim.NodeData.Serialized
+---@field nodeID number
+---@field parentNodeID number
+---@field childNodes CraftSim.NodeData.Serialized[]
+---@field nodeName string
+---@field configID number
+---@field entryIDs number[]
+---@field entryInfos TraitEntryInfo[]
+---@field icon number
+---@field perkInfos SpecPerkInfo[]
+---@field active boolean
+---@field rank number
+---@field maxRank number
+---@field affectsRecipe boolean
+
+---@return CraftSim.NodeData.Serialized
+function CraftSim.NodeData:Serialize()
+    ---@type CraftSim.NodeData.Serialized
+    local serializedData = {}
+    serializedData.nodeID = self.nodeID
+    if self.parentNode then
+        serializedData.parentNodeID = self.parentNode.nodeID
+    end
+    serializedData.nodeName = self.nodeName
+    serializedData.configID = self.configID
+    serializedData.entryIDs = CopyTable(self.entryIDs)
+    serializedData.entryInfos = CopyTable(self.entryInfos)
+    serializedData.icon = self.icon
+    serializedData.perkInfos = CopyTable(self.perkInfos)
+    serializedData.active = self.active
+    serializedData.rank = self.rank
+    serializedData.maxRank = self.maxRank
+    serializedData.affectsRecipe = self.affectsRecipe
+
+    return serializedData
+end
+
+---@param serializedData CraftSim.NodeData.Serialized
+---@param recipeData CraftSim.RecipeData
+---@param nodeIDMap table<number, CraftSim.NodeData>
+---@param professionRuleNodes table<string, table>
+---@return CraftSim.NodeData
+function CraftSim.NodeData:Deserialize(serializedData, recipeData, nodeIDMap, professionRuleNodes)
+    local nodeData = CraftSim.NodeData()
+    nodeData.professionStats = CraftSim.ProfessionStats()
+    nodeData.maxProfessionStats = CraftSim.ProfessionStats()
+    nodeData.nodeID = serializedData.nodeID
+    nodeIDMap[serializedData.nodeID] = nodeData
+    nodeData.recipeData = recipeData
+    nodeData.nodeName = serializedData.nodeName
+    nodeData.configID = serializedData.configID
+    nodeData.entryIDs = serializedData.entryIDs
+    nodeData.entryInfos = serializedData.entryInfos
+    nodeData.icon = serializedData.icon
+    nodeData.perkInfos = serializedData.perkInfos
+    nodeData.active = serializedData.active
+    nodeData.rank = serializedData.rank
+    nodeData.maxRank = serializedData.maxRank
+    nodeData.affectsRecipe = serializedData.affectsRecipe
+    nodeData.nodeRules = {}
+
+    local ruleNodes = GUTIL:Filter(professionRuleNodes, function(n) return n.nodeID == nodeData.nodeID end)
+
+    for _, ruleNode in pairs(ruleNodes) do
+        local nodeRule = CraftSim.NodeRule(recipeData, ruleNode, nodeData)
+        table.insert(nodeData.nodeRules, nodeRule) -- no need to serialize/deserialize nodeRules, just built again
+    end
+
+    nodeData:UpdateAffectance()
+    nodeData:UpdateProfessionStats()
+
+    return nodeData
 end

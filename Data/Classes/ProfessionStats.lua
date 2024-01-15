@@ -36,9 +36,9 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 		return
 	end
 	print("Parse Stats By OperationInfo", false, true)
-	self.skill.value = operationInfo.baseSkill + operationInfo.bonusSkill
-	self.recipeDifficulty.value = operationInfo.baseDifficulty
-	local bonusStats = operationInfo.bonusStats
+	self.skill.value = (operationInfo.baseSkill or 0) + (operationInfo.bonusSkill or 0)
+	self.recipeDifficulty.value = operationInfo.baseDifficulty or 0
+	local bonusStats = operationInfo.bonusStats or {}
 	for _, statInfo in pairs(bonusStats) do
 		local statName = string.lower(statInfo.bonusStatName)
 		-- check each stat individually to consider localization
