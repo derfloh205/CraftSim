@@ -67,13 +67,15 @@ end
 ---@param serializedData CraftSim.ProfessionGearSet.Serialized
 function CraftSim.ProfessionGearSet:LoadSerialized(serializedData)
     if self.isCooking then
-        self.tool:SetItem(serializedData.tool)
-        self.gear2:SetItem(serializedData.gear2)
+        self.tool = CraftSim.ProfessionGear:Deserialize(serializedData.tool)
+        self.gear2 = CraftSim.ProfessionGear:Deserialize(serializedData.gear2)
     else
-        self.tool:SetItem(serializedData.tool)
-        self.gear1:SetItem(serializedData.gear1)
-        self.gear2:SetItem(serializedData.gear2)
+        self.tool = CraftSim.ProfessionGear:Deserialize(serializedData.tool)
+        self.gear1 = CraftSim.ProfessionGear:Deserialize(serializedData.gear1)
+        self.gear2 = CraftSim.ProfessionGear:Deserialize(serializedData.gear2)
     end
+
+    self:UpdateProfessionStats()
 end
 
 function CraftSim.ProfessionGearSet:UpdateProfessionStats()
@@ -245,9 +247,9 @@ end
 ---@class CraftSim.ProfessionGearSet.Serialized
 ---@field profession Enum.Profession
 ---@field isCooking boolean
----@field gear1 string? -- itemLinks
----@field gear2 string?
----@field tool string?
+---@field gear1 CraftSim.ProfessionGear.Serialized
+---@field gear2 CraftSim.ProfessionGear.Serialized
+---@field tool CraftSim.ProfessionGear.Serialized
 
 ---@return CraftSim.ProfessionGearSet.Serialized
 function CraftSim.ProfessionGearSet:Serialize()
@@ -255,9 +257,9 @@ function CraftSim.ProfessionGearSet:Serialize()
     local serializedData = {
         profession = self.professionID,
         isCooking = self.isCooking,
-        gear1 = self.gear1.item and self.gear1.item:GetItemLink(),
-        gear2 = self.gear2.item and self.gear2.item:GetItemLink(),
-        tool = self.tool.item and self.tool.item:GetItemLink(),
+        gear1 = self.gear1 and self.gear1:Serialize(),
+        gear2 = self.gear2 and self.gear2:Serialize(),
+        tool = self.tool and self.tool:Serialize(),
     }
     return serializedData
 end
@@ -267,13 +269,15 @@ end
 function CraftSim.ProfessionGearSet:Deserialize(serializedData)
     local professionGearSet = CraftSim.ProfessionGearSet(serializedData.profession)
     if professionGearSet.isCooking then
-        professionGearSet.gear2:SetItem(serializedData.gear2)
-        professionGearSet.tool:SetItem(serializedData.tool)
+        professionGearSet.gear2 = CraftSim.ProfessionGear:Deserialize(serializedData.gear2)
+        professionGearSet.tool = CraftSim.ProfessionGear:Deserialize(serializedData.tool)
     else
-        professionGearSet.gear1:SetItem(serializedData.gear1)
-        professionGearSet.gear2:SetItem(serializedData.gear2)
-        professionGearSet.tool:SetItem(serializedData.tool)
+        professionGearSet.gear1 = CraftSim.ProfessionGear:Deserialize(serializedData.gear1)
+        professionGearSet.gear2 = CraftSim.ProfessionGear:Deserialize(serializedData.gear2)
+        professionGearSet.tool = CraftSim.ProfessionGear:Deserialize(serializedData.tool)
     end
+
+    professionGearSet:UpdateProfessionStats()
 
     return professionGearSet
 end

@@ -77,6 +77,8 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
         -- update recipeData
         recipeData:SetReagentsByCraftingReagentInfoTbl(GUTIL:Concat { serializedData.requiredReagents, serializedData.optionalReagents })
 
+        recipeData:SetNonQualityReagentsMax()
+
         recipeData.professionGearSet:LoadSerialized(serializedData.professionGearSet)
 
         recipeData:Update()

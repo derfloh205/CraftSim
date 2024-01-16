@@ -108,7 +108,12 @@ end
 function CraftSim.CraftQueue:RestoreFromCache()
     CraftSim.UTIL:StartProfiling("CraftQueue Item Restoration")
     self.craftQueueItems = GUTIL:Map(CraftSimCraftQueueCache, function(craftQueueItemSerialized)
-        return CraftSim.CraftQueueItem:Deserialize(craftQueueItemSerialized)
+        local craftQueueItem = CraftSim.CraftQueueItem:Deserialize(craftQueueItemSerialized)
+        if craftQueueItem then
+            craftQueueItem:CalculateCanCraft()
+            return craftQueueItem
+        end
+        return nil
     end)
     CraftSim.UTIL:StopProfiling("CraftQueue Item Restoration")
 end

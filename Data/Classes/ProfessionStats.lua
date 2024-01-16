@@ -2,12 +2,16 @@
 local CraftSim = select(2, ...)
 
 ---@class CraftSim.ProfessionStats
----@overload fun():CraftSim.ProfessionStats
+---@overload fun(serialized: boolean?):CraftSim.ProfessionStats
 CraftSim.ProfessionStats = CraftSim.Object:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
-function CraftSim.ProfessionStats:new()
+---@param serialized boolean?
+function CraftSim.ProfessionStats:new(serialized)
+	if serialized then
+		return
+	end
 	---@type CraftSim.ProfessionStat
 	self.recipeDifficulty = CraftSim.ProfessionStat("recipedifficulty")
 	---@type CraftSim.ProfessionStat
@@ -206,4 +210,48 @@ function CraftSim.ProfessionStats:GetJSON(indent)
 	jb:Add("potionExperimentationFactor", self.potionExperimentationFactor, true)
 	jb:End()
 	return jb.json
+end
+
+---@class CraftSim.ProfessionStats.Serialized
+---@field recipeDifficulty CraftSim.ProfessionStat.Serialized
+---@field skill CraftSim.ProfessionStat.Serialized
+---@field inspiration CraftSim.ProfessionStat.Serialized
+---@field multicraft CraftSim.ProfessionStat.Serialized
+---@field resourcefulness CraftSim.ProfessionStat.Serialized
+---@field craftingspeed CraftSim.ProfessionStat.Serialized
+---@field phialExperimentationFactor CraftSim.ProfessionStat.Serialized
+---@field potionExperimentationFactor CraftSim.ProfessionStat.Serialized
+
+
+---@return CraftSim.ProfessionStats.Serialized
+function CraftSim.ProfessionStats:Serialize()
+	---@type CraftSim.ProfessionStats.Serialized
+	local serializedData = {
+		recipeDifficulty = self.recipeDifficulty:Serialize(),
+		skill = self.skill:Serialize(),
+		inspiration = self.inspiration:Serialize(),
+		multicraft = self.multicraft:Serialize(),
+		resourcefulness = self.resourcefulness:Serialize(),
+		craftingspeed = self.craftingspeed:Serialize(),
+		phialExperimentationFactor = self.phialExperimentationFactor:Serialize(),
+		potionExperimentationFactor = self.potionExperimentationFactor:Serialize(),
+	}
+	return serializedData
+end
+
+---@param serializedData CraftSim.ProfessionStats.Serialized
+---@return CraftSim.ProfessionStats
+function CraftSim.ProfessionStats:Deserialize(serializedData)
+	local professionStats = CraftSim.ProfessionStats(true)
+	professionStats.recipeDifficulty = CraftSim.ProfessionStat:Deserialize(serializedData.recipeDifficulty)
+	professionStats.skill = CraftSim.ProfessionStat:Deserialize(serializedData.skill)
+	professionStats.inspiration = CraftSim.ProfessionStat:Deserialize(serializedData.inspiration)
+	professionStats.multicraft = CraftSim.ProfessionStat:Deserialize(serializedData.multicraft)
+	professionStats.resourcefulness = CraftSim.ProfessionStat:Deserialize(serializedData.resourcefulness)
+	professionStats.craftingspeed = CraftSim.ProfessionStat:Deserialize(serializedData.craftingspeed)
+	professionStats.phialExperimentationFactor = CraftSim.ProfessionStat:Deserialize(serializedData
+		.phialExperimentationFactor)
+	professionStats.potionExperimentationFactor = CraftSim.ProfessionStat:Deserialize(serializedData
+		.potionExperimentationFactor)
+	return professionStats
 end

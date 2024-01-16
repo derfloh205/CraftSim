@@ -9,6 +9,8 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 function CraftSim.ProfessionGear:new()
 	---@type CraftSim.ProfessionStats
 	self.professionStats = CraftSim.ProfessionStats()
+	---@type ItemMixin?
+	self.item = nil
 end
 
 function CraftSim.ProfessionGear:Equals(professionGear)
@@ -132,4 +134,30 @@ function CraftSim.ProfessionGear:GetJSON(indent)
 	jb:Add("professionStats", self.professionStats, true)
 	jb:End()
 	return jb.json
+end
+
+---@class CraftSim.ProfessionGear.Serialized
+---@field itemLink string
+---@field professionStats CraftSim.ProfessionStats.Serialized
+---@field serializationID number -- to cache deserialized data for reusage of references
+
+---@return CraftSim.ProfessionGear.Serialized
+function CraftSim.ProfessionGear:Serialize()
+	---@type CraftSim.ProfessionGear.Serialized
+	local serializedData = {
+		itemLink = self.item:GetItemLink(),
+		professionStats = self.professionStats:Serialize(),
+		serializationID = GetTimePreciseSec(),
+	}
+	return serializedData
+end
+
+---@param serializedData CraftSim.ProfessionGear.Serialized
+---@return CraftSim.ProfessionGear
+function CraftSim.ProfessionGear:Deserialize(serializedData)
+	local professionGear = CraftSim.ProfessionGear()
+	professionGear.item = Item:CreateFromItemLink(serializedData.itemLink)
+	professionGear.professionStats = CraftSim.ProfessionStats:Deserialize(serializedData.professionStats)
+
+	return professionGear
 end
