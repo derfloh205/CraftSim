@@ -1125,7 +1125,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                     anchor = "ANCHOR_CURSOR",
                 }
 
-                if craftQueueItem.gearEquipped then
+                if craftQueueItem.gearEquipped and craftQueueItem:IsCrafter() then
                     topGearColumn.equippedText:Show()
                     topGearColumn.equippedText:SetEquipped()
 
@@ -1148,9 +1148,14 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
                     topGearColumn.gear2Icon:Show()
                     topGearColumn.toolIcon:Show()
-                    topGearColumn.equipButton:Show()
-                    topGearColumn.equipButton.clickCallback = function()
-                        recipeData.professionGearSet:Equip()
+                    if craftQueueItem:IsCrafter() then
+                        topGearColumn.equipButton:Show()
+                        topGearColumn.equipButton.clickCallback = function()
+                            recipeData.professionGearSet:Equip()
+                        end
+                    else
+                        topGearColumn.equipButton:Hide()
+                        topGearColumn.equipButton.clickCallback = nil
                     end
                 end
 

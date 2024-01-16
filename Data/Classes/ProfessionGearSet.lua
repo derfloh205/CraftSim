@@ -11,7 +11,7 @@ function CraftSim.ProfessionGearSet:new(recipeData)
     self.recipeData = recipeData
     self.professionGearSlots = C_TradeSkillUI.GetProfessionSlots(self.professionID)
     self.isCooking = recipeData.isCooking
-    if self.isCooking then
+    if not self.isCooking then
         ---@type CraftSim.ProfessionGear?
         self.gear1 = CraftSim.ProfessionGear()
     end

@@ -142,6 +142,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     ---@type CraftSim.ProfessionGearSet
     self.professionGearSet = CraftSim.ProfessionGearSet(self)
+    self.professionGearSet:LoadCurrentEquippedSet()
 
     local baseOperationInfo = nil
     if self.orderData then
@@ -166,13 +167,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     self.baseProfessionStats:SetInspirationBaseBonusSkill(self.baseProfessionStats.recipeDifficulty.value,
         self.maxQuality)
-
-    -- subtract stats from current set to get base stats
-    if self:IsCrafter() then
-        self.professionGearSet:LoadCurrentEquippedSet()
-    else
-        self.professionGearSet:LoadCurrentEquippedSet(crafterData)
-    end
 
     -- cache available profession gear by calling this once
     CraftSim.TOPGEAR:GetProfessionGearFromInventory(self)
