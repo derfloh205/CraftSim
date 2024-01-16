@@ -145,8 +145,21 @@ CraftSim.CONST.EXPANSION_IDS = {
     DRAGONFLIGHT = 9,
 }
 
---- https://warcraft.wiki.gg/wiki/TradeSkillLineID
 ---@class CraftSim.TRADESKILLLINEIDS
+---@field BASE number
+---@field CLASSIC number
+---@field TBC number
+---@field WOTLK number
+---@field CATA number
+---@field MOP number
+---@field WOD number
+---@field LEGION number
+---@field BFA number
+---@field SHADOWLANDS number
+---@field DRAGONFLIGHT number
+
+--- https://warcraft.wiki.gg/wiki/TradeSkillLineID
+---@type table<Enum.Profession, CraftSim.TRADESKILLLINEIDS>
 CraftSim.CONST.TRADESKILLLINEIDS = {
     [Enum.Profession.Blacksmithing] = { BASE = 164, CLASSIC = 2477, TBC = 2476, WOTLK = 2475, CATA = 2474, MOP = 2473, WOD = 2472, LEGION = 2454, BFA = 2437, SHADOWLANDS = 2751, DRAGONFLIGHT = 2822 },
     [Enum.Profession.Leatherworking] = { BASE = 165, CLASSIC = 2532, TBC = 2531, WOTLK = 2530, CATA = 2529, MOP = 2528, WOD = 2527, LEGION = 2526, BFA = 2525, SHADOWLANDS = 2758, DRAGONFLIGHT = 2830 },

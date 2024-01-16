@@ -91,7 +91,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         self.subtypeID = subclassID
     end
 
-    self.isOldWorldRecipe = not CraftSim.UTIL:IsDragonflightRecipe(recipeID)
+    self.isOldWorldRecipe = not self:IsDragonflightRecipe()
     self.isRecraft = isRecraft or false
     self.isSimulationModeData = false
     self.learned = self.recipeInfo.learned or false
@@ -151,11 +151,12 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.professionGearSet = CraftSim.ProfessionGearSet(self)
     self.professionGearSet:LoadCurrentEquippedSet()
 
-    local baseOperationInfo = nil
+    self.baseOperationInfo = nil
     if self.orderData then
-        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {}, self.orderData.orderID)
+        self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
+            self.orderData.orderID)
     else
-        baseOperationInfo = self:GetCraftingOperationInfoForRecipeCrafter()
+        self.baseOperationInfo = self:GetCraftingOperationInfoForRecipeCrafter()
     end
 
     ---@type CraftSim.ProfessionStats
@@ -165,7 +166,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@type CraftSim.ProfessionStats
     self.professionStatModifiers = CraftSim.ProfessionStats()
 
-    self.baseProfessionStats:SetStatsByOperationInfo(self, baseOperationInfo)
+    self.baseProfessionStats:SetStatsByOperationInfo(self, self.baseOperationInfo)
 
     -- exception: when salvage recipe, then resourcefulness is supported!
     if self.isSalvageRecipe then
@@ -702,8 +703,6 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
     local crafterUID = self:GetCrafterUID()
     CraftSimRecipeDataCache.operationInfoCache[crafterUID] = CraftSimRecipeDataCache.operationInfoCache[crafterUID] or {}
     if not self:IsCrafter() then
-        -- if nothing is cached yet get an empty operationInfo
-
         operationInfo = CraftSimRecipeDataCache.operationInfoCache[crafterUID][self.recipeID]
 
         if operationInfo then
@@ -713,6 +712,8 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
         end
     else
         operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
+
+        -- check for too early access?
         CraftSimRecipeDataCache.operationInfoCache[crafterUID][self.recipeID] = operationInfo
     end
 
@@ -775,4 +776,20 @@ end
 function CraftSim.RecipeData:CrafterDataEquals(crafterData)
     return self.crafterData.name == crafterData.name and self.crafterData.realm == crafterData.realm and
         self.crafterData.class == crafterData.class
+end
+
+function CraftSim.RecipeData:IsDragonflightRecipe()
+    local print = CraftSim.UTIL:SetDebugPrint("CRAFTQ")
+    print("check dragonflight recipe")
+    local recipeInfo = self.recipeInfo
+    if recipeInfo then
+        print("recipeInfo: ")
+        print(recipeInfo, true)
+        local professionInfo = self.professionData.professionInfo
+        print("professionInfo: ")
+        print(professionInfo, true)
+        return professionInfo.profession == CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT
+    end
+
+    return false
 end

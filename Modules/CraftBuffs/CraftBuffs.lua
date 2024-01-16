@@ -5,8 +5,8 @@ local GUTIL = CraftSim.GUTIL
 
 local L = CraftSim.UTIL:GetLocalizer()
 
----@class CraftSim.CRAFT_BUFFS
-CraftSim.CRAFT_BUFFS = {}
+---@class CraftSim.CRAFT_BUFFS : Frame
+CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents("COMBAT_LOG_EVENT_UNFILTERED")
 
 --- Buffs created by this method do not have a recipeData reference!
 ---@param profession Enum.Profession
@@ -141,4 +141,27 @@ function CraftSim.CRAFT_BUFFS:CreateQuickPhialBuffs(recipeData)
     }, CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS_SPELL_Q3))
 
     return buffs
+end
+
+function CraftSim.CRAFT_BUFFS:COMBAT_LOG_EVENT_UNFILTERED()
+    local _, subEvent, _, _, sourceName = CombatLogGetCurrentEventInfo()
+    if subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REMOVED" then
+        if ProfessionsFrame:IsVisible() then
+            local playerName = UnitName("player")
+            if sourceName == playerName then
+                local auraID = select(12, CombatLogGetCurrentEventInfo())
+                print("Buff changed: " .. tostring(auraID))
+                if tContains(CraftSim.CONST.BUFF_IDS, auraID) then
+                    if CraftSim.MAIN.currentRecipeID then
+                        local isWorkOrder = ProfessionsFrame.OrdersPage:IsVisible()
+                        if isWorkOrder then
+                            CraftSim.MAIN:TriggerModuleUpdate(false)
+                        else
+                            CraftSim.MAIN:TriggerModuleUpdate(false)
+                        end
+                    end
+                end
+            end
+        end
+    end
 end

@@ -445,6 +445,7 @@ function CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeID, craf
     return qualityIDs
 end
 
+--- without using recipeData
 ---@param recipeID number
 function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
     local recipeInfo = CraftSimRecipeDataCache.cachedRecipeIDs[recipeID] or C_TradeSkillUI.GetRecipeInfo(recipeID)
@@ -454,8 +455,11 @@ function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
             print("No Profession loaded yet?", false, true)
             print(professionInfo, true)
         end
-        return C_TradeSkillUI.IsRecipeInSkillLine(recipeInfo.recipeID,
-            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT)
+
+        local IsDragonflightRecipe = professionInfo.professionID ==
+        CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT
+        -- do not use C_TradeSkillUI.IsRecipeInSkillLin because its not using cached data..
+        return IsDragonflightRecipe
     end
 
     return false
