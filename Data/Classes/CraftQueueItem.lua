@@ -4,6 +4,8 @@ local CraftSim = select(2, ...)
 ---@class CraftSim.CraftQueueItem
 CraftSim.CraftQueueItem = CraftSim.Object:extend()
 
+local print = CraftSim.UTIL:SetDebugPrint("CRAFTQ")
+
 ---@param recipeData CraftSim.RecipeData
 ---@param amount number?
 function CraftSim.CraftQueueItem:new(recipeData, amount)

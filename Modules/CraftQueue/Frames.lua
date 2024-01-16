@@ -1128,7 +1128,6 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                 end
 
                 local craftAbleAmount = math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount)
-                local f = CraftSim.UTIL:GetFormatter()
 
                 if craftAbleAmount == 0 or not craftQueueItem.allowedToCraft then
                     craftAbleColumn.text:SetText(f.r(craftAbleAmount))
