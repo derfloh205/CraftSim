@@ -101,6 +101,7 @@ function CraftSim.ReagentData:GetCraftingReagentInfoTbl()
     return GUTIL:Concat({ required, optionals })
 end
 
+---@return CraftingReagentInfo[]
 function CraftSim.ReagentData:GetOptionalCraftingReagentInfoTbl()
     local craftingReagentInfoTbl = {}
 
@@ -115,7 +116,9 @@ function CraftSim.ReagentData:GetOptionalCraftingReagentInfoTbl()
     return craftingReagentInfoTbl
 end
 
+---@return CraftingReagentInfo[]
 function CraftSim.ReagentData:GetRequiredCraftingReagentInfoTbl()
+    ---@type CraftingReagentInfo[]
     local craftingReagentInfoTbl = {}
 
     -- required

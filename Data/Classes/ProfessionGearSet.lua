@@ -29,7 +29,7 @@ function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet(crafterData)
     if not crafterData then
         local crafterUID = select(1, UnitNameUnmodified("player")) .. "-" .. GetNormalizedRealmName()
         CraftSimRecipeDataCache.professionGearCache[crafterUID] = CraftSimRecipeDataCache.professionGearCache
-        [crafterUID] or {}
+            [crafterUID] or {}
         CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] =
             CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] or
             CopyTable(CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
@@ -38,9 +38,6 @@ function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet(crafterData)
             local gear2 = GetInventoryItemLink("player", self.professionGearSlots[2])
             self.tool:SetItem(tool)
             self.gear2:SetItem(gear2)
-
-            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear.tool = tool
-            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear.gear2 = gear2
         else
             local tool = GetInventoryItemLink("player", self.professionGearSlots[1])
             local gear1 = GetInventoryItemLink("player", self.professionGearSlots[2])
@@ -48,31 +45,35 @@ function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet(crafterData)
             self.tool:SetItem(tool)
             self.gear1:SetItem(gear1)
             self.gear2:SetItem(gear2)
-            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear.tool = tool
-            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear.gear1 = gear1
-            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear.gear2 = gear2
         end
+
+        CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear = self:Serialize()
     else
         local crafterUID = crafterData.name .. "-" .. crafterData.realm
         CraftSimRecipeDataCache.professionGearCache[crafterUID] = CraftSimRecipeDataCache.professionGearCache
-        [crafterUID] or {}
+            [crafterUID] or {}
         CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] =
             CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] or
             CopyTable(CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
         local professionGearCacheData = CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID]
-        if professionGearCacheData then
-            if self.isCooking then
-                self.tool:SetItem(professionGearCacheData.equippedGear.tool)
-                self.gear2:SetItem(professionGearCacheData.equippedGear.gear2)
-            else
-                self.tool:SetItem(professionGearCacheData.equippedGear.tool)
-                self.gear1:SetItem(professionGearCacheData.equippedGear.gear1)
-                self.gear2:SetItem(professionGearCacheData.equippedGear.gear2)
-            end
+        if professionGearCacheData and professionGearCacheData.equippedGear then
+            self:LoadSerialized(professionGearCacheData.equippedGear)
         end
     end
 
     self:UpdateProfessionStats()
+end
+
+---@param serializedData CraftSim.ProfessionGearSet.Serialized
+function CraftSim.ProfessionGearSet:LoadSerialized(serializedData)
+    if self.isCooking then
+        self.tool:SetItem(serializedData.tool)
+        self.gear2:SetItem(serializedData.gear2)
+    else
+        self.tool:SetItem(serializedData.tool)
+        self.gear1:SetItem(serializedData.gear1)
+        self.gear2:SetItem(serializedData.gear2)
+    end
 end
 
 function CraftSim.ProfessionGearSet:UpdateProfessionStats()
@@ -239,4 +240,40 @@ function CraftSim.ProfessionGearSet:GetJSON(indent)
     jb:Add("professionStats", self.professionStats, true)
     jb:End()
     return jb.json
+end
+
+---@class CraftSim.ProfessionGearSet.Serialized
+---@field profession Enum.Profession
+---@field isCooking boolean
+---@field gear1 string? -- itemLinks
+---@field gear2 string?
+---@field tool string?
+
+---@return CraftSim.ProfessionGearSet.Serialized
+function CraftSim.ProfessionGearSet:Serialize()
+    ---@type CraftSim.ProfessionGearSet.Serialized
+    local serializedData = {
+        profession = self.professionID,
+        isCooking = self.isCooking,
+        gear1 = self.gear1.item and self.gear1.item:GetItemLink(),
+        gear2 = self.gear2.item and self.gear2.item:GetItemLink(),
+        tool = self.tool.item and self.tool.item:GetItemLink(),
+    }
+    return serializedData
+end
+
+---@param serializedData CraftSim.ProfessionGearSet.Serialized
+---@return CraftSim.ProfessionGearSet
+function CraftSim.ProfessionGearSet:Deserialize(serializedData)
+    local professionGearSet = CraftSim.ProfessionGearSet(serializedData.profession)
+    if professionGearSet.isCooking then
+        professionGearSet.gear2:SetItem(serializedData.gear2)
+        professionGearSet.tool:SetItem(serializedData.tool)
+    else
+        professionGearSet.gear1:SetItem(serializedData.gear1)
+        professionGearSet.gear2:SetItem(serializedData.gear2)
+        professionGearSet.tool:SetItem(serializedData.tool)
+    end
+
+    return professionGearSet
 end

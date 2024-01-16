@@ -22,17 +22,9 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.recipeID = recipeID
     -- important to set first so self:IsCrafter() can be used
-    if crafterData then
-        self.crafter = crafterData.name
-        self.crafterRealm = crafterData.realm
-        self.crafterClass = crafterData.class
-    else
-        self.crafter, self.crafterRealm = UnitNameUnmodified("player")
-        self.crafterRealm = self.crafterRealm or GetNormalizedRealmName()
-        self.crafterClass = select(2, UnitClass("player"))
-    end
+    self.crafterData = crafterData or CraftSim.UTIL:GetPlayerCrafterData()
 
-    local crafterUID = self.crafter .. "-" .. self.crafterRealm
+    local crafterUID = self:GetCrafterUID()
 
     -- important for recipedata of alts to check if data was cached
     self.specializationDataCached = false
@@ -212,7 +204,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.isCrafterInfoCached = self:IsCrafterInfoCached()
 
     if self:IsCrafter() and not crafterData then
-        local crafterUID = self.crafter .. "-" .. self.crafterRealm
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] = CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] or {}
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] =
             CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] or {}
@@ -579,11 +570,7 @@ end
 
 ---@return boolean
 function CraftSim.RecipeData:IsCrafter()
-    local crafter, crafterRealm = UnitNameUnmodified("player")
-
-    crafterRealm = crafterRealm or GetNormalizedRealmName()
-
-    return self.crafter == crafter and self.crafterRealm == crafterRealm and
+    return self:CrafterDataEquals(CraftSim.UTIL:GetPlayerCrafterData()) and
         C_TradeSkillUI.IsRecipeProfessionLearned(self.recipeID)
 end
 
@@ -711,7 +698,7 @@ end
 function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
     ---@type CraftingOperationInfo
     local operationInfo = nil
-    local crafterUID = self.crafter .. "-" .. self.crafterRealm
+    local crafterUID = self:GetCrafterUID()
     CraftSimRecipeDataCache.operationInfoCache[crafterUID] = CraftSimRecipeDataCache.operationInfoCache[crafterUID] or {}
     if not self:IsCrafter() then
         -- if nothing is cached yet get an empty operationInfo
@@ -732,7 +719,7 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
 end
 
 function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
-    local crafterUID = self.crafter .. "-" .. self.crafterRealm
+    local crafterUID = self:GetCrafterUID()
 
     CraftSimRecipeDataCache.specializationDataCache[crafterUID] = CraftSimRecipeDataCache.specializationDataCache
         [crafterUID] or {}
@@ -758,4 +745,21 @@ function CraftSim.RecipeData:IsCrafterInfoCached()
 
     return self.professionGearCached and self.specializationDataCached and self.operationInfoCached and
         self.recipeInfoCached
+end
+
+---@return CraftSim.CrafterData
+function CraftSim.RecipeData:GetCrafterData()
+    return self.crafterData
+end
+
+function CraftSim.RecipeData:GetCrafterUID()
+    return self.crafterData.name .. "-" .. self.crafterData.realm
+end
+
+---compares the given crafterData with the one from the recipe
+---@param crafterData CraftSim.CrafterData
+---@return boolean equals
+function CraftSim.RecipeData:CrafterDataEquals(crafterData)
+    return self.crafterData.name == crafterData.name and self.crafterData.realm == crafterData.realm and
+        self.crafterData.class == crafterData.class
 end

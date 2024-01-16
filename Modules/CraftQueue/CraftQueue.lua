@@ -105,8 +105,8 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
 end
 
 function CraftSim.CRAFTQ:InitializeCraftQueue()
-    -- TODO: load from Saved Variables?
-    CraftSim.CRAFTQ.craftQueue = CraftSim.CraftQueue({})
+    -- load from Saved Variables
+    CraftSim.CRAFTQ.craftQueue = CraftSim.CraftQueue()
 
     -- hook onto auction buy confirm function
     hooksecurefunc(C_AuctionHouse, "ConfirmCommoditiesPurchase", function(itemID, quantity)
@@ -119,14 +119,14 @@ end
 function CraftSim.CRAFTQ:AddRecipe(recipeData, amount)
     amount = amount or 1
 
-    CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue({})
+    CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
     CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, amount)
 
     CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
 end
 
 function CraftSim.CRAFTQ:ClearAll()
-    CraftSim.CRAFTQ.craftQueue = CraftSim.CraftQueue({})
+    CraftSim.CRAFTQ.craftQueue:ClearAll()
     CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
 end
 
@@ -185,7 +185,7 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
 end
 
 function CraftSim.CRAFTQ:ImportRecipeScan()
-    CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue({})
+    CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
     ---@type CraftSim.RecipeData[]
     local filteredRecipes = GUTIL:Filter(CraftSim.RECIPE_SCAN.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
     for _, recipeData in pairs(filteredRecipes) do

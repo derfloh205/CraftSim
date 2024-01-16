@@ -169,11 +169,11 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.ProfessionGear[] inventoryGear
 function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
-    local crafterGUID = recipeData.crafter .. "-" .. recipeData.crafterRealm
-    CraftSimRecipeDataCache.professionGearCache[crafterGUID] = CraftSimRecipeDataCache.professionGearCache[crafterGUID] or
+    local crafterUID = recipeData:GetCrafterUID()
+    CraftSimRecipeDataCache.professionGearCache[crafterUID] = CraftSimRecipeDataCache.professionGearCache[crafterUID] or
         {}
-    CraftSimRecipeDataCache.professionGearCache[crafterGUID][recipeData.professionData.professionInfo.profession] =
-        CraftSimRecipeDataCache.professionGearCache[crafterGUID][recipeData.professionData.professionInfo.profession] or
+    CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession] =
+        CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession] or
         CopyTable(
             CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
     if recipeData:IsCrafter() then
@@ -190,21 +190,21 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
                         local professionGear = CraftSim.ProfessionGear()
                         professionGear:SetItem(itemLink)
                         table.insert(inventoryGear, professionGear)
-                        table.insert(CraftSimRecipeDataCache.professionGearCache[crafterGUID]
+                        table.insert(CraftSimRecipeDataCache.professionGearCache[crafterUID]
                             [recipeData.professionData.professionInfo.profession]
                             .availableProfessionGear, itemLink)
                     end
                 end
             end
         end
-        CraftSimRecipeDataCache.professionGearCache[crafterGUID][recipeData.professionData.professionInfo.profession]
-        .availableProfessionGear = GUTIL:ToSet(CraftSimRecipeDataCache.professionGearCache[crafterGUID]
+        CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession]
+        .availableProfessionGear = GUTIL:ToSet(CraftSimRecipeDataCache.professionGearCache[crafterUID]
             [recipeData.professionData.professionInfo.profession]
             .availableProfessionGear)
-        CraftSimRecipeDataCache.professionGearCache[crafterGUID][recipeData.professionData.professionInfo.profession].cached = true
+        CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession].cached = true
         return inventoryGear
     else
-        local professionGearCacheData = CraftSimRecipeDataCache.professionGearCache[crafterGUID]
+        local professionGearCacheData = CraftSimRecipeDataCache.professionGearCache[crafterUID]
             [recipeData.professionData.professionInfo.profession]
 
         recipeData.professionGearCached = professionGearCacheData.cached

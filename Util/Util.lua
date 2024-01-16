@@ -328,9 +328,29 @@ end
 
 function CraftSim.UTIL:StopProfiling(label)
     local time = debugprofilestop()
-    local diff = time - profilings[label]
+    local startTime = profilings[label]
+    if not startTime then
+        pcall(function() -- show error but do not stop execution
+            error("CraftSim Error: Util Profiling Label not found on Stop: " .. tostring(label))
+        end)
+    end
+    local diff = time - startTime
     profilings[label] = nil
     CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
+end
+
+---@return CraftSim.CrafterData
+function CraftSim.UTIL:GetPlayerCrafterData()
+    local name, realm = UnitNameUnmodified("player")
+    realm = realm or GetNormalizedRealmName()
+    ---@type CraftSim.CrafterData
+    local crafterData = {
+        name = name,
+        realm = realm,
+        class = select(2, UnitClass("player")),
+    }
+
+    return crafterData
 end
 
 function CraftSim.UTIL:ProfilingUpdate(label)

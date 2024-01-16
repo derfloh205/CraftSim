@@ -15,14 +15,9 @@ end
 -- SavedVars
 CraftSimRecipeIDs = CraftSimRecipeIDs or {} -- itemToRecipe cache
 
----@class CraftSim.ProfessionGearCacheData.EquippedGear
----@field gear1 string?
----@field gear2 string?
----@field tool string?
-
 ---@class CraftSim.ProfessionGearCacheData
 ---@field cached boolean
----@field equippedGear CraftSim.ProfessionGearCacheData.EquippedGear
+---@field equippedGear CraftSim.ProfessionGearSet.Serialized?
 ---@field availableProfessionGear? string[] -- list of itemlinks
 
 ---@class CraftSim.RecipeDataCache
@@ -41,11 +36,7 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
 
 CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
     cached = false,
-    equippedGear = {
-        tool = nil,
-        gear1 = nil,
-        gear2 = nil,
-    },
+    equippedGear = nil,
     availableProfessionGear = {},
 }
 
@@ -55,6 +46,9 @@ CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
 
 ---@type CraftSim.RecipeMap
 CraftSimRecipeMap = CraftSimRecipeMap or {}
+
+---@type CraftSim.CraftQueueItem.Serialized[]
+CraftSimCraftQueueCache = CraftSimCraftQueueCache or {}
 
 function CraftSim.CACHE:GetFromCache(cache, entryID)
     return cache[entryID]

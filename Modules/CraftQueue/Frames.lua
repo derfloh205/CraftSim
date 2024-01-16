@@ -78,7 +78,10 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             top = true,
         })
         local restockOptionsTab = frame.content.restockOptionsTab
+        ---@class CraftSim.CraftQueue.QueueTab : GGUI.BlizzardTab
         local queueTab = frame.content.queueTab
+        ---@class CraftSim.CraftQueue.QueueTab.Content
+        queueTab.content = queueTab.content
 
         GGUI.BlizzardTabSystem({ queueTab, restockOptionsTab })
 
@@ -86,6 +89,11 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             {
                 label = "", -- edit button
                 width = 35,
+                justifyOptions = { type = "H", align = "CENTER" }
+            },
+            {
+                label = "Crafter",
+                width = 100,
                 justifyOptions = { type = "H", align = "CENTER" }
             },
             {
@@ -128,7 +136,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             }
         }
 
-        ---@type GGUI.FrameList
+        ---@class CraftSim.CraftQueue.CraftList : GGUI.FrameList
         queueTab.content.craftList = GGUI.FrameList({
             parent = queueTab.content,
             anchorParent = frame.title.frame,
@@ -153,15 +161,26 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             offsetY = -70,
             columnOptions = columnOptions,
             rowConstructor = function(columns)
+                ---@class CraftSim.CraftQueue.CraftList.EditButtonColumn : Frame
                 local editButtonColumn = columns[1]
-                local recipeColumn = columns[2]
-                local averageProfitColumn = columns[3]
-                local craftingCostsColumn = columns[4]
-                local topGearColumn = columns[5]
-                local craftAbleColumn = columns[6]
-                local craftAmountColumn = columns[7]
-                local craftButtonColumn = columns[8]
-                local removeRowColumn = columns[9]
+                ---@class CraftSim.CraftQueue.CraftList.CrafterColumn : Frame
+                local crafterColumn = columns[2]
+                ---@class CraftSim.CraftQueue.CraftList.RecipeColumn : Frame
+                local recipeColumn = columns[3]
+                ---@class CraftSim.CraftQueue.CraftList.AverageProfitColumn : Frame
+                local averageProfitColumn = columns[4]
+                ---@class CraftSim.CraftQueue.CraftList.CraftingCostColumn : Frame
+                local craftingCostsColumn = columns[5]
+                ---@class CraftSim.CraftQueue.CraftList.TopGearColumn : Frame
+                local topGearColumn = columns[6]
+                ---@class CraftSim.CraftQueue.CraftList.CraftAbleColumn : Frame
+                local craftAbleColumn = columns[7]
+                ---@class CraftSim.CraftQueue.CraftList.CraftAmountColumn : Frame
+                local craftAmountColumn = columns[8]
+                ---@class CraftSim.CraftQueue.CraftList.CraftButtonColumn : Frame
+                local craftButtonColumn = columns[9]
+                ---@class CraftSim.CraftQueue.CraftList.RemoveRowColumn : Frame
+                local removeRowColumn = columns[10]
 
                 editButtonColumn.editButton = GGUI.Button({
                     parent = editButtonColumn,
@@ -170,6 +189,10 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     sizeY = 25,
                     label = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.EDIT_PEN, 0.7),
                 })
+
+                crafterColumn.text = GGUI.Text {
+                    parent = crafterColumn, anchorParent = crafterColumn,
+                }
 
                 recipeColumn.text = GGUI.Text({
                     parent = recipeColumn,
@@ -1009,7 +1032,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
     ---@type GGUI.FrameList
     local craftList = queueTab.content.craftList
 
-    local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue({})
+    local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
     --- precalculate craftable status before sorting to increase performance
     table.foreach(craftQueue.craftQueueItems,
@@ -1058,15 +1081,16 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                 local profilingID = "- FrameListUpdate Add Recipe: " .. craftQueueItem.recipeData.recipeName
                 CraftSim.UTIL:StartProfiling(profilingID)
                 local columns = row.columns
-                local editButtonColumn = columns[1]
-                local recipeColumn = columns[2]
-                local averageProfitColumn = columns[3]
-                local craftingCostsColumn = columns[4]
-                local topGearColumn = columns[5]
-                local craftAbleColumn = columns[6]
-                local craftAmountColumn = columns[7]
-                local craftButtonColumn = columns[8]
-                local removeRowColumn = columns[9]
+                local editButtonColumn = columns[1] --[[@as CraftSim.CraftQueue.CraftList.EditButtonColumn]]
+                local crafterColumn = columns[2] --[[@as CraftSim.CraftQueue.CraftList.CrafterColumn]]
+                local recipeColumn = columns[3] --[[@as CraftSim.CraftQueue.CraftList.RecipeColumn]]
+                local averageProfitColumn = columns[4] --[[@as CraftSim.CraftQueue.CraftList.AverageProfitColumn]]
+                local craftingCostsColumn = columns[5] --[[@as CraftSim.CraftQueue.CraftList.CraftingCostColumn]]
+                local topGearColumn = columns[6] --[[@as CraftSim.CraftQueue.CraftList.TopGearColumn]]
+                local craftAbleColumn = columns[7] --[[@as CraftSim.CraftQueue.CraftList.CraftAbleColumn]]
+                local craftAmountColumn = columns[8] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
+                local craftButtonColumn = columns[9] --[[@as CraftSim.CraftQueue.CraftList.CraftButtonColumn]]
+                local removeRowColumn = columns[10] --[[@as CraftSim.CraftQueue.CraftList.RemoveRowColumn]]
 
                 row.craftQueueItem = craftQueueItem
 
@@ -1077,6 +1101,9 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                         CraftSim.CRAFTQ.frame.content.queueTab.content.editRecipeFrame:Show()
                     end
                 end
+
+                local classColor = C_ClassColor.GetClassColor(craftQueueItem.crafterData.class)
+                crafterColumn.text:SetText(classColor:WrapTextInColorCode(craftQueueItem.recipeData:GetCrafterUID()))
 
                 -- update price data and profit?
                 recipeData.priceData:Update()
@@ -1156,6 +1183,11 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                     end
                     craftButtonColumn.craftButton:SetText(
                         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL), nil, true)
+                elseif not craftQueueItem.isCrafter then
+                    craftButtonColumn.craftButton:SetText(
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER),
+                        nil,
+                        true)
                 elseif not craftQueueItem.correctProfessionOpen then
                     craftButtonColumn.craftButton:SetText(
                         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION),
@@ -1191,6 +1223,8 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
     queueTab.content.totalAverageProfit:SetText(GUTIL:FormatMoney(totalAverageProfit, true, totalCraftingCosts))
     queueTab.content.totalCraftingCosts:SetText(f.r(GUTIL:FormatMoney(totalCraftingCosts)))
+
+    craftQueue:CacheQueueItems() -- Is this a good time to cache it?
 
 
     CraftSim.UTIL:StopProfiling("FrameListUpdate")
