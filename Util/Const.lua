@@ -145,35 +145,37 @@ CraftSim.CONST.EXPANSION_IDS = {
     DRAGONFLIGHT = 9,
 }
 
----@class CraftSim.TRADESKILLLINEIDS
----@field BASE number
----@field CLASSIC number
----@field TBC number
----@field WOTLK number
----@field CATA number
----@field MOP number
----@field WOD number
----@field LEGION number
----@field BFA number
----@field SHADOWLANDS number
----@field DRAGONFLIGHT number
+---@type table<CraftSim.EXPANSION_IDS, CraftSim.LOCALIZATION_IDS>
+CraftSim.CONST.EXPANSION_LOCALIZATION_IDS = {
+    [0] = "EXPANSION_VANILLA",
+    [1] = "EXPANSION_THE_BURNING_CRUSADE",
+    [2] = "EXPANSION_WRATH_OF_THE_LICH_KING",
+    [3] = "EXPANSION_CATACLYSM",
+    [4] = "EXPANSION_MISTS_OF_PANDARIA",
+    [5] = "EXPANSION_WARLORDS_OF_DRAENOR",
+    [6] = "EXPANSION_LEGION",
+    [7] = "EXPANSION_BATTLE_FOR_AZEROTH",
+    [8] = "EXPANSION_SHADOWLANDS",
+    [9] = "EXPANSION_DRAGONFLIGHT",
+}
+
 
 --- https://warcraft.wiki.gg/wiki/TradeSkillLineID
----@type table<Enum.Profession, CraftSim.TRADESKILLLINEIDS>
+---@type table<Enum.Profession, table<CraftSim.EXPANSION_IDS, number>>
 CraftSim.CONST.TRADESKILLLINEIDS = {
-    [Enum.Profession.Blacksmithing] = { BASE = 164, CLASSIC = 2477, TBC = 2476, WOTLK = 2475, CATA = 2474, MOP = 2473, WOD = 2472, LEGION = 2454, BFA = 2437, SHADOWLANDS = 2751, DRAGONFLIGHT = 2822 },
-    [Enum.Profession.Leatherworking] = { BASE = 165, CLASSIC = 2532, TBC = 2531, WOTLK = 2530, CATA = 2529, MOP = 2528, WOD = 2527, LEGION = 2526, BFA = 2525, SHADOWLANDS = 2758, DRAGONFLIGHT = 2830 },
-    [Enum.Profession.Alchemy] = { BASE = 171, CLASSIC = 2485, TBC = 2484, WOTLK = 2483, CATA = 2482, MOP = 2481, WOD = 2480, LEGION = 2479, BFA = 2478, SHADOWLANDS = 2750, DRAGONFLIGHT = 2823 },
-    [Enum.Profession.Herbalism] = { BASE = 182, CLASSIC = 2556, TBC = 2555, WOTLK = 2554, CATA = 2553, MOP = 2552, WOD = 2551, LEGION = 2550, BFA = 2549, SHADOWLANDS = 2760, DRAGONFLIGHT = 2832 },
-    [Enum.Profession.Cooking] = { BASE = 185, CLASSIC = 2548, TBC = 2547, WOTLK = 2546, CATA = 2545, MOP = 2544, WOD = 2543, LEGION = 2542, BFA = 2541, SHADOWLANDS = 2752, DRAGONFLIGHT = 2824 },
-    [Enum.Profession.Mining] = { BASE = 186, CLASSIC = 2572, TBC = 2571, WOTLK = 2570, CATA = 2569, MOP = 2568, WOD = 2567, LEGION = 2566, BFA = 2565, SHADOWLANDS = 2761, DRAGONFLIGHT = 2833 },
-    [Enum.Profession.Tailoring] = { BASE = 197, CLASSIC = 2540, TBC = 2539, WOTLK = 2538, CATA = 2537, MOP = 2536, WOD = 2535, LEGION = 2534, BFA = 2533, SHADOWLANDS = 2759, DRAGONFLIGHT = 2831 },
-    [Enum.Profession.Engineering] = { BASE = 202, CLASSIC = 2506, TBC = 2505, WOTLK = 2504, CATA = 2503, MOP = 2502, WOD = 2501, LEGION = 2500, BFA = 2499, SHADOWLANDS = 2755, DRAGONFLIGHT = 2827 },
-    [Enum.Profession.Enchanting] = { BASE = 333, CLASSIC = 2494, TBC = 2493, WOTLK = 2492, CATA = 2491, MOP = 2489, WOD = 2488, LEGION = 2487, BFA = 2486, SHADOWLANDS = 2753, DRAGONFLIGHT = 2825 },
-    [Enum.Profession.Fishing] = { BASE = 356, CLASSIC = 2592, TBC = 2591, WOTLK = 2590, CATA = 2589, MOP = 2588, WOD = 2587, LEGION = 2586, BFA = 2585, SHADOWLANDS = 2754, DRAGONFLIGHT = 2826 },
-    [Enum.Profession.Skinning] = { BASE = 393, CLASSIC = 2564, TBC = 2563, WOTLK = 2562, CATA = 2561, MOP = 2560, WOD = 2559, LEGION = 2558, BFA = 2557, SHADOWLANDS = 2762, DRAGONFLIGHT = 2834 },
-    [Enum.Profession.Jewelcrafting] = { BASE = 755, CLASSIC = 2524, TBC = 2523, WOTLK = 2522, CATA = 2521, MOP = 2520, WOD = 2519, LEGION = 2518, BFA = 2517, SHADOWLANDS = 2757, DRAGONFLIGHT = 2829 },
-    [Enum.Profession.Inscription] = { BASE = 773, CLASSIC = 2514, TBC = 2513, WOTLK = 2512, CATA = 2511, MOP = 2510, WOD = 2509, LEGION = 2508, BFA = 2507, SHADOWLANDS = 2756, DRAGONFLIGHT = 2828 }
+    [Enum.Profession.Blacksmithing] = { BASE = 164, [0] = 2477, [1] = 2476, [2] = 2475, [3] = 2474, [4] = 2473, [5] = 2472, [6] = 2454, [7] = 2437, [8] = 2751, [9] = 2822 },
+    [Enum.Profession.Leatherworking] = { BASE = 165, [0] = 2532, [1] = 2531, [2] = 2530, [3] = 2529, [4] = 2528, [5] = 2527, [6] = 2526, [7] = 2525, [8] = 2758, [9] = 2830 },
+    [Enum.Profession.Alchemy] = { BASE = 171, [0] = 2485, [1] = 2484, [2] = 2483, [3] = 2482, [4] = 2481, [5] = 2480, [6] = 2479, [7] = 2478, [8] = 2750, [9] = 2823 },
+    [Enum.Profession.Herbalism] = { BASE = 182, [0] = 2556, [1] = 2555, [2] = 2554, [3] = 2553, [4] = 2552, [5] = 2551, [6] = 2550, [7] = 2549, [8] = 2760, [9] = 2832 },
+    [Enum.Profession.Cooking] = { BASE = 185, [0] = 2548, [1] = 2547, [2] = 2546, [3] = 2545, [4] = 2544, [5] = 2543, [6] = 2542, [7] = 2541, [8] = 2752, [9] = 2824 },
+    [Enum.Profession.Mining] = { BASE = 186, [0] = 2572, [1] = 2571, [2] = 2570, [3] = 2569, [4] = 2568, [5] = 2567, [6] = 2566, [7] = 2565, [8] = 2761, [9] = 2833 },
+    [Enum.Profession.Tailoring] = { BASE = 197, [0] = 2540, [1] = 2539, [2] = 2538, [3] = 2537, [4] = 2536, [5] = 2535, [6] = 2534, [7] = 2533, [8] = 2759, [9] = 2831 },
+    [Enum.Profession.Engineering] = { BASE = 202, [0] = 2506, [1] = 2505, [2] = 2504, [3] = 2503, [4] = 2502, [5] = 2501, [6] = 2500, [7] = 2499, [8] = 2755, [9] = 2827 },
+    [Enum.Profession.Enchanting] = { BASE = 333, [0] = 2494, [1] = 2493, [2] = 2492, [3] = 2491, [4] = 2489, [5] = 2488, [6] = 2487, [7] = 2486, [8] = 2753, [9] = 2825 },
+    [Enum.Profession.Fishing] = { BASE = 356, [0] = 2592, [1] = 2591, [2] = 2590, [3] = 2589, [4] = 2588, [5] = 2587, [6] = 2586, [7] = 2585, [8] = 2754, [9] = 2826 },
+    [Enum.Profession.Skinning] = { BASE = 393, [0] = 2564, [1] = 2563, [2] = 2562, [3] = 2561, [4] = 2560, [5] = 2559, [6] = 2558, [7] = 2557, [8] = 2762, [9] = 2834 },
+    [Enum.Profession.Jewelcrafting] = { BASE = 755, [0] = 2524, [1] = 2523, [2] = 2522, [3] = 2521, [4] = 2520, [5] = 2519, [6] = 2518, [7] = 2517, [8] = 2757, [9] = 2829 },
+    [Enum.Profession.Inscription] = { BASE = 773, [0] = 2514, [1] = 2513, [2] = 2512, [3] = 2511, [4] = 2510, [5] = 2509, [6] = 2508, [7] = 2507, [8] = 2756, [9] = 2828 }
 }
 
 CraftSim.CONST.QUEST_PLAN_CATEGORY_IDS = {
@@ -648,6 +650,16 @@ CraftSim.CONST.LOCALES = {
 
 ---@enum CraftSim.LOCALIZATION_IDS
 CraftSim.CONST.TEXT = {
+    EXPANSION_VANILLA = "EXPANSION_VANILLA",
+    EXPANSION_THE_BURNING_CRUSADE = "EXPANSION_THE_BURNING_CRUSADE",
+    EXPANSION_WRATH_OF_THE_LICH_KING = "EXPANSION_WRATH_OF_THE_LICH_KING",
+    EXPANSION_CATACLYSM = "EXPANSION_CATACLYSM",
+    EXPANSION_MISTS_OF_PANDARIA = "EXPANSION_MISTS_OF_PANDARIA",
+    EXPANSION_WARLORDS_OF_DRAENOR = "EXPANSION_WARLORDS_OF_DRAENOR",
+    EXPANSION_LEGION = "EXPANSION_LEGION",
+    EXPANSION_BATTLE_FOR_AZEROTH = "EXPANSION_BATTLE_FOR_AZEROTH",
+    EXPANSION_SHADOWLANDS = "EXPANSION_SHADOWLANDS",
+    EXPANSION_DRAGONFLIGHT = "EXPANSION_DRAGONFLIGHT",
     RESOURCEFULNESS_EXPLANATION_TOOLTIP = 0,
     MULTICRAFT_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP = 1,
     MULTICRAFT_ADDITIONAL_ITEMS_VALUE_EXPLANATION_TOOLTIP = 2,
@@ -979,6 +991,7 @@ CraftSim.CONST.TEXT = {
     RECIPE_SCAN_MODE_Q2 = "RECIPESCAN_MODE_Q2",
     RECIPE_SCAN_MODE_Q3 = "RECIPESCAN_MODE_Q3",
     RECIPE_SCAN_MODE_OPTIMIZE = "RECIPE_SCAN_MODE_OPTIMIZE",
+    RECIPE_SCAN_EXPANSION_FILTER_BUTTON = "RECIPE_SCAN_EXPANSION_FILTER_BUTTON",
 
     TOP_GEAR_TITLE = 750,
     TOP_GEAR_AUTOMATIC = 751,

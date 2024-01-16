@@ -15,6 +15,19 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Enchanted:",
 
         -- OPTIONAL (Defaulting to EN if not available):
+        -- expansions
+
+        [CraftSim.CONST.TEXT.EXPANSION_VANILLA] = "Classic",
+        [CraftSim.CONST.TEXT.EXPANSION_THE_BURNING_CRUSADE] = "The Burning Crusade",
+        [CraftSim.CONST.TEXT.EXPANSION_WRATH_OF_THE_LICH_KING] = "Wrath of the Lich King",
+        [CraftSim.CONST.TEXT.EXPANSION_CATACLYSM] = "Cataclysm",
+        [CraftSim.CONST.TEXT.EXPANSION_MISTS_OF_PANDARIA] = "Mists of Pandaria",
+        [CraftSim.CONST.TEXT.EXPANSION_WARLORDS_OF_DRAENOR] = "Warlords of Draenor",
+        [CraftSim.CONST.TEXT.EXPANSION_LEGION] = "Legion",
+        [CraftSim.CONST.TEXT.EXPANSION_BATTLE_FOR_AZEROTH] = "Battle of Azeroth",
+        [CraftSim.CONST.TEXT.EXPANSION_SHADOWLANDS] = "Shadowlands",
+        [CraftSim.CONST.TEXT.EXPANSION_DRAGONFLIGHT] = "Dragonflight",
+
         -- Other Statnames
 
         [CraftSim.CONST.TEXT.STAT_SKILL] = "Skill",
@@ -452,6 +465,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Materials Quality 2",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Materials Quality 3",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Optimize Reagents",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON] = "Expansion Filters",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",

@@ -99,12 +99,28 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
     end
 
     ---@diagnostic disable-next-line: missing-parameter
-    local isDragonIsleRecipe = CraftSim.UTIL:IsDragonflightRecipe(recipeInfo.recipeID)
-    if isDragonIsleRecipe and recipeInfo.isEnchantingRecipe then
+    -- local isExpansionIncluded = CraftSim.UTIL:IsDragonflightRecipe(recipeInfo.recipeID)
+    local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
+    local includedExpansions = {}
+    for expansionID, included in pairs(CraftSimOptions.recipeScanFilteredExpansions) do
+        if included then
+            table.insert(includedExpansions, expansionID)
+        end
+    end
+    local recipeExpansionIncluded = CraftSim.GUTIL:Some(includedExpansions, function(expansionID)
+        local skillLineID = CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][expansionID]
+        return professionInfo.professionID == skillLineID
+    end)
+    if professionInfo.professionID == CraftSim.CONST.TRADESKILLLINEIDS[1][8] then
+        print(recipeInfo.name)
+        print("- recipeExpansionIncluded: " .. tostring(recipeExpansionIncluded))
+    end
+    if recipeExpansionIncluded and recipeInfo.isEnchantingRecipe then
         return true
     end
-    if isDragonIsleRecipe then
-        if recipeInfo and recipeInfo.supportsCraftingStats and not recipeInfo.isGatheringRecipe and not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft then
+    if recipeExpansionIncluded then
+        -- if recipeInfo and recipeInfo.supportsCraftingStats and not recipeInfo.isGatheringRecipe and not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft then
+        if recipeInfo and not recipeInfo.isGatheringRecipe and not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft then
             if recipeInfo.hyperlink then
                 local isGear = recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil
                 local isSoulbound = CraftSim.GUTIL:isItemSoulbound(CraftSim.GUTIL:GetItemIDByLink(recipeInfo.hyperlink))
@@ -134,7 +150,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
 end
 
 function CraftSim.RECIPE_SCAN:StartScan()
-    CraftSim.RECIPE_SCAN.currentResults = {}
+    wipe(CraftSim.RECIPE_SCAN.currentResults)
     CraftSim.RECIPE_SCAN.isScanning = true
 
     print("Scan Mode: " .. tostring(CraftSimOptions.recipeScanScanMode))

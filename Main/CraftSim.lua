@@ -60,6 +60,7 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanOnlyFavorites = false,
 	recipeScanOptimizeProfessionTools = false,
 	recipeScanScanMode = nil,
+	recipeScanFilteredExpansions = nil,
 
 	-- profit calc
 	customMulticraftConstant = CraftSim.CONST.MULTICRAFT_CONSTANT,
@@ -143,6 +144,9 @@ function CraftSim.MAIN:handleCraftSimOptionsUpdates()
 		CraftSimOptions.craftQueueRestockPerRecipeOptions = CraftSimOptions.craftQueueRestockPerRecipeOptions or {}
 		CraftSimOptions.customerHistoryAutoPurgeInterval = CraftSimOptions.customerHistoryAutoPurgeInterval or 2
 		CraftSimOptions.customerHistoryAutoPurgeLastPurge = CraftSimOptions.customerHistoryAutoPurgeLastPurge or nil
+		CraftSimOptions.recipeScanFilteredExpansions = CraftSimOptions.recipeScanFilteredExpansions or {
+			[CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = true,
+		}
 		CraftSimOptions.recipeScanScanMode = CraftSimOptions.recipeScanScanMode or
 			CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
 

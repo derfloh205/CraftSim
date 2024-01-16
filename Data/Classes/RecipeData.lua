@@ -759,8 +759,12 @@ function CraftSim.RecipeData:IsCrafterInfoCached()
         return true
     end
 
-    return self.professionGearCached and self.specializationDataCached and self.operationInfoCached and
-        self.recipeInfoCached and self.professionInfoCached
+    if not self.isOldWorldRecipe then
+        return self.professionGearCached and self.specializationDataCached and self.operationInfoCached and
+            self.recipeInfoCached and self.professionInfoCached
+    else
+        return self.recipeInfoCached and self.professionInfoCached
+    end
 end
 
 ---@return CraftSim.CrafterData
@@ -785,7 +789,7 @@ function CraftSim.RecipeData:IsDragonflightRecipe()
     if recipeInfo then
         local professionInfo = self.professionData.professionInfo
         local isDragonflightRecipe = professionInfo.professionID ==
-            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT
+            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT]
         return isDragonflightRecipe
     end
 

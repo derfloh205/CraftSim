@@ -376,6 +376,33 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitScanOptionsTab(scanOptionsTab)
         initialValue = CraftSimOptions.recipeScanUseInsight,
         clickCallback = function(_, checked) CraftSimOptions.recipeScanUseInsight = checked end
     }
+
+    content.expansionSelector = GGUI.CheckboxSelector {
+        savedVariablesTable = CraftSimOptions.recipeScanFilteredExpansions,
+        initialItems = GUTIL:Sort(GUTIL:Map(CraftSim.CONST.EXPANSION_IDS,
+            function(expansionID)
+                ---@type GGUI.CheckboxSelector.CheckboxItem
+                local item = {
+                    name = L(CraftSim.CONST.EXPANSION_LOCALIZATION_IDS[expansionID]),
+                    savedVariableProperty = expansionID,
+                    selectionID = expansionID,
+                }
+                return item
+            end), function(a, b)
+            return a.selectionID > b.selectionID
+        end),
+        selectionFrameOptions = {
+            backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+            sizeX = 240, sizeY = 260, anchorA = "LEFT", anchorB = "RIGHT",
+
+        },
+        buttonOptions = {
+            parent = content, anchorParent = content.useInsightCB.frame,
+            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = checkBoxSpacingY,
+            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON), offsetX = 20,
+            adjustWidth = true, sizeX = 20,
+        },
+    }
 end
 
 function CraftSim.RECIPE_SCAN:ResetResults()
