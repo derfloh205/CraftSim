@@ -14,7 +14,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("13.0.0"),
-        f.P .. f.g("RecipeScan") .. " no offers an expansion filter!",
+        f.P .. f.g("RecipeScan") .. " now offers an expansion filter!",
         f.a .. "- Scan ALL recipes (unlearned included) from ALL Expansions",
         f.a .. "  tanks FPS though and takes a while to complete",
         f.P .. f.g("Craft Queue") .. " now persists over sessions",
