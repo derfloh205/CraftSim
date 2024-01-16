@@ -13,6 +13,13 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("13.0.0"),
+        f.P .. f.g("Craft Queue") .. " now persists over sessions",
+        f.a .. "- It's now available for all your characters",
+        f.a .. "- You can even optimize and edit a recipe which was not queued by",
+        f.a .. "  the original crafter character!",
+        f.p .. "Rescaled the new design for the " .. f.bb("Specialization Info"),
+        f.a .. "  to fit all nodes into it.",
         newP("12.5.4"),
         f.P .. "Building the foundations for cross character recipe simulations",
         newP("12.5.3"),

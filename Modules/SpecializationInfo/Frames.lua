@@ -10,7 +10,7 @@ CraftSim.SPECIALIZATION_INFO.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
-    local sizeX = 310
+    local sizeX = 290
     local sizeY = 340
     local offsetX = 260
     local offsetY = 341
@@ -104,12 +104,12 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
 
         frame.content.nodeList = GGUI.FrameList {
             parent = frame.content, anchorParent = frame.content.statsText.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-            hideScrollbar = true, sizeY = 200, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA },
-            rowHeight = 20, offsetX = -25, offsetY = -15, scale = 1.2,
+            hideScrollbar = true, sizeY = 250, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA },
+            rowHeight = 20, offsetX = -5, offsetY = 0, scale = 1,
             columnOptions = {
                 {
                     label = "", -- node name
-                    width = 170,
+                    width = 180,
                 },
                 {
                     label = "", -- node ranks
