@@ -85,6 +85,12 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
 
         return CraftSim.CraftQueueItem(recipeData, serializedData.amount)
     end
+    print("crafter info not cached...")
+    print("recipeInfo: " .. tostring(recipeData.recipeInfoCached))
+    print("isCrafterInfoCached: " .. tostring(recipeData.isCrafterInfoCached))
+    print("professionGearCached: " .. tostring(recipeData.professionGearCached))
+    print("operationInfoCached: " .. tostring(recipeData.operationInfoCached))
+    print("specializationDataCached: " .. tostring(recipeData.specializationDataCached))
     -- if necessary recipeData could not be loaded from cache or is not fully cached return nil
     -- should only really happen if somehow it could not cache the recipe on crafter side due to a bug
     -- or if the player deleted the cache saved var during character switch

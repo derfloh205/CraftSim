@@ -51,7 +51,14 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     if self:IsCrafter() then
         self.recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID) -- only partial info is returned when not the crafter, so we need to cache it
-        CraftSimRecipeDataCache.recipeInfoCache[crafterUID][self.recipeID] = self.recipeInfo
+
+        -- if we are here too early for recipeInfo to be loaded, use the cached one
+        if self.recipeInfo and self.recipeInfo.categoryID == 0 then
+            self.recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][self.recipeID]
+        else
+            -- otherwise save to cache
+            CraftSimRecipeDataCache.recipeInfoCache[crafterUID][self.recipeID] = self.recipeInfo
+        end
     else
         self.recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][self.recipeID]
         if not self.recipeInfo then
@@ -727,7 +734,19 @@ function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
         return CraftSim.SpecializationData(self) -- will initialize without stats and nodeinfo
     else
         local specializationData = CraftSim.SpecializationData(self)
-        CraftSimRecipeDataCache.specializationDataCache[crafterUID][self.recipeID] = specializationData:Serialize()
+
+        -- if too early, use cache
+        if not self.isOldWorldRecipe and #specializationData.nodeData == 0 then
+            local specializationDataSerialized = CraftSimRecipeDataCache.specializationDataCache[crafterUID]
+                [self.recipeID]
+            if specializationDataSerialized then
+                specializationData = CraftSim.SpecializationData:Deserialize(specializationDataSerialized, self)
+            end
+        else
+            -- cache it
+            CraftSimRecipeDataCache.specializationDataCache[crafterUID][self.recipeID] = specializationData:Serialize()
+        end
+
         return specializationData
     end
 end

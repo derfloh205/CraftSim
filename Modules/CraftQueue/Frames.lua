@@ -93,7 +93,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             },
             {
                 label = "Crafter",
-                width = 100,
+                width = 130,
                 justifyOptions = { type = "H", align = "CENTER" }
             },
             {
@@ -157,7 +157,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     end
                 end
             },
-            sizeY = 230,
+            sizeY = 232,
             offsetY = -70,
             columnOptions = columnOptions,
             rowConstructor = function(columns)
