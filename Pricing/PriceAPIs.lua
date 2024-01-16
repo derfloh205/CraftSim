@@ -19,7 +19,6 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_APIS)
 
 function CraftSim.PRICE_API:InitPriceSource()
     local loadedSources = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
-    systemPrint("loaded sources: " .. #loadedSources)
 
     if #loadedSources == 0 then
         CraftSim.UTIL:SystemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) ..

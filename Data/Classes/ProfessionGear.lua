@@ -139,15 +139,13 @@ end
 ---@class CraftSim.ProfessionGear.Serialized
 ---@field itemLink string
 ---@field professionStats CraftSim.ProfessionStats.Serialized
----@field serializationID number -- to cache deserialized data for reusage of references
 
 ---@return CraftSim.ProfessionGear.Serialized
 function CraftSim.ProfessionGear:Serialize()
 	---@type CraftSim.ProfessionGear.Serialized
 	local serializedData = {
-		itemLink = self.item:GetItemLink(),
-		professionStats = self.professionStats:Serialize(),
-		serializationID = GetTimePreciseSec(),
+		itemLink = self.item and self.item:GetItemLink(),
+		professionStats = self.professionStats and self.professionStats:Serialize(),
 	}
 	return serializedData
 end
@@ -156,7 +154,7 @@ end
 ---@return CraftSim.ProfessionGear
 function CraftSim.ProfessionGear:Deserialize(serializedData)
 	local professionGear = CraftSim.ProfessionGear()
-	professionGear.item = Item:CreateFromItemLink(serializedData.itemLink)
+	professionGear.item = serializedData.itemLink and Item:CreateFromItemLink(serializedData.itemLink)
 	professionGear.professionStats = CraftSim.ProfessionStats:Deserialize(serializedData.professionStats)
 
 	return professionGear

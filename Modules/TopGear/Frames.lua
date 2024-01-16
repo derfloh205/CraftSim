@@ -187,7 +187,7 @@ function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData, isClear, export
         topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
     end
 
-    local emptyProfessionGearSet = CraftSim.ProfessionGearSet(recipeData.professionData.professionInfo.profession)
+    local emptyProfessionGearSet = CraftSim.ProfessionGearSet(recipeData)
     CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(emptyProfessionGearSet, exportMode)
 
     topGearFrame.content.equipButton:SetEnabled(false)

@@ -1498,7 +1498,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
 
         -- fill the selectors with profession items from the players bag but exclude for each selector all items that are selected
         local inventoryGear = CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
-        local equippedGear = CraftSim.ProfessionGearSet(recipeData.professionData.professionInfo.profession)
+        local equippedGear = CraftSim.ProfessionGearSet(recipeData)
         equippedGear:LoadCurrentEquippedSet()
         local equippedGearList = CraftSim.GUTIL:Filter(equippedGear:GetProfessionGearList(),
             function(gear) return gear and gear.item ~= nil end)
@@ -1540,7 +1540,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
 
         -- fill the selectors with profession items from the players bag but exclude for each selector all items that are selected
         local inventoryGear = CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
-        local equippedGear = CraftSim.ProfessionGearSet(recipeData.professionData.professionInfo.profession)
+        local equippedGear = CraftSim.ProfessionGearSet(recipeData)
         equippedGear:LoadCurrentEquippedSet()
         local equippedGearList = CraftSim.GUTIL:Filter(equippedGear:GetProfessionGearList(),
             function(gear) return gear and gear.item ~= nil end)

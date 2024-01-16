@@ -107,13 +107,27 @@ end
 
 function CraftSim.CraftQueue:RestoreFromCache()
     CraftSim.UTIL:StartProfiling("CraftQueue Item Restoration")
-    self.craftQueueItems = GUTIL:Map(CraftSimCraftQueueCache, function(craftQueueItemSerialized)
-        local craftQueueItem = CraftSim.CraftQueueItem:Deserialize(craftQueueItemSerialized)
-        if craftQueueItem then
-            craftQueueItem:CalculateCanCraft()
-            return craftQueueItem
-        end
-        return nil
-    end)
-    CraftSim.UTIL:StopProfiling("CraftQueue Item Restoration")
+
+    local function load()
+        self.craftQueueItems = GUTIL:Map(CraftSimCraftQueueCache, function(craftQueueItemSerialized)
+            local craftQueueItem = CraftSim.CraftQueueItem:Deserialize(craftQueueItemSerialized)
+            if craftQueueItem then
+                craftQueueItem:CalculateCanCraft()
+                return craftQueueItem
+            end
+            return nil
+        end)
+
+        CraftSim.UTIL:StopProfiling("CraftQueue Item Restoration")
+    end
+
+    -- wait til all professionInfos are loaded, then put deserialized items into queue
+    GUTIL:WaitFor(function()
+            return GUTIL:Every(CraftSimCraftQueueCache,
+                function(craftQueueItemSerialized)
+                    local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(craftQueueItemSerialized.recipeID)
+                    return professionInfo and professionInfo.profession
+                end)
+        end,
+        load)
 end

@@ -141,7 +141,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         false
 
     ---@type CraftSim.ProfessionGearSet
-    self.professionGearSet = CraftSim.ProfessionGearSet(self.professionData.professionInfo.profession)
+    self.professionGearSet = CraftSim.ProfessionGearSet(self)
 
     local baseOperationInfo = nil
     if self.orderData then

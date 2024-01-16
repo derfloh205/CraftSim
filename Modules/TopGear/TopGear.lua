@@ -190,17 +190,19 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
                         local professionGear = CraftSim.ProfessionGear()
                         professionGear:SetItem(itemLink)
                         table.insert(inventoryGear, professionGear)
-                        table.insert(CraftSimRecipeDataCache.professionGearCache[crafterUID]
-                            [recipeData.professionData.professionInfo.profession]
-                            .availableProfessionGear, itemLink)
+
+                        if not GUTIL:Find(CraftSimRecipeDataCache.professionGearCache[crafterUID]
+                                [recipeData.professionData.professionInfo.profession]
+                                .availableProfessionGear, function(g) return g.itemLink == itemLink end) then
+                            table.insert(CraftSimRecipeDataCache.professionGearCache[crafterUID]
+                                [recipeData.professionData.professionInfo.profession]
+                                .availableProfessionGear, professionGear:Serialize())
+                        end
                     end
                 end
             end
         end
-        CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession]
-        .availableProfessionGear = GUTIL:ToSet(CraftSimRecipeDataCache.professionGearCache[crafterUID]
-            [recipeData.professionData.professionInfo.profession]
-            .availableProfessionGear)
+
         CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession].cached = true
         return inventoryGear
     else
@@ -210,10 +212,8 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
         recipeData.professionGearCached = professionGearCacheData.cached
 
         return GUTIL:Map(professionGearCacheData.availableProfessionGear,
-            function(itemLink)
-                local professionGear = CraftSim.ProfessionGear()
-                professionGear:SetItem(itemLink)
-                return professionGear
+            function(professionGearSerialized)
+                return CraftSim.ProfessionGear:Deserialize(professionGearSerialized)
             end)
     end
 end
@@ -221,15 +221,11 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.ProfessionGearSet[] topGearSets
 function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
-    local equippedGear = CraftSim.ProfessionGearSet(recipeData.professionData.professionInfo.profession)
+    local equippedGear = CraftSim.ProfessionGearSet(recipeData)
     if recipeData:IsCrafter() then
         equippedGear:LoadCurrentEquippedSet()
     else
-        equippedGear:LoadCurrentEquippedSet({
-            name = recipeData.crafter,
-            realm = recipeData.crafterRealm,
-            class = recipeData.crafterClass,
-        })
+        equippedGear:LoadCurrentEquippedSet(recipeData.crafterData)
     end
     local inventoryGear = CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
 
@@ -310,7 +306,7 @@ function CraftSim.TOPGEAR:GetProfessionGearCombinations(recipeData)
 
     local function convertToProfessionGearSet(combos)
         return GUTIL:Map(combos, function(combo)
-            local professionGearSet = CraftSim.ProfessionGearSet(recipeData.professionData.professionInfo.profession)
+            local professionGearSet = CraftSim.ProfessionGearSet(recipeData)
             local tool = combo[1]
             local gear1 = combo[2]
             local gear2 = combo[3]

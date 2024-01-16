@@ -450,6 +450,10 @@ function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
     local recipeInfo = CraftSimRecipeDataCache.cachedRecipeIDs[recipeID] or C_TradeSkillUI.GetRecipeInfo(recipeID)
     if recipeInfo then
         local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
+        if not professionInfo.profession then
+            print("No Profession loaded yet?", false, true)
+            print(professionInfo, true)
+        end
         return C_TradeSkillUI.IsRecipeInSkillLine(recipeInfo.recipeID,
             CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT)
     end

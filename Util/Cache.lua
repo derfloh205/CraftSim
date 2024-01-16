@@ -18,7 +18,7 @@ CraftSimRecipeIDs = CraftSimRecipeIDs or {} -- itemToRecipe cache
 ---@class CraftSim.ProfessionGearCacheData
 ---@field cached boolean
 ---@field equippedGear CraftSim.ProfessionGearSet.Serialized?
----@field availableProfessionGear? string[] -- list of itemlinks
+---@field availableProfessionGear CraftSim.ProfessionGear.Serialized[]
 
 ---@class CraftSim.RecipeDataCache
 ---@field cachedRecipeIDs table<string, table<number, number[]>> table<crafterGUID, table<profession, recipeID[]>

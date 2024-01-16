@@ -2,19 +2,18 @@
 local CraftSim = select(2, ...)
 
 ---@class CraftSim.ProfessionGearSet
----@overload fun(professionID: Enum.Profession) : CraftSim.ProfessionGearSet
+---@overload fun(recipeData: CraftSim.RecipeData) : CraftSim.ProfessionGearSet
 CraftSim.ProfessionGearSet = CraftSim.Object:extend()
 
----@param professionID number
-function CraftSim.ProfessionGearSet:new(professionID)
-    self.professionID = professionID
-    self.professionGearSlots = C_TradeSkillUI.GetProfessionSlots(professionID)
-    if professionID ~= Enum.Profession.Cooking then
+---@param recipeData CraftSim.RecipeData
+function CraftSim.ProfessionGearSet:new(recipeData)
+    self.professionID = recipeData.professionData.professionInfo.profession
+    self.recipeData = recipeData
+    self.professionGearSlots = C_TradeSkillUI.GetProfessionSlots(self.professionID)
+    self.isCooking = recipeData.isCooking
+    if self.isCooking then
         ---@type CraftSim.ProfessionGear?
         self.gear1 = CraftSim.ProfessionGear()
-        self.isCooking = false
-    else
-        self.isCooking = true
     end
     ---@type CraftSim.ProfessionGear
     self.gear2 = CraftSim.ProfessionGear()
@@ -24,10 +23,10 @@ function CraftSim.ProfessionGearSet:new(professionID)
     self.professionStats = CraftSim.ProfessionStats()
 end
 
----@param crafterData CraftSim.CrafterData?
-function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet(crafterData)
-    if not crafterData then
-        local crafterUID = select(1, UnitNameUnmodified("player")) .. "-" .. GetNormalizedRealmName()
+function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet()
+    local crafterUID = self.recipeData:GetCrafterUID()
+
+    if self.recipeData:IsCrafter() then
         CraftSimRecipeDataCache.professionGearCache[crafterUID] = CraftSimRecipeDataCache.professionGearCache
             [crafterUID] or {}
         CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] =
@@ -49,7 +48,6 @@ function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet(crafterData)
 
         CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear = self:Serialize()
     else
-        local crafterUID = crafterData.name .. "-" .. crafterData.realm
         CraftSimRecipeDataCache.professionGearCache[crafterUID] = CraftSimRecipeDataCache.professionGearCache
             [crafterUID] or {}
         CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] =
@@ -107,6 +105,9 @@ function CraftSim.ProfessionGearSet:GetProfessionGearListOrderedRight()
 end
 
 function CraftSim.ProfessionGearSet:Equals(professionGearSet)
+    if self.recipeData.recipeID ~= professionGearSet.recipeData.recipeID then
+        return false
+    end
     if self.isCooking ~= professionGearSet.isCooking then
         return false
     end
@@ -163,10 +164,9 @@ function CraftSim.ProfessionGearSet:Equals(professionGearSet)
     end
 end
 
----@param crafterData CraftSim.CrafterData?
-function CraftSim.ProfessionGearSet:IsEquipped(crafterData)
-    local equippedSet = CraftSim.ProfessionGearSet(self.professionID)
-    equippedSet:LoadCurrentEquippedSet(crafterData)
+function CraftSim.ProfessionGearSet:IsEquipped()
+    local equippedSet = CraftSim.ProfessionGearSet(self.recipeData)
+    equippedSet:LoadCurrentEquippedSet()
 
     return self:Equals(equippedSet)
 end
@@ -187,7 +187,7 @@ function CraftSim.ProfessionGearSet:Equip()
 end
 
 function CraftSim.ProfessionGearSet:Copy()
-    local copy = CraftSim.ProfessionGearSet(self.professionID)
+    local copy = CraftSim.ProfessionGearSet(self.recipeData)
     copy.professionStats = self.professionStats:Copy()
     if self.gear1 then
         copy.gear1 = self.gear1:Copy()
@@ -266,8 +266,8 @@ end
 
 ---@param serializedData CraftSim.ProfessionGearSet.Serialized
 ---@return CraftSim.ProfessionGearSet
-function CraftSim.ProfessionGearSet:Deserialize(serializedData)
-    local professionGearSet = CraftSim.ProfessionGearSet(serializedData.profession)
+function CraftSim.ProfessionGearSet:Deserialize(serializedData, recipeData)
+    local professionGearSet = CraftSim.ProfessionGearSet(recipeData)
     if professionGearSet.isCooking then
         professionGearSet.gear2 = CraftSim.ProfessionGear:Deserialize(serializedData.gear2)
         professionGearSet.tool = CraftSim.ProfessionGear:Deserialize(serializedData.tool)
