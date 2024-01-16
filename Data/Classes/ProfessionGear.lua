@@ -19,7 +19,10 @@ function CraftSim.ProfessionGear:Equals(professionGear)
 	elseif not self.item or not professionGear.item then
 		return false
 	end
-	return self.item:GetItemLink() == professionGear.item:GetItemLink()
+	-- remove player guid references before comparing
+	local itemLinkA = string.gsub(self.item:GetItemLink(), "Player.-:", "")
+	local itemLinkB = string.gsub(professionGear.item:GetItemLink(), "Player.-:", "")
+	return itemLinkA == itemLinkB
 end
 
 ---@param itemLink string?

@@ -1507,7 +1507,13 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
         equippedGear:LoadCurrentEquippedSet()
         local equippedGearList = CraftSim.GUTIL:Filter(equippedGear:GetProfessionGearList(),
             function(gear) return gear and gear.item ~= nil end)
+        ---@type CraftSim.ProfessionGear[]
         local allGear = CraftSim.GUTIL:Concat({ inventoryGear, equippedGearList })
+
+        allGear = GUTIL:ToSet(allGear, function(gear)
+            local compareLink = gear.item:GetItemLink():gsub("Player.':", "")
+            return compareLink
+        end)
 
         local gearSlotItems = GUTIL:Filter(allGear, function(gear)
             local isGearItem = gear.item:GetInventoryType() == Enum.InventoryType.IndexProfessionGearType
