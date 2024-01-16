@@ -448,7 +448,7 @@ end
 --- without using recipeData
 ---@param recipeID number
 function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
-    local recipeInfo = CraftSimRecipeDataCache.cachedRecipeIDs[recipeID] or C_TradeSkillUI.GetRecipeInfo(recipeID)
+    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
     if recipeInfo then
         local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
         if not professionInfo.profession then
@@ -456,9 +456,9 @@ function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
             print(professionInfo, true)
         end
 
+        -- do not use C_TradeSkillUI.IsRecipeInSkillLine because its not using cached data..
         local IsDragonflightRecipe = professionInfo.professionID ==
-        CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT
-        -- do not use C_TradeSkillUI.IsRecipeInSkillLin because its not using cached data..
+            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT
         return IsDragonflightRecipe
     end
 

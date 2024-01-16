@@ -119,6 +119,8 @@ function CraftSim.CraftQueue:RestoreFromCache()
             return nil
         end)
 
+        print("CraftQueue Restore Finished")
+
         CraftSim.UTIL:StopProfiling("CraftQueue Item Restoration")
     end
 

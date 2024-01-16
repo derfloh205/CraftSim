@@ -70,11 +70,11 @@ end
 ---@param serializedData CraftSim.CraftQueueItem.Serialized
 ---@return CraftSim.CraftQueueItem?
 function CraftSim.CraftQueueItem:Deserialize(serializedData)
+    print("Deserialize CraftQueueItem")
     -- first create a recipeData
     local recipeData = CraftSim.RecipeData(serializedData.recipeID, nil, nil, serializedData.crafterData)
 
     if recipeData and recipeData.isCrafterInfoCached then
-        -- update recipeData
         recipeData:SetReagentsByCraftingReagentInfoTbl(GUTIL:Concat { serializedData.requiredReagents, serializedData.optionalReagents })
 
         recipeData:SetNonQualityReagentsMax()
@@ -83,14 +83,14 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
 
         recipeData:Update()
 
+        print("recipeInfo: " .. tostring(recipeData.recipeInfoCached))
+        print("isCrafterInfoCached: " .. tostring(recipeData.isCrafterInfoCached))
+        print("professionGearCached: " .. tostring(recipeData.professionGearCached))
+        print("operationInfoCached: " .. tostring(recipeData.operationInfoCached))
+        print("specializationDataCached: " .. tostring(recipeData.specializationDataCached))
         return CraftSim.CraftQueueItem(recipeData, serializedData.amount)
     end
     print("crafter info not cached...")
-    print("recipeInfo: " .. tostring(recipeData.recipeInfoCached))
-    print("isCrafterInfoCached: " .. tostring(recipeData.isCrafterInfoCached))
-    print("professionGearCached: " .. tostring(recipeData.professionGearCached))
-    print("operationInfoCached: " .. tostring(recipeData.operationInfoCached))
-    print("specializationDataCached: " .. tostring(recipeData.specializationDataCached))
     -- if necessary recipeData could not be loaded from cache or is not fully cached return nil
     -- should only really happen if somehow it could not cache the recipe on crafter side due to a bug
     -- or if the player deleted the cache saved var during character switch

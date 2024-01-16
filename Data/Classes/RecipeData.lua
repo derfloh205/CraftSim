@@ -26,10 +26,12 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     local crafterUID = self:GetCrafterUID()
 
-    -- important for recipedata of alts to check if data was cached
+    -- important for recipedata of alts to check if data was cached (and for any recipe data creation b4 tradeskill is ready)
     self.specializationDataCached = false
     self.operationInfoCached = false
     self.professionGearCached = false
+    self.recipeInfoCached = false
+    self.professionInfoCached = false
 
     if not recipeID then
         return -- e.g. when deserializing
@@ -37,7 +39,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     ---@type CraftSim.ProfessionData
     self.professionData = CraftSim.ProfessionData(self, recipeID)
-
+    self.professionInfoCached = self.professionData.professionInfoCached
 
     if isWorkOrder then
         ---@type CraftingOrderInfo
@@ -758,7 +760,7 @@ function CraftSim.RecipeData:IsCrafterInfoCached()
     end
 
     return self.professionGearCached and self.specializationDataCached and self.operationInfoCached and
-        self.recipeInfoCached
+        self.recipeInfoCached and self.professionInfoCached
 end
 
 ---@return CraftSim.CrafterData
@@ -779,16 +781,12 @@ function CraftSim.RecipeData:CrafterDataEquals(crafterData)
 end
 
 function CraftSim.RecipeData:IsDragonflightRecipe()
-    local print = CraftSim.UTIL:SetDebugPrint("CRAFTQ")
-    print("check dragonflight recipe")
     local recipeInfo = self.recipeInfo
     if recipeInfo then
-        print("recipeInfo: ")
-        print(recipeInfo, true)
         local professionInfo = self.professionData.professionInfo
-        print("professionInfo: ")
-        print(professionInfo, true)
-        return professionInfo.profession == CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT
+        local isDragonflightRecipe = professionInfo.professionID ==
+            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT
+        return isDragonflightRecipe
     end
 
     return false

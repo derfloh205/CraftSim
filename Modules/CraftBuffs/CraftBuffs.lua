@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 local L = CraftSim.UTIL:GetLocalizer()
 
 ---@class CraftSim.CRAFT_BUFFS : Frame
-CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents("COMBAT_LOG_EVENT_UNFILTERED")
+CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents({ "COMBAT_LOG_EVENT_UNFILTERED" })
 
 --- Buffs created by this method do not have a recipeData reference!
 ---@param profession Enum.Profession
