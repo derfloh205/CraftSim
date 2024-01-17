@@ -52,6 +52,18 @@ CraftSimRecipeMap = CraftSimRecipeMap or {}
 ---@type CraftSim.CraftQueueItem.Serialized[]
 CraftSimCraftQueueCache = CraftSimCraftQueueCache or {}
 
+function CraftSim.CACHE:HandleCraftSimCacheUpdates()
+    -- init default cache fields in case of cache field updates
+    if CraftSimRecipeDataCache then
+        CraftSimRecipeDataCache.cachedRecipeIDs = CraftSimRecipeDataCache.cachedRecipeIDs or {}
+        CraftSimRecipeDataCache.recipeInfoCache = CraftSimRecipeDataCache.recipeInfoCache or {}
+        CraftSimRecipeDataCache.professionInfoCache = CraftSimRecipeDataCache.professionInfoCache or {}
+        CraftSimRecipeDataCache.operationInfoCache = CraftSimRecipeDataCache.operationInfoCache or {}
+        CraftSimRecipeDataCache.specializationDataCache = CraftSimRecipeDataCache.specializationDataCache or {}
+        CraftSimRecipeDataCache.professionGearCache = CraftSimRecipeDataCache.professionGearCache or {}
+    end
+end
+
 function CraftSim.CACHE:GetFromCache(cache, entryID)
     return cache[entryID]
 end

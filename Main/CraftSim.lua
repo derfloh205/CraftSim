@@ -107,7 +107,7 @@ function CraftSim.MAIN:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 	end
 end
 
-function CraftSim.MAIN:handleCraftSimOptionsUpdates()
+function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 	if CraftSimOptions then
 		CraftSimOptions.tsmPriceKey = nil
 		CraftSimOptions.tsmPriceKeyMaterials = CraftSimOptions.tsmPriceKeyMaterials or
@@ -359,7 +359,8 @@ end
 
 function CraftSim.MAIN:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
-		CraftSim.MAIN:handleCraftSimOptionsUpdates()
+		CraftSim.MAIN:HandleCraftSimOptionsUpdates()
+		CraftSim.CACHE:HandleCraftSimCacheUpdates()
 		CraftSim.MAIN:InitializeMinimapButton()
 
 		CraftSim.LOCAL:Init()
