@@ -92,7 +92,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                 justifyOptions = { type = "H", align = "CENTER" }
             },
             {
-                label = "Crafter",
+                label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_CRAFTER_HEADER),
                 width = 130,
                 justifyOptions = { type = "H", align = "CENTER" }
             },
@@ -654,7 +654,7 @@ end
 ---@param anchorParent Region
 ---@return CraftSim.CRAFTQ.EditRecipeFrame editRecipeFrame
 function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
-    local editFrameX = 500
+    local editFrameX = 600
     local editFrameY = 330
     ---@class CraftSim.CRAFTQ.EditRecipeFrame : GGUI.Frame
     local editRecipeFrame = GGUI.Frame {
@@ -673,7 +673,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
 
     editRecipeFrame.content.recipeName = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.title.frame, anchorA = "TOP", anchorB = "BOTTOM",
-        text = "Recipe Name", scale = 1.5, offsetY = -10,
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_NAME_LABEL), scale = 1.5, offsetY = -10,
     }
 
     -- required reagent frames (only for quality reagents as the non quality ones are fixed anyway)
@@ -858,7 +858,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
     -- optional reagent slots
     editRecipeFrame.content.optionalReagentsTitle = GGUI.Text {
         parent = optionalReagentsFrame, anchorParent = optionalReagentsFrame, anchorA = "TOPLEFT", anchorB = "TOPLEFT",
-        text = "Optional Reagents", justifyOptions = { type = "H", align = "LEFT" }
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIONAL_REAGENTS_LABEL), justifyOptions = { type = "H", align = "LEFT" }
     }
     ---@class CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector : GGUI.ItemSelector
     ---@field slot CraftSim.OptionalReagentSlot?
@@ -879,7 +879,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
             offsetY = itemSelectorBaseOffsetY,
             sizeX = itemSelectorSizeX, sizeY = itemSelectorSizeY, selectionFrameOptions = {
             backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-            title = "Select", anchorA = anchorA, anchorB = anchorB, offsetX = offsetX, offsetY = offsetY
+            title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_REAGENTS_SELECT_LABEL), anchorA = anchorA, anchorB = anchorB, offsetX = offsetX, offsetY = offsetY
         },
             emptyIcon = CraftSim.CONST.ATLAS_TEXTURES.TRADESKILL_ICON_ADD, isAtlas = true, onSelectCallback = onSelectCallback
         })
@@ -905,7 +905,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
 
     editRecipeFrame.content.finishingReagentsTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = optionalReagentsFrame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        text = "Finishing Reagents", justifyOptions = { type = "H", align = "LEFT" }
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_FINISHING_REAGENTS_LABEL), justifyOptions = { type = "H", align = "LEFT" }
     }
 
     ---@type CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector[]
@@ -918,7 +918,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
 
     editRecipeFrame.content.professionGearTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.optionalReagentsTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 20,
-        text = "Profession Gear", justifyOptions = { type = "H", align = "LEFT" }
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_PROFESSION_GEAR_LABEL), justifyOptions = { type = "H", align = "LEFT" }
     }
 
     ---@class CraftSim.CRAFTQ.EditRecipeFrame.ProfessionGearSelector : GGUI.ItemSelector
@@ -959,7 +959,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
 
     editRecipeFrame.content.optimizeReagents = GGUI.Button {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.professionGearTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -50,
-        label = "Optimize Profit", adjustWidth = true,
+        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON), adjustWidth = true,
         clickCallback = function()
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 editRecipeFrame.craftQueueItem.recipeData:OptimizeProfit(true)
@@ -971,7 +971,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
 
     editRecipeFrame.content.craftingCostsTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content, anchorA = "BOTTOM", anchorB = "BOTTOM", offsetX = -30,
-        offsetY = 40, text = "Crafting Costs: ",
+        offsetY = 40, text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CRAFTING_COSTS_LABEL),
     }
     editRecipeFrame.content.craftingCostsValue = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.craftingCostsTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
@@ -979,7 +979,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
     }
     editRecipeFrame.content.averageProfitTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.craftingCostsTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        offsetY = -5, text = "Average Profit: ",
+        offsetY = -5, text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_AVERAGE_PROFIT_LABEL),
     }
     editRecipeFrame.content.averageProfitValue = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.averageProfitTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
@@ -988,7 +988,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
 
     editRecipeFrame.content.resultTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.optimizeReagents.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        offsetY = -5, text = "Results",
+        offsetY = -5, text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL),
     }
     local resultItemSize = 25
     editRecipeFrame.content.expectedItemIcon = GGUI.Icon {
