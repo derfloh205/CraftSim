@@ -108,6 +108,11 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitRecipeScanTab(recipeScanTab)
         end
     })
 
+    content.resultAmount = GGUI.Text {
+        parent = content, anchorParent = content.scanButton.frame, anchorA = "RIGHT", anchorB = "LEFT",
+        offsetX = -15, justifyOptions = { type = "H", align = "RIGHT" }, text = "",
+    }
+
     content.cancelScanButton:Hide()
 
     local columnOptions = {
@@ -408,6 +413,7 @@ end
 function CraftSim.RECIPE_SCAN:ResetResults()
     local resultList = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab.content.resultList --[[@as GGUI.FrameList]]
     resultList:Remove()
+    CraftSim.RECIPE_SCAN.frame.content.recipeScanTab.content.resultAmount:SetText("")
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -516,14 +522,5 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(recipeData)
                 anchor = "ANCHOR_CURSOR",
             }
         end)
-
-    if CraftSimOptions.recipeScanSortByProfitMargin then
-        resultList:UpdateDisplay(function(rowA, rowB)
-            return rowA.relativeProfit > rowB.relativeProfit
-        end)
-    else
-        resultList:UpdateDisplay(function(rowA, rowB)
-            return rowA.averageProfit > rowB.averageProfit
-        end)
-    end
+    resultList:UpdateDisplay()
 end

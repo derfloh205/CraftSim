@@ -3,7 +3,6 @@ local CraftSim = select(2, ...)
 
 CraftSim.RECIPE_SCAN = {}
 
-CraftSim.RECIPE_SCAN.scanInterval = 0
 CraftSim.RECIPE_SCAN.frame = nil
 CraftSim.RECIPE_SCAN.isScanning = false
 
@@ -42,14 +41,15 @@ end
 
 function CraftSim.RECIPE_SCAN:UpdateScanPercent(currentProgress, maxProgress)
     local currentPercentage = CraftSim.GUTIL:Round(currentProgress / (maxProgress / 100))
+    local frame = CraftSim.RECIPE_SCAN.frame
+    local recipeScanTab = frame.content.recipeScanTab
+    local content = recipeScanTab.content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
 
     if currentPercentage % 1 == 0 then
-        local frame = CraftSim.RECIPE_SCAN.frame
-        local recipeScanTab = frame.content.recipeScanTab
-        local content = recipeScanTab.content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
         content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) ..
             " " .. currentPercentage .. "%")
     end
+    content.resultAmount:SetText(currentProgress .. "/" .. maxProgress)
 end
 
 function CraftSim.RECIPE_SCAN:EndScan()
@@ -58,7 +58,19 @@ function CraftSim.RECIPE_SCAN:EndScan()
     CraftSim.RECIPE_SCAN:ToggleScanButton(true)
     CraftSim.RECIPE_SCAN.isScanning = false
 
-    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay() -- TODO: maybe only the button...
+    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
+
+    --sort scan results?
+    local resultList = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab.content.resultList --[[@as GGUI.FrameList]]
+    if CraftSimOptions.recipeScanSortByProfitMargin then
+        resultList:UpdateDisplay(function(rowA, rowB)
+            return rowA.relativeProfit > rowB.relativeProfit
+        end)
+    else
+        resultList:UpdateDisplay(function(rowA, rowB)
+            return rowA.averageProfit > rowB.averageProfit
+        end)
+    end
 end
 
 ---@param recipeID number
@@ -99,14 +111,23 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
     end
 
     ---@diagnostic disable-next-line: missing-parameter
-    -- local isExpansionIncluded = CraftSim.UTIL:IsDragonflightRecipe(recipeInfo.recipeID)
     local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
+
+    -- if recipe does not have any profession info, exclude recipe
+    -- it seems some pandaren recipes may not have this info such as C_TradeSkillUI.GetProfessionInfoByRecipeID(381364)
+    if not professionInfo or not professionInfo.profession or not professionInfo.professionID then
+        return false
+    end
+
     local includedExpansions = {}
     for expansionID, included in pairs(CraftSimOptions.recipeScanFilteredExpansions) do
         if included then
             table.insert(includedExpansions, expansionID)
         end
     end
+    print("Filter Recipe: " ..
+        tostring(recipeInfo.name) ..
+        "(" .. tostring(recipeInfo.recipeID) .. ")" .. " P: " .. tostring(professionInfo.profession))
     local recipeExpansionIncluded = CraftSim.GUTIL:Some(includedExpansions, function(expansionID)
         local skillLineID = CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][expansionID]
         return professionInfo.professionID == skillLineID
@@ -217,10 +238,9 @@ function CraftSim.RECIPE_SCAN:StartScan()
             table.insert(CraftSim.RECIPE_SCAN.currentResults, recipeData)
 
             currentIndex = currentIndex + 1
-            C_Timer.After(CraftSim.RECIPE_SCAN.scanInterval, scanRecipesByInterval)
+            RunNextFrame(scanRecipesByInterval)
         end
-        -- so we can display them smoothly
-        -- TODO: should we also wait for the reagents to load?
+        -- since the result links are needed for calculations and probably not loaded within a scan
         CraftSim.GUTIL:ContinueOnAllItemsLoaded(recipeData.resultData.itemsByQuality, continueScan)
     end
 
