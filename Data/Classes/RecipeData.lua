@@ -218,6 +218,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
             self.recipeID)
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] = GUTIL:ToSet(
             CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession])
+
+        CraftSimRecipeDataCache.altClassCache[crafterUID] = UnitClass("player")
     end
 end
 

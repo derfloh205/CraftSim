@@ -27,6 +27,7 @@ CraftSimRecipeIDs = CraftSimRecipeIDs or {} -- itemToRecipe cache
 ---@field operationInfoCache table<string, table<number, CraftingOperationInfo>> table<crafterGUID, table<recipeID, CraftingOperationInfo>>
 ---@field specializationDataCache table<string, table<number, CraftSim.SpecializationData.Serialized>?> table<crafterGUID, table<recipeID, CraftSim.SpecializationData.Serialized>>
 ---@field professionGearCache table<string, table<number, CraftSim.ProfessionGearCacheData>> table<crafterGUID, table<profession, CraftSim.ProfessionGearCacheData>>
+---@field altClassCache table<string, ClassFile> table<crafterUID, ClassFile>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     cachedRecipeIDs = {},
     recipeInfoCache = {},
@@ -34,6 +35,7 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     operationInfoCache = {},
     specializationDataCache = {},
     professionGearCache = {},
+    altClassCache = {}
 }
 
 CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
@@ -61,6 +63,7 @@ function CraftSim.CACHE:HandleCraftSimCacheUpdates()
         CraftSimRecipeDataCache.operationInfoCache = CraftSimRecipeDataCache.operationInfoCache or {}
         CraftSimRecipeDataCache.specializationDataCache = CraftSimRecipeDataCache.specializationDataCache or {}
         CraftSimRecipeDataCache.professionGearCache = CraftSimRecipeDataCache.professionGearCache or {}
+        CraftSimRecipeDataCache.altClassCache = CraftSimRecipeDataCache.altClassCache or {}
     end
 end
 

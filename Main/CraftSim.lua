@@ -61,6 +61,7 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanOptimizeProfessionTools = false,
 	recipeScanScanMode = nil,
 	recipeScanFilteredExpansions = nil,
+	recipeScanAltProfessions = nil,
 
 	-- profit calc
 	customMulticraftConstant = CraftSim.CONST.MULTICRAFT_CONSTANT,
@@ -147,6 +148,7 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 		CraftSimOptions.recipeScanFilteredExpansions = CraftSimOptions.recipeScanFilteredExpansions or {
 			[CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = true,
 		}
+		CraftSimOptions.recipeScanIncludedProfessions = CraftSimOptions.recipeScanIncludedProfessions or {}
 		CraftSimOptions.recipeScanScanMode = CraftSimOptions.recipeScanScanMode or
 			CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
 

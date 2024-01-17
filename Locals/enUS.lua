@@ -28,6 +28,22 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.EXPANSION_SHADOWLANDS] = "Shadowlands",
         [CraftSim.CONST.TEXT.EXPANSION_DRAGONFLIGHT] = "Dragonflight",
 
+        -- professions
+
+        [CraftSim.CONST.TEXT.PROFESSIONS_BLACKSMITHING] = "Blacksmithing",
+        [CraftSim.CONST.TEXT.PROFESSIONS_LEATHERWORKING] = "Leatherworking",
+        [CraftSim.CONST.TEXT.PROFESSIONS_ALCHEMY] = "Alchemy",
+        [CraftSim.CONST.TEXT.PROFESSIONS_HERBALISM] = "Herbalism",
+        [CraftSim.CONST.TEXT.PROFESSIONS_COOKING] = "Cooking",
+        [CraftSim.CONST.TEXT.PROFESSIONS_MINING] = "Mining",
+        [CraftSim.CONST.TEXT.PROFESSIONS_TAILORING] = "Tailoring",
+        [CraftSim.CONST.TEXT.PROFESSIONS_ENGINEERING] = "Engineering",
+        [CraftSim.CONST.TEXT.PROFESSIONS_ENCHANTING] = "Enchanting",
+        [CraftSim.CONST.TEXT.PROFESSIONS_FISHING] = "Fishing",
+        [CraftSim.CONST.TEXT.PROFESSIONS_SKINNING] = "Skinning",
+        [CraftSim.CONST.TEXT.PROFESSIONS_JEWELCRAFTING] = "Jewelcrafting",
+        [CraftSim.CONST.TEXT.PROFESSIONS_INSCRIPTION] = "Inscription",
+
         -- Other Statnames
 
         [CraftSim.CONST.TEXT.STAT_SKILL] = "Skill",
@@ -466,7 +482,11 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Materials Quality 2",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Materials Quality 3",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Optimize Reagents",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON] = "Expansion Filters",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON] = "Expansions",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ALTPROFESSIONS_FILTER_BUTTON] = "Alt Professions",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_ALT_PROFESSION_HELP_TOOLTIP] =
+            "Filter to include cached profession recipes from your alts." ..
+            f.r("\n\n(Only prior visited or scanned recipes of an alt will be available)"),
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",

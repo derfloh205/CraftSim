@@ -19,7 +19,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "  profession information",
         f.a .. "- Changed the scan behaviour so it sorts once at the end of the scan",
         f.a .. "  instead of after every recipe to heavily increase performance",
-        f.a .. "- Scanning every recipe of every expansion is now unironically possible",
+        f.a .. "- Scanning all recipes of all expansions now unironically possible",
         f.a .. "- Scan Progress now shows the exact recipe amount",
         newP("13.0.2"),
         f.p .. "Recrafting Orders should now have the correct reagent amount",

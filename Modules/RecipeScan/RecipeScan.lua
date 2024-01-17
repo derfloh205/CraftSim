@@ -1,7 +1,12 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+---@class CraftSim.RECIPE_SCAN
 CraftSim.RECIPE_SCAN = {}
+
+local GUTIL = CraftSim.GUTIL
+
+local L = CraftSim.UTIL:GetLocalizer()
 
 CraftSim.RECIPE_SCAN.frame = nil
 CraftSim.RECIPE_SCAN.isScanning = false
@@ -40,7 +45,7 @@ function CraftSim.RECIPE_SCAN:ToggleScanButton(value)
 end
 
 function CraftSim.RECIPE_SCAN:UpdateScanPercent(currentProgress, maxProgress)
-    local currentPercentage = CraftSim.GUTIL:Round(currentProgress / (maxProgress / 100))
+    local currentPercentage = GUTIL:Round(currentProgress / (maxProgress / 100))
     local frame = CraftSim.RECIPE_SCAN.frame
     local recipeScanTab = frame.content.recipeScanTab
     local content = recipeScanTab.content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
@@ -90,7 +95,7 @@ function CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCacheByProfessionID(professionI
 end
 
 ---@param recipeInfo TradeSkillRecipeInfo
-function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
+function CraftSim.RECIPE_SCAN.FilterRecipeInfo(recipeInfo)
     if tContains(CraftSim.CONST.ALCHEMICAL_EXPERIMENTATION_RECIPE_IDS, recipeInfo.recipeID) then
         return false
     end
@@ -128,7 +133,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
     print("Filter Recipe: " ..
         tostring(recipeInfo.name) ..
         "(" .. tostring(recipeInfo.recipeID) .. ")" .. " P: " .. tostring(professionInfo.profession))
-    local recipeExpansionIncluded = CraftSim.GUTIL:Some(includedExpansions, function(expansionID)
+    local recipeExpansionIncluded = GUTIL:Some(includedExpansions, function(expansionID)
         local skillLineID = CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][expansionID]
         return professionInfo.professionID == skillLineID
     end)
@@ -144,7 +149,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
         if recipeInfo and not recipeInfo.isGatheringRecipe and not recipeInfo.isSalvageRecipe and not recipeInfo.isRecraft then
             if recipeInfo.hyperlink then
                 local isGear = recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil
-                local isSoulbound = CraftSim.GUTIL:isItemSoulbound(CraftSim.GUTIL:GetItemIDByLink(recipeInfo.hyperlink))
+                local isSoulbound = GUTIL:isItemSoulbound(GUTIL:GetItemIDByLink(recipeInfo.hyperlink))
                 if not CraftSimOptions.recipeScanIncludeSoulbound then
                     if isGear and isSoulbound then
                         return false
@@ -170,16 +175,58 @@ function CraftSim.RECIPE_SCAN.FilterRecipes(recipeInfo)
     return false
 end
 
+---@class CraftSim.RecipeScan.ScanRecipeInfoCrafterData
+---@field recipeInfo TradeSkillRecipeInfo
+---@field crafterData CraftSim.CrafterData?
+
+---@return CraftSim.RecipeScan.ScanRecipeInfoCrafterData[]
+function CraftSim.RECIPE_SCAN:GetScanRecipeInfoWithCrafterData()
+    --- first put all recipes of the current open profession into the list
+    -- TODO: only if the option to include the currently open profession is true!
+
+    local recipeIDCrafterData = GUTIL:Map(C_TradeSkillUI.GetAllRecipeIDs(),
+        function(recipeID)
+            local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+            if CraftSim.RECIPE_SCAN.FilterRecipeInfo(recipeInfo) then
+                return { recipeInfo = recipeInfo }
+            end
+            return nil
+        end)
+    local playerCrafterProfessionUID = self:GetPlayerCrafterProfessionUID()
+
+    -- then append for each cached recipe id if the profession is selected in the selector option
+    for crafterUID, professions in pairs(CraftSimRecipeDataCache.cachedRecipeIDs) do
+        for profession, recipeIDs in pairs(professions) do
+            local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
+            if not playerCrafterProfessionUID == crafterProfessionUID and CraftSimOptions.recipeScanIncludedProfessions[crafterProfessionUID] then
+                local name, realm = strsplit("-", crafterUID)
+                tAppendAll(recipeIDCrafterData, GUTIL:Map(recipeIDs, function(recipeID)
+                    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+                    if CraftSim.RECIPE_SCAN.FilterRecipeInfo(recipeInfo) then
+                        return {
+                            recipeInfo = recipeInfo,
+                            crafterData = {
+                                name = name,
+                                realm = realm,
+                                class = CraftSimRecipeDataCache.altClassCache[crafterUID]
+                            }
+                        }
+                    end
+                    return nil
+                end))
+            end
+        end
+    end
+    return recipeIDCrafterData
+end
+
 function CraftSim.RECIPE_SCAN:StartScan()
     wipe(CraftSim.RECIPE_SCAN.currentResults)
     CraftSim.RECIPE_SCAN.isScanning = true
 
     print("Scan Mode: " .. tostring(CraftSimOptions.recipeScanScanMode))
-    local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
-    local recipeInfos = CraftSim.GUTIL:Map(recipeIDs, function(recipeID)
-        return C_TradeSkillUI.GetRecipeInfo(recipeID)
-    end)
-    recipeInfos = CraftSim.GUTIL:Filter(recipeInfos, CraftSim.RECIPE_SCAN.FilterRecipes)
+
+    local recipeInfosWithCrafterData = CraftSim.RECIPE_SCAN:GetScanRecipeInfoWithCrafterData()
     local currentIndex = 1
 
     local function scanRecipesByInterval()
@@ -189,20 +236,22 @@ function CraftSim.RECIPE_SCAN:StartScan()
         end
 
         CraftSim.UTIL:StartProfiling("Single Recipe Scan")
-        local recipeInfo = recipeInfos[currentIndex]
+        local recipeInfosWithCrafterData = recipeInfosWithCrafterData[currentIndex]
+        local recipeInfo = recipeInfosWithCrafterData.recipeInfo
+        local crafterData = recipeInfosWithCrafterData.crafterData
         if not recipeInfo then
             CraftSim.RECIPE_SCAN:EndScan()
             return
         end
 
-        CraftSim.RECIPE_SCAN:UpdateScanPercent(currentIndex, #recipeInfos)
+        CraftSim.RECIPE_SCAN:UpdateScanPercent(currentIndex, #recipeInfosWithCrafterData)
 
         print("recipeID: " .. tostring(recipeInfo.recipeID), false, true)
         print("recipeName: " .. tostring(recipeInfo.name))
         print("isEnchant: " .. tostring(recipeInfo.isEnchantingRecipe))
 
         --- @type CraftSim.RecipeData
-        local recipeData = CraftSim.RecipeData(recipeInfo.recipeID);
+        local recipeData = CraftSim.RecipeData(recipeInfo.recipeID, nil, nil, crafterData);
 
         if recipeData.reagentData:HasOptionalReagents() and CraftSimOptions.recipeScanUseInsight then
             recipeData:SetOptionalReagent(CraftSim.CONST.ITEM_IDS.OPTIONAL_REAGENTS.ILLUSTRIOUS_INSIGHT)
@@ -241,7 +290,7 @@ function CraftSim.RECIPE_SCAN:StartScan()
             RunNextFrame(scanRecipesByInterval)
         end
         -- since the result links are needed for calculations and probably not loaded within a scan
-        CraftSim.GUTIL:ContinueOnAllItemsLoaded(recipeData.resultData.itemsByQuality, continueScan)
+        GUTIL:ContinueOnAllItemsLoaded(recipeData.resultData.itemsByQuality, continueScan)
     end
 
     print("End Scan")
@@ -261,4 +310,53 @@ function CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
     elseif CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
         recipeData:OptimizeReagents()
     end
+end
+
+---@param crafterUID string -  <name>-<NormalizedRealm>
+---@param profession Enum.Profession
+---@return string crafterProfessionUID <Name>-<NormalizedRealm>:<ProfessionID>
+function CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
+    return tostring(crafterUID) .. ":" .. tostring(profession)
+end
+
+function CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
+    local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
+    local currentProfessionInfo = C_TradeSkillUI
+        .GetBaseProfessionInfo()
+    if currentProfessionInfo then
+        return self:GetCrafterProfessionUID(playerCrafterData.name .. "-" .. playerCrafterData.realm,
+            currentProfessionInfo.profession)
+    end
+    return ""
+end
+
+---@param currentProfession Enum.Profession
+function CraftSim.RECIPE_SCAN:GetProfessionSelectorItems(currentProfession)
+    local playerCrafterData = CraftSim.UTIL:GetPlayerCrafterData()
+    local playerCrafterProfessionUID = self:GetCrafterProfessionUID(
+        playerCrafterData.name .. "-" .. playerCrafterData.realm, currentProfession)
+    -- do not include current profession of current character
+    ---@type GGUI.CheckboxSelector.CheckboxItem[]
+    local altProfessionItems = {}
+    for crafterUID, cachedProfessions in pairs(CraftSimRecipeDataCache.cachedRecipeIDs) do
+        for profession, _ in pairs(cachedProfessions) do
+            local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
+            if playerCrafterProfessionUID ~= crafterProfessionUID then
+                local altName, altRealm = strsplit("-", crafterUID)
+                local altClass = CraftSimRecipeDataCache.altClassCache[crafterUID]
+                if altClass then
+                    altName = C_ClassColor.GetClassColor(altClass):WrapTextInColorCode(altName)
+                end
+                ---@type GGUI.CheckboxSelector.CheckboxItem
+                local item = {
+                    name = altName .. ": " .. L(CraftSim.CONST.PROFESSION_LOCALIZATION_IDS[profession]),
+                    savedVariableProperty = crafterProfessionUID,
+                    selectionID = altProfessionItems,
+                    tooltip = altRealm,
+                }
+                table.insert(altProfessionItems, item)
+            end
+        end
+    end
+    return altProfessionItems
 end

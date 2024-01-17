@@ -5,6 +5,10 @@ local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 local L = CraftSim.UTIL:GetLocalizer()
 
+---@class CraftSim.RECIPE_SCAN
+CraftSim.RECIPE_SCAN = CraftSim.RECIPE_SCAN
+
+---@class CraftSim.RECIPE_SCAN.FRAMES
 CraftSim.RECIPE_SCAN.FRAMES = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
@@ -14,7 +18,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
     CraftSim.RECIPE_SCAN.frame = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent = ProfessionsFrame.CraftingPage.SchematicForm,
-        sizeX = 850,
+        sizeX = 1000,
         sizeY = 400,
         frameID = CraftSim.CONST.FRAMES.RECIPE_SCAN,
         title = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE),
@@ -72,6 +76,17 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
     GGUI:EnableHyperLinksForFrameAndChilds(CraftSim.RECIPE_SCAN.frame.content)
 end
 
+---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
+function CraftSim.RECIPE_SCAN:OnProfessionRowSelected(row)
+    print("select row!")
+    -- hide all others except me
+    for _, row in pairs(row.activeRows) do
+        row.contentFrame:Hide()
+    end
+
+    row.contentFrame:Show()
+end
+
 ---@param recipeScanTab CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB
 function CraftSim.RECIPE_SCAN.FRAMES:InitRecipeScanTab(recipeScanTab)
     ---@class CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB
@@ -79,6 +94,59 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitRecipeScanTab(recipeScanTab)
     ---@class CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT : Frame
     local content = recipeScanTab.content
 
+    content.professionList = GGUI.FrameList {
+        parent = content, anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -20, offsetX = 5,
+        sizeY = 370,
+        showBorder = true, selectionOptions = {
+        selectionCallback =
+        ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
+            function(row)
+                CraftSim.RECIPE_SCAN:OnProfessionRowSelected(row)
+            end
+    },
+        columnOptions = {
+            {
+                label = "", -- checkbox
+                width = 40,
+            },
+            {
+                label = "", -- crafter name + prof icon
+                width = 150,
+            },
+        },
+        rowConstructor = function(columns)
+            ---@class CraftSim.RECIPE_SCAN.PROFESSION_LIST.CHECKBOX_COLUMN : Frame
+            local checkboxColumn = columns[1]
+            ---@class CraftSim.RECIPE_SCAN.PROFESSION_LIST.CRAFTER_COLUMN : Frame
+            local crafterColumn = columns[2]
+
+            checkboxColumn.checkbox = GGUI.Checkbox {
+                parent = checkboxColumn, anchorParent = checkboxColumn,
+            }
+
+            crafterColumn.text = GGUI.Text {
+                parent = crafterColumn, anchorParent = crafterColumn, anchorA = "LEFT", anchorB = "LEFT",
+                justifyOptions = { type = "H", align = "LEFT" }
+            }
+        end
+    }
+
+    -- for each profession that is cached, create a tabFrame and connect it to the row of the profession
+
+    for crafterUID, professions in pairs(CraftSimRecipeDataCache.cachedRecipeIDs) do
+        for profession, _ in pairs(professions) do
+            CraftSim.RECIPE_SCAN.FRAMES:AddProfessionTabRow(crafterUID, profession)
+        end
+    end
+
+    print("select first row?")
+    content.professionList:SelectRow(1)
+end
+
+---@return CraftSim.RECIPE_SCAN.PROFESSION_LIST.TAB_CONTENT
+function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(content)
+    ---@class CraftSim.RECIPE_SCAN.PROFESSION_LIST.TAB_CONTENT : Frame
+    content = content
     content.scanButton = GGUI.Button({
         parent = content,
         anchorParent = content,
@@ -208,7 +276,12 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitRecipeScanTab(recipeScanTab)
 
             ---@type GGUI.Icon | GGUI.Widget
             expectedResultColumn.itemIcon = GGUI.Icon({
-                parent = expectedResultColumn, anchorParent = expectedResultColumn, sizeX = iconSize, sizeY = iconSize, qualityIconScale = 1.4,
+                parent = expectedResultColumn,
+                anchorParent = expectedResultColumn,
+                sizeX = iconSize,
+                sizeY =
+                    iconSize,
+                qualityIconScale = 1.4,
             })
 
             ---@type GGUI.Icon | GGUI.Widget
@@ -288,6 +361,64 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitRecipeScanTab(recipeScanTab)
             })
         end
     })
+
+    return content
+end
+
+---@param crafterUID string
+---@param profession Enum.Profession
+function CraftSim.RECIPE_SCAN.FRAMES:AddProfessionTabRow(crafterUID, profession)
+    local content = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
+        .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
+    content.professionList:Add(function(row)
+        ---@class CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW : GGUI.FrameList.Row
+        row = row
+
+        ---@type CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW[]
+        row.activeRows = content.professionList.activeRows
+        local columns = row.columns
+        local checkboxColumn = columns[1] --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.CHECKBOX_COLUMN]]
+        ---@type CraftSim.RECIPE_SCAN.PROFESSION_LIST.CRAFTER_COLUMN : Frame
+        local crafterColumn = columns[2] --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.CRAFTER_COLUMN]]
+
+        local crafterName, crafterRealm = strsplit("-", crafterUID)
+        local crafterClass = CraftSimRecipeDataCache.altClassCache[crafterUID]
+        if crafterClass then
+            crafterName = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterName)
+        end
+        -- todo: add profession icon prefix
+        crafterColumn.text:SetText(crafterName)
+
+        ---@type Enum.Profession
+        row.profession = profession
+        ---@type CraftSim.CrafterData
+        row.crafterData = {
+            name = crafterName,
+            realm = crafterRealm,
+            class = crafterClass,
+        }
+
+        local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
+
+        local isChecked = CraftSimOptions.recipeScanIncludedProfessions[crafterProfessionUID]
+
+        checkboxColumn.checkbox:SetChecked(isChecked)
+
+        checkboxColumn.checkbox.clickCallback = function(_, checked)
+            CraftSimOptions.recipeScanIncludedProfessions[crafterProfessionUID] = checked
+        end
+
+        row.contentFrame = GGUI.Frame {
+            parent = content, anchorParent = content, sizeX = 850, sizeY = 400,
+            anchorA = "CENTER", anchorB = "CENTER",
+        }
+        row.contentFrame.frame:SetFrameStrata(content:GetFrameStrata())
+        row.contentFrame.frame:SetFrameLevel(content:GetFrameLevel() + 10)
+
+        row.content = CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row.contentFrame.content)
+    end)
+
+    content.professionList:UpdateDisplay()
 end
 
 ---@param scanOptionsTab CraftSim.RECIPE_SCAN.SCAN_OPTIONS_TAB
