@@ -16,6 +16,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("13.0.2"),
         f.p .. "Recrafting Orders should now have the correct reagent amount",
         f.p .. "Removed the buff changed system print",
+        f.p .. "Thank you " .. f.bb("https://github.com/SirDester") .. " for",
+        f.a .. "  updating the italian translations!",
         f.p ..
         f.patreon("Supporter List Update ") .. CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.2),
         newP("13.0.1"),
