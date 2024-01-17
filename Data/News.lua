@@ -14,7 +14,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("13.0.2"),
-        f.p .. "Recrafting Orders should now consider the correct reagent amount",
+        f.p .. "Recrafting Orders should now have the correct reagent amount",
+        f.p .. "Removed the buff changed system print",
+        f.p ..
+        f.patreon("Supporter List Update ") .. CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.2),
         newP("13.0.1"),
         f.p .. "Fixed a bug with non-initialized professionInfoCache",
         f.p .. "Updated toc file for 10.2.5",

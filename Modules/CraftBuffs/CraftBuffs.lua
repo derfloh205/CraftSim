@@ -3,6 +3,8 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
+local print = CraftSim.UTIL:SetDebugPrint("BUFFDATA")
+
 local L = CraftSim.UTIL:GetLocalizer()
 
 ---@class CraftSim.CRAFT_BUFFS : Frame

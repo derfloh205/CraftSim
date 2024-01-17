@@ -14,6 +14,12 @@ function CraftSim.SUPPORTERS:GetList()
     local paypal = " " .. CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PAYPAL, 0.35)
     return {
         {
+            name = f.bb("from S.Korea"),
+            type = kofi,
+            message = "I become the 'master craftsman' with this addons",
+            date = "17.01.2024",
+        },
+        {
             name = f.bb("Zach B."),
             type = paypal,
             message = "Dunno what I`d do without you",
