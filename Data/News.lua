@@ -13,6 +13,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("13.0.2"),
+        f.p .. "Recrafting Orders should now consider the correct reagent amount",
         newP("13.0.1"),
         f.p .. "Fixed a bug with non-initialized professionInfoCache",
         f.p .. "Updated toc file for 10.2.5",

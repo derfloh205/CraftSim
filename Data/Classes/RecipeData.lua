@@ -95,6 +95,9 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     self.isOldWorldRecipe = not self:IsDragonflightRecipe()
     self.isRecraft = isRecraft or false
+    if self.orderData then
+        self.isRecraft = self.orderData.isRecraft
+    end
     self.isSimulationModeData = false
     self.learned = self.recipeInfo.learned or false
     self.numSkillUps = self.recipeInfo.numSkillUps
