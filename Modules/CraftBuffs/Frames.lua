@@ -72,7 +72,7 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
         frame.content.simulateBuffSelector = GGUI.CheckboxSelector {
             buttonOptions = {
                 parent = frame.content, anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
-                adjustWidth = true, sizeX = 15, label = "Simulate Buffs"
+                adjustWidth = true, sizeX = 15, label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_BUFFS_SIMULATE_BUTTON)
             },
             selectionFrameOptions = {
                 backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS, closeable = true,
