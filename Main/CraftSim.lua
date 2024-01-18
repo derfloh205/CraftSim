@@ -209,13 +209,14 @@ function CraftSim.MAIN:TriggerModuleUpdate(isInit)
 
 	lastCallTime = callTime
 
-	-- if freshLoginRecall and isInit then
-	-- 	freshLoginRecall = false
-	-- 	-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
-	-- 	C_Timer.After(0.1, function()
-	-- 		CraftSim.MAIN:TriggerModuleUpdate(true)
-	-- 	end)
-	-- end
+	if freshLoginRecall and isInit then
+		freshLoginRecall = false
+		-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
+		C_Timer.After(0.1, function()
+			CraftSim.MAIN:TriggerModuleUpdate(true)
+		end)
+		return
+	end
 
 	GUTIL:WaitFor(function()
 		if C_TradeSkillUI.IsTradeSkillReady() then
