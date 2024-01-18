@@ -5,6 +5,8 @@ local CraftSimAddonName = select(1, ...)
 CraftSim.LibCompress = LibStub:GetLibrary("LibCompress")
 CraftSim.LibIcon = LibStub("LibDBIcon-1.0")
 
+local GUTIL = CraftSim.GUTIL
+
 
 ---@class CraftSim.MAIN : Frame
 CraftSim.MAIN = CreateFrame("Frame", "CraftSimAddon")
@@ -62,6 +64,7 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanScanMode = nil,
 	recipeScanFilteredExpansions = nil,
 	recipeScanAltProfessions = nil,
+	recipeScanImportAllProfessions = false,
 
 	-- profit calc
 	customMulticraftConstant = CraftSim.CONST.MULTICRAFT_CONSTANT,
@@ -151,7 +154,7 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 		CraftSimOptions.recipeScanIncludedProfessions = CraftSimOptions.recipeScanIncludedProfessions or {}
 		CraftSimOptions.recipeScanScanMode = CraftSimOptions.recipeScanScanMode or
 			CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
-
+		CraftSimOptions.recipeScanImportAllProfessions = false
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end
@@ -206,17 +209,30 @@ function CraftSim.MAIN:TriggerModuleUpdate(isInit)
 
 	lastCallTime = callTime
 
-	if freshLoginRecall and isInit then
-		freshLoginRecall = false
-		-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
-		C_Timer.After(0.1, function()
-			CraftSim.MAIN:TriggerModuleUpdate(true)
-		end)
-	end
+	-- if freshLoginRecall and isInit then
+	-- 	freshLoginRecall = false
+	-- 	-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
+	-- 	C_Timer.After(0.1, function()
+	-- 		CraftSim.MAIN:TriggerModuleUpdate(true)
+	-- 	end)
+	-- end
 
-	CraftSim.UTIL:StartProfiling("MODULES UPDATE")
-	CraftSim.MAIN:TriggerModulesByRecipeType()
-	CraftSim.UTIL:StopProfiling("MODULES UPDATE")
+	GUTIL:WaitFor(function()
+		if C_TradeSkillUI.IsTradeSkillReady() then
+			local recipeID = CraftSim.MAIN.currentRecipeID
+			if recipeID then
+				local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+				return recipeInfo ~= nil and recipeInfo.categoryID
+			end
+		end
+		return false
+	end, function()
+		CraftSim.UTIL:StartProfiling("MODULES UPDATE")
+		CraftSim.MAIN:TriggerModulesByRecipeType()
+		-- do not do this all in the same frame to ease performance
+		RunNextFrame(CraftSim.RECIPE_SCAN.UpdateProfessionListByCache)
+		CraftSim.UTIL:StopProfiling("MODULES UPDATE")
+	end)
 end
 
 function CraftSim.MAIN:HookToEvent()

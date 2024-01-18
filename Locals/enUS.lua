@@ -484,9 +484,18 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Optimize Reagents",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON] = "Expansions",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ALTPROFESSIONS_FILTER_BUTTON] = "Alt Professions",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_ALT_PROFESSION_HELP_TOOLTIP] =
-            "Filter to include cached profession recipes from your alts." ..
-            f.r("\n\n(Only prior visited or scanned recipes of an alt will be available)"),
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_ALL_BUTTON_READY] = "Scan Professions",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_ALL_BUTTON_SCANNING] = "Scanning...",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_LABEL] = "All Scanned Professions",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP] = f.g("True: ") ..
+            "Import Scan Results from all enabled and scanned professions\n\n" ..
+            f.r("False: ") .. "Import Scan Results only from currently selected profession",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES_TOOLTIP] =
+            "Whenever you open or scan a recipe on a character, " ..
+            f.l("CraftSim") ..
+            " remembers it.\n\nOnly recipes from your alts that " ..
+            f.l("CraftSim") .. " can remember will be scanned with " .. f.bb("RecipeScan\n\n") ..
+            "The actual amount of recipes that are scanned is then based on your " .. f.e("Recipe Scan Options"),
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Top Gear",

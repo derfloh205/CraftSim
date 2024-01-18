@@ -7,7 +7,9 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(recipeID: number, isRecraft:boolean?, isWorkOrder:boolean?, crafterData:CraftSim.CrafterData?): CraftSim.RecipeData
 CraftSim.RecipeData = CraftSim.Object:extend()
 
+local systemPrint = print
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
+
 
 ---@class CraftSim.CrafterData
 ---@field name string
@@ -210,7 +212,16 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     self.isCrafterInfoCached = self:IsCrafterInfoCached()
 
-    if self:IsCrafter() and not crafterData then
+    -- only cache if this character is the crafter and the profession is open
+    local isCrafter = self:IsCrafter()
+    local IsProfessionOpen = self:IsProfessionOpen()
+
+    -- local print = CraftSim.UTIL:SetDebugPrint("RECIPE_SCAN")
+    -- print("RecipeData: " .. self.recipeName)
+    -- print("- isCrafter: " .. tostring(isCrafter))
+    -- print("- IsProfessionOpen: " .. tostring(IsProfessionOpen))
+    if isCrafter and IsProfessionOpen then
+        -- print("- Caching Recipe!")
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] = CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] or {}
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] =
             CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] or {}
@@ -219,7 +230,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] = GUTIL:ToSet(
             CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession])
 
-        CraftSimRecipeDataCache.altClassCache[crafterUID] = UnitClass("player")
+        CraftSimRecipeDataCache.altClassCache[crafterUID] = select(2, UnitClass("player"))
     end
 end
 
@@ -579,8 +590,12 @@ end
 
 ---@return boolean
 function CraftSim.RecipeData:IsCrafter()
-    return self:CrafterDataEquals(CraftSim.UTIL:GetPlayerCrafterData()) and
-        C_TradeSkillUI.IsRecipeProfessionLearned(self.recipeID)
+    local crafterDataEquals = self:CrafterDataEquals(CraftSim.UTIL:GetPlayerCrafterData())
+    local professionLearned = C_TradeSkillUI.IsRecipeProfessionLearned(self.recipeID)
+    -- local print = CraftSim.UTIL:SetDebugPrint("RECIPE_SCAN")
+    -- print("--crafterDataEquals: " .. tostring(crafterDataEquals))
+    -- print("--professionLearned: " .. tostring(professionLearned))
+    return crafterDataEquals and professionLearned
 end
 
 function CraftSim.RecipeData:GetForgeFinderExport(indent)
@@ -785,8 +800,14 @@ end
 ---@param crafterData CraftSim.CrafterData
 ---@return boolean equals
 function CraftSim.RecipeData:CrafterDataEquals(crafterData)
-    return self.crafterData.name == crafterData.name and self.crafterData.realm == crafterData.realm and
-        self.crafterData.class == crafterData.class
+    local nameEquals = self.crafterData.name == crafterData.name
+    local realmEquals = self.crafterData.realm == crafterData.realm
+    local classEquals = self.crafterData.class == crafterData.class
+    -- local print = CraftSim.UTIL:SetDebugPrint("RECIPE_SCAN")
+    -- print("---nameEquals: " .. tostring(nameEquals))
+    -- print("---realmEquals: " .. tostring(realmEquals))
+    -- print("---classEquals: " .. tostring(classEquals))
+    return nameEquals and realmEquals and classEquals
 end
 
 function CraftSim.RecipeData:IsDragonflightRecipe()

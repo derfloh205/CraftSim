@@ -186,31 +186,85 @@ end
 
 function CraftSim.CRAFTQ:ImportRecipeScan()
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
-    ---@type CraftSim.RecipeData[]
-    local filteredRecipes = GUTIL:Filter(CraftSim.RECIPE_SCAN.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
-    for _, recipeData in pairs(filteredRecipes) do
-        local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
-        local restockAmount = tonumber(CraftSimOptions.craftQueueGeneralRestockRestockAmount)
-        if restockOptions.enabled then
-            restockAmount = restockOptions.restockAmount
+    local recipeScanTabContent = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
+        .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
+    local professionList = recipeScanTabContent.professionList
+    local selectedRow = professionList.selectedRow --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
+    if not selectedRow then return end -- nil check .. who knows..
+    if not CraftSimOptions.recipeScanImportAllProfessions then
+        ---@type CraftSim.RecipeData[]
+        local filteredRecipes = GUTIL:Filter(selectedRow.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
+        for _, recipeData in pairs(filteredRecipes) do
+            local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
+            local restockAmount = tonumber(CraftSimOptions.craftQueueGeneralRestockRestockAmount)
+            if restockOptions.enabled then
+                restockAmount = restockOptions.restockAmount
 
-            for qualityID, use in pairs(restockOptions.restockPerQuality) do
-                if use then
-                    local item = recipeData.resultData.itemsByQuality[qualityID]
-                    if item then
-                        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(item:GetItemID(), true, false, true)
-                        restockAmount = restockAmount - itemCount
+                for qualityID, use in pairs(restockOptions.restockPerQuality) do
+                    if use then
+                        local item = recipeData.resultData.itemsByQuality[qualityID]
+                        if item then
+                            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(item:GetItemID(), true, false, true)
+                            restockAmount = restockAmount - itemCount
+                        end
                     end
                 end
             end
+
+            if restockAmount > 0 then
+                CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, restockAmount)
+            end
         end
 
-        if restockAmount > 0 then
-            CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, restockAmount)
-        end
+        CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
+    else
+        local queueTab = CraftSim.CRAFTQ.frame.content.queueTab --[[@as CraftSim.CraftQueue.QueueTab]]
+        local importButton = queueTab.content.importRecipeScanButton
+        local numImportProfessions = GUTIL:Count(professionList.activeRows,
+            function(row) return row.columns[1].checkbox:GetChecked() end)
+        GUTIL:FrameDistributedIteration(professionList.activeRows,
+            ---@param row CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
+            function(_, row, counter)
+                --- update button
+                local checkBoxColumn = row.columns[1] --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.CHECKBOX_COLUMN]]
+                if not checkBoxColumn.checkbox:GetChecked() then
+                    return
+                end
+
+                importButton:SetText("Importing: " .. tostring(counter) .. "/" .. tostring(numImportProfessions), 15,
+                    true)
+                importButton:SetEnabled(false)
+
+                ---@type CraftSim.RecipeData[]
+                local filteredRecipes = GUTIL:Filter(row.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
+                for _, recipeData in pairs(filteredRecipes) do
+                    local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
+                    local restockAmount = tonumber(CraftSimOptions.craftQueueGeneralRestockRestockAmount)
+                    if restockOptions.enabled then
+                        restockAmount = restockOptions.restockAmount
+
+                        for qualityID, use in pairs(restockOptions.restockPerQuality) do
+                            if use then
+                                local item = recipeData.resultData.itemsByQuality[qualityID]
+                                if item then
+                                    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(item:GetItemID(), true, false,
+                                        true)
+                                    restockAmount = restockAmount - itemCount
+                                end
+                            end
+                        end
+                    end
+
+                    if restockAmount > 0 then
+                        CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, restockAmount)
+                    end
+                end
+
+                CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
+            end, function()
+                importButton:SetStatus("Ready")
+            end)
     end
-
-    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
 end
 
 ---@param recipeData CraftSim.RecipeData

@@ -353,6 +353,17 @@ function CraftSim.UTIL:GetPlayerCrafterData()
     return crafterData
 end
 
+---@param crafterData CraftSim.CrafterData
+---@return string crafterUID
+function CraftSim.UTIL:GetCrafterUIDFromCrafterData(crafterData)
+    return crafterData.name .. "-" .. crafterData.realm
+end
+
+---@return string crafterUID
+function CraftSim.UTIL:GetPlayerCrafterUID()
+    return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
+end
+
 function CraftSim.UTIL:ProfilingUpdate(label)
     local time = debugprofilestop()
     local diff = time - profilings[label]

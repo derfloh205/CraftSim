@@ -1024,7 +1024,11 @@ CraftSim.CONST.TEXT = {
     RECIPE_SCAN_MODE_OPTIMIZE = "RECIPE_SCAN_MODE_OPTIMIZE",
     RECIPE_SCAN_EXPANSION_FILTER_BUTTON = "RECIPE_SCAN_EXPANSION_FILTER_BUTTON",
     RECIPE_SCAN_ALTPROFESSIONS_FILTER_BUTTON = "RECIPE_SCAN_ALTPROFESSIONS_FILTER_BUTTON",
-    RECIPE_SCAN_ALT_PROFESSION_HELP_TOOLTIP = "RECIPE_SCAN_ALT_PROFESSION_HELP_TOOLTIP",
+    RECIPE_SCAN_CACHED_RECIPES_TOOLTIP = "RECIPE_SCAN_CACHED_RECIPES_TOOLTIP",
+    RECIPE_SCAN_SCAN_ALL_BUTTON_READY = "RECIPE_SCAN_SCAN_ALL_BUTTON_READY",
+    RECIPE_SCAN_SCAN_ALL_BUTTON_SCANNING = "RECIPE_SCAN_SCAN_ALL_BUTTON_SCANNING",
+    RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_LABEL = "RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_LABEL",
+    RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP = "RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP",
 
     TOP_GEAR_TITLE = 750,
     TOP_GEAR_AUTOMATIC = 751,
@@ -1198,4 +1202,30 @@ CraftSim.CONST.ATLAS_TEXTURES = {
     TRADESKILL_ICON_ADD = 'tradeskills-icon-add',
     CRAFT_BUFF_ACTIVE = 'UI-QuestTracker-Tracker-Check',
     CRAFT_BUFF_NOT_ACTIVE = 'UI-QuestTracker-Objective-Fail',
+}
+
+---@type table<Enum.Profession, string>
+CraftSim.CONST.PROFESSION_ICONS = {
+    [Enum.Profession.Blacksmithing] = "Interface\\Icons\\ui_profession_blacksmithing",
+    [Enum.Profession.Leatherworking] = "Interface\\Icons\\ui_profession_leatherworking",
+    [Enum.Profession.Alchemy] = "Interface\\Icons\\ui_profession_alchemy",
+    [Enum.Profession.Herbalism] = "Interface\\Icons\\ui_profession_herbalism",
+    [Enum.Profession.Cooking] = "Interface\\Icons\\ui_profession_cooking",
+    [Enum.Profession.Mining] = "Interface\\Icons\\ui_profession_mining",
+    [Enum.Profession.Tailoring] = "Interface\\Icons\\ui_profession_tailoring",
+    [Enum.Profession.Engineering] = "Interface\\Icons\\ui_profession_engineering",
+    [Enum.Profession.Enchanting] = "Interface\\Icons\\ui_profession_enchanting",
+    [Enum.Profession.Fishing] = "Interface\\Icons\\ui_profession_fishing",
+    [Enum.Profession.Skinning] = "Interface\\Icons\\ui_profession_skinning",
+    [Enum.Profession.Jewelcrafting] = "Interface\\Icons\\ui_profession_jewelcrafting",
+    [Enum.Profession.Inscription] = "Interface\\Icons\\ui_profession_inscription",
+
+}
+
+---@type table<Enum.Profession, boolean>
+CraftSim.CONST.GATHERING_PROFESSIONS = {
+    [Enum.Profession.Herbalism] = true,
+    [Enum.Profession.Mining] = true,
+    [Enum.Profession.Fishing] = true,
+    [Enum.Profession.Skinning] = true,
 }
