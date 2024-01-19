@@ -13,6 +13,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("14.0.1"),
+        f.p .. "Attempting fix for GithubIssue#204 - CustomerHistory Sort Bug",
+        f.p .. "",
         newP("14.0.0"),
         f.P .. f.g("Recipe Scan") .. f.l(" Reworked"),
         f.a .. "- Cached professions will now appear in a list in the module",

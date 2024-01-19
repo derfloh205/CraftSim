@@ -320,43 +320,54 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
         return
     end
 
-    ---@type GGUI.FrameList
-    local customerList = CraftSim.CUSTOMER_HISTORY.frame.content.customerList
+    local customerList = CraftSim.CUSTOMER_HISTORY.frame.content.customerList --[[@as GGUI.FrameList]]
     customerList:Remove()
 
     for _, customerHistory in pairs(CraftSimCustomerHistoryV2) do
-        customerList:Add(function(row)
-            local columns = row.columns
-            local customerColumn = columns[1]
-            local tipColumn = columns[2]
-            local removeColumn = columns[3]
-            row.customerHistory = customerHistory
-            customerColumn.text:SetText(customerHistory.customer)
-            tipColumn.text:SetText(CraftSim.GUTIL:FormatMoney(customerHistory.totalTip or 0))
-            removeColumn.removeButton.clickCallback = function()
-                GGUI:ShowPopup({
-                    sizeY = 120,
-                    title = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE),
-                    anchorParent = removeColumn.removeButton.frame,
-                    anchorA = "CENTER",
-                    anchorB = "CENTER",
-                    onAccept = function()
-                        CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
-                    end,
-                    text = string.format(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP),
-                        customerHistory.customer)
-                })
-            end
-        end)
+        customerList:Add(
+            function(row)
+                row = row
+                local columns = row.columns
+                local customerColumn = columns[1]
+                local tipColumn = columns[2]
+                local removeColumn = columns[3]
+                row.customerHistory = customerHistory
+                customerColumn.text:SetText(customerHistory.customer)
+                tipColumn.text:SetText(CraftSim.GUTIL:FormatMoney(customerHistory.totalTip or 0))
+                removeColumn.removeButton.clickCallback = function()
+                    GGUI:ShowPopup({
+                        sizeY = 120,
+                        title = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE),
+                        anchorParent = removeColumn.removeButton.frame,
+                        anchorA = "CENTER",
+                        anchorB = "CENTER",
+                        onAccept = function()
+                            CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
+                        end,
+                        text = string.format(L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP),
+                            customerHistory.customer)
+                    })
+                end
+            end)
     end
 
-    customerList:UpdateDisplay(function(rowA, rowB)
-        if rowA.customerHistory.totalTip and rowB.customerHistory.totalTip then
-            return rowA.customerHistory.totalTip >= rowB.customerHistory.totalTip
-        else
-            return false
-        end
-    end)
+    customerList:UpdateDisplay(
+        function(rowA, rowB)
+            if rowA.customerHistory.totalTip and rowB.customerHistory.totalTip then
+                if rowA.customerHistory.totalTip > rowB.customerHistory.totalTip then
+                    return true
+                end
+                if rowA.customerHistory.totalTip < rowB.customerHistory.totalTip then
+                    return false
+                end
+                if rowA.customerHistory.totalTip == rowB.customerHistory.totalTip then
+                    return true
+                end
+                return false
+            else
+                return false
+            end
+        end)
 
     if not customerList.selectedRow then
         customerList:SelectRow(1)
