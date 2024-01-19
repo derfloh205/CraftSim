@@ -354,16 +354,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
     customerList:UpdateDisplay(
         function(rowA, rowB)
             if rowA.customerHistory.totalTip and rowB.customerHistory.totalTip then
-                if rowA.customerHistory.totalTip > rowB.customerHistory.totalTip then
-                    return true
-                end
-                if rowA.customerHistory.totalTip < rowB.customerHistory.totalTip then
-                    return false
-                end
-                if rowA.customerHistory.totalTip == rowB.customerHistory.totalTip then
-                    return true
-                end
-                return false
+                return rowA.customerHistory.totalTip < rowB.customerHistory.totalTip
             else
                 return false
             end
