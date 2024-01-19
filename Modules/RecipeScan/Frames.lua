@@ -173,6 +173,15 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitRecipeScanTab(recipeScanTab)
     end,
     }
 
+    content.cancelScanProfessionsButton = GGUI.Button {
+        parent = content, anchorParent = content.scanProfessionsButton.frame, anchorA = "LEFT", anchorB = "RIGHT",
+        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_CANCEL), offsetX = 5, adjustWidth = true, sizeX = 15,
+        clickCallback = function()
+            CraftSim.RECIPE_SCAN:CancelProfessionScan()
+        end
+    }
+    content.cancelScanProfessionsButton:Hide()
+
     content.scanProfessionsButton:SetStatusList {
         {
             statusID = "Ready",

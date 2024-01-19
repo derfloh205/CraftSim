@@ -327,13 +327,12 @@ function CraftSim.UTIL:StartProfiling(label)
 end
 
 function CraftSim.UTIL:StopProfiling(label)
-    local time = debugprofilestop()
     local startTime = profilings[label]
     if not startTime then
-        pcall(function() -- show error but do not stop execution
-            error("CraftSim Error: Util Profiling Label not found on Stop: " .. tostring(label))
-        end)
+        print("Util Profiling Label not found on Stop: " .. tostring(label))
+        return
     end
+    local time = debugprofilestop()
     local diff = time - startTime
     profilings[label] = nil
     CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)

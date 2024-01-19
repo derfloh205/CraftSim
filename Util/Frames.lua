@@ -2,7 +2,10 @@
 local CraftSim = select(2, ...)
 local CraftSimAddonName = select(1, ...)
 
+---@class CraftSim.FRAME
 CraftSim.FRAME = {}
+
+local GUTIL = CraftSim.GUTIL
 
 CraftSim.FRAME.frames = {}
 
@@ -28,7 +31,7 @@ function CraftSim.FRAME:FormatStatDiffpercentText(statDiff, roundTo, suffix)
     if suffix == nil then
         suffix = ""
     end
-    return sign .. CraftSim.GUTIL:Round(statDiff, roundTo) .. suffix
+    return sign .. GUTIL:Round(statDiff, roundTo) .. suffix
 end
 
 --> in GGUI in gFrame
@@ -297,7 +300,7 @@ function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, an
     hookFrame:SetSize(sizeX, sizeY)
     frame:SetSize(sizeX, sizeY)
     frame:SetFrameStrata(frameStrata or "HIGH")
-    local currentFrameCount = CraftSim.GUTIL:Count(CraftSim.FRAME.frames)
+    local currentFrameCount = GUTIL:Count(CraftSim.FRAME.frames)
     frame:SetFrameLevel(currentFrameCount) -- Prevent wierd overlap of craftsim frames?
 
     frame.resetPosition = function()
@@ -615,7 +618,7 @@ function CraftSim.FRAME:InitDebugFrame()
         controlPanel.content.debugIDSFrame, "TOPLEFT", "TOPLEFT", 5, 0)
 
     local lastHook = controlPanel.content.debugIDSFrame.checkBoxID_MAIN
-    for _, debugID in pairs(CraftSim.CONST.DEBUG_IDS) do
+    for _, debugID in GUTIL:OrderedPairs(CraftSim.CONST.DEBUG_IDS) do
         if debugID ~= CraftSim.CONST.DEBUG_IDS.MAIN then
             controlPanel.content.debugIDSFrame["checkboxID_" .. debugID] = CraftSim.FRAME:CreateCheckbox(
                 " " .. debugID, "Enable " .. debugID .. " Output", "enableDebugID_" .. debugID,
@@ -658,8 +661,8 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         closeable = true,
         scrollableContent = true,
         moveable = true,
-        title = CraftSim.GUTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")",
-            CraftSim.GUTIL.COLORS.GREEN),
+        title = GUTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")",
+            GUTIL.COLORS.GREEN),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
@@ -764,9 +767,9 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
                 -- remove colorizations
                 print(input)
 
-                input = string.gsub(input, CraftSim.GUTIL.COLORS.GOLD, "")
-                input = string.gsub(input, CraftSim.GUTIL.COLORS.SILVER, "")
-                input = string.gsub(input, CraftSim.GUTIL.COLORS.COPPER, "")
+                input = string.gsub(input, GUTIL.COLORS.GOLD, "")
+                input = string.gsub(input, GUTIL.COLORS.SILVER, "")
+                input = string.gsub(input, GUTIL.COLORS.COPPER, "")
                 input = string.gsub(input, "|r", "")
                 input = string.gsub(input, "|", "")
 
@@ -780,9 +783,9 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
                     local gold = tonumber(string.match(input, "(%d+)g")) or 0
                     local silver = tonumber(string.match(input, "(%d+)s")) or 0
                     local copper = tonumber(string.match(input, "(%d+)c")) or 0
-                    local gC = CraftSim.GUTIL:ColorizeText("g", CraftSim.GUTIL.COLORS.GOLD)
-                    local sC = CraftSim.GUTIL:ColorizeText("s", CraftSim.GUTIL.COLORS.SILVER)
-                    local cC = CraftSim.GUTIL:ColorizeText("c", CraftSim.GUTIL.COLORS.COPPER)
+                    local gC = GUTIL:ColorizeText("g", GUTIL.COLORS.GOLD)
+                    local sC = GUTIL:ColorizeText("s", GUTIL.COLORS.SILVER)
+                    local cC = GUTIL:ColorizeText("c", GUTIL.COLORS.COPPER)
                     local colorizedText = ((gold > 0 and (gold .. gC)) or "") ..
                         ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
                     self:SetText(colorizedText)
@@ -832,10 +835,10 @@ function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anc
     end
 
     function goldInput:SetValue(total)
-        local gold, silver, copper = CraftSim.GUTIL:GetMoneyValuesFromCopper(total)
-        local gC = CraftSim.GUTIL:ColorizeText("g", CraftSim.GUTIL.COLORS.GOLD)
-        local sC = CraftSim.GUTIL:ColorizeText("s", CraftSim.GUTIL.COLORS.SILVER)
-        local cC = CraftSim.GUTIL:ColorizeText("c", CraftSim.GUTIL.COLORS.COPPER)
+        local gold, silver, copper = GUTIL:GetMoneyValuesFromCopper(total)
+        local gC = GUTIL:ColorizeText("g", GUTIL.COLORS.GOLD)
+        local sC = GUTIL:ColorizeText("s", GUTIL.COLORS.SILVER)
+        local cC = GUTIL:ColorizeText("c", GUTIL.COLORS.COPPER)
         local colorizedText = ((gold > 0 and (gold .. gC)) or "") ..
             ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
         self:SetText(colorizedText)

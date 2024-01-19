@@ -638,5 +638,11 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     [309623] = { q1 = 172368, name = "Sinful Revelation" },
     [309620] = { q1 = 172370, name = "Lightless Force" },
     [309621] = { q1 = 172367, name = "Eternal Grace" },
-    [309622] = { q1 = 172365, name = "Ascended Vigor" }
+    [309622] = { q1 = 172365, name = "Ascended Vigor" },
+
+    -- old world engineering tinkers with no item output!
+    -- used for recipe scan filtering to optimize early return filtering
+
+    --- shadowlands
+    [310497] = { name = "Damage Retaliator", noOutputTinker = true },
 }
