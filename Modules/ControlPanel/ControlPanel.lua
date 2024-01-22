@@ -1,8 +1,12 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+---@class CraftSim.CONTROL_PANEL
 CraftSim.CONTROL_PANEL = {}
 
+local GUTIL = CraftSim.GUTIL
+
+---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
 CraftSim.CONTROL_PANEL.frame = nil
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CONTROL_PANEL)
@@ -10,12 +14,15 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CONTROL_PANEL
 function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
     print("ForgeFinder Export..")
 
-    if not C_TradeSkillUI.IsTradeSkillReady() then return end
+    if not C_TradeSkillUI.IsTradeSkillReady() then
+        print("Tradeskill not ready")
+        return
+    end
 
     local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
 
     if professionRecipeIDs and #professionRecipeIDs > 0 then
-        professionRecipeIDs = CraftSim.GUTIL:Filter(professionRecipeIDs, function(recipeID)
+        professionRecipeIDs = GUTIL:Filter(professionRecipeIDs, function(recipeID)
             local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
 
             -- needs to have a recipeInfo
@@ -62,6 +69,8 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
         local numRecipes = #professionRecipeIDs
         local data = {}
 
+        print("filtered recipeID: " .. tostring(numRecipes))
+
         local function finishExport()
             print("Created " .. #data .. " RecipeData")
             if #data > 0 then
@@ -85,9 +94,12 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
 
         local function mapRecipe()
             local recipeID = professionRecipeIDs[currentIndex]
+            print("map recipe: " .. tostring(currentIndex))
             if recipeID then
+                CraftSim.UTIL:StartProfiling("RecipeDataCreation")
                 ---@type CraftSim.RecipeData
                 local recipeData = CraftSim.RecipeData(recipeID)
+                CraftSim.UTIL:StopProfiling("RecipeDataCreation")
 
                 -- only for recipes that have a result which either has qualities or can multicraft
                 if recipeData.resultData.itemsByQuality and #recipeData.resultData.itemsByQuality > 1 and (recipeData.supportsQualities or recipeData.supportsMulticraft) then
@@ -97,11 +109,11 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
                 currentIndex = currentIndex + 1
 
                 -- update button
-                local currentPercent = CraftSim.GUTIL:Round(currentIndex / (numRecipes / 100))
+                local currentPercent = GUTIL:Round(currentIndex / (numRecipes / 100))
 
                 CraftSim.CONTROL_PANEL.frame.content.exportForgeFinderButton:SetText(CraftSim.LOCAL:GetText(CraftSim
                     .CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING) .. " " .. currentPercent .. "%")
-                C_Timer.After(0.001, mapRecipe)
+                RunNextFrame(mapRecipe)
             else
                 -- if finished
                 finishExport()

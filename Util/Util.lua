@@ -338,8 +338,12 @@ function CraftSim.UTIL:StopProfiling(label)
     CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
 end
 
+local playerCrafterDataCached = nil
 ---@return CraftSim.CrafterData
 function CraftSim.UTIL:GetPlayerCrafterData()
+    -- utilize cache to speed up api calls
+    if playerCrafterDataCached then return playerCrafterDataCached end
+
     local name, realm = UnitNameUnmodified("player")
     realm = realm or GetNormalizedRealmName()
     ---@type CraftSim.CrafterData
@@ -348,6 +352,8 @@ function CraftSim.UTIL:GetPlayerCrafterData()
         realm = realm,
         class = select(2, UnitClass("player")),
     }
+
+    playerCrafterDataCached = crafterData
 
     return crafterData
 end
@@ -468,7 +474,7 @@ function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
 
         -- do not use C_TradeSkillUI.IsRecipeInSkillLine because its not using cached data..
         local IsDragonflightRecipe = professionInfo.professionID ==
-            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession].DRAGONFLIGHT
+            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT]
         return IsDragonflightRecipe
     end
 

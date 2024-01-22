@@ -43,6 +43,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.professionData = CraftSim.ProfessionData(self, recipeID)
     self.professionInfoCached = self.professionData.professionInfoCached
 
+
     if isWorkOrder then
         ---@type CraftingOrderInfo
         self.orderData = ProfessionsFrame.OrdersPage.OrderView.order
@@ -52,7 +53,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     end
 
     CraftSimRecipeDataCache.recipeInfoCache[crafterUID] = CraftSimRecipeDataCache.recipeInfoCache[crafterUID] or {}
-
     if self:IsCrafter() then
         self.recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID) -- only partial info is returned when not the crafter, so we need to cache it
 
@@ -72,7 +72,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
             self.recipeInfoCached = true
         end
     end
-
 
     if not self.recipeInfo then
         print("Could not create recipeData: recipeInfo nil")
@@ -158,6 +157,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.professionGearSet = CraftSim.ProfessionGearSet(self)
     self.professionGearSet:LoadCurrentEquippedSet()
 
+    CraftSim.UTIL:StartProfiling("- RD: OperationInfo")
     self.baseOperationInfo = nil
     if self.orderData then
         self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
@@ -174,6 +174,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.professionStatModifiers = CraftSim.ProfessionStats()
 
     self.baseProfessionStats:SetStatsByOperationInfo(self, self.baseOperationInfo)
+    CraftSim.UTIL:StopProfiling("- RD: OperationInfo")
 
     -- exception: when salvage recipe, then resourcefulness is supported!
     if self.isSalvageRecipe then
@@ -183,8 +184,10 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.baseProfessionStats:SetInspirationBaseBonusSkill(self.baseProfessionStats.recipeDifficulty.value,
         self.maxQuality)
 
+    CraftSim.UTIL:StartProfiling("- RD: ProfessionGearCache")
     -- cache available profession gear by calling this once
     CraftSim.TOPGEAR:GetProfessionGearFromInventory(self)
+    CraftSim.UTIL:StopProfiling("- RD: ProfessionGearCache")
 
     self.baseProfessionStats:subtract(self.professionGearSet.professionStats)
 
@@ -221,16 +224,23 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     -- print("- isCrafter: " .. tostring(isCrafter))
     -- print("- IsProfessionOpen: " .. tostring(IsProfessionOpen))
     if isCrafter and IsProfessionOpen then
+        CraftSim.UTIL:StartProfiling("- RD: Cache Data")
         -- print("- Caching Recipe!")
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] = CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] or {}
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] =
             CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] or {}
         table.insert(CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession],
             self.recipeID)
+        CraftSim.UTIL:StartProfiling("- RD: Cache Data To Set")
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] = GUTIL:ToSet(
             CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession])
+        CraftSim.UTIL:StopProfiling("- RD: Cache Data To Set")
 
+        CraftSim.UTIL:StartProfiling("- RD: Cache Data ClassApi")
         CraftSimRecipeDataCache.altClassCache[crafterUID] = select(2, UnitClass("player"))
+        CraftSim.UTIL:StopProfiling("- RD: Cache Data ClassApi")
+
+        CraftSim.UTIL:StopProfiling("- RD: Cache Data")
     end
 end
 
