@@ -107,7 +107,7 @@ end
 
 function CraftSim.CraftQueue:RestoreFromCache()
     CraftSim.UTIL:StartProfiling("CraftQueue Item Restoration")
-
+    print("Restore CraftQ From Cache Start...")
     local function load()
         print("Loading Cached CraftQueue...")
         self.craftQueueItems = GUTIL:Map(CraftSimCraftQueueCache, function(craftQueueItemSerialized)
@@ -126,9 +126,22 @@ function CraftSim.CraftQueue:RestoreFromCache()
 
     -- wait til necessary info is loaded, then put deserialized items into queue
     GUTIL:WaitFor(function()
+            print("Wait for professionInfo loaded or cached")
             return GUTIL:Every(CraftSimCraftQueueCache,
                 function(craftQueueItemSerialized)
-                    local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(craftQueueItemSerialized.recipeID)
+                    -- from cache?
+                    CraftSimRecipeDataCache.professionInfoCache[CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)] =
+                        CraftSimRecipeDataCache.professionInfoCache
+                        [CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)] or {}
+                    local cachedProfessionInfos = CraftSimRecipeDataCache.professionInfoCache
+                        [CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)]
+                    local professionInfo = cachedProfessionInfos[craftQueueItemSerialized.recipeID]
+
+                    if not professionInfo then
+                        -- get from api
+                        professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(craftQueueItemSerialized
+                            .recipeID)
+                    end
 
                     return professionInfo and professionInfo.profession --[[@as boolean]]
                 end)

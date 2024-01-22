@@ -223,8 +223,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     -- print("RecipeData: " .. self.recipeName)
     -- print("- isCrafter: " .. tostring(isCrafter))
     -- print("- IsProfessionOpen: " .. tostring(IsProfessionOpen))
+    CraftSim.UTIL:StartProfiling("- RD: Cache Data")
     if isCrafter and IsProfessionOpen then
-        CraftSim.UTIL:StartProfiling("- RD: Cache Data")
         -- print("- Caching Recipe!")
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] = CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] or {}
         CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] =
@@ -688,9 +688,9 @@ function CraftSim.RecipeData:CanCraft(amount)
     end
 
     -- check amount of materials in players inventory + bank
-    local hasEnoughReagents = self.reagentData:HasEnough(amount)
+    local hasEnoughReagents = self.reagentData:HasEnough(amount, self:GetCrafterUID())
 
-    local craftAbleAmount = self.reagentData:GetCraftableAmount()
+    local craftAbleAmount = self.reagentData:GetCraftableAmount(self:GetCrafterUID())
 
     return hasEnoughReagents, craftAbleAmount
 end

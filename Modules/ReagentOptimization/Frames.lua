@@ -213,7 +213,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
 
         return
     else
-        local hasItems = CraftSim.SIMULATION_MODE.isActive or optimizationResult:HasItems()
+        local hasItems = CraftSim.SIMULATION_MODE.isActive or optimizationResult:HasItems(recipeData:GetCrafterUID())
         materialFrame.content.allocateText:Hide()
         materialFrame.content.infoText:Hide()
         materialFrame.content.qualityIcon:Show()

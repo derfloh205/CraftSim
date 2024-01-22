@@ -52,24 +52,16 @@ end
 
 --- returns wether the player has enough the selected optional reagent
 ---@param multiplier number? default: 1
-function CraftSim.OptionalReagentSlot:HasItem(multiplier)
+function CraftSim.OptionalReagentSlot:HasItem(multiplier, crafterUID)
     multiplier = multiplier or 1
     if not self.activeReagent then
         return true
     end
 
-    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(self.activeReagent.item:GetItemID(), true, true, true)
+    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(self.activeReagent.item:GetItemID(), true, false, true,
+        crafterUID)
 
     return itemCount >= multiplier
-end
-
---- check how many times the player can fulfill the allocated item quantity
-function CraftSim.OptionalReagentSlot:HasQuantityXTimes()
-    if not self.activeReagent then
-        return math.huge -- yes I have infinite a number of times yes
-    end
-    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(self.activeReagent.item:GetItemID(), true, true, true)
-    return itemCount -- cause the required amount is always 1
 end
 
 function CraftSim.OptionalReagentSlot:Debug()

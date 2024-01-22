@@ -48,9 +48,9 @@ function CraftSim.ReagentOptimizationResult:new(recipeData, knapsackResult)
 end
 
 ---@return boolean hasItems
-function CraftSim.ReagentOptimizationResult:HasItems()
+function CraftSim.ReagentOptimizationResult:HasItems(crafterUID)
     for _, reagent in pairs(self.reagents) do
-        local hasItems = reagent:HasItems()
+        local hasItems = reagent:HasItems(1, crafterUID)
 
         if not hasItems then
             return false

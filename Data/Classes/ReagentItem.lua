@@ -46,12 +46,13 @@ end
 
 --- returns wether the player has enough of the given required item's allocations (times the multiplier)
 ---@param multiplier number? default: 1
-function CraftSim.ReagentItem:HasItem(multiplier)
+---@param crafterUID string
+function CraftSim.ReagentItem:HasItem(multiplier, crafterUID)
     multiplier = multiplier or 1
     if not self.item then
         return false
     end
-    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(self.item:GetItemID(), true, true, true)
+    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(self.item:GetItemID(), true, false, true, crafterUID)
     return itemCount >= (self.quantity * multiplier)
 end
 

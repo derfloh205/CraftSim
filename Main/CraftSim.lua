@@ -89,6 +89,7 @@ CraftSimOptions = CraftSimOptions or {
 	craftQueueGeneralRestockRestockAmount = 1,
 	craftQueueGeneralRestockSaleRateThreshold = 0,
 	craftQueueRestockPerRecipeOptions = {},
+	craftQueueShoppingListPerCharacter = false,
 }
 
 CraftSimGGUIConfig = CraftSimGGUIConfig or {}
@@ -112,6 +113,9 @@ function CraftSim.MAIN:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 		-- clear post loaded multicraft professions
 		wipe(CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions)
 	end
+
+	-- load craft queue
+	CraftSim.CRAFTQ:InitializeCraftQueue()
 end
 
 function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
@@ -157,7 +161,8 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 		CraftSimOptions.recipeScanIncludedProfessions = CraftSimOptions.recipeScanIncludedProfessions or {}
 		CraftSimOptions.recipeScanScanMode = CraftSimOptions.recipeScanScanMode or
 			CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
-		CraftSimOptions.recipeScanImportAllProfessions = false
+		CraftSimOptions.recipeScanImportAllProfessions = CraftSimOptions.recipeScanImportAllProfessions or false
+		CraftSimOptions.craftQueueShoppingListPerCharacter = CraftSimOptions.craftQueueShoppingListPerCharacter or false
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end
@@ -217,14 +222,13 @@ function CraftSim.MAIN:TriggerModuleUpdate(isInit)
 
 	lastCallTime = callTime
 
+	CraftSim.MAIN:HideAllModules(true)
 
 	if freshLoginRecall and isInit then
 		-- hide all frames to reduce flicker on fresh login recall
-		CraftSim.MAIN:HideAllModules(true)
 		freshLoginRecall = false
 		-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
 		C_Timer.After(0.1, function()
-			CraftSim.MAIN:HideAllModules(true)
 			CraftSim.MAIN:TriggerModuleUpdate(true)
 		end)
 		return
@@ -427,7 +431,6 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.COST_DETAILS.FRAMES:Init()
 		CraftSim.SUPPORTERS.FRAMES:Init()
 		CraftSim.CRAFTQ.FRAMES:Init()
-		CraftSim.CRAFTQ:InitializeCraftQueue()
 		CraftSim.CRAFT_BUFFS.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()

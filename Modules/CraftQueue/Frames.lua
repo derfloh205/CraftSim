@@ -409,6 +409,20 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                 end,
                 label = L(CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL)
             })
+
+            queueTab.content.shoppingListPerCharacterCB = GGUI.Checkbox({
+                parent = queueTab.content,
+                anchorParent = queueTab.content.createAuctionatorShoppingList.frame,
+                anchorA = "LEFT",
+                anchorB = "RIGHT",
+                offsetX = 5,
+                label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX),
+                tooltip = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP),
+                initialValue = CraftSimOptions.craftQueueShoppingListPerCharacter,
+                clickCallback = function(_, checked)
+                    CraftSimOptions.craftQueueShoppingListPerCharacter = checked
+                end
+            })
         end
 
         -- summaries
@@ -1143,7 +1157,8 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                 craftingCostsColumn.text:SetText(f.r(GUTIL:FormatMoney(craftingCosts)))
 
                 row.tooltipOptions = {
-                    text = recipeData.reagentData:GetTooltipText(craftQueueItem.amount),
+                    text = recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
+                        craftQueueItem.recipeData:GetCrafterUID()),
                     owner = row.frame,
                     anchor = "ANCHOR_CURSOR",
                 }

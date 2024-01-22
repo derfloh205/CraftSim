@@ -2,8 +2,10 @@
 local CraftSim = select(2, ...)
 local CraftSimAddonName = select(1, ...)
 
----@class CraftSim.CACHE
-CraftSim.CACHE = {}
+local GUTIL = CraftSim.GUTIL
+
+---@class CraftSim.CACHE : Frame
+CraftSim.CACHE = GUTIL:CreateRegistreeForEvents({ "ITEM_COUNT_CHANGED" })
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
 
@@ -40,6 +42,9 @@ CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
 
 ---@type CraftSim.CraftQueueItem.Serialized[]
 CraftSimCraftQueueCache = CraftSimCraftQueueCache or {}
+
+---@type table<string, table<number, number>> table<crafterUID, table<itemID, count>>
+CraftSimItemCountCache = {}
 
 function CraftSim.CACHE:HandleCraftSimCacheUpdates()
     -- init default cache fields in case of cache field updates
@@ -161,4 +166,46 @@ function CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRe
     CraftSim.UTIL:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
 
     CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions[professionID] = true
+end
+
+---@param itemID ItemInfo
+---@param count number?
+function CraftSim.CACHE:UpdateItemCount(itemID, count)
+    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    CraftSimItemCountCache[crafterUID] = CraftSimItemCountCache[crafterUID] or {}
+    if count then
+        CraftSimItemCountCache[crafterUID][itemID] = count
+        return
+    else
+        CraftSimItemCountCache[crafterUID][itemID] = GetItemCount(itemID, true, false, true)
+    end
+end
+
+---@param itemID ItemInfo
+---@param crafterUID string
+function CraftSim.CACHE:GetItemCount(itemID, bank, uses, reagentBank, crafterUID)
+    local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    crafterUID = crafterUID or playerCrafterUID
+    local isPlayer = crafterUID == playerCrafterUID
+
+    print("GetItemCount for crafterUID: " .. tostring(crafterUID))
+    print("playerCrafterUID: " .. tostring(playerCrafterUID))
+    print("isPlayer: " .. tostring(isPlayer))
+
+    CraftSimItemCountCache[crafterUID] = CraftSimItemCountCache[crafterUID] or {}
+
+    if isPlayer then
+        -- always from api and then cache
+        local count = GetItemCount(itemID, bank, uses, reagentBank)
+        CraftSim.CACHE:UpdateItemCount(itemID, count)
+        return count
+    end
+
+
+    local count = CraftSimItemCountCache[crafterUID][itemID]
+    if not count then
+        return 0 -- not cached yet
+    else
+        return count
+    end
 end
