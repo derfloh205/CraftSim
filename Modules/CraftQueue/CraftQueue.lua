@@ -299,7 +299,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
     for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
         local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
         local crafterUID = craftQueueItem.recipeData:GetCrafterUID()
-        reagentMapPerCharacter[crafterUID] = {}
+        reagentMapPerCharacter[crafterUID] = reagentMapPerCharacter[crafterUID] or {}
         for _, reagent in pairs(requiredReagents) do
             if reagent.hasQuality then
                 for qualityID, reagentItem in pairs(reagent.items) do
@@ -351,7 +351,6 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
             if GUTIL:isItemSoulbound(itemID) then
                 return nil
             end
-            -- only deduct itemcount if crafterUID is current character
 
             local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(itemID, true, false, true, crafterUID)
             local searchTerm = {

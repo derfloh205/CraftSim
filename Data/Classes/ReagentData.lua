@@ -458,6 +458,9 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             text = text .. qualityIcon .. quantityText .. "   "
         end
     end
+    if crafterUID ~= CraftSim.UTIL:GetPlayerCrafterUID() then
+        text = text .. GUTIL:ColorizeText("\n(" .. crafterUID .. ")", GUTIL.COLORS.WHITE)
+    end
     return text
 end
 
