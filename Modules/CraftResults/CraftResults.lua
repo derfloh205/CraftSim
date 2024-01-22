@@ -71,19 +71,19 @@ function CraftSim.CRAFT_RESULTS:ResetData()
     CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CraftSessionData()
 end
 
----Saves the currentCraftData
+---Saves the currentCraftResult
 ---@param craftResult CraftSim.CraftResult
-function CraftSim.CRAFT_RESULTS:AddCraftData(craftResult)
+function CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
     local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
-    print("AddCraftData:", false, true)
+    print("AddCraftResult:", false, true)
     ---@type CraftSim.CraftSessionData
     CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CRAFT_RESULTS.currentSessionData
     if not CraftSim.CRAFT_RESULTS.currentSessionData then
-        print("AddCraftData: Create new SessionData")
+        print("AddCraftResult: Create new SessionData")
         CraftSim.CRAFT_RESULTS.currentSessionData = CraftSim.CraftSessionData()
     else
-        print("AddCraftData: Reuse session data")
+        print("AddCraftResult: Reuse session data")
     end
 
     CraftSim.CRAFT_RESULTS.currentSessionData:AddCraftResult(craftResult)
@@ -151,7 +151,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
 
     craftResultFrame.content.scrollingMessageFrame:AddMessage("\n" .. newText)
 
-    CraftSim.CRAFT_RESULTS:AddCraftData(craftResult)
+    CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
     CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(craftResult.recipeID)
     CraftSim.UTIL:StopProfiling("PROCESS_CRAFT_RESULTS_UI_UPDATE")
 end

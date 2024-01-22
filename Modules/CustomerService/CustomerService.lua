@@ -105,15 +105,16 @@ function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
     end
 
     -- otherwise does not work as key
-    local professionID = tonumber(payload.professionID)
+    ---@type Enum.Profession
+    local profession = tonumber(payload.professionID)
 
-    -- TODO: CraftSim VersionCheck ?
+    print("return recipe data for professionID: " .. tostring(profession))
 
-    print("return recipe data for professionID: " .. tostring(professionID))
+    -- get all cached recipe ids of that character for that profession
+    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+    local professions = CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] or {}
 
-    -- return recipelist by name and ids?
-
-    local professionRecipeIDs = CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCacheByProfessionID(professionID)
+    local professionRecipeIDs = professions(profession)
 
     -- map to recipeInfo and filter
     local response = {

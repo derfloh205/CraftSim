@@ -97,25 +97,6 @@ function CraftSim.RECIPE_SCAN:CancelProfessionScan()
     end
 end
 
----@param recipeID number
----@return Enum.Profession? profession
----@deprecateduse CraftSimRecipeDataCache.professionInfoCache instead
-function CraftSim.RECIPE_SCAN:GetProfessionByRecipeID(recipeID)
-    for professionID, recipeIDs in pairs(CraftSimRecipeIDs.data) do
-        if tContains(recipeIDs, recipeID) then
-            return professionID
-        end
-    end
-
-    return nil
-end
-
---- used in live preview?
----@deprecated use CraftSimRecipeDataCache.professionInfoCache instead
-function CraftSim.RECIPE_SCAN:GetAllRecipeIDsFromCacheByProfessionID(professionID)
-    return CraftSimRecipeIDs.data[professionID]
-end
-
 ---@param crafterUID string
 ---@param recipeInfo TradeSkillRecipeInfo
 function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)

@@ -10,15 +10,9 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CONTROL_PANEL
 function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
     print("ForgeFinder Export..")
 
-    -- get all dragon flight item producing (and quality supporting?) recipes
+    if not C_TradeSkillUI.IsTradeSkillReady() then return end
 
-    -- check current recipeData to fetch the current profession id
-    local professionID
-    if CraftSim.MAIN.currentRecipeData then
-        professionID = CraftSim.MAIN.currentRecipeData.professionData.professionInfo.profession
-    end
-
-    local professionRecipeIDs = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimRecipeIDs, professionID)
+    local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
 
     if professionRecipeIDs and #professionRecipeIDs > 0 then
         professionRecipeIDs = CraftSim.GUTIL:Filter(professionRecipeIDs, function(recipeID)

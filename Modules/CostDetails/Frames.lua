@@ -170,11 +170,11 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
                     usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText("OR", CraftSim.GUTIL.COLORS.LEGENDARY))
                 end
 
-                ---@param craftData CraftSim.CraftData
-                function usedPriceColumn:SetCrafter(craftData)
-                    usedPriceColumn.text:SetText(C_ClassColor.GetClassColor(craftData.crafterClass):WrapTextInColorCode(
-                        craftData.crafterName))
-                end
+                -- ---@param craftData CraftSim.CraftData
+                -- function usedPriceColumn:SetCrafter(craftData)
+                --     usedPriceColumn.text:SetText(C_ClassColor.GetClassColor(craftData.crafterClass):WrapTextInColorCode(
+                --         craftData.crafterName))
+                -- end
 
                 function usedPriceColumn:SetUnknown()
                     usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.RED))
@@ -216,18 +216,18 @@ function CraftSim.COST_DETAILS:UpdateDisplay(recipeData, exportMode)
                 else
                     row.columns[3].text:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
                 end
-                if priceInfo.craftDataExpectedCosts then
-                    row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.craftDataExpectedCosts))
-                else
-                    row.columns[4].text:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
-                end
+                -- if priceInfo.craftDataExpectedCosts then
+                --     row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.craftDataExpectedCosts))
+                -- else
+                --     row.columns[4].text:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.GREY))
+                -- end
 
                 if priceInfo.isAHPrice then
                     row.columns[5]:SetAH()
                 elseif priceInfo.isOverride then
                     row.columns[5]:SetOverride()
-                elseif priceInfo.isCraftData and priceInfo.craftData then
-                    row.columns[5]:SetCrafter(priceInfo.craftData)
+                    -- elseif priceInfo.isCraftData and priceInfo.craftData then
+                    --     row.columns[5]:SetCrafter(priceInfo.craftData)
                 else
                     row.columns[5]:SetUnknown()
                 end
@@ -262,8 +262,8 @@ function CraftSim.COST_DETAILS:UpdateDisplay(recipeData, exportMode)
                 row.columns[5]:SetAH()
             elseif priceInfo.isOverride then
                 row.columns[5]:SetOverride()
-            elseif priceInfo.isCraftData and priceInfo.craftData then
-                row.columns[5]:SetCrafter(priceInfo.craftData)
+                -- elseif priceInfo.isCraftData and priceInfo.craftData then
+                --     row.columns[5]:SetCrafter(priceInfo.craftData)
             else
                 row.columns[5]:SetUnknown()
             end

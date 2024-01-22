@@ -128,7 +128,6 @@ function CraftSim.FRAME:RestoreModulePositions()
     CraftSim.COST_DETAILS.frameWO:RestoreSavedConfig(ProfessionsFrame)
     materialOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
     materialOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
-    CraftSim.CRAFTDATA.frame:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
 
     CraftSim.CRAFT_BUFFS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
