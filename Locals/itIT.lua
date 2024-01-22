@@ -299,54 +299,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER] = "Oggetto",
         [CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER] = "Prezzo AH",
         [CraftSim.CONST.TEXT.COST_DETAILS_OVERRIDE_HEADER] = "Prezzo Personalizzato",
-        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFT_DATA_HEADER] = "Dati Salvati",
+        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_HEADER] = "Dati Salvati",
         [CraftSim.CONST.TEXT.COST_DETAILS_USED_SOURCE] = "Sorgente",
-
-        -- Craft Data Frame
-        [CraftSim.CONST.TEXT.CRAFT_DATA_TITLE] = "Dati Salvati di CraftSim",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPLANATION] = "In questa sezione puoi prendere una " ..
-            f.bb("'Istantanea'") ..
-            " delle tue configurazioni per le ricette di un dato oggetto.\nLe informazioni salvate includono un'istantanea delle tue attuali " ..
-            f.bb("Statistiche di Professione") ..
-            "\ne calcola i " ..
-            f.l("Costi Previsti") ..
-            " per un oggetto in base ad esse.\nPuoi usare la " ..
-            f.bb("Modalità Simulazione") .. " per raffinare le tue configurazioni!",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_RECIPE_ITEMS] = "Oggetti della Ricetta",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_ALL] = "Cancella per tutte le ricette",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_RECIPE] = "Cancella per la ricetta",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER] = "Artigiano: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS] = "Creazioni previste: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS_EXPLANATION] =
-            "Il numero di creazioni previsto per un oggetto in base alla tua\n" ..
-            f.bb("Ispirazione") .. ", " .. f.l("Percentuale HSV") .. " e " .. f.bb("Creazione multipla"),
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTING_CHANCE] = "Probabilità: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_UPGRADE_CHANCE_EXPLANATION] =
-            "La probabilità di creare un oggetto è basata sulla tua\n" ..
-            f.bb("Ispirazione") .. " e " .. f.l("Percentuale HSV"),
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS] = "Costi previsti: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS_EXPLANATION] =
-            "I costi previsti per un oggetto sono basati sul numero di\n" ..
-            f.bb("Creazioni Previste") ..
-            ", i " ..
-            f.bb("Costi di Creazione") .. ", e la tua " .. f.bb("Parsimonia") .. " e " .. f.bb("Creazione multipla"),
-        [CraftSim.CONST.TEXT.CRAFT_DATA_MINIMUM_COST] = "Costi minimi: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_SAVE] = "Salva",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_UPDATE] = "Aggiorna",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_UNREACHABLE] = "Irraggiungibile",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE] = "Cancella",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_SEND] = "Invia",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_SAVED_MATERIALS] = "Configurazione Materiali Salvati",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_NO_DATA] = "Nessun dato per questo oggetto",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_OPTIONAL_MATERIALS] = "Reagenti Opzionali",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_ITEM_HEADER] = "Oggetto",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER_HEADER] = "Artigiano",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COST_HEADER] = "Costo previsto",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CHANCE_HEADER] = "Probabilità",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_OVERRIDE_EXPLANATION] = "Se selezionato, il prezzo di un oggetto sarà il " ..
-            f.l("Costo Previsto") ..
-            " deti dati salvati per questo oggetto.\nSe non ci sono dati salvati per questo oggetto " ..
-            f.bb("O") .. " il prezzo dell'Asta è inferiore, verrà utilizzato il prezzo dell'Asta.",
 
         -- Statistics Frame
         [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "Statistiche di CraftSim",
@@ -457,7 +411,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP] =
         "Include le ricette vincolate nella scansione.\n\nE' consigliato modificare il prezzo (es. per simulare una commissione) nel modulo di Modifica Prezzi per gli oggetti creati con questa ricetta.",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR] = "Includi equipaggiamento",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP] = "Include le ricette di ogni forma di equipaggiamento nella scansione",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP] =
+        "Include le ricette di ogni forma di equipaggiamento nella scansione",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS] = "Ottimizza strumenti professioni",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP] =
         "Per ogni ricetta ottimizza i tuoi strumenti per il miglior profitto\n\n",
@@ -477,7 +432,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX] = "Usa " .. f.bb("Consapevolezza Illustre"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP] = "Usa " ..
             f.bb("Consapevolezza Illustre") ..
-            " o\n" .. f.bb("Consapevolezza Illustre Minore") .. " come reagente opzionale per le ricette che lo permettono",
+            " o\n" ..
+            f.bb("Consapevolezza Illustre Minore") .. " come reagente opzionale per le ricette che lo permettono",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX] = "Solo preferiti",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP] = "Scansiona solo le tue ricette preferite",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Equipaggiato",
@@ -748,7 +704,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP] = "Mostra la finestra con le ultime " ..
             f.bb("Novità") .. " di " .. f.l("CraftSim") .. " quando entri in gioco",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_CHECKBOX] = "Nascondi bottone sulla minimappa",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP] = "Abilita per nascondere il bottone della minimappa di " .. f.l("CraftSim"),
+        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP] =
+            "Abilita per nascondere il bottone della minimappa di " .. f.l("CraftSim"),
 
         -- Control Panel
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL] = "Coda Artigianato",
@@ -829,7 +786,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP] =
         "Sei sicuro di voler cancellare tutti i dati\n per %s?",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE] = "Cancella Storico Cliente",
-        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] = "Cancella Storico Clienti con 0 pagamenti",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] =
+        "Cancella Storico Clienti con 0 pagamenti",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL] = "Intervallo di auto-cancellazione (Giorni)",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP] =
         "CraftSim cancellerà tutti i clienti con 0 pagamenti quando entrerai in gioco dopo X giorni dall'ultima cancellazione.\nSe impostato a 0, CraftSim non cancellerà mai automaticamente.",
@@ -855,7 +813,7 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Rifornimento da Scansione Ricette",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Professione sbagliata",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN] = "In cooldown",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER] = "Artigiano sbagliato",        
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER] = "Artigiano sbagliato",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_REAGENT_INFO_HEADER] = "Reagenti",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_REAGENT_INFO_BUTTON_LABEL] = "Mostra reagenti",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL] = "Crea successivo",
@@ -909,6 +867,6 @@ maggiore o uguale alla soglia configurata.
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Si",
-        [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "No",            
+        [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "No",
     }
 end

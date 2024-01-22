@@ -292,58 +292,15 @@ function CraftSim.LOCAL_EN:GetData()
             f.l("OR") ..
             " .. Price Override\n" ..
             f.bb("Any Name") ..
-            " .. Expected Costs from Craft Data for this Crafter\n\n" ..
+            " .. Expected Costs from crafting it yourself" .. f.r(" (Work in Progress)\n\n") ..
             f.l("OR") ..
-            " will always be used if set. " .. f.bb("Craft Data") .. " will only be used if lower than " .. f.g("AH"),
+            " will always be used if set. " .. f.bb("Crafting Costs") .. " will only be used if lower than " .. f.g("AH"),
         [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_COSTS] = "Crafting Costs: ",
         [CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER] = "Item",
         [CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER] = "AH Price",
         [CraftSim.CONST.TEXT.COST_DETAILS_OVERRIDE_HEADER] = "Override",
-        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFT_DATA_HEADER] = "Craft Data",
+        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_HEADER] = "Crafting",
         [CraftSim.CONST.TEXT.COST_DETAILS_USED_SOURCE] = "Used Source",
-
-        -- Craft Data Frame
-        [CraftSim.CONST.TEXT.CRAFT_DATA_TITLE] = "CraftSim Craft Data",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPLANATION] = "Here you can take a " ..
-            f.bb("'Snapshot'") ..
-            " of your current recipe configuration for a target item\nThe saved data includes a snapshot of your current " ..
-            f.bb("Profession Stats") ..
-            "\nand calculates the " ..
-            f.l("Expected Costs") ..
-            " for an item based on that.\nYou can use " .. f.bb("Simulation Mode") .. " to finetune your configurations!",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_RECIPE_ITEMS] = "Recipe Items",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_ALL] = "Delete for all Recipes",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_RECIPE] = "Delete for Recipe",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER] = "Crafter: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS] = "Expected Crafts: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS_EXPLANATION] =
-            "The expected number of crafts for an item is based on your " ..
-            f.bb("Inspiration") .. ", " .. f.l("HSV Chance") .. " and " .. f.bb("Multicraft"),
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTING_CHANCE] = "Crafting Chance: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_UPGRADE_CHANCE_EXPLANATION] = "The craft chance for an item is based on your\n" ..
-            f.bb("Inspiration ") .. "and " .. f.l("HSV Chance"),
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS] = "Expected Costs: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS_EXPLANATION] = "The expected costs of an item is based on the " ..
-            f.bb("Expected Crafts") ..
-            ", the " ..
-            f.bb("Crafting Costs") .. ", and your " .. f.bb("Resourcefulness") .. " and " .. f.bb("Multicraft"),
-        [CraftSim.CONST.TEXT.CRAFT_DATA_MINIMUM_COST] = "Minimum Costs: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_SAVE] = "Save",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_UPDATE] = "Update",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_UNREACHABLE] = "Unreachable",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE] = "Delete",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_SEND] = "Send to Player",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_SAVED_MATERIALS] = "Saved Material Configuration",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_NO_DATA] = "No data found for this item",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_OPTIONAL_MATERIALS] = "Optional Reagents",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_ITEM_HEADER] = "Item",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER_HEADER] = "Crafter",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COST_HEADER] = "Expected Cost",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CHANCE_HEADER] = "Chance",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_OVERRIDE_EXPLANATION] = "If this is checked, the item price will be the " ..
-            f.l("Expected Costs") ..
-            " of the saved Craft Data of this item.\nIf no Craft Data for this item exists " ..
-            f.bb("OR") .. " the Auction House Price is lower, the Auction House price will be taken.",
 
         -- Statistics Frame
         [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "CraftSim Statistics",
@@ -587,10 +544,7 @@ function CraftSim.LOCAL_EN:GetData()
         "Suggests the cheapest materials to reach the highest quality/inspiration threshold.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Price Overrides",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] =
-        "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically. You can also set an item to use Craft Data as price.",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_LABEL] = "Craft Data",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_DATA_TOOLTIP] =
-        "Edit the saved configurations for crafting commodities of different qualities to show in tooltips and to calculate crafting costs",
+        "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL] = "Specialization Info",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP] =
         "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",

@@ -228,43 +228,8 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER] = "物品",
         [CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER] = "拍賣價格",
         [CraftSim.CONST.TEXT.COST_DETAILS_OVERRIDE_HEADER] = "重訂價格",
-        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFT_DATA_HEADER] = "製造資料",
+        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_HEADER] = "製造資料",
         [CraftSim.CONST.TEXT.COST_DETAILS_USED_SOURCE] = "使用來源",
-
-        -- Craft Data Frame
-        [CraftSim.CONST.TEXT.CRAFT_DATA_TITLE] = "CraftSim 製造資料",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPLANATION] = "你可以在這裡為目標物品拍攝你的當前配方配置的" ..
-            f.bb("截圖") ..
-            "。\n保存的資料包含了你的當前" ..
-            f.bb("專業屬性") .. "和使用這些屬性計算的物品" .. f.l("預期成本") .. "」。\n你可以使用" .. f.bb("模擬模式") .. "」微調你的配置！",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_RECIPE_ITEMS] = "配方項目",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_ALL] = "刪除所有配方",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE_RECIPE] = "刪除配方",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER] = "製造者: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS] = "預期製造: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_CRAFTS_EXPLANATION] = "物品的期望製造數量是依據你的" ..
-            f.bb("靈感") .. ", " .. f.l("HSV 機率") .. "和" .. f.bb("複數製造"),
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTING_CHANCE] = "製造機率: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_UPGRADE_CHANCE_EXPLANATION] = "物品的期望製造機率是依據你的\n" ..
-            f.bb("靈感") .. "和" .. f.l("HSV 機率"),
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS] = "預期成本: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COSTS_EXPLANATION] = "物品的預期成本機率是依據" ..
-            f.bb("預期製造") .. "、" .. f.bb("製造成本") .. "，以及你的" .. f.bb("精明") .. "和" .. f.bb("複數製造"),
-        [CraftSim.CONST.TEXT.CRAFT_DATA_MINIMUM_COST] = "最低成本: ",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_SAVE] = "儲存",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_UPDATE] = "更新",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_UNREACHABLE] = "無法達到",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_DELETE] = "刪除",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_SEND] = "傳送給玩家",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_SAVED_MATERIALS] = "儲存材料配置",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_NO_DATA] = "找不到該物品的資料",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_OPTIONAL_MATERIALS] = "選擇性材料",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_ITEM_HEADER] = "物品",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CRAFTER_HEADER] = "製造者",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_EXPECTED_COST_HEADER] = "預期成本",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_CHANCE_HEADER] = "機率",
-        [CraftSim.CONST.TEXT.CRAFT_DATA_OVERRIDE_EXPLANATION] = "勾選時，物品價格會是已儲存的製造資料中此物品的" ..
-            f.l("預期成本") .. "。\n如果沒有此物品的製造資料，" .. f.bb("或是") .. "拍賣場的價格比較低，則會是拍賣場的價格。",
 
         -- Statistics Frame
         [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "CraftSim 統計資料",

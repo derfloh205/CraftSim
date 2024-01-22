@@ -7,7 +7,6 @@ CraftSim.LibIcon = LibStub("LibDBIcon-1.0")
 
 local GUTIL = CraftSim.GUTIL
 
-
 ---@class CraftSim.MAIN : Frame
 CraftSim.MAIN = CreateFrame("Frame", "CraftSimAddon")
 CraftSim.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
@@ -188,6 +187,11 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 		if CraftSimOptions.optionsShowNews == nil then
 			CraftSimOptions.optionsShowNews = true
 		end
+	end
+
+	-- old data removal
+	if CraftSimCraftData then
+		CraftSimCraftData = nil
 	end
 end
 
