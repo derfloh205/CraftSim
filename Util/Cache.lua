@@ -144,24 +144,22 @@ local professionTriggered = {}
 --- trigger it for all recipes on purpose when the profession is opened the first time in this session
 function CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionID)
     if professionTriggered[professionID] then return end
-
     if not professionRecipeIDs then
         return
     end
-    if CraftSim.MAIN.initialLogin then
-        CraftSimLoadedProfessionRecipes = {}
-    end
-    if not tContains(CraftSimLoadedProfessionRecipes, professionID) then
-        CraftSim.UTIL:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
-        for _, recipeID in ipairs(professionRecipeIDs) do
-            if CraftSim.UTIL:IsDragonflightRecipe(recipeID) then
-                C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
-            end
-        end
+    print("Trigger operationInfo prefetch for: " .. #professionRecipeIDs .. " recipes")
 
-        table.insert(CraftSimLoadedProfessionRecipes, professionID)
-        CraftSim.UTIL:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
+    CraftSim.UTIL:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
+    for _, recipeID in ipairs(professionRecipeIDs) do
+        --if CraftSim.UTIL:IsDragonflightRecipe(recipeID) then
+        if recipeID == 367713 then
+            print("triggering debug recipe")
+        end
+        C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
+        --end
     end
+
+    CraftSim.UTIL:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
 
     professionTriggered[professionID] = true
 end

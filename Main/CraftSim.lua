@@ -7,6 +7,8 @@ CraftSim.LibIcon = LibStub("LibDBIcon-1.0")
 
 local GUTIL = CraftSim.GUTIL
 
+local L = CraftSim.UTIL:GetLocalizer()
+
 ---@class CraftSim.MAIN : Frame
 CraftSim.MAIN = CreateFrame("Frame", "CraftSimAddon")
 CraftSim.MAIN:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
@@ -278,6 +280,25 @@ function CraftSim.MAIN:HookToEvent()
 
 			CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionInfo.profession)
 			CraftSim.MAIN:TriggerModuleUpdate(true)
+
+			local recipeID = recipeInfo.recipeID
+			local multicraftLocalizedName = L(CraftSim.CONST.TEXT.STAT_MULTICRAFT)
+
+			--also: wait if recipe late loads multicraft information, if yes, reload modules
+			GUTIL:WaitFor(function()
+					local operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
+					if not operationInfo then return false end
+					return GUTIL:Some(operationInfo.bonusStats, function(bonusStatInfo)
+						return bonusStatInfo.bonusStatName == multicraftLocalizedName
+					end)
+				end, function()
+					-- if user is still on this recipe, reload
+					if recipeID == CraftSim.MAIN.currentRecipeID then
+						print("Multicraft Info Loaded")
+						CraftSim.MAIN:TriggerModuleUpdate(true)
+					end
+				end,
+				1) -- wait max one second for multicraft info to postload
 		else
 			print("Hide all frames recipeInfo nil")
 			CraftSim.MAIN:HideAllModules()
