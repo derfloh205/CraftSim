@@ -270,20 +270,10 @@ function CraftSim.MAIN:HookToEvent()
 			CraftSim.MAIN.currentRecipeID = recipeInfo.recipeID
 
 			local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
-			local professionRecipeIDs = CraftSim.CACHE:GetCacheEntryByVersion(CraftSimRecipeIDs,
-				professionInfo.profession)
-			if not professionRecipeIDs then
-				-- TODO: put somewhere other than main
-				local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
-				-- filter out non dragonflight professions???
-				if professionInfo.profession then
-					CraftSim.CACHE:AddCacheEntryByVersion(CraftSimRecipeIDs, professionInfo.profession, recipeIDs)
-				end
-			end
+			local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
 
 			CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionInfo.profession)
 			CraftSim.MAIN:TriggerModuleUpdate(true)
-			CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeInfo.recipeID)
 		else
 			print("Hide all frames recipeInfo nil")
 			CraftSim.MAIN:HideAllModules()
@@ -414,7 +404,6 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 		CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
 		CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
-		CraftSim.CRAFTDATA.FRAMES:Init()
 		CraftSim.COST_DETAILS.FRAMES:Init()
 		CraftSim.SUPPORTERS.FRAMES:Init()
 		CraftSim.CRAFTQ.FRAMES:Init()
@@ -435,7 +424,6 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 
 		CraftSim.CUSTOMER_SERVICE:Init()
 		CraftSim.CUSTOMER_HISTORY:Init()
-		CraftSim.CRAFTDATA:Init()
 
 		CraftSim.OPTIONS:Init()
 
@@ -576,7 +564,6 @@ function CraftSim.MAIN:HideAllModules(keepControlPanel)
 	CraftSim.COST_DETAILS.frameWO:Hide()
 	materialOptimizationFrame:Hide()
 	materialOptimizationFrameWO:Hide()
-	CraftSim.CRAFTDATA.frame:Hide()
 	-- hide sim mode toggle button
 	CraftSim.SIMULATION_MODE.FRAMES.WORKORDER.toggleButton:Hide()
 	CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton:Hide()
@@ -671,7 +658,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	local showRecipeScan = true
 	local showCustomerService = true
 	local showCustomerHistory = true
-	local showCraftData = true
 	local showCostDetails = true
 	local showCraftQueue = true
 	local showCraftBuffs = true
@@ -702,7 +688,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	showCraftResults = showCraftResults and CraftSimOptions.modulesCraftResults
 	showCustomerService = showCustomerService and CraftSimOptions.modulesCustomerService
 	showCustomerHistory = showCustomerHistory and CraftSimOptions.modulesCustomerHistory
-	showCraftData = showCraftData and CraftSimOptions.modulesCraftData
 	showCostDetails = showCostDetails and CraftSimOptions.modulesCostDetails
 	showCraftQueue = showCraftQueue and CraftSimOptions.modulesCraftQueue
 	showCraftBuffs = showCraftBuffs and CraftSimOptions.modulesCraftBuffs
@@ -740,11 +725,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 
 	if recipeData and showCraftResults then
 		CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeData.recipeID)
-	end
-
-	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTDATA.frame, showCraftData)
-	if showCraftData then
-		CraftSim.CRAFTDATA.FRAMES:UpdateDisplay(recipeData)
 	end
 
 	-- AverageProfit Module

@@ -33,7 +33,6 @@
         "ChatFrame_AddMessageEventFilter",
         "CloseDropDownMenus",
         "UIDropDownMenu_SetEnabled",
-        "CraftSimCraftData",
         "ToggleDropDownMenu",
         "GameFontNormal",
         "ChatTypeInfo",
