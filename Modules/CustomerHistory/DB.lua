@@ -88,7 +88,7 @@ end
 
 function CraftSim.CUSTOMER_HISTORY.DB:PurgeZeroTipCustomers()
     for key, customerHistory in pairs(CraftSimCustomerHistoryV2 or {}) do
-        if customerHistory.totalTip <= 0 then
+        if not customerHistory.totalTip or customerHistory.totalTip <= 0 then
             CraftSimCustomerHistoryV2[key] = nil
         end
     end

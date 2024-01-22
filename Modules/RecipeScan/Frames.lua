@@ -230,6 +230,12 @@ function CraftSim.RECIPE_SCAN.FRAMES:UpdateProfessionListDisplay()
     ---@param rowA CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
     ---@param rowB CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
         function(rowA, rowB)
+            if rowA and not rowB then
+                return true
+            end
+            if not rowA and rowA then
+                return false
+            end
             local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
             local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
             local crafterUIDA = CraftSim.UTIL:GetCrafterUIDFromCrafterData(rowA.crafterData)

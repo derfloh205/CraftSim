@@ -209,10 +209,14 @@ function CraftSim.MAIN:TriggerModuleUpdate(isInit)
 
 	lastCallTime = callTime
 
+
 	if freshLoginRecall and isInit then
+		-- hide all frames to reduce flicker on fresh login recall
+		CraftSim.MAIN:HideAllModules(true)
 		freshLoginRecall = false
 		-- hack to make frames appear after fresh login, when some info has not loaded yet although should have after blizzards' Init call
 		C_Timer.After(0.1, function()
+			CraftSim.MAIN:HideAllModules(true)
 			CraftSim.MAIN:TriggerModuleUpdate(true)
 		end)
 		return
@@ -282,7 +286,7 @@ function CraftSim.MAIN:HookToEvent()
 			CraftSim.CACHE:BuildRecipeMap(professionInfo, recipeInfo.recipeID)
 		else
 			print("Hide all frames recipeInfo nil")
-			CraftSim.MAIN:HideAllFrames()
+			CraftSim.MAIN:HideAllModules()
 		end
 	end
 
@@ -529,7 +533,7 @@ function CraftSim.MAIN:PLAYER_LOGIN()
 	end
 end
 
-function CraftSim.MAIN:HideAllFrames(keepControlPanel)
+function CraftSim.MAIN:HideAllModules(keepControlPanel)
 	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerServiceFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_SERVICE)
 	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
@@ -552,6 +556,9 @@ function CraftSim.MAIN:HideAllFrames(keepControlPanel)
 	end
 	-- hide all modules
 	CraftSim.RECIPE_SCAN.frame:Hide()
+	CraftSim.CRAFTQ.frame:Hide()
+	CraftSim.CRAFT_BUFFS.frame:Hide()
+	CraftSim.CRAFT_BUFFS.frameWO:Hide()
 	craftResultsFrame:Hide()
 	customerServiceFrame:Hide()
 	customerHistoryFrame:Hide()
@@ -600,7 +607,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	local craftBuffsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER)
 
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
-		CraftSim.MAIN:HideAllFrames()
+		CraftSim.MAIN:HideAllModules()
 		return
 	end
 
@@ -610,7 +617,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 
 	if not recipeInfo or recipeInfo.isGatheringRecipe then
 		-- hide all modules
-		CraftSim.MAIN:HideAllFrames(true)
+		CraftSim.MAIN:HideAllModules(true)
 		return
 	end
 
