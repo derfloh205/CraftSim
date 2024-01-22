@@ -20,6 +20,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
 ---@field specializationDataCache table<string, table<number, CraftSim.SpecializationData.Serialized>?> table<crafterGUID, table<recipeID, CraftSim.SpecializationData.Serialized>>
 ---@field professionGearCache table<string, table<number, CraftSim.ProfessionGearCacheData>> table<crafterGUID, table<profession, CraftSim.ProfessionGearCacheData>>
 ---@field altClassCache table<string, ClassFile> table<crafterUID, ClassFile>
+---@field postLoadedMulticraftInformationProfessions table<Enum.Profession, boolean>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     cachedRecipeIDs = {},
     recipeInfoCache = {},
@@ -27,7 +28,8 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     operationInfoCache = {},
     specializationDataCache = {},
     professionGearCache = {},
-    altClassCache = {}
+    altClassCache = {},
+    postLoadedMulticraftInformationProfessions = {},
 }
 
 CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
@@ -49,6 +51,8 @@ function CraftSim.CACHE:HandleCraftSimCacheUpdates()
         CraftSimRecipeDataCache.specializationDataCache = CraftSimRecipeDataCache.specializationDataCache or {}
         CraftSimRecipeDataCache.professionGearCache = CraftSimRecipeDataCache.professionGearCache or {}
         CraftSimRecipeDataCache.altClassCache = CraftSimRecipeDataCache.altClassCache or {}
+        CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions = CraftSimRecipeDataCache
+            .postLoadedMulticraftInformationProfessions or {}
     end
 end
 
@@ -139,11 +143,11 @@ function CraftSim.CACHE:AddCacheEntryByGameVersion(cache, entryID, data)
     cache.data[entryID] = data
 end
 
-local professionTriggered = {}
 --- Since Multicraft seems to be missing on operationInfo on the first call after a fresh login, and seems to be loaded in after the first call,
 --- trigger it for all recipes on purpose when the profession is opened the first time in this session
 function CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionID)
-    if professionTriggered[professionID] then return end
+    if not professionID then return end
+    if CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions[professionID] then return end
     if not professionRecipeIDs then
         return
     end
@@ -151,15 +155,10 @@ function CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRe
 
     CraftSim.UTIL:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
     for _, recipeID in ipairs(professionRecipeIDs) do
-        --if CraftSim.UTIL:IsDragonflightRecipe(recipeID) then
-        if recipeID == 367713 then
-            print("triggering debug recipe")
-        end
         C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
-        --end
     end
 
     CraftSim.UTIL:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
 
-    professionTriggered[professionID] = true
+    CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions[professionID] = true
 end

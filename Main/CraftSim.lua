@@ -109,6 +109,8 @@ function CraftSim.MAIN:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 	if initialLogin then
 		-- Clear Preview IDs upon fresh session
 		CraftSim.CUSTOMER_SERVICE:ClearPreviewIDs()
+		-- clear post loaded multicraft professions
+		wipe(CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions)
 	end
 end
 
@@ -282,23 +284,16 @@ function CraftSim.MAIN:HookToEvent()
 			CraftSim.MAIN:TriggerModuleUpdate(true)
 
 			local recipeID = recipeInfo.recipeID
-			local multicraftLocalizedName = L(CraftSim.CONST.TEXT.STAT_MULTICRAFT)
 
-			--also: wait if recipe late loads multicraft information, if yes, reload modules
-			GUTIL:WaitFor(function()
-					local operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
-					if not operationInfo then return false end
-					return GUTIL:Some(operationInfo.bonusStats, function(bonusStatInfo)
-						return bonusStatInfo.bonusStatName == multicraftLocalizedName
-					end)
-				end, function()
-					-- if user is still on this recipe, reload
-					if recipeID == CraftSim.MAIN.currentRecipeID then
-						print("Multicraft Info Loaded")
-						CraftSim.MAIN:TriggerModuleUpdate(true)
-					end
-				end,
-				1) -- wait max one second for multicraft info to postload
+			-- this should happen exactly once on the first open recipe when a profession opened fresh after a client start
+			-- otherwise it just always fizzles
+			-- its better than to wait for multicraft stat each frame because this can actually happen in the same frame
+			GUTIL:WaitForEvent("CRAFTING_DETAILS_UPDATE", function()
+				if recipeID == CraftSim.MAIN.currentRecipeID then
+					print("Multicraft Info Loaded")
+					CraftSim.MAIN:TriggerModuleUpdate(true)
+				end
+			end, 1)
 		else
 			print("Hide all frames recipeInfo nil")
 			CraftSim.MAIN:HideAllModules()
