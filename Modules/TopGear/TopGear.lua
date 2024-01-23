@@ -175,7 +175,7 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
     CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession] =
         CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession] or
         CopyTable(
-            CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
+            CraftSim.CACHE.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
     if recipeData:IsCrafter() then
         local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
         print("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))

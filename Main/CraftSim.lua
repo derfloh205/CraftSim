@@ -284,7 +284,8 @@ function CraftSim.MAIN:HookToEvent()
 			local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 			local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
 
-			CraftSim.CACHE:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionInfo.profession)
+			CraftSim.CACHE.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs,
+				professionInfo.profession)
 			CraftSim.MAIN:TriggerModuleUpdate(true)
 
 			local recipeID = recipeInfo.recipeID

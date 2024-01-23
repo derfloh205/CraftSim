@@ -327,7 +327,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             ---@type CraftSim.OptionalReagentSlot
             slot = slot
             for _, possibleReagent in pairs(slot.possibleReagents) do
-                CraftSim.CACHE:UpdateItemCount(possibleReagent.item:GetItemID())
+                CraftSim.CACHE.ITEM_COUNT:Update(possibleReagent.item:GetItemID())
             end
         end
     end

@@ -459,7 +459,7 @@ end
 function CraftSim.CRAFTQ:GetItemCountFromCache(itemID, bank, uses, reagentbank, crafterUID)
     local itemCount = (CraftSim.CRAFTQ.itemCountCache and CraftSim.CRAFTQ.itemCountCache[itemID]) or nil
     if not itemCount then
-        itemCount = CraftSim.CACHE:GetItemCount(itemID, bank, uses, reagentbank, crafterUID)
+        itemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentbank, crafterUID)
     end
     return itemCount
 end

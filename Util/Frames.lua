@@ -609,6 +609,19 @@ function CraftSim.FRAME:InitDebugFrame()
         end
     })
 
+    controlPanel.content.addToVDTButton = CraftSim.GGUI.Button {
+        label = "Add2VDT",
+        parent = controlPanel.content,
+        anchorParent = controlPanel.content.clearButton.frame,
+        anchorA = "LEFT", anchorB = "RIGHT",
+        adjustWidth = true, sizeX = 15, sizeY = 25,
+        clickCallback = function()
+            if DevTool then
+                DevTool:AddData(CraftSim_DEBUG:RUN(), "CraftSim")
+            end
+        end
+    }
+
     controlPanel.content.debugIDScrollFrame, controlPanel.content.debugIDSFrame = CraftSim.FRAME:CreateScrollFrame(
         controlPanel.content, -130, 10, -40, 20)
     local checkBoxOffsetY = 0

@@ -31,7 +31,7 @@ function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet()
             [crafterUID] or {}
         CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] =
             CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] or
-            CopyTable(CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
+            CopyTable(CraftSim.CACHE.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
         if self.isCooking then
             local tool = GetInventoryItemLink("player", self.professionGearSlots[1])
             local gear2 = GetInventoryItemLink("player", self.professionGearSlots[2])
@@ -52,7 +52,7 @@ function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet()
             [crafterUID] or {}
         CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] =
             CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] or
-            CopyTable(CraftSim.CACHE.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
+            CopyTable(CraftSim.CACHE.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
         local professionGearCacheData = CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID]
         if professionGearCacheData and professionGearCacheData.equippedGear then
             self:LoadSerialized(professionGearCacheData.equippedGear)

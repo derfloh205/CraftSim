@@ -21,12 +21,16 @@ Libs/Libs.lua
 Util/Const.lua
 Util/Util.lua
 
+Cache/Cache.lua
+Cache/ItemCount.lua
+Cache/RecipeData.lua
+Cache/CraftQueue.lua
+
 Media/Media.lua
 
 Util/Debug.lua
 Util/Tooltip.lua
 Util/Frames.lua
-Util/Cache.lua
 Util/Comm.lua
 Util/API.lua
 
