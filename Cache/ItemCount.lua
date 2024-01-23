@@ -34,9 +34,9 @@ function CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterU
     crafterUID = crafterUID or playerCrafterUID
     local isPlayer = crafterUID == playerCrafterUID
 
-    print("GetItemCount for crafterUID: " .. tostring(crafterUID))
-    print("playerCrafterUID: " .. tostring(playerCrafterUID))
-    print("isPlayer: " .. tostring(isPlayer))
+    -- print("GetItemCount for crafterUID: " .. tostring(crafterUID))
+    -- print("playerCrafterUID: " .. tostring(playerCrafterUID))
+    -- print("isPlayer: " .. tostring(isPlayer))
 
     CraftSimItemCountCache[crafterUID] = CraftSimItemCountCache[crafterUID] or {}
 

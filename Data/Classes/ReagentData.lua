@@ -361,11 +361,13 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
     print("minimum required fit: " .. tostring(currentMinimumReagentFit))
 
     local currentMinimumReagentFitOptional = math.huge
-    for _, optionalReagentSlot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
-        if not optionalReagentSlot:HasItem() then
+    ---@type CraftSim.OptionalReagentSlot[]
+    local optionalReagentSlots = GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })
+    for _, optionalReagentSlot in pairs(optionalReagentSlots) do
+        if not optionalReagentSlot:HasItem(1, crafterUID) then
             return 0
         end
-        currentMinimumReagentFitOptional = math.min(optionalReagentSlot:HasQuantityXTimes(),
+        currentMinimumReagentFitOptional = math.min(optionalReagentSlot:HasQuantityXTimes(crafterUID),
             currentMinimumReagentFitOptional)
     end
     print("minimum optional fit: " .. tostring(currentMinimumReagentFitOptional))
@@ -464,9 +466,28 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
         end
     end
     if crafterUID ~= CraftSim.UTIL:GetPlayerCrafterUID() then
-        text = text .. GUTIL:ColorizeText("\n(" .. crafterUID .. ")", GUTIL.COLORS.WHITE)
+        local crafterName = crafterUID
+        local classFileCached = CraftSimRecipeDataCache.altClassCache[crafterUID]
+        if classFileCached then
+            crafterName = C_ClassColor.GetClassColor(classFileCached):WrapTextInColorCode(crafterName)
+        end
+        text = text .. GUTIL:ColorizeText("\n(Inventory of " .. crafterName .. ")", GUTIL.COLORS.WHITE)
     end
     return text
+end
+
+--- called when recipe was successfully crafted and reagent bank was updated as a result (to update reagent bank item count)
+function CraftSim.ReagentData:UpdateItemCountCacheForAllocatedReagents()
+    -- only if I am the crafter!
+    if not self.recipeData:IsCrafter() then
+        return
+    end
+
+    local craftingReagentInfoTbl = self:GetCraftingReagentInfoTbl()
+
+    for _, craftingReagentInfo in pairs(craftingReagentInfoTbl) do
+        CraftSim.CACHE.ITEM_COUNT:Update(craftingReagentInfo.itemID)
+    end
 end
 
 function CraftSim.ReagentData:Debug()

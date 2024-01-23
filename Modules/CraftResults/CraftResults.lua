@@ -3,6 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
+local systemPrint = print
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
 ---@class CraftSim.CRAFT_RESULTS : Frame
 CraftSim.CRAFT_RESULTS = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT" })
@@ -18,14 +19,22 @@ local dataCollect = true
 function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
     --- triggered by enchants and not salvage crafts
 
+    print("OnCraftRecipe: " .. tostring(recipeData))
+
     if CraftSim.MAIN.currentRecipeData then
-        local recipeData = CraftSim.MAIN.currentRecipeData
+        local mainRecipeData = CraftSim.MAIN.currentRecipeData
         -- if the open recipe is a recraft recipe than take this as current craft results recipe data instead
         -- because this will not be able to be triggered by the craftqueue!
-        if recipeData.isRecraft then
-            CraftSim.CRAFT_RESULTS.currentRecipeData = recipeData
+        if mainRecipeData and mainRecipeData.isRecraft then
+            print("Setting main recipe")
+            CraftSim.CRAFT_RESULTS.currentRecipeData = mainRecipeData
             return
         end
+    end
+
+    print("Setting recipeData from param")
+    if recipeData then
+        print("recipe is: " .. tostring(recipeData.recipeName))
     end
 
     CraftSim.CRAFT_RESULTS.currentRecipeData = recipeData
@@ -45,6 +54,7 @@ end
 
 local currentCraftingResults = {}
 local collectingResults = true
+---@param craftResult CraftingItemResultData
 function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
     if CraftSimOptions.craftResultsDisable then
         return
@@ -59,6 +69,18 @@ function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
             CraftSim.CRAFT_RESULTS:processCraftResults()
         end)
     end
+
+    -- always update reagents of that craft
+    GUTIL:WaitForEvent("PLAYERREAGENTBANKSLOTS_CHANGED", function()
+        local print = CraftSim.UTIL:SetDebugPrint("CACHE_ITEM_COUNT")
+        print("PLAYERREAGENTBANKSLOTS_CHANGED After Craft")
+        -- update item count for each of the used reagents in this craft! (in next frame to batch results)
+        RunNextFrame(function()
+            local recipeData = CraftSim.CRAFT_RESULTS.currentRecipeData
+            print("Updating Reagents Count for: " .. tostring(recipeData.recipeName))
+            recipeData.reagentData:UpdateItemCountCacheForAllocatedReagents()
+        end)
+    end, 0.1)
 end
 
 function CraftSim.CRAFT_RESULTS:ExportJSON()
@@ -202,13 +224,14 @@ function CraftSim.CRAFT_RESULTS:processCraftResults()
         return
     end
 
+    print("process craft results for: " .. tostring(recipeData.recipeName))
     local craftResult = CraftSim.CraftResult(recipeData, CraftingItemResultData)
 
     -- Debug for data collection
     CraftSim.CRAFT_RESULTS:CollectData(recipeData, craftResult)
 
-    print("Craft Result: ")
-    print(craftResult)
+    -- print("Craft Result: ")
+    -- print(craftResult)
 
     local itemsToLoad = GUTIL:Map(craftResult.savedReagents, function(savedReagent)
         return savedReagent.item

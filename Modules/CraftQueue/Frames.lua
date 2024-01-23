@@ -161,7 +161,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             sizeY = 232,
             offsetY = -70,
             columnOptions = columnOptions,
-            rowConstructor = function(columns)
+            rowConstructor = function(columns, row)
                 ---@class CraftSim.CraftQueue.CraftList.EditButtonColumn : Frame
                 local editButtonColumn = columns[1]
                 ---@class CraftSim.CraftQueue.CraftList.CrafterColumn : Frame
@@ -293,7 +293,20 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     borderAdjustWidth = 1.13,
                     minValue = 1,
                     initialValue = 1,
-                    onNumberValidCallback = nil -- set dynamically on Add
+                    onNumberValidCallback = nil, -- set dynamically on Add
+                    onTabPressedCallback = function(input)
+                        -- focus next editbox in the row below
+                        local activeRowIndex = row:GetActiveRowIndex()
+                        if activeRowIndex then
+                            local nextRow = row.frameList.activeRows[activeRowIndex + 1]
+                            if nextRow then
+                                input.textInput.frame:ClearFocus()
+                                local craftAmountColumn = nextRow.columns
+                                    [8] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
+                                craftAmountColumn.input.textInput.frame:SetFocus()
+                            end
+                        end
+                    end
                 })
 
                 craftButtonColumn.craftButton = GGUI.Button({
@@ -535,7 +548,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             sizeX = 40, borderAdjustWidth = 1.2, onNumberValidCallback = function(input)
             local value = tostring(input.currentValue)
             CraftSimOptions.craftQueueGeneralRestockRestockAmount = value or 1
-        end
+        end,
         }
 
         local qualityIconSize = 20

@@ -116,10 +116,13 @@ end
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
     print("Update RecipeData: " .. tostring(recipeID))
+
     -- only update frontend if its the shown recipeID
     if not CraftSim.MAIN.currentRecipeData or CraftSim.MAIN.currentRecipeData.recipeID ~= recipeID then
+        print("no frontend update: is not shown recipe")
         return
     end
+    print("Do update cause its the shown recipe")
 
     local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
@@ -131,6 +134,9 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     else
         print("Reuse sessionData")
     end
+    if DevTool then
+        DevTool:AddData(craftSessionData, "CraftResults SessionData")
+    end
     local craftRecipeData = craftSessionData:GetCraftRecipeData(recipeID)
     if not craftRecipeData then
         print("create new recipedata")
@@ -138,7 +144,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
         table.insert(craftSessionData.craftRecipeData, craftRecipeData)
     else
         print("Reuse recipedata")
-        print(craftRecipeData)
+        -- print(craftRecipeData)
     end
 
     -- statistics
@@ -229,8 +235,8 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
             local expectedAverageSavedCosts = 0
             if craftRecipeData.numCrafts > 0 then
                 averageSavedCosts = CraftSim.GUTIL:Round((craftRecipeData.totalSavedCosts / craftRecipeData.numCrafts) /
-                    10000) *
-                10000          --roundToGold
+                        10000) *
+                    10000 --roundToGold
                 expectedAverageSavedCosts = CraftSim.GUTIL:Round((craftRecipeData.totalExpectedSavedCosts / craftRecipeData.numCrafts) /
                     10000) * 10000
             end

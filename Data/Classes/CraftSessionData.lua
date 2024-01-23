@@ -91,6 +91,7 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
     if not craftRecipeData then
         print("CraftSessionData: Create new CraftRecipeData")
         craftRecipeData = CraftSim.CraftRecipeData(craftResult.recipeID)
+        table.insert(self.craftRecipeData, craftRecipeData)
     else
         print("CraftSessionData: Reuse craftRecipeData")
     end
