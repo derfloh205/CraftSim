@@ -9,7 +9,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE_ITEM_CO
 CraftSim.CACHE = CraftSim.CACHE
 
 ---@class CraftSim.CACHE.ITEM_COUNT : Frame
-CraftSim.CACHE.ITEM_COUNT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED" })
+CraftSim.CACHE.ITEM_COUNT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED", "BANKFRAME_OPENED" })
 
 ---@type table<string, table<number, number>> table<crafterUID, table<itemID, count>>
 CraftSimItemCountCache = {}
@@ -61,11 +61,15 @@ function CraftSim.CACHE.ITEM_COUNT:ClearAll()
 end
 
 function CraftSim.CACHE.ITEM_COUNT:BAG_UPDATE_DELAYED()
-    CraftSim.CACHE.ITEM_COUNT:UpdateCountFromBags()
+    CraftSim.CACHE.ITEM_COUNT:UpdateItemCountForCharacter()
+end
+
+function CraftSim.CACHE.ITEM_COUNT:BANKFRAME_OPENED()
+    CraftSim.CACHE.ITEM_COUNT:UpdateItemCountForCharacter()
 end
 
 --- loops all of a players inventory+bank bags and updates all tradegoods item count
-function CraftSim.CACHE.ITEM_COUNT:UpdateCountFromBags()
+function CraftSim.CACHE.ITEM_COUNT:UpdateItemCountForCharacter()
     local alreadyUpdated = {} -- small map to cache already updated IDs to not double update them
     print("Start Bag Update..")
     local function countBagItems(bagID)
