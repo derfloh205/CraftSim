@@ -838,7 +838,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
             -- show reagents in tooltip when recipe is hovered
 
             row.tooltipOptions = {
-                text = recipeData.reagentData:GetTooltipText(),
+                text = recipeData.reagentData:GetTooltipText(1, recipeData:GetCrafterUID()),
                 owner = row.frame,
                 anchor = "ANCHOR_CURSOR",
             }

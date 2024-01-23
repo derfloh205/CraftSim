@@ -335,7 +335,8 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     local hasVellumIfneeded = true
 
     if self.recipeData.isEnchantingRecipe then
-        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(CraftSim.CONST.ENCHANTING_VELLUM_ID, false, false, true,
+        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(CraftSim.CONST.ENCHANTING_VELLUM_ID, false,
+            false, true,
             crafterUID)
         hasVellumIfneeded = itemCount >= multiplier
     end
@@ -371,7 +372,8 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
 
     local vellumMinimumFit = math.huge
     if self.recipeData.isEnchantingRecipe then
-        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(CraftSim.CONST.ENCHANTING_VELLUM_ID, false, false, true,
+        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(CraftSim.CONST.ENCHANTING_VELLUM_ID, false,
+            false, true,
             crafterUID)
         vellumMinimumFit = itemCount
         print("minimum vellum fit: " .. tostring(vellumMinimumFit))
@@ -405,7 +407,8 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
         local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
         text = text .. inlineIcon
         if not requiredReagent.hasQuality then
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(requiredReagent.items[1].item:GetItemID(), true,
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(requiredReagent.items[1].item:GetItemID(),
+                true,
                 false, true, crafterUID)
             print("- tooltiptext for: " .. tostring(requiredReagent.items[1].item:GetItemName()))
             print("- - player item count: " .. tostring(itemCount))
@@ -424,7 +427,8 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             local totalCount = requiredReagent:GetTotalQuantity()
             local totalCountOK = totalCount * multiplier >= requiredReagent.requiredQuantity * multiplier
             for qualityID, reagentItem in pairs(requiredReagent.items) do
-                local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(reagentItem.item:GetItemID(), true, false, true,
+                local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(reagentItem.item:GetItemID(), true,
+                    false, true,
                     crafterUID)
                 local quantityText = GUTIL:ColorizeText(
                     tostring(reagentItem.quantity * multiplier) .. "(" .. tostring(itemCount) .. ")", GUTIL.COLORS.RED)
@@ -445,7 +449,8 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             local reagentIcon = optionalReagentSlot.activeReagent.item:GetItemIcon()
             local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
             text = text .. inlineIcon
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(optionalReagentSlot.activeReagent.item:GetItemID(),
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(
+                optionalReagentSlot.activeReagent.item:GetItemID(),
                 true, false, true, crafterUID)
             local quantityText = GUTIL:ColorizeText(tostring(multiplier) .. "(" .. tostring(itemCount) .. ")",
                 GUTIL.COLORS.RED)

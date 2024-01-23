@@ -52,7 +52,8 @@ function CraftSim.ReagentItem:HasItem(multiplier, crafterUID)
     if not self.item then
         return false
     end
-    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCache(self.item:GetItemID(), true, false, true, crafterUID)
+    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(self.item:GetItemID(), true, false, true,
+        crafterUID)
     return itemCount >= (self.quantity * multiplier)
 end
 

@@ -9,7 +9,7 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE_ITEM_CO
 CraftSim.CACHE = CraftSim.CACHE
 
 ---@class CraftSim.CACHE.ITEM_COUNT : Frame
-CraftSim.CACHE.ITEM_COUNT = GUTIL:CreateRegistreeForEvents({})
+CraftSim.CACHE.ITEM_COUNT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED" })
 
 ---@type table<string, table<number, number>> table<crafterUID, table<itemID, count>>
 CraftSimItemCountCache = {}
@@ -60,12 +60,18 @@ function CraftSim.CACHE.ITEM_COUNT:ClearAll()
     wipe(CraftSimItemCountCache)
 end
 
+function CraftSim.CACHE.ITEM_COUNT:BAG_UPDATE_DELAYED()
+    CraftSim.CACHE.ITEM_COUNT:UpdateCountFromBags()
+end
+
 --- loops all of a players inventory+bank bags and updates all tradegoods item count
 function CraftSim.CACHE.ITEM_COUNT:UpdateCountFromBags()
     local alreadyUpdated = {} -- small map to cache already updated IDs to not double update them
-    for bag = BANK_CONTAINER, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-        for slot = 1, C_Container.GetContainerNumSlots(bag) do
-            local itemID = C_Container.GetContainerItemID(bag, slot)
+    print("Start Bag Update..")
+    local function countBagItems(bagID)
+        for slot = 1, C_Container.GetContainerNumSlots(bagID) do
+            local itemID = C_Container.GetContainerItemID(bagID, slot)
+
             if itemID ~= nil then
                 local itemInfoInstant = { GetItemInfoInstant(itemID) }
                 local itemClassID = itemInfoInstant[6]
@@ -79,5 +85,8 @@ function CraftSim.CACHE.ITEM_COUNT:UpdateCountFromBags()
                 end
             end
         end
+    end
+    for bagID = REAGENTBANK_CONTAINER, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+        countBagItems(bagID)
     end
 end
