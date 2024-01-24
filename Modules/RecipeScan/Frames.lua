@@ -227,22 +227,11 @@ function CraftSim.RECIPE_SCAN.FRAMES:UpdateProfessionListDisplay()
     print("update prof list display")
     local content = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
         .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
-    DevTool:AddData(CopyTable(content.professionList.activeRows, true), "ActiveRowsBeforeUpdateDisplay")
     local sortCallCounter = 1
     content.professionList:UpdateDisplay(
     ---@param rowA CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
     ---@param rowB CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW
         function(rowA, rowB)
-            -- DevTool:AddData(CopyTable(content.professionList.activeRows, true), "SortCall" .. tostring(sortCallCounter))
-            -- sortCallCounter = sortCallCounter + 1
-            if rowA and not rowB then
-                print("rowB nil")
-                return true
-            end
-            if not rowA and rowB then
-                print("rowA nil")
-                return false
-            end
             local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
             local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
             local crafterUIDA = CraftSim.UTIL:GetCrafterUIDFromCrafterData(rowA.crafterData)
@@ -280,12 +269,11 @@ function CraftSim.RECIPE_SCAN.FRAMES:UpdateProfessionListDisplay()
 
 
             return false
-        end, "professionList")
+        end)
 
     --- since this is only called when first opening or in general opening a profession just select the current profession always
     -- only select if there is nothing selected yet
     local selectedRow = content.professionList.selectedRow --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
-    DevTool:AddData(CopyTable(content.professionList.activeRows, true), "ActiveRowsAfterDisplayUpdateb4Select")
     if not selectedRow then
         content.professionList:SelectRow(1)
     else

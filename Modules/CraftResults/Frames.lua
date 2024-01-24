@@ -134,9 +134,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     else
         print("Reuse sessionData")
     end
-    if DevTool then
-        DevTool:AddData(craftSessionData, "CraftResults SessionData")
-    end
+
     local craftRecipeData = craftSessionData:GetCraftRecipeData(recipeID)
     if not craftRecipeData then
         print("create new recipedata")

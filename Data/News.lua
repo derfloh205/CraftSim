@@ -13,7 +13,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
-        newP("14.2.3"),
+        newP("14.2.4"),
         f.P .. f.g("CraftQueue"),
         f.a .. "- " .. f.bb("Reagent Item Count") .. " you own and craftable count is",
         f.a .. "  now based on" .. f.g(" Cached Item Count") .. " data from the crafter character",
@@ -26,6 +26,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "  the recipe was not yet visited in the crafting ui this session",
         f.p .. ".2 Hotfix: Update Items on Reagent Bank Open",
         f.p .. ".3 Hotfix: Fixed sort for profession list nil error",
+        f.p .. ".4 Hotfix: Forgot my dev tools in the addon, sorry :S",
         newP("14.1.0"),
         f.P .. f.l("Hugemongous") .. " performance increase for " .. f.bb("Recipe Scan"),
         f.a .. "and other recipe calculations",
