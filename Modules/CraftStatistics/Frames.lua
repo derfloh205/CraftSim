@@ -415,7 +415,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
 
     for qualityID, chance in pairs(recipeData.resultData.chanceByQuality) do
         local expectedCrafts = nil
-        if chance == 0 then
+        if chance == 0 or recipeData.resultData.expectedCraftsByQuality[qualityID] == nil then
             expectedCrafts = "-"
         else
             expectedCrafts = GUTIL:Round(recipeData.resultData.expectedCraftsByQuality[qualityID], 2)

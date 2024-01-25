@@ -10,9 +10,16 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     -- minimize names to make manual formatting easier :p
     local f = CraftSim.UTIL:GetFormatter()
     local function newP(v) return f.l("\n                                   --- Version " .. v .. " ---\n") end
+    local supporterListUpdate = f.p .. f.patreon("Supporter List Update ") ..
+        CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.15)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("14.2.5"),
+        f.s .. "It is now possible to queue the same recipe twice for",
+        f.a .. "different crafter characters into the " .. f.g("CraftQueue"),
+        f.p .. "Small nil error fix for the statistics table",
+        supporterListUpdate,
         newP("14.2.4"),
         f.P .. f.g("CraftQueue"),
         f.a .. "- " .. f.bb("Reagent Item Count") .. " you own and craftable count is",
@@ -39,7 +46,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Fixed module window flicker when opening",
         f.a .. "- crafting window after login",
         f.p ..
-        f.patreon("Supporter List Update ") .. CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.2),
+        supporterListUpdate,
         newP("14.0.1"),
         f.p .. "Attempting fix for",
         f.a .. f.bb("https://github.com/derfloh205/CraftSim/issues/209"),
@@ -68,7 +75,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.p .. "Thank you " .. f.bb("https://github.com/SirDester") .. " for",
         f.a .. "  updating the italian translations!",
         f.p ..
-        f.patreon("Supporter List Update ") .. CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.2),
+        supporterListUpdate,
         newP("13.0.1"),
         f.p .. "Fixed a bug with non-initialized professionInfoCache",
         f.p .. "Updated toc file for 10.2.5",
