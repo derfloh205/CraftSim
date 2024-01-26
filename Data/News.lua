@@ -18,6 +18,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("14.3.0"),
         f.P .. "New Module: " .. f.g("Cooldowns"),
         f.a .. "- Track your characters profession cooldowns!",
+        f.a .. "  (Dragonflight recipes only for now)",
         newP("14.2.5"),
         f.s .. "It is now possible to queue the same recipe twice for",
         f.a .. "different crafter characters into the " .. f.g("CraftQueue"),

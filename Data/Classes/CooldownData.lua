@@ -131,7 +131,7 @@ function CraftSim.CooldownData:GetAllChargesFullDateFormatted()
 
     local date = date("!*t", allchargesFullTime)
 
-    return string.format("%02d.%02d %02d:%02d", date.day, date.month, date.hour, date.min),
+    return string.format("%02d.%02d.%d %02d:%02d", date.day, date.month, date.year, date.hour, date.min),
         GetServerTime() <= allchargesFullTime
 end
 

@@ -13,6 +13,7 @@ CraftSim.COOLDOWNS.frame = nil
 local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 local L = CraftSim.UTIL:GetLocalizer()
+local f = CraftSim.UTIL:GetFormatter()
 local LID = CraftSim.CONST.TEXT
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COOLDOWNS)
@@ -102,9 +103,29 @@ function CraftSim.COOLDOWNS.FRAMES:Init()
                 parent = recipeColumn, anchorParent = recipeColumn, justifyOptions = { type = "H", align = "LEFT" },
                 anchorA = "LEFT", anchorB = "LEFT",
             }
-            chargesColumn.text = GGUI.Text {
-                parent = chargesColumn, anchorParent = chargesColumn,
+            chargesColumn.slash = GGUI.Text {
+                parent = chargesColumn, anchorParent = chargesColumn, text = "/"
             }
+            chargesColumn.current = GGUI.Text {
+                parent = chargesColumn, anchorParent = chargesColumn.slash.frame, justifyOptions = { type = "H", align = "RIGHT" },
+                anchorA = "RIGHT", anchorB = "LEFT",
+            }
+            chargesColumn.max = GGUI.Text {
+                parent = chargesColumn, anchorParent = chargesColumn.slash.frame, justifyOptions = { type = "H", align = "LEFT" },
+                anchorA = "LEFT", anchorB = "RIGHT",
+            }
+            chargesColumn.SetCharges = function(self, current, max)
+                if current == max and max > 0 then
+                    chargesColumn.current:SetText(f.g(current))
+                    chargesColumn.max:SetText(f.g(max))
+                elseif max > 0 then
+                    chargesColumn.current:SetText(f.l(current))
+                    chargesColumn.max:SetText(f.l(max))
+                else
+                    chargesColumn.current:SetText("-")
+                    chargesColumn.max:SetText("-")
+                end
+            end
             nextColumn.text = GGUI.Text {
                 parent = nextColumn, anchorParent = nextColumn,
             }
@@ -187,15 +208,14 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                     row.UpdateTimers = function(self)
                         print("Updating Timers for " .. tostring(recipeInfo.name))
                         local cooldownData = self.cooldownData
-                        chargesColumn.text:SetText(tostring(cooldownData:GetCurrentCharges()) ..
-                            "/" .. tostring(cooldownData.maxCharges))
-                        nextColumn.text:SetText(cooldownData:GetFormattedTimerNextCharge())
+                        chargesColumn:SetCharges(cooldownData:GetCurrentCharges(), cooldownData.maxCharges)
+                        nextColumn.text:SetText(f.bb(cooldownData:GetFormattedTimerNextCharge()))
                         local allFullTS, ready = cooldownData:GetAllChargesFullTimestamp()
                         row.allchargesFullTimestamp = allFullTS
                         if ready then
-                            allColumn.text:SetText(GUTIL:ColorizeText("Ready", GUTIL.COLORS.GREEN))
+                            allColumn.text:SetText(f.g("Ready"))
                         else
-                            allColumn.text:SetText(cooldownData:GetAllChargesFullDateFormatted())
+                            allColumn.text:SetText(f.g(cooldownData:GetAllChargesFullDateFormatted()))
                         end
                     end
 

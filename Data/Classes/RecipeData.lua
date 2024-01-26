@@ -78,30 +78,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         return nil
     end
 
-    -- cooldownData
-    if self:IsCrafter() then
-        self.cooldownData = CraftSim.CooldownData(self.recipeID)
-        self.cooldownData:Update()
-
-        -- cache only learned recipes that can be on cooldown
-        if self.cooldownData.isCooldownRecipe and self.recipeInfo.learned then
-            -- cache
-            CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
-
-            CraftSimRecipeDataCache.cooldownCache[crafterUID][recipeID] = self.cooldownData:Serialize()
-        end
-    else
-        -- try to get from cache
-        CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
-        local serializedCooldownData = CraftSimRecipeDataCache.cooldownCache[crafterUID][recipeID]
-
-        if serializedCooldownData then
-            self.cooldownData = CraftSim.CooldownData:Deserialize(serializedCooldownData)
-        else
-            self.cooldownData = CraftSim.CooldownData(self.recipeID)
-        end
-    end
-
     self.isBaseRecraftRecipe = GUTIL:Some(CraftSim.CONST.BASE_RECRAFT_RECIPE_IDS,
         function(id) return id == recipeID end)
     self.categoryID = self.recipeInfo.categoryID
@@ -147,6 +123,30 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     if not self.isCooking then
         ---@type CraftSim.SpecializationData?
         self.specializationData = self:GetSpecializationDataForRecipeCrafter()
+    end
+
+    -- cooldownData
+    if self:IsCrafter() then
+        self.cooldownData = CraftSim.CooldownData(self.recipeID)
+        self.cooldownData:Update()
+
+        -- cache only learned recipes from current expac that can be on cooldown
+        if self.cooldownData.isCooldownRecipe and self.recipeInfo.learned and not self.isOldWorldRecipe then
+            -- cache
+            CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
+
+            CraftSimRecipeDataCache.cooldownCache[crafterUID][recipeID] = self.cooldownData:Serialize()
+        end
+    else
+        -- try to get from cache
+        CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
+        local serializedCooldownData = CraftSimRecipeDataCache.cooldownCache[crafterUID][recipeID]
+
+        if serializedCooldownData then
+            self.cooldownData = CraftSim.CooldownData:Deserialize(serializedCooldownData)
+        else
+            self.cooldownData = CraftSim.CooldownData(self.recipeID)
+        end
     end
 
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft) -- is working even if profession is not learned on the character!
