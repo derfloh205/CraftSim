@@ -28,8 +28,8 @@ function CraftSim.COOLDOWNS.FRAMES:Init()
     CraftSim.COOLDOWNS.frame = GGUI.Frame({
         parent = ProfessionsFrame,
         anchorParent = ProfessionsFrame,
-        anchorA = "BOTTOM",
-        anchorB = "BOTTOM",
+        anchorA = "TOPRIGHT",
+        anchorB = "BOTTOMRIGHT",
         sizeX = sizeX,
         sizeY = sizeY,
         offsetY = offsetY,
@@ -101,7 +101,7 @@ function CraftSim.COOLDOWNS.FRAMES:Init()
             }
             recipeColumn.text = GGUI.Text {
                 parent = recipeColumn, anchorParent = recipeColumn, justifyOptions = { type = "H", align = "LEFT" },
-                anchorA = "LEFT", anchorB = "LEFT",
+                anchorA = "LEFT", anchorB = "LEFT", fixedWidth = 150,
             }
             chargesColumn.slash = GGUI.Text {
                 parent = chargesColumn, anchorParent = chargesColumn, text = "/"
@@ -127,7 +127,7 @@ function CraftSim.COOLDOWNS.FRAMES:Init()
                 end
             end
             nextColumn.text = GGUI.Text {
-                parent = nextColumn, anchorParent = nextColumn,
+                parent = nextColumn, anchorParent = nextColumn, fixedWidth = 120,
             }
             allColumn.text = GGUI.Text {
                 parent = allColumn, anchorParent = allColumn, justifyOptions = { type = "H", align = "LEFT" },
@@ -228,7 +228,7 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
     ---@param rowA CraftSim.COOLDOWNS.CooldownList.Row
     ---@param rowB CraftSim.COOLDOWNS.CooldownList.Row
         function(rowA, rowB)
-            return rowA.allchargesFullTimestamp > rowB.allchargesFullTimestamp
+            return rowA.allchargesFullTimestamp < rowB.allchargesFullTimestamp
         end)
 end
 
