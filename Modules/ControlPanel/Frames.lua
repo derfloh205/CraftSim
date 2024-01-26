@@ -201,6 +201,11 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP),
         "TOP", frame.content.modulesPriceOverride, "TOP", 0, cbSpacingY, "modulesCraftBuffs")
 
+    frame.content.modulesCooldowns = createModuleCheckbox(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_LABEL),
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP),
+        "TOP", frame.content.modulesCraftBuffs, "TOP", 0, cbSpacingY, "modulesCooldowns")
+
     -- 3. Column
 
     frame.content.modulesSpecInfo = createModuleCheckbox(

@@ -674,7 +674,7 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL] = "Results",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX] = "Per Character",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP] = "Create an " ..
-        f.bb("Auctionator Shopping List") .. " for each crafter character\ninstead of one shopping list for all",
+            f.bb("Auctionator Shopping List") .. " for each crafter character\ninstead of one shopping list for all",
 
         -- craft buffs
 
@@ -682,6 +682,18 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_BUFFS_SIMULATE_BUTTON] = "Simulate Buffs",
         [CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP] = f.bb("Wrath of the Lich King Toy.") ..
             "\nRequires Northrend Cooking\nSets Crafting Speed to " .. f.g("0.5 seconds"),
+
+        -- cooldowns module
+
+        [CraftSim.CONST.TEXT.COOLDOWNS_TITLE] = "CraftSim Cooldowns",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_LABEL] = "Cooldowns",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP] = "Overview for your account's " ..
+            f.bb("Profession Cooldowns"),
+        [CraftSim.CONST.TEXT.COOLDOWNS_CRAFTER_HEADER] = "Crafter",
+        [CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_HEADER] = "Recipe",
+        [CraftSim.CONST.TEXT.COOLDOWNS_CHARGES_HEADER] = "Charges",
+        [CraftSim.CONST.TEXT.COOLDOWNS_NEXT_HEADER] = "Next Charge",
+        [CraftSim.CONST.TEXT.COOLDOWNS_ALL_HEADER] = "Charges Full",
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",

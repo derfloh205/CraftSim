@@ -15,6 +15,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("14.3.0"),
+        f.P .. "New Module: " .. f.g("Cooldowns"),
+        f.a .. "- Track your characters profession cooldowns!",
         newP("14.2.5"),
         f.s .. "It is now possible to queue the same recipe twice for",
         f.a .. "different crafter characters into the " .. f.g("CraftQueue"),

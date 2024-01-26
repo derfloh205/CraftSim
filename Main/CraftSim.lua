@@ -48,6 +48,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesCostDetails = false,
 	modulesCraftQueue = false,
 	modulesCraftBuffs = true,
+	modulesCooldowns = false,
 
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
@@ -433,6 +434,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.SUPPORTERS.FRAMES:Init()
 		CraftSim.CRAFTQ.FRAMES:Init()
 		CraftSim.CRAFT_BUFFS.FRAMES:Init()
+		CraftSim.COOLDOWNS.FRAMES:Init()
 
 		CraftSim.TOOLTIP:Init()
 		CraftSim.MAIN:HookToEvent()
@@ -571,6 +573,7 @@ function CraftSim.MAIN:HideAllModules(keepControlPanel)
 	CraftSim.CRAFTQ.frame:Hide()
 	CraftSim.CRAFT_BUFFS.frame:Hide()
 	CraftSim.CRAFT_BUFFS.frameWO:Hide()
+	CraftSim.COOLDOWNS.frame:Hide()
 	craftResultsFrame:Hide()
 	customerServiceFrame:Hide()
 	customerHistoryFrame:Hide()
@@ -616,6 +619,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 		CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
 	local craftBuffsFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS)
 	local craftBuffsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER)
+	local cooldownsFrame = CraftSim.COOLDOWNS.frame
 
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
 		CraftSim.MAIN:HideAllModules()
@@ -685,6 +689,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	local showCostDetails = true
 	local showCraftQueue = true
 	local showCraftBuffs = true
+	local showCooldowns = true
 
 
 	if recipeData.supportsCraftingStats then
@@ -715,12 +720,18 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	showCostDetails = showCostDetails and CraftSimOptions.modulesCostDetails
 	showCraftQueue = showCraftQueue and CraftSimOptions.modulesCraftQueue
 	showCraftBuffs = showCraftBuffs and CraftSimOptions.modulesCraftBuffs
+	showCooldowns = showCooldowns and CraftSimOptions.modulesCooldowns
 
 	CraftSim.FRAME:ToggleFrame(CraftSim.RECIPE_SCAN.frame, showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTQ.frame, showCraftQueue)
 	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
 	CraftSim.FRAME:ToggleFrame(customerServiceFrame, showCustomerService)
 	CraftSim.FRAME:ToggleFrame(customerHistoryFrame, showCustomerHistory)
+	CraftSim.FRAME:ToggleFrame(cooldownsFrame, showCooldowns)
+
+	if showCooldowns then
+		CraftSim.COOLDOWNS.FRAMES:UpdateDisplay()
+	end
 
 	-- update CraftQ Display (e.g. cause of profession gear changes)
 	CraftSim.CRAFTQ.FRAMES:UpdateDisplay()

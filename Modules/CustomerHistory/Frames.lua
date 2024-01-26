@@ -522,25 +522,16 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerChatHistory(customer, ch
     end)
 end
 
-local function normalize(dateNumber)
-    dateNumber = tostring(dateNumber)
-    if #dateNumber == 2 then
-        return dateNumber
-    else
-        return "0" .. dateNumber
-    end
-end
-
 ---@param timestamp number
 ---@return string
 function CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedDayString(timestamp)
     local date = date("*t", timestamp)
-    return string.format("%s.%s.%s", normalize(date.day), normalize(date.month), date.year)
+    return string.format("%02d.%02d.%02d", date.day, date.month, date.year)
 end
 
 ---@param timestamp number
 ---@return string
 function CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedTimeString(timestamp)
     local date = date("*t", timestamp)
-    return string.format("%s:%s:%s", normalize(date.hour), normalize(date.min), normalize(date.sec))
+    return string.format("%02d:%02d:%02d", date.hour, date.min, date.sec)
 end

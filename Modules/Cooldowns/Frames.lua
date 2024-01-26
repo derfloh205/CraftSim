@@ -1,0 +1,221 @@
+---@class CraftSim
+local CraftSim = select(2, ...)
+
+---@class CraftSim.COOLDOWNS
+CraftSim.COOLDOWNS = CraftSim.COOLDOWNS
+
+---@class CraftSim.COOLDOWNS.FRAMES
+CraftSim.COOLDOWNS.FRAMES = {}
+
+---@class CraftSim.COOLDOWNS.FRAME : GGUI.Frame
+CraftSim.COOLDOWNS.frame = nil
+
+local GUTIL = CraftSim.GUTIL
+local GGUI = CraftSim.GGUI
+local L = CraftSim.UTIL:GetLocalizer()
+local LID = CraftSim.CONST.TEXT
+
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COOLDOWNS)
+
+function CraftSim.COOLDOWNS.FRAMES:Init()
+    local sizeX = 670
+    local sizeY = 220
+    local offsetX = 0
+    local offsetY = 0
+
+    ---@class CraftSim.COOLDOWNS.FRAME : GGUI.Frame
+    CraftSim.COOLDOWNS.frame = GGUI.Frame({
+        parent = ProfessionsFrame,
+        anchorParent = ProfessionsFrame,
+        anchorA = "BOTTOM",
+        anchorB = "BOTTOM",
+        sizeX = sizeX,
+        sizeY = sizeY,
+        offsetY = offsetY,
+        offsetX = offsetX,
+        frameID = CraftSim.CONST.FRAMES.COOLDOWNS,
+        title = L(CraftSim.CONST.TEXT.COOLDOWNS_TITLE),
+        collapseable = true,
+        closeable = true,
+        moveable = true,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCooldowns"),
+        frameTable = CraftSim.MAIN.FRAMES,
+        frameConfigTable = CraftSimGGUIConfig,
+    })
+
+    ---@class CraftSim.COOLDOWNS.FRAME.CONTENT : Frame
+    CraftSim.COOLDOWNS.frame.content = CraftSim.COOLDOWNS.frame.content
+
+    ---@class CraftSim.COOLDOWNS.FRAME.CONTENT : Frame
+    local content = CraftSim.COOLDOWNS.frame.content
+
+    content.cooldownList = GGUI.FrameList {
+        parent = content, anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -60, offsetX = 20,
+        showBorder = true, sizeY = 140, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA },
+        columnOptions = {
+            {
+                label = L(LID.COOLDOWNS_CRAFTER_HEADER),
+                width = 150,
+            },
+            {
+                label = L(LID.COOLDOWNS_RECIPE_HEADER),
+                width = 150,
+            },
+            {
+                label = L(LID.COOLDOWNS_CHARGES_HEADER),
+                width = 70,
+                justifyOptions = { type = "H", align = "CENTER" }
+            },
+            {
+                label = L(LID.COOLDOWNS_NEXT_HEADER),
+                width = 120,
+                justifyOptions = { type = "H", align = "CENTER" }
+            },
+            {
+                label = L(LID.COOLDOWNS_ALL_HEADER),
+                width = 120,
+            },
+        },
+        rowConstructor = function(columns, row)
+            ---@class CraftSim.COOLDOWNS.CooldownList.Row : GGUI.FrameList.Row
+            row = row
+            ---@type CraftSim.CooldownData
+            row.cooldownData = nil
+            row.allchargesFullTimestamp = 0
+            ---@class CraftSim.COOLDOWNS.CooldownList.CrafterColumn : Frame
+            local crafterColumn = columns[1]
+            ---@class CraftSim.COOLDOWNS.CooldownList.RecipeColumn : Frame
+            local recipeColumn = columns[2]
+            ---@class CraftSim.COOLDOWNS.CooldownList.ChargesColumn : Frame
+            local chargesColumn = columns[3]
+            ---@class CraftSim.COOLDOWNS.CooldownList.NextColumn : Frame
+            local nextColumn = columns[4]
+            ---@class CraftSim.COOLDOWNS.CooldownList.AllColumn : Frame
+            local allColumn = columns[5]
+
+            crafterColumn.text = GGUI.Text {
+                parent = crafterColumn, anchorParent = crafterColumn, justifyOptions = { type = "H", align = "LEFT" },
+                anchorA = "LEFT", anchorB = "LEFT",
+            }
+            recipeColumn.text = GGUI.Text {
+                parent = recipeColumn, anchorParent = recipeColumn, justifyOptions = { type = "H", align = "LEFT" },
+                anchorA = "LEFT", anchorB = "LEFT",
+            }
+            chargesColumn.text = GGUI.Text {
+                parent = chargesColumn, anchorParent = chargesColumn,
+            }
+            nextColumn.text = GGUI.Text {
+                parent = nextColumn, anchorParent = nextColumn,
+            }
+            allColumn.text = GGUI.Text {
+                parent = allColumn, anchorParent = allColumn, justifyOptions = { type = "H", align = "LEFT" },
+                anchorA = "LEFT", anchorB = "LEFT",
+            }
+        end
+
+    }
+
+    CraftSim.COOLDOWNS.frame:HookScript("OnShow", function()
+        CraftSim.COOLDOWNS:StartTimerUpdate()
+    end)
+    CraftSim.COOLDOWNS.frame:HookScript("OnHide", function()
+        CraftSim.COOLDOWNS:StopTimerUpdate()
+    end)
+end
+
+function CraftSim.COOLDOWNS.FRAMES:UpdateDisplay()
+    CraftSim.COOLDOWNS.FRAMES:UpdateList()
+    CraftSim.COOLDOWNS.FRAMES:UpdateTimers()
+end
+
+--- TODO: check if this can be made more efficient without deserializing all the time
+function CraftSim.COOLDOWNS.FRAMES:UpdateList()
+    local cooldownList = CraftSim.COOLDOWNS.frame.content.cooldownList
+
+    cooldownList:Remove()
+
+    for crafterUID, recipeCooldowns in pairs(CraftSimRecipeDataCache.cooldownCache) do
+        for recipeID, cooldownDataSerialized in pairs(recipeCooldowns) do
+            local cooldownData = CraftSim.CooldownData:Deserialize(cooldownDataSerialized)
+
+            cooldownList:Add(
+            ---@param row CraftSim.COOLDOWNS.CooldownList.Row
+                function(row)
+                    row.cooldownData = cooldownData
+                    local columns = row.columns
+                    local crafterColumn = columns[1] --[[@as CraftSim.COOLDOWNS.CooldownList.CrafterColumn]]
+                    local recipeColumn = columns[2] --[[@as CraftSim.COOLDOWNS.CooldownList.RecipeColumn]]
+                    local chargesColumn = columns[3] --[[@as CraftSim.COOLDOWNS.CooldownList.ChargesColumn]]
+                    local nextColumn = columns[4] --[[@as CraftSim.COOLDOWNS.CooldownList.NextColumn]]
+                    local allColumn = columns[5] --[[@as CraftSim.COOLDOWNS.CooldownList.AllColumn]]
+
+                    local crafterName = crafterUID
+                    local crafterClass = CraftSimRecipeDataCache.altClassCache[crafterUID]
+
+                    if crafterClass then
+                        crafterName = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterName)
+                    end
+
+                    CraftSimRecipeDataCache.recipeInfoCache[crafterUID] = CraftSimRecipeDataCache.recipeInfoCache
+                        [crafterUID] or {}
+
+                    CraftSimRecipeDataCache.professionInfoCache[crafterUID] = CraftSimRecipeDataCache
+                        .professionInfoCache
+                        [crafterUID] or {}
+
+                    local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][recipeID] or
+                        C_TradeSkillUI.GetRecipeInfo(recipeID)
+
+                    local professionInfo = CraftSimRecipeDataCache.professionInfoCache[crafterUID][recipeID] or
+                        C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
+                    local professionIcon = ""
+                    if professionInfo.profession then
+                        professionIcon = CraftSim.CONST.PROFESSION_ICONS[professionInfo.profession]
+                        professionIcon = GUTIL:IconToText(professionIcon, 20, 20) .. " "
+                    end
+
+                    crafterColumn.text:SetText(professionIcon .. crafterName)
+
+
+                    if recipeInfo then
+                        recipeColumn.text:SetText(recipeInfo.name)
+                    else
+                        recipeColumn.text:SetText(recipeID)
+                    end
+
+                    row.UpdateTimers = function(self)
+                        print("Updating Timers for " .. tostring(recipeInfo.name))
+                        local cooldownData = self.cooldownData
+                        chargesColumn.text:SetText(tostring(cooldownData:GetCurrentCharges()) ..
+                            "/" .. tostring(cooldownData.maxCharges))
+                        nextColumn.text:SetText(cooldownData:GetFormattedTimerNextCharge())
+                        local allFullTS, ready = cooldownData:GetAllChargesFullTimestamp()
+                        row.allchargesFullTimestamp = allFullTS
+                        if ready then
+                            allColumn.text:SetText(GUTIL:ColorizeText("Ready", GUTIL.COLORS.GREEN))
+                        else
+                            allColumn.text:SetText(cooldownData:GetAllChargesFullDateFormatted())
+                        end
+                    end
+
+                    row:UpdateTimers()
+                end)
+        end
+    end
+
+    cooldownList:UpdateDisplay(
+    ---@param rowA CraftSim.COOLDOWNS.CooldownList.Row
+    ---@param rowB CraftSim.COOLDOWNS.CooldownList.Row
+        function(rowA, rowB)
+            return rowA.allchargesFullTimestamp > rowB.allchargesFullTimestamp
+        end)
+end
+
+function CraftSim.COOLDOWNS.FRAMES:UpdateTimers()
+    local cooldownList = CraftSim.COOLDOWNS.frame.content.cooldownList
+
+    for _, activeRow in pairs(cooldownList.activeRows) do
+        activeRow:UpdateTimers()
+    end
+end

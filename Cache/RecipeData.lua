@@ -16,15 +16,19 @@ CraftSim.CACHE.RECIPE_DATA = {}
 ---@field equippedGear CraftSim.ProfessionGearSet.Serialized?
 ---@field availableProfessionGear CraftSim.ProfessionGear.Serialized[]
 
+---@alias CrafterUID string
+---@alias RecipeID number
+
 ---@class CraftSim.RecipeDataCache
----@field cachedRecipeIDs table<string, table<number, number[]>> table<crafterGUID, table<profession, recipeID[]>
----@field recipeInfoCache table<string, table<number, TradeSkillRecipeInfo>> table<crafterGUID, table<recipeID, TradeSkillRecipeInfo>
----@field professionInfoCache table<string, table<number, ProfessionInfo>> table<crafterGUID, table<recipeID, TradeSkillRecipeInfo>
----@field operationInfoCache table<string, table<number, CraftingOperationInfo>> table<crafterGUID, table<recipeID, CraftingOperationInfo>>
----@field specializationDataCache table<string, table<number, CraftSim.SpecializationData.Serialized>?> table<crafterGUID, table<recipeID, CraftSim.SpecializationData.Serialized>>
----@field professionGearCache table<string, table<number, CraftSim.ProfessionGearCacheData>> table<crafterGUID, table<profession, CraftSim.ProfessionGearCacheData>>
----@field altClassCache table<string, ClassFile> table<crafterUID, ClassFile>
+---@field cachedRecipeIDs table<CrafterUID, table<Enum.Profession, RecipeID[]>>
+---@field recipeInfoCache table<CrafterUID, table<RecipeID, TradeSkillRecipeInfo>>
+---@field professionInfoCache table<CrafterUID, table<RecipeID, ProfessionInfo>>
+---@field operationInfoCache table<CrafterUID, table<RecipeID, CraftingOperationInfo>>
+---@field specializationDataCache table<CrafterUID, table<RecipeID, CraftSim.SpecializationData.Serialized>?>
+---@field professionGearCache table<CrafterUID, table<Enum.Profession, CraftSim.ProfessionGearCacheData>>
+---@field altClassCache table<CrafterUID, ClassFile> table<crafterUID, ClassFile>
 ---@field postLoadedMulticraftInformationProfessions table<Enum.Profession, boolean>
+---@field cooldownCache table<CrafterUID, table<RecipeID, CraftSim.CooldownData.Serialized>>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     cachedRecipeIDs = {},
     recipeInfoCache = {},
@@ -34,6 +38,7 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     professionGearCache = {},
     altClassCache = {},
     postLoadedMulticraftInformationProfessions = {},
+    cooldownCache = {},
 }
 
 CraftSim.CACHE.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
@@ -53,6 +58,7 @@ function CraftSim.CACHE.RECIPE_DATA:HandleUpdates()
         CraftSimRecipeDataCache.altClassCache = CraftSimRecipeDataCache.altClassCache or {}
         CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions = CraftSimRecipeDataCache
             .postLoadedMulticraftInformationProfessions or {}
+        CraftSimRecipeDataCache.cooldownCache = CraftSimRecipeDataCache.cooldownCache or {}
     end
 end
 

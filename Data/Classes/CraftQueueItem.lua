@@ -38,7 +38,7 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
     self.canCraftOnce, self.craftAbleAmount = self.recipeData:CanCraft(1)
     self.gearEquipped = self.recipeData.professionGearSet:IsEquipped() or false
     self.correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
-    self.notOnCooldown = not self.recipeData:GetCooldownInformation().onCooldown
+    self.notOnCooldown = not self.recipeData:OnCooldown()
     self.isCrafter = self:IsCrafter()
 
     self.allowedToCraft = self.canCraftOnce and self.gearEquipped and self.correctProfessionOpen and self.notOnCooldown and

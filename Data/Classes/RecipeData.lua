@@ -78,6 +78,30 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         return nil
     end
 
+    -- cooldownData
+    if self:IsCrafter() then
+        self.cooldownData = CraftSim.CooldownData(self.recipeID)
+        self.cooldownData:Update()
+
+        -- cache only learned recipes that can be on cooldown
+        if self.cooldownData.isCooldownRecipe and self.recipeInfo.learned then
+            -- cache
+            CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
+
+            CraftSimRecipeDataCache.cooldownCache[crafterUID][recipeID] = self.cooldownData:Serialize()
+        end
+    else
+        -- try to get from cache
+        CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
+        local serializedCooldownData = CraftSimRecipeDataCache.cooldownCache[crafterUID][recipeID]
+
+        if serializedCooldownData then
+            self.cooldownData = CraftSim.CooldownData:Deserialize(serializedCooldownData)
+        else
+            self.cooldownData = CraftSim.CooldownData(self.recipeID)
+        end
+    end
+
     self.isBaseRecraftRecipe = GUTIL:Some(CraftSim.CONST.BASE_RECRAFT_RECIPE_IDS,
         function(id) return id == recipeID end)
     self.categoryID = self.recipeInfo.categoryID
@@ -692,7 +716,14 @@ function CraftSim.RecipeData:CanCraft(amount)
 
     local craftAbleAmount = self.reagentData:GetCraftableAmount(self:GetCrafterUID())
 
-    return hasEnoughReagents, craftAbleAmount
+    local isChargeRecipe = self.cooldownData.maxCharges > 0
+
+    if not isChargeRecipe then
+        return hasEnoughReagents, craftAbleAmount
+    else
+        -- limit by current charge amount
+        return hasEnoughReagents, math.min(craftAbleAmount, self.cooldownData:GetCurrentCharges())
+    end
 end
 
 ---@return boolean true of the profession the recipe belongs to is opened
@@ -708,23 +739,9 @@ function CraftSim.RecipeData:IsProfessionOpen()
     return openProfessionID == self.professionData.professionInfo.profession
 end
 
----@class CraftSim.RecipeData.CooldownInformation
----@field onCooldown boolean
----@field duration number
----@field cooldownStart number
----@field spellEnabled boolean
----@field cooldownMod number
-
----@return CraftSim.RecipeData.CooldownInformation cooldownInformation
-function CraftSim.RecipeData:GetCooldownInformation()
-    local start, duration, enabled, mod = GetSpellCooldown(self.recipeID)
-    return {
-        onCooldown = duration and duration > 0,
-        duration = duration or 0,
-        cooldownStart = start or 0,
-        spellEnabled = enabled,
-        cooldownMod = mod or 1
-    }
+---@return boolean onCooldown
+function CraftSim.RecipeData:OnCooldown()
+    return self.cooldownData:OnCooldown()
 end
 
 --- Returns either the current characters CraftingOperationInfo or the cached info from the recipe's crafter

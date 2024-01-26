@@ -617,7 +617,9 @@ function CraftSim.FRAME:InitDebugFrame()
         adjustWidth = true, sizeX = 15, sizeY = 25,
         clickCallback = function()
             if DevTool then
-                DevTool:AddData(CraftSim_DEBUG:RUN(), "CraftSim")
+                local CraftSim = CraftSim_DEBUG:RUN()
+                DevTool:AddData(CraftSim, "CraftSim")
+                DevTool:AddData(CraftSim.MAIN.currentRecipeData, "CurrentRecipeData")
             end
         end
     }
