@@ -53,7 +53,7 @@ function CraftSim.COOLDOWNS.FRAMES:Init()
 
     content.cooldownList = GGUI.FrameList {
         parent = content, anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -60, offsetX = 20,
-        showBorder = true, sizeY = 140, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA },
+        showBorder = true, sizeY = 147, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA },
         columnOptions = {
             {
                 label = L(LID.COOLDOWNS_CRAFTER_HEADER),
