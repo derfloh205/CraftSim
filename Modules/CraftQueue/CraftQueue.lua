@@ -469,8 +469,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
             return nil
         end
         -- subtract the total item count of all crafter's cached inventory
-        local totalItemCount = GUTIL:Fold(crafterUIDs, function(itemCount, crafterUID)
-            if type(itemCount) ~= "number" then return 0 end -- consider first iteration
+        local totalItemCount = GUTIL:Fold(crafterUIDs, 0, function(itemCount, crafterUID)
             local itemCountForCrafter = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, true, false, true,
                 crafterUID)
             return itemCount + itemCountForCrafter

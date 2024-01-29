@@ -307,10 +307,10 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
     end
 
     --print(" calculating gcd of " .. unpack(mWeight))
-    local weightGCD = GUTIL:Fold(mWeight, function(a, b)
+    local weightGCD = GUTIL:Fold(mWeight, 0, function(a, b)
         --print("fold " .. a .. " and " .. b)
         return CraftSim.REAGENT_OPTIMIZATION:GetGCD(a, b)
-    end, true)
+    end)
 
     --print("gcd: " .. tostring(weightGCD))
     -- create the ks items
