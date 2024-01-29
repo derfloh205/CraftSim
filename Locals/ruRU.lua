@@ -14,8 +14,13 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Если на персонаже:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Чары:",
 
-        -- OPTIONAL:
--- expansions
+        -- OPTIONAL (Defaulting to EN if not available):
+		
+		-- shared prof cds
+        [CraftSim.CONST.TEXT.DF_ALCHEMY_TRANSMUTATIONS] = "Трансмутация DF",
+		
+		-- expansions
+		
         [CraftSim.CONST.TEXT.EXPANSION_VANILLA] = "Classic",
         [CraftSim.CONST.TEXT.EXPANSION_THE_BURNING_CRUSADE] = "The Burning Crusade",
         [CraftSim.CONST.TEXT.EXPANSION_WRATH_OF_THE_LICH_KING] = "Wrath of the Lich King",
@@ -165,7 +170,8 @@ function CraftSim.LOCAL_RU:GetData()
             "Вы можете просмотреть все случаи для вашего текущего рецепта в окне " .. f.bb("Статистика") .. "!"
         ,
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV] =
-            f.l("Скрытое значение навыка (HSV)") ..
+            
+			f.l("Скрытое значение навыка (HSV)") ..
             " — это дополнительный случайный фактор, который возникает каждый раз, когда вы что-то создаете.\n" ..
             "Он нигде не упоминается в игре. Однако вы можете наблюдать визуализацию его прока: когда вы создаете что-то, " ..
             f.bb("Полоса качества") ..
