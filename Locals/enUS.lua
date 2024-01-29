@@ -15,6 +15,10 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Enchanted:",
 
         -- OPTIONAL (Defaulting to EN if not available):
+
+        -- shared prof cds
+        [CraftSim.CONST.TEXT.DF_ALCHEMY_TRANSMUTATIONS] = "DF - Transmutations",
+
         -- expansions
 
         [CraftSim.CONST.TEXT.EXPANSION_VANILLA] = "Classic",

@@ -15,6 +15,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("14.3.1"),
+        f.p .. f.g("Cooldown Module"),
+        f.a .. "- " .. f.bb("Dragonflight Transmutations") .. " now share one timer",
         newP("14.3.0"),
         f.P .. "New Module: " .. f.g("Cooldowns"),
         f.a .. "- Track your characters profession cooldowns!",

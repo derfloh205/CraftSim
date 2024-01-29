@@ -157,8 +157,9 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
     cooldownList:Remove()
 
     for crafterUID, recipeCooldowns in pairs(CraftSimRecipeDataCache.cooldownCache) do
-        for recipeID, cooldownDataSerialized in pairs(recipeCooldowns) do
+        for serializationID, cooldownDataSerialized in pairs(recipeCooldowns) do
             local cooldownData = CraftSim.CooldownData:Deserialize(cooldownDataSerialized)
+            local recipeID = cooldownData.recipeID
 
             cooldownList:Add(
             ---@param row CraftSim.COOLDOWNS.CooldownList.Row
@@ -185,8 +186,7 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                         .professionInfoCache
                         [crafterUID] or {}
 
-                    local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][recipeID] or
-                        C_TradeSkillUI.GetRecipeInfo(recipeID)
+
 
                     local professionInfo = CraftSimRecipeDataCache.professionInfoCache[crafterUID][recipeID] or
                         C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
@@ -198,11 +198,13 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
 
                     crafterColumn.text:SetText(professionIcon .. crafterName)
 
+                    local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][recipeID] or
+                        C_TradeSkillUI.GetRecipeInfo(recipeID)
 
-                    if recipeInfo then
-                        recipeColumn.text:SetText(recipeInfo.name)
+                    if cooldownData.sharedCD then
+                        recipeColumn.text:SetText(L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD]))
                     else
-                        recipeColumn.text:SetText(recipeID)
+                        recipeColumn.text:SetText((recipeInfo and recipeInfo.name) or serializationID)
                     end
 
                     row.UpdateTimers = function(self)

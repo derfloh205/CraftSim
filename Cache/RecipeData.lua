@@ -18,6 +18,7 @@ CraftSim.CACHE.RECIPE_DATA = {}
 
 ---@alias CrafterUID string
 ---@alias RecipeID number
+---@alias CooldownDataSerializationID RecipeID | CraftSim.SHARED_PROFESSION_COOLDOWNS
 
 ---@class CraftSim.RecipeDataCache
 ---@field cachedRecipeIDs table<CrafterUID, table<Enum.Profession, RecipeID[]>>
@@ -28,7 +29,7 @@ CraftSim.CACHE.RECIPE_DATA = {}
 ---@field professionGearCache table<CrafterUID, table<Enum.Profession, CraftSim.ProfessionGearCacheData>>
 ---@field altClassCache table<CrafterUID, ClassFile> table<crafterUID, ClassFile>
 ---@field postLoadedMulticraftInformationProfessions table<Enum.Profession, boolean>
----@field cooldownCache table<CrafterUID, table<RecipeID, CraftSim.CooldownData.Serialized>>
+---@field cooldownCache table<CrafterUID, table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     cachedRecipeIDs = {},
     recipeInfoCache = {},
@@ -39,6 +40,17 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     altClassCache = {},
     postLoadedMulticraftInformationProfessions = {},
     cooldownCache = {},
+    cacheVersions = {
+        cachedRecipeIDs = 1,
+        recipeInfoCache = 1,
+        professionInfoCache = 1,
+        operationInfoCache = 1,
+        specializationDataCache = 1,
+        professionGearCache = 1,
+        altClassCache = 1,
+        postLoadedMulticraftInformationProfessions = 1,
+        cooldownCache = 1,
+    },
 }
 
 CraftSim.CACHE.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
@@ -59,6 +71,9 @@ function CraftSim.CACHE.RECIPE_DATA:HandleUpdates()
         CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions = CraftSimRecipeDataCache
             .postLoadedMulticraftInformationProfessions or {}
         CraftSimRecipeDataCache.cooldownCache = CraftSimRecipeDataCache.cooldownCache or {}
+        CraftSimRecipeDataCache.cacheVersions = CraftSimRecipeDataCache.cacheVersions or {}
+
+        CraftSim.CACHE.RECIPE_DATA:HandleMigrations()
     end
 end
 
@@ -90,4 +105,31 @@ function CraftSim.CACHE.RECIPE_DATA:ClearAll()
     wipe(CraftSimRecipeDataCache.professionGearCache)
     wipe(CraftSimRecipeDataCache.altClassCache)
     wipe(CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions)
+end
+
+function CraftSim.CACHE.RECIPE_DATA:HandleMigrations()
+    -- cooldownCache 0 -> 1
+    if not CraftSimRecipeDataCache.cacheVersions.cooldownCache then
+        CraftSim.CACHE.RECIPE_DATA:MigrateCooldownCache_0_1()
+        CraftSimRecipeDataCache.cacheVersions.cooldownCache = 1
+    end
+end
+
+function CraftSim.CACHE.RECIPE_DATA:MigrateCooldownCache_0_1()
+    local newCache = {}
+
+    for crafterUID, cooldownDataByRecipeID in pairs(CraftSimRecipeDataCache.cooldownCache) do
+        newCache[crafterUID] = newCache[crafterUID] or {}
+
+        for recipeID, serializedCooldownData in pairs(cooldownDataByRecipeID) do
+            local sharedCD = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[recipeID]
+            local serializationID = sharedCD or recipeID
+            if not newCache[crafterUID][serializationID] then
+                serializedCooldownData.sharedCD = sharedCD
+                newCache[crafterUID][serializationID] = serializedCooldownData
+            end
+        end
+    end
+
+    CraftSimRecipeDataCache.cooldownCache = newCache
 end

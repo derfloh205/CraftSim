@@ -479,7 +479,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
         local searchTerm = {
             searchString = info.itemName,
             tier = info.qualityID,
-            quantity = math.max(info.quantity - totalItemCount, 0),
+            quantity = math.max(info.quantity - (tonumber(totalItemCount) or 0), 0),
             isExact = true,
         }
         if searchTerm.quantity == 0 then
