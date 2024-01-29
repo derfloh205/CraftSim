@@ -25,6 +25,7 @@ function CraftSim.CraftQueueItem:new(recipeData, amount)
     self.craftAbleAmount = 0
     self.notOnCooldown = true
     self.isCrafter = false
+    self.learned = false
 
     --- important if the current character is not the crafter of the recipe
     self.allDataCached = false
@@ -40,9 +41,10 @@ function CraftSim.CraftQueueItem:CalculateCanCraft()
     self.correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
     self.notOnCooldown = not self.recipeData:OnCooldown()
     self.isCrafter = self:IsCrafter()
+    self.learned = self.recipeData.learned
 
     self.allowedToCraft = self.canCraftOnce and self.gearEquipped and self.correctProfessionOpen and self.notOnCooldown and
-        self.isCrafter
+        self.isCrafter and self.learned
     CraftSim.UTIL:StopProfiling('CraftSim.CraftQueueItem:CalculateCanCraft')
 end
 

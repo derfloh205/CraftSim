@@ -16,6 +16,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("14.3.1"),
+        f.s .. f.g("CraftQueue"),
+        f.a .. "- Recipes that are " .. f.bb("not learned yet") .. " can now be queued",
         f.p .. f.g("Cooldown Module"),
         f.a .. "- " .. f.bb("Dragonflight Transmutations") .. " now share one timer",
         newP("14.3.0"),

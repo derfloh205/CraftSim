@@ -219,7 +219,7 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                         end
                         if #recipeListText > 0 then
                             tooltipText = tooltipText ..
-                                f.bb("\n\nRecipes sharing this Cooldown:") .. f.white(recipeListText)
+                                f.bb("\n\nRecipes sharing this Cooldown:\n") .. f.white(recipeListText)
                         end
                     else
                         recipeColumn.text:SetText((recipeInfo and recipeInfo.name) or serializationID)

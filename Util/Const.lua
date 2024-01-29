@@ -1280,3 +1280,42 @@ CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES = {
 CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.TRANSLATION_IDS = {
     DF_ALCHEMY_TRANSMUTATIONS = CraftSim.CONST.TEXT.DF_ALCHEMY_TRANSMUTATIONS,
 }
+
+CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES = {
+    LEARNED = {
+        isAtlas = true,
+        texture = "Profession",
+        x = 25,
+        y = 25,
+    },
+    TOOLS = {
+        isAtlas = true,
+        texture = "Professions-Crafting-Orders-Icon",
+        x = 25,
+        y = 25,
+    },
+    COOLDOWN = {
+        isAtlas = true,
+        texture = "ChromieTime-32x32",
+        x = 25,
+        y = 25,
+    },
+    REAGENTS = {
+        isAtlas = true,
+        texture = "Banker",
+        x = 25,
+        y = 25,
+    },
+    PROFESSION = {
+        isAtlas = true,
+        texture = "mechagon-projects",
+        x = 25,
+        y = 25,
+    },
+    CRAFTER = {
+        isAtlas = true,
+        texture = "UI-ChatIcon-App",
+        x = 25,
+        y = 25,
+    },
+}
