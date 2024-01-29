@@ -385,6 +385,7 @@ function CraftSim.UTIL:GetFormatter()
     local e = CraftSim.GUTIL.COLORS.EPIC
     local patreon = CraftSim.GUTIL.COLORS.PATREON
     local whisper = CraftSim.GUTIL.COLORS.WHISPER
+    local white = CraftSim.GUTIL.COLORS.WHITE
     local c = function(text, color)
         return CraftSim.GUTIL:ColorizeText(text, color)
     end
@@ -420,6 +421,9 @@ function CraftSim.UTIL:GetFormatter()
     end
     formatter.whisper = function(text)
         return c(text, whisper)
+    end
+    formatter.white = function(text)
+        return c(text, white)
     end
     formatter.p = p
     formatter.s = s

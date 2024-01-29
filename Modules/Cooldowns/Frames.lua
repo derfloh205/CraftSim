@@ -172,11 +172,15 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                     local nextColumn = columns[4] --[[@as CraftSim.COOLDOWNS.CooldownList.NextColumn]]
                     local allColumn = columns[5] --[[@as CraftSim.COOLDOWNS.CooldownList.AllColumn]]
 
-                    local crafterName = crafterUID
+                    local crafterName, crafterRealm = strsplit("-", crafterUID)
                     local crafterClass = CraftSimRecipeDataCache.altClassCache[crafterUID]
 
+                    local tooltipText = crafterUID
+
                     if crafterClass then
-                        crafterName = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterName)
+                        local color = C_ClassColor.GetClassColor(crafterClass)
+                        crafterName = color:WrapTextInColorCode(crafterName)
+                        tooltipText = color:WrapTextInColorCode(tooltipText)
                     end
 
                     CraftSimRecipeDataCache.recipeInfoCache[crafterUID] = CraftSimRecipeDataCache.recipeInfoCache
@@ -185,7 +189,6 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                     CraftSimRecipeDataCache.professionInfoCache[crafterUID] = CraftSimRecipeDataCache
                         .professionInfoCache
                         [crafterUID] or {}
-
 
 
                     local professionInfo = CraftSimRecipeDataCache.professionInfoCache[crafterUID][recipeID] or
@@ -201,11 +204,32 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                     local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][recipeID] or
                         C_TradeSkillUI.GetRecipeInfo(recipeID)
 
+
                     if cooldownData.sharedCD then
                         recipeColumn.text:SetText(L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD]))
+                        local recipeListText = ""
+                        for _, sharedRecipeID in pairs(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES[cooldownData.sharedCD]) do
+                            local sharedRecipeIDInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID]
+                                [sharedRecipeID] or
+                                C_TradeSkillUI.GetRecipeInfo(sharedRecipeID)
+
+                            if sharedRecipeIDInfo then
+                                recipeListText = recipeListText .. "\n" .. sharedRecipeIDInfo.name
+                            end
+                        end
+                        if #recipeListText > 0 then
+                            tooltipText = tooltipText ..
+                                f.bb("\n\nRecipes sharing this Cooldown:") .. f.white(recipeListText)
+                        end
                     else
                         recipeColumn.text:SetText((recipeInfo and recipeInfo.name) or serializationID)
                     end
+
+                    row.tooltipOptions = {
+                        text = tooltipText,
+                        owner = row.frame,
+                        anchor = "ANCHOR_CURSOR",
+                    }
 
                     row.UpdateTimers = function(self)
                         print("Updating Timers for " .. tostring(recipeInfo.name))
