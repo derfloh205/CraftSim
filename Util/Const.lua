@@ -672,6 +672,7 @@ CraftSim.CONST.LOCALES = {
 
 ---@enum CraftSim.LOCALIZATION_IDS
 CraftSim.CONST.TEXT = {
+    DF_ALCHEMY_TRANSMUTATIONS = "DF_ALCHEMY_TRANSMUTATIONS",
     EXPANSION_VANILLA = "EXPANSION_VANILLA",
     EXPANSION_THE_BURNING_CRUSADE = "EXPANSION_THE_BURNING_CRUSADE",
     EXPANSION_WRATH_OF_THE_LICH_KING = "EXPANSION_WRATH_OF_THE_LICH_KING",
@@ -1245,4 +1246,76 @@ CraftSim.CONST.GATHERING_PROFESSIONS = {
     [Enum.Profession.Mining] = true,
     [Enum.Profession.Fishing] = true,
     [Enum.Profession.Skinning] = true,
+}
+
+---@enum CraftSim.SHARED_PROFESSION_COOLDOWNS
+CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS = {
+    DF_ALCHEMY_TRANSMUTATIONS = "DF_ALCHEMY_TRANSMUTATIONS",
+}
+
+CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP = {
+    [405847] = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.DF_ALCHEMY_TRANSMUTATIONS, -- DRACOTHYST
+    [370714] = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.DF_ALCHEMY_TRANSMUTATIONS, -- DECAY
+    [370715] = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.DF_ALCHEMY_TRANSMUTATIONS, -- ORDER_TO_ELEMENTS
+    [370711] = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.DF_ALCHEMY_TRANSMUTATIONS, -- AWAKENED_AIR
+    [370710] = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.DF_ALCHEMY_TRANSMUTATIONS, -- AWAKENED_EARTH
+    [370707] = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.DF_ALCHEMY_TRANSMUTATIONS, -- AWAKENED_FIRE
+    [370708] = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.DF_ALCHEMY_TRANSMUTATIONS, -- AWAKENED_FROST
+}
+
+--- used for the cooldown module tooltip to list all connected recipes
+CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES = {
+    [CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.DF_ALCHEMY_TRANSMUTATIONS] = {
+        405847, -- DRACOTHYST
+        370714, -- DECAY
+        370715, -- ORDER_TO_ELEMENTS
+        370711, -- AWAKENED_AIR
+        370710, -- AWAKENED_EARTH
+        370707, -- AWAKENED_FIRE
+        370708, -- AWAKENED_FROST
+    },
+}
+
+---@type table <CraftSim.SHARED_PROFESSION_COOLDOWNS, CraftSim.LOCALIZATION_IDS>
+CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.TRANSLATION_IDS = {
+    DF_ALCHEMY_TRANSMUTATIONS = CraftSim.CONST.TEXT.DF_ALCHEMY_TRANSMUTATIONS,
+}
+
+CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES = {
+    LEARNED = {
+        isAtlas = true,
+        texture = "Profession",
+        x = 25,
+        y = 25,
+    },
+    TOOLS = {
+        isAtlas = true,
+        texture = "Professions-Crafting-Orders-Icon",
+        x = 25,
+        y = 25,
+    },
+    COOLDOWN = {
+        isAtlas = true,
+        texture = "ChromieTime-32x32",
+        x = 25,
+        y = 25,
+    },
+    REAGENTS = {
+        isAtlas = true,
+        texture = "Banker",
+        x = 25,
+        y = 25,
+    },
+    PROFESSION = {
+        isAtlas = true,
+        texture = "mechagon-projects",
+        x = 25,
+        y = 25,
+    },
+    CRAFTER = {
+        isAtlas = true,
+        texture = "UI-ChatIcon-App",
+        x = 25,
+        y = 25,
+    },
 }

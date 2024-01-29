@@ -469,8 +469,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
             return nil
         end
         -- subtract the total item count of all crafter's cached inventory
-        local totalItemCount = GUTIL:Fold(crafterUIDs, function(itemCount, crafterUID)
-            if type(itemCount) ~= "number" then return 0 end -- consider first iteration
+        local totalItemCount = GUTIL:Fold(crafterUIDs, 0, function(itemCount, crafterUID)
             local itemCountForCrafter = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, true, false, true,
                 crafterUID)
             return itemCount + itemCountForCrafter
@@ -479,7 +478,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
         local searchTerm = {
             searchString = info.itemName,
             tier = info.qualityID,
-            quantity = math.max(info.quantity - totalItemCount, 0),
+            quantity = math.max(info.quantity - (tonumber(totalItemCount) or 0), 0),
             isExact = true,
         }
         if searchTerm.quantity == 0 then
@@ -541,11 +540,10 @@ end
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFTQ:IsRecipeQueueable(recipeData)
     return
-        recipeData.learned and
         not recipeData.isRecraft and
         not recipeData.isSalvageRecipe and
         not recipeData.isBaseRecraftRecipe and
-        recipeData.resultData.itemsByQuality[1] and -- needs at least one result
+        recipeData.resultData.itemsByQuality[1] and -- needs at least one result?
         not recipeData.isAlchemicalExperimentation
 end
 

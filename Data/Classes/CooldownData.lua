@@ -19,6 +19,8 @@ function CraftSim.CooldownData:new(recipeID)
     self.startTime = 0              -- seconds with ms precision, starttime for charge 1
     self.startTimeCurrentCharge = 0 -- seconds with ms precision, starttime for charge 1
     self.cooldownPerCharge = 0      -- with cd reductions included
+    ---@type CraftSim.SHARED_PROFESSION_COOLDOWNS
+    self.sharedCD = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[recipeID]
 end
 
 function CraftSim.CooldownData:Update()
@@ -135,6 +137,17 @@ function CraftSim.CooldownData:GetAllChargesFullDateFormatted()
         GetServerTime() <= allchargesFullTime
 end
 
+---@param crafterUID CrafterUID
+function CraftSim.CooldownData:Save(crafterUID)
+    CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
+
+    local serialized = self:Serialize()
+    local serializationID = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[self.recipeID] or
+        self.recipeID
+
+    CraftSimRecipeDataCache.cooldownCache[crafterUID][serializationID] = serialized
+end
+
 ---@class CraftSim.CooldownData.Serialized
 ---@field recipeID RecipeID
 ---@field isDayCooldown boolean
@@ -143,6 +156,7 @@ end
 ---@field startTime number
 ---@field cooldownPerCharge number?
 ---@field maxCooldown number?
+---@field sharedCD CraftSim.SHARED_PROFESSION_COOLDOWNS?
 
 function CraftSim.CooldownData:Serialize()
     -- calculate startTime by using cooldown
@@ -155,6 +169,7 @@ function CraftSim.CooldownData:Serialize()
         startTime = self.startTime,
         cooldownPerCharge = self.cooldownPerCharge,
         maxCooldown = self.maxCooldown,
+        sharedCD = self.sharedCD,
     }
     return serialized
 end
@@ -169,5 +184,24 @@ function CraftSim.CooldownData:Deserialize(serialized)
     cooldownData.startTime = serialized.startTime
     cooldownData.cooldownPerCharge = serialized.cooldownPerCharge
     cooldownData.maxCooldown = serialized.maxCooldown
+    cooldownData.sharedCD = serialized.sharedCD
     return cooldownData
+end
+
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@return CraftSim.CooldownData
+function CraftSim.CooldownData:DeserializeForCrafter(crafterUID, recipeID)
+    CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
+
+    local serializationID = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[recipeID] or
+        recipeID
+
+    local serializedCooldownData = CraftSimRecipeDataCache.cooldownCache[crafterUID][serializationID]
+
+    if serializedCooldownData then
+        return CraftSim.CooldownData:Deserialize(serializedCooldownData)
+    else
+        return CraftSim.CooldownData(recipeID)
+    end
 end
