@@ -747,6 +747,7 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
     return operationInfo
 end
 
+---@return CraftSim.SpecializationData
 function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
     local crafterUID = self:GetCrafterUID()
 
@@ -779,20 +780,24 @@ function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
     end
 end
 
+---@return CraftSim.CooldownData
 function CraftSim.RecipeData:GetCooldownDataForRecipeCrafter()
     local crafterUID = self:GetCrafterUID()
+    local cooldownData
 
     if self:IsCrafter() then
-        self.cooldownData = CraftSim.CooldownData(self.recipeID)
-        self.cooldownData:Update()
+        cooldownData = CraftSim.CooldownData(self.recipeID)
+        cooldownData:Update()
 
         -- cache only learned recipes from current expac that can be on cooldown
-        if self.cooldownData.isCooldownRecipe and self.recipeInfo.learned and not self.isOldWorldRecipe then
-            self.cooldownData:Save(crafterUID)
+        if cooldownData.isCooldownRecipe and self.recipeInfo.learned and not self.isOldWorldRecipe then
+            cooldownData:Save(crafterUID)
         end
     else
-        self.cooldownData = CraftSim.CooldownData:DeserializeForCrafter(crafterUID, self.recipeID)
+        cooldownData = CraftSim.CooldownData:DeserializeForCrafter(crafterUID, self.recipeID)
     end
+
+    return cooldownData
 end
 
 function CraftSim.RecipeData:IsCrafterInfoCached()
