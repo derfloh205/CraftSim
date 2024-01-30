@@ -556,7 +556,7 @@ function CraftSim.LOCAL_RU:GetData()
         "Показывает цену продажи и обзор прибыли в зависимости от качества товара",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "Средняя прибыль",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] =
-        "Показывает среднюю прибыль на основе характеристик вашей профессии и веса статистики прибыли в золоте на очко.",
+        "Показывает среднюю прибыль на основе характеристик вашей профессии и прибыль от каждого очка характеристик в золоте.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_LABEL] = "Оптимизация материалов",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_TOOLTIP] =
         "Предлагает самые дешевые материалы для достижения наивысшего порога качества и вдохновения.",
