@@ -91,6 +91,7 @@ CraftSimOptions = CraftSimOptions or {
 	craftQueueGeneralRestockSaleRateThreshold = 0,
 	craftQueueRestockPerRecipeOptions = {},
 	craftQueueShoppingListPerCharacter = false,
+	craftQueueFlashTaskbarOnCraftFinished = true,
 }
 
 CraftSimGGUIConfig = CraftSimGGUIConfig or {}
@@ -164,6 +165,7 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 			CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
 		CraftSimOptions.recipeScanImportAllProfessions = CraftSimOptions.recipeScanImportAllProfessions or false
 		CraftSimOptions.craftQueueShoppingListPerCharacter = CraftSimOptions.craftQueueShoppingListPerCharacter or false
+
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end
@@ -196,6 +198,9 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.optionsShowNews == nil then
 			CraftSimOptions.optionsShowNews = true
+		end
+		if CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished == nil then
+			CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished = true
 		end
 	end
 

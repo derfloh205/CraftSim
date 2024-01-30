@@ -497,7 +497,10 @@ function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT()
     if CraftSim.CRAFTQ.currentlyCraftedRecipeData then
         print("have recipeData, now decrement")
         -- decrement by one and refresh list
-        CraftSim.CRAFTQ.craftQueue:SetAmount(CraftSim.CRAFTQ.currentlyCraftedRecipeData, -1, true)
+        local newAmount = CraftSim.CRAFTQ.craftQueue:SetAmount(CraftSim.CRAFTQ.currentlyCraftedRecipeData, -1, true)
+        if newAmount and newAmount <= 0 and CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished then
+            FlashClientIcon()
+        end
         CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
     end
 end

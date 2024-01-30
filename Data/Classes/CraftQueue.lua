@@ -48,6 +48,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param amount number
 ---@param relative boolean? increment/decrement relative or set amount directly
+---@return number? newAmount amount after adjustment, nil if recipe could not be adjusted
 function CraftSim.CraftQueue:SetAmount(recipeData, amount, relative)
     relative = relative or false
     local craftQueueItem, index = self:FindRecipe(recipeData)
@@ -63,7 +64,10 @@ function CraftSim.CraftQueue:SetAmount(recipeData, amount, relative)
         if craftQueueItem.amount <= 0 then
             self.craftQueueItems[index] = nil
         end
+
+        return craftQueueItem.amount
     end
+    return nil
 end
 
 ---@param recipeData CraftSim.RecipeData
