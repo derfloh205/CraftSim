@@ -22,7 +22,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Added a new option in Options->Crafting to flash your",
         f.a .. "  WoW Taskbar Icon when the current CraftQueue recipe",
         f.a .. "  finished crafting",
-        f.p .. "Added missing Localization IDs",
+        f.p .. "Added some missing Localization IDs",
+        f.p ..
+        "Added " .. f.bb("Transmutation") .. " Node to ",
+        f.a .. f.bb("Transmute: Dracothyst") .. " Specialization Info",
         supporterListUpdate,
         newP("14.4.0"),
         f.s .. f.g("CraftQueue"),

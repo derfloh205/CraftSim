@@ -521,6 +521,7 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         ELEMENTAL = 10,             -- transmutations
         EXPLOSIVES_AND_DEVICES = 0, -- transmutations
         MISC = 0,                   -- trinket
+        METAL_AND_STONE = 7,        -- e.g: transmute: dracothyst
     },
     ENCHANTING = {
         FINISHING_REAGENTS = 19,
