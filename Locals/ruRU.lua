@@ -52,7 +52,7 @@ function CraftSim.LOCAL_RU:GetData()
 
         [CraftSim.CONST.TEXT.STAT_SKILL] = "Навык",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS] = "Бонус предметов от перепроизводства",
-        [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "Бонус предметов от находчивости",
+        [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "Бонус предметов от наход.",
         [CraftSim.CONST.TEXT.STAT_INSPIRATION_BONUS] = "Бонус навыка от вдохновения",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS] = "Скорость изготовления",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "Прорыв в экспериментах с флаконами",
@@ -103,7 +103,7 @@ function CraftSim.LOCAL_RU:GetData()
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Сложность рецепта: ",
         [CraftSim.CONST.TEXT.INSPIRATION_LABEL] = "Вдохновение: ",
-        [CraftSim.CONST.TEXT.INSPIRATION_SKILL_LABEL] = "Бонусный вдохновения: ",
+        [CraftSim.CONST.TEXT.INSPIRATION_SKILL_LABEL] = "Бонусный навык вдохн.: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Перепроизводство: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Находчивость: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Бонус предметов от находчивости: ",
@@ -118,7 +118,7 @@ function CraftSim.LOCAL_RU:GetData()
 
         -- Customer Service Module
         [CraftSim.CONST.TEXT.HSV_EXPLANATION] =
-        "HSV означает «Скрытое значение навыка» и представляет собой скрытое увеличение навыка от 0 до 5% от сложности вашего рецепта каждый раз, когда вы что-то создаете.\n\nЭто скрытое значение навыка может привести вас к следующему качеству, подобно вдохновению.\n\n nОднако чем ближе вы к следующему качеству, тем выше шанс!",
+        "HSV означает «Скрытое значение навыка» и представляет собой скрытое увеличение навыка от 0 до 5% от сложности вашего рецепта каждый раз, когда вы что-то создаете.\n\nЭто скрытое значение навыка может привести вас к следующему качеству, подобно вдохновению.\n\nОднако чем ближе вы к следующему качеству, тем выше шанс!",
 
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] =
@@ -180,7 +180,7 @@ function CraftSim.LOCAL_RU:GetData()
             "\n" .. f.cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
             "Этот дополнительный навык всегда составляет от 0% до 5% от вашей " ..
             f.bb("Базовой сложности рецепта") ..
-            ".\nТо есть, если у вас есть рецепт со сложностью 400. Вы можете получить до 20 очков навыка.\n" ..
+            ".\nНапример, если у вас есть рецепт со сложностью 400, вы можете получить до 20 очков навыка.\n" ..
             "И тесты показывают, что это " ..
             f.bb("равномерно распределено") ..
             ". Это означает, что каждое процентное значение имеет одинаковую вероятность.\n" ..
@@ -192,28 +192,28 @@ function CraftSim.LOCAL_RU:GetData()
             f.bb("недостающий навык") ..
             " для достижения следующего качества и преобразует его в " ..
             f.bb("процент относительно сложности рецепта\n\n") ..
-            "Итак, для рецепта со сложностью 400: если у вас 190 очков навыка и вам нужно 200 для достижения следующего качества,\n недостающий навык будет равен 10" ..
+            "Итак, для рецепта со сложностью 400: если у вас 190 очков навыка и вам нужно 200 для достижения следующего качества,\nнедостающий навык будет равен 10. " ..
             "Чтобы получить это значение в процентах относительно сложности, вы можете рассчитать его следующим образом:\n" ..
-            f.bb("10 / (400 / 100)") .. " что равно " .. f.bb("2.5%\n") ..
+            f.bb("10 / (400 / 100)") .. ", что равно " .. f.bb("2.5%\n") ..
             "Далее нам нужно помнить, что " .. f.l("HSV") .. " может дать нам от 0 до 5 процентов.\n" ..
             "Значит, нам нужно вычислить " ..
             f.bb("шанс получить 2.5 или более") .. " при получении случайного числа от 0 до 5,\n" ..
             "чтобы узнать вероятность того, что " .. f.l("HSV") .. " даст нам более высокое качество.\n\n" ..
             "Статистика говорит нам, что такой одинаковый шанс получить что-то между двумя границами называется\n" ..
-            f.l("Непрерывное равномерное распределение вероятностей\n") ..
+            f.l("Непрерывным равномерным распределением вероятностей\n") ..
             "И таким образом существует формула, которая дает именно то, что нам нужно:\n\n" ..
             f.bb("(upperBound - X) / (upperBound - lowerBound)") .. "\nгде\n" ..
             f.bb("upperBound") .. " = 5\n" ..
             f.bb("lowerBound") .. " = 0\n" ..
             "и " ..
-            f.bb("X") .. " — это желаемое значение, которое мы хотим получить или превзойти. В данном случае 2.5\n" ..
+            f.bb("X") .. " — это желаемое значение, которое мы хотим получить или превзойти. В данном случае 2.5.\n" ..
             "В данном случае мы находимся прямо посередине " ..
-            f.l("'зоны' HSV") .. " так что шанс равен\n" ..
+            f.l("'зоны' HSV") .. ", так что шанс равен\n" ..
             f.bb("(5 - 2.5) / (5 - 0) = 0.5") ..
-            " то есть 50% для перехода к следующему качеству с помощью только " .. f.l("HSV") .. ".\n" ..
+            ", то есть 50%, для перехода к следующему качеству с помощью только " .. f.l("HSV") .. ".\n" ..
             "Если бы у нас было больше недостающих очков навыка, шанс был бы ниже, и наоборот!\n" ..
-            "Кроме того, если вам не хватает навыка 5% или более, шанс равен 0 или отрицательный, то есть невозможно, что " ..
-            f.l("HSV") .. " само улучшит предмет.\n\n" ..
+            "Кроме того, если вам не хватает навыка 5% или более, шанс равен 0 или отрицательный, то есть " ..
+            f.l("HSV") .. " не может само улучшить предмет.\n\n" ..
             "Однако, существует возможность достижения следующего качества, если " ..
             f.bb("Вдохновение") .. " и " .. f.l("HSV") .. " прокают вместе и\n" ..
             "навык от " ..
@@ -458,10 +458,12 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ALTPROFESSIONS_FILTER_BUTTON] = "Профессии альтов",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_ALL_BUTTON_READY] = "Сканировать профессии",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_ALL_BUTTON_SCANNING] = "Сканирование...",
+		[CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_SCAN] = "Сканирование рецептов",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_OPTIONS] = "Параметры сканирования",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_LABEL] = "Все просканированные профессии",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP] = f.g("Истина: ") ..
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP] = f.g("Включено: ") ..
             "Импортировать результаты сканирования всех включенных и просканированных профессий\n\n" ..
-            f.r("Ложь: ") .. "Импортировать результаты сканирования только из выбранной в данный момент профессии",
+            f.r("Выключено: ") .. "Импортировать результаты сканирования только из выбранной в данный момент профессии",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES_TOOLTIP] =
             "Каждый раз, когда вы открываете или сканируете рецепт персонажа, " ..
             f.l("CraftSim") ..
@@ -525,7 +527,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Модуль обзора стоимости",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "Модуль информации о специализации",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] =
-        "Максимальное количество сообщений истории клиента на одного клиента",
+        "Максимальное количество сообщений\nистории клиентов на одного клиента",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Сместить точки навыков на 1",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] =
         "Предложение по комбинации материалов будет пытаться достичь точки + 1 вместо того, чтобы точно соответствовать требуемому навыку",
@@ -572,7 +574,7 @@ function CraftSim.LOCAL_RU:GetData()
         "Модуль, показывающий подробную информацию о стоимости крафта",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Скан. рецептов",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] =
-        "Module that scans your recipe list based on various options",
+        "Модуль, которой сканирует ваш список рецептов на базе заданных параметров",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_LABEL] = "Поддержка клиентов",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP] =
         "Модуль, предлагающий различные варианты взаимодействия с потенциальными клиентами",
@@ -582,7 +584,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL] = "Усиления",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP] =
         "Модуль, который показывает ваши активные и недостающие ремесленные усиления",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Сбросить позиции рамок",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Сбросить позиции",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Параметры",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "Новости",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = "Экспорт " .. f.l("ForgeFinder"),
@@ -647,10 +649,16 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Неправильная профессия",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN] = "На перезарядке",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER] = "Неправильный крафтер",
+		[CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_STATUS_HEADER] = "Состояние",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL] = "Создать дальше",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT] = "Можно создать",
         [CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL] = "Создать список покупок Auctionator",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL] = "Очередь крафта",
+		[CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL] = "Помигать иконкой панели задач по завершении крафта в " ..
+            f.bb("Очереди крафта"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP] =
+            "Когда ваш клиент WoW свернут и крафт рецепта в " .. f.bb("Очереди крафта") ..
+            " заканчивается," .. f.l(" CraftSim") .. " заставит иконку WoW в панели задач замигать",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL] = "Варианты пополнения запасов",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL] = "Порог прибыли:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL] = "Порог цены продажи:",
@@ -688,7 +696,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CRAFTING_COSTS_LABEL] = "Стоимость изготовления: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_AVERAGE_PROFIT_LABEL] = "Средняя прибыль: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL] = "Результаты",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX] = "На персонажа",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX] = "Для персонажа",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP] = "Создать " ..
             f.bb("Список покупок Auctionator") ..
             " для каждого персонажа-крафтера\nвместо одного списка покупок для всех",
@@ -710,7 +718,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_HEADER] = "Рецепт",
         [CraftSim.CONST.TEXT.COOLDOWNS_CHARGES_HEADER] = "Заряды",
         [CraftSim.CONST.TEXT.COOLDOWNS_NEXT_HEADER] = "Следующий заряд",
-        [CraftSim.CONST.TEXT.COOLDOWNS_ALL_HEADER] = "Заряды полны",
+        [CraftSim.CONST.TEXT.COOLDOWNS_ALL_HEADER] = "Полный заряд",
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Да",
