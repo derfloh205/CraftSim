@@ -126,7 +126,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                 justifyOptions = { type = "H", align = "CENTER" }
             },
             {
-                label = "Status", -- Status Icon List
+                label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_STATUS_HEADER), -- Status Icon List
                 width = 130,
                 justifyOptions = { type = "H", align = "CENTER" }
             },

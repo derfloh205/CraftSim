@@ -15,6 +15,18 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("14.4.1"),
+        f.P .. "Updated Russian Localizations",
+        f.a .. "- Thanks to " .. f.bb("https://github.com/SerGlushko") .. " !",
+        f.s .. f.g("CraftQueue"),
+        f.a .. "- Added a new option in Options->Crafting to flash your",
+        f.a .. "  WoW Taskbar Icon when the current CraftQueue recipe",
+        f.a .. "  finished crafting",
+        f.p .. "Added some missing Localization IDs",
+        f.p ..
+        "Added " .. f.bb("Transmutation") .. " Node to ",
+        f.a .. f.bb("Transmute: Dracothyst") .. " Specialization Info",
+        supporterListUpdate,
         newP("14.4.0"),
         f.s .. f.g("CraftQueue"),
         f.a .. "- Recipes that are " .. f.bb("not learned yet") .. " can now be queued",

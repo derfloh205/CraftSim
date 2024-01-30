@@ -53,7 +53,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         ---@class CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB : GGUI.BlizzardTab
         frame.content.recipeScanTab = GGUI.BlizzardTab {
             buttonOptions = {
-                label = "Recipe Scan",
+                label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_SCAN),
                 offsetY = -3,
             },
             parent = frame.content, anchorParent = frame.content, initialTab = true,
@@ -66,7 +66,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         ---@class CraftSim.RECIPE_SCAN.SCAN_OPTIONS_TAB : GGUI.BlizzardTab
         frame.content.scanOptionsTab = GGUI.BlizzardTab {
             buttonOptions = {
-                label = "Scan Options",
+                label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_OPTIONS),
                 anchorA = "LEFT", anchorB = "RIGHT", anchorParent = frame.content.recipeScanTab.button
             },
             parent = frame.content, anchorParent = frame.content,
