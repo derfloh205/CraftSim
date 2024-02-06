@@ -293,7 +293,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
     -- add saved reagents
     local savedReagentsText = ""
     if #CraftSim.CRAFT_RESULTS.currentSessionData.totalSavedReagents > 0 then
-        savedReagentsText = "\n" .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_11) .. ":\n"
+        savedReagentsText = "\n" .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_SAVED_REAGENTS) .. "\n"
         for _, savedReagent in pairs(CraftSim.CRAFT_RESULTS.currentSessionData.totalSavedReagents) do
             savedReagentsText = savedReagentsText ..
                 (savedReagent.quantity or 1) .. " x " .. (savedReagent.item:GetItemLink() or "") .. "\n"

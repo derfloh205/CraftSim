@@ -159,13 +159,11 @@ end
 
 function CraftSim.PriceData:Copy(recipeData)
     local copy = CraftSim.PriceData(recipeData)
-    copy.qualityPriceList = CopyTable(self.qualityPriceList)
+    copy.qualityPriceList = CopyTable(self.qualityPriceList or {})
     copy.craftingCosts = self.craftingCosts
     copy.craftingCostsFixed = self.craftingCostsFixed
     copy.craftingCostsRequired = self.craftingCostsRequired
-    copy.expectedCostsByQuality = CopyTable(self.expectedCostsByQuality)
-    copy.optimizedReagentsExpectedCraftingCosts = CopyTable(self.optimizedReagentsExpectedCraftingCosts)
-    copy.reagentPriceInfoByItemID = CopyTable(self.reagentPriceInfoByItemID)
+    copy.expectedCostsByQuality = CopyTable(self.expectedCostsByQuality or {})
     return copy
 end
 

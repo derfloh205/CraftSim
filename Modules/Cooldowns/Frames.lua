@@ -115,6 +115,7 @@ function CraftSim.COOLDOWNS.FRAMES:Init()
                 anchorA = "LEFT", anchorB = "RIGHT",
             }
             chargesColumn.SetCharges = function(self, current, max)
+                current = math.min(current, max)
                 if current == max and max > 0 then
                     chargesColumn.current:SetText(f.g(current))
                     chargesColumn.max:SetText(f.g(max))
@@ -235,10 +236,12 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                         print("Updating Timers for " .. tostring(recipeInfo.name))
                         local cooldownData = self.cooldownData
                         chargesColumn:SetCharges(cooldownData:GetCurrentCharges(), cooldownData.maxCharges)
-                        nextColumn.text:SetText(f.bb(cooldownData:GetFormattedTimerNextCharge()))
                         local allFullTS, ready = cooldownData:GetAllChargesFullTimestamp()
+                        local cdReady = ready or cooldownData:GetCurrentCharges() >= cooldownData.maxCharges
+                        nextColumn.text:SetText(cdReady and f.grey("-") or
+                        f.bb(cooldownData:GetFormattedTimerNextCharge()))
                         row.allchargesFullTimestamp = allFullTS
-                        if ready then
+                        if cdReady then
                             allColumn.text:SetText(f.g("Ready"))
                         else
                             allColumn.text:SetText(f.g(cooldownData:GetAllChargesFullDateFormatted()))
