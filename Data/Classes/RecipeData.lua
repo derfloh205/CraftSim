@@ -37,6 +37,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     --- might be not necessary
     ---@type CraftSim.RecipeData[]
     self.optimizedSubRecipes = {}
+    self.subRecipeCostsEnabled = false
 
     if not recipeID then
         return -- e.g. when deserializing
@@ -247,6 +248,10 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
         CraftSim.UTIL:StopProfiling("- RD: Cache Data")
     end
+end
+
+function CraftSim.RecipeData:SetSubRecipeCostsUsage(enabled)
+    self.subRecipeCostsEnabled = enabled
 end
 
 ---@param reagentList CraftSim.ReagentListItem[]
@@ -467,9 +472,9 @@ function CraftSim.RecipeData:Copy()
     copy.resultData = self.resultData:Copy(copy) -- Is this needed or covered by constructor?
     -- copy spec data or already handled in constructor?
     copy.orderData = self.orderData
-    copy.crafter = self.crafter
-    copy.crafterClass = self.crafterClass
-    copy.crafterRealm = self.crafterRealm
+    copy.crafterData = self.crafterData
+    copy.subRecipeCostsEnabled = self.subRecipeCostsEnabled
+    copy.optimizedSubRecipes = self.optimizedSubRecipes
 
     copy:Update()
     return copy

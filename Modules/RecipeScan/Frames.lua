@@ -4,6 +4,7 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 local L = CraftSim.UTIL:GetLocalizer()
+local f = CraftSim.UTIL:GetFormatter()
 
 ---@class CraftSim.RECIPE_SCAN
 CraftSim.RECIPE_SCAN = CraftSim.RECIPE_SCAN
@@ -697,6 +698,15 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitScanOptionsTab(scanOptionsTab)
         clickCallback = function(_, checked) CraftSimOptions.recipeScanUseInsight = checked end
     }
 
+    content.optimizeSubRecipes = GGUI.Checkbox {
+        parent = content, anchorParent = content.useInsightCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
+        label = "Optimize Sub Recipes",
+        tooltip = "If enabled, " .. f.l("CraftSim") .. " also optimizes crafts of cached reagent recipes of scanned recipes and uses their\n" ..
+            f.bb("expected costs") .. " to calculate the crafting costs for the final product.\n\n" .. f.r("Warning: This might reduce scanning performance"),
+        initialValue = CraftSimOptions.recipeScanOptimizeSubRecipes,
+        clickCallback = function(_, checked) CraftSimOptions.recipeScanOptimizeSubRecipes = checked end
+    }
+
     content.expansionSelector = GGUI.CheckboxSelector {
         savedVariablesTable = CraftSimOptions.recipeScanFilteredExpansions,
         initialItems = GUTIL:Sort(GUTIL:Map(CraftSim.CONST.EXPANSION_IDS,
@@ -717,9 +727,9 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitScanOptionsTab(scanOptionsTab)
 
         },
         buttonOptions = {
-            parent = content, anchorParent = content.useInsightCB.frame,
+            parent = content, anchorParent = content.optimizeSubRecipes.frame,
             anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = checkBoxSpacingY,
-            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON), offsetX = 20,
+            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON), offsetX = 25,
             adjustWidth = true, sizeX = 20,
         },
     }

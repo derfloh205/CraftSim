@@ -225,7 +225,7 @@ function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestResul
     return recipeData.reagentData:EqualsQualityReagents(bestResult.reagents)
 end
 
-function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
+function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, useSubRecipeCosts)
     local inf = math.huge
 
     local j, k, a, b, c, n, w
@@ -241,11 +241,11 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
     end
 
     local q3ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[3].item:GetItemID(), true, false,
-        CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
+        useSubRecipeCosts)
     local q2ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[2].item:GetItemID(), true, false,
-        CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
+        useSubRecipeCosts)
     local q1ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[1].item:GetItemID(), true, false,
-        CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
+        useSubRecipeCosts)
 
     --print("start crumb creation: " .. ksItem.name)
     for k = 0, n, 1 do
@@ -341,7 +341,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
         --print("mWeight[index] / weightGCD -> " .. mWeight[index] .. " / " .. weightGCD .. " = " .. mWeight[index] / weightGCD)
 
         -- fill crumbs
-        CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
+        CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, recipeData.subRecipeCostsEnabled)
         ksItems[index] = ksItem
     end
     CraftSim.UTIL:StopProfiling("KnapsackKsItemCreation")

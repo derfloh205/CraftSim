@@ -286,6 +286,14 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
             return
         end
 
+        -- if optimizing subrecipes
+        if CraftSimOptions.recipeScanOptimizeSubRecipes then
+            printS("Optimizing SubRecipes..")
+            recipeData:SetSubRecipeCostsUsage(true)
+            recipeData:OptimizeSubRecipes()
+            printS("optimizedRecipes: " .. tostring(#recipeData.optimizedSubRecipes))
+        end
+
         --optimize top gear first cause optimized reagents might change depending on the gear
         if CraftSimOptions.recipeScanOptimizeProfessionTools then
             printS("Optimizing Gear...")

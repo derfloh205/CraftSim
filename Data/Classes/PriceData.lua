@@ -30,7 +30,7 @@ function CraftSim.PriceData:Update()
     wipe(self.qualityPriceList)
     wipe(self.expectedCostsByQuality)
 
-    local useSubRecipes = CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization
+    local useSubRecipes = self.recipeData.subRecipeCostsEnabled
 
     print("Update PriceData", false, true)
     print("using subrecipes: " .. tostring(useSubRecipes))

@@ -67,6 +67,7 @@ CraftSimOptions = CraftSimOptions or {
 	recipeScanFilteredExpansions = nil,
 	recipeScanAltProfessions = nil,
 	recipeScanImportAllProfessions = false,
+	recipeScanOptimizeSubRecipes = false,
 
 	-- profit calc
 	customMulticraftConstant = CraftSim.CONST.MULTICRAFT_CONSTANT,
@@ -682,7 +683,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	end
 
 	-- subrecipe optimization
-	if CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization then
+	recipeData:SetSubRecipeCostsUsage(CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
+	if recipeData.subRecipeCostsEnabled then
 		CraftSim.UTIL:StartProfiling("OptimizeSubRecipes")
 		recipeData:OptimizeSubRecipes()
 		CraftSim.UTIL:StopProfiling("OptimizeSubRecipes")

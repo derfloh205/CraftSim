@@ -224,7 +224,7 @@ function CraftSim.COST_DETAILS:UpdateDisplay(recipeData, exportMode)
         costDetailsFrame = CraftSim.COST_DETAILS.frame
     end
 
-    local considerSubRecipes = CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization
+    local considerSubRecipes = recipeData.subRecipeCostsEnabled
 
     costDetailsFrame.content.craftingCostsValue:SetText(CraftSim.GUTIL:FormatMoney(recipeData.priceData.craftingCosts))
 
