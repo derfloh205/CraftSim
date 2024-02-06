@@ -364,6 +364,23 @@ function CraftSim.UTIL:GetCrafterUIDFromCrafterData(crafterData)
     return crafterData.name .. "-" .. crafterData.realm
 end
 
+---@param crafterUID CrafterUID
+---@return CraftSim.CrafterData? crafterData nil if not fully cached
+function CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafterUID)
+    local name, realm = strsplit("-", crafterUID)
+    local crafterClass = CraftSimRecipeDataCache.altClassCache[crafterUID]
+
+    if name and realm and crafterClass then
+        ---@type CraftSim.CrafterData
+        local crafterData = {
+            name = name,
+            realm = realm,
+            class = crafterClass,
+        }
+        return crafterData
+    end
+end
+
 ---@return string crafterUID
 function CraftSim.UTIL:GetPlayerCrafterUID()
     return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())

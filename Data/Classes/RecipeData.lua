@@ -34,6 +34,9 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.professionGearCached = false
     self.recipeInfoCached = false
     self.professionInfoCached = false
+    --- might be not necessary
+    ---@type CraftSim.RecipeData[]
+    self.optimizedSubRecipes = {}
 
     if not recipeID then
         return -- e.g. when deserializing
@@ -512,6 +515,28 @@ function CraftSim.RecipeData:OptimizeProfit()
     self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
     -- need another because it could be that the optimized gear makes it possible to use cheaper reagents
     self:OptimizeReagents()
+
+    -- cache the results if not gear and if its learned only
+    if not self.isGear and self.learned then
+        -- only if reachable
+        for qualityID, chance in ipairs(self.resultData.chanceByQuality) do
+            if chance > 0 then
+                local item = self.resultData.itemsByQuality[qualityID]
+                local itemID = item:GetItemID()
+                CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
+                    .itemOptimizedCostsDataCache[itemID] or {}
+
+                CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID][self:GetCrafterUID()] = {
+                    crafter = self:GetCrafterUID(),
+                    qualityID = qualityID,
+                    craftingChance = chance,
+                    expectedCosts = self.priceData.expectedCostsByQuality[qualityID],
+                    expectedCrafts = self.resultData.expectedCraftsByQuality[qualityID],
+                    profession = self.professionData.professionInfo.profession,
+                }
+            end
+        end
+    end
 end
 
 ---Optimizes the recipeData's reagents and gear for highest quality
@@ -846,4 +871,56 @@ function CraftSim.RecipeData:IsDragonflightRecipe()
     end
 
     return false
+end
+
+---@return CraftSim.ItemRecipeData[]
+function CraftSim.RecipeData:GetSubRecipeCraftingInfos()
+    local print = CraftSim.UTIL:SetDebugPrint("SUB_RECIPE_DATA")
+    local craftingInfos = {}
+    for _, reagent in pairs(self.reagentData.requiredReagents) do
+        local craftingInfo = CraftSimRecipeDataCache.itemRecipeCache[reagent.items[1].item:GetItemID()]
+        if craftingInfo then
+            table.insert(craftingInfos, craftingInfo)
+        end
+    end
+    return craftingInfos
+end
+
+--- optimizes cached subrecipes and updates priceData
+function CraftSim.RecipeData:OptimizeSubRecipes()
+    local print = CraftSim.UTIL:SetDebugPrint("SUB_RECIPE_DATA")
+    local subRecipeData = self:GetSubRecipeCraftingInfos()
+    wipe(self.optimizedSubRecipes)
+
+    -- optimize recipes
+    for _, data in pairs(subRecipeData) do
+        print("checking subrecipe: " .. tostring(data.recipeID))
+        local recipeID = data.recipeID
+        local crafter = data.crafters[1]
+
+        local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafter)
+
+        print("crafterData: " .. tostring(crafterData))
+
+        local alreadyOptimized = GUTIL:Some(self.optimizedSubRecipes, function(recipeData)
+            return recipeData.recipeID == recipeID
+        end)
+
+        if recipeID and crafterData and not alreadyOptimized then
+            local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
+
+            -- go deep?!
+            recipeData:OptimizeSubRecipes()
+            -- caches the expect costs info automatically
+            recipeData:OptimizeProfit()
+
+            print("Optimized Sub Recipe: " .. tostring(recipeData.recipeName))
+            print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
+
+            tinsert(self.optimizedSubRecipes, recipeData)
+        end
+    end
+
+    -- update pricedata
+    self.priceData:Update()
 end

@@ -240,9 +240,12 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem)
         ksItem.crumb[j].value = inf
     end
 
-    local q3ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[3].item:GetItemID(), true)
-    local q2ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[2].item:GetItemID(), true)
-    local q1ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[1].item:GetItemID(), true)
+    local q3ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[3].item:GetItemID(), true, false,
+        CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
+    local q2ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[2].item:GetItemID(), true, false,
+        CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
+    local q1ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[1].item:GetItemID(), true, false,
+        CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
 
     --print("start crumb creation: " .. ksItem.name)
     for k = 0, n, 1 do

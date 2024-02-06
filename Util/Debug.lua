@@ -90,10 +90,9 @@ function CraftSim_DEBUG:print(debugOutput, debugID, recursive, printLabel, level
     end
 end
 
-function CraftSim_DEBUG:InspectTable(table)
-    local loaded = C_AddOns.LoadAddOn("Blizzard_DebugTools")
-    if table and type(table) == "table" and loaded then
-        DisplayTableInspectorWindow(table)
+function CraftSim_DEBUG:InspectTable(t, label)
+    if DevTool then
+        DevTool:AddData(t, label)
     end
 end
 

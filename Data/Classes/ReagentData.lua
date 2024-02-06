@@ -79,6 +79,7 @@ function CraftSim.ReagentData:GetProfessionStatsByOptionals()
     return totalStats
 end
 
+--- circumvents itemLink loading
 ---@param itemID number
 function CraftSim.ReagentData:GetReagentQualityIDByItemID(itemID)
     local qualityID = 0

@@ -17,13 +17,16 @@ local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
 ---@field noAHPriceFound boolean
 ---@field isOverride boolean
 ---@field noPriceSource boolean
+---@field isExpectedCost boolean
+---@field expectedCostsData? CraftSim.ExpectedCraftingCostsData
 
 ---Wrapper for Price Source addons price fetch by itemID
 ---@param itemID number
 ---@param isReagent? boolean Use TSM Expression for materials
+---@param considerSubCrafts? boolean
 ---@return number usedPrice
 ---@return CraftSim.PriceData.PriceInfo priceInfo
-function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice)
+function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice, considerSubCrafts)
     local ahPrice = CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, isReagent)
     ---@type CraftSim.PriceData.PriceInfo
     local priceInfo = {
@@ -32,6 +35,7 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
         isOverride = false,
         noPriceSource = false,
         isAHPrice = false,
+        isExpectedCost = false,
     }
 
     if forceAHPrice then
@@ -41,11 +45,31 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
     -- check for overrides
     if isReagent then
         local priceOverrideData = CraftSim.PRICE_OVERRIDE:GetGlobalOverride(itemID)
-
-
         if priceOverrideData then
             priceInfo.isOverride = true
             return priceOverrideData.price, priceInfo
+        end
+
+        if considerSubCrafts then
+            CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
+                .itemOptimizedCostsDataCache[itemID] or {}
+            -- check for crafting costs cached data
+            local itemOptimizedCostsCrafters = CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID]
+            local itemOptimizedCostsData
+            -- get best costs from all cached crafters
+            for _, data in pairs(itemOptimizedCostsCrafters) do
+                if not itemOptimizedCostsData or data.expectedCosts < itemOptimizedCostsData.expectedCosts then
+                    itemOptimizedCostsData = data
+                end
+            end
+            if itemOptimizedCostsData then
+                priceInfo.expectedCostsData = itemOptimizedCostsData
+                -- only set as used price if its lower then ah price or no ah price for this item exists
+                if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCosts < priceInfo.ahPrice then
+                    priceInfo.isExpectedCost = true
+                    return itemOptimizedCostsData.expectedCosts, priceInfo
+                end
+            end
         end
     end
 

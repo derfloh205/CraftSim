@@ -92,6 +92,9 @@ CraftSimOptions = CraftSimOptions or {
 	craftQueueRestockPerRecipeOptions = {},
 	craftQueueShoppingListPerCharacter = false,
 	craftQueueFlashTaskbarOnCraftFinished = true,
+
+	-- cost optimization
+	costOptimizationAutomaticSubRecipeOptimization = false,
 }
 
 CraftSimGGUIConfig = CraftSimGGUIConfig or {}
@@ -676,6 +679,13 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 
 			CraftSim.MAIN.currentRecipeData = recipeData
 		end
+	end
+
+	-- subrecipe optimization
+	if CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization then
+		CraftSim.UTIL:StartProfiling("OptimizeSubRecipes")
+		recipeData:OptimizeSubRecipes()
+		CraftSim.UTIL:StopProfiling("OptimizeSubRecipes")
 	end
 
 	local showMaterialOptimization = false

@@ -97,6 +97,23 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
             self.itemsByQuality = { self.itemsByQuality[1] } -- force one of an item (illustrious insight e.g. has always 3 items in it for whatever reason)
         end
     end
+
+    if not recipeData.isGear then
+        local crafterUID = recipeData:GetCrafterUID()
+        -- if not gear update itemRecipeCache
+        for qualityID, item in ipairs(self.itemsByQuality) do
+            local itemID = item:GetItemID()
+            CraftSimRecipeDataCache.itemRecipeCache[itemID] = CraftSimRecipeDataCache.itemRecipeCache[itemID] or {}
+            CraftSimRecipeDataCache.itemRecipeCache[itemID].recipeID = recipeData.recipeID
+            CraftSimRecipeDataCache.itemRecipeCache[itemID].qualityID = qualityID
+            CraftSimRecipeDataCache.itemRecipeCache[itemID].itemID = itemID
+            CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters = CraftSimRecipeDataCache.itemRecipeCache[itemID]
+                .crafters or {}
+            if not tContains(CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters, crafterUID) then
+                tinsert(CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters, crafterUID)
+            end
+        end
+    end
 end
 
 --- Updates based on professionStats and reagentData

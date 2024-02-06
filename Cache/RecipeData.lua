@@ -19,6 +19,21 @@ CraftSim.CACHE.RECIPE_DATA = {}
 ---@alias CrafterUID string
 ---@alias RecipeID number
 ---@alias CooldownDataSerializationID RecipeID | CraftSim.SHARED_PROFESSION_COOLDOWNS
+---@alias ItemID number
+
+---@class CraftSim.ItemRecipeData
+---@field recipeID RecipeID
+---@field itemID number
+---@field qualityID number
+---@field crafters CrafterUID[]
+
+---@class CraftSim.ExpectedCraftingCostsData
+---@field qualityID number
+---@field crafter CrafterUID
+---@field expectedCosts number
+---@field craftingChance number
+---@field expectedCrafts number
+---@field profession Enum.Profession
 
 ---@class CraftSim.RecipeDataCache
 ---@field cachedRecipeIDs table<CrafterUID, table<Enum.Profession, RecipeID[]>>
@@ -27,9 +42,11 @@ CraftSim.CACHE.RECIPE_DATA = {}
 ---@field operationInfoCache table<CrafterUID, table<RecipeID, CraftingOperationInfo>>
 ---@field specializationDataCache table<CrafterUID, table<RecipeID, CraftSim.SpecializationData.Serialized>?>
 ---@field professionGearCache table<CrafterUID, table<Enum.Profession, CraftSim.ProfessionGearCacheData>>
----@field altClassCache table<CrafterUID, ClassFile> table<crafterUID, ClassFile>
+---@field altClassCache table<CrafterUID, ClassFile>
 ---@field postLoadedMulticraftInformationProfessions table<Enum.Profession, boolean>
 ---@field cooldownCache table<CrafterUID, table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>>
+---@field itemRecipeCache table<ItemID, CraftSim.ItemRecipeData>
+---@field itemOptimizedCostsDataCache table<ItemID, table<CrafterUID, CraftSim.ExpectedCraftingCostsData>>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     cachedRecipeIDs = {},
     recipeInfoCache = {},
@@ -71,6 +88,8 @@ function CraftSim.CACHE.RECIPE_DATA:HandleUpdates()
         CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions = CraftSimRecipeDataCache
             .postLoadedMulticraftInformationProfessions or {}
         CraftSimRecipeDataCache.cooldownCache = CraftSimRecipeDataCache.cooldownCache or {}
+        CraftSimRecipeDataCache.itemRecipeCache = CraftSimRecipeDataCache.itemRecipeCache or {}
+        CraftSimRecipeDataCache.itemOptimizedCostsDataCache = CraftSimRecipeDataCache.itemOptimizedCostsDataCache or {}
         CraftSimRecipeDataCache.cacheVersions = CraftSimRecipeDataCache.cacheVersions or {}
 
         CraftSim.CACHE.RECIPE_DATA:HandleMigrations()

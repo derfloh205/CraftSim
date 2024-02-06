@@ -9,7 +9,7 @@ CraftSim.PRICE_DETAILS.frameWO = nil
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS)
 
 function CraftSim.PRICE_DETAILS.FRAMES:Init()
-    local sizeX = 390
+    local sizeX = 410
     local sizeY = 200
     local offsetX = -5
     local offsetY = 140
@@ -82,7 +82,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
                 },
                 {
                     label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_DETAILS_PROFIT_ITEM),
-                    width = 110,
+                    width = 130,
                 }
             },
             rowConstructor = function(columns)
