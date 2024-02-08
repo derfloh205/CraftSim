@@ -200,7 +200,9 @@ function CraftSim.CooldownData:DeserializeForCrafter(crafterUID, recipeID)
     local serializedCooldownData = CraftSimRecipeDataCache.cooldownCache[crafterUID][serializationID]
 
     if serializedCooldownData then
-        return CraftSim.CooldownData:Deserialize(serializedCooldownData)
+        local data = CraftSim.CooldownData:Deserialize(serializedCooldownData)
+        data.isCooldownRecipe = true
+        return data
     else
         return CraftSim.CooldownData(recipeID)
     end

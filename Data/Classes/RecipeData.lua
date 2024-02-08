@@ -815,7 +815,8 @@ function CraftSim.RecipeData:GetCooldownDataForRecipeCrafter()
     local crafterUID = self:GetCrafterUID()
     local cooldownData
 
-    if self:IsCrafter() then
+    -- the C_TradeSkillUI.GetRecipeCooldown api only works if the actual profession is open
+    if self:IsCrafter() and self:IsProfessionOpen() then
         cooldownData = CraftSim.CooldownData(self.recipeID)
         cooldownData:Update()
 

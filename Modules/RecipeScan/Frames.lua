@@ -14,12 +14,15 @@ CraftSim.RECIPE_SCAN.FRAMES = {}
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
+--- TODO: Move to debug window as toggle
+local debugScannedRecipeIDs = false
+
 function CraftSim.RECIPE_SCAN.FRAMES:Init()
     ---@class CraftSim.RECIPE_SCAN.FRAME : GGUI.Frame
     CraftSim.RECIPE_SCAN.frame = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent = ProfessionsFrame.CraftingPage.SchematicForm,
-        sizeX = 1020,
+        sizeX = 1050,
         sizeY = 400,
         frameID = CraftSim.CONST.FRAMES.RECIPE_SCAN,
         --title = L(CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE),
@@ -350,7 +353,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
     local columnOptions = {
         {
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER),
-            width = 150,
+            width = 190,
         },
         {
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER),
@@ -391,6 +394,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
         anchorB = "BOTTOM",
         showBorder = true,
         sizeY = 280,
+        offsetX = 15,
         offsetY = -25,
         columnOptions = columnOptions,
         selectionOptions = {
@@ -746,6 +750,9 @@ end
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
     local resultList = row.content.resultList
+    if debugScannedRecipeIDs then
+        recipeData:DebugInspect("RecipeScan: " .. recipeData.recipeName)
+    end
     resultList:Add(
         function(row)
             local columns = row.columns
@@ -762,7 +769,16 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
 
             local recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
 
-            recipeColumn.text:SetText(recipeRarity.hex .. recipeData.recipeName .. "|r")
+            local cooldownInfoText = ""
+            local cooldownData = recipeData:GetCooldownDataForRecipeCrafter()
+            if cooldownData and cooldownData.isCooldownRecipe and not cooldownData.isDayCooldown then
+                local timeIcon = CreateAtlasMarkup(CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.COOLDOWN.texture, 13, 13)
+                cooldownInfoText = " " .. timeIcon ..
+                    "(" .. cooldownData:GetCurrentCharges() .. "/" .. cooldownData.maxCharges .. ")"
+            end
+
+
+            recipeColumn.text:SetText(recipeRarity.hex .. recipeData.recipeName .. "|r" .. cooldownInfoText)
 
             learnedColumn:SetLearned(recipeData.learned)
 

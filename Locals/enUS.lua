@@ -297,7 +297,7 @@ function CraftSim.LOCAL_EN:GetData()
             f.l("OR") ..
             " .. Price Override\n" ..
             f.bb("Any Name") ..
-            " .. Expected Costs from crafting it yourself" ..
+            " .. Expected Costs from crafting it yourself\n" ..
             f.l("OR") ..
             " will always be used if set. " .. f.bb("Crafting Costs") .. " will only be used if lower than " .. f.g("AH"),
         [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_COSTS] = "Crafting Costs: ",
