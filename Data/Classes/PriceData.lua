@@ -15,8 +15,14 @@ function CraftSim.PriceData:new(recipeData)
     self.recipeData = recipeData
     ---@type number[]
     self.qualityPriceList = {}
+    --- Per 1 Item
     self.expectedCostsByQuality = {}
+    --- Per 1 Item
+    self.expectedCostsByMinimumQuality = {}
     self.craftingCosts = 0
+    --- list of itemIDs of reagents where the selfcrafted price is used
+    ---@type ItemID[]
+    self.selfCraftedReagents = {}
 end
 
 --- Update Pricing Information based on reagentData and resultData and any price overrides
@@ -29,6 +35,8 @@ function CraftSim.PriceData:Update()
     self.craftingCostsFixed = 0
     wipe(self.qualityPriceList)
     wipe(self.expectedCostsByQuality)
+    wipe(self.expectedCostsByMinimumQuality)
+    wipe(self.selfCraftedReagents)
 
     local useSubRecipes = self.recipeData.subRecipeCostsEnabled
 
@@ -40,9 +48,13 @@ function CraftSim.PriceData:Update()
     if self.recipeData.isSalvageRecipe then
         if reagentData.salvageReagentSlot.activeItem then
             local itemID = reagentData.salvageReagentSlot.activeItem:GetItemID()
-            local itemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, useSubRecipes)
+            local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, useSubRecipes)
             self.craftingCosts = self.craftingCosts + itemPrice * reagentData.salvageReagentSlot.requiredQuantity
             self.craftingCostsRequired = self.craftingCosts
+
+            if priceInfo.isExpectedCost then
+                tinsert(self.selfCraftedReagents, itemID)
+            end
         end
     else
         print("Summing reagents:")
@@ -53,8 +65,12 @@ function CraftSim.PriceData:Update()
                 for _, reagentItem in pairs(reagent.items) do
                     totalQuantity = totalQuantity + reagentItem.quantity
                     local itemID = reagentItem.item:GetItemID()
-                    local itemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, useSubRecipes)
+                    local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false,
+                        useSubRecipes)
                     totalPrice = totalPrice + itemPrice * reagentItem.quantity
+                    if priceInfo.isExpectedCost then
+                        tinsert(self.selfCraftedReagents, itemID)
+                    end
                 end
 
                 if totalQuantity < reagent.requiredQuantity then
@@ -92,8 +108,12 @@ function CraftSim.PriceData:Update()
             if activeOptionalReagent then
                 print("added optional reagent to crafting cost: " .. tostring(activeOptionalReagent.item:GetItemLink()))
                 local itemID = activeOptionalReagent.item:GetItemID()
-                local itemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, useSubRecipes)
+                local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, useSubRecipes)
                 self.craftingCosts = self.craftingCosts + itemPrice
+
+                if priceInfo.isExpectedCost then
+                    tinsert(self.selfCraftedReagents, itemID)
+                end
             end
         end
     end
@@ -119,25 +139,21 @@ function CraftSim.PriceData:Update()
             self.recipeData.professionStats.resourcefulness:GetPercent(true)
     end
     for qualityID, chance in pairs(self.recipeData.resultData.chanceByQuality) do
-        local baseAmount = self.recipeData.baseItemAmount
-        local averageItemAmountForUpgrade = baseAmount
-        if self.recipeData.supportsMulticraft then
-            local multicraftChance = self.recipeData.professionStats.multicraft:GetPercent(true)
-            local multiCraftUpgradeChance = chance * multicraftChance
-            local expectedExtraItems = select(2, CraftSim.CALC:GetExpectedItemAmountMulticraft(self.recipeData))
-            local avgExpectedExtraItemsForUpgradeWithMC = multiCraftUpgradeChance * expectedExtraItems
-            averageItemAmountForUpgrade = averageItemAmountForUpgrade + avgExpectedExtraItemsForUpgradeWithMC
+        local minChance = self.recipeData.resultData.chancebyMinimumQuality[qualityID] or 0
+        --- this instead of the expectedYieldForQuality because the chance for the quality is already baked into the expected crafts
+        local expectedItemsPerCraft = CraftSim.CALC:GetExpectedItemAmountMulticraft(self.recipeData)
+        local avgCraftingCostsRes = self.craftingCosts - avgSavedCostsRes
+        local expectedCraftsForQuality = self.recipeData.resultData.expectedCraftsByQuality[qualityID]
+        local expectedCraftsForMinQuality = self.recipeData.resultData.expectedCraftsByMinimumQuality[qualityID]
+
+        if chance > 0 and expectedItemsPerCraft > 0 then
+            self.expectedCostsByQuality[qualityID] = (avgCraftingCostsRes * expectedCraftsForQuality) /
+                expectedItemsPerCraft
         end
 
-        if chance == 1 then
-            self.expectedCostsByQuality[qualityID] = (self.craftingCosts - avgSavedCostsRes) /
-                averageItemAmountForUpgrade
-        elseif chance > 0 then
-            local expectedCrafts = self.recipeData.resultData.expectedCraftsByQuality[qualityID]
-            self.expectedCostsByQuality[qualityID] = CraftSim.CALC:CalculateExpectedCosts(
-                expectedCrafts, chance, self.recipeData.professionStats.resourcefulness:GetPercent(true),
-                self.recipeData.professionStats.resourcefulness:GetExtraFactor(true), averageItemAmountForUpgrade,
-                self.craftingCosts, self.craftingCostsRequired)
+        if minChance > 0 and expectedItemsPerCraft > 0 then
+            self.expectedCostsByMinimumQuality[qualityID] = (avgCraftingCostsRes * expectedCraftsForMinQuality) /
+                expectedItemsPerCraft
         end
     end
 
@@ -164,6 +180,7 @@ function CraftSim.PriceData:Copy(recipeData)
     copy.craftingCostsFixed = self.craftingCostsFixed
     copy.craftingCostsRequired = self.craftingCostsRequired
     copy.expectedCostsByQuality = CopyTable(self.expectedCostsByQuality or {})
+    copy.selfCraftedReagents = CopyTable(self.selfCraftedReagents or {})
     return copy
 end
 

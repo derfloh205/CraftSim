@@ -150,7 +150,7 @@ function CraftSim.CALC:GetHSVInfo(recipeData)
     return hsvInfo
 end
 
----Returns the average items received if multicraft procs
+---Returns the average items received considering multicraft procs
 ---@param recipeData CraftSim.RecipeData
 ---@return number expectedItems the average yield (base + extra)
 ---@return number expectedExtraItems the expected amount of extra items
@@ -165,17 +165,6 @@ function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
     local expectedItems = recipeData.baseItemAmount + expectedExtraItems
 
     return expectedItems, expectedExtraItems
-end
-
-function CraftSim.CALC:CalculateExpectedCosts(expectedCrafts, chance, resChance, resExtraFactor, avgItemAmount,
-                                              craftingCosts, requiredCraftingCosts)
-    local avgSavedCostsRes = CraftSim.CALC:CalculateResourcefulnessSavedCosts(resExtraFactor, requiredCraftingCosts) *
-        resChance
-    if chance == 1 then
-        return (craftingCosts - avgSavedCostsRes) / avgItemAmount
-    elseif chance > 0 then
-        return ((craftingCosts - avgSavedCostsRes) * expectedCrafts) / avgItemAmount
-    end
 end
 
 ---@class CraftSim.ProbabilityInfo
