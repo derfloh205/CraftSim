@@ -1,8 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.ReagentItem
-CraftSim.ReagentItem = CraftSim.Object:extend()
+---@class CraftSim.ReagentItem : CraftSim.CraftSimObject
+CraftSim.ReagentItem = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 

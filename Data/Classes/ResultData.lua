@@ -4,8 +4,8 @@ local CraftSim = select(2, ...)
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
----@class CraftSim.ResultData
-CraftSim.ResultData = CraftSim.Object:extend()
+---@class CraftSim.ResultData : CraftSim.CraftSimObject
+CraftSim.ResultData = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.ResultData:new(recipeData)
@@ -49,8 +49,30 @@ function CraftSim.ResultData:new(recipeData)
     ---@type number[]
     self.chanceByQuality = {}
 
+    --- E.g: if q1 = 70% and q2 = 30%, chance for min q1 is 100%
+    ---@type number[]
+    self.chancebyMinimumQuality = {}
+
+
+
     ---@type number[] if an item is unreachable the expected crafts are nil
     self.expectedCraftsByQuality = {}
+
+    --- E.g: expected crafts to get at least the given quality (similar to chance by minQuality)
+    ---@type number[] if an item is unreachable the expected crafts are nil
+    self.expectedCraftsByMinimumQuality = {}
+
+    --- Considering Multicraft and Multicraft Extra Item Bonus
+    ---@type number
+    self.expectedYieldPerCraft = 0
+
+    --- Per craft
+    ---@type number[]
+    self.expectedYieldByQuality = {}
+
+    --- Per craft
+    ---@type number[]
+    self.expectedYieldByMinimumQuality = {}
 
     self:UpdatePossibleResultItems()
 end
@@ -289,9 +311,8 @@ function CraftSim.ResultData:Update()
     self.chanceInspirationHSV = self.hsvInfo.chanceNextQuality * self.chanceInspiration
     self.chanceInspirationHSVSkip = self.hsvInfo.chanceSkipQuality * self.chanceInspiration
 
-    -- refactor below with hsvInfo
-    self.expectedCraftsByQuality = {}
-    self.chanceByQuality = {}
+    wipe(self.expectedCraftsByQuality)
+    wipe(self.chanceByQuality)
 
     for quality = 1, self.recipeData.maxQuality, 1 do
         if quality < self.expectedQuality then
@@ -362,6 +383,71 @@ function CraftSim.ResultData:Update()
     if self.chanceByQuality[self.expectedQuality] > 0 then
         self.expectedCraftsByQuality[self.expectedQuality] = 1 / self.chanceByQuality[self.expectedQuality]
     end
+
+    -- chances for min quality is based on chancebyquality
+    -- expected crafts by minquality is based on chancebyminquality
+
+    for quality = 1, self.recipeData.maxQuality, 1 do
+        local minChanceSum = 0
+        for q = quality, self.recipeData.maxQuality, 1 do
+            local chanceForQuality = self.chanceByQuality[q] or 0
+            minChanceSum = minChanceSum + chanceForQuality
+        end
+
+        self.chancebyMinimumQuality[quality] = minChanceSum
+        if minChanceSum > 0 then
+            self.expectedCraftsByMinimumQuality[quality] = 1 / minChanceSum
+        end
+    end
+
+
+    -- expected yield per quality
+    wipe(self.expectedYieldByQuality)
+    wipe(self.expectedYieldByMinimumQuality)
+
+    local expectedItemYieldPerCraft = CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
+
+    for quality = 1, self.recipeData.maxQuality, 1 do
+        local chance = self.chanceByQuality[quality]
+        local chanceMin = self.chancebyMinimumQuality[quality]
+        if chance > 0 then
+            self.expectedYieldByQuality[quality] = chance * expectedItemYieldPerCraft
+        else
+            self.expectedYieldByQuality[quality] = 0
+        end
+
+        if chanceMin > 0 then
+            self.expectedYieldByMinimumQuality[quality] = chanceMin * expectedItemYieldPerCraft
+        else
+            self.expectedYieldByMinimumQuality[quality] = 0
+        end
+    end
+end
+
+--- returns the expected number of crafts to craft a given amount of items of the given quality
+---@param amount number how many items of the given quality
+---@param qualityID number quality to be crafted
+---@return number expectedCrafts for given yield for given quality
+function CraftSim.ResultData:GetExpectedCraftsForYieldByQuality(amount, qualityID)
+    local expectedYieldForQuality = self.expectedYieldByQuality[qualityID] or 0
+    if expectedYieldForQuality > 0 then
+        return amount / expectedYieldForQuality
+    else
+        return 0
+    end
+end
+
+--- returns the expected number of crafts to craft a given amount of items of the given minimum quality
+---@param amount number how many items of the given quality or higher
+---@param qualityID number minimum quality to be crafted
+---@return number expectedCrafts for given yield for given quality or higher
+function CraftSim.ResultData:GetExpectedCraftsForYieldByMinimumQuality(amount, qualityID)
+    local expectedYieldForQualityOrHigher = self.expectedYieldByMinimumQuality[qualityID] or 0
+    if expectedYieldForQualityOrHigher > 0 then
+        return amount / expectedYieldForQualityOrHigher
+    else
+        return 0
+    end
 end
 
 function CraftSim.ResultData:Debug()
@@ -421,6 +507,11 @@ end
 ---@field chanceInspiration number
 ---@field chanceHSV number
 ---@field chanceInspirationHSV number
+---@field chanceByQuality number[]
+---@field chancebyMinimumQuality number[]
+---@field expectedCraftsByQuality number[]
+---@field expectedCraftsByMinimumQuality number[]
+---@field expectedYieldPerCraft number
 
 --- Make sure that the items are loaded before serializing or the links are empty
 function CraftSim.ResultData:Serialize()
@@ -445,6 +536,11 @@ function CraftSim.ResultData:Serialize()
     serialized.chanceInspiration = self.chanceInspiration
     serialized.chanceHSV = self.chanceHSV
     serialized.chanceInspirationHSV = self.chanceInspirationHSV
+    serialized.chanceByQuality = CopyTable(self.chanceByQuality or {})
+    serialized.chancebyMinimumQuality = CopyTable(self.chancebyMinimumQuality or {})
+    serialized.expectedCraftsByQuality = CopyTable(self.expectedCraftsByQuality or {})
+    serialized.expectedCraftsByMinimumQuality = CopyTable(self.expectedCraftsByMinimumQuality or {})
+    serialized.expectedYieldPerCraft = self.expectedYieldPerCraft
     return serialized
 end
 
@@ -476,6 +572,11 @@ function CraftSim.ResultData:Deserialize(serializedResultData)
         nil
     deserialized.expectedItemInspirationHSV = (serializedResultData.expectedItemLinkInspirationHSV and deserialized.itemsByQuality[deserialized.expectedQualityInspirationHSV]) or
         nil
+    deserialized.chanceByQuality = serializedResultData.chanceByQuality or {}
+    deserialized.chancebyMinimumQuality = serializedResultData.chancebyMinimumQuality or {}
+    deserialized.expectedCraftsByQuality = serializedResultData.expectedCraftsByQuality or {}
+    deserialized.expectedCraftsByMinimumQuality = serializedResultData.expectedCraftsByMinimumQuality or {}
+    deserialized.expectedYieldPerCraft = serializedResultData.expectedYieldPerCraft
     return deserialized
 end
 

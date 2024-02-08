@@ -2,8 +2,8 @@
 local CraftSim = select(2, ...)
 
 
----@class CraftSim.OptionalReagentSlot
-CraftSim.OptionalReagentSlot = CraftSim.Object:extend()
+---@class CraftSim.OptionalReagentSlot : CraftSim.CraftSimObject
+CraftSim.OptionalReagentSlot = CraftSim.CraftSimObject:extend()
 
 ---@param reagentSlotSchematic CraftingReagentSlotSchematic
 ---@param recipeData CraftSim.RecipeData

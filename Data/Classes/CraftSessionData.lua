@@ -3,8 +3,8 @@ local CraftSim = select(2, ...)
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
 
----@class CraftSim.CraftSessionData
-CraftSim.CraftSessionData = CraftSim.Object:extend()
+---@class CraftSim.CraftSessionData : CraftSim.CraftSimObject
+CraftSim.CraftSessionData = CraftSim.CraftSimObject:extend()
 
 function CraftSim.CraftSessionData:new()
     self.totalProfit = 0

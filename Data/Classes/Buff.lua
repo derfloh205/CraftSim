@@ -5,9 +5,9 @@ local GUTIL = CraftSim.GUTIL
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.BUFFDATA)
 
----@class CraftSim.Buff
+---@class CraftSim.Buff : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData, buffID: CraftSim.BuffID, professionStats:CraftSim.ProfessionStats, qualityID: number?, valuePointData: CraftSim.Buff.ValuePointData?, displayBuffID: number?, customTooltip: string?): CraftSim.Buff
-CraftSim.Buff = CraftSim.Object:extend()
+CraftSim.Buff = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
 ---@param buffID CraftSim.BuffID

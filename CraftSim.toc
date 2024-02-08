@@ -126,6 +126,7 @@ Data/SpecNodeData/Leatherworking.lua
 Data/SpecNodeData/Tailoring.lua
 Data/SpecNodeData/Engineering.lua
 
+Data/Classes/CraftSimObject.lua
 Data/Classes/CooldownData.lua
 Data/Classes/ProfessionData.lua
 Data/Classes/RecipeData.lua

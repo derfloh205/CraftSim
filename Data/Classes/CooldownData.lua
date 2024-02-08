@@ -3,9 +3,9 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.CooldownData
+---@class CraftSim.CooldownData : CraftSim.CraftSimObject
 ---@overload fun(recipeID: RecipeID): CraftSim.CooldownData
-CraftSim.CooldownData = CraftSim.Object:extend()
+CraftSim.CooldownData = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint("COOLDOWNS")
 

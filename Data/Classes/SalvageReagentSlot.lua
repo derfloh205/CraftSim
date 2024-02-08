@@ -1,8 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.SalvageReagentSlot
-CraftSim.SalvageReagentSlot = CraftSim.Object:extend()
+---@class CraftSim.SalvageReagentSlot : CraftSim.CraftSimObject
+CraftSim.SalvageReagentSlot = CraftSim.CraftSimObject:extend()
 
 function CraftSim.SalvageReagentSlot:new(recipeData)
     ---@type ItemMixin[]

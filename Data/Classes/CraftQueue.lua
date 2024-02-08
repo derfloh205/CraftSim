@@ -3,8 +3,8 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.CraftQueue
-CraftSim.CraftQueue = CraftSim.Object:extend()
+---@class CraftSim.CraftQueue : CraftSim.CraftSimObject
+CraftSim.CraftQueue = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 

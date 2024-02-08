@@ -3,8 +3,8 @@ local CraftSim = select(2, ...)
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
 
----@class CraftSim.ReagentOptimizationResult
-CraftSim.ReagentOptimizationResult = CraftSim.Object:extend()
+---@class CraftSim.ReagentOptimizationResult : CraftSim.CraftSimObject
+CraftSim.ReagentOptimizationResult = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
 ---@param knapsackResult table

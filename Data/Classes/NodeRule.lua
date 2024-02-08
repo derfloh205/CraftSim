@@ -4,9 +4,9 @@ local CraftSim = select(2, ...)
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 
----@class CraftSim.NodeRule
+---@class CraftSim.NodeRule : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData?, nodeRuleData: table, nodeData: CraftSim.NodeData):CraftSim.NodeRule
-CraftSim.NodeRule = CraftSim.Object:extend()
+CraftSim.NodeRule = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData?
 ---@param nodeRuleData table

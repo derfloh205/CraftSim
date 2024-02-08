@@ -1,8 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.ReagentListItem
-CraftSim.ReagentListItem = CraftSim.Object:extend()
+---@class CraftSim.ReagentListItem : CraftSim.CraftSimObject
+CraftSim.ReagentListItem = CraftSim.CraftSimObject:extend()
 
 ---@param itemID number
 ---@param quantity number

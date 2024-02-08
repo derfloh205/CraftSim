@@ -4,8 +4,8 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 
----@class CraftSim.PriceData
-CraftSim.PriceData = CraftSim.Object:extend()
+---@class CraftSim.PriceData : CraftSim.CraftSimObject
+CraftSim.PriceData = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
 local f = GUTIL:GetFormatter()

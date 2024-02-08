@@ -1,9 +1,9 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.ProfessionGearSet
+---@class CraftSim.ProfessionGearSet : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData) : CraftSim.ProfessionGearSet
-CraftSim.ProfessionGearSet = CraftSim.Object:extend()
+CraftSim.ProfessionGearSet = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.ProfessionGearSet:new(recipeData)

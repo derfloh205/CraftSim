@@ -3,9 +3,9 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.RecipeData
+---@class CraftSim.RecipeData : CraftSim.CraftSimObject
 ---@overload fun(recipeID: number, isRecraft:boolean?, isWorkOrder:boolean?, crafterData:CraftSim.CrafterData?): CraftSim.RecipeData
-CraftSim.RecipeData = CraftSim.Object:extend()
+CraftSim.RecipeData = CraftSim.CraftSimObject:extend()
 
 local systemPrint = print
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
@@ -932,7 +932,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes()
         if reagentRecipeData then
             -- if we already optimized the crafting cost of this reagent (another quality e.g.) then check if reachable
             -- TODO: maybe use IsMinimumQualityReachable when craftingqueue has feature to consider higher quality reagents?
-            local reagentQualityReachable = reagentRecipeData.resultData:IsQualityReachable(data.qualityID)
+            local reagentQualityReachable = reagentRecipeData.resultData:IsMinimumQualityReachable(data.qualityID)
             print("Is qualityID " .. tostring(data.qualityID) .. " reachable: " .. tostring(reagentQualityReachable))
             if reagentQualityReachable then
                 self.optimizedSubRecipes[data.itemID] = reagentRecipeData
@@ -950,7 +950,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes()
 
             optimized[data.itemID] = recipeData
             -- if the necessary item quality is reachable, map it to the recipe
-            local reagentQualityReachable = recipeData.resultData:IsQualityReachable(data.qualityID)
+            local reagentQualityReachable = recipeData.resultData:IsMinimumQualityReachable(data.qualityID)
             print("Is qualityID " .. tostring(data.qualityID) .. " reachable: " .. tostring(reagentQualityReachable))
             if reagentQualityReachable then
                 self.optimizedSubRecipes[data.itemID] = recipeData

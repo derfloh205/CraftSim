@@ -2,8 +2,8 @@
 local CraftSim = select(2, ...)
 
 
----@class CraftSim.CraftResultSavedReagent
-CraftSim.CraftResultSavedReagent = CraftSim.Object:extend()
+---@class CraftSim.CraftResultSavedReagent : CraftSim.CraftSimObject
+CraftSim.CraftResultSavedReagent = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
 ---@param itemID number

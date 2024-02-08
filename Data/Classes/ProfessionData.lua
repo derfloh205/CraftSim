@@ -3,9 +3,9 @@ local CraftSim = select(2, ...)
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
----@class CraftSim.ProfessionData
+---@class CraftSim.ProfessionData : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData, recipeID:number) : CraftSim.ProfessionData
-CraftSim.ProfessionData = CraftSim.Object:extend()
+CraftSim.ProfessionData = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
 ---@param recipeID number

@@ -1,11 +1,10 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
----@class CraftSim.IDMapping
-CraftSim.IDMapping = CraftSim.Object:extend()
+---@class CraftSim.IDMapping : CraftSim.CraftSimObject
+CraftSim.IDMapping = CraftSim.CraftSimObject:extend()
 
 ---@param idMappingData table
 ---@param exceptionRecipeIDs number[]

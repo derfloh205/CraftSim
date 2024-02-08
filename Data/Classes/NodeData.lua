@@ -3,9 +3,9 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.NodeData
+---@class CraftSim.NodeData : CraftSim.CraftSimObject
 ---@overload fun(recipeData: CraftSim.RecipeData?, nodeName: string?, nodeRulesData: table?, parentNode:CraftSim.NodeData?): CraftSim.NodeData
-CraftSim.NodeData = CraftSim.Object:extend()
+CraftSim.NodeData = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 

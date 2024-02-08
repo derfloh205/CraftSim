@@ -2,8 +2,8 @@
 local CraftSim = select(2, ...)
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
----@class CraftSim.Reagent
-CraftSim.Reagent = CraftSim.Object:extend()
+---@class CraftSim.Reagent : CraftSim.CraftSimObject
+CraftSim.Reagent = CraftSim.CraftSimObject:extend()
 
 ---@param reagentSlotSchematic CraftingReagentSlotSchematic
 function CraftSim.Reagent:new(reagentSlotSchematic)

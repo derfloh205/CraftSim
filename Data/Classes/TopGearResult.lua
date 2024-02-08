@@ -1,8 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.TopGearResult
-CraftSim.TopGearResult = CraftSim.Object:extend()
+---@class CraftSim.TopGearResult : CraftSim.CraftSimObject
+CraftSim.TopGearResult = CraftSim.CraftSimObject:extend()
 
 ---@param professionGearSet CraftSim.ProfessionGearSet
 ---@param averageProfit number

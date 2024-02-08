@@ -1,8 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.CraftRecipeData
-CraftSim.CraftRecipeData = CraftSim.Object:extend()
+---@class CraftSim.CraftRecipeData : CraftSim.CraftSimObject
+CraftSim.CraftRecipeData = CraftSim.CraftSimObject:extend()
 
 ---@param recipeID number
 function CraftSim.CraftRecipeData:new(recipeID)

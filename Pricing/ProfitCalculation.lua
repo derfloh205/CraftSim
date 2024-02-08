@@ -150,9 +150,9 @@ function CraftSim.CALC:GetHSVInfo(recipeData)
     return hsvInfo
 end
 
----Returns the total items received if multicraft procs
+---Returns the average items received if multicraft procs
 ---@param recipeData CraftSim.RecipeData
----@return number expectedItems the total amount (base + extra)
+---@return number expectedItems the average yield (base + extra)
 ---@return number expectedExtraItems the expected amount of extra items
 function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
     if not recipeData.supportsMulticraft then

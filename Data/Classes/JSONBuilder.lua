@@ -2,9 +2,9 @@
 local CraftSim = select(2, ...)
 
 
----@class CraftSim.JSONBuilder
+---@class CraftSim.JSONBuilder : CraftSim.CraftSimObject
 ---@overload fun(indent:number?):CraftSim.JSONBuilder
-CraftSim.JSONBuilder = CraftSim.Object:extend()
+CraftSim.JSONBuilder = CraftSim.CraftSimObject:extend()
 
 ---@param indent number?
 function CraftSim.JSONBuilder:new(indent)

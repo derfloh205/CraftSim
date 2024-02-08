@@ -7,8 +7,8 @@ local GUTIL = CraftSim.GUTIL
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 local f = GUTIL:GetFormatter()
 
----@class CraftSim.ReagentData
-CraftSim.ReagentData = CraftSim.Object:extend()
+---@class CraftSim.ReagentData : CraftSim.CraftSimObject
+CraftSim.ReagentData = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
 ---@param schematicInfo CraftingRecipeSchematic

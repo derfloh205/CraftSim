@@ -3,9 +3,9 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.CraftQueueItem
+---@class CraftSim.CraftQueueItem : CraftSim.CraftSimObject
 ---@overload fun(recipeData:CraftSim.RecipeData, amount:number)
-CraftSim.CraftQueueItem = CraftSim.Object:extend()
+CraftSim.CraftQueueItem = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint("CRAFTQ")
 

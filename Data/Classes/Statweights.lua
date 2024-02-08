@@ -1,8 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.Statweights
-CraftSim.Statweights = CraftSim.Object:extend()
+---@class CraftSim.Statweights : CraftSim.CraftSimObject
+CraftSim.Statweights = CraftSim.CraftSimObject:extend()
 
 ---@param averageProfit number
 ---@param inspirationWeight number

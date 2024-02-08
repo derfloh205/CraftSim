@@ -1,9 +1,9 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.ProfessionStat
+---@class CraftSim.ProfessionStat : CraftSim.CraftSimObject
 ---@overload fun(name: string, value: number?, percentMod: number?): CraftSim.ProfessionStat
-CraftSim.ProfessionStat = CraftSim.Object:extend()
+CraftSim.ProfessionStat = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 

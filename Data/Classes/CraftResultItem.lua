@@ -1,8 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.CraftResultItem
-CraftSim.CraftResultItem = CraftSim.Object:extend()
+---@class CraftSim.CraftResultItem : CraftSim.CraftSimObject
+CraftSim.CraftResultItem = CraftSim.CraftSimObject:extend()
 
 ---@param itemLink string
 ---@param quantity number

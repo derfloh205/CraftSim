@@ -1,8 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.IDCategory
-CraftSim.IDCategory = CraftSim.Object:extend()
+---@class CraftSim.IDCategory : CraftSim.CraftSimObject
+CraftSim.IDCategory = CraftSim.CraftSimObject:extend()
 
 ---@param categoryID number
 ---@param subtypeIDs number[]
