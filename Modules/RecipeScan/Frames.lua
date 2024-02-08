@@ -700,7 +700,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitScanOptionsTab(scanOptionsTab)
 
     content.optimizeSubRecipes = GGUI.Checkbox {
         parent = content, anchorParent = content.useInsightCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = "Optimize Sub Recipes",
+        label = "Optimize Sub Recipes " .. f.bb("(experimental)"),
         tooltip = "If enabled, " .. f.l("CraftSim") .. " also optimizes crafts of cached reagent recipes of scanned recipes and uses their\n" ..
             f.bb("expected costs") .. " to calculate the crafting costs for the final product.\n\n" .. f.r("Warning: This might reduce scanning performance"),
         initialValue = CraftSimOptions.recipeScanOptimizeSubRecipes,

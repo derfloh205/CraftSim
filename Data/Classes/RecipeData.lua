@@ -878,14 +878,23 @@ function CraftSim.RecipeData:IsDragonflightRecipe()
     return false
 end
 
+--- returns recipe crafting info for all required and all active optional reagents
 ---@return CraftSim.ItemRecipeData[]
 function CraftSim.RecipeData:GetSubRecipeCraftingInfos()
     local print = CraftSim.UTIL:SetDebugPrint("SUB_RECIPE_DATA")
     local craftingInfos = {}
-    for _, reagent in pairs(self.reagentData.requiredReagents) do
-        local craftingInfo = CraftSimRecipeDataCache.itemRecipeCache[reagent.items[1].item:GetItemID()]
+    for _, reagent in ipairs(self.reagentData.requiredReagents) do
+        for _, reagentItem in ipairs(reagent.items) do
+            local craftingInfo = CraftSimRecipeDataCache.itemRecipeCache[reagentItem.item:GetItemID()]
+            if craftingInfo then
+                tinsert(craftingInfos, craftingInfo)
+            end
+        end
+    end
+    for _, activeReagent in ipairs(self.reagentData:GetActiveOptionalReagents()) do
+        local craftingInfo = CraftSimRecipeDataCache.itemRecipeCache[activeReagent.item:GetItemID()]
         if craftingInfo then
-            table.insert(craftingInfos, craftingInfo)
+            tinsert(craftingInfos, craftingInfo)
         end
     end
     return craftingInfos
@@ -893,24 +902,41 @@ end
 
 --- optimizes cached subrecipes and updates priceData
 function CraftSim.RecipeData:OptimizeSubRecipes()
-    local print = CraftSim.UTIL:SetDebugPrint("SUB_RECIPE_DATA")
+    local printD = CraftSim.UTIL:SetDebugPrint("SUB_RECIPE_DATA")
+    --- DEBUG
+    local print = function(...)
+        if false then --self.recipeID == 367591 then -- obsidian seared crusher
+            printD(...)
+        end
+    end
     local subRecipeData = self:GetSubRecipeCraftingInfos()
+    print("subrecipecraftinginfos: " .. GUTIL:Count(subRecipeData))
+    -- used to show what is reachable
     wipe(self.optimizedSubRecipes)
+    -- used to cache already optimized recipes
+    ---@type CraftSim.RecipeData[]
+    local optimized = {}
 
     -- optimize recipes and map itemIDs
     for _, data in pairs(subRecipeData) do
-        print("checking subrecipe: " .. tostring(data.recipeID))
+        print("checking subrecipe: " .. tostring(data.recipeID) .. " q: " .. tostring(data.qualityID))
         local recipeID = data.recipeID
-        local crafter = data.crafters[1]
+        local crafter = data.crafters[1] -- todo: ?
 
         local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafter)
 
-        local reagentRecipeData = GUTIL:Find(self.optimizedSubRecipes, function(recipeData)
+
+        local reagentRecipeData = GUTIL:Find(optimized, function(recipeData)
             return recipeData.recipeID == recipeID
         end)
         if reagentRecipeData then
-            -- if we already optimized the crafting cost of this reagent (another quality e.g.) then just map it
-            self.optimizedSubRecipes[data.itemID] = reagentRecipeData
+            -- if we already optimized the crafting cost of this reagent (another quality e.g.) then check if reachable
+            -- TODO: maybe use IsMinimumQualityReachable when craftingqueue has feature to consider higher quality reagents?
+            local reagentQualityReachable = reagentRecipeData.resultData:IsQualityReachable(data.qualityID)
+            print("Is qualityID " .. tostring(data.qualityID) .. " reachable: " .. tostring(reagentQualityReachable))
+            if reagentQualityReachable then
+                self.optimizedSubRecipes[data.itemID] = reagentRecipeData
+            end
         elseif recipeID and crafterData then
             local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
 
@@ -922,7 +948,13 @@ function CraftSim.RecipeData:OptimizeSubRecipes()
             print("Optimized Sub Recipe: " .. tostring(recipeData.recipeName))
             print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
 
-            self.optimizedSubRecipes[data.itemID] = recipeData
+            optimized[data.itemID] = recipeData
+            -- if the necessary item quality is reachable, map it to the recipe
+            local reagentQualityReachable = recipeData.resultData:IsQualityReachable(data.qualityID)
+            print("Is qualityID " .. tostring(data.qualityID) .. " reachable: " .. tostring(reagentQualityReachable))
+            if reagentQualityReachable then
+                self.optimizedSubRecipes[data.itemID] = recipeData
+            end
         end
     end
 

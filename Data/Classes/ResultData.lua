@@ -116,6 +116,41 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
     end
 end
 
+--- Returns true if the chance to craft this exact quality is higher than 0
+---@param qualityID number
+---@return boolean craftable
+function CraftSim.ResultData:IsQualityReachable(qualityID)
+    if not self.recipeData.supportsQualities then
+        return true
+    end
+
+    local craftingChance = self.chanceByQuality[qualityID]
+
+    if not craftingChance then
+        return false
+    end
+
+    return craftingChance > 0
+end
+
+--- Returns true if either the given quality or any higher quality than it is craftable
+---@param qualityID any
+---@return boolean craftable
+function CraftSim.ResultData:IsMinimumQualityReachable(qualityID)
+    if not self.recipeData.supportsQualities then
+        return true
+    end
+
+    for currentQualityID = qualityID, self.recipeData.maxQuality do
+        local craftingChance = self.chanceByQuality[currentQualityID]
+        if craftingChance and craftingChance > 0 then
+            return true
+        end
+    end
+
+    return false
+end
+
 --- Updates based on professionStats and reagentData
 function CraftSim.ResultData:Update()
     local recipeData = self.recipeData

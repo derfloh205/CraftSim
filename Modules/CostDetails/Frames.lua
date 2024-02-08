@@ -83,7 +83,7 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
 
         frame.content.automaticSubRecipeOptimizationCB = GGUI.Checkbox {
             parent = frame.content, anchorParent = frame.content.craftingCostsTitle.frame, anchorA = "TOP", anchorB = "BOTTOM",
-            offsetX = -60, offsetY = -5, label = "Sub Recipe Optimization",
+            offsetX = -60, offsetY = -5, label = "Sub Recipe Optimization " .. f.bb("(experimental)"),
             tooltip = "If enabled " .. f.l("CraftSim") .. " considers the " .. f.g("optimized crafting costs") .. " of your character and your alts\nif they are able to craft that item.\n\n"
                 .. f.r("Might decrease performance a bit due to a lot of additional calculations"),
             initialValue = CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization,
