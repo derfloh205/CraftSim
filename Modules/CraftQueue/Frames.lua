@@ -11,6 +11,7 @@ CraftSim.CRAFTQ = CraftSim.CRAFTQ
 CraftSim.CRAFTQ.FRAMES = {}
 
 local L = CraftSim.UTIL:GetLocalizer()
+local f = GUTIL:GetFormatter()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
@@ -1118,7 +1119,6 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
 end
 
 function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
-    local f = CraftSim.UTIL:GetFormatter()
     -- multiples should be possible (different reagent setup)
     -- but if there already is a configuration just increase the count?
 

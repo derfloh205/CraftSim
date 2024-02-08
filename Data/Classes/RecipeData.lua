@@ -34,8 +34,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.professionGearCached = false
     self.recipeInfoCached = false
     self.professionInfoCached = false
-    --- might be not necessary
-    ---@type CraftSim.RecipeData[]
+    --- map of itemID of reagent to the recipe used for crafting cost optimization
+    ---@type table<ItemID, CraftSim.RecipeData>
     self.optimizedSubRecipes = {}
     self.subRecipeCostsEnabled = false
 
@@ -897,7 +897,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes()
     local subRecipeData = self:GetSubRecipeCraftingInfos()
     wipe(self.optimizedSubRecipes)
 
-    -- optimize recipes
+    -- optimize recipes and map itemIDs
     for _, data in pairs(subRecipeData) do
         print("checking subrecipe: " .. tostring(data.recipeID))
         local recipeID = data.recipeID
@@ -905,13 +905,13 @@ function CraftSim.RecipeData:OptimizeSubRecipes()
 
         local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafter)
 
-        print("crafterData: " .. tostring(crafterData))
-
-        local alreadyOptimized = GUTIL:Some(self.optimizedSubRecipes, function(recipeData)
+        local reagentRecipeData = GUTIL:Find(self.optimizedSubRecipes, function(recipeData)
             return recipeData.recipeID == recipeID
         end)
-
-        if recipeID and crafterData and not alreadyOptimized then
+        if reagentRecipeData then
+            -- if we already optimized the crafting cost of this reagent (another quality e.g.) then just map it
+            self.optimizedSubRecipes[data.itemID] = reagentRecipeData
+        elseif recipeID and crafterData then
             local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
 
             -- go deep?!
@@ -922,10 +922,35 @@ function CraftSim.RecipeData:OptimizeSubRecipes()
             print("Optimized Sub Recipe: " .. tostring(recipeData.recipeName))
             print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
 
-            tinsert(self.optimizedSubRecipes, recipeData)
+            self.optimizedSubRecipes[data.itemID] = recipeData
         end
     end
 
     -- update pricedata
     self.priceData:Update()
+end
+
+---@param includeProfessionIcon? boolean
+---@param includeRealm? boolean
+---@param professionIconX? number = 20
+---@param professionIconY? number = 20
+---@return string
+function CraftSim.RecipeData:GetFormattedCrafterText(includeRealm, includeProfessionIcon, professionIconX,
+                                                     professionIconY)
+    local finalText = ""
+    if includeProfessionIcon then
+        finalText = finalText .. GUTIL:IconToText(
+            CraftSim.CONST.PROFESSION_ICONS[self.professionData.professionInfo.profession],
+            professionIconY, professionIconX)
+    end
+
+    local crafterData = self:GetCrafterData()
+    local classColor = C_ClassColor.GetClassColor(crafterData.class)
+    if includeRealm then
+        finalText = finalText .. classColor:WrapTextInColorCode(crafterData.name .. "-" .. crafterData.realm)
+    else
+        finalText = finalText .. classColor:WrapTextInColorCode(crafterData.name)
+    end
+
+    return finalText
 end

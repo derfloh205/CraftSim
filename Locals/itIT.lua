@@ -4,7 +4,8 @@ local CraftSim = select(2, ...)
 CraftSim.LOCAL_IT = {}
 
 function CraftSim.LOCAL_IT:GetData()
-    local f = CraftSim.UTIL:GetFormatter()
+    local f = CraftSim.GUTIL:GetFormatter()
+    local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     return {
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Ispirazione",
@@ -135,7 +136,7 @@ function CraftSim.LOCAL_IT:GetData()
             f.bb("Valore Atteso") .. " che è\n" ..
             "come suggerisce il nome, il valore che ci possiamo aspettare di ottenere in media, o nel nostro caso, il " ..
             f.bb(" profitto atteso per una creazione!") .. "\n" ..
-            "\n" .. f.cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
+            "\n" .. cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
             "Questo ci dice che il valore atteso " ..
             f.l("E") ..
             " di una distribuzione di probabilità " ..
@@ -159,7 +160,7 @@ function CraftSim.LOCAL_IT:GetData()
             "Possiamo notare l'attivazione di questo valore in questo modo: Quando crei qualcosa l'" ..
             f.bb("Indicatore della qualità") ..
             "si riempie fino a un certo punto.\nQuesto può andare leggermente oltre il valore di competenza mostrato.\n " ..
-            "\n" .. f.cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
+            "\n" .. cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
             "Questo valore di compentenza aggiuntivo è sempre tra lo 0% e il 5% della tua " ..
             f.bb("Difficoltà base della ricetta") ..
             ".\nQuesto significa che se una ricetta ha una difficoltà di 400 puoi ottenere fino a 20 punti competenza aggiuntivi.\n" ..

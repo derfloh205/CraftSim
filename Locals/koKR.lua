@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 CraftSim.LOCAL_KO = {}
 
 function CraftSim.LOCAL_KO:GetData()
-    local f = CraftSim.UTIL:GetFormatter()
+    local f = CraftSim.GUTIL:GetFormatter()
     return {
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "영감",

@@ -174,7 +174,7 @@ function CraftSim.ProfessionStats:GetTooltipText(maxProfessionStats)
 	end
 
 	-- for specializationData help tooltip
-	local f = CraftSim.UTIL:GetFormatter()
+	local f = CraftSim.GUTIL:GetFormatter()
 	-- use the maxProfessionStats as reference to show the line at all
 	local text =
 		((maxProfessionStats.skill.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) .. ": " .. r(self.skill.value) .. " / " .. f.grey(r(maxProfessionStats.skill.value)) .. "\n")) or "") ..

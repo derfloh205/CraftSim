@@ -1,6 +1,14 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
+local f = GUTIL:GetFormatter()
+
+---@class CraftSim.SUPPORTERS
+CraftSim.SUPPORTERS = CraftSim.SUPPORTERS
+
+---@class CraftSim.SUPPORTERS.FRAMES
 CraftSim.SUPPORTERS.FRAMES = {}
 
 function CraftSim.SUPPORTERS.FRAMES:Init()
@@ -25,7 +33,6 @@ function CraftSim.SUPPORTERS.FRAMES:Init()
 
     local function createContent(frame)
         frame:Hide()
-        local f = CraftSim.UTIL:GetFormatter()
         frame.content.description = CraftSim.GGUI.Text({
             parent = frame.content,
             anchorParent = frame.content,

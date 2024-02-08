@@ -8,7 +8,7 @@ local GUTIL = CraftSim.GUTIL
 CraftSim.PriceData = CraftSim.Object:extend()
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
-local f = CraftSim.UTIL:GetFormatter()
+local f = GUTIL:GetFormatter()
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.PriceData:new(recipeData)

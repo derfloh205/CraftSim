@@ -291,7 +291,7 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
             printS("Optimizing SubRecipes..")
             recipeData:SetSubRecipeCostsUsage(true)
             recipeData:OptimizeSubRecipes()
-            printS("optimizedRecipes: " .. tostring(#recipeData.optimizedSubRecipes))
+            printS("optimizedRecipes: " .. tostring(GUTIL:Count(recipeData.optimizedSubRecipes)))
         end
 
         --optimize top gear first cause optimized reagents might change depending on the gear

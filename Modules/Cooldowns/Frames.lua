@@ -13,7 +13,7 @@ CraftSim.COOLDOWNS.frame = nil
 local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 local L = CraftSim.UTIL:GetLocalizer()
-local f = CraftSim.UTIL:GetFormatter()
+local f = GUTIL:GetFormatter()
 local LID = CraftSim.CONST.TEXT
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COOLDOWNS)
@@ -239,7 +239,7 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                         local allFullTS, ready = cooldownData:GetAllChargesFullTimestamp()
                         local cdReady = ready or cooldownData:GetCurrentCharges() >= cooldownData.maxCharges
                         nextColumn.text:SetText(cdReady and f.grey("-") or
-                        f.bb(cooldownData:GetFormattedTimerNextCharge()))
+                            f.bb(cooldownData:GetFormattedTimerNextCharge()))
                         row.allchargesFullTimestamp = allFullTS
                         if cdReady then
                             allColumn.text:SetText(f.g("Ready"))

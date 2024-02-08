@@ -664,7 +664,7 @@ end
 function CraftSim.FRAME:InitOneTimeNoteFrame()
     local currentVersion = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
 
-    local f = CraftSim.UTIL:GetFormatter()
+    local f = GUTIL:GetFormatter()
 
     local frame = CraftSim.GGUI.Frame({
         parent = UIParent,

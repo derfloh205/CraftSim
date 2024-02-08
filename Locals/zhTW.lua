@@ -4,7 +4,8 @@ local CraftSim = select(2, ...)
 CraftSim.LOCAL_TW = {}
 
 function CraftSim.LOCAL_TW:GetData()
-    local f = CraftSim.UTIL:GetFormatter()
+    local f = CraftSim.GUTIL:GetFormatter()
+    local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     return {
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "靈感",
@@ -112,7 +113,7 @@ function CraftSim.LOCAL_TW:GetData()
             "在用這種方式計算每個可能性後，各別可能性確實會加起來到 1！\n" ..
             "這意味著我們現在可以用統計公式了。對我們來說最有趣的是 " .. f.bb("期望值") .. "\n" ..
             "正如其名，期望值是指我們平均可以獲得的價值，或者在我們的例子中，也就是 " .. f.bb("製作的期望利潤！\n") ..
-            "\n" .. f.cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
+            "\n" .. cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
             "這告訴我們機率分配 " .. f.l("X") .. " 的期望值 " .. f.l("E") .. " 是所有數值與其可能性的乘積的總和。\n" ..
             "所以如果我們有一個 " ..
             f.bb("情況 A 機率 30%") ..
@@ -124,7 +125,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV] =
             f.l("隱藏技能數值 (HSV)") .. " 是每次製作物品時產生的額外隨機因素。遊戲中未提及此項數值。\n" ..
             "不過，你可以觀察到觸發效果的視覺化呈現：製作物品時，" .. f.bb("品質計量器") .. "\n會填滿至某個程度。而且此值可能會遠遠超過你當前顯示的技能。\n" ..
-            " \n" .. f.cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. " \n\n" ..
+            " \n" .. cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. " \n\n" ..
             "此額外技能始終介於你的" .. f.bb("基本配方難度") .. "的 0% 到 5% 之間。\n如果你的配方難度為 400，代表你能獲得最高 20 點技能。\n" ..
             "而且測試表明，這種分佈是" .. f.bb("均勻分佈") .. "。也就是說，每個百分比數值都有相同的機率。\n" ..
             f.l("HSV") .. "在接近品質時可能嚴重影響利潤！在 CraftSim 中，它被視為額外觸發效果，例如" .. f.bb("靈感") .. "或" .. f.bb("複數製造。") ..

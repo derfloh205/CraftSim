@@ -4,7 +4,8 @@ local CraftSim = select(2, ...)
 CraftSim.LOCAL_RU = {}
 
 function CraftSim.LOCAL_RU:GetData()
-    local f = CraftSim.UTIL:GetFormatter()
+    local f = CraftSim.GUTIL:GetFormatter()
+    local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     return {
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Вдохновение",
@@ -155,7 +156,7 @@ function CraftSim.LOCAL_RU:GetData()
             f.bb("Ожидаемое значение") .. "\n" ..
             "Это, как следует из названия, значение, которое мы можем ожидать в среднем, или, в нашем случае, " ..
             f.bb(" ожидаемая прибыль от крафта!\n") ..
-            "\n" .. f.cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
+            "\n" .. cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
             "Это говорит нам о том, что ожидаемое значение " ..
             f.l("E") ..
             " распределения вероятностей " ..
@@ -177,7 +178,7 @@ function CraftSim.LOCAL_RU:GetData()
             "Он нигде не упоминается в игре. Однако вы можете наблюдать визуализацию его прока: когда вы создаете что-то, " ..
             f.bb("Полоса качества") ..
             "\nзаполняется до определенного момента. И она может 'выстрелить' по сравнению с вашим текущим показанным навыком.\n" ..
-            "\n" .. f.cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
+            "\n" .. cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
             "Этот дополнительный навык всегда составляет от 0% до 5% от вашей " ..
             f.bb("Базовой сложности рецепта") ..
             ".\nТо есть, если у вас есть рецепт со сложностью 400. Вы можете получить до 20 очков навыка.\n" ..

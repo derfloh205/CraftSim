@@ -2,6 +2,11 @@
 local CraftSim = select(2, ...)
 local CraftSimAddonName = select(1, ...)
 
+local GUTIL = CraftSim.GUTIL
+
+local f = GUTIL:GetFormatter()
+
+---@class CraftSim.PRICE_API
 CraftSim.PRICE_API = {}
 CraftSim.PRICE_APIS = {}
 
@@ -186,7 +191,6 @@ function CraftSimTSM:GetItemSaleRate(itemLink)
     local tsmItemString = TSM_API.ToItemString(itemLink)
     local salerate, error = TSM_API.GetCustomPriceValue(key, tsmItemString)
     if error then
-        local f = CraftSim.UTIL:GetFormatter()
         print(f.r("CraftSimTSM:GetItemSaleRate Error: " .. tostring(error)), false, true)
         print("itemLink: " .. tostring(itemLink))
     end

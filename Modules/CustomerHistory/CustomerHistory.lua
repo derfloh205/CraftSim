@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
+local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.CUSTOMER_HISTORY : Frame
 CraftSim.CUSTOMER_HISTORY = GUTIL:CreateRegistreeForEvents(
@@ -14,9 +15,9 @@ function CraftSim.CUSTOMER_HISTORY:Init()
     if not CraftSimOptions.customerHistoryMigrationDoneV3 then
         local s, e = pcall(CraftSim.CUSTOMER_HISTORY.DB.MigrateDataV2)
         if not s then
-            print(CraftSim.UTIL:GetFormatter().r("CustomerHistoryLegacy Migration failed:\n" .. tostring(e)))
+            print(f.r("CustomerHistoryLegacy Migration failed:\n" .. tostring(e)))
         else
-            print(CraftSim.UTIL:GetFormatter().g("CustomerHistoryLegacy Migration succeded"))
+            print(f.g("CustomerHistoryLegacy Migration succeded"))
             CraftSimOptions.customerHistoryMigrationDoneV3 = true
         end
     end

@@ -4,7 +4,8 @@ local CraftSim = select(2, ...)
 CraftSim.LOCAL_EN = {}
 
 function CraftSim.LOCAL_EN:GetData()
-    local f = CraftSim.UTIL:GetFormatter()
+    local f = CraftSim.GUTIL:GetFormatter()
+    local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     return {
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Inspiration",
@@ -154,7 +155,7 @@ function CraftSim.LOCAL_EN:GetData()
             f.bb("Expected Value") .. "\n" ..
             "Which is, as the name suggests, the value we can expect to get on average, or in our case, the " ..
             f.bb(" expected profit for a craft!\n") ..
-            "\n" .. f.cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
+            "\n" .. cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
             "This tells us that the expected value " ..
             f.l("E") ..
             " of a probability distribution " ..
@@ -176,7 +177,7 @@ function CraftSim.LOCAL_EN:GetData()
             "However you can observe a visualization of the proc: When you craft something the " ..
             f.bb("Quality Meter") ..
             "\nfills up to a certain point. And this can 'shoot' quite a bit over your current shown skill.\n" ..
-            "\n" .. f.cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
+            "\n" .. cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
             "This extra skill is always between 0% and 5% of your " ..
             f.bb("Base Recipe Difficulty") ..
             ".\nMeaning if you have a recipe with 400 difficulty. You can get up to 20 Skill.\n" ..

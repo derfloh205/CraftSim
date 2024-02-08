@@ -392,7 +392,7 @@ function CraftSim.UTIL:ProfilingUpdate(label)
     CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms (u)", CraftSim.CONST.DEBUG_IDS.PROFILING)
 end
 
-function CraftSim.UTIL:GetFormatter()
+function CraftSim.GUTIL:GetFormatter()
     local b = CraftSim.GUTIL.COLORS.DARK_BLUE
     local bb = CraftSim.GUTIL.COLORS.BRIGHT_BLUE
     local g = CraftSim.GUTIL.COLORS.GREEN
@@ -455,10 +455,6 @@ function CraftSim.UTIL:GetFormatter()
 
     formatter.i = function(i, h, w)
         return CraftSim.GUTIL:IconToText(i, h, w)
-    end
-
-    formatter.cm = function(i, s)
-        return CraftSim.MEDIA:GetAsTextIcon(i, s)
     end
 
     return formatter

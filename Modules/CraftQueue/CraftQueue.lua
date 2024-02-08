@@ -143,7 +143,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instead of : is on purpose here
-    local f = CraftSim.UTIL:GetFormatter()
+    local f = GUTIL:GetFormatter()
     print("Filtering: " .. tostring(recipeData.recipeName), false, true)
     if not recipeData.learned then
         print(f.r("Not learned"))

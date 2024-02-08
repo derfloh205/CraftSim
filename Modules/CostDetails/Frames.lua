@@ -14,7 +14,7 @@ CraftSim.COST_DETAILS.frame = nil
 CraftSim.COST_DETAILS.frameWO = nil
 
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_DETAILS)
-local f = CraftSim.UTIL:GetFormatter()
+local f = CraftSim.GUTIL:GetFormatter()
 
 function CraftSim.COST_DETAILS.FRAMES:Init()
     local sizeX = 520

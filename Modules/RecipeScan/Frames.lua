@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 local L = CraftSim.UTIL:GetLocalizer()
-local f = CraftSim.UTIL:GetFormatter()
+local f = CraftSim.GUTIL:GetFormatter()
 
 ---@class CraftSim.RECIPE_SCAN
 CraftSim.RECIPE_SCAN = CraftSim.RECIPE_SCAN
