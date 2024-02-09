@@ -63,8 +63,36 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
     })
 
     local function createContent(frame)
-        frame.content.craftingCostsTitle = GGUI.Text({
-            parent = frame.content,
+        frame.content.reagentCostsTab = GGUI.BlizzardTab {
+            buttonOptions = {
+                parent = frame.content,
+                anchorParent = frame.content,
+                label = "Reagent Costs",
+            },
+            top = true,
+            initialTab = true,
+            parent = frame.content, anchorParent = frame.content,
+            sizeX = sizeX - 5,
+            sizeY = sizeY - 5,
+        }
+
+        frame.content.subRecipeOptions = GGUI.BlizzardTab {
+            buttonOptions = {
+                parent = frame.content,
+                anchorParent = frame.content.reagentCostsTab.button,
+                label = "Sub Recipe Options",
+                anchorA = "LEFT", anchorB = "RIGHT",
+            },
+            top = true,
+            parent = frame.content, anchorParent = frame.content,
+            sizeX = sizeX - 5,
+            sizeY = sizeY - 5,
+        }
+
+        local content = frame.content.reagentCostsTab.content
+
+        content.craftingCostsTitle = GGUI.Text({
+            parent = content,
             anchorParent = frame.title.frame,
             anchorA = "TOP",
             anchorB = "BOTTOM",
@@ -72,17 +100,17 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
             offsetY = -15,
             text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS),
         })
-        frame.content.craftingCostsValue = GGUI.Text({
-            parent = frame.content,
-            anchorParent = frame.content.craftingCostsTitle.frame,
+        content.craftingCostsValue = GGUI.Text({
+            parent = content,
+            anchorParent = content.craftingCostsTitle.frame,
             anchorA = "LEFT",
             anchorB = "RIGHT",
             text = CraftSim.GUTIL:FormatMoney(123456789),
             justifyOptions = { type = "H", align = "LEFT" }
         })
 
-        frame.content.automaticSubRecipeOptimizationCB = GGUI.Checkbox {
-            parent = frame.content, anchorParent = frame.content.craftingCostsTitle.frame, anchorA = "TOP", anchorB = "BOTTOM",
+        content.automaticSubRecipeOptimizationCB = GGUI.Checkbox {
+            parent = content, anchorParent = content.craftingCostsTitle.frame, anchorA = "TOP", anchorB = "BOTTOM",
             offsetX = -60, offsetY = -5, label = "Sub Recipe Optimization " .. f.bb("(experimental)"),
             tooltip = "If enabled " .. f.l("CraftSim") .. " considers the " .. f.g("optimized crafting costs") .. " of your character and your alts\nif they are able to craft that item.\n\n"
                 .. f.r("Might decrease performance a bit due to a lot of additional calculations"),
@@ -94,7 +122,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
         }
 
         GGUI.HelpIcon({
-            parent = frame.content,
+            parent = content,
             anchorParent = frame.title.frame,
             anchorA = "LEFT",
             anchorB = "RIGHT",
@@ -103,9 +131,9 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
         })
 
 
-        frame.content.reagentList = GGUI.FrameList({
-            parent = frame.content,
-            anchorParent = frame.content,
+        content.reagentList = GGUI.FrameList({
+            parent = content,
+            anchorParent = content,
             anchorA = "TOP",
             anchorB = "TOP",
             offsetY = -100,
@@ -208,6 +236,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
                 end
             end
         })
+
+        GGUI.BlizzardTabSystem { frame.content.reagentCostsTab, frame.content.subRecipeOptions }
     end
 
     createContent(CraftSim.COST_OPTIMIZATION.frame)
@@ -217,11 +247,11 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
 function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
-    local costDetailsFrame = nil
+    local costOptimizationFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        costDetailsFrame = CraftSim.COST_OPTIMIZATION.frameWO
+        costOptimizationFrame = CraftSim.COST_OPTIMIZATION.frameWO
     else
-        costDetailsFrame = CraftSim.COST_OPTIMIZATION.frame
+        costOptimizationFrame = CraftSim.COST_OPTIMIZATION.frame
     end
 
 
@@ -229,9 +259,11 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
     print("Cost Optimization - Reagent List Update", false, true)
     print("considerSubRecipes: " .. tostring(considerSubRecipes))
 
-    costDetailsFrame.content.craftingCostsValue:SetText(CraftSim.GUTIL:FormatMoney(recipeData.priceData.craftingCosts))
+    costOptimizationFrame.content.reagentCostsTab.content.craftingCostsValue:SetText(CraftSim.GUTIL:FormatMoney(
+        recipeData
+        .priceData.craftingCosts))
 
-    local reagentList = costDetailsFrame.content.reagentList --[[@as GGUI.FrameList]]
+    local reagentList = costOptimizationFrame.content.reagentCostsTab.content.reagentList --[[@as GGUI.FrameList]]
     reagentList:Remove() --[[@as GGUI.FrameList]]
 
     for _, reagent in pairs(recipeData.reagentData.requiredReagents) do

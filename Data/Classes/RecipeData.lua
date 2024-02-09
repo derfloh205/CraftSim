@@ -524,14 +524,14 @@ function CraftSim.RecipeData:OptimizeProfit()
 
     -- cache the results if not gear and if its learned only
     if not self.isGear and self.learned then
-        print("Caching Optimized Costs Data for: " .. self.recipeName)
+        --print("Caching Optimized Costs Data for: " .. self.recipeName)
 
         -- only if reachable
         for qualityID, item in ipairs(self.resultData.itemsByQuality) do
             local chance = self.resultData.chanceByQuality[qualityID] or 0
             if chance > 0 then
                 local print = CraftSim.UTIL:SetDebugPrint("SUB_RECIPE_DATA")
-                print("Caching Optimized Costs Data for: " .. self.recipeName)
+                --print("Caching Optimized Costs Data for: " .. self.recipeName)
                 local itemID = item:GetItemID()
                 CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
                     .itemOptimizedCostsDataCache[itemID] or {}
@@ -917,9 +917,13 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
     subRecipeDepth = subRecipeDepth or 0
     visitedRecipeIDs = visitedRecipeIDs or {}
 
+    if subRecipeDepth > 4 then
+        return -- quick workaround to inf loops
+    end
+
     --- DEBUG
     local print = function(t, r, l)
-        if self.recipeID == 376556 then
+        if true then --self.recipeID == 376556 then
             printD(t, r, l, subRecipeDepth)
         end
     end
@@ -944,7 +948,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
         -- and does not make sense to resolve
         local infLoop = GUTIL:Some(visitedRecipeIDs,
             function(visitedRecipeData)
-                return visitedRecipeData.subRecipeDepth < subRecipeDepth and visitedRecipeData == recipeID
+                return visitedRecipeData.subRecipeDepth < subRecipeDepth and visitedRecipeData.recipeID == recipeID
             end)
         -- inf loop breaker
         if not infLoop then
@@ -964,7 +968,12 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
                 CraftSimRecipeDataCache.recipeInfoCache[crafter] = CraftSimRecipeDataCache.recipeInfoCache[crafter] or {}
                 local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafter][recipeID]
 
-                if recipeInfo and recipeInfo.learned then
+                tinsert(visitedRecipeIDs, {
+                    recipeID = recipeID,
+                    subRecipeDepth = subRecipeDepth,
+                })
+
+                if recipeInfo then --and recipeInfo.learned then
                     local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
 
                     recipeData.subRecipeDepth = subRecipeDepth + 1
@@ -985,11 +994,6 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
                     end
                 end
             end
-
-            tinsert(visitedRecipeIDs, {
-                recipeID = recipeID,
-                subRecipeDepth = subRecipeDepth,
-            })
         else
             print("Break Inf Loop!")
         end
