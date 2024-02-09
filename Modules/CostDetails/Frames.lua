@@ -224,7 +224,10 @@ function CraftSim.COST_DETAILS:UpdateDisplay(recipeData, exportMode)
         costDetailsFrame = CraftSim.COST_DETAILS.frame
     end
 
+
     local considerSubRecipes = recipeData.subRecipeCostsEnabled
+    print("Cost Details List Update", false, true)
+    print("considerSubRecipes: " .. tostring(considerSubRecipes))
 
     costDetailsFrame.content.craftingCostsValue:SetText(CraftSim.GUTIL:FormatMoney(recipeData.priceData.craftingCosts))
 
@@ -233,6 +236,7 @@ function CraftSim.COST_DETAILS:UpdateDisplay(recipeData, exportMode)
 
     for _, reagent in pairs(recipeData.reagentData.requiredReagents) do
         for _, reagentItem in pairs(reagent.items) do
+            print("Adding: " .. tostring(reagentItem.item:GetItemLink()))
             reagentList:Add(function(row)
                 local tooltip = ""
                 row.columns[1].itemIcon:SetItem(reagentItem.item)
@@ -252,7 +256,7 @@ function CraftSim.COST_DETAILS:UpdateDisplay(recipeData, exportMode)
                 else
                     row.columns[3].text:SetText(f.grey("-"))
                 end
-
+                print("Has expectedCostsData: " .. tostring(priceInfo.expectedCostsData ~= nil))
                 if priceInfo.expectedCostsData then
                     row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCosts))
                     local class = CraftSimRecipeDataCache.altClassCache[priceInfo.expectedCostsData.crafter]

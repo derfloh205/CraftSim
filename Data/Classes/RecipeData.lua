@@ -524,10 +524,14 @@ function CraftSim.RecipeData:OptimizeProfit()
 
     -- cache the results if not gear and if its learned only
     if not self.isGear and self.learned then
+        print("Caching Optimized Costs Data for: " .. self.recipeName)
+
         -- only if reachable
-        for qualityID, chance in ipairs(self.resultData.chanceByQuality) do
+        for qualityID, item in ipairs(self.resultData.itemsByQuality) do
+            local chance = self.resultData.chanceByQuality[qualityID] or 0
             if chance > 0 then
-                local item = self.resultData.itemsByQuality[qualityID]
+                local print = CraftSim.UTIL:SetDebugPrint("SUB_RECIPE_DATA")
+                print("Caching Optimized Costs Data for: " .. self.recipeName)
                 local itemID = item:GetItemID()
                 CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
                     .itemOptimizedCostsDataCache[itemID] or {}
@@ -910,9 +914,9 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
     subRecipeDepth = subRecipeDepth or 0
 
     --- DEBUG
-    local print = function(...)
-        if false then --self.recipeID == 367591 then -- obsidian seared crusher
-            printD(...)
+    local print = function(t, r, l)
+        if true then --self.recipeID == 367591 then -- obsidian seared crusher
+            printD(t, r, l, subRecipeDepth)
         end
     end
     local subRecipeData = self:GetSubRecipeCraftingInfos()
@@ -944,20 +948,29 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
                     self.optimizedSubRecipes[data.itemID] = reagentRecipeData
                 end
             elseif recipeID and crafterData then
-                local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
-                recipeData.subRecipeDepth = subRecipeDepth + 1
+                -- only continue of the recipe in question is learned by the target crafter
+                CraftSimRecipeDataCache.recipeInfoCache[crafter] = CraftSimRecipeDataCache.recipeInfoCache[crafter] or {}
+                local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafter][recipeID]
 
-                -- go deep!
-                recipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth)
-                -- caches the expect costs info automatically
-                recipeData:OptimizeProfit()
-                print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
+                if recipeInfo and recipeInfo.learned then
+                    local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
 
-                optimized[data.itemID] = recipeData
-                -- if the necessary item quality is reachable, map it to the recipe
-                local reagentQualityReachable = recipeData.resultData:IsMinimumQualityReachable(data.qualityID)
-                if reagentQualityReachable then
-                    self.optimizedSubRecipes[data.itemID] = recipeData
+                    recipeData.subRecipeDepth = subRecipeDepth + 1
+                    print("- Checking SubRecipe: " .. recipeData.recipeName)
+                    -- go deep!
+                    recipeData:SetSubRecipeCostsUsage(true)
+                    recipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth + 1)
+                    -- caches the expect costs info automatically
+                    recipeData:OptimizeProfit()
+                    print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
+
+                    optimized[data.itemID] = recipeData
+                    -- if the necessary item quality is reachable, map it to the recipe
+                    local reagentQualityReachable = recipeData.resultData:IsMinimumQualityReachable(data.qualityID)
+                    print("- Quality Reachable: " .. tostring(reagentQualityReachable))
+                    if reagentQualityReachable then
+                        self.optimizedSubRecipes[data.itemID] = recipeData
+                    end
                 end
             end
 
@@ -992,4 +1005,9 @@ function CraftSim.RecipeData:GetFormattedCrafterText(includeRealm, includeProfes
     end
 
     return finalText
+end
+
+---@param itemID ItemID
+function CraftSim.RecipeData:IsSelfCraftedReagent(itemID)
+    return self.priceData:IsSelfCraftedReagent(itemID)
 end

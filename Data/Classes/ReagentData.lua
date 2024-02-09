@@ -411,12 +411,13 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
         local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
         text = text .. inlineIcon
         if not requiredReagent.hasQuality then
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(requiredReagent.items[1].item:GetItemID(),
+            local reagentItem = requiredReagent.items[1]
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(reagentItem.item:GetItemID(),
                 true,
                 false, true, crafterUID)
-            print("- tooltiptext for: " .. tostring(requiredReagent.items[1].item:GetItemName()))
+            print("- tooltiptext for: " .. tostring(reagentItem.item:GetItemName()))
             print("- - player item count: " .. tostring(itemCount))
-            print("- - allocated quantity: " .. tostring(requiredReagent.items[1].quantity))
+            print("- - allocated quantity: " .. tostring(reagentItem.quantity))
             local quantityText = f.r(tostring(requiredReagent.requiredQuantity * multiplier) ..
                 "(" .. tostring(itemCount) .. ")")
 
@@ -424,7 +425,18 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 quantityText = f.g(tostring(requiredReagent.requiredQuantity * multiplier))
             end
 
-            text = text .. " x " .. quantityText .. "\n"
+            local crafterText = ""
+            -- add crafterInfo text if reagent is supposed to be crafted by the player
+            if self.recipeData:IsSelfCraftedReagent(reagentItem.item:GetItemID()) and reagentItem.quantity > 0 then
+                local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes
+                    [reagentItem.item:GetItemID()]
+                if optimizedReagentRecipeData then
+                    crafterText = f.white(" (" ..
+                        optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
+                end
+            end
+
+            text = text .. " x " .. quantityText .. crafterText .. "\n"
         else
             local totalCount = requiredReagent:GetTotalQuantity()
             local totalCountOK = totalCount * multiplier >= requiredReagent.requiredQuantity * multiplier
@@ -441,10 +453,12 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
                 local crafterText = ""
                 -- add crafterInfo text if reagent is supposed to be crafted by the player
-                local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes[reagentItem.item:GetItemID()]
-                if optimizedReagentRecipeData and reagentItem.quantity > 0 then
-                    crafterText = f.white(" (" ..
-                        optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
+                if self.recipeData:IsSelfCraftedReagent(reagentItem.item:GetItemID()) and reagentItem.quantity > 0 then
+                    local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes[reagentItem.item:GetItemID()]
+                    if optimizedReagentRecipeData then
+                        crafterText = f.white(" (" ..
+                            optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
+                    end
                 end
                 text = text .. qualityIcon .. quantityText .. crafterText .. "   "
             end

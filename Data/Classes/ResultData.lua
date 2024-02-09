@@ -205,14 +205,24 @@ function CraftSim.ResultData:Update()
 
     local professionStats = self.recipeData.professionStats
 
-    self.expectedItem = self.itemsByQuality[self.expectedQuality]
+    local expectedItemYieldPerCraft = CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
 
+    -- special case for no quality results. Needed for expectedCrafts and such
     if not recipeData.supportsQualities or not recipeData.supportsInspiration then
+        self.expectedQuality = 1
+        self.expectedItem = self.itemsByQuality[1]
+        self.expectedCraftsByQuality = { 1 }
+        self.expectedCraftsByMinimumQuality = { 1 }
+        self.chanceByQuality = { 1 }
+        self.chancebyMinimumQuality = { 1 }
+        self.expectedYieldByQuality = { expectedItemYieldPerCraft }
+        self.expectedYieldByMinimumQuality = { expectedItemYieldPerCraft }
         return
     end
 
     self.expectedQuality = expectedQualityBySkill(professionStats.skill.value, recipeData.maxQuality,
         professionStats.recipeDifficulty.value)
+
     self.expectedItem = self.itemsByQuality[self.expectedQuality]
 
     local hsvInfo = CraftSim.CALC:GetHSVInfo(self.recipeData)
@@ -400,12 +410,9 @@ function CraftSim.ResultData:Update()
         end
     end
 
-
     -- expected yield per quality
     wipe(self.expectedYieldByQuality)
     wipe(self.expectedYieldByMinimumQuality)
-
-    local expectedItemYieldPerCraft = CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
 
     for quality = 1, self.recipeData.maxQuality, 1 do
         local chance = self.chanceByQuality[quality]

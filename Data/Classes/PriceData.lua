@@ -25,6 +25,11 @@ function CraftSim.PriceData:new(recipeData)
     self.selfCraftedReagents = {}
 end
 
+---@param itemID ItemID
+function CraftSim.PriceData:IsSelfCraftedReagent(itemID)
+    return tContains(self.selfCraftedReagents, itemID)
+end
+
 --- Update Pricing Information based on reagentData and resultData and any price overrides
 function CraftSim.PriceData:Update()
     local resultData = self.recipeData.resultData
@@ -40,8 +45,8 @@ function CraftSim.PriceData:Update()
 
     local useSubRecipes = self.recipeData.subRecipeCostsEnabled
 
-    print("Update PriceData", false, true)
-    print("using subrecipes: " .. tostring(useSubRecipes))
+    print("Update PriceData: " .. tostring(self.recipeData.recipeName), false, true)
+    print("Using subrecipes: " .. tostring(useSubRecipes))
 
     print("Calculating Crafting Costs: ")
 
@@ -90,9 +95,15 @@ function CraftSim.PriceData:Update()
                 end
             else
                 local itemID = reagent.items[1].item:GetItemID()
-                local itemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true)
+                local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, useSubRecipes)
                 self.craftingCosts = self.craftingCosts + itemPrice * reagent.requiredQuantity
                 self.craftingCostsFixed = self.craftingCostsFixed + itemPrice * reagent.requiredQuantity -- always max
+                print(tostring(reagent.items[1].item:GetItemName()) ..
+                    " selfcraft: " .. tostring(priceInfo.isExpectedCost))
+
+                if priceInfo.isExpectedCost then
+                    tinsert(self.selfCraftedReagents, itemID)
+                end
             end
         end
 
