@@ -287,8 +287,8 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV_TAB] = "HSV Consideration",
 
         -- Cost Details Frame
-        [CraftSim.CONST.TEXT.COST_DETAILS_TITLE] = "CraftSim Cost Details",
-        [CraftSim.CONST.TEXT.COST_DETAILS_EXPLANATION] =
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "CraftSim Cost Optimization",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_EXPLANATION] =
             "Here you can see an overview of all possible prices of the used materials.\nThe " ..
             f.bb("'Used Source'") ..
             " column indicates which one of the prices is used.\n\n" ..
@@ -300,12 +300,12 @@ function CraftSim.LOCAL_EN:GetData()
             " .. Expected Costs from crafting it yourself\n" ..
             f.l("OR") ..
             " will always be used if set. " .. f.bb("Crafting Costs") .. " will only be used if lower than " .. f.g("AH"),
-        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_COSTS] = "Crafting Costs: ",
-        [CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER] = "Item",
-        [CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER] = "AH Price",
-        [CraftSim.CONST.TEXT.COST_DETAILS_OVERRIDE_HEADER] = "Override",
-        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_HEADER] = "Crafting",
-        [CraftSim.CONST.TEXT.COST_DETAILS_USED_SOURCE] = "Used Source",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS] = "Crafting Costs: ",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER] = "Item",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_AH_PRICE_HEADER] = "AH Price",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_OVERRIDE_HEADER] = "Override",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_HEADER] = "Crafting",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_USED_SOURCE] = "Used Source",
 
         -- Statistics Frame
         [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "CraftSim Statistics",
@@ -558,9 +558,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_LABEL] = "Craft Results",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_TOOLTIP] =
         "Show a crafting log and statistics about your crafts!",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_LABEL] = "Cost Details",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_TOOLTIP] =
-        "Module that shows detailed information about crafting costs",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL] = "Cost Optimization",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP] =
+        "Module that shows detailed information about and helps with optimizing crafting costs",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Recipe Scan",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] =
         "Module that scans your recipe list based on various options",

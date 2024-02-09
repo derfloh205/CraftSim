@@ -89,8 +89,8 @@ Modules/RecipeScan/Frames.lua
 Modules/PriceDetails/PriceDetails.lua
 Modules/PriceDetails/Frames.lua
 
-Modules/CostDetails/CostDetails.lua
-Modules/CostDetails/Frames.lua
+Modules/CostOptimization/CostOptimization.lua
+Modules/CostOptimization/Frames.lua
 
 Modules/Supporters/Supporters.lua
 Modules/Supporters/Frames.lua

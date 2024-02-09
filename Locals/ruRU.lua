@@ -294,8 +294,8 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV_TAB] = "Учет HSV",
 
         -- Cost Details Frame
-        [CraftSim.CONST.TEXT.COST_DETAILS_TITLE] = "Информация о стоимости CraftSim",
-        [CraftSim.CONST.TEXT.COST_DETAILS_EXPLANATION] =
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "Информация о стоимости CraftSim",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_EXPLANATION] =
             "Здесь вы можете увидеть обзор всех возможных цен на использованные материалы.\nСтолбец " ..
             f.bb("'Использованный источник'") ..
             " указывает, какая из цен используется.\n\n" ..
@@ -308,12 +308,12 @@ function CraftSim.LOCAL_RU:GetData()
             f.l("OR") ..
             " всегда будет использоваться, если установлено. " ..
             f.bb("Стоимость изготовления") .. " будет использоваться, только если ниже " .. f.g("AH"),
-        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_COSTS] = "Стоимость изготовления: ",
-        [CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER] = "Предмет",
-        [CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER] = "Цена AH",
-        [CraftSim.CONST.TEXT.COST_DETAILS_OVERRIDE_HEADER] = "Переопределение",
-        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_HEADER] = "Изготовление",
-        [CraftSim.CONST.TEXT.COST_DETAILS_USED_SOURCE] = "Использованный источник",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS] = "Стоимость изготовления: ",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER] = "Предмет",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_AH_PRICE_HEADER] = "Цена AH",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_OVERRIDE_HEADER] = "Переопределение",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_HEADER] = "Изготовление",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_USED_SOURCE] = "Использованный источник",
 
         -- Statistics Frame
         [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "Статистика CraftSim",
@@ -459,7 +459,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ALTPROFESSIONS_FILTER_BUTTON] = "Профессии альтов",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_ALL_BUTTON_READY] = "Сканировать профессии",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_ALL_BUTTON_SCANNING] = "Сканирование...",
-		[CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_SCAN] = "Сканирование рецептов",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_SCAN] = "Сканирование рецептов",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_OPTIONS] = "Параметры сканирования",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_LABEL] = "Все просканированные профессии",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP] = f.g("Включено: ") ..
@@ -570,8 +570,8 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_LABEL] = "Результаты крафта",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_TOOLTIP] =
         "Показать журнал крафта и статистику ваших крафтов!",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_LABEL] = "Данные о стоимости",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_TOOLTIP] =
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL] = "Данные о стоимости",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP] =
         "Модуль, показывающий подробную информацию о стоимости крафта",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Скан. рецептов",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] =
@@ -650,12 +650,13 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Неправильная профессия",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN] = "На перезарядке",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER] = "Неправильный крафтер",
-		[CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_STATUS_HEADER] = "Состояние",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_STATUS_HEADER] = "Состояние",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL] = "Создать дальше",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT] = "Можно создать",
         [CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL] = "Создать список покупок Auctionator",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL] = "Очередь крафта",
-		[CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL] = "Помигать иконкой панели задач по завершении крафта в " ..
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL] =
+            "Помигать иконкой панели задач по завершении крафта в " ..
             f.bb("Очереди крафта"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP] =
             "Когда ваш клиент WoW свернут и крафт рецепта в " .. f.bb("Очереди крафта") ..

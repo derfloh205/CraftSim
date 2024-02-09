@@ -218,10 +218,10 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_TOOLTIP),
         "TOP", frame.content.modulesSpecInfo, "TOP", 0, cbSpacingY, "modulesCraftResults")
 
-    frame.content.modulesCostDetails = createModuleCheckbox(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_LABEL),
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_TOOLTIP),
-        "TOP", frame.content.modulesCraftResults, "TOP", 0, cbSpacingY, "modulesCostDetails")
+    frame.content.modulesCostOptimization = createModuleCheckbox(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL),
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP),
+        "TOP", frame.content.modulesCraftResults, "TOP", 0, cbSpacingY, "modulesCostOptimization")
 
     -- 4. Column
 

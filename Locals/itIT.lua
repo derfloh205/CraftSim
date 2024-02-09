@@ -282,8 +282,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV_TAB] = "Considerazioni su HSV",
 
         -- Cost Details Frame
-        [CraftSim.CONST.TEXT.COST_DETAILS_TITLE] = "Dettaglio Costi di CraftSim",
-        [CraftSim.CONST.TEXT.COST_DETAILS_EXPLANATION] =
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "Dettaglio Costi di CraftSim",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_EXPLANATION] =
             "In questa sezione puoi vedere una panoramica di tutti i possibili prezzi dei materiali utilizzati.\nLa colonna " ..
             f.bb("'Sorgente'") ..
             " indica quale dei prezzi è utilizzato.\n\n" ..
@@ -296,12 +296,12 @@ function CraftSim.LOCAL_IT:GetData()
             f.l("OR") ..
             " verrà sempre preferito se è stato impostato. " ..
             f.bb("Dati Salvati") .. " saranno utilizzati solo se inferiori a " .. f.g("AH"),
-        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_COSTS] = "Costi di creazione: ",
-        [CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER] = "Oggetto",
-        [CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER] = "Prezzo AH",
-        [CraftSim.CONST.TEXT.COST_DETAILS_OVERRIDE_HEADER] = "Prezzo Personalizzato",
-        [CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_HEADER] = "Dati Salvati",
-        [CraftSim.CONST.TEXT.COST_DETAILS_USED_SOURCE] = "Sorgente",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS] = "Costi di creazione: ",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER] = "Oggetto",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_AH_PRICE_HEADER] = "Prezzo AH",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_OVERRIDE_HEADER] = "Prezzo Personalizzato",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_HEADER] = "Dati Salvati",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_USED_SOURCE] = "Sorgente",
 
         -- Statistics Frame
         [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "Statistiche di CraftSim",
@@ -736,8 +736,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_LABEL] = "Risultati Artigianato",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_TOOLTIP] =
         "Mostra rapporti e statistiche dei tuoi oggetti creati!",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_LABEL] = "Dettaglio Costi",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_DETAILS_TOOLTIP] =
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL] = "Dettaglio Costi",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP] =
         "Modulo che mostra dettagliate informazioni sui costi di creazione",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Scansione Ricette",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] =

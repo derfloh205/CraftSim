@@ -1,28 +1,28 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@class CraftSim.COST_DETAILS
-CraftSim.COST_DETAILS = CraftSim.COST_DETAILS
+---@class CraftSim.COST_OPTIMIZATION
+CraftSim.COST_OPTIMIZATION = CraftSim.COST_OPTIMIZATION
 
----@class CraftSim.COST_DETAILS.FRAMES
-CraftSim.COST_DETAILS.FRAMES = {}
+---@class CraftSim.COST_OPTIMIZATION.FRAMES
+CraftSim.COST_OPTIMIZATION.FRAMES = {}
 
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
-CraftSim.COST_DETAILS.frame = nil
-CraftSim.COST_DETAILS.frameWO = nil
+CraftSim.COST_OPTIMIZATION.frame = nil
+CraftSim.COST_OPTIMIZATION.frameWO = nil
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_DETAILS)
+local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OPTIMIZATION)
 local f = CraftSim.GUTIL:GetFormatter()
 
-function CraftSim.COST_DETAILS.FRAMES:Init()
+function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
     local sizeX = 520
     local sizeY = 280
     local offsetX = -5
     local offsetY = -120
 
-    CraftSim.COST_DETAILS.frame = GGUI.Frame({
+    CraftSim.COST_OPTIMIZATION.frame = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent = ProfessionsFrame,
         anchorA = "BOTTOM",
@@ -31,17 +31,17 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
         sizeY = sizeY,
         offsetY = offsetY,
         offsetX = offsetX,
-        frameID = CraftSim.CONST.FRAMES.COST_DETAILS,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_TITLE),
+        frameID = CraftSim.CONST.FRAMES.COST_OPTIMIZATION,
+        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE),
         collapseable = true,
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCostDetails"),
+        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCostOptimization"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
-    CraftSim.COST_DETAILS.frameWO = GGUI.Frame({
+    CraftSim.COST_OPTIMIZATION.frameWO = GGUI.Frame({
         parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
         anchorParent = ProfessionsFrame,
         anchorA = "BOTTOM",
@@ -50,14 +50,14 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
         sizeY = sizeY,
         offsetY = offsetY,
         offsetX = offsetX,
-        frameID = CraftSim.CONST.FRAMES.COST_DETAILS_WO,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_TITLE) ..
+        frameID = CraftSim.CONST.FRAMES.COST_OPTIMIZATION_WO,
+        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE) ..
             " " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCostDetails"),
+        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCostOptimization"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
@@ -70,7 +70,7 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
             anchorB = "BOTTOM",
             offsetX = -30,
             offsetY = -15,
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_COSTS),
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS),
         })
         frame.content.craftingCostsValue = GGUI.Text({
             parent = frame.content,
@@ -99,7 +99,7 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 5,
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_EXPLANATION)
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_EXPLANATION)
         })
 
 
@@ -118,24 +118,24 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
             },
             columnOptions = {
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_ITEM_HEADER),
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER),
                     width = 40,
                     justifyOptions = { type = "H", align = "CENTER" }
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_AH_PRICE_HEADER),
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_AH_PRICE_HEADER),
                     width = 110,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_OVERRIDE_HEADER),
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_OVERRIDE_HEADER),
                     width = 110,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_CRAFTING_HEADER),
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_HEADER),
                     width = 110,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_DETAILS_USED_SOURCE),
+                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_USED_SOURCE),
                     width = 80,
                     justifyOptions = { type = "H", align = "CENTER" }
                 },
@@ -210,23 +210,23 @@ function CraftSim.COST_DETAILS.FRAMES:Init()
         })
     end
 
-    createContent(CraftSim.COST_DETAILS.frame)
-    createContent(CraftSim.COST_DETAILS.frameWO)
+    createContent(CraftSim.COST_OPTIMIZATION.frame)
+    createContent(CraftSim.COST_OPTIMIZATION.frameWO)
 end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
-function CraftSim.COST_DETAILS:UpdateDisplay(recipeData, exportMode)
+function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
     local costDetailsFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        costDetailsFrame = CraftSim.COST_DETAILS.frameWO
+        costDetailsFrame = CraftSim.COST_OPTIMIZATION.frameWO
     else
-        costDetailsFrame = CraftSim.COST_DETAILS.frame
+        costDetailsFrame = CraftSim.COST_OPTIMIZATION.frame
     end
 
 
     local considerSubRecipes = recipeData.subRecipeCostsEnabled
-    print("Cost Details List Update", false, true)
+    print("Cost Optimization - Reagent List Update", false, true)
     print("considerSubRecipes: " .. tostring(considerSubRecipes))
 
     costDetailsFrame.content.craftingCostsValue:SetText(CraftSim.GUTIL:FormatMoney(recipeData.priceData.craftingCosts))

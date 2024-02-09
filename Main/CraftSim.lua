@@ -45,7 +45,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesCraftResults = false,
 	modulesCustomerService = false,
 	modulesCustomerHistory = false,
-	modulesCostDetails = false,
+	modulesCostOptimization = false,
 	modulesCraftQueue = false,
 	modulesCraftBuffs = true,
 	modulesCooldowns = false,
@@ -439,7 +439,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 		CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
 		CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
-		CraftSim.COST_DETAILS.FRAMES:Init()
+		CraftSim.COST_OPTIMIZATION.FRAMES:Init()
 		CraftSim.SUPPORTERS.FRAMES:Init()
 		CraftSim.CRAFTQ.FRAMES:Init()
 		CraftSim.CRAFT_BUFFS.FRAMES:Init()
@@ -596,8 +596,8 @@ function CraftSim.MAIN:HideAllModules(keepControlPanel)
 	topgearFrameWO:Hide()
 	CraftSim.PRICE_DETAILS.frame:Hide()
 	CraftSim.PRICE_DETAILS.frameWO:Hide()
-	CraftSim.COST_DETAILS.frame:Hide()
-	CraftSim.COST_DETAILS.frameWO:Hide()
+	CraftSim.COST_OPTIMIZATION.frame:Hide()
+	CraftSim.COST_OPTIMIZATION.frameWO:Hide()
 	materialOptimizationFrame:Hide()
 	materialOptimizationFrameWO:Hide()
 	-- hide sim mode toggle button
@@ -734,7 +734,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	showCraftResults = showCraftResults and CraftSimOptions.modulesCraftResults
 	showCustomerService = showCustomerService and CraftSimOptions.modulesCustomerService
 	showCustomerHistory = showCustomerHistory and CraftSimOptions.modulesCustomerHistory
-	showCostDetails = showCostDetails and CraftSimOptions.modulesCostDetails
+	showCostDetails = showCostDetails and CraftSimOptions.modulesCostOptimization
 	showCraftQueue = showCraftQueue and CraftSimOptions.modulesCraftQueue
 	showCraftBuffs = showCraftBuffs and CraftSimOptions.modulesCraftBuffs
 	showCooldowns = showCooldowns and CraftSimOptions.modulesCooldowns
@@ -767,12 +767,12 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 		CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 	end
 
-	CraftSim.FRAME:ToggleFrame(CraftSim.COST_DETAILS.frame,
+	CraftSim.FRAME:ToggleFrame(CraftSim.COST_OPTIMIZATION.frame,
 		showCostDetails and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-	CraftSim.FRAME:ToggleFrame(CraftSim.COST_DETAILS.frameWO,
+	CraftSim.FRAME:ToggleFrame(CraftSim.COST_OPTIMIZATION.frameWO,
 		showCostDetails and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showCostDetails then
-		CraftSim.COST_DETAILS:UpdateDisplay(recipeData, exportMode)
+		CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
 	end
 
 	if recipeData and showCraftResults then
