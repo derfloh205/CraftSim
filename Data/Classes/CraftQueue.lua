@@ -20,12 +20,11 @@ end
 function CraftSim.CraftQueue:AddRecipe(recipeData, amount)
     amount = amount or 1
 
-    print("Adding recipe to queue with reagents: ")
-    print(recipeData.reagentData, true)
+    print("Adding Recipe to Queue: " .. recipeData.recipeName, true)
 
     -- make sure all required reagents are maxed out
     recipeData:SetNonQualityReagentsMax()
-    for _, reagent in pairs(recipeData.reagentData.requiredReagents) do
+    for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do
         if reagent.hasQuality then
             if reagent:GetTotalQuantity() < reagent.requiredQuantity then
                 reagent:SetCheapestQualityMax()
@@ -36,11 +35,35 @@ function CraftSim.CraftQueue:AddRecipe(recipeData, amount)
     local craftQueueItem = self:FindRecipe(recipeData)
 
     if craftQueueItem then
-        -- only increase amount
+        -- only increase amount, but if recipeData has deeper (higher) subrecipedepth than take lower one
         craftQueueItem.amount = craftQueueItem.amount + amount
+        craftQueueItem.recipeData.subRecipeDepth = math.max(craftQueueItem.recipeData.subRecipeDepth,
+            recipeData.subRecipeDepth)
     else
         -- create a new queue item
         table.insert(self.craftQueueItems, CraftSim.CraftQueueItem(recipeData, amount))
+    end
+
+    if #recipeData.priceData.selfCraftedReagents > 0 then
+        -- for each reagent check if its self crafted
+        for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do
+            for qualityID, reagentItem in ipairs(reagent.items) do
+                local itemID = reagentItem.item:GetItemID()
+                if recipeData:IsSelfCraftedReagent(itemID) and reagentItem.quantity > 0 then
+                    -- queue recipeData
+                    local subRecipe = recipeData.optimizedSubRecipes[itemID]
+                    if subRecipe then
+                        subRecipe:SetNonQualityReagentsMax()
+                        -- TODO: as option or always use minimum quality instead of exact?
+                        local queuedCrafts = math.ceil(subRecipe.resultData:GetExpectedCraftsForYieldByQuality(
+                        reagentItem.quantity, qualityID))
+                        self:AddRecipe(subRecipe, queuedCrafts)
+                    end
+                end
+            end
+        end
+
+        -- TODO: optional reagents
     end
 end
 

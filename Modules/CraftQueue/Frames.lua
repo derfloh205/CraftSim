@@ -1147,6 +1147,10 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             local allowedToCraftA = craftQueueItemA.allowedToCraft
             local allowedToCraftB = craftQueueItemB.allowedToCraft
 
+            if craftQueueItemA.recipeData.subRecipeDepth > craftQueueItemB.recipeData.subRecipeDepth then
+                return true
+            end
+
             -- if both are same, sort by average profit of recipe
             if allowedToCraftA == allowedToCraftB then
                 return craftQueueItemA.recipeData.averageProfitCached > craftQueueItemB.recipeData.averageProfitCached
@@ -1212,7 +1216,11 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                 local averageProfit = (recipeData.averageProfitCached or recipeData:GetAverageProfit()) *
                     craftQueueItem.amount
                 totalAverageProfit = totalAverageProfit + averageProfit
-                recipeColumn.text:SetText(recipeData.recipeName)
+                local upCraftText = ""
+                if craftQueueItem.recipeData.subRecipeDepth > 0 then
+                    upCraftText = " (^)" -- TODO: atlas or smth with more meaning?
+                end
+                recipeColumn.text:SetText(recipeData.recipeName .. upCraftText)
 
                 averageProfitColumn.text:SetText(GUTIL:FormatMoney(select(1, averageProfit), true, craftingCosts))
 
