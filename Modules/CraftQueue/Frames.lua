@@ -1149,22 +1149,31 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
             if craftQueueItemA.recipeData.subRecipeDepth > craftQueueItemB.recipeData.subRecipeDepth then
                 return true
-            end
-
-            -- if both are same, sort by average profit of recipe
-            if allowedToCraftA == allowedToCraftB then
-                return craftQueueItemA.recipeData.averageProfitCached > craftQueueItemB.recipeData.averageProfitCached
+            elseif craftQueueItemA.recipeData.subRecipeDepth < craftQueueItemB.recipeData.subRecipeDepth then
+                return false
             end
 
             if allowedToCraftA and not allowedToCraftB then
-                CraftSim.UTIL:ProfilingUpdate("- FrameListUpdate Sort Queue")
                 return true
-            end
-            if not allowedToCraftA and allowedToCraftB then
-                CraftSim.UTIL:ProfilingUpdate("- FrameListUpdate Sort Queue")
+            elseif not allowedToCraftA and allowedToCraftB then
                 return false
             end
-            CraftSim.UTIL:ProfilingUpdate("- FrameListUpdate Sort Queue")
+
+            local crafterA = craftQueueItemA.recipeData:GetCrafterUID()
+            local crafterB = craftQueueItemB.recipeData:GetCrafterUID()
+
+            if crafterA > crafterB then
+                return true
+            elseif crafterA < crafterB then
+                return false
+            end
+
+            if craftQueueItemA.recipeData.averageProfitCached > craftQueueItemB.recipeData.averageProfitCached then
+                return true
+            elseif craftQueueItemA.recipeData.averageProfitCached < craftQueueItemB.recipeData.averageProfitCached then
+                return false
+            end
+
             return false
         end)
     CraftSim.UTIL:StopProfiling("- FrameListUpdate Sort Queue")
@@ -1218,7 +1227,9 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                 totalAverageProfit = totalAverageProfit + averageProfit
                 local upCraftText = ""
                 if craftQueueItem.recipeData.subRecipeDepth > 0 then
-                    upCraftText = " (^)" -- TODO: atlas or smth with more meaning?
+                    upCraftText = " (^" ..
+                        craftQueueItem.recipeData.subRecipeDepth ..
+                        ")"                                         -- TODO: atlas or smth with more meaning?
                 end
                 recipeColumn.text:SetText(recipeData.recipeName .. upCraftText)
 

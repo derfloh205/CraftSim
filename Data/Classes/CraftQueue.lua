@@ -40,8 +40,9 @@ function CraftSim.CraftQueue:AddRecipe(recipeData, amount)
         craftQueueItem.recipeData.subRecipeDepth = math.max(craftQueueItem.recipeData.subRecipeDepth,
             recipeData.subRecipeDepth)
     else
+        craftQueueItem = CraftSim.CraftQueueItem(recipeData, amount)
         -- create a new queue item
-        table.insert(self.craftQueueItems, CraftSim.CraftQueueItem(recipeData, amount))
+        table.insert(self.craftQueueItems, craftQueueItem)
     end
 
     if #recipeData.priceData.selfCraftedReagents > 0 then
@@ -56,7 +57,7 @@ function CraftSim.CraftQueue:AddRecipe(recipeData, amount)
                         subRecipe:SetNonQualityReagentsMax()
                         -- TODO: as option or always use minimum quality instead of exact?
                         local queuedCrafts = math.ceil(subRecipe.resultData:GetExpectedCraftsForYieldByQuality(
-                        reagentItem.quantity, qualityID))
+                            reagentItem.quantity, qualityID) * craftQueueItem.amount)
                         self:AddRecipe(subRecipe, queuedCrafts)
                     end
                 end

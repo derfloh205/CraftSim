@@ -50,41 +50,80 @@ end
 
 ---@class CraftSim.CraftQueueItem.Serialized
 ---@field recipeID number
----@field amount number
+---@field amount? number
 ---@field crafterData CraftSim.CrafterData
 ---@field requiredReagents CraftingReagentInfo[]
 ---@field optionalReagents CraftingReagentInfo[]
 ---@field professionGearSet CraftSim.ProfessionGearSet.Serialized
+---@field subRecipeDepth number
+---@field subRecipeCostsEnabled boolean
+---@field serializedSubRecipeData CraftSim.CraftQueueItem.Serialized[]
 
 function CraftSim.CraftQueueItem:Serialize()
-    ---@type CraftSim.CraftQueueItem.Serialized
-    local serializedData = {
-        recipeID = self.recipeData.recipeID,
-        amount = self.amount,
-        crafterData = self.crafterData,
-        requiredReagents = self.recipeData.reagentData:GetRequiredCraftingReagentInfoTbl(),
-        optionalReagents = self.recipeData.reagentData:GetOptionalCraftingReagentInfoTbl(),
-        professionGearSet = self.recipeData.professionGearSet:Serialize()
-    }
-    return serializedData
+    ---@param recipeData CraftSim.RecipeData
+    local function serializeCraftQueueRecipeData(recipeData)
+        ---@type CraftSim.CraftQueueItem.Serialized
+        local serializedData = {
+            recipeID = recipeData.recipeID,
+            crafterData = recipeData.crafterData,
+            requiredReagents = recipeData.reagentData:GetRequiredCraftingReagentInfoTbl(),
+            optionalReagents = recipeData.reagentData:GetOptionalCraftingReagentInfoTbl(),
+            professionGearSet = recipeData.professionGearSet:Serialize(),
+            subRecipeDepth = recipeData.subRecipeDepth,
+            subRecipeCostsEnabled = recipeData.subRecipeCostsEnabled,
+            serializedSubRecipeData = GUTIL:Map(recipeData.optimizedSubRecipes or {}, function(subRecipeData)
+                return serializeCraftQueueRecipeData(subRecipeData)
+            end)
+        }
+
+        return serializedData
+    end
+
+    local serializedCraftQueueItem = serializeCraftQueueRecipeData(self.recipeData)
+    serializedCraftQueueItem.amount = self.amount
+
+    return serializedCraftQueueItem
 end
 
 ---@param serializedData CraftSim.CraftQueueItem.Serialized
 ---@return CraftSim.CraftQueueItem?
 function CraftSim.CraftQueueItem:Deserialize(serializedData)
     print("Deserialize CraftQueueItem")
-    -- first create a recipeData
-    local recipeData = CraftSim.RecipeData(serializedData.recipeID, nil, nil, serializedData.crafterData)
 
-    if recipeData and recipeData.isCrafterInfoCached then
-        recipeData:SetReagentsByCraftingReagentInfoTbl(GUTIL:Concat { serializedData.requiredReagents, serializedData.optionalReagents })
+    ---@param serializedCraftQueueItem CraftSim.CraftQueueItem.Serialized
+    ---@return CraftSim.RecipeData?
+    local function deserializeCraftQueueRecipeData(serializedCraftQueueItem)
+        -- first create a recipeData
+        local recipeData = CraftSim.RecipeData(serializedCraftQueueItem.recipeID, nil, nil,
+            serializedCraftQueueItem.crafterData)
+        recipeData.subRecipeDepth = serializedCraftQueueItem.subRecipeDepth or 0
+        recipeData.subRecipeCostsEnabled = serializedCraftQueueItem.subRecipeCostsEnabled
 
-        recipeData:SetNonQualityReagentsMax()
+        if recipeData and recipeData.isCrafterInfoCached then
+            -- deserialize potential subrecipes
+            recipeData.optimizedSubRecipes = GUTIL:Map(serializedCraftQueueItem.serializedSubRecipeData or {},
+                function(serializedSubRecipeData)
+                    return deserializeCraftQueueRecipeData(serializedSubRecipeData)
+                end)
 
-        recipeData.professionGearSet:LoadSerialized(serializedData.professionGearSet)
+            recipeData:SetReagentsByCraftingReagentInfoTbl(GUTIL:Concat { serializedCraftQueueItem.requiredReagents, serializedCraftQueueItem.optionalReagents })
 
-        recipeData:Update()
+            recipeData:SetNonQualityReagentsMax()
 
+            recipeData.professionGearSet:LoadSerialized(serializedCraftQueueItem.professionGearSet)
+
+            recipeData:Update() -- should also update pricedata which uses the optimizedsubrecipes
+
+
+            return recipeData
+        end
+    end
+
+    -- update price data to update self crafted reagents?
+    local recipeData = deserializeCraftQueueRecipeData(serializedData)
+
+
+    if recipeData then
         print("recipeInfo: " .. tostring(recipeData.recipeInfoCached))
         print("isCrafterInfoCached: " .. tostring(recipeData.isCrafterInfoCached))
         print("professionGearCached: " .. tostring(recipeData.professionGearCached))
@@ -92,7 +131,6 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
         print("specializationDataCached: " .. tostring(recipeData.specializationDataCached))
         return CraftSim.CraftQueueItem(recipeData, serializedData.amount)
     end
-    print("crafter info not cached...")
     -- if necessary recipeData could not be loaded from cache or is not fully cached return nil
     -- should only really happen if somehow it could not cache the recipe on crafter side due to a bug
     -- or if the player deleted the cache saved var during character switch

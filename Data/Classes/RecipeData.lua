@@ -906,16 +906,20 @@ function CraftSim.RecipeData:GetSubRecipeCraftingInfos()
     return craftingInfos
 end
 
+---@class CraftSim.RecipeData.VisitedRecipeData
+---@field recipeID RecipeID
+---@field subRecipeDepth number
+
 --- optimizes cached subrecipes and updates priceData
----@param visitedRecipeIDs? RecipeID[] blank in initial call - used to break potential infinite loops
+---@param visitedRecipeIDs? CraftSim.RecipeData.VisitedRecipeData[] blank in initial call - used to break potential infinite loops
 function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth)
     local printD = CraftSim.UTIL:SetDebugPrint("SUB_RECIPE_DATA")
-    visitedRecipeIDs = visitedRecipeIDs or {}
     subRecipeDepth = subRecipeDepth or 0
+    visitedRecipeIDs = visitedRecipeIDs or {}
 
     --- DEBUG
     local print = function(t, r, l)
-        if true then --self.recipeID == 367591 then -- obsidian seared crusher
+        if self.recipeID == 376556 then
             printD(t, r, l, subRecipeDepth)
         end
     end
@@ -934,8 +938,16 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
         -- todo: for selected crafters of player in cost optimization module (tbi), and use the one with lowest costs
         local crafter = data.crafters[1]
 
+        -- a infinite loop occurs if we try to optimize a recipe we already visited in a previous subRecipe depth
+        -- if that happens we do not want to optimize that recipe again but just stop optimizing
+        -- this might lead to this reagent not being marked as self crafted but I guess thats ok cause its a very special case
+        -- and does not make sense to resolve
+        local infLoop = GUTIL:Some(visitedRecipeIDs,
+            function(visitedRecipeData)
+                return visitedRecipeData.subRecipeDepth < subRecipeDepth and visitedRecipeData == recipeID
+            end)
         -- inf loop breaker
-        if not tContains(visitedRecipeIDs, recipeID) then
+        if not infLoop then
             local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafter)
             local reagentRecipeData = GUTIL:Find(optimized, function(recipeData)
                 return recipeData.recipeID == recipeID
@@ -974,7 +986,12 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
                 end
             end
 
-            tinsert(visitedRecipeIDs, recipeID)
+            tinsert(visitedRecipeIDs, {
+                recipeID = recipeID,
+                subRecipeDepth = subRecipeDepth,
+            })
+        else
+            print("Break Inf Loop!")
         end
     end
 
