@@ -15,7 +15,7 @@ CraftSim.RECIPE_SCAN.FRAMES = {}
 local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 
 --- TODO: Move to debug window as toggle
-local debugScannedRecipeIDs = false
+local debugScannedRecipeIDs = true
 
 function CraftSim.RECIPE_SCAN.FRAMES:Init()
     ---@class CraftSim.RECIPE_SCAN.FRAME : GGUI.Frame

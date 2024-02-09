@@ -38,6 +38,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@type table<ItemID, CraftSim.RecipeData>
     self.optimizedSubRecipes = {}
     self.subRecipeCostsEnabled = false
+    self.subRecipeDepth = 0
 
     if not recipeID then
         return -- e.g. when deserializing
@@ -902,8 +903,12 @@ function CraftSim.RecipeData:GetSubRecipeCraftingInfos()
 end
 
 --- optimizes cached subrecipes and updates priceData
-function CraftSim.RecipeData:OptimizeSubRecipes()
+---@param visitedRecipeIDs? RecipeID[] blank in initial call - used to break potential infinite loops
+function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth)
     local printD = CraftSim.UTIL:SetDebugPrint("SUB_RECIPE_DATA")
+    visitedRecipeIDs = visitedRecipeIDs or {}
+    subRecipeDepth = subRecipeDepth or 0
+
     --- DEBUG
     local print = function(...)
         if false then --self.recipeID == 367591 then -- obsidian seared crusher
@@ -911,7 +916,8 @@ function CraftSim.RecipeData:OptimizeSubRecipes()
         end
     end
     local subRecipeData = self:GetSubRecipeCraftingInfos()
-    print("subrecipecraftinginfos: " .. GUTIL:Count(subRecipeData))
+    print("Optimize SubRecipes for " .. self.recipeName)
+    print("- Depth: " .. subRecipeDepth)
     -- used to show what is reachable
     wipe(self.optimizedSubRecipes)
     -- used to cache already optimized recipes
@@ -920,42 +926,42 @@ function CraftSim.RecipeData:OptimizeSubRecipes()
 
     -- optimize recipes and map itemIDs
     for _, data in pairs(subRecipeData) do
-        print("checking subrecipe: " .. tostring(data.recipeID) .. " q: " .. tostring(data.qualityID))
         local recipeID = data.recipeID
-        local crafter = data.crafters[1] -- todo: ?
+        -- todo: for selected crafters of player in cost optimization module (tbi), and use the one with lowest costs
+        local crafter = data.crafters[1]
 
-        local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafter)
+        -- inf loop breaker
+        if not tContains(visitedRecipeIDs, recipeID) then
+            local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafter)
+            local reagentRecipeData = GUTIL:Find(optimized, function(recipeData)
+                return recipeData.recipeID == recipeID
+            end)
+            if reagentRecipeData then
+                -- if we already optimized the crafting cost of this reagent (another quality e.g.) then check if reachable
+                -- TODO: maybe use IsMinimumQualityReachable when craftingqueue has feature to consider higher quality reagents?
+                local reagentQualityReachable = reagentRecipeData.resultData:IsMinimumQualityReachable(data.qualityID)
+                if reagentQualityReachable then
+                    self.optimizedSubRecipes[data.itemID] = reagentRecipeData
+                end
+            elseif recipeID and crafterData then
+                local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
+                recipeData.subRecipeDepth = subRecipeDepth + 1
 
+                -- go deep!
+                recipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth)
+                -- caches the expect costs info automatically
+                recipeData:OptimizeProfit()
+                print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
 
-        local reagentRecipeData = GUTIL:Find(optimized, function(recipeData)
-            return recipeData.recipeID == recipeID
-        end)
-        if reagentRecipeData then
-            -- if we already optimized the crafting cost of this reagent (another quality e.g.) then check if reachable
-            -- TODO: maybe use IsMinimumQualityReachable when craftingqueue has feature to consider higher quality reagents?
-            local reagentQualityReachable = reagentRecipeData.resultData:IsMinimumQualityReachable(data.qualityID)
-            print("Is qualityID " .. tostring(data.qualityID) .. " reachable: " .. tostring(reagentQualityReachable))
-            if reagentQualityReachable then
-                self.optimizedSubRecipes[data.itemID] = reagentRecipeData
+                optimized[data.itemID] = recipeData
+                -- if the necessary item quality is reachable, map it to the recipe
+                local reagentQualityReachable = recipeData.resultData:IsMinimumQualityReachable(data.qualityID)
+                if reagentQualityReachable then
+                    self.optimizedSubRecipes[data.itemID] = recipeData
+                end
             end
-        elseif recipeID and crafterData then
-            local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
 
-            -- go deep?!
-            recipeData:OptimizeSubRecipes()
-            -- caches the expect costs info automatically
-            recipeData:OptimizeProfit()
-
-            print("Optimized Sub Recipe: " .. tostring(recipeData.recipeName))
-            print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
-
-            optimized[data.itemID] = recipeData
-            -- if the necessary item quality is reachable, map it to the recipe
-            local reagentQualityReachable = recipeData.resultData:IsMinimumQualityReachable(data.qualityID)
-            print("Is qualityID " .. tostring(data.qualityID) .. " reachable: " .. tostring(reagentQualityReachable))
-            if reagentQualityReachable then
-                self.optimizedSubRecipes[data.itemID] = recipeData
-            end
+            tinsert(visitedRecipeIDs, recipeID)
         end
     end
 
