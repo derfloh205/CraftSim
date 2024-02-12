@@ -9,7 +9,7 @@ CraftSim.CUSTOMER_HISTORY.timeoutSeconds = 5
 
 CraftSim.CUSTOMER_HISTORY.frame = nil
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
 local f = GUTIL:GetFormatter()
 
 ---@param LOCALIZATION_ID CraftSim.LOCALIZATION_IDS

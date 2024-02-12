@@ -12,7 +12,7 @@ CraftSim.SIMULATION_MODE.recipeData = nil
 ---@type CraftSim.SpecializationData?
 CraftSim.SIMULATION_MODE.specializationData = nil
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE)
 
 function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()
@@ -234,7 +234,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
-    local print = CraftSim.UTIL:SetDebugPrint("BUFFDATA")
+    local print = CraftSim.DEBUG:SetDebugPrint("BUFFDATA")
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
 
     if not recipeData then return end

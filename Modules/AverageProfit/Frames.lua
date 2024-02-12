@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 CraftSim.AVERAGEPROFIT.FRAMES = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
 
 function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     local sizeX = 320

@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CraftQueue : CraftSim.CraftSimObject
 CraftSim.CraftQueue = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 function CraftSim.CraftQueue:new()
     ---@type CraftSim.CraftQueueItem[]
@@ -121,15 +121,15 @@ function CraftSim.CraftQueue:ClearAllForCharacter(crafterData)
 end
 
 function CraftSim.CraftQueue:CacheQueueItems()
-    CraftSim.UTIL:StartProfiling("CraftQueue Item Caching")
+    CraftSim.DEBUG:StartProfiling("CraftQueue Item Caching")
     CraftSimCraftQueueCache = GUTIL:Map(self.craftQueueItems, function(craftQueueItem)
         return craftQueueItem:Serialize()
     end)
-    CraftSim.UTIL:StopProfiling("CraftQueue Item Caching")
+    CraftSim.DEBUG:StopProfiling("CraftQueue Item Caching")
 end
 
 function CraftSim.CraftQueue:RestoreFromCache()
-    CraftSim.UTIL:StartProfiling("CraftQueue Item Restoration")
+    CraftSim.DEBUG:StartProfiling("CraftQueue Item Restoration")
     print("Restore CraftQ From Cache Start...")
     local function load()
         print("Loading Cached CraftQueue...")
@@ -144,7 +144,7 @@ function CraftSim.CraftQueue:RestoreFromCache()
 
         print("CraftQueue Restore Finished")
 
-        CraftSim.UTIL:StopProfiling("CraftQueue Item Restoration")
+        CraftSim.DEBUG:StopProfiling("CraftQueue Item Restoration")
     end
 
     -- wait til necessary info is loaded, then put deserialized items into queue

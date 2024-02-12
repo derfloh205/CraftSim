@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE_ITEM_COUNT)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE_ITEM_COUNT)
 
 ---@class CraftSim.CACHE
 CraftSim.CACHE = CraftSim.CACHE
@@ -106,12 +106,12 @@ function CraftSim.CACHE.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(
     end
     print("Trigger operationInfo prefetch for: " .. #professionRecipeIDs .. " recipes")
 
-    CraftSim.UTIL:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
+    CraftSim.DEBUG:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
     for _, recipeID in ipairs(professionRecipeIDs) do
         C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
     end
 
-    CraftSim.UTIL:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
+    CraftSim.DEBUG:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
 
     CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions[professionID] = true
 end

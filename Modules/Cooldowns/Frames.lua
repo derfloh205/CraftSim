@@ -16,7 +16,7 @@ local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 local LID = CraftSim.CONST.TEXT
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COOLDOWNS)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COOLDOWNS)
 
 function CraftSim.COOLDOWNS.FRAMES:Init()
     local sizeX = 670

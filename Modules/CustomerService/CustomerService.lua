@@ -8,7 +8,7 @@ local PREVIEW_RECIPE_LIST_RESPONSE_PREFIX = "CraftSimRes1"
 local PREVIEW_REQUEST_RECIPE_UPDATE = "CraftSimReq2"
 local PREVIEW_RECIPE_UPDATE_RESPONSE = "CraftSimRes2"
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_SERVICE)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_SERVICE)
 
 local versionWarningShowed = false
 

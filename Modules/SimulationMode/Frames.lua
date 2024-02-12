@@ -13,7 +13,7 @@ CraftSim.SIMULATION_MODE.FRAMES.WORKORDER = {}
 ---@class CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER
 CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE)
 
 function CraftSim.SIMULATION_MODE.FRAMES:Init()
     local function createSimulationModeFrames(schematicForm, workOrder)
@@ -1271,7 +1271,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
 end
 
 function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
-    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
+    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
     local specializationData = CraftSim.SIMULATION_MODE.specializationData
 
     if not specializationData then

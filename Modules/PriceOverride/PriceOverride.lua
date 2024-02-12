@@ -19,7 +19,7 @@ CraftSimPriceOverridesV2 = CraftSimPriceOverridesV2 or {
 ---@field price number
 ---@field qualityID? number -- used for result item mappings in a recipe
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE)
 
 function CraftSim.PRICE_OVERRIDE:ClearAll()
     CraftSimPriceOverridesV2.globalOverrides = {}

@@ -96,6 +96,7 @@ CraftSimOptions = CraftSimOptions or {
 
 	-- cost optimization
 	costOptimizationAutomaticSubRecipeOptimization = false,
+	costOptimizationSubRecipeMaxDepth = 3,
 }
 
 CraftSimGGUIConfig = CraftSimGGUIConfig or {}
@@ -107,7 +108,7 @@ CraftSim.MAIN.currentRecipeID = nil
 CraftSim.MAIN.initialLogin = false
 CraftSim.MAIN.isReloadingUI = false
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.MAIN)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.MAIN)
 function CraftSim.MAIN:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 	CraftSim.MAIN.initialLogin = initialLogin
 	CraftSim.MAIN.isReloadingUI = isReloadingUI
@@ -169,6 +170,7 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 			CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
 		CraftSimOptions.recipeScanImportAllProfessions = CraftSimOptions.recipeScanImportAllProfessions or false
 		CraftSimOptions.craftQueueShoppingListPerCharacter = CraftSimOptions.craftQueueShoppingListPerCharacter or false
+		CraftSimOptions.costOptimizationSubRecipeMaxDepth = CraftSimOptions.costOptimizationSubRecipeMaxDepth or 3
 
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
@@ -254,11 +256,11 @@ function CraftSim.MAIN:TriggerModuleUpdate(isInit)
 		end
 		return false
 	end, function()
-		CraftSim.UTIL:StartProfiling("MODULES UPDATE")
+		CraftSim.DEBUG:StartProfiling("MODULES UPDATE")
 		CraftSim.MAIN:TriggerModulesByRecipeType()
 		-- do not do this all in the same frame to ease performance
 		RunNextFrame(CraftSim.RECIPE_SCAN.UpdateProfessionListByCache)
-		CraftSim.UTIL:StopProfiling("MODULES UPDATE")
+		CraftSim.DEBUG:StopProfiling("MODULES UPDATE")
 	end)
 end
 
@@ -366,7 +368,7 @@ function CraftSim.MAIN:InitCraftRecipeHooks()
 		-- 	isRecraft = CraftSim.MAIN.currentRecipeData.isRecraft
 		-- end
 
-		local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+		local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 		---@type CraftSim.RecipeData
 		local recipeData
@@ -412,7 +414,8 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 		CraftSim.MAIN:InitializeMinimapButton()
 
 		CraftSim.LOCAL:Init()
-		CraftSim.FRAME:InitDebugFrame()
+
+
 		CraftSim.GGUI:InitializePopup({
 			backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
 			sizeX = 300,
@@ -420,6 +423,9 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 			title = "CraftSim Popup",
 			frameID = CraftSim.CONST.FRAMES.POPUP,
 		})
+
+		CraftSim.DEBUG.FRAMES:Init()
+
 		CraftSim.PRICE_API:InitPriceSource()
 
 
@@ -685,9 +691,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	-- subrecipe optimization
 	recipeData:SetSubRecipeCostsUsage(CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
 	if recipeData.subRecipeCostsEnabled then
-		CraftSim.UTIL:StartProfiling("OptimizeSubRecipes")
+		CraftSim.DEBUG:StartProfiling("OptimizeSubRecipes")
 		recipeData:OptimizeSubRecipes()
-		CraftSim.UTIL:StopProfiling("OptimizeSubRecipes")
+		CraftSim.DEBUG:StopProfiling("OptimizeSubRecipes")
 	end
 
 	local showMaterialOptimization = false
@@ -819,10 +825,10 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO,
 		showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showMaterialOptimization then
-		CraftSim.UTIL:StartProfiling("Reagent Optimization")
+		CraftSim.DEBUG:StartProfiling("Reagent Optimization")
 		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
 		CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, optimizationResult, exportMode)
-		CraftSim.UTIL:StopProfiling("Reagent Optimization")
+		CraftSim.DEBUG:StopProfiling("Reagent Optimization")
 	end
 
 	-- Top Gear Module
@@ -831,9 +837,9 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	if recipeData and showTopGear then
 		CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(recipeData, exportMode)
 		if CraftSimOptions.topGearAutoUpdate then
-			CraftSim.UTIL:StartProfiling("Top Gear")
+			CraftSim.DEBUG:StartProfiling("Top Gear")
 			CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
-			CraftSim.UTIL:StopProfiling("Top Gear")
+			CraftSim.DEBUG:StopProfiling("Top Gear")
 		else
 			local isCooking = recipeData.professionID == Enum.Profession.Cooking
 			CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData, true, exportMode)

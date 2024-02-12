@@ -13,7 +13,8 @@ local GUTIL = CraftSim.GUTIL
 CraftSim.COST_OPTIMIZATION.frame = nil
 CraftSim.COST_OPTIMIZATION.frameWO = nil
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OPTIMIZATION)
+local systemPrint = print
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OPTIMIZATION)
 local f = CraftSim.GUTIL:GetFormatter()
 
 function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
@@ -76,6 +77,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
             sizeY = sizeY - 5,
         }
 
+        ---@class CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab : GGUI.BlizzardTab
         frame.content.subRecipeOptions = GGUI.BlizzardTab {
             buttonOptions = {
                 parent = frame.content,
@@ -88,6 +90,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
             sizeX = sizeX - 5,
             sizeY = sizeY - 5,
         }
+
+        self:InitSubRecipeOptions(frame.content.subRecipeOptions)
 
         local content = frame.content.reagentCostsTab.content
 
@@ -242,6 +246,21 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
 
     createContent(CraftSim.COST_OPTIMIZATION.frame)
     createContent(CraftSim.COST_OPTIMIZATION.frameWO)
+end
+
+---@param subRecipeOptionsTab CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab
+function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptionsTab)
+    ---@class CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab.Content : Frame
+    local content = subRecipeOptionsTab.content
+
+    content.maxRecipeDepthSlider = GGUI.Slider {
+        parent = content, anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -50, offsetX = 70,
+        label = "Sub Recipe Calculation Depth", minValue = 1, maxValue = 5, initialValue = CraftSimOptions.costOptimizationSubRecipeMaxDepth,
+        lowText = "1", highText = "5", step = 1,
+        onValueChangedCallback = function(self, value)
+            CraftSimOptions.costOptimizationSubRecipeMaxDepth = value
+        end
+    }
 end
 
 ---@param recipeData CraftSim.RecipeData

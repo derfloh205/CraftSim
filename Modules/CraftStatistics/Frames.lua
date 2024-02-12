@@ -7,7 +7,7 @@ local GGUI = CraftSim.GGUI
 ---@class CraftSim.STATISTICS.FRAMES
 CraftSim.STATISTICS.FRAMES = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
 
 function CraftSim.STATISTICS.FRAMES:Init()
     local sizeX = 700

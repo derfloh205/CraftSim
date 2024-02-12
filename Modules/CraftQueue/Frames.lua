@@ -13,7 +13,7 @@ CraftSim.CRAFTQ.FRAMES = {}
 local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 function CraftSim.CRAFTQ.FRAMES:Init()
     local sizeX = 1050
@@ -1122,7 +1122,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
     -- multiples should be possible (different reagent setup)
     -- but if there already is a configuration just increase the count?
 
-    CraftSim.UTIL:StartProfiling("FrameListUpdate")
+    CraftSim.DEBUG:StartProfiling("FrameListUpdate")
 
     ---@type GGUI.Tab
     local queueTab = CraftSim.CRAFTQ.frame.content.queueTab
@@ -1139,7 +1139,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             craftQueueItem:CalculateCanCraft()
         end)
 
-    CraftSim.UTIL:StartProfiling("- FrameListUpdate Sort Queue")
+    CraftSim.DEBUG:StartProfiling("- FrameListUpdate Sort Queue")
     craftQueue.craftQueueItems = GUTIL:Sort(craftQueue.craftQueueItems,
         ---@param craftQueueItemA CraftSim.CraftQueueItem
         ---@param craftQueueItemB CraftSim.CraftQueueItem
@@ -1176,20 +1176,20 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
             return false
         end)
-    CraftSim.UTIL:StopProfiling("- FrameListUpdate Sort Queue")
+    CraftSim.DEBUG:StopProfiling("- FrameListUpdate Sort Queue")
 
     craftList:Remove()
 
     local totalAverageProfit = 0
     local totalCraftingCosts = 0
 
-    CraftSim.UTIL:StartProfiling("- FrameListUpdate Add Rows")
+    CraftSim.DEBUG:StartProfiling("- FrameListUpdate Add Rows")
     for _, craftQueueItem in pairs(craftQueue.craftQueueItems) do
         local recipeData = craftQueueItem.recipeData
         craftList:Add(
             function(row)
                 local profilingID = "- FrameListUpdate Add Recipe: " .. craftQueueItem.recipeData.recipeName
-                CraftSim.UTIL:StartProfiling(profilingID)
+                CraftSim.DEBUG:StartProfiling(profilingID)
                 local columns = row.columns
                 local editButtonColumn = columns[1] --[[@as CraftSim.CraftQueue.CraftList.EditButtonColumn]]
                 local crafterColumn = columns[2] --[[@as CraftSim.CraftQueue.CraftList.CrafterColumn]]
@@ -1229,7 +1229,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                 if craftQueueItem.recipeData.subRecipeDepth > 0 then
                     upCraftText = " (^" ..
                         craftQueueItem.recipeData.subRecipeDepth ..
-                        ")"                                         -- TODO: atlas or smth with more meaning?
+                        ")" -- TODO: atlas or smth with more meaning?
                 end
                 recipeColumn.text:SetText(recipeData.recipeName .. upCraftText)
 
@@ -1357,11 +1357,11 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                     CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
                 end
 
-                CraftSim.UTIL:StopProfiling(profilingID)
+                CraftSim.DEBUG:StopProfiling(profilingID)
             end)
     end
 
-    CraftSim.UTIL:StopProfiling("- FrameListUpdate Add Rows")
+    CraftSim.DEBUG:StopProfiling("- FrameListUpdate Add Rows")
 
 
     --- sort by craftable status
@@ -1373,7 +1373,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
     craftQueue:CacheQueueItems() -- Is this a good time to cache it?
 
 
-    CraftSim.UTIL:StopProfiling("FrameListUpdate")
+    CraftSim.DEBUG:StopProfiling("FrameListUpdate")
 end
 
 function CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()

@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CACHE
 CraftSim.CACHE = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
 
 function CraftSim.CACHE:HandleCraftSimCacheUpdates()
     -- init default cache fields in case of cache field updates

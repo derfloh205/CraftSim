@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 CraftSim.TOPGEAR.FRAMES = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.TOP_GEAR)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.TOP_GEAR)
 
 function CraftSim.TOPGEAR.FRAMES:Init()
     local sizeX = 270

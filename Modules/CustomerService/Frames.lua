@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 CraftSim.CUSTOMER_SERVICE.FRAMES = {}
 CraftSim.CUSTOMER_SERVICE.timeoutSeconds = 5
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_SERVICE)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_SERVICE)
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
     local frame = CraftSim.GGUI.Frame({

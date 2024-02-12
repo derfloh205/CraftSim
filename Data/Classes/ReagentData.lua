@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.ReagentData : CraftSim.CraftSimObject
@@ -348,7 +348,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
 end
 
 function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
-    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
     print("getCraftable amount", false, true)
 
@@ -402,7 +402,7 @@ end
 --- convert required and finished reagents to string that is displayable in a tooltip
 ---@param multiplier number? default: 1
 function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
-    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
     multiplier = multiplier or 1
     local iconSize = 25
     local text = ""

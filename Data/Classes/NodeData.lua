@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@overload fun(recipeData: CraftSim.RecipeData?, nodeName: string?, nodeRulesData: table?, parentNode:CraftSim.NodeData?): CraftSim.NodeData
 CraftSim.NodeData = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 ---@param recipeData CraftSim.RecipeData?
 ---@param nodeName string

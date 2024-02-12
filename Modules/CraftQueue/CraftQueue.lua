@@ -22,7 +22,7 @@ CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
 CraftSim.CRAFTQ.itemCountCache = nil
 
 local systemPrint = print
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 --- cache for OnConfirmCommoditiesPurchase -> COMMODITY_PURCHASE_SUCCEEDED flow
 ---@class CraftSim.CraftQueue.purchasedItem
@@ -329,7 +329,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
 
     CraftSim.CRAFTQ:DeleteAllCraftSimShoppingLists()
 
-    CraftSim.UTIL:StartProfiling("CreateAuctionatorShoppingListPerCharacter")
+    CraftSim.DEBUG:StartProfiling("CreateAuctionatorShoppingListPerCharacter")
     local reagentMapPerCharacter = {}
     -- create a map of all used reagents in the queue and their quantity
     for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
@@ -407,7 +407,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
     end
 
 
-    CraftSim.UTIL:StopProfiling("CreateAuctionatorShoppingListPerCharacter")
+    CraftSim.DEBUG:StopProfiling("CreateAuctionatorShoppingListPerCharacter")
 end
 
 function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
@@ -415,7 +415,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
 
     CraftSim.CRAFTQ:DeleteAllCraftSimShoppingLists()
 
-    CraftSim.UTIL:StartProfiling("CreateAuctionatorShopping")
+    CraftSim.DEBUG:StartProfiling("CreateAuctionatorShopping")
     local reagentMap = {}
     -- create a map of all used reagents in the queue and their quantity
     for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
@@ -489,7 +489,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
     end)
     Auctionator.API.v1.CreateShoppingList(addonName, CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME, searchStrings)
 
-    CraftSim.UTIL:StopProfiling("CreateAuctionatorShopping")
+    CraftSim.DEBUG:StopProfiling("CreateAuctionatorShopping")
 end
 
 function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT()

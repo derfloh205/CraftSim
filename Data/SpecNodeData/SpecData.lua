@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 CraftSim.SPEC_DATA = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 -- its a function so craftsimConst can be accessed (otherwise nil cause not yet initialized)
 CraftSim.SPEC_DATA.RULE_NODES = function()

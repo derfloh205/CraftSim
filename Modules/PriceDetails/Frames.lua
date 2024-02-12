@@ -6,7 +6,7 @@ CraftSim.PRICE_DETAILS.FRAMES = {}
 CraftSim.PRICE_DETAILS.frame = nil
 CraftSim.PRICE_DETAILS.frameWO = nil
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS)
 
 function CraftSim.PRICE_DETAILS.FRAMES:Init()
     local sizeX = 410

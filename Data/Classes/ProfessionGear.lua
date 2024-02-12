@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 ---@class CraftSim.ProfessionGear : CraftSim.CraftSimObject
 ---@overload fun():CraftSim.ProfessionGear
 CraftSim.ProfessionGear = CraftSim.CraftSimObject:extend()
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 function CraftSim.ProfessionGear:new()
 	---@type CraftSim.ProfessionStats

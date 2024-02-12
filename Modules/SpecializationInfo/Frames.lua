@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.SPECIALIZATION_INFO.FRAMES
 CraftSim.SPECIALIZATION_INFO.FRAMES = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     local sizeX = 290

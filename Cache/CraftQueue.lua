@@ -9,7 +9,7 @@ CraftSim.CACHE = CraftSim.CACHE
 ---@class CraftSim.CACHE.CRAFT_QUEUE
 CraftSim.CACHE.CRAFT_QUEUE = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
 
 ---@type CraftSim.CraftQueueItem.Serialized[]
 CraftSimCraftQueueCache = CraftSimCraftQueueCache or {}

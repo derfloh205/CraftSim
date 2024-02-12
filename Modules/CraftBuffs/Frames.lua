@@ -10,7 +10,7 @@ CraftSim.CRAFT_BUFFS = CraftSim.CRAFT_BUFFS
 ---@class CraftSim.CRAFT_BUFFS.FRAMES
 CraftSim.CRAFT_BUFFS.FRAMES = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.BUFFDATA)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.BUFFDATA)
 
 ---@type table<string, boolean>
 CraftSim.CRAFT_BUFFS.simulatedBuffs = {}

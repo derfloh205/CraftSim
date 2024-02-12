@@ -1,6 +1,6 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 ---@class CraftSim.Reagent : CraftSim.CraftSimObject
 CraftSim.Reagent = CraftSim.CraftSimObject:extend()
@@ -158,7 +158,7 @@ end
 function CraftSim.Reagent:HasQuantityXTimes(crafterUID)
     local currentMinTimes = math.huge
 
-    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
     --print("CraftSim.Reagent:HasQuantityXTimes", false, true)
     for q, reagentItem in pairs(self.items) do
         if reagentItem.quantity > 0 then

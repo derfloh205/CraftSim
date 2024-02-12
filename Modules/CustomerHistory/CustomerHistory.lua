@@ -9,7 +9,7 @@ CraftSim.CUSTOMER_HISTORY = GUTIL:CreateRegistreeForEvents(
     { "CHAT_MSG_WHISPER", "CHAT_MSG_WHISPER_INFORM", "CRAFTINGORDERS_FULFILL_ORDER_RESPONSE" }
 )
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
 
 function CraftSim.CUSTOMER_HISTORY:Init()
     if not CraftSimOptions.customerHistoryMigrationDoneV3 then

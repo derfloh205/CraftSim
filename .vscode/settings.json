@@ -47,7 +47,9 @@
         "RunNextFrame",
         "ChatFrame_SendTell",
         "CraftSimCustomerHistory",
-        "DevTool"
+        "DevTool",
+        "Settings",
+        "CreateMinimalSliderFormatter"
     ],
     "Lua.diagnostics.disable": [
         "missing-parameter",

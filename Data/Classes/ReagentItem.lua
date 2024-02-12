@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 ---@class CraftSim.ReagentItem : CraftSim.CraftSimObject
 CraftSim.ReagentItem = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 ---@param itemID number
 ---@param qualityID number?

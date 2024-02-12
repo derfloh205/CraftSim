@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.REAGENT_OPTIMIZATION
 CraftSim.REAGENT_OPTIMIZATION = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
 
 local function translateLuaIndex(index)
     return index + 1
@@ -75,7 +75,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     local i = 0
     for k = 0, 2 * ks[i].n, 1 do -- for each weight and value in material(0)
         --print("current crumb: " .. k)
-        --CraftSim.UTIL:PrintTable(ks[i].crumb[k])
+        --CraftSim.DEBUG:PrintTable(ks[i].crumb[k])
         b[i][ks[i].crumb[k].weight] = ks[i].crumb[k].value
         c[i][ks[i].crumb[k].weight] = k
     end
@@ -322,7 +322,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
     for i = 0, #requiredReagents - 1, 1 do
         ksItems[i] = {}
     end
-    CraftSim.UTIL:StartProfiling("KnapsackKsItemCreation")
+    CraftSim.DEBUG:StartProfiling("KnapsackKsItemCreation")
     -- !!!!! lua tables init with a 0 index, show one less entry with #table then there really is
     for index = 0, #requiredReagents - 1, 1 do
         local reagent = requiredReagents[translateLuaIndex(index)]
@@ -344,7 +344,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
         CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, recipeData.subRecipeCostsEnabled)
         ksItems[index] = ksItem
     end
-    CraftSim.UTIL:StopProfiling("KnapsackKsItemCreation")
+    CraftSim.DEBUG:StopProfiling("KnapsackKsItemCreation")
 
     -- Calculate ArrayBP (The skill breakpoints)
     local numBP = 0
@@ -437,7 +437,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
 
 
 
-    CraftSim.UTIL:StartProfiling("optimizeKnapsack")
+    CraftSim.DEBUG:StartProfiling("optimizeKnapsack")
     -- Optimize Knapsack
     local resultsNoInspiration = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBPNoInspiration, recipeData)
 
@@ -465,12 +465,12 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
         -- if it would be the same qualityID then the optimization for guaranteed is better
 
         if bestResultInspiration.qualityID > bestResultNoInspiration.qualityID then
-            CraftSim.UTIL:StopProfiling("optimizeKnapsack")
+            CraftSim.DEBUG:StopProfiling("optimizeKnapsack")
             print("taking inspiration result as best result")
             return bestResultInspiration
         end
     end
-    CraftSim.UTIL:StopProfiling("optimizeKnapsack")
+    CraftSim.DEBUG:StopProfiling("optimizeKnapsack")
     print("taking guaranteed result as best result")
     return bestResultNoInspiration
 end

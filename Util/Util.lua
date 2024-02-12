@@ -9,24 +9,7 @@ local multicraftFactor = 0.0009
 local resourcefulnessFactor = 0.00111
 local craftingspeedFactor = 0.002
 
----@param debugID CraftSim.DEBUG_IDS
-function CraftSim.UTIL:SetDebugPrint(debugID)
-    local function print(text, recursive, l, level)
-        if CraftSim_DEBUG and CraftSim.GGUI.GetFrame and CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG) then
-            CraftSim_DEBUG:print(text, debugID, recursive, l, level)
-        else
-            print(text)
-        end
-    end
-
-    return print
-end
-
-function CraftSim.UTIL:SystemPrint(text)
-    print(text)
-end
-
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.UTIL)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.UTIL)
 
 function CraftSim.UTIL:GetInspirationStatByPercent(percent)
     if percent == nil then
@@ -202,33 +185,6 @@ function CraftSim.UTIL:KethoEditBox_Show(text)
     KethoEditBox:Show()
 end
 
--- for debug purposes
-function CraftSim.UTIL:PrintTable(t, debugID, recursive, level)
-    level = level or 0
-    local levelString = ""
-    for i = 1, level, 1 do
-        levelString = levelString .. "-"
-    end
-
-    if t.Debug then
-        for _, line in pairs(t:Debug()) do
-            CraftSim_DEBUG:print(levelString .. tostring(line), debugID, false)
-        end
-        return
-    end
-
-    for k, v in pairs(t) do
-        if type(v) == 'function' then
-            CraftSim_DEBUG:print(levelString .. tostring(k) .. ": function", debugID, false)
-        elseif not recursive or type(v) ~= "table" then
-            CraftSim_DEBUG:print(levelString .. tostring(k) .. ": " .. tostring(v), debugID, false)
-        elseif type(v) == "table" then
-            CraftSim_DEBUG:print(levelString .. tostring(k) .. ": ", debugID, false)
-            CraftSim.UTIL:PrintTable(v, debugID, recursive, level + 1)
-        end
-    end
-end
-
 function CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
     local linkLevel, specializationID = string.match(itemString, "item:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d*:(%d+):(%d+)")
     local bonusIDString = linkLevel .. ":" .. specializationID
@@ -320,24 +276,6 @@ function CraftSim.UTIL:toBits(num, bits)
     return t
 end
 
-local profilings = {}
-function CraftSim.UTIL:StartProfiling(label)
-    local time = debugprofilestop();
-    profilings[label] = time
-end
-
-function CraftSim.UTIL:StopProfiling(label)
-    local startTime = profilings[label]
-    if not startTime then
-        print("Util Profiling Label not found on Stop: " .. tostring(label))
-        return
-    end
-    local time = debugprofilestop()
-    local diff = time - startTime
-    profilings[label] = nil
-    CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
-end
-
 local playerCrafterDataCached = nil
 ---@return CraftSim.CrafterData
 function CraftSim.UTIL:GetPlayerCrafterData()
@@ -384,80 +322,6 @@ end
 ---@return string crafterUID
 function CraftSim.UTIL:GetPlayerCrafterUID()
     return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
-end
-
-function CraftSim.UTIL:ProfilingUpdate(label)
-    local time = debugprofilestop()
-    local diff = time - profilings[label]
-    CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms (u)", CraftSim.CONST.DEBUG_IDS.PROFILING)
-end
-
-function CraftSim.GUTIL:GetFormatter()
-    local b = CraftSim.GUTIL.COLORS.DARK_BLUE
-    local bb = CraftSim.GUTIL.COLORS.BRIGHT_BLUE
-    local g = CraftSim.GUTIL.COLORS.GREEN
-    local grey = CraftSim.GUTIL.COLORS.GREY
-    local r = CraftSim.GUTIL.COLORS.RED
-    local l = CraftSim.GUTIL.COLORS.LEGENDARY
-    local e = CraftSim.GUTIL.COLORS.EPIC
-    local patreon = CraftSim.GUTIL.COLORS.PATREON
-    local whisper = CraftSim.GUTIL.COLORS.WHISPER
-    local white = CraftSim.GUTIL.COLORS.WHITE
-    local c = function(text, color)
-        return CraftSim.GUTIL:ColorizeText(text, color)
-    end
-    local p = CraftSim.GUTIL:GetQualityIconString(1, 15, 15) .. " "
-    local s = CraftSim.GUTIL:GetQualityIconString(2, 15, 15) .. " "
-    local P = CraftSim.GUTIL:GetQualityIconString(3, 15, 15) .. " "
-    local a = "     "
-
-    local formatter = {}
-    formatter.b = function(text)
-        return c(text, b)
-    end
-    formatter.bb = function(text)
-        return c(text, bb)
-    end
-    formatter.g = function(text)
-        return c(text, g)
-    end
-    formatter.r = function(text)
-        return c(text, r)
-    end
-    formatter.l = function(text)
-        return c(text, l)
-    end
-    formatter.e = function(text)
-        return c(text, e)
-    end
-    formatter.grey = function(text)
-        return c(text, grey)
-    end
-    formatter.patreon = function(text)
-        return c(text, patreon)
-    end
-    formatter.whisper = function(text)
-        return c(text, whisper)
-    end
-    formatter.white = function(text)
-        return c(text, white)
-    end
-    formatter.p = p
-    formatter.s = s
-    formatter.P = P
-    formatter.a = a
-    formatter.m = function(m)
-        return CraftSim.GUTIL:FormatMoney(m, true)
-    end
-    formatter.mw = function(m)
-        return CraftSim.GUTIL:FormatMoney(m)
-    end
-
-    formatter.i = function(i, h, w)
-        return CraftSim.GUTIL:IconToText(i, h, w)
-    end
-
-    return formatter
 end
 
 function CraftSim.UTIL:GetSchematicFormByVisibility()

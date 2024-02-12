@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 CraftSim.CRAFT_RESULTS.FRAMES = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
 
 function CraftSim.CRAFT_RESULTS.FRAMES:Init()
     local frameNO_WO = CraftSim.GGUI.Frame({
@@ -114,7 +114,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
 end
 
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
-    local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
+    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
     print("Update RecipeData: " .. tostring(recipeID))
 
     -- only update frontend if its the shown recipeID
