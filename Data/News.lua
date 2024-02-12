@@ -29,6 +29,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Added a Recipe Scan Option to toggle " .. f.bb("sub crafts"),
         f.a .. "- Current cooldown charges are now shown besides",
         f.a .. "  the recipe name",
+        f.a .. "- The alt profession list is now more consistently sorted",
         f.p .. f.bb("Cooldowns"),
         f.a .. "- Fixed a bug when displaying a cooldown that is fully charged",
         f.p .. f.bb("CraftResults"),

@@ -245,32 +245,26 @@ function CraftSim.RECIPE_SCAN.FRAMES:UpdateProfessionListDisplay()
             local playerCrafterProfessionUIDB = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUIDB, rowB
                 .profession)
 
-            -- always prefer the crafterUID of the player
-
-            if crafterUIDA == playerCrafterUID and crafterUIDB ~= playerCrafterUID then
+            -- current character and current profession always on top
+            if playerCrafterProfessionUIDA == playerCrafterProfessionUID and playerCrafterProfessionUIDB ~= playerCrafterProfessionUID then
                 return true
-            end
-
-            if crafterUIDA ~= playerCrafterUID and crafterUIDB == playerCrafterUID then
+            elseif playerCrafterProfessionUIDA ~= playerCrafterProfessionUID and playerCrafterProfessionUIDB == playerCrafterProfessionUID then
                 return false
             end
 
-            -- -- if both are the playerCrafterUID, prefer the playerCrafterProfessionUID
+            -- next prefer current character
+            if crafterUIDA == playerCrafterUID and crafterUIDB ~= playerCrafterUID then
+                return true
+            elseif crafterUIDA ~= playerCrafterUID and crafterUIDB == playerCrafterUID then
+                return false
+            end
 
-            -- if playerCrafterProfessionUIDA == playerCrafterProfessionUID and playerCrafterProfessionUIDB ~= playerCrafterProfessionUID then
-            --     return true
-            -- end
-
-            -- if playerCrafterProfessionUIDA ~= playerCrafterProfessionUID and playerCrafterProfessionUIDB == playerCrafterProfessionUID then
-            --     return false
-            -- end
-
-            -- -- if not the player prefer same crafterUID
-
-            -- if crafterUIDA == crafterUIDB then
-            --     return true
-            -- end
-
+            -- next sort by alphabet
+            if crafterUIDA > crafterUIDB then
+                return true
+            elseif crafterUIDA < crafterUIDB then
+                return false
+            end
 
             return false
         end)
