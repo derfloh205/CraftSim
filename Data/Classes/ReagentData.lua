@@ -497,6 +497,21 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
         local crafterName = self.recipeData:GetFormattedCrafterText(true)
         text = text .. f.white("\n(Inventory of " .. crafterName .. ")")
     end
+
+    -- add parent recipe info
+    if #self.recipeData.parentRecipeInfo > 0 then
+        text = text .. f.white("\n\nPrerequisite of:")
+        ---@type CraftSim.RecipeData.ParentRecipeInfo[]
+        local sortedInfo = GUTIL:Sort(self.recipeData.parentRecipeInfo, function(infoA, infoB)
+            return infoA.crafterUID > infoB.crafterUID
+        end)
+        for _, info in ipairs(sortedInfo) do
+            text = text ..
+                "\n- " ..
+                C_ClassColor.GetClassColor(info.crafterClass):WrapTextInColorCode(info.crafterUID) ..
+                ": " .. f.white(info.recipeName)
+        end
+    end
     return text
 end
 

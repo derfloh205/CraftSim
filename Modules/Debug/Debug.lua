@@ -8,7 +8,7 @@ CraftSim.DEBUG = {}
 CraftSim.DEBUG.profilings = {}
 CraftSim.DEBUG.isMute = false
 
----@type CraftSim.DEBUG.FRAME
+---@class CraftSim.DEBUG.FRAME
 CraftSim.DEBUG.frame = nil
 
 local GUTIL = CraftSim.GUTIL

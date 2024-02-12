@@ -58,6 +58,7 @@ end
 ---@field subRecipeDepth number
 ---@field subRecipeCostsEnabled boolean
 ---@field serializedSubRecipeData CraftSim.CraftQueueItem.Serialized[]
+---@field parentRecipeInfo CraftSim.RecipeData.ParentRecipeInfo[]
 
 function CraftSim.CraftQueueItem:Serialize()
     ---@param recipeData CraftSim.RecipeData
@@ -71,10 +72,14 @@ function CraftSim.CraftQueueItem:Serialize()
             professionGearSet = recipeData.professionGearSet:Serialize(),
             subRecipeDepth = recipeData.subRecipeDepth,
             subRecipeCostsEnabled = recipeData.subRecipeCostsEnabled,
-            serializedSubRecipeData = GUTIL:Map(recipeData.optimizedSubRecipes or {}, function(subRecipeData)
-                return serializeCraftQueueRecipeData(subRecipeData)
-            end)
+            serializedSubRecipeData = {},
+            parentRecipeInfo = recipeData.parentRecipeInfo
         }
+
+        -- save correct mapping
+        for itemID, optimizedSubRecipeData in pairs(recipeData.optimizedSubRecipes) do
+            serializedData.serializedSubRecipeData[itemID] = serializeCraftQueueRecipeData(optimizedSubRecipeData)
+        end
 
         return serializedData
     end
@@ -98,13 +103,13 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
             serializedCraftQueueItem.crafterData)
         recipeData.subRecipeDepth = serializedCraftQueueItem.subRecipeDepth or 0
         recipeData.subRecipeCostsEnabled = serializedCraftQueueItem.subRecipeCostsEnabled
+        recipeData.parentRecipeInfo = serializedCraftQueueItem.parentRecipeInfo or {}
 
         if recipeData and recipeData.isCrafterInfoCached then
-            -- deserialize potential subrecipes
-            recipeData.optimizedSubRecipes = GUTIL:Map(serializedCraftQueueItem.serializedSubRecipeData or {},
-                function(serializedSubRecipeData)
-                    return deserializeCraftQueueRecipeData(serializedSubRecipeData)
-                end)
+            -- deserialize potential subrecipes and restore correct mapping
+            for itemID, serializedSubRecipeData in pairs(serializedCraftQueueItem.serializedSubRecipeData or {}) do
+                recipeData.optimizedSubRecipes[itemID] = deserializeCraftQueueRecipeData(serializedSubRecipeData)
+            end
 
             recipeData:SetReagentsByCraftingReagentInfoTbl(GUTIL:Concat { serializedCraftQueueItem.requiredReagents, serializedCraftQueueItem.optionalReagents })
 

@@ -1122,6 +1122,8 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
     -- multiples should be possible (different reagent setup)
     -- but if there already is a configuration just increase the count?
 
+    print("CraftQueue Update List", false, true)
+
     CraftSim.DEBUG:StartProfiling("FrameListUpdate")
 
     ---@type GGUI.Tab
@@ -1130,6 +1132,8 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
     local craftList = queueTab.content.craftList
 
     local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
+
+    local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
 
     --- precalculate craftable status before sorting to increase performance
     table.foreach(craftQueue.craftQueueItems,
@@ -1147,9 +1151,19 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             local allowedToCraftA = craftQueueItemA.allowedToCraft
             local allowedToCraftB = craftQueueItemB.allowedToCraft
 
-            if craftQueueItemA.recipeData.subRecipeDepth > craftQueueItemB.recipeData.subRecipeDepth then
+            -- always sort before if it is a parent recipe
+
+            if craftQueueItemB.recipeData:IsParentRecipeOf(craftQueueItemA.recipeData) then
+                return true  -- (A > B)
+            elseif craftQueueItemA.recipeData:IsParentRecipeOf(craftQueueItemB.recipeData) then
+                return false -- (B > A)
+            end
+
+            -- recipes with subrecipes should be put bottom and without can be sorted to top
+
+            if #craftQueueItemA.recipeData.priceData.selfCraftedReagents == 0 and #craftQueueItemB.recipeData.priceData.selfCraftedReagents > 0 then
                 return true
-            elseif craftQueueItemA.recipeData.subRecipeDepth < craftQueueItemB.recipeData.subRecipeDepth then
+            elseif #craftQueueItemB.recipeData.priceData.selfCraftedReagents == 0 and #craftQueueItemA.recipeData.priceData.selfCraftedReagents > 0 then
                 return false
             end
 
@@ -1162,11 +1176,22 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
             local crafterA = craftQueueItemA.recipeData:GetCrafterUID()
             local crafterB = craftQueueItemB.recipeData:GetCrafterUID()
 
+            -- then prefer current character
+            if crafterA == playerCrafterUID and crafterB ~= playerCrafterUID then
+                return true
+            elseif crafterA ~= playerCrafterUID and crafterB == playerCrafterUID then
+                return false
+            end
+
+            -- else sort by alphabet
+
             if crafterA > crafterB then
                 return true
             elseif crafterA < crafterB then
                 return false
             end
+
+            -- at last sort by profit
 
             if craftQueueItemA.recipeData.averageProfitCached > craftQueueItemB.recipeData.averageProfitCached then
                 return true
