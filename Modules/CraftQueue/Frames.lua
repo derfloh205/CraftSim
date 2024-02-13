@@ -1144,63 +1144,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
         end)
 
     CraftSim.DEBUG:StartProfiling("- FrameListUpdate Sort Queue")
-    craftQueue.craftQueueItems = GUTIL:Sort(craftQueue.craftQueueItems,
-        ---@param craftQueueItemA CraftSim.CraftQueueItem
-        ---@param craftQueueItemB CraftSim.CraftQueueItem
-        function(craftQueueItemA, craftQueueItemB)
-            local allowedToCraftA = craftQueueItemA.allowedToCraft
-            local allowedToCraftB = craftQueueItemB.allowedToCraft
-
-            -- always sort before if it is a parent recipe
-
-            if craftQueueItemB.recipeData:IsParentRecipeOf(craftQueueItemA.recipeData) then
-                return true  -- (A > B)
-            elseif craftQueueItemA.recipeData:IsParentRecipeOf(craftQueueItemB.recipeData) then
-                return false -- (B > A)
-            end
-
-            -- recipes with subrecipes should be put bottom and without can be sorted to top
-
-            if #craftQueueItemA.recipeData.priceData.selfCraftedReagents == 0 and #craftQueueItemB.recipeData.priceData.selfCraftedReagents > 0 then
-                return true
-            elseif #craftQueueItemB.recipeData.priceData.selfCraftedReagents == 0 and #craftQueueItemA.recipeData.priceData.selfCraftedReagents > 0 then
-                return false
-            end
-
-            if allowedToCraftA and not allowedToCraftB then
-                return true
-            elseif not allowedToCraftA and allowedToCraftB then
-                return false
-            end
-
-            local crafterA = craftQueueItemA.recipeData:GetCrafterUID()
-            local crafterB = craftQueueItemB.recipeData:GetCrafterUID()
-
-            -- then prefer current character
-            if crafterA == playerCrafterUID and crafterB ~= playerCrafterUID then
-                return true
-            elseif crafterA ~= playerCrafterUID and crafterB == playerCrafterUID then
-                return false
-            end
-
-            -- else sort by alphabet
-
-            if crafterA > crafterB then
-                return true
-            elseif crafterA < crafterB then
-                return false
-            end
-
-            -- at last sort by profit
-
-            if craftQueueItemA.recipeData.averageProfitCached > craftQueueItemB.recipeData.averageProfitCached then
-                return true
-            elseif craftQueueItemA.recipeData.averageProfitCached < craftQueueItemB.recipeData.averageProfitCached then
-                return false
-            end
-
-            return false
-        end)
+    craftQueue:FilterSortByPriority()
     CraftSim.DEBUG:StopProfiling("- FrameListUpdate Sort Queue")
 
     craftList:Remove()

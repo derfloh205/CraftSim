@@ -11,8 +11,6 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 function CraftSim.CraftQueue:new()
     ---@type CraftSim.CraftQueueItem[]
     self.craftQueueItems = {}
-
-    self:RestoreFromCache()
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -39,6 +37,16 @@ function CraftSim.CraftQueue:AddRecipe(recipeData, amount)
         craftQueueItem.amount = craftQueueItem.amount + amount
         craftQueueItem.recipeData.subRecipeDepth = math.max(craftQueueItem.recipeData.subRecipeDepth,
             recipeData.subRecipeDepth)
+
+        -- also check if I have parent recipes that the already queued recipe does not have
+        for _, parentRecipesInfo in ipairs(recipeData.parentRecipeInfo) do
+            local hasPri = GUTIL:Some(craftQueueItem.recipeData.parentRecipeInfo, function(pri)
+                return pri.crafterUID == parentRecipesInfo.crafterUID and pri.recipeID == parentRecipesInfo.recipeID
+            end)
+            if not hasPri then
+                tinsert(craftQueueItem.recipeData.parentRecipeInfo, parentRecipesInfo)
+            end
+        end
     else
         craftQueueItem = CraftSim.CraftQueueItem(recipeData, amount)
         -- create a new queue item
@@ -170,4 +178,118 @@ function CraftSim.CraftQueue:RestoreFromCache()
                 end)
         end,
         load)
+end
+
+function CraftSim.CraftQueue:FilterSortByPriority()
+    -- first append all recipes of the current crafter character that do not have any subrecipes
+    local characterRecipesNoAltDependency, restRecipes = GUTIL:Split(self.craftQueueItems, function(cqi)
+        local noActiveSubRecipes = not cqi.hasActiveSubRecipes
+        local noSubRecipeFromAlts = not cqi.hasActiveSubRecipesFromAlts
+        local validSubRecipeStatus = noActiveSubRecipes or noSubRecipeFromAlts
+        return validSubRecipeStatus and cqi.isCrafter
+    end)
+    local sortedCharacterRecipes = GUTIL:Sort(characterRecipesNoAltDependency,
+        function(a, b)
+            if a.allowedToCraft and not b.allowedToCraft then
+                return true
+            elseif not a.allowedToCraft and b.allowedToCraft then
+                return false
+            end
+
+            if a.recipeData.subRecipeDepth > b.recipeData.subRecipeDepth then
+                return true
+            elseif a.recipeData.subRecipeDepth < b.recipeData.subRecipeDepth then
+                return false
+            end
+
+            if a.recipeData.averageProfitCached > b.recipeData.averageProfitCached then
+                return true
+            elseif a.recipeData.averageProfitCached < b.recipeData.averageProfitCached then
+                return false
+            end
+
+            return false
+        end)
+
+    -- then sort the rest items by subrecipedepth and character names / profit
+    local sortedRestRecipes = GUTIL:Sort(restRecipes, function(a, b)
+        if a.recipeData.subRecipeDepth > b.recipeData.subRecipeDepth then
+            return true
+        elseif a.recipeData.subRecipeDepth < b.recipeData.subRecipeDepth then
+            return false
+        end
+
+        local crafterA = a.recipeData:GetCrafterUID()
+        local crafterB = b.recipeData:GetCrafterUID()
+
+        if crafterA > crafterB then
+            return true
+        elseif crafterA < crafterB then
+            return false
+        end
+
+        if a.recipeData.averageProfitCached > b.recipeData.averageProfitCached then
+            return true
+        elseif a.recipeData.averageProfitCached < b.recipeData.averageProfitCached then
+            return false
+        end
+
+        return false
+    end)
+
+    wipe(self.craftQueueItems)
+    tAppendAll(self.craftQueueItems, sortedCharacterRecipes)
+    tAppendAll(self.craftQueueItems, sortedRestRecipes)
+end
+
+---Returns wether the recipe has any active subrecipes and if they are from alts (sub recipe is active if the item quantity > 0 and is crafted by another character)
+---@param recipeData CraftSim.RecipeData
+---@return boolean HasActiveSubRecipes
+---@return boolean HasActiveSubRecipesFromAlts
+function CraftSim.CraftQueue:RecipeHasActiveSubRecipesInQueue(recipeData)
+    local print = CraftSim.DEBUG:SetDebugPrint("SUB_RECIPE_DATA")
+    local activeSubRecipes = false
+    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+
+    print("HasActiveSubRecipes? " .. recipeData:GetCrafterUID() .. "-" .. recipeData.recipeName)
+
+    local activeSubRecipesFromAlts = GUTIL:Some(recipeData.priceData.selfCraftedReagents, function(itemID)
+        -- need to find the corresponding recipeData in the craftQueue since the optimized one referenced in the recipeData itself is not necessarily the same (due to serialization and AddRecipe adding amount)
+        local optimizedSubRecipeData = recipeData.optimizedSubRecipes[itemID]
+        if not optimizedSubRecipeData then return false end
+        local craftQueueItem = self:FindRecipe(optimizedSubRecipeData)
+        if not craftQueueItem then return false end
+        local subRecipeData = craftQueueItem.recipeData
+        local debugItem = tostring(select(1, GetItemInfo(itemID)) or itemID) ..
+            " q: " .. recipeData.reagentData:GetReagentQualityIDByItemID(itemID)
+        print("checking item: " .. debugItem)
+        local quantity = recipeData:GetReagentQuantityByItemID(itemID)
+        local hasQuantity = quantity > 0
+        if hasQuantity then
+            print("item quantity: " .. quantity)
+            activeSubRecipes = true -- if we find at least one active then we have subrecipes
+
+            local isAlt = subRecipeData:GetCrafterUID() ~= crafterUID
+            if isAlt then
+                print("- has alt dep sub recipes")
+                return true
+            end
+
+            -- else check if subRecipeData has ActiveSubRecipes not from the player
+            local _, subRecipeAltDependend = self:RecipeHasActiveSubRecipesInQueue(subRecipeData)
+
+            if subRecipeAltDependend then
+                print("- has sub rep with alt dep")
+                return true
+            end
+        end
+
+        print("- no quantity for item")
+
+        return false
+    end)
+
+    print("return " .. tostring(activeSubRecipes) .. ", " .. tostring(activeSubRecipesFromAlts))
+
+    return activeSubRecipes, activeSubRecipesFromAlts
 end

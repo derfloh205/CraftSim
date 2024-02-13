@@ -56,6 +56,31 @@ function CraftSim.DEBUG.FRAMES:InitDebugFrame(debugFrame)
     debugFrame.content.debugBox:SetScript("OnEscapePressed", function() debugFrame.content.debugBox:ClearFocus() end)
     debugFrame.content.debugBox:SetScript("OnEnterPressed", function() debugFrame.content.debugBox:ClearFocus() end)
 
+    debugFrame.content.autoScrollCB = GGUI.Checkbox {
+        parent = debugFrame.content, anchorParent = debugFrame.content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 10, offsetY = 0,
+        initialValue = CraftSimOptions.debugAutoScroll,
+        label = "Autoscroll",
+        clickCallback = function(_, checked)
+            CraftSimOptions.debugAutoScroll = checked
+        end
+    }
+
+    debugFrame.content.clearButton = GGUI.Button({
+        label = "Clear Log",
+        parent = debugFrame.content,
+        anchorParent = debugFrame.content,
+        anchorA = "TOPRIGHT",
+        anchorB = "TOPRIGHT",
+        offsetY = 3,
+        offsetX = -25,
+        sizeX = 15,
+        sizeY = 25,
+        adjustWidth = true,
+        clickCallback = function()
+            CraftSim.DEBUG.frame.content.debugBox:SetText("")
+        end,
+    })
+
     debugFrame.addDebug = function(debugOutput, debugID, printLabel)
         if debugFrame:IsVisible() then -- to not make it too bloated over time
             local currentOutput = debugFrame.content.debugBox:GetText()
@@ -120,7 +145,7 @@ function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
 
     controlPanel.content.logTab = GGUI.BlizzardTab {
         buttonOptions = {
-            label = "Log Options", offsetY = -3,
+            label = "Debug IDs", offsetY = -3,
         },
         initialTab = true,
         top = true,
@@ -161,30 +186,6 @@ end
 function CraftSim.DEBUG.FRAMES:InitLogOptionsTab(logOptionsTab)
     local content = logOptionsTab.content
 
-    content.autoScrollCB = GGUI.Checkbox {
-        parent = content, anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 25, offsetY = -30,
-        initialValue = CraftSimOptions.debugAutoScroll,
-        label = "Autoscroll",
-        clickCallback = function(_, checked)
-            CraftSimOptions.debugAutoScroll = checked
-        end
-    }
-
-    content.clearButton = GGUI.Button({
-        label = "Clear Log",
-        parent = content,
-        anchorParent = content.autoScrollCB.frame,
-        anchorA = "TOPLEFT",
-        anchorB = "BOTTOMLEFT",
-        sizeX = 15,
-        sizeY = 25,
-        adjustWidth = true,
-        clickCallback = function()
-            CraftSim.DEBUG.frame.content.debugBox:SetText("")
-        end,
-        offsetX = 0,
-    })
-
     content.debugIDList = GGUI.FrameList {
         columnOptions = {
             {
@@ -196,7 +197,7 @@ function CraftSim.DEBUG.FRAMES:InitLogOptionsTab(logOptionsTab)
                 width = 220,
             }
         },
-        parent = content, anchorParent = content, sizeY = 290, anchorA = "TOP", anchorB = "TOP", offsetY = -90, showBorder = true, offsetX = -10,
+        parent = content, anchorParent = content, sizeY = 340, anchorA = "TOP", anchorB = "TOP", offsetY = -40, showBorder = true, offsetX = -10,
         rowConstructor = function(columns)
             local checkBoxRow = columns[1]
             local labelRow = columns[2]
@@ -476,7 +477,12 @@ function CraftSim.DEBUG.FRAMES:InitModuleToolsCraftQueueTab(craftQueueTab)
         clickCallback = function()
             if DevTool then
                 DevTool.MainWindow:Show()
-                DevTool:AddData(CraftSim.CRAFTQ.craftQueue.craftQueueItems, "CraftQueueItems")
+                local nameMap = {}
+                for index, cqi in ipairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
+                    nameMap["[" .. index .. "] " .. cqi.recipeData:GetCrafterUID() .. "-" .. cqi.recipeData.recipeName] =
+                        cqi
+                end
+                DevTool:AddData(nameMap, "CraftQueueItems")
             end
         end
     }

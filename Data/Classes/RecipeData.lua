@@ -923,13 +923,18 @@ end
 
 --- optimizes cached subrecipes and updates priceData
 ---@param visitedRecipeIDs? CraftSim.RecipeData.VisitedRecipeData[] blank in initial call - used to break potential infinite loops
+---@return boolean success
 function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth)
     local printD = CraftSim.DEBUG:SetDebugPrint("SUB_RECIPE_DATA")
     subRecipeDepth = subRecipeDepth or 0
     visitedRecipeIDs = visitedRecipeIDs or {}
 
+    print("Optimize SubRecipes for " .. self.recipeName)
+    print("- Depth: " .. subRecipeDepth)
+
     if subRecipeDepth > CraftSimOptions.costOptimizationSubRecipeMaxDepth then
-        return
+        print("Cancel Sub Recipe Optimization due to max depth")
+        return false
     end
 
     --- DEBUG
@@ -939,8 +944,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
         end
     end
     local subRecipeData = self:GetSubRecipeCraftingInfos()
-    print("Optimize SubRecipes for " .. self.recipeName)
-    print("- Depth: " .. subRecipeDepth)
+
     -- used to show what is reachable
     wipe(self.optimizedSubRecipes)
     -- used to cache already optimized recipes
@@ -948,6 +952,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
     local optimized = {}
 
     local crafterUID = self:GetCrafterUID()
+    local parentRecipeInfo = self:CreateParentRecipeInfo()
 
     -- optimize recipes and map itemIDs
     for _, data in pairs(subRecipeData) do
@@ -979,13 +984,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
                 if not GUTIL:Some(reagentRecipeData.parentRecipeInfo, function(info)
                         return info.crafterUID == crafterUID and info.recipeID == self.recipeID
                     end) then
-                    tinsert(reagentRecipeData.parentRecipeInfo, {
-                        crafterUID = crafterUID,
-                        recipeID = self.recipeID,
-                        crafterClass = self.crafterData.class,
-                        profession = self.professionData.professionInfo.profession,
-                        recipeName = self.recipeName,
-                    })
+                    tinsert(reagentRecipeData.parentRecipeInfo, parentRecipeInfo)
                 end
             elseif recipeID and crafterData then
                 -- only continue of the recipe in question is learned by the target crafter
@@ -1003,29 +1002,25 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
                     recipeData.subRecipeDepth = subRecipeDepth + 1
                     print("- Checking SubRecipe: " .. recipeData.recipeName)
                     -- go deep!
-                    recipeData:SetSubRecipeCostsUsage(true)
-                    if not GUTIL:Some(recipeData.parentRecipeInfo, function(info)
-                            return info.crafterUID == crafterUID and info.recipeID == self.recipeID
-                        end) then
-                        tinsert(recipeData.parentRecipeInfo, {
-                            crafterUID = crafterUID,
-                            recipeID = self.recipeID,
-                            crafterClass = self.crafterData.class,
-                            profession = self.professionData.professionInfo.profession,
-                            recipeName = self.recipeName,
-                        })
-                    end
-                    recipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth + 1)
-                    -- caches the expect costs info automatically
-                    recipeData:OptimizeProfit()
-                    print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
+                    local success = recipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth + 1)
+                    if success then
+                        recipeData:SetSubRecipeCostsUsage(true)
+                        if not GUTIL:Some(recipeData.parentRecipeInfo, function(info)
+                                return info.crafterUID == crafterUID and info.recipeID == self.recipeID
+                            end) then
+                            tinsert(recipeData.parentRecipeInfo, parentRecipeInfo)
+                        end
+                        -- caches the expect costs info automatically
+                        recipeData:OptimizeProfit()
+                        print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
 
-                    optimized[data.itemID] = recipeData
-                    -- if the necessary item quality is reachable, map it to the recipe
-                    local reagentQualityReachable = recipeData.resultData:IsMinimumQualityReachable(data.qualityID)
-                    print("- Quality Reachable: " .. tostring(reagentQualityReachable))
-                    if reagentQualityReachable then
-                        self.optimizedSubRecipes[data.itemID] = recipeData
+                        optimized[data.itemID] = recipeData
+                        -- if the necessary item quality is reachable, map it to the recipe
+                        local reagentQualityReachable = recipeData.resultData:IsMinimumQualityReachable(data.qualityID)
+                        print("- Quality Reachable: " .. tostring(reagentQualityReachable))
+                        if reagentQualityReachable then
+                            self.optimizedSubRecipes[data.itemID] = recipeData
+                        end
                     end
                 end
             end
@@ -1036,6 +1031,8 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
 
     -- update pricedata
     self.priceData:Update()
+
+    return true
 end
 
 ---@param includeProfessionIcon? boolean
@@ -1068,6 +1065,12 @@ function CraftSim.RecipeData:IsSelfCraftedReagent(itemID)
     return self.priceData:IsSelfCraftedReagent(itemID)
 end
 
+---@param itemID ItemID
+---@return number
+function CraftSim.RecipeData:GetReagentQuantityByItemID(itemID)
+    return self.reagentData:GetReagentQuantityByItemID(itemID)
+end
+
 ---@param subRecipeData CraftSim.RecipeData
 function CraftSim.RecipeData:IsParentRecipeOf(subRecipeData)
     -- check not per reference by by recipeID and crafterUID
@@ -1077,4 +1080,21 @@ function CraftSim.RecipeData:IsParentRecipeOf(subRecipeData)
     return GUTIL:Some(subRecipeData.parentRecipeInfo, function(parentRecipeInfo)
         return parentRecipeInfo.recipeID == parentRecipeID and parentRecipeInfo.crafterUID == parentCrafterUID
     end)
+end
+
+---@return CraftSim.RecipeData.ParentRecipeInfo
+function CraftSim.RecipeData:CreateParentRecipeInfo()
+    ---@type CraftSim.RecipeData.ParentRecipeInfo
+    local pri = {
+        recipeID = self.recipeID,
+        crafterUID = self:GetCrafterUID(),
+        crafterClass = self.crafterData.class,
+        profession = self.professionData.professionInfo.profession,
+        recipeName = self.recipeName,
+    }
+    return pri
+end
+
+function CraftSim.RecipeData:HasActiveSubRecipeInCraftQueue()
+    return CraftSim.CRAFTQ.craftQueue:RecipeHasActiveSubRecipesInQueue(self)
 end

@@ -529,6 +529,21 @@ function CraftSim.ReagentData:UpdateItemCountCacheForAllocatedReagents()
     end
 end
 
+---@param itemID ItemID
+---@return number count
+function CraftSim.ReagentData:GetReagentQuantityByItemID(itemID)
+    for i, reagent in ipairs(self.requiredReagents) do
+        for q, reagentItem in ipairs(reagent.items) do
+            local reagentItemID = reagentItem.item:GetItemID()
+            if reagentItemID == itemID then
+                return reagentItem.quantity
+            end
+        end
+    end
+
+    return 0
+end
+
 function CraftSim.ReagentData:Debug()
     local debugLines = {}
     for _, reagent in pairs(self.requiredReagents) do
