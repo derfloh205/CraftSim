@@ -998,28 +998,33 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
 
                 if recipeInfo then --and recipeInfo.learned then
                     local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
+                    local ignoreCooldownRecipe = not CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns and
+                        recipeData.cooldownData.isCooldownRecipe
 
-                    recipeData.subRecipeDepth = subRecipeDepth + 1
-                    print("- Checking SubRecipe: " .. recipeData.recipeName)
-                    -- go deep!
-                    local success = recipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth + 1)
-                    if success then
-                        recipeData:SetSubRecipeCostsUsage(true)
-                        if not GUTIL:Some(recipeData.parentRecipeInfo, function(info)
-                                return info.crafterUID == crafterUID and info.recipeID == self.recipeID
-                            end) then
-                            tinsert(recipeData.parentRecipeInfo, parentRecipeInfo)
-                        end
-                        -- caches the expect costs info automatically
-                        recipeData:OptimizeProfit()
-                        print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
+                    if not ignoreCooldownRecipe then
+                        recipeData.subRecipeDepth = subRecipeDepth + 1
+                        print("- Checking SubRecipe: " .. recipeData.recipeName)
+                        -- go deep!
+                        local success = recipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth + 1)
+                        if success then
+                            recipeData:SetSubRecipeCostsUsage(true)
+                            if not GUTIL:Some(recipeData.parentRecipeInfo, function(info)
+                                    return info.crafterUID == crafterUID and info.recipeID == self.recipeID
+                                end) then
+                                tinsert(recipeData.parentRecipeInfo, parentRecipeInfo)
+                            end
+                            -- caches the expect costs info automatically
+                            recipeData:OptimizeProfit()
+                            print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
 
-                        optimized[data.itemID] = recipeData
-                        -- if the necessary item quality is reachable, map it to the recipe
-                        local reagentQualityReachable = recipeData.resultData:IsMinimumQualityReachable(data.qualityID)
-                        print("- Quality Reachable: " .. tostring(reagentQualityReachable))
-                        if reagentQualityReachable then
-                            self.optimizedSubRecipes[data.itemID] = recipeData
+                            optimized[data.itemID] = recipeData
+                            -- if the necessary item quality is reachable, map it to the recipe
+                            local reagentQualityReachable = recipeData.resultData:IsMinimumQualityReachable(data
+                                .qualityID)
+                            print("- Quality Reachable: " .. tostring(reagentQualityReachable))
+                            if reagentQualityReachable then
+                                self.optimizedSubRecipes[data.itemID] = recipeData
+                            end
                         end
                     end
                 end

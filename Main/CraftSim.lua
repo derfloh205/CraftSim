@@ -97,6 +97,7 @@ CraftSimOptions = CraftSimOptions or {
 	-- cost optimization
 	costOptimizationAutomaticSubRecipeOptimization = false,
 	costOptimizationSubRecipeMaxDepth = 3,
+	costOptimizationSubRecipesIncludeCooldowns = false,
 }
 
 CraftSimGGUIConfig = CraftSimGGUIConfig or {}
@@ -171,6 +172,8 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 		CraftSimOptions.recipeScanImportAllProfessions = CraftSimOptions.recipeScanImportAllProfessions or false
 		CraftSimOptions.craftQueueShoppingListPerCharacter = CraftSimOptions.craftQueueShoppingListPerCharacter or false
 		CraftSimOptions.costOptimizationSubRecipeMaxDepth = CraftSimOptions.costOptimizationSubRecipeMaxDepth or 3
+		CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = CraftSimOptions
+		.costOptimizationSubRecipesIncludeCooldowns or false
 
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true

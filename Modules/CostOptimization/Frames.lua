@@ -261,6 +261,19 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
             CraftSimOptions.costOptimizationSubRecipeMaxDepth = value
         end
     }
+
+    content.includeCooldownsCB = GGUI.Checkbox {
+        parent = content, anchorParent = content.maxRecipeDepthSlider.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        labelOptions = {
+            anchorA = "RIGHT", anchorB = "LEFT", text = "Include Cooldown Recipes", justifyOptions = { type = "H", align = "RIGHT" },
+            offsetX = -7,
+        },
+        tooltip = "If enabled, " .. f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted materials",
+        initialValue = CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns,
+        clickCallback = function(_, checked)
+            CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = checked
+        end
+    }
 end
 
 ---@param recipeData CraftSim.RecipeData
