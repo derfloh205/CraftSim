@@ -274,6 +274,45 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
             CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = checked
         end
     }
+
+    ---@class CraftSim.COST_OPTIMIZATION.SubRecipeList : GGUI.FrameList
+    content.subRecipeList = GGUI.FrameList {
+        columnOptions = {
+            {
+                label = "", -- recipe names
+                width = 160,
+            },
+            {
+                label = "", -- resulting items icons
+                width = 70,
+            }
+        },
+        parent = content, anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -100, sizeY = 170, offsetX = 5,
+        showBorder = true,
+        rowConstructor = function(columns, row)
+            ---@class CraftSim.COST_OPTIMIZATION.SubRecipeList.Row
+            row = row
+            ---@class CraftSim.COST_OPTIMIZATION.SubRecipeList.RecipeColumn : Frame
+            local recipeColumn = columns[1]
+
+            ---@type CraftSim.ItemRecipeData
+            row.subRecipeData = nil
+
+            recipeColumn.text = GGUI.Text {
+                parent = recipeColumn, anchorParent = recipeColumn, justifyOptions = { type = "H", align = "LEFT" },
+                anchorA = "LEFT", anchorB = "LEFT",
+            }
+        end,
+        selectionOptions = {
+            selectionCallback = function(row, userInput)
+                CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
+            end
+        },
+    }
+
+    content.recipeTitle = GGUI.Text {
+        parent = content, anchorParent = content.subRecipeList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 50,
+    }
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -428,4 +467,69 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
     end
 
     reagentList:UpdateDisplay()
+    CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeList(recipeData)
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeList(recipeData)
+    local subRecipeOptionsTab = CraftSim.COST_OPTIMIZATION.frame.content
+        .subRecipeOptions --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab]]
+    local content = subRecipeOptionsTab.content --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab.Content]]
+    -- get selected itemID
+    local subRecipeList = content.subRecipeList
+
+    local subRecipeCraftingInfos = GUTIL:ToSet(recipeData:GetSubRecipeCraftingInfos(), function(element)
+        return element.recipeID
+    end)
+
+    -- make sure all possible crafters are listed by only looking at q1 entries
+    subRecipeCraftingInfos = GUTIL:Filter(subRecipeCraftingInfos, function(value)
+        return value.qualityID == 1
+    end)
+
+    subRecipeList:Remove()
+    for _, subRecipeCraftingInfo in ipairs(subRecipeCraftingInfos) do
+        subRecipeList:Add(
+        ---@param row CraftSim.COST_OPTIMIZATION.SubRecipeList.Row
+            function(row)
+                local columns = row.columns
+                local recipeColumn = columns[1] --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeList.RecipeColumn]]
+                -- to get general data just take the first crafter to fetch from cache
+                CraftSimRecipeDataCache.recipeInfoCache[subRecipeCraftingInfo.crafters[1]] = CraftSimRecipeDataCache
+                    .recipeInfoCache[subRecipeCraftingInfo.crafters[1]] or {}
+                local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[subRecipeCraftingInfo.crafters[1]]
+                    [subRecipeCraftingInfo.recipeID]
+
+                if recipeInfo then
+                    recipeColumn.text:SetText(GUTIL:IconToText(recipeInfo.icon, 25, 25) .. " " .. recipeInfo.name)
+                else
+                    recipeColumn.text:SetText(subRecipeCraftingInfo.recipeID)
+                end
+
+                row.subRecipeData = subRecipeCraftingInfo
+            end)
+    end
+
+    subRecipeList:UpdateDisplay()
+    subRecipeList:SelectRow(1)
+end
+
+function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
+    local subRecipeOptionsTab = CraftSim.COST_OPTIMIZATION.frame.content
+        .subRecipeOptions --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab]]
+    local content = subRecipeOptionsTab.content --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab.Content]]
+    -- get selected itemID
+    local subReagentList = content.subRecipeList
+
+    local selectedRow = subReagentList.selectedRow --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeList.Row]]
+
+    if selectedRow and selectedRow.subRecipeData then
+        local subRecipeData = selectedRow.subRecipeData --[[@as CraftSim.ItemRecipeData]]
+        -- update display
+        content.recipeTitle:Show()
+        content.recipeTitle:SetText(subRecipeData.recipeID)
+    else
+        -- hide stuff
+        content.recipeTitle:Hide()
+    end
 end

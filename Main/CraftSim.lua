@@ -173,7 +173,7 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 		CraftSimOptions.craftQueueShoppingListPerCharacter = CraftSimOptions.craftQueueShoppingListPerCharacter or false
 		CraftSimOptions.costOptimizationSubRecipeMaxDepth = CraftSimOptions.costOptimizationSubRecipeMaxDepth or 3
 		CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = CraftSimOptions
-		.costOptimizationSubRecipesIncludeCooldowns or false
+			.costOptimizationSubRecipesIncludeCooldowns or false
 
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
@@ -803,7 +803,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 		CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
 	end
 
-	-- Cost Overview Module
+	-- Price Details Module
 	CraftSim.FRAME:ToggleFrame(CraftSim.PRICE_DETAILS.frame,
 		showCostOverview and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(CraftSim.PRICE_DETAILS.frameWO,
