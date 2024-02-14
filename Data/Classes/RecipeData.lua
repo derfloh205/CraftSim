@@ -972,8 +972,9 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
     -- optimize recipes and map itemIDs
     for _, data in pairs(subRecipeData) do
         local recipeID = data.recipeID
-        -- todo: for selected crafters of player in cost optimization module (tbi), and use the one with lowest costs
-        local crafter = data.crafters[1]
+        -- fall back to the first crafter if nothing is set?
+        local crafter = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(data.recipeID) or
+            data.crafters[1]
 
         -- a infinite loop occurs if we try to optimize a recipe we already visited in a previous subRecipe depth
         -- if that happens we do not want to optimize that recipe again but just stop optimizing

@@ -96,7 +96,7 @@ CraftSimOptions = CraftSimOptions or {
 
 	-- cost optimization
 	costOptimizationAutomaticSubRecipeOptimization = false,
-	costOptimizationSubRecipeMaxDepth = 3,
+	costOptimizationSubRecipeMaxDepth = 1,
 	costOptimizationSubRecipesIncludeCooldowns = false,
 }
 
@@ -171,7 +171,7 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 			CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
 		CraftSimOptions.recipeScanImportAllProfessions = CraftSimOptions.recipeScanImportAllProfessions or false
 		CraftSimOptions.craftQueueShoppingListPerCharacter = CraftSimOptions.craftQueueShoppingListPerCharacter or false
-		CraftSimOptions.costOptimizationSubRecipeMaxDepth = CraftSimOptions.costOptimizationSubRecipeMaxDepth or 3
+		CraftSimOptions.costOptimizationSubRecipeMaxDepth = CraftSimOptions.costOptimizationSubRecipeMaxDepth or 1
 		CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = CraftSimOptions
 			.costOptimizationSubRecipesIncludeCooldowns or false
 

@@ -195,3 +195,9 @@ end
 function CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(recipeID, crafterUID)
     return crafterUID == CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID]
 end
+
+---@param recipeID RecipeID
+---@param crafterUID CrafterUID
+function CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(recipeID, crafterUID)
+    CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID] = crafterUID
+end

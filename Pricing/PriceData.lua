@@ -53,21 +53,24 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
         if considerSubCrafts then
             CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
                 .itemOptimizedCostsDataCache[itemID] or {}
-            -- check for crafting costs cached data
-            local itemOptimizedCostsCrafters = CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID]
-            local itemOptimizedCostsData
-            -- get best costs from all cached crafters
-            for _, data in pairs(itemOptimizedCostsCrafters) do
-                if not itemOptimizedCostsData or data.expectedCosts < itemOptimizedCostsData.expectedCosts then
-                    itemOptimizedCostsData = data
-                end
-            end
-            if itemOptimizedCostsData then
-                priceInfo.expectedCostsData = itemOptimizedCostsData
-                -- only set as used price if its lower then ah price or no ah price for this item exists
-                if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCosts < priceInfo.ahPrice then
-                    priceInfo.isExpectedCost = true
-                    return itemOptimizedCostsData.expectedCosts, priceInfo
+            -- get costs from set crafter
+            local itemRecipeData = CraftSimRecipeDataCache.itemRecipeCache[itemID]
+
+            -- only use if set crafter exists, has cached optimized costs and can even craft that item with a chance higher than 0
+            if itemRecipeData then
+                local recipeCrafter = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(itemRecipeData
+                    .recipeID)
+                if recipeCrafter then
+                    local itemOptimizedCostsData = CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID]
+                        [recipeCrafter]
+                    if itemOptimizedCostsData and itemOptimizedCostsData.craftingChance > 0 then
+                        priceInfo.expectedCostsData = itemOptimizedCostsData
+                        -- only set as used price if its lower then ah price or no ah price for this item exists
+                        if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCosts < priceInfo.ahPrice then
+                            priceInfo.isExpectedCost = true
+                            return itemOptimizedCostsData.expectedCosts, priceInfo
+                        end
+                    end
                 end
             end
         end

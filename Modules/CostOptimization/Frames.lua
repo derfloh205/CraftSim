@@ -338,8 +338,10 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
             ---@param userInput boolean
                 function(row, userInput)
                     if userInput and row.recipeID and row.crafterUID then
-                        CraftSimRecipeDataCache.subRecipeCrafterCache[row.recipeID] = row.crafterUID
-                        content.subRecipeCrafterList:SortAndUpdate()
+                        if not CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(row.recipeID, row.crafterUID) then
+                            CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(row.recipeID, row.crafterUID)
+                            CraftSim.MAIN:TriggerModulesByRecipeType()
+                        end
                     end
                 end },
         rowConstructor = function(columns, row)
