@@ -776,6 +776,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 		CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 	end
 
+	-- Cost Optimization Module
 	CraftSim.FRAME:ToggleFrame(CraftSim.COST_OPTIMIZATION.frame,
 		showCostDetails and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(CraftSim.COST_OPTIMIZATION.frameWO,

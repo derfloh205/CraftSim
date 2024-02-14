@@ -1060,7 +1060,10 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
         label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON), adjustWidth = true,
         clickCallback = function()
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
-                editRecipeFrame.craftQueueItem.recipeData:OptimizeProfit(true)
+                editRecipeFrame.craftQueueItem.recipeData:OptimizeProfit({
+                    optimizeGear = true,
+                    optimizeReagents = true,
+                })
                 CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
                 CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
             end

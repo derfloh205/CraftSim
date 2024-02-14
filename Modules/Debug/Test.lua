@@ -18,7 +18,10 @@ function CraftSim.DEBUG.TEST:CachedRecipesTest()
             for _, recipeID in pairs(recipeIDs) do
                 local recipeData = CraftSim.RecipeData(recipeID, nil, nil, { name = name, realm = realm })
 
-                recipeData:OptimizeProfit()
+                recipeData:OptimizeProfit({
+                    optimizeGear = true,
+                    optimizeReagents = true,
+                })
 
                 recipeData:Update()
 

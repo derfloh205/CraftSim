@@ -289,6 +289,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
         },
         parent = content, anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -100, sizeY = 170, offsetX = 5,
         showBorder = true,
+        rowHeight = 20,
         rowConstructor = function(columns, row)
             ---@class CraftSim.COST_OPTIMIZATION.SubRecipeList.Row
             row = row
@@ -297,6 +298,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
 
             ---@type CraftSim.ItemRecipeData
             row.subRecipeData = nil
+
+            row.recipeTitle = ""
 
             recipeColumn.text = GGUI.Text {
                 parent = recipeColumn, anchorParent = recipeColumn, justifyOptions = { type = "H", align = "LEFT" },
@@ -311,7 +314,33 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
     }
 
     content.recipeTitle = GGUI.Text {
-        parent = content, anchorParent = content.subRecipeList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 50,
+        parent = content, anchorParent = content.subRecipeList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 40,
+    }
+
+    content.subRecipeCrafterList = GGUI.FrameList {
+        parent = content, anchorParent = content.subRecipeList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 30, offsetY = -30, sizeY = 140,
+        columnOptions = {
+            {
+                width = 50, -- checkboxcolumn
+            },
+            {
+                width = 150, -- crafterName
+            }
+        },
+        showBorder = true,
+        selectionOptions = { hoverRGBA = CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA, noSelectionColor = true },
+        rowConstructor = function(columns, row)
+            local cbColumn = columns[1]
+            local crafterColumn = columns[2]
+
+            cbColumn.cb = GGUI.Checkbox {
+                parent = cbColumn, anchorParent = cbColumn,
+            }
+
+            crafterColumn.text = GGUI.Text {
+                parent = crafterColumn, anchorParent = crafterColumn, anchorA = "LEFT", anchorB = "LEFT", justifyOptions = { type = "H", align = "LEFT" },
+            }
+        end
     }
 end
 
@@ -501,17 +530,18 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeList(reci
                     [subRecipeCraftingInfo.recipeID]
 
                 if recipeInfo then
-                    recipeColumn.text:SetText(GUTIL:IconToText(recipeInfo.icon, 25, 25) .. " " .. recipeInfo.name)
+                    row.recipeTitle = GUTIL:IconToText(recipeInfo.icon, 20, 20) .. " " .. recipeInfo.name
+                    recipeColumn.text:SetText(row.recipeTitle)
+                    row.subRecipeData = subRecipeCraftingInfo
                 else
                     recipeColumn.text:SetText(subRecipeCraftingInfo.recipeID)
                 end
-
-                row.subRecipeData = subRecipeCraftingInfo
             end)
     end
 
     subRecipeList:UpdateDisplay()
     subRecipeList:SelectRow(1)
+    CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
 end
 
 function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
@@ -523,11 +553,84 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
 
     local selectedRow = subReagentList.selectedRow --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeList.Row]]
 
-    if selectedRow and selectedRow.subRecipeData then
+    if selectedRow and selectedRow.subRecipeData and #subReagentList.activeRows > 0 then
         local subRecipeData = selectedRow.subRecipeData --[[@as CraftSim.ItemRecipeData]]
         -- update display
         content.recipeTitle:Show()
-        content.recipeTitle:SetText(subRecipeData.recipeID)
+        content.recipeTitle:SetText(selectedRow.recipeTitle)
+
+        local subRecipeCrafterList = content.subRecipeCrafterList
+
+        local recipeSubRecipeInfoList = GUTIL:Filter(CraftSimRecipeDataCache.itemRecipeCache, function(irI)
+            return irI.recipeID == subRecipeData.recipeID
+        end)
+
+        -- fill with cached crafters and initialize checkboxes and so on
+
+        subRecipeCrafterList:Remove()
+
+        for _, crafter in ipairs(subRecipeData.crafters) do
+            subRecipeCrafterList:Add(function(row)
+                local columns = row.columns
+                local cbColumn = columns[1]
+                local crafterColumn = columns[2]
+
+                cbColumn.cb:SetChecked(false)
+                local crafterText = strsplit("-", crafter) -- name only
+                local fullCrafterText = crafter
+                local crafterClass = CraftSimRecipeDataCache.altClassCache[crafter]
+                if crafterClass then
+                    crafterText = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterText)
+                    fullCrafterText = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(fullCrafterText)
+                end
+                crafterColumn.text:SetText(crafterText)
+
+                local crafterItemRecipeList = GUTIL:Filter(recipeSubRecipeInfoList, function(irI)
+                    return tContains(irI.crafters, crafter)
+                end)
+                local optimizedItemIDs = {}
+                -- metadata for sorting and other things
+                local crafterRecipeOptimizedCostsDataModifiedList = GUTIL:Map(crafterItemRecipeList, function(irI)
+                    CraftSimRecipeDataCache.itemOptimizedCostsDataCache[irI.itemID] = CraftSimRecipeDataCache
+                    .itemOptimizedCostsDataCache[irI.itemID] or {}
+                    tinsert(optimizedItemIDs, Item:CreateFromItemID(irI.itemID))
+                    return {
+                        itemID = irI.itemID,
+                        optimizedCostsData = CraftSimRecipeDataCache.itemOptimizedCostsDataCache
+                            [irI.itemID][crafter]
+                    }
+                end)
+
+                row.crafter = fullCrafterText
+                local tooltipText = ""
+
+                GUTIL:ContinueOnAllItemsLoaded(optimizedItemIDs, function()
+                    if #crafterRecipeOptimizedCostsDataModifiedList > 0 then
+                        for _, optimizedCostsDataModified in ipairs(crafterRecipeOptimizedCostsDataModifiedList) do
+                            local item = Item:CreateFromItemID(optimizedCostsDataModified.itemID)
+                            local optimizedCostData = optimizedCostsDataModified.optimizedCostsData
+                            if optimizedCostData then
+                                tooltipText = tooltipText .. "\n" .. GUTIL:IconToText(item:GetItemIcon(), 20, 20) .. " "
+                                    ..
+                                    GUTIL:GetQualityIconString(optimizedCostData.qualityID, 20, 20) ..
+                                    f.white("\n- Chance: " ..
+                                        GUTIL:Round(optimizedCostData.craftingChance * 100) .. "%") ..
+                                    f.white("\n- Expected Crafts: " .. math.ceil(optimizedCostData.expectedCrafts)) ..
+                                    f.white("\n- Expected Costs: " .. GUTIL:FormatMoney(optimizedCostData.expectedCosts))
+                            end
+                        end
+                    end
+
+                    row.tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR",
+                        owner = row.frame,
+                        text = crafterText .. tooltipText,
+                    }
+                end)
+            end)
+        end
+
+        subRecipeCrafterList:UpdateDisplay()
     else
         -- hide stuff
         content.recipeTitle:Hide()

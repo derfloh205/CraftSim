@@ -526,12 +526,24 @@ function CraftSim.RecipeData:GetAverageProfit()
     return averageProfit, probabilityTable
 end
 
----Optimizes the recipeData's reagents and gear for highest profit
-function CraftSim.RecipeData:OptimizeProfit()
-    self:OptimizeReagents()
-    self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
-    -- need another because it could be that the optimized gear makes it possible to use cheaper reagents
-    self:OptimizeReagents()
+---@class CraftSim.RecipeData.OptimizeProfitOptions
+---@field optimizeGear? boolean
+---@field optimizeReagents? boolean
+
+---Optimizes the recipeData's reagents and gear for highest profit and caches result for crafter
+---@param options? CraftSim.RecipeData.OptimizeProfitOptions
+function CraftSim.RecipeData:OptimizeProfit(options)
+    options = options or {}
+    if options.optimizeReagents then
+        self:OptimizeReagents()
+    end
+    if options.optimizeGear then -- TEMPORARY: ALWAYS OPTIMIZE IF PARAM IS NOT GIVEN
+        self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
+    end
+    if options.optimizeReagents and options.optimizeGear then
+        -- need another because it could be that the optimized gear makes it possible to use cheaper reagents
+        self:OptimizeReagents()
+    end
 
     -- cache the results if not gear and if its learned only
     if not self.isGear and self.learned then
@@ -541,8 +553,8 @@ function CraftSim.RecipeData:OptimizeProfit()
         for qualityID, item in ipairs(self.resultData.itemsByQuality) do
             local chance = self.resultData.chanceByQuality[qualityID] or 0
             if chance > 0 then
-                local print = CraftSim.DEBUG:SetDebugPrint("SUB_RECIPE_DATA")
-                --print("Caching Optimized Costs Data for: " .. self.recipeName)
+                local print = CraftSim.DEBUG:SetDebugPrint("CACHE")
+                print("Caching Optimized Costs Data for: " .. self.recipeName)
                 local itemID = item:GetItemID()
                 CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
                     .itemOptimizedCostsDataCache[itemID] or {}
@@ -1014,7 +1026,10 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
                                 tinsert(recipeData.parentRecipeInfo, parentRecipeInfo)
                             end
                             -- caches the expect costs info automatically
-                            recipeData:OptimizeProfit()
+                            recipeData:OptimizeProfit({
+                                optimizeGear = true,
+                                optimizeReagents = true,
+                            })
                             print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
 
                             optimized[data.itemID] = recipeData
