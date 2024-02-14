@@ -573,7 +573,10 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeList(reci
     end
 
     subRecipeList:UpdateDisplay()
-    subRecipeList:SelectRow(1)
+    if CraftSim.MAIN.currentRecipeID ~= CraftSim.MAIN.lastRecipeID then
+        -- only auto select new row when switching recipes
+        subRecipeList:SelectRow(1)
+    end
     CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
 end
 
@@ -670,18 +673,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
 
         subRecipeCrafterList:SortAndUpdate()
 
-        if not subRecipeCrafterList.selectedRow then
-            local crafterRow = GUTIL:Find(subRecipeCrafterList.activeRows,
-                ---@param row CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.Row
-                function(row)
-                    return CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(row.recipeID,
-                        row.crafterUID)
-                end)
-
-            if crafterRow then
-                crafterRow:Select()
-            end
-        end
+        --first row is always crafter row after sort update
+        subRecipeCrafterList:SelectRow(1)
     else
         -- hide stuff
         content.recipeTitle:Hide()

@@ -870,6 +870,8 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	if recipeData and showCraftBuffs then
 		CraftSim.CRAFT_BUFFS.FRAMES:UpdateDisplay(recipeData, exportMode)
 	end
+
+	CraftSim.MAIN.lastRecipeID = CraftSim.MAIN.currentRecipeID
 end
 
 function CraftSim_OnAddonCompartmentClick()
