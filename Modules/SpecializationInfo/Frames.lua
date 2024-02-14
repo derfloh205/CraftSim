@@ -104,7 +104,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
 
         frame.content.nodeList = GGUI.FrameList {
             parent = frame.content, anchorParent = frame.content.statsText.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-            hideScrollbar = true, sizeY = 250, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA },
+            hideScrollbar = true, sizeY = 250, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE },
             rowHeight = 20, offsetX = -5, offsetY = 0, scale = 1,
             columnOptions = {
                 {

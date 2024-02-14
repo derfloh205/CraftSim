@@ -129,8 +129,12 @@ CraftSim.CONST.BACKDROPS = {
     }
 }
 
-CraftSim.CONST.JUST_HOVER_FRAMELIST_HOVERRGBA = { 1, 1, 1, 0.3 }
-
+CraftSim.CONST.FRAME_LIST_SELECTION_COLORS = {
+    HOVER_LIGHT_WHITE = { 1, 1, 1, 0.3 },
+    SELECTED_LIGHT_WHITE = { 1, 1, 1, 0.5 },
+    HOVER_LIGHT_GREEN = { 0, 1, 0, 0.2 },
+    SELECTED_LIGHT_GREEN = { 0, 1, 0, 0.4 },
+}
 
 ---@enum CraftSim.EXPANSION_IDS
 CraftSim.CONST.EXPANSION_IDS = {

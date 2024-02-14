@@ -125,15 +125,7 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
         -- if not gear update itemRecipeCache
         for qualityID, item in ipairs(self.itemsByQuality) do
             local itemID = item:GetItemID()
-            CraftSimRecipeDataCache.itemRecipeCache[itemID] = CraftSimRecipeDataCache.itemRecipeCache[itemID] or {}
-            CraftSimRecipeDataCache.itemRecipeCache[itemID].recipeID = recipeData.recipeID
-            CraftSimRecipeDataCache.itemRecipeCache[itemID].qualityID = qualityID
-            CraftSimRecipeDataCache.itemRecipeCache[itemID].itemID = itemID
-            CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters = CraftSimRecipeDataCache.itemRecipeCache[itemID]
-                .crafters or {}
-            if not tContains(CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters, crafterUID) then
-                tinsert(CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters, crafterUID)
-            end
+            CraftSim.CACHE.RECIPE_DATA.ITEM_RECIPE_CACHE:AddCache(recipeData.recipeID, qualityID, itemID, crafterUID)
         end
     end
 end

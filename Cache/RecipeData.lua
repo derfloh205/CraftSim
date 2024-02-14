@@ -11,6 +11,12 @@ CraftSim.CACHE = CraftSim.CACHE
 ---@class CraftSim.CACHE.RECIPE_DATA
 CraftSim.CACHE.RECIPE_DATA = {}
 
+---@class CraftSim.CACHE.ITEM_RECIPE_CACHE
+CraftSim.CACHE.RECIPE_DATA.ITEM_RECIPE_CACHE = {}
+
+---@class CraftSim.CACHE.SUB_RECIPE_CRAFTER_CACHE
+CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE = {}
+
 ---@class CraftSim.ProfessionGearCacheData
 ---@field cached boolean
 ---@field equippedGear CraftSim.ProfessionGearSet.Serialized?
@@ -47,6 +53,7 @@ CraftSim.CACHE.RECIPE_DATA = {}
 ---@field cooldownCache table<CrafterUID, table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>>
 ---@field itemRecipeCache table<ItemID, CraftSim.ItemRecipeData>
 ---@field itemOptimizedCostsDataCache table<ItemID, table<CrafterUID, CraftSim.ExpectedCraftingCostsData>>
+---@field subRecipeCrafterCache table<RecipeID, CrafterUID>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     cachedRecipeIDs = {},
     recipeInfoCache = {},
@@ -57,6 +64,7 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     altClassCache = {},
     postLoadedMulticraftInformationProfessions = {},
     cooldownCache = {},
+    subRecipeCrafterCache = {},
     cacheVersions = {
         cachedRecipeIDs = 1,
         recipeInfoCache = 1,
@@ -67,6 +75,7 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
         altClassCache = 1,
         postLoadedMulticraftInformationProfessions = 1,
         cooldownCache = 1,
+        subRecipeCrafterCache = 1,
     },
 }
 
@@ -88,9 +97,11 @@ function CraftSim.CACHE.RECIPE_DATA:HandleUpdates()
         CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions = CraftSimRecipeDataCache
             .postLoadedMulticraftInformationProfessions or {}
         CraftSimRecipeDataCache.cooldownCache = CraftSimRecipeDataCache.cooldownCache or {}
+        CraftSimRecipeDataCache.subRecipeCrafterCache = CraftSimRecipeDataCache.subRecipeCrafterCache or {}
         CraftSimRecipeDataCache.itemRecipeCache = CraftSimRecipeDataCache.itemRecipeCache or {}
         CraftSimRecipeDataCache.itemOptimizedCostsDataCache = CraftSimRecipeDataCache.itemOptimizedCostsDataCache or {}
         CraftSimRecipeDataCache.cacheVersions = CraftSimRecipeDataCache.cacheVersions or {}
+        CraftSimRecipeDataCache.cacheVersions.subRecipeCrafterCache = 1
 
         CraftSim.CACHE.RECIPE_DATA:HandleMigrations()
     end
@@ -151,4 +162,36 @@ function CraftSim.CACHE.RECIPE_DATA:MigrateCooldownCache_0_1()
     end
 
     CraftSimRecipeDataCache.cooldownCache = newCache
+end
+
+---@param itemID ItemID
+---@param crafterUID CrafterUID
+function CraftSim.CACHE.RECIPE_DATA.ITEM_RECIPE_CACHE:AddCache(recipeID, qualityID, itemID, crafterUID)
+    CraftSimRecipeDataCache.itemRecipeCache[itemID] = CraftSimRecipeDataCache.itemRecipeCache[itemID] or {}
+    CraftSimRecipeDataCache.itemRecipeCache[itemID].recipeID = recipeID
+    CraftSimRecipeDataCache.itemRecipeCache[itemID].qualityID = qualityID
+    CraftSimRecipeDataCache.itemRecipeCache[itemID].itemID = itemID
+    CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters = CraftSimRecipeDataCache.itemRecipeCache[itemID]
+        .crafters or {}
+    if not tContains(CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters, crafterUID) then
+        tinsert(CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters, crafterUID)
+
+        -- if the first and only crafter, enable in subRecipeCrafterCache
+        if #CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters == 1 then
+            CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID] = crafterUID
+        end
+    end
+end
+
+---@param recipeID RecipeID
+---@return CrafterUID crafterUID?
+function CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(recipeID)
+    return CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID]
+end
+
+---@param recipeID RecipeID
+---@param crafterUID CrafterUID
+---@return boolean
+function CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(recipeID, crafterUID)
+    return crafterUID == CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID]
 end
