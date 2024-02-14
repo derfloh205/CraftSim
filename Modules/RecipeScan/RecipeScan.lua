@@ -290,7 +290,10 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
         if CraftSimOptions.recipeScanOptimizeSubRecipes then
             printS("Optimizing SubRecipes..")
             recipeData:SetSubRecipeCostsUsage(true)
-            recipeData:OptimizeSubRecipes()
+            recipeData:OptimizeSubRecipes({
+                optimizeGear = CraftSimOptions.recipeScanOptimizeProfessionTools,
+                optimizeReagents = true,
+            })
             printS("optimizedRecipes: " .. tostring(GUTIL:Count(recipeData.optimizedSubRecipes)))
         end
 

@@ -695,7 +695,10 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	recipeData:SetSubRecipeCostsUsage(CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
 	if recipeData.subRecipeCostsEnabled then
 		CraftSim.DEBUG:StartProfiling("OptimizeSubRecipes")
-		recipeData:OptimizeSubRecipes()
+		recipeData:OptimizeSubRecipes({
+			optimizeGear = true, -- TODO: Option to toggle, maybe general, maybe per sub recipe?
+			optimizeReagents = true,
+		})
 		CraftSim.DEBUG:StopProfiling("OptimizeSubRecipes")
 	end
 

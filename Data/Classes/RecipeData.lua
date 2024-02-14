@@ -934,10 +934,13 @@ end
 ---@field subRecipeDepth number
 
 --- optimizes cached subrecipes and updates priceData
+---@param optimizeOptions? CraftSim.RecipeData.OptimizeProfitOptions
 ---@param visitedRecipeIDs? CraftSim.RecipeData.VisitedRecipeData[] blank in initial call - used to break potential infinite loops
+---@param subRecipeDepth? number
 ---@return boolean success
-function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth)
+function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeIDs, subRecipeDepth)
     local printD = CraftSim.DEBUG:SetDebugPrint("SUB_RECIPE_DATA")
+    optimizeOptions = optimizeOptions or {}
     subRecipeDepth = subRecipeDepth or 0
     visitedRecipeIDs = visitedRecipeIDs or {}
 
@@ -1017,7 +1020,8 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
                         recipeData.subRecipeDepth = subRecipeDepth + 1
                         print("- Checking SubRecipe: " .. recipeData.recipeName)
                         -- go deep!
-                        local success = recipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth + 1)
+                        local success = recipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeIDs,
+                            subRecipeDepth + 1)
                         if success then
                             recipeData:SetSubRecipeCostsUsage(true)
                             if not GUTIL:Some(recipeData.parentRecipeInfo, function(info)
@@ -1026,10 +1030,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(visitedRecipeIDs, subRecipeDepth
                                 tinsert(recipeData.parentRecipeInfo, parentRecipeInfo)
                             end
                             -- caches the expect costs info automatically
-                            recipeData:OptimizeProfit({
-                                optimizeGear = true,
-                                optimizeReagents = true,
-                            })
+                            recipeData:OptimizeProfit(optimizeOptions)
                             print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
 
                             optimized[data.itemID] = recipeData
