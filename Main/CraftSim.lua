@@ -49,6 +49,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesCraftQueue = false,
 	modulesCraftBuffs = true,
 	modulesCooldowns = false,
+	modulesExplanations = false,
 
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
@@ -433,7 +434,7 @@ function CraftSim.MAIN:ADDON_LOADED(addon_name)
 
 
 		CraftSim.AVERAGEPROFIT.FRAMES:Init()
-		CraftSim.AVERAGEPROFIT.FRAMES:InitExplanation()
+		CraftSim.EXPLANATIONS.FRAMES:Init()
 		CraftSim.TOPGEAR.FRAMES:Init()
 		CraftSim.PRICE_DETAILS.FRAMES:Init()
 		CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
@@ -612,6 +613,7 @@ function CraftSim.MAIN:HideAllModules(keepControlPanel)
 	-- hide sim mode toggle button
 	CraftSim.SIMULATION_MODE.FRAMES.WORKORDER.toggleButton:Hide()
 	CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton:Hide()
+	CraftSim.EXPLANATIONS.frame:Hide()
 end
 
 function CraftSim.MAIN:TriggerModulesByRecipeType()
@@ -719,6 +721,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	local showCraftQueue = true
 	local showCraftBuffs = true
 	local showCooldowns = true
+	local showExplanations = true
 
 
 	if recipeData.supportsCraftingStats then
@@ -750,9 +753,11 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	showCraftQueue = showCraftQueue and CraftSimOptions.modulesCraftQueue
 	showCraftBuffs = showCraftBuffs and CraftSimOptions.modulesCraftBuffs
 	showCooldowns = showCooldowns and CraftSimOptions.modulesCooldowns
+	showExplanations = showExplanations and CraftSimOptions.modulesExplanations
 
 	CraftSim.FRAME:ToggleFrame(CraftSim.RECIPE_SCAN.frame, showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTQ.frame, showCraftQueue)
+	CraftSim.FRAME:ToggleFrame(CraftSim.EXPLANATIONS.frame, showExplanations)
 	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
 	CraftSim.FRAME:ToggleFrame(customerServiceFrame, showCustomerService)
 	CraftSim.FRAME:ToggleFrame(customerHistoryFrame, showCustomerHistory)

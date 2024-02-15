@@ -124,7 +124,7 @@ function CraftSim.LOCAL_RU:GetData()
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] =
         "Это рассчитывается с использованием аппроксимации Абрамовица и Стегуна (1985) CDF (кумулятивной функции распределения)\n\nВы заметите, что это всегда около 50% для 1 крафта.\nЭто потому, что в большинстве случаев 0 близок к средней прибыли.\nИ вероятность получения среднего значения CDF всегда составляет 50%.\n\nОднако скорость изменения может сильно различаться в зависимости от рецепта.\nЕсли вероятность получения положительной прибыли выше, чем отрицательной, он будет постоянно увеличиваться.\nЭто, конечно, верно и для другого направления.",
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION] =
+        [CraftSim.CONST.TEXT.EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION] =
             f.r("Внимание: ") .. " Впереди математика!\n\n" ..
             "Когда вы создаете что-то, у вас есть разные шансы на разные результаты в зависимости от ваших показателей крафта.\n" ..
             "И в статистике это называется " .. f.l("Распределением вероятностей.\n") ..
@@ -171,7 +171,7 @@ function CraftSim.LOCAL_RU:GetData()
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") .. "что равно " .. f.m((-100 * 0.3 + 300 * 0.7) * 10000) .. "\n" ..
             "Вы можете просмотреть все случаи для вашего текущего рецепта в окне " .. f.bb("Статистика") .. "!"
         ,
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV] =
+        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_EXPLANATION] =
 
             f.l("Скрытое значение навыка (HSV)") ..
             " — это дополнительный случайный фактор, который возникает каждый раз, когда вы что-то создаете.\n" ..
@@ -284,14 +284,14 @@ function CraftSim.LOCAL_RU:GetData()
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "Средняя прибыль CraftSim",
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_EXPLANATION_TITLE] = "Объяснение средней прибыли CraftSim",
+        [CraftSim.CONST.TEXT.EXPLANATIONS_TITLE] = "Объяснение средней прибыли CraftSim",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON] = "Показать объяснение",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_EXPLANATION_BUTTON] = "Скрыть объяснение",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON] = "Показать статистику",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON] = "Скрыть статистику",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Ø Прибыль / Крафт: ",
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_TAB] = "Базовый расчет прибыли",
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV_TAB] = "Учет HSV",
+        [CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB] = "Базовый расчет прибыли",
+        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_TAB] = "Учет HSV",
 
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "Информация о стоимости CraftSim",

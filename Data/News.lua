@@ -15,7 +15,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
-        newP("15.0.10"),
+        newP("15.0.11"),
         f.P .. "Introducing " .. f.bb("Sub Recipes Optimization"),
         f.a .. "- " .. f.l("CraftSim") .. " is now able to optimize and cache",
         f.a .. "  crafting cost details for reagents",
@@ -30,6 +30,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Current cooldown charges are now shown besides",
         f.a .. "  the recipe name",
         f.a .. "- The alt profession list is now more consistently sorted",
+        f.P .. f.g("Explanations"),
+        f.a .. "- New Module moved from the Average Profit Module Explanation Button",
         f.p .. f.bb("Cooldowns"),
         f.a .. "- Fixed a bug when displaying a cooldown that is fully charged",
         f.p .. f.bb("CraftResults"),

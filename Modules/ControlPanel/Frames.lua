@@ -2,6 +2,10 @@
 local CraftSim = select(2, ...)
 local CraftSimAddonName = select(1, ...)
 
+---@class CraftSim.CONTROL_PANEL
+CraftSim.CONTROL_PANEL = CraftSim.CONTROL_PANEL
+
+---@class CraftSim.CONTROL_PANEL.FRAMES
 CraftSim.CONTROL_PANEL.FRAMES = {}
 
 function CraftSim.CONTROL_PANEL.FRAMES:Init()
@@ -240,4 +244,10 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP),
         "TOP", frame.content.modulesCustomerService, "TOP", 0, cbSpacingY, "modulesCustomerHistory",
         CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
+
+    frame.content.modulesExplanations = createModuleCheckbox(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL),
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP),
+        "TOP", frame.content.modulesCustomerHistory, "TOP", 0, cbSpacingY, "modulesExplanations",
+        CraftSim.CONST.FRAMES.EXPLANATIONS)
 end

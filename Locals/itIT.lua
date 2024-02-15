@@ -97,7 +97,7 @@ function CraftSim.LOCAL_IT:GetData()
             "Comunque, the rate of change può essere molto diverso tra le ricette.\n" ..
             "Se è più probabile avere un profitto positivo rispetto a uno negativo, crescerà in maniera costante.\n" ..
             "Questo è ovviamente vero anche in direzione opposta.",
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION] =
+        [CraftSim.CONST.TEXT.EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION] =
             f.r("Attenzione: ") .. " Un po' di matematica!!\n\n" ..
             "Quando crei qualcosa ci sono diverse probabilità di avere risultati diversi in base alle tue statistiche di creazione.\n" ..
             "E in statistica questa viene chiamata " .. f.l("Distribuzione di Probabilità.\n") ..
@@ -152,7 +152,7 @@ function CraftSim.LOCAL_IT:GetData()
             "Puoi vedere tutti questi casi per le tue ricette correnti nella finestra delle " ..
             f.bb("Statistiche") .. "!",
 
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV] =
+        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_EXPLANATION] =
             "Il " ..
             f.l("Valore di competenza nascosto (HSV)") ..
             " è un fattore casuale aggiuntivo che si presenta ogni volta che crei qualcosa.\n" ..
@@ -272,14 +272,14 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Stats Weight Frame
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "Profitto Medio di CraftSim",
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_EXPLANATION_TITLE] = "Spiegazioni del Profitto Medio di CraftSim",
+        [CraftSim.CONST.TEXT.EXPLANATIONS_TITLE] = "Spiegazioni del Profitto Medio di CraftSim",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_EXPLANATION_BUTTON] = "Mostra Spiegazioni",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_EXPLANATION_BUTTON] = "Chiudi Spiegazioni",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON] = "Mostra Statistiche",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON] = "Chiudi Statistiche",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Ø Profitto/Creazione: ",
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_TAB] = "Basi del calcolo del Profitto",
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_EXPLANATION_HSV_TAB] = "Considerazioni su HSV",
+        [CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB] = "Basi del calcolo del Profitto",
+        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_TAB] = "Considerazioni su HSV",
 
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "Dettaglio Costi di CraftSim",
