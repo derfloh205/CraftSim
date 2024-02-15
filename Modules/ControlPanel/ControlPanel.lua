@@ -129,3 +129,10 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
         mapRecipe()
     end
 end
+
+function CraftSim.CONTROL_PANEL:HandleModuleClose(moduleOption)
+    return function()
+        CraftSimOptions[moduleOption] = false
+        CraftSim.CONTROL_PANEL.frame.content[moduleOption]:SetChecked(false)
+    end
+end

@@ -97,15 +97,12 @@ function CraftSim.FRAME:RestoreModulePositions()
     local debugFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
     local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.INFO)
     local livePreviewFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.LIVE_PREVIEW)
-    local statisticsFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STATISTICS)
-    local statisticsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STATISTICS_WORKORDER)
     local specsim = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
     local specsimWO = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
 
     specsim:RestoreSavedConfig(UIParent)
     specsimWO:RestoreSavedConfig(UIParent)
-    statisticsFrame:RestoreSavedConfig(UIParent)
-    statisticsFrameWO:RestoreSavedConfig(UIParent)
+
     livePreviewFrame:RestoreSavedConfig(UIParent)
     infoFrame:RestoreSavedConfig(UIParent)
     debugFrame:RestoreSavedConfig(UIParent)
@@ -131,7 +128,10 @@ function CraftSim.FRAME:RestoreModulePositions()
     CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
 
     CraftSim.CRAFT_BUFFS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
-    CraftSim.CRAFT_BUFFS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForme)
+    CraftSim.CRAFT_BUFFS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
+    CraftSim.STATISTICS.frameNO_WO:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
+    CraftSim.STATISTICS.frameWO:RestoreSavedConfig(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm)
+    CraftSim.EXPLANATIONS.frame:RestoreSavedConfig(ProfessionsFrame)
 end
 
 function CraftSim.FRAME:ResetFrames()
@@ -719,12 +719,4 @@ function CraftSim.FRAME:CreateNumericInput(name, parent, anchorParent, anchorA, 
     end)
 
     return numericInput
-end
-
-function CraftSim.FRAME:HandleModuleClose(moduleOption)
-    return function()
-        CraftSimOptions[moduleOption] = false
-        CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CONTROL_PANEL).content[moduleOption]
-            :SetChecked(false)
-    end
 end

@@ -50,6 +50,7 @@ CraftSimOptions = CraftSimOptions or {
 	modulesCraftBuffs = true,
 	modulesCooldowns = false,
 	modulesExplanations = false,
+	modulesStatistics = false,
 
 	transparencyMaterials = 1,
 	transparencyStatWeights = 1,
@@ -614,6 +615,7 @@ function CraftSim.MAIN:HideAllModules(keepControlPanel)
 	CraftSim.SIMULATION_MODE.FRAMES.WORKORDER.toggleButton:Hide()
 	CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER.toggleButton:Hide()
 	CraftSim.EXPLANATIONS.frame:Hide()
+	CraftSim.STATISTICS.FRAMES:SetVisible(false)
 end
 
 function CraftSim.MAIN:TriggerModulesByRecipeType()
@@ -706,6 +708,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 
 	local showMaterialOptimization = false
 	local showStatweights = false
+	local showStatistics = false
 	local showTopGear = false
 	local showSimulationMode = false
 	local showSpecInfo = false
@@ -726,6 +729,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 
 	if recipeData.supportsCraftingStats then
 		showStatweights = true
+		showStatistics = true
 		showTopGear = true
 	end
 
@@ -754,6 +758,7 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	showCraftBuffs = showCraftBuffs and CraftSimOptions.modulesCraftBuffs
 	showCooldowns = showCooldowns and CraftSimOptions.modulesCooldowns
 	showExplanations = showExplanations and CraftSimOptions.modulesExplanations
+	showStatistics = showStatistics and CraftSimOptions.modulesStatistics
 
 	CraftSim.FRAME:ToggleFrame(CraftSim.RECIPE_SCAN.frame, showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTQ.frame, showCraftQueue)
@@ -808,7 +813,11 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 		if statWeights then
 			CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, recipeData.priceData.craftingCosts, exportMode)
 		end
+	end
 
+	-- Statistics Module
+	CraftSim.STATISTICS.FRAMES:SetVisible(showStatistics, exportMode)
+	if recipeData and showStatistics then
 		CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
 	end
 

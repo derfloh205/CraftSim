@@ -27,7 +27,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesMaterials"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesMaterials"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
@@ -46,7 +46,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesMaterials"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesMaterials"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })

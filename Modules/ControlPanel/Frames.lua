@@ -166,8 +166,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES)
     })
 
-    -- 1. Column
 
+    -- 1. Column
     frame.content.modulesMaterials = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_TOOLTIP),
@@ -188,8 +188,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP),
         "TOP", frame.content.modulesTopGear, "TOP", 0, cbSpacingY, "modulesCraftQueue")
 
-    -- 2. Column
 
+    -- 2. Column
     frame.content.modulesPriceDetails = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_TOOLTIP),
@@ -210,8 +210,8 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP),
         "TOP", frame.content.modulesCraftBuffs, "TOP", 0, cbSpacingY, "modulesCooldowns")
 
-    -- 3. Column
 
+    -- 3. Column
     frame.content.modulesSpecInfo = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP),
@@ -226,9 +226,13 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP),
         "TOP", frame.content.modulesCraftResults, "TOP", 0, cbSpacingY, "modulesCostOptimization")
+    frame.content.modulesStatistics = createModuleCheckbox(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_LABEL),
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP),
+        "TOP", frame.content.modulesCostOptimization, "TOP", 0, cbSpacingY, "modulesStatistics")
+
 
     -- 4. Column
-
     frame.content.modulesRecipeScan = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP),

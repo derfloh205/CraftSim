@@ -32,7 +32,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
         moveable = true,
         frameStrata = "HIGH",
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCraftQueue"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCraftQueue"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })

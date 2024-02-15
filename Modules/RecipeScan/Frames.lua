@@ -31,7 +31,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         moveable = true,
         frameStrata = "DIALOG",
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesRecipeScan"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesRecipeScan"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })

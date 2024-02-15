@@ -21,7 +21,8 @@ function CraftSim.EXPLANATIONS.FRAMES:Init()
         frameConfigTable = CraftSimGGUIConfig, frameTable = CraftSim.MAIN.FRAMES,
         frameID = CraftSim.CONST.FRAMES.EXPLANATIONS, moveable = true, closeable = true, collapseable = true,
         frameStrata = "DIALOG",
-        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesExplanations"),
     }
 
     local function createContent(frame)

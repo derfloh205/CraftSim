@@ -31,7 +31,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "  the recipe name",
         f.a .. "- The alt profession list is now more consistently sorted",
         f.P .. f.g("Explanations"),
-        f.a .. "- New Module moved from the Average Profit Module Explanation Button",
+        f.a .. "- New Module moved from Average Profit",
         f.p .. f.bb("Cooldowns"),
         f.a .. "- Fixed a bug when displaying a cooldown that is fully charged",
         f.p .. f.bb("CraftResults"),

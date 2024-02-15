@@ -18,7 +18,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata = "DIALOG",
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCustomerService"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCustomerService"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })

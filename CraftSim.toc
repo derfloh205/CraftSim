@@ -60,8 +60,8 @@ Modules/CustomerHistory/CustomerHistory.lua
 Modules/CustomerHistory/Frames.lua
 Modules/CustomerHistory/DB.lua
 
-Modules/CraftStatistics/CraftStatistics.lua
-Modules/CraftStatistics/Frames.lua
+Modules/Statistics/Statistics.lua
+Modules/Statistics/Frames.lua
 
 Modules/CraftResults/CraftResults.lua
 Modules/CraftResults/Frames.lua

@@ -21,7 +21,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata = "FULLSCREEN",
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCraftResults"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCraftResults"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })

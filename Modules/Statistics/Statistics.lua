@@ -1,7 +1,13 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+---@class CraftSim.STATISTICS
 CraftSim.STATISTICS = {}
+
+---@type GGUI.Frame
+CraftSim.STATISTICS.frameNO_WO = nil
+---@type GGUI.Frame
+CraftSim.STATISTICS.frameWO = nil
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
 

@@ -29,7 +29,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesPriceDetails"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesPriceDetails"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
@@ -50,7 +50,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesPriceDetails"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesPriceDetails"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })

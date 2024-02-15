@@ -31,7 +31,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesSpecInfo"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesSpecInfo"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
@@ -52,7 +52,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesSpecInfo"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesSpecInfo"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })

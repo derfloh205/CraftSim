@@ -1,6 +1,10 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+---@class CraftSim.AVERAGEPROFIT
+CraftSim.AVERAGEPROFIT = CraftSim.AVERAGEPROFIT
+
+---@class CraftSim.AVERAGEPROFIT.FRAMES
 CraftSim.AVERAGEPROFIT.FRAMES = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
@@ -25,7 +29,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesStatWeights"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatWeights"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
@@ -46,32 +50,12 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesStatWeights"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatWeights"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
 
-    local function createContent(frame, profitDetailsFrameID, statisticsFrameID)
-        frame.content.statisticsButton = CraftSim.GGUI.Button({
-            parent = frame.content,
-            anchorParent = frame.content,
-            anchorA = "TOP",
-            anchorB = "TOP",
-            offsetY = -20,
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON),
-            sizeX = 15,
-            sizeY = 20,
-            adjustWidth = true,
-            clickCallback = function()
-                local statisticsFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, statisticsFrameID)
-                local isVisible = statisticsFrame:IsVisible()
-                CraftSim.FRAME:ToggleFrame(statisticsFrame, not isVisible)
-                frame.content.statisticsButton:SetText(isVisible and
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON) or
-                    not isVisible and CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON))
-            end
-        })
-
+    local function createContent(frame)
         local textOffsetX = 30
         local textOffsetY = -50
         local textSpacingY = -2
@@ -161,9 +145,8 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         frame:Hide()
     end
 
-    createContent(frameNonWorkOrder, CraftSim.CONST.FRAMES.EXPLANATIONS, CraftSim.CONST.FRAMES.STATISTICS)
-    createContent(frameWorkOrder, CraftSim.CONST.FRAMES.PROFIT_DETAILS_WORK_ORDER,
-        CraftSim.CONST.FRAMES.STATISTICS_WORKORDER)
+    createContent(frameNonWorkOrder)
+    createContent(frameWorkOrder)
 end
 
 ---@param statWeights CraftSim.Statweights

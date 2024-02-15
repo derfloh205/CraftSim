@@ -36,7 +36,7 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCraftBuffs"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCraftBuffs"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
@@ -57,7 +57,7 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCraftBuffs"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCraftBuffs"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })

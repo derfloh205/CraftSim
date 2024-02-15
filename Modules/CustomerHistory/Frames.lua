@@ -32,7 +32,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata = "DIALOG",
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCustomerHistory"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCustomerHistory"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })

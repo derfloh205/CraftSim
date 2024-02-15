@@ -37,7 +37,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCostOptimization"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCostOptimization"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
@@ -57,7 +57,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.FRAME:HandleModuleClose("modulesCostOptimization"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCostOptimization"),
         frameTable = CraftSim.MAIN.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
