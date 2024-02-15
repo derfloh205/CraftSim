@@ -150,11 +150,11 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyStatWeights, -- get from options..
         "0", "1",
         function(self, value)
-            GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(value)
+            GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT):SetTransparency(value)
             CraftSimOptions.transparencyStatWeights = value
         end)
 
-    GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STAT_WEIGHTS):SetTransparency(CraftSimOptions
+    GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT):SetTransparency(CraftSimOptions
         .transparencyStatWeights)
     CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT),
         ModulesTab.content, CraftSimDetailsTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
