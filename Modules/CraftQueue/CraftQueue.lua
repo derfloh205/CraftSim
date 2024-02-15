@@ -129,11 +129,12 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param amount number?
-function CraftSim.CRAFTQ:AddRecipe(recipeData, amount)
+---@param targetItemCountByQuality? table<QualityID, number>
+function CraftSim.CRAFTQ:AddRecipe(recipeData, amount, targetItemCountByQuality)
     amount = amount or 1
 
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
-    CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, amount)
+    CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, amount, targetItemCountByQuality)
 
     CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
 end
@@ -529,13 +530,7 @@ end
 function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT()
     print("onCraftResult")
     if CraftSim.CRAFTQ.currentlyCraftedRecipeData then
-        print("have recipeData, now decrement")
-        -- decrement by one and refresh list
-        local newAmount = CraftSim.CRAFTQ.craftQueue:SetAmount(CraftSim.CRAFTQ.currentlyCraftedRecipeData, -1, true)
-        if newAmount and newAmount <= 0 and CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished then
-            FlashClientIcon()
-        end
-        CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
+        CraftSim.CRAFTQ.craftQueue:OnRecipeCrafted(CraftSim.CRAFTQ.currentlyCraftedRecipeData)
     end
 end
 

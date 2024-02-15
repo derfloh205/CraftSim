@@ -161,6 +161,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.hasReagents = #self.reagentData.requiredReagents > 0
 
     self.baseItemAmount = (schematicInfo.quantityMin + schematicInfo.quantityMax) / 2
+    self.minItemAmount = schematicInfo.quantityMin
+    self.maxItemAmount = schematicInfo.quantityMax
 
     -- EXCEPTION for Sturdy Expedition Shovel - 388279
     -- Due to a blizzard bug the recipe's baseItemAmount is 2 although it only produces 1
