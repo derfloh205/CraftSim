@@ -17,24 +17,22 @@ CraftSim.CACHE.RECIPE_DATA.ITEM_RECIPE_CACHE = {}
 ---@class CraftSim.CACHE.SUB_RECIPE_CRAFTER_CACHE
 CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE = {}
 
+---@class CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE
+CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE = {}
+
 ---@class CraftSim.ProfessionGearCacheData
 ---@field cached boolean
 ---@field equippedGear CraftSim.ProfessionGearSet.Serialized?
 ---@field availableProfessionGear CraftSim.ProfessionGear.Serialized[]
 
----@alias CrafterUID string
----@alias RecipeID number
----@alias CooldownDataSerializationID RecipeID | CraftSim.SHARED_PROFESSION_COOLDOWNS
----@alias ItemID number
-
 ---@class CraftSim.ItemRecipeData
 ---@field recipeID RecipeID
----@field itemID number
----@field qualityID number
+---@field itemID ItemID
+---@field qualityID QualityID
 ---@field crafters CrafterUID[]
 
 ---@class CraftSim.ExpectedCraftingCostsData
----@field qualityID number
+---@field qualityID QualityID
 ---@field crafter CrafterUID
 ---@field expectedCosts number
 ---@field craftingChance number
@@ -200,4 +198,26 @@ end
 ---@param crafterUID CrafterUID
 function CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(recipeID, crafterUID)
     CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID] = crafterUID
+end
+
+---@param recipeID RecipeID
+---@param crafterUID? CrafterUID
+function CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(recipeID, crafterUID)
+    -- if crafterUID was given get directly otherwise check for any crafter
+    if crafterUID then
+        local serializationID = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[recipeID] or
+            recipeID
+        CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
+        ---@type CraftSim.CooldownData.Serialized?
+        local cooldownDataSerialized = CraftSimRecipeDataCache.cooldownCache[crafterUID][serializationID]
+        return cooldownDataSerialized ~= nil
+    else
+        for crafterUID, _ in pairs(CraftSimRecipeDataCache.cooldownCache) do
+            if self:IsCooldownRecipe(recipeID, crafterUID) then
+                return true
+            end
+        end
+
+        return false
+    end
 end

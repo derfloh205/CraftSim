@@ -1273,6 +1273,7 @@ CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP = {
 }
 
 --- used for the cooldown module tooltip to list all connected recipes
+---@type table<CraftSim.SHARED_PROFESSION_COOLDOWNS, RecipeID[]>
 CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES = {
     [CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS.DF_ALCHEMY_TRANSMUTATIONS] = {
         405847, -- DRACOTHYST

@@ -21,7 +21,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
 ---@field expectedCostsData? CraftSim.ExpectedCraftingCostsData
 
 ---Wrapper for Price Source addons price fetch by itemID
----@param itemID number
+---@param itemID ItemID
 ---@param isReagent? boolean Use TSM Expression for materials
 ---@param considerSubCrafts? boolean
 ---@return number usedPrice
@@ -55,20 +55,24 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
                 .itemOptimizedCostsDataCache[itemID] or {}
             -- get costs from set crafter
             local itemRecipeData = CraftSimRecipeDataCache.itemRecipeCache[itemID]
-
             -- only use if set crafter exists, has cached optimized costs and can even craft that item with a chance higher than 0
             if itemRecipeData then
                 local recipeCrafter = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(itemRecipeData
                     .recipeID)
                 if recipeCrafter then
-                    local itemOptimizedCostsData = CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID]
-                        [recipeCrafter]
-                    if itemOptimizedCostsData and itemOptimizedCostsData.craftingChance > 0 then
-                        priceInfo.expectedCostsData = itemOptimizedCostsData
-                        -- only set as used price if its lower then ah price or no ah price for this item exists
-                        if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCosts < priceInfo.ahPrice then
-                            priceInfo.isExpectedCost = true
-                            return itemOptimizedCostsData.expectedCosts, priceInfo
+                    local allowCooldown = CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns or
+                        not CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(itemRecipeData.recipeID,
+                            recipeCrafter)
+                    if allowCooldown then
+                        local itemOptimizedCostsData = CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID]
+                            [recipeCrafter]
+                        if itemOptimizedCostsData and itemOptimizedCostsData.craftingChance > 0 then
+                            priceInfo.expectedCostsData = itemOptimizedCostsData
+                            -- only set as used price if its lower then ah price or no ah price for this item exists
+                            if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCosts < priceInfo.ahPrice then
+                                priceInfo.isExpectedCost = true
+                                return itemOptimizedCostsData.expectedCosts, priceInfo
+                            end
                         end
                     end
                 end

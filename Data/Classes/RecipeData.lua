@@ -22,7 +22,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 ---@param crafterData? CraftSim.CrafterData
 ---@return CraftSim.RecipeData?
 function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
-    self.recipeID = recipeID
+    self.recipeID = recipeID --[[@as RecipeID]]
     -- important to set first so self:IsCrafter() can be used
     self.crafterData = crafterData or CraftSim.UTIL:GetPlayerCrafterData()
 
@@ -877,8 +877,10 @@ function CraftSim.RecipeData:GetCrafterData()
     return self.crafterData
 end
 
+---@return CrafterUID
 function CraftSim.RecipeData:GetCrafterUID()
-    return self.crafterData.name .. "-" .. self.crafterData.realm
+    local crafterUID = self.crafterData.name .. "-" .. self.crafterData.realm --[[@as CrafterUID]]
+    return crafterUID
 end
 
 ---compares the given crafterData with the one from the recipe

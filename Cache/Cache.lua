@@ -6,6 +6,12 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CACHE
 CraftSim.CACHE = {}
 
+---@alias CrafterUID string Name-Server
+---@alias RecipeID number
+---@alias CooldownDataSerializationID RecipeID | CraftSim.SHARED_PROFESSION_COOLDOWNS
+---@alias ItemID number
+---@alias QualityID number between 1 and 5
+
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
 
 function CraftSim.CACHE:HandleCraftSimCacheUpdates()

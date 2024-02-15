@@ -13,7 +13,6 @@ local GUTIL = CraftSim.GUTIL
 CraftSim.COST_OPTIMIZATION.frame = nil
 CraftSim.COST_OPTIMIZATION.frameWO = nil
 
-local systemPrint = print
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OPTIMIZATION)
 local f = CraftSim.GUTIL:GetFormatter()
 
@@ -272,6 +271,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
         initialValue = CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns,
         clickCallback = function(_, checked)
             CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = checked
+            CraftSim.MAIN:TriggerModulesByRecipeType()
         end
     }
 

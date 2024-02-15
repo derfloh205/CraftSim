@@ -427,7 +427,8 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
 
             local crafterText = ""
             -- add crafterInfo text if reagent is supposed to be crafted by the player
-            if self.recipeData:IsSelfCraftedReagent(reagentItem.item:GetItemID()) and reagentItem.quantity > 0 then
+            -- check for quantity not needed for non quality items
+            if self.recipeData:IsSelfCraftedReagent(reagentItem.item:GetItemID()) then
                 local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes
                     [reagentItem.item:GetItemID()]
                 if optimizedReagentRecipeData then
