@@ -708,7 +708,6 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 
 	local showMaterialOptimization = false
 	local showStatweights = false
-	local showStatistics = false
 	local showTopGear = false
 	local showSimulationMode = false
 	local showSpecInfo = false
@@ -725,11 +724,10 @@ function CraftSim.MAIN:TriggerModulesByRecipeType()
 	local showCraftBuffs = true
 	local showCooldowns = true
 	local showExplanations = true
-
+	local showStatistics = true
 
 	if recipeData.supportsCraftingStats then
 		showStatweights = true
-		showStatistics = true
 		showTopGear = true
 	end
 
