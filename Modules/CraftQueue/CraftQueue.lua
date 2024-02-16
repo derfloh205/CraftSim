@@ -300,6 +300,9 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
 
                 CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
             end, function()
+                -- finally update all subrecipes in target mode and update display one last time
+                CraftSim.CRAFTQ.craftQueue:UpdateSubRecipesTargetItemCounts()
+                CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
                 importButton:SetStatus("Ready")
             end)
     end
@@ -667,8 +670,7 @@ function CraftSim.CRAFTQ:AddOpenRecipe()
         return
     end
 
-    -- needs to be a copy or we modify it when we edit it in the queue..
-    CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData:Copy() })
+    CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
 end
 
 function CraftSim.CRAFTQ:OnRecipeEditSave()

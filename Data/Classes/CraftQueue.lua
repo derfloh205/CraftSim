@@ -52,24 +52,25 @@ function CraftSim.CraftQueue:AddRecipe(options)
         elseif craftQueueItem.targetMode and not targetItemCountByQuality then
             -- if recipe to queue is not target mode and the already queued on is, ignore? TODO: maybe some compromise or even make target mode and non target mode recipes coexisting?
         else -- if none are target mode just add amount
-            -- only increase amount, but if recipeData has deeper (higher) subrecipedepth then take lower one
+            -- only increase amount
             craftQueueItem.amount = craftQueueItem.amount + amount
-            craftQueueItem.recipeData.subRecipeDepth = math.max(craftQueueItem.recipeData.subRecipeDepth,
-                recipeData.subRecipeDepth)
+        end
+        -- always update the subrecipedepth
+        craftQueueItem.recipeData.subRecipeDepth = math.max(craftQueueItem.recipeData.subRecipeDepth,
+            recipeData.subRecipeDepth)
+        -- also check if I have parent recipes that the already queued recipe does not have
 
-            -- also check if I have parent recipes that the already queued recipe does not have
-            for _, parentRecipesInfo in ipairs(recipeData.parentRecipeInfo) do
-                local hasPri = GUTIL:Some(craftQueueItem.recipeData.parentRecipeInfo, function(pri)
-                    return pri.crafterUID == parentRecipesInfo.crafterUID and pri.recipeID == parentRecipesInfo.recipeID
-                end)
-                if not hasPri then
-                    tinsert(craftQueueItem.recipeData.parentRecipeInfo, parentRecipesInfo)
-                end
+        for _, parentRecipesInfo in ipairs(recipeData.parentRecipeInfo) do
+            local hasPri = GUTIL:Some(craftQueueItem.recipeData.parentRecipeInfo, function(pri)
+                return pri.crafterUID == parentRecipesInfo.crafterUID and pri.recipeID == parentRecipesInfo.recipeID
+            end)
+            if not hasPri then
+                tinsert(craftQueueItem.recipeData.parentRecipeInfo, parentRecipesInfo)
             end
         end
     else
         craftQueueItem = CraftSim.CraftQueueItem({
-            recipeData = recipeData,
+            recipeData = recipeData:Copy(),
             amount = amount,
             targetItemCountByQuality = targetItemCountByQuality
         })
@@ -87,11 +88,13 @@ function CraftSim.CraftQueue:AddRecipe(options)
                     -- queue recipeData
                     local subRecipe = recipeData.optimizedSubRecipes[itemID]
                     if subRecipe then
-                        local currentItemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, true, false, true,
-                            subRecipe:GetCrafterUID())
-                        local restItemCount = math.max(0, reagentItem.quantity - currentItemCount)
-                        if restItemCount > 0 then
-                            subRecipe:SetNonQualityReagentsMax()
+                        print("Found self crafted reagent: queue into cq: " .. subRecipe.recipeName)
+                        subRecipe:SetNonQualityReagentsMax()
+                        -- local currentItemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, true, false, true,
+                        --     recipeData:GetCrafterUID())
+                        -- local restItemCount = math.max(0, reagentItem.quantity - currentItemCount)
+                        -- print("Restitemcount: " .. tostring(restItemCount))
+                        if reagentItem.quantity > 0 then
                             self:AddRecipe({ recipeData = subRecipe, amount = 1, targetItemCountByQuality = { [qualityID] = reagentItem.quantity } })
                         end
                     end

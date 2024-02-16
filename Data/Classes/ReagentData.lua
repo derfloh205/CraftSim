@@ -415,9 +415,6 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(reagentItem.item:GetItemID(),
                 true,
                 false, true, crafterUID)
-            print("- tooltiptext for: " .. tostring(reagentItem.item:GetItemName()))
-            print("- - player item count: " .. tostring(itemCount))
-            print("- - allocated quantity: " .. tostring(reagentItem.quantity))
             local quantityText = f.r(tostring(requiredReagent.requiredQuantity * multiplier) ..
                 "(" .. tostring(itemCount) .. ")")
 

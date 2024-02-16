@@ -54,11 +54,10 @@ function CraftSim.PriceData:Update()
         if reagentData.salvageReagentSlot.activeItem then
             local itemID = reagentData.salvageReagentSlot.activeItem:GetItemID()
             -- only use subrecipe price if the item also has a optimizedSubRecipe in the recipeData
-            useSubRecipes = useSubRecipes and self.recipeData.optimizedSubRecipes[itemID]
-            local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, useSubRecipes)
+            local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false,
+                useSubRecipes and self.recipeData.optimizedSubRecipes[itemID])
             self.craftingCosts = self.craftingCosts + itemPrice * reagentData.salvageReagentSlot.requiredQuantity
             self.craftingCostsRequired = self.craftingCosts
-            print(tostring(reagentData.salvageReagentSlot.activeItem:GetItemLink()))
             if priceInfo.isExpectedCost then
                 tinsert(self.selfCraftedReagents, itemID)
             end
@@ -72,9 +71,8 @@ function CraftSim.PriceData:Update()
                 for _, reagentItem in pairs(reagent.items) do
                     totalQuantity = totalQuantity + reagentItem.quantity
                     local itemID = reagentItem.item:GetItemID()
-                    useSubRecipes = useSubRecipes and self.recipeData.optimizedSubRecipes[itemID]
                     local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false,
-                        useSubRecipes)
+                        useSubRecipes and self.recipeData.optimizedSubRecipes[itemID])
                     totalPrice = totalPrice + itemPrice * reagentItem.quantity
                     if priceInfo.isExpectedCost then
                         tinsert(self.selfCraftedReagents, itemID)
@@ -87,9 +85,12 @@ function CraftSim.PriceData:Update()
                     local itemIDQ1 = reagent.items[1].item:GetItemID()
                     local itemIDQ2 = reagent.items[2].item:GetItemID()
                     local itemIDQ3 = reagent.items[3].item:GetItemID()
-                    local itemPriceQ1 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemIDQ1, true, false, useSubRecipes)
-                    local itemPriceQ2 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemIDQ2, true, false, useSubRecipes)
-                    local itemPriceQ3 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemIDQ3, true, false, useSubRecipes)
+                    local itemPriceQ1 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemIDQ1, true, false,
+                        useSubRecipes and self.recipeData.optimizedSubRecipes[itemIDQ1])
+                    local itemPriceQ2 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemIDQ2, true, false,
+                        useSubRecipes and self.recipeData.optimizedSubRecipes[itemIDQ2])
+                    local itemPriceQ3 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemIDQ3, true, false,
+                        useSubRecipes and self.recipeData.optimizedSubRecipes[itemIDQ3])
                     local cheapestItemPrice = math.min(itemPriceQ1, itemPriceQ2, itemPriceQ3)
 
                     self.craftingCosts = self.craftingCosts + cheapestItemPrice * reagent.requiredQuantity
@@ -98,8 +99,8 @@ function CraftSim.PriceData:Update()
                 end
             else
                 local itemID = reagent.items[1].item:GetItemID()
-                useSubRecipes = useSubRecipes and self.recipeData.optimizedSubRecipes[itemID]
-                local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, useSubRecipes)
+                local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false,
+                    useSubRecipes and self.recipeData.optimizedSubRecipes[itemID])
                 self.craftingCosts = self.craftingCosts + itemPrice * reagent.requiredQuantity
                 self.craftingCostsFixed = self.craftingCostsFixed + itemPrice * reagent.requiredQuantity -- always max
 
@@ -121,8 +122,8 @@ function CraftSim.PriceData:Update()
             if activeOptionalReagent then
                 print("added optional reagent to crafting cost: " .. tostring(activeOptionalReagent.item:GetItemLink()))
                 local itemID = activeOptionalReagent.item:GetItemID()
-                useSubRecipes = useSubRecipes and self.recipeData.optimizedSubRecipes[itemID]
-                local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, useSubRecipes)
+                local itemPrice, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false,
+                    useSubRecipes and self.recipeData.optimizedSubRecipes[itemID])
                 self.craftingCosts = self.craftingCosts + itemPrice
 
                 if priceInfo.isExpectedCost then

@@ -476,23 +476,23 @@ end
 ---@return CraftSim.RecipeData recipeDataCopy
 function CraftSim.RecipeData:Copy()
     ---@type CraftSim.RecipeData
-    local copy = CraftSim.RecipeData(self.recipeID, self.isRecraft)
+    local copy = CraftSim.RecipeData(self.recipeID, self.isRecraft, self.orderData ~= nil, self.crafterData)
     copy.reagentData = self.reagentData:Copy(copy)
     copy.professionGearSet = self.professionGearSet:Copy()
     copy.professionStats = self.professionStats:Copy()
     copy.baseProfessionStats = self.baseProfessionStats:Copy()
     copy.professionStatModifiers = self.professionStatModifiers:Copy()
-    copy.priceData = self.priceData:Copy(copy)   -- Is this needed or covered by constructor?
-    copy.resultData = self.resultData:Copy(copy) -- Is this needed or covered by constructor?
-    -- copy spec data or already handled in constructor?
+    copy.priceData = self.priceData:Copy(copy)
+    copy.resultData = self.resultData:Copy(copy)
     copy.orderData = self.orderData
     copy.crafterData = self.crafterData
     copy.subRecipeCostsEnabled = self.subRecipeCostsEnabled
     copy.optimizedSubRecipes = {}
+    copy.averageProfitCached = self.averageProfitCached
+    copy.relativeProfitCached = self.relativeProfitCached
 
-    -- TODO: Check if deep copy is necessary here or if its ok to just reuse the references
     for itemID, recipeData in pairs(self.optimizedSubRecipes) do
-        copy.optimizedSubRecipes[itemID] = recipeData
+        copy.optimizedSubRecipes[itemID] = recipeData:Copy()
     end
 
     copy:Update()
