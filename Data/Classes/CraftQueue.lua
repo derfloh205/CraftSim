@@ -6,7 +6,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CraftQueue : CraftSim.CraftSimObject
 CraftSim.CraftQueue = CraftSim.CraftSimObject:extend()
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
+local print = CraftSim.DEBUG:SetDebugPrint("CRAFTQ_CRAFTING")
 
 function CraftSim.CraftQueue:new()
     ---@type CraftSim.CraftQueueItem[]
@@ -115,8 +115,8 @@ end
 ---@return number? newAmount amount after adjustment, nil if recipe could not be adjusted
 function CraftSim.CraftQueue:SetAmount(recipeData, amount, relative)
     relative = relative or false
-    local craftQueueItem, index = self:FindRecipe(recipeData)
-    if craftQueueItem and index then
+    local craftQueueItem = self:FindRecipe(recipeData)
+    if craftQueueItem then
         print("found craftQueueItem do decrement")
         if relative then
             craftQueueItem.amount = craftQueueItem.amount + amount
