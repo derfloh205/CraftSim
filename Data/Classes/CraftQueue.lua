@@ -147,7 +147,6 @@ function CraftSim.CraftQueue:Remove(craftQueueItem)
     tremove(self.craftQueueItems, index)
 
     -- after removal check if cqi had any subrecipes that are now without parents, if yes remove them too (recursively)
-
     local subCraftQueueItems = GUTIL:Map(craftQueueItem.recipeData.priceData.selfCraftedReagents, function(itemID)
         local subRecipeData = craftQueueItem.recipeData.optimizedSubRecipes[itemID]
         if subRecipeData then
@@ -160,6 +159,33 @@ function CraftSim.CraftQueue:Remove(craftQueueItem)
     for _, subCqi in ipairs(subCraftQueueItems) do
         self:Remove(subCqi)
     end
+
+    -- if i was a subrecipe, check my parent recipes, and set the item I crafted their to not be crafted anymore by me (reoptimize needed?)
+    -- by removing the optimizedSubRecipe and selfCraftedReagents entry
+
+    for _, prI in ipairs(craftQueueItem.recipeData.parentRecipeInfo) do
+        local parentCQI = self:FindRecipeByParentRecipeInfo(prI)
+
+        if parentCQI then
+            -- remove all references to this subrecipe and update priceData and profit
+            for itemID, optimizedSubRecipe in pairs(parentCQI.recipeData.optimizedSubRecipes) do
+                if optimizedSubRecipe then
+                    if optimizedSubRecipe:GetRecipeCrafterUID() == craftQueueItem.recipeData:GetRecipeCrafterUID() then
+                        parentCQI.recipeData.optimizedSubRecipes[itemID] = nil
+                    end
+                end
+            end
+
+            parentCQI.recipeData.priceData:Update()
+            parentCQI.recipeData:GetAverageProfit()
+        end
+    end
+end
+
+---@param prI CraftSim.RecipeData.ParentRecipeInfo
+---@return CraftSim.CraftQueueItem | nil
+function CraftSim.CraftQueue:FindRecipeByParentRecipeInfo(prI)
+    return self.recipeCrafterMap[prI.crafterUID .. ":" .. prI.recipeID]
 end
 
 function CraftSim.CraftQueue:ClearAll()

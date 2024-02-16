@@ -26,6 +26,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.p .. "- This is default for any automatically queued sub crafts",
         f.p .. "- A minimum craft amount is calculated by CraftSim",
         f.a .. "- But can be adjusted per recipe when editing",
+        f.a .. "- Adjusting the craft amount for a queued recipe now",
+        f.a .. "  requires ENTER to be pressed to update the queue",
         f.P .. f.g("Cost Details") .. " renamed to " .. f.g("Cost Optimization"),
         f.a .. "- Now shows the lowest expected crafting costs for an item",
         f.a .. "  if you or one of your alts are able to craft it (and its cached)",

@@ -488,7 +488,12 @@ function CraftSim.RecipeData:Copy()
     copy.orderData = self.orderData
     copy.crafterData = self.crafterData
     copy.subRecipeCostsEnabled = self.subRecipeCostsEnabled
-    copy.optimizedSubRecipes = self.optimizedSubRecipes
+    copy.optimizedSubRecipes = {}
+
+    -- TODO: Check if deep copy is necessary here or if its ok to just reuse the references
+    for itemID, recipeData in pairs(self.optimizedSubRecipes) do
+        copy.optimizedSubRecipes[itemID] = recipeData
+    end
 
     copy:Update()
     return copy

@@ -108,7 +108,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             },
             {
                 label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFTING_COSTS_HEADER),
-                width = 100,
+                width = 130,
                 justifyOptions = { type = "H", align = "RIGHT" }
             },
             {
@@ -532,11 +532,29 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                 anchorA = "LEFT",
                 anchorB = "RIGHT",
                 offsetX = 5,
-                label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX),
+                labelOptions = {
+                    text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX),
+                },
                 tooltip = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP),
                 initialValue = CraftSimOptions.craftQueueShoppingListPerCharacter,
                 clickCallback = function(_, checked)
                     CraftSimOptions.craftQueueShoppingListPerCharacter = checked
+                end
+            })
+
+            queueTab.content.shoppingListTargetModeOnly = GGUI.Checkbox({
+                parent = queueTab.content,
+                anchorParent = queueTab.content.shoppingListPerCharacterCB.labelText.frame,
+                anchorA = "LEFT",
+                anchorB = "RIGHT",
+                offsetX = 5,
+                labelOptions = {
+                    text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX),
+                },
+                tooltip = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP),
+                initialValue = CraftSimOptions.craftQueueShoppingListTargetMode,
+                clickCallback = function(_, checked)
+                    CraftSimOptions.craftQueueShoppingListTargetMode = checked
                 end
             })
         end

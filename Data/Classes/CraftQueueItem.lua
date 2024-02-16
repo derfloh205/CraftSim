@@ -255,14 +255,17 @@ end
 function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
     if not self.recipeData:HasActiveSubRecipes() then return end
 
-    print("UpdateSubRecipesInQueue", false, true)
+    print("UpdateSubRecipesInQueue for " .. self.recipeData.recipeName, false, true)
 
     -- fetch cqis or add them if not existing
     local subCraftQueueItems = GUTIL:Map(self.recipeData.priceData.selfCraftedReagents, function(itemID)
         local subRecipeData = self.recipeData.optimizedSubRecipes[itemID]
-        if subRecipeData then
+        -- only if parent recipe has quantity set for this itemID
+        if subRecipeData and self.recipeData:GetReagentQuantityByItemID(itemID) > 0 then
             local cqi = CraftSim.CRAFTQ.craftQueue:FindRecipe(subRecipeData)
             if not cqi then
+                print("- Adding Subrecipe to queue: " ..
+                    subRecipeData.recipeName .. " - " .. subRecipeData:GetCrafterUID())
                 cqi = CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = subRecipeData, amount = 1, targetItemCountByQuality = {} })
             end
 

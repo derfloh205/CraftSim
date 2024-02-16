@@ -94,6 +94,7 @@ CraftSimOptions = CraftSimOptions or {
 	craftQueueGeneralRestockSaleRateThreshold = 0,
 	craftQueueRestockPerRecipeOptions = {},
 	craftQueueShoppingListPerCharacter = false,
+	craftQueueShoppingListTargetMode = false,
 	craftQueueFlashTaskbarOnCraftFinished = true,
 
 	-- cost optimization
