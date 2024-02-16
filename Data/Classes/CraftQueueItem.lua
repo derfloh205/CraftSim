@@ -4,25 +4,29 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.CraftQueueItem : CraftSim.CraftSimObject
----@overload fun(recipeData:CraftSim.RecipeData, amount?:number, targetItemCountByQuality?: table<QualityID, number>)
+---@overload fun(options: CraftSim.CraftQueueItem.Options): CraftSim.CraftQueueItem
 CraftSim.CraftQueueItem = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.DEBUG:SetDebugPrint("CRAFTQ")
 
----@param recipeData CraftSim.RecipeData
----@param amount number?
----@param targetItemCountByQuality? table<QualityID, number>
-function CraftSim.CraftQueueItem:new(recipeData, amount, targetItemCountByQuality)
+---@class CraftSim.CraftQueueItem.Options
+---@field recipeData CraftSim.RecipeData
+---@field amount? number
+---@field targetItemCountByQuality? table<QualityID, number>
+
+---@param options CraftSim.CraftQueueItem.Options
+function CraftSim.CraftQueueItem:new(options)
+    options = options or {}
     ---@type CraftSim.RecipeData
-    self.recipeData = recipeData
+    self.recipeData = options.recipeData
     ---@type number
-    self.amount = amount or 1
+    self.amount = options.amount or 1
     ---@type boolean
     self.targetMode = false
 
-    self.targetItemCountByQuality = targetItemCountByQuality
+    self.targetItemCountByQuality = options.targetItemCountByQuality
 
-    if targetItemCountByQuality then
+    if options.targetItemCountByQuality then
         self.targetMode = true
     end
 
@@ -40,7 +44,7 @@ function CraftSim.CraftQueueItem:new(recipeData, amount, targetItemCountByQualit
     --- important if the current character is not the crafter of the recipe
     self.allDataCached = false
 
-    self.crafterData = recipeData:GetCrafterData()
+    self.crafterData = options.recipeData:GetCrafterData()
 end
 
 --- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
@@ -151,7 +155,11 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
         print("professionGearCached: " .. tostring(recipeData.professionGearCached))
         print("operationInfoCached: " .. tostring(recipeData.operationInfoCached))
         print("specializationDataCached: " .. tostring(recipeData.specializationDataCached))
-        return CraftSim.CraftQueueItem(recipeData, serializedData.amount, serializedData.targetItemCountByQuality)
+        return CraftSim.CraftQueueItem({
+            recipeData = recipeData,
+            amount = serializedData.amount,
+            targetItemCountByQuality = serializedData.targetItemCountByQuality
+        })
     end
     -- if necessary recipeData could not be loaded from cache or is not fully cached return nil
     -- should only really happen if somehow it could not cache the recipe on crafter side due to a bug
@@ -242,4 +250,72 @@ function CraftSim.CraftQueueItem:AddTargetItemCount(targetItemCountByQuality)
     for qualityID, count in pairs(targetItemCountByQuality) do
         self:SetTargetCount(qualityID, count, true)
     end
+end
+
+function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
+    if not self.recipeData:HasActiveSubRecipes() then return end
+
+    print("UpdateSubRecipesInQueue", false, true)
+
+    -- fetch cqis or add them if not existing
+    local subCraftQueueItems = GUTIL:Map(self.recipeData.priceData.selfCraftedReagents, function(itemID)
+        local subRecipeData = self.recipeData.optimizedSubRecipes[itemID]
+        if subRecipeData then
+            local cqi = CraftSim.CRAFTQ.craftQueue:FindRecipe(subRecipeData)
+            if not cqi then
+                cqi = CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = subRecipeData, amount = 1, targetItemCountByQuality = {} })
+            end
+
+            return cqi
+        end
+
+        return nil
+    end)
+
+    print("#subCraftQueueItems: " .. #subCraftQueueItems)
+
+    -- update their target count by all of their parent recipes
+    for _, cqi in ipairs(subCraftQueueItems) do
+        cqi:UpdateTargetModeSubRecipeByParentRecipes()
+    end
+end
+
+function CraftSim.CraftQueueItem:UpdateTargetModeSubRecipeByParentRecipes()
+    if not self.targetMode or self.recipeData.subRecipeDepth == 0 then return nil end
+
+    print("UpdateTargetModeSubRecipeByParentRecipes", false, true)
+
+    wipe(self.targetItemCountByQuality)
+
+    for _, pri in ipairs(self.recipeData.parentRecipeInfo) do
+        local recipeCrafterUID = pri.crafterUID .. ":" .. pri.recipeID
+        local parentCQI = CraftSim.CRAFTQ.craftQueue.recipeCrafterMap[recipeCrafterUID]
+
+        print("Found Parent Recipe in Queue: " .. tostring(recipeCrafterUID))
+
+        if parentCQI then
+            for qualityID, item in ipairs(self.recipeData.resultData.itemsByQuality) do
+                -- only if this item is a activesubreagent and I am the crafter!
+                local itemID = item:GetItemID()
+                local isSubReagent = parentCQI.recipeData:IsSelfCraftedReagent(itemID)
+                if isSubReagent then
+                    local subReagentCrafter = parentCQI.recipeData.optimizedSubRecipes[itemID]:GetCrafterUID()
+                    local isCrafter = self.recipeData:GetCrafterUID() == subReagentCrafter
+
+                    if isCrafter then
+                        local totalQuantity = parentCQI.recipeData.reagentData:GetReagentQuantityByItemID(item:GetItemID()) *
+                            parentCQI.amount
+                        local restItemCount = CraftSim.CACHE.ITEM_COUNT:GetRest(item:GetItemID(),
+                            totalQuantity, parentCQI.recipeData:GetCrafterUID())
+                        self.targetItemCountByQuality[qualityID] = self.targetItemCountByQuality[qualityID] or 0
+                        self.targetItemCountByQuality[qualityID] = self.targetItemCountByQuality[qualityID] +
+                            restItemCount
+                    end
+                end
+            end
+        end
+    end
+
+    -- update expectedCrafts
+    self.amount = self:GetMinimumCraftsForTargetCount()
 end

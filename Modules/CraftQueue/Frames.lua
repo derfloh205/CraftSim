@@ -127,7 +127,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                 justifyOptions = { type = "H", align = "CENTER" }
             },
             {
-                label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_STATUS_HEADER), -- Status Icon List
+                label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER), -- Status Icon List
                 width = 130,
                 justifyOptions = { type = "H", align = "CENTER" }
             },
@@ -158,7 +158,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     ---@type CraftSim.CraftQueueItem
                     local craftQueueItem = row.craftQueueItem
                     if craftQueueItem then
-                        if craftQueueItem.correctProfessionOpen and craftQueueItem.recipeData then
+                        if craftQueueItem.recipeData then
                             C_TradeSkillUI.OpenRecipe(craftQueueItem.recipeData.recipeID)
                         end
                     end
@@ -301,7 +301,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     borderAdjustWidth = 1.13,
                     minValue = 1,
                     initialValue = 1,
-                    onNumberValidCallback = nil, -- set dynamically on Add
+                    onEnterPressedCallback = nil, -- set dynamically on Add
                     onTabPressedCallback = function(input)
                         -- focus next editbox in the row below
                         local activeRowIndex = row:GetActiveRowIndex()
@@ -1209,14 +1209,14 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
     local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
-    --- precalculate craftable status before sorting to increase performance
+    --- precalculate craftable status and subrecipetargetcounts before sorting to increase performance
     table.foreach(craftQueue.craftQueueItems,
         ---@param _ any
         ---@param craftQueueItem CraftSim.CraftQueueItem
         function(_, craftQueueItem)
             -- update all target mode craft amounts
             if craftQueueItem.targetMode then
-                craftQueueItem.amount = craftQueueItem:GetMinimumCraftsForTargetCount()
+                craftQueueItem:UpdateTargetModeSubRecipeByParentRecipes()
             end
             craftQueueItem:CalculateCanCraft()
         end)
@@ -1305,11 +1305,11 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueTotalProfitDisplay()
 
     for _, row in ipairs(craftList.activeRows) do
         local craftQueueItem = row.craftQueueItem --[[@as CraftSim.CraftQueueItem]]
-        -- do not count subrecipes in the total profit
-        if craftQueueItem.recipeData.subRecipeDepth == 0 then
+        -- do not count subrecipes in the total profit or crafting costs
+        if not craftQueueItem.recipeData:IsSubRecipe() then
             totalAverageProfit = totalAverageProfit + row.averageProfit
+            totalCraftingCosts = totalCraftingCosts + row.craftingCosts
         end
-        totalCraftingCosts = totalCraftingCosts + row.craftingCosts
     end
 
     queueTab.content.totalAverageProfit:SetText(GUTIL:FormatMoney(totalAverageProfit, true, totalCraftingCosts))
@@ -1718,9 +1718,14 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
     end
     recipeColumn.text:SetText(recipeData.recipeName .. upCraftText)
 
-    averageProfitColumn.text:SetText(GUTIL:FormatMoney(select(1, row.averageProfit), true, row.craftingCosts))
+    if craftQueueItem.recipeData:IsSubRecipe() then
+        averageProfitColumn.text:SetText(f.g("-"))
+        craftingCostsColumn.text:SetText(f.g("-"))
+    else
+        averageProfitColumn.text:SetText(GUTIL:FormatMoney(select(1, row.averageProfit), true, row.craftingCosts))
+        craftingCostsColumn.text:SetText(f.r(GUTIL:FormatMoney(row.craftingCosts)))
+    end
 
-    craftingCostsColumn.text:SetText(f.r(GUTIL:FormatMoney(row.craftingCosts)))
 
     local craftAmountTooltipText = ""
     if craftQueueItem.targetMode then
@@ -1788,8 +1793,10 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
         targetList:Show()
 
         targetList:Remove()
+        local addedTargets = 0
         for qualityID, targetCount in pairs(craftQueueItem.targetItemCountByQuality) do
             if targetCount > 0 then
+                addedTargets = addedTargets + 1
                 targetList:Add(function(row, columns)
                     row.qualityID = qualityID
                     local qualityColumn = columns[1]
@@ -1808,6 +1815,18 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
             end
         end
 
+        if addedTargets == 0 then
+            targetList:Add(function(row, columns)
+                local qualityColumn = columns[1]
+                local countColumn = columns[2]
+                local maxColumn = columns[3]
+
+                qualityColumn.icon:SetQuality(nil)
+                countColumn.text:SetText(f.g("-"))
+                maxColumn.text:SetText("")
+            end)
+        end
+
         -- adjust row height based on result list height
         targetList.autoAdjustHeightCallback = function(newHeight)
             row.frame:SetSize(row:GetWidth(), (newHeight - 4) * targetList.frame:GetScale())
@@ -1821,10 +1840,9 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
         craftAmountColumn.input:Show()
         targetList:Hide()
         craftAmountColumn.input.textInput:SetText(craftQueueItem.amount, false)
-        craftAmountColumn.input.onNumberValidCallback =
-        ---@param numericInput GGUI.NumericInput
-            function(numericInput)
-                craftQueueItem.amount = tonumber(numericInput.currentValue) or 1
+        craftAmountColumn.input.onEnterPressedCallback =
+            function(_, value)
+                craftQueueItem.amount = value or 1
                 CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
             end
     end

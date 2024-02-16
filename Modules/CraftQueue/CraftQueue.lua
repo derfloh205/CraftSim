@@ -127,14 +127,17 @@ function CraftSim.CRAFTQ:InitializeCraftQueue()
     end)
 end
 
----@param recipeData CraftSim.RecipeData
----@param amount number?
----@param targetItemCountByQuality? table<QualityID, number>
-function CraftSim.CRAFTQ:AddRecipe(recipeData, amount, targetItemCountByQuality)
-    amount = amount or 1
+---@param options CraftSim.CraftQueueItem.Options
+function CraftSim.CRAFTQ:AddRecipe(options)
+    options = options or {}
 
     CraftSim.CRAFTQ.craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
-    CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, amount, targetItemCountByQuality)
+    CraftSim.CRAFTQ.craftQueue:AddRecipe({
+        recipeData = options.recipeData,
+        amount = options.amount,
+        targetItemCountByQuality =
+            options.targetItemCountByQuality
+    })
 
     CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
 end
@@ -230,9 +233,13 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
             if restockAmount > 0 then
                 if recipeData.cooldownData.isCooldownRecipe and not recipeData.cooldownData.isDayCooldown then
                     local charges = recipeData.cooldownData:GetCurrentCharges()
-                    CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, math.min(restockAmount, charges))
+                    CraftSim.CRAFTQ.craftQueue:AddRecipe({
+                        recipeData = recipeData,
+                        amount = math.min(restockAmount,
+                            charges)
+                    })
                 else
-                    CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, restockAmount)
+                    CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData, amount = restockAmount })
                 end
             end
         end
@@ -280,9 +287,10 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                     if restockAmount > 0 then
                         if recipeData.cooldownData.isCooldownRecipe and not recipeData.cooldownData.isDayCooldown then
                             local charges = recipeData.cooldownData:GetCurrentCharges()
-                            CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, math.min(restockAmount, charges))
+                            CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData, amount = math.min(
+                            restockAmount, charges) })
                         else
-                            CraftSim.CRAFTQ.craftQueue:AddRecipe(recipeData, restockAmount)
+                            CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = recipeData, amount = restockAmount })
                         end
                     end
                 end
@@ -653,7 +661,7 @@ function CraftSim.CRAFTQ:AddOpenRecipe()
     end
 
     -- needs to be a copy or we modify it when we edit it in the queue..
-    CraftSim.CRAFTQ:AddRecipe(recipeData:Copy())
+    CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData:Copy() })
 end
 
 function CraftSim.CRAFTQ:OnRecipeEditSave()

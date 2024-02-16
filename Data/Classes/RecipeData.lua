@@ -1124,3 +1124,27 @@ end
 function CraftSim.RecipeData:HasActiveSubRecipeInCraftQueue()
     return CraftSim.CRAFTQ.craftQueue:RecipeHasActiveSubRecipesInQueue(self)
 end
+
+---@alias RecipeCrafterUID string
+
+---Returns a unique id for the crafter and the recipeID
+---@return RecipeCrafterUID
+function CraftSim.RecipeData:GetRecipeCrafterUID()
+    return self:GetCrafterUID() .. ":" .. self.recipeID
+end
+
+---@return boolean hasActiveSubRecipes
+function CraftSim.RecipeData:HasActiveSubRecipes()
+    return GUTIL:Count(self.optimizedSubRecipes) > 0 and GUTIL:Count(self.priceData.selfCraftedReagents) > 0
+end
+
+---@return boolean IsSubRecipe
+function CraftSim.RecipeData:IsSubRecipe()
+    return self.subRecipeDepth > 0
+end
+
+function CraftSim.RecipeData:HasParentsInCraftQueue()
+    return GUTIL:Some(self.parentRecipeInfo, function(rpI)
+        return CraftSim.CRAFTQ.craftQueue.recipeCrafterMap[rpI.crafterUID .. ":" .. rpI.recipeID] ~= nil
+    end)
+end

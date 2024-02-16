@@ -56,6 +56,13 @@ function CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterU
     end
 end
 
+function CraftSim.CACHE.ITEM_COUNT:GetRest(itemID,
+                                           quantity, crafterUID)
+    local itemCount = self:Get(itemID, true, false, true, crafterUID)
+
+    return math.max(0, quantity - itemCount)
+end
+
 function CraftSim.CACHE.ITEM_COUNT:ClearAll()
     wipe(CraftSimItemCountCache)
 end
