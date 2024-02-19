@@ -93,17 +93,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         ---@class CraftSim.SimulationMode.ReagentOverwriteFrame.Content
         reagentOverwriteFrame.content = reagentOverwriteFrame.content
 
-        reagentOverwriteFrame.content.qualityIcon1 = GGUI.QualityIcon({
-            parent = reagentOverwriteFrame.content,
-            anchorParent = reagentOverwriteFrame.content,
-            sizeX = 20,
-            sizeY = 20,
-            anchorA = "TOP",
-            anchorB = "TOP",
-            offsetX = baseX - 63,
-            offsetY = 15,
-            initialQuality = 1,
-        })
+
         reagentOverwriteFrame.content.quality1Button = GGUI.Button({
             parent = reagentOverwriteFrame.content,
             anchorParent = reagentOverwriteFrame.content,
@@ -116,18 +106,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             offsetY = 15,
             clickCallback = function()
                 CraftSim.SIMULATION_MODE:AllocateAllByQuality(1)
-            end
-        })
-        reagentOverwriteFrame.content.qualityIcon2 = GGUI.QualityIcon({
-            parent = reagentOverwriteFrame.content,
-            anchorParent = reagentOverwriteFrame.content,
-            sizeX = 20,
-            sizeY = 20,
-            anchorA = "TOP",
-            anchorB = "TOP",
-            offsetX = baseX + inputOffsetX - 63,
-            offsetY = 15,
-            initialQuality = 2,
+            end,
+            tooltipOptions = {
+                owner = reagentOverwriteFrame.content,
+                anchor = "ANCHOR_CURSOR",
+                textWrap = true,
+                text = "Max All Reagents of Quality " .. GUTIL:GetQualityIconString(1, 20, 20),
+            },
         })
         reagentOverwriteFrame.content.quality2Button = GGUI.Button({
             parent = reagentOverwriteFrame.content,
@@ -141,19 +126,15 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             offsetY = 15,
             clickCallback = function()
                 CraftSim.SIMULATION_MODE:AllocateAllByQuality(2)
-            end
+            end,
+            tooltipOptions = {
+                owner = reagentOverwriteFrame.content,
+                anchor = "ANCHOR_CURSOR",
+                textWrap = true,
+                text = "Max All Reagents of Quality " .. GUTIL:GetQualityIconString(2, 20, 20),
+            },
         })
-        reagentOverwriteFrame.content.qualityIcon3 = GGUI.QualityIcon({
-            parent = reagentOverwriteFrame.content,
-            anchorParent = reagentOverwriteFrame.content,
-            sizeX = 20,
-            sizeY = 20,
-            anchorA = "TOP",
-            anchorB = "TOP",
-            offsetX = baseX + inputOffsetX * 2 - 63,
-            offsetY = 15,
-            initialQuality = 3,
-        })
+
         reagentOverwriteFrame.content.quality3Button = GGUI.Button({
             parent = reagentOverwriteFrame.content,
             anchorParent = reagentOverwriteFrame.content,
@@ -166,7 +147,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             offsetY = 15,
             clickCallback = function()
                 CraftSim.SIMULATION_MODE:AllocateAllByQuality(3)
-            end
+            end,
+            tooltipOptions = {
+                owner = reagentOverwriteFrame.content,
+                anchor = "ANCHOR_CURSOR",
+                textWrap = true,
+                text = "Max All Reagents of Quality " .. GUTIL:GetQualityIconString(3, 20, 20),
+            },
         })
         reagentOverwriteFrame.content.clearAllocationsButton = GGUI.Button({
             parent = reagentOverwriteFrame.content,
@@ -1482,9 +1469,6 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     CraftSim.FRAME:ToggleFrame(reagentOverwriteFrame.content.quality1Button, hasQualityReagents)
     CraftSim.FRAME:ToggleFrame(reagentOverwriteFrame.content.quality2Button, hasQualityReagents)
     CraftSim.FRAME:ToggleFrame(reagentOverwriteFrame.content.quality3Button, hasQualityReagents)
-    CraftSim.FRAME:ToggleFrame(reagentOverwriteFrame.content.qualityIcon1, hasQualityReagents)
-    CraftSim.FRAME:ToggleFrame(reagentOverwriteFrame.content.qualityIcon2, hasQualityReagents)
-    CraftSim.FRAME:ToggleFrame(reagentOverwriteFrame.content.qualityIcon3, hasQualityReagents)
     CraftSim.FRAME:ToggleFrame(reagentOverwriteFrame.content.clearAllocationsButton, hasQualityReagents)
 
     reagentOverwriteFrame:SetVisible(CraftSim.SIMULATION_MODE.isActive)

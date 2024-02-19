@@ -69,7 +69,13 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                 anchorParent = frame.content.queueTab.button,
                 anchorA = "LEFT",
                 anchorB = "RIGHT",
-                label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL)
+                label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL),
+                tooltipOptions = {
+                    owner = frame.content,
+                    anchor = "ANCHOR_CURSOR",
+                    text = f.white("Configure the restock behaviour when importing from Recipe Scan"),
+                    textWrap = true,
+                },
             },
             parent = frame.content,
             anchorParent = frame.content,
@@ -87,6 +93,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
 
         GGUI.BlizzardTabSystem({ queueTab, restockOptionsTab })
 
+        ---@type GGUI.FrameList.ColumnOption[]
         local columnOptions = {
             {
                 label = "", -- edit button
@@ -129,7 +136,13 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             {
                 label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER), -- Status Icon List
                 width = 130,
-                justifyOptions = { type = "H", align = "CENTER" }
+                justifyOptions = { type = "H", align = "CENTER" },
+                tooltipOptions = {
+                    anchor = nil,
+                    owner = nil,
+                    text = f.white("All Requirements need to be fulfilled in order to craft a recipe"),
+                    textWrap = true,
+                },
             },
             {
                 label = "", -- craftButtonColumn
@@ -298,7 +311,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     parent = craftAmountColumn,
                     anchorParent = craftAmountColumn,
                     sizeX = 100,
-                    borderAdjustWidth = 1.13,
+                    borderAdjustWidth = 0.95,
                     minValue = 1,
                     initialValue = 1,
                     onEnterPressedCallback = nil, -- set dynamically on Add
