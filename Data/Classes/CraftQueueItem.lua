@@ -282,7 +282,6 @@ function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
     -- update their target count by all of their parent recipes
     for _, cqi in ipairs(subCraftQueueItems) do
         cqi:UpdateTargetModeSubRecipeByParentRecipes()
-        cqi:UpdateSubRecipesInQueue() -- after updating the expected crafts -- kind of breadth first
     end
 end
 
@@ -320,4 +319,14 @@ function CraftSim.CraftQueueItem:UpdateTargetModeSubRecipeByParentRecipes()
 
     -- update expectedCrafts
     self.amount = self:GetMinimumCraftsForTargetCount()
+end
+
+function CraftSim.CraftQueueItem:GetNumParentRecipesInQueue()
+    local count = 0
+    for _, prI in ipairs(self.recipeData.parentRecipeInfo) do
+        if CraftSim.CRAFTQ.craftQueue:FindRecipeByParentRecipeInfo(prI) then
+            count = count + 1
+        end
+    end
+    return count
 end

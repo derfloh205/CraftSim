@@ -305,7 +305,6 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                 CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
             end, function()
                 -- finally update all subrecipes in target mode and update display one last time
-                CraftSim.CRAFTQ.craftQueue:UpdateSubRecipesTargetItemCounts()
                 CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
                 importButton:SetStatus("Ready")
             end)

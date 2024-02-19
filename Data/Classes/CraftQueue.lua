@@ -143,7 +143,11 @@ function CraftSim.CraftQueue:Remove(craftQueueItem)
     local subCraftQueueItems = GUTIL:Map(craftQueueItem.recipeData.priceData.selfCraftedReagents, function(itemID)
         local subRecipeData = craftQueueItem.recipeData.optimizedSubRecipes[itemID]
         if subRecipeData then
-            return CraftSim.CRAFTQ.craftQueue:FindRecipe(subRecipeData)
+            local subCQI = CraftSim.CRAFTQ.craftQueue:FindRecipe(subRecipeData)
+            -- only queue for removal if I am the only parent recipe in queue
+            if subCQI and subCQI:GetNumParentRecipesInQueue() == 0 then
+                return subCQI
+            end
         end
 
         return nil
@@ -153,7 +157,7 @@ function CraftSim.CraftQueue:Remove(craftQueueItem)
         self:Remove(subCqi)
     end
 
-    -- if i was a subrecipe, check my parent recipes, and set the item I crafted their to not be crafted anymore by me (reoptimize needed?)
+    -- if i was a subrecipe, check my parent recipes, and set the item I crafted there to not be crafted anymore by me (reoptimize needed?)
     -- by removing the optimizedSubRecipe and selfCraftedReagents entry
 
     for _, prI in ipairs(craftQueueItem.recipeData.parentRecipeInfo) do
@@ -395,7 +399,19 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData)
 end
 
 function CraftSim.CraftQueue:UpdateSubRecipesTargetItemCounts()
-    for _, cqi in ipairs(self.craftQueueItems) do
-        cqi:UpdateSubRecipesInQueue()
+    -- get max sub recipe depth in queue then step down to this -1
+    local maxDepth = GUTIL:Fold(self.craftQueueItems, 0, function(maxDepth, nextElement, key)
+        if nextElement.recipeData.subRecipeDepth > maxDepth then
+            return nextElement.recipeData.subRecipeDepth
+        else
+            return maxDepth
+        end
+    end)
+    for depth = 0, maxDepth - 1 do
+        for _, cqi in ipairs(self.craftQueueItems) do
+            if cqi.recipeData.subRecipeDepth == depth then
+                cqi:UpdateSubRecipesInQueue()
+            end
+        end
     end
 end

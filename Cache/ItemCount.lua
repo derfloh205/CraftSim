@@ -40,9 +40,14 @@ function CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterU
 
     CraftSimItemCountCache[crafterUID] = CraftSimItemCountCache[crafterUID] or {}
 
+    local alternativeItemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[itemID]
+
     if isPlayer then
         -- always from api and then cache
         local count = GetItemCount(itemID, bank, uses, reagentBank)
+        if alternativeItemID then
+            count = count + GetItemCount(alternativeItemID, bank, uses, reagentBank)
+        end
         CraftSim.CACHE.ITEM_COUNT:Update(itemID, count)
         return count
     end

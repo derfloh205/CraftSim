@@ -1227,15 +1227,13 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
     local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
+    craftQueue:UpdateSubRecipesTargetItemCounts()
+
     --- precalculate craftable status and subrecipetargetcounts before sorting to increase performance
     table.foreach(craftQueue.craftQueueItems,
         ---@param _ any
         ---@param craftQueueItem CraftSim.CraftQueueItem
         function(_, craftQueueItem)
-            -- update all target mode craft amounts
-            if craftQueueItem.targetMode then
-                craftQueueItem:UpdateTargetModeSubRecipeByParentRecipes()
-            end
             craftQueueItem:CalculateCanCraft()
         end)
 
