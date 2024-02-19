@@ -560,7 +560,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddProfessionTabRow(crafterUID, profession)
         local professionIconSize = 20
         local professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[row.profession], professionIconSize,
             professionIconSize)
-        ---@type GGUI.FrameList.Row.TooltipOptions
+        ---@type GGUI.TooltipOptions
         row.tooltipOptions = {
             text = crafterUID .. ": " .. L(CraftSim.CONST.PROFESSION_LOCALIZATION_IDS[profession]),
             anchor = "ANCHOR_TOP",

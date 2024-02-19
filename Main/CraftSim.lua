@@ -92,6 +92,7 @@ CraftSimOptions = CraftSimOptions or {
 	craftQueueGeneralRestockProfitMarginThreshold = 0,
 	craftQueueGeneralRestockRestockAmount = 1,
 	craftQueueGeneralRestockSaleRateThreshold = 0,
+	craftQueueGeneralRestockTargetModeCraftOffset = 0,
 	craftQueueRestockPerRecipeOptions = {},
 	craftQueueShoppingListPerCharacter = false,
 	craftQueueShoppingListTargetMode = false,
@@ -177,6 +178,9 @@ function CraftSim.MAIN:HandleCraftSimOptionsUpdates()
 		CraftSimOptions.costOptimizationSubRecipeMaxDepth = CraftSimOptions.costOptimizationSubRecipeMaxDepth or 1
 		CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = CraftSimOptions
 			.costOptimizationSubRecipesIncludeCooldowns or false
+
+		CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset = CraftSimOptions
+			.craftQueueGeneralRestockTargetModeCraftOffset or 0
 
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true

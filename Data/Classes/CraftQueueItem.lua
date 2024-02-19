@@ -217,7 +217,6 @@ function CraftSim.CraftQueueItem:IsTargetCountSatisfied()
     return true
 end
 
--- TODO: GIVE AN OPTION TO INCREASE THIS RELATIVELY
 function CraftSim.CraftQueueItem:GetMinimumCraftsForTargetCount()
     if not self.targetMode or not self.targetItemCountByQuality then return 0 end
 
@@ -246,7 +245,7 @@ function CraftSim.CraftQueueItem:GetMinimumCraftsForTargetCount()
 
     print("Minimum Crafts for Target Count: " .. ceiledExpectedCrafts)
 
-    return ceiledExpectedCrafts
+    return ceiledExpectedCrafts + CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset
 end
 
 ---@param targetItemCountByQuality table<QualityID, number>

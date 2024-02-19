@@ -704,6 +704,24 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             anchorA = "RIGHT", anchorB = "LEFT", offsetX = -2, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL)
         }
 
+        generalOptionsFrame.targetModeCraftOffsetInput = GGUI.NumericInput {
+            parent = generalOptionsFrame, anchorParent = generalOptionsFrame.saleRateInput.textInput.frame, anchorA = "TOP", anchorB = "BOTTOM",
+            allowDecimals = false, initialValue = CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset, minValue = 0,
+            sizeX = 40,
+            labelOptions = {
+                text = "Target Mode Crafts: ",
+            },
+            tooltipOptions = {
+                owner = generalOptionsFrame, anchor = "ANCHOR_CURSOR",
+                text = f.white("Add additional crafts to the calculated minimum crafts for target mode recipes"),
+                textWrap = true,
+            },
+            onNumberValidCallback = function(input)
+                CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset = input.currentValue
+                self:UpdateQueueDisplay()
+            end
+        }
+
         restockOptionsTab.content.recipeOptionsFrame = CreateFrame("Frame", nil, restockOptionsTab.content)
         restockOptionsTab.content.recipeOptionsFrame:SetSize(150, 50)
         restockOptionsTab.content.recipeOptionsFrame:SetPoint("TOP", generalOptionsFrame, "BOTTOM", 0, -60)
@@ -1674,6 +1692,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
                     targetCountInput.onNumberValidCallback = function(input)
                         local amount = input.currentValue
                         craftQueueItem:SetTargetCount(qualityID, amount)
+                        craftQueueItem.amount = craftQueueItem:GetMinimumCraftsForTargetCount()
                         self:UpdateFrameListByCraftQueue()
                     end
                     targetCountInput.textInput:SetText(craftQueueItem:GetTargetCount(qualityID))
