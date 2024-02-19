@@ -261,15 +261,17 @@ function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
     local subCraftQueueItems = GUTIL:Map(self.recipeData.priceData.selfCraftedReagents, function(itemID)
         local subRecipeData = self.recipeData.optimizedSubRecipes[itemID]
         -- only if parent recipe has quantity set for this itemID
-        if subRecipeData and self.recipeData:GetReagentQuantityByItemID(itemID) > 0 then
-            local cqi = CraftSim.CRAFTQ.craftQueue:FindRecipe(subRecipeData)
-            if not cqi then
-                print("- Adding Subrecipe to queue: " ..
-                    subRecipeData.recipeName .. " - " .. subRecipeData:GetCrafterUID())
-                cqi = CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = subRecipeData, amount = 1, targetItemCountByQuality = {} })
-            end
+        if subRecipeData then
+            if self.recipeData:GetReagentQuantityByItemID(itemID) > 0 then
+                local cqi = CraftSim.CRAFTQ.craftQueue:FindRecipe(subRecipeData)
+                if not cqi then
+                    print("- Adding Subrecipe to queue: " ..
+                        subRecipeData.recipeName .. " - " .. subRecipeData:GetCrafterUID())
+                    cqi = CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = subRecipeData, amount = 1, targetItemCountByQuality = {} })
+                end
 
-            return cqi
+                return cqi
+            end
         end
 
         return nil
@@ -280,6 +282,7 @@ function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
     -- update their target count by all of their parent recipes
     for _, cqi in ipairs(subCraftQueueItems) do
         cqi:UpdateTargetModeSubRecipeByParentRecipes()
+        cqi:UpdateSubRecipesInQueue() -- after updating the expected crafts -- kind of breadth first
     end
 end
 
@@ -306,11 +309,9 @@ function CraftSim.CraftQueueItem:UpdateTargetModeSubRecipeByParentRecipes()
                     if isCrafter then
                         local totalQuantity = parentCQI.recipeData.reagentData:GetReagentQuantityByItemID(item:GetItemID()) *
                             parentCQI.amount
-                        local restItemCount = CraftSim.CACHE.ITEM_COUNT:GetRest(item:GetItemID(),
-                            totalQuantity, parentCQI.recipeData:GetCrafterUID())
                         self.targetItemCountByQuality[qualityID] = self.targetItemCountByQuality[qualityID] or 0
                         self.targetItemCountByQuality[qualityID] = self.targetItemCountByQuality[qualityID] +
-                            restItemCount
+                            totalQuantity
                     end
                 end
             end

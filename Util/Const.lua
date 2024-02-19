@@ -1238,6 +1238,8 @@ CraftSim.CONST.ATLAS_TEXTURES = {
     TRADESKILL_ICON_ADD = 'tradeskills-icon-add',
     CRAFT_BUFF_ACTIVE = 'UI-QuestTracker-Tracker-Check',
     CRAFT_BUFF_NOT_ACTIVE = 'UI-QuestTracker-Objective-Fail',
+    UPGRADE_ARROW = 'CovenantSanctum-Upgrade-Icon-Available',
+    UPGRADE_ARROW_2 = 'loottoast-arrow-green',
 }
 
 ---@type table<Enum.Profession, string>

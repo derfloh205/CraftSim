@@ -55,13 +55,9 @@ function CraftSim.CraftQueue:AddRecipe(options)
             -- only increase amount
             craftQueueItem.amount = craftQueueItem.amount + amount
         end
-        -- TODO evaluate if this is still needed (probably not because of differentiation between subrecipedepths now)
-        -- always update the subrecipedepth
-        -- craftQueueItem.recipeData.subRecipeDepth = math.max(craftQueueItem.recipeData.subRecipeDepth,
-        --     recipeData.subRecipeDepth)
-        -- also check if I have parent recipes that the already queued recipe does not have
 
-        --craftQueueItem.recipeData:AddParentRecipeInfosFrom(recipeData)
+        -- Check if I have parent recipes that the already queued recipe does not have and merge if yes
+        craftQueueItem.recipeData:AddParentRecipeInfosFrom(recipeData)
     else
         craftQueueItem = CraftSim.CraftQueueItem({
             recipeData = recipeData:Copy(),

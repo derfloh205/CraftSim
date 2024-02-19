@@ -1730,9 +1730,9 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
 
     local upCraftText = ""
     if craftQueueItem.recipeData.subRecipeDepth > 0 then
-        upCraftText = " (^" ..
-            craftQueueItem.recipeData.subRecipeDepth ..
-            ")" -- TODO: atlas or smth with more meaning?
+        local upgradeArrow = CreateAtlasMarkup(CraftSim.CONST.ATLAS_TEXTURES.UPGRADE_ARROW_2, 10, 10)
+        upCraftText = " " ..
+            upgradeArrow --.. "(" .. craftQueueItem.recipeData.subRecipeDepth .. ")"
     end
     recipeColumn.text:SetText(recipeData.recipeName .. upCraftText)
 
