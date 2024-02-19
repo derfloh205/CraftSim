@@ -260,7 +260,7 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateRequest(payload)
         recipeIcon = recipeData.recipeIcon,
         supportsQualities = recipeData.supportsQualities,
         upgradeChance = upgradeChance,
-        reagents = recipeData.reagentData:SerializeReagents(),
+        reagents = recipeData.reagentData:SerializeRequiredReagents(),
         optionalReagents = recipeData.reagentData:SerializeOptionalReagentSlots(),
         finishingReagents = recipeData.reagentData:SerializeFinishingReagentSlots(),
         resultData = recipeData.resultData:Serialize(),

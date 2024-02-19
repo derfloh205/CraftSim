@@ -48,6 +48,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.p .. f.bb("CraftResults"),
         f.a .. "- Fixed a Typo in the Item Result Log saying 'Profit: :'",
         f.a .. "  instead of 'Saved Reagents:",
+        f.p .. "Fixed a bug leading to an error when moving a frame while crafting",
         f.p .. "Russian Translation Update",
         f.a .. "- Thanks to " .. f.bb("https://github.com/SerGlushko"),
     }

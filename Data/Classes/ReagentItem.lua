@@ -6,16 +6,20 @@ CraftSim.ReagentItem = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
----@param itemID number
----@param qualityID number?
-function CraftSim.ReagentItem:new(itemID, qualityID)
+---@param originalItemID ItemID
+---@param qualityID QualityID?
+function CraftSim.ReagentItem:new(originalItemID, qualityID)
     -- consider possible exception mappings
-    itemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[itemID] or itemID
+    local alternativeItemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[originalItemID]
+    local itemID = alternativeItemID or originalItemID
 
     self.qualityID = qualityID
     --- how much of that reagentItem has been allocated for this recipe
     self.quantity = 0
     self.item = Item:CreateFromItemID(itemID)
+    if alternativeItemID then
+        self.originalItem = Item:CreateFromItemID(originalItemID)
+    end
 end
 
 ---@return CraftSim.ReagentListItem
@@ -27,7 +31,12 @@ function CraftSim.ReagentItem:GetAsReagentListItem()
 end
 
 function CraftSim.ReagentItem:Copy()
-    local copy = CraftSim.ReagentItem(self.item:GetItemID(), self.qualityID)
+    local copy = nil
+    if self.originalItem then
+        copy = CraftSim.ReagentItem(self.originalItem:GetItemID(), self.qualityID)
+    else
+        copy = CraftSim.ReagentItem(self.item:GetItemID(), self.qualityID)
+    end
     copy.quantity = self.quantity
 
     return copy
@@ -44,7 +53,7 @@ function CraftSim.ReagentItem:Clear()
     self.quantity = 0
 end
 
---- returns wether the player has enough of the given required item's allocations (times the multiplier)
+--- returns wether the player has enough of the given required item's allocations (times the multiplier) for crafting
 ---@param multiplier number? default: 1
 ---@param crafterUID string
 function CraftSim.ReagentItem:HasItem(multiplier, crafterUID)
@@ -52,7 +61,9 @@ function CraftSim.ReagentItem:HasItem(multiplier, crafterUID)
     if not self.item then
         return false
     end
-    local itemID = self.item:GetItemID()
+    -- only count the item actually used in the recipe (originalItem if we have one)
+    -- in the case of e.g. rimefin tuna we want to count the non frosted one only (will be the original)
+    local itemID = (self.originalItem and self.originalItem:GetItemID()) or self.item:GetItemID()
     local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, true, false, true,
         crafterUID)
     return itemCount >= (self.quantity * multiplier)
@@ -62,12 +73,14 @@ end
 ---@field qualityID number
 ---@field quantity number
 ---@field itemID number
+---@field originalItemID number
 
 function CraftSim.ReagentItem:Serialize()
     local serizalized = {}
     serizalized.qualityID = self.qualityID
     serizalized.quantity = self.quantity
     serizalized.itemID = self.item:GetItemID()
+    serizalized.originalItemID = self.originalItem and self.originalItem:GetItemID()
     return serizalized
 end
 

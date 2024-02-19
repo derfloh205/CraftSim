@@ -69,7 +69,7 @@ end
 ---@field recipeID number
 ---@field amount? number
 ---@field crafterData CraftSim.CrafterData
----@field requiredReagents CraftingReagentInfo[]
+---@field requiredReagents CraftSim.Reagent.Serialized[]
 ---@field optionalReagents CraftingReagentInfo[]
 ---@field professionGearSet CraftSim.ProfessionGearSet.Serialized
 ---@field subRecipeDepth number
@@ -86,7 +86,7 @@ function CraftSim.CraftQueueItem:Serialize()
         local serializedData = {
             recipeID = recipeData.recipeID,
             crafterData = recipeData.crafterData,
-            requiredReagents = recipeData.reagentData:GetRequiredCraftingReagentInfoTbl(),
+            requiredReagents = recipeData.reagentData:SerializeRequiredReagents(),
             optionalReagents = recipeData.reagentData:GetOptionalCraftingReagentInfoTbl(),
             professionGearSet = recipeData.professionGearSet:Serialize(),
             subRecipeDepth = recipeData.subRecipeDepth,
@@ -132,7 +132,13 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
                 recipeData.optimizedSubRecipes[itemID] = deserializeCraftQueueRecipeData(serializedSubRecipeData)
             end
 
-            recipeData:SetReagentsByCraftingReagentInfoTbl(GUTIL:Concat { serializedCraftQueueItem.requiredReagents, serializedCraftQueueItem.optionalReagents })
+            local requiredReagentsCraftingReagentInfos = {}
+            for _, serializedReagent in ipairs(serializedData.requiredReagents) do
+                local reagent = CraftSim.Reagent:Deserialize(serializedReagent)
+                tAppendAll(requiredReagentsCraftingReagentInfos, reagent:GetCraftingReagentInfos())
+            end
+
+            recipeData:SetReagentsByCraftingReagentInfoTbl(GUTIL:Concat { requiredReagentsCraftingReagentInfos, serializedCraftQueueItem.optionalReagents })
 
             recipeData:SetNonQualityReagentsMax()
 

@@ -29,6 +29,9 @@ end
 
 ---@param itemID ItemInfo
 ---@param crafterUID string
+---@return number count
+---@return ItemID? alternativeItemID
+---@return number? alternativeCount
 function CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterUID)
     local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     crafterUID = crafterUID or playerCrafterUID
@@ -45,19 +48,25 @@ function CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterU
     if isPlayer then
         -- always from api and then cache
         local count = GetItemCount(itemID, bank, uses, reagentBank)
+        local altCount = nil
         if alternativeItemID then
-            count = count + GetItemCount(alternativeItemID, bank, uses, reagentBank)
+            altCount = GetItemCount(alternativeItemID, bank, uses, reagentBank)
+            CraftSim.CACHE.ITEM_COUNT:Update(alternativeItemID, altCount)
         end
         CraftSim.CACHE.ITEM_COUNT:Update(itemID, count)
-        return count
+        return count, alternativeItemID, altCount
     end
 
 
     local count = CraftSimItemCountCache[crafterUID][itemID]
+    local altCount = nil
+    if alternativeItemID then
+        altCount = CraftSimItemCountCache[crafterUID][alternativeItemID]
+    end
     if not count then
         return 0 -- not cached yet
     else
-        return count
+        return count, alternativeItemID, altCount
     end
 end
 

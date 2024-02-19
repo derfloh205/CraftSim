@@ -327,6 +327,20 @@ function CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount, enchantItemTarget)
     CraftSim.CRAFTQ.currentlyCraftedRecipeData = recipeData
 end
 
+function CraftSim.CRAFTQ:GetNonSoulboundAlternativeItemID(itemID)
+    if GUTIL:isItemSoulbound(itemID) then
+        -- if item is soulbound check if there is non soulbound alternative item
+        local alternativeItemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[itemID]
+        if alternativeItemID and not GUTIL:isItemSoulbound(alternativeItemID) then
+            print("Found non soulbound alt item: " .. tostring(alternativeItemID))
+            return alternativeItemID
+        else
+            return nil
+        end
+    end
+    return itemID
+end
+
 function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
     if CraftSimOptions.craftQueueShoppingListPerCharacter then
         CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
@@ -428,8 +442,11 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
     for crafterUID, reagentMap in pairs(reagentMapPerCharacter) do
         --- convert to Auctionator Search Strings and deduct item count
         local searchStrings = GUTIL:Map(reagentMap, function(info, itemID)
-            if GUTIL:isItemSoulbound(itemID) then
+            itemID = CraftSim.CRAFTQ:GetNonSoulboundAlternativeItemID(itemID)
+            if not itemID then
                 return nil
+            else
+                info.itemName = select(1, GetItemInfo(itemID)) -- 100% already loaded in this case when its used as alt item in ReagentItem
             end
 
             local itemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, true, false, true, crafterUID)
@@ -521,7 +538,8 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
 
     --- convert to Auctionator Search Strings and deduct item count (of all crafters total)
     local searchStrings = GUTIL:Map(reagentMap, function(info, itemID)
-        if GUTIL:isItemSoulbound(itemID) then
+        itemID = CraftSim.CRAFTQ:GetNonSoulboundAlternativeItemID(itemID)
+        if not itemID then
             return nil
         end
         -- subtract the total item count of all crafter's cached inventory
@@ -562,32 +580,6 @@ function CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, bank, uses, rea
         itemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentbank, crafterUID)
     end
     return itemCount
-end
-
----@param itemName string
----@param qualityID number | string?
----@param quantity number?
----@return string auctionatorShoppingListItemString
-function CraftSim.CRAFTQ:GetAuctionatorShoppingListItemString(itemName, qualityID, quantity)
-    return '"' .. itemName .. '"' .. ';;0;0;0;0;0;0;0;0;;' .. (qualityID or '#') .. ';;' .. (quantity or '')
-end
-
----@return string name
----@return number | nil qualityID
----@return number | nil quantity
-function CraftSim.CRAFTQ:ParseAuctionatorShoppingListItemString(itemString)
-    local name, qualityID, quantity = itemString:match('"([^"]+)";;0;0;0;0;0;0;0;0;;(%S+);;(%d+)$')
-    if qualityID == '#' then
-        qualityID = nil
-    else
-        qualityID = tonumber(qualityID)
-    end
-    if quantity == '' then
-        quantity = nil
-    else
-        quantity = tonumber(quantity)
-    end
-    return name, qualityID, quantity
 end
 
 ---@param recipeData CraftSim.RecipeData

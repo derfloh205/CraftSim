@@ -163,7 +163,10 @@ function CraftSim.Reagent:HasQuantityXTimes(crafterUID)
     for q, reagentItem in pairs(self.items) do
         if reagentItem.quantity > 0 then
             --print("-" .. tostring(reagentItem.item:GetItemName()) .. "(" .. q .. ")")
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(reagentItem.item:GetItemID(), true, false,
+            -- use original item if available
+            local itemID = (reagentItem.originalItem and reagentItem.originalItem:GetItemID()) or
+            reagentItem.item:GetItemID()
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, true, false,
                 true,
                 crafterUID)
             --print("--player item count: " .. tostring(itemCount))
