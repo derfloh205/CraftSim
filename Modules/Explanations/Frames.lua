@@ -16,7 +16,7 @@ CraftSim.EXPLANATIONS.FRAMES = {}
 function CraftSim.EXPLANATIONS.FRAMES:Init()
     CraftSim.EXPLANATIONS.frame = GGUI.Frame {
         title = L(CraftSim.CONST.TEXT.EXPLANATIONS_TITLE),
-        parent = UIParent, anchorParent = ProfessionsFrame,
+        parent = ProfessionsFrame, anchorParent = ProfessionsFrame,
         sizeX = 1000, sizeY = 600,
         frameConfigTable = CraftSimGGUIConfig, frameTable = CraftSim.MAIN.FRAMES,
         frameID = CraftSim.CONST.FRAMES.EXPLANATIONS, moveable = true, closeable = true, collapseable = true,
