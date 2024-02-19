@@ -13,7 +13,7 @@ function CraftSim.CraftQueue:new()
     self.craftQueueItems = {}
 
     --- quick key value map to O(1) find craft queue items based on RecipeCrafterUIDs
-    ---@type table<RecipeCrafterUID, CraftSim.CraftQueueItem>
+    ---@type table<RecipeCraftQueueUID, CraftSim.CraftQueueItem>
     self.recipeCrafterMap = {}
 end
 
@@ -27,7 +27,7 @@ function CraftSim.CraftQueue:AddRecipe(options)
 
     print("Adding Recipe to Queue: " .. recipeData.recipeName, true)
 
-    local recipeCrafterUID = recipeData:GetRecipeCrafterUID()
+    local recipeCrafterUID = recipeData:GetRecipeCraftQueueUID()
 
     -- make sure all required reagents are maxed out
     recipeData:SetNonQualityReagentsMax()
@@ -55,19 +55,13 @@ function CraftSim.CraftQueue:AddRecipe(options)
             -- only increase amount
             craftQueueItem.amount = craftQueueItem.amount + amount
         end
+        -- TODO evaluate if this is still needed (probably not because of differentiation between subrecipedepths now)
         -- always update the subrecipedepth
-        craftQueueItem.recipeData.subRecipeDepth = math.max(craftQueueItem.recipeData.subRecipeDepth,
-            recipeData.subRecipeDepth)
+        -- craftQueueItem.recipeData.subRecipeDepth = math.max(craftQueueItem.recipeData.subRecipeDepth,
+        --     recipeData.subRecipeDepth)
         -- also check if I have parent recipes that the already queued recipe does not have
 
-        for _, parentRecipesInfo in ipairs(recipeData.parentRecipeInfo) do
-            local hasPri = GUTIL:Some(craftQueueItem.recipeData.parentRecipeInfo, function(pri)
-                return pri.crafterUID == parentRecipesInfo.crafterUID and pri.recipeID == parentRecipesInfo.recipeID
-            end)
-            if not hasPri then
-                tinsert(craftQueueItem.recipeData.parentRecipeInfo, parentRecipesInfo)
-            end
-        end
+        --craftQueueItem.recipeData:AddParentRecipeInfosFrom(recipeData)
     else
         craftQueueItem = CraftSim.CraftQueueItem({
             recipeData = recipeData:Copy(),
@@ -137,7 +131,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.CraftQueueItem | nil craftQueueItem
 function CraftSim.CraftQueue:FindRecipe(recipeData)
-    return self.recipeCrafterMap[recipeData:GetRecipeCrafterUID()]
+    return self.recipeCrafterMap[recipeData:GetRecipeCraftQueueUID()]
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
@@ -146,7 +140,7 @@ function CraftSim.CraftQueue:Remove(craftQueueItem)
         return craftQueueItem == cqI
     end)
 
-    self.recipeCrafterMap[craftQueueItem.recipeData:GetRecipeCrafterUID()] = nil
+    self.recipeCrafterMap[craftQueueItem.recipeData:GetRecipeCraftQueueUID()] = nil
     tremove(self.craftQueueItems, index)
 
     -- after removal check if cqi had any subrecipes that are now without parents, if yes remove them too (recursively)
@@ -173,7 +167,7 @@ function CraftSim.CraftQueue:Remove(craftQueueItem)
             -- remove all references to this subrecipe and update priceData and profit
             for itemID, optimizedSubRecipe in pairs(parentCQI.recipeData.optimizedSubRecipes) do
                 if optimizedSubRecipe then
-                    if optimizedSubRecipe:GetRecipeCrafterUID() == craftQueueItem.recipeData:GetRecipeCrafterUID() then
+                    if optimizedSubRecipe:GetRecipeCraftQueueUID() == craftQueueItem.recipeData:GetRecipeCraftQueueUID() then
                         parentCQI.recipeData.optimizedSubRecipes[itemID] = nil
                     end
                 end
@@ -188,7 +182,7 @@ end
 ---@param prI CraftSim.RecipeData.ParentRecipeInfo
 ---@return CraftSim.CraftQueueItem | nil
 function CraftSim.CraftQueue:FindRecipeByParentRecipeInfo(prI)
-    return self.recipeCrafterMap[prI.crafterUID .. ":" .. prI.recipeID]
+    return self.recipeCrafterMap[prI.crafterUID .. ":" .. prI.recipeID .. ":" .. prI.subRecipeDepth]
 end
 
 function CraftSim.CraftQueue:ClearAll()
@@ -222,7 +216,7 @@ function CraftSim.CraftQueue:RestoreFromCache()
             local craftQueueItem = CraftSim.CraftQueueItem:Deserialize(craftQueueItemSerialized)
             if craftQueueItem then
                 craftQueueItem:CalculateCanCraft()
-                self.recipeCrafterMap[craftQueueItem.recipeData:GetRecipeCrafterUID()] = craftQueueItem
+                self.recipeCrafterMap[craftQueueItem.recipeData:GetRecipeCraftQueueUID()] = craftQueueItem
                 return craftQueueItem
             end
             return nil

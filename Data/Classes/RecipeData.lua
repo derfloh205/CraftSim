@@ -47,6 +47,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@field crafterClass ClassFile
     ---@field profession Enum.Profession
     ---@field recipeName string
+    ---@field subRecipeDepth number
     --- recipeData references for which the recipeData is used as subRecipe
     ---@type CraftSim.RecipeData.ParentRecipeInfo[]
     self.parentRecipeInfo = {}
@@ -487,9 +488,12 @@ function CraftSim.RecipeData:Copy()
     copy.orderData = self.orderData
     copy.crafterData = self.crafterData
     copy.subRecipeCostsEnabled = self.subRecipeCostsEnabled
+    copy.subRecipeDepth = self.subRecipeDepth
     copy.optimizedSubRecipes = {}
     copy.averageProfitCached = self.averageProfitCached
     copy.relativeProfitCached = self.relativeProfitCached
+
+    copy.parentRecipeInfo = CopyTable(self.parentRecipeInfo)
 
     for itemID, recipeData in pairs(self.optimizedSubRecipes) do
         copy.optimizedSubRecipes[itemID] = recipeData:Copy()
@@ -975,9 +979,6 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
     ---@type CraftSim.RecipeData[]
     local optimized = {}
 
-    local crafterUID = self:GetCrafterUID()
-    local parentRecipeInfo = self:CreateParentRecipeInfo()
-
     -- optimize recipes and map itemIDs
     for _, data in pairs(subRecipeData) do
         local recipeID = data.recipeID
@@ -1006,11 +1007,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                 if reagentQualityReachable then
                     self.optimizedSubRecipes[data.itemID] = reagentRecipeData
                 end
-                if not GUTIL:Some(reagentRecipeData.parentRecipeInfo, function(info)
-                        return info.crafterUID == crafterUID and info.recipeID == self.recipeID
-                    end) then
-                    tinsert(reagentRecipeData.parentRecipeInfo, parentRecipeInfo)
-                end
+                reagentRecipeData:AddParentRecipe(self)
             elseif recipeID and crafterData then
                 -- only continue of the recipe in question is learned by the target crafter
                 CraftSimRecipeDataCache.recipeInfoCache[crafter] = CraftSimRecipeDataCache.recipeInfoCache[crafter] or {}
@@ -1034,11 +1031,8 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                             subRecipeDepth + 1)
                         if success then
                             recipeData:SetSubRecipeCostsUsage(true)
-                            if not GUTIL:Some(recipeData.parentRecipeInfo, function(info)
-                                    return info.crafterUID == crafterUID and info.recipeID == self.recipeID
-                                end) then
-                                tinsert(recipeData.parentRecipeInfo, parentRecipeInfo)
-                            end
+                            recipeData:AddParentRecipe(self)
+
                             -- caches the expect costs info automatically
                             recipeData:OptimizeProfit(optimizeOptions)
                             print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
@@ -1104,12 +1098,14 @@ end
 
 ---@param subRecipeData CraftSim.RecipeData
 function CraftSim.RecipeData:IsParentRecipeOf(subRecipeData)
-    -- check not per reference by by recipeID and crafterUID
-    local parentRecipeID = self.recipeID
-    local parentCrafterUID = self:GetCrafterUID()
+    return subRecipeData:HasParentRecipeInfo(self:CreateParentRecipeInfo())
+end
 
-    return GUTIL:Some(subRecipeData.parentRecipeInfo, function(parentRecipeInfo)
-        return parentRecipeInfo.recipeID == parentRecipeID and parentRecipeInfo.crafterUID == parentCrafterUID
+---@param prI CraftSim.RecipeData.ParentRecipeInfo
+function CraftSim.RecipeData:HasParentRecipeInfo(prI)
+    return GUTIL:Some(self.parentRecipeInfo, function(parentRecipeInfo)
+        return parentRecipeInfo.recipeID == prI.recipeID and parentRecipeInfo.crafterUID == prI.crafterUID and
+            parentRecipeInfo.subRecipeDepth == prI.subRecipeDepth
     end)
 end
 
@@ -1122,20 +1118,40 @@ function CraftSim.RecipeData:CreateParentRecipeInfo()
         crafterClass = self.crafterData.class,
         profession = self.professionData.professionInfo.profession,
         recipeName = self.recipeName,
+        subRecipeDepth = self.subRecipeDepth,
     }
     return pri
+end
+
+---@param prI CraftSim.RecipeData.ParentRecipeInfo
+function CraftSim.RecipeData:AddParentRecipeInfo(prI)
+    if not self:HasParentRecipeInfo(prI) then
+        tinsert(self.parentRecipeInfo, prI)
+    end
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.RecipeData:AddParentRecipe(recipeData)
+    self:AddParentRecipeInfo(recipeData:CreateParentRecipeInfo())
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.RecipeData:AddParentRecipeInfosFrom(recipeData)
+    for _, parentRecipesInfo in ipairs(recipeData.parentRecipeInfo) do
+        self:AddParentRecipeInfo(parentRecipesInfo)
+    end
 end
 
 function CraftSim.RecipeData:HasActiveSubRecipeInCraftQueue()
     return CraftSim.CRAFTQ.craftQueue:RecipeHasActiveSubRecipesInQueue(self)
 end
 
----@alias RecipeCrafterUID string
+---@alias RecipeCraftQueueUID string
 
----Returns a unique id for the crafter and the recipeID
----@return RecipeCrafterUID
-function CraftSim.RecipeData:GetRecipeCrafterUID()
-    return self:GetCrafterUID() .. ":" .. self.recipeID
+---Returns a unique id for the recipe within the craftqueue
+---@return RecipeCraftQueueUID
+function CraftSim.RecipeData:GetRecipeCraftQueueUID()
+    return self:GetCrafterUID() .. ":" .. self.recipeID .. ":" .. self.subRecipeDepth
 end
 
 ---@return boolean hasActiveSubRecipes
@@ -1149,7 +1165,7 @@ function CraftSim.RecipeData:IsSubRecipe()
 end
 
 function CraftSim.RecipeData:HasParentsInCraftQueue()
-    return GUTIL:Some(self.parentRecipeInfo, function(rpI)
-        return CraftSim.CRAFTQ.craftQueue.recipeCrafterMap[rpI.crafterUID .. ":" .. rpI.recipeID] ~= nil
+    return GUTIL:Some(self.parentRecipeInfo, function(prI)
+        return CraftSim.CRAFTQ.craftQueue:FindRecipeByParentRecipeInfo(prI) ~= nil
     end)
 end

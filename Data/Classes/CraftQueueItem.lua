@@ -291,12 +291,10 @@ function CraftSim.CraftQueueItem:UpdateTargetModeSubRecipeByParentRecipes()
     wipe(self.targetItemCountByQuality)
 
     for _, pri in ipairs(self.recipeData.parentRecipeInfo) do
-        local recipeCrafterUID = pri.crafterUID .. ":" .. pri.recipeID
-        local parentCQI = CraftSim.CRAFTQ.craftQueue.recipeCrafterMap[recipeCrafterUID]
-
-        print("Found Parent Recipe in Queue: " .. tostring(recipeCrafterUID))
+        local parentCQI = CraftSim.CRAFTQ.craftQueue:FindRecipeByParentRecipeInfo(pri)
 
         if parentCQI then
+            print("Found Parent Recipe in Queue: " .. parentCQI.recipeData:GetRecipeCraftQueueUID())
             for qualityID, item in ipairs(self.recipeData.resultData.itemsByQuality) do
                 -- only if this item is a activesubreagent and I am the crafter!
                 local itemID = item:GetItemID()
