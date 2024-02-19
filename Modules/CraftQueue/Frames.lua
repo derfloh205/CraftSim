@@ -608,7 +608,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
         -- restock Options
 
         restockOptionsTab.content.generalOptionsFrame = CreateFrame("frame", nil, restockOptionsTab.content)
-        restockOptionsTab.content.generalOptionsFrame:SetSize(150, 50)
+        restockOptionsTab.content.generalOptionsFrame:SetSize(150, 70)
         restockOptionsTab.content.generalOptionsFrame:SetPoint("TOP", restockOptionsTab.content, "TOP", 0, -10)
         local generalOptionsFrame = restockOptionsTab.content.generalOptionsFrame
 
@@ -704,18 +704,22 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             anchorA = "RIGHT", anchorB = "LEFT", offsetX = -2, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL)
         }
 
+        local targetModecraftOffsetTooltipOptions = {
+            owner = generalOptionsFrame,
+            anchor = "ANCHOR_CURSOR",
+            text = f.white("Add additional crafts to the calculated minimum crafts for target mode recipes"),
+            textWrap = true,
+        }
+
         generalOptionsFrame.targetModeCraftOffsetInput = GGUI.NumericInput {
             parent = generalOptionsFrame, anchorParent = generalOptionsFrame.saleRateInput.textInput.frame, anchorA = "TOP", anchorB = "BOTTOM",
             allowDecimals = false, initialValue = CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset, minValue = 0,
             sizeX = 40,
             labelOptions = {
                 text = "Target Mode Crafts: ",
+                tooltipOptions = targetModecraftOffsetTooltipOptions
             },
-            tooltipOptions = {
-                owner = generalOptionsFrame, anchor = "ANCHOR_CURSOR",
-                text = f.white("Add additional crafts to the calculated minimum crafts for target mode recipes"),
-                textWrap = true,
-            },
+            tooltipOptions = targetModecraftOffsetTooltipOptions,
             onNumberValidCallback = function(input)
                 CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset = input.currentValue
                 self:UpdateQueueDisplay()
