@@ -556,31 +556,7 @@ function CraftSim.RecipeData:OptimizeProfit(options)
         self:OptimizeReagents()
     end
 
-    -- cache the results if not gear and if its learned only
-    if not self.isGear and self.learned then
-        --print("Caching Optimized Costs Data for: " .. self.recipeName)
-
-        -- only if reachable
-        for qualityID, item in ipairs(self.resultData.itemsByQuality) do
-            local chance = self.resultData.chanceByQuality[qualityID] or 0
-            if chance > 0 then
-                local print = CraftSim.DEBUG:SetDebugPrint("CACHE")
-                print("Caching Optimized Costs Data for: " .. self.recipeName)
-                local itemID = item:GetItemID()
-                CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
-                    .itemOptimizedCostsDataCache[itemID] or {}
-
-                CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID][self:GetCrafterUID()] = {
-                    crafter = self:GetCrafterUID(),
-                    qualityID = qualityID,
-                    craftingChance = chance,
-                    expectedCosts = self.priceData.expectedCostsByQuality[qualityID],
-                    expectedCrafts = self.resultData.expectedCraftsByQuality[qualityID],
-                    profession = self.professionData.professionInfo.profession,
-                }
-            end
-        end
-    end
+    CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Save(self)
 end
 
 ---Optimizes the recipeData's reagents and gear for highest quality

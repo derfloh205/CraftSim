@@ -51,8 +51,6 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
         end
 
         if considerSubCrafts then
-            CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
-                .itemOptimizedCostsDataCache[itemID] or {}
             -- get costs from set crafter
             local itemRecipeData = CraftSimRecipeDataCache.itemRecipeCache[itemID]
             -- only use if set crafter exists, has cached optimized costs and can even craft that item with a chance higher than 0
@@ -64,14 +62,14 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
                         not CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(itemRecipeData.recipeID,
                             recipeCrafter)
                     if allowCooldown then
-                        local itemOptimizedCostsData = CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID]
-                            [recipeCrafter]
-                        if itemOptimizedCostsData and itemOptimizedCostsData.craftingChance > 0 then
+                        local itemOptimizedCostsData = CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Get(itemID,
+                            recipeCrafter)
+                        if itemOptimizedCostsData and itemOptimizedCostsData.craftingChanceMin > 0 then
                             priceInfo.expectedCostsData = itemOptimizedCostsData
                             -- only set as used price if its lower then ah price or no ah price for this item exists
-                            if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCosts < priceInfo.ahPrice then
+                            if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCostsMin < priceInfo.ahPrice then
                                 priceInfo.isExpectedCost = true
-                                return itemOptimizedCostsData.expectedCosts, priceInfo
+                                return itemOptimizedCostsData.expectedCostsMin, priceInfo
                             end
                         end
                     end

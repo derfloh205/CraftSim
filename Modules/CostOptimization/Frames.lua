@@ -628,13 +628,10 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
                     local optimizedItemIDs = {}
                     -- metadata for sorting and other things
                     local crafterRecipeOptimizedCostsDataModifiedList = GUTIL:Map(crafterItemRecipeList, function(irI)
-                        CraftSimRecipeDataCache.itemOptimizedCostsDataCache[irI.itemID] = CraftSimRecipeDataCache
-                            .itemOptimizedCostsDataCache[irI.itemID] or {}
                         tinsert(optimizedItemIDs, Item:CreateFromItemID(irI.itemID))
                         return {
                             itemID = irI.itemID,
-                            optimizedCostsData = CraftSimRecipeDataCache.itemOptimizedCostsDataCache
-                                [irI.itemID][crafter]
+                            optimizedCostsData = CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Get(irI.itemID, crafter)
                         }
                     end)
 

@@ -20,6 +20,9 @@ CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE = {}
 ---@class CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE
 CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE = {}
 
+---@class CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS
+CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS = {}
+
 ---@class CraftSim.ProfessionGearCacheData
 ---@field cached boolean
 ---@field equippedGear CraftSim.ProfessionGearSet.Serialized?
@@ -35,8 +38,11 @@ CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE = {}
 ---@field qualityID QualityID
 ---@field crafter CrafterUID
 ---@field expectedCosts number
+---@field expectedCostsMin number
 ---@field craftingChance number
+---@field craftingChanceMin number
 ---@field expectedCrafts number
+---@field expectedCraftsMin number
 ---@field profession Enum.Profession
 
 ---@class CraftSim.RecipeDataCache
@@ -63,6 +69,7 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     postLoadedMulticraftInformationProfessions = {},
     cooldownCache = {},
     subRecipeCrafterCache = {},
+    itemOptimizedCostsDataCache = {},
     cacheVersions = {
         cachedRecipeIDs = 1,
         recipeInfoCache = 1,
@@ -220,4 +227,46 @@ function CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(recipeID, cr
 
         return false
     end
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Save(recipeData)
+    -- cache the results if not gear and if its learned only
+    if not recipeData.isGear and recipeData.learned then
+        --print("Caching Optimized Costs Data for: " .. self.recipeName)
+
+        -- only if reachable
+        for qualityID, item in ipairs(recipeData.resultData.itemsByQuality) do
+            local chance = recipeData.resultData.chanceByQuality[qualityID] or 0
+            local minChance = recipeData.resultData.chancebyMinimumQuality[qualityID] or 0
+            if minChance > 0 then
+                print("Caching Optimized Costs Data for: " .. recipeData.recipeName)
+                local itemID = item:GetItemID()
+                CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
+                    .itemOptimizedCostsDataCache[itemID] or {}
+
+                CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID][recipeData:GetCrafterUID()] = {
+                    crafter = recipeData:GetCrafterUID(),
+                    qualityID = qualityID,
+                    craftingChance = chance,
+                    craftingChanceMin = minChance,
+                    expectedCosts = recipeData.priceData.expectedCostsByQuality[qualityID],
+                    expectedCostsMin = recipeData.priceData.expectedCostsByMinimumQuality[qualityID],
+                    expectedCrafts = recipeData.resultData.expectedCraftsByQuality[qualityID],
+                    expectedCraftsMin = recipeData.resultData.expectedCraftsByMinimumQuality[qualityID],
+                    profession = recipeData.professionData.professionInfo.profession,
+                }
+            end
+        end
+    end
+end
+
+---@param itemID ItemID
+---@param crafterUID CrafterUID
+---@return CraftSim.ExpectedCraftingCostsData?
+function CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Get(itemID, crafterUID)
+    CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
+        .itemOptimizedCostsDataCache[itemID] or {}
+
+    return CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID][crafterUID]
 end
