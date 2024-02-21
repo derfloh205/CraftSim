@@ -332,7 +332,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
 
                 -- target mode frame
                 craftAmountColumn.targetList = GGUI.FrameList {
-                    parent = craftAmountColumn, anchorParent = craftAmountColumn,
+                    parent = craftAmountColumn, anchorParent = craftAmountColumn, disableScrolling = true,
                     anchorA = "TOPLEFT", anchorB = "TOPLEFT", sizeY = 25, autoAdjustHeight = true,
                     hideScrollbar = true, scale = 1, rowHeight = 18, offsetX = -10, offsetY = 2,
                     selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE },
