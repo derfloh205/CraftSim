@@ -449,6 +449,8 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
 
     local bestResultNoInspiration = results[1]
 
+    local bestResult = bestResultNoInspiration
+
     if recipeData.supportsInspiration then
         local arrayBPInspiration = calculateArrayBP(skillWithoutReagentIncrease +
             recipeData.professionStats.inspiration:GetExtraValueByFactor())
@@ -467,10 +469,15 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
         if bestResultInspiration.qualityID > bestResultNoInspiration.qualityID then
             CraftSim.DEBUG:StopProfiling("optimizeKnapsack")
             print("taking inspiration result as best result")
-            return bestResultInspiration
+            bestResult = bestResultInspiration
         end
     end
     CraftSim.DEBUG:StopProfiling("optimizeKnapsack")
     print("taking guaranteed result as best result")
-    return bestResultNoInspiration
+
+
+    -- if certain qualityIDs have the same price, use the higher qualityID
+    bestResult:OptimizeQualityIDs(recipeData.subRecipeCostsEnabled)
+
+    return bestResult
 end

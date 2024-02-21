@@ -9,10 +9,12 @@ CraftSim.ReagentOptimizationResult = CraftSim.CraftSimObject:extend()
 ---@param recipeData CraftSim.RecipeData
 ---@param knapsackResult table
 function CraftSim.ReagentOptimizationResult:new(recipeData, knapsackResult)
+    self.recipeData = recipeData
+
     if knapsackResult then
         ---@type number
         self.qualityID = knapsackResult.qualityReached
-        self.craftingCosts = knapsackResult.minValue + recipeData.priceData.craftingCostsFixed
+        --self.craftingCosts = knapsackResult.minValue + recipeData.priceData.craftingCostsFixed
 
         local reagentItems = {}
         ---@type CraftSim.Reagent[]
@@ -42,7 +44,7 @@ function CraftSim.ReagentOptimizationResult:new(recipeData, knapsackResult)
         end
     else
         self.qualityID = recipeData.maxQuality
-        self.craftingCosts = 0
+        --self.craftingCosts = 0
         self.reagents = {}
     end
 end
@@ -87,4 +89,29 @@ end
 
 function CraftSim.ReagentOptimizationResult:IsAllocated(recipeData)
     return CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, self)
+end
+
+function CraftSim.ReagentOptimizationResult:OptimizeQualityIDs(considerSubCrafts)
+    --- if qualityIDs of a reagent share their price with a higher quality, use the higher one (relevant for selfcrafted items mostly)
+
+    for _, reagent in ipairs(self.reagents) do
+        local lastPrice = 0
+        local lastQuality = 1
+        local lastReagentItem = nil
+        for q, reagentItem in ipairs(reagent.items) do
+            local currentPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true, false,
+                considerSubCrafts)
+
+            if q > lastQuality then
+                if currentPrice == lastPrice and lastReagentItem then
+                    reagentItem.quantity = reagentItem.quantity + lastReagentItem.quantity
+                    lastReagentItem.quantity = 0
+                end
+            end
+
+            lastQuality = q
+            lastPrice = currentPrice
+            lastReagentItem = reagentItem
+        end
+    end
 end
