@@ -467,17 +467,17 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
         -- if it would be the same qualityID then the optimization for guaranteed is better
 
         if bestResultInspiration.qualityID > bestResultNoInspiration.qualityID then
-            CraftSim.DEBUG:StopProfiling("optimizeKnapsack")
             print("taking inspiration result as best result")
             bestResult = bestResultInspiration
         end
     end
-    CraftSim.DEBUG:StopProfiling("optimizeKnapsack")
     print("taking guaranteed result as best result")
 
 
     -- if certain qualityIDs have the same price, use the higher qualityID
     bestResult:OptimizeQualityIDs(recipeData.subRecipeCostsEnabled)
+
+    CraftSim.DEBUG:StopProfiling("optimizeKnapsack")
 
     return bestResult
 end
