@@ -15,7 +15,7 @@ CraftSim.STATISTICS.FRAMES = {}
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
 
 function CraftSim.STATISTICS.FRAMES:Init()
-    local sizeX = 700
+    local sizeX = 900
     local sizeYExpanded = 630
     local sizeYRetracted = 350
 
@@ -184,17 +184,29 @@ function CraftSim.STATISTICS.FRAMES:Init()
                     justifyOptions = { type = "H", align = "CENTER" },
                 },
                 {
-                    label = L(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER),
-                    width = 150,
+                    label = L(CraftSim.CONST.TEXT.STATISTICS_CHANCE_MIN_HEADER),
+                    width = 70,
                     justifyOptions = { type = "H", align = "CENTER" },
-                }
+                },
+                {
+                    label = L(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_MIN_HEADER),
+                    width = 130,
+                    justifyOptions = { type = "H", align = "CENTER" },
+                },
+                {
+                    label = L(CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_MIN_HEADER),
+                    width = 170,
+                    justifyOptions = { type = "H", align = "CENTER" },
+                },
             },
             rowConstructor = function(columns)
                 local qualityRow = columns[1]
                 local chanceRow = columns[2]
                 local craftsRow = columns[3]
                 local expectedCostsRow = columns[4]
-                local expectedCostsWithReturnRow = columns[5]
+                local chanceMinRow = columns[5]
+                local craftsMinRow = columns[6]
+                local expectedCostsMinRow = columns[7]
 
                 qualityRow.text = GGUI.Text({
                     parent = qualityRow, anchorParent = qualityRow,
@@ -219,8 +231,16 @@ function CraftSim.STATISTICS.FRAMES:Init()
                     parent = expectedCostsRow, anchorParent = expectedCostsRow,
                 })
 
-                expectedCostsWithReturnRow.text = GGUI.Text({
-                    parent = expectedCostsWithReturnRow, anchorParent = expectedCostsWithReturnRow
+                chanceMinRow.text = GGUI.Text({
+                    parent = chanceMinRow, anchorParent = chanceMinRow,
+                })
+
+                craftsMinRow.text = GGUI.Text({
+                    parent = craftsMinRow, anchorParent = craftsMinRow
+                })
+
+                expectedCostsMinRow.text = GGUI.Text({
+                    parent = expectedCostsMinRow, anchorParent = expectedCostsMinRow,
                 })
             end
         })
@@ -417,46 +437,49 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
 
     for qualityID, chance in pairs(recipeData.resultData.chanceByQuality) do
         local expectedCrafts = nil
+        local expectedCraftsMin = nil
+        local chanceMin = recipeData.resultData.chancebyMinimumQuality[qualityID]
+        if chanceMin == 0 or recipeData.resultData.expectedCraftsByMinimumQuality[qualityID] == nil then
+            expectedCraftsMin = "-"
+        else
+            expectedCraftsMin = GUTIL:Round(recipeData.resultData.expectedCraftsByMinimumQuality[qualityID], 2)
+        end
         if chance == 0 or recipeData.resultData.expectedCraftsByQuality[qualityID] == nil then
             expectedCrafts = "-"
         else
             expectedCrafts = GUTIL:Round(recipeData.resultData.expectedCraftsByQuality[qualityID], 2)
         end
 
-        statisticsFrame.content.chanceByQualityTable:Add(function(row)
-            local qualityRow = row.columns[1]
-            local chanceRow = row.columns[2]
-            local craftsRow = row.columns[3]
-            local expectedCostsRow = row.columns[4]
-            local expectedCostsWithReturnRow = row.columns[5]
+        statisticsFrame.content.chanceByQualityTable:Add(function(row, columns)
+            local qualityRow = columns[1]
+            local chanceRow = columns[2]
+            local craftsRow = columns[3]
+            local expectedCostsRow = columns[4]
+            local chanceMinRow = columns[5]
+            local craftsMinRow = columns[6]
+            local expectedCostsMinRow = columns[7]
 
             qualityRow:SetQuality(qualityID)
             chanceRow.text:SetText(GUTIL:Round(chance * 100, 2) .. "%")
+            chanceMinRow.text:SetText(GUTIL:Round(chanceMin * 100, 2) .. "%")
             craftsRow.text:SetText(expectedCrafts)
+            craftsMinRow.text:SetText(expectedCraftsMin)
 
             local expectedCostsForQuality = recipeData.priceData.expectedCostsByQuality[qualityID]
+            local expectedCostsForQualityMin = recipeData.priceData.expectedCostsByMinimumQuality[qualityID]
 
             if expectedCostsForQuality then
                 expectedCostsRow.text:SetText(GUTIL:ColorizeText(GUTIL:FormatMoney(expectedCostsForQuality),
                     GUTIL.COLORS.RED))
-                -- Consider selling on average one item of a lower quality per attempted crafts before reaching this quality (the rounded down integer)
-                local expectedSellReturnForQuality = 0
-                if qualityID > 1 then
-                    -- 1.97 minus 1 and ceil is 1 and 1 minus 1 and ceil is 0
-                    -- 1.97 floor is 1 and 1 floor is also one, so we take the ceil and minus one method
-                    -- update: just minus one to get the average crafts before the final average craft that reaches the desired quality
-                    -- e.g: if the expected is 1.05 then the average sell value for lower quality of that is weighted with 0.05 which seems about right
-                    local expectedCraftsForQuality = recipeData.resultData.expectedCraftsByQuality[qualityID] or 0
-                    local priceForLastQuality = recipeData.priceData.qualityPriceList[qualityID - 1] or 0
-                    expectedSellReturnForQuality = (expectedCraftsForQuality - 1) * priceForLastQuality
-                    expectedSellReturnForQuality = expectedSellReturnForQuality * CraftSim.CONST.AUCTION_HOUSE_CUT
-                end
-
-                expectedCostsWithReturnRow.text:SetText(GUTIL:ColorizeText(
-                    GUTIL:FormatMoney(expectedCostsForQuality - expectedSellReturnForQuality), GUTIL.COLORS.RED))
             else
                 expectedCostsRow.text:SetText("-")
-                expectedCostsWithReturnRow.text:SetText("-");
+            end
+
+            if expectedCostsForQualityMin then
+                expectedCostsMinRow.text:SetText(GUTIL:ColorizeText(GUTIL:FormatMoney(expectedCostsForQualityMin),
+                    GUTIL.COLORS.RED))
+            else
+                expectedCostsMinRow.text:SetText("-")
             end
         end)
     end

@@ -81,6 +81,7 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
         postLoadedMulticraftInformationProfessions = 1,
         cooldownCache = 1,
         subRecipeCrafterCache = 1,
+        itemOptimizedCostsDataCache = 1,
     },
 }
 
@@ -106,7 +107,6 @@ function CraftSim.CACHE.RECIPE_DATA:HandleUpdates()
         CraftSimRecipeDataCache.itemRecipeCache = CraftSimRecipeDataCache.itemRecipeCache or {}
         CraftSimRecipeDataCache.itemOptimizedCostsDataCache = CraftSimRecipeDataCache.itemOptimizedCostsDataCache or {}
         CraftSimRecipeDataCache.cacheVersions = CraftSimRecipeDataCache.cacheVersions or {}
-        CraftSimRecipeDataCache.cacheVersions.subRecipeCrafterCache = 1
 
         CraftSim.CACHE.RECIPE_DATA:HandleMigrations()
     end
@@ -147,6 +147,17 @@ function CraftSim.CACHE.RECIPE_DATA:HandleMigrations()
     if not CraftSimRecipeDataCache.cacheVersions.cooldownCache then
         CraftSim.CACHE.RECIPE_DATA:MigrateCooldownCache_0_1()
         CraftSimRecipeDataCache.cacheVersions.cooldownCache = 1
+    end
+
+    -- itemOptimizedCostsDataCache 0 -> 1
+    if not CraftSimRecipeDataCache.cacheVersions.itemOptimizedCostsDataCache then
+        wipe(CraftSimRecipeDataCache.itemOptimizedCostsDataCache)
+        CraftSimRecipeDataCache.cacheVersions.itemOptimizedCostsDataCache = 1
+    end
+
+    -- subRecipeCrafterCache 0 -> 1
+    if not CraftSimRecipeDataCache.cacheVersions.subRecipeCrafterCache then
+        CraftSimRecipeDataCache.cacheVersions.subRecipeCrafterCache = 1
     end
 end
 

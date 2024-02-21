@@ -423,7 +423,7 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
                 end
                 print("Has expectedCostsData: " .. tostring(priceInfo.expectedCostsData ~= nil))
                 if priceInfo.expectedCostsData then
-                    row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCosts))
+                    row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin))
                     local class = CraftSimRecipeDataCache.altClassCache[priceInfo.expectedCostsData.crafter]
                     local crafterName = priceInfo.expectedCostsData.crafter
                     if class then
@@ -435,10 +435,12 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
                     tooltip = tooltip ..
                         "\n\nCrafting " .. crafterName ..
                         ":" ..
-                        "\n- Expected Costs per Item: " ..
-                        CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCosts) ..
-                        "\n- Expected Crafts per Item: " .. GUTIL:Round(priceInfo.expectedCostsData.expectedCrafts, 1) ..
-                        "\n- Expected Chance per Item: " .. priceInfo.expectedCostsData.craftingChance * 100 .. "%"
+                        "\n- Expected Costs Min per Item: " ..
+                        CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin) ..
+                        "\n- Expected Crafts Min per Item: " ..
+                        GUTIL:Round(priceInfo.expectedCostsData.expectedCraftsMin, 1) ..
+                        "\n- Expected Chance Min per Item: " ..
+                        priceInfo.expectedCostsData.craftingChanceMin * 100 .. "%"
                 else
                     row.columns[4].text:SetText(f.grey("-"))
                 end
@@ -491,7 +493,7 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
             end
 
             if priceInfo.isExpectedCost and priceInfo.expectedCostsData then
-                row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCosts))
+                row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin))
                 local class = CraftSimRecipeDataCache.altClassCache[priceInfo.expectedCostsData.crafter]
                 local crafterName = priceInfo.expectedCostsData.crafter
                 if class then
@@ -503,10 +505,11 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
                 tooltip = tooltip ..
                     "\n\nCrafting " .. crafterName ..
                     ":" ..
-                    "\n- Expected Costs per Item: " ..
-                    CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCosts) ..
-                    "\n- Expected Crafts per Item: " .. GUTIL:Round(priceInfo.expectedCostsData.expectedCrafts, 1) ..
-                    "\n- Expected Chance per Item: " .. priceInfo.expectedCostsData.craftingChance * 100 .. "%"
+                    "\n- Expected Costs Min per Item: " ..
+                    CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin) ..
+                    "\n- Expected Crafts Min per Item: " ..
+                    GUTIL:Round(priceInfo.expectedCostsData.expectedCraftsMin, 1) ..
+                    "\n- Expected Chance Min per Item: " .. priceInfo.expectedCostsData.craftingChanceMin * 100 .. "%"
             else
                 row.columns[4].text:SetText(f.grey("-"))
             end
@@ -650,11 +653,11 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
                                         ..
                                         GUTIL:GetQualityIconString(optimizedCostData.qualityID, 20, 20) ..
                                         f.white("\n- Chance: " ..
-                                            GUTIL:Round(optimizedCostData.craftingChance * 100) .. "%") ..
+                                            GUTIL:Round(optimizedCostData.craftingChanceMin * 100) .. "%") ..
                                         f.white("\n- Expected Crafts: " ..
-                                            GUTIL:Round(optimizedCostData.expectedCrafts, 1)) ..
+                                            GUTIL:Round(optimizedCostData.expectedCraftsMin, 1)) ..
                                         f.white("\n- Expected Costs: " ..
-                                            GUTIL:FormatMoney(optimizedCostData.expectedCosts))
+                                            GUTIL:FormatMoney(optimizedCostData.expectedCostsMin))
                                 end
                             end
                         end

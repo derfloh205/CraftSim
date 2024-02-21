@@ -316,7 +316,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_CRAFTS] = "Crafts: ",
         [CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER] = "Quality",
         [CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER] = "Chance",
+        [CraftSim.CONST.TEXT.STATISTICS_CHANCE_MIN_HEADER] = "Chance (Min)",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Ø Expected Crafts",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_MIN_HEADER] = "Ø Expected Crafts (Min)",
         [CraftSim.CONST.TEXT.STATISTICS_INSPIRATION_HEADER] = "Inspiration",
         [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "Multicraft",
         [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "Resourcefulness",
@@ -329,8 +331,10 @@ function CraftSim.LOCAL_EN:GetData()
             f.l("HSV Next") ..
             " .. HSV chance for next quality\n\n" ..
             f.l("HSV Skip") .. " .. HSV chance to skip a quality with inspiration",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "Ø Expected Costs per Item",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "Ø Expected Costs",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_MIN_HEADER] = "Ø Expected Costs (Min)",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "With Ø Sell Return",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_MIN_WITH_RETURN_HEADER] = "With Ø Sell Return (Min)",
         [CraftSim.CONST.TEXT.STATISTICS_EXPLANATION_ICON] =
             "This table gives you the average (Ø) expected crafts and costs per quality.\n\n" ..
             f.g("Chance") ..
