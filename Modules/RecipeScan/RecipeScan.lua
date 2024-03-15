@@ -243,7 +243,7 @@ end
 function CraftSim.RECIPE_SCAN:StartScan(row)
     wipe(row.currentResults)
     CraftSim.RECIPE_SCAN.isScanning = true
-
+    
     printS("Start Scan for: " .. tostring(row.crafterProfessionUID))
 
     local recipeInfos = CraftSim.RECIPE_SCAN:GetScanRecipeInfo(row)
@@ -303,6 +303,7 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
             if CraftSimOptions.recipeScanScanMode ~= CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
                 CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
             end
+            -- Optimize gear and/or reagents
             recipeData:OptimizeProfit({
                 optimizeGear = CraftSimOptions.recipeScanOptimizeProfessionTools,
                 optimizeReagents = CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE,
