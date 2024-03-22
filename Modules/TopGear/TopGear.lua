@@ -185,7 +185,7 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
             for slot = 1, C_Container.GetContainerNumSlots(bag) do
                 local itemLink = C_Container.GetContainerItemLink(bag, slot)
                 if itemLink ~= nil then
-                    local itemSubType = select(3, GetItemInfoInstant(itemLink))
+                    local itemSubType = select(3, C_Item.GetItemInfoInstant(itemLink))
                     if itemSubType == currentProfession then
                         local professionGear = CraftSim.ProfessionGear()
                         professionGear:SetItem(itemLink)
