@@ -346,7 +346,7 @@ function CraftSim.CraftQueue:RecipeHasActiveSubRecipesInQueue(recipeData)
         local craftQueueItem = self:FindRecipe(optimizedSubRecipeData)
         if not craftQueueItem then return false end
         local subRecipeData = craftQueueItem.recipeData
-        local debugItem = tostring(select(1, GetItemInfo(itemID)) or itemID) ..
+        local debugItem = tostring(select(1, C_Item.GetItemInfo(itemID)) or itemID) ..
             " q: " .. recipeData.reagentData:GetReagentQualityIDByItemID(itemID)
         print("checking item: " .. debugItem)
         local quantity = recipeData:GetReagentQuantityByItemID(itemID)

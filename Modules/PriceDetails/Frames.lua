@@ -162,7 +162,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, exportMode)
                     ((priceOverride and CraftSim.GUTIL:ColorizeText(" (OR)", CraftSim.GUTIL.COLORS.LEGENDARY)) or ""))
                 profitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(profit, true))
 
-                local itemCount = GetItemCount(itemLink, true, false, true)
+                local itemCount = C_Item.GetItemCount(itemLink, true, false, true)
                 local ahCount = CraftSim.PRICEDATA:GetAuctionAmount(itemLink)
 
                 if ahCount then

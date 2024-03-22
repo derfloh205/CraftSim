@@ -145,7 +145,7 @@ function CraftSimTSM:GetMinBuyoutByItemID(itemID, isReagent)
     if itemID == nil then
         return
     end
-    local _, itemLink = GetItemInfo(itemID)
+    local _, itemLink = C_Item.GetItemInfo(itemID)
     local tsmItemString = ""
     if itemLink == nil then
         tsmItemString = "i:" .. itemID -- manually, if the link was not generated
@@ -253,7 +253,7 @@ end
 function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
     local debugItem = CraftSimDebugData[itemID]
     if debugItem == nil then
-        local itemName = GetItemInfo(itemID)
+        local itemName = C_Item.GetItemInfo(itemID)
         if itemName == nil then
             print("itemData not loaded yet, add to debugData next time..")
             return 0
@@ -272,7 +272,7 @@ function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemLink(itemLink)
     --print("itemString: " .. itemString)
     local debugItem = CraftSimDebugData[itemString]
     if debugItem == nil then
-        local itemName = GetItemInfo(itemLink)
+        local itemName = C_Item.GetItemInfo(itemLink)
         if itemName == nil then
             print("itemData not loaded yet, add to debugData next time..")
             return 0
