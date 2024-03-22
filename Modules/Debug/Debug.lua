@@ -113,7 +113,7 @@ function CraftSim.DEBUG:PrintRecipeIDs(recipeID)
     local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType,
     itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType,
     expacID, setID, isCraftingReagent
-                                      = GetItemInfo(itemID)
+                                      = C_Item.GetItemInfo(itemID)
     ---@diagnostic disable-next-line: missing-parameter
     local data                        = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
 

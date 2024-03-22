@@ -446,7 +446,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
             if not itemID then
                 return nil
             else
-                info.itemName = select(1, GetItemInfo(itemID)) -- 100% already loaded in this case when its used as alt item in ReagentItem
+                info.itemName = select(1, C_Item.GetItemInfo(itemID)) -- 100% already loaded in this case when its used as alt item in ReagentItem
             end
 
             local itemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, true, false, true, crafterUID)

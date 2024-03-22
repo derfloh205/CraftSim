@@ -106,7 +106,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.isQuestRecipe = tContains(CraftSim.CONST.QUEST_RECIPE_IDS, recipeID)
 
     if self.recipeInfo.hyperlink then
-        local subclassID = select(7, GetItemInfoInstant(self.recipeInfo.hyperlink))
+        local subclassID = select(7, C_Item.GetItemInfoInstant(self.recipeInfo.hyperlink))
         ---@type number?
         self.subtypeID = subclassID
     end

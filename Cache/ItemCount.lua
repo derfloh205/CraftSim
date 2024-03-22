@@ -23,7 +23,7 @@ function CraftSim.CACHE.ITEM_COUNT:Update(itemID, count)
         CraftSimItemCountCache[crafterUID][itemID] = count
         return
     else
-        CraftSimItemCountCache[crafterUID][itemID] = GetItemCount(itemID, true, false, true)
+        CraftSimItemCountCache[crafterUID][itemID] = C_Item.GetItemCount(itemID, true, false, true)
     end
 end
 
@@ -37,7 +37,7 @@ function CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterU
     crafterUID = crafterUID or playerCrafterUID
     local isPlayer = crafterUID == playerCrafterUID
 
-    -- print("GetItemCount for crafterUID: " .. tostring(crafterUID))
+    -- print("C_Item.GetItemCount for crafterUID: " .. tostring(crafterUID))
     -- print("playerCrafterUID: " .. tostring(playerCrafterUID))
     -- print("isPlayer: " .. tostring(isPlayer))
 
@@ -47,10 +47,10 @@ function CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterU
 
     if isPlayer then
         -- always from api and then cache
-        local count = GetItemCount(itemID, bank, uses, reagentBank)
+        local count = C_Item.GetItemCount(itemID, bank, uses, reagentBank)
         local altCount = nil
         if alternativeItemID then
-            altCount = GetItemCount(alternativeItemID, bank, uses, reagentBank)
+            altCount = C_Item.GetItemCount(alternativeItemID, bank, uses, reagentBank)
             CraftSim.CACHE.ITEM_COUNT:Update(alternativeItemID, altCount)
         end
         CraftSim.CACHE.ITEM_COUNT:Update(itemID, count)
@@ -98,7 +98,7 @@ function CraftSim.CACHE.ITEM_COUNT:UpdateItemCountForCharacter()
             local itemID = C_Container.GetContainerItemID(bagID, slot)
 
             if itemID ~= nil then
-                local itemInfoInstant = { GetItemInfoInstant(itemID) }
+                local itemInfoInstant = { C_Item.GetItemInfoInstant(itemID) }
                 local itemClassID = itemInfoInstant[6]
                 local itemIcon = itemInfoInstant[5]
                 if Enum.ItemClass.Tradegoods == itemClassID then
