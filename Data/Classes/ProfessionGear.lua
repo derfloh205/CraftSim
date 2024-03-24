@@ -34,13 +34,20 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 	end
 
 	self.item = Item:CreateFromItemLink(itemLink)
+	itemLink = self.item:GetItemLink()
 
 	-- parse stats
 	local extractedStats = GetItemStats(itemLink)
 
 	if not extractedStats then
 		print("Could not extract item stats: " .. tostring(itemLink))
-		return
+		itemLink = select(2, C_Item.GetItemInfoInstant(itemLink))
+		extractedStats = GetItemStats(itemLink)
+		if not extractedStats then
+			return
+		else
+			print("Could extract item stats with second try : " .. tostring(itemLink))
+		end
 	end
 
 	self.professionStats.inspiration.value = extractedStats.ITEM_MOD_INSPIRATION_SHORT or 0
