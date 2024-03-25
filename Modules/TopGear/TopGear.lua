@@ -197,16 +197,14 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
                         if itemSubType == currentProfession and (itemEquipLoc == "INVTYPE_PROFESSION_TOOL" or itemEquipLoc == "INVTYPE_PROFESSION_GEAR") then
                             local professionGear = CraftSim.ProfessionGear()
                             professionGear:SetItem(itemLink)
-                            if not professionGear.skipItem then
-                                table.insert(inventoryGear, professionGear)
-                            
-                                if not GUTIL:Find(CraftSimRecipeDataCache.professionGearCache[crafterUID]
-                                        [recipeData.professionData.professionInfo.profession]
-                                        .availableProfessionGear, function(g) return g.itemLink == itemLink end) then
-                                    table.insert(CraftSimRecipeDataCache.professionGearCache[crafterUID]
-                                        [recipeData.professionData.professionInfo.profession]
-                                        .availableProfessionGear, professionGear:Serialize())
-                                end
+                            table.insert(inventoryGear, professionGear)
+                        
+                            if not GUTIL:Find(CraftSimRecipeDataCache.professionGearCache[crafterUID]
+                                    [recipeData.professionData.professionInfo.profession]
+                                    .availableProfessionGear, function(g) return g.itemLink == itemLink end) then
+                                table.insert(CraftSimRecipeDataCache.professionGearCache[crafterUID]
+                                    [recipeData.professionData.professionInfo.profession]
+                                    .availableProfessionGear, professionGear:Serialize())
                             end
                         end
                     end

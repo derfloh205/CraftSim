@@ -110,12 +110,6 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 		self.professionStats.multicraft.value = self.professionStats.multicraft.value + parsedEnchantingStats.multicraft
 	end
 
-	if (self.professionStats.inspiration.value == 0 
-	and self.professionStats.multicraft.value == 0 
-	and self.professionStats.resourcefulness.value == 0 
-	and self.professionStats.craftingspeed.value == 0) then 
-		self.skipItem = 1
-	end
 end
 
 function CraftSim.ProfessionGear:Copy()
