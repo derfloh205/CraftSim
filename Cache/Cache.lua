@@ -23,4 +23,5 @@ function CraftSim.CACHE:ClearAll()
     CraftSim.CACHE.RECIPE_DATA:ClearAll()
     CraftSim.CACHE.ITEM_COUNT:ClearAll()
     CraftSim.CACHE.CRAFT_QUEUE:ClearAll()
+    CraftSim.PRICE_OVERRIDE:ClearAll()
 end
