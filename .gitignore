@@ -1,2 +1,4 @@
-.replit
-replit.nix
+.vscode
+.release/
+Libs/
+!Libs/classic.lua
