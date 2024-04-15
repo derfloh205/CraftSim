@@ -16,7 +16,7 @@
 
 embeds.xml
 
-Libs/Libs.lua
+Init/GLibs.lua
 
 Util/Const.lua
 
@@ -38,7 +38,7 @@ Util/Frames.lua
 Util/Comm.lua
 Util/API.lua
 
-Main/CraftSim.lua
+Init/Init.lua
 
 Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
