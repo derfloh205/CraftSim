@@ -18,7 +18,7 @@ externals:
     tag: 2.0
   Libs/GGUI: 
     url: https://github.com/derfloh205/GGUI.git
-    tag: 2.1.20
+    tag: 2.1
 
 ignore:
   - Libs/LibStub.lua
