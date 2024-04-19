@@ -656,8 +656,8 @@ function CraftSim.CRAFTQ:AddOpenRecipe()
             recipeData = CraftSim.SIMULATION_MODE.recipeData:Copy() -- need a copy or changes in simulation mode just overwrite it
         end
     else
-        if CraftSim.MAIN.currentRecipeData then
-            recipeData = CraftSim.MAIN.currentRecipeData
+        if CraftSim.INIT.currentRecipeData then
+            recipeData = CraftSim.INIT.currentRecipeData
         end
     end
 
@@ -672,7 +672,7 @@ function CraftSim.CRAFTQ:OnRecipeEditSave()
     -- TODO
     print("OnRecipeEditSave")
     ---@type CraftSim.CRAFTQ.EditRecipeFrame
-    local editRecipeFrame = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
+    local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
 
     editRecipeFrame:Hide()
 end

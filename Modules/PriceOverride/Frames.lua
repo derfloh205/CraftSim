@@ -34,7 +34,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata = "DIALOG",
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesPriceOverride"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
     local frameWO = CraftSim.GGUI.Frame({
@@ -51,7 +51,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata = "DIALOG",
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesPriceOverride"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
 
@@ -142,7 +142,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
             clickCallback = function()
                 CraftSim.PRICE_OVERRIDE:SaveOverrideData(frame.recipeID, frame.currentDropdownData)
                 overrideOptions:updateButtonStatus()
-                CraftSim.MAIN:TriggerModuleUpdate()
+                CraftSim.INIT:TriggerModuleUpdate()
             end,
             initialStatus = "READY",
             label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVE),
@@ -178,7 +178,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                 CraftSim.PRICE_OVERRIDE:RemoveOverrideData(frame.recipeID, frame.currentDropdownData)
                 overrideOptions:updateButtonStatus()
                 overrideOptions.currencyInputGold:SetValue(0)
-                CraftSim.MAIN:TriggerModuleUpdate()
+                CraftSim.INIT:TriggerModuleUpdate()
             end,
             label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_REMOVE),
         })
@@ -223,7 +223,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
                 if frame.currentDropdownData then
                     overrideOptions:updateButtonStatus()
                 end
-                CraftSim.MAIN:TriggerModuleUpdate()
+                CraftSim.INIT:TriggerModuleUpdate()
             end
         })
 
@@ -243,10 +243,10 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideItem(overrideData)
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local priceOverrideFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES
+        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES
             .PRICE_OVERRIDE_WORK_ORDER)
     else
-        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
     end
 
     local overrideOptions = priceOverrideFrame.content.overrideOptions
@@ -261,10 +261,10 @@ end
 function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)
     local priceOverrideFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES
+        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES
             .PRICE_OVERRIDE_WORK_ORDER)
     else
-        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
+        priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
     end
 
     CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideList(priceOverrideFrame)

@@ -22,6 +22,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
     local offsetX = -5
     local offsetY = -120
 
+    local frameLevel = CraftSim.UTIL:NextFrameLevel()
+
     CraftSim.COST_OPTIMIZATION.frame = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent = ProfessionsFrame,
@@ -38,8 +40,10 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCostOptimization"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameLevel = frameLevel
     })
     CraftSim.COST_OPTIMIZATION.frameWO = GGUI.Frame({
         parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
@@ -58,8 +62,10 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCostOptimization"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameLevel = frameLevel
     })
 
     local function createContent(frame)
@@ -120,7 +126,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
             initialValue = CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization,
             clickCallback = function(_, checked)
                 CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization = checked
-                CraftSim.MAIN:TriggerModulesByRecipeType()
+                CraftSim.INIT:TriggerModulesByRecipeType()
             end
         }
 
@@ -271,7 +277,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
         initialValue = CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns,
         clickCallback = function(_, checked)
             CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = checked
-            CraftSim.MAIN:TriggerModulesByRecipeType()
+            CraftSim.INIT:TriggerModulesByRecipeType()
         end
     }
 
@@ -340,7 +346,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
                     if userInput and row.recipeID and row.crafterUID then
                         if not CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(row.recipeID, row.crafterUID) then
                             CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(row.recipeID, row.crafterUID)
-                            CraftSim.MAIN:TriggerModulesByRecipeType()
+                            CraftSim.INIT:TriggerModulesByRecipeType()
                         end
                     end
                 end },
@@ -576,7 +582,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeList(reci
     end
 
     subRecipeList:UpdateDisplay()
-    if CraftSim.MAIN.currentRecipeID ~= CraftSim.MAIN.lastRecipeID then
+    if CraftSim.INIT.currentRecipeID ~= CraftSim.INIT.lastRecipeID then
         -- only auto select new row when switching recipes
         subRecipeList:SelectRow(1)
     end

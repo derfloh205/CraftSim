@@ -18,11 +18,12 @@ function CraftSim.EXPLANATIONS.FRAMES:Init()
         title = L(CraftSim.CONST.TEXT.EXPLANATIONS_TITLE),
         parent = ProfessionsFrame, anchorParent = ProfessionsFrame,
         sizeX = 1000, sizeY = 600,
-        frameConfigTable = CraftSimGGUIConfig, frameTable = CraftSim.MAIN.FRAMES,
+        frameConfigTable = CraftSimGGUIConfig, frameTable = CraftSim.INIT.FRAMES,
         frameID = CraftSim.CONST.FRAMES.EXPLANATIONS, moveable = true, closeable = true, collapseable = true,
-        frameStrata = "DIALOG",
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesExplanations"),
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameLevel = CraftSim.UTIL:NextFrameLevel()
     }
 
     local function createContent(frame)

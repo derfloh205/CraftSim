@@ -90,6 +90,8 @@ CraftSim.CONST.FRAMES = {
     CRAFT_QUEUE_EDIT_RECIPE = "CRAFT_QUEUE_EDIT_RECIPE",
 }
 
+CraftSim.CONST.MODULES_FRAME_STRATA = "HIGH"
+
 CraftSim.CONST.OLD_BACKDROP_OPTIONS = {
     bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
     borderOptions = {

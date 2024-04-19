@@ -41,8 +41,10 @@ function CraftSim.COOLDOWNS.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCooldowns"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
     ---@class CraftSim.COOLDOWNS.FRAME.CONTENT : Frame
