@@ -21,6 +21,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     local offsetX = -10
     local offsetY = 30
     CraftSim.AVERAGEPROFIT.frame = GGUI.Frame({
+        debug = true,
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent = ProfessionsFrame,
         anchorA = "BOTTOMRIGHT",
@@ -39,7 +40,8 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
-        frameLevel = CraftSim.UTIL:NextFrameLevel()
+        frameLevel = CraftSim.UTIL:NextFrameLevel(),
+        raiseOnClick = true
     })
 
     CraftSim.AVERAGEPROFIT.frameWO = GGUI.Frame({
@@ -61,6 +63,9 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatWeights"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameLevel = CraftSim.UTIL:NextFrameLevel(),
+        raiseOnClick = true
     })
 
     local function createContent(frame)
