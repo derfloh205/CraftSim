@@ -42,6 +42,7 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = frameLevel
     })
     ---@class CraftSim.CRAFT_BUFFS.FRAME: GGUI.Frame
@@ -65,6 +66,7 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = frameLevel
     })
 

@@ -23,6 +23,7 @@ function CraftSim.EXPLANATIONS.FRAMES:Init()
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesExplanations"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel()
     }
 

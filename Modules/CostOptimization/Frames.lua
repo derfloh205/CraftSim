@@ -43,6 +43,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = frameLevel
     })
     CraftSim.COST_OPTIMIZATION.frameWO = GGUI.Frame({
@@ -65,6 +66,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = frameLevel
     })
 

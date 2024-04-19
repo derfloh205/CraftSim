@@ -35,6 +35,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 

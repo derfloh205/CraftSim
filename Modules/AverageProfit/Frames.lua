@@ -40,8 +40,8 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel(),
-        raiseOnClick = true
     })
 
     CraftSim.AVERAGEPROFIT.frameWO = GGUI.Frame({
@@ -64,6 +64,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel(),
         raiseOnClick = true
     })

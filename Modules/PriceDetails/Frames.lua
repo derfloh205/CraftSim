@@ -35,6 +35,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = frameLevel
     })
 
@@ -58,6 +59,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = frameLevel
     })
 

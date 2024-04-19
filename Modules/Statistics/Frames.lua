@@ -36,6 +36,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
         frameConfigTable = CraftSimGGUIConfig,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatistics"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = frameLevel
     })
 
@@ -55,6 +56,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
         frameConfigTable = CraftSimGGUIConfig,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatistics"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = frameLevel
     })
 

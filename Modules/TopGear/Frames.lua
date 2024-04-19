@@ -33,6 +33,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = frameLevel
     })
     local frameNO_WO = CraftSim.GGUI.Frame({
@@ -54,6 +55,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
         frameLevel = frameLevel
     })
 
