@@ -4,12 +4,20 @@ local CraftSimAddonName = select(1, ...)
 
 CraftSim.UTIL = {}
 
+CraftSim.UTIL.frameLevel = 100
+
 local inspirationFactor = 0.001
 local multicraftFactor = 0.0009
 local resourcefulnessFactor = 0.00111
 local craftingspeedFactor = 0.002
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.UTIL)
+
+function CraftSim.UTIL:NextFrameLevel()
+    local frameLevel = CraftSim.UTIL.frameLevel
+    CraftSim.UTIL.frameLevel = CraftSim.UTIL.frameLevel + 50
+    return frameLevel
+end
 
 function CraftSim.UTIL:GetInspirationStatByPercent(percent)
     if percent == nil then

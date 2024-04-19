@@ -105,7 +105,7 @@ function CraftSim.NEWS:ShowNews(force)
         print("showing news, old / new cs: " .. tostring(CraftSimOptions.newsChecksum) .. "/" .. tostring(newChecksum))
         CraftSimOptions.newsChecksum = newChecksum
 
-        local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.INFO)
+        local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
         -- resize
         infoFrame:SetSize(CraftSim.CONST.infoBoxSizeX, CraftSim.CONST.infoBoxSizeY)
         infoFrame.originalX = CraftSim.CONST.infoBoxSizeX

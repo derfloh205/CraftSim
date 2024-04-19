@@ -43,7 +43,7 @@ function CraftSim.DEBUG:print(debugOutput, debugID, recursive, printLabel, level
         if type(debugOutput) == "table" then
             CraftSim.DEBUG:PrintTable(debugOutput, debugID, recursive, level)
         else
-            local debugFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
+            local debugFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
             debugFrame.addDebug(debugOutput, debugID, printLabel)
         end
     end
@@ -90,7 +90,7 @@ function CraftSim.DEBUG:CompareStatData()
 end
 
 function CraftSim.DEBUG:PrintRecipeIDs(recipeID)
-    recipeID = recipeID or CraftSim.MAIN.currentRecipeData.recipeID
+    recipeID = recipeID or CraftSim.INIT.currentRecipeData.recipeID
     local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
 
     if not recipeInfo then

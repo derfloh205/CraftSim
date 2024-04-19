@@ -135,10 +135,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyMaterials, -- get from options..
         "0", "1",
         function(self, value)
-            GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
+            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
             CraftSimOptions.transparencyMaterials = value
         end)
-    GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions
+    GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions
         .transparencyMaterials)
 
     CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS),
@@ -150,11 +150,11 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyStatWeights, -- get from options..
         "0", "1",
         function(self, value)
-            GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT):SetTransparency(value)
+            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT):SetTransparency(value)
             CraftSimOptions.transparencyStatWeights = value
         end)
 
-    GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT):SetTransparency(CraftSimOptions
+    GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT):SetTransparency(CraftSimOptions
         .transparencyStatWeights)
     CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT),
         ModulesTab.content, CraftSimDetailsTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
@@ -166,10 +166,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencyTopGear, -- get from options..
         "0", "1",
         function(self, value)
-            GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(value)
+            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(value)
             CraftSimOptions.transparencyTopGear = value
         end)
-    GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(CraftSimOptions
+    GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(CraftSimOptions
         .transparencyTopGear)
     CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR),
         ModulesTab.content, CraftSimTopGearTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
@@ -194,10 +194,10 @@ function CraftSim.OPTIONS:Init()
         0, 1, CraftSimOptions.transparencySpecInfo, -- get from options..
         "0", "1",
         function(self, value)
-            GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(value)
+            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(value)
             CraftSimOptions.transparencySpecInfo = value
         end)
-    GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions
+    GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions
         .transparencySpecInfo)
     CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO),
         ModulesTab.content, specInfoTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)

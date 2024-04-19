@@ -15,6 +15,8 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
     local offsetX = 260
     local offsetY = 341
 
+    local frameLevel = CraftSim.UTIL:NextFrameLevel()
+
     ---@class CraftSim.SPEC_INFO.FRAME : GGUI.Frame
     local frameNO_WO = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
@@ -32,8 +34,10 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesSpecInfo"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameLevel = frameLevel
     })
 
     ---@class CraftSim.SPEC_INFO.FRAME : GGUI.Frame
@@ -53,8 +57,10 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesSpecInfo"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        frameLevel = frameLevel
     })
 
     local function createContent(frame)
@@ -76,8 +82,8 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
             adjustWidth = true,
             label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_SIMULATE_KNOWLEDGE_DISTRIBUTION),
             clickCallback = function()
-                local specSimFrame = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
-                CraftSim.FRAME:ToggleFrame(GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM),
+                local specSimFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
+                CraftSim.FRAME:ToggleFrame(GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM),
                     not specSimFrame:IsVisible())
             end
         })
@@ -150,9 +156,9 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
     ---@type CraftSim.SPEC_INFO.FRAME
     local specInfoFrame
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        specInfoFrame = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO) --[[@as CraftSim.SPEC_INFO.FRAME]]
+        specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO) --[[@as CraftSim.SPEC_INFO.FRAME]]
     else
-        specInfoFrame = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO) --[[@as CraftSim.SPEC_INFO.FRAME]]
+        specInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO) --[[@as CraftSim.SPEC_INFO.FRAME]]
     end
 
     local specializationData = recipeData.specializationData

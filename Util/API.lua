@@ -16,7 +16,7 @@ end
 ---Fetch the currently open CraftSim.RecipeData instance (or the last one opened if profession window was closed)
 ---@return CraftSim.RecipeData | nil
 function CraftSimAPI:GetOpenRecipeData()
-    return CraftSim.MAIN.currentRecipeData
+    return CraftSim.INIT.currentRecipeData
 end
 
 ---Get the whole CraftSim addon table for whatever reason. Have Fun!
