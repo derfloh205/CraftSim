@@ -25,8 +25,11 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         collapseable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
     CraftSim.CONTROL_PANEL.frame = frame
@@ -44,9 +47,9 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
             offsetY)
         cb:HookScript("OnClick", function()
             local checked = frame.content[optionVariable]:GetChecked()
-            CraftSim.MAIN:TriggerModuleUpdate()
+            CraftSim.INIT:TriggerModuleUpdate()
             if optionalFrameToToggle then
-                CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, optionalFrameToToggle):SetVisible(checked)
+                CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, optionalFrameToToggle):SetVisible(checked)
             end
         end)
         return cb
@@ -87,7 +90,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
+            CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
         end
     })
 
@@ -134,7 +137,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.SUPPORTERS):Show()
+            CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SUPPORTERS):Show()
         end
     })
 

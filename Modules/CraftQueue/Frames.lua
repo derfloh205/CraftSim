@@ -30,11 +30,13 @@ function CraftSim.CRAFTQ.FRAMES:Init()
         collapseable = true,
         closeable = true,
         moveable = true,
-        frameStrata = "HIGH",
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCraftQueue"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
     ---@param frame CraftSim.CraftQueue.Frame
@@ -866,7 +868,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
     local editRecipeFrame = GGUI.Frame {
         parent = parent, anchorParent = anchorParent,
         sizeX = editFrameX, sizeY = editFrameY, backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameID = CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE, frameTable = CraftSim.MAIN.FRAMES,
+        frameID = CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE, frameTable = CraftSim.INIT.FRAMES,
         title = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_TITLE),
         frameStrata = "DIALOG", closeable = true, closeOnClickOutside = true, moveable = true, frameConfigTable = CraftSimGGUIConfig,
     }
@@ -1329,7 +1331,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
         queueTab.content.craftNextButton:SetEnabled(false)
     end
 
-    local currentRecipeData = CraftSim.MAIN.currentRecipeData
+    local currentRecipeData = CraftSim.INIT.currentRecipeData
 
     if currentRecipeData then
         -- disable addCurrentRecipeButton if the currently open recipe is not suitable for queueing
@@ -1380,8 +1382,8 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
     if not CraftSim.CRAFTQ.frame then
         return
     end
-    if CraftSim.MAIN.currentRecipeData then
-        local recipeData = CraftSim.MAIN.currentRecipeData
+    if CraftSim.INIT.currentRecipeData then
+        local recipeData = CraftSim.INIT.currentRecipeData
         local restockOptionsTab = CraftSim.CRAFTQ.frame.content.restockOptionsTab
         ---@type CraftSim.CraftQueue.RestockOptions.RecipeOptionsFrame
         local recipeOptionsFrame = restockOptionsTab.content.recipeOptionsFrame
@@ -1478,7 +1480,7 @@ end
 ---@param craftQueueItem CraftSim.CraftQueueItem
 function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
     ---@type CraftSim.CRAFTQ.EditRecipeFrame
-    local editRecipeFrame = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
+    local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
     local recipeData = craftQueueItem.recipeData
     editRecipeFrame.craftQueueItem = craftQueueItem
     ---@type CraftSim.CRAFTQ.EditRecipeFrame.Content

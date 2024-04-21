@@ -21,8 +21,8 @@ function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
 
     print("OnCraftRecipe: " .. tostring(recipeData))
 
-    if CraftSim.MAIN.currentRecipeData then
-        local mainRecipeData = CraftSim.MAIN.currentRecipeData
+    if CraftSim.INIT.currentRecipeData then
+        local mainRecipeData = CraftSim.INIT.currentRecipeData
         -- if the open recipe is a recraft recipe than take this as current craft results recipe data instead
         -- because this will not be able to be triggered by the craftqueue!
         if mainRecipeData and mainRecipeData.isRecraft then
@@ -41,8 +41,8 @@ function CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
 end
 
 function CraftSim.CRAFT_RESULTS:OnCraftSalvage()
-    if CraftSim.MAIN.currentRecipeData then
-        local recipeData = CraftSim.MAIN.currentRecipeData
+    if CraftSim.INIT.currentRecipeData then
+        local recipeData = CraftSim.INIT.currentRecipeData
         -- if the open recipe is a salvage or recraft recipe than take this as current craft results recipe data instead
         -- because this will not be able to be triggered by the craftqueue!
         if recipeData.isSalvageRecipe then
@@ -96,7 +96,7 @@ end
 ---Saves the currentCraftResult
 ---@param craftResult CraftSim.CraftResult
 function CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
-    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     print("AddCraftResult:", false, true)
     ---@type CraftSim.CraftSessionData
@@ -122,7 +122,7 @@ end
 ---@param craftResult CraftSim.CraftResult
 function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_RESULTS_UI_UPDATE")
-    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     local resourcesText = ""
 

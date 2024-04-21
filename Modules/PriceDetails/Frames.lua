@@ -14,6 +14,8 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
     local offsetX = -5
     local offsetY = 140
 
+    local frameLevel = CraftSim.UTIL:NextFrameLevel()
+
     CraftSim.PRICE_DETAILS.frame = CraftSim.GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent = ProfessionsFrame,
@@ -30,8 +32,11 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesPriceDetails"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = frameLevel
     })
 
     CraftSim.PRICE_DETAILS.frameWO = CraftSim.GGUI.Frame({
@@ -51,8 +56,11 @@ function CraftSim.PRICE_DETAILS.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesPriceDetails"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = frameLevel
     })
 
     local function createContent(frame)

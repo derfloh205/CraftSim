@@ -31,10 +31,12 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameStrata = "DIALOG",
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCustomerHistory"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
     local function createContent(frame)

@@ -154,12 +154,12 @@ function CraftSim.CRAFT_BUFFS:COMBAT_LOG_EVENT_UNFILTERED()
                 local auraID = select(12, CombatLogGetCurrentEventInfo())
                 print("Buff changed: " .. tostring(auraID))
                 if tContains(CraftSim.CONST.BUFF_IDS, auraID) then
-                    if CraftSim.MAIN.currentRecipeID then
+                    if CraftSim.INIT.currentRecipeID then
                         local isWorkOrder = ProfessionsFrame.OrdersPage:IsVisible()
                         if isWorkOrder then
-                            CraftSim.MAIN:TriggerModuleUpdate(false)
+                            CraftSim.INIT:TriggerModuleUpdate(false)
                         else
-                            CraftSim.MAIN:TriggerModuleUpdate(false)
+                            CraftSim.INIT:TriggerModuleUpdate(false)
                         end
                     end
                 end

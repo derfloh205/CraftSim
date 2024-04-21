@@ -4,7 +4,7 @@
 ## Title: CraftSim
 ## Notes: Calculates the average profit based on your profession stats and other tools for dragonflight gold making
 ## Author: genju
-## Version: 15.0.17
+## Version: 15.0.18
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
@@ -16,7 +16,7 @@
 
 embeds.xml
 
-Libs/Libs.lua
+Init/GLibs.lua
 
 Util/Const.lua
 
@@ -38,7 +38,7 @@ Util/Frames.lua
 Util/Comm.lua
 Util/API.lua
 
-Main/CraftSim.lua
+Init/Init.lua
 
 Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua

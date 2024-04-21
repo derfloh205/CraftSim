@@ -20,10 +20,12 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameStrata = "FULLSCREEN",
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCraftResults"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
     local function createContent(frame)
@@ -50,7 +52,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
                 frame.content.craftedItemsFrame.resultFeed:SetText("")
                 frame.content.totalProfitAllValue:SetText(CraftSim.GUTIL:FormatMoney(0, true))
                 CraftSim.CRAFT_RESULTS:ResetData()
-                CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.MAIN.currentRecipeData.recipeID)
+                CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
             end
         })
 
@@ -118,13 +120,13 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     print("Update RecipeData: " .. tostring(recipeID))
 
     -- only update frontend if its the shown recipeID
-    if not CraftSim.MAIN.currentRecipeData or CraftSim.MAIN.currentRecipeData.recipeID ~= recipeID then
+    if not CraftSim.INIT.currentRecipeData or CraftSim.INIT.currentRecipeData.recipeID ~= recipeID then
         print("no frontend update: is not shown recipe")
         return
     end
     print("Do update cause its the shown recipe")
 
-    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     local craftSessionData = CraftSim.CRAFT_RESULTS.currentSessionData
     if not craftSessionData then
@@ -159,7 +161,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     statisticsText = statisticsText ..
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_1) .. craftRecipeData.numCrafts .. "\n\n"
 
-    if CraftSim.MAIN.currentRecipeData.supportsCraftingStats then
+    if CraftSim.INIT.currentRecipeData.supportsCraftingStats then
         statisticsText = statisticsText ..
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_2) .. expectedAverageProfit .. "\n"
         statisticsText = statisticsText ..
@@ -168,9 +170,9 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_4) .. actualProfit .. "\n\n"
         statisticsText = statisticsText ..
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_5) .. "\n\n"
-        if CraftSim.MAIN.currentRecipeData.supportsInspiration then
+        if CraftSim.INIT.currentRecipeData.supportsInspiration then
             local expectedProcs = tonumber(CraftSim.GUTIL:Round(
-                    CraftSim.MAIN.currentRecipeData.professionStats.inspiration:GetPercent(true) *
+                    CraftSim.INIT.currentRecipeData.professionStats.inspiration:GetPercent(true) *
                     craftRecipeData.numCrafts, 1)) or
                 0
             if craftRecipeData.numInspiration >= expectedProcs then
@@ -185,9 +187,9 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
                     " / " .. expectedProcs .. "\n"
             end
         end
-        if CraftSim.MAIN.currentRecipeData.supportsMulticraft then
+        if CraftSim.INIT.currentRecipeData.supportsMulticraft then
             local expectedProcs = tonumber(CraftSim.GUTIL:Round(
-                    CraftSim.MAIN.currentRecipeData.professionStats.multicraft:GetPercent(true) *
+                    CraftSim.INIT.currentRecipeData.professionStats.multicraft:GetPercent(true) *
                     craftRecipeData.numCrafts, 1)) or
                 0
             if craftRecipeData.numMulticraft >= expectedProcs then
@@ -203,9 +205,9 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
             end
             local averageExtraItems = 0
             local expectedAdditionalItems = 0
-            local multicraftExtraItemsFactor = CraftSim.MAIN.currentRecipeData.professionStats.multicraft:GetExtraFactor(true)
+            local multicraftExtraItemsFactor = CraftSim.INIT.currentRecipeData.professionStats.multicraft:GetExtraFactor(true)
 
-            local maxExtraItems = (CraftSimOptions.customMulticraftConstant * CraftSim.MAIN.currentRecipeData.baseItemAmount) *
+            local maxExtraItems = (CraftSimOptions.customMulticraftConstant * CraftSim.INIT.currentRecipeData.baseItemAmount) *
                 multicraftExtraItemsFactor
             expectedAdditionalItems = tonumber(CraftSim.GUTIL:Round((1 + maxExtraItems) / 2, 2)) or 0
 
@@ -228,7 +230,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
                     " / " .. expectedAdditionalItems .. "\n"
             end
         end
-        if CraftSim.MAIN.currentRecipeData.supportsResourcefulness then
+        if CraftSim.INIT.currentRecipeData.supportsResourcefulness then
             local averageSavedCosts = 0
             local expectedAverageSavedCosts = 0
             if craftRecipeData.numCrafts > 0 then
@@ -271,7 +273,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
 end
 
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
-    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
     -- total items
     local craftResultItems = CraftSim.CRAFT_RESULTS.currentSessionData.totalItems
 

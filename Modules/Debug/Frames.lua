@@ -30,8 +30,11 @@ function CraftSim.DEBUG.FRAMES:Init()
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         parent = UIParent,
         anchorParent = UIParent,
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = 50,
     })
 
     CraftSim.DEBUG.frame = debugFrame
@@ -120,7 +123,7 @@ function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
         sizeY = 400,
         frameID = CraftSim.CONST.FRAMES.DEBUG_CONTROL,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
 
@@ -438,7 +441,7 @@ function CraftSim.DEBUG.FRAMES:InitModuleToolsMainTab(mainTab)
         clickCallback = function()
             if DevTool then
                 DevTool.MainWindow:Show()
-                DevTool:AddData(CraftSim.MAIN.currentRecipeData, "Open RecipeData")
+                DevTool:AddData(CraftSim.INIT.currentRecipeData, "Open RecipeData")
             end
         end
     }

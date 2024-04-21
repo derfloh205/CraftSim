@@ -117,7 +117,7 @@ function CraftSim.DEBUG.TEST:GGUITest()
         collapseable = true,
         moveable = true,
         scrollableContent = true,
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
 
@@ -217,15 +217,15 @@ function CraftSim.DEBUG.TEST:GGUITest()
 end
 
 function CraftSim.DEBUG.TEST:TestAllocationSkillFetchV2()
-    CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSim.MAIN.currentRecipeData)
+    CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncrease(CraftSim.INIT.currentRecipeData)
 end
 
 function CraftSim.DEBUG.TEST:TestAllocationSkillFetchV1()
-    local skillIncrease = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncreaseOLD(CraftSim.MAIN
+    local skillIncrease = CraftSim.REAGENT_OPTIMIZATION:GetCurrentReagentAllocationSkillIncreaseOLD(CraftSim.INIT
         .currentRecipeData)
     print("Skill Increase: " .. tostring(skillIncrease))
 end
 
 function CraftSim.DEBUG.TEST:TestMaxReagentIncreaseFactor()
-    print("Factor: " .. CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(CraftSim.MAIN.currentRecipeData))
+    print("Factor: " .. CraftSim.REAGENT_OPTIMIZATION:GetMaxReagentIncreaseFactor(CraftSim.INIT.currentRecipeData))
 end

@@ -19,6 +19,8 @@ function CraftSim.STATISTICS.FRAMES:Init()
     local sizeYExpanded = 630
     local sizeYRetracted = 350
 
+    local frameLevel = CraftSim.UTIL:NextFrameLevel()
+
     CraftSim.STATISTICS.frameNO_WO = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         sizeX = sizeX,
@@ -29,11 +31,13 @@ function CraftSim.STATISTICS.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameStrata = "DIALOG",
         initialStatusID = "RETRACTED",
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatistics"),
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = frameLevel
     })
 
     CraftSim.STATISTICS.frameWO = GGUI.Frame({
@@ -47,11 +51,13 @@ function CraftSim.STATISTICS.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        frameStrata = "DIALOG",
         initialStatusID = "RETRACTED",
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatistics"),
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = frameLevel
     })
 
 
@@ -115,7 +121,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
             borderAdjustWidth = 1.15,
             borderAdjustHeight = 1.05,
             onNumberValidCallback = function()
-                local recipeData = CraftSim.MAIN.currentRecipeData
+                local recipeData = CraftSim.INIT.currentRecipeData
                 if not recipeData then
                     return
                 end
@@ -426,7 +432,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
-    local statisticsFrame = GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.STATISTICS)
+    local statisticsFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.STATISTICS)
     local meanProfit, probabilityTable = recipeData:GetAverageProfit()
 
     if not probabilityTable then

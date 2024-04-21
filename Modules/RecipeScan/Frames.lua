@@ -18,6 +18,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.RECIPE_SCAN)
 local debugScannedRecipeIDs = false
 
 function CraftSim.RECIPE_SCAN.FRAMES:Init()
+    local frameLevel = CraftSim.UTIL:NextFrameLevel()
     ---@class CraftSim.RECIPE_SCAN.FRAME : GGUI.Frame
     CraftSim.RECIPE_SCAN.frame = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
@@ -29,11 +30,13 @@ function CraftSim.RECIPE_SCAN.FRAMES:Init()
         collapseable = true,
         closeable = true,
         moveable = true,
-        frameStrata = "DIALOG",
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesRecipeScan"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = frameLevel
     })
 
     -- manually create title for offset

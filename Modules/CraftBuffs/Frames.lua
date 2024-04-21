@@ -20,6 +20,8 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
     local offsetX = 0
     local offsetY = 0
 
+    local frameLevel = CraftSim.UTIL:NextFrameLevel()
+
     ---@class CraftSim.CRAFT_BUFFS.FRAME : GGUI.Frame
     CraftSim.CRAFT_BUFFS.frame = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage,
@@ -37,8 +39,11 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCraftBuffs"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = frameLevel
     })
     ---@class CraftSim.CRAFT_BUFFS.FRAME: GGUI.Frame
     CraftSim.CRAFT_BUFFS.frameWO = GGUI.Frame({
@@ -58,8 +63,11 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCraftBuffs"),
-        frameTable = CraftSim.MAIN.FRAMES,
+        frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = frameLevel
     })
 
     local function createContent(frame)
@@ -80,7 +88,7 @@ function CraftSim.CRAFT_BUFFS.FRAMES:Init()
             },
             savedVariablesTable = CraftSim.CRAFT_BUFFS.simulatedBuffs,
             onSelectCallback = function()
-                CraftSim.MAIN:TriggerModuleUpdate()
+                CraftSim.INIT:TriggerModuleUpdate()
             end
         }
 
