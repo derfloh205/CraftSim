@@ -120,7 +120,8 @@ function CraftSim.CooldownData:GetCurrentCharges()
     if self.maxCharges > 0 then
         local currentTime = GetServerTime()
         local diffTotal = currentTime - self.startTime
-        return math.floor(diffTotal / self.cooldownPerCharge)
+        local currentCharges = math.floor(diffTotal / self.cooldownPerCharge)
+        return math.min(currentCharges, self.maxCharges)
     end
 
     if self.isDayCooldown or self.maxCharges == 0 then
