@@ -347,11 +347,7 @@ function CraftSim.LOCAL_EN:GetData()
             " tells you how often, on average, you have to craft this recipe to craft this quality\n\n" ..
             f.g("Expected Costs per Item") ..
             " tells you, on average, what the costs for 1 resulting item in this quality are (this can be below the crafting costs since it is per item and considers stats like " ..
-            f.bb("Multicraft") ..
-            "\n\n" ..
-            f.g("With Sell Return") ..
-            " subtracts the sell value (considering AH Cut) of the (average number) of crafted items of lower quality until the desired quality is crafted",
-
+            f.bb("Multicraft"),
 
         -- Customer Service Frame
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "CraftSim Customer Service",
