@@ -320,8 +320,12 @@ function CraftSim.DEBUG.FRAMES:InitCacheTab(cacheTab)
             clearButton.clickCallback = function()
                 local cacheSV = _G[cacheName]
                 if cacheSV then
-                    wipe(cacheSV)
-                    CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. "Cache cleared: " .. cacheName)
+                    if cacheName == "CraftSimPriceOverridesV2" then
+                        CraftSim.PRICE_OVERRIDE:ClearAll()
+                    else 
+                        wipe(cacheSV)
+                        CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. "Cache cleared: " .. cacheName)
+                    end
                 end
             end
 
