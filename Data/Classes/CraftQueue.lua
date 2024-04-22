@@ -136,10 +136,17 @@ function CraftSim.CraftQueue:Remove(craftQueueItem)
         return craftQueueItem == cqI
     end)
 
+    -- Fix deleting multiple row 
+    if index  == nil then 
+        return
+    end
+
     self.recipeCrafterMap[craftQueueItem.recipeData:GetRecipeCraftQueueUID()] = nil
     tremove(self.craftQueueItems, index)
 
     -- after removal check if cqi had any subrecipes that are now without parents, if yes remove them too (recursively)
+    -- ? Return a table with 3times the same subrecipe => try to deleting 3 times the same subrecipe 
+    -- But the index is nil in the second iteration because :Find return nil (already deleted) 
     local subCraftQueueItems = GUTIL:Map(craftQueueItem.recipeData.priceData.selfCraftedReagents, function(itemID)
         local subRecipeData = craftQueueItem.recipeData.optimizedSubRecipes[itemID]
         if subRecipeData then

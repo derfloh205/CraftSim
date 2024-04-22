@@ -109,6 +109,7 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 	if parsedEnchantingStats.multicraft then
 		self.professionStats.multicraft.value = self.professionStats.multicraft.value + parsedEnchantingStats.multicraft
 	end
+
 end
 
 function CraftSim.ProfessionGear:Copy()
