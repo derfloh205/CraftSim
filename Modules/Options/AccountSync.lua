@@ -1,6 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+---@deprecated
 CraftSim.ACCOUNTSYNC = {}
 local TOOLTIP_SYNC_PREFIX = "CSTooltipSync"
 local OPTIONS_SYNC_PREFIX = "CSOptionsSync"

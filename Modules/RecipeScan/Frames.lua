@@ -747,6 +747,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
     local resultList = row.content.resultList
+    local showProfit = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
     if debugScannedRecipeIDs then
         recipeData:DebugInspect("RecipeScan: " .. recipeData.recipeName)
     end
@@ -795,7 +796,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
             end
             local averageProfit = recipeData:GetAverageProfit()
             local relativeTo = nil
-            if CraftSimOptions.showProfitPercentage then
+            if showProfit then
                 relativeTo = recipeData.priceData.craftingCosts
             end
             averageProfitColumn.text:SetText(GUTIL:FormatMoney(averageProfit, true, relativeTo))

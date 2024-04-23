@@ -15,15 +15,8 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 CraftSim.INIT.FRAMES = {}
 
 CraftSimOptions = CraftSimOptions or {
-	breakPointOffset = false,
-	autoAssignVellum = false,
-	showProfitPercentage = false,
-	detailedCraftingInfoTooltip = true,
-	syncTarget = nil,
-	openLastRecipe = true,
-	topGearAutoUpdate = false,
-	optionsShowNews = true,
-	optionsHideMinimapButton = false,
+	-- topGearAutoUpdate = false,
+	-- optionsHideMinimapButton = false,
 
 	-- modules
 	modulesMaterials = true,
@@ -123,9 +116,6 @@ end
 
 function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 	if CraftSimOptions then
-		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
-		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
-		CraftSimOptions.showProfitPercentage = CraftSimOptions.showProfitPercentage or false
 		CraftSimOptions.transparencyMaterials = CraftSimOptions.transparencyMaterials or 1
 		CraftSimOptions.transparencyStatWeights = CraftSimOptions.transparencyStatWeights or 1
 		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
@@ -170,9 +160,6 @@ function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
 			CraftSimOptions.detailedCraftingInfoTooltip = true
 		end
-		if CraftSimOptions.openLastRecipe == nil then
-			CraftSimOptions.openLastRecipe = true
-		end
 		if CraftSimOptions.modulesMaterials == nil then
 			CraftSimOptions.modulesMaterials = true
 		end
@@ -196,9 +183,6 @@ function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 		end
 		if CraftSimOptions.craftGarbageCollectEnabled == nil then
 			CraftSimOptions.craftGarbageCollectEnabled = true
-		end
-		if CraftSimOptions.optionsShowNews == nil then
-			CraftSimOptions.optionsShowNews = true
 		end
 		if CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished == nil then
 			CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished = true
@@ -489,7 +473,7 @@ function CraftSim.INIT:HookToProfessionsFrame()
 		function()
 			CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateDisplay()
 			CraftSim.INIT.lastRecipeID = nil
-			if CraftSimOptions.openLastRecipe then
+			if CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE") then
 				C_Timer.After(1, function()
 					local recipeInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeInfo()
 					local professionInfo = ProfessionsFrame:GetProfessionInfo()
@@ -554,7 +538,7 @@ function CraftSim.INIT:PLAYER_LOGIN()
 	end
 
 	-- show one time note
-	if CraftSimOptions.optionsShowNews then
+	if CraftSim.DB.OPTIONS:Get("SHOW_NEWS") then
 		CraftSim.NEWS:ShowNews()
 	end
 end
@@ -847,7 +831,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	CraftSim.FRAME:ToggleFrame(topgearFrameWO, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showTopGear then
 		CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(recipeData, exportMode)
-		if CraftSimOptions.topGearAutoUpdate then
+		if CraftSim.DB.OPTIONS:Get("TOP_GEAR_AUTO_UPDATE") then
 			CraftSim.DEBUG:StartProfiling("Top Gear")
 			CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
 			CraftSim.DEBUG:StopProfiling("Top Gear")

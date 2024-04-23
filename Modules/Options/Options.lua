@@ -255,56 +255,55 @@ function CraftSim.OPTIONS:Init()
         ProfitCalculationTab.content, customResourcefulnessConstantInput, "RIGHT", "LEFT", -5, 0)
 
 
-    local precentProfitCheckbox = CraftSim.FRAME:CreateCheckbox(
-        " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT),
-        L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP),
-        "showProfitPercentage",
-        GeneralTab.content,
-        GeneralTab.content,
-        "TOP",
-        "TOP",
-        -90,
-        -90)
+    local percentProfitCheckbox = GGUI.Checkbox {
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT),
+        tooltip = L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_PROFIT_TOOLTIP),
+        initialValue = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE"),
+        parent = GeneralTab.content, anchorParent = GeneralTab.content,
+        anchorA = "TOP", anchorB = "TOP", offsetX = -90, offsetY = -90,
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("SHOW_PROFIT_PERCENTAGE", checked)
+        end
+    }
 
-    local openLastRecipeCheckbox = CraftSim.FRAME:CreateCheckbox(
-        " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE),
-        L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP),
-        "openLastRecipe",
-        GeneralTab.content,
-        precentProfitCheckbox,
-        "TOPLEFT",
-        "BOTTOMLEFT",
-        0,
-        0)
+    local openLastRecipeCheckbox = GGUI.Checkbox {
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE),
+        tooltip = L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP),
+        initialValue = CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE"),
+        parent = GeneralTab.content, anchorParent = percentProfitCheckbox.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("OPEN_LAST_RECIPE", checked)
+        end
+    }
 
-    local showNewsCheckbox = CraftSim.FRAME:CreateCheckbox(
-        " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX),
-        L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP),
-        "optionsShowNews",
-        GeneralTab.content,
-        openLastRecipeCheckbox,
-        "TOPLEFT",
-        "BOTTOMLEFT",
-        0,
-        0)
+    local showNewsCheckbox = GGUI.Checkbox {
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX),
+        tooltip = L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP),
+        initialValue = CraftSim.DB.OPTIONS:Get("SHOW_NEWS"),
+        parent = GeneralTab.content, anchorParent = openLastRecipeCheckbox.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("SHOW_NEWS", checked)
+        end
+    }
 
-    local hideMinimapButtonCheckbox = CraftSim.FRAME:CreateCheckbox(
-        " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_CHECKBOX),
-        L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP),
-        "optionsHideMinimapButton",
-        GeneralTab.content,
-        showNewsCheckbox,
-        "TOPLEFT",
-        "BOTTOMLEFT",
-        0,
-        0,
-        function(checked)
+    local hideMinimapButtonCheckbox = GGUI.Checkbox {
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_CHECKBOX),
+        tooltip = L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP),
+        initialValue = CraftSim.DB.OPTIONS:Get("MINIMAP_BUTTON_HIDE"),
+        parent = GeneralTab.content, anchorParent = showNewsCheckbox.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("MINIMAP_BUTTON_HIDE", checked)
+
             if checked then
                 CraftSim.LibIcon:Hide("CraftSim")
             else
                 CraftSim.LibIcon:Show("CraftSim")
             end
-        end)
+        end
+    }
 
     local supportedPriceSources = GeneralTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
     supportedPriceSources:SetPoint("TOP", 0, -200)

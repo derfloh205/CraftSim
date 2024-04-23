@@ -196,6 +196,7 @@ end
 ---@param statWeights CraftSim.Statweights
 function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts)
     local averageProfitFrame = self:GetFrameByExportMode()
+    local showProfitPercentage = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
 
     local profitList = averageProfitFrame.content.profitList --[[@as GGUI.FrameList]]
     profitList:Remove()
@@ -221,7 +222,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts)
 
     if statWeights ~= nil then
         if statWeights.averageProfit then
-            local relativeValue = CraftSimOptions.showProfitPercentage and craftingCosts or nil
+            local relativeValue = showProfitPercentage and craftingCosts or nil
             addToList(L(CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT),
                 f.mr(statWeights.averageProfit, relativeValue),
                 f.white(f.bb("Average") .. " profit per craft considering your crafting stats"))
