@@ -2,6 +2,8 @@
 local CraftSim = select(2, ...)
 local CraftSimAddonName = select(1, ...)
 
+local GGUI = CraftSim.GGUI
+
 ---@class CraftSim.CONTROL_PANEL
 CraftSim.CONTROL_PANEL = CraftSim.CONTROL_PANEL
 
@@ -12,7 +14,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     local currentVersion = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
 
     ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
-    local frame = CraftSim.GGUI.Frame({
+    local frame = GGUI.Frame({
         parent = ProfessionsFrame,
         anchorParent = ProfessionsFrame,
         anchorA = "BOTTOM",
@@ -34,24 +36,22 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
 
     CraftSim.CONTROL_PANEL.frame = frame
 
+    ---@param option CraftSim.GENERAL_OPTIONS
+    ---@return GGUI.Checkbox
     local createModuleCheckbox = function(label, description, anchorA, anchorParent, anchorB, offsetX, offsetY,
-                                          optionVariable, optionalFrameToToggle)
-        local cb = CraftSim.FRAME:CreateCheckbox(" " .. label,
-            description,
-            optionVariable,
-            frame.content,
-            anchorParent,
-            anchorA,
-            anchorB,
-            offsetX,
-            offsetY)
-        cb:HookScript("OnClick", function()
-            local checked = frame.content[optionVariable]:GetChecked()
-            CraftSim.INIT:TriggerModuleUpdate()
-            if optionalFrameToToggle then
-                CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, optionalFrameToToggle):SetVisible(checked)
+                                          option, optionalFrameToToggle)
+        local cb = GGUI.Checkbox {
+            parent = frame.content, anchorParent = anchorParent,
+            label = label, tooltip = description, anchorA = anchorA, anchorB = anchorB,
+            offsetX = offsetX, offsetY = offsetY,
+            clickCallback = function(_, checked)
+                CraftSim.DB.OPTIONS:Save(option, checked)
+                CraftSim.INIT:TriggerModuleUpdate()
+                if optionalFrameToToggle then
+                    GGUI:GetFrame(CraftSim.INIT.FRAMES, optionalFrameToToggle):SetVisible(checked)
+                end
             end
-        end)
+        }
         return cb
     end
 
@@ -64,7 +64,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     ---@class CraftSim.CONTROL_PANEL.FRAME.CONTENT
     frame.content = frame.content
 
-    frame.content.newsButton = CraftSim.GGUI.Button({
+    frame.content.newsButton = GGUI.Button({
         label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS),
         parent = frame.content,
         anchorParent = frame.content,
@@ -80,7 +80,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         end
     })
 
-    frame.content.debugButton = CraftSim.GGUI.Button({
+    frame.content.debugButton = GGUI.Button({
         label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG),
         parent = frame.content,
         anchorParent = frame.content.newsButton.frame,
@@ -90,11 +90,11 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
+            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
         end
     })
 
-    frame.content.exportForgeFinderButton = CraftSim.GGUI.Button({
+    frame.content.exportForgeFinderButton = GGUI.Button({
         label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT),
         parent = frame.content,
         anchorParent = frame.content.debugButton.frame,
@@ -117,7 +117,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         }
     })
 
-    CraftSim.GGUI.HelpIcon({
+    GGUI.HelpIcon({
         parent = frame.content,
         anchorParent = frame.content.exportForgeFinderButton.frame,
         anchorA = "RIGHT",
@@ -127,7 +127,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
     })
 
     local pixelHeart = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.2)
-    frame.content.supportersButton = CraftSim.GGUI.Button({
+    frame.content.supportersButton = GGUI.Button({
         parent = frame.content,
         anchorParent = frame.content.debugButton.frame,
         anchorA = "TOPRIGHT",
@@ -137,11 +137,11 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SUPPORTERS):Show()
+            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SUPPORTERS):Show()
         end
     })
 
-    frame.content.optionsButton = CraftSim.GGUI.Button({
+    frame.content.optionsButton = GGUI.Button({
         parent = frame.content,
         anchorParent = frame.content.newsButton.frame,
         anchorA = "RIGHT",
@@ -155,7 +155,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS)
     })
 
-    frame.content.resetFramesButton = CraftSim.GGUI.Button({
+    frame.content.resetFramesButton = GGUI.Button({
         parent = frame.content,
         anchorParent = frame.content.optionsButton.frame,
         anchorA = "RIGHT",
@@ -171,90 +171,90 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
 
 
     -- 1. Column
-    frame.content.modulesMaterials = createModuleCheckbox(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_LABEL),
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_TOOLTIP),
-        "TOPLEFT", frame.content, "TOPLEFT", cbBaseOffsetX, cbBaseOffsetY, "modulesMaterials")
+    frame.content.modulesReagentOptimization = createModuleCheckbox(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL),
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP),
+        "TOPLEFT", frame.content, "TOPLEFT", cbBaseOffsetX, cbBaseOffsetY, "MODULE_REAGENT_OPTIMIZATION")
 
-    frame.content.modulesStatWeights = createModuleCheckbox(
+    frame.content.modulesAverageProfit = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP),
-        "TOP", frame.content.modulesMaterials, "TOP", 0, cbSpacingY, "modulesStatWeights")
+        "TOP", frame.content.modulesReagentOptimization, "TOP", 0, cbSpacingY, "MODULE_AVERAGE_PROFIT")
 
     frame.content.modulesTopGear = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP),
-        "TOP", frame.content.modulesStatWeights, "TOP", 0, cbSpacingY, "modulesTopGear")
+        "TOP", frame.content.modulesAverageProfit, "TOP", 0, cbSpacingY, "MODULE_TOP_GEAR")
 
     frame.content.modulesCraftQueue = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP),
-        "TOP", frame.content.modulesTopGear, "TOP", 0, cbSpacingY, "modulesCraftQueue")
+        "TOP", frame.content.modulesTopGear, "TOP", 0, cbSpacingY, "MODULE_CRAFT_QUEUE")
 
 
     -- 2. Column
-    frame.content.modulesPriceDetails = createModuleCheckbox(
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL),
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_TOOLTIP),
-        "LEFT", frame.content.modulesMaterials, "RIGHT", 155, 0, "modulesPriceDetails")
+    frame.content.modulesCostOverview = createModuleCheckbox(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL),
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP),
+        "LEFT", frame.content.modulesReagentOptimization, "RIGHT", 155, 0, "MODULE_COST_OVERVIEW")
 
     frame.content.modulesPriceOverride = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP),
-        "TOP", frame.content.modulesPriceDetails, "TOP", 0, cbSpacingY, "modulesPriceOverride")
+        "TOP", frame.content.modulesCostOverview, "TOP", 0, cbSpacingY, "MODULE_PRICE_OVERRIDE")
 
     frame.content.modulesCraftBuffs = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP),
-        "TOP", frame.content.modulesPriceOverride, "TOP", 0, cbSpacingY, "modulesCraftBuffs")
+        "TOP", frame.content.modulesPriceOverride, "TOP", 0, cbSpacingY, "MODULE_CRAFT_BUFFS")
 
     frame.content.modulesCooldowns = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP),
-        "TOP", frame.content.modulesCraftBuffs, "TOP", 0, cbSpacingY, "modulesCooldowns")
+        "TOP", frame.content.modulesCraftBuffs, "TOP", 0, cbSpacingY, "MODULE_COOLDOWNS")
 
 
     -- 3. Column
     frame.content.modulesSpecInfo = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP),
-        "LEFT", frame.content.modulesPriceDetails, "RIGHT", 125, 0, "modulesSpecInfo")
+        "LEFT", frame.content.modulesCostOverview, "RIGHT", 125, 0, "MODULE_SPEC_INFO")
 
     frame.content.modulesCraftResults = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_RESULTS_TOOLTIP),
-        "TOP", frame.content.modulesSpecInfo, "TOP", 0, cbSpacingY, "modulesCraftResults")
+        "TOP", frame.content.modulesSpecInfo, "TOP", 0, cbSpacingY, "MODULE_CRAFT_RESULTS")
 
     frame.content.modulesCostOptimization = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP),
-        "TOP", frame.content.modulesCraftResults, "TOP", 0, cbSpacingY, "modulesCostOptimization")
+        "TOP", frame.content.modulesCraftResults, "TOP", 0, cbSpacingY, "MODULE_COST_OPTIMIZATION")
     frame.content.modulesStatistics = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP),
-        "TOP", frame.content.modulesCostOptimization, "TOP", 0, cbSpacingY, "modulesStatistics")
+        "TOP", frame.content.modulesCostOptimization, "TOP", 0, cbSpacingY, "MODULE_STATISTICS")
 
 
     -- 4. Column
     frame.content.modulesRecipeScan = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP),
-        "LEFT", frame.content.modulesSpecInfo, "RIGHT", 125, 0, "modulesRecipeScan")
+        "LEFT", frame.content.modulesSpecInfo, "RIGHT", 125, 0, "MODULE_RECIPE_SCAN")
 
     frame.content.modulesCustomerService = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP),
-        "TOP", frame.content.modulesRecipeScan, "TOP", 0, cbSpacingY, "modulesCustomerService")
+        "TOP", frame.content.modulesRecipeScan, "TOP", 0, cbSpacingY, "MODULE_CUSTOMER_SERVICE")
 
     frame.content.modulesCustomerHistory = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP),
-        "TOP", frame.content.modulesCustomerService, "TOP", 0, cbSpacingY, "modulesCustomerHistory",
+        "TOP", frame.content.modulesCustomerService, "TOP", 0, cbSpacingY, "MODULE_CUSTOMER_HISTORY",
         CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 
     frame.content.modulesExplanations = createModuleCheckbox(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL),
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP),
-        "TOP", frame.content.modulesCustomerHistory, "TOP", 0, cbSpacingY, "modulesExplanations",
+        "TOP", frame.content.modulesCustomerHistory, "TOP", 0, cbSpacingY, "MODULE_EXPLANATIONS",
         CraftSim.CONST.FRAMES.EXPLANATIONS)
 end

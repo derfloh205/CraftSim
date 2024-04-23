@@ -4,18 +4,18 @@ local CraftSim = select(2, ...)
 CraftSim.LOCAL_FR = {}
 
 function CraftSim.LOCAL_FR:GetData()
-	local f = CraftSim.GUTIL:GetFormatter()
+    local f = CraftSim.GUTIL:GetFormatter()
     local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
-	return {
-		-- REQUIRED:
-		[CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Inspiration",
-		[CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Fabrication multiple",
-		[CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Ingéniosité",
-		[CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Vitesse de fabrication",
-		[CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Équipé",
-		[CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Enchanté:",
+    return {
+        -- REQUIRED:
+        [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Inspiration",
+        [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Fabrication multiple",
+        [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Ingéniosité",
+        [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Vitesse de fabrication",
+        [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Équipé",
+        [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Enchanté:",
 
-		-- OPTIONAL (Defaulting to EN if not available):
+        -- OPTIONAL (Defaulting to EN if not available):
 
         -- shared prof cds
         [CraftSim.CONST.TEXT.DF_ALCHEMY_TRANSMUTATIONS] = "DF - Transmutations",
@@ -544,14 +544,14 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL] = "Meilleur Equipement",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP] =
         "Shows the best available profession gear combination based on the selected mode",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL] = "Details Prix",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_TOOLTIP] =
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL] = "Details Prix",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP] =
         "Shows a sell price and profit overview by resulting item quality",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "Profit Moyen",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] =
         "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_LABEL] = "Optimisation Matériaux",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_TOOLTIP] =
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Optimisation Matériaux",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP] =
         "Suggests the cheapest materials to reach the highest quality/inspiration threshold.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Remplacement Prix",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] =
@@ -722,5 +722,5 @@ greater or equal the configured sale rate threshold.
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",
         [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "No",
-	}
+    }
 end

@@ -49,6 +49,39 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MINIMAP_BUTTON_HIDE] = CraftSimOptions
             .optionsHideMinimapButton
         -- TODO
+        -- MODULE VISIBILITIES
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_REAGENT_OPTIMIZATION] = CraftSimOptions
+            .moduleMaterials
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_AVERAGE_PROFIT] = CraftSimOptions
+            .moduleStatWeights
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_TOP_GEAR] = CraftSimOptions
+            .moduleTopGear
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_COST_OVERVIEW] = CraftSimOptions
+            .modulePriceDetails
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_SPEC_INFO] = CraftSimOptions
+            .moduleSpecInfo
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_PRICE_OVERRIDE] = CraftSimOptions
+            .modulePriceOverride
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_RECIPE_SCAN] = CraftSimOptions
+            .moduleRecipeScan
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_CRAFT_RESULTS] = CraftSimOptions
+            .moduleCraftResults
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_CUSTOMER_SERVICE] = CraftSimOptions
+            .moduleCustomerService
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_CUSTOMER_HISTORY] = CraftSimOptions
+            .moduleCustomerHistory
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_COST_OPTIMIZATION] = CraftSimOptions
+            .moduleCostOptimization
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_CRAFT_QUEUE] = CraftSimOptions
+            .moduleCraftQueue
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_CRAFT_BUFFS] = CraftSimOptions
+            .moduleCraftBuffs
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_COOLDOWNS] = CraftSimOptions
+            .moduleCooldowns
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_EXPLANATIONS] = CraftSimOptions
+            .moduleExplanations
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_STATISTICS] = CraftSimOptions
+            .moduleStatistics
 
 
 
