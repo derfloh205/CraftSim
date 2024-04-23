@@ -8,9 +8,6 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE_ITEM_C
 ---@class CraftSim.ITEM_COUNT : Frame
 CraftSim.ITEM_COUNT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED", "BANKFRAME_OPENED" })
 
----@type table<string, table<number, number>> table<crafterUID, table<itemID, count>>
-CraftSimItemCountCache = {}
-
 ---@param crafterUID string
 ---@param itemID ItemInfo
 ---@return number count
@@ -20,8 +17,6 @@ function CraftSim.ITEM_COUNT:Get(crafterUID, itemID)
     local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     crafterUID = crafterUID or playerCrafterUID
     local isPlayer = crafterUID == playerCrafterUID
-
-    CraftSimItemCountCache[crafterUID] = CraftSimItemCountCache[crafterUID] or {}
 
     local alternativeItemID = CraftSim.CONST.REAGENT_ID_EXCEPTION_MAPPING[itemID]
 
@@ -38,27 +33,16 @@ function CraftSim.ITEM_COUNT:Get(crafterUID, itemID)
     end
 
 
-    local count = CraftSimItemCountCache[crafterUID][itemID]
+    local count = CraftSim.DB.ITEM_COUNT:Get(crafterUID, itemID)
     local altCount = nil
     if alternativeItemID then
-        altCount = CraftSimItemCountCache[crafterUID][alternativeItemID]
+        altCount = CraftSim.DB.ITEM_COUNT:Get(crafterUID, alternativeItemID)
     end
     if not count then
         return 0 -- not cached yet
     else
         return count, alternativeItemID, altCount
     end
-end
-
-function CraftSim.ITEM_COUNT:GetRest(itemID,
-                                           quantity, crafterUID)
-    local itemCount = self:Get(itemID, true, false, true, crafterUID)
-
-    return math.max(0, quantity - itemCount)
-end
-
-function CraftSim.ITEM_COUNT:ClearAll()
-    wipe(CraftSimItemCountCache)
 end
 
 function CraftSim.ITEM_COUNT:BAG_UPDATE_DELAYED()

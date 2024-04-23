@@ -416,7 +416,8 @@ end
 function CraftSim.INIT:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
 		CraftSim.INIT:HandleCraftSimOptionsUpdates()
-		CraftSim.DB:HandleCraftSimCacheUpdates()
+		CraftSim.DB:Init()
+		--CraftSim.DB:HandleCraftSimCacheUpdates()
 		CraftSim.INIT:InitializeMinimapButton()
 
 		CraftSim.LOCAL:Init()

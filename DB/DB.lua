@@ -23,16 +23,18 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
 CraftSimDB = CraftSimDB or {}
 
 function CraftSim.DB:Init()
-    self.MATCH_HISTORY:Init()
+    self.ITEM_COUNT:Init()
 
     CraftSim.DB:Migrate()
     CraftSim.DB:CleanUp()
 end
 
 function CraftSim.DB:Migrate()
+    self.ITEM_COUNT:Migrate()
 end
 
 function CraftSim.DB:CleanUp()
+    self.ITEM_COUNT:CleanUp()
 end
 
 function CraftSim.DB:HandleCraftSimCacheUpdates()

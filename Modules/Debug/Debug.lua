@@ -151,6 +151,7 @@ function CraftSim.DEBUG:StopProfiling(label)
     CraftSim.DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
 end
 
+---@deprecated
 --- used for the cache debug list
 function CraftSim.DEBUG:GetCacheGlobalsList()
     return {
