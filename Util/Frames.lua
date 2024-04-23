@@ -55,17 +55,6 @@ function CraftSim.FRAME:InitTabSystem(tabs)
     tabs[1]:SetEnabled(false)
 end
 
---> in GGUI
-function CraftSim.FRAME:makeFrameMoveable(frame)
-    frame.hookFrame:SetMovable(true)
-    frame:SetScript("OnMouseDown", function(self, button)
-        frame.hookFrame:StartMoving()
-    end)
-    frame:SetScript("OnMouseUp", function(self, button)
-        frame.hookFrame:StopMovingOrSizing()
-    end)
-end
-
 function CraftSim.FRAME:RestoreModulePositions()
     local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CONTROL_PANEL)
     local recipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.RECIPE_SCAN)

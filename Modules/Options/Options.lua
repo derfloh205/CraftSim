@@ -257,7 +257,7 @@ function CraftSim.OPTIONS:Init()
     CraftSim.FRAME:CreateText("Crafts", CraftingTab.content, garbageCollectCraftsInput, "LEFT", "RIGHT", 5, 0)
 
     CraftingTab.content.flashTaskBarCD = GGUI.Checkbox {
-        parent = CraftingTab.content, anchorParent = enableGarbageCollectWhenCraftingCB, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        parent = CraftingTab.content, anchorParent = enableGarbageCollectWhenCraftingCB.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         offsetX = 0, offsetY = -50,
         initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED"),
         label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL),

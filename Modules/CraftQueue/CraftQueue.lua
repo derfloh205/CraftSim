@@ -615,7 +615,7 @@ function CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeID)
     restockPerRecipeOptions[recipeID].saleRateThreshold = restockPerRecipeOptions[recipeID].saleRateThreshold or 0
     restockPerRecipeOptions[recipeID].saleRatePerQuality = restockPerRecipeOptions[recipeID].saleRatePerQuality or {}
 
-    return restockPerRecipeOptions
+    return restockPerRecipeOptions[recipeID]
 end
 
 ---@param recipeData CraftSim.RecipeData
