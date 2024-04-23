@@ -239,23 +239,21 @@ function CraftSim.OPTIONS:Init()
     supportedPriceSources:SetText(L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES) ..
         "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
 
-    local enableGarbageCollectWhenCraftingCB = CraftSim.FRAME:CreateCheckbox(
-        " " .. L(CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM),
-        L(CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP),
-        "craftGarbageCollectEnabled",
-        CraftingTab.content,
-        CraftingTab.content,
-        "TOP",
-        "TOP",
-        -90,
-        -50)
+    local enableGarbageCollectWhenCraftingCB = GGUI.Checkbox {
+        parent = CraftingTab.content, anchorParent = CraftingTab.content,
+        anchorA = "TOP", anchorB = "TOP", offsetX = -90, offsetY = -50,
+        initialValue = CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_ENABLED"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("CRAFTING_GARBAGE_COLLECTION_ENABLED", checked)
+        end
+    }
 
     local garbageCollectCraftsInput = CraftSim.FRAME:CreateInput("CraftSimGarbageCollectCraftsInput", CraftingTab
-        .content, enableGarbageCollectWhenCraftingCB, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25,
-        CraftSimOptions.craftGarbageCollectCrafts,
+        .content, enableGarbageCollectWhenCraftingCB.frame, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25,
+        CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_CRAFTS"),
         function()
             local number = CraftSim.UTIL:ValidateNumberInput(CraftSimGarbageCollectCraftsInput, false)
-            CraftSimOptions.craftGarbageCollectCrafts = number
+            CraftSim.DB.OPTIONS:Save("CRAFTING_GARBAGE_COLLECTION_CRAFTS", number)
         end)
 
     CraftSim.FRAME:CreateText("Crafts", CraftingTab.content, garbageCollectCraftsInput, "LEFT", "RIGHT", 5, 0)

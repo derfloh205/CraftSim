@@ -38,9 +38,12 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
     self.numCrafts = self.numCrafts + 1
     table.insert(self.craftResults, craftResult) -- TODO: check for RAM bloat when crafting alot!!
 
+    local craftGarbageCollectEnabled = CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_ENABLED")
+    local craftGarbageCollectCrafts = CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_CRAFTS")
+
     -- if enabled and the correct number of modulo crafts -> collect garbage
-    if CraftSimOptions.craftGarbageCollectEnabled and CraftSimOptions.craftGarbageCollectCrafts > 0 then
-        if (self.numCrafts % CraftSimOptions.craftGarbageCollectCrafts) == 0 then
+    if craftGarbageCollectEnabled and craftGarbageCollectCrafts > 0 then
+        if (self.numCrafts % craftGarbageCollectCrafts) == 0 then
             collectgarbage()
         end
     end

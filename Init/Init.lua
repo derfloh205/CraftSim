@@ -15,10 +15,6 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 CraftSim.INIT.FRAMES = {}
 
 CraftSimOptions = CraftSimOptions or {
-	-- crafting options
-	craftGarbageCollectEnabled = true,
-	craftGarbageCollectCrafts = 500,
-
 	-- craft queue
 	craftQueueGeneralRestockProfitMarginThreshold = 0,
 	craftQueueGeneralRestockRestockAmount = 1,
@@ -63,7 +59,6 @@ end
 
 function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 	if CraftSimOptions then
-		CraftSimOptions.craftGarbageCollectCrafts = CraftSimOptions.craftGarbageCollectCrafts or 500
 		CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold = CraftSimOptions
 			.craftQueueGeneralRestockProfitMarginThreshold or 0
 		CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold = CraftSimOptions
@@ -80,10 +75,6 @@ function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 
 		CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset = CraftSimOptions
 			.craftQueueGeneralRestockTargetModeCraftOffset or 0
-
-		if CraftSimOptions.craftGarbageCollectEnabled == nil then
-			CraftSimOptions.craftGarbageCollectEnabled = true
-		end
 		if CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished == nil then
 			CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished = true
 		end

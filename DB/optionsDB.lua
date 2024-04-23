@@ -119,7 +119,6 @@ function CraftSim.DB.OPTIONS:Migrate()
             CraftSimOptions
             .customResourcefulnessConstant
 
-        -- TODO
         -- CUSTOMER SERVICE
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_SERVICE_WHISPER_FORMAT] =
             CraftSimOptions
@@ -130,6 +129,16 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS] =
             CraftSimOptions
             .customerServiceActivePreviewIDs
+
+        -- CRAFTING
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTING_GARBAGE_COLLECTION_ENABLED] =
+            CraftSimOptions
+            .craftGarbageCollectEnabled
+
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTING_GARBAGE_COLLECTION_CRAFTS] =
+            CraftSimOptions
+            .craftGarbageCollectCrafts
+
 
 
         CraftSimDB.optionsDB.version = 1
