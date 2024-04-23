@@ -91,6 +91,8 @@ CraftSim.DB.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
     availableProfessionGear = {},
 }
 
+--- TODO: move to init
+---@deprecated
 function CraftSim.DB.RECIPE_DATA:HandleUpdates()
     if CraftSimRecipeDataCache then
         CraftSimRecipeDataCache.cachedRecipeIDs = CraftSimRecipeDataCache.cachedRecipeIDs or {}
