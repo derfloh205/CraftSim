@@ -127,7 +127,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
             offsetY = contentOffsetY,
             width = 120,
             clickCallback = function(_, _, value)
-                CraftSimOptions.topGearMode = value
+                CraftSim.DB.OPTIONS:Save("TOP_GEAR_MODE", value)
                 CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.INIT.currentRecipeData)
             end
         })
@@ -338,18 +338,20 @@ function CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(recipeData, exportMode)
         topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
     end
 
-
+    local topGearMode = CraftSim.DB.OPTIONS:Get("TOP_GEAR_MODE")
     local availableModes = CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData)
-    if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
-        CraftSimOptions.topGearMode = availableModes[1]
+    if #availableModes > 0 and not tContains(availableModes, topGearMode) then
+        topGearMode = availableModes[1]
+        CraftSim.DB.OPTIONS:Save("TOP_GEAR_MODE", topGearMode)
     end
 
     availableModes = CraftSim.GUTIL:Map(availableModes, function(mode) return { label = mode, value = mode } end)
 
+    local topGearMode = CraftSim.DB.OPTIONS:Get("TOP_GEAR_MODE")
+
     topGearFrame.content.simModeDropdown:SetData({
         data = availableModes,
-        initialValue = CraftSimOptions.topGearMode,
-        initialLabel =
-            CraftSimOptions.topGearMode
+        initialValue = topGearMode,
+        initialLabel = topGearMode
     })
 end

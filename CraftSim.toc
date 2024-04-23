@@ -27,6 +27,7 @@ Modules/Debug/Test.lua
 Util/Util.lua
 
 DB/DB.lua
+DB/optionsDB.lua
 DB/itemCountDB.lua
 DB/RecipeData.lua
 DB/CraftQueue.lua

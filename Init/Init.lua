@@ -15,11 +15,6 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 CraftSim.INIT.FRAMES = {}
 
 CraftSimOptions = CraftSimOptions or {
-	-- priceDebug = false,
-	-- priceSource = nil,
-	tsmPriceKeyMaterials = "first(DBRecent, DBMinbuyout)",
-	tsmPriceKeyItems = "first(DBRecent, DBMinbuyout)",
-	topGearMode = "Top Profit",
 	breakPointOffset = false,
 	autoAssignVellum = false,
 	showProfitPercentage = false,
@@ -128,12 +123,6 @@ end
 
 function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 	if CraftSimOptions then
-		CraftSimOptions.tsmPriceKey = nil
-		CraftSimOptions.tsmPriceKeyMaterials = CraftSimOptions.tsmPriceKeyMaterials or
-			CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION
-		CraftSimOptions.tsmPriceKeyItems = CraftSimOptions.tsmPriceKeyItems or
-			CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION
-		CraftSimOptions.topGearMode = CraftSimOptions.topGearMode or "Top Profit"
 		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
 		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
 		CraftSimOptions.showProfitPercentage = CraftSimOptions.showProfitPercentage or false

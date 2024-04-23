@@ -183,14 +183,14 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
 
         for bag = BANK_CONTAINER, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
             for slot = 1, C_Container.GetContainerNumSlots(bag) do
-                local itemLoc = ItemLocation:CreateFromBagAndSlot(bag,slot)
+                local itemLoc = ItemLocation:CreateFromBagAndSlot(bag, slot)
                 if itemLoc:IsValid() then
                     local isCached = C_Item.IsItemDataCached(itemLoc)
                     if not isCached then
                         C_Item.RequestLoadItemData(itemLoc)
                     end
-                    
-                    local itemLink = C_Item.GetItemLink(ItemLocation:CreateFromBagAndSlot(bag,slot))
+
+                    local itemLink = C_Item.GetItemLink(ItemLocation:CreateFromBagAndSlot(bag, slot))
                     if itemLink ~= nil then
                         local itemSubType = select(3, C_Item.GetItemInfoInstant(itemLink))
                         local itemEquipLoc = select(4, C_Item.GetItemInfoInstant(itemLink))
@@ -198,7 +198,7 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
                             local professionGear = CraftSim.ProfessionGear()
                             professionGear:SetItem(itemLink)
                             table.insert(inventoryGear, professionGear)
-                        
+
                             if not GUTIL:Find(CraftSimRecipeDataCache.professionGearCache[crafterUID]
                                     [recipeData.professionData.professionInfo.profession]
                                     .availableProfessionGear, function(g) return g.itemLink == itemLink end) then
@@ -446,7 +446,8 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
 end
 
 function CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
-    local results = self:OptimizeTopGear(recipeData, CraftSimOptions.topGearMode)
+    local topGearMode = CraftSim.DB.OPTIONS:Get("TOP_GEAR_MODE")
+    local results = self:OptimizeTopGear(recipeData, topGearMode)
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
 
     local hasResults = #results > 0
@@ -454,7 +455,7 @@ function CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
     if hasResults and not recipeData.professionGearSet:Equals(results[1].professionGearSet) then
         print("best result")
         print(results[1])
-        CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, CraftSimOptions.topGearMode, exportMode)
+        CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, exportMode)
     else
         CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData, false, exportMode)
     end

@@ -30,6 +30,12 @@ function CraftSim.DB.OPTIONS:Migrate()
         -- remap to new options enum
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PRICE_DEBUG] = CraftSimOptions.priceDebug
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE] = CraftSimOptions.priceSource
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS] = CraftSimOptions
+            .tsmPriceKeyMaterials
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_RESULTS] = CraftSimOptions
+            .tsmPriceKeyItems
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TOP_GEAR_MODE] = CraftSimOptions
+            .topGearMode
 
 
 

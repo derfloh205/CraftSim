@@ -356,7 +356,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     tsmMaterialsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
     tsmMaterialsPriceExpression:SetAutoFocus(false) -- dont automatically focus
     tsmMaterialsPriceExpression:SetFontObject("ChatFontNormal")
-    tsmMaterialsPriceExpression:SetText(CraftSimOptions.tsmPriceKeyMaterials)
+    tsmMaterialsPriceExpression:SetText(CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS))
     tsmMaterialsPriceExpression:SetScript("OnEscapePressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
     tsmMaterialsPriceExpression:SetScript("OnEnterPressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
     tsmMaterialsPriceExpression:SetScript("OnTextChanged", function()
@@ -368,7 +368,8 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         else
             CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText(
                 L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
-            CraftSimOptions.tsmPriceKeyMaterials = tsmMaterialsPriceExpression:GetText()
+            CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS,
+                tsmMaterialsPriceExpression:GetText())
         end
     end)
 
@@ -404,7 +405,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     tsmItemsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
     tsmItemsPriceExpression:SetAutoFocus(false) -- dont automatically focus
     tsmItemsPriceExpression:SetFontObject("ChatFontNormal")
-    tsmItemsPriceExpression:SetText(CraftSimOptions.tsmPriceKeyItems)
+    tsmItemsPriceExpression:SetText(CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_ITEMS))
     tsmItemsPriceExpression:SetScript("OnEscapePressed", function() tsmItemsPriceExpression:ClearFocus() end)
     tsmItemsPriceExpression:SetScript("OnEnterPressed", function() tsmItemsPriceExpression:ClearFocus() end)
     tsmItemsPriceExpression:SetScript("OnTextChanged", function()
@@ -416,7 +417,8 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         else
             CraftSimTSMStringValidationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(
                 L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
-            CraftSimOptions.tsmPriceKeyItems = tsmItemsPriceExpression:GetText()
+            CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_ITEMS,
+                tsmItemsPriceExpression:GetText())
         end
     end)
 
