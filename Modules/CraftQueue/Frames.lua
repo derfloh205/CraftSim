@@ -477,9 +477,9 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             parent = queueTab.content, anchorParent = queueTab.content.importRecipeScanButton.frame,
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_LABEL),
             offsetX = 5, anchorA = "LEFT", anchorB = "RIGHT",
-            initialValue = CraftSimOptions.recipeScanImportAllProfessions,
+            initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_IMPORT_ALL_PROFESSIONS"),
             clickCallback = function(_, checked)
-                CraftSimOptions.recipeScanImportAllProfessions = checked
+                CraftSim.DB.OPTIONS:Save("RECIPESCAN_IMPORT_ALL_PROFESSIONS", checked)
             end,
             tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP)
         }

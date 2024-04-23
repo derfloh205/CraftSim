@@ -15,19 +15,6 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 CraftSim.INIT.FRAMES = {}
 
 CraftSimOptions = CraftSimOptions or {
-	-- profit calc
-	customMulticraftConstant = CraftSim.CONST.MULTICRAFT_CONSTANT,
-
-	-- customer service module
-	customerServiceRecipeWhisperFormat =
-		"Highest Result: %gc\n" ..
-		"with Inspiration: %ic (%insp)\n" ..
-		"Crafting Costs: %cc\n" ..
-		"%ccd\n",
-
-	customerServiceAllowAutoResult = true,
-	customerServiceActivePreviewIDs = {},
-
 	-- crafting options
 	craftGarbageCollectEnabled = true,
 	craftGarbageCollectCrafts = 500,
@@ -76,17 +63,7 @@ end
 
 function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 	if CraftSimOptions then
-		CraftSimOptions.customerServiceActivePreviewIDs = CraftSimOptions.customerServiceActivePreviewIDs or {}
-		CraftSimOptions.customerServiceRecipeWhisperFormat = CraftSimOptions.customerServiceRecipeWhisperFormat or
-			("Highest Result: %gc\n" ..
-				"with Inspiration: %ic (%insp)\n" ..
-				"Crafting Costs: %cc\n" ..
-				"%ccd")
 		CraftSimOptions.craftGarbageCollectCrafts = CraftSimOptions.craftGarbageCollectCrafts or 500
-		CraftSimOptions.customMulticraftConstant = CraftSimOptions.customMulticraftConstant or
-			CraftSim.CONST.MULTICRAFT_CONSTANT
-		CraftSimOptions.customResourcefulnessConstant = CraftSimOptions.customResourcefulnessConstant or
-			CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
 		CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold = CraftSimOptions
 			.craftQueueGeneralRestockProfitMarginThreshold or 0
 		CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold = CraftSimOptions
@@ -104,12 +81,6 @@ function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 		CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset = CraftSimOptions
 			.craftQueueGeneralRestockTargetModeCraftOffset or 0
 
-		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
-			CraftSimOptions.detailedCraftingInfoTooltip = true
-		end
-		if CraftSimOptions.customerServiceAllowAutoResult == nil then
-			CraftSimOptions.customerServiceAllowAutoResult = true
-		end
 		if CraftSimOptions.craftGarbageCollectEnabled == nil then
 			CraftSimOptions.craftGarbageCollectEnabled = true
 		end

@@ -87,8 +87,6 @@ function CraftSim.DB.OPTIONS:Migrate()
             CraftSimOptions
             .maxHistoryEntriesPerClient
 
-        -- TODO
-
         -- RECIPE SCAN
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_INCLUDE_SOULBOUND] = CraftSimOptions
             .recipeScanIncludeSoulbound
@@ -108,8 +106,30 @@ function CraftSim.DB.OPTIONS:Migrate()
             .recipeScanImportAllProfessions
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_OPTIMIZE_SUBRECIPES] = CraftSimOptions
             .recipeScanOptimizeSubRecipes
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_SORT_BY_PROFIT_MARGIN] = CraftSimOptions
+            .recipeScanSortByProfitMargin
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_USE_INSIGHT] = CraftSimOptions
+            .recipeScanUseInsight
 
+        -- PROFIT CALCULATION
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PROFIT_CALCULATION_MULTICRAFT_CONSTANT] =
+            CraftSimOptions
+            .customMulticraftConstant
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT] =
+            CraftSimOptions
+            .customResourcefulnessConstant
 
+        -- TODO
+        -- CUSTOMER SERVICE
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_SERVICE_WHISPER_FORMAT] =
+            CraftSimOptions
+            .customerServiceRecipeWhisperFormat
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_SERVICE_ALLOW_LIVE_PREVIEW] =
+            CraftSimOptions
+            .customerServiceAllowAutoResult
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS] =
+            CraftSimOptions
+            .customerServiceActivePreviewIDs
 
 
         CraftSimDB.optionsDB.version = 1

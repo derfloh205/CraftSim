@@ -1,13 +1,15 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GGUI = CraftSim.GGUI
+
 CraftSim.CUSTOMER_SERVICE.FRAMES = {}
 CraftSim.CUSTOMER_SERVICE.timeoutSeconds = 5
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_SERVICE)
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
-    local frame = CraftSim.GGUI.Frame({
+    local frame = GGUI.Frame({
         parent = ProfessionsFrame,
         sizeX = 400,
         sizeY = 300,
@@ -41,7 +43,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
             function()
             end)
 
-        recipeWhisperTab.content.whisperButton = CraftSim.GGUI.Button({
+        recipeWhisperTab.content.whisperButton = GGUI.Button({
             parent = recipeWhisperTab.content,
             anchorParent = recipeWhisperTab.content.customerCharacterInput,
             anchorA = "LEFT",
@@ -64,7 +66,8 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
             recipeWhisperTab.content.msgFrameContent)
         recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetPoint("TOP", recipeWhisperTab.content.msgFrameContent,
             "TOP", 0, -5)
-        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(CraftSimOptions.customerServiceRecipeWhisperFormat)
+        recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(CraftSim.DB.OPTIONS:Get(
+            "CUSTOMER_SERVICE_WHISPER_FORMAT"))
         recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetWidth(recipeWhisperTab.content.msgFrameContent:GetWidth() -
             15)
         recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetHeight(20)
@@ -74,8 +77,9 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetScript("OnEscapePressed",
             function() recipeWhisperTab.content.msgFrameContent.msgFormatBox:ClearFocus() end)
         recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetScript("OnTextChanged", function()
-            CraftSimOptions.customerServiceRecipeWhisperFormat = recipeWhisperTab.content.msgFrameContent.msgFormatBox
-                :GetText()
+            CraftSim.DB.OPTIONS:Save("CUSTOMER_SERVICE_WHISPER_FORMAT",
+                recipeWhisperTab.content.msgFrameContent.msgFormatBox
+                :GetText())
         end)
 
         recipeWhisperTab.content.messageFormatTitle = CraftSim.FRAME:CreateText(
@@ -86,7 +90,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION),
             recipeWhisperTab.content, recipeWhisperTab.content.messageFormatTitle, "LEFT", "RIGHT", 10, 0)
 
-        recipeWhisperTab.content.resetDefaults = CraftSim.GGUI.Button({
+        recipeWhisperTab.content.resetDefaults = GGUI.Button({
             parent = recipeWhisperTab.content,
             anchorParent = recipeWhisperTab.content.messageFormatHelp,
             anchorA = "LEFT",
@@ -102,23 +106,29 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
                     "with Inspiration: %ic (%insp)\n" ..
                     "Crafting Costs: %cc\n" ..
                     "%ccd"
-                CraftSimOptions.customerServiceRecipeWhisperFormat = defaultFormat
+                CraftSim.DB.OPTIONS:Save("CUSTOMER_SERVICE_WHISPER_FORMAT", defaultFormat)
                 recipeWhisperTab.content.msgFrameContent.msgFormatBox:SetText(defaultFormat)
             end
         })
 
-        autoResultTab.content.enableConnections = CraftSim.FRAME:CreateCheckbox(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS),
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION),
-            "customerServiceAllowAutoResult", autoResultTab.content, autoResultTab.content, "TOPLEFT", "TOPLEFT", 10, -10)
+        autoResultTab.content.enableConnections = GGUI.Checkbox {
+            parent = autoResultTab.content, anchorParent = autoResultTab.content, anchorA = "TOPLEFT", anchorB = "TOPLEFT",
+            offsetX = 10, offsetY = -10,
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS),
+            tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION),
+            initialValue = CraftSim.DB.OPTIONS:Get("CUSTOMER_SERVICE_ALLOW_LIVE_PREVIEW"),
+            clickCallback = function(_, checked)
+                CraftSim.DB.OPTIONS:Save("CUSTOMER_SERVICE_ALLOW_LIVE_PREVIEW", checked)
+            end
+        }
 
         autoResultTab.content.browserInviteInput = CraftSim.FRAME:CreateInput(nil, autoResultTab.content,
-            autoResultTab.content.enableConnections, "TOPLEFT", "BOTTOMLEFT", 0, 0, 150, 25,
+            autoResultTab.content.enableConnections.frame, "TOPLEFT", "BOTTOMLEFT", 0, 0, 150, 25,
             "",
             function()
             end)
 
-        recipeWhisperTab.content.resetDefaults = CraftSim.GGUI.Button({
+        recipeWhisperTab.content.resetDefaults = GGUI.Button({
             parent = autoResultTab.content,
             anchorParent = autoResultTab.content.browserInviteInput,
             anchorA = "LEFT",
@@ -142,7 +152,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
 end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
-    local frame = CraftSim.GGUI.Frame({
+    local frame = GGUI.Frame({
         parent = UIParent,
         anchorParent = UIParent,
         sizeX = 500,
@@ -171,7 +181,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTER_PROFESSION),
             frame.content, frame.title.frame, "TOP", "BOTTOM", 0, -10)
 
-        frame.content.recipeDropdown = CraftSim.GGUI.Dropdown({
+        frame.content.recipeDropdown = GGUI.Dropdown({
             parent = frame.content,
             anchorParent = frame.content.previewTitle,
             anchorA = "TOP",
@@ -264,7 +274,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         frame.content.optionalDropdownGroup:Hide()
 
         local function CreateReagentInputDropdown(label, offsetX, offsetY)
-            local optionalReagentDropdown = CraftSim.GGUI.Dropdown({
+            local optionalReagentDropdown = GGUI.Dropdown({
                 parent = frame.content.optionalDropdownGroup,
                 anchorParent = frame.content.optionalDropdownGroup,
                 anchorA = "TOP",
@@ -307,7 +317,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_RESULTS),
             frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", -80, -10, nil, nil)
 
-        frame.content.expectedResultIcon = CraftSim.GGUI.Icon({
+        frame.content.expectedResultIcon = GGUI.Icon({
             parent = frame.content,
             anchorParent = frame.content.expectedResultTitle,
             sizeX = 40,
@@ -321,7 +331,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             "100% " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_INSPIRATION),
             frame.content, frame.content.craftingCosts, "TOP", "BOTTOM", 80, -10, nil, nil)
 
-        frame.content.expectedInspirationIcon = CraftSim.GGUI.Icon({
+        frame.content.expectedInspirationIcon = GGUI.Icon({
             parent = frame.content,
             anchorParent = frame.content.expectedInspirationPercent,
             sizeX = 40,
@@ -341,7 +351,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
             reagentFrame:SetSize(iconSize, iconSize)
             reagentFrame:SetPoint(anchorA, anchorParent, anchorB, anchorX, anchorY)
 
-            reagentFrame.icon = CraftSim.GGUI.Icon({
+            reagentFrame.icon = GGUI.Icon({
                 parent = reagentFrame,
                 sizeX = iconSize,
                 sizeY = iconSize,
@@ -414,14 +424,14 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
     end
 
     createContent(frame)
-    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
+    GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
 end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
     local recipes = payload.recipes
     local crafter = payload.crafter
     local professionName = payload.professionName
-    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.LIVE_PREVIEW)
 
     previewFrame.professionID = payload.professionID
     previewFrame.crafter = crafter
@@ -472,7 +482,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreviewSession(payload)
 end
 
 function CraftSim.CUSTOMER_SERVICE.FRAMES:UpdateRecipe(payload)
-    local previewFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.LIVE_PREVIEW)
+    local previewFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.LIVE_PREVIEW)
     local resultData = payload.resultData
     local reagents = payload.reagents
     local optionalReagents = payload.optionalReagents

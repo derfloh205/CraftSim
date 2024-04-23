@@ -20,7 +20,8 @@ function CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
 end
 
 function CraftSim.CALC:CalculateResourcefulnessSavedCosts(resExtraFactor, craftingCostsRequired)
-    return craftingCostsRequired * (CraftSimOptions.customResourcefulnessConstant * resExtraFactor)
+    return craftingCostsRequired *
+    (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT") * resExtraFactor)
 end
 
 ---Returns the chance to receive an upgrade with hsv
@@ -159,7 +160,7 @@ function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
         return recipeData.baseItemAmount, 0
     end
 
-    local maxExtraItems = (CraftSimOptions.customMulticraftConstant * recipeData.baseItemAmount) *
+    local maxExtraItems = (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT") * recipeData.baseItemAmount) *
         recipeData.professionStats.multicraft:GetExtraFactor(true)
     local expectedExtraItems = (1 + maxExtraItems) / 2
     local expectedItems = recipeData.baseItemAmount + expectedExtraItems

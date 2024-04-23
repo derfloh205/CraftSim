@@ -208,7 +208,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
     local professionList = recipeScanTabContent.professionList
     local selectedRow = professionList.selectedRow --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.ROW]]
     if not selectedRow then return end -- nil check .. who knows..
-    if not CraftSimOptions.recipeScanImportAllProfessions then
+    if not CraftSim.DB.OPTIONS:Get("RECIPESCAN_IMPORT_ALL_PROFESSIONS") then
         ---@type CraftSim.RecipeData[]
         local filteredRecipes = GUTIL:Filter(selectedRow.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
         for _, recipeData in pairs(filteredRecipes) do
@@ -221,7 +221,8 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                     if use then
                         local item = recipeData.resultData.itemsByQuality[qualityID]
                         if item then
-                            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(recipeData:GetCrafterUID(), item:GetItemID())
+                            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(recipeData:GetCrafterUID(),
+                                item:GetItemID())
                             restockAmount = restockAmount - itemCount
                         end
                     end
@@ -275,7 +276,8 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                             if use then
                                 local item = recipeData.resultData.itemsByQuality[qualityID]
                                 if item then
-                                    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(recipeData:GetCrafterUID(), item:GetItemID())
+                                    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(
+                                    recipeData:GetCrafterUID(), item:GetItemID())
                                     restockAmount = restockAmount - itemCount
                                 end
                             end

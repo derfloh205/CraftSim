@@ -26,7 +26,7 @@ function CraftSim.CUSTOMER_SERVICE:Init()
 end
 
 function CraftSim.CUSTOMER_SERVICE:ClearPreviewIDs()
-    CraftSimOptions.customerServiceActivePreviewIDs = {}
+    wipe(CraftSim.DB.OPTIONS:Get("CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS"))
 end
 
 function CraftSim.CUSTOMER_SERVICE:GeneratePreviewInviteLink()
@@ -39,7 +39,7 @@ function CraftSim.CUSTOMER_SERVICE:GeneratePreviewInviteLink()
     local inviteLink = "CraftSimLivePreview:" ..
         GetUnitName("player", true) ..
         ":" .. professionID .. ":" .. recipeData.professionData.professionInfo.parentProfessionName .. ":" .. timeID
-    table.insert(CraftSimOptions.customerServiceActivePreviewIDs, timeID)
+    table.insert(CraftSim.DB.OPTIONS:Get("CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS"), timeID)
     return inviteLink
 end
 
@@ -86,7 +86,7 @@ end
 
 function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
     print("OnPreviewRequest: " .. type(payload.previewID), false, true)
-    if not tContains(CraftSimOptions.customerServiceActivePreviewIDs, tonumber(payload.previewID)) then
+    if not tContains(CraftSim.DB.OPTIONS:Get("CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS"), tonumber(payload.previewID)) then
         print("PreviewID not active: " .. tostring(payload.previewID))
         return
     end
@@ -339,7 +339,7 @@ function CraftSim.CUSTOMER_SERVICE:WhisperRecipeDetails(whisperTarget)
     local requiredReagents = recipeData.reagentData.requiredReagents
 
     -- replace formattext with values
-    local responseText = CraftSimOptions.customerServiceRecipeWhisperFormat
+    local responseText = CraftSim.DB.OPTIONS:Get("CUSTOMER_SERVICE_WHISPER_FORMAT")
 
     local inspStat = (recipeData.supportsInspiration and (professionStats.inspiration:GetPercent() .. "%%")) or "-"
     local mcStat = (recipeData.supportsMulticraft and (professionStats.multicraft:GetPercent() .. "%%")) or "-"

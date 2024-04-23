@@ -71,7 +71,7 @@ function CraftSim.RECIPE_SCAN:EndScan(row)
 
     --sort scan results?
     local resultList = row.content.resultList
-    if CraftSimOptions.recipeScanSortByProfitMargin then
+    if CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_BY_PROFIT_MARGIN") then
         resultList:UpdateDisplay(function(rowA, rowB)
             return rowA.relativeProfit > rowB.relativeProfit
         end)
@@ -113,7 +113,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         printF("Is Dummy2: Exclude")
         return false
     end
-    if not CraftSimOptions.recipeScanIncludeNotLearned and not recipeInfo.learned then
+    if not CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_NOT_LEARNED") and not recipeInfo.learned then
         printF("Is not learned: Exclude")
         return false
     end
@@ -121,7 +121,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
         printF("Is Quest: Exclude")
         return false
     end
-    if CraftSimOptions.recipeScanOnlyFavorites and not recipeInfo.favorite then
+    if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ONLY_FAVORITES") and not recipeInfo.favorite then
         printF("Is not favorite: Exclude")
         return false
     end
@@ -143,7 +143,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
     end
 
     local includedExpansions = {}
-    for expansionID, included in pairs(CraftSimOptions.recipeScanFilteredExpansions) do
+    for expansionID, included in pairs(CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS")) do
         if included then
             table.insert(includedExpansions, expansionID)
         end
@@ -179,12 +179,12 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
             if recipeInfo.hyperlink then
                 local isGear = recipeInfo.hasSingleItemOutput and recipeInfo.qualityIlvlBonuses ~= nil
                 local isSoulbound = GUTIL:isItemSoulbound(GUTIL:GetItemIDByLink(recipeInfo.hyperlink))
-                if not CraftSimOptions.recipeScanIncludeSoulbound then
+                if not CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_SOULBOUND") then
                     if isGear and isSoulbound then
                         printF("Is Gear+Soulbound: Exclude")
                         return false
                     end
-                    if not CraftSimOptions.recipeScanIncludeGear and isGear then
+                    if not CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_GEAR") and isGear then
                         printF("Is Gear: Exclude")
                         return false
                     end
@@ -195,7 +195,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
                     end
                 end
 
-                if not CraftSimOptions.recipeScanIncludeGear and isGear then
+                if not CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_GEAR") and isGear then
                     printF("Is Gear: Exclude")
                     return false
                 end
@@ -243,7 +243,7 @@ end
 function CraftSim.RECIPE_SCAN:StartScan(row)
     wipe(row.currentResults)
     CraftSim.RECIPE_SCAN.isScanning = true
-    
+
     printS("Start Scan for: " .. tostring(row.crafterProfessionUID))
 
     local recipeInfos = CraftSim.RECIPE_SCAN:GetScanRecipeInfo(row)
@@ -273,7 +273,7 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
         --- @type CraftSim.RecipeData
         local recipeData = CraftSim.RecipeData(recipeInfo.recipeID, nil, nil, crafterData);
 
-        if recipeData.reagentData:HasOptionalReagents() and CraftSimOptions.recipeScanUseInsight then
+        if recipeData.reagentData:HasOptionalReagents() and CraftSim.DB.OPTIONS:Get("RECIPESCAN_USE_INSIGHT") then
             recipeData:SetOptionalReagent(CraftSim.CONST.ITEM_IDS.OPTIONAL_REAGENTS.ILLUSTRIOUS_INSIGHT)
             recipeData:SetOptionalReagent(CraftSim.CONST.ITEM_IDS.OPTIONAL_REAGENTS.LESSER_ILLUSTRIOUS_INSIGHT)
         end
@@ -287,26 +287,27 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
         end
 
         -- if optimizing subrecipes
-        if CraftSimOptions.recipeScanOptimizeSubRecipes then
+        if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES") then
             printS("Optimizing SubRecipes..")
             recipeData:SetSubRecipeCostsUsage(true)
             recipeData:OptimizeSubRecipes({
-                optimizeGear = CraftSimOptions.recipeScanOptimizeProfessionTools,
+                optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"),
                 optimizeReagents = true,
             })
             printS("optimizedRecipes: " .. tostring(GUTIL:Count(recipeData.optimizedSubRecipes)))
         end
 
         --optimize top gear first cause optimized reagents might change depending on the gear
-        if CraftSimOptions.recipeScanOptimizeProfessionTools or CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
+        if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS") or CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
             printS("Optimizing...")
-            if CraftSimOptions.recipeScanScanMode ~= CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
+            if CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ~= CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
                 CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
             end
             -- Optimize gear and/or reagents
             recipeData:OptimizeProfit({
-                optimizeGear = CraftSimOptions.recipeScanOptimizeProfessionTools,
-                optimizeReagents = CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE,
+                optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"),
+                optimizeReagents = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
+                    CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE,
             })
         else
             CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
@@ -333,13 +334,14 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
-    if CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q1 then
+    local scanMode = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE")
+    if scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q1 then
         recipeData.reagentData:SetReagentsMaxByQuality(1)
-    elseif CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q2 then
+    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q2 then
         recipeData.reagentData:SetReagentsMaxByQuality(2)
-    elseif CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3 then
+    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.Q3 then
         recipeData.reagentData:SetReagentsMaxByQuality(3)
-    elseif CraftSimOptions.recipeScanScanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
+    elseif scanMode == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
         recipeData:OptimizeReagents()
     end
 end
