@@ -255,7 +255,7 @@ function CraftSim.DEBUG.FRAMES:InitCacheTab(cacheTab)
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            CraftSim.CACHE:ClearAll()
+            CraftSim.DB:ClearAll()
         end
     })
 

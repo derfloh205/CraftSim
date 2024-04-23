@@ -302,7 +302,7 @@ function CraftSim.INIT:HookToEvent()
 			local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 			local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
 
-			CraftSim.CACHE.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs,
+			CraftSim.DB.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs,
 				professionInfo.profession)
 			CraftSim.INIT:TriggerModuleUpdate(true)
 
@@ -416,7 +416,7 @@ end
 function CraftSim.INIT:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
 		CraftSim.INIT:HandleCraftSimOptionsUpdates()
-		CraftSim.CACHE:HandleCraftSimCacheUpdates()
+		CraftSim.DB:HandleCraftSimCacheUpdates()
 		CraftSim.INIT:InitializeMinimapButton()
 
 		CraftSim.LOCAL:Init()

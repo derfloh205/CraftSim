@@ -55,14 +55,14 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
             local itemRecipeData = CraftSimRecipeDataCache.itemRecipeCache[itemID]
             -- only use if set crafter exists, has cached optimized costs and can even craft that item with a chance higher than 0
             if itemRecipeData then
-                local recipeCrafter = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(itemRecipeData
+                local recipeCrafter = CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(itemRecipeData
                     .recipeID)
                 if recipeCrafter then
                     local allowCooldown = CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns or
-                        not CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(itemRecipeData.recipeID,
+                        not CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(itemRecipeData.recipeID,
                             recipeCrafter)
                     if allowCooldown then
-                        local itemOptimizedCostsData = CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Get(itemID,
+                        local itemOptimizedCostsData = CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS:Get(itemID,
                             recipeCrafter)
                         if itemOptimizedCostsData and itemOptimizedCostsData.craftingChanceMin > 0 then
                             priceInfo.expectedCostsData = itemOptimizedCostsData

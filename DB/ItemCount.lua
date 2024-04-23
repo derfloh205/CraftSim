@@ -5,18 +5,18 @@ local GUTIL = CraftSim.GUTIL
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE_ITEM_COUNT)
 
----@class CraftSim.CACHE
-CraftSim.CACHE = CraftSim.CACHE
+---@class CraftSim.DB
+CraftSim.DB = CraftSim.DB
 
----@class CraftSim.CACHE.ITEM_COUNT : Frame
-CraftSim.CACHE.ITEM_COUNT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED", "BANKFRAME_OPENED" })
+---@class CraftSim.DB.ITEM_COUNT : Frame
+CraftSim.DB.ITEM_COUNT = GUTIL:CreateRegistreeForEvents({ "BAG_UPDATE_DELAYED", "BANKFRAME_OPENED" })
 
 ---@type table<string, table<number, number>> table<crafterUID, table<itemID, count>>
 CraftSimItemCountCache = {}
 
 ---@param itemID ItemInfo
 ---@param count number?
-function CraftSim.CACHE.ITEM_COUNT:Update(itemID, count)
+function CraftSim.DB.ITEM_COUNT:Update(itemID, count)
     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     CraftSimItemCountCache[crafterUID] = CraftSimItemCountCache[crafterUID] or {}
     if count then
@@ -32,7 +32,7 @@ end
 ---@return number count
 ---@return ItemID? alternativeItemID
 ---@return number? alternativeCount
-function CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterUID)
+function CraftSim.DB.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterUID)
     local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     crafterUID = crafterUID or playerCrafterUID
     local isPlayer = crafterUID == playerCrafterUID
@@ -51,9 +51,9 @@ function CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterU
         local altCount = nil
         if alternativeItemID then
             altCount = C_Item.GetItemCount(alternativeItemID, bank, uses, reagentBank)
-            CraftSim.CACHE.ITEM_COUNT:Update(alternativeItemID, altCount)
+            CraftSim.DB.ITEM_COUNT:Update(alternativeItemID, altCount)
         end
-        CraftSim.CACHE.ITEM_COUNT:Update(itemID, count)
+        CraftSim.DB.ITEM_COUNT:Update(itemID, count)
         return count, alternativeItemID, altCount
     end
 
@@ -70,27 +70,27 @@ function CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentBank, crafterU
     end
 end
 
-function CraftSim.CACHE.ITEM_COUNT:GetRest(itemID,
+function CraftSim.DB.ITEM_COUNT:GetRest(itemID,
                                            quantity, crafterUID)
     local itemCount = self:Get(itemID, true, false, true, crafterUID)
 
     return math.max(0, quantity - itemCount)
 end
 
-function CraftSim.CACHE.ITEM_COUNT:ClearAll()
+function CraftSim.DB.ITEM_COUNT:ClearAll()
     wipe(CraftSimItemCountCache)
 end
 
-function CraftSim.CACHE.ITEM_COUNT:BAG_UPDATE_DELAYED()
-    CraftSim.CACHE.ITEM_COUNT:UpdateItemCountForCharacter()
+function CraftSim.DB.ITEM_COUNT:BAG_UPDATE_DELAYED()
+    CraftSim.DB.ITEM_COUNT:UpdateItemCountForCharacter()
 end
 
-function CraftSim.CACHE.ITEM_COUNT:BANKFRAME_OPENED()
-    CraftSim.CACHE.ITEM_COUNT:UpdateItemCountForCharacter()
+function CraftSim.DB.ITEM_COUNT:BANKFRAME_OPENED()
+    CraftSim.DB.ITEM_COUNT:UpdateItemCountForCharacter()
 end
 
 --- loops all of a players inventory+bank bags and updates all tradegoods item count
-function CraftSim.CACHE.ITEM_COUNT:UpdateItemCountForCharacter()
+function CraftSim.DB.ITEM_COUNT:UpdateItemCountForCharacter()
     local alreadyUpdated = {} -- small map to cache already updated IDs to not double update them
     print("Start Bag Update..")
     local function countBagItems(bagID)

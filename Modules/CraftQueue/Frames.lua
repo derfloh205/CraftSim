@@ -1863,7 +1863,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
                         owner = row.frame,
                         itemID = itemID
                     }
-                    local itemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, true, false, true, recipeData:GetCrafterUID())
+                    local itemCount = CraftSim.DB.ITEM_COUNT:Get(itemID, true, false, true, recipeData:GetCrafterUID())
                     countColumn:SetCount(itemCount, targetCount)
                 end)
             end

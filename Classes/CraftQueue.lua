@@ -80,7 +80,7 @@ function CraftSim.CraftQueue:AddRecipe(options)
                     if subRecipe then
                         print("Found self crafted reagent: queue into cq: " .. subRecipe.recipeName)
                         subRecipe:SetNonQualityReagentsMax()
-                        -- local currentItemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, true, false, true,
+                        -- local currentItemCount = CraftSim.DB.ITEM_COUNT:Get(itemID, true, false, true,
                         --     recipeData:GetCrafterUID())
                         -- local restItemCount = math.max(0, reagentItem.quantity - currentItemCount)
                         -- print("Restitemcount: " .. tostring(restItemCount))

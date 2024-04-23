@@ -328,7 +328,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             ---@type CraftSim.OptionalReagentSlot
             slot = slot
             for _, possibleReagent in pairs(slot.possibleReagents) do
-                CraftSim.CACHE.ITEM_COUNT:Update(possibleReagent.item:GetItemID())
+                CraftSim.DB.ITEM_COUNT:Update(possibleReagent.item:GetItemID())
             end
         end
     end
@@ -532,7 +532,7 @@ function CraftSim.ReagentData:UpdateItemCountCacheForAllocatedReagents()
     local craftingReagentInfoTbl = self:GetCraftingReagentInfoTbl()
 
     for _, craftingReagentInfo in pairs(craftingReagentInfoTbl) do
-        CraftSim.CACHE.ITEM_COUNT:Update(craftingReagentInfo.itemID)
+        CraftSim.DB.ITEM_COUNT:Update(craftingReagentInfo.itemID)
     end
 end
 

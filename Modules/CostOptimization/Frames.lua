@@ -346,8 +346,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
             ---@param userInput boolean
                 function(row, userInput)
                     if userInput and row.recipeID and row.crafterUID then
-                        if not CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(row.recipeID, row.crafterUID) then
-                            CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(row.recipeID, row.crafterUID)
+                        if not CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(row.recipeID, row.crafterUID) then
+                            CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(row.recipeID, row.crafterUID)
                             CraftSim.INIT:TriggerModulesByRecipeType()
                         end
                     end
@@ -375,9 +375,9 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
         ---@param rowA CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.Row
         ---@param rowB CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.Row
             function(rowA, rowB)
-                local isCrafterA = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(rowA.recipeID,
+                local isCrafterA = CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(rowA.recipeID,
                     rowA.crafterUID)
-                local isCrafterB = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(rowB.recipeID,
+                local isCrafterB = CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(rowB.recipeID,
                     rowB.crafterUID)
 
                 return isCrafterA and not isCrafterB
@@ -642,7 +642,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
                         tinsert(optimizedItemIDs, Item:CreateFromItemID(irI.itemID))
                         return {
                             itemID = irI.itemID,
-                            optimizedCostsData = CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Get(irI.itemID, crafter)
+                            optimizedCostsData = CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS:Get(irI.itemID, crafter)
                         }
                     end)
 

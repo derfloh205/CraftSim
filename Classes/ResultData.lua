@@ -125,7 +125,7 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
         -- if not gear update itemRecipeCache
         for qualityID, item in ipairs(self.itemsByQuality) do
             local itemID = item:GetItemID()
-            CraftSim.CACHE.RECIPE_DATA.ITEM_RECIPE_CACHE:AddCache(recipeData.recipeID, qualityID, itemID, crafterUID)
+            CraftSim.DB.RECIPE_DATA.ITEM_RECIPE_CACHE:AddCache(recipeData.recipeID, qualityID, itemID, crafterUID)
         end
     end
 end

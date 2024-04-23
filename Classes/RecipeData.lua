@@ -556,7 +556,7 @@ function CraftSim.RecipeData:OptimizeProfit(options)
         self:OptimizeReagents()
     end
 
-    CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Save(self)
+    CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS:Save(self)
 end
 
 ---Optimizes the recipeData's reagents and gear for highest quality
@@ -959,7 +959,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
     for _, data in pairs(subRecipeData) do
         local recipeID = data.recipeID
         -- fall back to the first crafter if nothing is set?
-        local crafter = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(data.recipeID) or
+        local crafter = CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(data.recipeID) or
             data.crafters[1]
 
         -- a infinite loop occurs if we try to optimize a recipe we already visited in a previous subRecipe depth

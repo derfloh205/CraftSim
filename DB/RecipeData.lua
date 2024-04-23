@@ -5,23 +5,23 @@ local GUTIL = CraftSim.GUTIL
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE_ITEM_COUNT)
 
----@class CraftSim.CACHE
-CraftSim.CACHE = CraftSim.CACHE
+---@class CraftSim.DB
+CraftSim.DB = CraftSim.DB
 
----@class CraftSim.CACHE.RECIPE_DATA
-CraftSim.CACHE.RECIPE_DATA = {}
+---@class CraftSim.DB.RECIPE_DATA
+CraftSim.DB.RECIPE_DATA = {}
 
----@class CraftSim.CACHE.ITEM_RECIPE_CACHE
-CraftSim.CACHE.RECIPE_DATA.ITEM_RECIPE_CACHE = {}
+---@class CraftSim.DB.ITEM_RECIPE_CACHE
+CraftSim.DB.RECIPE_DATA.ITEM_RECIPE_CACHE = {}
 
----@class CraftSim.CACHE.SUB_RECIPE_CRAFTER_CACHE
-CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE = {}
+---@class CraftSim.DB.SUB_RECIPE_CRAFTER_CACHE
+CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE = {}
 
----@class CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE
-CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE = {}
+---@class CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE
+CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE = {}
 
----@class CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS
-CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS = {}
+---@class CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS
+CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS = {}
 
 ---@class CraftSim.ProfessionGearCacheData
 ---@field cached boolean
@@ -85,13 +85,13 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     },
 }
 
-CraftSim.CACHE.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
+CraftSim.DB.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
     cached = false,
     equippedGear = nil,
     availableProfessionGear = {},
 }
 
-function CraftSim.CACHE.RECIPE_DATA:HandleUpdates()
+function CraftSim.DB.RECIPE_DATA:HandleUpdates()
     if CraftSimRecipeDataCache then
         CraftSimRecipeDataCache.cachedRecipeIDs = CraftSimRecipeDataCache.cachedRecipeIDs or {}
         CraftSimRecipeDataCache.recipeInfoCache = CraftSimRecipeDataCache.recipeInfoCache or {}
@@ -108,13 +108,13 @@ function CraftSim.CACHE.RECIPE_DATA:HandleUpdates()
         CraftSimRecipeDataCache.itemOptimizedCostsDataCache = CraftSimRecipeDataCache.itemOptimizedCostsDataCache or {}
         CraftSimRecipeDataCache.cacheVersions = CraftSimRecipeDataCache.cacheVersions or {}
 
-        CraftSim.CACHE.RECIPE_DATA:HandleMigrations()
+        CraftSim.DB.RECIPE_DATA:HandleMigrations()
     end
 end
 
 --- Since Multicraft seems to be missing on operationInfo on the first call after a fresh login, and seems to be loaded in after the first call,
 --- trigger it for all recipes on purpose when the profession is opened the first time in this session
-function CraftSim.CACHE.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionID)
+function CraftSim.DB.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionID)
     if not professionID then return end
     if CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions[professionID] then return end
     if not professionRecipeIDs then
@@ -132,7 +132,7 @@ function CraftSim.CACHE.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(
     CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions[professionID] = true
 end
 
-function CraftSim.CACHE.RECIPE_DATA:ClearAll()
+function CraftSim.DB.RECIPE_DATA:ClearAll()
     wipe(CraftSimRecipeDataCache.cachedRecipeIDs)
     wipe(CraftSimRecipeDataCache.recipeInfoCache)
     wipe(CraftSimRecipeDataCache.professionInfoCache)
@@ -142,10 +142,10 @@ function CraftSim.CACHE.RECIPE_DATA:ClearAll()
     wipe(CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions)
 end
 
-function CraftSim.CACHE.RECIPE_DATA:HandleMigrations()
+function CraftSim.DB.RECIPE_DATA:HandleMigrations()
     -- cooldownCache 0 -> 1
     if not CraftSimRecipeDataCache.cacheVersions.cooldownCache then
-        CraftSim.CACHE.RECIPE_DATA:MigrateCooldownCache_0_1()
+        CraftSim.DB.RECIPE_DATA:MigrateCooldownCache_0_1()
         CraftSimRecipeDataCache.cacheVersions.cooldownCache = 1
     end
 
@@ -161,7 +161,7 @@ function CraftSim.CACHE.RECIPE_DATA:HandleMigrations()
     end
 end
 
-function CraftSim.CACHE.RECIPE_DATA:MigrateCooldownCache_0_1()
+function CraftSim.DB.RECIPE_DATA:MigrateCooldownCache_0_1()
     local newCache = {}
 
     for crafterUID, cooldownDataByRecipeID in pairs(CraftSimRecipeDataCache.cooldownCache) do
@@ -182,7 +182,7 @@ end
 
 ---@param itemID ItemID
 ---@param crafterUID CrafterUID
-function CraftSim.CACHE.RECIPE_DATA.ITEM_RECIPE_CACHE:AddCache(recipeID, qualityID, itemID, crafterUID)
+function CraftSim.DB.RECIPE_DATA.ITEM_RECIPE_CACHE:AddCache(recipeID, qualityID, itemID, crafterUID)
     CraftSimRecipeDataCache.itemRecipeCache[itemID] = CraftSimRecipeDataCache.itemRecipeCache[itemID] or {}
     CraftSimRecipeDataCache.itemRecipeCache[itemID].recipeID = recipeID
     CraftSimRecipeDataCache.itemRecipeCache[itemID].qualityID = qualityID
@@ -201,26 +201,26 @@ end
 
 ---@param recipeID RecipeID
 ---@return CrafterUID crafterUID?
-function CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(recipeID)
+function CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(recipeID)
     return CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID]
 end
 
 ---@param recipeID RecipeID
 ---@param crafterUID CrafterUID
 ---@return boolean
-function CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(recipeID, crafterUID)
+function CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(recipeID, crafterUID)
     return crafterUID == CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID]
 end
 
 ---@param recipeID RecipeID
 ---@param crafterUID CrafterUID
-function CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(recipeID, crafterUID)
+function CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(recipeID, crafterUID)
     CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID] = crafterUID
 end
 
 ---@param recipeID RecipeID
 ---@param crafterUID? CrafterUID
-function CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(recipeID, crafterUID)
+function CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(recipeID, crafterUID)
     -- if crafterUID was given get directly otherwise check for any crafter
     if crafterUID then
         local serializationID = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[recipeID] or
@@ -241,7 +241,7 @@ function CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(recipeID, cr
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Save(recipeData)
+function CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS:Save(recipeData)
     -- cache the results if not gear and if its learned only
     if not recipeData.isGear and recipeData.learned then
         --print("Caching Optimized Costs Data for: " .. self.recipeName)
@@ -275,7 +275,7 @@ end
 ---@param itemID ItemID
 ---@param crafterUID CrafterUID
 ---@return CraftSim.ExpectedCraftingCostsData?
-function CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Get(itemID, crafterUID)
+function CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS:Get(itemID, crafterUID)
     CraftSimRecipeDataCache.itemOptimizedCostsDataCache[itemID] = CraftSimRecipeDataCache
         .itemOptimizedCostsDataCache[itemID] or {}
 

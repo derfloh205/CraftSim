@@ -449,7 +449,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
                 info.itemName = select(1, C_Item.GetItemInfo(itemID)) -- 100% already loaded in this case when its used as alt item in ReagentItem
             end
 
-            local itemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, true, false, true, crafterUID)
+            local itemCount = CraftSim.DB.ITEM_COUNT:Get(itemID, true, false, true, crafterUID)
             local searchTerm = {
                 searchString = info.itemName,
                 tier = info.qualityID,
@@ -577,7 +577,7 @@ end
 function CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, bank, uses, reagentbank, crafterUID)
     local itemCount = (CraftSim.CRAFTQ.itemCountCache and CraftSim.CRAFTQ.itemCountCache[itemID]) or nil
     if not itemCount then
-        itemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, bank, uses, reagentbank, crafterUID)
+        itemCount = CraftSim.DB.ITEM_COUNT:Get(itemID, bank, uses, reagentbank, crafterUID)
     end
     return itemCount
 end
