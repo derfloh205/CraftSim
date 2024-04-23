@@ -20,21 +20,25 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
 
 ---@class CraftSimDB
 ---@field itemCountDB CraftSimDB.Database
+---@field optionsDB CraftSimDB.Database
 CraftSimDB = CraftSimDB or {}
 
 function CraftSim.DB:Init()
     self.ITEM_COUNT:Init()
+    self.OPTIONS:Init()
 
     CraftSim.DB:Migrate()
     CraftSim.DB:CleanUp()
 end
 
 function CraftSim.DB:Migrate()
+    self.OPTIONS:Migrate()
     self.ITEM_COUNT:Migrate()
 end
 
 function CraftSim.DB:CleanUp()
     self.ITEM_COUNT:CleanUp()
+    self.OPTIONS:CleanUp()
 end
 
 function CraftSim.DB:ClearAll()
@@ -42,4 +46,5 @@ function CraftSim.DB:ClearAll()
     CraftSim.DB.ITEM_COUNT:ClearAll()
     CraftSim.DB.CRAFT_QUEUE:ClearAll()
     CraftSim.PRICE_OVERRIDE:ClearAll()
+    --- options too?
 end

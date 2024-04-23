@@ -112,9 +112,9 @@ function CraftSim.OPTIONS:Init()
             initialData = priceSourceAddonsDropdownData,
             initialValue = CraftSim.PRICE_API.name,
             initialLabel = CraftSim.PRICE_API.name,
-            clickCallback = function(_, _, value)
-                CraftSim.PRICE_APIS:SwitchAPIByAddonName(value)
-                CraftSimOptions.priceSource = value
+            clickCallback = function(_, _, newPriceSource)
+                CraftSim.PRICE_APIS:SwitchAPIByAddonName(newPriceSource)
+                CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE, newPriceSource)
             end
         })
     elseif #priceSourceAddons == 1 then

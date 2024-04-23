@@ -232,6 +232,7 @@ CraftSim.CONST.QUEST_RECIPE_IDS = {
 
 ---@enum CraftSim.DEBUG_IDS
 CraftSim.CONST.DEBUG_IDS = {
+    DB = "DB",
     MAIN = "MAIN",
     SPECDATA = "SPECDATA",
     ERROR = "ERROR",
@@ -271,6 +272,19 @@ CraftSim.CONST.DEBUG_IDS = {
     SUB_RECIPE_DATA = "SUB_RECIPE_DATA",
 }
 
+--- TODO: Move to options? or maybe create Const folder with different const files
+---@enum CraftSim.GENERAL_OPTIONS
+CraftSim.CONST.GENERAL_OPTIONS = {
+    PRICE_DEBUG = "PRICE_DEBUG",
+    PRICE_SOURCE = "PRICE_SOURCE"
+}
+
+---@type table<CraftSim.GENERAL_OPTIONS, any>
+CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS = {
+    [CraftSim.CONST.GENERAL_OPTIONS.PRICE_DEBUG] = false,
+    [CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE] = nil, -- will be set on init
+}
+
 CraftSim.CONST.ERROR = {
     NO_PRICE_DATA = 0,
     NO_RECIPE_DATA = 1
@@ -286,22 +300,6 @@ CraftSim.CONST.PROFESSIONTOOL_INV_TYPES = {
     TOOL = "INVTYPE_PROFESSION_TOOL",
     GEAR = "INVTYPE_PROFESSION_GEAR"
 }
-
--- CraftSim.CONST.PROFESSION_INV_SLOTS = {{
---     TOOL = "PROF0TOOLSLOT",
---     GEAR0 = "PROF0GEAR0SLOT",
---     GEAR1 = "PROF0GEAR1SLOT"
---     },
---     {
---         TOOL = "PROF1TOOLSLOT",
---         GEAR0 = "PROF1GEAR0SLOT",
---         GEAR1 = "PROF1GEAR1SLOT"
---     },
---     {
---         TOOL = "COOKINGTOOLSLOT",
---         GEAR0 = "COOKINGGEAR0SLOT"
---     }
--- }
 
 CraftSim.CONST.STAT_MAP = {
     ITEM_MOD_RESOURCEFULNESS_SHORT = "resourcefulness",

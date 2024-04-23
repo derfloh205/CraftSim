@@ -48,13 +48,13 @@ function CraftSim.PRICE_API:InitPriceSource()
         return
     end
 
-    local savedSource = CraftSimOptions.priceSource
+    local savedSource = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE)
 
     if tContains(loadedSources, savedSource) then
         CraftSim.PRICE_APIS:SwitchAPIByAddonName(savedSource)
     else
         CraftSim.PRICE_APIS:SwitchAPIByAddonName(loadedSources[1])
-        CraftSimOptions.priceSource = loadedSources[1]
+        CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE, loadedSources[1])
     end
 end
 

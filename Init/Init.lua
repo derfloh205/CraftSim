@@ -15,8 +15,8 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 CraftSim.INIT.FRAMES = {}
 
 CraftSimOptions = CraftSimOptions or {
-	priceDebug = false,
-	priceSource = nil,
+	-- priceDebug = false,
+	-- priceSource = nil,
 	tsmPriceKeyMaterials = "first(DBRecent, DBMinbuyout)",
 	tsmPriceKeyItems = "first(DBRecent, DBMinbuyout)",
 	topGearMode = "Top Profit",
@@ -539,10 +539,12 @@ function CraftSim.INIT:PLAYER_LOGIN()
 		rest = (rest and rest ~= "") and rest:trim() or nil
 
 		if command == "pricedebug" then
-			CraftSimOptions.priceDebug = not CraftSimOptions.priceDebug
-			print("Craftsim: Toggled price debug mode: " .. tostring(CraftSimOptions.priceDebug))
+			local priceDebug = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.PRICE_DEBUG)
+			priceDebug = not priceDebug
+			CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.PRICE_DEBUG, priceDebug)
+			print("Craftsim: Toggled price debug mode: " .. tostring(priceDebug))
 
-			if CraftSimOptions.priceDebug then
+			if priceDebug then
 				CraftSim.PRICE_API = CraftSimDEBUG_PRICE_API
 			else
 				CraftSim.PRICE_APIS:InitAvailablePriceAPI()
