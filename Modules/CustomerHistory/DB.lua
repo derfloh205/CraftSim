@@ -75,8 +75,9 @@ end
 
 ---@param customerHistory CraftSim.CustomerHistory
 function CraftSim.CUSTOMER_HISTORY.DB:SaveCustomerHistory(customerHistory)
+    local maxEntriesPerClient = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT")
     --- limit chat history to a certain amount of messages
-    CraftSim.GUTIL:TrimTable(customerHistory.chatHistory, CraftSimOptions.maxHistoryEntriesPerClient, true)
+    CraftSim.GUTIL:TrimTable(customerHistory.chatHistory, maxEntriesPerClient, true)
 
     CraftSimCustomerHistoryV2[customerHistory.customer .. "-" .. customerHistory.realm] = customerHistory
 end

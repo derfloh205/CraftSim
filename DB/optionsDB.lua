@@ -48,7 +48,6 @@ function CraftSim.DB.OPTIONS:Migrate()
             .optionsShowNews
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MINIMAP_BUTTON_HIDE] = CraftSimOptions
             .optionsHideMinimapButton
-        -- TODO
         -- MODULE VISIBILITIES
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_REAGENT_OPTIMIZATION] = CraftSimOptions
             .moduleMaterials
@@ -82,6 +81,33 @@ function CraftSim.DB.OPTIONS:Migrate()
             .moduleExplanations
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_STATISTICS] = CraftSimOptions
             .moduleStatistics
+
+        -- CUSTOMER HISTORY
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] =
+            CraftSimOptions
+            .maxHistoryEntriesPerClient
+
+        -- TODO
+
+        -- RECIPE SCAN
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_INCLUDE_SOULBOUND] = CraftSimOptions
+            .recipeScanIncludeSoulbound
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_INCLUDE_GEAR] = CraftSimOptions
+            .recipeScanIncludeGear
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_INCLUDE_NOT_LEARNED] = CraftSimOptions
+            .recipeScanIncludeNotLearned
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_ONLY_FAVORITES] = CraftSimOptions
+            .recipeScanOnlyFavorites
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS] = CraftSimOptions
+            .recipeScanOptimizeProfessionTools
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_SCAN_MODE] = CraftSimOptions
+            .recipeScanScanMode
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_FILTERED_EXPANSIONS] = CraftSimOptions
+            .recipeScanFilteredExpansions
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_IMPORT_ALL_PROFESSIONS] = CraftSimOptions
+            .recipeScanImportAllProfessions
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_OPTIMIZE_SUBRECIPES] = CraftSimOptions
+            .recipeScanOptimizeSubRecipes
 
 
 

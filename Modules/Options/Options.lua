@@ -132,10 +132,10 @@ function CraftSim.OPTIONS:Init()
     local historyMaxSizeInput = GGUI.NumericInput {
         parent = ModulesTab.content, anchorParent = ModulesTab.content,
         anchorA = "TOP", anchorB = "TOP", label = "Max history entries per client",
-        offsetY = -40, sizeX = 85, sizeY = 10, initialValue = CraftSimOptions.maxHistoryEntriesPerClient, allowDecimals = false, minValue = 1,
+        offsetY = -40, sizeX = 85, sizeY = 10, initialValue = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT"), allowDecimals = false, minValue = 1,
         onNumberValidCallback = function(numberInput)
             local value = tonumber(numberInput.currentValue)
-            CraftSimOptions.maxHistoryEntriesPerClient = value
+            CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT", value)
         end, borderAdjustHeight = 0.6, borderWidth = 30,
     }
     CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE),

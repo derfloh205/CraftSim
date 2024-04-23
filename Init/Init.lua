@@ -15,20 +15,6 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 CraftSim.INIT.FRAMES = {}
 
 CraftSimOptions = CraftSimOptions or {
-	maxHistoryEntriesPerClient = 200,
-
-	-- recipeScan
-	recipeScanIncludeSoulbound = false,
-	recipeScanIncludeGear = false,
-	recipeScanIncludeNotLearned = false,
-	recipeScanOnlyFavorites = false,
-	recipeScanOptimizeProfessionTools = false,
-	recipeScanScanMode = nil,
-	recipeScanFilteredExpansions = nil,
-	recipeScanAltProfessions = nil,
-	recipeScanImportAllProfessions = false,
-	recipeScanOptimizeSubRecipes = false,
-
 	-- profit calc
 	customMulticraftConstant = CraftSim.CONST.MULTICRAFT_CONSTANT,
 
@@ -90,7 +76,6 @@ end
 
 function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 	if CraftSimOptions then
-		CraftSimOptions.maxHistoryEntriesPerClient = CraftSimOptions.maxHistoryEntriesPerClient or 200
 		CraftSimOptions.customerServiceActivePreviewIDs = CraftSimOptions.customerServiceActivePreviewIDs or {}
 		CraftSimOptions.customerServiceRecipeWhisperFormat = CraftSimOptions.customerServiceRecipeWhisperFormat or
 			("Highest Result: %gc\n" ..
@@ -111,13 +96,6 @@ function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 		CraftSimOptions.craftQueueRestockPerRecipeOptions = CraftSimOptions.craftQueueRestockPerRecipeOptions or {}
 		CraftSimOptions.customerHistoryAutoPurgeInterval = CraftSimOptions.customerHistoryAutoPurgeInterval or 2
 		CraftSimOptions.customerHistoryAutoPurgeLastPurge = CraftSimOptions.customerHistoryAutoPurgeLastPurge or nil
-		CraftSimOptions.recipeScanFilteredExpansions = CraftSimOptions.recipeScanFilteredExpansions or {
-			[CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = true,
-		}
-		CraftSimOptions.recipeScanIncludedProfessions = CraftSimOptions.recipeScanIncludedProfessions or {}
-		CraftSimOptions.recipeScanScanMode = CraftSimOptions.recipeScanScanMode or
-			CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
-		CraftSimOptions.recipeScanImportAllProfessions = CraftSimOptions.recipeScanImportAllProfessions or false
 		CraftSimOptions.craftQueueShoppingListPerCharacter = CraftSimOptions.craftQueueShoppingListPerCharacter or false
 		CraftSimOptions.costOptimizationSubRecipeMaxDepth = CraftSimOptions.costOptimizationSubRecipeMaxDepth or 1
 		CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = CraftSimOptions
