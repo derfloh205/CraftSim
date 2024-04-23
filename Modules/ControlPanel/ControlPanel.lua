@@ -130,6 +130,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
     end
 end
 
+---@param moduleOption CraftSim.GENERAL_OPTIONS
 function CraftSim.CONTROL_PANEL:HandleModuleClose(moduleOption)
     return function()
         CraftSimOptions[moduleOption] = false

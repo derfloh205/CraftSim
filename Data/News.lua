@@ -88,7 +88,7 @@ end
 ---@return string | nil newChecksum newChecksum when news should be shown, otherwise nil
 function CraftSim.NEWS:IsNewsUpdate(newsText)
     local newChecksum = CraftSim.NEWS:GetChecksum(newsText)
-    local oldChecksum = CraftSimOptions.newsChecksum
+    local oldChecksum = CraftSim.DB.OPTIONS:Get("NEWS_CHECKSUM")
     if newChecksum ~= oldChecksum then
         return newChecksum
     end
@@ -108,8 +108,7 @@ function CraftSim.NEWS:ShowNews(force)
             return
         end
 
-        print("showing news, old / new cs: " .. tostring(CraftSimOptions.newsChecksum) .. "/" .. tostring(newChecksum))
-        CraftSimOptions.newsChecksum = newChecksum
+        CraftSim.DB.OPTIONS:Save("NEWS_CHECKSUM", newChecksum)
 
         local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
         -- resize

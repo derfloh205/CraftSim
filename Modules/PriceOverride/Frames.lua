@@ -33,7 +33,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata = "DIALOG",
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesPriceOverride"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_PRICE_OVERRIDE"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })
@@ -50,7 +50,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameStrata = "DIALOG",
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesPriceOverride"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_PRICE_OVERRIDE"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
     })

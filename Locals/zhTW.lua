@@ -157,7 +157,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "不要再顯示警告",
 
         -- Materials Frame
-        [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "CraftSim 材料最佳化",
+        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim 材料最佳化",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "達到靈感斷點",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] = "嘗試使用最便宜的材料組合達到技能斷點，使靈感觸發升級到下一個更高的品質",
         [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "可達到品質: ",
@@ -300,7 +300,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "鎖定",
 
         -- Price Details Frame
-        [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "CraftSim 價格明細",
+        [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "CraftSim 價格明細",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Inv/AH",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "物品",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "價格/物品",

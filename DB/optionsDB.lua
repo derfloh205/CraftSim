@@ -28,6 +28,8 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data = {}
 
         -- remap to new options enum
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE_REMINDER_DISABLED] = CraftSimOptions
+            .doNotRemindPriceSource
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PRICE_DEBUG] = CraftSimOptions.priceDebug
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE] = CraftSimOptions.priceSource
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS] = CraftSimOptions
@@ -86,6 +88,12 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] =
             CraftSimOptions
             .maxHistoryEntriesPerClient
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL] =
+            CraftSimOptions
+            .customerHistoryAutoPurgeInterval
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE] =
+            CraftSimOptions
+            .customerHistoryAutoPurgeLastPurge
 
         -- RECIPE SCAN
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_INCLUDE_SOULBOUND] = CraftSimOptions

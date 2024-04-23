@@ -40,18 +40,6 @@ function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 	CraftSim.CRAFTQ:InitializeCraftQueue()
 end
 
-function CraftSim.INIT:HandleCraftSimOptionsUpdates()
-	if CraftSimOptions then
-		CraftSimOptions.customerHistoryAutoPurgeInterval = CraftSimOptions.customerHistoryAutoPurgeInterval or 2
-		CraftSimOptions.customerHistoryAutoPurgeLastPurge = CraftSimOptions.customerHistoryAutoPurgeLastPurge or nil
-	end
-
-	-- old data removal
-	if CraftSimCraftData then
-		CraftSimCraftData = nil
-	end
-end
-
 local hookedEvent = false
 
 local freshLoginRecall = true
@@ -177,7 +165,7 @@ function CraftSim.INIT:InitStaticPopups()
 		button1 = "Yes",
 		button2 = "No",
 		OnAccept = function(self, data1, data2)
-			CraftSimOptions.doNotRemindPriceSource = true
+			CraftSim.DB.OPTIONS:Save("PRICE_SOURCE_REMINDER_DISABLED", true)
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -245,7 +233,6 @@ end
 
 function CraftSim.INIT:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
-		CraftSim.INIT:HandleCraftSimOptionsUpdates()
 		CraftSim.DB:Init()
 		CraftSim.INIT:InitializeMinimapButton()
 
@@ -414,9 +401,10 @@ function CraftSim.INIT:HideAllModules(keepControlPanel)
 		CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
 	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
 	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.MATERIALS)
+	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
+		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
 	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
 	-- hide control panel and return
 	if not keepControlPanel then
 		CraftSim.CONTROL_PANEL.frame:Hide()
@@ -469,9 +457,10 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
 	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
 	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.MATERIALS)
+	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
+		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
 	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
 	local craftBuffsFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS)
 	local craftBuffsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER)
 	local cooldownsFrame = CraftSim.COOLDOWNS.frame
@@ -740,7 +729,7 @@ function CraftSim.INIT:InitializeMinimapButton()
 	CraftSim.LibIcon:Register("CraftSim", ldb, CraftSimLibIconDB)
 
 	RunNextFrame(function()
-		if CraftSimOptions.optionsHideMinimapButton then
+		if CraftSim.DB.OPTIONS:Get("MINIMAP_BUTTON_HIDE") then
 			CraftSim.LibIcon:Hide("CraftSim")
 		end
 	end)

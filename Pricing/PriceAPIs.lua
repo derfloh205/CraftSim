@@ -29,7 +29,7 @@ function CraftSim.PRICE_API:InitPriceSource()
         systemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) ..
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM))
         CraftSim.PRICE_APIS.available = false
-        if not CraftSimOptions.doNotRemindPriceSource then
+        if not CraftSim.DB.OPTIONS:Get("PRICE_SOURCE_REMINDER_DISABLED") then
             CraftSim.GGUI:ShowPopup({
                 sizeX = 400,
                 sizeY = 250,

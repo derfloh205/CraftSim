@@ -232,7 +232,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Больше не показывать предупреждение",
 
         -- Materials Frame
-        [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "Оптимизация материалов CraftSim",
+        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Оптимизация материалов CraftSim",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "Достичь точки вдохновения",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] =
         "Попробовать достичь точки навыка, когда прок вдохновения переходит на более высокое качество с использованием самой дешевой комбинации материалов",
@@ -391,7 +391,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "Заблокировано",
 
         -- Price Details Frame
-        [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "Информация о ценах CraftSim",
+        [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "Информация о ценах CraftSim",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Инв/Аук",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "Предмет",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "Цена/Предмет",

@@ -31,7 +31,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCustomerHistory"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CUSTOMER_HISTORY"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -135,8 +135,8 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             label = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL), offsetX = 7,
             sizeX = 50, minValue = 0, onNumberValidCallback = function(numericInput)
             local value = tonumber(numericInput.currentValue)
-            CraftSimOptions.customerHistoryAutoPurgeInterval = value
-        end, initialValue = CraftSimOptions.customerHistoryAutoPurgeInterval
+            CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL", value)
+        end, initialValue = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL")
         }
 
         frame.content.autoPurgeInputLabel = GGUI.Text { parent = frame.content, anchorParent = frame.content.autoPurgeInput.textInput.frame, anchorA = "LEFT", anchorB = "RIGHT",

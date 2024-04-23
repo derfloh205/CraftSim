@@ -127,22 +127,23 @@ function CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
 end
 
 function CraftSim.CUSTOMER_HISTORY:AutoPurge()
-    if CraftSimOptions.customerHistoryAutoPurgeInterval == 0 then
+    if CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL") == 0 then
         return
     end
-    if not CraftSimOptions.customerHistoryAutoPurgeLastPurge then
+    if not CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE") then
         CraftSim.CUSTOMER_HISTORY.DB:PurgeZeroTipCustomers()
-        CraftSimOptions.customerHistoryAutoPurgeLastPurge = C_DateAndTime.GetServerTimeLocal()
+        CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE", C_DateAndTime.GetServerTimeLocal())
     else
         local currentTime = C_DateAndTime.GetServerTimeLocal()
         -- debug
-        local dayDiff = GUTIL:GetDaysBetweenTimestamps(currentTime, CraftSimOptions.customerHistoryAutoPurgeLastPurge)
+        local dayDiff = GUTIL:GetDaysBetweenTimestamps(currentTime,
+            CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE"))
         print("Day Difference:" .. dayDiff)
 
-        if dayDiff >= CraftSimOptions.customerHistoryAutoPurgeInterval then
+        if dayDiff >= CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_AUTO_PURGE_INTERVAL") then
             print("auto purge 0 tip customers.." .. tostring(dayDiff))
             CraftSim.CUSTOMER_HISTORY.DB:PurgeZeroTipCustomers()
-            CraftSimOptions.customerHistoryAutoPurgeLastPurge = C_DateAndTime.GetServerTimeLocal()
+            CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_AUTO_PURGE_LAST_PURGE", C_DateAndTime.GetServerTimeLocal())
         else
             print("do not purge, daydiff too low: " .. tostring(dayDiff))
         end

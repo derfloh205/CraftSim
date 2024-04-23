@@ -226,7 +226,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Ne plus montrer l'avertissement",
 
         -- Materials Frame
-        [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "Optimisation des matériaux CraftSim",
+        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Optimisation des matériaux CraftSim",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "Atteindre le point d'inspiration",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] =
         "Essaie d'atteindre le prochain palier de compétence qui apporterais un proc au niveau de qualité suivant en utilisant la combinaison de qualité minimale des matériaux possible",
@@ -387,7 +387,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "Locked",
 
         -- Price Details Frame
-        [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "Details des prix CraftSim",
+        [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "Details des prix CraftSim",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Sac/HV",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "Item",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "Prix/Item",

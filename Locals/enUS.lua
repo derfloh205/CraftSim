@@ -226,7 +226,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Do not show warning again",
 
         -- Materials Frame
-        [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "CraftSim Material Optimization",
+        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Material Optimization",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "Reach Inspiration Breakpoint",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] =
         "Try to reach the skill breakpoint where an inspiration proc upgrades to the next higher quality with the cheapest material combination",
@@ -383,7 +383,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "Locked",
 
         -- Price Details Frame
-        [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "CraftSim Price Details",
+        [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "CraftSim Price Details",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Inv/AH",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "Item",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "Price/Item",

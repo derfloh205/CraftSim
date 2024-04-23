@@ -183,7 +183,7 @@ function CraftSim.ResultData:Update()
     -- TODO: new util function? V2 ?
     local function expectedQualityBySkill(skill, maxQuality, recipeDifficulty)
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(maxQuality, recipeDifficulty,
-            CraftSimOptions.breakPointOffset)
+            CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         local expectedQuality = 1
 
         for _, threshold in pairs(thresholds) do

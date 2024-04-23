@@ -36,7 +36,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatWeights"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_AVERAGE_PROFIT"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -60,7 +60,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatWeights"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_AVERAGE_PROFIT"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -70,91 +70,6 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     })
 
     local function createContent(frame)
-        -- local textOffsetX = 30
-        -- local textOffsetY = -50
-        -- local textSpacingY = -2
-        -- local titleWidth = 130
-        -- local titleValueSpacingX = 20
-        -- frame.content.profit = {}
-        -- frame.content.inspiration = {}
-        -- frame.content.multicraft = {}
-        -- frame.content.resourcefulness = {}
-
-        -- frame.content.profit.title = GGUI.Text({
-        --     parent = frame.content,
-        --     anchorParent = frame.content,
-        --     offsetX = textOffsetX,
-        --     offsetY = textOffsetY,
-        --     anchorA = "TOPLEFT",
-        --     anchorB = "TOPLEFT",
-        --     fixedWidth = titleWidth,
-        --     justifyOptions = { type = "H", align = "RIGHT" },
-        --     text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT),
-        -- })
-        -- frame.content.profit.value = GGUI.Text({
-        --     parent = frame.content,
-        --     anchorParent = frame.content.profit.title.frame,
-        --     anchorA = "LEFT",
-        --     anchorB = "RIGHT",
-        --     justifyOptions = { type = "H", align = "LEFT" }
-        -- })
-
-        -- frame.content.inspiration.title = GGUI.Text({
-        --     parent = frame.content,
-        --     anchorParent = frame.content.profit.title.frame,
-        --     offsetY = textSpacingY,
-        --     anchorA = "TOPRIGHT",
-        --     anchorB = "BOTTOMRIGHT",
-        --     fixedWidth = titleWidth,
-        --     justifyOptions = { type = "H", align = "RIGHT" },
-        --     text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_LABEL)
-        -- })
-        -- frame.content.inspiration.value = GGUI.Text({
-        --     parent = frame.content,
-        --     anchorParent = frame.content.inspiration.title.frame,
-        --     anchorA = "LEFT",
-        --     anchorB = "RIGHT",
-        --     justifyOptions = { type = "H", align = "LEFT" },
-        --     offsetX = titleValueSpacingX
-        -- })
-
-        -- frame.content.multicraft.title = GGUI.Text({
-        --     parent = frame.content,
-        --     anchorParent = frame.content.inspiration.title.frame,
-        --     offsetY = textSpacingY,
-        --     anchorA = "TOPRIGHT",
-        --     anchorB = "BOTTOMRIGHT",
-        --     fixedWidth = titleWidth,
-        --     justifyOptions = { type = "H", align = "RIGHT" },
-        --     text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_LABEL)
-        -- })
-        -- frame.content.multicraft.value = GGUI.Text({
-        --     parent = frame.content,
-        --     anchorParent = frame.content.multicraft.title.frame,
-        --     anchorA = "LEFT",
-        --     anchorB = "RIGHT",
-        --     justifyOptions = { type = "H", align = "LEFT" },
-        --     offsetX = titleValueSpacingX
-        -- })
-
-        -- frame.content.resourcefulness.title = GGUI.Text({
-        --     parent = frame.content,
-        --     anchorParent = frame.content.multicraft.title.frame,
-        --     offsetY = textSpacingY,
-        --     anchorA = "TOPRIGHT",
-        --     anchorB = "BOTTOMRIGHT",
-        --     fixedWidth = titleWidth,
-        --     justifyOptions = { type = "H", align = "RIGHT" },
-        --     text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL)
-        -- })
-        -- frame.content.resourcefulness.value = GGUI.Text({
-        --     parent = frame.content,
-        --     anchorParent = frame.content.resourcefulness.title.frame,
-        --     anchorA = "LEFT",
-        --     anchorB = "RIGHT",
-        --     justifyOptions = { type = "H", align = "LEFT" },
-        --     offsetX = titleValueSpacingX
-        -- })
         local moneyColumnWidth = 180
         frame.content.profitList = GGUI.FrameList {
             parent = frame.content, anchorParent = frame.content,
