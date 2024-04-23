@@ -128,82 +128,9 @@ function CraftSim.OPTIONS:Init()
         warning:SetText(L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_NO_PRICE_SOURCE))
     end
 
-    local materialSuggestionTransparencySlider = CraftSim.FRAME:CreateSlider("CraftSimMaterialSlider",
-        L(CraftSim.CONST.TEXT.OPTIONS_MODULES_TRANSPARENCY) .. "\n ", ModulesTab.content,
-        ModulesTab.content,
-        "TOP", "TOP", -15, -50, 100, 10, "HORIZONTAL",
-        0, 1, CraftSimOptions.transparencyMaterials, -- get from options..
-        "0", "1",
-        function(self, value)
-            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(value)
-            CraftSimOptions.transparencyMaterials = value
-        end)
-    GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.MATERIALS):SetTransparency(CraftSimOptions
-        .transparencyMaterials)
-
-    CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS),
-        ModulesTab.content, materialSuggestionTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
-
-    local CraftSimDetailsTransparencySlider = CraftSim.FRAME:CreateSlider("CraftSimDetailsSlider",
-        "", ModulesTab.content, materialSuggestionTransparencySlider,
-        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL",
-        0, 1, CraftSimOptions.transparencyStatWeights, -- get from options..
-        "0", "1",
-        function(self, value)
-            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT):SetTransparency(value)
-            CraftSimOptions.transparencyStatWeights = value
-        end)
-
-    GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.AVERAGE_PROFIT):SetTransparency(CraftSimOptions
-        .transparencyStatWeights)
-    CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT),
-        ModulesTab.content, CraftSimDetailsTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
-
-
-    local CraftSimTopGearTransparencySlider = CraftSim.FRAME:CreateSlider("CraftSimTopGearSlider",
-        "", ModulesTab.content, CraftSimDetailsTransparencySlider,
-        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL",
-        0, 1, CraftSimOptions.transparencyTopGear, -- get from options..
-        "0", "1",
-        function(self, value)
-            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(value)
-            CraftSimOptions.transparencyTopGear = value
-        end)
-    GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR):SetTransparency(CraftSimOptions
-        .transparencyTopGear)
-    CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR),
-        ModulesTab.content, CraftSimTopGearTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
-
-
-    local CraftSimCostOverviewTransparencySlider = CraftSim.FRAME:CreateSlider("CraftSimCostOverviewSlider",
-        "", ModulesTab.content, CraftSimTopGearTransparencySlider,
-        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL",
-        0, 1, CraftSimOptions.transparencyCostOverview, -- get from options..
-        "0", "1",
-        function(self, value)
-            CraftSim.PRICE_DETAILS.frame:SetTransparency(value)
-            CraftSimOptions.transparencyCostOverview = value
-        end)
-    CraftSim.PRICE_DETAILS.frame:SetTransparency(CraftSimOptions.transparencyCostOverview)
-    CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW),
-        ModulesTab.content, CraftSimCostOverviewTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
-
-    local specInfoTransparencySlider = CraftSim.FRAME:CreateSlider("CraftSimSpecInfoSlider",
-        "", ModulesTab.content, CraftSimCostOverviewTransparencySlider,
-        "TOP", "TOP", 0, -20, 100, 10, "HORIZONTAL",
-        0, 1, CraftSimOptions.transparencySpecInfo, -- get from options..
-        "0", "1",
-        function(self, value)
-            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(value)
-            CraftSimOptions.transparencySpecInfo = value
-        end)
-    GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO):SetTransparency(CraftSimOptions
-        .transparencySpecInfo)
-    CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO),
-        ModulesTab.content, specInfoTransparencySlider, "LEFT", "RIGHT", 10, 0, 1, nil)
 
     local historyMaxSizeInput = GGUI.NumericInput {
-        parent = ModulesTab.content, anchorParent = specInfoTransparencySlider,
+        parent = ModulesTab.content, anchorParent = ModulesTab.content,
         anchorA = "TOP", anchorB = "TOP", label = "Max history entries per client",
         offsetY = -40, sizeX = 85, sizeY = 10, initialValue = CraftSimOptions.maxHistoryEntriesPerClient, allowDecimals = false, minValue = 1,
         onNumberValidCallback = function(numberInput)

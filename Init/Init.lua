@@ -15,29 +15,6 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 CraftSim.INIT.FRAMES = {}
 
 CraftSimOptions = CraftSimOptions or {
-	-- modules
-	-- modulesMaterials = true,
-	-- modulesStatWeights = true,
-	-- modulesTopGear = true,
-	-- modulesPriceDetails = true,
-	-- modulesSpecInfo = true,
-	-- modulesPriceOverride = false,
-	-- modulesRecipeScan = false,
-	-- modulesCraftResults = false,
-	-- modulesCustomerService = false,
-	-- modulesCustomerHistory = false,
-	-- modulesCostOptimization = false,
-	-- modulesCraftQueue = false,
-	-- modulesCraftBuffs = true,
-	-- modulesCooldowns = false,
-	-- modulesExplanations = false,
-	-- modulesStatistics = false,
-
-	transparencyMaterials = 1,
-	transparencyStatWeights = 1,
-	transparencyTopGear = 1,
-	transparencyCostOverview = 1,
-	transparencySpecInfo = 1,
 	maxHistoryEntriesPerClient = 200,
 
 	-- recipeScan
@@ -113,11 +90,6 @@ end
 
 function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 	if CraftSimOptions then
-		CraftSimOptions.transparencyMaterials = CraftSimOptions.transparencyMaterials or 1
-		CraftSimOptions.transparencyStatWeights = CraftSimOptions.transparencyStatWeights or 1
-		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
-		CraftSimOptions.transparencyCostOverview = CraftSimOptions.transparencyCostOverview or 1
-		CraftSimOptions.transparencySpecInfo = CraftSimOptions.transparencySpecInfo or 1
 		CraftSimOptions.maxHistoryEntriesPerClient = CraftSimOptions.maxHistoryEntriesPerClient or 200
 		CraftSimOptions.customerServiceActivePreviewIDs = CraftSimOptions.customerServiceActivePreviewIDs or {}
 		CraftSimOptions.customerServiceRecipeWhisperFormat = CraftSimOptions.customerServiceRecipeWhisperFormat or
