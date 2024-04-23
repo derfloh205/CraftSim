@@ -157,6 +157,13 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED] =
             CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished
 
+        -- COST OPTIMIZATION
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION] =
+            CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH] =
+            CraftSimOptions.costOptimizationSubRecipeMaxDepth
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS] =
+            CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns
 
 
         CraftSimDB.optionsDB.version = 1
@@ -185,5 +192,5 @@ end
 ---@param option CraftSim.GENERAL_OPTIONS
 ---@param value any
 function CraftSim.DB.OPTIONS:Save(option, value)
-    CraftSimDB.itemCountDB.data[option] = value
+    CraftSimDB.optionsDB.data[option] = value
 end

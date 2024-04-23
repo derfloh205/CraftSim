@@ -936,7 +936,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
     print("Optimize SubRecipes for " .. self.recipeName)
     print("- Depth: " .. subRecipeDepth)
 
-    if subRecipeDepth > CraftSimOptions.costOptimizationSubRecipeMaxDepth then
+    if subRecipeDepth > CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH") then
         print("Cancel Sub Recipe Optimization due to max depth")
         return false
     end
@@ -996,7 +996,8 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
 
                 if recipeInfo then --and recipeInfo.learned then
                     local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
-                    local ignoreCooldownRecipe = not CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns and
+                    local ignoreCooldownRecipe = not CraftSim.DB.OPTIONS:Get(
+                        "COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS") and
                         recipeData.cooldownData.isCooldownRecipe
 
                     if not ignoreCooldownRecipe then

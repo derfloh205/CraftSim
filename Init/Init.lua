@@ -14,13 +14,6 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 
 CraftSim.INIT.FRAMES = {}
 
-CraftSimOptions = CraftSimOptions or {
-	-- cost optimization
-	costOptimizationAutomaticSubRecipeOptimization = false,
-	costOptimizationSubRecipeMaxDepth = 1,
-	costOptimizationSubRecipesIncludeCooldowns = false,
-}
-
 CraftSimGGUIConfig = CraftSimGGUIConfig or {}
 
 ---@type CraftSim.RecipeData?
@@ -51,9 +44,6 @@ function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 	if CraftSimOptions then
 		CraftSimOptions.customerHistoryAutoPurgeInterval = CraftSimOptions.customerHistoryAutoPurgeInterval or 2
 		CraftSimOptions.customerHistoryAutoPurgeLastPurge = CraftSimOptions.customerHistoryAutoPurgeLastPurge or nil
-		CraftSimOptions.costOptimizationSubRecipeMaxDepth = CraftSimOptions.costOptimizationSubRecipeMaxDepth or 1
-		CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = CraftSimOptions
-			.costOptimizationSubRecipesIncludeCooldowns or false
 	end
 
 	-- old data removal
@@ -539,7 +529,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	end
 
 	-- subrecipe optimization
-	recipeData:SetSubRecipeCostsUsage(CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
+	recipeData:SetSubRecipeCostsUsage(CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION"))
 	if recipeData.subRecipeCostsEnabled then
 		CraftSim.DEBUG:StartProfiling("OptimizeSubRecipes")
 		recipeData:OptimizeSubRecipes({

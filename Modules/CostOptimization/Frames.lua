@@ -125,9 +125,9 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
             offsetX = -60, offsetY = -5, label = "Sub Recipe Optimization " .. f.bb("(experimental)"),
             tooltip = "If enabled " .. f.l("CraftSim") .. " considers the " .. f.g("optimized crafting costs") .. " of your character and your alts\nif they are able to craft that item.\n\n"
                 .. f.r("Might decrease performance a bit due to a lot of additional calculations"),
-            initialValue = CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization,
+            initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION"),
             clickCallback = function(_, checked)
-                CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization = checked
+                CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION", checked)
                 CraftSim.INIT:TriggerModulesByRecipeType()
             end
         }
@@ -262,10 +262,10 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
 
     content.maxRecipeDepthSlider = GGUI.Slider {
         parent = content, anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -50, offsetX = 70,
-        label = "Sub Recipe Calculation Depth", minValue = 1, maxValue = 5, initialValue = CraftSimOptions.costOptimizationSubRecipeMaxDepth,
+        label = "Sub Recipe Calculation Depth", minValue = 1, maxValue = 5, initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH"),
         lowText = "1", highText = "5", step = 1,
         onValueChangedCallback = function(self, value)
-            CraftSimOptions.costOptimizationSubRecipeMaxDepth = value
+            CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH", value)
         end
     }
 
@@ -276,9 +276,9 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
             offsetX = -7,
         },
         tooltip = "If enabled, " .. f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted materials",
-        initialValue = CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns,
+        initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS"),
         clickCallback = function(_, checked)
-            CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = checked
+            CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS", checked)
             CraftSim.INIT:TriggerModulesByRecipeType()
         end
     }

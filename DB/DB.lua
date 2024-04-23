@@ -46,5 +46,5 @@ function CraftSim.DB:ClearAll()
     CraftSim.DB.ITEM_COUNT:ClearAll()
     CraftSim.DB.CRAFT_QUEUE:ClearAll()
     CraftSim.PRICE_OVERRIDE:ClearAll()
-    --- options too?
+    CraftSim.DB.OPTIONS:ClearAll()
 end
