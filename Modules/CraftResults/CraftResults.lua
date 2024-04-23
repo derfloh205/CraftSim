@@ -56,7 +56,7 @@ local currentCraftingResults = {}
 local collectingResults = true
 ---@param craftResult CraftingItemResultData
 function CraftSim.CRAFT_RESULTS:TRADE_SKILL_ITEM_CRAFTED_RESULT(craftResult)
-    if CraftSimOptions.craftResultsDisable then
+    if CraftSim.DB.OPTIONS:Get("CRAFT_RESULTS_DISABLE") then
         return
     end
 

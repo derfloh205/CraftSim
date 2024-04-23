@@ -12,16 +12,6 @@ CraftSim.CUSTOMER_HISTORY = GUTIL:CreateRegistreeForEvents(
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
 
 function CraftSim.CUSTOMER_HISTORY:Init()
-    if not CraftSimOptions.customerHistoryMigrationDoneV3 then
-        local s, e = pcall(CraftSim.CUSTOMER_HISTORY.DB.MigrateDataV2)
-        if not s then
-            print(f.r("CustomerHistoryLegacy Migration failed:\n" .. tostring(e)))
-        else
-            print(f.g("CustomerHistoryLegacy Migration succeded"))
-            CraftSimOptions.customerHistoryMigrationDoneV3 = true
-        end
-    end
-
     CraftSim.CUSTOMER_HISTORY:AutoPurge()
 end
 

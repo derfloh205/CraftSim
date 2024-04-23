@@ -142,10 +142,14 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTING_GARBAGE_COLLECTION_ENABLED] =
             CraftSimOptions
             .craftGarbageCollectEnabled
-
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTING_GARBAGE_COLLECTION_CRAFTS] =
             CraftSimOptions
             .craftGarbageCollectCrafts
+
+        -- CRAFT RESULTS
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFT_RESULTS_DISABLE] =
+            CraftSimOptions
+            .craftResultsDisable
 
         -- CRAFT QUEUE
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_GENERAL_RESTOCK_PROFIT_MARGIN_THRESHOLD] =
