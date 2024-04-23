@@ -139,6 +139,24 @@ function CraftSim.DB.OPTIONS:Migrate()
             CraftSimOptions
             .craftGarbageCollectCrafts
 
+        -- CRAFT QUEUE
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_GENERAL_RESTOCK_PROFIT_MARGIN_THRESHOLD] =
+            CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT] =
+            CraftSimOptions.craftQueueGeneralRestockRestockAmount
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_GENERAL_RESTOCK_SALE_RATE_THRESHOLD] =
+            CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET] =
+            CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_RESTOCK_PER_RECIPE_OPTIONS] =
+            CraftSimOptions.craftQueueRestockPerRecipeOptions
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER] =
+            CraftSimOptions.craftQueueShoppingListPerCharacter
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE] =
+            CraftSimOptions.craftQueueShoppingListTargetMode
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED] =
+            CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished
+
 
 
         CraftSimDB.optionsDB.version = 1

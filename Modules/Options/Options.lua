@@ -261,11 +261,11 @@ function CraftSim.OPTIONS:Init()
     CraftingTab.content.flashTaskBarCD = GGUI.Checkbox {
         parent = CraftingTab.content, anchorParent = enableGarbageCollectWhenCraftingCB, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         offsetX = 0, offsetY = -50,
-        initialValue = CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished,
+        initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED"),
         label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL),
         tooltip = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP),
         clickCallback = function(_, checked)
-            CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished = checked
+            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED", checked)
         end
     }
 

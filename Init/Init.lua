@@ -15,16 +15,6 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 CraftSim.INIT.FRAMES = {}
 
 CraftSimOptions = CraftSimOptions or {
-	-- craft queue
-	craftQueueGeneralRestockProfitMarginThreshold = 0,
-	craftQueueGeneralRestockRestockAmount = 1,
-	craftQueueGeneralRestockSaleRateThreshold = 0,
-	craftQueueGeneralRestockTargetModeCraftOffset = 0,
-	craftQueueRestockPerRecipeOptions = {},
-	craftQueueShoppingListPerCharacter = false,
-	craftQueueShoppingListTargetMode = false,
-	craftQueueFlashTaskbarOnCraftFinished = true,
-
 	-- cost optimization
 	costOptimizationAutomaticSubRecipeOptimization = false,
 	costOptimizationSubRecipeMaxDepth = 1,
@@ -59,25 +49,11 @@ end
 
 function CraftSim.INIT:HandleCraftSimOptionsUpdates()
 	if CraftSimOptions then
-		CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold = CraftSimOptions
-			.craftQueueGeneralRestockProfitMarginThreshold or 0
-		CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold = CraftSimOptions
-			.craftQueueGeneralRestockSaleRateThreshold or 0
-		CraftSimOptions.craftQueueGeneralRestockRestockAmount = CraftSimOptions.craftQueueGeneralRestockRestockAmount or
-			1
-		CraftSimOptions.craftQueueRestockPerRecipeOptions = CraftSimOptions.craftQueueRestockPerRecipeOptions or {}
 		CraftSimOptions.customerHistoryAutoPurgeInterval = CraftSimOptions.customerHistoryAutoPurgeInterval or 2
 		CraftSimOptions.customerHistoryAutoPurgeLastPurge = CraftSimOptions.customerHistoryAutoPurgeLastPurge or nil
-		CraftSimOptions.craftQueueShoppingListPerCharacter = CraftSimOptions.craftQueueShoppingListPerCharacter or false
 		CraftSimOptions.costOptimizationSubRecipeMaxDepth = CraftSimOptions.costOptimizationSubRecipeMaxDepth or 1
 		CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = CraftSimOptions
 			.costOptimizationSubRecipesIncludeCooldowns or false
-
-		CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset = CraftSimOptions
-			.craftQueueGeneralRestockTargetModeCraftOffset or 0
-		if CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished == nil then
-			CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished = true
-		end
 	end
 
 	-- old data removal

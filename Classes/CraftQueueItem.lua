@@ -244,7 +244,7 @@ function CraftSim.CraftQueueItem:GetMinimumCraftsForTargetCount()
 
     print("Minimum Crafts for Target Count: " .. ceiledExpectedCrafts)
 
-    return ceiledExpectedCrafts + CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset
+    return ceiledExpectedCrafts + CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET")
 end
 
 ---@param targetItemCountByQuality table<QualityID, number>

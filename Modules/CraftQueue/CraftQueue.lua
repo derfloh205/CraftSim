@@ -164,10 +164,10 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
         local profitThresholdReached = false
         if recipeData.relativeProfitCached then
             profitThresholdReached = recipeData.relativeProfitCached >=
-                (CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0)
+                (CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_PROFIT_MARGIN_THRESHOLD") or 0)
         end
         local saleRateReached = CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, nil,
-            CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold)
+            CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_SALE_RATE_THRESHOLD"))
         print("profitThresholdReached: " .. tostring(profitThresholdReached))
         print("saleRateReached: " .. tostring(saleRateReached))
         local include = profitThresholdReached and saleRateReached
@@ -213,7 +213,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
         local filteredRecipes = GUTIL:Filter(selectedRow.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
         for _, recipeData in pairs(filteredRecipes) do
             local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
-            local restockAmount = tonumber(CraftSimOptions.craftQueueGeneralRestockRestockAmount)
+            local restockAmount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT")
             if restockOptions.enabled then
                 restockAmount = restockOptions.restockAmount
 
@@ -268,7 +268,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                 local filteredRecipes = GUTIL:Filter(row.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
                 for _, recipeData in pairs(filteredRecipes) do
                     local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
-                    local restockAmount = tonumber(CraftSimOptions.craftQueueGeneralRestockRestockAmount)
+                    local restockAmount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT")
                     if restockOptions.enabled then
                         restockAmount = restockOptions.restockAmount
 
@@ -277,7 +277,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                                 local item = recipeData.resultData.itemsByQuality[qualityID]
                                 if item then
                                     local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(
-                                    recipeData:GetCrafterUID(), item:GetItemID())
+                                        recipeData:GetCrafterUID(), item:GetItemID())
                                     restockAmount = restockAmount - itemCount
                                 end
                             end
@@ -340,7 +340,7 @@ function CraftSim.CRAFTQ:GetNonSoulboundAlternativeItemID(itemID)
 end
 
 function CraftSim.CRAFTQ:CreateAuctionatorShoppingList()
-    if CraftSimOptions.craftQueueShoppingListPerCharacter then
+    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER") then
         CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
     else
         CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
@@ -375,7 +375,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
     local reagentMapPerCharacter = {}
     -- create a map of all used reagents in the queue and their quantity
     for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
-        if not CraftSimOptions.craftQueueShoppingListTargetMode or craftQueueItem.targetMode then
+        if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE") or craftQueueItem.targetMode then
             local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
             local crafterUID = craftQueueItem.recipeData:GetCrafterUID()
             reagentMapPerCharacter[crafterUID] = reagentMapPerCharacter[crafterUID] or {}
@@ -478,7 +478,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
     local reagentMap = {}
     -- create a map of all used reagents in the queue and their quantity
     for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
-        if not CraftSimOptions.craftQueueShoppingListTargetMode or craftQueueItem.targetMode then
+        if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE") or craftQueueItem.targetMode then
             local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
             for _, reagent in pairs(requiredReagents) do
                 if reagent.hasQuality then
@@ -603,16 +603,19 @@ end
 ---@param recipeID number
 ---@return CraftSim.CraftQueue.RestockRecipeOption
 function CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeID)
-    CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID] = CraftSimOptions.craftQueueRestockPerRecipeOptions
+    local restockPerRecipeOptions = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_PER_RECIPE_OPTIONS")
+    restockPerRecipeOptions[recipeID] = restockPerRecipeOptions
         [recipeID] or {}
-    return {
-        enabled = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].enabled or false,
-        profitMarginThreshold = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].profitMarginThreshold or 0,
-        restockAmount = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].restockAmount or 1,
-        restockPerQuality = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].restockPerQuality or {},
-        saleRateThreshold = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].saleRateThreshold or 0,
-        saleRatePerQuality = CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeID].saleRatePerQuality or {}
-    }
+
+    restockPerRecipeOptions[recipeID].enabled = restockPerRecipeOptions[recipeID].enabled or false
+    restockPerRecipeOptions[recipeID].profitMarginThreshold = restockPerRecipeOptions[recipeID].profitMarginThreshold or
+        0
+    restockPerRecipeOptions[recipeID].restockAmount = restockPerRecipeOptions[recipeID].restockAmount or 1
+    restockPerRecipeOptions[recipeID].restockPerQuality = restockPerRecipeOptions[recipeID].restockPerQuality or {}
+    restockPerRecipeOptions[recipeID].saleRateThreshold = restockPerRecipeOptions[recipeID].saleRateThreshold or 0
+    restockPerRecipeOptions[recipeID].saleRatePerQuality = restockPerRecipeOptions[recipeID].saleRatePerQuality or {}
+
+    return restockPerRecipeOptions
 end
 
 ---@param recipeData CraftSim.RecipeData
