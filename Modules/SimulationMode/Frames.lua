@@ -1185,7 +1185,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
         recipeData.supportsQualities and recipeData.hasQualityReagents)
     if recipeData.supportsQualities then
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality,
-            professionStats.recipeDifficulty.value, CraftSimOptions.breakPointOffset)
+            professionStats.recipeDifficulty.value, CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         qualityFrame.currentQualityIcon:SetQuality(recipeData.resultData.expectedQuality)
         qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[recipeData.resultData.expectedQuality - 1] or 0))
 

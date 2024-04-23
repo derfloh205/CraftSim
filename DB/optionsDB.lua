@@ -118,6 +118,9 @@ function CraftSim.DB.OPTIONS:Migrate()
             .recipeScanSortByProfitMargin
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_USE_INSIGHT] = CraftSimOptions
             .recipeScanUseInsight
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_INCLUDED_PROFESSIONS] = CraftSimOptions
+            .recipeScanIncludedProfessions
+
 
         -- PROFIT CALCULATION
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PROFIT_CALCULATION_MULTICRAFT_CONSTANT] =
@@ -176,6 +179,12 @@ function CraftSim.DB.OPTIONS:Migrate()
             CraftSimOptions.costOptimizationSubRecipeMaxDepth
         CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS] =
             CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns
+
+        -- DEBUG
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.DEBUG_VISIBLE] =
+            CraftSimOptions.debugVisible
+        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.DEBUG_AUTO_SCROLL] =
+            CraftSimOptions.debugAutoScroll
 
 
         CraftSimDB.optionsDB.version = 1

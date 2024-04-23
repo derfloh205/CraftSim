@@ -279,8 +279,6 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.INIT:HookToProfessionsFrame()
 		CraftSim.INIT:HandleAuctionatorHooks()
 		CraftSim.INIT:InitCraftRecipeHooks()
-		CraftSim.ACCOUNTSYNC:Init()
-
 
 		CraftSim.CONTROL_PANEL.FRAMES:Init()
 		CraftSim.INIT:InitStaticPopups()

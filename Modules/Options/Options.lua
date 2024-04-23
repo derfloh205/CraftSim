@@ -141,19 +141,17 @@ function CraftSim.OPTIONS:Init()
     CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE),
         ModulesTab.content, historyMaxSizeInput.textInput.frame, "LEFT", "RIGHT", 20, 0, 1, nil)
 
-    local skillBreakpointsCheckbox = CraftSim.FRAME:CreateCheckbox(
-        " " .. L(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET),
-        L(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP),
-        "breakPointOffset",
-        ProfitCalculationTab.content,
-        ProfitCalculationTab.content,
-        "TOP",
-        "TOP",
-        -90,
-        -50)
+    local skillBreakpointsCheckbox = GGUI.Checkbox {
+        parent = ProfitCalculationTab.content, anchorParent = ProfitCalculationTab.content,
+        anchorA = "TOP", anchorB = "TOP", offsetX = -90, offsetY = -50,
+        initialValue = CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("QUALITY_BREAKPOINT_OFFSET", checked)
+        end
+    }
 
     local customMulticraftConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputMulticraftConstant",
-        ProfitCalculationTab.content, skillBreakpointsCheckbox, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25,
+        ProfitCalculationTab.content, skillBreakpointsCheckbox.frame, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25,
         CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT"),
         function()
             CraftSim.DB.OPTIONS:Save("PROFIT_CALCULATION_MULTICRAFT_CONSTANT",

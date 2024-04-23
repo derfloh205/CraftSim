@@ -21,7 +21,7 @@ end
 
 function CraftSim.CALC:CalculateResourcefulnessSavedCosts(resExtraFactor, craftingCostsRequired)
     return craftingCostsRequired *
-    (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT") * resExtraFactor)
+        (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT") * resExtraFactor)
 end
 
 ---Returns the chance to receive an upgrade with hsv
@@ -34,7 +34,7 @@ function CraftSim.CALC:getHSVChance(recipeData)
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty,
-            CraftSimOptions.breakPointOffset)
+            CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         local upperThreshold = thresholds[recipeData.resultData.expectedQuality]
 
         local playerSkill = recipeData.professionStats.skill.value
@@ -91,7 +91,7 @@ function CraftSim.CALC:GetHSVInfo(recipeData)
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty,
-            CraftSimOptions.breakPointOffset)
+            CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         local upperThreshold = thresholds[recipeData.resultData.expectedQuality]
 
         local playerSkill = recipeData.professionStats.skill.value
@@ -126,7 +126,7 @@ function CraftSim.CALC:GetHSVInfo(recipeData)
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty,
-            CraftSimOptions.breakPointOffset)
+            CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         local skipThreshold = thresholds[recipeData.resultData.expectedQuality + 1]
 
         local playerSkill = recipeData.professionStats.skill.value

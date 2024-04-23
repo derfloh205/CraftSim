@@ -213,23 +213,6 @@ function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
     end)
 end
 
---> in GGUI
-function CraftSim.FRAME:MakeCloseable(frame, moduleOption)
-    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    frame.closeButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)
-    frame.closeButton:SetText("X")
-    frame.closeButton:SetSize(frame.closeButton:GetTextWidth() + 15, 20)
-    frame.closeButton:SetScript("OnClick", function(self)
-        frame:Hide()
-        if moduleOption then
-            CraftSimOptions[moduleOption] = false
-            local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CONTROL_PANEL)
-
-            controlPanel.content[moduleOption]:SetChecked(false)
-        end
-    end)
-end
-
 --> in GGUI.Text
 function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, scale, font,
                                    justifyData)
@@ -299,46 +282,6 @@ function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initial
     end
 
     return checkBox
-end
-
---> in GGUI.Checkbox
-function CraftSim.FRAME:CreateCheckbox(label, description, optionName, parent, anchorParent, anchorA, anchorB, offsetX,
-                                       offsetY, onClick)
-    local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
-    checkBox:SetHitRectInsets(0, 0, 0, 0); -- see https://wowpedia.fandom.com/wiki/API_Frame_SetHitRectInsets
-    checkBox:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
-    checkBox.Text:SetText(label)
-    checkBox.tooltip = description
-    -- there already is an existing OnClick script that plays a sound, hook it
-    checkBox:SetChecked(CraftSimOptions[optionName])
-    checkBox:HookScript("OnClick", function(_, btn, down)
-        local checked = checkBox:GetChecked()
-        CraftSimOptions[optionName] = checked
-
-        if onClick then
-            onClick(checked)
-        end
-    end)
-
-    return checkBox
-end
-
---> in GGUI.Slider
-function CraftSim.FRAME:CreateSlider(name, label, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY,
-                                     orientation, min, max, initialValue, lowText, highText, updateCallback)
-    local newSlider = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
-    newSlider:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
-    newSlider:SetSize(sizeX, sizeY)
-    newSlider:SetOrientation(orientation)
-    newSlider:SetMinMaxValues(min, max)
-    newSlider:SetValue(initialValue)
-    _G[newSlider:GetName() .. 'Low']:SetText(lowText)   -- Sets the left-side slider text (default is "Low").
-    _G[newSlider:GetName() .. 'High']:SetText(highText) -- Sets the right-side slider text (default is "High").
-    _G[newSlider:GetName() .. 'Text']:SetText(label)    -- Sets the "title" text (top-centre of slider).
-
-    newSlider:SetScript("OnValueChanged", updateCallback)
-
-    return newSlider
 end
 
 --> in GGUI.HelpIcon

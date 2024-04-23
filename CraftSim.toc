@@ -79,7 +79,6 @@ Modules/SpecializationInfo/SpecializationInfo.lua
 Modules/SpecializationInfo/Frames.lua
 
 Modules/Options/Options.lua
-Modules/Options/AccountSync.lua
 
 Modules/SimulationMode/SimulationMode.lua
 Modules/SimulationMode/Frames.lua

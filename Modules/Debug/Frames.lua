@@ -43,10 +43,10 @@ function CraftSim.DEBUG.FRAMES:Init()
 end
 
 function CraftSim.DEBUG.FRAMES:InitDebugFrame(debugFrame)
-    CraftSim.FRAME:ToggleFrame(debugFrame, CraftSimOptions.debugVisible)
+    CraftSim.FRAME:ToggleFrame(debugFrame, CraftSim.DB.OPTIONS:Get("DEBUG_VISIBLE"))
 
-    debugFrame:HookScript("OnShow", function() CraftSimOptions.debugVisible = true end)
-    debugFrame:HookScript("OnHide", function() CraftSimOptions.debugVisible = false end)
+    debugFrame:HookScript("OnShow", function() CraftSim.DB.OPTIONS:Save("DEBUG_VISIBLE", true) end)
+    debugFrame:HookScript("OnHide", function() CraftSim.DB.OPTIONS:Save("DEBUG_VISIBLE", false) end)
 
     debugFrame.content.debugBox = CreateFrame("EditBox", nil, debugFrame.content)
     debugFrame.content.debugBox:SetPoint("TOP", debugFrame.content, "TOP", 0, -20)
@@ -61,10 +61,10 @@ function CraftSim.DEBUG.FRAMES:InitDebugFrame(debugFrame)
 
     debugFrame.content.autoScrollCB = GGUI.Checkbox {
         parent = debugFrame.frame, anchorParent = debugFrame.frame, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -15,
-        initialValue = CraftSimOptions.debugAutoScroll,
+        initialValue = CraftSim.DB.OPTIONS:Get("DEBUG_AUTO_SCROLL"),
         label = "Autoscroll",
         clickCallback = function(_, checked)
-            CraftSimOptions.debugAutoScroll = checked
+            CraftSim.DB.OPTIONS:Save("DEBUG_AUTO_SCROLL", checked)
         end
     }
 
@@ -97,7 +97,7 @@ function CraftSim.DEBUG.FRAMES:InitDebugFrame(debugFrame)
     end
 
     debugFrame.frame.scrollFrame:HookScript("OnScrollRangeChanged", function()
-        if CraftSimOptions.debugAutoScroll then
+        if CraftSim.DB.OPTIONS:Get("DEBUG_AUTO_SCROLL") then
             debugFrame.frame.scrollFrame:SetVerticalScroll(debugFrame.frame.scrollFrame:GetVerticalScrollRange())
         end
     end)
@@ -229,9 +229,11 @@ function CraftSim.DEBUG.FRAMES:InitLogOptionsTab(logOptionsTab)
 
             local cb = checkBoxRow.cb --[[@as GGUI.Checkbox]]
 
-            cb:SetChecked(CraftSimOptions["enableDebugID_" .. debugID])
+            local debugIDs = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
+
+            cb:SetChecked(debugIDs["enableDebugID_" .. debugID])
             cb.clickCallback = function(_, checked)
-                CraftSimOptions["enableDebugID_" .. debugID] = checked
+                debugIDs["enableDebugID_" .. debugID] = checked
             end
         end)
     end
@@ -322,7 +324,7 @@ function CraftSim.DEBUG.FRAMES:InitCacheTab(cacheTab)
                 if cacheSV then
                     if cacheName == "CraftSimPriceOverridesV2" then
                         CraftSim.PRICE_OVERRIDE:ClearAll()
-                    else 
+                    else
                         wipe(cacheSV)
                         CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. "Cache cleared: " .. cacheName)
                     end

@@ -584,12 +584,13 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddProfessionTabRow(crafterUID, profession)
 
         local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
 
-        local isChecked = CraftSimOptions.recipeScanIncludedProfessions[crafterProfessionUID]
+        local isChecked = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDED_PROFESSIONS")[crafterProfessionUID]
 
         checkboxColumn.checkbox:SetChecked(isChecked)
 
         checkboxColumn.checkbox.clickCallback = function(_, checked)
-            CraftSimOptions.recipeScanIncludedProfessions[crafterProfessionUID] = checked
+            local includedProfessions = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDED_PROFESSIONS")
+            includedProfessions[crafterProfessionUID] = checked
         end
 
         row.contentFrame = GGUI.Frame {
