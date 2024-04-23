@@ -221,9 +221,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                     if use then
                         local item = recipeData.resultData.itemsByQuality[qualityID]
                         if item then
-                            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(item:GetItemID(), true,
-                                false, true,
-                                recipeData:GetCrafterUID())
+                            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(recipeData:GetCrafterUID(), item:GetItemID())
                             restockAmount = restockAmount - itemCount
                         end
                     end
@@ -277,9 +275,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                             if use then
                                 local item = recipeData.resultData.itemsByQuality[qualityID]
                                 if item then
-                                    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(item:GetItemID(),
-                                        true, false,
-                                        true, recipeData:GetCrafterUID())
+                                    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(recipeData:GetCrafterUID(), item:GetItemID())
                                     restockAmount = restockAmount - itemCount
                                 end
                             end
@@ -449,7 +445,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
                 info.itemName = select(1, C_Item.GetItemInfo(itemID)) -- 100% already loaded in this case when its used as alt item in ReagentItem
             end
 
-            local itemCount = CraftSim.DB.ITEM_COUNT:Get(itemID, true, false, true, crafterUID)
+            local itemCount = CraftSim.ITEM_COUNT:Get(crafterUID, itemID)
             local searchTerm = {
                 searchString = info.itemName,
                 tier = info.qualityID,
@@ -544,8 +540,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
         end
         -- subtract the total item count of all crafter's cached inventory
         local totalItemCount = GUTIL:Fold(crafterUIDs, 0, function(itemCount, crafterUID)
-            local itemCountForCrafter = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, true, false, true,
-                crafterUID)
+            local itemCountForCrafter = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
             return itemCount + itemCountForCrafter
         end)
 
@@ -573,11 +568,14 @@ function CraftSim.CRAFTQ:TRADE_SKILL_ITEM_CRAFTED_RESULT()
     end
 end
 
+--- TODO: need exception for enchant vellum to not be fetched from the bank!
 --- only for craft queue display update's flash cache
-function CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, bank, uses, reagentbank, crafterUID)
+---@param crafterUID CrafterUID
+---@param itemID number
+function CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
     local itemCount = (CraftSim.CRAFTQ.itemCountCache and CraftSim.CRAFTQ.itemCountCache[itemID]) or nil
     if not itemCount then
-        itemCount = CraftSim.DB.ITEM_COUNT:Get(itemID, bank, uses, reagentbank, crafterUID)
+        itemCount = CraftSim.ITEM_COUNT:Get(crafterUID, itemID)
     end
     return itemCount
 end

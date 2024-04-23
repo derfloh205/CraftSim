@@ -59,9 +59,7 @@ function CraftSim.OptionalReagentSlot:HasItem(multiplier, crafterUID)
         return true
     end
 
-    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(self.activeReagent.item:GetItemID(), true, false,
-        true,
-        crafterUID)
+    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, self.activeReagent.item:GetItemID())
 
     return itemCount >= multiplier
 end
@@ -72,8 +70,7 @@ function CraftSim.OptionalReagentSlot:HasQuantityXTimes(crafterUID)
     if not self.activeReagent then
         return math.huge -- yes I have infinite a number of times yes
     end
-    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(self.activeReagent.item:GetItemID(), true, false,
-        true, crafterUID)
+    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, self.activeReagent.item:GetItemID())
     return itemCount -- cause the required amount is always 1
 end
 

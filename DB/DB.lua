@@ -14,6 +14,27 @@ CraftSim.DB = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
 
+---@class CraftSimDB.Database
+---@field version number
+---@field data table
+
+---@class CraftSimDB
+---@field itemCountDB CraftSimDB.Database
+CraftSimDB = CraftSimDB or {}
+
+function CraftSim.DB:Init()
+    self.MATCH_HISTORY:Init()
+
+    CraftSim.DB:Migrate()
+    CraftSim.DB:CleanUp()
+end
+
+function CraftSim.DB:Migrate()
+end
+
+function CraftSim.DB:CleanUp()
+end
+
 function CraftSim.DB:HandleCraftSimCacheUpdates()
     -- init default cache fields in case of cache field updates
     CraftSim.DB.RECIPE_DATA:HandleUpdates()

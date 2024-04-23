@@ -207,7 +207,7 @@ function CraftSim.CraftQueueItem:IsTargetCountSatisfied()
     local crafterUID = self.recipeData:GetCrafterUID()
     for qualityID, count in pairs(self.targetItemCountByQuality) do
         local item = self.recipeData.resultData.itemsByQuality[qualityID]
-        local itemCount = CraftSim.DB.ITEM_COUNT:Get(item:GetItemID(), true, false, true, crafterUID)
+        local itemCount = CraftSim.ITEM_COUNT:Get(crafterUID, item:GetItemID())
 
         if itemCount < count then
             return false
@@ -227,8 +227,7 @@ function CraftSim.CraftQueueItem:GetMinimumCraftsForTargetCount()
 
     for qualityID, count in pairs(self.targetItemCountByQuality) do
         local item = self.recipeData.resultData.itemsByQuality[qualityID]
-        local currentCount = CraftSim.DB.ITEM_COUNT:Get(item:GetItemID(), true, false, true,
-            self.recipeData:GetCrafterUID())
+        local currentCount = CraftSim.ITEM_COUNT:Get(self.recipeData:GetCrafterUID(), item:GetItemID())
         local restCount = math.max(0, count - currentCount)
         if restCount > 0 then
             minimumAmountForDifferentQualities = minimumAmountForDifferentQualities + 1
