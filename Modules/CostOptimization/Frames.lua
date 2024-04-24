@@ -644,7 +644,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
                         tinsert(optimizedItemIDs, Item:CreateFromItemID(irI.itemID))
                         return {
                             itemID = irI.itemID,
-                            optimizedCostsData = CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS:Get(irI.itemID, crafter)
+                            optimizedCostsData = CraftSim.DB.ITEM_OPTIMIZED_COSTS:Get(irI.itemID, crafter)
                         }
                     end)
 

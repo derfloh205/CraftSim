@@ -24,7 +24,9 @@ end
 function CraftSim.DB.CRAFT_QUEUE:Migrate()
     -- 0 -> 1
     if CraftSimDB.craftQueueDB.version == 0 then
-        CraftSimDB.craftQueueDB.data = _G["CraftSimCraftQueueCache"] or {}
+        if _G["CraftSimCraftQueueCache"] then
+            CraftSimDB.craftQueueDB.data = _G["CraftSimCraftQueueCache"]
+        end
         CraftSimDB.craftQueueDB.version = 1
     end
 end

@@ -556,7 +556,7 @@ function CraftSim.RecipeData:OptimizeProfit(options)
         self:OptimizeReagents()
     end
 
-    CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS:Save(self)
+    CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(self)
 end
 
 ---Optimizes the recipeData's reagents and gear for highest quality

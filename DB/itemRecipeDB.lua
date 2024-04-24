@@ -31,7 +31,7 @@ function CraftSim.DB.ITEM_RECIPE:Migrate()
     -- 0 -> 1
     if CraftSimDB.itemRecipeDB.version == 0 then
         local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-        if CraftSimCraftQueueCache then
+        if CraftSimRecipeDataCache then
             CraftSimDB.itemRecipeDB.data = CraftSimRecipeDataCache["itemRecipeCache"]
         end
         CraftSimDB.itemRecipeDB.version = 1
