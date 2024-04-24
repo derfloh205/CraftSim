@@ -608,7 +608,9 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
         subRecipeCrafterList:Show()
         content.recipeTitle:SetText(selectedRow.recipeTitle)
 
-        local recipeSubRecipeInfoList = GUTIL:Filter(CraftSimRecipeDataCache.itemRecipeCache, function(irI)
+        local itemRecipeData = CraftSim.DB.ITEM_RECIPE:GetAll()
+
+        local recipeSubRecipeInfoList = GUTIL:Filter(itemRecipeData, function(irI)
             return irI.recipeID == subRecipeData.recipeID
         end)
 

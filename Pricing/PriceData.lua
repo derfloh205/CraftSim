@@ -52,7 +52,7 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
 
         if considerSubCrafts then
             -- get costs from set crafter
-            local itemRecipeData = CraftSimRecipeDataCache.itemRecipeCache[itemID]
+            local itemRecipeData = CraftSim.DB.ITEM_RECIPE:Get(itemID)
             -- only use if set crafter exists, has cached optimized costs and can even craft that item with a chance higher than 0
             if itemRecipeData then
                 local recipeCrafter = CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(itemRecipeData

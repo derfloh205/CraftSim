@@ -30,6 +30,7 @@ DB/DB.lua
 DB/optionsDB.lua
 DB/itemCountDB.lua
 DB/craftQueueDB.lua
+DB/itemRecipeDB.lua
 DB/RecipeData.lua
 
 Media/Media.lua

@@ -28,6 +28,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 ---@field itemCountDB CraftSimDB.Database
 ---@field optionsDB CraftSimDB.Database
 ---@field craftQueueDB CraftSimDB.Database
+---@field itemRecipeDB CraftSimDB.Database
 CraftSimDB = CraftSimDB or {}
 
 ---@type CraftSim.DB.Repository[]

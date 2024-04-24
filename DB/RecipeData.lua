@@ -11,9 +11,6 @@ CraftSim.DB = CraftSim.DB
 ---@class CraftSim.DB.RECIPE_DATA
 CraftSim.DB.RECIPE_DATA = {}
 
----@class CraftSim.DB.ITEM_RECIPE_CACHE
-CraftSim.DB.RECIPE_DATA.ITEM_RECIPE_CACHE = {}
-
 ---@class CraftSim.DB.SUB_RECIPE_CRAFTER_CACHE
 CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE = {}
 
@@ -28,12 +25,6 @@ CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS = {}
 ---@field equippedGear CraftSim.ProfessionGearSet.Serialized?
 ---@field availableProfessionGear CraftSim.ProfessionGear.Serialized[]
 
----@class CraftSim.ItemRecipeData
----@field recipeID RecipeID
----@field itemID ItemID
----@field qualityID QualityID
----@field crafters CrafterUID[]
-
 ---@class CraftSim.ExpectedCraftingCostsData
 ---@field qualityID QualityID
 ---@field crafter CrafterUID
@@ -45,6 +36,7 @@ CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS = {}
 ---@field expectedCraftsMin number
 ---@field profession Enum.Profession
 
+-- TODO create 1 db for crafterUID -> infos
 ---@class CraftSim.RecipeDataCache
 ---@field cachedRecipeIDs table<CrafterUID, table<Enum.Profession, RecipeID[]>>
 ---@field recipeInfoCache table<CrafterUID, table<RecipeID, TradeSkillRecipeInfo>>
@@ -55,7 +47,6 @@ CraftSim.DB.RECIPE_DATA.EXPECTED_COSTS = {}
 ---@field altClassCache table<CrafterUID, ClassFile>
 ---@field postLoadedMulticraftInformationProfessions table<Enum.Profession, boolean>
 ---@field cooldownCache table<CrafterUID, table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>>
----@field itemRecipeCache table<ItemID, CraftSim.ItemRecipeData>
 ---@field itemOptimizedCostsDataCache table<ItemID, table<CrafterUID, CraftSim.ExpectedCraftingCostsData>>
 ---@field subRecipeCrafterCache table<RecipeID, CrafterUID>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
@@ -106,7 +97,6 @@ function CraftSim.DB.RECIPE_DATA:HandleUpdates()
             .postLoadedMulticraftInformationProfessions or {}
         CraftSimRecipeDataCache.cooldownCache = CraftSimRecipeDataCache.cooldownCache or {}
         CraftSimRecipeDataCache.subRecipeCrafterCache = CraftSimRecipeDataCache.subRecipeCrafterCache or {}
-        CraftSimRecipeDataCache.itemRecipeCache = CraftSimRecipeDataCache.itemRecipeCache or {}
         CraftSimRecipeDataCache.itemOptimizedCostsDataCache = CraftSimRecipeDataCache.itemOptimizedCostsDataCache or {}
         CraftSimRecipeDataCache.cacheVersions = CraftSimRecipeDataCache.cacheVersions or {}
 
@@ -180,25 +170,6 @@ function CraftSim.DB.RECIPE_DATA:MigrateCooldownCache_0_1()
     end
 
     CraftSimRecipeDataCache.cooldownCache = newCache
-end
-
----@param itemID ItemID
----@param crafterUID CrafterUID
-function CraftSim.DB.RECIPE_DATA.ITEM_RECIPE_CACHE:AddCache(recipeID, qualityID, itemID, crafterUID)
-    CraftSimRecipeDataCache.itemRecipeCache[itemID] = CraftSimRecipeDataCache.itemRecipeCache[itemID] or {}
-    CraftSimRecipeDataCache.itemRecipeCache[itemID].recipeID = recipeID
-    CraftSimRecipeDataCache.itemRecipeCache[itemID].qualityID = qualityID
-    CraftSimRecipeDataCache.itemRecipeCache[itemID].itemID = itemID
-    CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters = CraftSimRecipeDataCache.itemRecipeCache[itemID]
-        .crafters or {}
-    if not tContains(CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters, crafterUID) then
-        tinsert(CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters, crafterUID)
-
-        -- if the first and only crafter, enable in subRecipeCrafterCache
-        if #CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters == 1 then
-            CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID] = crafterUID
-        end
-    end
 end
 
 ---@param recipeID RecipeID

@@ -903,14 +903,14 @@ function CraftSim.RecipeData:GetSubRecipeCraftingInfos()
     local craftingInfos = {}
     for _, reagent in ipairs(self.reagentData.requiredReagents) do
         for _, reagentItem in ipairs(reagent.items) do
-            local craftingInfo = CraftSimRecipeDataCache.itemRecipeCache[reagentItem.item:GetItemID()]
+            local craftingInfo = CraftSim.DB.ITEM_RECIPE:Get(reagentItem.item:GetItemID())
             if craftingInfo then
                 tinsert(craftingInfos, craftingInfo)
             end
         end
     end
     for _, activeReagent in ipairs(self.reagentData:GetActiveOptionalReagents()) do
-        local craftingInfo = CraftSimRecipeDataCache.itemRecipeCache[activeReagent.item:GetItemID()]
+        local craftingInfo = CraftSim.DB.ITEM_RECIPE:Get(activeReagent.item:GetItemID())
         if craftingInfo then
             tinsert(craftingInfos, craftingInfo)
         end
@@ -997,7 +997,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                 if recipeInfo then --and recipeInfo.learned then
                     local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
                     local ignoreCooldownRecipe = not CraftSim.DB.OPTIONS:Get(
-                        "COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS") and
+                            "COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS") and
                         recipeData.cooldownData.isCooldownRecipe
 
                     if not ignoreCooldownRecipe then
