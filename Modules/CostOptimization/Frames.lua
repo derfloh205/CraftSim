@@ -237,11 +237,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
                 end
 
                 function usedPriceColumn:SetCrafter(crafterUID, profession)
-                    local crafterName = strsplit("-", crafterUID)
-                    local crafterClass = CraftSimRecipeDataCache.altClassCache[crafterUID]
-                    if crafterClass then
-                        crafterName = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterName)
-                    end
+                    local crafterName = f.class(select(1, strsplit("-", crafterUID)),
+                        CraftSim.DB.CRAFTER:GetClass(crafterUID))
                     crafterName = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[profession], 15, 15) .. crafterName
                     usedPriceColumn.text:SetText(crafterName)
                 end
@@ -432,7 +429,7 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
                 print("Has expectedCostsData: " .. tostring(priceInfo.expectedCostsData ~= nil))
                 if priceInfo.expectedCostsData then
                     row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin))
-                    local class = CraftSimRecipeDataCache.altClassCache[priceInfo.expectedCostsData.crafter]
+                    local class = CraftSim.DB.CRAFTER:GetClass(priceInfo.expectedCostsData.crafter)
                     local crafterName = priceInfo.expectedCostsData.crafter
                     if class then
                         crafterName = C_ClassColor.GetClassColor(class):WrapTextInColorCode(crafterName)
@@ -502,11 +499,8 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
 
             if priceInfo.isExpectedCost and priceInfo.expectedCostsData then
                 row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin))
-                local class = CraftSimRecipeDataCache.altClassCache[priceInfo.expectedCostsData.crafter]
-                local crafterName = priceInfo.expectedCostsData.crafter
-                if class then
-                    crafterName = C_ClassColor.GetClassColor(class):WrapTextInColorCode(crafterName)
-                end
+                local class = CraftSim.DB.CRAFTER:GetClass(priceInfo.expectedCostsData.crafter)
+                local crafterName = f.class(priceInfo.expectedCostsData.crafter, class)
                 crafterName = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[priceInfo.expectedCostsData.profession],
                         13, 13) ..
                     " " .. crafterName
@@ -616,7 +610,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
 
         subRecipeCrafterList:Remove()
 
-        for _, crafter in ipairs(subRecipeData.crafters) do
+        for _, crafterUID in ipairs(subRecipeData.crafters) do
             subRecipeCrafterList:Add(
             ---@param row CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.Row
                 function(row)
@@ -624,17 +618,13 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
                     local crafterColumn = columns
                         [1] --[[@as CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.CrafterColumn]]
 
-                    local crafterText = strsplit("-", crafter) -- name only
-                    local fullCrafterText = crafter
-                    local crafterClass = CraftSimRecipeDataCache.altClassCache[crafter]
-                    if crafterClass then
-                        crafterText = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterText)
-                        fullCrafterText = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(fullCrafterText)
-                    end
+                    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                    local crafterText = f.class(select(1, strsplit("-", crafterUID)), crafterClass) -- name only
+                    local fullCrafterText = f.class(crafterUID, crafterClass)
                     crafterColumn.text:SetText(fullCrafterText)
 
                     local crafterItemRecipeList = GUTIL:Filter(recipeSubRecipeInfoList, function(irI)
-                        return tContains(irI.crafters, crafter)
+                        return tContains(irI.crafters, crafterUID)
                     end)
                     local optimizedItemIDs = {}
                     -- metadata for sorting and other things
@@ -642,11 +632,11 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
                         tinsert(optimizedItemIDs, Item:CreateFromItemID(irI.itemID))
                         return {
                             itemID = irI.itemID,
-                            optimizedCostsData = CraftSim.DB.ITEM_OPTIMIZED_COSTS:Get(irI.itemID, crafter)
+                            optimizedCostsData = CraftSim.DB.ITEM_OPTIMIZED_COSTS:Get(irI.itemID, crafterUID)
                         }
                     end)
 
-                    row.crafterUID = crafter
+                    row.crafterUID = crafterUID
                     row.recipeID = subRecipeData.recipeID
                     local tooltipText = ""
 

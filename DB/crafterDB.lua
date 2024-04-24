@@ -70,6 +70,11 @@ function CraftSim.DB.CRAFTER:Migrate()
                 CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
                 CraftSimDB.crafterDB.data[crafterUID].professionGear = professionGear
             end
+
+            for crafterUID, class in pairs(CraftSimRecipeDataCache["altClassCache"] or {}) do
+                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+                CraftSimDB.crafterDB.data[crafterUID].class = class
+            end
         end
         CraftSimDB.crafterDB.version = 1
     end
@@ -257,6 +262,19 @@ end
 function CraftSim.DB.CRAFTER:GetProfessionGearCached(crafterUID, profession)
     local professionGearData = self:GetProfessionGearData(crafterUID, profession)
     return professionGearData.cached
+end
+
+---@param crafterUID CrafterUID
+---@return ClassFile?
+function CraftSim.DB.CRAFTER:GetClass(crafterUID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    return CraftSimDB.crafterDB.data[crafterUID].class
+end
+
+---@param class ClassFile
+function CraftSim.DB.CRAFTER:SaveClass(crafterUID, class)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].class = class
 end
 
 ---@return table<CrafterUID, CraftSim.DB.CrafterDBData>

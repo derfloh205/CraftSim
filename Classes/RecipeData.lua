@@ -249,7 +249,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         CraftSim.DB.CRAFTER:AddCachedRecipeID(crafterUID, self.professionData.professionInfo.profession, self.recipeID)
 
         CraftSim.DEBUG:StartProfiling("- RD: Cache Data ClassApi")
-        CraftSimRecipeDataCache.altClassCache[crafterUID] = select(2, UnitClass("player"))
+        CraftSim.DB.CRAFTER:SaveClass(crafterUID, select(2, UnitClass("player")))
         CraftSim.DEBUG:StopProfiling("- RD: Cache Data ClassApi")
 
         CraftSim.DEBUG:StopProfiling("- RD: Cache Data")

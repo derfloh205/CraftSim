@@ -176,16 +176,9 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                     local nextColumn = columns[4] --[[@as CraftSim.COOLDOWNS.CooldownList.NextColumn]]
                     local allColumn = columns[5] --[[@as CraftSim.COOLDOWNS.CooldownList.AllColumn]]
 
-                    local crafterName, crafterRealm = strsplit("-", crafterUID)
-                    local crafterClass = CraftSimRecipeDataCache.altClassCache[crafterUID]
-
-                    local tooltipText = crafterUID
-
-                    if crafterClass then
-                        local color = C_ClassColor.GetClassColor(crafterClass)
-                        crafterName = color:WrapTextInColorCode(crafterName)
-                        tooltipText = color:WrapTextInColorCode(tooltipText)
-                    end
+                    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                    local crafterName = f.class(select(1, strsplit("-", crafterUID), crafterClass))
+                    local tooltipText = f.class(crafterUID, crafterClass)
 
                     local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID) or
                         C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
