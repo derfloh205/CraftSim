@@ -33,6 +33,7 @@ DB/itemRecipeDB.lua
 DB/itemOptimizedCostsDB.lua
 DB/recipeSubCrafterDB.lua
 DB/multicraftPreloadDB.lua
+DB/crafterDB.lua
 DB/RecipeData.lua
 
 Media/Media.lua

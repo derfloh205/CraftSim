@@ -53,6 +53,14 @@ function CraftSim.DB:Init()
         repository:Migrate()
         repository:CleanUp()
     end
+
+    -- general cleanups after multi migrations
+    if _G["CraftSimRecipeDataCache"] then
+        local empty = GUTIL:Count(_G["CraftSimRecipeDataCache"]) == 0
+        if empty then
+            _G["CraftSimRecipeDataCache"] = nil
+        end
+    end
 end
 
 function CraftSim.DB:ClearAll()
