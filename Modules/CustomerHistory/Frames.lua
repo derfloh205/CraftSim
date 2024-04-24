@@ -320,14 +320,11 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateDisplay()
 end
 
 function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
-    if not CraftSimCustomerHistoryV2 then
-        return
-    end
-
     local customerList = CraftSim.CUSTOMER_HISTORY.frame.content.customerList --[[@as GGUI.FrameList]]
     customerList:Remove()
+    local customerHistoryData = CraftSim.DB.CUSTOMER_HISTORY:GetAll()
 
-    for _, customerHistory in pairs(CraftSimCustomerHistoryV2) do
+    for _, customerHistory in pairs(customerHistoryData) do
         customerList:Add(
             function(row)
                 local columns = row.columns
@@ -371,8 +368,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
         customerList:SelectRow(1)
     end
 
-    local hideCustomerInfo = not CraftSimCustomerHistoryV2 or CraftSim.GUTIL:Count(CraftSimCustomerHistoryV2) == 0
-    if hideCustomerInfo then
+    if CraftSim.DB.CUSTOMER_HISTORY:Count() == 0 then
         CraftSim.CUSTOMER_HISTORY.frame.content.customerName:Hide()
         CraftSim.CUSTOMER_HISTORY.frame.content.whisperButton:Hide()
         CraftSim.CUSTOMER_HISTORY.frame.content.craftList:Hide()
@@ -385,7 +381,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
     end
 end
 
----@param customerHistory CraftSim.CustomerHistory
+---@param customerHistory CraftSim.DB.CustomerHistory
 function CraftSim.CUSTOMER_HISTORY.FRAMES:OnCustomerSelected(customerHistory)
     ---@type GGUI.Text
     local customerName = CraftSim.CUSTOMER_HISTORY.frame.content.customerName
@@ -399,17 +395,17 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:OnCustomerSelected(customerHistory)
     CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerCraftHistory(customerHistory.craftHistory)
 end
 
----@param craftHistory CraftSim.CustomerHistory.Craft
+---@param craftHistory CraftSim.DB.CustomerHistory.Craft
 function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerCraftHistory(craftHistory)
     ---@type GGUI.FrameList
     local craftList = CraftSim.CUSTOMER_HISTORY.frame.content.craftList
 
     craftList:Remove()
 
-    ---@type CraftSim.CustomerHistory.Craft[]
+    ---@type CraftSim.DB.CustomerHistory.Craft[]
     local craftsSorted = CraftSim.GUTIL:Sort(craftHistory,
-        ---@param craftA CraftSim.CustomerHistory.Craft
-        ---@param craftB CraftSim.CustomerHistory.Craft
+        ---@param craftA CraftSim.DB.CustomerHistory.Craft
+        ---@param craftB CraftSim.DB.CustomerHistory.Craft
         function(craftA, craftB)
             return craftA.timestamp > craftB.timestamp
         end)
@@ -453,23 +449,23 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerCraftHistory(craftHistor
     craftList:UpdateDisplay()
 end
 
----@param chatHistory CraftSim.CustomerHistory.ChatMessage
+---@param chatHistory CraftSim.DB.CustomerHistory.ChatMessage
 function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerChatHistory(customer, chatHistory)
     ---@type GGUI.FrameList
     local chatMessageList = CraftSim.CUSTOMER_HISTORY.frame.content.chatMessageList
 
     chatMessageList:Remove()
 
-    ---@type CraftSim.CustomerHistory.ChatMessage[]
+    ---@type CraftSim.DB.CustomerHistory.ChatMessage[]
     local chatMessagesReversed = CraftSim.GUTIL:Sort(chatHistory,
-        ---@param chatMessageA CraftSim.CustomerHistory.ChatMessage
-        ---@param chatMessageB CraftSim.CustomerHistory.ChatMessage
+        ---@param chatMessageA CraftSim.DB.CustomerHistory.ChatMessage
+        ---@param chatMessageB CraftSim.DB.CustomerHistory.ChatMessage
         function(chatMessageA, chatMessageB)
             return chatMessageA.timestamp < chatMessageB.timestamp
         end)
 
     -- insert headers per day
-    ---@type (CraftSim.CustomerHistory.ChatMessage | {day:string})[]
+    ---@type (CraftSim.DB.CustomerHistory.ChatMessage | {day:string})[]
     local chatMessages = {}
     local currentDate = nil
     for _, chatMessage in pairs(chatMessagesReversed) do
