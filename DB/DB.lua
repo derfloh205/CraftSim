@@ -12,7 +12,7 @@ CraftSim.DB = {}
 ---@alias ItemID number
 ---@alias QualityID number between 1 and 5
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 
 ---@class CraftSimDB.Database
 ---@field version number

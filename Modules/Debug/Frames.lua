@@ -157,9 +157,9 @@ function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
         sizeY = tabSizeY
     }
 
-    controlPanel.content.cacheTab = GGUI.BlizzardTab {
+    controlPanel.content.dbTab = GGUI.BlizzardTab {
         buttonOptions = {
-            label = "Cache", anchorA = "LEFT", anchorB = "RIGHT",
+            label = "DB", anchorA = "LEFT", anchorB = "RIGHT",
             anchorParent = controlPanel.content.logTab.button
         },
         top = true,
@@ -170,8 +170,8 @@ function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
 
     controlPanel.content.modulesTab = GGUI.BlizzardTab {
         buttonOptions = {
-            label = "Module Debug Tools", anchorA = "LEFT", anchorB = "RIGHT",
-            anchorParent = controlPanel.content.cacheTab.button
+            label = "Modules", anchorA = "LEFT", anchorB = "RIGHT",
+            anchorParent = controlPanel.content.dbTab.button
         },
         top = true,
         parent = controlPanel.content, anchorParent = controlPanel.content,
@@ -179,10 +179,10 @@ function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
         sizeY = tabSizeY
     }
 
-    GGUI.BlizzardTabSystem { controlPanel.content.logTab, controlPanel.content.cacheTab, controlPanel.content.modulesTab }
+    GGUI.BlizzardTabSystem { controlPanel.content.logTab, controlPanel.content.dbTab, controlPanel.content.modulesTab }
 
     CraftSim.DEBUG.FRAMES:InitLogOptionsTab(controlPanel.content.logTab)
-    CraftSim.DEBUG.FRAMES:InitCacheTab(controlPanel.content.cacheTab)
+    CraftSim.DEBUG.FRAMES:InitCacheTab(controlPanel.content.dbTab)
     CraftSim.DEBUG.FRAMES:InitModuleDebugToolsTab(controlPanel.content.modulesTab)
 end
 
