@@ -63,11 +63,6 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Get(itemID, crafterUID)
     return CraftSimDB.itemOptimizedCostsDB.data[itemID][crafterUID]
 end
 
----@return CraftSim.ItemRecipeData[]
-function CraftSim.DB.ITEM_OPTIMIZED_COSTS:GetAll()
-    return CraftSimDB.itemOptimizedCostsDB.data
-end
-
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(recipeData)
     -- cache the results if not gear and if its learned only

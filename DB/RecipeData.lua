@@ -33,7 +33,6 @@ CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE = {}
 ---@field altClassCache table<CrafterUID, ClassFile>
 ---@field postLoadedMulticraftInformationProfessions table<Enum.Profession, boolean>
 ---@field cooldownCache table<CrafterUID, table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>>
----@field subRecipeCrafterCache table<RecipeID, CrafterUID>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     cachedRecipeIDs = {},
     recipeInfoCache = {},
@@ -44,7 +43,6 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     altClassCache = {},
     postLoadedMulticraftInformationProfessions = {},
     cooldownCache = {},
-    subRecipeCrafterCache = {},
     cacheVersions = {
         cachedRecipeIDs = 1,
         recipeInfoCache = 1,
@@ -55,7 +53,6 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
         altClassCache = 1,
         postLoadedMulticraftInformationProfessions = 1,
         cooldownCache = 1,
-        subRecipeCrafterCache = 1,
     },
 }
 
@@ -79,7 +76,6 @@ function CraftSim.DB.RECIPE_DATA:HandleUpdates()
         CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions = CraftSimRecipeDataCache
             .postLoadedMulticraftInformationProfessions or {}
         CraftSimRecipeDataCache.cooldownCache = CraftSimRecipeDataCache.cooldownCache or {}
-        CraftSimRecipeDataCache.subRecipeCrafterCache = CraftSimRecipeDataCache.subRecipeCrafterCache or {}
         CraftSimRecipeDataCache.cacheVersions = CraftSimRecipeDataCache.cacheVersions or {}
 
         CraftSim.DB.RECIPE_DATA:HandleMigrations()
@@ -122,11 +118,6 @@ function CraftSim.DB.RECIPE_DATA:HandleMigrations()
         CraftSim.DB.RECIPE_DATA:MigrateCooldownCache_0_1()
         CraftSimRecipeDataCache.cacheVersions.cooldownCache = 1
     end
-
-    -- subRecipeCrafterCache 0 -> 1
-    if not CraftSimRecipeDataCache.cacheVersions.subRecipeCrafterCache then
-        CraftSimRecipeDataCache.cacheVersions.subRecipeCrafterCache = 1
-    end
 end
 
 function CraftSim.DB.RECIPE_DATA:MigrateCooldownCache_0_1()
@@ -146,25 +137,6 @@ function CraftSim.DB.RECIPE_DATA:MigrateCooldownCache_0_1()
     end
 
     CraftSimRecipeDataCache.cooldownCache = newCache
-end
-
----@param recipeID RecipeID
----@return CrafterUID crafterUID?
-function CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(recipeID)
-    return CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID]
-end
-
----@param recipeID RecipeID
----@param crafterUID CrafterUID
----@return boolean
-function CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(recipeID, crafterUID)
-    return crafterUID == CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID]
-end
-
----@param recipeID RecipeID
----@param crafterUID CrafterUID
-function CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(recipeID, crafterUID)
-    CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID] = crafterUID
 end
 
 ---@param recipeID RecipeID

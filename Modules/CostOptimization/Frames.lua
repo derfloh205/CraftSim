@@ -346,8 +346,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
             ---@param userInput boolean
                 function(row, userInput)
                     if userInput and row.recipeID and row.crafterUID then
-                        if not CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(row.recipeID, row.crafterUID) then
-                            CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(row.recipeID, row.crafterUID)
+                        if not CraftSim.DB.RECIPE_SUB_CRAFTER:IsCrafter(row.recipeID, row.crafterUID) then
+                            CraftSim.DB.RECIPE_SUB_CRAFTER:SetCrafter(row.recipeID, row.crafterUID)
                             CraftSim.INIT:TriggerModulesByRecipeType()
                         end
                     end
@@ -375,9 +375,9 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
         ---@param rowA CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.Row
         ---@param rowB CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.Row
             function(rowA, rowB)
-                local isCrafterA = CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(rowA.recipeID,
+                local isCrafterA = CraftSim.DB.RECIPE_SUB_CRAFTER:IsCrafter(rowA.recipeID,
                     rowA.crafterUID)
-                local isCrafterB = CraftSim.DB.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(rowB.recipeID,
+                local isCrafterB = CraftSim.DB.RECIPE_SUB_CRAFTER:IsCrafter(rowB.recipeID,
                     rowB.crafterUID)
 
                 return isCrafterA and not isCrafterB

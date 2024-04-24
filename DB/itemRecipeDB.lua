@@ -76,11 +76,9 @@ function CraftSim.DB.ITEM_RECIPE:Add(recipeID, qualityID, itemID, crafterUID)
     if not tContains(itemRecipeData.crafters, crafterUID) then
         tinsert(itemRecipeData.crafters, crafterUID)
 
-        -- TODO: move responsibility to subRecipeCrafterCache?
-        -- if the first and only crafter, enable in subRecipeCrafterCache
-        -- if #CraftSimRecipeDataCache.itemRecipeCache[itemID].crafters == 1 then
-        --     CraftSimRecipeDataCache.subRecipeCrafterCache[recipeID] = crafterUID
-        -- end
+        if #itemRecipeData.crafters == 1 then
+            CraftSim.DB.RECIPE_SUB_CRAFTER:SetCrafter(recipeID, crafterUID)
+        end
     end
 
     CraftSimDB.itemRecipeDB.data[itemID] = itemRecipeData

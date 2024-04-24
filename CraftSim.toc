@@ -32,6 +32,7 @@ DB/itemCountDB.lua
 DB/craftQueueDB.lua
 DB/itemRecipeDB.lua
 DB/itemOptimizedCostsDB.lua
+DB/recipeSubCrafterDB.lua
 DB/RecipeData.lua
 
 Media/Media.lua
