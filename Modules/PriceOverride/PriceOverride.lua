@@ -7,6 +7,7 @@ CraftSim.PRICE_OVERRIDE = {}
 ---@field globalOverrides CraftSim.PriceOverrideData[]
 ---@field recipeResultOverrides CraftSim.PriceOverrideData[][]
 
+-- TODO -> MOVE TO CraftSimDB
 ---@type CraftSim.PriceOverride
 CraftSimPriceOverridesV2 = CraftSimPriceOverridesV2 or {
     globalOverrides = {},       -- mapped itemID -> data
