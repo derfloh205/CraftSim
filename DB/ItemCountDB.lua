@@ -8,8 +8,8 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CACHE_ITEM_C
 ---@class CraftSim.DB
 CraftSim.DB = CraftSim.DB
 
----@class CraftSim.DB.ITEM_COUNT
-CraftSim.DB.ITEM_COUNT = {}
+---@class CraftSim.DB.ITEM_COUNT : CraftSim.DB.Repository
+CraftSim.DB.ITEM_COUNT = CraftSim.DB:RegisterRepository()
 
 function CraftSim.DB.ITEM_COUNT:Init()
     if not CraftSimDB.itemCountDB then

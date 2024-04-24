@@ -10,7 +10,7 @@
 ## X-WoWI-ID: 26519
 ## AddonCompartmentFunc: CraftSim_OnAddonCompartmentClick
 ## IconTexture: Interface\Icons\inv_misc_coin_02
-## SavedVariables: CraftSimDB, CraftSimDebugData, CraftSimGGUIConfig, CraftSimPriceOverridesV2, CraftSimLoadedProfessionRecipes, CraftSimCustomerHistoryV2, CraftSimLibIconDB, CraftSimRecipeDataCache, CraftSimCraftQueueCache
+## SavedVariables: CraftSimDB, CraftSimDebugData, CraftSimGGUIConfig, CraftSimPriceOverridesV2, CraftSimLoadedProfessionRecipes, CraftSimCustomerHistoryV2, CraftSimLibIconDB, CraftSimRecipeDataCache
 ## Dependencies: Blizzard_Professions
 ## OptionalDeps: Auctionator, TradeSkillMaster, RECrystallize, OribosExchange
 
@@ -29,8 +29,8 @@ Util/Util.lua
 DB/DB.lua
 DB/optionsDB.lua
 DB/itemCountDB.lua
+DB/craftQueueDB.lua
 DB/RecipeData.lua
-DB/CraftQueue.lua
 
 Media/Media.lua
 

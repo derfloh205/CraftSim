@@ -207,19 +207,21 @@ function CraftSim.CraftQueue:ClearAllForCharacter(crafterData)
 end
 
 function CraftSim.CraftQueue:CacheQueueItems()
-    CraftSim.DEBUG:StartProfiling("CraftQueue Item Caching")
-    CraftSimCraftQueueCache = GUTIL:Map(self.craftQueueItems, function(craftQueueItem)
-        return craftQueueItem:Serialize()
-    end)
-    CraftSim.DEBUG:StopProfiling("CraftQueue Item Caching")
+    CraftSim.DEBUG:StartProfiling("CraftQueue Item DB Save")
+    CraftSim.DB.CRAFT_QUEUE:ClearAll()
+    for _, craftQueueItem in ipairs(self.craftQueueItems) do
+        CraftSim.DB.CRAFT_QUEUE:Add(craftQueueItem:Serialize())
+    end
+    CraftSim.DEBUG:StopProfiling("CraftQueue Item DB Save")
 end
 
-function CraftSim.CraftQueue:RestoreFromCache()
+function CraftSim.CraftQueue:RestoreFromDB()
     CraftSim.DEBUG:StartProfiling("CraftQueue Item Restoration")
-    print("Restore CraftQ From Cache Start...")
+    print("Restore CraftQ From DB Start...")
+    local dbCraftQueueItems = CraftSim.DB.CRAFT_QUEUE:GetAll()
     local function load()
-        print("Loading Cached CraftQueue...")
-        self.craftQueueItems = GUTIL:Map(CraftSimCraftQueueCache, function(craftQueueItemSerialized)
+        print("Loading CraftQueue from DB...")
+        self.craftQueueItems = GUTIL:Map(dbCraftQueueItems, function(craftQueueItemSerialized)
             local craftQueueItem = CraftSim.CraftQueueItem:Deserialize(craftQueueItemSerialized)
             if craftQueueItem then
                 craftQueueItem:CalculateCanCraft()
@@ -240,7 +242,7 @@ function CraftSim.CraftQueue:RestoreFromCache()
     -- wait til necessary info is loaded, then put deserialized items into queue
     GUTIL:WaitFor(function()
             print("Wait for professionInfo loaded or cached")
-            return GUTIL:Every(CraftSimCraftQueueCache,
+            return GUTIL:Every(dbCraftQueueItems,
                 function(craftQueueItemSerialized)
                     -- from cache?
                     CraftSimRecipeDataCache.professionInfoCache[CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)] =

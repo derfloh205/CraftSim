@@ -8,8 +8,8 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 ---@class CraftSim.DB
 CraftSim.DB = CraftSim.DB
 
----@class CraftSim.DB.OPTIONS
-CraftSim.DB.OPTIONS = {}
+---@class CraftSim.DB.OPTIONS : CraftSim.DB.Repository
+CraftSim.DB.OPTIONS = CraftSim.DB:RegisterRepository()
 
 function CraftSim.DB.OPTIONS:Init()
     if not CraftSimDB.optionsDB then
@@ -26,6 +26,7 @@ function CraftSim.DB.OPTIONS:Migrate()
     if CraftSimDB.optionsDB.version == 0 then
         -- move old saved variable to new db if it exists, otherwise init new table
         CraftSimDB.optionsDB.data = {}
+        local CraftSimOptions = _G["CraftSimOptions"]
         if CraftSimOptions then
             -- remap to new options enum
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE_REMINDER_DISABLED] = CraftSimOptions
@@ -196,7 +197,7 @@ end
 function CraftSim.DB.OPTIONS:CleanUp()
     if _G["CraftSimOptions"] then
         -- remove old
-        --_G["CraftSimOptions"] = nil
+        _G["CraftSimOptions"] = nil
     end
 end
 

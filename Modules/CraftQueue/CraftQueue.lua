@@ -119,7 +119,7 @@ function CraftSim.CRAFTQ:InitializeCraftQueue()
     -- load from Saved Variables
     CraftSim.CRAFTQ.craftQueue = CraftSim.CraftQueue()
 
-    CraftSim.CRAFTQ.craftQueue:RestoreFromCache()
+    CraftSim.CRAFTQ.craftQueue:RestoreFromDB()
 
     -- hook onto auction buy confirm function
     hooksecurefunc(C_AuctionHouse, "ConfirmCommoditiesPurchase", function(itemID, quantity)

@@ -14,6 +14,12 @@ CraftSim.DB = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 
+---@class CraftSim.DB.Repository
+---@field Init function
+---@field ClearAll function
+---@field Migrate function
+---@field CleanUp function
+
 ---@class CraftSimDB.Database
 ---@field version number
 ---@field data table
@@ -21,30 +27,35 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 ---@class CraftSimDB
 ---@field itemCountDB CraftSimDB.Database
 ---@field optionsDB CraftSimDB.Database
+---@field craftQueueDB CraftSimDB.Database
 CraftSimDB = CraftSimDB or {}
 
+---@type CraftSim.DB.Repository[]
+CraftSim.DB.repositories = {}
+
+---@return CraftSim.DB.Repository
+function CraftSim.DB:RegisterRepository()
+    ---@type CraftSim.DB.Repository
+    local repository = {
+        Init = function() end,
+        Migrate = function() end,
+        ClearAll = function() end,
+        CleanUp = function() end,
+    }
+    tinsert(CraftSim.DB.repositories, repository)
+    return repository
+end
+
 function CraftSim.DB:Init()
-    self.ITEM_COUNT:Init()
-    self.OPTIONS:Init()
-
-    CraftSim.DB:Migrate()
-    CraftSim.DB:CleanUp()
-end
-
-function CraftSim.DB:Migrate()
-    self.OPTIONS:Migrate()
-    self.ITEM_COUNT:Migrate()
-end
-
-function CraftSim.DB:CleanUp()
-    self.ITEM_COUNT:CleanUp()
-    self.OPTIONS:CleanUp()
+    for _, repository in ipairs(self.repositories) do
+        repository:Init()
+        repository:Migrate()
+        repository:CleanUp()
+    end
 end
 
 function CraftSim.DB:ClearAll()
-    CraftSim.DB.RECIPE_DATA:ClearAll()
-    CraftSim.DB.ITEM_COUNT:ClearAll()
-    CraftSim.DB.CRAFT_QUEUE:ClearAll()
-    CraftSim.PRICE_OVERRIDE:ClearAll()
-    CraftSim.DB.OPTIONS:ClearAll()
+    for _, repository in ipairs(self.repositories) do
+        repository:ClearAll()
+    end
 end
