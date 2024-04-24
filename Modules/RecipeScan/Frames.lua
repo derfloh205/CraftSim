@@ -213,7 +213,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:UpdateProfessionList()
     local activeRows = content.professionList.activeRows
     local crafterDBDataMap = CraftSim.DB.CRAFTER:GetAll()
     for crafterUID, crafterDBData in pairs(crafterDBDataMap) do
-        local cachedProfessionRecipeIDs = crafterDBData.cachedRecipeIDs
+        local cachedProfessionRecipeIDs = crafterDBData.cachedRecipeIDs or {}
         for profession, _ in pairs(cachedProfessionRecipeIDs) do
             local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
             local alreadyListed = GUTIL:Some(activeRows, function(activeRow)
