@@ -187,14 +187,6 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                         tooltipText = color:WrapTextInColorCode(tooltipText)
                     end
 
-                    CraftSimRecipeDataCache.recipeInfoCache[crafterUID] = CraftSimRecipeDataCache.recipeInfoCache
-                        [crafterUID] or {}
-
-                    CraftSimRecipeDataCache.professionInfoCache[crafterUID] = CraftSimRecipeDataCache
-                        .professionInfoCache
-                        [crafterUID] or {}
-
-
                     local professionInfo = CraftSimRecipeDataCache.professionInfoCache[crafterUID][recipeID] or
                         C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
                     local professionIcon = ""
@@ -205,7 +197,7 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
 
                     crafterColumn.text:SetText(professionIcon .. crafterName)
 
-                    local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][recipeID] or
+                    local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID) or
                         C_TradeSkillUI.GetRecipeInfo(recipeID)
 
 
@@ -213,9 +205,8 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                         recipeColumn.text:SetText(L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD]))
                         local recipeListText = ""
                         for _, sharedRecipeID in pairs(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES[cooldownData.sharedCD]) do
-                            local sharedRecipeIDInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID]
-                                [sharedRecipeID] or
-                                C_TradeSkillUI.GetRecipeInfo(sharedRecipeID)
+                            local sharedRecipeIDInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, sharedRecipeID) or
+                            C_TradeSkillUI.GetRecipeInfo(sharedRecipeID)
 
                             if sharedRecipeIDInfo then
                                 recipeListText = recipeListText .. "\n" .. sharedRecipeIDInfo.name

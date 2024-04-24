@@ -224,14 +224,13 @@ function CraftSim.RECIPE_SCAN:GetScanRecipeInfo(row)
             return nil
         end)
     end
-    -- else take the infos from cache
-    local cachedProfessions = CraftSimRecipeDataCache.cachedRecipeIDs[row.crafterUID] or {}
-    local cachedRecipeIDs = cachedProfessions[row.profession] or {}
+    -- else take the infos from db
+    local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(row.crafterUID, row.profession)
 
     return GUTIL:Map(cachedRecipeIDs, function(recipeID)
-        -- also take from cache
-        local recipeInfoCache = CraftSimRecipeDataCache.recipeInfoCache[row.crafterUID] or {}
-        local recipeInfo = recipeInfoCache[recipeID]
+        -- also take from db
+        local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(row.crafterUID, recipeID)
+
         if CraftSim.RECIPE_SCAN.FilterRecipeInfo(row.crafterUID, recipeInfo) then
             return recipeInfo
         end
@@ -374,9 +373,8 @@ function CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
     GUTIL:WaitFor(function()
         local playerCrafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
         local professionInfo = C_TradeSkillUI.GetBaseProfessionInfo()
-        CraftSimRecipeDataCache.cachedRecipeIDs[playerCrafterUID] = CraftSimRecipeDataCache.cachedRecipeIDs
-            [playerCrafterUID] or {}
-        return CraftSimRecipeDataCache.cachedRecipeIDs[playerCrafterUID][professionInfo.profession] ~= nil
+        local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(playerCrafterUID, professionInfo.profession)
+        return cachedRecipeIDs ~= nil
     end, update)
 end
 

@@ -84,6 +84,7 @@ function CraftSim.CUSTOMER_SERVICE:SendPreviewRequest(crafter, previewID, profes
     CraftSim.COMM:SendData(PREVIEW_REQUEST_PREFIX, requestData, "WHISPER", crafter)
 end
 
+---@deprecated
 function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
     print("OnPreviewRequest: " .. type(payload.previewID), false, true)
     if not tContains(CraftSim.DB.OPTIONS:Get("CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS"), tonumber(payload.previewID)) then
@@ -112,9 +113,8 @@ function CraftSim.CUSTOMER_SERVICE.OnPreviewRequest(payload)
 
     -- get all cached recipe ids of that character for that profession
     local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
-    local professions = CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] or {}
 
-    local professionRecipeIDs = professions(profession)
+    local professionRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(crafterUID, profession)
 
     -- map to recipeInfo and filter
     local response = {

@@ -568,10 +568,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeList(reci
                 local columns = row.columns
                 local recipeColumn = columns[1] --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeList.RecipeColumn]]
                 -- to get general data just take the first crafter to fetch from cache
-                CraftSimRecipeDataCache.recipeInfoCache[subRecipeCraftingInfo.crafters[1]] = CraftSimRecipeDataCache
-                    .recipeInfoCache[subRecipeCraftingInfo.crafters[1]] or {}
-                local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[subRecipeCraftingInfo.crafters[1]]
-                    [subRecipeCraftingInfo.recipeID]
+                local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(subRecipeCraftingInfo.crafters[1],
+                    subRecipeCraftingInfo.recipeID)
 
                 if recipeInfo then
                     row.recipeTitle = GUTIL:IconToText(recipeInfo.icon, 20, 20) .. " " .. recipeInfo.name

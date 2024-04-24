@@ -22,7 +22,6 @@ Util/Const.lua
 
 Modules/Debug/Debug.lua
 Modules/Debug/Frames.lua
-Modules/Debug/Test.lua
 
 Util/Util.lua
 

@@ -359,8 +359,8 @@ function CraftSim.CRAFTQ:DeleteAllCraftSimShoppingLists()
     -- delete the general shopping list if it exists
     CraftSim.CRAFTQ:DeleteAuctionatorShoppingList(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME)
     -- delete , if existing, all shoppinglists for cached crafterUIDS
-
-    for crafterUID, _ in pairs(CraftSimRecipeDataCache.cachedRecipeIDs) do
+    local crafterUIDs = CraftSim.DB.CRAFTER:GetCrafterUIDs()
+    for _, crafterUID in pairs(crafterUIDs) do
         CraftSim.CRAFTQ:DeleteAuctionatorShoppingList(CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME ..
             " " .. tostring(crafterUID))
     end

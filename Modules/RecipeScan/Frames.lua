@@ -107,13 +107,12 @@ end
 function CraftSim.RECIPE_SCAN.FRAMES:UpdateProfessionListRowCachedRecipesInfo(selectedRow)
     -- update cached recipes value
     local content = selectedRow.content --[[@as CraftSim.RECIPE_SCAN.PROFESSION_LIST.TAB_CONTENT]]
-    local professions = CraftSimRecipeDataCache.cachedRecipeIDs[selectedRow.crafterUID] or {}
-    local recipeIDCache = professions[selectedRow.profession] or {}
+    local cachedRecipeIDs = CraftSim.DB.CRAFTER:GetCachedRecipeIDs(selectedRow.crafterUID, selectedRow.profession)
 
     if C_TradeSkillUI.IsTradeSkillReady() then
         if selectedRow.crafterProfessionUID ~= CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID() then
             content.cachedRecipesInfoHelpIcon:Show()
-            content.cachedRecipesInfo:SetText("(Cached Recipes: " .. tostring(#recipeIDCache) .. ") ")
+            content.cachedRecipesInfo:SetText("(Cached Recipes: " .. tostring(#cachedRecipeIDs) .. ") ")
         else
             content.cachedRecipesInfo:SetText("")
             content.cachedRecipesInfoHelpIcon:Hide()
@@ -212,8 +211,10 @@ function CraftSim.RECIPE_SCAN.FRAMES:UpdateProfessionList()
     local content = CraftSim.RECIPE_SCAN.frame.content.recipeScanTab
         .content --[[@as CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB.CONTENT]]
     local activeRows = content.professionList.activeRows
-    for crafterUID, professions in pairs(CraftSimRecipeDataCache.cachedRecipeIDs) do
-        for profession, _ in pairs(professions) do
+    local crafterDBDataMap = CraftSim.DB.CRAFTER:GetAll()
+    for crafterUID, crafterDBData in pairs(crafterDBDataMap) do
+        local cachedProfessionRecipeIDs = crafterDBData.cachedRecipeIDs
+        for profession, _ in pairs(cachedProfessionRecipeIDs) do
             local crafterProfessionUID = CraftSim.RECIPE_SCAN:GetCrafterProfessionUID(crafterUID, profession)
             local alreadyListed = GUTIL:Some(activeRows, function(activeRow)
                 return activeRow.crafterProfessionUID == crafterProfessionUID
