@@ -50,7 +50,7 @@ end
 
 function CraftSim.DB.MULTICRAFT_PRELOAD:CleanUp()
     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-    if CraftSimRecipeDataCache["postLoadedMulticraftInformationProfessions"] then
+    if CraftSimRecipeDataCache and CraftSimRecipeDataCache["postLoadedMulticraftInformationProfessions"] then
         CraftSimRecipeDataCache["postLoadedMulticraftInformationProfessions"] = nil
     end
 end

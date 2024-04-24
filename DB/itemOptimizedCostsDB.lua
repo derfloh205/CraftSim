@@ -49,7 +49,7 @@ end
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:CleanUp()
     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-    if CraftSimRecipeDataCache["itemOptimizedCostsDataCache"] then
+    if CraftSimRecipeDataCache and CraftSimRecipeDataCache["itemOptimizedCostsDataCache"] then
         CraftSimRecipeDataCache["itemOptimizedCostsDataCache"] = nil
     end
 end

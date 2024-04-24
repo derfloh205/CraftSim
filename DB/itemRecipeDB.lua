@@ -44,8 +44,10 @@ end
 
 function CraftSim.DB.ITEM_RECIPE:CleanUp()
     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-    if CraftSimRecipeDataCache["itemRecipeCache"] then
-        CraftSimRecipeDataCache["itemRecipeCache"] = nil
+    if CraftSimRecipeDataCache then
+        if CraftSimRecipeDataCache["itemRecipeCache"] then
+            CraftSimRecipeDataCache["itemRecipeCache"] = nil
+        end
     end
 end
 

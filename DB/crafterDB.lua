@@ -334,12 +334,14 @@ end
 
 function CraftSim.DB.CRAFTER:CleanUp()
     local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
-    CraftSimRecipeDataCache["cachedRecipeIDs"] = nil
-    CraftSimRecipeDataCache["recipeInfoCache"] = nil
-    CraftSimRecipeDataCache["professionInfoCache"] = nil
-    CraftSimRecipeDataCache["operationInfoCache"] = nil
-    CraftSimRecipeDataCache["specializationDataCache"] = nil
-    CraftSimRecipeDataCache["professionGearCache"] = nil
-    CraftSimRecipeDataCache["altClassCache"] = nil
-    CraftSimRecipeDataCache["cooldownCache"] = nil
+    if CraftSimRecipeDataCache then
+        CraftSimRecipeDataCache["cachedRecipeIDs"] = nil
+        CraftSimRecipeDataCache["recipeInfoCache"] = nil
+        CraftSimRecipeDataCache["professionInfoCache"] = nil
+        CraftSimRecipeDataCache["operationInfoCache"] = nil
+        CraftSimRecipeDataCache["specializationDataCache"] = nil
+        CraftSimRecipeDataCache["professionGearCache"] = nil
+        CraftSimRecipeDataCache["altClassCache"] = nil
+        CraftSimRecipeDataCache["cooldownCache"] = nil
+    end
 end
