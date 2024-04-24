@@ -233,7 +233,7 @@ CraftSim.CONST.QUEST_RECIPE_IDS = {
 ---@enum CraftSim.DEBUG_IDS
 CraftSim.CONST.DEBUG_IDS = {
     DB = "DB",
-    MAIN = "MAIN",
+    INIT = "INIT",
     SPECDATA = "SPECDATA",
     ERROR = "ERROR",
     DATAEXPORT = "DATAEXPORT",
