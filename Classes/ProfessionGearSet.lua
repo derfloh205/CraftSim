@@ -27,11 +27,6 @@ function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet()
     local crafterUID = self.recipeData:GetCrafterUID()
 
     if self.recipeData:IsCrafter() then
-        CraftSimRecipeDataCache.professionGearCache[crafterUID] = CraftSimRecipeDataCache.professionGearCache
-            [crafterUID] or {}
-        CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] =
-            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] or
-            CopyTable(CraftSim.DB.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
         if self.isCooking then
             local tool = GetInventoryItemLink("player", self.professionGearSlots[1])
             local gear2 = GetInventoryItemLink("player", self.professionGearSlots[2])
@@ -46,16 +41,11 @@ function CraftSim.ProfessionGearSet:LoadCurrentEquippedSet()
             self.gear2:SetItem(gear2)
         end
 
-        CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID].equippedGear = self:Serialize()
+        CraftSim.DB.CRAFTER:SaveProfessionGearEquipped(crafterUID, self.professionID, self)
     else
-        CraftSimRecipeDataCache.professionGearCache[crafterUID] = CraftSimRecipeDataCache.professionGearCache
-            [crafterUID] or {}
-        CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] =
-            CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID] or
-            CopyTable(CraftSim.DB.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
-        local professionGearCacheData = CraftSimRecipeDataCache.professionGearCache[crafterUID][self.professionID]
-        if professionGearCacheData and professionGearCacheData.equippedGear then
-            self:LoadSerialized(professionGearCacheData.equippedGear)
+        local equippedGearSerialized = CraftSim.DB.CRAFTER:GetProfessionGearEquipped(crafterUID, self.professionID)
+        if equippedGearSerialized then
+            self:LoadSerialized(equippedGearSerialized)
         end
     end
 

@@ -170,12 +170,6 @@ end
 ---@return CraftSim.ProfessionGear[] inventoryGear
 function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
     local crafterUID = recipeData:GetCrafterUID()
-    CraftSimRecipeDataCache.professionGearCache[crafterUID] = CraftSimRecipeDataCache.professionGearCache[crafterUID] or
-        {}
-    CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession] =
-        CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession] or
-        CopyTable(
-            CraftSim.DB.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA)
     if recipeData:IsCrafter() then
         local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
         print("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
@@ -199,31 +193,21 @@ function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
                             professionGear:SetItem(itemLink)
                             table.insert(inventoryGear, professionGear)
 
-                            if not GUTIL:Find(CraftSimRecipeDataCache.professionGearCache[crafterUID]
-                                    [recipeData.professionData.professionInfo.profession]
-                                    .availableProfessionGear, function(g) return g.itemLink == itemLink end) then
-                                table.insert(CraftSimRecipeDataCache.professionGearCache[crafterUID]
-                                    [recipeData.professionData.professionInfo.profession]
-                                    .availableProfessionGear, professionGear:Serialize())
-                            end
+                            CraftSim.DB.CRAFTER:SaveProfessionGearAvailable(crafterUID,
+                                recipeData.professionData.professionInfo.profession, professionGear)
                         end
                     end
                 end
             end
         end
-
-        CraftSimRecipeDataCache.professionGearCache[crafterUID][recipeData.professionData.professionInfo.profession].cached = true
+        CraftSim.DB.CRAFTER:FlagProfessionGearCached(crafterUID, recipeData.professionData.professionInfo.profession)
         return inventoryGear
     else
-        local professionGearCacheData = CraftSimRecipeDataCache.professionGearCache[crafterUID]
-            [recipeData.professionData.professionInfo.profession]
+        recipeData.professionGearCached = CraftSim.DB.CRAFTER:GetProfessionGearCached(crafterUID,
+            recipeData.professionData.professionInfo.profession)
 
-        recipeData.professionGearCached = professionGearCacheData.cached
-
-        return GUTIL:Map(professionGearCacheData.availableProfessionGear,
-            function(professionGearSerialized)
-                return CraftSim.ProfessionGear:Deserialize(professionGearSerialized)
-            end)
+        return CraftSim.DB.CRAFTER:GetProfessionGearAvailable(crafterUID,
+            recipeData.professionData.professionInfo.profession)
     end
 end
 

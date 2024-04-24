@@ -786,29 +786,21 @@ end
 function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
     local crafterUID = self:GetCrafterUID()
 
-    CraftSimRecipeDataCache.specializationDataCache[crafterUID] = CraftSimRecipeDataCache.specializationDataCache
-        [crafterUID] or {}
-
     if not self:IsCrafter() then
-        local specializationDataSerialized = CraftSimRecipeDataCache.specializationDataCache[crafterUID][self.recipeID]
-        if specializationDataSerialized then
+        local specializationData = CraftSim.DB.CRAFTER:GetSpecializationData(crafterUID, self)
+        if specializationData then
             self.specializationDataCached = true
-            return CraftSim.SpecializationData:Deserialize(specializationDataSerialized, self)
+            return specializationData
         end
         return CraftSim.SpecializationData(self) -- will initialize without stats and nodeinfo
     else
         local specializationData = CraftSim.SpecializationData(self)
 
-        -- if too early, use cache
+        -- if too early, use from db
         if not self.isOldWorldRecipe and #specializationData.nodeData == 0 then
-            local specializationDataSerialized = CraftSimRecipeDataCache.specializationDataCache[crafterUID]
-                [self.recipeID]
-            if specializationDataSerialized then
-                specializationData = CraftSim.SpecializationData:Deserialize(specializationDataSerialized, self)
-            end
+            specializationData = CraftSim.DB.CRAFTER:GetSpecializationData(crafterUID, self)
         else
-            -- cache it
-            CraftSimRecipeDataCache.specializationDataCache[crafterUID][self.recipeID] = specializationData:Serialize()
+            CraftSim.DB.CRAFTER:SaveSpecializationData(crafterUID, specializationData)
         end
 
         return specializationData

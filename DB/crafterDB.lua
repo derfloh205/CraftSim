@@ -60,6 +60,16 @@ function CraftSim.DB.CRAFTER:Migrate()
                 CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
                 CraftSimDB.crafterDB.data[crafterUID].operationInfos = operationInfos
             end
+
+            for crafterUID, specializationData in pairs(CraftSimRecipeDataCache["specializationDataCache"] or {}) do
+                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+                CraftSimDB.crafterDB.data[crafterUID].specializationData = specializationData
+            end
+
+            for crafterUID, professionGear in pairs(CraftSimRecipeDataCache["professionGearCache"] or {}) do
+                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+                CraftSimDB.crafterDB.data[crafterUID].professionGear = professionGear
+            end
         end
         CraftSimDB.crafterDB.version = 1
     end
@@ -104,7 +114,16 @@ end
 
 ---@param crafterUID CrafterUID
 ---@param recipeID RecipeID
----@return ProfessionInfo
+---@param recipeInfo TradeSkillRecipeInfo
+function CraftSim.DB.CRAFTER:SaveRecipeInfo(crafterUID, recipeID, recipeInfo)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].recipeInfos = CraftSimDB.crafterDB.data[crafterUID].recipeInfos or {}
+    CraftSimDB.crafterDB.data[crafterUID].recipeInfos[recipeID] = recipeInfo
+end
+
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@return ProfessionInfo?
 function CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID)
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
     CraftSimDB.crafterDB.data[crafterUID].professionInfos = CraftSimDB.crafterDB.data[crafterUID].professionInfos or {}
@@ -122,7 +141,7 @@ end
 
 ---@param crafterUID CrafterUID
 ---@param recipeID RecipeID
----@return CraftingOperationInfo
+---@return CraftingOperationInfo?
 function CraftSim.DB.CRAFTER:GetOperationInfoForRecipe(crafterUID, recipeID)
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
     CraftSimDB.crafterDB.data[crafterUID].operationInfos = CraftSimDB.crafterDB.data[crafterUID].operationInfos or {}
@@ -138,13 +157,106 @@ function CraftSim.DB.CRAFTER:SaveOperationInfoForRecipe(crafterUID, recipeID, op
     CraftSimDB.crafterDB.data[crafterUID].operationInfos[recipeID] = operationInfo
 end
 
+--- returns the data serialized
 ---@param crafterUID CrafterUID
----@param recipeID RecipeID
----@param recipeInfo TradeSkillRecipeInfo
-function CraftSim.DB.CRAFTER:SaveRecipeInfo(crafterUID, recipeID, recipeInfo)
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.SpecializationData?
+function CraftSim.DB.CRAFTER:GetSpecializationData(crafterUID, recipeData)
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
-    CraftSimDB.crafterDB.data[crafterUID].recipeInfos = CraftSimDB.crafterDB.data[crafterUID].recipeInfos or {}
-    CraftSimDB.crafterDB.data[crafterUID].recipeInfos[recipeID] = recipeInfo
+    CraftSimDB.crafterDB.data[crafterUID].specializationData = CraftSimDB.crafterDB.data[crafterUID].specializationData or
+        {}
+    local specializationDataSerialized = CraftSimDB.crafterDB.data[crafterUID].specializationData[recipeData.recipeID]
+
+    if specializationDataSerialized then
+        return CraftSim.SpecializationData:Deserialize(specializationDataSerialized, recipeData)
+    end
+
+    return nil
+end
+
+---@param crafterUID CrafterUID
+---@param specializationData CraftSim.SpecializationData
+function CraftSim.DB.CRAFTER:SaveSpecializationData(crafterUID, specializationData)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].specializationData = CraftSimDB.crafterDB.data[crafterUID].specializationData or
+        {}
+    CraftSimDB.crafterDB.data[crafterUID].specializationData[specializationData.recipeData.recipeID] = specializationData
+        :Serialize()
+end
+
+--- returns the data serialized
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return CraftSim.DB.CrafterDBData.ProfessionGearData professionGearData
+function CraftSim.DB.CRAFTER:GetProfessionGearData(crafterUID, profession)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].professionGear = CraftSimDB.crafterDB.data[crafterUID].professionGear or {}
+    CraftSimDB.crafterDB.data[crafterUID].professionGear[profession] = CraftSimDB.crafterDB.data[crafterUID]
+        .professionGear[profession] or
+        {
+            cached = false,
+            equippedGear = nil,
+            availableProfessionGear = {},
+        }
+    return CraftSimDB.crafterDB.data[crafterUID].professionGear[profession]
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@param professionGearSet CraftSim.ProfessionGearSet
+function CraftSim.DB.CRAFTER:SaveProfessionGearEquipped(crafterUID, profession, professionGearSet)
+    local professionGearData = self:GetProfessionGearData(crafterUID, profession)
+    professionGearData.equippedGear = professionGearSet:Serialize()
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@param professionGear CraftSim.ProfessionGear
+function CraftSim.DB.CRAFTER:SaveProfessionGearAvailable(crafterUID, profession, professionGear)
+    local professionGearData = self:GetProfessionGearData(crafterUID, profession)
+
+    local alreadyListed = GUTIL:Find(professionGearData.availableProfessionGear, function(g)
+        return g.itemLink ==
+            professionGear.item:GetItemLink()
+    end)
+    if not alreadyListed then
+        table.insert(professionGearData.availableProfessionGear, professionGear:Serialize())
+    end
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return CraftSim.ProfessionGear[] professionGear
+function CraftSim.DB.CRAFTER:GetProfessionGearAvailable(crafterUID, profession)
+    local professionGearData = self:GetProfessionGearData(crafterUID, profession)
+
+    return GUTIL:Map(professionGearData.availableProfessionGear, function(professionGearSerialized)
+        return CraftSim.ProfessionGear:Deserialize(professionGearSerialized)
+    end)
+end
+
+--- returns data serialized
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return CraftSim.ProfessionGearSet.Serialized?
+function CraftSim.DB.CRAFTER:GetProfessionGearEquipped(crafterUID, profession)
+    local professionGearData = self:GetProfessionGearData(crafterUID, profession)
+    return professionGearData.equippedGear
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+function CraftSim.DB.CRAFTER:FlagProfessionGearCached(crafterUID, profession)
+    local professionGearData = self:GetProfessionGearData(crafterUID, profession)
+    professionGearData.cached = true
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return boolean cached
+function CraftSim.DB.CRAFTER:GetProfessionGearCached(crafterUID, profession)
+    local professionGearData = self:GetProfessionGearData(crafterUID, profession)
+    return professionGearData.cached
 end
 
 ---@return table<CrafterUID, CraftSim.DB.CrafterDBData>

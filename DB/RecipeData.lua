@@ -16,17 +16,9 @@ CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE = {}
 
 -- TODO create 1 db for crafterUID -> infos
 ---@class CraftSim.RecipeDataCache
----@field specializationDataCache table<CrafterUID, table<RecipeID, CraftSim.SpecializationData.Serialized>?>
----@field professionGearCache table<CrafterUID, table<Enum.Profession, CraftSim.DB.CrafterDBData.ProfessionGearData>>
 ---@field altClassCache table<CrafterUID, ClassFile>
 ---@field cooldownCache table<CrafterUID, table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
-}
-
-CraftSim.DB.RECIPE_DATA.DEFAULT_PROFESSION_GEAR_CACHE_DATA = {
-    cached = false,
-    equippedGear = nil,
-    availableProfessionGear = {},
 }
 
 --- Since Multicraft seems to be missing on operationInfo on the first call after a fresh login, and seems to be loaded in after the first call,
