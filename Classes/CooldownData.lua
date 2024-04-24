@@ -140,13 +140,7 @@ end
 
 ---@param crafterUID CrafterUID
 function CraftSim.CooldownData:Save(crafterUID)
-    CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
-
-    local serialized = self:Serialize()
-    local serializationID = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[self.recipeID] or
-        self.recipeID
-
-    CraftSimRecipeDataCache.cooldownCache[crafterUID][serializationID] = serialized
+    CraftSim.DB.CRAFTER:SaveRecipeCooldownData(crafterUID, self.recipeID, self)
 end
 
 ---@class CraftSim.CooldownData.Serialized
@@ -193,12 +187,7 @@ end
 ---@param recipeID RecipeID
 ---@return CraftSim.CooldownData
 function CraftSim.CooldownData:DeserializeForCrafter(crafterUID, recipeID)
-    CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
-
-    local serializationID = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[recipeID] or
-        recipeID
-
-    local serializedCooldownData = CraftSimRecipeDataCache.cooldownCache[crafterUID][serializationID]
+    local serializedCooldownData = CraftSim.DB.CRAFTER:GetRecipeCooldownData(crafterUID, recipeID)
 
     if serializedCooldownData then
         local data = CraftSim.CooldownData:Deserialize(serializedCooldownData)

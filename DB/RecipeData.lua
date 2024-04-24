@@ -16,8 +16,6 @@ CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE = {}
 
 -- TODO create 1 db for crafterUID -> infos
 ---@class CraftSim.RecipeDataCache
----@field altClassCache table<CrafterUID, ClassFile>
----@field cooldownCache table<CrafterUID, table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
 }
 
@@ -39,26 +37,4 @@ function CraftSim.DB.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(pro
     CraftSim.DEBUG:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
 
     CraftSim.DB.MULTICRAFT_PRELOAD:Save(professionID, true)
-end
-
----@param recipeID RecipeID
----@param crafterUID? CrafterUID
-function CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(recipeID, crafterUID)
-    -- if crafterUID was given get directly otherwise check for any crafter
-    if crafterUID then
-        local serializationID = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[recipeID] or
-            recipeID
-        CraftSimRecipeDataCache.cooldownCache[crafterUID] = CraftSimRecipeDataCache.cooldownCache[crafterUID] or {}
-        ---@type CraftSim.CooldownData.Serialized?
-        local cooldownDataSerialized = CraftSimRecipeDataCache.cooldownCache[crafterUID][serializationID]
-        return cooldownDataSerialized ~= nil
-    else
-        for crafterUID, _ in pairs(CraftSimRecipeDataCache.cooldownCache) do
-            if self:IsCooldownRecipe(recipeID, crafterUID) then
-                return true
-            end
-        end
-
-        return false
-    end
 end

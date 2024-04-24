@@ -59,8 +59,7 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
                     .recipeID)
                 if recipeCrafter then
                     local allowCooldown = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS") or
-                        not CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(itemRecipeData.recipeID,
-                            recipeCrafter)
+                        not CraftSim.DB.CRAFTER:IsRecipeCooldownRecipe(recipeCrafter, itemRecipeData.recipeID)
                     if allowCooldown then
                         local itemOptimizedCostsData = CraftSim.DB.ITEM_OPTIMIZED_COSTS:Get(itemID,
                             recipeCrafter)

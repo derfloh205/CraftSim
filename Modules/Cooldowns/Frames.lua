@@ -160,7 +160,9 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
 
     cooldownList:Remove()
 
-    for crafterUID, recipeCooldowns in pairs(CraftSimRecipeDataCache.cooldownCache) do
+    local crafterCooldownData = CraftSim.DB.CRAFTER:GetCrafterCooldownData()
+
+    for crafterUID, recipeCooldowns in pairs(crafterCooldownData) do
         for serializationID, cooldownDataSerialized in pairs(recipeCooldowns) do
             local cooldownData = CraftSim.CooldownData:Deserialize(cooldownDataSerialized)
             local recipeID = cooldownData.recipeID

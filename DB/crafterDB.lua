@@ -24,7 +24,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 ---@field specializationData table<RecipeID, CraftSim.SpecializationData.Serialized>
 ---@field professionGear table<Enum.Profession, CraftSim.DB.CrafterDBData.ProfessionGearData>
 ---@field class ClassFile
----@field cooldowns table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>
+---@field cooldownData table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>
 
 function CraftSim.DB.CRAFTER:Init()
     if not CraftSimDB.crafterDB then
@@ -74,6 +74,11 @@ function CraftSim.DB.CRAFTER:Migrate()
             for crafterUID, class in pairs(CraftSimRecipeDataCache["altClassCache"] or {}) do
                 CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
                 CraftSimDB.crafterDB.data[crafterUID].class = class
+            end
+
+            for crafterUID, cooldownData in pairs(CraftSimRecipeDataCache["cooldownCache"] or {}) do
+                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+                CraftSimDB.crafterDB.data[crafterUID].cooldownData = cooldownData
             end
         end
         CraftSimDB.crafterDB.version = 1
@@ -275,6 +280,47 @@ end
 function CraftSim.DB.CRAFTER:SaveClass(crafterUID, class)
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
     CraftSimDB.crafterDB.data[crafterUID].class = class
+end
+
+--- returns data serialized
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@return CraftSim.CooldownData.Serialized?
+function CraftSim.DB.CRAFTER:GetRecipeCooldownData(crafterUID, recipeID)
+    local serializationID = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[recipeID] or
+        recipeID
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].cooldownData = CraftSimDB.crafterDB.data[crafterUID].cooldownData or {}
+    return CraftSimDB.crafterDB.data[crafterUID].cooldownData[serializationID]
+end
+
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@param cooldownData CraftSim.CooldownData
+function CraftSim.DB.CRAFTER:SaveRecipeCooldownData(crafterUID, recipeID, cooldownData)
+    local serializationID = CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPE_ID_MAP[recipeID] or
+        recipeID
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].cooldownData = CraftSimDB.crafterDB.data[crafterUID].cooldownData or {}
+    CraftSimDB.crafterDB.data[crafterUID].cooldownData[serializationID] = cooldownData:Serialize()
+end
+
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@return boolean IsCooldownRecipe
+function CraftSim.DB.CRAFTER:IsRecipeCooldownRecipe(crafterUID, recipeID)
+    return self:GetRecipeCooldownData(crafterUID, recipeID) ~= nil
+end
+
+---@return table<CrafterUID, CraftSim.CooldownData.Serialized[]> crafterCooldownData
+function CraftSim.DB.CRAFTER:GetCrafterCooldownData()
+    local crafterCooldownData = {}
+
+    for crafterUID, crafterDBData in pairs(CraftSimDB.crafterDB.data) do
+        crafterCooldownData[crafterUID] = crafterDBData.cooldownData
+    end
+
+    return crafterCooldownData
 end
 
 ---@return table<CrafterUID, CraftSim.DB.CrafterDBData>
