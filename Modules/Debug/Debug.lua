@@ -40,7 +40,7 @@ end
 
 function CraftSim.DEBUG:print(debugOutput, debugID, recursive, printLabel, level)
     local debugIDsDB = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
-    if debugIDsDB["enableDebugID_" .. debugID] and not CraftSim.DEBUG.isMute then
+    if debugIDsDB[debugID] and not CraftSim.DEBUG.isMute then
         if type(debugOutput) == "table" then
             CraftSim.DEBUG:PrintTable(debugOutput, debugID, recursive, level)
         else

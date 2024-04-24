@@ -44,6 +44,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
             parent = frame.content, anchorParent = anchorParent,
             label = label, tooltip = description, anchorA = anchorA, anchorB = anchorB,
             offsetX = offsetX, offsetY = offsetY,
+            initialValue = CraftSim.DB.OPTIONS:Get(option),
             clickCallback = function(_, checked)
                 CraftSim.DB.OPTIONS:Save(option, checked)
                 CraftSim.INIT:TriggerModuleUpdate()

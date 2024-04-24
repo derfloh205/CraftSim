@@ -231,9 +231,9 @@ function CraftSim.DEBUG.FRAMES:InitLogOptionsTab(logOptionsTab)
 
             local debugIDs = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
 
-            cb:SetChecked(debugIDs["enableDebugID_" .. debugID])
+            cb:SetChecked(debugIDs[debugID])
             cb.clickCallback = function(_, checked)
-                debugIDs["enableDebugID_" .. debugID] = checked
+                debugIDs[debugID] = checked
             end
         end)
     end

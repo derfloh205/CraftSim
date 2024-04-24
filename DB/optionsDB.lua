@@ -207,8 +207,9 @@ end
 ---@param option CraftSim.GENERAL_OPTIONS
 ---@return any optionValue
 function CraftSim.DB.OPTIONS:Get(option)
-    CraftSimDB.optionsDB.data[option] = CraftSimDB.optionsDB.data[option] or
-        CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS[option]
+    if CraftSimDB.optionsDB.data[option] == nil then
+        CraftSimDB.optionsDB.data[option] = CraftSim.CONST.GENERAL_OPTIONS_DEFAULTS[option]
+    end
     return CraftSimDB.optionsDB.data[option]
 end
 
