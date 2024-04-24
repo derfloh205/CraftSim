@@ -33,7 +33,7 @@ function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 		-- Clear Preview IDs upon fresh session
 		CraftSim.CUSTOMER_SERVICE:ClearPreviewIDs()
 		-- clear post loaded multicraft professions
-		wipe(CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions)
+		CraftSim.DB.MULTICRAFT_PRELOAD:ClearAll()
 	end
 
 	-- load craft queue

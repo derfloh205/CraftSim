@@ -31,7 +31,6 @@ CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE = {}
 ---@field specializationDataCache table<CrafterUID, table<RecipeID, CraftSim.SpecializationData.Serialized>?>
 ---@field professionGearCache table<CrafterUID, table<Enum.Profession, CraftSim.ProfessionGearCacheData>>
 ---@field altClassCache table<CrafterUID, ClassFile>
----@field postLoadedMulticraftInformationProfessions table<Enum.Profession, boolean>
 ---@field cooldownCache table<CrafterUID, table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>>
 CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     cachedRecipeIDs = {},
@@ -41,7 +40,6 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
     specializationDataCache = {},
     professionGearCache = {},
     altClassCache = {},
-    postLoadedMulticraftInformationProfessions = {},
     cooldownCache = {},
     cacheVersions = {
         cachedRecipeIDs = 1,
@@ -51,7 +49,6 @@ CraftSimRecipeDataCache = CraftSimRecipeDataCache or {
         specializationDataCache = 1,
         professionGearCache = 1,
         altClassCache = 1,
-        postLoadedMulticraftInformationProfessions = 1,
         cooldownCache = 1,
     },
 }
@@ -73,8 +70,6 @@ function CraftSim.DB.RECIPE_DATA:HandleUpdates()
         CraftSimRecipeDataCache.specializationDataCache = CraftSimRecipeDataCache.specializationDataCache or {}
         CraftSimRecipeDataCache.professionGearCache = CraftSimRecipeDataCache.professionGearCache or {}
         CraftSimRecipeDataCache.altClassCache = CraftSimRecipeDataCache.altClassCache or {}
-        CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions = CraftSimRecipeDataCache
-            .postLoadedMulticraftInformationProfessions or {}
         CraftSimRecipeDataCache.cooldownCache = CraftSimRecipeDataCache.cooldownCache or {}
         CraftSimRecipeDataCache.cacheVersions = CraftSimRecipeDataCache.cacheVersions or {}
 
@@ -86,7 +81,7 @@ end
 --- trigger it for all recipes on purpose when the profession is opened the first time in this session
 function CraftSim.DB.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionID)
     if not professionID then return end
-    if CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions[professionID] then return end
+    if CraftSim.DB.MULTICRAFT_PRELOAD:Get(professionID) then return end
     if not professionRecipeIDs then
         return
     end
@@ -99,7 +94,7 @@ function CraftSim.DB.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(pro
 
     CraftSim.DEBUG:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
 
-    CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions[professionID] = true
+    CraftSim.DB.MULTICRAFT_PRELOAD:Save(professionID, true)
 end
 
 function CraftSim.DB.RECIPE_DATA:ClearAll()
@@ -109,7 +104,6 @@ function CraftSim.DB.RECIPE_DATA:ClearAll()
     wipe(CraftSimRecipeDataCache.specializationDataCache)
     wipe(CraftSimRecipeDataCache.professionGearCache)
     wipe(CraftSimRecipeDataCache.altClassCache)
-    wipe(CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions)
 end
 
 function CraftSim.DB.RECIPE_DATA:HandleMigrations()
