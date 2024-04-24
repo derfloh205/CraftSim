@@ -127,8 +127,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
     end
 
     -- use cache if available for performance
-    local professionInfoCache = CraftSimRecipeDataCache.professionInfoCache[crafterUID] or {}
-    local professionInfo = professionInfoCache[recipeInfo.recipeID]
+    local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeInfo.recipeID)
 
     if not professionInfo then
         printF("professionInfo not Cached: Get from Api")

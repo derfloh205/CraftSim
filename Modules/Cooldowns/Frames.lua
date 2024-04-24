@@ -187,7 +187,7 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                         tooltipText = color:WrapTextInColorCode(tooltipText)
                     end
 
-                    local professionInfo = CraftSimRecipeDataCache.professionInfoCache[crafterUID][recipeID] or
+                    local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID) or
                         C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
                     local professionIcon = ""
                     if professionInfo.profession then
@@ -206,7 +206,7 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                         local recipeListText = ""
                         for _, sharedRecipeID in pairs(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES[cooldownData.sharedCD]) do
                             local sharedRecipeIDInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, sharedRecipeID) or
-                            C_TradeSkillUI.GetRecipeInfo(sharedRecipeID)
+                                C_TradeSkillUI.GetRecipeInfo(sharedRecipeID)
 
                             if sharedRecipeIDInfo then
                                 recipeListText = recipeListText .. "\n" .. sharedRecipeIDInfo.name

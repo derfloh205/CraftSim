@@ -244,16 +244,13 @@ function CraftSim.CraftQueue:RestoreFromDB()
             print("Wait for professionInfo loaded or cached")
             return GUTIL:Every(dbCraftQueueItems,
                 function(craftQueueItemSerialized)
-                    -- from cache?
-                    CraftSimRecipeDataCache.professionInfoCache[CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)] =
-                        CraftSimRecipeDataCache.professionInfoCache
-                        [CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)] or {}
-                    local cachedProfessionInfos = CraftSimRecipeDataCache.professionInfoCache
-                        [CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)]
-                    local professionInfo = cachedProfessionInfos[craftQueueItemSerialized.recipeID]
+                    local crafterUID = CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)
+                    -- from db
+                    local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID,
+                        craftQueueItemSerialized.recipeID)
 
                     if not professionInfo then
-                        -- get from api
+                        -- get from api if not in db
                         professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(craftQueueItemSerialized
                             .recipeID)
                     end

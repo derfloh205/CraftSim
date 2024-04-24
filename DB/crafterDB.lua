@@ -50,6 +50,11 @@ function CraftSim.DB.CRAFTER:Migrate()
                 CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
                 CraftSimDB.crafterDB.data[crafterUID].recipeInfos = recipeInfos
             end
+
+            for crafterUID, professionInfos in pairs(CraftSimRecipeDataCache["professionInfoCache"] or {}) do
+                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+                CraftSimDB.crafterDB.data[crafterUID].professionInfos = professionInfos
+            end
         end
         CraftSimDB.crafterDB.version = 1
     end
@@ -90,6 +95,24 @@ function CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID)
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
     CraftSimDB.crafterDB.data[crafterUID].recipeInfos = CraftSimDB.crafterDB.data[crafterUID].recipeInfos or {}
     return CraftSimDB.crafterDB.data[crafterUID].recipeInfos[recipeID]
+end
+
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@return ProfessionInfo
+function CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].professionInfos = CraftSimDB.crafterDB.data[crafterUID].professionInfos or {}
+    return CraftSimDB.crafterDB.data[crafterUID].professionInfos[recipeID]
+end
+
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@param professionInfo ProfessionInfo
+function CraftSim.DB.CRAFTER:SaveProfessionInfoForRecipe(crafterUID, recipeID, professionInfo)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].professionInfos = CraftSimDB.crafterDB.data[crafterUID].professionInfos or {}
+    CraftSimDB.crafterDB.data[crafterUID].professionInfos[recipeID] = professionInfo
 end
 
 ---@param crafterUID CrafterUID
