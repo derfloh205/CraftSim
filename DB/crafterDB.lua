@@ -55,6 +55,11 @@ function CraftSim.DB.CRAFTER:Migrate()
                 CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
                 CraftSimDB.crafterDB.data[crafterUID].professionInfos = professionInfos
             end
+
+            for crafterUID, operationInfos in pairs(CraftSimRecipeDataCache["operationInfoCache"] or {}) do
+                CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+                CraftSimDB.crafterDB.data[crafterUID].operationInfos = operationInfos
+            end
         end
         CraftSimDB.crafterDB.version = 1
     end
@@ -113,6 +118,24 @@ function CraftSim.DB.CRAFTER:SaveProfessionInfoForRecipe(crafterUID, recipeID, p
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
     CraftSimDB.crafterDB.data[crafterUID].professionInfos = CraftSimDB.crafterDB.data[crafterUID].professionInfos or {}
     CraftSimDB.crafterDB.data[crafterUID].professionInfos[recipeID] = professionInfo
+end
+
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@return CraftingOperationInfo
+function CraftSim.DB.CRAFTER:GetOperationInfoForRecipe(crafterUID, recipeID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].operationInfos = CraftSimDB.crafterDB.data[crafterUID].operationInfos or {}
+    return CraftSimDB.crafterDB.data[crafterUID].operationInfos[recipeID]
+end
+
+---@param crafterUID CrafterUID
+---@param recipeID RecipeID
+---@param operationInfo CraftingOperationInfo
+function CraftSim.DB.CRAFTER:SaveOperationInfoForRecipe(crafterUID, recipeID, operationInfo)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].operationInfos = CraftSimDB.crafterDB.data[crafterUID].operationInfos or {}
+    CraftSimDB.crafterDB.data[crafterUID].operationInfos[recipeID] = operationInfo
 end
 
 ---@param crafterUID CrafterUID

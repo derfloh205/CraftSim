@@ -764,9 +764,8 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
     ---@type CraftingOperationInfo
     local operationInfo = nil
     local crafterUID = self:GetCrafterUID()
-    CraftSimRecipeDataCache.operationInfoCache[crafterUID] = CraftSimRecipeDataCache.operationInfoCache[crafterUID] or {}
     if not self:IsCrafter() then
-        operationInfo = CraftSimRecipeDataCache.operationInfoCache[crafterUID][self.recipeID]
+        operationInfo = CraftSim.DB.CRAFTER:GetOperationInfoForRecipe(crafterUID, self.recipeID)
 
         if operationInfo then
             self.operationInfoCached = true
@@ -777,7 +776,7 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
         operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
 
         -- check for too early access?
-        CraftSimRecipeDataCache.operationInfoCache[crafterUID][self.recipeID] = operationInfo
+        CraftSim.DB.CRAFTER:SaveOperationInfoForRecipe(crafterUID, self.recipeID, operationInfo)
     end
 
     return operationInfo

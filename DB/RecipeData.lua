@@ -16,7 +16,6 @@ CraftSim.DB.RECIPE_DATA.COOLDOWN_CACHE = {}
 
 -- TODO create 1 db for crafterUID -> infos
 ---@class CraftSim.RecipeDataCache
----@field operationInfoCache table<CrafterUID, table<RecipeID, CraftingOperationInfo>>
 ---@field specializationDataCache table<CrafterUID, table<RecipeID, CraftSim.SpecializationData.Serialized>?>
 ---@field professionGearCache table<CrafterUID, table<Enum.Profession, CraftSim.DB.CrafterDBData.ProfessionGearData>>
 ---@field altClassCache table<CrafterUID, ClassFile>
