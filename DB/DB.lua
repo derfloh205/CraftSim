@@ -61,6 +61,10 @@ function CraftSim.DB:PostInitCleanUp()
             _G["CraftSimRecipeDataCache"] = nil
         end
     end
+
+    if _G["CraftSimDebugData"] then
+        _G["CraftSimDebugData"] = nil
+    end
 end
 
 function CraftSim.DB:ClearAll()

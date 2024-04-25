@@ -360,7 +360,7 @@ function CraftSim.INIT:PLAYER_LOGIN()
 			print("Craftsim: Toggled price debug mode: " .. tostring(priceDebug))
 
 			if priceDebug then
-				CraftSim.PRICE_API = CraftSimDEBUG_PRICE_API
+				CraftSim.PRICE_API = CraftSimNO_PRICE_API
 			else
 				CraftSim.PRICE_APIS:InitAvailablePriceAPI()
 			end

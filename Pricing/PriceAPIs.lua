@@ -14,9 +14,8 @@ CraftSimTSM = { name = "TradeSkillMaster" }
 CraftSimAUCTIONATOR = { name = "Auctionator" }
 CraftSimRECRYSTALLIZE = { name = "RECrystallize" }
 CraftSimEXCHANGE = { name = "OribosExchange" }
-CraftSimDEBUG_PRICE_API = { name = "Debug" }
+CraftSimNO_PRICE_API = { name = "None" }
 
-CraftSimDebugData = CraftSimDebugData or {}
 CraftSim.PRICE_APIS.available = true
 
 local systemPrint = print
@@ -44,7 +43,7 @@ function CraftSim.PRICE_API:InitPriceSource()
                 end
             })
         end
-        CraftSim.PRICE_API = CraftSimDEBUG_PRICE_API
+        CraftSim.PRICE_API = CraftSimNO_PRICE_API
         return
     end
 
@@ -250,38 +249,14 @@ function CraftSimEXCHANGE:GetMinBuyoutByItemLink(itemLink)
     return output
 end
 
-function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
-    local debugItem = CraftSimDebugData[itemID]
-    if debugItem == nil then
-        local itemName = C_Item.GetItemInfo(itemID)
-        if itemName == nil then
-            print("itemData not loaded yet, add to debugData next time..")
-            return 0
-        end
-        print("PriceData not in ItemID Debugdata for: " .. tostring(itemName) .. " .. creating")
-        CraftSimDebugData[itemID] = {
-            itemName = itemName,
-            minBuyout = 0
-        }
-    end
-    return CraftSimDebugData[itemID].minBuyout
+---@param itemID ItemID
+---@return number 0
+function CraftSimNO_PRICE_API:GetMinBuyoutByItemID(itemID)
+    return 0
 end
 
-function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemLink(itemLink)
-    local itemString = select(3, strfind(itemLink, "|H(.+)%["))
-    --print("itemString: " .. itemString)
-    local debugItem = CraftSimDebugData[itemString]
-    if debugItem == nil then
-        local itemName = C_Item.GetItemInfo(itemLink)
-        if itemName == nil then
-            print("itemData not loaded yet, add to debugData next time..")
-            return 0
-        end
-        print("PriceData not in ItemString Debugdata for: " .. itemName .. " .. creating")
-        CraftSimDebugData[itemString] = {
-            itemName = itemName,
-            minBuyout = 0
-        }
-    end
-    return CraftSimDebugData[itemString].minBuyout
+---@param itemLink string
+---@return number 0
+function CraftSimNO_PRICE_API:GetMinBuyoutByItemLink(itemLink)
+    return 0
 end
