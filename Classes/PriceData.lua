@@ -150,7 +150,7 @@ function CraftSim.PriceData:Update()
     local avgSavedCostsRes = 0
     if self.recipeData.supportsResourcefulness then
         -- in this case we need the average saved costs per craft
-        avgSavedCostsRes = CraftSim.CALC:getResourcefulnessSavedCosts(self.recipeData) *
+        avgSavedCostsRes = CraftSim.CALC:GetResourcefulnessSavedCosts(self.recipeData) *
             self.recipeData.professionStats.resourcefulness:GetPercent(true)
     end
     for qualityID, chance in pairs(self.recipeData.resultData.chanceByQuality) do

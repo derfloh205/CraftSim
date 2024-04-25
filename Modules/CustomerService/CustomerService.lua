@@ -233,7 +233,7 @@ function CraftSim.CUSTOMER_SERVICE.OnRecipeUpdateRequest(payload)
 
     -- TODO: make it its own method/function
     local inspPercent = (recipeData.supportsInspiration and recipeData.professionStats.inspiration:GetPercent()) or nil
-    local hsvChance, withInspiration = CraftSim.CALC:getHSVChance(recipeData)
+    local hsvChance, withInspiration = CraftSim.CALC:GetHSVChance(recipeData)
     hsvChance = hsvChance / 100
     local upgradeChance = 0
     if hsvChance == 0 and recipeData.supportsInspiration then
