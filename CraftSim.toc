@@ -39,7 +39,6 @@ DB/priceOverrideDB.lua
 
 Media/Media.lua
 
-Util/Tooltip.lua
 Util/Frames.lua
 Util/Comm.lua
 Util/API.lua
