@@ -34,7 +34,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
         initialStatusID = "RETRACTED",
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatistics"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_STATISTICS"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = frameLevel
@@ -54,7 +54,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
         initialStatusID = "RETRACTED",
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesStatistics"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_STATISTICS"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = frameLevel

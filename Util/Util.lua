@@ -314,7 +314,7 @@ end
 ---@return CraftSim.CrafterData? crafterData nil if not fully cached
 function CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafterUID)
     local name, realm = strsplit("-", crafterUID)
-    local crafterClass = CraftSimRecipeDataCache.altClassCache[crafterUID]
+    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
 
     if name and realm and crafterClass then
         ---@type CraftSim.CrafterData

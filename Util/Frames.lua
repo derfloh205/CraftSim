@@ -55,17 +55,6 @@ function CraftSim.FRAME:InitTabSystem(tabs)
     tabs[1]:SetEnabled(false)
 end
 
---> in GGUI
-function CraftSim.FRAME:makeFrameMoveable(frame)
-    frame.hookFrame:SetMovable(true)
-    frame:SetScript("OnMouseDown", function(self, button)
-        frame.hookFrame:StartMoving()
-    end)
-    frame:SetScript("OnMouseUp", function(self, button)
-        frame.hookFrame:StopMovingOrSizing()
-    end)
-end
-
 function CraftSim.FRAME:RestoreModulePositions()
     local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CONTROL_PANEL)
     local recipeScanFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.RECIPE_SCAN)
@@ -82,9 +71,10 @@ function CraftSim.FRAME:RestoreModulePositions()
         CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
     local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
     local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-    local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.MATERIALS)
+    local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
+        CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
     local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-        CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+        CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
     local debugFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
     local infoFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
     local livePreviewFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.LIVE_PREVIEW)
@@ -171,64 +161,6 @@ function CraftSim.FRAME:CreateTab(label, parent, anchorParent, anchorA, anchorB,
     return tabButton
 end
 
---> in GGUI
-function CraftSim.FRAME:MakeCollapsable(frame, originalX, originalY, frameID)
-    frame.collapsed = false
-    frame.collapseButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    local offsetX = frame.closeButton and -43 or -23
-    frame.collapseButton:SetPoint("TOP", frame, "TOPRIGHT", offsetX, -10)
-    frame.collapseButton:SetText(" - ")
-    frame.originalX = originalX -- so it can be modified later
-    frame.originalY = originalY
-    frame.collapseButton:SetSize(frame.collapseButton:GetTextWidth() + 12, 20)
-    frame.collapse = function(self)
-        frame.collapsed = true
-        -- make smaller and hide content, only show frameTitle
-        frame:SetSize(self.originalX, 40)
-        frame.collapseButton:SetText("+")
-        frame.content:Hide()
-        if frame.scrollFrame then
-            frame.scrollFrame:Hide()
-        end
-    end
-
-    frame.decollapse = function(self)
-        -- restore
-        frame.collapsed = false
-        frame.collapseButton:SetText("-")
-        frame:SetSize(self.originalX, self.originalY)
-        frame.content:Show()
-        if frame.scrollFrame then
-            frame.scrollFrame:Show()
-        end
-    end
-
-    frame.collapseButton:SetScript("OnClick", function(self)
-        if frame.collapsed then
-            frame:decollapse()
-        else
-            frame:collapse()
-        end
-    end)
-end
-
---> in GGUI
-function CraftSim.FRAME:MakeCloseable(frame, moduleOption)
-    frame.closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    frame.closeButton:SetPoint("TOP", frame, "TOPRIGHT", -20, -10)
-    frame.closeButton:SetText("X")
-    frame.closeButton:SetSize(frame.closeButton:GetTextWidth() + 15, 20)
-    frame.closeButton:SetScript("OnClick", function(self)
-        frame:Hide()
-        if moduleOption then
-            CraftSimOptions[moduleOption] = false
-            local controlPanel = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CONTROL_PANEL)
-
-            controlPanel.content[moduleOption]:SetChecked(false)
-        end
-    end)
-end
-
 --> in GGUI.Text
 function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB, anchorX, anchorY, scale, font,
                                    justifyData)
@@ -279,87 +211,6 @@ function CraftSim.FRAME:CreateScrollingMessageFrame(parent, anchorParent, anchor
     return scrollingFrame
 end
 
---> in GGUI.Frame
-function CraftSim.FRAME:CreateCraftSimFrame(name, title, parent, anchorFrame, anchorA, anchorB, offsetX, offsetY, sizeX,
-                                            sizeY,
-                                            frameID, scrollable, closeable, frameStrata, moduleOption)
-    local hookFrame = CreateFrame("frame", nil, parent)
-    hookFrame:SetPoint(anchorA, anchorFrame, anchorB, offsetX, offsetY)
-    local frame = CreateFrame("frame", name, hookFrame, "BackdropTemplate")
-    frame.hookFrame = hookFrame
-    hookFrame:SetSize(sizeX, sizeY)
-    frame:SetSize(sizeX, sizeY)
-    frame:SetFrameStrata(frameStrata or "HIGH")
-    local currentFrameCount = GUTIL:Count(CraftSim.FRAME.frames)
-    frame:SetFrameLevel(currentFrameCount) -- Prevent wierd overlap of craftsim frames?
-
-    frame.resetPosition = function()
-        hookFrame:SetPoint(anchorA, anchorFrame, anchorB, offsetX, offsetY)
-    end
-
-    frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    frame.title:SetPoint("TOP", frame, "TOP", 0, -15)
-    frame.title:SetText(title)
-
-    frame:SetPoint("TOP", hookFrame, "TOP", 0, 0)
-    frame:SetBackdropBorderColor(0, .44, .87, 0.5) -- darkblue
-    frame:SetBackdrop({
-        bgFile = "Interface\\CharacterFrame\\UI-Party-Background",
-        edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-        edgeSize = 16,
-        insets = { left = 8, right = 6, top = 8, bottom = 8 },
-    })
-
-    frame:SetBackdropColor(0, 0, 0, 1)
-
-    frame.SetTransparency = function(self, transparency)
-        frame:SetBackdropColor(0, 0, 0, transparency)
-    end
-
-    if closeable then
-        CraftSim.FRAME:MakeCloseable(frame, moduleOption)
-    end
-
-    CraftSim.FRAME:MakeCollapsable(frame, sizeX, sizeY, frameID)
-
-    CraftSim.FRAME:makeFrameMoveable(frame)
-
-    if scrollable then
-        -- scrollframe
-        frame.scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-        frame.scrollFrame.scrollChild = CreateFrame("frame")
-        local scrollFrame = frame.scrollFrame
-        local scrollChild = scrollFrame.scrollChild
-        scrollFrame:SetSize(frame:GetWidth(), frame:GetHeight())
-        scrollFrame:SetPoint("TOP", frame, "TOP", 0, -30)
-        scrollFrame:SetPoint("LEFT", frame, "LEFT", 20, 0)
-        scrollFrame:SetPoint("RIGHT", frame, "RIGHT", -35, 0)
-        scrollFrame:SetPoint("BOTTOM", frame, "BOTTOM", 0, 20)
-        scrollFrame:SetScrollChild(scrollFrame.scrollChild)
-        scrollChild:SetWidth(scrollFrame:GetWidth())
-        scrollChild:SetHeight(1) -- ??
-
-        frame.content = scrollChild
-
-        frame.UpdateSize = function(x, y)
-            frame:SetSize(x, y)
-            scrollFrame:SetSize(frame:GetWidth(), frame:GetHeight())
-            scrollFrame:SetPoint("TOP", frame, "TOP", 0, -30)
-            scrollFrame:SetPoint("LEFT", frame, "LEFT", 20, 0)
-            scrollFrame:SetPoint("RIGHT", frame, "RIGHT", -35, 0)
-            scrollFrame:SetPoint("BOTTOM", frame, "BOTTOM", 0, 20)
-            scrollChild:SetWidth(scrollFrame:GetWidth())
-        end
-    else
-        frame.content = CreateFrame("frame", nil, frame)
-        frame.content:SetPoint("TOP", frame, "TOP")
-        frame.content:SetSize(sizeX, sizeY)
-    end
-
-    CraftSim.FRAME.frames[frameID] = name
-    return frame
-end
-
 --> in GGUI.Checkbox
 function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initialValue, clickCallback, parent,
                                                      anchorParent, anchorA, anchorB, offsetX, offsetY)
@@ -379,46 +230,6 @@ function CraftSim.FRAME:CreateCheckboxCustomCallback(label, description, initial
     end
 
     return checkBox
-end
-
---> in GGUI.Checkbox
-function CraftSim.FRAME:CreateCheckbox(label, description, optionName, parent, anchorParent, anchorA, anchorB, offsetX,
-                                       offsetY, onClick)
-    local checkBox = CreateFrame("CheckButton", nil, parent, "ChatConfigCheckButtonTemplate")
-    checkBox:SetHitRectInsets(0, 0, 0, 0); -- see https://wowpedia.fandom.com/wiki/API_Frame_SetHitRectInsets
-    checkBox:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
-    checkBox.Text:SetText(label)
-    checkBox.tooltip = description
-    -- there already is an existing OnClick script that plays a sound, hook it
-    checkBox:SetChecked(CraftSimOptions[optionName])
-    checkBox:HookScript("OnClick", function(_, btn, down)
-        local checked = checkBox:GetChecked()
-        CraftSimOptions[optionName] = checked
-
-        if onClick then
-            onClick(checked)
-        end
-    end)
-
-    return checkBox
-end
-
---> in GGUI.Slider
-function CraftSim.FRAME:CreateSlider(name, label, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY,
-                                     orientation, min, max, initialValue, lowText, highText, updateCallback)
-    local newSlider = CreateFrame("Slider", name, parent, "OptionsSliderTemplate")
-    newSlider:SetPoint(anchorA, anchorParent, anchorB, offsetX, offsetY)
-    newSlider:SetSize(sizeX, sizeY)
-    newSlider:SetOrientation(orientation)
-    newSlider:SetMinMaxValues(min, max)
-    newSlider:SetValue(initialValue)
-    _G[newSlider:GetName() .. 'Low']:SetText(lowText)   -- Sets the left-side slider text (default is "Low").
-    _G[newSlider:GetName() .. 'High']:SetText(highText) -- Sets the right-side slider text (default is "High").
-    _G[newSlider:GetName() .. 'Text']:SetText(label)    -- Sets the "title" text (top-centre of slider).
-
-    newSlider:SetScript("OnValueChanged", updateCallback)
-
-    return newSlider
 end
 
 --> in GGUI.HelpIcon
@@ -514,142 +325,6 @@ function CraftSim.FRAME:CreateScrollFrame(parent, offsetTOP, offsetLEFT, offsetR
     scrollChild:SetWidth(scrollFrame:GetWidth())
     scrollChild:SetHeight(1)
     return scrollFrame, scrollChild
-end
-
---> in GGUI.CurrencyInput
-function CraftSim.FRAME:CreateGoldInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX, sizeY,
-                                        initialValue, onValueValidCallback, onValidationChangedCallback,
-                                        showFormatHelpIcon)
-    local function validateMoneyString(moneyString)
-        -- check if the string matches the pattern
-        if not string.match(moneyString, "^%d*g?%d*s?%d*c?$") then
-            return false
-        end
-
-        -- check if the string contains at least one of g, s, or c
-        if not string.match(moneyString, "[gsc]") then
-            return false
-        end
-
-        -- check if the string contains multiple g, s, or c
-        if string.match(moneyString, "g.*g") then
-            return false
-        end
-        if string.match(moneyString, "s.*s") then
-            return false
-        end
-        if string.match(moneyString, "c.*c") then
-            return false
-        end
-
-        -- check if it ends incorrectly
-        if string.match(moneyString, "%d$") then
-            return false
-        end
-
-        -- check if the string contains invalid characters
-        if string.match(moneyString, "[^%dgsc]") then
-            return false
-        end
-
-        -- all checks passed, the string is valid
-        return true
-    end
-
-    local goldInput = CraftSim.FRAME:CreateInput(name, parent, anchorParent, anchorA, anchorB, offsetX, offsetY, sizeX,
-        sizeY, initialValue,
-        function(self, userInput)
-            print("userinput: " .. tostring(userInput))
-            if userInput then
-                -- validate and color text, and adapt save button
-                local input = self:GetText() or ""
-                -- remove colorizations
-                print(input)
-
-                input = string.gsub(input, GUTIL.COLORS.GOLD, "")
-                input = string.gsub(input, GUTIL.COLORS.SILVER, "")
-                input = string.gsub(input, GUTIL.COLORS.COPPER, "")
-                input = string.gsub(input, "|r", "")
-                input = string.gsub(input, "|", "")
-
-                local valid = validateMoneyString(input)
-                self.isValid = valid
-
-                print("money string valid: " .. tostring(valid))
-                if valid then
-                    -- colorize
-                    print("colorize")
-                    local gold = tonumber(string.match(input, "(%d+)g")) or 0
-                    local silver = tonumber(string.match(input, "(%d+)s")) or 0
-                    local copper = tonumber(string.match(input, "(%d+)c")) or 0
-                    local gC = GUTIL:ColorizeText("g", GUTIL.COLORS.GOLD)
-                    local sC = GUTIL:ColorizeText("s", GUTIL.COLORS.SILVER)
-                    local cC = GUTIL:ColorizeText("c", GUTIL.COLORS.COPPER)
-                    local colorizedText = ((gold > 0 and (gold .. gC)) or "") ..
-                        ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
-                    self:SetText(colorizedText)
-
-                    local goldInputInfo = {
-                        gold = gold,
-                        silver = silver,
-                        copper = copper,
-                        total = gold * 10000 + silver * 100 + copper
-                    }
-                    if onValueValidCallback then
-                        onValueValidCallback(goldInputInfo)
-                    end
-
-                    self.currentInfo = goldInputInfo
-                end
-
-                self.validationBorder:SetValid(valid)
-
-                if onValidationChangedCallback then
-                    onValidationChangedCallback(valid)
-                end
-            end
-        end)
-
-    local validationBorder = CreateFrame("Frame", nil, goldInput, "BackdropTemplate")
-    validationBorder:SetSize(goldInput:GetWidth() * 1.3, goldInput:GetHeight() * 1.6)
-    validationBorder:SetPoint("CENTER", goldInput, "CENTER", -2, 0)
-    validationBorder:SetBackdrop({
-        edgeFile = "Interface\\PVPFrame\\UI-Character-PVP-Highlight", -- this one is neat
-        edgeSize = 25,
-    })
-    function validationBorder:SetValid(valid)
-        if valid then
-            validationBorder:Hide()
-        else
-            validationBorder:Show()
-            validationBorder:SetBackdropBorderColor(1, 0, 0, 0.5)
-        end
-    end
-
-    validationBorder:Hide()
-    goldInput.validationBorder = validationBorder
-
-    function goldInput:GetInfo()
-        return goldInput.currentInfo
-    end
-
-    function goldInput:SetValue(total)
-        local gold, silver, copper = GUTIL:GetMoneyValuesFromCopper(total)
-        local gC = GUTIL:ColorizeText("g", GUTIL.COLORS.GOLD)
-        local sC = GUTIL:ColorizeText("s", GUTIL.COLORS.SILVER)
-        local cC = GUTIL:ColorizeText("c", GUTIL.COLORS.COPPER)
-        local colorizedText = ((gold > 0 and (gold .. gC)) or "") ..
-            ((silver > 0 and (silver .. sC)) or "") .. ((copper > 0 and (copper .. cC)) or "")
-        self:SetText(colorizedText)
-    end
-
-    goldInput:SetValue(initialValue)
-
-    if showFormatHelpIcon then
-        CraftSim.FRAME:CreateHelpIcon("Format: 100g10s1c", goldInput, goldInput, "LEFT", "RIGHT", 5, 0)
-    end
-
-    return goldInput
 end
 
 --> in GGUI.TextInput

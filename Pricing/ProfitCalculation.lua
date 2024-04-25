@@ -6,7 +6,7 @@ CraftSim.CALC = {}
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PROFIT_CALCULATION)
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
+function CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
     local priceData = recipeData.priceData
     local extraSavedItemsFactor = recipeData.professionStats.resourcefulness:GetExtraFactor(true)
 
@@ -20,20 +20,21 @@ function CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
 end
 
 function CraftSim.CALC:CalculateResourcefulnessSavedCosts(resExtraFactor, craftingCostsRequired)
-    return craftingCostsRequired * (CraftSimOptions.customResourcefulnessConstant * resExtraFactor)
+    return craftingCostsRequired *
+        (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT") * resExtraFactor)
 end
 
 ---Returns the chance to receive an upgrade with hsv
 ---@param recipeData CraftSim.RecipeData
 ---@return number hsvChance -- not in decimal!
 ---@return boolean withInspirationOnly -- only if it procs together with inspiration, the inspiration chance has to be factored in afterwards
-function CraftSim.CALC:getHSVChance(recipeData)
+function CraftSim.CALC:GetHSVChance(recipeData)
     print("HSV Chance calc")
     if recipeData.maxQuality and recipeData.resultData.expectedQuality < recipeData.maxQuality then
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty,
-            CraftSimOptions.breakPointOffset)
+            CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         local upperThreshold = thresholds[recipeData.resultData.expectedQuality]
 
         local playerSkill = recipeData.professionStats.skill.value
@@ -90,7 +91,7 @@ function CraftSim.CALC:GetHSVInfo(recipeData)
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty,
-            CraftSimOptions.breakPointOffset)
+            CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         local upperThreshold = thresholds[recipeData.resultData.expectedQuality]
 
         local playerSkill = recipeData.professionStats.skill.value
@@ -125,7 +126,7 @@ function CraftSim.CALC:GetHSVInfo(recipeData)
         local baseRecipeDifficulty = recipeData.baseProfessionStats.recipeDifficulty.value
         local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality, recipeDifficulty,
-            CraftSimOptions.breakPointOffset)
+            CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         local skipThreshold = thresholds[recipeData.resultData.expectedQuality + 1]
 
         local playerSkill = recipeData.professionStats.skill.value
@@ -159,7 +160,7 @@ function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
         return recipeData.baseItemAmount, 0
     end
 
-    local maxExtraItems = (CraftSimOptions.customMulticraftConstant * recipeData.baseItemAmount) *
+    local maxExtraItems = (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT") * recipeData.baseItemAmount) *
         recipeData.professionStats.multicraft:GetExtraFactor(true)
     local expectedExtraItems = (1 + maxExtraItems) / 2
     local expectedItems = recipeData.baseItemAmount + expectedExtraItems
@@ -225,7 +226,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         local mcChance = professionStats.multicraft:GetPercent(true)
         local resChance = professionStats.resourcefulness:GetPercent(true)
         local hsvInfo = recipeData.resultData.hsvInfo
-        local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
+        local savedCostsByRes = CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
 
         print("Chances:")
         print("inspChance: " .. inspChance)
@@ -435,7 +436,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         -- no inspiration -> no hsv
         local mcChance = professionStats.multicraft:GetPercent(true)
         local resChance = professionStats.resourcefulness:GetPercent(true)
-        local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
+        local savedCostsByRes = CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
 
         local expectedItems = CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
 
@@ -500,7 +501,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
         local inspChance = professionStats.inspiration:GetPercent(true)
         local hsvInfo = CraftSim.CALC:GetHSVInfo(recipeData)
         local resChance = professionStats.resourcefulness:GetPercent(true)
-        local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
+        local savedCostsByRes = CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
 
         print("Chances:")
         print("inspChance: " .. inspChance)
@@ -641,7 +642,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData) -- With HSVSkip Consideratio
     elseif not recipeData.supportsInspiration and not recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
         -- no insp no hsv
         local resChance = professionStats.resourcefulness:GetPercent(true)
-        local savedCostsByRes = CraftSim.CALC:getResourcefulnessSavedCosts(recipeData)
+        local savedCostsByRes = CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
 
         -- get all possible craft results (for resourcefulness take avg) and their profits
         -- to build the probability distribution with p(x) = x where x is the profit

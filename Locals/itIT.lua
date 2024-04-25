@@ -220,7 +220,7 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Non mostrare di nuovo l'avviso",
 
         -- Materials Frame
-        [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "Ottimizzazione Materiali",
+        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Ottimizzazione Materiali",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "Raggiungi soglia Ispirazione",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] =
         "Prova a raggiungere la soglia di competenza per cui l'attivazione di ispirazione porta l'oggetto alla qualità superiore con la combinazione di materiali più economica",
@@ -379,7 +379,7 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "Bloccato",
 
         -- Price Details Frame
-        [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "Dettaglio Prezzi di CraftSim",
+        [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "Dettaglio Prezzi di CraftSim",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Inv/AH",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "Oggetto",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "Prezzo/Oggetto",
@@ -685,7 +685,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Resetta",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Espressione non valida",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Espressione valida",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_TRANSPARENCY] = "Trasparenza",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Modulo Ottimizzazione Materiali",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Modulo Profitto Medio",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Modulo Ottimizzazione Strumenti",
@@ -715,14 +714,14 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL] = "Ottimizzazione Strumenti",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP] =
         "Mostra la miglior combinazione di strumenti per le professioni disponibile in base alla modalità scelta.",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL] = "Dettaglio Prezzi",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_TOOLTIP] =
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL] = "Dettaglio Prezzi",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP] =
         "Mostra una panoramica di prezzi e profitti in base alla qualità risultante degli oggetti.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "Profitto Medio",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] =
         "Mostra il profitto medio in base alle tue statistiche delle professioni e il peso in profitto delle statistiche come oro per punto.",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_LABEL] = "Ottimizzazione Materiali",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_TOOLTIP] =
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Ottimizzazione Materiali",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP] =
         "Suggerisce i materiali più economici per raggiungere la più alta soglia di qualità/ispirazione.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Prezzi Personalizzati",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] =

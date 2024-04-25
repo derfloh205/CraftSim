@@ -39,7 +39,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCostOptimization"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_COST_OPTIMIZATION"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -62,7 +62,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCostOptimization"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_COST_OPTIMIZATION"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -125,9 +125,9 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
             offsetX = -60, offsetY = -5, label = "Sub Recipe Optimization " .. f.bb("(experimental)"),
             tooltip = "If enabled " .. f.l("CraftSim") .. " considers the " .. f.g("optimized crafting costs") .. " of your character and your alts\nif they are able to craft that item.\n\n"
                 .. f.r("Might decrease performance a bit due to a lot of additional calculations"),
-            initialValue = CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization,
+            initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION"),
             clickCallback = function(_, checked)
-                CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization = checked
+                CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION", checked)
                 CraftSim.INIT:TriggerModulesByRecipeType()
             end
         }
@@ -237,11 +237,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
                 end
 
                 function usedPriceColumn:SetCrafter(crafterUID, profession)
-                    local crafterName = strsplit("-", crafterUID)
-                    local crafterClass = CraftSimRecipeDataCache.altClassCache[crafterUID]
-                    if crafterClass then
-                        crafterName = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterName)
-                    end
+                    local crafterName = f.class(select(1, strsplit("-", crafterUID)),
+                        CraftSim.DB.CRAFTER:GetClass(crafterUID))
                     crafterName = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[profession], 15, 15) .. crafterName
                     usedPriceColumn.text:SetText(crafterName)
                 end
@@ -262,10 +259,10 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
 
     content.maxRecipeDepthSlider = GGUI.Slider {
         parent = content, anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -50, offsetX = 70,
-        label = "Sub Recipe Calculation Depth", minValue = 1, maxValue = 5, initialValue = CraftSimOptions.costOptimizationSubRecipeMaxDepth,
+        label = "Sub Recipe Calculation Depth", minValue = 1, maxValue = 5, initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH"),
         lowText = "1", highText = "5", step = 1,
         onValueChangedCallback = function(self, value)
-            CraftSimOptions.costOptimizationSubRecipeMaxDepth = value
+            CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH", value)
         end
     }
 
@@ -276,9 +273,9 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
             offsetX = -7,
         },
         tooltip = "If enabled, " .. f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted materials",
-        initialValue = CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns,
+        initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS"),
         clickCallback = function(_, checked)
-            CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = checked
+            CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS", checked)
             CraftSim.INIT:TriggerModulesByRecipeType()
         end
     }
@@ -346,8 +343,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
             ---@param userInput boolean
                 function(row, userInput)
                     if userInput and row.recipeID and row.crafterUID then
-                        if not CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(row.recipeID, row.crafterUID) then
-                            CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:SetCrafter(row.recipeID, row.crafterUID)
+                        if not CraftSim.DB.RECIPE_SUB_CRAFTER:IsCrafter(row.recipeID, row.crafterUID) then
+                            CraftSim.DB.RECIPE_SUB_CRAFTER:SetCrafter(row.recipeID, row.crafterUID)
                             CraftSim.INIT:TriggerModulesByRecipeType()
                         end
                     end
@@ -375,9 +372,9 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
         ---@param rowA CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.Row
         ---@param rowB CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.Row
             function(rowA, rowB)
-                local isCrafterA = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(rowA.recipeID,
+                local isCrafterA = CraftSim.DB.RECIPE_SUB_CRAFTER:IsCrafter(rowA.recipeID,
                     rowA.crafterUID)
-                local isCrafterB = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:IsCrafter(rowB.recipeID,
+                local isCrafterB = CraftSim.DB.RECIPE_SUB_CRAFTER:IsCrafter(rowB.recipeID,
                     rowB.crafterUID)
 
                 return isCrafterA and not isCrafterB
@@ -432,7 +429,7 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
                 print("Has expectedCostsData: " .. tostring(priceInfo.expectedCostsData ~= nil))
                 if priceInfo.expectedCostsData then
                     row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin))
-                    local class = CraftSimRecipeDataCache.altClassCache[priceInfo.expectedCostsData.crafter]
+                    local class = CraftSim.DB.CRAFTER:GetClass(priceInfo.expectedCostsData.crafter)
                     local crafterName = priceInfo.expectedCostsData.crafter
                     if class then
                         crafterName = C_ClassColor.GetClassColor(class):WrapTextInColorCode(crafterName)
@@ -502,11 +499,8 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
 
             if priceInfo.isExpectedCost and priceInfo.expectedCostsData then
                 row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin))
-                local class = CraftSimRecipeDataCache.altClassCache[priceInfo.expectedCostsData.crafter]
-                local crafterName = priceInfo.expectedCostsData.crafter
-                if class then
-                    crafterName = C_ClassColor.GetClassColor(class):WrapTextInColorCode(crafterName)
-                end
+                local class = CraftSim.DB.CRAFTER:GetClass(priceInfo.expectedCostsData.crafter)
+                local crafterName = f.class(priceInfo.expectedCostsData.crafter, class)
                 crafterName = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[priceInfo.expectedCostsData.profession],
                         13, 13) ..
                     " " .. crafterName
@@ -568,10 +562,8 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeList(reci
                 local columns = row.columns
                 local recipeColumn = columns[1] --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeList.RecipeColumn]]
                 -- to get general data just take the first crafter to fetch from cache
-                CraftSimRecipeDataCache.recipeInfoCache[subRecipeCraftingInfo.crafters[1]] = CraftSimRecipeDataCache
-                    .recipeInfoCache[subRecipeCraftingInfo.crafters[1]] or {}
-                local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[subRecipeCraftingInfo.crafters[1]]
-                    [subRecipeCraftingInfo.recipeID]
+                local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(subRecipeCraftingInfo.crafters[1],
+                    subRecipeCraftingInfo.recipeID)
 
                 if recipeInfo then
                     row.recipeTitle = GUTIL:IconToText(recipeInfo.icon, 20, 20) .. " " .. recipeInfo.name
@@ -608,7 +600,9 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
         subRecipeCrafterList:Show()
         content.recipeTitle:SetText(selectedRow.recipeTitle)
 
-        local recipeSubRecipeInfoList = GUTIL:Filter(CraftSimRecipeDataCache.itemRecipeCache, function(irI)
+        local itemRecipeData = CraftSim.DB.ITEM_RECIPE:GetAll()
+
+        local recipeSubRecipeInfoList = GUTIL:Filter(itemRecipeData, function(irI)
             return irI.recipeID == subRecipeData.recipeID
         end)
 
@@ -616,7 +610,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
 
         subRecipeCrafterList:Remove()
 
-        for _, crafter in ipairs(subRecipeData.crafters) do
+        for _, crafterUID in ipairs(subRecipeData.crafters) do
             subRecipeCrafterList:Add(
             ---@param row CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.Row
                 function(row)
@@ -624,17 +618,13 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
                     local crafterColumn = columns
                         [1] --[[@as CraftSim.COST_OPTIMIZATION.SUB_RECIPE_CRAFTER_LIST.CrafterColumn]]
 
-                    local crafterText = strsplit("-", crafter) -- name only
-                    local fullCrafterText = crafter
-                    local crafterClass = CraftSimRecipeDataCache.altClassCache[crafter]
-                    if crafterClass then
-                        crafterText = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(crafterText)
-                        fullCrafterText = C_ClassColor.GetClassColor(crafterClass):WrapTextInColorCode(fullCrafterText)
-                    end
+                    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                    local crafterText = f.class(select(1, strsplit("-", crafterUID)), crafterClass) -- name only
+                    local fullCrafterText = f.class(crafterUID, crafterClass)
                     crafterColumn.text:SetText(fullCrafterText)
 
                     local crafterItemRecipeList = GUTIL:Filter(recipeSubRecipeInfoList, function(irI)
-                        return tContains(irI.crafters, crafter)
+                        return tContains(irI.crafters, crafterUID)
                     end)
                     local optimizedItemIDs = {}
                     -- metadata for sorting and other things
@@ -642,11 +632,11 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
                         tinsert(optimizedItemIDs, Item:CreateFromItemID(irI.itemID))
                         return {
                             itemID = irI.itemID,
-                            optimizedCostsData = CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Get(irI.itemID, crafter)
+                            optimizedCostsData = CraftSim.DB.ITEM_OPTIMIZED_COSTS:Get(irI.itemID, crafterUID)
                         }
                     end)
 
-                    row.crafterUID = crafter
+                    row.crafterUID = crafterUID
                     row.recipeID = subRecipeData.recipeID
                     local tooltipText = ""
 

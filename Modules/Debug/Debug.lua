@@ -39,7 +39,8 @@ function CraftSim.DEBUG:InspectTable(t, label)
 end
 
 function CraftSim.DEBUG:print(debugOutput, debugID, recursive, printLabel, level)
-    if CraftSimOptions["enableDebugID_" .. debugID] and not CraftSim.DEBUG.isMute then
+    local debugIDsDB = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
+    if debugIDsDB[debugID] and not CraftSim.DEBUG.isMute then
         if type(debugOutput) == "table" then
             CraftSim.DEBUG:PrintTable(debugOutput, debugID, recursive, level)
         else
@@ -151,14 +152,8 @@ function CraftSim.DEBUG:StopProfiling(label)
     CraftSim.DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
 end
 
---- used for the cache debug list
+---@deprecated
 function CraftSim.DEBUG:GetCacheGlobalsList()
     return {
-        "CraftSimOptions",
-        "CraftSimCraftQueueCache",
-        "CraftSimItemCountCache",
-        "CraftSimRecipeDataCache",
-        "CraftSimPriceOverridesV2",
-        "CraftSimCustomerHistoryV2",
     }
 end

@@ -1,6 +1,12 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GGUI = CraftSim.GGUI
+
+---@class CraftSim.TOP_GEAR
+CraftSim.TOPGEAR = CraftSim.TOPGEAR
+
+---@class CraftSim.TOP_GEAR.FRAMES
 CraftSim.TOPGEAR.FRAMES = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.TOP_GEAR)
@@ -29,7 +35,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesTopGear"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_TOP_GEAR"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -51,7 +57,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         offsetX = offsetX,
         offsetY = offsetY,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesTopGear"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_TOP_GEAR"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -62,13 +68,15 @@ function CraftSim.TOPGEAR.FRAMES:Init()
     local function createContent(frame)
         local contentOffsetY = -40
         local iconsOffsetY = 90
-        frame.content.autoUpdateCB = CraftSim.FRAME:CreateCheckbox(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC),
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC_TOOLTIP),
-            "topGearAutoUpdate", frame.content, frame.content, "TOP", "TOP", -40, -33)
-        frame.content.autoUpdateCB:HookScript("OnClick", function()
-            CraftSim.INIT:TriggerModuleUpdate(false)
-        end)
+        frame.content.autoUpdateCB = GGUI.Checkbox {
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC),
+            tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC_TOOLTIP),
+            parent = frame.content, anchorParent = frame.content, anchorA = "TOP", anchorB = "TOP", offsetX = -40, offsetY = -33,
+            initialValue = CraftSim.DB.OPTIONS:Get("TOP_GEAR_AUTO_UPDATE"),
+            clickCallback = function(_, checked)
+                CraftSim.DB.OPTIONS:Save("TOP_GEAR_AUTO_UPDATE", checked)
+            end
+        }
         frame.content.gear1Icon = CraftSim.GGUI.Icon({
             parent = frame.content,
             anchorParent = frame.content,
@@ -127,7 +135,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
             offsetY = contentOffsetY,
             width = 120,
             clickCallback = function(_, _, value)
-                CraftSimOptions.topGearMode = value
+                CraftSim.DB.OPTIONS:Save("TOP_GEAR_MODE", value)
                 CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.INIT.currentRecipeData)
             end
         })
@@ -338,18 +346,20 @@ function CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(recipeData, exportMode)
         topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
     end
 
-
+    local topGearMode = CraftSim.DB.OPTIONS:Get("TOP_GEAR_MODE")
     local availableModes = CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData)
-    if #availableModes > 0 and not tContains(availableModes, CraftSimOptions.topGearMode) then
-        CraftSimOptions.topGearMode = availableModes[1]
+    if #availableModes > 0 and not tContains(availableModes, topGearMode) then
+        topGearMode = availableModes[1]
+        CraftSim.DB.OPTIONS:Save("TOP_GEAR_MODE", topGearMode)
     end
 
     availableModes = CraftSim.GUTIL:Map(availableModes, function(mode) return { label = mode, value = mode } end)
 
+    local topGearMode = CraftSim.DB.OPTIONS:Get("TOP_GEAR_MODE")
+
     topGearFrame.content.simModeDropdown:SetData({
         data = availableModes,
-        initialValue = CraftSimOptions.topGearMode,
-        initialLabel =
-            CraftSimOptions.topGearMode
+        initialValue = topGearMode,
+        initialLabel = topGearMode
     })
 end

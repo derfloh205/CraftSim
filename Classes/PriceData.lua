@@ -138,10 +138,10 @@ function CraftSim.PriceData:Update()
         -- if its not gear we get the price by id
         local itemPrice = 0
         if self.recipeData.isGear then
-            itemPrice = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
+            itemPrice = CraftSim.DB.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
                 CraftSim.PRICEDATA:GetMinBuyoutByItemLink(item:GetItemLink())
         else
-            itemPrice = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
+            itemPrice = CraftSim.DB.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
                 CraftSim.PRICEDATA:GetMinBuyoutByItemID(item:GetItemID())
         end
         table.insert(self.qualityPriceList, itemPrice)
@@ -150,7 +150,7 @@ function CraftSim.PriceData:Update()
     local avgSavedCostsRes = 0
     if self.recipeData.supportsResourcefulness then
         -- in this case we need the average saved costs per craft
-        avgSavedCostsRes = CraftSim.CALC:getResourcefulnessSavedCosts(self.recipeData) *
+        avgSavedCostsRes = CraftSim.CALC:GetResourcefulnessSavedCosts(self.recipeData) *
             self.recipeData.professionStats.resourcefulness:GetPercent(true)
     end
     for qualityID, chance in pairs(self.recipeData.resultData.chanceByQuality) do

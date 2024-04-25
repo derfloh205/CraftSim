@@ -31,7 +31,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCraftQueue"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CRAFT_QUEUE"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -477,9 +477,9 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             parent = queueTab.content, anchorParent = queueTab.content.importRecipeScanButton.frame,
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_LABEL),
             offsetX = 5, anchorA = "LEFT", anchorB = "RIGHT",
-            initialValue = CraftSimOptions.recipeScanImportAllProfessions,
+            initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_IMPORT_ALL_PROFESSIONS"),
             clickCallback = function(_, checked)
-                CraftSimOptions.recipeScanImportAllProfessions = checked
+                CraftSim.DB.OPTIONS:Save("RECIPESCAN_IMPORT_ALL_PROFESSIONS", checked)
             end,
             tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP)
         }
@@ -551,9 +551,9 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX),
                 },
                 tooltip = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP),
-                initialValue = CraftSimOptions.craftQueueShoppingListPerCharacter,
+                initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER"),
                 clickCallback = function(_, checked)
-                    CraftSimOptions.craftQueueShoppingListPerCharacter = checked
+                    CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER", checked)
                 end
             })
 
@@ -567,9 +567,9 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX),
                 },
                 tooltip = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP),
-                initialValue = CraftSimOptions.craftQueueShoppingListTargetMode,
+                initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE"),
                 clickCallback = function(_, checked)
-                    CraftSimOptions.craftQueueShoppingListTargetMode = checked
+                    CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE", checked)
                 end
             })
         end
@@ -645,7 +645,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
         generalOptionsFrame.profitMarginThresholdInput = GGUI.NumericInput({
             parent = generalOptionsFrame,
             anchorParent = profitMarginLabel.frame,
-            initialValue = CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold or 0,
+            initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_PROFIT_MARGIN_THRESHOLD"),
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 10,
@@ -654,8 +654,8 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             sizeX = 40,
             borderAdjustWidth = 1.2,
             onNumberValidCallback = function(numberInput)
-                print("Updating craftQueueGeneralRestockProfitMarginThreshold: " .. tostring(numberInput.currentValue))
-                CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold = tonumber(numberInput.currentValue or 0)
+                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_GENERAL_RESTOCK_PROFIT_MARGIN_THRESHOLD",
+                    tonumber(numberInput.currentValue or 0))
             end
         })
         -- %
@@ -679,11 +679,11 @@ function CraftSim.CRAFTQ.FRAMES:Init()
 
         generalOptionsFrame.restockAmountInput = GGUI.NumericInput {
             parent = generalOptionsFrame, anchorParent = generalOptionsFrame.restockAmountLabel.frame,
-            initialValue = tonumber(CraftSimOptions.craftQueueGeneralRestockRestockAmount) or 1,
+            initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT"),
             anchorA = "LEFT", anchorB = "RIGHT", offsetX = 10, minValue = 1,
             sizeX = 40, borderAdjustWidth = 1.2, onNumberValidCallback = function(input)
             local value = tostring(input.currentValue)
-            CraftSimOptions.craftQueueGeneralRestockRestockAmount = value or 1
+            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT", tonumber(value) or 1)
         end,
         }
 
@@ -706,12 +706,12 @@ function CraftSim.CRAFTQ.FRAMES:Init()
         }
 
         generalOptionsFrame.saleRateInput = GGUI.NumericInput {
-            parent = generalOptionsFrame, anchorParent = generalOptionsFrame.saleRateTitle.frame, initialValue = CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold or 0,
+            parent = generalOptionsFrame, anchorParent = generalOptionsFrame.saleRateTitle.frame, initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_SALE_RATE_THRESHOLD"),
             anchorA = "LEFT", anchorB = "RIGHT", offsetX = 10,
             allowDecimals = true, minValue = 0,
             sizeX = 40, borderAdjustWidth = 1.2, onNumberValidCallback = function(input)
             local value = input.currentValue
-            CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold = tonumber(value)
+            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_GENERAL_RESTOCK_SALE_RATE_THRESHOLD", tonumber(value))
         end
         }
 
@@ -728,7 +728,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
 
         generalOptionsFrame.targetModeCraftOffsetInput = GGUI.NumericInput {
             parent = generalOptionsFrame, anchorParent = generalOptionsFrame.saleRateInput.textInput.frame, anchorA = "TOP", anchorB = "BOTTOM",
-            allowDecimals = false, initialValue = CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset, minValue = 0,
+            allowDecimals = false, initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET"), minValue = 0,
             sizeX = 40,
             labelOptions = {
                 text = "Target Mode Crafts: ",
@@ -736,7 +736,8 @@ function CraftSim.CRAFTQ.FRAMES:Init()
             },
             tooltipOptions = targetModecraftOffsetTooltipOptions,
             onNumberValidCallback = function(input)
-                CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset = input.currentValue
+                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET",
+                    tonumber(input.currentValue))
                 self:UpdateQueueDisplay()
             end
         }
@@ -1387,6 +1388,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
         local restockOptionsTab = CraftSim.CRAFTQ.frame.content.restockOptionsTab
         ---@type CraftSim.CraftQueue.RestockOptions.RecipeOptionsFrame
         local recipeOptionsFrame = restockOptionsTab.content.recipeOptionsFrame
+        local restockOptions = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_RESTOCK_PER_RECIPE_OPTIONS")
 
         if not CraftSim.CRAFTQ:IsRecipeQueueable(recipeData) then
             recipeOptionsFrame:Hide()
@@ -1405,10 +1407,6 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
         local recipeIconText = GUTIL:IconToText(recipeData.recipeIcon, 25, 25)
         recipeOptionsFrame.recipeTitle:SetText(recipeIconText .. " " .. recipeData.recipeName)
 
-        CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID] = CraftSimOptions
-            .craftQueueRestockPerRecipeOptions[recipeData.recipeID] or
-            CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
-        --- only use for setting of initial values of checkboxes and such
         local initialRestockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
 
         ---@type CraftSim.CraftQueue.RestockOptions.TSMSaleRateFrame
@@ -1422,43 +1420,41 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
             restockCB:SetVisible(hasQualityID)
             restockCB:SetChecked(initialRestockOptions.restockPerQuality[qualityID])
             restockCB.clickCallback = function(_, checked)
-                CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality =
-                    CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality or {}
-                CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockPerQuality[qualityID] =
-                    checked
+                restockOptions[recipeData.recipeID].restockPerQuality = restockOptions[recipeData.recipeID]
+                    .restockPerQuality or {}
+                restockOptions[recipeData.recipeID].restockPerQuality[qualityID] = checked
             end
 
             tsmSaleRateCB:SetVisible(hasQualityID)
             tsmSaleRateCB:SetChecked(initialRestockOptions.saleRatePerQuality[qualityID])
             tsmSaleRateCB.clickCallback = function(_, checked)
-                CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality =
-                    CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality or {}
-                CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRatePerQuality[qualityID] =
-                    checked
+                restockOptions[recipeData.recipeID].saleRatePerQuality =
+                    restockOptions[recipeData.recipeID].saleRatePerQuality or {}
+                restockOptions[recipeData.recipeID].saleRatePerQuality[qualityID] = checked
             end
         end
         recipeOptionsFrame.enableRecipeCheckbox:SetChecked(initialRestockOptions.enabled or false)
         recipeOptionsFrame.enableRecipeCheckbox.clickCallback = function(_, checked)
-            CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].enabled = checked
+            restockOptions[recipeData.recipeID].enabled = checked
         end
 
         -- adjust numericInputs Visibility, initialValue and Callbacks
         recipeOptionsFrame.restockAmountInput.textInput:SetText(initialRestockOptions.restockAmount or 0)
         recipeOptionsFrame.restockAmountInput.onNumberValidCallback = function(input)
             local inputValue = tonumber(input.currentValue)
-            CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].restockAmount = inputValue
+            restockOptions[recipeData.recipeID].restockAmount = inputValue
         end
         recipeOptionsFrame.profitMarginThresholdInput.textInput:SetText(initialRestockOptions.profitMarginThreshold or 0)
         recipeOptionsFrame.profitMarginThresholdInput.onNumberValidCallback = function(input)
             local inputValue = tonumber(input.currentValue)
-            CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].profitMarginThreshold = inputValue
+            restockOptions[recipeData.recipeID].profitMarginThreshold = inputValue
         end
         -- Only show Sale Rate Input Stuff if TSM is loaded
 
         tsmSaleRateFrame.saleRateInput.textInput:SetText(initialRestockOptions.saleRateThreshold)
         tsmSaleRateFrame.saleRateInput.onNumberValidCallback = function(input)
             local inputValue = tonumber(input.currentValue)
-            CraftSimOptions.craftQueueRestockPerRecipeOptions[recipeData.recipeID].saleRateThreshold = inputValue
+            restockOptions[recipeData.recipeID].saleRateThreshold = inputValue
         end
         if tsmLoaded then
             tsmSaleRateFrame:Show()
@@ -1863,7 +1859,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
                         owner = row.frame,
                         itemID = itemID
                     }
-                    local itemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, true, false, true, recipeData:GetCrafterUID())
+                    local itemCount = CraftSim.ITEM_COUNT:Get(recipeData:GetCrafterUID(), itemID)
                     countColumn:SetCount(itemCount, targetCount)
                 end)
             end

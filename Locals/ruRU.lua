@@ -232,7 +232,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Больше не показывать предупреждение",
 
         -- Materials Frame
-        [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "Оптимизация материалов CraftSim",
+        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Оптимизация материалов CraftSim",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "Достичь точки вдохновения",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] =
         "Попробовать достичь точки навыка, когда прок вдохновения переходит на более высокое качество с использованием самой дешевой комбинации материалов",
@@ -391,7 +391,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "Заблокировано",
 
         -- Price Details Frame
-        [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "Информация о ценах CraftSim",
+        [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "Информация о ценах CraftSim",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Инв/Аук",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "Предмет",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "Цена/Предмет",
@@ -521,7 +521,6 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Сбросить по умолчанию",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Недопустимое выражение",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Допустимое выражение",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_TRANSPARENCY] = "Прозрачность",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Модуль оптимизации материалов",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Модуль средней прибыли",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Модуль снаряжения",
@@ -552,14 +551,14 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL] = "Снаряжение",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP] =
         "Показывает лучшую доступную комбинацию снаряжения для профессии в зависимости от выбранного режима",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL] = "Данные о ценах",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_TOOLTIP] =
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL] = "Данные о ценах",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP] =
         "Показывает цену продажи и обзор прибыли в зависимости от качества товара",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "Средняя прибыль",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] =
         "Показывает среднюю прибыль на основе характеристик вашей профессии и прибыль от каждого очка характеристик в золоте.",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_LABEL] = "Оптимизация материалов",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_TOOLTIP] =
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Оптимизация материалов",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP] =
         "Предлагает самые дешевые материалы для достижения наивысшего порога качества и вдохновения.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Переопределение",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] =

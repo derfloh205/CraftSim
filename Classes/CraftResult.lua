@@ -52,7 +52,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     local resChance = ((recipeData.supportsCraftingStats and recipeData.supportsResourcefulness) and recipeData.professionStats.resourcefulness:GetPercent(true)) or
         1
 
-    self.expectedAverageSavedCosts = (recipeData.supportsCraftingStats and CraftSim.CALC:getResourcefulnessSavedCosts(recipeData) * resChance) or
+    self.expectedAverageSavedCosts = (recipeData.supportsCraftingStats and CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData) * resChance) or
         0
 
     if inspChance < 1 then

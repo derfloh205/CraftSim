@@ -64,8 +64,7 @@ function CraftSim.ReagentItem:HasItem(multiplier, crafterUID)
     -- only count the item actually used in the recipe (originalItem if we have one)
     -- in the case of e.g. rimefin tuna we want to count the non frosted one only (will be the original)
     local itemID = (self.originalItem and self.originalItem:GetItemID()) or self.item:GetItemID()
-    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, true, false, true,
-        crafterUID)
+    local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
     return itemCount >= (self.quantity * multiplier)
 end
 

@@ -43,10 +43,10 @@ function CraftSim.DEBUG.FRAMES:Init()
 end
 
 function CraftSim.DEBUG.FRAMES:InitDebugFrame(debugFrame)
-    CraftSim.FRAME:ToggleFrame(debugFrame, CraftSimOptions.debugVisible)
+    CraftSim.FRAME:ToggleFrame(debugFrame, CraftSim.DB.OPTIONS:Get("DEBUG_VISIBLE"))
 
-    debugFrame:HookScript("OnShow", function() CraftSimOptions.debugVisible = true end)
-    debugFrame:HookScript("OnHide", function() CraftSimOptions.debugVisible = false end)
+    debugFrame:HookScript("OnShow", function() CraftSim.DB.OPTIONS:Save("DEBUG_VISIBLE", true) end)
+    debugFrame:HookScript("OnHide", function() CraftSim.DB.OPTIONS:Save("DEBUG_VISIBLE", false) end)
 
     debugFrame.content.debugBox = CreateFrame("EditBox", nil, debugFrame.content)
     debugFrame.content.debugBox:SetPoint("TOP", debugFrame.content, "TOP", 0, -20)
@@ -61,10 +61,10 @@ function CraftSim.DEBUG.FRAMES:InitDebugFrame(debugFrame)
 
     debugFrame.content.autoScrollCB = GGUI.Checkbox {
         parent = debugFrame.frame, anchorParent = debugFrame.frame, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 20, offsetY = -15,
-        initialValue = CraftSimOptions.debugAutoScroll,
+        initialValue = CraftSim.DB.OPTIONS:Get("DEBUG_AUTO_SCROLL"),
         label = "Autoscroll",
         clickCallback = function(_, checked)
-            CraftSimOptions.debugAutoScroll = checked
+            CraftSim.DB.OPTIONS:Save("DEBUG_AUTO_SCROLL", checked)
         end
     }
 
@@ -97,7 +97,7 @@ function CraftSim.DEBUG.FRAMES:InitDebugFrame(debugFrame)
     end
 
     debugFrame.frame.scrollFrame:HookScript("OnScrollRangeChanged", function()
-        if CraftSimOptions.debugAutoScroll then
+        if CraftSim.DB.OPTIONS:Get("DEBUG_AUTO_SCROLL") then
             debugFrame.frame.scrollFrame:SetVerticalScroll(debugFrame.frame.scrollFrame:GetVerticalScrollRange())
         end
     end)
@@ -157,9 +157,9 @@ function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
         sizeY = tabSizeY
     }
 
-    controlPanel.content.cacheTab = GGUI.BlizzardTab {
+    controlPanel.content.dbTab = GGUI.BlizzardTab {
         buttonOptions = {
-            label = "Cache", anchorA = "LEFT", anchorB = "RIGHT",
+            label = "DB", anchorA = "LEFT", anchorB = "RIGHT",
             anchorParent = controlPanel.content.logTab.button
         },
         top = true,
@@ -170,8 +170,8 @@ function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
 
     controlPanel.content.modulesTab = GGUI.BlizzardTab {
         buttonOptions = {
-            label = "Module Debug Tools", anchorA = "LEFT", anchorB = "RIGHT",
-            anchorParent = controlPanel.content.cacheTab.button
+            label = "Modules", anchorA = "LEFT", anchorB = "RIGHT",
+            anchorParent = controlPanel.content.dbTab.button
         },
         top = true,
         parent = controlPanel.content, anchorParent = controlPanel.content,
@@ -179,10 +179,10 @@ function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
         sizeY = tabSizeY
     }
 
-    GGUI.BlizzardTabSystem { controlPanel.content.logTab, controlPanel.content.cacheTab, controlPanel.content.modulesTab }
+    GGUI.BlizzardTabSystem { controlPanel.content.logTab, controlPanel.content.dbTab, controlPanel.content.modulesTab }
 
     CraftSim.DEBUG.FRAMES:InitLogOptionsTab(controlPanel.content.logTab)
-    CraftSim.DEBUG.FRAMES:InitCacheTab(controlPanel.content.cacheTab)
+    CraftSim.DEBUG.FRAMES:InitCacheTab(controlPanel.content.dbTab)
     CraftSim.DEBUG.FRAMES:InitModuleDebugToolsTab(controlPanel.content.modulesTab)
 end
 
@@ -229,9 +229,11 @@ function CraftSim.DEBUG.FRAMES:InitLogOptionsTab(logOptionsTab)
 
             local cb = checkBoxRow.cb --[[@as GGUI.Checkbox]]
 
-            cb:SetChecked(CraftSimOptions["enableDebugID_" .. debugID])
+            local debugIDs = CraftSim.DB.OPTIONS:Get("DEBUG_IDS")
+
+            cb:SetChecked(debugIDs[debugID])
             cb.clickCallback = function(_, checked)
-                CraftSimOptions["enableDebugID_" .. debugID] = checked
+                debugIDs[debugID] = checked
             end
         end)
     end
@@ -241,6 +243,7 @@ function CraftSim.DEBUG.FRAMES:InitLogOptionsTab(logOptionsTab)
     end)
 end
 
+---@deprecated
 function CraftSim.DEBUG.FRAMES:InitCacheTab(cacheTab)
     local content = cacheTab.content
 
@@ -255,7 +258,7 @@ function CraftSim.DEBUG.FRAMES:InitCacheTab(cacheTab)
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            CraftSim.CACHE:ClearAll()
+            CraftSim.DB:ClearAll()
         end
     })
 
@@ -318,15 +321,7 @@ function CraftSim.DEBUG.FRAMES:InitCacheTab(cacheTab)
             local clearButton = clearColumn.clearButton --[[@as GGUI.Button]]
 
             clearButton.clickCallback = function()
-                local cacheSV = _G[cacheName]
-                if cacheSV then
-                    if cacheName == "CraftSimPriceOverridesV2" then
-                        CraftSim.PRICE_OVERRIDE:ClearAll()
-                    else 
-                        wipe(cacheSV)
-                        CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. "Cache cleared: " .. cacheName)
-                    end
-                end
+                CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. "Button deprecated and will be implemented anew")
             end
 
             local inspectButton = inspectColumn.inspectButton --[[@as GGUI.Button]]

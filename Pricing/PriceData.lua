@@ -44,7 +44,7 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
     end
     -- check for overrides
     if isReagent then
-        local priceOverrideData = CraftSim.PRICE_OVERRIDE:GetGlobalOverride(itemID)
+        local priceOverrideData = CraftSim.DB.PRICE_OVERRIDE:GetGlobalOverride(itemID)
         if priceOverrideData then
             priceInfo.isOverride = true
             return priceOverrideData.price, priceInfo
@@ -52,17 +52,16 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
 
         if considerSubCrafts then
             -- get costs from set crafter
-            local itemRecipeData = CraftSimRecipeDataCache.itemRecipeCache[itemID]
+            local itemRecipeData = CraftSim.DB.ITEM_RECIPE:Get(itemID)
             -- only use if set crafter exists, has cached optimized costs and can even craft that item with a chance higher than 0
             if itemRecipeData then
-                local recipeCrafter = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(itemRecipeData
+                local recipeCrafter = CraftSim.DB.RECIPE_SUB_CRAFTER:GetCrafter(itemRecipeData
                     .recipeID)
                 if recipeCrafter then
-                    local allowCooldown = CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns or
-                        not CraftSim.CACHE.RECIPE_DATA.COOLDOWN_CACHE:IsCooldownRecipe(itemRecipeData.recipeID,
-                            recipeCrafter)
+                    local allowCooldown = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS") or
+                        not CraftSim.DB.CRAFTER:IsRecipeCooldownRecipe(recipeCrafter, itemRecipeData.recipeID)
                     if allowCooldown then
-                        local itemOptimizedCostsData = CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Get(itemID,
+                        local itemOptimizedCostsData = CraftSim.DB.ITEM_OPTIMIZED_COSTS:Get(itemID,
                             recipeCrafter)
                         if itemOptimizedCostsData and itemOptimizedCostsData.craftingChanceMin > 0 then
                             priceInfo.expectedCostsData = itemOptimizedCostsData

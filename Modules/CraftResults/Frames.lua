@@ -1,12 +1,18 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GGUI = CraftSim.GGUI
+
+---@class CraftSim.CRAFT_RESULTS
+CraftSim.CRAFT_RESULTS = CraftSim.CRAFT_RESULTS
+
+---@class CraftSim.CRAFT_RESULTS.FRAMES
 CraftSim.CRAFT_RESULTS.FRAMES = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
 
 function CraftSim.CRAFT_RESULTS.FRAMES:Init()
-    local frameNO_WO = CraftSim.GGUI.Frame({
+    local frameNO_WO = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage,
         anchorParent = ProfessionsFrame.CraftingPage.CraftingOutputLog,
         anchorA = "TOPLEFT",
@@ -20,7 +26,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCraftResults"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CRAFT_RESULTS"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -37,7 +43,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
             "TOPLEFT", "BOTTOMLEFT", 0, -5, nil, nil, { type = "H", value = "LEFT" })
 
 
-        frame.content.clearButton = CraftSim.GGUI.Button({
+        frame.content.clearButton = GGUI.Button({
             parent = frame.content,
             anchorParent = frame.content.totalProfitAllTitle,
             anchorA = "TOPLEFT",
@@ -56,7 +62,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
             end
         })
 
-        frame.content.exportButton = CraftSim.GGUI.Button({
+        frame.content.exportButton = GGUI.Button({
             parent = frame.content,
             anchorParent = frame.content.clearButton.frame,
             anchorA = "TOPLEFT",
@@ -105,14 +111,20 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
             "TOPLEFT", "BOTTOMLEFT", -70, -10, nil, nil, { type = "H", value = "LEFT" })
         frame.content.statisticsText:SetWidth(300)
 
-        frame.content.disableCraftResultsCB = CraftSim.FRAME:CreateCheckbox(
-            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX),
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX_TOOLTIP),
-            "craftResultsDisable", frame.content, frame.content.exportButton.frame, "TOPLEFT", "BOTTOMLEFT", 0, -10)
+        frame.content.disableCraftResultsCB = GGUI.Checkbox {
+            parent = frame.content, anchorParent = frame.content.exportButton.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+            offsetY = -10,
+            label = " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX),
+            tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX_TOOLTIP),
+            initialValue = CraftSim.DB.OPTIONS:Get("CRAFT_RESULTS_DISABLE"),
+            clickCallback = function(_, checked)
+                CraftSim.DB.OPTIONS:Save("CRAFT_RESULTS_DISABLE", checked)
+            end
+        }
     end
 
     createContent(frameNO_WO)
-    CraftSim.GGUI:EnableHyperLinksForFrameAndChilds(frameNO_WO.content)
+    GGUI:EnableHyperLinksForFrameAndChilds(frameNO_WO.content)
 end
 
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
@@ -126,7 +138,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     end
     print("Do update cause its the shown recipe")
 
-    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 
     local craftSessionData = CraftSim.CRAFT_RESULTS.currentSessionData
     if not craftSessionData then
@@ -207,7 +219,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
             local expectedAdditionalItems = 0
             local multicraftExtraItemsFactor = CraftSim.INIT.currentRecipeData.professionStats.multicraft:GetExtraFactor(true)
 
-            local maxExtraItems = (CraftSimOptions.customMulticraftConstant * CraftSim.INIT.currentRecipeData.baseItemAmount) *
+            local maxExtraItems = (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT") * CraftSim.INIT.currentRecipeData.baseItemAmount) *
                 multicraftExtraItemsFactor
             expectedAdditionalItems = tonumber(CraftSim.GUTIL:Round((1 + maxExtraItems) / 2, 2)) or 0
 
@@ -273,7 +285,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
 end
 
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
-    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
     -- total items
     local craftResultItems = CraftSim.CRAFT_RESULTS.currentSessionData.totalItems
 

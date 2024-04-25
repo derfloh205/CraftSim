@@ -399,7 +399,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
     local function calculateArrayBP(playerSkill)
         local arrayBP = {}
         for i = 0, numBP - 1, 1 do
-            local extraSkillPoint = (CraftSimOptions.breakPointOffset and 1) or 0
+            local extraSkillPoint = (CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET") and 1) or 0
             local skillBreakpoint = craftingDifficultyBP[i] * recipeData.professionStats.recipeDifficulty.value +
                 extraSkillPoint
 

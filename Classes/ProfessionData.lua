@@ -12,11 +12,9 @@ CraftSim.ProfessionData = CraftSim.CraftSimObject:extend()
 function CraftSim.ProfessionData:new(recipeData, recipeID)
 	self.recipeData = recipeData
 	local crafterUID = recipeData:GetCrafterUID()
-	CraftSimRecipeDataCache.professionInfoCache[crafterUID] = CraftSimRecipeDataCache.professionInfoCache[crafterUID] or
-		{}
 	-- if not the crafter get from cache, if not cached take data-less info
 	if not recipeData:IsCrafter() then
-		self.professionInfo = CraftSimRecipeDataCache.professionInfoCache[crafterUID][recipeID]
+		self.professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID)
 		if not self.professionInfo then
 			self.professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
 			self.professionInfoCached = false
@@ -28,11 +26,11 @@ function CraftSim.ProfessionData:new(recipeData, recipeID)
 
 		-- check if loaded
 		if self.professionInfo.profession then
-			-- cache it
-			CraftSimRecipeDataCache.professionInfoCache[crafterUID][recipeID] = self.professionInfo
+			-- save to db
+			CraftSim.DB.CRAFTER:SaveProfessionInfoForRecipe(crafterUID, recipeID, self.professionInfo)
 		else
 			-- take from cache or take plain
-			self.professionInfo = CraftSimRecipeDataCache.professionInfoCache[crafterUID][recipeID]
+			self.professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID)
 
 			if not self.professionInfo then
 				error("No professionInfo cached for " .. crafterUID .. ": " .. tostring(recipeID))

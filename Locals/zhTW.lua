@@ -157,7 +157,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "不要再顯示警告",
 
         -- Materials Frame
-        [CraftSim.CONST.TEXT.MATERIALS_TITLE] = "CraftSim 材料最佳化",
+        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim 材料最佳化",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "達到靈感斷點",
         [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] = "嘗試使用最便宜的材料組合達到技能斷點，使靈感觸發升級到下一個更高的品質",
         [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "可達到品質: ",
@@ -300,7 +300,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "鎖定",
 
         -- Price Details Frame
-        [CraftSim.CONST.TEXT.PRICE_DETAILS_TITLE] = "CraftSim 價格明細",
+        [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "CraftSim 價格明細",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Inv/AH",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "物品",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "價格/物品",
@@ -400,7 +400,6 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "恢復成預設值",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "語法不正確",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "語法正確",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_TRANSPARENCY] = "透明度",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "材料最佳化模組",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "平均利潤模組",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "最佳裝備模組",
@@ -424,12 +423,12 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP] = "在同一個地方排程並製造你的配方!",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_LABEL] = "最佳裝備",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_TOP_GEAR_TOOLTIP] = "依據選擇的模式來顯示最佳的可用專業裝備組合",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_LABEL] = "價格明細",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_DETAILS_TOOLTIP] = "按物品品質顯示銷售價格和利潤概覽",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_LABEL] = "價格明細",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OVERVIEW_TOOLTIP] = "按物品品質顯示銷售價格和利潤概覽",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "平均利潤",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] = "依據你的專業屬性和利潤比重來顯示平均利潤，每個點數多少金。",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_LABEL] = "材料最佳化",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_MATERIAL_OPTIMIZATION_TOOLTIP] = "建議使用最便宜材料便能達到最高品質/靈感的門檻",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "材料最佳化",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP] = "建議使用最便宜材料便能達到最高品質/靈感的門檻",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "重訂價格",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] =
         "取代所有配方或特定配方的任何材料、可選材料和製造結果的價格。也可以設定物品使用製造資料的價格。",

@@ -328,7 +328,9 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             ---@type CraftSim.OptionalReagentSlot
             slot = slot
             for _, possibleReagent in pairs(slot.possibleReagents) do
-                CraftSim.CACHE.ITEM_COUNT:Update(possibleReagent.item:GetItemID())
+                local itemID = possibleReagent.item:GetItemID()
+                local itemCount = C_Item.GetItemCount(itemID, true, false, true)
+                CraftSim.DB.ITEM_COUNT:Save(crafterUID, itemID, itemCount)
             end
         end
     end
@@ -336,9 +338,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     local hasVellumIfneeded = true
 
     if self.recipeData.isEnchantingRecipe then
-        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(CraftSim.CONST.ENCHANTING_VELLUM_ID, false,
-            false, true,
-            crafterUID)
+        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST.ENCHANTING_VELLUM_ID)
         hasVellumIfneeded = itemCount >= multiplier
     end
 
@@ -375,9 +375,7 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
 
     local vellumMinimumFit = math.huge
     if self.recipeData.isEnchantingRecipe then
-        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(CraftSim.CONST.ENCHANTING_VELLUM_ID, false,
-            false, true,
-            crafterUID)
+        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST.ENCHANTING_VELLUM_ID)
         vellumMinimumFit = itemCount
         print("minimum vellum fit: " .. tostring(vellumMinimumFit))
     end
@@ -416,9 +414,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             if reagentItem.originalItem then
                 itemID = reagentItem.originalItem:GetItemID()
             end
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID,
-                true,
-                false, true, crafterUID)
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
             local quantityText = f.r(tostring(requiredReagent.requiredQuantity * multiplier) ..
                 "(" .. tostring(itemCount) .. ")")
 
@@ -448,9 +444,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 if reagentItem.originalItem then
                     itemID = reagentItem.originalItem:GetItemID()
                 end
-                local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, true,
-                    false, true,
-                    crafterUID)
+                local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
                 local quantityText = f.r(
                     tostring(reagentItem.quantity * multiplier) .. "(" .. tostring(itemCount) .. ")")
 
@@ -479,9 +473,8 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             local reagentIcon = optionalReagentSlot.activeReagent.item:GetItemIcon()
             local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
             text = text .. inlineIcon
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(
-                optionalReagentSlot.activeReagent.item:GetItemID(),
-                true, false, true, crafterUID)
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID,
+                optionalReagentSlot.activeReagent.item:GetItemID())
             local quantityText = f.r(tostring(multiplier) .. "(" .. tostring(itemCount) .. ")")
             if itemCount >= multiplier then
                 quantityText = f.g(tostring(multiplier))
@@ -529,10 +522,13 @@ function CraftSim.ReagentData:UpdateItemCountCacheForAllocatedReagents()
         return
     end
 
+    local crafterUID = self.recipeData:GetCrafterUID()
+
     local craftingReagentInfoTbl = self:GetCraftingReagentInfoTbl()
 
     for _, craftingReagentInfo in pairs(craftingReagentInfoTbl) do
-        CraftSim.CACHE.ITEM_COUNT:Update(craftingReagentInfo.itemID)
+        local itemCount = C_Item.GetItemCount(craftingReagentInfo.itemID, true, false, true)
+        CraftSim.DB.ITEM_COUNT:Save(crafterUID, craftingReagentInfo.itemID, itemCount)
     end
 end
 

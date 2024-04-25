@@ -14,92 +14,6 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 
 CraftSim.INIT.FRAMES = {}
 
-CraftSimOptions = CraftSimOptions or {
-	priceDebug = false,
-	priceSource = nil,
-	tsmPriceKeyMaterials = "first(DBRecent, DBMinbuyout)",
-	tsmPriceKeyItems = "first(DBRecent, DBMinbuyout)",
-	topGearMode = "Top Profit",
-	breakPointOffset = false,
-	autoAssignVellum = false,
-	showProfitPercentage = false,
-	detailedCraftingInfoTooltip = true,
-	syncTarget = nil,
-	openLastRecipe = true,
-	topGearAutoUpdate = false,
-	optionsShowNews = true,
-	optionsHideMinimapButton = false,
-
-	-- modules
-	modulesMaterials = true,
-	modulesStatWeights = true,
-	modulesTopGear = true,
-	modulesPriceDetails = true,
-	modulesSpecInfo = true,
-	modulesPriceOverride = false,
-	modulesRecipeScan = false,
-	modulesCraftResults = false,
-	modulesCustomerService = false,
-	modulesCustomerHistory = false,
-	modulesCostOptimization = false,
-	modulesCraftQueue = false,
-	modulesCraftBuffs = true,
-	modulesCooldowns = false,
-	modulesExplanations = false,
-	modulesStatistics = false,
-
-	transparencyMaterials = 1,
-	transparencyStatWeights = 1,
-	transparencyTopGear = 1,
-	transparencyCostOverview = 1,
-	transparencySpecInfo = 1,
-	maxHistoryEntriesPerClient = 200,
-
-	-- recipeScan
-	recipeScanIncludeSoulbound = false,
-	recipeScanIncludeGear = false,
-	recipeScanIncludeNotLearned = false,
-	recipeScanOnlyFavorites = false,
-	recipeScanOptimizeProfessionTools = false,
-	recipeScanScanMode = nil,
-	recipeScanFilteredExpansions = nil,
-	recipeScanAltProfessions = nil,
-	recipeScanImportAllProfessions = false,
-	recipeScanOptimizeSubRecipes = false,
-
-	-- profit calc
-	customMulticraftConstant = CraftSim.CONST.MULTICRAFT_CONSTANT,
-
-	-- customer service module
-	customerServiceRecipeWhisperFormat =
-		"Highest Result: %gc\n" ..
-		"with Inspiration: %ic (%insp)\n" ..
-		"Crafting Costs: %cc\n" ..
-		"%ccd\n",
-
-	customerServiceAllowAutoResult = true,
-	customerServiceActivePreviewIDs = {},
-
-	-- crafting options
-	craftGarbageCollectEnabled = true,
-	craftGarbageCollectCrafts = 500,
-
-	-- craft queue
-	craftQueueGeneralRestockProfitMarginThreshold = 0,
-	craftQueueGeneralRestockRestockAmount = 1,
-	craftQueueGeneralRestockSaleRateThreshold = 0,
-	craftQueueGeneralRestockTargetModeCraftOffset = 0,
-	craftQueueRestockPerRecipeOptions = {},
-	craftQueueShoppingListPerCharacter = false,
-	craftQueueShoppingListTargetMode = false,
-	craftQueueFlashTaskbarOnCraftFinished = true,
-
-	-- cost optimization
-	costOptimizationAutomaticSubRecipeOptimization = false,
-	costOptimizationSubRecipeMaxDepth = 1,
-	costOptimizationSubRecipesIncludeCooldowns = false,
-}
-
 CraftSimGGUIConfig = CraftSimGGUIConfig or {}
 
 ---@type CraftSim.RecipeData?
@@ -109,7 +23,7 @@ CraftSim.INIT.currentRecipeID = nil
 CraftSim.INIT.initialLogin = false
 CraftSim.INIT.isReloadingUI = false
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.MAIN)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.INIT)
 function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 	CraftSim.INIT.initialLogin = initialLogin
 	CraftSim.INIT.isReloadingUI = isReloadingUI
@@ -119,107 +33,11 @@ function CraftSim.INIT:PLAYER_ENTERING_WORLD(initialLogin, isReloadingUI)
 		-- Clear Preview IDs upon fresh session
 		CraftSim.CUSTOMER_SERVICE:ClearPreviewIDs()
 		-- clear post loaded multicraft professions
-		wipe(CraftSimRecipeDataCache.postLoadedMulticraftInformationProfessions)
+		CraftSim.DB.MULTICRAFT_PRELOAD:ClearAll()
 	end
 
 	-- load craft queue
 	CraftSim.CRAFTQ:InitializeCraftQueue()
-end
-
-function CraftSim.INIT:HandleCraftSimOptionsUpdates()
-	if CraftSimOptions then
-		CraftSimOptions.tsmPriceKey = nil
-		CraftSimOptions.tsmPriceKeyMaterials = CraftSimOptions.tsmPriceKeyMaterials or
-			CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION
-		CraftSimOptions.tsmPriceKeyItems = CraftSimOptions.tsmPriceKeyItems or
-			CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION
-		CraftSimOptions.topGearMode = CraftSimOptions.topGearMode or "Top Profit"
-		CraftSimOptions.breakPointOffset = CraftSimOptions.breakPointOffset or false
-		CraftSimOptions.autoAssignVellum = CraftSimOptions.autoAssignVellum or false
-		CraftSimOptions.showProfitPercentage = CraftSimOptions.showProfitPercentage or false
-		CraftSimOptions.transparencyMaterials = CraftSimOptions.transparencyMaterials or 1
-		CraftSimOptions.transparencyStatWeights = CraftSimOptions.transparencyStatWeights or 1
-		CraftSimOptions.transparencyTopGear = CraftSimOptions.transparencyTopGear or 1
-		CraftSimOptions.transparencyCostOverview = CraftSimOptions.transparencyCostOverview or 1
-		CraftSimOptions.transparencySpecInfo = CraftSimOptions.transparencySpecInfo or 1
-		CraftSimOptions.maxHistoryEntriesPerClient = CraftSimOptions.maxHistoryEntriesPerClient or 200
-		CraftSimOptions.customerServiceActivePreviewIDs = CraftSimOptions.customerServiceActivePreviewIDs or {}
-		CraftSimOptions.customerServiceRecipeWhisperFormat = CraftSimOptions.customerServiceRecipeWhisperFormat or
-			("Highest Result: %gc\n" ..
-				"with Inspiration: %ic (%insp)\n" ..
-				"Crafting Costs: %cc\n" ..
-				"%ccd")
-		CraftSimOptions.craftGarbageCollectCrafts = CraftSimOptions.craftGarbageCollectCrafts or 500
-		CraftSimOptions.customMulticraftConstant = CraftSimOptions.customMulticraftConstant or
-			CraftSim.CONST.MULTICRAFT_CONSTANT
-		CraftSimOptions.customResourcefulnessConstant = CraftSimOptions.customResourcefulnessConstant or
-			CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR
-		CraftSimOptions.craftQueueGeneralRestockProfitMarginThreshold = CraftSimOptions
-			.craftQueueGeneralRestockProfitMarginThreshold or 0
-		CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold = CraftSimOptions
-			.craftQueueGeneralRestockSaleRateThreshold or 0
-		CraftSimOptions.craftQueueGeneralRestockRestockAmount = CraftSimOptions.craftQueueGeneralRestockRestockAmount or
-			1
-		CraftSimOptions.craftQueueRestockPerRecipeOptions = CraftSimOptions.craftQueueRestockPerRecipeOptions or {}
-		CraftSimOptions.customerHistoryAutoPurgeInterval = CraftSimOptions.customerHistoryAutoPurgeInterval or 2
-		CraftSimOptions.customerHistoryAutoPurgeLastPurge = CraftSimOptions.customerHistoryAutoPurgeLastPurge or nil
-		CraftSimOptions.recipeScanFilteredExpansions = CraftSimOptions.recipeScanFilteredExpansions or {
-			[CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = true,
-		}
-		CraftSimOptions.recipeScanIncludedProfessions = CraftSimOptions.recipeScanIncludedProfessions or {}
-		CraftSimOptions.recipeScanScanMode = CraftSimOptions.recipeScanScanMode or
-			CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
-		CraftSimOptions.recipeScanImportAllProfessions = CraftSimOptions.recipeScanImportAllProfessions or false
-		CraftSimOptions.craftQueueShoppingListPerCharacter = CraftSimOptions.craftQueueShoppingListPerCharacter or false
-		CraftSimOptions.costOptimizationSubRecipeMaxDepth = CraftSimOptions.costOptimizationSubRecipeMaxDepth or 1
-		CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns = CraftSimOptions
-			.costOptimizationSubRecipesIncludeCooldowns or false
-
-		CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset = CraftSimOptions
-			.craftQueueGeneralRestockTargetModeCraftOffset or 0
-
-		if CraftSimOptions.detailedCraftingInfoTooltip == nil then
-			CraftSimOptions.detailedCraftingInfoTooltip = true
-		end
-		if CraftSimOptions.openLastRecipe == nil then
-			CraftSimOptions.openLastRecipe = true
-		end
-		if CraftSimOptions.modulesMaterials == nil then
-			CraftSimOptions.modulesMaterials = true
-		end
-		if CraftSimOptions.modulesStatWeights == nil then
-			CraftSimOptions.modulesStatWeights = true
-		end
-		if CraftSimOptions.modulesTopGear == nil then
-			CraftSimOptions.modulesTopGear = true
-		end
-		if CraftSimOptions.modulesPriceDetails == nil then
-			CraftSimOptions.modulesPriceDetails = true
-		end
-		if CraftSimOptions.modulesSpecInfo == nil then
-			CraftSimOptions.modulesSpecInfo = true
-		end
-		if CraftSimOptions.modulesCraftBuffs == nil then
-			CraftSimOptions.modulesCraftBuffs = true
-		end
-		if CraftSimOptions.customerServiceAllowAutoResult == nil then
-			CraftSimOptions.customerServiceAllowAutoResult = true
-		end
-		if CraftSimOptions.craftGarbageCollectEnabled == nil then
-			CraftSimOptions.craftGarbageCollectEnabled = true
-		end
-		if CraftSimOptions.optionsShowNews == nil then
-			CraftSimOptions.optionsShowNews = true
-		end
-		if CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished == nil then
-			CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished = true
-		end
-	end
-
-	-- old data removal
-	if CraftSimCraftData then
-		CraftSimCraftData = nil
-	end
 end
 
 local hookedEvent = false
@@ -302,7 +120,7 @@ function CraftSim.INIT:HookToEvent()
 			local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
 			local professionRecipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
 
-			CraftSim.CACHE.RECIPE_DATA:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs,
+			CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs,
 				professionInfo.profession)
 			CraftSim.INIT:TriggerModuleUpdate(true)
 
@@ -347,7 +165,7 @@ function CraftSim.INIT:InitStaticPopups()
 		button1 = "Yes",
 		button2 = "No",
 		OnAccept = function(self, data1, data2)
-			CraftSimOptions.doNotRemindPriceSource = true
+			CraftSim.DB.OPTIONS:Save("PRICE_SOURCE_REMINDER_DISABLED", true)
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -415,8 +233,7 @@ end
 
 function CraftSim.INIT:ADDON_LOADED(addon_name)
 	if addon_name == CraftSimAddonName then
-		CraftSim.INIT:HandleCraftSimOptionsUpdates()
-		CraftSim.CACHE:HandleCraftSimCacheUpdates()
+		CraftSim.DB:Init()
 		CraftSim.INIT:InitializeMinimapButton()
 
 		CraftSim.LOCAL:Init()
@@ -457,13 +274,10 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.CRAFT_BUFFS.FRAMES:Init()
 		CraftSim.COOLDOWNS.FRAMES:Init()
 
-		CraftSim.TOOLTIP:Init()
 		CraftSim.INIT:HookToEvent()
 		CraftSim.INIT:HookToProfessionsFrame()
 		CraftSim.INIT:HandleAuctionatorHooks()
 		CraftSim.INIT:InitCraftRecipeHooks()
-		CraftSim.ACCOUNTSYNC:Init()
-
 
 		CraftSim.CONTROL_PANEL.FRAMES:Init()
 		CraftSim.INIT:InitStaticPopups()
@@ -500,7 +314,7 @@ function CraftSim.INIT:HookToProfessionsFrame()
 		function()
 			CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateDisplay()
 			CraftSim.INIT.lastRecipeID = nil
-			if CraftSimOptions.openLastRecipe then
+			if CraftSim.DB.OPTIONS:Get("OPEN_LAST_RECIPE") then
 				C_Timer.After(1, function()
 					local recipeInfo = ProfessionsFrame.CraftingPage.SchematicForm:GetRecipeInfo()
 					local professionInfo = ProfessionsFrame:GetProfessionInfo()
@@ -539,11 +353,13 @@ function CraftSim.INIT:PLAYER_LOGIN()
 		rest = (rest and rest ~= "") and rest:trim() or nil
 
 		if command == "pricedebug" then
-			CraftSimOptions.priceDebug = not CraftSimOptions.priceDebug
-			print("Craftsim: Toggled price debug mode: " .. tostring(CraftSimOptions.priceDebug))
+			local priceDebug = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.PRICE_DEBUG)
+			priceDebug = not priceDebug
+			CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.PRICE_DEBUG, priceDebug)
+			print("Craftsim: Toggled price debug mode: " .. tostring(priceDebug))
 
-			if CraftSimOptions.priceDebug then
-				CraftSim.PRICE_API = CraftSimDEBUG_PRICE_API
+			if priceDebug then
+				CraftSim.PRICE_API = CraftSimNO_PRICE_API
 			else
 				CraftSim.PRICE_APIS:InitAvailablePriceAPI()
 			end
@@ -563,7 +379,7 @@ function CraftSim.INIT:PLAYER_LOGIN()
 	end
 
 	-- show one time note
-	if CraftSimOptions.optionsShowNews then
+	if CraftSim.DB.OPTIONS:Get("SHOW_NEWS") then
 		CraftSim.NEWS:ShowNews()
 	end
 end
@@ -582,9 +398,10 @@ function CraftSim.INIT:HideAllModules(keepControlPanel)
 		CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
 	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
 	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.MATERIALS)
+	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
+		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
 	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
 	-- hide control panel and return
 	if not keepControlPanel then
 		CraftSim.CONTROL_PANEL.frame:Hide()
@@ -637,9 +454,10 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
 	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
 	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.MATERIALS)
+	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
+		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
 	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
-		CraftSim.CONST.FRAMES.MATERIALS_WORK_ORDER)
+		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
 	local craftBuffsFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS)
 	local craftBuffsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER)
 	local cooldownsFrame = CraftSim.COOLDOWNS.frame
@@ -697,7 +515,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	end
 
 	-- subrecipe optimization
-	recipeData:SetSubRecipeCostsUsage(CraftSimOptions.costOptimizationAutomaticSubRecipeOptimization)
+	recipeData:SetSubRecipeCostsUsage(CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_AUTOMATIC_SUB_RECIPE_OPTIMIZATION"))
 	if recipeData.subRecipeCostsEnabled then
 		CraftSim.DEBUG:StartProfiling("OptimizeSubRecipes")
 		recipeData:OptimizeSubRecipes({
@@ -707,8 +525,8 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		CraftSim.DEBUG:StopProfiling("OptimizeSubRecipes")
 	end
 
-	local showMaterialOptimization = false
-	local showStatweights = false
+	local showReagentOptimization = false
+	local showAverageProfit = false
 	local showTopGear = false
 	local showSimulationMode = false
 	local showSpecInfo = false
@@ -720,7 +538,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	local showRecipeScan = true
 	local showCustomerService = true
 	local showCustomerHistory = true
-	local showCostDetails = true
+	local showCostOptimization = true
 	local showCraftQueue = true
 	local showCraftBuffs = true
 	local showCooldowns = true
@@ -728,12 +546,12 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	local showStatistics = true
 
 	if recipeData.supportsCraftingStats then
-		showStatweights = true
+		showAverageProfit = true
 		showTopGear = true
 	end
 
 	if recipeData.hasQualityReagents then
-		showMaterialOptimization = true
+		showReagentOptimization = true
 	end
 
 	if not recipeData.isCooking and not recipeData.isOldWorldRecipe then
@@ -741,23 +559,22 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	end
 	showSimulationMode = not recipeData.isOldWorldRecipe
 
-
-	showMaterialOptimization = showMaterialOptimization and CraftSimOptions.modulesMaterials
-	showStatweights = showStatweights and CraftSimOptions.modulesStatWeights
-	showTopGear = showTopGear and CraftSimOptions.modulesTopGear
-	showCostOverview = showCostOverview and CraftSimOptions.modulesPriceDetails
-	showSpecInfo = showSpecInfo and CraftSimOptions.modulesSpecInfo
-	showPriceOverride = showPriceOverride and CraftSimOptions.modulesPriceOverride
-	showRecipeScan = showRecipeScan and CraftSimOptions.modulesRecipeScan
-	showCraftResults = showCraftResults and CraftSimOptions.modulesCraftResults
-	showCustomerService = showCustomerService and CraftSimOptions.modulesCustomerService
-	showCustomerHistory = showCustomerHistory and CraftSimOptions.modulesCustomerHistory
-	showCostDetails = showCostDetails and CraftSimOptions.modulesCostOptimization
-	showCraftQueue = showCraftQueue and CraftSimOptions.modulesCraftQueue
-	showCraftBuffs = showCraftBuffs and CraftSimOptions.modulesCraftBuffs
-	showCooldowns = showCooldowns and CraftSimOptions.modulesCooldowns
-	showExplanations = showExplanations and CraftSimOptions.modulesExplanations
-	showStatistics = showStatistics and CraftSimOptions.modulesStatistics
+	showReagentOptimization = showReagentOptimization and CraftSim.DB.OPTIONS:Get("MODULE_REAGENT_OPTIMIZATION")
+	showAverageProfit = showAverageProfit and CraftSim.DB.OPTIONS:Get("MODULE_AVERAGE_PROFIT")
+	showTopGear = showTopGear and CraftSim.DB.OPTIONS:Get("MODULE_TOP_GEAR")
+	showCostOverview = showCostOverview and CraftSim.DB.OPTIONS:Get("MODULE_COST_OVERVIEW")
+	showSpecInfo = showSpecInfo and CraftSim.DB.OPTIONS:Get("MODULE_SPEC_INFO")
+	showPriceOverride = showPriceOverride and CraftSim.DB.OPTIONS:Get("MODULE_PRICE_OVERRIDE")
+	showRecipeScan = showRecipeScan and CraftSim.DB.OPTIONS:Get("MODULE_RECIPE_SCAN")
+	showCraftResults = showCraftResults and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_RESULTS")
+	showCustomerService = showCustomerService and CraftSim.DB.OPTIONS:Get("MODULE_CUSTOMER_SERVICE")
+	showCustomerHistory = showCustomerHistory and CraftSim.DB.OPTIONS:Get("MODULE_CUSTOMER_HISTORY")
+	showCostOptimization = showCostOptimization and CraftSim.DB.OPTIONS:Get("MODULE_COST_OPTIMIZATION")
+	showCraftQueue = showCraftQueue and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE")
+	showCraftBuffs = showCraftBuffs and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_BUFFS")
+	showCooldowns = showCooldowns and CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS")
+	showExplanations = showExplanations and CraftSim.DB.OPTIONS:Get("MODULE_EXPLANATIONS")
+	showStatistics = showStatistics and CraftSim.DB.OPTIONS:Get("MODULE_STATISTICS")
 
 	CraftSim.FRAME:ToggleFrame(CraftSim.RECIPE_SCAN.frame, showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTQ.frame, showCraftQueue)
@@ -790,10 +607,10 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 
 	-- Cost Optimization Module
 	CraftSim.FRAME:ToggleFrame(CraftSim.COST_OPTIMIZATION.frame,
-		showCostDetails and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+		showCostOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(CraftSim.COST_OPTIMIZATION.frameWO,
-		showCostDetails and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	if recipeData and showCostDetails then
+		showCostOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showCostOptimization then
 		CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
 	end
 
@@ -803,10 +620,10 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 
 	-- AverageProfit Module
 	CraftSim.FRAME:ToggleFrame(averageProfitFrame,
-		showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+		showAverageProfit and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(averageProfitFrameWO,
-		showStatweights and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	if recipeData and showStatweights then
+		showAverageProfit and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showAverageProfit then
 		local statWeights = CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
 
 		if statWeights then
@@ -841,10 +658,10 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 
 	-- Material Optimization Module
 	CraftSim.FRAME:ToggleFrame(materialOptimizationFrame,
-		showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+		showReagentOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 	CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO,
-		showMaterialOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
-	if recipeData and showMaterialOptimization then
+		showReagentOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+	if recipeData and showReagentOptimization then
 		CraftSim.DEBUG:StartProfiling("Reagent Optimization")
 		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
 		CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, optimizationResult, exportMode)
@@ -856,7 +673,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	CraftSim.FRAME:ToggleFrame(topgearFrameWO, showTopGear and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showTopGear then
 		CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(recipeData, exportMode)
-		if CraftSimOptions.topGearAutoUpdate then
+		if CraftSim.DB.OPTIONS:Get("TOP_GEAR_AUTO_UPDATE") then
 			CraftSim.DEBUG:StartProfiling("Top Gear")
 			CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
 			CraftSim.DEBUG:StopProfiling("Top Gear")
@@ -909,8 +726,28 @@ function CraftSim.INIT:InitializeMinimapButton()
 	CraftSim.LibIcon:Register("CraftSim", ldb, CraftSimLibIconDB)
 
 	RunNextFrame(function()
-		if CraftSimOptions.optionsHideMinimapButton then
+		if CraftSim.DB.OPTIONS:Get("MINIMAP_BUTTON_HIDE") then
 			CraftSim.LibIcon:Hide("CraftSim")
 		end
 	end)
+end
+
+--- Since Multicraft seems to be missing on operationInfo on the first call after a fresh login, and seems to be loaded in after the first call,
+--- trigger it for all recipes on purpose when the profession is opened the first time in this session
+function CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRecipeIDs, professionID)
+	if not professionID then return end
+	if CraftSim.DB.MULTICRAFT_PRELOAD:Get(professionID) then return end
+	if not professionRecipeIDs then
+		return
+	end
+	print("Trigger operationInfo prefetch for: " .. #professionRecipeIDs .. " recipes")
+
+	CraftSim.DEBUG:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
+	for _, recipeID in ipairs(professionRecipeIDs) do
+		C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
+	end
+
+	CraftSim.DEBUG:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")
+
+	CraftSim.DB.MULTICRAFT_PRELOAD:Save(professionID, true)
 end

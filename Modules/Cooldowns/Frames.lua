@@ -40,7 +40,7 @@ function CraftSim.COOLDOWNS.FRAMES:Init()
         closeable = true,
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesCooldowns"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_COOLDOWNS"),
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSimGGUIConfig,
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
@@ -160,7 +160,9 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
 
     cooldownList:Remove()
 
-    for crafterUID, recipeCooldowns in pairs(CraftSimRecipeDataCache.cooldownCache) do
+    local crafterCooldownData = CraftSim.DB.CRAFTER:GetCrafterCooldownData()
+
+    for crafterUID, recipeCooldowns in pairs(crafterCooldownData) do
         for serializationID, cooldownDataSerialized in pairs(recipeCooldowns) do
             local cooldownData = CraftSim.CooldownData:Deserialize(cooldownDataSerialized)
             local recipeID = cooldownData.recipeID
@@ -176,26 +178,11 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                     local nextColumn = columns[4] --[[@as CraftSim.COOLDOWNS.CooldownList.NextColumn]]
                     local allColumn = columns[5] --[[@as CraftSim.COOLDOWNS.CooldownList.AllColumn]]
 
-                    local crafterName, crafterRealm = strsplit("-", crafterUID)
-                    local crafterClass = CraftSimRecipeDataCache.altClassCache[crafterUID]
+                    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                    local crafterName = f.class(select(1, strsplit("-", crafterUID), crafterClass))
+                    local tooltipText = f.class(crafterUID, crafterClass)
 
-                    local tooltipText = crafterUID
-
-                    if crafterClass then
-                        local color = C_ClassColor.GetClassColor(crafterClass)
-                        crafterName = color:WrapTextInColorCode(crafterName)
-                        tooltipText = color:WrapTextInColorCode(tooltipText)
-                    end
-
-                    CraftSimRecipeDataCache.recipeInfoCache[crafterUID] = CraftSimRecipeDataCache.recipeInfoCache
-                        [crafterUID] or {}
-
-                    CraftSimRecipeDataCache.professionInfoCache[crafterUID] = CraftSimRecipeDataCache
-                        .professionInfoCache
-                        [crafterUID] or {}
-
-
-                    local professionInfo = CraftSimRecipeDataCache.professionInfoCache[crafterUID][recipeID] or
+                    local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID) or
                         C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
                     local professionIcon = ""
                     if professionInfo.profession then
@@ -205,7 +192,7 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
 
                     crafterColumn.text:SetText(professionIcon .. crafterName)
 
-                    local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][recipeID] or
+                    local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID) or
                         C_TradeSkillUI.GetRecipeInfo(recipeID)
 
 
@@ -213,8 +200,7 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
                         recipeColumn.text:SetText(L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD]))
                         local recipeListText = ""
                         for _, sharedRecipeID in pairs(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES[cooldownData.sharedCD]) do
-                            local sharedRecipeIDInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID]
-                                [sharedRecipeID] or
+                            local sharedRecipeIDInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, sharedRecipeID) or
                                 C_TradeSkillUI.GetRecipeInfo(sharedRecipeID)
 
                             if sharedRecipeIDInfo then

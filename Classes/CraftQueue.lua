@@ -80,7 +80,7 @@ function CraftSim.CraftQueue:AddRecipe(options)
                     if subRecipe then
                         print("Found self crafted reagent: queue into cq: " .. subRecipe.recipeName)
                         subRecipe:SetNonQualityReagentsMax()
-                        -- local currentItemCount = CraftSim.CACHE.ITEM_COUNT:Get(itemID, true, false, true,
+                        -- local currentItemCount = CraftSim.ITEM_COUNT:Get(itemID, true, false, true,
                         --     recipeData:GetCrafterUID())
                         -- local restItemCount = math.max(0, reagentItem.quantity - currentItemCount)
                         -- print("Restitemcount: " .. tostring(restItemCount))
@@ -136,8 +136,8 @@ function CraftSim.CraftQueue:Remove(craftQueueItem)
         return craftQueueItem == cqI
     end)
 
-    -- Fix deleting multiple row 
-    if index  == nil then 
+    -- Fix deleting multiple row
+    if index == nil then
         return
     end
 
@@ -145,8 +145,8 @@ function CraftSim.CraftQueue:Remove(craftQueueItem)
     tremove(self.craftQueueItems, index)
 
     -- after removal check if cqi had any subrecipes that are now without parents, if yes remove them too (recursively)
-    -- ? Return a table with 3times the same subrecipe => try to deleting 3 times the same subrecipe 
-    -- But the index is nil in the second iteration because :Find return nil (already deleted) 
+    -- ? Return a table with 3times the same subrecipe => try to deleting 3 times the same subrecipe
+    -- But the index is nil in the second iteration because :Find return nil (already deleted)
     local subCraftQueueItems = GUTIL:Map(craftQueueItem.recipeData.priceData.selfCraftedReagents, function(itemID)
         local subRecipeData = craftQueueItem.recipeData.optimizedSubRecipes[itemID]
         if subRecipeData then
@@ -207,19 +207,21 @@ function CraftSim.CraftQueue:ClearAllForCharacter(crafterData)
 end
 
 function CraftSim.CraftQueue:CacheQueueItems()
-    CraftSim.DEBUG:StartProfiling("CraftQueue Item Caching")
-    CraftSimCraftQueueCache = GUTIL:Map(self.craftQueueItems, function(craftQueueItem)
-        return craftQueueItem:Serialize()
-    end)
-    CraftSim.DEBUG:StopProfiling("CraftQueue Item Caching")
+    CraftSim.DEBUG:StartProfiling("CraftQueue Item DB Save")
+    CraftSim.DB.CRAFT_QUEUE:ClearAll()
+    for _, craftQueueItem in ipairs(self.craftQueueItems) do
+        CraftSim.DB.CRAFT_QUEUE:Add(craftQueueItem:Serialize())
+    end
+    CraftSim.DEBUG:StopProfiling("CraftQueue Item DB Save")
 end
 
-function CraftSim.CraftQueue:RestoreFromCache()
+function CraftSim.CraftQueue:RestoreFromDB()
     CraftSim.DEBUG:StartProfiling("CraftQueue Item Restoration")
-    print("Restore CraftQ From Cache Start...")
+    print("Restore CraftQ From DB Start...")
+    local dbCraftQueueItems = CraftSim.DB.CRAFT_QUEUE:GetAll()
     local function load()
-        print("Loading Cached CraftQueue...")
-        self.craftQueueItems = GUTIL:Map(CraftSimCraftQueueCache, function(craftQueueItemSerialized)
+        print("Loading CraftQueue from DB...")
+        self.craftQueueItems = GUTIL:Map(dbCraftQueueItems, function(craftQueueItemSerialized)
             local craftQueueItem = CraftSim.CraftQueueItem:Deserialize(craftQueueItemSerialized)
             if craftQueueItem then
                 craftQueueItem:CalculateCanCraft()
@@ -240,18 +242,15 @@ function CraftSim.CraftQueue:RestoreFromCache()
     -- wait til necessary info is loaded, then put deserialized items into queue
     GUTIL:WaitFor(function()
             print("Wait for professionInfo loaded or cached")
-            return GUTIL:Every(CraftSimCraftQueueCache,
+            return GUTIL:Every(dbCraftQueueItems,
                 function(craftQueueItemSerialized)
-                    -- from cache?
-                    CraftSimRecipeDataCache.professionInfoCache[CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)] =
-                        CraftSimRecipeDataCache.professionInfoCache
-                        [CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)] or {}
-                    local cachedProfessionInfos = CraftSimRecipeDataCache.professionInfoCache
-                        [CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)]
-                    local professionInfo = cachedProfessionInfos[craftQueueItemSerialized.recipeID]
+                    local crafterUID = CraftSim.UTIL:GetCrafterUIDFromCrafterData(craftQueueItemSerialized.crafterData)
+                    -- from db
+                    local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID,
+                        craftQueueItemSerialized.recipeID)
 
                     if not professionInfo then
-                        -- get from api
+                        -- get from api if not in db
                         professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(craftQueueItemSerialized
                             .recipeID)
                     end
@@ -398,7 +397,7 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData)
     else
         -- decrement by one and refresh list
         local newAmount = CraftSim.CRAFTQ.craftQueue:SetAmount(recipeData, -1, true)
-        if newAmount and newAmount <= 0 and CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished then
+        if newAmount and newAmount <= 0 and CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED") then
             FlashClientIcon()
         end
     end

@@ -21,7 +21,7 @@ function CraftSim.EXPLANATIONS.FRAMES:Init()
         frameConfigTable = CraftSimGGUIConfig, frameTable = CraftSim.INIT.FRAMES,
         frameID = CraftSim.CONST.FRAMES.EXPLANATIONS, moveable = true, closeable = true, collapseable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("modulesExplanations"),
+        onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_EXPLANATIONS"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel()

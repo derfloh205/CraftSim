@@ -4,13 +4,13 @@
 ## Title: CraftSim
 ## Notes: Calculates the average profit based on your profession stats and other tools for dragonflight gold making
 ## Author: genju
-## Version: 16.0.1
+## Version: 16.1.0
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
 ## AddonCompartmentFunc: CraftSim_OnAddonCompartmentClick
 ## IconTexture: Interface\Icons\inv_misc_coin_02
-## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimGGUIConfig, CraftSimPriceOverridesV2, CraftSimLoadedProfessionRecipes, CraftSimCustomerHistoryV2, CraftSimLibIconDB, CraftSimRecipeDataCache, CraftSimCraftQueueCache, CraftSimItemCountCache
+## SavedVariables: CraftSimDB, CraftSimGGUIConfig, CraftSimLibIconDB
 ## Dependencies: Blizzard_Professions
 ## OptionalDeps: Auctionator, TradeSkillMaster, RECrystallize, OribosExchange
 
@@ -22,18 +22,23 @@ Util/Const.lua
 
 Modules/Debug/Debug.lua
 Modules/Debug/Frames.lua
-Modules/Debug/Test.lua
 
 Util/Util.lua
 
-Cache/Cache.lua
-Cache/ItemCount.lua
-Cache/RecipeData.lua
-Cache/CraftQueue.lua
+DB/DB.lua
+DB/optionsDB.lua
+DB/itemCountDB.lua
+DB/craftQueueDB.lua
+DB/itemRecipeDB.lua
+DB/itemOptimizedCostsDB.lua
+DB/recipeSubCrafterDB.lua
+DB/multicraftPreloadDB.lua
+DB/customerHistoryDB.lua
+DB/crafterDB.lua
+DB/priceOverrideDB.lua
 
 Media/Media.lua
 
-Util/Tooltip.lua
 Util/Frames.lua
 Util/Comm.lua
 Util/API.lua
@@ -43,6 +48,8 @@ Init/Init.lua
 Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
 Pricing/PriceData.lua
+
+Modules/ItemCount/ItemCount.lua
 
 Modules/Explanations/Explanations.lua
 Modules/Explanations/Frames.lua
@@ -58,7 +65,6 @@ Modules/CustomerService/Frames.lua
 
 Modules/CustomerHistory/CustomerHistory.lua
 Modules/CustomerHistory/Frames.lua
-Modules/CustomerHistory/DB.lua
 
 Modules/Statistics/Statistics.lua
 Modules/Statistics/Frames.lua
@@ -76,7 +82,6 @@ Modules/SpecializationInfo/SpecializationInfo.lua
 Modules/SpecializationInfo/Frames.lua
 
 Modules/Options/Options.lua
-Modules/Options/AccountSync.lua
 
 Modules/SimulationMode/SimulationMode.lua
 Modules/SimulationMode/Frames.lua
@@ -133,39 +138,39 @@ Data/SpecNodeData/Leatherworking.lua
 Data/SpecNodeData/Tailoring.lua
 Data/SpecNodeData/Engineering.lua
 
-Data/Classes/CraftSimObject.lua
-Data/Classes/CooldownData.lua
-Data/Classes/ProfessionData.lua
-Data/Classes/RecipeData.lua
-Data/Classes/PriceData.lua
-Data/Classes/ReagentData.lua
-Data/Classes/Reagent.lua
-Data/Classes/ReagentItem.lua
-Data/Classes/ReagentListItem.lua
-Data/Classes/ProfessionStats.lua
-Data/Classes/ProfessionStat.lua
-Data/Classes/ProfessionGearSet.lua
-Data/Classes/ProfessionGear.lua
-Data/Classes/ResultData.lua
-Data/Classes/OptionalReagentSlot.lua
-Data/Classes/OptionalReagent.lua
-Data/Classes/SalvageReagentSlot.lua
-Data/Classes/SpecializationData.lua
-Data/Classes/NodeData.lua
-Data/Classes/NodeRule.lua
-Data/Classes/IDMapping.lua
-Data/Classes/IDCategory.lua
-Data/Classes/Statweights.lua
-Data/Classes/ReagentOptimizationResult.lua
-Data/Classes/TopGearResult.lua
-Data/Classes/CraftResult.lua
-Data/Classes/CraftResultItem.lua
-Data/Classes/CraftResultSavedReagent.lua
-Data/Classes/CraftResultSavedReagent.lua
-Data/Classes/CraftSessionData.lua
-Data/Classes/CraftRecipeData.lua
-Data/Classes/JSONBuilder.lua
-Data/Classes/BuffData.lua
-Data/Classes/Buff.lua
-Data/Classes/CraftQueue.lua
-Data/Classes/CraftQueueItem.lua
+Classes/CraftSimObject.lua
+Classes/CooldownData.lua
+Classes/ProfessionData.lua
+Classes/RecipeData.lua
+Classes/PriceData.lua
+Classes/ReagentData.lua
+Classes/Reagent.lua
+Classes/ReagentItem.lua
+Classes/ReagentListItem.lua
+Classes/ProfessionStats.lua
+Classes/ProfessionStat.lua
+Classes/ProfessionGearSet.lua
+Classes/ProfessionGear.lua
+Classes/ResultData.lua
+Classes/OptionalReagentSlot.lua
+Classes/OptionalReagent.lua
+Classes/SalvageReagentSlot.lua
+Classes/SpecializationData.lua
+Classes/NodeData.lua
+Classes/NodeRule.lua
+Classes/IDMapping.lua
+Classes/IDCategory.lua
+Classes/Statweights.lua
+Classes/ReagentOptimizationResult.lua
+Classes/TopGearResult.lua
+Classes/CraftResult.lua
+Classes/CraftResultItem.lua
+Classes/CraftResultSavedReagent.lua
+Classes/CraftResultSavedReagent.lua
+Classes/CraftSessionData.lua
+Classes/CraftRecipeData.lua
+Classes/JSONBuilder.lua
+Classes/BuffData.lua
+Classes/Buff.lua
+Classes/CraftQueue.lua
+Classes/CraftQueueItem.lua

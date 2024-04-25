@@ -166,9 +166,7 @@ function CraftSim.Reagent:HasQuantityXTimes(crafterUID)
             -- use original item if available
             local itemID = (reagentItem.originalItem and reagentItem.originalItem:GetItemID()) or
             reagentItem.item:GetItemID()
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(itemID, true, false,
-                true,
-                crafterUID)
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
             --print("--player item count: " .. tostring(itemCount))
             --print("--reagentItem.quantity: " .. tostring(reagentItem.quantity))
             local itemFitCount = math.floor(itemCount / reagentItem.quantity)

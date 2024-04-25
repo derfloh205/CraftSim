@@ -69,19 +69,18 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         print(self.orderData, true)
     end
 
-    CraftSimRecipeDataCache.recipeInfoCache[crafterUID] = CraftSimRecipeDataCache.recipeInfoCache[crafterUID] or {}
     if self:IsCrafter() then
         self.recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID) -- only partial info is returned when not the crafter, so we need to cache it
 
-        -- if we are here too early for recipeInfo to be loaded, use the cached one
+        -- if we are here too early for recipeInfo to be loaded, use the one from db
         if self.recipeInfo and self.recipeInfo.categoryID == 0 then
-            self.recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][self.recipeID]
+            self.recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, self.recipeID)
         else
-            -- otherwise save to cache
-            CraftSimRecipeDataCache.recipeInfoCache[crafterUID][self.recipeID] = self.recipeInfo
+            -- otherwise save to db
+            CraftSim.DB.CRAFTER:SaveRecipeInfo(crafterUID, recipeID, self.recipeInfo)
         end
     else
-        self.recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafterUID][self.recipeID]
+        self.recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, self.recipeID)
         if not self.recipeInfo then
             self.recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
             self.recipeInfoCached = false
@@ -247,18 +246,10 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     CraftSim.DEBUG:StartProfiling("- RD: Cache Data")
     if isCrafter and IsProfessionOpen then
         -- print("- Caching Recipe!")
-        CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] = CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID] or {}
-        CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] =
-            CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] or {}
-        table.insert(CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession],
-            self.recipeID)
-        CraftSim.DEBUG:StartProfiling("- RD: Cache Data To Set")
-        CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession] = GUTIL:ToSet(
-            CraftSimRecipeDataCache.cachedRecipeIDs[crafterUID][self.professionData.professionInfo.profession])
-        CraftSim.DEBUG:StopProfiling("- RD: Cache Data To Set")
+        CraftSim.DB.CRAFTER:AddCachedRecipeID(crafterUID, self.professionData.professionInfo.profession, self.recipeID)
 
         CraftSim.DEBUG:StartProfiling("- RD: Cache Data ClassApi")
-        CraftSimRecipeDataCache.altClassCache[crafterUID] = select(2, UnitClass("player"))
+        CraftSim.DB.CRAFTER:SaveClass(crafterUID, select(2, UnitClass("player")))
         CraftSim.DEBUG:StopProfiling("- RD: Cache Data ClassApi")
 
         CraftSim.DEBUG:StopProfiling("- RD: Cache Data")
@@ -556,7 +547,7 @@ function CraftSim.RecipeData:OptimizeProfit(options)
         self:OptimizeReagents()
     end
 
-    CraftSim.CACHE.RECIPE_DATA.EXPECTED_COSTS:Save(self)
+    CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(self)
 end
 
 ---Optimizes the recipeData's reagents and gear for highest quality
@@ -773,9 +764,8 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
     ---@type CraftingOperationInfo
     local operationInfo = nil
     local crafterUID = self:GetCrafterUID()
-    CraftSimRecipeDataCache.operationInfoCache[crafterUID] = CraftSimRecipeDataCache.operationInfoCache[crafterUID] or {}
     if not self:IsCrafter() then
-        operationInfo = CraftSimRecipeDataCache.operationInfoCache[crafterUID][self.recipeID]
+        operationInfo = CraftSim.DB.CRAFTER:GetOperationInfoForRecipe(crafterUID, self.recipeID)
 
         if operationInfo then
             self.operationInfoCached = true
@@ -786,7 +776,7 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
         operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
 
         -- check for too early access?
-        CraftSimRecipeDataCache.operationInfoCache[crafterUID][self.recipeID] = operationInfo
+        CraftSim.DB.CRAFTER:SaveOperationInfoForRecipe(crafterUID, self.recipeID, operationInfo)
     end
 
     return operationInfo
@@ -796,29 +786,21 @@ end
 function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
     local crafterUID = self:GetCrafterUID()
 
-    CraftSimRecipeDataCache.specializationDataCache[crafterUID] = CraftSimRecipeDataCache.specializationDataCache
-        [crafterUID] or {}
-
     if not self:IsCrafter() then
-        local specializationDataSerialized = CraftSimRecipeDataCache.specializationDataCache[crafterUID][self.recipeID]
-        if specializationDataSerialized then
+        local specializationData = CraftSim.DB.CRAFTER:GetSpecializationData(crafterUID, self)
+        if specializationData then
             self.specializationDataCached = true
-            return CraftSim.SpecializationData:Deserialize(specializationDataSerialized, self)
+            return specializationData
         end
         return CraftSim.SpecializationData(self) -- will initialize without stats and nodeinfo
     else
         local specializationData = CraftSim.SpecializationData(self)
 
-        -- if too early, use cache
+        -- if too early, use from db
         if not self.isOldWorldRecipe and #specializationData.nodeData == 0 then
-            local specializationDataSerialized = CraftSimRecipeDataCache.specializationDataCache[crafterUID]
-                [self.recipeID]
-            if specializationDataSerialized then
-                specializationData = CraftSim.SpecializationData:Deserialize(specializationDataSerialized, self)
-            end
+            specializationData = CraftSim.DB.CRAFTER:GetSpecializationData(crafterUID, self)
         else
-            -- cache it
-            CraftSimRecipeDataCache.specializationDataCache[crafterUID][self.recipeID] = specializationData:Serialize()
+            CraftSim.DB.CRAFTER:SaveSpecializationData(crafterUID, specializationData)
         end
 
         return specializationData
@@ -903,14 +885,14 @@ function CraftSim.RecipeData:GetSubRecipeCraftingInfos()
     local craftingInfos = {}
     for _, reagent in ipairs(self.reagentData.requiredReagents) do
         for _, reagentItem in ipairs(reagent.items) do
-            local craftingInfo = CraftSimRecipeDataCache.itemRecipeCache[reagentItem.item:GetItemID()]
+            local craftingInfo = CraftSim.DB.ITEM_RECIPE:Get(reagentItem.item:GetItemID())
             if craftingInfo then
                 tinsert(craftingInfos, craftingInfo)
             end
         end
     end
     for _, activeReagent in ipairs(self.reagentData:GetActiveOptionalReagents()) do
-        local craftingInfo = CraftSimRecipeDataCache.itemRecipeCache[activeReagent.item:GetItemID()]
+        local craftingInfo = CraftSim.DB.ITEM_RECIPE:Get(activeReagent.item:GetItemID())
         if craftingInfo then
             tinsert(craftingInfos, craftingInfo)
         end
@@ -936,7 +918,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
     print("Optimize SubRecipes for " .. self.recipeName)
     print("- Depth: " .. subRecipeDepth)
 
-    if subRecipeDepth > CraftSimOptions.costOptimizationSubRecipeMaxDepth then
+    if subRecipeDepth > CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH") then
         print("Cancel Sub Recipe Optimization due to max depth")
         return false
     end
@@ -959,7 +941,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
     for _, data in pairs(subRecipeData) do
         local recipeID = data.recipeID
         -- fall back to the first crafter if nothing is set?
-        local crafter = CraftSim.CACHE.RECIPE_DATA.SUB_RECIPE_CRAFTER_CACHE:GetCrafter(data.recipeID) or
+        local crafterUID = CraftSim.DB.RECIPE_SUB_CRAFTER:GetCrafter(data.recipeID) or
             data.crafters[1]
 
         -- a infinite loop occurs if we try to optimize a recipe we already visited in a previous subRecipe depth
@@ -972,7 +954,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
             end)
         -- inf loop breaker
         if not infLoop then
-            local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafter)
+            local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafterUID)
             local reagentRecipeData = GUTIL:Find(optimized, function(recipeData)
                 return recipeData.recipeID == recipeID
             end)
@@ -986,8 +968,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                 reagentRecipeData:AddParentRecipe(self)
             elseif recipeID and crafterData then
                 -- only continue of the recipe in question is learned by the target crafter
-                CraftSimRecipeDataCache.recipeInfoCache[crafter] = CraftSimRecipeDataCache.recipeInfoCache[crafter] or {}
-                local recipeInfo = CraftSimRecipeDataCache.recipeInfoCache[crafter][recipeID]
+                local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID)
 
                 tinsert(visitedRecipeIDs, {
                     recipeID = recipeID,
@@ -996,7 +977,8 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
 
                 if recipeInfo then --and recipeInfo.learned then
                     local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
-                    local ignoreCooldownRecipe = not CraftSimOptions.costOptimizationSubRecipesIncludeCooldowns and
+                    local ignoreCooldownRecipe = not CraftSim.DB.OPTIONS:Get(
+                            "COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS") and
                         recipeData.cooldownData.isCooldownRecipe
 
                     if not ignoreCooldownRecipe then
