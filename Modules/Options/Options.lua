@@ -132,19 +132,25 @@ function CraftSim.OPTIONS:Init()
     local historyMaxSizeInput = GGUI.NumericInput {
         parent = ModulesTab.content, anchorParent = ModulesTab.content,
         anchorA = "TOP", anchorB = "TOP", label = "Max history entries per client",
-        offsetY = -40, sizeX = 85, sizeY = 10, initialValue = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT"), allowDecimals = false, minValue = 1,
+        offsetX = -30,
+        offsetY = -20, sizeX = 85, sizeY = 10, initialValue = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT"), allowDecimals = false, minValue = 1,
         onNumberValidCallback = function(numberInput)
             local value = tonumber(numberInput.currentValue)
             CraftSim.DB.OPTIONS:Save("CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT", value)
-        end, borderAdjustHeight = 0.6, borderWidth = 30,
+        end, borderAdjustHeight = 0.7, borderWidth = 30,
+        labelOptions = {
+            text = L(CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE),
+            parent = ModulesTab.content, anchorA = "LEFT", anchorB = "RIGHT",
+            offsetX = 5,
+        },
     }
-    CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE),
-        ModulesTab.content, historyMaxSizeInput.textInput.frame, "LEFT", "RIGHT", 20, 0, 1, nil)
 
     local skillBreakpointsCheckbox = GGUI.Checkbox {
         parent = ProfitCalculationTab.content, anchorParent = ProfitCalculationTab.content,
         anchorA = "TOP", anchorB = "TOP", offsetX = -90, offsetY = -50,
         initialValue = CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"),
+        label = L("OPTIONS_PROFIT_CALCULATION_OFFSET"),
+        tooltip = L("OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP"),
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("QUALITY_BREAKPOINT_OFFSET", checked)
         end
@@ -240,6 +246,8 @@ function CraftSim.OPTIONS:Init()
     local enableGarbageCollectWhenCraftingCB = GGUI.Checkbox {
         parent = CraftingTab.content, anchorParent = CraftingTab.content,
         anchorA = "TOP", anchorB = "TOP", offsetX = -90, offsetY = -50,
+        label = L("OPTIONS_PERFORMANCE_RAM"),
+        tooltip = L("OPTIONS_PERFORMANCE_RAM_TOOLTIP"),
         initialValue = CraftSim.DB.OPTIONS:Get("CRAFTING_GARBAGE_COLLECTION_ENABLED"),
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("CRAFTING_GARBAGE_COLLECTION_ENABLED", checked)
