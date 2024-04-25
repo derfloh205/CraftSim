@@ -162,7 +162,7 @@ function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, exportMode)
 
                 local itemLink = resultItem:GetItemLink()
                 itemColumn.icon:SetItem(resultItem)
-                local priceOverride = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(recipeData.recipeID, qualityID)
+                local priceOverride = CraftSim.DB.PRICE_OVERRIDE:GetResultOverridePrice(recipeData.recipeID, qualityID)
                 local price = priceOverride or CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink)
                 local profit = (price * CraftSim.CONST.AUCTION_HOUSE_CUT) -
                     (priceData.craftingCosts / recipeData.baseItemAmount)

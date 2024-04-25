@@ -13,6 +13,7 @@ CraftSim.DB.ITEM_COUNT = CraftSim.DB:RegisterRepository()
 
 function CraftSim.DB.ITEM_COUNT:Init()
     if not CraftSimDB.itemCountDB then
+        ---@type CraftSimDB.Database
         CraftSimDB.itemCountDB = {
             ---@type table<string, table<number, number>> table<crafterUID, table<itemID, count>>
             data = {},

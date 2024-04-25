@@ -101,9 +101,9 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
 
             local overrideData = nil
             if currentData.isResult then
-                overrideData = CraftSim.PRICE_OVERRIDE:GetResultOverride(frame.recipeID, currentData.qualityID)
+                overrideData = CraftSim.DB.PRICE_OVERRIDE:GetResultOverride(frame.recipeID, currentData.qualityID)
             else
-                overrideData = CraftSim.PRICE_OVERRIDE:GetGlobalOverride(currentData.item:GetItemID())
+                overrideData = CraftSim.DB.PRICE_OVERRIDE:GetGlobalOverride(currentData.item:GetItemID())
             end
 
             overrideOptions.removeButton:SetEnabled(overrideData)
@@ -140,7 +140,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
             sizeY = 25,
             adjustWidth = true,
             clickCallback = function()
-                CraftSim.PRICE_OVERRIDE:SaveOverrideData(frame.recipeID, frame.currentDropdownData)
+                CraftSim.PRICE_OVERRIDE:SaveOverrideDataByDropdown(frame.recipeID, frame.currentDropdownData)
                 overrideOptions:updateButtonStatus()
                 CraftSim.INIT:TriggerModuleUpdate()
             end,
@@ -175,7 +175,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
             sizeY = 25,
             adjustWidth = true,
             clickCallback = function()
-                CraftSim.PRICE_OVERRIDE:RemoveOverrideData(frame.recipeID, frame.currentDropdownData)
+                CraftSim.PRICE_OVERRIDE:DeleteOverrideDataByDropdown(frame.recipeID, frame.currentDropdownData)
                 overrideOptions:updateButtonStatus()
                 overrideOptions.currencyInputGold:SetValue(0)
                 CraftSim.INIT:TriggerModuleUpdate()
@@ -386,8 +386,8 @@ end
 function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideList(priceOverrideFrame)
     local overrideText = priceOverrideFrame.content.activeOverridesBox.overrideList
 
-    local globalOverrides = CraftSimPriceOverridesV2.globalOverrides or {}
-    local recipeOverrides = CraftSimPriceOverridesV2.recipeResultOverrides or {}
+    local globalOverrides = CraftSim.DB.PRICE_OVERRIDE:GetGlobalOverrides()
+    local recipeOverrides = CraftSim.DB.PRICE_OVERRIDE:GetResultOverrides()
     local resultOverrides = {}
     table.foreach(recipeOverrides, function(_, resultOverrideList)
         table.foreach(resultOverrideList, function(_, resultOverride)

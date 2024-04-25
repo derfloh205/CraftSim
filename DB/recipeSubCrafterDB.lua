@@ -13,6 +13,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 
 function CraftSim.DB.RECIPE_SUB_CRAFTER:Init()
     if not CraftSimDB.recipeSubCrafterDB then
+        ---@type CraftSimDB.Database
         CraftSimDB.recipeSubCrafterDB = {
             version = 0,
             ---@type table<RecipeID, CrafterUID>

@@ -28,6 +28,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 
 function CraftSim.DB.CRAFTER:Init()
     if not CraftSimDB.crafterDB then
+        ---@type CraftSimDB.Database
         CraftSimDB.crafterDB = {
             version = 0,
             ---@type table<CrafterUID, CraftSim.DB.CrafterDBData>

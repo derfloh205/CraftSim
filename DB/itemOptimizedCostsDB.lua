@@ -24,6 +24,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Init()
     if not CraftSimDB.itemOptimizedCostsDB then
+        ---@type CraftSimDB.Database
         CraftSimDB.itemOptimizedCostsDB = {
             version = 0,
             ---@type table<ItemID, table<CrafterUID, CraftSim.ExpectedCraftingCostsData>>

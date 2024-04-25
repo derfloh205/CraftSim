@@ -138,10 +138,10 @@ function CraftSim.PriceData:Update()
         -- if its not gear we get the price by id
         local itemPrice = 0
         if self.recipeData.isGear then
-            itemPrice = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
+            itemPrice = CraftSim.DB.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
                 CraftSim.PRICEDATA:GetMinBuyoutByItemLink(item:GetItemLink())
         else
-            itemPrice = CraftSim.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
+            itemPrice = CraftSim.DB.PRICE_OVERRIDE:GetResultOverridePrice(self.recipeData.recipeID, i) or
                 CraftSim.PRICEDATA:GetMinBuyoutByItemID(item:GetItemID())
         end
         table.insert(self.qualityPriceList, itemPrice)

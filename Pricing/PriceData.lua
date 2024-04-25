@@ -44,7 +44,7 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
     end
     -- check for overrides
     if isReagent then
-        local priceOverrideData = CraftSim.PRICE_OVERRIDE:GetGlobalOverride(itemID)
+        local priceOverrideData = CraftSim.DB.PRICE_OVERRIDE:GetGlobalOverride(itemID)
         if priceOverrideData then
             priceInfo.isOverride = true
             return priceOverrideData.price, priceInfo

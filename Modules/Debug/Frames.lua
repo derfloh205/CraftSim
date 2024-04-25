@@ -243,6 +243,7 @@ function CraftSim.DEBUG.FRAMES:InitLogOptionsTab(logOptionsTab)
     end)
 end
 
+---@deprecated
 function CraftSim.DEBUG.FRAMES:InitCacheTab(cacheTab)
     local content = cacheTab.content
 
@@ -320,15 +321,7 @@ function CraftSim.DEBUG.FRAMES:InitCacheTab(cacheTab)
             local clearButton = clearColumn.clearButton --[[@as GGUI.Button]]
 
             clearButton.clickCallback = function()
-                local cacheSV = _G[cacheName]
-                if cacheSV then
-                    if cacheName == "CraftSimPriceOverridesV2" then
-                        CraftSim.PRICE_OVERRIDE:ClearAll()
-                    else
-                        wipe(cacheSV)
-                        CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. "Cache cleared: " .. cacheName)
-                    end
-                end
+                CraftSim.DEBUG:SystemPrint(f.l("CraftSim ") .. "Button deprecated and will be implemented anew")
             end
 
             local inspectButton = inspectColumn.inspectButton --[[@as GGUI.Button]]

@@ -13,6 +13,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 
 function CraftSim.DB.CRAFT_QUEUE:Init()
     if not CraftSimDB.craftQueueDB then
+        ---@type CraftSimDB.Database
         CraftSimDB.craftQueueDB = {
             version = 0,
             ---@type CraftSim.CraftQueueItem.Serialized[]

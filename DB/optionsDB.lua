@@ -13,6 +13,7 @@ CraftSim.DB.OPTIONS = CraftSim.DB:RegisterRepository()
 
 function CraftSim.DB.OPTIONS:Init()
     if not CraftSimDB.optionsDB then
+        ---@type CraftSimDB.Database
         CraftSimDB.optionsDB = {
             ---@type table<CraftSim.GENERAL_OPTIONS, any>
             data = {},

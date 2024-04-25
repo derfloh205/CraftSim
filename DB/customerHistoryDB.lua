@@ -39,6 +39,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 
 function CraftSim.DB.CUSTOMER_HISTORY:Init()
     if not CraftSimDB.customerHistoryDB then
+        ---@type CraftSimDB.Database
         CraftSimDB.customerHistoryDB = {
             version = 0,
             ---@type table<CustomerID, CraftSim.DB.CustomerHistory>

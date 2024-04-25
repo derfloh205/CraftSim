@@ -13,6 +13,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 
 function CraftSim.DB.MULTICRAFT_PRELOAD:Init()
     if not CraftSimDB.multicraftPreloadDB then
+        ---@type CraftSimDB.Database
         CraftSimDB.multicraftPreloadDB = {
             version = 0,
             ---@type table<Enum.Profession, boolean>
