@@ -43,9 +43,9 @@ function CraftSim.DB.PRICE_OVERRIDE:Migrate()
             end
             for recipeID, recipeResultOverride in pairs(CraftSimPriceOverridesV2.recipeResultOverrides or {}) do
                 for qualityID, priceOverrideData in pairs(recipeResultOverride) do
-                    CraftSimDB.priceOverrideDB.data.globalOverrides[recipeID] = CraftSimDB.priceOverrideDB.data
-                        .globalOverrides[recipeID] or {}
-                    CraftSimDB.priceOverrideDB.data.globalOverrides[recipeID][qualityID] = priceOverrideData
+                    CraftSimDB.priceOverrideDB.data.recipeResultOverrides[recipeID] = CraftSimDB.priceOverrideDB.data
+                        .recipeResultOverrides[recipeID] or {}
+                    CraftSimDB.priceOverrideDB.data.recipeResultOverrides[recipeID][qualityID] = priceOverrideData
                 end
             end
         end
