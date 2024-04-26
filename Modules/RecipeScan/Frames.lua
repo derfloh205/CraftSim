@@ -554,7 +554,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddProfessionTabRow(crafterUID, profession)
 
         local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
         local crafterName, crafterRealm = strsplit("-", crafterUID)
-        crafterName = f.class(crafterName, crafterClass)
+        local coloredCrafterName = f.class(crafterName, crafterClass)
         local professionIconSize = 20
         local professionIcon = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[row.profession], professionIconSize,
             professionIconSize)
@@ -566,7 +566,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddProfessionTabRow(crafterUID, profession)
         }
 
         -- todo: add profession icon prefix
-        crafterColumn.text:SetText(professionIcon .. " " .. crafterName)
+        crafterColumn.text:SetText(professionIcon .. " " .. coloredCrafterName)
         ---@type Enum.Profession
         ---@type CraftSim.CrafterData
         row.crafterData = {
@@ -599,7 +599,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddProfessionTabRow(crafterUID, profession)
 
         row.content = CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, row.contentFrame.content)
 
-        row.content.recipeTitle:SetText(professionIcon .. " " .. crafterName)
+        row.content.recipeTitle:SetText(professionIcon .. " " .. coloredCrafterName)
     end)
 end
 

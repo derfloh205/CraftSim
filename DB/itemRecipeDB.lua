@@ -37,6 +37,22 @@ function CraftSim.DB.ITEM_RECIPE:Migrate()
         end
         CraftSimDB.itemRecipeDB.version = 1
     end
+
+    -- 1 -> 2 (16.1.2 -> 16.1.3)
+    if CraftSimDB.itemRecipeDB.version == 1 then
+        -- remove any crafter entries with colored names...
+        for _, data in pairs(CraftSimDB.itemRecipeDB.data) do
+            local correctedCrafterUIDs = {}
+            for _, crafterUID in pairs(data.crafters) do
+                if not string.find(crafterUID, '\124c') then
+                    tinsert(correctedCrafterUIDs, crafterUID)
+                end
+            end
+            data.crafters = correctedCrafterUIDs
+        end
+
+        CraftSimDB.itemRecipeDB.version = 2
+    end
 end
 
 function CraftSim.DB.ITEM_RECIPE:ClearAll()

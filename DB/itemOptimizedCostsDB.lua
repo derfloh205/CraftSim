@@ -42,6 +42,20 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Migrate()
         end
         CraftSimDB.itemOptimizedCostsDB.version = 1
     end
+
+    -- 1 -> 2 (16.1.2 -> 16.1.3)
+    if CraftSimDB.itemOptimizedCostsDB.version == 1 then
+        -- remove any crafter entries with colored names...
+        for _, data in pairs(CraftSimDB.itemOptimizedCostsDB.data) do
+            for crafterUID, _ in pairs(data) do
+                if string.find(crafterUID, '\124c') then
+                    data[crafterUID] = nil
+                end
+            end
+        end
+
+        CraftSimDB.itemOptimizedCostsDB.version = 2
+    end
 end
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:ClearAll()
