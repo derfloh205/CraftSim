@@ -372,6 +372,9 @@ function CraftSim.INIT:PLAYER_LOGIN()
 				local json = CraftSim.INIT.currentRecipeData:GetJSON()
 				CraftSim.UTIL:KethoEditBox_Show(json)
 			end
+		elseif command == "resetdb" then
+			CraftSimDB = nil
+			C_UI.Reload()
 		else
 			-- open options if any other command or no command is given
 			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
