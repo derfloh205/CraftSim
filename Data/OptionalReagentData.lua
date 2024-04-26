@@ -218,4 +218,10 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [208747] = { recipeDifficulty = 30, qualityID = 2 },
     [208748] = { recipeDifficulty = 25, qualityID = 3 },
 
+    --- 10.2.6
+    --- General
+    [211518] = { recipeDifficulty = 30 },  -- Enchanted Wyrms's Awakened Crest
+    [211519] = { recipeDifficulty = 50 },  -- Enchanted Aspect's Awakened Crest
+    [211520] = { recipeDifficulty = 160 }, -- Enchanted Whelpling's Awakened Crest
+
 }
