@@ -84,6 +84,17 @@ function CraftSim.DB.CRAFTER:Migrate()
         end
         CraftSimDB.crafterDB.version = 1
     end
+    -- 1 -> 2 (16.1.2 -> 16.1.3)
+    if CraftSimDB.crafterDB.version == 1 then
+        -- remove any crafter entries with colored names...
+        for crafterUID, _ in pairs(CraftSimDB.crafterDB.data) do
+            if string.find(crafterUID, '\124c') then
+                CraftSimDB.crafterDB.data[crafterUID] = nil
+            end
+        end
+
+        CraftSimDB.crafterDB.version = 2
+    end
 end
 
 ---@param crafterUID CrafterUID
@@ -93,7 +104,7 @@ function CraftSim.DB.CRAFTER:AddCachedRecipeID(crafterUID, profession, recipeID)
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
     CraftSimDB.crafterDB.data[crafterUID].cachedRecipeIDs = CraftSimDB.crafterDB.data[crafterUID].cachedRecipeIDs or {}
     CraftSimDB.crafterDB.data[crafterUID].cachedRecipeIDs[profession] = CraftSimDB.crafterDB.data[crafterUID]
-    .cachedRecipeIDs[profession] or {}
+        .cachedRecipeIDs[profession] or {}
 
     if not tContains(CraftSimDB.crafterDB.data[crafterUID].cachedRecipeIDs[profession], recipeID) then
         tinsert(CraftSimDB.crafterDB.data[crafterUID].cachedRecipeIDs[profession], recipeID)

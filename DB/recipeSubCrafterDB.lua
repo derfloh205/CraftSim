@@ -31,6 +31,18 @@ function CraftSim.DB.RECIPE_SUB_CRAFTER:Migrate()
         end
         CraftSimDB.recipeSubCrafterDB.version = 1
     end
+
+    -- 1 -> 2 (16.1.2 -> 16.1.3)
+    if CraftSimDB.recipeSubCrafterDB.version == 1 then
+        -- remove any crafter entries with colored names...
+        for itemID, crafterUID in pairs(CraftSimDB.recipeSubCrafterDB.data) do
+            if string.find(crafterUID, '\124c') then
+                CraftSimDB.recipeSubCrafterDB.data[itemID] = nil
+            end
+        end
+
+        CraftSimDB.recipeSubCrafterDB.version = 2
+    end
 end
 
 function CraftSim.DB.RECIPE_SUB_CRAFTER:ClearAll()
