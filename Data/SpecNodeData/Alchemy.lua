@@ -441,6 +441,23 @@ function CraftSim.ALCHEMY_DATA:GetData()
                 415810, -- Potion of Withering Dreams
             },
         },
+        DECAYOLOGY_5 = {
+            nodeID = 19536,
+            threshold = 30,
+            skill = 10,
+            exceptionRecipeIDs = {
+                370521, -- air potion
+                370536, -- frost potion
+                370525, -- frost potion
+                370528, -- frost potion
+                370457, -- frost phial
+                370456, -- frost phial
+                370714, -- decay transmutation
+                405832, -- Stinky Bright Potion
+                405879, -- Cauldron of Extracted Putrescense
+                415810, -- Potion of Withering Dreams
+            },
+        },
         RESOURCEFUL_ROUTINES_1 = {
             nodeID = 19535,
             equalsResourcefulness = true,
