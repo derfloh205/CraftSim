@@ -33,15 +33,15 @@ function CraftSim.DB.ITEM_RECIPE:Migrate()
     if CraftSimDB.itemRecipeDB.version == 0 then
         local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
         if CraftSimRecipeDataCache then
-            CraftSimDB.itemRecipeDB.data = CraftSimRecipeDataCache["itemRecipeCache"]
+            CraftSimDB.itemRecipeDB.data = CraftSimRecipeDataCache["itemRecipeCache"] or {}
         end
         CraftSimDB.itemRecipeDB.version = 1
     end
 
-    -- 1 -> 2 (16.1.2 -> 16.1.3)
+    -- 1 -> 2 (16.1.3)
     if CraftSimDB.itemRecipeDB.version == 1 then
         -- remove any crafter entries with colored names...
-        for _, data in pairs(CraftSimDB.itemRecipeDB.data) do
+        for _, data in pairs(CraftSimDB.itemRecipeDB.data or {}) do
             local correctedCrafterUIDs = {}
             for _, crafterUID in pairs(data.crafters) do
                 if not string.find(crafterUID, '\124c') then
@@ -52,6 +52,13 @@ function CraftSim.DB.ITEM_RECIPE:Migrate()
         end
 
         CraftSimDB.itemRecipeDB.version = 2
+    end
+
+    -- 2 -> 3 (16.1.5)
+    if CraftSimDB.itemRecipeDB.version == 2 then
+        -- restore data table if not existing
+        CraftSimDB.itemCountDB.data = CraftSimDB.itemCountDB.data or {}
+        CraftSimDB.itemRecipeDB.version = 3
     end
 end
 
