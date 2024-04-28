@@ -213,6 +213,7 @@ end
 ---@param profession Enum.Profession
 ---@return CraftSim.DB.CrafterDBData.ProfessionGearData professionGearData
 function CraftSim.DB.CRAFTER:GetProfessionGearData(crafterUID, profession)
+    if not profession then return {} end
     CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
     CraftSimDB.crafterDB.data[crafterUID].professionGear = CraftSimDB.crafterDB.data[crafterUID].professionGear or {}
     CraftSimDB.crafterDB.data[crafterUID].professionGear[profession] = CraftSimDB.crafterDB.data[crafterUID]

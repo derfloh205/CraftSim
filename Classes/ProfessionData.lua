@@ -40,6 +40,10 @@ function CraftSim.ProfessionData:new(recipeData, recipeID)
 	self.skillLineID = self.professionInfo.professionID
 end
 
+function CraftSim.ProfessionData:UsesGear()
+	return self.professionInfo.profession
+end
+
 function CraftSim.ProfessionData:GetJSON(indent)
 	indent = indent or 0
 	local jb = CraftSim.JSONBuilder(indent)

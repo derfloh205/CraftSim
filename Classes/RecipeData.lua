@@ -204,12 +204,14 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.baseProfessionStats:SetInspirationBaseBonusSkill(self.baseProfessionStats.recipeDifficulty.value,
         self.maxQuality)
 
-    CraftSim.DEBUG:StartProfiling("- RD: ProfessionGearCache")
-    -- cache available profession gear by calling this once
-    CraftSim.TOPGEAR:GetProfessionGearFromInventory(self)
-    CraftSim.DEBUG:StopProfiling("- RD: ProfessionGearCache")
+    if self.professionData:UsesGear() then
+        CraftSim.DEBUG:StartProfiling("- RD: ProfessionGearCache")
+        -- cache available profession gear by calling this once
+        CraftSim.TOPGEAR:GetProfessionGearFromInventory(self)
+        CraftSim.DEBUG:StopProfiling("- RD: ProfessionGearCache")
 
-    self.baseProfessionStats:subtract(self.professionGearSet.professionStats)
+        self.baseProfessionStats:subtract(self.professionGearSet.professionStats)
+    end
 
     ---@type CraftSim.BuffData
     self.buffData = CraftSim.BuffData(self)
@@ -870,6 +872,7 @@ function CraftSim.RecipeData:IsDragonflightRecipe()
     local recipeInfo = self.recipeInfo
     if recipeInfo then
         local professionInfo = self.professionData.professionInfo
+        if not professionInfo.profession then return false end
         local isDragonflightRecipe = professionInfo.professionID ==
             CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT]
         return isDragonflightRecipe

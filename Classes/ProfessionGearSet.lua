@@ -9,7 +9,7 @@ CraftSim.ProfessionGearSet = CraftSim.CraftSimObject:extend()
 function CraftSim.ProfessionGearSet:new(recipeData)
     self.professionID = recipeData.professionData.professionInfo.profession
     self.recipeData = recipeData
-    self.professionGearSlots = C_TradeSkillUI.GetProfessionSlots(self.professionID)
+    self.professionGearSlots = self.professionID and C_TradeSkillUI.GetProfessionSlots(self.professionID) or {}
     self.isCooking = recipeData.isCooking
     if not self.isCooking then
         ---@type CraftSim.ProfessionGear?
