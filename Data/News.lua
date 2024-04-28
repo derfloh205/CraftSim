@@ -128,4 +128,3 @@ function CraftSim.NEWS:ShowNews(force)
         infoFrame.showInfo(newsText)
     end)
 end
-end
