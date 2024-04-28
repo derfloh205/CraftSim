@@ -20,6 +20,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "prepare for TWW testing/updates",
         f.p .. "Added a command to reset craftsim's database",
         f.a .. "'/craftsim resetdb'",
+        f.p .. "Contribution thanks:",
+        f.a .. "- " .. f.bb("https://github.com/rowaasr13"),
         newP("16.0.0"),
         f.P .. "Introducing " .. f.bb("Sub Recipes Optimization"),
         f.a .. "- " .. f.l("CraftSim") .. " is now able to optimize and cache",
