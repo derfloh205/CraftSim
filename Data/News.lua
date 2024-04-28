@@ -15,12 +15,13 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
-        newP("16.1.4"),
+        newP("16.1.5"),
         f.P .. "A lot of internal code optimizations to",
         f.a .. "prepare for TWW testing/updates",
         f.s .. "Added a command to reset craftsim's database",
         f.a .. "'/craftsim resetdb'",
         f.p .. "Fixed Simulation Mode Module Window opacity",
+        f.p .. "DB Migration fixes", 
         f.p .. "Fixed errors with npc professions",
         f.p .. "Contribution thanks:",
         f.a .. "- " .. f.bb("https://github.com/rowaasr13"),
@@ -126,4 +127,5 @@ function CraftSim.NEWS:ShowNews(force)
         infoFrame.originalY = CraftSim.CONST.infoBoxSizeY
         infoFrame.showInfo(newsText)
     end)
+end
 end
