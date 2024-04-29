@@ -20,6 +20,8 @@ function CraftSim.DB.MULTICRAFT_PRELOAD:Init()
             data = {},
         }
     end
+
+    CraftSimDB.multicraftPreloadDB.data = CraftSimDB.multicraftPreloadDB.data or {}
 end
 
 function CraftSim.DB.MULTICRAFT_PRELOAD:Migrate()
@@ -27,7 +29,8 @@ function CraftSim.DB.MULTICRAFT_PRELOAD:Migrate()
     if CraftSimDB.multicraftPreloadDB.version == 0 then
         local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
         if CraftSimRecipeDataCache then
-            CraftSimDB.multicraftPreloadDB.data = CraftSimRecipeDataCache["postLoadedMulticraftInformationProfessions"]
+            CraftSimDB.multicraftPreloadDB.data = CraftSimRecipeDataCache["postLoadedMulticraftInformationProfessions"] or
+                {}
         end
         CraftSimDB.multicraftPreloadDB.version = 1
     end

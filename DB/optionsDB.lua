@@ -20,6 +20,8 @@ function CraftSim.DB.OPTIONS:Init()
             version = 0,
         }
     end
+
+    CraftSimDB.optionsDB.data = CraftSimDB.optionsDB.data or {}
 end
 
 function CraftSim.DB.OPTIONS:Migrate()

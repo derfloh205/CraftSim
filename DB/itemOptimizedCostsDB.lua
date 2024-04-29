@@ -31,6 +31,8 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Init()
             data = {},
         }
     end
+
+    CraftSimDB.itemOptimizedCostsDB.data = CraftSimDB.itemOptimizedCostsDB.data or {}
 end
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Migrate()
@@ -38,7 +40,7 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Migrate()
     if CraftSimDB.itemOptimizedCostsDB.version == 0 then
         local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
         if CraftSimRecipeDataCache then
-            CraftSimDB.itemOptimizedCostsDB.data = CraftSimRecipeDataCache["itemOptimizedCostsDataCache"]
+            CraftSimDB.itemOptimizedCostsDB.data = CraftSimRecipeDataCache["itemOptimizedCostsDataCache"] or {}
         end
         CraftSimDB.itemOptimizedCostsDB.version = 1
     end
@@ -46,7 +48,7 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Migrate()
     -- 1 -> 2 (16.1.2 -> 16.1.3)
     if CraftSimDB.itemOptimizedCostsDB.version == 1 then
         -- remove any crafter entries with colored names...
-        for _, data in pairs(CraftSimDB.itemOptimizedCostsDB.data) do
+        for _, data in pairs(CraftSimDB.itemOptimizedCostsDB.data or {}) do
             for crafterUID, _ in pairs(data) do
                 if string.find(crafterUID, '\124c') then
                     data[crafterUID] = nil

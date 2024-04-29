@@ -20,6 +20,7 @@ function CraftSim.DB.RECIPE_SUB_CRAFTER:Init()
             data = {},
         }
     end
+    CraftSimDB.recipeSubCrafterDB.data = CraftSimDB.recipeSubCrafterDB.data or {}
 end
 
 function CraftSim.DB.RECIPE_SUB_CRAFTER:Migrate()
@@ -27,7 +28,7 @@ function CraftSim.DB.RECIPE_SUB_CRAFTER:Migrate()
     if CraftSimDB.recipeSubCrafterDB.version == 0 then
         local CraftSimRecipeDataCache = _G["CraftSimRecipeDataCache"]
         if CraftSimRecipeDataCache then
-            CraftSimDB.recipeSubCrafterDB.data = CraftSimRecipeDataCache["subRecipeCrafterCache"]
+            CraftSimDB.recipeSubCrafterDB.data = CraftSimRecipeDataCache["subRecipeCrafterCache"] or {}
         end
         CraftSimDB.recipeSubCrafterDB.version = 1
     end
@@ -35,7 +36,7 @@ function CraftSim.DB.RECIPE_SUB_CRAFTER:Migrate()
     -- 1 -> 2 (16.1.2 -> 16.1.3)
     if CraftSimDB.recipeSubCrafterDB.version == 1 then
         -- remove any crafter entries with colored names...
-        for itemID, crafterUID in pairs(CraftSimDB.recipeSubCrafterDB.data) do
+        for itemID, crafterUID in pairs(CraftSimDB.recipeSubCrafterDB.data or {}) do
             if string.find(crafterUID, '\124c') then
                 CraftSimDB.recipeSubCrafterDB.data[itemID] = nil
             end

@@ -35,6 +35,8 @@ function CraftSim.DB.CRAFTER:Init()
             data = {},
         }
     end
+
+    CraftSimDB.crafterDB.data = CraftSimDB.crafterDB.data or {}
 end
 
 function CraftSim.DB.CRAFTER:Migrate()
@@ -87,7 +89,7 @@ function CraftSim.DB.CRAFTER:Migrate()
     -- 1 -> 2 (16.1.2 -> 16.1.3)
     if CraftSimDB.crafterDB.version == 1 then
         -- remove any crafter entries with colored names...
-        for crafterUID, _ in pairs(CraftSimDB.crafterDB.data) do
+        for crafterUID, _ in pairs(CraftSimDB.crafterDB.data or {}) do
             if string.find(crafterUID, '\124c') then
                 CraftSimDB.crafterDB.data[crafterUID] = nil
             end

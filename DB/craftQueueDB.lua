@@ -20,6 +20,8 @@ function CraftSim.DB.CRAFT_QUEUE:Init()
             data = {},
         }
     end
+
+    CraftSimDB.craftQueueDB.data = CraftSimDB.craftQueueDB.data or {}
 end
 
 function CraftSim.DB.CRAFT_QUEUE:Migrate()

@@ -31,6 +31,10 @@ function CraftSim.DB.PRICE_OVERRIDE:Init()
             },
         }
     end
+
+    CraftSimDB.priceOverrideDB.data = CraftSimDB.priceOverrideDB.data or {}
+    CraftSimDB.priceOverrideDB.data.globalOverrides = CraftSimDB.priceOverrideDB.data.globalOverrides or {}
+    CraftSimDB.priceOverrideDB.data.recipeResultOverrides = CraftSimDB.priceOverrideDB.data.recipeResultOverrides or {}
 end
 
 function CraftSim.DB.PRICE_OVERRIDE:Migrate()

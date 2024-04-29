@@ -26,6 +26,8 @@ function CraftSim.DB.ITEM_RECIPE:Init()
             data = {},
         }
     end
+
+    CraftSimDB.itemRecipeDB.data = CraftSimDB.itemRecipeDB.data or {}
 end
 
 function CraftSim.DB.ITEM_RECIPE:Migrate()

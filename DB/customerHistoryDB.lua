@@ -46,6 +46,8 @@ function CraftSim.DB.CUSTOMER_HISTORY:Init()
             data = {},
         }
     end
+
+    CraftSimDB.customerHistoryDB.data = CraftSimDB.customerHistoryDB.data or {}
 end
 
 function CraftSim.DB.CUSTOMER_HISTORY:Migrate()
