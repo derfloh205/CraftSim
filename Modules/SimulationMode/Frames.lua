@@ -253,6 +253,9 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE),
             frameTable = CraftSim.INIT.FRAMES,
             frameConfigTable = CraftSimGGUIConfig,
+            frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+            frameLevel = 50,
+            raiseOnInteraction = true,
         })
 
         simModeDetailsFrame:Hide()
