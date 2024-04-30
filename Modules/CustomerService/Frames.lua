@@ -21,7 +21,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:Init()
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CUSTOMER_SERVICE"),
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSimGGUIConfig,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel()
@@ -165,7 +165,7 @@ function CraftSim.CUSTOMER_SERVICE.FRAMES:InitLivePreview()
         title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_TITLE),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSimGGUIConfig,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
     })
 
     local function createContent(frame)

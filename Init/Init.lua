@@ -14,8 +14,6 @@ CraftSim.INIT = GUTIL:CreateRegistreeForEvents { "ADDON_LOADED", "PLAYER_LOGIN",
 
 CraftSim.INIT.FRAMES = {}
 
-CraftSimGGUIConfig = CraftSimGGUIConfig or {}
-
 ---@type CraftSim.RecipeData?
 CraftSim.INIT.currentRecipeData = nil
 ---@type number?
@@ -237,7 +235,6 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.INIT:InitializeMinimapButton()
 
 		CraftSim.LOCAL:Init()
-
 
 		CraftSim.GGUI:InitializePopup({
 			backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
@@ -724,9 +721,7 @@ function CraftSim.INIT:InitializeMinimapButton()
 		end,
 	})
 
-	CraftSimLibIconDB = CraftSimLibIconDB or {}
-
-	CraftSim.LibIcon:Register("CraftSim", ldb, CraftSimLibIconDB)
+	CraftSim.LibIcon:Register("CraftSim", ldb, CraftSim.DB.OPTIONS:Get("LIB_ICON_DB"))
 
 	RunNextFrame(function()
 		if CraftSim.DB.OPTIONS:Get("MINIMAP_BUTTON_HIDE") then

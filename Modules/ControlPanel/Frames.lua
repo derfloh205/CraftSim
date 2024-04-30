@@ -28,7 +28,7 @@ function CraftSim.CONTROL_PANEL.FRAMES:Init()
         moveable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSimGGUIConfig,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = CraftSim.UTIL:NextFrameLevel()

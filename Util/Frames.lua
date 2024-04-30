@@ -276,7 +276,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
             GUTIL.COLORS.GREEN),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSimGGUIConfig,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = "FULLSCREEN",
     })
 

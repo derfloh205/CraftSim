@@ -252,7 +252,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             moveable = true,
             title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE),
             frameTable = CraftSim.INIT.FRAMES,
-            frameConfigTable = CraftSimGGUIConfig,
+            frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
             frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
             frameLevel = 50,
             raiseOnInteraction = true,
@@ -594,7 +594,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
         title = "CraftSim Knowledge Simulation",
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSimGGUIConfig,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
     })
     local frameWO = GGUI.Frame({
         parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
@@ -609,7 +609,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
         title = "CraftSim Knowledge Simulation",
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSimGGUIConfig,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
     })
 
     local function createContent(frame)

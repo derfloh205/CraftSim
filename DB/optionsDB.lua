@@ -195,12 +195,28 @@ function CraftSim.DB.OPTIONS:Migrate()
 
         CraftSimDB.optionsDB.version = 1
     end
+
+    -- 1 -> 2
+    if CraftSimDB.optionsDB.version == 1 then
+        if _G["CraftSimGGUIConfig"] then
+            self:Save("GGUI_CONFIG", _G["CraftSimGGUIConfig"])
+        end
+        if _G["CraftSimLibIconDB"] then
+            self:Save("LIB_ICON_DB", _G["CraftSimLibIconDB"])
+        end
+        CraftSimDB.optionsDB.version = 2
+    end
 end
 
 function CraftSim.DB.OPTIONS:CleanUp()
     if _G["CraftSimOptions"] then
-        -- remove old
         _G["CraftSimOptions"] = nil
+    end
+    if _G["CraftSimGGUIConfig"] then
+        _G["CraftSimGGUIConfig"] = nil
+    end
+    if _G["CraftSimLibIconDB"] then
+        _G["CraftSimLibIconDB"] = nil
     end
 end
 

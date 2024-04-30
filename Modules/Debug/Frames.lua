@@ -31,7 +31,7 @@ function CraftSim.DEBUG.FRAMES:Init()
         parent = UIParent,
         anchorParent = UIParent,
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSimGGUIConfig,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
         raiseOnInteraction = true,
         frameLevel = 50,
@@ -124,7 +124,7 @@ function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
         frameID = CraftSim.CONST.FRAMES.DEBUG_CONTROL,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSimGGUIConfig,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
     })
 
     ---@class CraftSim.DEBUG.FRAME.CONTROL_PANEL.CONTENT : Frame

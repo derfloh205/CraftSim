@@ -35,7 +35,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         frameStrata = "DIALOG",
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_PRICE_OVERRIDE"),
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSimGGUIConfig,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
     })
     local frameWO = CraftSim.GGUI.Frame({
         parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
@@ -52,7 +52,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         frameStrata = "DIALOG",
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_PRICE_OVERRIDE"),
         frameTable = CraftSim.INIT.FRAMES,
-        frameConfigTable = CraftSimGGUIConfig,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
     })
 
     local function createContentV2(frame)
