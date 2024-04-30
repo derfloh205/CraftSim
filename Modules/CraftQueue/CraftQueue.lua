@@ -6,7 +6,8 @@ local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.CRAFTQ : Frame
-CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED" })
+CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
+    "NEW_RECIPE_LEARNED" })
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
@@ -672,10 +673,26 @@ function CraftSim.CRAFTQ:AddOpenRecipe()
 end
 
 function CraftSim.CRAFTQ:OnRecipeEditSave()
-    -- TODO
     print("OnRecipeEditSave")
     ---@type CraftSim.CRAFTQ.EditRecipeFrame
     local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
 
     editRecipeFrame:Hide()
+end
+
+---@param recipeID RecipeID
+function CraftSim.CRAFTQ:NEW_RECIPE_LEARNED(recipeID)
+    -- if craftQueue has items from this crafter, update learned status and recipeInfo, and queue list
+    for _, craftQueueItem in ipairs(self.craftQueue.craftQueueItems) do
+        local recipeData = craftQueueItem.recipeData
+        if recipeData:IsCrafter() and recipeData.recipeID == recipeID then
+            -- recipe was learned, update
+            recipeData.recipeInfo.learned = true
+            recipeData.learned = true
+            CraftSim.DB.CRAFTER:SaveRecipeInfo(recipeData:GetCrafterUID(), recipeData.recipeID, recipeData
+                .recipeInfo)
+        end
+    end
+
+    self.FRAMES:UpdateDisplay()
 end
