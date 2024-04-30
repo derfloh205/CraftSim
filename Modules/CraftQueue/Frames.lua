@@ -329,8 +329,22 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                                 craftAmountColumn.input.textInput.frame:SetFocus()
                             end
                         end
+                    end,
+                    onNumberValidCallback = function()
+                        craftAmountColumn.unsavedMarker:Show()
                     end
                 })
+
+                craftAmountColumn.unsavedMarker = GGUI.Text {
+                    parent = craftAmountColumn, anchorPoints =
+                { { anchorParent = craftAmountColumn.input.textInput.frame, anchorA = "TOPRIGHT", anchorB = "TOPLEFT", offsetX = -5, offsetY = -3 } },
+                    text = "*", scale = 1.2,
+                    tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR",
+                        text = L("CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP")
+                    },
+                    hide = true,
+                }
 
                 -- target mode frame
                 craftAmountColumn.targetList = GGUI.FrameList {
@@ -394,37 +408,55 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     parent = statusColumn, anchorParent = statusColumn, anchorA = "LEFT", anchorB = "LEFT",
                     offsetX = statusIconsOffsetX, sizeX = statusIconSize * 1.1, sizeY = statusIconSize * 1.1,
                     atlas = CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.LEARNED.texture,
-                    tooltip = "Recipe Learned",
+                    tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                        text = L("CRAFT_QUEUE_STATUSBAR_LEARNED"),
+                    },
                 }
                 statusColumn.cooldown = GGUI.Texture {
                     parent = statusColumn, anchorParent = statusColumn.learned.frame, anchorA = "LEFT", anchorB = "RIGHT",
                     offsetX = statusIconsSpacingX, sizeX = statusIconSize * 0.8, sizeY = statusIconSize * 0.8,
                     atlas = CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.COOLDOWN.texture,
-                    tooltip = "Not on Cooldown",
+                    tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                        text = L("CRAFT_QUEUE_STATUSBAR_COOLDOWN"),
+                    },
                 }
                 statusColumn.reagents = GGUI.Texture {
                     parent = statusColumn, anchorParent = statusColumn.cooldown.frame, anchorA = "LEFT", anchorB = "RIGHT",
                     offsetX = statusIconsSpacingX, sizeX = statusIconSize * 0.9, sizeY = statusIconSize * 0.9,
                     atlas = CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.REAGENTS.texture,
-                    tooltip = "Materials Available",
+                    tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                        text = L("CRAFT_QUEUE_STATUSBAR_MATERIALS"),
+                    },
                 }
                 statusColumn.tools = GGUI.Texture {
                     parent = statusColumn, anchorParent = statusColumn.reagents.frame, anchorA = "LEFT", anchorB = "RIGHT",
                     offsetX = statusIconsSpacingX, sizeX = statusIconSize, sizeY = statusIconSize,
                     atlas = CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.TOOLS.texture,
-                    tooltip = "Profession Gear Equipped",
+                    tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                        text = L("CRAFT_QUEUE_STATUSBAR_PROFESSION"),
+                    },
                 }
                 statusColumn.crafter = GGUI.Texture {
                     parent = statusColumn, anchorParent = statusColumn.tools.frame, anchorA = "LEFT", anchorB = "RIGHT",
                     offsetX = statusIconsSpacingX, sizeX = statusIconSize, sizeY = statusIconSize,
                     atlas = CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.CRAFTER.texture,
-                    tooltip = "Correct Crafter Character",
+                    tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                        text = L("CRAFT_QUEUE_STATUSBAR_CRAFTER"),
+                    },
                 }
                 statusColumn.profession = GGUI.Texture {
                     parent = statusColumn, anchorParent = statusColumn.crafter.frame, anchorA = "LEFT", anchorB = "RIGHT",
                     offsetX = statusIconsSpacingX, sizeX = statusIconSize, sizeY = statusIconSize,
                     atlas = CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.PROFESSION.texture,
-                    tooltip = "Profession Open",
+                    tooltipOptions = {
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                        text = L("CRAFT_QUEUE_STATUSBAR_PROFESSION"),
+                    },
                 }
 
                 craftButtonColumn.craftButton = GGUI.Button({
@@ -1893,6 +1925,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
         craftAmountColumn.input.onEnterPressedCallback =
             function(_, value)
                 craftQueueItem.amount = value or 1
+                craftAmountColumn.unsavedMarker:Hide()
                 CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
             end
     end
