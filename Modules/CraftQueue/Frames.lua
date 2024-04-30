@@ -1296,7 +1296,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
 
     self:UpdateCraftQueueTotalProfitDisplay()
 
-    craftQueue:CacheQueueItems() -- Is this a good time to cache it?
+    craftQueue:CacheQueueItems()
 
 
     CraftSim.DEBUG:StopProfiling("FrameListUpdate")
