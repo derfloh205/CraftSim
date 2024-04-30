@@ -1,6 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+---@class CraftSim.CONST
 CraftSim.CONST = {}
 
 -- One Time Info ------------

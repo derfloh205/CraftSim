@@ -186,9 +186,6 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		-- conclusion: use work order page to check if its a work order and use (if available) the current main recipeData to check if its a recraft
 		-- new take: problem when recraft recipe is open and crafting in queue.. then it thinks its a recraft... so for now its just always false..
 		local isRecraft = false
-		-- if CraftSim.INIT.currentRecipeData then
-		-- 	isRecraft = CraftSim.INIT.currentRecipeData.isRecraft
-		-- end
 
 		local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
@@ -224,8 +221,15 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
 		CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount or 1, itemTarget)
 	end
+	local function OnRecraft()
+		if CraftSim.INIT.currentRecipeData then
+			CraftSim.CRAFT_RESULTS:OnCraftRecipe(CraftSim.INIT.currentRecipeData)
+		end
+	end
 	hooksecurefunc(C_TradeSkillUI, "CraftRecipe", OnCraft)
 	hooksecurefunc(C_TradeSkillUI, "CraftEnchant", OnCraft)
+	hooksecurefunc(C_TradeSkillUI, "RecraftRecipe", OnRecraft)
+	hooksecurefunc(C_TradeSkillUI, "RecraftRecipeForOrder", OnRecraft)
 	hooksecurefunc(C_TradeSkillUI, "CraftSalvage", CraftSim.CRAFT_RESULTS.OnCraftSalvage)
 end
 
