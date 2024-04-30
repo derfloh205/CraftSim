@@ -177,7 +177,8 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 	---@param amount number?
 	---@param craftingReagentInfoTbl CraftingReagentInfo[]?
 	---@param itemTarget ItemLocationMixin?
-	local function OnCraft(recipeID, amount, craftingReagentInfoTbl, itemTarget)
+	---@param recraftItemGUID? string
+	local function OnCraft(recipeID, amount, craftingReagentInfoTbl, itemTarget, recraftItemGUID)
 		-- create a recipeData instance with given info and forward it to the corresponding modules
 		-- isRecraft and isWorkOrder is omitted cause cant know here
 		-- but recrafts have different reagents.. so they wont be recognized by comparison anyway
@@ -185,7 +186,7 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		-- If it is important I could just check if the work order frame is open because there is no way a player starts a work order craft without it open!
 		-- conclusion: use work order page to check if its a work order and use (if available) the current main recipeData to check if its a recraft
 		-- new take: problem when recraft recipe is open and crafting in queue.. then it thinks its a recraft... so for now its just always false..
-		local isRecraft = false
+		local isRecraft = recraftItemGUID ~= nil
 		-- if CraftSim.INIT.currentRecipeData then
 		-- 	isRecraft = CraftSim.INIT.currentRecipeData.isRecraft
 		-- end
@@ -203,6 +204,7 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 			end
 			-- this means recraft and work order stuff is important
 			recipeData = CraftSim.RecipeData(recipeID, isRecraft, CraftSim.UTIL:IsWorkOrder())
+			recipeData.allocationItemGUID = recraftItemGUID
 
 			recipeData:SetAllReagentsBySchematicForm()
 			-- assume non df recipe or recipe without quality reagents that are all set (cause otherwise crafting would not be possible)
@@ -224,8 +226,15 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
 		CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount or 1, itemTarget)
 	end
+	local function OnRecraft()
+		if CraftSim.INIT.currentRecipeData then
+			CraftSim.CRAFT_RESULTS:OnCraftRecipe(CraftSim.INIT.currentRecipeData)
+		end
+	end
 	hooksecurefunc(C_TradeSkillUI, "CraftRecipe", OnCraft)
 	hooksecurefunc(C_TradeSkillUI, "CraftEnchant", OnCraft)
+	hooksecurefunc(C_TradeSkillUI, "RecraftRecipe", OnRecraft)
+	hooksecurefunc(C_TradeSkillUI, "RecraftRecipeForOrder", OnRecraft)
 	hooksecurefunc(C_TradeSkillUI, "CraftSalvage", CraftSim.CRAFT_RESULTS.OnCraftSalvage)
 end
 
