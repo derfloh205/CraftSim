@@ -17,6 +17,13 @@ function CraftSim.SUPPORTERS:GetList()
     local kofi = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.KOFI, 0.45)
     local paypal = " " .. CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PAYPAL, 0.35)
     return {
+
+        {
+            name = f.bb("Fracguru"),
+            type = paypal,
+            message = "good addon",
+            date = "29.04.2024",
+        },
         {
             name = f.bb("Darrell L."),
             type = paypal,
