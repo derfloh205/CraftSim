@@ -15,6 +15,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("16.1.8"),
+        f.p .. "Fixed module collapsed content showing on tab switch",
         newP("16.1.7"),
         f.P .. "A lot of internal code optimizations to",
         f.a .. "prepare for TWW testing/updates",
