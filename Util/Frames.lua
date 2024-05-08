@@ -175,11 +175,14 @@ function CraftSim.FRAME:CreateText(text, parent, anchorParent, anchorA, anchorB,
 
     if justifyData then
         if justifyData.type == "V" then
+            -- retroactive compatible fix for 10.2.7
+            justifyData.value = justifyData.value == "CENTER" and "MIDDLE" or justifyData.value
             craftSimText:SetJustifyV(justifyData.value)
         elseif justifyData.type == "H" then
             craftSimText:SetJustifyH(justifyData.value)
         elseif justifyData.type == "HV" then
             craftSimText:SetJustifyH(justifyData.valueH)
+            justifyData.valueV = justifyData.valueV == "CENTER" and "MIDDLE" or justifyData.valueV
             craftSimText:SetJustifyV(justifyData.valueV)
         end
     end
