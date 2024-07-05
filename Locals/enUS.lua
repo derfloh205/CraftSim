@@ -31,6 +31,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.EXPANSION_BATTLE_FOR_AZEROTH] = "Battle of Azeroth",
         [CraftSim.CONST.TEXT.EXPANSION_SHADOWLANDS] = "Shadowlands",
         [CraftSim.CONST.TEXT.EXPANSION_DRAGONFLIGHT] = "Dragonflight",
+        [CraftSim.CONST.TEXT.EXPANSION_THE_WAR_WITHIN] = "The War Within",
 
         -- professions
 
