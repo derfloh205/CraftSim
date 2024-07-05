@@ -430,49 +430,20 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
         return arrayBP
     end
 
-    local arrayBPNoInspiration = calculateArrayBP(skillWithoutReagentIncrease)
-
-    print("arrayBPNoInspiration: ", false, true)
-    print(arrayBPNoInspiration, true)
-
+    local arrayBP = calculateArrayBP(skillWithoutReagentIncrease)
 
 
     CraftSim.DEBUG:StartProfiling("optimizeKnapsack")
     -- Optimize Knapsack
-    local resultsNoInspiration = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBPNoInspiration, recipeData)
+    local resultsUnfiltered = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP, recipeData)
 
     -- remove any result that maps to the expected quality without reagent increase
     -- NEW: any that is below! Same is fine
-    local results = GUTIL:Filter(resultsNoInspiration, function(result)
+    local results = GUTIL:Filter(resultsUnfiltered, function(result)
         return result.qualityID >= expectedQualityWithoutReagents
     end)
 
-    local bestResultNoInspiration = results[1]
-
-    local bestResult = bestResultNoInspiration
-
-    if recipeData.supportsInspiration then
-        local arrayBPInspiration = calculateArrayBP(skillWithoutReagentIncrease +
-            recipeData.professionStats.inspiration:GetExtraValueByFactor())
-        print("arrayBPInspiration: ", false, true)
-        print(arrayBPInspiration, true)
-        local resultsInspiration = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBPInspiration, recipeData)
-        local results = GUTIL:Filter(resultsInspiration, function(result)
-            return result.qualityID >= expectedQualityWithoutReagents
-        end)
-
-        local bestResultInspiration = results[1]
-
-        -- check if inspiration result is better than the noinspiration one
-        -- if it would be the same qualityID then the optimization for guaranteed is better
-
-        if bestResultInspiration.qualityID > bestResultNoInspiration.qualityID then
-            print("taking inspiration result as best result")
-            bestResult = bestResultInspiration
-        end
-    end
-    print("taking guaranteed result as best result")
-
+    local bestResult = results[1]
 
     -- if certain qualityIDs have the same price, use the higher qualityID
     bestResult:OptimizeQualityIDs(recipeData.subRecipeCostsEnabled)

@@ -185,7 +185,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
             nodeID = 40008,
             threshold = 30,
-            inspiration = 15,
             resourcefulness = 15,
             craftingspeedBonusFactor = 0.15,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
@@ -242,49 +241,41 @@ function CraftSim.TAILORING_DATA:GetData()
         },
         SHREWD_STITCHERY_1 = {
             nodeID = 40005,
-            equalsInspiration = true,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_2 = {
             nodeID = 40005,
             threshold = 0,
-            inspirationBonusSkillFactor = 0.05,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_3 = {
             nodeID = 40005,
             threshold = 5,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_4 = {
             nodeID = 40005,
             threshold = 10,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_5 = {
             nodeID = 40005,
             threshold = 15,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_6 = {
             nodeID = 40005,
             threshold = 20,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_7 = {
             nodeID = 40005,
             threshold = 25,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SHREWD_STITCHERY_8 = {
             nodeID = 40005,
             threshold = 30,
-            inspirationBonusSkillFactor = 0.25,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         TEXTILES_1 = { -- spinning mapped, waeving mapped, embroidery mapped
@@ -321,7 +312,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
             nodeID = 40038,
             threshold = 0,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
@@ -509,7 +499,6 @@ function CraftSim.TAILORING_DATA:GetData()
         WEAVING_3 = {
             nodeID = 40036,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
@@ -529,7 +518,6 @@ function CraftSim.TAILORING_DATA:GetData()
         WEAVING_5 = {
             nodeID = 40036,
             threshold = 15,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
@@ -590,7 +578,6 @@ function CraftSim.TAILORING_DATA:GetData()
         EMBROIDERY_3 = {
             nodeID = 40035,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
@@ -632,7 +619,6 @@ function CraftSim.TAILORING_DATA:GetData()
         EMBROIDERY_5 = {
             nodeID = 40035,
             threshold = 15,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
@@ -725,7 +711,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
             nodeID = 40074,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
@@ -815,7 +800,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
             nodeID = 40074,
             threshold = 25,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
@@ -863,7 +847,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "AZUREWEAVING_1" },
             nodeID = 40073,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
@@ -901,7 +884,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "AZUREWEAVING_1" },
             nodeID = 40073,
             threshold = 25,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
@@ -970,7 +952,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "TIMEWEAVING_1" },
             nodeID = 40071,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
@@ -1008,7 +989,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "TIMEWEAVING_1" },
             nodeID = 40071,
             threshold = 25,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
@@ -1221,7 +1201,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
             nodeID = 40226,
             threshold = 10,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 -- gloves
                 395813, -- (Rare) Surveyor's Seasoned Gloves
@@ -1385,7 +1364,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
             nodeID = 40226,
             threshold = 30,
-            inspiration = 10,
             resourcefulness = 10,
             craftingspeedBonusFactor = 0.15,
             exceptionRecipeIDs = {
@@ -1511,7 +1489,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
             nodeID = 40222,
             threshold = 5,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- gloves
                 395813, -- (Rare) Surveyor's Seasoned Gloves
@@ -1640,7 +1617,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
             nodeID = 40222,
             threshold = 45,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- gloves
                 395813, -- (Rare) Surveyor's Seasoned Gloves
@@ -1857,7 +1833,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
             nodeID = 40225,
             threshold = 15,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 --- robes
                 -- Armor
@@ -2055,7 +2030,6 @@ function CraftSim.TAILORING_DATA:GetData()
             childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
             nodeID = 40217,
             threshold = 15,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- mantles
                 395815, -- (Rare) Surveyor's Seasoned Shoulders

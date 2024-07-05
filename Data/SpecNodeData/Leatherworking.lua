@@ -204,7 +204,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1" },
             nodeID = 31184,
             threshold = 30,
-            inspiration = 15,
             resourcefulness = 15,
             craftingspeedBonusFactor = 0.20,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
@@ -258,49 +257,41 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
         },
         AWL_INSPIRING_WORKS_1 = {
             nodeID = 31182,
-            equalsInspiration = true,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_2 = {
             nodeID = 31182,
             threshold = 0,
-            inspirationBonusSkillFactor = 0.05,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_3 = {
             nodeID = 31182,
             threshold = 5,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_4 = {
             nodeID = 31182,
             threshold = 10,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_5 = {
             nodeID = 31182,
             threshold = 15,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_6 = {
             nodeID = 31182,
             threshold = 20,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_7 = {
             nodeID = 31182,
             threshold = 25,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         AWL_INSPIRING_WORKS_8 = {
             nodeID = 31182,
             threshold = 30,
-            inspirationBonusSkillFactor = 0.25,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         BONDING_AND_STITCHING_1 = {
@@ -334,7 +325,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
         BONDING_AND_STITCHING_3 = {
             nodeID = 31181,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.PROFESSION_EQUIPMENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ALCHEMY,
@@ -363,7 +353,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
         BONDING_AND_STITCHING_5 = {
             nodeID = 31181,
             threshold = 15,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.PROFESSION_EQUIPMENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ALCHEMY,
@@ -417,7 +406,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
         CURING_AND_TANNING_3 = {
             nodeID = 31180,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
@@ -443,7 +431,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
         CURING_AND_TANNING_5 = {
             nodeID = 31180,
             threshold = 15,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
@@ -504,7 +491,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1" },
             nodeID = 31146,
             threshold = 0,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ELEMENTAL_PATTERNS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
@@ -572,7 +558,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1" },
             nodeID = 31146,
             threshold = 15,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ELEMENTAL_PATTERNS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
@@ -688,7 +673,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
         ELEMENTAL_MASTERY_2 = {
             nodeID = 31145,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ELEMENTAL_PATTERNS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
@@ -787,7 +771,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
         BESTIAL_PRIMACY_3 = {
             nodeID = 31144,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.BESTIAL_PATTERNS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
@@ -874,7 +857,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
         DECAYING_GRASP_3 = {
             nodeID = 31143,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DECAYED_PATTERNS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
@@ -977,7 +959,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1" },
             nodeID = 28546,
             threshold = 5,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 --- shaped leather armor
                 -- chest
@@ -1079,7 +1060,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1" },
             nodeID = 28546,
             threshold = 25,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 --- shaped leather armor
                 -- chest
@@ -1130,7 +1110,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1" },
             nodeID = 28546,
             threshold = 30,
-            inspiration = 15,
             resourcefulness = 15,
             craftingspeedBonusFactor = 0.10,
             exceptionRecipeIDs = {
@@ -1211,7 +1190,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1" },
             nodeID = 28545,
             threshold = 5,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- chest
                 375105, -- (Rare) Pioneer's Leather Tunic
@@ -1267,7 +1245,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1" },
             nodeID = 28545,
             threshold = 25,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- chest
                 375105, -- (Rare) Pioneer's Leather Tunic
@@ -1499,7 +1476,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1" },
             nodeID = 28540,
             threshold = 5,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- legs
                 395867, -- (Rare) Pioneer's Practiced Leggins
@@ -1557,7 +1533,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1" },
             nodeID = 28540,
             threshold = 25,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- legs
                 395867, -- (Rare) Pioneer's Practiced Leggins
@@ -1816,7 +1791,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "LARGE_MAIL_1", "INTRICATE_MAIL_1" },
             nodeID = 28438,
             threshold = 5,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 --- large mail
                 -- chest
@@ -1916,7 +1890,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "LARGE_MAIL_1", "INTRICATE_MAIL_1" },
             nodeID = 28438,
             threshold = 25,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 --- large mail
                 -- chest
@@ -1966,7 +1939,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "LARGE_MAIL_1", "INTRICATE_MAIL_1" },
             nodeID = 28438,
             threshold = 30,
-            inspiration = 15,
             resourcefulness = 15,
             craftingspeedBonusFactor = 0.10,
             exceptionRecipeIDs = {
@@ -2044,7 +2016,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1" },
             nodeID = 28437,
             threshold = 5,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- chest
                 375108, -- (Rare) Trailblazer's Scale Vest
@@ -2096,7 +2067,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1" },
             nodeID = 28437,
             threshold = 25,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- chest
                 375108, -- (Rare) Trailblazer's Scale Vest
@@ -2320,7 +2290,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1" },
             nodeID = 28432,
             threshold = 5,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- greaves
                 395847, -- (Rare) Trailblazer's Toughened Legguards
@@ -2380,7 +2349,6 @@ function CraftSim.LEATHERWORKING_DATA:GetData()
             childNodeIDs = { "GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1" },
             nodeID = 28432,
             threshold = 25,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- greaves
                 395847, -- (Rare) Trailblazer's Toughened Legguards

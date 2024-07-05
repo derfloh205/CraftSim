@@ -193,7 +193,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             nodeID = 42828,
             threshold = 30,
             craftingspeedBonusFactor = 0.10,
-            inspiration = 10,
             resourcefulness = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
@@ -228,49 +227,42 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
         },
         POIGNANT_PLANS_1 = {
             nodeID = 42826,
-            equalsInspiration = true,
+
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         POIGNANT_PLANS_2 = {
             nodeID = 42826,
             threshold = 0,
-            inspirationBonusSkillFactor = 0.05,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         POIGNANT_PLANS_3 = {
             nodeID = 42826,
             threshold = 5,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         POIGNANT_PLANS_4 = {
             nodeID = 42826,
             threshold = 10,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         POIGNANT_PLANS_5 = {
             nodeID = 42826,
             threshold = 15,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         POIGNANT_PLANS_6 = {
             nodeID = 42826,
             threshold = 20,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         POIGNANT_PLANS_7 = {
             nodeID = 42826,
             threshold = 25,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         POIGNANT_PLANS_8 = {
             nodeID = 42826,
             threshold = 30,
-            inspirationBonusSkillFactor = 0.25,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         -- Speciality Smithing
@@ -302,7 +294,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "TOOLSMITHING_1", "STONEWORK_1", "SMELTING_1" },
             nodeID = 23765,
             threshold = 0,
-            inspiration = 5,
             idMapping = {
                 -- toolsmithing
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS] = {
@@ -352,7 +343,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "TOOLSMITHING_1", "STONEWORK_1", "SMELTING_1" },
             nodeID = 23765,
             threshold = 20,
-            inspiration = 5,
             idMapping = {
                 -- toolsmithing
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS] = {
@@ -456,7 +446,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
         TOOLSMITHING_3 = {
             nodeID = 23764,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
@@ -486,7 +475,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
         TOOLSMITHING_5 = {
             nodeID = 23764,
             threshold = 20,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.BLACKSMITHING,
@@ -536,7 +524,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
         STONEWORK_3 = {
             nodeID = 23762,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
@@ -556,7 +543,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
         STONEWORK_5 = {
             nodeID = 23762,
             threshold = 15,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.STONEWORK
@@ -596,7 +582,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
         SMELTING_3 = {
             nodeID = 23761,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
@@ -616,7 +601,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
         SMELTING_5 = {
             nodeID = 23761,
             threshold = 15,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.METAL_AND_STONE
@@ -680,7 +664,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "BLADES_1", "HAFTED_1" },
             nodeID = 23727,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                     --- blades
@@ -766,7 +749,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "BLADES_1", "HAFTED_1" },
             nodeID = 23727,
             threshold = 25,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                     --- blades
@@ -809,7 +791,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "BLADES_1", "HAFTED_1" },
             nodeID = 23727,
             threshold = 30,
-            inspiration = 15,
             resourcefulness = 15,
             craftingspeedBonusFactor = 0.15,
             idMapping = {
@@ -882,7 +863,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "AXES_1", "MACES_1" },
             nodeID = 23723,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                     -- axes
@@ -934,7 +914,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "AXES_1", "MACES_1" },
             nodeID = 23723,
             threshold = 25,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                     -- axes
@@ -1105,7 +1084,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "SHORT_BLADES_1", "LONG_BLADES_1" },
             nodeID = 23726,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                     -- short blades
@@ -1153,7 +1131,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "SHORT_BLADES_1", "LONG_BLADES_1" },
             nodeID = 23726,
             threshold = 25,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                     -- short blades
@@ -1362,7 +1339,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1" },
             nodeID = 23912,
             threshold = 5,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 --- large plate armor
                 -- breastplates
@@ -1476,7 +1452,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1" },
             nodeID = 23912,
             threshold = 25,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 --- large plate armor
                 -- breastplates
@@ -1533,7 +1508,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1" },
             nodeID = 23912,
             threshold = 30,
-            inspiration = 15,
             resourcefulness = 15,
             craftingspeedBonusFactor = 0.15,
             exceptionRecipeIDs = {
@@ -1617,7 +1591,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "BREASTPLATES_1", "SHIELDS_1", "GREAVES_1" },
             nodeID = 23911,
             threshold = 5,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- breastplates
                 376618, -- pvp green breast
@@ -1663,7 +1636,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "BREASTPLATES_1", "SHIELDS_1", "GREAVES_1" },
             nodeID = 23911,
             threshold = 25,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- breastplates
                 376618, -- pvp green breast
@@ -1867,7 +1839,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "HELMS_1", "PAULDRONS_1", "SABATONS_1" },
             nodeID = 23907,
             threshold = 5,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- helms
                 376621, -- pvp green
@@ -1911,7 +1882,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "HELMS_1", "PAULDRONS_1", "SABATONS_1" },
             nodeID = 23907,
             threshold = 25,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- helms
                 376621, -- pvp green
@@ -2116,7 +2086,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "BELTS_1", "VAMBRACES_1", "GAUNTLETS_1" },
             nodeID = 23903,
             threshold = 5,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- belts
                 367611, -- blue
@@ -2162,7 +2131,6 @@ function CraftSim.BLACKSMITHING_DATA:GetData()
             childNodeIDs = { "BELTS_1", "VAMBRACES_1", "GAUNTLETS_1" },
             nodeID = 23903,
             threshold = 25,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- belts
                 367611, -- blue

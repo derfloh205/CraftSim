@@ -8,7 +8,6 @@ function CraftSim.LOCAL_RU:GetData()
     local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     return {
         -- REQUIRED:
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Вдохновение",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Перепроизводство",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Находчивость",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Скорость изготовления",
@@ -54,7 +53,6 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.STAT_SKILL] = "Навык",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS] = "Бонус предметов от перепроизводства",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "Бонус предметов от наход.",
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION_BONUS] = "Бонус навыка от вдохновения",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS] = "Скорость изготовления",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "Прорыв в экспериментах с флаконами",
         [CraftSim.CONST.TEXT.STAT_POTION_EXPERIMENTATION] = "Прорыв в экспериментах с зельями",
@@ -62,29 +60,8 @@ function CraftSim.LOCAL_RU:GetData()
         -- Profit Breakdown Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
         "Находчивость прокает для каждого материала индивидуально, а затем сохраняет около 30% его количества.\n\nСреднее сохраненное значение - это среднее сохраненное значение КАЖДОЙ комбинации и их шансов.\n(Прок всех материалов одновременно очень маловероятен, но сохраняет очень много)\n\nСредняя общая сэкономленная стоимость материалов представляет собой сумму сэкономленных затрат на материалы всех комбинаций, взвешенную с учетом их вероятности.",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP] =
-        "Это значение показывает среднее количество предметов, дополнительно изготовленных благодаря перепроизводству.\n\nЗдесь учитывается ваш шанс и принимается для перепроизводства что создается \n(1-2.5y)*any_spec_bonus дополнительных предметов, где y - среднее значение предметов, изготовленных за 1 раз",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_VALUE_EXPLANATION_TOOLTIP] =
-        "Это среднее количество дополнительных предметов, созданных перепроизводством, умноженное на цену продажи полученного предмета этого качества",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_HIGHER_VALUE_EXPLANATION_TOOLTIP] =
-        "Это среднее количество дополнительных предметов, созданных с помощью перепроизводства и вдохновения, умноженное на цену продажи полученного предмета с учетом качества, достигнутого вдохновением",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_HIGHER_QUALITY_EXPLANATION_TOOLTIP] =
-        "Это число показывает среднее количество предметов, которые дополнительно создаются при перепроизводстве с вдохновением.\n\nЭто учитывает ваш шанс перепроизводства и вдохновения и отражает дополнительные предметы, созданные при одновременном проке обоих",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP] =
-        "Это число показывает среднее количество предметов, созданных с вашим текущим гарантированным качеством, когда вдохновение не прокает",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_HIGHER_QUALITY_EXPLANATION_TOOLTIP] =
-        "Это число показывает среднее количество предметов, созданных с вдохновением в следующем достижимом качестве",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_VALUE_EXPLANATION_TOOLTIP] =
-        "Это среднее количество предметов, созданных с гарантированным качеством, умноженное на цену продажи полученного предмета с этим качеством",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_HIGHER_VALUE_EXPLANATION_TOOLTIP] =
-        "Это среднее количество предметов, созданных с качеством, достигнутым с помощью вдохновения, умноженное на цену продажи конечного предмета с качеством, достигнутым с помощью вдохновения",
-
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP] =
         "Сложность рецепта определяет, где находятся контрольные точки различных качеств.\n\nДля рецептов с пятью качествами они составляют 20%, 50%, 80% и 100% сложности рецепта в очках навыка.\nДля рецептов с тремя качествами они составляют 50% и 100%",
-        [CraftSim.CONST.TEXT.INSPIRATION_EXPLANATION_TOOLTIP] =
-        "Вдохновение дает вам возможность добавить очки навыка.\n\nЭто может привести к производсту предметов более высокого качества, если добавленный навык превысит порог следующего качества.\nДля рецептов с 5 качествами базовым бонусным навыком является шестая часть (16,67%) базовой сложности рецепта.\nДля рецептов с 3 качествами — треть (33,33%)",
-        [CraftSim.CONST.TEXT.INSPIRATION_SKILL_EXPLANATION_TOOLTIP] =
-        "Этот навык добавляется поверх вашего текущего навыка, если прокает вдохновение.\n\nЕсли ваш текущий навык плюс этот бонусный навык достигают порога\nследующего качества, вы создаете предмет в этом более высоком качестве.",
         [CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP] =
         "Перепроизводство дает вам возможность создать больше предметов, чем вы обычно производите по рецепту.\n\nДополнительная сумма обычно составляет от 1 до 2.5y\nгде y = обычная сумма, которую дает 1 крафт.",
         [CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP] =
@@ -103,8 +80,6 @@ function CraftSim.LOCAL_RU:GetData()
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Сложность рецепта: ",
-        [CraftSim.CONST.TEXT.INSPIRATION_LABEL] = "Вдохновение: ",
-        [CraftSim.CONST.TEXT.INSPIRATION_SKILL_LABEL] = "Бонусный навык вдохн.: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Перепроизводство: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Находчивость: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Бонус предметов от находчивости: ",
@@ -113,60 +88,13 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Ожидаемое качество: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Следующее качество: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Недостающий навык: ",
-        [CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL] = "Недостающий навык (вдохновение)",
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Навык: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Бонус предметов от перепроизводства: ",
 
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] =
         "Это рассчитывается с использованием аппроксимации Абрамовица и Стегуна (1985) CDF (кумулятивной функции распределения)\n\nВы заметите, что это всегда около 50% для 1 крафта.\nЭто потому, что в большинстве случаев 0 близок к средней прибыли.\nИ вероятность получения среднего значения CDF всегда составляет 50%.\n\nОднако скорость изменения может сильно различаться в зависимости от рецепта.\nЕсли вероятность получения положительной прибыли выше, чем отрицательной, он будет постоянно увеличиваться.\nЭто, конечно, верно и для другого направления.",
-        [CraftSim.CONST.TEXT.EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION] =
-            f.r("Внимание: ") .. " Впереди математика!\n\n" ..
-            "Когда вы создаете что-то, у вас есть разные шансы на разные результаты в зависимости от ваших показателей крафта.\n" ..
-            "И в статистике это называется " .. f.l("Распределением вероятностей.\n") ..
-            "Однако вы заметите, что разные шансы ваших проков не суммируются до единицы\n" ..
-            "(Что требуется для такого распределения, поскольку означает, что у вас есть 100% вероятность того, что что-то может случиться)\n\n" ..
-            "Это потому что проки типа " ..
-            f.bb("Вдохновение ") .. "и" .. f.bb(" Перепроизводство") .. " могут случиться " .. f.g("одновременно.\n") ..
-            "Итак, сначала нам нужно преобразовать наши шансы прока в " ..
-            f.l("Распределение вероятностей ") .. " с шансами\n" ..
-            "суммирующимися до 100% (что означает, что рассматривается каждый случай)\n" ..
-            "И для этого нам нужно будет вычислить " .. f.l("каждый") .. " возможный результат крафта\n\n" ..
-            "Например: \n" ..
-            f.p .. "Что, если " .. f.bb("ничего") .. " не прокнет?\n" ..
-            f.p .. "Что, если " .. f.bb("всё") .. " прокнет?\n" ..
-            f.p .. "Что, если прокнет только " .. f.bb("Вдохновение") .. " и " .. f.bb("Перепроизводство") .. "?\n" ..
-            f.p .. "И так далее..\n\n" ..
-            "Для рецепта, учитывающего все три прока, это будет 2 в третьей степени, что составляет 8.\n" ..
-            "Чтобы получить возможность появления только " ..
-            f.bb("Вдохновения") .. ", должны учитывать все остальные проки!\n" ..
-            "Шанс на прок " ..
-            f.l("только") .. f.bb(" Вдохновения ") .. "на самом деле это шанс " .. f.bb("Вдохновения\n") ..
-            "при котором " .. f.l("не ") .. "прокают " .. f.bb("Перепроизводство") .. " и " .. f.bb("Находчивость.\n") ..
-            "А математика говорит нам, что вероятность того, что что-то не произойдет, равна 1 минус вероятность того, что это произойдет.\n" ..
-            "Так что шанс прока только " ..
-            f.bb("Вдохновения ") ..
-            "на самом деле " .. f.g("inspirationChance * (1-multicraftChance) * (1-resourcefulnessChance)\n\n") ..
-            "После такого расчета каждой возможности сумма индивидуальных шансов действительно равна единице!\n" ..
-            "Это означает, что теперь мы можем применять статистические формулы. Самая интересная из них в нашем случае — это " ..
-            f.bb("Ожидаемое значение") .. "\n" ..
-            "Это, как следует из названия, значение, которое мы можем ожидать в среднем, или, в нашем случае, " ..
-            f.bb(" ожидаемая прибыль от крафта!\n") ..
-            "\n" .. cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
-            "Это говорит нам о том, что ожидаемое значение " ..
-            f.l("E") ..
-            " распределения вероятностей " ..
-            f.l("X") .. " — это сумма всех его значений, умноженная на их вероятность.\n" ..
-            "Так что в " ..
-            f.bb("случае A с шансом 30%") ..
-            " и прибылью " ..
-            f.m(-100 * 10000) ..
-            " и " ..
-            f.bb("случае B с шансом 70%") ..
-            " и прибылью " .. f.m(300 * 10000) .. " ожидаемая прибыль равна\n" ..
-            f.bb("\nE(X) = -100*0.3 + 300*0.7  ") .. "что равно " .. f.m((-100 * 0.3 + 300 * 0.7) * 10000) .. "\n" ..
-            "Вы можете просмотреть все случаи для вашего текущего рецепта в окне " .. f.bb("Статистика") .. "!"
-        ,
+
         -- Popups
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM] = "Нет поддерживаемого источника цен!",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_TITLE] = "Предупреждение об источнике цен CraftSim",
@@ -176,9 +104,6 @@ function CraftSim.LOCAL_RU:GetData()
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Оптимизация материалов CraftSim",
-        [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "Достичь точки вдохновения",
-        [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] =
-        "Попробовать достичь точки навыка, когда прок вдохновения переходит на более высокое качество с использованием самой дешевой комбинации материалов",
         [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Достижимое качество: ",
         [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Недостающие материалы",
         [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Доступные материалы",
@@ -267,7 +192,6 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER] = "Качество",
         [CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER] = "Шанс",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Ø Ожидаемые крафты",
-        [CraftSim.CONST.TEXT.STATISTICS_INSPIRATION_HEADER] = "Вдохновение",
         [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "Перепроизводство",
         [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "Находчивость",
         [CraftSim.CONST.TEXT.STATISTICS_HSV_NEXT] = "Следующее HSV",
@@ -305,7 +229,6 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_FINISHING] = "Завершающие",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTING_COSTS] = "Стоимость изготовления",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_RESULTS] = "Ожидаемый результат",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_INSPIRATION] = "Шанс",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUIRED_MATERIALS] = "Необходимые материалы",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_NONE] = "Нет",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "Заблокировано",
@@ -405,13 +328,11 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_MUTLICRAFT] = "Новое перепроизводство\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_CRAFTING_SPEED] = "Новая скорость изготовления\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_RESOURCEFULNESS] = "Новая находчивость\n",
-        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_INSPIRATION] = "Новое вдохновение\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_SKILL] = "Новый навык\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_UNHANDLED] = "Режим необработанной симуляции",
 
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_PROFIT] = "Максимальная прибыль",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_SKILL] = "Высший навык",
-        [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_INSPIRATION] = "Высшее вдохновение",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_MULTICRAFT] = "Высшее перепроизводство",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_RESOURCEFULNESS] = "Высшая находчивость",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_CRAFTING_SPEED] = "Высшая скорость изготовления",

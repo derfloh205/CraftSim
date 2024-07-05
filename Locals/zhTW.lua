@@ -8,7 +8,6 @@ function CraftSim.LOCAL_TW:GetData()
     local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     return {
         -- REQUIRED:
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "靈感",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "複數製造",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "精明",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "製造速度",
@@ -21,7 +20,6 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.STAT_SKILL] = "技能",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS] = "複數製造額外物品",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "精明額外物品",
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION_BONUS] = "靈感額外技能",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS] = "製造速度",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "藥瓶突破",
         [CraftSim.CONST.TEXT.STAT_POTION_EXPERIMENTATION] = "藥水突破",
@@ -29,28 +27,10 @@ function CraftSim.LOCAL_TW:GetData()
         -- Profit Breakdown Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
         "精明會個別觸發每一種材料，然後節省約 30% 的數量。\n\n它節省的平均值是每一組合及其機率的平均節省值。\n（所有材料同時觸發機率很低，但節省很多。）\n\n平均總節省的材料成本是所有組合的節省材料成本，並根據其機率進行加權。",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP] =
-        "這個數字顯示了複數製造另外製作的平均物品數量。\n\n這會考慮你的機率，並假設複數製造有\n（1-2.5y）* 任何專精獎勵額外製作的物品，其中 y 為 1 次製作所製作物品的基本平均值。",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_VALUE_EXPLANATION_TOOLTIP] = "這是複數製造另外製作的平均物品數量乘以該品質結果物品的銷售價格。",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_HIGHER_VALUE_EXPLANATION_TOOLTIP] =
-        "這是複數製造和靈感創造的平均額外物品數量，乘以靈感達到的品質的結果物品的銷售價格。",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_HIGHER_QUALITY_EXPLANATION_TOOLTIP] =
-        "這個數字顯示了靈感觸發的複數製造另外製作的平均物品數量。\n\n這會考慮你的複數製造和靈感機率，並反映當兩者同時觸發時另外製作的物品。",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP] = "這個數字顯示了在你當前保證的品質上製作的平均物品數量，當靈感沒有觸發時。",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_HIGHER_QUALITY_EXPLANATION_TOOLTIP] =
-        "這個數字顯示了在靈感達到的下一個可達品質上製作的平均物品數量。",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_VALUE_EXPLANATION_TOOLTIP] =
-        "這是保證品質上製作的平均物品數量，乘以該品質的結果物品的銷售價格。",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_HIGHER_VALUE_EXPLANATION_TOOLTIP] =
-        "這是靈感達到的品質上製作的平均物品數量，乘以靈感達到的品質的結果物品的銷售價格。",
 
         -- unused currently
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP] =
         "配方難度決定了不同品質的臨界點。\n\n對於有五種品質的配方，它們分別在 20%、50%、80% 和 100% 的配方技能難度。\n對於有三個品質的配方，它們分別在 50% 和 100%。",
-        [CraftSim.CONST.TEXT.INSPIRATION_EXPLANATION_TOOLTIP] =
-        "靈感給你一個機率在你的製作上增加技能。\n\n這可能會導致更高品質的製作，如果增加的技能使你的技能超過下一個品質的臨界值。\n對於有 5 個品質的配方，基礎獎勵技能是基礎配方難度的六分之一 (16.67%)。\n對於有 3 個品質的配方，它為三分之一 (33.33%)。",
-        [CraftSim.CONST.TEXT.INSPIRATION_SKILL_EXPLANATION_TOOLTIP] =
-        "這是如果靈感觸發時在你當前技能上增加的技能。\n\n如果你的當前技能加上這個獎勵技能達到下一個品質的臨界值，你以這個較高品質製作物品。",
         [CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP] =
         "複數製造給你一個使用配方製作比你通常會製作的更多物品的機率。\n\n額外數量通常介於 1 到 2.5y 之間\ny = 1 次製作通常產生的數量。",
         [CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP] =
@@ -68,8 +48,6 @@ function CraftSim.LOCAL_TW:GetData()
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "配方難度：",
-        [CraftSim.CONST.TEXT.INSPIRATION_LABEL] = "靈感：",
-        [CraftSim.CONST.TEXT.INSPIRATION_SKILL_LABEL] = "靈感技能：",
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "複數製造：",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "精明：",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "精明節省加成: ",
@@ -78,7 +56,6 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "預期品質: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "下一級品質: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "不足技能: ",
-        [CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL] = "不足技能 (靈感)",
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "技能: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "複數製造加成: ",
 
@@ -127,8 +104,6 @@ function CraftSim.LOCAL_TW:GetData()
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim 材料最佳化",
-        [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "達到靈感斷點",
-        [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] = "嘗試使用最便宜的材料組合達到技能斷點，使靈感觸發升級到下一個更高的品質",
         [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "可達到品質: ",
         [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "缺少材料",
         [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "可用材料",
@@ -210,7 +185,6 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER] = "品質",
         [CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER] = "機率",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Φ 預期製造",
-        [CraftSim.CONST.TEXT.STATISTICS_INSPIRATION_HEADER] = "靈感",
         [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "複數製造",
         [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "精明",
         [CraftSim.CONST.TEXT.STATISTICS_HSV_NEXT] = "HSV提升",
@@ -247,7 +221,6 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_FINISHING] = "正在完成",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTING_COSTS] = "製造成本",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_RESULTS] = "預期結果",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_INSPIRATION] = "機率",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUIRED_MATERIALS] = "所需材料",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_NONE] = "無",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "鎖定",
@@ -320,13 +293,11 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_MUTLICRAFT] = "新的複數製造\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_CRAFTING_SPEED] = "新的製造速度\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_RESOURCEFULNESS] = "新的精明\n",
-        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_INSPIRATION] = "新的靈感\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_SKILL] = "新的技能\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_UNHANDLED] = "未處理的模擬模式",
 
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_PROFIT] = "最佳利潤",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_SKILL] = "最佳技能",
-        [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_INSPIRATION] = "最佳靈感",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_MULTICRAFT] = "最佳複數製造",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_RESOURCEFULNESS] = "最佳精明",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_CRAFTING_SPEED] = "最佳製造速度",

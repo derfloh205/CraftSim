@@ -182,23 +182,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_4) .. actualProfit .. "\n\n"
         statisticsText = statisticsText ..
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_5) .. "\n\n"
-        if CraftSim.INIT.currentRecipeData.supportsInspiration then
-            local expectedProcs = tonumber(CraftSim.GUTIL:Round(
-                    CraftSim.INIT.currentRecipeData.professionStats.inspiration:GetPercent(true) *
-                    craftRecipeData.numCrafts, 1)) or
-                0
-            if craftRecipeData.numInspiration >= expectedProcs then
-                statisticsText = statisticsText ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_6) ..
-                    CraftSim.GUTIL:ColorizeText(craftRecipeData.numInspiration, CraftSim.GUTIL.COLORS.GREEN) ..
-                    " / " .. expectedProcs .. "\n"
-            else
-                statisticsText = statisticsText ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_6) ..
-                    CraftSim.GUTIL:ColorizeText(craftRecipeData.numInspiration, CraftSim.GUTIL.COLORS.RED) ..
-                    " / " .. expectedProcs .. "\n"
-            end
-        end
+
         if CraftSim.INIT.currentRecipeData.supportsMulticraft then
             local expectedProcs = tonumber(CraftSim.GUTIL:Round(
                     CraftSim.INIT.currentRecipeData.professionStats.multicraft:GetPercent(true) *

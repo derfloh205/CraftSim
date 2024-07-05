@@ -7,7 +7,6 @@ function CraftSim.LOCAL_ES:GetData()
     local f = CraftSim.GUTIL:GetFormatter()
     return {
         -- REQUIRED:
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Inspiración",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Multifabricación",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Ingenio",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Velocidad de fabricación",
@@ -19,8 +18,6 @@ function CraftSim.LOCAL_ES:GetData()
 
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP] =
         "Dificultad de la receta determina cuanta Habilidad es necesaria para fabricar la receta en cada calidad.\n\nPara recetas con cinco calidades es 20%, 50%, 80% y 100% de la Dificultad de la receta como Habilidad\nPara recetas con tres calidades es 50% y 100%",
-        [CraftSim.CONST.TEXT.INSPIRATION_EXPLANATION_TOOLTIP] =
-        "Inspiración da una probabilidad de aumentar la Habilidad al fabricar.\n\nEso puede llevar a fabricaciones de calidad mayor si la cantidad de Habilidad otorgada al inspirarte es suficiente.\nPara recetas con cinco calidades la cantidad de de Habilidad otorgada es un sexto (16.67%) de la Dificultad de la receta.\nPara recetas con tres calidades la cantidad de Habilidad otorgada es un tercio (33.33%)",
         [CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP] =
         "Multifabricación da una probabilidad de fabricar mas objetos de los que normalmente fabricaría la receta.\n\nLa cantidad adicional es entre 1 y 2.5y\ndonde y = es la cantidad normal que da la fabricación.",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
@@ -30,7 +27,6 @@ function CraftSim.LOCAL_ES:GetData()
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Dificultad de la receta: ",
-        [CraftSim.CONST.TEXT.INSPIRATION_LABEL] = "Inspiración: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Multifabricación: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Ingenio: ",
     }

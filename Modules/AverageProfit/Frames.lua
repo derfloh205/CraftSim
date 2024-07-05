@@ -142,10 +142,6 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts)
                 f.mr(statWeights.averageProfit, relativeValue),
                 f.white(f.bb("Average") .. " profit per craft considering your crafting stats"))
         end
-        if statWeights.inspirationWeight then
-            addToList(L(CraftSim.CONST.TEXT.INSPIRATION_LABEL), f.mw(statWeights.inspirationWeight),
-                f.white("Profit increase " .. f.l("per point ") .. f.bb("Inspiration")))
-        end
         if statWeights.multicraftWeight then
             addToList(L(CraftSim.CONST.TEXT.MULTICRAFT_LABEL), f.mw(statWeights.multicraftWeight),
                 f.white("Profit increase " .. f.l("per point ") .. f.bb("Multicraft")))

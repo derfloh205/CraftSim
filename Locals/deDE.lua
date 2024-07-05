@@ -7,7 +7,6 @@ function CraftSim.LOCAL_DE:GetData()
     local f = CraftSim.GUTIL:GetFormatter()
     return {
         -- REQUIRED:
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Inspiration",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Mehrfachherstellung",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Einfallsreichtum",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Herstellungsgeschwindigkeit",

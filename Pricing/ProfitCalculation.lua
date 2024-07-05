@@ -54,7 +54,6 @@ end
 function CraftSim.CALC:GetAverageProfit(recipeData)
     print("Get Average Profit", false, true)
     print("Supports Crafting Stats: " .. tostring(recipeData.supportsCraftingStats))
-    print("Inspiration: " .. tostring(recipeData.supportsInspiration))
     print("Multicraft: " .. tostring(recipeData.supportsMulticraft))
     print("Resourcefulness: " .. tostring(recipeData.supportsResourcefulness))
     local priceData = recipeData.priceData

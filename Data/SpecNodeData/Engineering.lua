@@ -109,7 +109,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
             childNodeIDs = { "PIECES_PARTS_1", "SCRAPPER_1", "GENERALIST_1" },
             nodeID = 50993,
             threshold = 10,
-            inspiration = 5,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         OPTIMIZED_EFFICIENCY_4 = {
@@ -123,21 +122,18 @@ function CraftSim.ENGINEERING_DATA:GetData()
             childNodeIDs = { "PIECES_PARTS_1", "SCRAPPER_1", "GENERALIST_1" },
             nodeID = 50993,
             threshold = 25,
-            inspiration = 25,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         OPTIMIZED_EFFICIENCY_6 = {
             childNodeIDs = { "PIECES_PARTS_1", "SCRAPPER_1", "GENERALIST_1" },
             nodeID = 50993,
             threshold = 35,
-            inspiration = 5,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         OPTIMIZED_EFFICIENCY_7 = {
             childNodeIDs = { "PIECES_PARTS_1", "SCRAPPER_1", "GENERALIST_1" },
             nodeID = 50993,
             threshold = 40,
-            inspirationBonusSkillFactor = 0.20,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         PIECES_PARTS_1 = {
@@ -174,7 +170,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
         PIECES_PARTS_3 = {
             nodeID = 50992,
             threshold = 10,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.PARTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENGINEERING.PARTS
@@ -233,7 +228,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
         SCRAPPER_3 = {
             nodeID = 50991,
             threshold = 15,
-            inspiration = 5,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         SCRAPPER_4 = {
@@ -468,7 +462,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
         SHORT_FUSE_4 = {
             nodeID = 50892,
             threshold = 25,
-            inspiration = 25,
             exceptionRecipeIDs = {
                 382343, -- gravitational displacer
                 382323, -- grease grenade
@@ -530,7 +523,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
         EZ_THRO_5 = {
             nodeID = 50891,
             threshold = 25,
-            inspiration = 25,
             exceptionRecipeIDs = {
                 382355, -- ez-thro creature combustion canister
                 382356, -- ez-thro gravitational displacer
@@ -730,7 +722,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
             childNodeIDs = { "GEAR_1", "GEARS_FOR_GEAR_1", "UTILITY_1" },
             nodeID = 50929,
             threshold = 35,
-            inspiration = 25,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.GOGGLES] = {
                     -- gear
@@ -822,7 +813,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
         },
         GEAR_1 = {
             nodeID = 50928,
-            equalsInspiration = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.GOGGLES] = {
                     -- gear
@@ -891,7 +881,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
         GEAR_4 = {
             nodeID = 50928,
             threshold = 30,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.GOGGLES] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENGINEERING.PLATE,
@@ -912,7 +901,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
         },
         GEARS_FOR_GEAR_1 = {
             nodeID = 50927,
-            equalsInspiration = true,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.PROFESSION_EQUIPMENT] = {
                     -- gears for gear
@@ -1037,7 +1025,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
         INVENTIONS_3 = {
             nodeID = 50955,
             threshold = 15,
-            inspiration = 25,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.TINKERS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENGINEERING.OTHER
@@ -1066,7 +1053,6 @@ function CraftSim.ENGINEERING_DATA:GetData()
         },
         NOVELTIES_1 = {
             nodeID = 50954,
-            equalsInspirationBonusSkillFactor = true,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
     }

@@ -117,7 +117,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
             childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
             nodeID = 19539,
             threshold = 0,
-            inspiration = 5,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         ALCHEMICAL_THEORY_3 = {
@@ -138,7 +137,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
             childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
             nodeID = 19539,
             threshold = 30,
-            inspiration = 5,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         ALCHEMICAL_THEORY_6 = {
@@ -152,7 +150,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
             childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
             nodeID = 19539,
             threshold = 50,
-            inspiration = 15,
             resourcefulness = 15,
             craftingspeedBonusFactor = 0.15,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
@@ -263,7 +260,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
         CHEMICAL_SYNTHESIS_4 = {
             nodeID = 19537,
             threshold = 10,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
@@ -410,7 +406,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
         DECAYOLOGY_3 = {
             nodeID = 19536,
             threshold = 15,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 370521, -- air potion
                 370536, -- frost potion
@@ -507,49 +502,41 @@ function CraftSim.ALCHEMY_DATA:GetData()
         },
         INSPIRING_AMBIENCE_1 = {
             nodeID = 19534,
-            equalsInspiration = true,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRING_AMBIENCE_2 = {
             nodeID = 19534,
             threshold = 0,
-            inspirationBonusSkillFactor = 0.05,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRING_AMBIENCE_3 = {
             nodeID = 19534,
             threshold = 5,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRING_AMBIENCE_4 = {
             nodeID = 19534,
             threshold = 10,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRING_AMBIENCE_5 = {
             nodeID = 19534,
             threshold = 15,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRING_AMBIENCE_6 = {
             nodeID = 19534,
             threshold = 20,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRING_AMBIENCE_7 = {
             nodeID = 19534,
             threshold = 25,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRING_AMBIENCE_8 = {
             nodeID = 19534,
             threshold = 30,
-            inspirationBonusSkillFactor = 0.25,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         -- Phial Mastery
@@ -582,7 +569,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
             childNodeIDs = { "FROST_PHIALS_1", "PHIAL_LORE_1", "AIR_PHIALS_1" },
             nodeID = 22483,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -684,7 +670,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
             childNodeIDs = { "PHIAL_EXPERIMENTATION_1", "PHIAL_BATCH_PRODUCTION_1" },
             nodeID = 22480,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -748,7 +733,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
         FROST_PHIALS_2 = {
             nodeID = 22482,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -812,7 +796,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
         FROST_PHIALS_6 = {
             nodeID = 22482,
             threshold = 25,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -843,7 +826,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
         AIR_PHIALS_2 = {
             nodeID = 22481,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -907,7 +889,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
         AIR_PHIALS_6 = {
             nodeID = 22481,
             threshold = 25,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -1115,7 +1096,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
             childNodeIDs = { "FROST_POTIONS_1", "POTION_LORE_1", "AIR_POTIONS_1" },
             nodeID = 19487,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
@@ -1225,7 +1205,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
             childNodeIDs = { "POTION_EXPERIMENTATION_1", "POTION_BATCH_PRODUCTION_1" },
             nodeID = 19484,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
@@ -1314,7 +1293,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
         FROST_POTIONS_3 = {
             nodeID = 19486,
             threshold = 10,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
@@ -1403,7 +1381,6 @@ function CraftSim.ALCHEMY_DATA:GetData()
         AIR_POTIONS_3 = {
             nodeID = 19485,
             threshold = 10,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
