@@ -202,6 +202,7 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 			recipeData = CraftSim.RecipeData(recipeID, isRecraft, CraftSim.UTIL:IsWorkOrder())
 
 			recipeData:SetAllReagentsBySchematicForm()
+			recipeData:SetConcentrationBySchematicForm()
 			-- assume non df recipe or recipe without quality reagents that are all set (cause otherwise crafting would not be possible)
 		else
 			print("api was called via craftsim")
@@ -277,6 +278,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 
 		CraftSim.INIT:HookToEvent()
 		CraftSim.INIT:HookToProfessionsFrame()
+		CraftSim.INIT:HookToConcentrationButton()
 		CraftSim.INIT:HandleAuctionatorHooks()
 		CraftSim.INIT:InitCraftRecipeHooks()
 
@@ -337,6 +339,19 @@ function CraftSim.INIT:HookToProfessionsFrame()
 				CraftSim.OPTIONS.lastOpenRecipeID[profession] = recipeInfo.recipeID
 			end
 		end)
+end
+
+local concentrationButtonHooked = false
+function CraftSim.INIT:HookToConcentrationButton()
+	if concentrationButtonHooked then
+		return
+	end
+	concentrationButtonHooked = true
+
+	ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer
+		.ConcentrateToggleButton:HookScript("OnClick", function()
+		self:TriggerModulesByRecipeType()
+	end)
 end
 
 function CraftSim.INIT:PLAYER_LOGIN()
@@ -512,6 +527,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		if recipeData then
 			-- Set Reagents based on visibleFrame and load equipped profession gear set
 			recipeData:SetAllReagentsBySchematicForm()
+			recipeData:SetConcentrationBySchematicForm()
 			recipeData:SetEquippedProfessionGearSet()
 
 			CraftSim.INIT.currentRecipeData = recipeData

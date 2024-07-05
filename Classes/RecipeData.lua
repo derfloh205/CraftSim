@@ -403,6 +403,16 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
     end
 end
 
+function CraftSim.RecipeData:SetConcentrationBySchematicForm()
+    local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+    if not schematicForm then
+        return
+    end
+
+    local currentTransaction = schematicForm:GetTransaction()
+    self.concentrating = currentTransaction:IsApplyingConcentration()
+end
+
 ---@param itemID number
 function CraftSim.RecipeData:SetOptionalReagent(itemID)
     self.reagentData:SetOptionalReagent(itemID)

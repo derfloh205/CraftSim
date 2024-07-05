@@ -55,6 +55,10 @@ Automatically calls Update()
 
 This sets all required and optional reagents based on the set reagents in the visible default blizzard crafting GUI.
 
+### recipeData:SetConcentrationBySchematicForm()
+
+Toggle the concentrating property of the recipe based on the visible default blizzard crafting GUI
+
 ### recipeData:SetOptionalReagents(itemIDList: number[])
 
 Takes a list of itemIDs of optional reagents which will, if available, be set as active in the reagentData.
