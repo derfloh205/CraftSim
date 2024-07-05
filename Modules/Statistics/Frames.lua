@@ -439,59 +439,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
         return
     end
 
-    statisticsFrame.content.chanceByQualityTable:Remove()
-
-    for qualityID, chance in pairs(recipeData.resultData.chanceByQuality) do
-        local expectedCrafts = nil
-        local expectedCraftsMin = nil
-        local chanceMin = recipeData.resultData.chancebyMinimumQuality[qualityID]
-        if chanceMin == 0 or recipeData.resultData.expectedCraftsByMinimumQuality[qualityID] == nil then
-            expectedCraftsMin = "-"
-        else
-            expectedCraftsMin = GUTIL:Round(recipeData.resultData.expectedCraftsByMinimumQuality[qualityID], 2)
-        end
-        if chance == 0 or recipeData.resultData.expectedCraftsByQuality[qualityID] == nil then
-            expectedCrafts = "-"
-        else
-            expectedCrafts = GUTIL:Round(recipeData.resultData.expectedCraftsByQuality[qualityID], 2)
-        end
-
-        statisticsFrame.content.chanceByQualityTable:Add(function(row, columns)
-            local qualityRow = columns[1]
-            local chanceRow = columns[2]
-            local craftsRow = columns[3]
-            local expectedCostsRow = columns[4]
-            local chanceMinRow = columns[5]
-            local craftsMinRow = columns[6]
-            local expectedCostsMinRow = columns[7]
-
-            qualityRow:SetQuality(qualityID)
-            chanceRow.text:SetText(GUTIL:Round(chance * 100, 2) .. "%")
-            chanceMinRow.text:SetText(GUTIL:Round(chanceMin * 100, 2) .. "%")
-            craftsRow.text:SetText(expectedCrafts)
-            craftsMinRow.text:SetText(expectedCraftsMin)
-
-            local expectedCostsForQuality = recipeData.priceData.expectedCostsByQuality[qualityID]
-            local expectedCostsForQualityMin = recipeData.priceData.expectedCostsByMinimumQuality[qualityID]
-
-            if expectedCostsForQuality then
-                expectedCostsRow.text:SetText(GUTIL:ColorizeText(GUTIL:FormatMoney(expectedCostsForQuality),
-                    GUTIL.COLORS.RED))
-            else
-                expectedCostsRow.text:SetText("-")
-            end
-
-            if expectedCostsForQualityMin then
-                expectedCostsMinRow.text:SetText(GUTIL:ColorizeText(GUTIL:FormatMoney(expectedCostsForQualityMin),
-                    GUTIL.COLORS.RED))
-            else
-                expectedCostsMinRow.text:SetText("-")
-            end
-        end)
-    end
-
-    statisticsFrame.content.chanceByQualityTable:UpdateDisplay()
-
+    statisticsFrame.content.chanceByQualityTable:Remove() --- TODO Remove
 
     statisticsFrame.content.expandFrame.probabilityTable:Remove()
 

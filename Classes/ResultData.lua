@@ -131,7 +131,7 @@ function CraftSim.ResultData:Update()
     self.expectedYieldPerCraft = CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
 
     -- special case for no quality results. Needed for expectedCrafts and such
-    if not recipeData.supportsQualities or not recipeData.supportsInspiration then
+    if not recipeData.supportsQualities then
         self.expectedQuality = 1
         self.expectedQualityConcentration = 1
         self.expectedItem = self.itemsByQuality[1]
