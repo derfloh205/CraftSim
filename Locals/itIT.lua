@@ -84,10 +84,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Competenza: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Moltiplicatore oggetti aggiuntivi: ",
 
-        -- Customer Service Module
-        [CraftSim.CONST.TEXT.HSV_EXPLANATION] =
-        "HSV è l'acronimo inglese di 'Valore di competenza nascosto' ed è un aumento di difficoltà nascosto tra lo 0 e il 5% della difficoltà della tua ricetta ogni volta che crei qualcosa.\n\nQuesto valore nascosto ti può portare al livello successivo di qualità in maniera simile all'ispirazione.\n\nComunque, più vicino sei alla successiva qualità più alta è la possibilità!",
-
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] =
             "Questo viene calcolato usando l'approssimazione di 'abramowitz e stegun' (1985) della Funziona di Distribuzione Cumulata (CDF)\n\n" ..
@@ -152,67 +148,7 @@ function CraftSim.LOCAL_IT:GetData()
             "Puoi vedere tutti questi casi per le tue ricette correnti nella finestra delle " ..
             f.bb("Statistiche") .. "!",
 
-        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_EXPLANATION] =
-            "Il " ..
-            f.l("Valore di competenza nascosto (HSV)") ..
-            " è un fattore casuale aggiuntivo che si presenta ogni volta che crei qualcosa.\n" ..
-            "E' qualcosa che non è menzionato da nessuna parte nel gioco.\n" ..
-            "Possiamo notare l'attivazione di questo valore in questo modo: Quando crei qualcosa l'" ..
-            f.bb("Indicatore della qualità") ..
-            "si riempie fino a un certo punto.\nQuesto può andare leggermente oltre il valore di competenza mostrato.\n " ..
-            "\n" .. cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
-            "Questo valore di compentenza aggiuntivo è sempre tra lo 0% e il 5% della tua " ..
-            f.bb("Difficoltà base della ricetta") ..
-            ".\nQuesto significa che se una ricetta ha una difficoltà di 400 puoi ottenere fino a 20 punti competenza aggiuntivi.\n" ..
-            "Varie prove ci portano a dire che questo valore sia " ..
-            f.bb("unifermemente distribuito") ..
-            ". Questo significa che ogni valore percentuale ha la stessa probabilità.\n" ..
-            "L'" ..
-            f.l("HSV") ..
-            " può influenzare il profitto in maniera importante quando si è vicici a un salto di qualità!\n" ..
-            "In CraftSim questo viene trattato come una attivazione addizionale, come " ..
-            f.bb("Ispirazione") .. " o " .. f.bb("Multicreazione") .. ".\n" ..
-            "Comunque, il suo effetto dipende dalla tuo attuale valore di competenza, la difficoltà della ricetta e\nla competenza di cui hai bisongo per raggiunere il successivo grado di qualità.\n" ..
-            "Quindi CraftSim calcola la " ..
-            f.bb("competenza mancante") ..
-            " per raggiungere la qualità successiva e la converte in " ..
-            f.bb("percentuale relativa alla difficoltà della ricetta") .. "\n\n" ..
-            "Quindi per una ricetta con difficoltà 400: se hai 190 di competenza, e hai bisogno di 200 per raggiungere la qualità successiva, la competenza mancante sarà 10\n" ..
-            "Per ottenere questo valore come percentuale relativa della difficoltà si può calcolare come segue: " ..
-            f.bb("10 / (400 / 100)") .. " che corrisponde a " .. f.bb("2.5%") .. "\n\n" ..
-            "Dobbiamo poi ricordare che l'" ..
-            f.l("HSV") ..
-            " può fornirci un punteggio tra lo 0% e il 5%. Quindi dobbiamo calcolare la " ..
-            f.bb("probabilità di ottenere 2.5 o più") .. "\n" ..
-            "quando prendiamo un numero casuale tra 0 e 5. per conoscere la probabilità che l'" ..
-            f.l("HSV") .. " ci faccia raggiungere una qualità superiore.\n\n" ..
-            "La statistica ci dice che la probabilità uniforme di ricevere qualcosa tra due limiti è chiamata " ..
-            f.l("Distribuzione Continua Uniforme di Probabilità") .. "\n" ..
-            "E questo ci porta alla formula che ci fa ottenere esattamente quanto ci serve:\n\n" ..
-            f.bb("(LimiteSuperiore - X) / (LimiteSuperiore - LimiteInferiore)") .. "\n\n" ..
-            "dove: " ..
-            f.bb("LimiteSuperiore") ..
-            " è 5, " ..
-            f.bb("LimiteInferiore") ..
-            " è 0, " ..
-            f.bb("X") .. " è il valore uguale o superiore che desideriamo ottenere. In questo caso 2.5.\n\n" ..
-            "In questo caso siamo esattamente a metà dell'" ..
-            f.l("Area HSV") .. " quindi abbiamo una probabilità di:\n" ..
-            f.bb("(5 - 2.5) / (5 - 0) = 0.5") ..
-            "\ncioè il 50% di ottenere una qualità superiore solo grazie all'" .. f.l("HSV") .. ".\n" ..
-            "Se avessimo un maggiore valore di competenza mancante avremmo meno probabilità e viceversa!\n" ..
-            "Inoltre, se mancasse più del 5% la probabilità sarebbe 0 o negativa, cioè non è possibile che l'" ..
-            f.l("HSV") .. " da solo possa portare a un miglioramento di qualità.\n\n" ..
-            "Comunque, è possibile che tu possa raggiungere la qualità successiva quando " ..
-            f.bb("Ispirazione") .. " e l'" .. f.l("HSV") .. " si attivano insieme e\n" ..
-            "la competenza da " ..
-            f.bb("Ispirazione") ..
-            " più la competenza dall'" ..
-            f.l("HSV") ..
-            " ti forniscono competenza a sufficienza per raggiungere il successivo livello di qualità!.\n" ..
-            "Tutto questo viene preso in considerazione da CraftSim.",
-
-        -- Popups
+        --- Popups
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM] = "Nessuna Sorgente dei Prezzi Disponibile!",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_TITLE] = "Avviso di CraftSim sulle Sorgenti dei Prezzi",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] =
@@ -279,7 +215,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON] = "Chiudi Statistiche",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Ø Profitto/Creazione: ",
         [CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB] = "Basi del calcolo del Profitto",
-        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_TAB] = "Considerazioni su HSV",
 
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "Dettaglio Costi di CraftSim",

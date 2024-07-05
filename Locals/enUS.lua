@@ -117,10 +117,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Skill: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Multicraft Item Bonus: ",
 
-        -- Customer Service Module
-        [CraftSim.CONST.TEXT.HSV_EXPLANATION] =
-        "HSV stands for 'Hidden Skill Value' and is a hidden skill increase between 0 to 5% of your recipe difficulty whenever you craft something.\n\nThis hidden skill value can bring you to the next quality similar to inspiration.\n\nHowever, the closer you are to the next quality the higher is the chance!",
-
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] =
         "This is calculated by using the 'abramowitz and stegun' approximation (1985) of the CDF (Cumulative Distribution Function)\n\nYou will notice that its always around 50% for 1 craft.\nThis is because 0 is most of the time close to the average profit.\nAnd the chance of getting the mean of the CDF is always 50%.\n\nHowever, the rate of change can be very different between recipes.\nIf it is more likely to have a positive profit than a negative one, it will steadly increase.\nThis is of course also true for the other direction.",
@@ -131,25 +127,26 @@ function CraftSim.LOCAL_EN:GetData()
             "However, you will notice that the different chances of your procs do not sum up to one\n" ..
             "(Which is required for such a distribution as it means you got a 100% chance that anything can happen)\n\n" ..
             "This is because procs like " ..
-            f.bb("Inspiration ") .. "and" .. f.bb(" Multicraft") .. " can happen " .. f.g("at the same time.\n") ..
+            f.bb("Resourcefulness ") .. "and" .. f.bb(" Multicraft") .. " can happen " .. f.g("at the same time.\n") ..
             "So we first need to convert our proc chances to a " ..
             f.l("Probability Distribution ") .. " with chances\n" ..
             "summing to 100% (Which would mean that every case is covered)\n" ..
-            "And for this we would need to calculate " .. f.l("every") .. " possible outcome of a craft\n\n" ..
+            "And for this we would need to calculate " .. f.l("every") .. " possible outcome of one craft\n\n" ..
             "Like: \n" ..
             f.p .. "What if " .. f.bb("nothing") .. " procs?\n" ..
-            f.p .. "What if " .. f.bb("everything") .. " procs?\n" ..
-            f.p .. "What if only " .. f.bb("Inspiration") .. " and " .. f.bb("Multicraft") .. " procs?\n" ..
+            f.p .. "What if either " .. f.bb("Resourcefulness") .. " or " .. f.bb("Multicraft") .. " procs?\n" ..
+            f.p .. "What if both " .. f.bb("Resourcefulness") .. " and " .. f.bb("Multicraft") .. " procs?\n" ..
             f.p .. "And so on..\n\n" ..
-            "For a recipe that considers all three procs, that would be 2 to the power of 3 outcome possibilities, which is a neat 8.\n" ..
-            "To get the chance of only " .. f.bb("Inspiration") .. " occuring, we have to consider all other procs!\n" ..
+            "For a recipe that considers all procs, that would be 2 to the power of 2 outcome possibilities, which is a neat 4.\n" ..
+            "To get the chance of only " ..
+            f.bb("Multicraft") .. " occuring, we have to consider all other possibilities!\n" ..
             "The chance to proc " ..
-            f.l("only") .. f.bb(" Inspiration ") .. "is actually the chance to proc " .. f.bb("Inspiration\n") ..
-            "But to " .. f.l("not ") .. "proc " .. f.bb("Multicraft") .. " or " .. f.bb("Resourcefulness.\n") ..
+            f.l("only") .. f.bb(" Multicraft ") .. "is actually the chance to proc " .. f.bb("Multicraft\n") ..
+            "and " .. f.l("not ") .. "proc " .. f.bb("Resourcefulness\n") ..
             "And Math tells us that the chance of something not occuring is 1 minus the chance of it occuring.\n" ..
             "So the chance to proc only " ..
-            f.bb("Inspiration ") ..
-            "is actually " .. f.g("inspirationChance * (1-multicraftChance) * (1-resourcefulnessChance)\n\n") ..
+            f.bb("Multicraft ") ..
+            "is actually " .. f.g("multicraftChance * (1-resourcefulnessChance)\n\n") ..
             "After calculating each possibility in that way the individual chances indeed sum up to one!\n" ..
             "Which means we can now apply statistical formulas. The most interesting one in our case is the " ..
             f.bb("Expected Value") .. "\n" ..
@@ -169,53 +166,6 @@ function CraftSim.LOCAL_EN:GetData()
             " and profit " .. f.m(300 * 10000) .. " then the expected profit of that is\n" ..
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") .. "which is " .. f.m((-100 * 0.3 + 300 * 0.7) * 10000) .. "\n" ..
             "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
-        ,
-        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_EXPLANATION] =
-            "The " ..
-            f.l("Hidden Skill Value (HSV)") ..
-            " is an additional random factor that occurs everytime you craft something. It is not mentioned anywhere in the game.\n" ..
-            "However you can observe a visualization of the proc: When you craft something the " ..
-            f.bb("Quality Meter") ..
-            "\nfills up to a certain point. And this can 'shoot' quite a bit over your current shown skill.\n" ..
-            "\n" .. cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
-            "This extra skill is always between 0% and 5% of your " ..
-            f.bb("Base Recipe Difficulty") ..
-            ".\nMeaning if you have a recipe with 400 difficulty. You can get up to 20 Skill.\n" ..
-            "And tests tell us that this is " ..
-            f.bb("uniformly distributed") .. ". Meaning every percent value has the same chance.\n" ..
-            f.l("HSV") ..
-            " can influence profits heavily when close to a quality! In CraftSim it is treated as an additional proc, like " ..
-            f.bb("Inspiration") .. " or " .. f.bb("Multicraft.\n") ..
-            "However, its effect is depending on your current skill, the recipe difficulty, and the skill you need to reach the next quality.\n" ..
-            "So CraftSim calculates the " ..
-            f.bb("missing skill") ..
-            " to reach the next quality and converts it to " .. f.bb("percent relative to the recipe difficulty\n\n") ..
-            "So for a recipe with 400 difficulty:if you have 190 Skill, and need 200 to reach the next quality, the missing skill would be 10\n" ..
-            "To get this value in percent relative to the difficulty you can calculate it like this: " ..
-            f.bb("10 / (400 / 100)") .. " which is " .. f.bb("2.5%\n\n") ..
-            "Then we need to remember that the " .. f.l("HSV") .. " can give us anywhere between 0 and 5 percent.\n" ..
-            "So we need to calculate the " ..
-            f.bb("chance of getting 2.5 or more") .. " when getting a random number between 0 and 5\n" ..
-            "to know the chance of " .. f.l("HSV") .. " giving us a higher quality.\n\n" ..
-            "Statistics tell us that such a uniform chance to receive something between two boundaries is called a " ..
-            f.l("Continuous Uniform Probability Distribution\n") ..
-            "And thus there is a formula which yields exactly what we need:\n\n" ..
-            f.bb("(upperBound - X) / (upperBound - lowerBound)") .. "\nwhere\n" ..
-            f.bb("upperBound") .. " is 5\n" ..
-            f.bb("lowerBound") .. " is 0\n" ..
-            "and " .. f.bb("X") .. " is the desired value where we want equal or more from. In this case 2.5\n" ..
-            "In this case we are right in the middle of the " ..
-            f.l("HSV 'Area'") .. " so that we have a chance of\n\n" ..
-            f.bb("(5 - 2.5) / (5 - 0) = 0.5") .. " aka 50% to get to next quality by " .. f.l("HSV") .. " alone.\n" ..
-            "If we would have more missing skill we would have less chance and the other way round!\n" ..
-            "Also, if you are missing skill of 5% or more the chance is 0 or negative, meaning it is not possible that " ..
-            f.l("HSV") .. " alone triggers an upgrade.\n\n" ..
-            "However, it is possible that you also reach the next quality when " ..
-            f.bb("Inspiration") .. " and " .. f.l("HSV") .. " occur together and\n" ..
-            "the skill from " ..
-            f.bb("Inspiration") ..
-            " plus the skill from " ..
-            f.l("HSV") .. " give you enough skill to reach the next quality! This is also considered by CraftSim."
         ,
 
         -- Popups
@@ -284,7 +234,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON] = "Hide Statistics",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Ø Profit / Craft: ",
         [CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB] = "Basic Profit Calculation",
-        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_TAB] = "HSV Consideration",
 
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "CraftSim Cost Optimization",
