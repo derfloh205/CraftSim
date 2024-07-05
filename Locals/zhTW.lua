@@ -249,23 +249,8 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP] = "HSV跳過",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "預期利潤",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "配方概率表",
-        [CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION] = "此表格顯示出當前配方所有可能的觸發組合。\n\n" ..
-            f.l("HSV 提升") .. " .. HSV 到下個品質的機率\n\n" .. f.l("HSV 跳過") .. " .. 有靈感時，HSV 有機率跳過一個品質。",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "每件物品的 Φ 預期成本",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "Φ 銷售回報",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPLANATION_ICON] = "此表格為你提供平均 (Φ) 預計製作次數及每個品質的成本。\n\n" ..
-            f.g("機率") ..
-            "是考慮到你的" ..
-            f.bb("靈感") ..
-            "和 " ..
-            f.l("HSV") ..
-            " 製作該物品的機率。\n\n" ..
-            f.g("期望製造") ..
-            "告訴你製作該品質平均需要製作配方的次數。\n\n" ..
-            f.g("每個物品的預期成本") ..
-            "告訴你該品質的 1 件物品的成本平均是多少（由於這是按每個物品計算並考慮" ..
-            f.bb("複數製造") .. "等數據，因此可能低於製作成本。\n\n" .. f.g("連同出售收益") .. "減去到製作出所需品質之前製作的較低品質的物品的出售價值（考慮拍賣場手續費）。",
-
         -- Customer Service Frame
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "CraftSim 客戶服務",
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RECIPE_WHISPER] = "配方密語",

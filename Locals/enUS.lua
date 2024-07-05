@@ -326,28 +326,10 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP] = "HSV Skip",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "Expected Profit",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "Recipe Probability Table",
-        [CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION] =
-            "This table shows all possible proc combinations of the current recipe.\n\n" ..
-            f.l("HSV Next") ..
-            " .. HSV chance for next quality\n\n" ..
-            f.l("HSV Skip") .. " .. HSV chance to skip a quality with inspiration",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "Ø Expected Costs",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_MIN_HEADER] = "Ø Expected Costs (Min)",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "With Ø Sell Return",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_MIN_WITH_RETURN_HEADER] = "With Ø Sell Return (Min)",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPLANATION_ICON] =
-            "This table gives you the average (Ø) expected crafts and costs per quality.\n\n" ..
-            f.g("Chance") ..
-            " is the chance of crafting this item considering your " ..
-            f.bb("Inspiration") ..
-            " and " ..
-            f.l("HSV") ..
-            "\n\n" ..
-            f.g("Expected Crafts") ..
-            " tells you how often, on average, you have to craft this recipe to craft this quality\n\n" ..
-            f.g("Expected Costs per Item") ..
-            " tells you, on average, what the costs for 1 resulting item in this quality are (this can be below the crafting costs since it is per item and considers stats like " ..
-            f.bb("Multicraft"),
 
         -- Customer Service Frame
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "CraftSim Customer Service",

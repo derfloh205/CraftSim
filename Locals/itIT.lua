@@ -320,30 +320,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP] = "HSV Salto",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "Profitto previsto",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "Tabella delle Probabilità della Ricetta",
-        [CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION] =
-            "Questa tabella mostra tutte le possibili combinazioni di attivazioni per la ricetta corrente.\n\n" ..
-            f.l("HSV Succ.") ..
-            " .. Probabilità HSV per la qualità successiva\n\n" ..
-            f.l("HSV Salto") .. " .. Probabilità HSV di saltare una qualità grazie all'ispirazione",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "Ø Costo Previsto per Oggetto",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "Con Ø di Reso",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPLANATION_ICON] =
-            "Questa tabella mostra il numero di oggetti medi creati (Ø) e il costo per qualità.\n\n" ..
-            f.g("Probabilità") ..
-            " è la probabilità di creare questo oggetto considerando la tua " ..
-            f.bb("Ispirazione") ..
-            " e l'" ..
-            f.l("HSV") ..
-            "\n\n" ..
-            f.g("Creazioni Previste") ..
-            " ti dice quante volte, in media, dovrai creare questa ricetta per raggiungere questa qualità\n\n" ..
-            f.g("Costo Previsto per Oggetto") ..
-            " ti dice, in media, il costo di un oggetto di questa qualità (questo può essere al di sotto dei costi di creazione visto che viene valutato per oggetto e considera statistiche come " ..
-            f.bb("Multicreazione") ..
-            "\n\n" ..
-            f.g("Con Reso") ..
-            " sottrae il valore di vendita (considerando un taglio dell'asta) del (numero medio) di oggetti creati di qualità inferiore fin quando non si raggiunge la qualità desiderata",
-
 
         -- Customer Service Frame
         [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "Servizio Clienti di CraftSim",
