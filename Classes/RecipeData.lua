@@ -28,6 +28,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     local crafterUID = self:GetCrafterUID()
 
+    self.concentrating = false
+
     -- important for recipedata of alts to check if data was cached (and for any recipe data creation b4 tradeskill is ready)
     self.specializationDataCached = false
     self.operationInfoCached = false
@@ -772,10 +774,12 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
         if operationInfo then
             self.operationInfoCached = true
         else
-            operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
+            operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID,
+                self.concentrating)
         end
     else
-        operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
+        operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID,
+            self.concentrating)
 
         -- check for too early access?
         CraftSim.DB.CRAFTER:SaveOperationInfoForRecipe(crafterUID, self.recipeID, operationInfo)
