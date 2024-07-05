@@ -17,7 +17,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROF
 
 function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     local sizeX = 320
-    local sizeY = 110
+    local sizeY = 100
     local offsetX = -10
     local offsetY = 30
     CraftSim.AVERAGEPROFIT.frame = GGUI.Frame({

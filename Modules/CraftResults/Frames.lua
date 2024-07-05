@@ -539,47 +539,35 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
         craftProfitsContent.statisticsText:SetText(statisticsText)
     end
 
-    -- Statistics Tracker
-    do
-        local statisticsTrackerTabContent = craftResultFrame.content.statisticsTrackerTab
-            .content --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.CONTENT]]
+    if CraftSim.INIT.currentRecipeData.supportsCraftingStats then
+        statisticsText = statisticsText ..
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_2) .. expectedAverageProfit .. "\n"
+        statisticsText = statisticsText ..
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_3) .. actualAverageProfit .. "\n"
+        statisticsText = statisticsText ..
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_4) .. actualProfit .. "\n\n"
+        statisticsText = statisticsText ..
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_5) .. "\n\n"
 
-        statisticsTrackerTabContent.recipeHeader:SetText(CraftSim.INIT.currentRecipeData.recipeName .. " " ..
-            GUTIL:IconToText(CraftSim.INIT.currentRecipeData.recipeIcon, 15, 15))
-
-        -- Result Distribution
-        do
-            local resultDistributionList = statisticsTrackerTabContent.resultDistributionList
-
-            resultDistributionList:Remove()
-
-            -- Ignore multicraft quantity on purpose
-
-            local totalItemCount = GUTIL:Fold(craftRecipeData.totalItems, 0, function(foldValue, nextElement)
-                return foldValue + nextElement.quantity
-            end)
-            local oncePercent = totalItemCount / 100
-
-            for _, craftResultItem in pairs(craftRecipeData.totalItems) do
-                resultDistributionList:Add(function(row, columns)
-                    local resultColumn = columns
-                        [1] --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN]]
-                    local distColumn = columns
-                        [2] --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN]]
-
-                    resultColumn.text:SetText(craftResultItem.item:GetItemLink())
-                    local itemDist = GUTIL:Round((craftResultItem.quantity / oncePercent) / 100, 2)
-                    distColumn.text:SetText(itemDist)
-                    row.tooltipOptions = {
-                        itemID = craftResultItem.item:GetItemID(),
-                        anchor = "ANCHOR_RIGHT",
-                        owner = row.frameList.frame
-                    }
-                end)
+        if CraftSim.INIT.currentRecipeData.supportsMulticraft then
+            local expectedProcs = tonumber(CraftSim.GUTIL:Round(
+                    CraftSim.INIT.currentRecipeData.professionStats.multicraft:GetPercent(true) *
+                    craftRecipeData.numCrafts, 1)) or
+                0
+            if craftRecipeData.numMulticraft >= expectedProcs then
+                statisticsText = statisticsText ..
+                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7) ..
+                    CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.GREEN) ..
+                    " / " .. expectedProcs .. "\n"
+            else
+                statisticsText = statisticsText ..
+                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7) ..
+                    CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.RED) ..
+                    " / " .. expectedProcs .. "\n"
             end
-
-            resultDistributionList:UpdateDisplay()
-        end
+            local averageExtraItems = 0
+            local expectedAdditionalItems = 0
+            local multicraftExtraItemsFactor = CraftSim.INIT.currentRecipeData.professionStats.multicraft:GetExtraFactor(true)
 
         -- Multicraft Statistics
         do

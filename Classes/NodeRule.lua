@@ -35,15 +35,13 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.professionStats.resourcefulness.extraFactor = nodeRuleData.resourcefulnessExtraItemsFactor or 0
     self.professionStats.ingenuity.extraFactor = nodeRuleData.ingenuityExtraConcentrationFactor or 0
 
-    self.equalsSkill = nodeRuleData.equalsSkill or 0
-    self.equalsMulticraft = nodeRuleData.equalsMulticraft or 0
-    self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or 0
-    self.equalsIngenuity = nodeRuleData.equalsIngenuity or 0
-    self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or 0
-    self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or 0
-    self.equalsIngenuityExtraConcentrationFactor = nodeRuleData.equalsIngenuityExtraConcentrationFactor or 0
-    self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or 0
-    self.equalsPotionExperimentationChanceFactor = nodeRuleData.equalsPotionExperimentationChanceFactor or 0
+    self.equalsSkill = nodeRuleData.equalsSkill or false
+    self.equalsMulticraft = nodeRuleData.equalsMulticraft or false
+    self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or false
+    self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or false
+    self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or false
+    self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or false
+    self.equalsPotionExperimentationChanceFactor = nodeRuleData.equalsPotionExperimentationChanceFactor or false
 end
 
 function CraftSim.NodeRule:UpdateAffectance()
@@ -70,16 +68,8 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
         self.professionStats.resourcefulness.value = math.max(0, rank * self.equalsResourcefulness)
     end
 
-    if self.equalsIngenuity > 0 then
-        self.professionStats.ingenuity.value = math.max(0, rank * self.equalsIngenuity)
-    end
-
-    if self.equalsCraftingspeed > 0 then
-        self.professionStats.craftingspeed.value = math.max(0, rank * self.equalsCraftingspeed)
-    end
-
-    if self.equalsResourcefulnessExtraItemsFactor > 0 then
-        self.professionStats.resourcefulness.extraFactor = math.max(0, rank * self.equalsResourcefulnessExtraItemsFactor)
+    if self.equalsResourcefulness then
+        self.professionStats.resourcefulness.value = math.max(0, rank)
     end
 
     if self.equalsIngenuityExtraConcentrationFactor > 0 then

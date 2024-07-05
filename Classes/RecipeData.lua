@@ -444,8 +444,6 @@ function CraftSim.RecipeData:UpdateProfessionStats()
 
     self.concentrationCost = concentrationCost
 
-    self.professionStats:Clear()
-
     self.professionStats:add(self.baseProfessionStats)
 
     self.professionStats:add(buffStats)

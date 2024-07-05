@@ -14,18 +14,9 @@ CraftSim.CONST.FEATURE_TOGGLES = {
 
 ---@type table<CraftSim.EXPANSION_IDS, table<string, number>>
 CraftSim.CONST.PERCENT_MODS = {
-    [9] = { -- Dragonflight
-        MULTICRAFT = 0.0009,
-        RESOURCEFULNESS = 0.00111,
-        INGENUITY = 0.000333,
-        CRAFTINGSPEED = 0.002,
-    },
-    [10] = { -- The War Within
-        MULTICRAFT = 0.000302,
-        RESOURCEFULNESS = 0.00037,
-        INGENUITY = 0.000333,
-        CRAFTINGSPEED = 0.001114,
-    },
+    MULTICRAFT = 0.0009,
+    RESOURCEFULNESS = 0.00111,
+    CRAFTINGSPEED = 0.002,
 }
 
 -- some dummy recipes are not flagged as dummy ..........

@@ -19,9 +19,7 @@ function CraftSim.ProfessionStats:new(serialized)
 	---@type CraftSim.ProfessionStat
 	self.skill = CraftSim.ProfessionStat("skill")
 	---@type CraftSim.ProfessionStat
-	self.multicraft = CraftSim.ProfessionStat("multicraft", 0, statPercentModTable.MULTICRAFT)
-	---@type CraftSim.ProfessionStat
-	self.resourcefulness = CraftSim.ProfessionStat("resourcefulness", 0, statPercentModTable.RESOURCEFULNESS)
+	self.multicraft = CraftSim.ProfessionStat("multicraft", 0, CraftSim.CONST.PERCENT_MODS.MULTICRAFT)
 	---@type CraftSim.ProfessionStat
 	self.ingenuity = CraftSim.ProfessionStat("ingenuity", 0, statPercentModTable.INGENUITY)
 	---@type CraftSim.ProfessionStat
@@ -69,7 +67,7 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 end
 
 function CraftSim.ProfessionStats:GetStatList()
-	return { self.recipeDifficulty, self.skill, self.multicraft, self.resourcefulness, self.ingenuity, self
+	return { self.recipeDifficulty, self.skill, self.multicraft, self.resourcefulness, self
 		.craftingspeed, self.phialExperimentationFactor, self.potionExperimentationFactor }
 end
 
