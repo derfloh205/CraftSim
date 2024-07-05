@@ -228,38 +228,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "Ø Costo Previsto per Oggetto",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "Con Ø di Reso",
 
-        -- Customer Service Frame
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "Servizio Clienti di CraftSim",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RECIPE_WHISPER] = "Sussurra Ricetta",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW] = "Anteprima Live",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_WHISPER] = "Sussurra",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_MESSAGE_FORMAT] = "Formato Messaggio",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RESET_TO_DEFAULT] = "Resetta Messaggio",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS] = "Permetti Connessioni",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_SEND_INVITE] = "Manda Invito",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION] =
-        "Abilita la risposta automatica con i risultato più alti possibili e i costi dei materiali quando qualcuno ti sussurra il comando e il link ad un oggetto che puoi creare!",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] =
-        "Ogni linea è un messaggio separato nella chat dei sussurri.\n\nPuoi usare le seguenti etichette per inserire informazioni sulla ricetta:\n%gc .. collegamento alla qualità garantita\n%ic .. collegamento alla qualità raggiungibile con l'ispirazione\n%insp .. la tua percentuale di ispirazione es. 18%\n%mc .. la tua percentuale di creazione multipla\n%res .. la tua percentuale di parsimonia\n%cc .. i costi di creazione\n%ccd .. i costi dettagliati per reagente utilizzato (preferibilmente in una linea separata)\n%orl .. una lista semplice di tutti i reagenti opzionali utilizzati\n%rl .. una lista semplice di tutti i reagenti obbligatori",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION] =
-        "Abilita le connessioni all'anteprima live del processo d'artigianato attraverso i 'Collegamenti di Anteprima di CraftSim'.\nChiunque abbia CraftSim e clicchi sul collegamento condiviso può connettersi in tempo reale alle tue informazioni per controllare le tue abilità d'artigianato",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX] = "Qualità garantita",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION] =
-        "Controlla la più alta qualità garantita che l'artigiano può fornire con questa ricetta e ottimizza al meglio i costi di creazione.\n\nSe disabilitato, la più alta qualità raggiungibile con l'ispirazione sarà ottimizzata in base ai costi di creazione.",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_TITLE] = "Anteprima Live di CraftSim",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTER_PROFESSION] = "Professione dell'Artigiano",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES] = "Ricette imparate",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES_INITIAL] = "Seleziona una ricetta",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUESTING_UPDATE] = "Richiesta di aggiornamento",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TIMEOUT] = "Timeout (Giocatore Offline?)",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_OPTIONAL] = "Opzionale",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_FINISHING] = "Finitura",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTING_COSTS] = "Costi di creazione",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_RESULTS] = "Risultati previsti",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUIRED_MATERIALS] = "Materiali richiesti",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_NONE] = "Nessuno",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "Bloccato",
-
         -- Price Details Frame
         [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "Dettaglio Prezzi di CraftSim",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Inv/AH",
@@ -621,9 +589,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Scansione Ricette",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] =
         "Modulo che scansiona la tua lista di ricette in base a varie opzioni",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_LABEL] = "Servizio Clienti",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP] =
-        "Modulo che offre varie opzioni per interagire con i potenziali clienti",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL] = "Storico Clienti",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP] =
         "Modulo che mostra uno storico delle conversazioni con i clienti, gli oggetti creati e le commissioni",

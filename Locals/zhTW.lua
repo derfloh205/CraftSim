@@ -193,37 +193,6 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "配方概率表",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "每件物品的 Φ 預期成本",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "Φ 銷售回報",
-        -- Customer Service Frame
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "CraftSim 客戶服務",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RECIPE_WHISPER] = "配方密語",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW] = "即時預覽",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_WHISPER] = "密語",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_MESSAGE_FORMAT] = "訊息格式",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RESET_TO_DEFAULT] = "恢復成預設值",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS] = "允許連線",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_SEND_INVITE] = "傳送邀請",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION] =
-        "啟用最高保證等級品質與技能成本的自動回覆功能，當有人密語你關於你能夠製作的物品時提供此功能，並且附上物品連結。",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] =
-        "每行都是密語中的獨立聊天訊息。\n\n你可以使用以下標籤來插入配方資訊：\n%gc .. 保證品質結果的連結\n%ic .. 靈感可以達到的結果品質連結\n%insp .. 你的靈感值機率，例如 18%\n%mc .. 你的複數製造機率\n%res .. 你的精明機率\n%cc .. 製作花費\n%ccd .. 每種使用試劑的詳細花費（最好放在它自己的行中）\n%orl .. 所有選用試劑的清單\n%rl .. 所有需求試劑的清單",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION] =
-        "啟用透過 CraftSim 預覽連結與你建立線上製作預覽連結。\n所有擁有 CraftSim 並點擊分享連結的人都可以線上連結到你的製作資訊來查看你的製作能力",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX] = "最高保證",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION] =
-        "檢查能否使用此配方製作最高保證品質並且針對最低製作成本進行優化。\n\n如果取消選取。最高可達品質將會針對製作成本進行靈感優化。",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_TITLE] = "CraftSim 即時預覽",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTER_PROFESSION] = "製造者的專業",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES] = "已學會的配方",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES_INITIAL] = "選擇配方",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUESTING_UPDATE] = "請求更新",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TIMEOUT] = "逾時 (玩家離線?)",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_OPTIONAL] = "選擇性",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_FINISHING] = "正在完成",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTING_COSTS] = "製造成本",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_RESULTS] = "預期結果",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUIRED_MATERIALS] = "所需材料",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_NONE] = "無",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "鎖定",
 
         -- Price Details Frame
         [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "CraftSim 價格明細",
@@ -366,8 +335,6 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP] = "顯示製造成本詳細資訊的模組",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "配方掃描",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] = "依據多種不同的選項掃描你的配方列表",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_LABEL] = "客戶服務",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP] = "提供多種不同的選項與潛在客戶互動",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL] = "客戶記錄",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP] = "提供與客戶對談的歷史記錄、製作過的物品和佣金的模組",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "重置框架位置",

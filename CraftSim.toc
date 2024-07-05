@@ -60,9 +60,6 @@ Modules/CraftQueue/Frames.lua
 Modules/Cooldowns/Cooldowns.lua
 Modules/Cooldowns/Frames.lua
 
-Modules/CustomerService/CustomerService.lua
-Modules/CustomerService/Frames.lua
-
 Modules/CustomerHistory/CustomerHistory.lua
 Modules/CustomerHistory/Frames.lua
 

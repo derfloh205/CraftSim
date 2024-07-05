@@ -201,38 +201,6 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "Ø Ожидаемая стоимость за предмет",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "Со Ø возвратом продажи",
 
-        -- Customer Service Frame
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "Поддержка клиентов CraftSim",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RECIPE_WHISPER] = "Шепот рецепта",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW] = "Предпросмотр",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_WHISPER] = "Шепот",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_MESSAGE_FORMAT] = "Формат сообщения",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RESET_TO_DEFAULT] = "Восстановить по умолчанию",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS] = "Разрешить соединения",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_SEND_INVITE] = "Отправить приглашение",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION] =
-        "Включить автоматический ответ с максимально возможными результатами и материальными затратами, когда кто-то шепчет вам команду и ссылку на предмет, который вы можете создать!",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] =
-        "Каждая строка представляет собой отдельное сообщение чата.\n\nДля вставки информации о рецепте можно использовать следующие метки:\n%gc .. ссылка гарантированного качества результата\n%ic .. ссылка качества результата, достижимого с вдохновением\n%insp .. ваш шанс вдохновения, например, 18%\n%mc .. ваш шанс перепроизвоства\n%res .. ваш шанс находчивости\n%cc .. затраты на крафт\n%ccd .. подробное описание затраты на каждый использованный реагент (желательно в отдельной строке)\n%orl .. простой список всех использованных дополнительных реагентов\n%rl .. простой список всех необходимых реагентов",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION] =
-        "Включите подключение к предварительному просмотру крафта в реальном времени через ссылки предварительного просмотра CraftSim.\nЛюбой, у кого есть CraftSim и кто нажимает на ссылку, может в реальном времени подключиться к вашей информации о крафте, чтобы проверить ваши ремесленные навыки",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX] = "Наивысшая гарантия",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION] =
-        "Проверьте наивысшее гарантированное качество, которое ремесленник может изготовить по этому рецепту. И оптимизируйте его для минимальных затрат на крафт.\n\nЕсли этот параметр отключен, наивысшее достижимое качество с вдохновением будет оптимизировано с учетом затрат на крафт.",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_TITLE] = "Предварительный просмотр CraftSim",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTER_PROFESSION] = "Профессия ремесленника",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES] = "Изученные рецепты",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES_INITIAL] = "Выбрать рецепт",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUESTING_UPDATE] = "Запрос обновления",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TIMEOUT] = "Тайм-аут (Игрок не в сети?)",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_OPTIONAL] = "Необязательные",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_FINISHING] = "Завершающие",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTING_COSTS] = "Стоимость изготовления",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_RESULTS] = "Ожидаемый результат",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUIRED_MATERIALS] = "Необходимые материалы",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_NONE] = "Нет",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "Заблокировано",
-
         -- Price Details Frame
         [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "Информация о ценах CraftSim",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Инв/Аук",
@@ -416,9 +384,6 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Скан. рецептов",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] =
         "Модуль, которой сканирует ваш список рецептов на базе заданных параметров",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_LABEL] = "Поддержка клиентов",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP] =
-        "Модуль, предлагающий различные варианты взаимодействия с потенциальными клиентами",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL] = "История клиентов",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP] =
         "Модуль, который предоставляет историю взаимодействия с клиентами, созданных предметов и комиссий",
