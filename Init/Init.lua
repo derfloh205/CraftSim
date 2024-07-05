@@ -274,7 +274,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 
 		CraftSim.INIT:HookToEvent()
 		CraftSim.INIT:HookToProfessionsFrame()
-		CraftSim.INIT:HookToConcentrationButton()
+		CraftSim.INIT:HookToConcentrationButtons()
 		CraftSim.INIT:HandleAuctionatorHooks()
 		CraftSim.INIT:InitCraftRecipeHooks()
 
@@ -337,13 +337,19 @@ function CraftSim.INIT:HookToProfessionsFrame()
 end
 
 local concentrationButtonHooked = false
-function CraftSim.INIT:HookToConcentrationButton()
+function CraftSim.INIT:HookToConcentrationButtons()
 	if concentrationButtonHooked then
 		return
 	end
 	concentrationButtonHooked = true
 
 	ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer
+		.ConcentrateToggleButton:HookScript("OnClick", function()
+		self:TriggerModulesByRecipeType()
+	end)
+
+	ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Details.CraftingChoicesContainer
+		.ConcentrateContainer
 		.ConcentrateToggleButton:HookScript("OnClick", function()
 		self:TriggerModulesByRecipeType()
 	end)

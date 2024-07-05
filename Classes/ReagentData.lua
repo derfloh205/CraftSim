@@ -190,9 +190,9 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
     local operationInfoWithReagents = nil
     if self.recipeData.orderData then
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
-            self.recipeData.orderData.orderID)
+            self.recipeData.orderData.orderID, self.recipeData.concentrating)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID,
-            maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID)
+            maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID, self.recipeData.concentrating)
     else
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
             self.recipeData.concentrating)
@@ -229,9 +229,9 @@ function CraftSim.ReagentData:GetSkillFromRequiredReagents()
     local operationInfoWithReagents = nil
     if self.recipeData.orderData then
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
-            self.recipeData.orderData.orderID)
+            self.recipeData.orderData.orderID, self.recipeData.concentrating)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, requiredTbl,
-            self.recipeData.orderData.orderID)
+            self.recipeData.orderData.orderID, self.recipeData.concentrating)
     else
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
             self.recipeData.concentrating)

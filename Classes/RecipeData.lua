@@ -182,7 +182,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.baseOperationInfo = nil
     if self.orderData then
         self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
-            self.orderData.orderID)
+            self.orderData.orderID, self.concentrating)
     else
         self.baseOperationInfo = self:GetCraftingOperationInfoForRecipeCrafter()
     end
