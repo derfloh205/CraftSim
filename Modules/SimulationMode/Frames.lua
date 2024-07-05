@@ -22,7 +22,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         local clickCallback = function(self)
             print("sim mode click callback")
             CraftSim.SIMULATION_MODE.isActive = self:GetChecked()
-            local bestQBox = schematicForm.AllocateBestQualityCheckBox
+            local bestQBox = schematicForm.AllocateBestQualityCheckbox
             if bestQBox:GetChecked() and CraftSim.SIMULATION_MODE.isActive then
                 bestQBox:Click()
             end
@@ -1440,14 +1440,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     local simModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
     local bestQBox = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        bestQBox = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.AllocateBestQualityCheckBox
+        bestQBox = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.AllocateBestQualityCheckbox
         specializationInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Reagents,
             not CraftSim.SIMULATION_MODE.isActive and recipeData.hasReagents)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.OptionalReagents,
             not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
     else
-        bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
+        bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckbox
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents,
             not CraftSim.SIMULATION_MODE.isActive and
             (recipeData.hasReagents or recipeData.isSalvageRecipe))
