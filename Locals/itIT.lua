@@ -8,7 +8,6 @@ function CraftSim.LOCAL_IT:GetData()
     local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     return {
         -- REQUIRED:
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Ispirazione",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Creazione multipla",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Parsimonia",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Velocità di creazione",
@@ -21,7 +20,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.STAT_SKILL] = "Competenza",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS] = "Moltiplicatore oggetti aggiuntivi",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "Molt. reagenti risparmiati", -- Ideally, it should be "Moltiplicatore reagenti risparmiati" but there is not enough space for it.
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION_BONUS] = "Comp. bonus ispirazione",        -- Ideally, it should be "Competenza bonus Ispirazione" but there is not enough space for it.
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS] = "Velocità di creazione",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "Scoperta Fiala",
         [CraftSim.CONST.TEXT.STAT_POTION_EXPERIMENTATION] = "Scoperta Pozione",
@@ -29,29 +27,8 @@ function CraftSim.LOCAL_IT:GetData()
         -- Profit Breakdown Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
         "Parsimonia si attiva separatamente per ogni tipo di reagente, permettendo di risparmiarne il 30% della quantità.\n\nIl risparmio medio è uguale alla somma del costo dei reagenti\nmoltiplicata per la probabilità che si attivi Parsimonia e per la percentuale di risparmio.\nParsimonia si può anche attivare per tutti i reagenti contemporaneamente, permettendo di risparmiare molto in rare occasioni.",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP] =
-        "Questo numero indica la quantità media di oggetti aggiuntivi creati via Creazione multipla.\n\nCiò tiene in considerazione la probabilità di Creazione multipla e presuppone che (1-2.5y)*x oggetti aggiuntivi siano creati,\ndove x è qualsiasi bonus ottenuto dalle Specializzazioni mentre y è la media base di oggetti creati\ncon una singola operazione di creazione.",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_VALUE_EXPLANATION_TOOLTIP] =
-        "Questo numero indica la quantità media di oggetti aggiuntivi creati via Creazione multipla\nmoltiplicato per il prezzo di vendita dell'oggetto creato di qualità garantita.",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_HIGHER_VALUE_EXPLANATION_TOOLTIP] =
-        "Questo numero indica la quantità media di oggetti aggiuntivi creati via Creazione multipla\nquando si attiva Ispirazione moltiplicato per il prezzo di vendita dell'oggetto creato di qualità superiore, raggiunta via Ispirazione.",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_HIGHER_QUALITY_EXPLANATION_TOOLTIP] =
-        "Questo numero indica la quantità media di oggetti aggiuntivi creati via Creazione multipla\nquando si attiva Ispirazione.\n\nCiò tiene in considerazione sia Creazione multipla sia Ispirazione e riflette\nla quantità di oggetti aggiuntivi creati quando si attivano entrambe contemporaneamente.",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP] =
-        "Questo numero indica la quantità media di oggetti creati di qualità garantita senza Ispirazione.",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_HIGHER_QUALITY_EXPLANATION_TOOLTIP] =
-        "Questo numero indica la quantità media di oggetti creati di qualità superiore via Ispirazione.",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_VALUE_EXPLANATION_TOOLTIP] =
-        "Questo numero indica la quantità media di oggetti creati di qualità garantita\nmoltiplicata per il prezzo di vendita dell'oggetto creato di qualità garantita.",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_HIGHER_VALUE_EXPLANATION_TOOLTIP] =
-        "Questo numero indica la quantità media di ogetti creati di qualità superiore via Ispirazione\nmoltiplicata per il prezzo di vendita dell'oggetto creato di qualità superiore.",
-
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP] =
         "La Difficoltà ricetta determina quali sono le soglie di Competenza necessaria per le varie qualità.\n\nPer ricette con 5 qualità, le soglie di Competenza sono 20%, 50%, 80% e 100% della Difficoltà ricetta.\nPer ricette con 3 qualità, le soglie di Competenza sono 50% e 100% della Difficoltà ricetta.",
-        [CraftSim.CONST.TEXT.INSPIRATION_EXPLANATION_TOOLTIP] =
-        "L'Ispirazione ti permette di ottenere occasionalmente Competenza bonus quando si crea.\n\nQuando la Competenza bonus ottenuta via Ispirazione permette di andare oltre la soglia per la qualità successiva,\nsi possono ottenere creazioni di qualità superiore.\nPer ricette con 5 qualità, la Competenza bonus è pari a un sesto (16.67%) della Difficoltà ricetta di base.\nPer ricette con 3 qualità, la Competenza bonus è pari a un terzo (33.33%) della Difficoltà ricetta di base.",
-        [CraftSim.CONST.TEXT.INSPIRATION_SKILL_EXPLANATION_TOOLTIP] =
-        "Questa è la Competenza bonus che ottieni quando si attiva Ispirazione.\n\nSe la somma tra la Competenza attuale e la Competenza bonus raggiungono la soglia\ndella qualità successiva, riuscirai a creare un oggetto di qualità superiore.",
         [CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP] =
         "Creazione multipla ti permette di creare occasionalmente più oggetti del solito.\n\nLa quantità aggiuntiva è stimata tra 1 e 2.5y,\ndove y è la quantità che si ottiene normalmente con una singola operazione di crezione.",
         [CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP] =
@@ -70,8 +47,6 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Difficoltà ricetta: ",
-        [CraftSim.CONST.TEXT.INSPIRATION_LABEL] = "Ispirazione: ",
-        [CraftSim.CONST.TEXT.INSPIRATION_SKILL_LABEL] = "Competenza bonus: ", -- Ideally, it should be "Competenza bonus Ispirazione" but there is not enough space for it.
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Creazione multipla: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Parsimonia: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Moltiplicatore reagenti risparmiati: ",
@@ -80,13 +55,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Qualità garantita: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Qualità superiore: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Competenza mancante: ",
-        [CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL] = "Competenza mancante (Ispirazione): ",
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Competenza: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Moltiplicatore oggetti aggiuntivi: ",
-
-        -- Customer Service Module
-        [CraftSim.CONST.TEXT.HSV_EXPLANATION] =
-        "HSV è l'acronimo inglese di 'Valore di competenza nascosto' ed è un aumento di difficoltà nascosto tra lo 0 e il 5% della difficoltà della tua ricetta ogni volta che crei qualcosa.\n\nQuesto valore nascosto ti può portare al livello successivo di qualità in maniera simile all'ispirazione.\n\nComunque, più vicino sei alla successiva qualità più alta è la possibilità!",
 
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] =
@@ -152,67 +122,7 @@ function CraftSim.LOCAL_IT:GetData()
             "Puoi vedere tutti questi casi per le tue ricette correnti nella finestra delle " ..
             f.bb("Statistiche") .. "!",
 
-        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_EXPLANATION] =
-            "Il " ..
-            f.l("Valore di competenza nascosto (HSV)") ..
-            " è un fattore casuale aggiuntivo che si presenta ogni volta che crei qualcosa.\n" ..
-            "E' qualcosa che non è menzionato da nessuna parte nel gioco.\n" ..
-            "Possiamo notare l'attivazione di questo valore in questo modo: Quando crei qualcosa l'" ..
-            f.bb("Indicatore della qualità") ..
-            "si riempie fino a un certo punto.\nQuesto può andare leggermente oltre il valore di competenza mostrato.\n " ..
-            "\n" .. cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
-            "Questo valore di compentenza aggiuntivo è sempre tra lo 0% e il 5% della tua " ..
-            f.bb("Difficoltà base della ricetta") ..
-            ".\nQuesto significa che se una ricetta ha una difficoltà di 400 puoi ottenere fino a 20 punti competenza aggiuntivi.\n" ..
-            "Varie prove ci portano a dire che questo valore sia " ..
-            f.bb("unifermemente distribuito") ..
-            ". Questo significa che ogni valore percentuale ha la stessa probabilità.\n" ..
-            "L'" ..
-            f.l("HSV") ..
-            " può influenzare il profitto in maniera importante quando si è vicici a un salto di qualità!\n" ..
-            "In CraftSim questo viene trattato come una attivazione addizionale, come " ..
-            f.bb("Ispirazione") .. " o " .. f.bb("Multicreazione") .. ".\n" ..
-            "Comunque, il suo effetto dipende dalla tuo attuale valore di competenza, la difficoltà della ricetta e\nla competenza di cui hai bisongo per raggiunere il successivo grado di qualità.\n" ..
-            "Quindi CraftSim calcola la " ..
-            f.bb("competenza mancante") ..
-            " per raggiungere la qualità successiva e la converte in " ..
-            f.bb("percentuale relativa alla difficoltà della ricetta") .. "\n\n" ..
-            "Quindi per una ricetta con difficoltà 400: se hai 190 di competenza, e hai bisogno di 200 per raggiungere la qualità successiva, la competenza mancante sarà 10\n" ..
-            "Per ottenere questo valore come percentuale relativa della difficoltà si può calcolare come segue: " ..
-            f.bb("10 / (400 / 100)") .. " che corrisponde a " .. f.bb("2.5%") .. "\n\n" ..
-            "Dobbiamo poi ricordare che l'" ..
-            f.l("HSV") ..
-            " può fornirci un punteggio tra lo 0% e il 5%. Quindi dobbiamo calcolare la " ..
-            f.bb("probabilità di ottenere 2.5 o più") .. "\n" ..
-            "quando prendiamo un numero casuale tra 0 e 5. per conoscere la probabilità che l'" ..
-            f.l("HSV") .. " ci faccia raggiungere una qualità superiore.\n\n" ..
-            "La statistica ci dice che la probabilità uniforme di ricevere qualcosa tra due limiti è chiamata " ..
-            f.l("Distribuzione Continua Uniforme di Probabilità") .. "\n" ..
-            "E questo ci porta alla formula che ci fa ottenere esattamente quanto ci serve:\n\n" ..
-            f.bb("(LimiteSuperiore - X) / (LimiteSuperiore - LimiteInferiore)") .. "\n\n" ..
-            "dove: " ..
-            f.bb("LimiteSuperiore") ..
-            " è 5, " ..
-            f.bb("LimiteInferiore") ..
-            " è 0, " ..
-            f.bb("X") .. " è il valore uguale o superiore che desideriamo ottenere. In questo caso 2.5.\n\n" ..
-            "In questo caso siamo esattamente a metà dell'" ..
-            f.l("Area HSV") .. " quindi abbiamo una probabilità di:\n" ..
-            f.bb("(5 - 2.5) / (5 - 0) = 0.5") ..
-            "\ncioè il 50% di ottenere una qualità superiore solo grazie all'" .. f.l("HSV") .. ".\n" ..
-            "Se avessimo un maggiore valore di competenza mancante avremmo meno probabilità e viceversa!\n" ..
-            "Inoltre, se mancasse più del 5% la probabilità sarebbe 0 o negativa, cioè non è possibile che l'" ..
-            f.l("HSV") .. " da solo possa portare a un miglioramento di qualità.\n\n" ..
-            "Comunque, è possibile che tu possa raggiungere la qualità successiva quando " ..
-            f.bb("Ispirazione") .. " e l'" .. f.l("HSV") .. " si attivano insieme e\n" ..
-            "la competenza da " ..
-            f.bb("Ispirazione") ..
-            " più la competenza dall'" ..
-            f.l("HSV") ..
-            " ti forniscono competenza a sufficienza per raggiungere il successivo livello di qualità!.\n" ..
-            "Tutto questo viene preso in considerazione da CraftSim.",
-
-        -- Popups
+        --- Popups
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM] = "Nessuna Sorgente dei Prezzi Disponibile!",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_TITLE] = "Avviso di CraftSim sulle Sorgenti dei Prezzi",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] =
@@ -221,9 +131,6 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Ottimizzazione Materiali",
-        [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "Raggiungi soglia Ispirazione",
-        [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] =
-        "Prova a raggiungere la soglia di competenza per cui l'attivazione di ispirazione porta l'oggetto alla qualità superiore con la combinazione di materiali più economica",
         [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Qualità raggiungibile: ",
         [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Materiali mancanti",
         [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Materiali disponibioli",
@@ -279,7 +186,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON] = "Chiudi Statistiche",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Ø Profitto/Creazione: ",
         [CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB] = "Basi del calcolo del Profitto",
-        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_TAB] = "Considerazioni su HSV",
 
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "Dettaglio Costi di CraftSim",
@@ -313,70 +219,14 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER] = "Qualità",
         [CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER] = "Probabilità",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Creazioni previste",
-        [CraftSim.CONST.TEXT.STATISTICS_INSPIRATION_HEADER] = "Ispirazione",
         [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "Creazioni multiple",
         [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "Parsimonia",
         [CraftSim.CONST.TEXT.STATISTICS_HSV_NEXT] = "HSV Succ.",
         [CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP] = "HSV Salto",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "Profitto previsto",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "Tabella delle Probabilità della Ricetta",
-        [CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION] =
-            "Questa tabella mostra tutte le possibili combinazioni di attivazioni per la ricetta corrente.\n\n" ..
-            f.l("HSV Succ.") ..
-            " .. Probabilità HSV per la qualità successiva\n\n" ..
-            f.l("HSV Salto") .. " .. Probabilità HSV di saltare una qualità grazie all'ispirazione",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "Ø Costo Previsto per Oggetto",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "Con Ø di Reso",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPLANATION_ICON] =
-            "Questa tabella mostra il numero di oggetti medi creati (Ø) e il costo per qualità.\n\n" ..
-            f.g("Probabilità") ..
-            " è la probabilità di creare questo oggetto considerando la tua " ..
-            f.bb("Ispirazione") ..
-            " e l'" ..
-            f.l("HSV") ..
-            "\n\n" ..
-            f.g("Creazioni Previste") ..
-            " ti dice quante volte, in media, dovrai creare questa ricetta per raggiungere questa qualità\n\n" ..
-            f.g("Costo Previsto per Oggetto") ..
-            " ti dice, in media, il costo di un oggetto di questa qualità (questo può essere al di sotto dei costi di creazione visto che viene valutato per oggetto e considera statistiche come " ..
-            f.bb("Multicreazione") ..
-            "\n\n" ..
-            f.g("Con Reso") ..
-            " sottrae il valore di vendita (considerando un taglio dell'asta) del (numero medio) di oggetti creati di qualità inferiore fin quando non si raggiunge la qualità desiderata",
-
-
-        -- Customer Service Frame
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "Servizio Clienti di CraftSim",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RECIPE_WHISPER] = "Sussurra Ricetta",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW] = "Anteprima Live",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_WHISPER] = "Sussurra",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_MESSAGE_FORMAT] = "Formato Messaggio",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RESET_TO_DEFAULT] = "Resetta Messaggio",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS] = "Permetti Connessioni",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_SEND_INVITE] = "Manda Invito",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION] =
-        "Abilita la risposta automatica con i risultato più alti possibili e i costi dei materiali quando qualcuno ti sussurra il comando e il link ad un oggetto che puoi creare!",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] =
-        "Ogni linea è un messaggio separato nella chat dei sussurri.\n\nPuoi usare le seguenti etichette per inserire informazioni sulla ricetta:\n%gc .. collegamento alla qualità garantita\n%ic .. collegamento alla qualità raggiungibile con l'ispirazione\n%insp .. la tua percentuale di ispirazione es. 18%\n%mc .. la tua percentuale di creazione multipla\n%res .. la tua percentuale di parsimonia\n%cc .. i costi di creazione\n%ccd .. i costi dettagliati per reagente utilizzato (preferibilmente in una linea separata)\n%orl .. una lista semplice di tutti i reagenti opzionali utilizzati\n%rl .. una lista semplice di tutti i reagenti obbligatori",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION] =
-        "Abilita le connessioni all'anteprima live del processo d'artigianato attraverso i 'Collegamenti di Anteprima di CraftSim'.\nChiunque abbia CraftSim e clicchi sul collegamento condiviso può connettersi in tempo reale alle tue informazioni per controllare le tue abilità d'artigianato",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX] = "Qualità garantita",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION] =
-        "Controlla la più alta qualità garantita che l'artigiano può fornire con questa ricetta e ottimizza al meglio i costi di creazione.\n\nSe disabilitato, la più alta qualità raggiungibile con l'ispirazione sarà ottimizzata in base ai costi di creazione.",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_TITLE] = "Anteprima Live di CraftSim",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTER_PROFESSION] = "Professione dell'Artigiano",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES] = "Ricette imparate",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES_INITIAL] = "Seleziona una ricetta",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUESTING_UPDATE] = "Richiesta di aggiornamento",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TIMEOUT] = "Timeout (Giocatore Offline?)",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_OPTIONAL] = "Opzionale",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_FINISHING] = "Finitura",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTING_COSTS] = "Costi di creazione",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_RESULTS] = "Risultati previsti",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_INSPIRATION] = "di probabilità di ispirazione",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUIRED_MATERIALS] = "Materiali richiesti",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_NONE] = "Nessuno",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "Bloccato",
 
         -- Price Details Frame
         [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "Dettaglio Prezzi di CraftSim",
@@ -457,13 +307,11 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_MUTLICRAFT] = "Nuova Creazione Multipla\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_CRAFTING_SPEED] = "Nuova Velocità di Creazione\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_RESOURCEFULNESS] = "Nuova Parsimonia\n",
-        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_INSPIRATION] = "Nuova Ispirazione\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_SKILL] = "Nuova Competenza\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_UNHANDLED] = "Simulazione non gestita",
 
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_PROFIT] = "Max Profitto",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_SKILL] = "Max Competenza",
-        [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_INSPIRATION] = "Max Ispirazione",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_MULTICRAFT] = "Max Creazione Multipla",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_RESOURCEFULNESS] = "Max Parsimonia",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_CRAFTING_SPEED] = "Max Velocità Creazione",
@@ -741,9 +589,6 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Scansione Ricette",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] =
         "Modulo che scansiona la tua lista di ricette in base a varie opzioni",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_LABEL] = "Servizio Clienti",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP] =
-        "Modulo che offre varie opzioni per interagire con i potenziali clienti",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL] = "Storico Clienti",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP] =
         "Modulo che mostra uno storico delle conversazioni con i clienti, gli oggetti creati e le commissioni",

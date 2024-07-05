@@ -167,7 +167,6 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
         resultsText ..
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_1) .. profitText .. "\n" ..
         chanceText ..
-        ((craftResult.triggeredInspiration and GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_2) .. "\n", GUTIL.COLORS.LEGENDARY)) or "") ..
         ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
         ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
 

@@ -17,7 +17,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROF
 
 function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     local sizeX = 320
-    local sizeY = 120
+    local sizeY = 100
     local offsetX = -10
     local offsetY = 30
     CraftSim.AVERAGEPROFIT.frame = GGUI.Frame({
@@ -141,10 +141,6 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts)
             addToList(L(CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT),
                 f.mr(statWeights.averageProfit, relativeValue),
                 f.white(f.bb("Average") .. " profit per craft considering your crafting stats"))
-        end
-        if statWeights.inspirationWeight then
-            addToList(L(CraftSim.CONST.TEXT.INSPIRATION_LABEL), f.mw(statWeights.inspirationWeight),
-                f.white("Profit increase " .. f.l("per point ") .. f.bb("Inspiration")))
         end
         if statWeights.multicraftWeight then
             addToList(L(CraftSim.CONST.TEXT.MULTICRAFT_LABEL), f.mw(statWeights.multicraftWeight),

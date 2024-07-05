@@ -25,19 +25,15 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.idMapping = CraftSim.IDMapping(recipeData, nodeRuleData.idMapping, nodeRuleData.exceptionRecipeIDs)
 
     self.professionStats.skill.value = nodeRuleData.skill or 0
-    self.professionStats.inspiration.value = nodeRuleData.inspiration or 0
     self.professionStats.multicraft.value = nodeRuleData.multicraft or 0
     self.professionStats.resourcefulness.value = nodeRuleData.resourcefulness or 0
     self.professionStats.craftingspeed.value = nodeRuleData.craftingspeed or 0
 
-    self.professionStats.inspiration.extraFactor = nodeRuleData.inspirationBonusSkillFactor or 0
     self.professionStats.multicraft.extraFactor = nodeRuleData.multicraftExtraItemsFactor or 0
     self.professionStats.resourcefulness.extraFactor = nodeRuleData.resourcefulnessExtraItemsFactor or 0
 
     self.equalsSkill = nodeRuleData.equalsSkill or false
     self.equalsMulticraft = nodeRuleData.equalsMulticraft or false
-    self.equalsInspiration = nodeRuleData.equalsInspiration or false
-    self.equalsInspirationBonusSkillFactor = nodeRuleData.equalsInspirationBonusSkillFactor or false
     self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or false
     self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or false
     self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or false
@@ -68,14 +64,6 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
 
     if self.equalsMulticraft then
         self.professionStats.multicraft.value = math.max(0, rank)
-    end
-
-    if self.equalsInspiration then
-        self.professionStats.inspiration.value = math.max(0, rank)
-    end
-
-    if self.equalsInspirationBonusSkillFactor then
-        self.professionStats.inspiration.extraFactor = math.max(0, rank * 0.01)
     end
 
     if self.equalsResourcefulness then
@@ -111,7 +99,6 @@ function CraftSim.NodeRule:Debug()
         "threshold: " .. tostring(self.threshold),
         "equalsSkill: " .. tostring(self.equalsSkill),
         "equalsMulticraft: " .. tostring(self.equalsMulticraft),
-        "equalsInspiration: " .. tostring(self.equalsInspiration),
         "equalsResourcefulness: " .. tostring(self.equalsResourcefulness),
         "equalsCraftingspeed: " .. tostring(self.equalsCraftingspeed),
         "equalsResourcefulnessExtraItemsFactor: " .. tostring(self.equalsResourcefulnessExtraItemsFactor),
@@ -131,7 +118,6 @@ function CraftSim.NodeRule:GetJSON(indent)
     jb:Add("professionStats", self.professionStats)
     jb:Add("equalsSkill", self.equalsSkill)
     jb:Add("equalsMulticraft", self.equalsMulticraft)
-    jb:Add("equalsInspiration", self.equalsInspiration)
     jb:Add("equalsResourcefulness", self.equalsResourcefulness)
     jb:Add("equalsCraftingspeed", self.equalsCraftingspeed)
     jb:Add("equalsResourcefulnessExtraItemsFactor", self.equalsResourcefulnessExtraItemsFactor)

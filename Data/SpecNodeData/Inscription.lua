@@ -194,7 +194,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1" },
             nodeID = 34835,
             threshold = 35,
-            inspiration = 10,
             resourcefulness = 10,
             craftingspeedBonusFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
@@ -203,7 +202,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1" },
             nodeID = 34835,
             threshold = 40,
-            inspiration = 10,
             resourcefulness = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
@@ -256,49 +254,41 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         },
         INFINITE_DISCOVERY_1 = {
             nodeID = 34833,
-            equalsInspiration = true,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INFINITE_DISCOVERY_2 = {
             nodeID = 34833,
             threshold = 0,
-            inspirationBonusSkillFactor = 0.05,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INFINITE_DISCOVERY_3 = {
             nodeID = 34833,
             threshold = 5,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INFINITE_DISCOVERY_4 = {
             nodeID = 34833,
             threshold = 10,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INFINITE_DISCOVERY_5 = {
             nodeID = 34833,
             threshold = 15,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INFINITE_DISCOVERY_6 = {
             nodeID = 34833,
             threshold = 20,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INFINITE_DISCOVERY_7 = {
             nodeID = 34833,
             threshold = 25,
-            inspiration = 10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INFINITE_DISCOVERY_8 = {
             nodeID = 34833,
             threshold = 30,
-            inspirationBonusSkillFactor = 0.25,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         UNDERSTANDING_FLORA_1 = {
@@ -373,7 +363,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         FLAWLESS_INKS_2 = {
             nodeID = 34831,
             threshold = 0,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.INKS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -393,7 +382,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         FLAWLESS_INKS_4 = {
             nodeID = 34831,
             threshold = 10,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.INKS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -469,7 +457,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "DARKMOON_MYSTERIES_1", "SHARED_KNOWLEDGE_1", "SCALE_SIGILS_1" },
             nodeID = 43535,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 -- dm mysteries
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
@@ -561,7 +548,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "DARKMOON_MYSTERIES_1", "SHARED_KNOWLEDGE_1", "SCALE_SIGILS_1" },
             nodeID = 43535,
             threshold = 25,
-            inspiration = 5,
             craftingspeedBonusFactor = 0.05,
             idMapping = {
                 -- dm mysteries
@@ -673,7 +659,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "FIRE_1", "FROST_1", "AIR_1", "EARTH_1" },
             nodeID = 43534,
             threshold = 25,
-            inspiration = 10,
             craftingspeedBonusFactor = 0.10,
             exceptionRecipeIDs = {
                 --fire
@@ -978,7 +963,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         CONTRACTS_AND_MISSIVES_2 = {
             nodeID = 43528,
             threshold = 0,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -997,7 +981,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         CONTRACTS_AND_MISSIVES_3 = {
             nodeID = 43528,
             threshold = 5,
-            inspiration = 5,
             craftingspeedBonusFactor = 0.10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
@@ -1017,7 +1000,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         CONTRACTS_AND_MISSIVES_4 = {
             nodeID = 43528,
             threshold = 10,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -1036,7 +1018,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         CONTRACTS_AND_MISSIVES_5 = {
             nodeID = 43528,
             threshold = 15,
-            inspiration = 5,
             craftingspeedBonusFactor = 0.10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
@@ -1056,7 +1037,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         CONTRACTS_AND_MISSIVES_6 = {
             nodeID = 43528,
             threshold = 20,
-            inspiration = 10,
             multicraft = 20,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
@@ -1157,7 +1137,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         AZURESCALE_SIGIL_3 = {
             nodeID = 43525,
             threshold = 10,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 383533, -- Azurescale Sigil
             },
@@ -1180,7 +1159,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         EMBERSCALE_SIGIL_3 = {
             nodeID = 43524,
             threshold = 10,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 383535, -- Emberscale Sigil
             },
@@ -1203,7 +1181,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         SAGESCALE_SIGIL_3 = {
             nodeID = 43523,
             threshold = 10,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 383534, -- Sagescale Sigil
             },
@@ -1226,7 +1203,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         BRONZESCALE_SIGIL_3 = {
             nodeID = 43522,
             threshold = 10,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 383536, -- Bronzescale Sigil
             },
@@ -1249,7 +1225,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         JETSCALE_SIGIL_3 = {
             nodeID = 43521,
             threshold = 10,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 383538, -- Jetscale Sigil
             },
@@ -1332,7 +1307,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "WOODCARVING_1", "RUNIC_SCRIPTURE_1" },
             nodeID = 34893,
             threshold = 25,
-            inspiration = 5,
             idMapping = {
                 --- woodcarving
                 -- prof tools
@@ -1398,7 +1372,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "PROFESSION_TOOLS_1", "STAVES_1" },
             nodeID = 34892,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 -- prof tools
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
@@ -1414,7 +1387,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "PROFESSION_TOOLS_1", "STAVES_1" },
             nodeID = 34892,
             threshold = 15,
-            inspiration = 5,
             idMapping = {
                 -- prof tools
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
@@ -1430,7 +1402,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "PROFESSION_TOOLS_1", "STAVES_1" },
             nodeID = 34892,
             threshold = 25,
-            inspiration = 10,
             craftingspeedBonusFactor = 0.10,
             idMapping = {
                 -- prof tools
@@ -1492,7 +1463,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         PROFESSION_TOOLS_4 = {
             nodeID = 34891,
             threshold = 15,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -1512,7 +1482,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         STAVES_2 = {
             nodeID = 34890,
             threshold = 10,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES
@@ -1522,7 +1491,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         STAVES_3 = {
             nodeID = 34890,
             threshold = 15,
-            inspiration = 10,
             resourcefulness = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
@@ -1543,7 +1511,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         STAVES_5 = {
             nodeID = 34890,
             threshold = 30,
-            inspiration = 15,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.STAVES
@@ -1571,7 +1538,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "CODEXES_1", "VANTUS_RUNES_1", "FAUNA_RUNES_1" },
             nodeID = 34889,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 -- codexes
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
@@ -1589,7 +1555,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "CODEXES_1", "VANTUS_RUNES_1", "FAUNA_RUNES_1" },
             nodeID = 34889,
             threshold = 15,
-            inspiration = 10,
             idMapping = {
                 -- codexes
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
@@ -1607,7 +1572,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             childNodeIDs = { "CODEXES_1", "VANTUS_RUNES_1", "FAUNA_RUNES_1" },
             nodeID = 34889,
             threshold = 25,
-            inspiration = 10,
             craftingspeedBonusFactor = 0.10,
             idMapping = {
                 -- codexes
@@ -1663,7 +1627,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         CODEXES_3 = {
             nodeID = 34888,
             threshold = 10,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
@@ -1673,7 +1636,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         CODEXES_4 = {
             nodeID = 34888,
             threshold = 15,
-            inspiration = 15,
             resourcefulness = 15,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
@@ -1694,7 +1656,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
         CODEXES_6 = {
             nodeID = 34888,
             threshold = 30,
-            inspiration = 15,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.OFFHANDS
@@ -1725,7 +1686,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 34887,
             threshold = 5,
             resourcefulness = 5,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES
@@ -1736,7 +1696,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 34887,
             threshold = 10,
             resourcefulness = 10,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.VANTUS_RUNES
@@ -1788,7 +1747,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 34886,
             threshold = 5,
             resourcefulness = 5,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES
@@ -1799,7 +1757,6 @@ function CraftSim.INSCRIPTION_DATA:GetData()
             nodeID = 34886,
             threshold = 10,
             resourcefulness = 10,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.FAUNA_RUNES

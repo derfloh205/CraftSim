@@ -232,7 +232,7 @@ function CraftSim.CraftQueueItem:GetMinimumCraftsForTargetCount()
         if restCount > 0 then
             minimumAmountForDifferentQualities = minimumAmountForDifferentQualities + 1
         end
-        local expectedCrafts = self.recipeData.resultData:GetExpectedCraftsForYieldByQuality(restCount, qualityID) or 0
+        local expectedCrafts = self.recipeData.resultData:GetExpectedCraftsForYield(restCount, qualityID) or 0
         print("Minimum Crafts for " .. restCount .. " x q" .. qualityID .. ": " .. expectedCrafts)
 
         if expectedCrafts > highestExpectedCrafts then

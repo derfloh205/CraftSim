@@ -6,10 +6,6 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [191526] = { skill = 30 },
     -- Illustrious Insight
     [191529] = { skill = 30 },
-    -- Stable Fluid Draconium
-    [191511] = { inspirationBonusSkillFactor = 0.15, qualityID = 1 },
-    [191512] = { inspirationBonusSkillFactor = 0.20, qualityID = 2 },
-    [191513] = { inspirationBonusSkillFactor = 0.25, qualityID = 3 },
     -- Primal Infusion
     [197921] = { recipeDifficulty = 30 },
     [198046] = { recipeDifficulty = 50 },
@@ -33,7 +29,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [194577] = { recipeDifficulty = 20, qualityID = 2 },
     [194575] = { recipeDifficulty = 15, qualityID = 3 },
     -- Missives Profession Stats
-    [198534] = { recipeDifficulty = 25, qualityID = 1 }, -- inspiration
+    [198534] = { recipeDifficulty = 25, qualityID = 1 }, -- ???
     [198535] = { recipeDifficulty = 20, qualityID = 2 },
     [198536] = { recipeDifficulty = 15, qualityID = 3 },
     [200571] = { recipeDifficulty = 25, qualityID = 1 }, -- crafting speed
@@ -85,15 +81,15 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [194902] = { multicraft = math.huge }, -- Ooey-Gooey Chocolate: max out multicraft (limited to 100% in professionstats)
 
     -- Alchemy
-    [191520] = { inspiration = 30, multicraft = 27, qualityID = 1 }, -- Potion Augmentation
-    [191521] = { inspiration = 40, multicraft = 36, qualityID = 2 },
-    [191522] = { inspiration = 50, multicraft = 45, qualityID = 3 },
-    [191523] = { inspiration = 30, multicraft = 27, qualityID = 1 }, -- Phial Embellishment
-    [191524] = { inspiration = 40, multicraft = 36, qualityID = 2 },
-    [191525] = { inspiration = 50, multicraft = 45, qualityID = 3 },
-    [191514] = { inspiration = 30, craftingspeedBonusFactor = 0.12, qualityID = 1 }, -- Brood Salt
-    [191515] = { inspiration = 40, craftingspeedBonusFactor = 0.16, qualityID = 2 },
-    [191516] = { inspiration = 50, craftingspeedBonusFactor = 0.20, qualityID = 3 },
+    [191520] = { multicraft = 27, qualityID = 1 }, -- Potion Augmentation
+    [191521] = { multicraft = 36, qualityID = 2 },
+    [191522] = { multicraft = 45, qualityID = 3 },
+    [191523] = { multicraft = 27, qualityID = 1 }, -- Phial Embellishment
+    [191524] = { multicraft = 36, qualityID = 2 },
+    [191525] = { multicraft = 45, qualityID = 3 },
+    [191514] = { craftingspeedBonusFactor = 0.12, qualityID = 1 }, -- Brood Salt
+    [191515] = { craftingspeedBonusFactor = 0.16, qualityID = 2 },
+    [191516] = { craftingspeedBonusFactor = 0.20, qualityID = 3 },
     [191517] = { recipeDifficulty = 18, qualityID = 1 }, -- Writhefire Oil
     [191518] = { recipeDifficulty = 24, qualityID = 2 }, -- Writhefire Oil
     [191519] = { recipeDifficulty = 30, qualityID = 3 }, -- Writhefire Oil
@@ -107,9 +103,9 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [192894] = { recipeDifficulty = 18, qualityID = 1 }, -- Blotting Sand
     [192895] = { recipeDifficulty = 24, qualityID = 2 },
     [192896] = { recipeDifficulty = 30, qualityID = 3 },
-    [192897] = { inspiration = 30, inspirationBonusSkillFactor = 0.07, qualityID = 1 }, -- Pounce
-    [192898] = { inspiration = 40, inspirationBonusSkillFactor = 0.10, qualityID = 2 },
-    [192899] = { inspiration = 50, inspirationBonusSkillFactor = 0.12, qualityID = 3 },
+    [192897] = { qualityID = 1 }, -- Pounce
+    [192898] = { qualityID = 2 },
+    [192899] = { qualityID = 3 },
 
     -- Inscription
     [194868] = { recipeDifficulty = 20, qualityID = 1 }, -- Emberscale
@@ -132,12 +128,12 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [193950] = { recipeDifficulty = 18, qualityID = 1 }, -- Abrasive Polishing Cloth
     [193951] = { recipeDifficulty = 24, qualityID = 2 },
     [193952] = { recipeDifficulty = 30, qualityID = 3 },
-    [193953] = { inspiration = 30, inspirationBonusSkillFactor = 0.07, qualityID = 1 }, -- Vibrant Polishing Cloth
-    [193954] = { inspiration = 40, inspirationBonusSkillFactor = 0.10, qualityID = 2 },
-    [193955] = { inspiration = 50, inspirationBonusSkillFactor = 0.12, qualityID = 3 },
-    [193959] = { inspirationBonusSkillFactor = 0.07, craftingspeedBonusFactor = 0.12, qualityID = 1 }, -- Chromatic Embroidery Thread
-    [193960] = { inspirationBonusSkillFactor = 0.10, craftingspeedBonusFactor = 0.16, qualityID = 2 },
-    [193961] = { inspirationBonusSkillFactor = 0.12, craftingspeedBonusFactor = 0.20, qualityID = 3 },
+    [193953] = { qualityID = 1 }, -- Vibrant Polishing Cloth
+    [193954] = { qualityID = 2 },
+    [193955] = { qualityID = 3 },
+    [193959] = { craftingspeedBonusFactor = 0.12, qualityID = 1 }, -- Chromatic Embroidery Thread
+    [193960] = { craftingspeedBonusFactor = 0.16, qualityID = 2 },
+    [193961] = { craftingspeedBonusFactor = 0.20, qualityID = 3 },
     [193962] = { resourcefulnessExtraItemsFactor = 0.15, qualityID = 1 }, -- Shimmering Embroidery Thread
     [193963] = { resourcefulnessExtraItemsFactor = 0.20, qualityID = 2 },
     [193964] = { resourcefulnessExtraItemsFactor = 0.25, qualityID = 3 },
@@ -146,9 +142,9 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
     [193958] = { recipeDifficulty = 30, qualityID = 3 },
 
     -- Engineering
-    [198219] = { inspiration = 30, ressourcefulness = 33, qualityID = 1 }, -- Overclocker
-    [198220] = { inspiration = 40, ressourcefulness = 44, qualityID = 2 },
-    [198221] = { inspiration = 50, ressourcefulness = 55, qualityID = 3 },
+    [198219] = { ressourcefulness = 33, qualityID = 1 }, -- Overclocker
+    [198220] = { ressourcefulness = 44, qualityID = 2 },
+    [198221] = { ressourcefulness = 55, qualityID = 3 },
     [198216] = { recipeDifficulty = 18, qualityID = 1 }, -- Hazard Wires
     [198217] = { recipeDifficulty = 24, qualityID = 2 },
     [198218] = { recipeDifficulty = 30, qualityID = 3 },

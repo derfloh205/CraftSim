@@ -14,15 +14,10 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
     ---@type CraftSim.CraftResultSavedReagent[]
     self.savedReagents = {}
     self.expectedQuality = recipeData.resultData.expectedQuality
-    self.triggeredInspiration = false
     self.triggeredMulticraft = false
     self.triggeredResourcefulness = false
 
     for _, craftingItemResult in pairs(craftingItemResultData) do
-        if craftingItemResult.isCrit then
-            self.triggeredInspiration = true
-        end
-
         if craftingItemResult.multicraft and craftingItemResult.multicraft > 0 then
             self.triggeredMulticraft = true
         end
@@ -45,8 +40,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
         end
     end
 
-    local inspChance = ((recipeData.supportsCraftingStats and recipeData.supportsInspiration) and recipeData.professionStats.inspiration:GetPercent(true)) or
-        1
+
     local mcChance = ((recipeData.supportsCraftingStats and recipeData.supportsMulticraft) and recipeData.professionStats.multicraft:GetPercent(true)) or
         1
     local resChance = ((recipeData.supportsCraftingStats and recipeData.supportsResourcefulness) and recipeData.professionStats.resourcefulness:GetPercent(true)) or
@@ -54,10 +48,6 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
 
     self.expectedAverageSavedCosts = (recipeData.supportsCraftingStats and CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData) * resChance) or
         0
-
-    if inspChance < 1 then
-        inspChance = (self.triggeredInspiration and inspChance) or (1 - inspChance)
-    end
 
     if mcChance < 1 then
         mcChance = (self.triggeredMulticraft and mcChance) or (1 - mcChance)
@@ -71,7 +61,7 @@ function CraftSim.CraftResult:new(recipeData, craftingItemResultData)
         totalResChance = (1 - resChance) ^ numProcced
     end
 
-    self.craftingChance = inspChance * mcChance * totalResChance
+    self.craftingChance = mcChance * totalResChance
 
     local craftProfit = CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, self)
 
@@ -87,7 +77,6 @@ function CraftSim.CraftResult:Debug()
         "expectedAverageSavedCosts: " .. CraftSim.GUTIL:FormatMoney(self.expectedAverageSavedCosts, true),
         "expectedQuality: " .. tostring(self.expectedQuality),
         "craftingChance: " .. tostring((self.craftingChance or 0) * 100) .. "%",
-        "triggeredInspiration: " .. tostring(self.triggeredInspiration),
         "triggeredMulticraft: " .. tostring(self.triggeredMulticraft),
         "triggeredResourcefulness: " .. tostring(self.triggeredResourcefulness),
     }
@@ -123,7 +112,6 @@ function CraftSim.CraftResult:GetJSON(indent)
     jb:Add("expectedAverageSavedCosts", self.expectedAverageSavedCosts)
     jb:Add("expectedQuality", self.expectedQuality)
     jb:Add("craftingChance", self.craftingChance)
-    jb:Add("triggeredInspiration", self.triggeredInspiration)
     jb:Add("triggeredMulticraft", self.triggeredMulticraft)
     jb:Add("triggeredResourcefulness", self.triggeredResourcefulness)
     jb:AddList("craftResultItems", self.craftResultItems)

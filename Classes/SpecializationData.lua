@@ -94,7 +94,6 @@ end
 function CraftSim.SpecializationData:GetExtraFactors()
     local extraFactors = CraftSim.ProfessionStats()
 
-    extraFactors.inspiration.extraFactor = self.professionStats.inspiration.extraFactor
     extraFactors.multicraft.extraFactor = self.professionStats.multicraft.extraFactor
     extraFactors.resourcefulness.extraFactor = self.professionStats.resourcefulness.extraFactor
 

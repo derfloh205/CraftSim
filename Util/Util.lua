@@ -6,7 +6,6 @@ CraftSim.UTIL = {}
 
 CraftSim.UTIL.frameLevel = 100
 
-local inspirationFactor = 0.001
 local multicraftFactor = 0.0009
 local resourcefulnessFactor = 0.00111
 local craftingspeedFactor = 0.002
@@ -17,13 +16,6 @@ function CraftSim.UTIL:NextFrameLevel()
     local frameLevel = CraftSim.UTIL.frameLevel
     CraftSim.UTIL.frameLevel = CraftSim.UTIL.frameLevel + 50
     return frameLevel
-end
-
-function CraftSim.UTIL:GetInspirationStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / inspirationFactor
 end
 
 function CraftSim.UTIL:GetCraftingSpeedStatByPercent(percent)
@@ -45,10 +37,6 @@ function CraftSim.UTIL:GetResourcefulnessStatByPercent(percent)
         return 0
     end
     return percent / resourcefulnessFactor
-end
-
-function CraftSim.UTIL:GetInspirationPercentByStat(stat)
-    return stat * inspirationFactor
 end
 
 function CraftSim.UTIL:GetCraftingSpeedPercentByStat(stat)

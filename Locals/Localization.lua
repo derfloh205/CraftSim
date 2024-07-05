@@ -49,9 +49,7 @@ end
 
 function CraftSim.LOCAL:TranslateStatName(statName)
     -- translate the variable name to the display name
-    if statName == "inspiration" then
-        return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION)
-    elseif statName == "multicraft" then
+    if statName == "multicraft" then
         return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT)
     elseif statName == "resourcefulness" then
         return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS)
@@ -65,8 +63,6 @@ function CraftSim.LOCAL:TranslateStatName(statName)
         return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS)
     elseif statName == "craftingspeedBonusFactor" then
         return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS)
-    elseif statName == "inspirationBonusSkillFactor" then
-        return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INSPIRATION_BONUS)
     elseif statName == "phialExperimentationChanceFactor" then
         return CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION)
     elseif statName == "potionExperimentationChanceFactor" then

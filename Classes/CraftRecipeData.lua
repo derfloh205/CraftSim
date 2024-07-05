@@ -10,7 +10,6 @@ function CraftSim.CraftRecipeData:new(recipeID)
     self.numCrafts = 0
     self.totalProfit = 0
     self.totalExpectedProfit = 0
-    self.numInspiration = 0
     self.numMulticraft = 0
     self.numMulticraftExtraItems = 0
     self.numResourcefulness = 0
@@ -29,7 +28,6 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult)
     self.numCrafts = self.numCrafts + 1
     self.totalProfit = self.totalProfit + craftResult.profit
     self.totalExpectedProfit = self.totalExpectedProfit + craftResult.expectedAverageProfit
-    self.numInspiration = self.numInspiration + ((craftResult.triggeredInspiration and 1) or 0)
     self.numMulticraft = self.numMulticraft + ((craftResult.triggeredMulticraft and 1) or 0)
     self.numResourcefulness = self.numResourcefulness + ((craftResult.triggeredResourcefulness and 1) or 0)
     self.totalSavedCosts = self.totalSavedCosts + craftResult.savedCosts
@@ -76,7 +74,6 @@ function CraftSim.CraftRecipeData:Debug()
         "numCrafts: " .. self.numCrafts,
         "totalProfit: " .. CraftSim.GUTIL:FormatMoney(self.totalProfit, true),
         "totalExpectedProfit: " .. CraftSim.GUTIL:FormatMoney(self.totalExpectedProfit, true),
-        "numInspiration: " .. self.numInspiration,
         "numMulticraft: " .. self.numMulticraft,
         "numMulticraftExtraItems: " .. self.numMulticraftExtraItems,
         "numResourcefulness: " .. self.numResourcefulness,
@@ -94,7 +91,6 @@ function CraftSim.CraftRecipeData:GetJSON(indent)
     jb:Add("numCrafts", self.numCrafts)
     jb:Add("totalProfit", self.totalProfit)
     jb:Add("totalExpectedProfit", self.totalExpectedProfit)
-    jb:Add("numInspiration", self.numInspiration)
     jb:Add("numMulticraft", self.numMulticraft)
     jb:Add("numMulticraftExtraItems", self.numMulticraftExtraItems)
     jb:Add("numResourcefulness", self.numResourcefulness)

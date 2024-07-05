@@ -201,7 +201,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
             childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
             nodeID = 64143,
             threshold = 5,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 -- Burning
                 389547, -- Burning Devotion
@@ -287,7 +286,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
             childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
             nodeID = 64143,
             threshold = 25,
-            inspiration = 5,
             craftingspeedBonusFactor = 0.10,
             exceptionRecipeIDs = {
                 -- Burning
@@ -397,7 +395,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
             childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
             nodeID = 64142,
             threshold = 5,
-            inspiration = 5,
             exceptionRecipeIDs = {
                 -- Burning
                 389547, -- Burning Devotion
@@ -466,7 +463,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
             childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
             nodeID = 64142,
             threshold = 30,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- Burning
                 389547, -- Burning Devotion
@@ -635,7 +631,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
             childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
             nodeID = 64136,
             threshold = 15,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
                     -- adaptive
@@ -739,7 +734,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
             childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
             nodeID = 64136,
             threshold = 40,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
                     -- adaptive
@@ -868,7 +862,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
         ADAPTIVE_2 = {
             nodeID = 64135,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
@@ -930,7 +923,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
         ARTISTRY_2 = {
             nodeID = 64134,
             threshold = 5,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
@@ -1007,7 +999,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
         MAGICAL_REINFORCEMENT_3 = {
             nodeID = 64133,
             threshold = 10,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
@@ -1100,7 +1091,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
             childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
             nodeID = 68402,
             threshold = 15,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
                     -- draconic
@@ -1208,7 +1198,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
             childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
             nodeID = 68402,
             threshold = 40,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
                     -- draconic
@@ -1406,7 +1395,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
         PRIMAL_EXTRACTION_2 = {
             nodeID = 68400,
             threshold = 5,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
@@ -1462,7 +1450,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
         PRIMAL_EXTRACTION_4 = {
             nodeID = 68400,
             threshold = 25,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
@@ -1518,7 +1505,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
         PRIMAL_EXTRACTION_6 = {
             nodeID = 68400,
             threshold = 35,
-            inspiration = 10,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
@@ -1638,7 +1624,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
         RODS_AND_WANDS_5 = {
             nodeID = 68444,
             threshold = 35,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RODS_AND_WANDS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.RODS,
@@ -1683,7 +1668,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
         ILLUSORY_GOODS_2 = {
             nodeID = 68443,
             threshold = 0,
-            inspiration = 5,
             idMapping = {
                 [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.ILLUSORY_GOODS] = {
                     CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSIONS,
@@ -1730,13 +1714,11 @@ function CraftSim.ENCHANTING_DATA:GetData()
         },
         INSPIRED_DEVOTION_1 = {
             nodeID = 68441,
-            equalsInspiration = true,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRED_DEVOTION_2 = {
             nodeID = 68441,
             threshold = 0,
-            inspirationBonusSkillFactor = 0.05,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRED_DEVOTION_3 = {
@@ -1764,7 +1746,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
         INSPIRED_DEVOTION_4 = {
             nodeID = 68441,
             threshold = 10,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRED_DEVOTION_5 = {
@@ -1792,13 +1773,11 @@ function CraftSim.ENCHANTING_DATA:GetData()
         INSPIRED_DEVOTION_6 = {
             nodeID = 68441,
             threshold = 20,
-            inspirationBonusSkillFactor = 0.10,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         INSPIRED_DEVOTION_7 = {
             nodeID = 68441,
             threshold = 25,
-            inspiration = 10,
             exceptionRecipeIDs = {
                 -- Ring Devotions
                 389292, -- Crit
@@ -1820,7 +1799,6 @@ function CraftSim.ENCHANTING_DATA:GetData()
         INSPIRED_DEVOTION_8 = {
             nodeID = 68441,
             threshold = 30,
-            inspirationBonusSkillFactor = 0.25,
             idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
         },
         RESOURCEFUL_WRIT_1 = {
