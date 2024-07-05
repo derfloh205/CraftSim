@@ -746,7 +746,8 @@ function CraftSim.INIT:TriggerRecipeOperationInfoLoadForProfession(professionRec
 
 	CraftSim.DEBUG:StartProfiling("FORCE_RECIPE_OPERATION_INFOS")
 	for _, recipeID in ipairs(professionRecipeIDs) do
-		C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {})
+		local concentrating = false
+		C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, nil, concentrating)
 	end
 
 	CraftSim.DEBUG:StopProfiling("FORCE_RECIPE_OPERATION_INFOS")

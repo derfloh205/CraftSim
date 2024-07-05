@@ -194,9 +194,10 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID,
             maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID)
     else
-        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
+            self.recipeData.concentrating)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, maxQualityReagentsCraftingTbl,
-            self.recipeData.allocationItemGUID)
+            self.recipeData.allocationItemGUID, self.recipeData.concentrating)
     end
 
     if baseOperationInfo and operationInfoWithReagents then
@@ -232,9 +233,10 @@ function CraftSim.ReagentData:GetSkillFromRequiredReagents()
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, requiredTbl,
             self.recipeData.orderData.orderID)
     else
-        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
+            self.recipeData.concentrating)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, requiredTbl,
-            self.recipeData.allocationItemGUID)
+            self.recipeData.allocationItemGUID, self.recipeData.concentrating)
     end
 
     if baseOperationInfo and operationInfoWithReagents then
@@ -338,7 +340,8 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     local hasVellumIfneeded = true
 
     if self.recipeData.isEnchantingRecipe then
-        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST.ENCHANTING_VELLUM_ID)
+        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST
+            .ENCHANTING_VELLUM_ID)
         hasVellumIfneeded = itemCount >= multiplier
     end
 
@@ -375,7 +378,8 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
 
     local vellumMinimumFit = math.huge
     if self.recipeData.isEnchantingRecipe then
-        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST.ENCHANTING_VELLUM_ID)
+        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST
+            .ENCHANTING_VELLUM_ID)
         vellumMinimumFit = itemCount
         print("minimum vellum fit: " .. tostring(vellumMinimumFit))
     end

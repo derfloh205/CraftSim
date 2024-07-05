@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 CraftSim.REAGENT_DATA = {
+    -- Dragonflight
     [191476] = { name = "Draconic Vial", weight = 11 },
     [191475] = { name = "Draconic Vial", weight = 11 },
     [191474] = { name = "Draconic Vial", weight = 11 },
