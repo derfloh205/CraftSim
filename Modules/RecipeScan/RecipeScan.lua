@@ -205,7 +205,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
             return false
         end
     end
-    printF("Is not expansion: Exclude")
+    printF("Is not expansion: Exclude (ExpacID: " .. tostring(expansionID) .. ")")
     return false
 end
 
@@ -215,7 +215,9 @@ function CraftSim.RECIPE_SCAN:GetScanRecipeInfo(row)
     local playerCrafterProfessionUID = CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID()
     -- if its the currently open profession we can just take it directly
     if row.crafterProfessionUID == playerCrafterProfessionUID then
-        return GUTIL:Map(C_TradeSkillUI.GetAllRecipeIDs(), function(recipeID)
+        local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs()
+        printF("Total RecipeIDs: " .. #recipeIDs)
+        return GUTIL:Map(recipeIDs, function(recipeID)
             local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
             if CraftSim.RECIPE_SCAN.FilterRecipeInfo(row.crafterUID, recipeInfo) then
                 return recipeInfo
