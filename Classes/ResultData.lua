@@ -62,9 +62,11 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
             table.insert(self.itemsByQuality, Item:CreateFromItemLink(itemLink))
         end
     else
+        print("fetching quality ids itemids:", false, true)
         local itemIDs = CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeData.recipeID,
             craftingReagentInfoTbl, recipeData.allocationItemGUID)
         for _, itemID in pairs(itemIDs) do
+            print("itemID: " .. itemID)
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
     end
