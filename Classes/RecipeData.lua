@@ -106,10 +106,15 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.relativeProfitCached = nil
     self.isQuestRecipe = tContains(CraftSim.CONST.QUEST_RECIPE_IDS, recipeID)
 
+    self.isGear = false
+
     if self.recipeInfo.hyperlink then
-        local subclassID = select(7, C_Item.GetItemInfoInstant(self.recipeInfo.hyperlink))
+        local itemInfoInstant = { C_Item.GetItemInfoInstant(self.recipeInfo.hyperlink) }
+        local subclassID = itemInfoInstant[7]
         ---@type number?
         self.subtypeID = subclassID
+        -- 4th return value is item equip slot, so if its of non type its not equipable, otherwise its gear
+        self.isGear = itemInfoInstant[4] ~= CraftSim.CONST.INVENTORY_TYPE_NON_EQUIP_IGNORE
     end
 
     self.isOldWorldRecipe = not self:IsDragonflightRecipe()
@@ -131,7 +136,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@type string?
     self.allocationItemGUID = nil
     self.maxQuality = self.recipeInfo.maxQuality
-    self.isGear = self.recipeInfo.hasSingleItemOutput and self.recipeInfo.qualityIlvlBonuses ~= nil
+    --self.isGear = self.recipeInfo.hasSingleItemOutput and self.recipeInfo.qualityIlvlBonuses ~= nil
 
     self.supportsMulticraft = false
     self.supportsResourcefulness = false

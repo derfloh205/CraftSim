@@ -62,14 +62,16 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
             table.insert(self.itemsByQuality, Item:CreateFromItemLink(itemLink))
         end
     else
+        print("fetching quality ids itemids:", false, true)
         local itemIDs = CraftSim.UTIL:GetDifferentQualityIDsByCraftingReagentTbl(recipeData.recipeID,
             craftingReagentInfoTbl, recipeData.allocationItemGUID)
         for _, itemID in pairs(itemIDs) do
+            print("itemID: " .. itemID)
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
     end
 
-    if not recipeData.isGear and self.itemsByQuality[1] and self.itemsByQuality[2] then
+    if not recipeData.isGear and self.itemsByQuality[1] and self.itemsByQuality[2] and not recipeData.supportsQualities then
         if self.itemsByQuality[1]:GetItemID() == self.itemsByQuality[2]:GetItemID() then
             self.itemsByQuality = { self.itemsByQuality[1] } -- force one of an item (illustrious insight e.g. has always 3 items in it for whatever reason)
         end

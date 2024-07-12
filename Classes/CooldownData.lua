@@ -37,12 +37,12 @@ function CraftSim.CooldownData:Update()
     self.maxCharges = maxCharges or 0
 
     if self.isDayCooldown then
-        local _, maxCooldown = select(2, GetSpellCooldown(self.recipeID))
+        local _, maxCooldown = select(2, C_Spell.GetSpellCooldown(self.recipeID))
         self.maxCooldown = maxCooldown -- for day cooldowns only (cd reductions inclusive)
         local elapsedTimeSinceCooldownStart = (self.maxCooldown - currentCooldown)
         self.startTime = math.max(GetServerTime() - elapsedTimeSinceCooldownStart, 0)
     else
-        self.cooldownPerCharge = select(4, GetSpellCharges(self.recipeID))
+        self.cooldownPerCharge = select(4, C_Spell.GetSpellCharges(self.recipeID))
         if self.currentCharges < self.maxCharges then
             local elapsedTimeSinceCooldownStart = (self.cooldownPerCharge - currentCooldown)
             self.startTimeCurrentCharge = GetServerTime() - elapsedTimeSinceCooldownStart

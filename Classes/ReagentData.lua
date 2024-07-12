@@ -206,6 +206,10 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
 
         local maxSkill = skillWithReagents - baseSkill
 
+        if maxSkill == 0 then
+            -- division by zero not possible so just configure that reagents do not influence skill at all by returning a factor of 0
+            return 0
+        end
         local maxReagentIncreaseFactor = self.recipeData.baseProfessionStats.recipeDifficulty.value / maxSkill
 
         print("ReagentData: maxReagentIncreaseFactor: " .. tostring(maxReagentIncreaseFactor))
