@@ -136,6 +136,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@type string?
     self.allocationItemGUID = nil
     self.maxQuality = self.recipeInfo.maxQuality
+    --self.isGear = self.recipeInfo.hasSingleItemOutput and self.recipeInfo.qualityIlvlBonuses ~= nil
 
     self.supportsMulticraft = false
     self.supportsResourcefulness = false

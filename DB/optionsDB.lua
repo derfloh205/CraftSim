@@ -208,10 +208,10 @@ function CraftSim.DB.OPTIONS:Migrate()
     end
 
     if CraftSimDB.optionsDB.version == 2 then
-        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.MODULE_CUSTOMER_SERVICE] = nil
-        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_SERVICE_WHISPER_FORMAT] = nil
-        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_SERVICE_ALLOW_LIVE_PREVIEW] = nil
-        CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS] = nil
+        CraftSimDB.optionsDB.data["MODULE_CUSTOMER_SERVICE"] = nil
+        CraftSimDB.optionsDB.data["CUSTOMER_SERVICE_WHISPER_FORMAT"] = nil
+        CraftSimDB.optionsDB.data["CUSTOMER_SERVICE_ALLOW_LIVE_PREVIEW"] = nil
+        CraftSimDB.optionsDB.data["CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS"] = nil
 
         CraftSimDB.optionsDB.version = 3
     end
