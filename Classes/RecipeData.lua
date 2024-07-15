@@ -136,7 +136,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@type string?
     self.allocationItemGUID = nil
     self.maxQuality = self.recipeInfo.maxQuality
-    --self.isGear = self.recipeInfo.hasSingleItemOutput and self.recipeInfo.qualityIlvlBonuses ~= nil
 
     self.supportsMulticraft = false
     self.supportsResourcefulness = false
@@ -481,6 +480,7 @@ end
 function CraftSim.RecipeData:Copy()
     ---@type CraftSim.RecipeData
     local copy = CraftSim.RecipeData(self.recipeID, self.isRecraft, self.orderData ~= nil, self.crafterData)
+    copy.concentrating = self.concentrating
     copy.reagentData = self.reagentData:Copy(copy)
     copy.professionGearSet = self.professionGearSet:Copy()
     copy.professionStats = self.professionStats:Copy()
@@ -611,6 +611,7 @@ function CraftSim.RecipeData:GetJSON(indent)
     jb:Add("recipeID", self.recipeID)
     jb:Add("categoryID", self.categoryID)
     jb:Add("subtypeID", self.subtypeID)
+    jb:Add("concentrating", self.concentrating)
     jb:Add("learned", self.learned)
     jb:Add("numSkillUps", self.numSkillUps)
     jb:Add("recipeIcon", self.recipeIcon)

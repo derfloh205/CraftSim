@@ -190,10 +190,20 @@ function CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, craftResult)
 
     local resultValue = 0
     for _, craftResultItem in pairs(craftResult.craftResultItems) do
+        local itemLink = craftResultItem.item:GetItemLink()
+        local qualityID = GUTIL:GetQualityIDFromLink(itemLink)
         local quantity = craftResultItem.quantity + craftResultItem.quantityMulticraft
-        resultValue = resultValue +
-            (CraftSim.PRICEDATA:GetMinBuyoutByItemLink(craftResultItem.item:GetItemLink()) or 0) * quantity
+        local priceOverrideData = CraftSim.DB.PRICE_OVERRIDE:GetResultOverride(recipeData.recipeID, qualityID)
+        local resultItemPrice = (priceOverrideData and priceOverrideData.price) or
+            CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink) or 0
+        resultValue = resultValue + resultItemPrice * quantity
+        print("resultitem: " .. (itemLink or 0))
+        print("result value: " .. GUTIL:FormatMoney(resultValue, true))
+        if priceOverrideData then
+            print("(result price overridden)")
+        end
     end
+
 
     local craftProfit = (resultValue * CraftSim.CONST.AUCTION_HOUSE_CUT) - (craftingCosts - savedCosts)
 
