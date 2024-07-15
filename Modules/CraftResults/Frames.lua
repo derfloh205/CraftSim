@@ -183,11 +183,9 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
         showBorder = true,
         columnOptions = {
             {
-                label = "Result",
                 width = 150,
             },
             {
-                label = "Dist",
                 width = 50,
             }
         },
@@ -211,9 +209,53 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
         selectionOptions = { noSelectionColor = true },
     }
 
+    GGUI.Text {
+        parent = content,
+        anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
+        text = "Result Distribution"
+    }
+
     GGUI.HelpIcon {
         parent = content, anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPRIGHT", offsetX = -5, offsetY = -4,
         text = "Relative distribution of crafted item results.\n(Ignoring Multicraft Quantities)"
+    }
+
+    content.multicraftStatisticsList = GGUI.FrameList {
+        anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 30, } },
+        parent = content,
+        sizeY = 250,
+        showBorder = true,
+        columnOptions = {
+            {
+                width = 150,
+            },
+            {
+                width = 50,
+            }
+        },
+        rowConstructor = function(columns, row)
+            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+            local statisticsColumn = columns[1]
+            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.VALUE_COLUMN : Frame
+            local valueColumn = columns[2]
+
+            statisticsColumn.text = GGUI.Text {
+                parent = statisticsColumn,
+                anchorPoints = { { anchorParent = statisticsColumn, anchorA = "RIGHT", anchorB = "RIGHT", offsetX = -5 } },
+                justifyOptions = { type = "H", align = "RIGHT" }
+            }
+
+            valueColumn.text = GGUI.Text {
+                parent = valueColumn,
+                anchorPoints = { { anchorParent = valueColumn } },
+            }
+        end,
+    }
+
+    GGUI.Text {
+        parent = content,
+        anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
+        text = "Multicraft"
     }
 end
 
@@ -306,8 +348,6 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     print("Do update cause its the shown recipe")
 
     local craftResultFrame = CraftSim.CRAFT_RESULTS.frame
-    local craftProfitsContent = craftResultFrame.content.craftProfitsTab
-        .content --[[@as CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT]]
 
     local craftSessionData = CraftSim.CRAFT_RESULTS.currentSessionData
     if not craftSessionData then
@@ -325,114 +365,152 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
         table.insert(craftSessionData.craftRecipeData, craftRecipeData)
     else
         print("Reuse recipedata")
-        -- print(craftRecipeData)
     end
 
-    -- statistics
-    local statisticsText = ""
-    local expectedAverageProfit = CraftSim.GUTIL:FormatMoney(0, true)
-    local actualAverageProfit = CraftSim.GUTIL:FormatMoney(0, true)
-    if craftRecipeData.numCrafts > 0 then
-        expectedAverageProfit = CraftSim.GUTIL:FormatMoney(
-            (craftRecipeData.totalExpectedProfit / craftRecipeData.numCrafts) or 0, true)
-        actualAverageProfit = CraftSim.GUTIL:FormatMoney((craftRecipeData.totalProfit / craftRecipeData.numCrafts) or 0,
-            true)
-    end
-    local actualProfit = CraftSim.GUTIL:FormatMoney(craftRecipeData.totalProfit, true)
-    statisticsText = statisticsText ..
-        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_1) .. craftRecipeData.numCrafts .. "\n\n"
-
-    if CraftSim.INIT.currentRecipeData.supportsCraftingStats then
-        statisticsText = statisticsText ..
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_2) .. expectedAverageProfit .. "\n"
-        statisticsText = statisticsText ..
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_3) .. actualAverageProfit .. "\n"
-        statisticsText = statisticsText ..
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_4) .. actualProfit .. "\n\n"
-        statisticsText = statisticsText ..
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_5) .. "\n\n"
-
-        if CraftSim.INIT.currentRecipeData.supportsMulticraft then
-            local expectedProcs = tonumber(CraftSim.GUTIL:Round(
-                    CraftSim.INIT.currentRecipeData.professionStats.multicraft:GetPercent(true) *
-                    craftRecipeData.numCrafts, 1)) or
-                0
-            if craftRecipeData.numMulticraft >= expectedProcs then
-                statisticsText = statisticsText ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7) ..
-                    CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.GREEN) ..
-                    " / " .. expectedProcs .. "\n"
-            else
-                statisticsText = statisticsText ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7) ..
-                    CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.RED) ..
-                    " / " .. expectedProcs .. "\n"
-            end
-            local averageExtraItems = 0
-            local expectedAdditionalItems = 0
-            local multicraftExtraItemsFactor = CraftSim.INIT.currentRecipeData.professionStats.multicraft:GetExtraFactor(true)
-
-            local maxExtraItems = (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT") * CraftSim.INIT.currentRecipeData.baseItemAmount) *
-                multicraftExtraItemsFactor
-            expectedAdditionalItems = tonumber(CraftSim.GUTIL:Round((1 + maxExtraItems) / 2, 2)) or 0
-
-            averageExtraItems = tonumber(CraftSim.GUTIL:Round(
-                (craftRecipeData.numMulticraft > 0 and (craftRecipeData.numMulticraftExtraItems / craftRecipeData.numMulticraft)) or
-                0, 2)) or 0
-            if averageExtraItems == 0 then
-                statisticsText = statisticsText ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8) ..
-                    averageExtraItems .. " / " .. expectedAdditionalItems .. "\n"
-            elseif averageExtraItems >= expectedAdditionalItems then
-                statisticsText = statisticsText ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8) ..
-                    CraftSim.GUTIL:ColorizeText(averageExtraItems, CraftSim.GUTIL.COLORS.GREEN) ..
-                    " / " .. expectedAdditionalItems .. "\n"
-            else
-                statisticsText = statisticsText ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8) ..
-                    CraftSim.GUTIL:ColorizeText(averageExtraItems, CraftSim.GUTIL.COLORS.RED) ..
-                    " / " .. expectedAdditionalItems .. "\n"
-            end
+    -- Craft Profits
+    do
+        local craftProfitsContent = craftResultFrame.content.craftProfitsTab
+            .content --[[@as CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT]]
+        local statisticsText = ""
+        local expectedAverageProfit = CraftSim.GUTIL:FormatMoney(0, true)
+        local actualAverageProfit = CraftSim.GUTIL:FormatMoney(0, true)
+        if craftRecipeData.numCrafts > 0 then
+            expectedAverageProfit = CraftSim.GUTIL:FormatMoney(
+                (craftRecipeData.totalExpectedProfit / craftRecipeData.numCrafts) or 0, true)
+            actualAverageProfit = CraftSim.GUTIL:FormatMoney(
+                (craftRecipeData.totalProfit / craftRecipeData.numCrafts) or 0,
+                true)
         end
-        if CraftSim.INIT.currentRecipeData.supportsResourcefulness then
-            local averageSavedCosts = 0
-            local expectedAverageSavedCosts = 0
-            if craftRecipeData.numCrafts > 0 then
-                averageSavedCosts = CraftSim.GUTIL:Round((craftRecipeData.totalSavedCosts / craftRecipeData.numCrafts) /
-                        10000) *
-                    10000 --roundToGold
-                expectedAverageSavedCosts = CraftSim.GUTIL:Round((craftRecipeData.totalExpectedSavedCosts / craftRecipeData.numCrafts) /
-                    10000) * 10000
-            end
-
-            if averageSavedCosts == 0 then
-                statisticsText = statisticsText ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9) ..
-                    CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN)
-            elseif averageSavedCosts >= expectedAverageSavedCosts then
-                statisticsText = statisticsText ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9) ..
-                    CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
-                    "\n" ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10) ..
-                    CraftSim.GUTIL:ColorizeText(CraftSim.GUTIL:FormatMoney(averageSavedCosts),
-                        CraftSim.GUTIL.COLORS.GREEN) .. " / " .. CraftSim.GUTIL:FormatMoney(expectedAverageSavedCosts)
-            else
-                statisticsText = statisticsText ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9) ..
-                    CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
-                    "\n" ..
-                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10) ..
-                    CraftSim.GUTIL:ColorizeText(CraftSim.GUTIL:FormatMoney(averageSavedCosts), CraftSim.GUTIL.COLORS.RED) ..
-                    " / " .. CraftSim.GUTIL:FormatMoney(expectedAverageSavedCosts)
-            end
-        end
-    else
+        local actualProfit = CraftSim.GUTIL:FormatMoney(craftRecipeData.totalProfit, true)
         statisticsText = statisticsText ..
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_11) .. actualProfit .. "\n\n"
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_1) .. craftRecipeData.numCrafts .. "\n\n"
+
+        if CraftSim.INIT.currentRecipeData.supportsCraftingStats then
+            statisticsText = statisticsText ..
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_2) .. expectedAverageProfit .. "\n"
+            statisticsText = statisticsText ..
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_3) .. actualAverageProfit .. "\n"
+            statisticsText = statisticsText ..
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_4) .. actualProfit .. "\n\n"
+            statisticsText = statisticsText ..
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_5) .. "\n\n"
+
+            if CraftSim.INIT.currentRecipeData.supportsMulticraft then
+                local expectedProcs = tonumber(CraftSim.GUTIL:Round(
+                        CraftSim.INIT.currentRecipeData.professionStats.multicraft:GetPercent(true) *
+                        craftRecipeData.numCrafts, 1)) or
+                    0
+                if craftRecipeData.numMulticraft >= expectedProcs then
+                    statisticsText = statisticsText ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7) ..
+                        CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.GREEN) ..
+                        " / " .. expectedProcs .. "\n"
+                else
+                    statisticsText = statisticsText ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7) ..
+                        CraftSim.GUTIL:ColorizeText(craftRecipeData.numMulticraft, CraftSim.GUTIL.COLORS.RED) ..
+                        " / " .. expectedProcs .. "\n"
+                end
+                local averageExtraItems = 0
+                local expectedAdditionalItems = 0
+                local multicraftExtraItemsFactor = CraftSim.INIT.currentRecipeData.professionStats.multicraft
+                    :GetExtraFactor(true)
+
+                local maxExtraItems = (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT") * CraftSim.INIT.currentRecipeData.baseItemAmount) *
+                    multicraftExtraItemsFactor
+                expectedAdditionalItems = tonumber(CraftSim.GUTIL:Round((1 + maxExtraItems) / 2, 2)) or 0
+
+                averageExtraItems = tonumber(CraftSim.GUTIL:Round(
+                    (craftRecipeData.numMulticraft > 0 and (craftRecipeData.numMulticraftExtraItems / craftRecipeData.numMulticraft)) or
+                    0, 2)) or 0
+                if averageExtraItems == 0 then
+                    statisticsText = statisticsText ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8) ..
+                        averageExtraItems .. " / " .. expectedAdditionalItems .. "\n"
+                elseif averageExtraItems >= expectedAdditionalItems then
+                    statisticsText = statisticsText ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8) ..
+                        CraftSim.GUTIL:ColorizeText(averageExtraItems, CraftSim.GUTIL.COLORS.GREEN) ..
+                        " / " .. expectedAdditionalItems .. "\n"
+                else
+                    statisticsText = statisticsText ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8) ..
+                        CraftSim.GUTIL:ColorizeText(averageExtraItems, CraftSim.GUTIL.COLORS.RED) ..
+                        " / " .. expectedAdditionalItems .. "\n"
+                end
+            end
+            if CraftSim.INIT.currentRecipeData.supportsResourcefulness then
+                local averageSavedCosts = 0
+                local expectedAverageSavedCosts = 0
+                if craftRecipeData.numCrafts > 0 then
+                    averageSavedCosts = CraftSim.GUTIL:Round((craftRecipeData.totalSavedCosts / craftRecipeData.numCrafts) /
+                            10000) *
+                        10000 --roundToGold
+                    expectedAverageSavedCosts = CraftSim.GUTIL:Round((craftRecipeData.totalExpectedSavedCosts / craftRecipeData.numCrafts) /
+                        10000) * 10000
+                end
+
+                if averageSavedCosts == 0 then
+                    statisticsText = statisticsText ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9) ..
+                        CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN)
+                elseif averageSavedCosts >= expectedAverageSavedCosts then
+                    statisticsText = statisticsText ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9) ..
+                        CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
+                        "\n" ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10) ..
+                        CraftSim.GUTIL:ColorizeText(CraftSim.GUTIL:FormatMoney(averageSavedCosts),
+                            CraftSim.GUTIL.COLORS.GREEN) ..
+                        " / " .. CraftSim.GUTIL:FormatMoney(expectedAverageSavedCosts)
+                else
+                    statisticsText = statisticsText ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9) ..
+                        CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
+                        "\n" ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10) ..
+                        CraftSim.GUTIL:ColorizeText(CraftSim.GUTIL:FormatMoney(averageSavedCosts),
+                            CraftSim.GUTIL.COLORS.RED) ..
+                        " / " .. CraftSim.GUTIL:FormatMoney(expectedAverageSavedCosts)
+                end
+            end
+        else
+            statisticsText = statisticsText ..
+                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_11) .. actualProfit .. "\n\n"
+        end
+
+
+        craftProfitsContent.statisticsText:SetText(statisticsText)
     end
 
+    -- Statistics Tracker
+    do
+        local statisticsTrackerTabContent = craftResultFrame.content.statisticsTrackerTab
+            .content --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.CONTENT]]
+        local multicraftStatisticsList = statisticsTrackerTabContent.multicraftStatisticsList
 
-    craftProfitsContent.statisticsText:SetText(statisticsText)
+        multicraftStatisticsList:Remove()
+
+        if craftRecipeData.numCrafts > 0 then
+            local function addStatistic(label, value)
+                multicraftStatisticsList:Add(function(row, columns)
+                    ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+                    local statisticsColumn = columns[1]
+                    ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.VALUE_COLUMN : Frame
+                    local valueColumn = columns[2]
+
+                    statisticsColumn.text:SetText(label)
+                    valueColumn.text:SetText(value)
+                end)
+            end
+
+            local multicraftDistribution = GUTIL:Round(
+                (craftRecipeData.numMulticraft / (craftRecipeData.numCrafts / 100)) / 100, 2)
+            addStatistic("Distribution:", multicraftDistribution)
+            addStatistic("Average Additional Yield:", craftRecipeData.numMulticraftExtraItems / craftRecipeData
+                .numCrafts)
+
+            multicraftStatisticsList:UpdateDisplay()
+        end
+    end
 end
