@@ -176,14 +176,19 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
     ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.CONTENT : Frame
     local content = statisticsTrackerTab.content
 
+    content.recipeHeader = GGUI.Text {
+        parent = content, anchorPoints = { { anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -20 } },
+        scale = 2
+    }
+
     content.resultDistributionList = GGUI.FrameList {
-        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 10, offsetY = -50 } },
+        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 10, offsetY = -100 } },
         parent = content,
         sizeY = 250,
         showBorder = true,
         columnOptions = {
             {
-                width = 150,
+                width = 170,
             },
             {
                 width = 50,
@@ -198,7 +203,8 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
             resultColumn.text = GGUI.Text {
                 parent = resultColumn,
                 anchorPoints = { { anchorParent = resultColumn, anchorA = "LEFT", anchorB = "LEFT" } },
-                justifyOptions = { type = "H", align = "LEFT" }
+                justifyOptions = { type = "H", align = "LEFT" },
+                fixedWidth = 150,
             }
 
             distColumn.text = GGUI.Text {
@@ -227,10 +233,10 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
         showBorder = true,
         columnOptions = {
             {
-                width = 150,
+                width = 130,
             },
             {
-                width = 50,
+                width = 40,
             }
         },
         rowConstructor = function(columns, row)
@@ -256,6 +262,44 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
         parent = content,
         anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
         text = "Multicraft"
+    }
+
+    content.resourcefulnessStatisticsList = GGUI.FrameList {
+        anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 30, } },
+        parent = content,
+        sizeY = 250,
+        showBorder = true,
+        columnOptions = {
+            {
+                width = 130,
+            },
+            {
+                width = 40,
+            }
+        },
+        rowConstructor = function(columns, row)
+            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+            local statisticsColumn = columns[1]
+            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.VALUE_COLUMN : Frame
+            local valueColumn = columns[2]
+
+            statisticsColumn.text = GGUI.Text {
+                parent = statisticsColumn,
+                anchorPoints = { { anchorParent = statisticsColumn, anchorA = "RIGHT", anchorB = "RIGHT", offsetX = -5 } },
+                justifyOptions = { type = "H", align = "RIGHT" }
+            }
+
+            valueColumn.text = GGUI.Text {
+                parent = valueColumn,
+                anchorPoints = { { anchorParent = valueColumn } },
+            }
+        end,
+    }
+
+    GGUI.Text {
+        parent = content,
+        anchorPoints = { { anchorParent = content.resourcefulnessStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
+        text = "Resourcefulness"
     }
 end
 
@@ -296,43 +340,6 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
         end
 
         craftedItemsFrame.resultFeed:SetText(craftedItemsText .. savedReagentsText)
-    end
-
-    do
-        -- Statistics Tracker
-        local statisticsTrackerTabContent = craftResultFrame.content.statisticsTrackerTab
-            .content --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.CONTENT]]
-
-        local resultDistributionList = statisticsTrackerTabContent.resultDistributionList
-
-        resultDistributionList:Remove()
-
-        -- Ignore multicraft quantity on purpose
-
-        local totalItemCount = GUTIL:Fold(craftResultItems, 0, function(foldValue, nextElement)
-            return foldValue + nextElement.quantity
-        end)
-        local oncePercent = totalItemCount / 100
-
-        for _, craftResultItem in pairs(craftResultItems) do
-            resultDistributionList:Add(function(row, columns)
-                local resultColumn = columns
-                    [1] --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN]]
-                local distColumn = columns
-                    [2] --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN]]
-
-                resultColumn.text:SetText(craftResultItem.item:GetItemLink())
-                local itemDist = GUTIL:Round((craftResultItem.quantity / oncePercent) / 100, 2)
-                distColumn.text:SetText(itemDist) -- TODO: relative ratio instead of quantity or both? what about mc?
-                row.tooltipOptions = {
-                    itemID = craftResultItem.item:GetItemID(),
-                    anchor = "ANCHOR_RIGHT",
-                    owner = row.frameList.frame
-                }
-            end)
-        end
-
-        resultDistributionList:UpdateDisplay()
     end
 end
 
@@ -487,30 +494,102 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     do
         local statisticsTrackerTabContent = craftResultFrame.content.statisticsTrackerTab
             .content --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.CONTENT]]
-        local multicraftStatisticsList = statisticsTrackerTabContent.multicraftStatisticsList
 
-        multicraftStatisticsList:Remove()
+        statisticsTrackerTabContent.recipeHeader:SetText(CraftSim.INIT.currentRecipeData.recipeName .. " " ..
+            GUTIL:IconToText(CraftSim.INIT.currentRecipeData.recipeIcon, 15, 15))
 
-        if craftRecipeData.numCrafts > 0 then
-            local function addStatistic(label, value)
-                multicraftStatisticsList:Add(function(row, columns)
-                    ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.STATISTICS_COLUMN : Frame
-                    local statisticsColumn = columns[1]
-                    ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.VALUE_COLUMN : Frame
-                    local valueColumn = columns[2]
+        -- Result Distribution
+        do
+            local resultDistributionList = statisticsTrackerTabContent.resultDistributionList
 
-                    statisticsColumn.text:SetText(label)
-                    valueColumn.text:SetText(value)
+            resultDistributionList:Remove()
+
+            -- Ignore multicraft quantity on purpose
+
+            local totalItemCount = GUTIL:Fold(craftRecipeData.totalItems, 0, function(foldValue, nextElement)
+                return foldValue + nextElement.quantity
+            end)
+            local oncePercent = totalItemCount / 100
+
+            for _, craftResultItem in pairs(craftRecipeData.totalItems) do
+                resultDistributionList:Add(function(row, columns)
+                    local resultColumn = columns
+                        [1] --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN]]
+                    local distColumn = columns
+                        [2] --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN]]
+
+                    resultColumn.text:SetText(craftResultItem.item:GetItemLink())
+                    local itemDist = GUTIL:Round((craftResultItem.quantity / oncePercent) / 100, 2)
+                    distColumn.text:SetText(itemDist)
+                    row.tooltipOptions = {
+                        itemID = craftResultItem.item:GetItemID(),
+                        anchor = "ANCHOR_RIGHT",
+                        owner = row.frameList.frame
+                    }
                 end)
             end
 
-            local multicraftDistribution = GUTIL:Round(
-                (craftRecipeData.numMulticraft / (craftRecipeData.numCrafts / 100)) / 100, 2)
-            addStatistic("Distribution:", multicraftDistribution)
-            addStatistic("Average Additional Yield:", craftRecipeData.numMulticraftExtraItems / craftRecipeData
-                .numCrafts)
+            resultDistributionList:UpdateDisplay()
+        end
 
-            multicraftStatisticsList:UpdateDisplay()
+        -- Multicraft Statistics
+        do
+            local multicraftStatisticsList = statisticsTrackerTabContent.multicraftStatisticsList
+
+            multicraftStatisticsList:Remove()
+
+            if craftRecipeData.numCrafts > 0 then
+                local function addStatistic(label, value)
+                    multicraftStatisticsList:Add(function(row, columns)
+                        ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+                        local statisticsColumn = columns[1]
+                        ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.MULTICRAFT_STATISTICS_LIST.VALUE_COLUMN : Frame
+                        local valueColumn = columns[2]
+
+                        statisticsColumn.text:SetText(label)
+                        valueColumn.text:SetText(value)
+                    end)
+                end
+
+                local distribution = GUTIL:Round(
+                    (craftRecipeData.numMulticraft / (craftRecipeData.numCrafts / 100)) / 100, 2)
+                addStatistic("Distribution:", distribution)
+                local additionalYield = 0
+                if craftRecipeData.numMulticraft > 0 then
+                    additionalYield = GUTIL:Round(craftRecipeData.numMulticraftExtraItems / craftRecipeData
+                        .numMulticraft, 2)
+                end
+                addStatistic("Ø Additional Yield:", additionalYield)
+
+                multicraftStatisticsList:UpdateDisplay()
+            end
+        end
+
+        -- Resourcefulness Statistics
+        do
+            local resourcefulnessStatisticsList = statisticsTrackerTabContent.resourcefulnessStatisticsList
+
+            resourcefulnessStatisticsList:Remove()
+
+            if craftRecipeData.numCrafts > 0 then
+                local function addStatistic(label, value)
+                    resourcefulnessStatisticsList:Add(function(row, columns)
+                        ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+                        local statisticsColumn = columns[1]
+                        ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESOURCEFULNESS_STATISTICS_LIST.VALUE_COLUMN : Frame
+                        local valueColumn = columns[2]
+
+                        statisticsColumn.text:SetText(label)
+                        valueColumn.text:SetText(value)
+                    end)
+                end
+
+                local distribution = GUTIL:Round(
+                    (craftRecipeData.numResourcefulness / (craftRecipeData.numCrafts / 100)) / 100, 2)
+                addStatistic("Distribution:", distribution)
+
+                resourcefulnessStatisticsList:UpdateDisplay()
+            end
         end
     end
 end

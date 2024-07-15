@@ -36,7 +36,7 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 	self.item = Item:CreateFromItemLink(itemLink)
 
 	-- parse stats
-	local extractedStats = GetItemStats(itemLink)
+	local extractedStats = C_Item.GetItemStats(itemLink)
 
 	if not extractedStats then
 		print("Could not extract item stats: " .. tostring(itemLink))
