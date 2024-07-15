@@ -410,7 +410,6 @@ function CraftSim.INIT:PLAYER_LOGIN()
 end
 
 function CraftSim.INIT:HideAllModules(keepControlPanel)
-	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
 	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
@@ -436,7 +435,7 @@ function CraftSim.INIT:HideAllModules(keepControlPanel)
 	CraftSim.CRAFT_BUFFS.frame:Hide()
 	CraftSim.CRAFT_BUFFS.frameWO:Hide()
 	CraftSim.COOLDOWNS.frame:Hide()
-	craftResultsFrame:Hide()
+	CraftSim.CRAFT_RESULTS.frame:Hide()
 	customerHistoryFrame:Hide()
 	priceOverrideFrame:Hide()
 	priceOverrideFrameWO:Hide()
@@ -464,7 +463,6 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		return
 	end
 
-	local craftResultsFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
 	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
 	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
@@ -600,7 +598,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	CraftSim.FRAME:ToggleFrame(CraftSim.RECIPE_SCAN.frame, showRecipeScan)
 	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTQ.frame, showCraftQueue)
 	CraftSim.FRAME:ToggleFrame(CraftSim.EXPLANATIONS.frame, showExplanations)
-	CraftSim.FRAME:ToggleFrame(craftResultsFrame, showCraftResults)
+	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFT_RESULTS.frame, showCraftResults)
 	CraftSim.FRAME:ToggleFrame(customerHistoryFrame, showCustomerHistory)
 	CraftSim.FRAME:ToggleFrame(cooldownsFrame, showCooldowns)
 
