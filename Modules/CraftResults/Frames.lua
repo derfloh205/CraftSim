@@ -2,6 +2,7 @@
 local CraftSim = select(2, ...)
 
 local GGUI = CraftSim.GGUI
+local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.CRAFT_RESULTS
 CraftSim.CRAFT_RESULTS = CraftSim.CRAFT_RESULTS
@@ -12,7 +13,8 @@ CraftSim.CRAFT_RESULTS.FRAMES = {}
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
 
 function CraftSim.CRAFT_RESULTS.FRAMES:Init()
-    local frameNO_WO = GGUI.Frame({
+    ---@class CraftSim.CRAFT_RESULTS.FRAME : GGUI.Frame
+    local frame = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage,
         anchorParent = ProfessionsFrame.CraftingPage.CraftingOutputLog,
         anchorA = "TOPLEFT",
@@ -34,97 +36,262 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
         frameLevel = CraftSim.UTIL:NextFrameLevel()
     })
 
+    CraftSim.CRAFT_RESULTS.frame = frame
+
     local function createContent(frame)
-        frame.content.totalProfitAllTitle = CraftSim.FRAME:CreateText(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_SESSION_PROFIT), frame.content, frame.content,
-            "TOP", "TOP", 140, -60, nil, nil, { type = "H", value = "LEFT" })
-        frame.content.totalProfitAllValue = CraftSim.FRAME:CreateText(CraftSim.GUTIL:FormatMoney(0, true), frame.content,
-            frame.content.totalProfitAllTitle,
-            "TOPLEFT", "BOTTOMLEFT", 0, -5, nil, nil, { type = "H", value = "LEFT" })
+        local tabSizeX = 700
+        local tabSizeY = 450
 
-
-        frame.content.clearButton = GGUI.Button({
-            parent = frame.content,
-            anchorParent = frame.content.totalProfitAllTitle,
-            anchorA = "TOPLEFT",
-            anchorB = "BOTTOMLEFT",
-            sizeX = 15,
-            sizeY = 25,
-            adjustWidth = true,
-            offsetY = -40,
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_RESET_DATA),
-            clickCallback = function()
-                frame.content.scrollingMessageFrame:Clear()
-                frame.content.craftedItemsFrame.resultFeed:SetText("")
-                frame.content.totalProfitAllValue:SetText(CraftSim.GUTIL:FormatMoney(0, true))
-                CraftSim.CRAFT_RESULTS:ResetData()
-                CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
-            end
-        })
-
-        frame.content.exportButton = GGUI.Button({
-            parent = frame.content,
-            anchorParent = frame.content.clearButton.frame,
-            anchorA = "TOPLEFT",
-            anchorB = "BOTTOMLEFT",
-            sizeX = 25,
-            sizeY = 25,
-            offsetY = -10,
-            adjustWidth = true,
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_EXPORT_JSON),
-            clickCallback = function()
-                local json = CraftSim.CRAFT_RESULTS:ExportJSON()
-                CraftSim.UTIL:KethoEditBox_Show(json)
-            end
-        })
-
-
-        -- craft results
-
-        frame.content.craftsTitle = CraftSim.FRAME:CreateText(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG), frame.content, frame.content, "TOPLEFT",
-            "TOPLEFT",
-            155, -40)
-
-        frame.content.scrollingMessageFrame = CraftSim.FRAME:CreateScrollingMessageFrame(frame.content,
-            frame.content.craftsTitle,
-            "TOPLEFT", "BOTTOMLEFT", -125, -15, 30, 200, 140)
-        --
-
-        frame.content.scrollFrame2, frame.content.craftedItemsFrame = CraftSim.FRAME:CreateScrollFrame(frame.content,
-            -230, 20, -350, 20)
-
-        frame.content.craftedItemsTitle = CraftSim.FRAME:CreateText(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_CRAFTED_ITEMS), frame.content,
-            frame.content.scrollFrame2, "BOTTOM", "TOP", 0, 0)
-
-        frame.content.craftedItemsFrame.resultFeed = CraftSim.FRAME:CreateText("", frame.content.craftedItemsFrame,
-            frame.content.craftedItemsFrame,
-            "TOPLEFT", "TOPLEFT", 10, -10, nil, nil, { type = "H", value = "LEFT" })
-
-        frame.content.statisticsTitle = CraftSim.FRAME:CreateText(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_RECIPE_STATISTICS), frame.content,
-            frame.content.craftedItemsTitle, "LEFT", "RIGHT", 270, 0)
-        frame.content.statisticsText = CraftSim.FRAME:CreateText(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_NOTHING), frame.content,
-            frame.content.statisticsTitle,
-            "TOPLEFT", "BOTTOMLEFT", -70, -10, nil, nil, { type = "H", value = "LEFT" })
-        frame.content.statisticsText:SetWidth(300)
-
-        frame.content.disableCraftResultsCB = GGUI.Checkbox {
-            parent = frame.content, anchorParent = frame.content.exportButton.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-            offsetY = -10,
-            label = " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX),
-            tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX_TOOLTIP),
-            initialValue = CraftSim.DB.OPTIONS:Get("CRAFT_RESULTS_DISABLE"),
-            clickCallback = function(_, checked)
-                CraftSim.DB.OPTIONS:Save("CRAFT_RESULTS_DISABLE", checked)
-            end
+        ---@class CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB : GGUI.BlizzardTab
+        frame.content.craftProfitsTab = GGUI.BlizzardTab {
+            buttonOptions = {
+                label = "Craft Profits",
+                offsetY = -3,
+            },
+            parent = frame.content, anchorParent = frame.content, initialTab = true,
+            sizeX = tabSizeX, sizeY = tabSizeY,
+            top = true,
         }
+
+        self:InitCraftProfitsTab(frame.content.craftProfitsTab)
+
+        ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB : GGUI.BlizzardTab
+        frame.content.statisticsTrackerTab = GGUI.BlizzardTab {
+            buttonOptions = {
+                label = "Statistics Tracker",
+                anchorParent = frame.content.craftProfitsTab.button,
+                anchorA = "LEFT",
+                anchorB = "RIGHT",
+            },
+            parent = frame.content, anchorParent = frame.content,
+            sizeX = tabSizeX, sizeY = tabSizeY,
+            top = true,
+        }
+
+        self:InitStatisticsTrackerTab(frame.content.statisticsTrackerTab)
+
+        GGUI.BlizzardTabSystem { frame.content.craftProfitsTab, frame.content.statisticsTrackerTab }
     end
 
-    createContent(frameNO_WO)
-    GGUI:EnableHyperLinksForFrameAndChilds(frameNO_WO.content)
+    createContent(frame)
+    GGUI:EnableHyperLinksForFrameAndChilds(frame.content)
+end
+
+---@param craftProfitsTab CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB
+function CraftSim.CRAFT_RESULTS.FRAMES:InitCraftProfitsTab(craftProfitsTab)
+    ---@class CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB
+    craftProfitsTab = craftProfitsTab
+    ---@class CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT : Frame
+    local content = craftProfitsTab.content
+
+    content.totalProfitAllTitle = CraftSim.FRAME:CreateText(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_SESSION_PROFIT), content, content,
+        "TOP", "TOP", 140, -60, nil, nil, { type = "H", value = "LEFT" })
+    content.totalProfitAllValue = CraftSim.FRAME:CreateText(CraftSim.GUTIL:FormatMoney(0, true), content,
+        content.totalProfitAllTitle,
+        "TOPLEFT", "BOTTOMLEFT", 0, -5, nil, nil, { type = "H", value = "LEFT" })
+
+
+    content.clearButton = GGUI.Button({
+        parent = content,
+        anchorParent = content.totalProfitAllTitle,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        sizeX = 15,
+        sizeY = 25,
+        adjustWidth = true,
+        offsetY = -40,
+        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_RESET_DATA),
+        clickCallback = function()
+            content.scrollingMessageFrame:Clear()
+            content.craftedItemsFrame.resultFeed:SetText("")
+            content.totalProfitAllValue:SetText(CraftSim.GUTIL:FormatMoney(0, true))
+            CraftSim.CRAFT_RESULTS:ResetData()
+            CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
+        end
+    })
+
+    content.exportButton = GGUI.Button({
+        parent = content,
+        anchorParent = content.clearButton.frame,
+        anchorA = "TOPLEFT",
+        anchorB = "BOTTOMLEFT",
+        sizeX = 25,
+        sizeY = 25,
+        offsetY = -10,
+        adjustWidth = true,
+        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_EXPORT_JSON),
+        clickCallback = function()
+            local json = CraftSim.CRAFT_RESULTS:ExportJSON()
+            CraftSim.UTIL:KethoEditBox_Show(json)
+        end
+    })
+
+
+    -- craft results
+    content.craftsTitle = CraftSim.FRAME:CreateText(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG), content, content, "TOPLEFT",
+        "TOPLEFT",
+        155, -40)
+
+    content.scrollingMessageFrame = CraftSim.FRAME:CreateScrollingMessageFrame(content,
+        content.craftsTitle,
+        "TOPLEFT", "BOTTOMLEFT", -125, -15, 30, 200, 140)
+    --
+
+    content.scrollFrame2, content.craftedItemsFrame = CraftSim.FRAME:CreateScrollFrame(content,
+        -230, 20, -350, 20)
+
+    content.craftedItemsTitle = CraftSim.FRAME:CreateText(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_CRAFTED_ITEMS), content,
+        content.scrollFrame2, "BOTTOM", "TOP", 0, 0)
+
+    content.craftedItemsFrame.resultFeed = CraftSim.FRAME:CreateText("", content.craftedItemsFrame,
+        content.craftedItemsFrame,
+        "TOPLEFT", "TOPLEFT", 10, -10, nil, nil, { type = "H", value = "LEFT" })
+
+    content.statisticsTitle = CraftSim.FRAME:CreateText(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_RECIPE_STATISTICS), content,
+        content.craftedItemsTitle, "LEFT", "RIGHT", 270, 0)
+    content.statisticsText = CraftSim.FRAME:CreateText(
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_NOTHING), content,
+        content.statisticsTitle,
+        "TOPLEFT", "BOTTOMLEFT", -70, -10, nil, nil, { type = "H", value = "LEFT" })
+    content.statisticsText:SetWidth(300)
+
+    content.disableCraftResultsCB = GGUI.Checkbox {
+        parent = content, anchorParent = content.exportButton.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        offsetY = -10,
+        label = " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX),
+        tooltip = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX_TOOLTIP),
+        initialValue = CraftSim.DB.OPTIONS:Get("CRAFT_RESULTS_DISABLE"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("CRAFT_RESULTS_DISABLE", checked)
+        end
+    }
+end
+
+---@param statisticsTrackerTab CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB
+function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTrackerTab)
+    ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.CONTENT : Frame
+    local content = statisticsTrackerTab.content
+
+    content.resultDistributionList = GGUI.FrameList {
+        anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 10, offsetY = -50 } },
+        parent = content,
+        sizeY = 250,
+        showBorder = true,
+        columnOptions = {
+            {
+                label = "Result",
+                width = 150,
+            },
+            {
+                label = "Dist",
+                width = 50,
+            }
+        },
+        rowConstructor = function(columns, row)
+            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN : Frame
+            local resultColumn = columns[1]
+            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN : Frame
+            local distColumn = columns[2]
+
+            resultColumn.text = GGUI.Text {
+                parent = resultColumn,
+                anchorPoints = { { anchorParent = resultColumn, anchorA = "LEFT", anchorB = "LEFT" } },
+                justifyOptions = { type = "H", align = "LEFT" }
+            }
+
+            distColumn.text = GGUI.Text {
+                parent = distColumn,
+                anchorPoints = { { anchorParent = distColumn } },
+            }
+        end,
+        selectionOptions = { noSelectionColor = true },
+    }
+
+    GGUI.HelpIcon {
+        parent = content, anchorParent = content.resultDistributionList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPRIGHT", offsetX = -5, offsetY = -4,
+        text = "Relative distribution of crafted item results.\n(Ignoring Multicraft Quantities)"
+    }
+end
+
+function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
+    local craftResultFrame = CraftSim.CRAFT_RESULTS.frame
+
+    -- total items
+    local craftResultItems = CraftSim.CRAFT_RESULTS.currentSessionData.totalItems
+
+    -- CraftProfits
+    do
+        local craftProfitsTabContent = craftResultFrame.content.craftProfitsTab.content
+        local craftedItemsFrame = craftProfitsTabContent.craftedItemsFrame
+
+        -- sort craftedItems by rareness
+        local sortedCraftResultItems = CraftSim.GUTIL:Sort(craftResultItems, function(a, b)
+            local rarityA = a.item:GetItemQuality()
+            local rarityB = b.item:GetItemQuality()
+            if rarityA and rarityB then
+                return a.item:GetItemQuality() > b.item:GetItemQuality()
+            end
+        end)
+
+        local craftedItemsText = ""
+        for _, craftResultItem in pairs(sortedCraftResultItems) do
+            craftedItemsText = craftedItemsText ..
+                craftResultItem.quantity .. " x " .. craftResultItem.item:GetItemLink() .. "\n"
+        end
+
+        -- add saved reagents
+        local savedReagentsText = ""
+        if #CraftSim.CRAFT_RESULTS.currentSessionData.totalSavedReagents > 0 then
+            savedReagentsText = "\n" .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_SAVED_REAGENTS) .. "\n"
+            for _, savedReagent in pairs(CraftSim.CRAFT_RESULTS.currentSessionData.totalSavedReagents) do
+                savedReagentsText = savedReagentsText ..
+                    (savedReagent.quantity or 1) .. " x " .. (savedReagent.item:GetItemLink() or "") .. "\n"
+            end
+        end
+
+        craftedItemsFrame.resultFeed:SetText(craftedItemsText .. savedReagentsText)
+    end
+
+    do
+        -- Statistics Tracker
+        local statisticsTrackerTabContent = craftResultFrame.content.statisticsTrackerTab
+            .content --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.CONTENT]]
+
+        local resultDistributionList = statisticsTrackerTabContent.resultDistributionList
+
+        resultDistributionList:Remove()
+
+        -- Ignore multicraft quantity on purpose
+
+        local totalItemCount = GUTIL:Fold(craftResultItems, 0, function(foldValue, nextElement)
+            return foldValue + nextElement.quantity
+        end)
+        local oncePercent = totalItemCount / 100
+
+        for _, craftResultItem in pairs(craftResultItems) do
+            resultDistributionList:Add(function(row, columns)
+                local resultColumn = columns
+                    [1] --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.RESULT_COLUMN]]
+                local distColumn = columns
+                    [2] --[[@as CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.RESULT_DISTRIBUTION_LIST.DIST_COLUMN]]
+
+                resultColumn.text:SetText(craftResultItem.item:GetItemLink())
+                local itemDist = GUTIL:Round((craftResultItem.quantity / oncePercent) / 100, 2)
+                distColumn.text:SetText(itemDist) -- TODO: relative ratio instead of quantity or both? what about mc?
+                row.tooltipOptions = {
+                    itemID = craftResultItem.item:GetItemID(),
+                    anchor = "ANCHOR_RIGHT",
+                    owner = row.frameList.frame
+                }
+            end)
+        end
+
+        resultDistributionList:UpdateDisplay()
+    end
 end
 
 function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
@@ -138,7 +305,9 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     end
     print("Do update cause its the shown recipe")
 
-    local craftResultFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.CRAFT_RESULTS.frame
+    local craftProfitsContent = craftResultFrame.content.craftProfitsTab
+        .content --[[@as CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT]]
 
     local craftSessionData = CraftSim.CRAFT_RESULTS.currentSessionData
     if not craftSessionData then
@@ -265,38 +434,5 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
     end
 
 
-    craftResultFrame.content.statisticsText:SetText(statisticsText)
-end
-
-function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
-    local craftResultFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
-    -- total items
-    local craftResultItems = CraftSim.CRAFT_RESULTS.currentSessionData.totalItems
-
-    -- sort craftedItems by .. rareness?
-    craftResultItems = CraftSim.GUTIL:Sort(craftResultItems, function(a, b)
-        local rarityA = a.item:GetItemQuality()
-        local rarityB = b.item:GetItemQuality()
-        if rarityA and rarityB then
-            return a.item:GetItemQuality() > b.item:GetItemQuality()
-        end
-    end)
-
-    local craftedItemsText = ""
-    for _, craftResultItem in pairs(craftResultItems) do
-        craftedItemsText = craftedItemsText ..
-            craftResultItem.quantity .. " x " .. craftResultItem.item:GetItemLink() .. "\n"
-    end
-
-    -- add saved reagents
-    local savedReagentsText = ""
-    if #CraftSim.CRAFT_RESULTS.currentSessionData.totalSavedReagents > 0 then
-        savedReagentsText = "\n" .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_SAVED_REAGENTS) .. "\n"
-        for _, savedReagent in pairs(CraftSim.CRAFT_RESULTS.currentSessionData.totalSavedReagents) do
-            savedReagentsText = savedReagentsText ..
-                (savedReagent.quantity or 1) .. " x " .. (savedReagent.item:GetItemLink() or "") .. "\n"
-        end
-    end
-
-    craftResultFrame.content.craftedItemsFrame.resultFeed:SetText(craftedItemsText .. savedReagentsText)
+    craftProfitsContent.statisticsText:SetText(statisticsText)
 end

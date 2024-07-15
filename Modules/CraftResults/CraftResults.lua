@@ -13,6 +13,9 @@ CraftSim.CRAFT_RESULTS.currentRecipeData = nil
 
 CraftSim.CRAFT_RESULTS.currentSessionData = nil
 
+---@type CraftSim.CRAFT_RESULTS.FRAME
+CraftSim.CRAFT_RESULTS.frame = nil
+
 local dataCollect = true
 
 ---@param recipeData CraftSim.RecipeData
@@ -96,7 +99,9 @@ end
 ---Saves the currentCraftResult
 ---@param craftResult CraftSim.CraftResult
 function CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
-    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.CRAFT_RESULTS.frame
+    local craftProfitsTabContent = craftResultFrame.content.craftProfitsTab
+        .content --[[@as CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT]]
 
     print("AddCraftResult:", false, true)
     ---@type CraftSim.CraftSessionData
@@ -111,7 +116,7 @@ function CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
     CraftSim.CRAFT_RESULTS.currentSessionData:AddCraftResult(craftResult)
 
     -- update frames
-    craftResultFrame.content.totalProfitAllValue:SetText(GUTIL:FormatMoney(
+    craftProfitsTabContent.totalProfitAllValue:SetText(GUTIL:FormatMoney(
         CraftSim.CRAFT_RESULTS.currentSessionData.totalProfit, true))
 
     CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
@@ -122,7 +127,9 @@ end
 ---@param craftResult CraftSim.CraftResult
 function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     CraftSim.DEBUG:StartProfiling("PROCESS_CRAFT_RESULTS_UI_UPDATE")
-    local craftResultFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_RESULTS)
+    local craftResultFrame = CraftSim.CRAFT_RESULTS.frame
+    local craftProfitsTabContent = craftResultFrame.content.craftProfitsTab
+        .content --[[@as CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT]]
 
     local resourcesText = ""
 
@@ -170,7 +177,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
         ((craftResult.triggeredMulticraft and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_3), GUTIL.COLORS.EPIC) .. multicraftExtraItemsText)) or "") ..
         ((craftResult.triggeredResourcefulness and (GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG_4) .. "\n", GUTIL.COLORS.UNCOMMON) .. resourcesText .. "\n")) or "")
 
-    craftResultFrame.content.scrollingMessageFrame:AddMessage("\n" .. newText)
+    craftProfitsTabContent.scrollingMessageFrame:AddMessage("\n" .. newText)
 
     CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
     CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(craftResult.recipeID)
