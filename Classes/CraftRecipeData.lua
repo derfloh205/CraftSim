@@ -36,7 +36,7 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult)
     table.foreach(craftResult.craftResultItems, function(_, craftResultItemA)
         self.numMulticraftExtraItems = self.numMulticraftExtraItems + craftResultItemA.quantityMulticraft
 
-        local found = CraftSim.GUTIL:Find(self.totalItems, function(craftResultItemB)
+        local craftResultItemB = CraftSim.GUTIL:Find(self.totalItems, function(craftResultItemB)
             local itemLinkA = craftResultItemA.item:GetItemLink() -- for gear its possible to match by itemlink
             local itemLinkB = craftResultItemB.item:GetItemLink()
             local itemIDA = craftResultItemA.item:GetItemID()
@@ -48,8 +48,13 @@ function CraftSim.CraftRecipeData:AddCraftResult(craftResult)
                 return itemIDA == itemIDB
             end
         end)
-        if not found then
-            table.insert(self.totalItems, craftResultItemA)
+        if craftResultItemB then
+            craftResultItemB.quantity = craftResultItemB.quantity +
+                (craftResultItemA.quantity + craftResultItemA.quantityMulticraft)
+            craftResultItemB.quantityMulticraft = craftResultItemB.quantityMulticraft +
+                craftResultItemA.quantityMulticraft
+        else
+            table.insert(self.totalItems, craftResultItemA:Copy())
         end
         -- we do not need to increase quantity as this would have been already done in the CraftSessionData Constructor
     end)

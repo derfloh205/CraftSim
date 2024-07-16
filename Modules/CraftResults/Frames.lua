@@ -184,7 +184,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
     content.resultDistributionList = GGUI.FrameList {
         anchorPoints = { { anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetX = 10, offsetY = -100 } },
         parent = content,
-        sizeY = 250,
+        sizeY = 150,
         showBorder = true,
         columnOptions = {
             {
@@ -229,7 +229,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
     content.multicraftStatisticsList = GGUI.FrameList {
         anchorPoints = { { anchorParent = content.resultDistributionList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 30, } },
         parent = content,
-        sizeY = 250,
+        sizeY = 150,
         showBorder = true,
         columnOptions = {
             {
@@ -267,7 +267,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
     content.resourcefulnessStatisticsList = GGUI.FrameList {
         anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetX = 30, } },
         parent = content,
-        sizeY = 250,
+        sizeY = 150,
         showBorder = true,
         columnOptions = {
             {
@@ -300,6 +300,55 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
         parent = content,
         anchorPoints = { { anchorParent = content.resourcefulnessStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
         text = "Resourcefulness"
+    }
+
+    content.yieldStatisticsList = GGUI.FrameList {
+        anchorPoints = { { anchorParent = content.multicraftStatisticsList.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -20, offsetX = -5 } },
+        parent = content,
+        sizeY = 160,
+        showBorder = true,
+        columnOptions = {
+            {
+                width = 170,
+            },
+            {
+                width = 40,
+            },
+            {
+                width = 40,
+            }
+        },
+        selectionOptions = { noSelectionColor = true },
+        rowConstructor = function(columns, row)
+            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+            local itemColumn = columns[1]
+            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.YIELD_COLUMN : Frame
+            local yieldColumn = columns[2]
+            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.DIST_COLUMN : Frame
+            local distColumn = columns[3]
+
+            itemColumn.text = GGUI.Text {
+                parent = itemColumn,
+                anchorPoints = { { anchorParent = itemColumn, anchorA = "LEFT", anchorB = "LEFT", } },
+                justifyOptions = { type = "H", align = "LEFT" }
+            }
+
+            yieldColumn.text = GGUI.Text {
+                parent = yieldColumn,
+                anchorPoints = { { anchorParent = yieldColumn } },
+            }
+
+            distColumn.text = GGUI.Text {
+                parent = distColumn,
+                anchorPoints = { { anchorParent = distColumn } },
+            }
+        end,
+    }
+
+    GGUI.Text {
+        parent = content,
+        anchorPoints = { { anchorParent = content.yieldStatisticsList.frame, anchorA = "BOTTOM", anchorB = "TOP", offsetY = 2 } },
+        text = "Yield Distribution"
     }
 end
 
@@ -560,9 +609,8 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
                         .numMulticraft, 2)
                 end
                 addStatistic("Ø Additional Yield:", additionalYield)
-
-                multicraftStatisticsList:UpdateDisplay()
             end
+            multicraftStatisticsList:UpdateDisplay()
         end
 
         -- Resourcefulness Statistics
@@ -587,9 +635,79 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
                 local distribution = GUTIL:Round(
                     (craftRecipeData.numResourcefulness / (craftRecipeData.numCrafts / 100)) / 100, 2)
                 addStatistic("Distribution:", distribution)
-
-                resourcefulnessStatisticsList:UpdateDisplay()
             end
+            resourcefulnessStatisticsList:UpdateDisplay()
+        end
+
+        -- Yield Statistics
+        do
+            local yieldStatisticsList = statisticsTrackerTabContent.yieldStatisticsList
+            yieldStatisticsList:Remove()
+
+            if craftRecipeData.numCrafts > 0 then
+                local yieldDistributionMap = {}
+                for _, craftResult in pairs(craftRecipeData.craftResults) do
+                    local itemResultCountMap = {}
+                    for _, craftResultItem in pairs(craftResult.craftResultItems) do
+                        local itemLink = craftResultItem.item:GetItemLink()
+                        itemResultCountMap[itemLink] = itemResultCountMap[itemLink] or 0
+                        itemResultCountMap[itemLink] = itemResultCountMap[itemLink] + craftResultItem.quantity +
+                            craftResultItem.quantityMulticraft
+                    end
+
+                    for itemLink, count in pairs(itemResultCountMap) do
+                        yieldDistributionMap[itemLink] = yieldDistributionMap[itemLink] or {}
+                        yieldDistributionMap[itemLink].distributions = yieldDistributionMap[itemLink].distributions or {}
+                        yieldDistributionMap[itemLink].totalDistributionCount = yieldDistributionMap[itemLink]
+                            .totalDistributionCount or 0
+
+                        if not yieldDistributionMap[itemLink].distributions[count] then
+                            yieldDistributionMap[itemLink].distributions[count] = 0
+                        end
+
+                        yieldDistributionMap[itemLink].distributions[count] = yieldDistributionMap[itemLink]
+                            .distributions[count] + 1
+                        yieldDistributionMap[itemLink].totalDistributionCount = yieldDistributionMap[itemLink]
+                            .totalDistributionCount + 1
+                    end
+                end
+
+                for itemLink, distributionData in pairs(yieldDistributionMap) do
+                    for yield, count in pairs(distributionData.distributions) do
+                        yieldStatisticsList:Add(function(row, columns)
+                            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.STATISTICS_COLUMN : Frame
+                            local itemColumn = columns[1]
+                            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.YIELD_COLUMN : Frame
+                            local yieldColumn = columns[2]
+                            ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.YIELD_STATISTICS_LIST.DIST_COLUMN : Frame
+                            local distColumn = columns[3]
+
+                            itemColumn.text:SetText(itemLink)
+                            local dist = GUTIL:Round(
+                                (count / (distributionData.totalDistributionCount / 100)) / 100, 2)
+                            distColumn.text:SetText(dist)
+                            yieldColumn.text:SetText("x " .. yield)
+                            row.yield = yield
+                            row.itemLink = itemLink
+                            row.tooltipOptions = {
+                                itemID = GUTIL:GetItemIDByLink(itemLink),
+                                anchor = "ANCHOR_RIGHT",
+                                owner = row.frameList.frame
+                            }
+                        end)
+                    end
+                end
+            end
+
+            yieldStatisticsList:UpdateDisplay(function(rowA, rowB)
+                if rowA.itemLink > rowB.itemLink then
+                    return true
+                elseif rowA.itemLink < rowB.itemLink then
+                    return false
+                end
+
+                return rowA.yield > rowB.yield
+            end)
         end
     end
 end
