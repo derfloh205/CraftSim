@@ -37,3 +37,8 @@ function CraftSim.CraftResultItem:GetJSON(intent)
     jb:End()
     return jb.json
 end
+
+---@return CraftSim.CraftResultItem
+function CraftSim.CraftResultItem:Copy()
+    return CraftSim.CraftResultItem(self.item:GetItemLink(), self.quantity, self.quantityMulticraft, self.qualityID)
+end
