@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.NodeData : CraftSim.CraftSimObject
----@overload fun(recipeData: CraftSim.RecipeData?, nodeName: string?, nodeRulesData: table?, parentNode:CraftSim.NodeData?): CraftSim.NodeData
+---@overload fun(recipeData: CraftSim.RecipeData?, nodeRulesData: table?, parentNode:CraftSim.NodeData?): CraftSim.NodeData
 CraftSim.NodeData = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
@@ -13,7 +13,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 ---@param nodeName string
 ---@param nodeRulesData table
 ---@param parentNode CraftSim.NodeData
-function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData, parentNode)
+function CraftSim.NodeData:new(recipeData, nodeRulesData, parentNode)
     self.affectsRecipe = false
     if not recipeData then
         return
@@ -22,7 +22,6 @@ function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData, parentNode)
     self.recipeData         = recipeData
     ---@type CraftSim.NodeData[]
     self.childNodes         = {}
-    self.nodeName           = nodeName
     ---@type number
     self.nodeID             = nodeRulesData[1].nodeID
     ---@type CraftSim.ProfessionStats
@@ -43,7 +42,10 @@ function CraftSim.NodeData:new(recipeData, nodeName, nodeRulesData, parentNode)
     end)
     if definitionInfos[1] then
         self.icon = definitionInfos[1].overrideIcon
+        -- each entry of a node has the same overrideName but could have different descriptions, this is used for the professions to contain the node names..
+        self.nodeName = definitionInfos[1].overrideName
     end
+    self.nodeName = self.nodeName or "<nodeName?>"
 
     self.perkInfos = C_ProfSpecs.GetPerksForPath(self.nodeID)
 

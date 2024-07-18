@@ -37,7 +37,6 @@ function CraftSim.SpecializationData:new(recipeData)
     local profession = recipeData.professionData.professionInfo.profession
     local expansionID = recipeData.professionData.expansionID
 
-    local nodeNameData = CraftSim.SPECIALIZATION_DATA:GetNodes(profession, expansionID)
     local professionRuleNodes = CraftSim.SPECIALIZATION_DATA:GetData(profession, expansionID)
     local baseRuleNodes = CraftSim.SPECIALIZATION_DATA:GetBaseRuleNodes(profession, expansionID)
 
@@ -53,18 +52,8 @@ function CraftSim.SpecializationData:new(recipeData)
     local baseNodeIndex = 1
     local function parseNode(nodeID, parentNodeData, layer)
         local ruleNodes = GUTIL:Filter(professionRuleNodes, function(n) return n.nodeID == nodeID end)
-        local nodeName = CraftSim.LOCAL:GetText(nodeID);
 
-        if not nodeName then
-            nodeName = GUTIL:Find(nodeNameData,
-                function(nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
-        end
-        local nodeData = CraftSim.NodeData(self.recipeData, nodeName, ruleNodes, parentNodeData)
-
-        --- DEBUG
-        if nodeData.nodeName == "Curing and Tanning" then
-            print("@node: " .. nodeData.nodeName)
-        end
+        local nodeData = CraftSim.NodeData(self.recipeData, ruleNodes, parentNodeData)
 
         nodeData:UpdateAffectance()
         nodeData:UpdateProfessionStats()
