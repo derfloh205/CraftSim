@@ -29,7 +29,7 @@ function CraftSim.SPECIALIZATION_DATA:GetData(profession, expansionID)
     local dataProviderMap = {
         [CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = {
             [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA,
-            [Enum.Profession.Alchemy] = CraftSim.ALCHEMY_DATA,
+            [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA,
             [Enum.Profession.Leatherworking] = CraftSim.LEATHERWORKING_DATA,
             [Enum.Profession.Jewelcrafting] = CraftSim.JEWELCRAFTING_DATA,
             [Enum.Profession.Enchanting] = CraftSim.ENCHANTING_DATA,
@@ -39,7 +39,7 @@ function CraftSim.SPECIALIZATION_DATA:GetData(profession, expansionID)
         },
         [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
             [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA,
-            [Enum.Profession.Alchemy] = CraftSim.ALCHEMY_DATA,
+            [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA,
             [Enum.Profession.Leatherworking] = CraftSim.LEATHERWORKING_DATA,
             [Enum.Profession.Jewelcrafting] = CraftSim.JEWELCRAFTING_DATA,
             [Enum.Profession.Enchanting] = CraftSim.ENCHANTING_DATA,
@@ -83,7 +83,7 @@ end
 
 function CraftSim.SPECIALIZATION_DATA:GetNodes(professionID)
     if professionID == Enum.Profession.Alchemy then
-        return CraftSim.ALCHEMY_DATA.NODES()
+        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA.NODES()
     elseif professionID == Enum.Profession.Blacksmithing then
         return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA.NODES()
     elseif professionID == Enum.Profession.Enchanting then
