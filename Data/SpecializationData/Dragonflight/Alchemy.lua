@@ -1,10 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@type CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER
-CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {}
-
-function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA:GetData()
+---@return CraftSim.SPECIALIZATION_DATA.NODE_DATA
+function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA()
     return {
         -- Alchemical Theory
         ALCHEMICAL_THEORY_1 = { -- mapped

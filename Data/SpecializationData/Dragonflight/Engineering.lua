@@ -1,10 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@type CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER
-CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {}
-
-function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA:GetData()
+---@return CraftSim.SPECIALIZATION_DATA.NODE_DATA
+function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA()
     return {
         OPTIMIZED_EFFICIENCY_1 = { -- all mapped
             childNodeIDs = { "PIECES_PARTS_1", "SCRAPPER_1", "GENERALIST_1" },
