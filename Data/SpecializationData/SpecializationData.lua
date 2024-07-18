@@ -30,22 +30,22 @@ function CraftSim.SPECIALIZATION_DATA:GetData(profession, expansionID)
         [CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = {
             [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA,
             [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA,
-            [Enum.Profession.Leatherworking] = CraftSim.LEATHERWORKING_DATA,
-            [Enum.Profession.Jewelcrafting] = CraftSim.JEWELCRAFTING_DATA,
-            [Enum.Profession.Enchanting] = CraftSim.ENCHANTING_DATA,
-            [Enum.Profession.Tailoring] = CraftSim.TAILORING_DATA,
-            [Enum.Profession.Inscription] = CraftSim.INSCRIPTION_DATA,
-            [Enum.Profession.Engineering] = CraftSim.ENGINEERING_DATA
+            [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA,
+            [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA,
+            [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA,
+            [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA,
+            [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA,
+            [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA
         },
         [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
             [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA,
             [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA,
-            [Enum.Profession.Leatherworking] = CraftSim.LEATHERWORKING_DATA,
-            [Enum.Profession.Jewelcrafting] = CraftSim.JEWELCRAFTING_DATA,
-            [Enum.Profession.Enchanting] = CraftSim.ENCHANTING_DATA,
-            [Enum.Profession.Tailoring] = CraftSim.TAILORING_DATA,
-            [Enum.Profession.Inscription] = CraftSim.INSCRIPTION_DATA,
-            [Enum.Profession.Engineering] = CraftSim.ENGINEERING_DATA
+            [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA,
+            [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA,
+            [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA,
+            [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA,
+            [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA,
+            [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA
         },
     }
     local dataProvider = dataProviderMap[expansionID][profession]
@@ -87,17 +87,17 @@ function CraftSim.SPECIALIZATION_DATA:GetNodes(professionID)
     elseif professionID == Enum.Profession.Blacksmithing then
         return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA.NODES()
     elseif professionID == Enum.Profession.Enchanting then
-        return CraftSim.ENCHANTING_DATA.NODES()
+        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA.NODES()
     elseif professionID == Enum.Profession.Inscription then
-        return CraftSim.INSCRIPTION_DATA.NODES()
+        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA.NODES()
     elseif professionID == Enum.Profession.Jewelcrafting then
-        return CraftSim.JEWELCRAFTING_DATA.NODES()
+        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA.NODES()
     elseif professionID == Enum.Profession.Leatherworking then
-        return CraftSim.LEATHERWORKING_DATA.NODES()
+        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA.NODES()
     elseif professionID == Enum.Profession.Tailoring then
-        return CraftSim.TAILORING_DATA.NODES()
+        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA.NODES()
     elseif professionID == Enum.Profession.Engineering then
-        return CraftSim.ENGINEERING_DATA.NODES()
+        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA.NODES()
     elseif professionID == Enum.Profession.Cooking then
         return {}
     else

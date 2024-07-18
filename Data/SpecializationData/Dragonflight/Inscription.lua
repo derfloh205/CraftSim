@@ -1,9 +1,9 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-CraftSim.INSCRIPTION_DATA = {}
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {}
 
-CraftSim.INSCRIPTION_DATA.NODE_IDS = {
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA.NODE_IDS = {
     RUNE_MASTERY = 34835,
     PERFECT_PRACTICE = 34834,
     INFINITE_DISCOVERY = 34833,
@@ -34,7 +34,7 @@ CraftSim.INSCRIPTION_DATA.NODE_IDS = {
     FAUNA_RUNES = 34886
 }
 
-CraftSim.INSCRIPTION_DATA.NODES = function()
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA.NODES = function()
     return {
         -- Rune Mastery
         {
@@ -154,7 +154,7 @@ CraftSim.INSCRIPTION_DATA.NODES = function()
     }
 end
 
-function CraftSim.INSCRIPTION_DATA:GetData()
+function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA:GetData()
     return {
         RUNE_MASTERY_1 = { -- all mapped
             childNodeIDs = { "PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1" },
