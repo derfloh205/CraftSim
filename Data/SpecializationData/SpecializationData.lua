@@ -2,9 +2,12 @@
 local CraftSim = select(2, ...)
 
 CraftSim.SPECIALIZATION_DATA = {}
-
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT = {}
+CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN = {}
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
+-- TODO: Const is actually initialized before in the toc so it should be possible to put this into a const table instead of function?
+-- could be a problem with static table size in lua but I guess it should not be to big
 -- its a function so craftsimConst can be accessed (otherwise nil cause not yet initialized)
 CraftSim.SPECIALIZATION_DATA.RULE_NODES = function()
     return {
