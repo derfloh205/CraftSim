@@ -125,7 +125,7 @@ Data/ReagentWeightData.lua
 Data/OptionalReagentData.lua
 Data/News.lua
 
-Data/SpecializationData/SpecData.lua
+Data/SpecializationData/SpecializationData.lua
 Data/SpecializationData/Alchemy.lua
 Data/SpecializationData/Blacksmithing.lua
 Data/SpecializationData/Enchanting.lua
