@@ -5,152 +5,44 @@ local CraftSim = select(2, ...)
 CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {}
 
 CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA.NODE_IDS = {
-    HAMMER_CONTROL = 42828,
-    SAFETY_SMITHING = 42827,
-    POIGNANT_PLANS = 42826,
-    SPECIALITY_SMITHING = 23765,
-    TOOLSMITHING = 23764,
-    STONEWORK = 23762,
-    SMELTING = 23761,
-    WEAPON_SMITHING = 23727,
-    BLADES = 23726,
-    HAFTED = 23723,
-    SHORT_BLADES = 23725,
-    LONG_BLADES = 23724,
-    MACES_AND_HAMMERS = 23722,
-    AXES_PICKS_AND_POLEARMS = 23721,
-    ARMOR_SMITHING = 23912,
-    BELTS = 23902,
-    BREASTPLATES = 23910,
-    FINE_ARMOR = 23903,
-    GAUNTLETS = 23900,
-    GREAVES = 23908,
-    HELMS = 23906,
-    LARGE_PLATE_ARMOR = 23911,
-    PAULDRONS = 23905,
-    SABATONS = 23904,
-    SCULPED_ARMOR = 23907,
-    SHIELDS = 23909,
-    VAMBRACES = 23901
+    EVER_BURNING_FORGE = 99267,
+    IMAGINATIVE_FORESIGHT = 99266,
+    DISCERNING_DISCIPLINE = 99265,
+    GRACIOUS_FORGING = 99264,
+
+    MEANS_OF_PRODUCTION = 99589,
+    TOOLS_OF_THE_TRADE = 99588,
+    TRADE_TOOLS = 99587,
+    TRADE_ACCESSORIES = 99586,
+    STONE_WORK = 99585,
+    WEAPON_STONES = 99584,
+    TOOL_ENHANCEMENT = 99583,
+    FORTUITOUS_FORGES = 99582,
+    ALLOYS = 99580,
+    FRAMEWORKS = 99581,
+
+    WEAPON_SMITHING = 99453,
+    BLADES = 99452,
+    SHORT_BLADES = 99451,
+    LONG_BLADES = 99450,
+    HAFTED = 99449,
+    MACES = 99448,
+    AXES_AND_POLEARMS = 99447,
+
+    ARMOR_SMITHING = 99239,
+    LARGE_PLATE_ARMOR = 99238,
+    BREASTPLATES = 99237,
+    GREAVES = 99236,
+    SHIELDS = 99235,
+    SCULPTED_ARMOR = 99234,
+    HELMS = 99233,
+    PAULDRONS = 99232,
+    SABATONS = 99231,
+    FINE_ARMOR = 99230,
+    BELTS = 99229,
+    VAMBRACES = 99228,
+    GAUNTLETS = 99227,
 }
-
-CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA.NODES = function()
-    return {
-        -- Hammer Control
-        {
-            name = "Hammer Control",
-            nodeID = 42828
-        },
-        {
-            name = "Safety Smithing",
-            nodeID = 42827
-        },
-        {
-            name = "Poignant Plans",
-            nodeID = 42826
-        },
-        -- Speciality Smithing
-        {
-            name = "Speciality Smithing",
-            nodeID = 23765
-        },
-        {
-            name = "Toolsmithing",
-            nodeID = 23764
-        },
-        {
-            name = "Stonework",
-            nodeID = 23762
-        },
-        {
-            name = "Smelting",
-            nodeID = 23761
-        },
-        -- Weapon Smithing
-        {
-            name = "Weapon Smithing",
-            nodeID = 23727
-        },
-        {
-            name = "Blades",
-            nodeID = 23726
-        },
-        {
-            name = "Hafted",
-            nodeID = 23723
-        },
-        {
-            name = "Short Blades",
-            nodeID = 23725
-        },
-        {
-            name = "Long Blades",
-            nodeID = 23724
-        },
-        {
-            name = "Maces & Hammers",
-            nodeID = 23722
-        },
-        {
-            name = "Axes, Picks & Polearms",
-            nodeID = 23721
-        },
-
-        -- Armor Smithing
-        {
-            name = "Armor Smithing",
-            nodeID = 23912
-        },
-        {
-            name = "Belts",
-            nodeID = 23902
-        },
-        {
-            name = "Breastplates",
-            nodeID = 23910
-        },
-        {
-            name = "Fine Armor",
-            nodeID = 23903
-        },
-        {
-            name = "Gauntlets",
-            nodeID = 23900
-        },
-        {
-            name = "Greaves",
-            nodeID = 23908
-        },
-        {
-            name = "Helms",
-            nodeID = 23906
-        },
-        {
-            name = "Large Plate Armor",
-            nodeID = 23911
-        },
-        {
-            name = "Pauldrons",
-            nodeID = 23905
-        },
-        {
-            name = "Sabatons",
-            nodeID = 23904
-        },
-        {
-            name = "Sculpted Armor",
-            nodeID = 23907
-        },
-        {
-            name = "Shields",
-            nodeID = 23909
-        },
-        {
-            name = "Vambraces",
-            nodeID = 23901
-        }
-    }
-end
 
 function CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA:GetData()
     return {

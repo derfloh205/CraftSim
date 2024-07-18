@@ -37,7 +37,6 @@ function CraftSim.SpecializationData:new(recipeData)
     local profession = recipeData.professionData.professionInfo.profession
     local expansionID = recipeData.professionData.expansionID
 
-    local nodeNameData = CraftSim.SPECIALIZATION_DATA:GetNodes(profession, expansionID)
     local professionRuleNodes = CraftSim.SPECIALIZATION_DATA:GetData(profession, expansionID)
     local baseRuleNodes = CraftSim.SPECIALIZATION_DATA:GetBaseRuleNodes(profession, expansionID)
 
