@@ -2,45 +2,36 @@
 local CraftSim = select(2, ...)
 
 ---@class CraftSim.SPECIALIZATION_DATA
-CraftSim.SPECIALIZATION_DATA = {}
-CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT = {}
-CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN = {}
+CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 
 ---@class CraftSim.SPECIALIZATION_DATA.RULE_DATA
 ---@field nodeID number
 
-
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
----@param profession Enum.Profession
----@param expansionID CraftSim.EXPANSION_IDS
----@return table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
-function CraftSim.SPECIALIZATION_DATA:GetNodeData(profession, expansionID)
-    ---@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>>>
-    local nodeDataMap = {
-        [CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = {
-            [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA,
-            [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA,
-            [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA,
-            [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA,
-            [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA,
-            [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA,
-            [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA,
-            [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA
-        },
-        [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
-            [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA,
-            [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA,
-            [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA,
-            [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA,
-            [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA,
-            [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA,
-            [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA,
-            [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA
-        },
-    }
-    return nodeDataMap[expansionID][profession]
-end
+---@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.SPECIALIZATION_DATA.RULE_DATA>>
+CraftSim.SPECIALIZATION_DATA.NODE_DATA = {
+    [CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = {
+        [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA,
+        [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA,
+        [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA,
+        [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA,
+        [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA,
+        [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA,
+        [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA,
+        [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA
+    },
+    [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
+        [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA,
+        [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA,
+        [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA,
+        [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA,
+        [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA,
+        [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA,
+        [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA,
+        [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA
+    },
+}
 
 ---@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, string[]>>
 CraftSim.SPECIALIZATION_DATA.BASE_NODES = {
