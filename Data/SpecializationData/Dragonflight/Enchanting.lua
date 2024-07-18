@@ -1,7 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@return CraftSim.SPECIALIZATION_DATA.NODE_DATA
+---@return CraftSim.SPECIALIZATION_DATA.RULE_DATA[]
 function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA()
     return {
         ENCHANTMENT_1 = { -- primal mapped, material mapped

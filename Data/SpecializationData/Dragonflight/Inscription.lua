@@ -1,7 +1,7 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@return CraftSim.SPECIALIZATION_DATA.NODE_DATA
+---@return CraftSim.SPECIALIZATION_DATA.RULE_DATA[]
 function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA()
     return {
         RUNE_MASTERY_1 = { -- all mapped
