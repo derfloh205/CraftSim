@@ -125,8 +125,6 @@ Data/ReagentWeightData.lua
 Data/OptionalReagentData.lua
 Data/News.lua
 
-Data/SpecializationData/SpecializationData.lua
-
 Data/SpecializationData/Dragonflight/Alchemy.lua
 Data/SpecializationData/Dragonflight/Blacksmithing.lua
 Data/SpecializationData/Dragonflight/Enchanting.lua
@@ -135,8 +133,9 @@ Data/SpecializationData/Dragonflight/Jewelcrafting.lua
 Data/SpecializationData/Dragonflight/Leatherworking.lua
 Data/SpecializationData/Dragonflight/Tailoring.lua
 Data/SpecializationData/Dragonflight/Engineering.lua
-
 Data/SpecializationData/TheWarWithin/Blacksmithing.lua
+# needs to be last
+Data/SpecializationData/SpecializationData.lua
 
 Classes/CraftSimObject.lua
 Classes/CooldownData.lua

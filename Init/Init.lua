@@ -2,6 +2,11 @@
 local CraftSim = select(2, ...)
 local CraftSimAddonName = select(1, ...)
 
+---@class CraftSim.SPECIALIZATION_DATA
+CraftSim.SPECIALIZATION_DATA = {}
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT = {}
+CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN = {}
+
 CraftSim.LibCompress = LibStub:GetLibrary("LibCompress")
 CraftSim.LibIcon = LibStub("LibDBIcon-1.0")
 
