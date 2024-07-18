@@ -3,25 +3,20 @@ local CraftSim = select(2, ...)
 
 ---@class CraftSim.SPECIALIZATION_DATA
 CraftSim.SPECIALIZATION_DATA = {}
-
----@class CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER
----@field GetData fun(): CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER.DATA
-
----@class CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER.DATA
-
-
----@type CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER[]
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT = {}
----@type CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER[]
 CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN = {}
+
+---@class CraftSim.SPECIALIZATION_DATA.NODE_DATA
+
+
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 -- its a function so craftsimConst can be accessed (otherwise nil cause not yet initialized)
 ---@param profession Enum.Profession
 ---@param expansionID CraftSim.EXPANSION_IDS
----@return CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER.DATA
+---@return CraftSim.SPECIALIZATION_DATA.NODE_DATA
 function CraftSim.SPECIALIZATION_DATA:GetData(profession, expansionID)
-    ---@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER>>
+    ---@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, function>
     local dataProviderMap = {
         [CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = {
             [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA,
