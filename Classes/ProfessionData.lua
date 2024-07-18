@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 ---@class CraftSim.ProfessionData : CraftSim.CraftSimObject
@@ -38,6 +40,12 @@ function CraftSim.ProfessionData:new(recipeData, recipeID)
 		end
 	end
 	self.skillLineID = self.professionInfo.professionID
+	for expansionID, skillLineID in pairs(CraftSim.CONST.TRADESKILLLINEIDS[self.professionInfo.profession]) do
+		if skillLineID == self.skillLineID then
+			self.expansionID = expansionID
+			break
+		end
+	end
 end
 
 function CraftSim.ProfessionData:UsesGear()

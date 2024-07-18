@@ -26,7 +26,7 @@ function CraftSim.SpecializationData:new(recipeData)
     ---@type number[][]
     self.numNodesPerLayer = {} -- needed for spec sim tree buildup
 
-    self.isImplemented = CraftSim.UTIL:IsSpecImplemented(recipeData.professionData.professionInfo.profession)
+    self.isImplemented = recipeData:IsSpecializationInfoImplemented()
     self.isGatheringProfession = CraftSim.CONST.GATHERING_PROFESSIONS
         [recipeData.professionData.professionInfo.profession]
 
@@ -198,7 +198,7 @@ end
 ---@return CraftSim.SpecializationData
 function CraftSim.SpecializationData:Deserialize(serializedData, recipeData)
     local specializationData = CraftSim.SpecializationData()
-    self.isImplemented = CraftSim.UTIL:IsSpecImplemented(recipeData.professionData.professionInfo.profession)
+    self.isImplemented = recipeData:IsSpecializationInfoImplemented()
     specializationData.numNodesPerLayer = serializedData.numNodesPerLayer
     specializationData.professionStats = CraftSim.ProfessionStats()
     specializationData.maxProfessionStats = CraftSim.ProfessionStats()
