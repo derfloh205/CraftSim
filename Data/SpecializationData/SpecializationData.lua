@@ -82,27 +82,26 @@ function CraftSim.SPECIALIZATION_DATA:GetBaseRuleNodes(profession, expansionID)
     return map[expansionID][profession]
 end
 
-function CraftSim.SPECIALIZATION_DATA:GetNodes(professionID)
-    if professionID == Enum.Profession.Alchemy then
-        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA.NODES()
-    elseif professionID == Enum.Profession.Blacksmithing then
-        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA.NODES()
-    elseif professionID == Enum.Profession.Enchanting then
-        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA.NODES()
-    elseif professionID == Enum.Profession.Inscription then
-        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA.NODES()
-    elseif professionID == Enum.Profession.Jewelcrafting then
-        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA.NODES()
-    elseif professionID == Enum.Profession.Leatherworking then
-        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA.NODES()
-    elseif professionID == Enum.Profession.Tailoring then
-        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA.NODES()
-    elseif professionID == Enum.Profession.Engineering then
-        return CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA.NODES()
-    elseif professionID == Enum.Profession.Cooking then
-        return {}
+---@param profession Enum.Profession
+---@param expansionID CraftSim.EXPANSION_IDS
+function CraftSim.SPECIALIZATION_DATA:GetNodes(profession, expansionID)
+    local nodeProviderMap = {
+        [CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = {
+            [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA.NODES,
+            [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA.NODES,
+            [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA.NODES,
+            [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA.NODES,
+            [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA.NODES,
+            [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA.NODES,
+            [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA.NODES,
+            [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA.NODES,
+        },
+    }
+    local nodeProvider = nodeProviderMap[expansionID][profession]
+    if nodeProvider then
+        return nodeProvider()
     else
-        print("CraftSim SpecData: No nodes found for profession id: " .. tostring(professionID))
+        print("No nodes found for profession/expansion: " .. tostring(profession) .. " / " .. tostring(expansionID))
         return {}
     end
 end
