@@ -34,11 +34,12 @@ function CraftSim.SpecializationData:new(recipeData)
         return
     end
 
-    local profession = recipeData.professionData.professionInfo.profession
-    local expansionID = recipeData.professionData.expansionID
-
-    local professionRuleNodes = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID][profession]
-    local baseRuleNodes = CraftSim.SPECIALIZATION_DATA.BASE_NODES[expansionID][profession]
+    local nodeNameData = CraftSim.SPECIALIZATION_DATA:GetNodes(recipeData.professionData.professionInfo.profession)
+    local professionRuleNodes = CraftSim.SPECIALIZATION_DATA:GetData(recipeData.professionData.professionInfo.profession,
+        recipeData.professionData.expansionID)
+    local baseRuleNodes = CraftSim.SPECIALIZATION_DATA:GetBaseRuleNodes(
+        recipeData.professionData.professionInfo.profession,
+        recipeData.professionData.expansionID)
 
     local baseRuleNodeIDs = GUTIL:Map(baseRuleNodes, function(nameID)
         local ruleNode = professionRuleNodes[nameID]
@@ -196,8 +197,8 @@ function CraftSim.SpecializationData:Deserialize(serializedData, recipeData)
     specializationData.maxProfessionStats = CraftSim.ProfessionStats()
 
     local nodeIDMap = {} -- to restore references
-    local professionRuleNodes = CraftSim.SPECIALIZATION_DATA.NODE_DATA[recipeData.professionData.expansionID]
-        [recipeData.professionData.professionInfo.profession]
+    local professionRuleNodes = CraftSim.SPECIALIZATION_DATA:GetData(recipeData.professionData.professionInfo.profession,
+        recipeData.professionData.expansionID)
 
     specializationData.nodeData = GUTIL:Map(serializedData.nodeData, function(nodeDataSerialized)
         return CraftSim.NodeData:Deserialize(nodeDataSerialized, recipeData, nodeIDMap, professionRuleNodes)

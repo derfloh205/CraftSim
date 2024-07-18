@@ -1288,14 +1288,7 @@ CraftSim.CONST.IMPLEMENTED_SPECIALIZATION_DATA =
         Enum.Profession.Tailoring,
     },
     [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
-        Enum.Profession.Alchemy,
         Enum.Profession.Blacksmithing,
-        Enum.Profession.Enchanting,
-        Enum.Profession.Engineering,
-        Enum.Profession.Inscription,
-        Enum.Profession.Jewelcrafting,
-        Enum.Profession.Leatherworking,
-        Enum.Profession.Tailoring,
     },
 }
 

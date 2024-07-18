@@ -5,106 +5,12 @@ CraftSim.UTIL = {}
 
 CraftSim.UTIL.frameLevel = 100
 
-local multicraftFactor = 0.0009
-local resourcefulnessFactor = 0.00111
-local craftingspeedFactor = 0.002
-
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.UTIL)
 
 function CraftSim.UTIL:NextFrameLevel()
     local frameLevel = CraftSim.UTIL.frameLevel
     CraftSim.UTIL.frameLevel = CraftSim.UTIL.frameLevel + 50
     return frameLevel
-end
-
-function CraftSim.UTIL:GetCraftingSpeedStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / craftingspeedFactor
-end
-
-function CraftSim.UTIL:GetMulticraftStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / multicraftFactor
-end
-
-function CraftSim.UTIL:GetResourcefulnessStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / resourcefulnessFactor
-end
-
-function CraftSim.UTIL:GetCraftingSpeedPercentByStat(stat)
-    return stat * craftingspeedFactor
-end
-
-function CraftSim.UTIL:GetMulticraftPercentByStat(stat)
-    return stat * multicraftFactor
-end
-
-function CraftSim.UTIL:GetResourcefulnessPercentByStat(stat)
-    return stat * resourcefulnessFactor
-end
-
-function CraftSim.UTIL:IsMyVersionHigher(versionB)
-    local versionA = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version") or ""
-    local subVersionsA = strsplittable(".", versionA)
-    local subVersionsB = strsplittable(".", versionB)
-
-    -- TODO: refactor recursively to get rid of this abomination
-    if subVersionsA[1] and subVersionsB[1] then
-        if subVersionsA[1] < subVersionsB[1] then
-            return false
-        elseif subVersionsA[1] > subVersionsB[1] then
-            return true
-        end
-
-        if subVersionsA[2] and subVersionsB[2] then
-            if subVersionsA[2] < subVersionsB[2] then
-                return false
-            elseif subVersionsA[2] > subVersionsB[2] then
-                return true
-            end
-
-            if subVersionsA[3] and subVersionsB[3] then
-                if subVersionsA[3] < subVersionsB[3] then
-                    return false
-                elseif subVersionsA[3] > subVersionsB[3] then
-                    return true
-                end
-
-                if subVersionsA[4] and subVersionsB[4] then
-                    if subVersionsA[4] < subVersionsB[4] then
-                        return false
-                    elseif subVersionsA[4] > subVersionsB[4] then
-                        return true
-                    end
-                else
-                    if subVersionsB[4] then
-                        return false
-                    end
-                end
-            else
-                if subVersionsB[3] then
-                    return false
-                end
-            end
-        else
-            if subVersionsB[2] then
-                return false
-            end
-        end
-    else
-        if subVersionsB[1] then
-            return false
-        end
-    end
-
-    return true
 end
 
 -- thx ketho forum guy
