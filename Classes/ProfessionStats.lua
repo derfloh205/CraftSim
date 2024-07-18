@@ -23,7 +23,9 @@ function CraftSim.ProfessionStats:new(serialized)
 	---@type CraftSim.ProfessionStat
 	self.ingenuity = CraftSim.ProfessionStat("ingenuity", 0, statPercentModTable.INGENUITY)
 	---@type CraftSim.ProfessionStat
-	self.craftingspeed = CraftSim.ProfessionStat("craftingspeed", 0, statPercentModTable.CRAFTINGSPEED)
+	self.ingenuity = CraftSim.ProfessionStat("ingenuity", 0, CraftSim.CONST.PERCENT_MODS.INGENUITY)
+	---@type CraftSim.ProfessionStat
+	self.craftingspeed = CraftSim.ProfessionStat("craftingspeed", 0, CraftSim.CONST.PERCENT_MODS.CRAFTINGSPEED)
 
 	-- alchemy specific
 	---@type CraftSim.ProfessionStat
@@ -67,7 +69,7 @@ function CraftSim.ProfessionStats:SetStatsByOperationInfo(recipeData, operationI
 end
 
 function CraftSim.ProfessionStats:GetStatList()
-	return { self.recipeDifficulty, self.skill, self.multicraft, self.resourcefulness, self
+	return { self.recipeDifficulty, self.skill, self.multicraft, self.resourcefulness, self.ingenuity, self
 		.craftingspeed, self.phialExperimentationFactor, self.potionExperimentationFactor }
 end
 

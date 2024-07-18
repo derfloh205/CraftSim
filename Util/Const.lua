@@ -16,6 +16,7 @@ CraftSim.CONST.FEATURE_TOGGLES = {
 CraftSim.CONST.PERCENT_MODS = {
     MULTICRAFT = 0.0009,
     RESOURCEFULNESS = 0.00111,
+    INGENUITY = 0.00111, -- TODO: research and set value
     CRAFTINGSPEED = 0.002,
 }
 
@@ -501,6 +502,38 @@ CraftSim.CONST.REAGENT_TYPE = {
 CraftSim.CONST.AUCTION_HOUSE_CUT = 0.95
 
 CraftSim.CONST.ENCHANTING_VELLUM_ID = 38682
+
+CraftSim.CONST.RECIPE_TYPES = {
+    GEAR = 0,                -- like blue gear
+    SOULBOUND_GEAR = 1,      -- like purple gear
+    NO_QUALITY_MULTIPLE = 2, -- like transmuted air
+    NO_QUALITY_SINGLE = 3,   -- like repair hammer
+    MULTIPLE = 4,            -- like potions..
+    SINGLE = 5,              -- like omnium draconis
+    NO_CRAFT_OPERATION = 6,  -- like reclaim from alchemy or old world stuff
+    GATHERING = 7,
+    NO_ITEM = 8,             -- like phial experimentation
+    ENCHANT = 9,
+}
+
+CraftSim.CONST.DEFAULT_POSITIONS = {
+    REAGENT_FRAME = {
+        x = 0,
+        y = 0,
+    },
+    PRICE_DETAILS_FRAME = {
+        x = 0,
+        y = 10,
+    },
+    TOP_GEAR_FRAME = {
+        x = -5,
+        y = 3,
+    },
+    STAT_WEIGHT_FRAME = {
+        x = 0,
+        y = -80,
+    }
+}
 
 ---@class CraftSim.RecipeCategories
 CraftSim.CONST.RECIPE_CATEGORIES = {

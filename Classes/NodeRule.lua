@@ -38,6 +38,7 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.equalsSkill = nodeRuleData.equalsSkill or false
     self.equalsMulticraft = nodeRuleData.equalsMulticraft or false
     self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or false
+    self.equalsIngenuity = nodeRuleData.equalsIngenuity or false
     self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or false
     self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or false
     self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or false
@@ -72,9 +73,12 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
         self.professionStats.resourcefulness.value = math.max(0, rank)
     end
 
-    if self.equalsIngenuityExtraConcentrationFactor > 0 then
-        self.professionStats.ingenuity.extraFactor = math.max(0,
-            rank * self.equalsIngenuityExtraConcentrationFactor)
+    if self.equalsIngenuity then
+        self.professionStats.ingenuity.value = math.max(0, rank)
+    end
+
+    if self.equalsCraftingspeed then
+        self.professionStats.craftingspeed.value = math.max(0, rank)
     end
 
     if self.equalsPhialExperimentationChanceFactor > 0 then
@@ -82,9 +86,12 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
             rank * self.equalsPhialExperimentationChanceFactor)
     end
 
-    if self.equalsPotionExperimentationChanceFactor > 0 then
-        self.professionStats.potionExperimentationFactor.extraFactor = math.max(0,
-            rank * self.equalsPotionExperimentationChanceFactor)
+    if self.equalsPhialExperimentationChanceFactor then
+        self.professionStats.phialExperimentationFactor.extraFactor = math.max(0, rank * 0.01)
+    end
+
+    if self.equalsPotionExperimentationChanceFactor then
+        self.professionStats.potionExperimentationFactor.extraFactor = math.max(0, rank * 0.01)
     end
 end
 
