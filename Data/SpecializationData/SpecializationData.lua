@@ -6,7 +6,6 @@ CraftSim.SPECIALIZATION_DATA = {}
 
 ---@class CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER
 ---@field GetData fun(): CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER.DATA
----@field NODE_IDS table<string, number>
 
 ---@class CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER.DATA
 
