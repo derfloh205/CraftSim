@@ -7,6 +7,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT = {}
 CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN = {}
 
 ---@class CraftSim.SPECIALIZATION_DATA.RULE_DATA
+---@field nodeID number
+
 
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
@@ -14,10 +16,10 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 -- its a function so craftsimConst can be accessed (otherwise nil cause not yet initialized)
 ---@param profession Enum.Profession
 ---@param expansionID CraftSim.EXPANSION_IDS
----@return CraftSim.SPECIALIZATION_DATA.RULE_DATA[]
+---@return table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
 function CraftSim.SPECIALIZATION_DATA:GetData(profession, expansionID)
-    ---@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, function>>
-    local dataProviderMap = {
+    ---@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>>>
+    local nodeDataMap = {
         [CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = {
             [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA,
             [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA,
@@ -39,8 +41,7 @@ function CraftSim.SPECIALIZATION_DATA:GetData(profession, expansionID)
             [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA
         },
     }
-    local nodeDataProvider = dataProviderMap[expansionID][profession]
-    return nodeDataProvider()
+    return nodeDataMap[expansionID][profession]
 end
 
 ---@param profession Enum.Profession

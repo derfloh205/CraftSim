@@ -1,9 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
----@return CraftSim.SPECIALIZATION_DATA.RULE_DATA[]
-function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA()
-    return {
+---@type table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
         TAILORING_MASTERY_1 = { -- all mapped
             childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
             nodeID = 40008,
@@ -2016,4 +2015,3 @@ function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA()
             },
         },
     }
-end
