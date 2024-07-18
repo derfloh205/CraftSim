@@ -139,6 +139,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     self.supportsMulticraft = false
     self.supportsResourcefulness = false
+    self.supportsIngenuity = false
     self.supportsCraftingspeed = true -- this is always supported (but does not show in details UI when 0)
 
     if not self.isCooking then

@@ -10,6 +10,7 @@ function CraftSim.LOCAL_EN:GetData()
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Multicraft",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Resourcefulness",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY] = "Ingenuity",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Crafting Speed",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Equip:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Enchanted:",

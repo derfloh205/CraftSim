@@ -15,6 +15,7 @@ CraftSim.CONST.FEATURE_TOGGLES = {
 CraftSim.CONST.PERCENT_MODS = {
     MULTICRAFT = 0.0009,
     RESOURCEFULNESS = 0.00111,
+    INGENUITY = 0.00111, -- TODO: research and set value
     CRAFTINGSPEED = 0.002,
 }
 
@@ -531,6 +532,7 @@ CraftSim.CONST.DEFAULT_POSITIONS = {
     }
 }
 
+---@class CraftSim.RecipeCategories
 CraftSim.CONST.RECIPE_CATEGORIES = {
     ALL = 999999,
     BLACKSMITHING = {
@@ -657,6 +659,7 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
     }
 }
 
+---@class CraftSim.RecipeItemSubTypes
 CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
     ALL = 999999,
     BLACKSMITHING = {

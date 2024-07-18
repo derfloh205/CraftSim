@@ -78,7 +78,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA =
     },
     POIGNANT_PLANS_1 = {
         nodeID = 42826,
-
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     POIGNANT_PLANS_2 = {

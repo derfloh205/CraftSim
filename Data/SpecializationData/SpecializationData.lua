@@ -6,6 +6,27 @@ CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 
 ---@class CraftSim.SPECIALIZATION_DATA.RULE_DATA
 ---@field nodeID number
+---@field childNodeIDs? string[]
+---@field threshold? number
+---@field idMapping table<CraftSim.RecipeCategories, CraftSim.RecipeItemSubTypes>
+---@field exceptionRecipeIDs number[]
+---@field equalsSkill? boolean
+---@field equalsResourcefulness? boolean
+---@field equalsMulticraft? boolean
+---@field equalsIngenuity? boolean
+---@field equalsCraftingspeed? boolean
+---@field equalsResourcefulnessExtraItemsFactor? boolean
+---@field equalsPhialExperimentationChanceFactor? boolean
+---@field equalsPotionExperimentationChanceFactor? boolean
+---@field skill? number
+---@field resourcefulness? number
+---@field multicraft? number
+---@field ingenuity? number
+---@field craftingspeed? number
+---@field resourcefulnessExtraItemsFactor? number
+---@field multicraftExtraItemsFactor? number
+---@field craftingspeedBonusFactor? number
+
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
