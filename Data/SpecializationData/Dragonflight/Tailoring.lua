@@ -1,9 +1,10 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-CraftSim.TAILORING_DATA = {}
+---@type CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {}
 
-CraftSim.TAILORING_DATA.NODE_IDS = {
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA.NODE_IDS = {
     TAILORING_MASTERY = 40008,
     CLOTH_COLLECTION = 40007,
     SPARING_SEWING = 40006,
@@ -32,7 +33,7 @@ CraftSim.TAILORING_DATA.NODE_IDS = {
     BELTS = 40214
 }
 
-CraftSim.TAILORING_DATA.NODES = function()
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA.NODES = function()
     return {
         -- Tailoring Mastery
         {
@@ -145,7 +146,7 @@ CraftSim.TAILORING_DATA.NODES = function()
     }
 end
 
-function CraftSim.TAILORING_DATA:GetData()
+function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA:GetData()
     return {
         TAILORING_MASTERY_1 = { -- all mapped
             childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },

@@ -1,9 +1,10 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-CraftSim.ENCHANTING_DATA = {}
+---@type CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {}
 
-CraftSim.ENCHANTING_DATA.NODE_IDS = {
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA.NODE_IDS = {
     ENCHANTMENT = 64143,
     PRIMAL = 64142,
     MATERIAL_MANIPULATION = 64136,
@@ -25,7 +26,7 @@ CraftSim.ENCHANTING_DATA.NODE_IDS = {
     INSPIRED_DEVOTION = 68441
 }
 
-CraftSim.ENCHANTING_DATA.NODES = function()
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA.NODES = function()
     return {
         -- Enchantment
         {
@@ -110,7 +111,7 @@ CraftSim.ENCHANTING_DATA.NODES = function()
     }
 end
 
-function CraftSim.ENCHANTING_DATA:GetData()
+function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA:GetData()
     return {
         ENCHANTMENT_1 = { -- primal mapped, material mapped
             childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },

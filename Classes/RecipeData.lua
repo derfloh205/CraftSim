@@ -117,7 +117,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         self.isGear = itemInfoInstant[4] ~= CraftSim.CONST.INVENTORY_TYPE_NON_EQUIP_IGNORE
     end
 
-    self.isOldWorldRecipe = not self:IsDragonflightRecipe()
+    self.isOldWorldRecipe = self:IsOldWorldRecipe()
     self.isRecraft = isRecraft or false
     if self.orderData then
         self.isRecraft = self.orderData.isRecraft
@@ -834,6 +834,10 @@ function CraftSim.RecipeData:GetCooldownDataForRecipeCrafter()
     return cooldownData
 end
 
+function CraftSim.RecipeData:GetExpansionID()
+    local professionExpansions = CraftSim.CONST.TRADESKILLLINEIDS[self.professionData.professionInfo.profession]
+end
+
 function CraftSim.RecipeData:IsCrafterInfoCached()
     if self:IsCrafter() then
         return true
@@ -872,17 +876,23 @@ function CraftSim.RecipeData:CrafterDataEquals(crafterData)
     return nameEquals and realmEquals and classEquals
 end
 
-function CraftSim.RecipeData:IsDragonflightRecipe()
-    local recipeInfo = self.recipeInfo
-    if recipeInfo then
-        local professionInfo = self.professionData.professionInfo
-        if not professionInfo.profession then return false end
-        local isDragonflightRecipe = professionInfo.professionID ==
-            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT]
-        return isDragonflightRecipe
+function CraftSim.RecipeData:IsOldWorldRecipe()
+    return self.professionData.expansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT
+end
+
+---@param expansionID CraftSim.EXPANSION_IDS
+function CraftSim.RecipeData:IsExpansionRecipe(expansionID)
+    if self.professionData and self.professionData.skillLineID then
+        return self.professionData.skillLineID ==
+            CraftSim.CONST.TRADESKILLLINEIDS[self.professionData.professionInfo.profession][expansionID]
     end
 
     return false
+end
+
+function CraftSim.RecipeData:IsSpecializationInfoImplemented()
+    return tContains(CraftSim.CONST.IMPLEMENTED_SPECIALIZATION_DATA[self.professionData.expansionID],
+        self.professionData.professionInfo.profession)
 end
 
 --- returns recipe crafting info for all required and all active optional reagents

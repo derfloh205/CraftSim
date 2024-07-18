@@ -1,9 +1,10 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-CraftSim.ALCHEMY_DATA = {}
+---@type CraftSim.SPECIALIZATION_DATA.DATA_PROVIDER
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {}
 
-CraftSim.ALCHEMY_DATA.NODE_IDS = {
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA.NODE_IDS = {
     ALCHEMICAL_THEORY = 19539,
     TRANSMUTATION = 19538,
     CHEMICAL_SYNTHESIS = 19537,
@@ -24,7 +25,7 @@ CraftSim.ALCHEMY_DATA.NODE_IDS = {
     POTION_BATCH_PRODUCTION = 19482
 }
 
-CraftSim.ALCHEMY_DATA.NODES = function()
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA.NODES = function()
     return {
         -- Alchemical Theory
         {
@@ -104,7 +105,7 @@ CraftSim.ALCHEMY_DATA.NODES = function()
     }
 end
 
-function CraftSim.ALCHEMY_DATA:GetData()
+function CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA:GetData()
     return {
         -- Alchemical Theory
         ALCHEMICAL_THEORY_1 = { -- mapped

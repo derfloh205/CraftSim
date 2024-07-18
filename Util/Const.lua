@@ -1293,8 +1293,10 @@ CraftSim.CONST.TEXT = {
     STATIC_POPUPS_NO = "STATIC_POPUPS_NO",
 }
 
-CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function()
-    return {
+---@type table<CraftSim.EXPANSION_IDS, Enum.Profession[]>
+CraftSim.CONST.IMPLEMENTED_SPECIALIZATION_DATA =
+{
+    [CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = {
         Enum.Profession.Alchemy,
         Enum.Profession.Blacksmithing,
         Enum.Profession.Enchanting,
@@ -1303,8 +1305,11 @@ CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP = function()
         Enum.Profession.Jewelcrafting,
         Enum.Profession.Leatherworking,
         Enum.Profession.Tailoring,
-    }
-end
+    },
+    [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
+        Enum.Profession.Blacksmithing,
+    },
+}
 
 CraftSim.CONST.BASE_RECRAFT_RECIPE_IDS = {
     385304, -- Blacksmithing

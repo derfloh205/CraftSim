@@ -125,15 +125,18 @@ Data/ReagentWeightData.lua
 Data/OptionalReagentData.lua
 Data/News.lua
 
-Data/SpecNodeData/SpecData.lua
-Data/SpecNodeData/Alchemy.lua
-Data/SpecNodeData/Blacksmithing.lua
-Data/SpecNodeData/Enchanting.lua
-Data/SpecNodeData/Inscription.lua
-Data/SpecNodeData/Jewelcrafting.lua
-Data/SpecNodeData/Leatherworking.lua
-Data/SpecNodeData/Tailoring.lua
-Data/SpecNodeData/Engineering.lua
+Data/SpecializationData/SpecializationData.lua
+
+Data/SpecializationData/Dragonflight/Alchemy.lua
+Data/SpecializationData/Dragonflight/Blacksmithing.lua
+Data/SpecializationData/Dragonflight/Enchanting.lua
+Data/SpecializationData/Dragonflight/Inscription.lua
+Data/SpecializationData/Dragonflight/Jewelcrafting.lua
+Data/SpecializationData/Dragonflight/Leatherworking.lua
+Data/SpecializationData/Dragonflight/Tailoring.lua
+Data/SpecializationData/Dragonflight/Engineering.lua
+
+Data/SpecializationData/TheWarWithin/Blacksmithing.lua
 
 Classes/CraftSimObject.lua
 Classes/CooldownData.lua

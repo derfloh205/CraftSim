@@ -165,7 +165,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "CraftSim Specialization Info",
         [CraftSim.CONST.TEXT.SPEC_INFO_SIMULATE_KNOWLEDGE_DISTRIBUTION] = "Simulate Knowledge Distribution",
         [CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP] = "This node grants you following stats for this recipe:",
-        [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "SpecInfo Work in Progress",
+        [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "Specialization Info\nWork in Progress",
 
         -- Crafting Results Frame
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE] = "CraftSim Crafting Results",
