@@ -1,12 +1,12 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-CraftSim.SPEC_DATA = {}
+CraftSim.SPECIALIZATION_DATA = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 -- its a function so craftsimConst can be accessed (otherwise nil cause not yet initialized)
-CraftSim.SPEC_DATA.RULE_NODES = function()
+CraftSim.SPECIALIZATION_DATA.RULE_NODES = function()
     return {
         [Enum.Profession.Blacksmithing] = CraftSim.BLACKSMITHING_DATA:GetData(),
         [Enum.Profession.Alchemy] = CraftSim.ALCHEMY_DATA:GetData(),
@@ -18,7 +18,7 @@ CraftSim.SPEC_DATA.RULE_NODES = function()
         [Enum.Profession.Engineering] = CraftSim.ENGINEERING_DATA:GetData()
     }
 end
-CraftSim.SPEC_DATA.BASE_RULE_NODES = function()
+CraftSim.SPECIALIZATION_DATA.BASE_RULE_NODES = function()
     return {
         [Enum.Profession.Blacksmithing] = { "ARMOR_SMITHING_1", "WEAPON_SMITHING_1", "SPECIALITY_SMITHING_1", "HAMMER_CONTROL_1" },
         [Enum.Profession.Alchemy] = { "POTION_MASTERY_1", "PHIAL_MASTERY_1", "ALCHEMICAL_THEORY_1" },
@@ -31,7 +31,7 @@ CraftSim.SPEC_DATA.BASE_RULE_NODES = function()
     }
 end
 
-function CraftSim.SPEC_DATA:GetNodes(professionID)
+function CraftSim.SPECIALIZATION_DATA:GetNodes(professionID)
     if professionID == Enum.Profession.Alchemy then
         return CraftSim.ALCHEMY_DATA.NODES()
     elseif professionID == Enum.Profession.Blacksmithing then

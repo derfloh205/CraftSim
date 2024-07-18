@@ -125,15 +125,15 @@ Data/ReagentWeightData.lua
 Data/OptionalReagentData.lua
 Data/News.lua
 
-Data/SpecNodeData/SpecData.lua
-Data/SpecNodeData/Alchemy.lua
-Data/SpecNodeData/Blacksmithing.lua
-Data/SpecNodeData/Enchanting.lua
-Data/SpecNodeData/Inscription.lua
-Data/SpecNodeData/Jewelcrafting.lua
-Data/SpecNodeData/Leatherworking.lua
-Data/SpecNodeData/Tailoring.lua
-Data/SpecNodeData/Engineering.lua
+Data/SpecializationData/SpecData.lua
+Data/SpecializationData/Alchemy.lua
+Data/SpecializationData/Blacksmithing.lua
+Data/SpecializationData/Enchanting.lua
+Data/SpecializationData/Inscription.lua
+Data/SpecializationData/Jewelcrafting.lua
+Data/SpecializationData/Leatherworking.lua
+Data/SpecializationData/Tailoring.lua
+Data/SpecializationData/Engineering.lua
 
 Classes/CraftSimObject.lua
 Classes/CooldownData.lua
