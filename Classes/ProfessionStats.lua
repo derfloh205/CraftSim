@@ -19,13 +19,13 @@ function CraftSim.ProfessionStats:new(serialized)
 	---@type CraftSim.ProfessionStat
 	self.skill = CraftSim.ProfessionStat("skill")
 	---@type CraftSim.ProfessionStat
-	self.multicraft = CraftSim.ProfessionStat("multicraft", 0, CraftSim.CONST.PERCENT_MODS.MULTICRAFT)
+	self.multicraft = CraftSim.ProfessionStat("multicraft", 0, statPercentModTable.MULTICRAFT)
+	---@type CraftSim.ProfessionStat
+	self.resourcefulness = CraftSim.ProfessionStat("resourcefulness", 0, statPercentModTable.RESOURCEFULNESS)
 	---@type CraftSim.ProfessionStat
 	self.ingenuity = CraftSim.ProfessionStat("ingenuity", 0, statPercentModTable.INGENUITY)
 	---@type CraftSim.ProfessionStat
-	self.ingenuity = CraftSim.ProfessionStat("ingenuity", 0, CraftSim.CONST.PERCENT_MODS.INGENUITY)
-	---@type CraftSim.ProfessionStat
-	self.craftingspeed = CraftSim.ProfessionStat("craftingspeed", 0, CraftSim.CONST.PERCENT_MODS.CRAFTINGSPEED)
+	self.craftingspeed = CraftSim.ProfessionStat("craftingspeed", 0, statPercentModTable.CRAFTINGSPEED)
 
 	-- alchemy specific
 	---@type CraftSim.ProfessionStat

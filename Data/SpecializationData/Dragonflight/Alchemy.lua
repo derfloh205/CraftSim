@@ -4,7 +4,7 @@ local CraftSim = select(2, ...)
 ---@type table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     -- Alchemical Theory
-    ALCHEMICAL_THEORY_1 = {     -- mapped
+    ALCHEMICAL_THEORY_1 = { -- mapped
         childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
         nodeID = 19539,
         equalsSkill = true,
@@ -65,7 +65,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     TRANSMUTATION_2 = {
         nodeID = 19538,
         threshold = 0,
-        resourcefulness = (0.05 / CraftSim.CONST.PERCENT_MODS.RESOURCEFULNESS),
+        resourcefulness = (0.05 / CraftSim.CONST.PERCENT_MODS[CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT].RESOURCEFULNESS),
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
@@ -77,7 +77,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     TRANSMUTATION_3 = {
         nodeID = 19538,
         threshold = 5,
-        resourcefulness = (0.05 / CraftSim.CONST.PERCENT_MODS.RESOURCEFULNESS),
+        resourcefulness = (0.05 / CraftSim.CONST.PERCENT_MODS[CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT].RESOURCEFULNESS),
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
@@ -89,7 +89,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     TRANSMUTATION_4 = {
         nodeID = 19538,
         threshold = 15,
-        resourcefulness = (0.15 / CraftSim.CONST.PERCENT_MODS.RESOURCEFULNESS),
+        resourcefulness = (0.15 / CraftSim.CONST.PERCENT_MODS[CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT].RESOURCEFULNESS),
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
@@ -271,16 +271,16 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         nodeID = 19536,
         equalsSkill = true,
         exceptionRecipeIDs = {
-            370521,     -- air potion
-            370536,     -- frost potion
-            370525,     -- frost potion
-            370528,     -- frost potion
-            370457,     -- frost phial
-            370456,     -- frost phial
-            370714,     -- decay transmutation
-            405832,     -- Stinky Bright Potion
-            405879,     -- Cauldron of Extracted Putrescense
-            415810,     -- Potion of Withering Dreams
+            370521, -- air potion
+            370536, -- frost potion
+            370525, -- frost potion
+            370528, -- frost potion
+            370457, -- frost phial
+            370456, -- frost phial
+            370714, -- decay transmutation
+            405832, -- Stinky Bright Potion
+            405879, -- Cauldron of Extracted Putrescense
+            415810, -- Potion of Withering Dreams
         },
     },
     DECAYOLOGY_2 = {
@@ -288,32 +288,32 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         threshold = 5,
         resourcefulness = 10,
         exceptionRecipeIDs = {
-            370521,     -- air potion
-            370536,     -- frost potion
-            370525,     -- frost potion
-            370528,     -- frost potion
-            370457,     -- frost phial
-            370456,     -- frost phial
-            370714,     -- decay transmutation
-            405832,     -- Stinky Bright Potion
-            405879,     -- Cauldron of Extracted Putrescense
-            415810,     -- Potion of Withering Dreams
+            370521, -- air potion
+            370536, -- frost potion
+            370525, -- frost potion
+            370528, -- frost potion
+            370457, -- frost phial
+            370456, -- frost phial
+            370714, -- decay transmutation
+            405832, -- Stinky Bright Potion
+            405879, -- Cauldron of Extracted Putrescense
+            415810, -- Potion of Withering Dreams
         },
     },
     DECAYOLOGY_3 = {
         nodeID = 19536,
         threshold = 15,
         exceptionRecipeIDs = {
-            370521,     -- air potion
-            370536,     -- frost potion
-            370525,     -- frost potion
-            370528,     -- frost potion
-            370457,     -- frost phial
-            370456,     -- frost phial
-            370714,     -- decay transmutation
-            405832,     -- Stinky Bright Potion
-            405879,     -- Cauldron of Extracted Putrescense
-            415810,     -- Potion of Withering Dreams
+            370521, -- air potion
+            370536, -- frost potion
+            370525, -- frost potion
+            370528, -- frost potion
+            370457, -- frost phial
+            370456, -- frost phial
+            370714, -- decay transmutation
+            405832, -- Stinky Bright Potion
+            405879, -- Cauldron of Extracted Putrescense
+            415810, -- Potion of Withering Dreams
         },
     },
     DECAYOLOGY_4 = {
@@ -321,16 +321,16 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         threshold = 25,
         resourcefulness = 10,
         exceptionRecipeIDs = {
-            370521,     -- air potion
-            370536,     -- frost potion
-            370525,     -- frost potion
-            370528,     -- frost potion
-            370457,     -- frost phial
-            370456,     -- frost phial
-            370714,     -- decay transmutation
-            405832,     -- Stinky Bright Potion
-            405879,     -- Cauldron of Extracted Putrescense
-            415810,     -- Potion of Withering Dreams
+            370521, -- air potion
+            370536, -- frost potion
+            370525, -- frost potion
+            370528, -- frost potion
+            370457, -- frost phial
+            370456, -- frost phial
+            370714, -- decay transmutation
+            405832, -- Stinky Bright Potion
+            405879, -- Cauldron of Extracted Putrescense
+            415810, -- Potion of Withering Dreams
         },
     },
     DECAYOLOGY_5 = {
@@ -338,16 +338,16 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         threshold = 30,
         skill = 10,
         exceptionRecipeIDs = {
-            370521,     -- air potion
-            370536,     -- frost potion
-            370525,     -- frost potion
-            370528,     -- frost potion
-            370457,     -- frost phial
-            370456,     -- frost phial
-            370714,     -- decay transmutation
-            405832,     -- Stinky Bright Potion
-            405879,     -- Cauldron of Extracted Putrescense
-            415810,     -- Potion of Withering Dreams
+            370521, -- air potion
+            370536, -- frost potion
+            370525, -- frost potion
+            370528, -- frost potion
+            370457, -- frost phial
+            370456, -- frost phial
+            370714, -- decay transmutation
+            405832, -- Stinky Bright Potion
+            405879, -- Cauldron of Extracted Putrescense
+            415810, -- Potion of Withering Dreams
         },
     },
     RESOURCEFUL_ROUTINES_1 = {
@@ -437,7 +437,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     -- Phial Mastery
-    PHIAL_MASTERY_1 = {     -- frost mapped, air mapped, lore mapped
+    PHIAL_MASTERY_1 = { -- frost mapped, air mapped, lore mapped
         childNodeIDs = { "FROST_PHIALS_1", "PHIAL_LORE_1", "AIR_PHIALS_1" },
         nodeID = 22483,
         equalsSkill = true,
@@ -454,12 +454,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         },
         exceptionRecipeIDs = {
             -- lore
-            370676,     -- phial trinket
+            370676, -- phial trinket
             -- phial experimentation
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
             -- batch production
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     PHIAL_MASTERY_2 = {
@@ -479,12 +479,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         },
         exceptionRecipeIDs = {
             -- lore
-            370676,     -- phial trinket
+            370676, -- phial trinket
             -- phial experimentation
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
             -- batch production
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     PHIAL_MASTERY_3 = {
@@ -505,15 +505,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         },
         exceptionRecipeIDs = {
             -- lore
-            370676,     -- phial trinket
+            370676, -- phial trinket
             -- phial experimentation
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
             -- batch production
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
-    PHIAL_LORE_1 = {     -- experimentation mapped, batch mapped
+    PHIAL_LORE_1 = { -- experimentation mapped, batch mapped
         childNodeIDs = { "PHIAL_EXPERIMENTATION_1", "PHIAL_BATCH_PRODUCTION_1" },
         nodeID = 22480,
         equalsSkill = true,
@@ -530,12 +530,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         },
         exceptionRecipeIDs = {
             -- lore
-            370676,     -- phial trinket
+            370676, -- phial trinket
             -- phial experimentation
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
             -- batch production
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         },
     },
     PHIAL_LORE_2 = {
@@ -555,12 +555,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            370676,     -- phial trinket
+            370676, -- phial trinket
             -- phial experimentation
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
             -- batch production
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         },
     },
     PHIAL_LORE_3 = {
@@ -579,12 +579,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            370676,     -- phial trinket
+            370676, -- phial trinket
             -- phial experimentation
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
             -- batch production
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         },
     },
     PHIAL_LORE_4 = {
@@ -604,12 +604,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            370676,     -- phial trinket
+            370676, -- phial trinket
             -- phial experimentation
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
             -- batch production
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         },
     },
     FROST_PHIALS_1 = {
@@ -624,7 +624,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     FROST_PHIALS_2 = {
@@ -639,7 +639,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     FROST_PHIALS_3 = {
@@ -655,7 +655,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     FROST_PHIALS_4 = {
@@ -671,7 +671,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     FROST_PHIALS_5 = {
@@ -687,7 +687,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     FROST_PHIALS_6 = {
@@ -702,7 +702,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     AIR_PHIALS_1 = {
@@ -717,7 +717,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     AIR_PHIALS_2 = {
@@ -732,7 +732,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     AIR_PHIALS_3 = {
@@ -748,7 +748,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     AIR_PHIALS_4 = {
@@ -764,7 +764,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     AIR_PHIALS_5 = {
@@ -780,7 +780,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     AIR_PHIALS_6 = {
@@ -795,7 +795,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            406106,     -- phial cauldron
+            406106, -- phial cauldron
         }
     },
     PHIAL_EXPERIMENTATION_1 = {
@@ -803,8 +803,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         equalsPhialExperimentationChanceFactor = true,
         exceptionRecipeIDs = {
             -- phial experimentation
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
         }
     },
     PHIAL_EXPERIMENTATION_2 = {
@@ -812,8 +812,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         threshold = 0,
         phialExperimentationChanceFactor = 0.10,
         exceptionRecipeIDs = {
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
         }
     },
     PHIAL_EXPERIMENTATION_3 = {
@@ -821,8 +821,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         threshold = 5,
         phialExperimentationChanceFactor = 0.05,
         exceptionRecipeIDs = {
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
         }
     },
     PHIAL_EXPERIMENTATION_4 = {
@@ -830,8 +830,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         threshold = 15,
         phialExperimentationChanceFactor = 0.05,
         exceptionRecipeIDs = {
-            370746,     -- basic
-            370747,     -- advanced
+            370746, -- basic
+            370747, -- advanced
         }
     },
     PHIAL_BATCH_PRODUCTION_1 = {
@@ -848,11 +848,11 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370746,                -- basic
-            370747,                -- advanced
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370746,            -- basic
+            370747,            -- advanced
             -- lore
-            406106,                -- phial cauldron
+            406106,            -- phial cauldron
         },
     },
     PHIAL_BATCH_PRODUCTION_2 = {
@@ -870,10 +870,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370746,                -- basic
-            370747,                -- advanced
-            406106,                -- phial cauldron
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370746,            -- basic
+            370747,            -- advanced
+            406106,            -- phial cauldron
         },
     },
     PHIAL_BATCH_PRODUCTION_3 = {
@@ -891,10 +891,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370746,                -- basic
-            370747,                -- advanced
-            406106,                -- phial cauldron
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370746,            -- basic
+            370747,            -- advanced
+            406106,            -- phial cauldron
         },
     },
     PHIAL_BATCH_PRODUCTION_4 = {
@@ -912,10 +912,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370746,                -- basic
-            370747,                -- advanced
-            406106,                -- phial cauldron
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370746,            -- basic
+            370747,            -- advanced
+            406106,            -- phial cauldron
         },
     },
     PHIAL_BATCH_PRODUCTION_5 = {
@@ -933,10 +933,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370746,                -- basic
-            370747,                -- advanced
-            406106,                -- phial cauldron
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370746,            -- basic
+            370747,            -- advanced
+            406106,            -- phial cauldron
         },
     },
     PHIAL_BATCH_PRODUCTION_6 = {
@@ -954,15 +954,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370746,                -- basic
-            370747,                -- advanced
-            406106,                -- phial cauldron
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370746,            -- basic
+            370747,            -- advanced
+            406106,            -- phial cauldron
         },
     },
 
     -- Potion Mastery
-    POTION_MASTERY_1 = {     -- frost mapped, air mapped, lore mapped
+    POTION_MASTERY_1 = { -- frost mapped, air mapped, lore mapped
         childNodeIDs = { "FROST_POTIONS_1", "POTION_LORE_1", "AIR_POTIONS_1" },
         nodeID = 19487,
         equalsSkill = true,
@@ -979,14 +979,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         },
         exceptionRecipeIDs = {
             -- frost
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
             -- lore
-            370677,     -- potion trinket
+            370677, -- potion trinket
             -- potion experimentation
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
         },
     },
     POTION_MASTERY_2 = {
@@ -1006,14 +1006,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         },
         exceptionRecipeIDs = {
             -- frost
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
             -- lore
-            370677,     -- potion trinket
+            370677, -- potion trinket
             -- potion experimentation
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
         },
     },
     POTION_MASTERY_3 = {
@@ -1034,17 +1034,17 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         },
         exceptionRecipeIDs = {
             -- frost
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
             -- lore
-            370677,     -- potion trinket
+            370677, -- potion trinket
             -- potion experimentation
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
         },
     },
-    POTION_LORE_1 = {     -- experimentation mapped, batch mapped
+    POTION_LORE_1 = { -- experimentation mapped, batch mapped
         childNodeIDs = { "POTION_EXPERIMENTATION_1", "POTION_BATCH_PRODUCTION_1" },
         nodeID = 19484,
         equalsSkill = true,
@@ -1061,14 +1061,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         },
         exceptionRecipeIDs = {
             -- lore
-            370677,     -- potion trinket
+            370677, -- potion trinket
             -- potion experimentation
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
             -- batch
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     POTION_LORE_2 = {
@@ -1088,14 +1088,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370677,     -- potion trinket
+            370677, -- potion trinket
             -- potion experimentation
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
             -- batch
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     POTION_LORE_3 = {
@@ -1114,14 +1114,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370677,     -- potion trinket
+            370677, -- potion trinket
             -- potion experimentation
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
             -- batch
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     POTION_LORE_4 = {
@@ -1141,14 +1141,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370677,     -- potion trinket
+            370677, -- potion trinket
             -- potion experimentation
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
             -- batch
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     FROST_POTIONS_1 = {
@@ -1164,9 +1164,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         },
         exceptionRecipeIDs = {
             -- frost
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     FROST_POTIONS_2 = {
@@ -1182,9 +1182,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     FROST_POTIONS_3 = {
@@ -1199,9 +1199,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     FROST_POTIONS_4 = {
@@ -1217,9 +1217,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     FROST_POTIONS_5 = {
@@ -1235,9 +1235,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     AIR_POTIONS_1 = {
@@ -1252,9 +1252,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     AIR_POTIONS_2 = {
@@ -1270,9 +1270,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     AIR_POTIONS_3 = {
@@ -1287,9 +1287,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     AIR_POTIONS_4 = {
@@ -1305,9 +1305,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     AIR_POTIONS_5 = {
@@ -1323,9 +1323,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            370672,     -- ultimate power cauldron
-            370668,     -- power cauldron
-            370673,     -- pooka cauldron
+            370672, -- ultimate power cauldron
+            370668, -- power cauldron
+            370673, -- pooka cauldron
         },
     },
     POTION_EXPERIMENTATION_1 = {
@@ -1333,8 +1333,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         equalsPotionExperimentationChanceFactor = true,
         exceptionRecipeIDs = {
             -- potion experimentation
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
         }
     },
     POTION_EXPERIMENTATION_2 = {
@@ -1342,8 +1342,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         threshold = 0,
         potionExperimentationChanceFactor = 0.10,
         exceptionRecipeIDs = {
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
         }
     },
     POTION_EXPERIMENTATION_3 = {
@@ -1351,8 +1351,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         threshold = 5,
         potionExperimentationChanceFactor = 0.05,
         exceptionRecipeIDs = {
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
         }
     },
     POTION_EXPERIMENTATION_4 = {
@@ -1360,8 +1360,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
         threshold = 15,
         potionExperimentationChanceFactor = 0.05,
         exceptionRecipeIDs = {
-            370743,     -- basic
-            370745,     -- advanced
+            370743, -- basic
+            370745, -- advanced
         }
     },
     POTION_BATCH_PRODUCTION_1 = {
@@ -1378,13 +1378,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             }
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370743,                -- basic
-            370745,                -- advanced
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370743,            -- basic
+            370745,            -- advanced
             -- batch
-            370672,                -- ultimate power cauldron
-            370668,                -- power cauldron
-            370673,                -- pooka cauldron
+            370672,            -- ultimate power cauldron
+            370668,            -- power cauldron
+            370673,            -- pooka cauldron
         },
     },
     POTION_BATCH_PRODUCTION_2 = {
@@ -1402,12 +1402,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             }
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370743,                -- basic
-            370745,                -- advanced
-            370672,                -- ultimate power cauldron
-            370668,                -- power cauldron
-            370673,                -- pooka cauldron
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370743,            -- basic
+            370745,            -- advanced
+            370672,            -- ultimate power cauldron
+            370668,            -- power cauldron
+            370673,            -- pooka cauldron
         },
     },
     POTION_BATCH_PRODUCTION_3 = {
@@ -1425,12 +1425,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             }
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370743,                -- basic
-            370745,                -- advanced
-            370672,                -- ultimate power cauldron
-            370668,                -- power cauldron
-            370673,                -- pooka cauldron
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370743,            -- basic
+            370745,            -- advanced
+            370672,            -- ultimate power cauldron
+            370668,            -- power cauldron
+            370673,            -- pooka cauldron
         },
     },
     POTION_BATCH_PRODUCTION_4 = {
@@ -1448,12 +1448,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             }
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370743,                -- basic
-            370745,                -- advanced
-            370672,                -- ultimate power cauldron
-            370668,                -- power cauldron
-            370673,                -- pooka cauldron
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370743,            -- basic
+            370745,            -- advanced
+            370672,            -- ultimate power cauldron
+            370668,            -- power cauldron
+            370673,            -- pooka cauldron
         },
     },
     POTION_BATCH_PRODUCTION_5 = {
@@ -1471,12 +1471,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             }
         },
-        exceptionRecipeIDs = {     -- the crafting speed effects experimentations
-            370743,                -- basic
-            370745,                -- advanced
-            370672,                -- ultimate power cauldron
-            370668,                -- power cauldron
-            370673,                -- pooka cauldron
+        exceptionRecipeIDs = { -- the crafting speed effects experimentations
+            370743,            -- basic
+            370745,            -- advanced
+            370672,            -- ultimate power cauldron
+            370668,            -- power cauldron
+            370673,            -- pooka cauldron
         },
     },
 }
