@@ -1,236 +1,1384 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-
 CraftSim.REAGENT_DATA = {
-    [191476] = { name = "Draconic Vial", weight = 11 },
-    [191475] = { name = "Draconic Vial", weight = 11 },
-    [191474] = { name = "Draconic Vial", weight = 11 },
-    [191462] = { name = "Hochenblume", weight = 3 },
-    [191460] = { name = "Hochenblume", weight = 3 },
-    [191461] = { name = "Hochenblume", weight = 3 },
-    [191464] = { name = "Saxifrage", weight = 6 },
-    [191465] = { name = "Saxifrage", weight = 6 },
-    [191466] = { name = "Saxifrage", weight = 6 },
-    [191468] = { name = "Bubble Poppy", weight = 6 },
-    [191467] = { name = "Bubble Poppy", weight = 6 },
-    [191469] = { name = "Bubble Poppy", weight = 6 },
-    [191496] = { name = "Omnium Draconis", weight = 12 },
-    [191498] = { name = "Omnium Draconis", weight = 12 },
-    [191497] = { name = "Omnium Draconis", weight = 12 },
-    [191387] = { name = "Elemental Potion of Power", weight = 22 },
-    [191389] = { name = "Elemental Potion of Power", weight = 22 },
-    [191388] = { name = "Elemental Potion of Power", weight = 22 },
-    [191363] = { name = "Potion of Frozen Focus", weight = 21 },
-    [191365] = { name = "Potion of Frozen Focus", weight = 21 },
-    [191364] = { name = "Potion of Frozen Focus", weight = 21 },
-    [191495] = { name = "Primal Convergent", weight = 39 },
-    [191493] = { name = "Primal Convergent", weight = 39 },
-    [191494] = { name = "Primal Convergent", weight = 39 },
-    [191470] = { name = "Writhebark", weight = 6 },
-    [191472] = { name = "Writhebark", weight = 6 },
-    [191471] = { name = "Writhebark", weight = 6 },
-    [188658] = { name = "Draconium Ore", weight = 10 },
-    [189143] = { name = "Draconium Ore", weight = 10 },
-    [190311] = { name = "Draconium Ore", weight = 10 },
-    [191339] = { name = "Phial of Tepid Versatility", weight = 32 },
-    [191341] = { name = "Phial of Tepid Versatility", weight = 32 },
-    [191340] = { name = "Phial of Tepid Versatility", weight = 32 },
-    [191359] = { name = "Phial of Elemental Chaos", weight = 35 },
-    [191357] = { name = "Phial of Elemental Chaos", weight = 35 },
-    [191358] = { name = "Phial of Elemental Chaos", weight = 35 },
-    [190533] = { name = "Obsidian Seared Alloy", weight = 78 },
-    [190534] = { name = "Obsidian Seared Alloy", weight = 78 },
-    [190535] = { name = "Obsidian Seared Alloy", weight = 78 },
-    [189542] = { name = "Primal Molten Alloy", weight = 48 },
-    [189541] = { name = "Primal Molten Alloy", weight = 48 },
-    [189543] = { name = "Primal Molten Alloy", weight = 48 },
-    [190530] = { name = "Frostfire Alloy", weight = 48 },
-    [190531] = { name = "Frostfire Alloy", weight = 48 },
-    [190532] = { name = "Frostfire Alloy", weight = 48 },
-    [190536] = { name = "Infurious Alloy", weight = 33 },
-    [190537] = { name = "Infurious Alloy", weight = 33 },
-    [190538] = { name = "Infurious Alloy", weight = 33 },
-    [190396] = { name = "Serevite Ore", weight = 3 },
-    [190395] = { name = "Serevite Ore", weight = 3 },
-    [190394] = { name = "Serevite Ore", weight = 3 },
-    [190312] = { name = "Khaz'gorite Ore", weight = 14 },
-    [190313] = { name = "Khaz'gorite Ore", weight = 14 },
-    [190314] = { name = "Khaz'gorite Ore", weight = 14 },
-    [192883] = { name = "Glossy Stone", weight = 21 },
-    [192884] = { name = "Glossy Stone", weight = 21 },
-    [192885] = { name = "Glossy Stone", weight = 21 },
-    [193368] = { name = "Silken Gemdust", weight = 20 },
-    [193369] = { name = "Silken Gemdust", weight = 20 },
-    [193370] = { name = "Silken Gemdust", weight = 20 },
-    [194862] = { name = "Runed Writhebark", weight = 46 },
-    [194864] = { name = "Runed Writhebark", weight = 46 },
-    [194863] = { name = "Runed Writhebark", weight = 46 },
-    [198186] = { name = "Shock-Spring Coil", weight = 9 },
-    [198188] = { name = "Shock-Spring Coil", weight = 9 },
-    [198187] = { name = "Shock-Spring Coil", weight = 9 },
-    [198192] = { name = "Greased-Up Gears", weight = 26 },
-    [198193] = { name = "Greased-Up Gears", weight = 26 },
-    [198194] = { name = "Greased-Up Gears", weight = 26 },
-    [198183] = { name = "Handful of Serevite Bolts", weight = 7 },
-    [198185] = { name = "Handful of Serevite Bolts", weight = 7 },
-    [198184] = { name = "Handful of Serevite Bolts", weight = 7 },
-    [192876] = { name = "Frameless Lens", weight = 26 },
-    [192877] = { name = "Frameless Lens", weight = 26 },
-    [192878] = { name = "Frameless Lens", weight = 26 },
-    [198195] = { name = "Arclight Capacitor", weight = 51 },
-    [198197] = { name = "Arclight Capacitor", weight = 51 },
-    [198196] = { name = "Arclight Capacitor", weight = 51 },
-    [198198] = { name = "Reinforced Machine Chassis", weight = 75 },
-    [198200] = { name = "Reinforced Machine Chassis", weight = 75 },
-    [198199] = { name = "Reinforced Machine Chassis", weight = 75 },
-    [198189] = { name = "Everburning Blasting Powder", weight = 13 },
-    [198191] = { name = "Everburning Blasting Powder", weight = 13 },
-    [198190] = { name = "Everburning Blasting Powder", weight = 13 },
-    [193229] = { name = "Mireslush Hide", weight = 45 },
-    [193230] = { name = "Mireslush Hide", weight = 45 },
-    [193231] = { name = "Mireslush Hide", weight = 45 },
-    [192849] = { name = "Eternity Amber", weight = 15 },
-    [192850] = { name = "Eternity Amber", weight = 15 },
-    [192851] = { name = "Eternity Amber", weight = 15 },
-    [193226] = { name = "Stonecrust Hide", weight = 45 },
-    [193228] = { name = "Stonecrust Hide", weight = 45 },
-    [193227] = { name = "Stonecrust Hide", weight = 45 },
-    [192887] = { name = "Elemental Harmony", weight = 291 },
-    [193379] = { name = "Elemental Harmony", weight = 291 },
-    [193378] = { name = "Elemental Harmony", weight = 291 },
-    [193222] = { name = "Lustrous Scaled Hide", weight = 31 },
-    [193224] = { name = "Lustrous Scaled Hide", weight = 31 },
-    [193223] = { name = "Lustrous Scaled Hide", weight = 31 },
-    [198278] = { name = "Primal Deconstruction Charge", weight = 22 },
-    [198280] = { name = "Primal Deconstruction Charge", weight = 22 },
-    [198279] = { name = "Primal Deconstruction Charge", weight = 22 },
-    [193208] = { name = "Resilient Leather", weight = 2 },
-    [193210] = { name = "Resilient Leather", weight = 2 },
-    [193211] = { name = "Resilient Leather", weight = 2 },
-    [198230] = { name = "Gravitational Displacer", weight = 20 },
-    [198228] = { name = "Gravitational Displacer", weight = 20 },
-    [198229] = { name = "Gravitational Displacer", weight = 20 },
-    [198201] = { name = "Assorted Safety Fuses", weight = 19 },
-    [198202] = { name = "Assorted Safety Fuses", weight = 19 },
-    [198203] = { name = "Assorted Safety Fuses", weight = 19 },
-    [191396] = { name = "Potion of Gusts", weight = 20 },
-    [191398] = { name = "Potion of Gusts", weight = 20 },
-    [191397] = { name = "Potion of Gusts", weight = 20 },
-    [192863] = { name = "Neltharite", weight = 108 },
-    [192862] = { name = "Neltharite", weight = 108 },
-    [192865] = { name = "Neltharite", weight = 108 },
-    [193213] = { name = "Adamant Scales", weight = 2 },
-    [193214] = { name = "Adamant Scales", weight = 2 },
-    [193215] = { name = "Adamant Scales", weight = 2 },
-    [193929] = { name = "Vibrant Wildercloth Bolt", weight = 54 },
-    [193931] = { name = "Vibrant Wildercloth Bolt", weight = 54 },
-    [193930] = { name = "Vibrant Wildercloth Bolt", weight = 54 },
-    [191378] = { name = "Refreshing Healing Potion", weight = 11 },
-    [191380] = { name = "Refreshing Healing Potion", weight = 11 },
-    [191379] = { name = "Refreshing Healing Potion", weight = 11 },
-    [192848] = { name = "Sundered Onyx", weight = 25 },
-    [192847] = { name = "Sundered Onyx", weight = 25 },
-    [192846] = { name = "Sundered Onyx", weight = 25 },
-    [193216] = { name = "Dense Hide", weight = 31 },
-    [193217] = { name = "Dense Hide", weight = 31 },
-    [193218] = { name = "Dense Hide", weight = 31 },
-    [192840] = { name = "Mystic Sapphire", weight = 25 },
-    [192841] = { name = "Mystic Sapphire", weight = 25 },
-    [192842] = { name = "Mystic Sapphire", weight = 25 },
-    [193245] = { name = "Frostbite Scales", weight = 45 },
-    [193246] = { name = "Frostbite Scales", weight = 45 },
-    [193247] = { name = "Frostbite Scales", weight = 45 },
-    [192856] = { name = "Malygite", weight = 108 },
-    [192857] = { name = "Malygite", weight = 108 },
-    [192858] = { name = "Malygite", weight = 108 },
-    [192843] = { name = "Vibrant Emerald", weight = 25 },
-    [192844] = { name = "Vibrant Emerald", weight = 25 },
-    [192845] = { name = "Vibrant Emerald", weight = 25 },
-    [192838] = { name = "Queen's Ruby", weight = 25 },
-    [192837] = { name = "Queen's Ruby", weight = 25 },
-    [192839] = { name = "Queen's Ruby", weight = 25 },
-    [191393] = { name = "Potion of the Hushed Zephyr", weight = 21 },
-    [191395] = { name = "Potion of the Hushed Zephyr", weight = 21 },
-    [191394] = { name = "Potion of the Hushed Zephyr", weight = 21 },
-    [194856] = { name = "Serene Ink", weight = 14 },
-    [194857] = { name = "Serene Ink", weight = 14 },
-    [194858] = { name = "Serene Ink", weight = 14 },
-    [194760] = { name = "Burnished Ink", weight = 24 },
-    [194761] = { name = "Burnished Ink", weight = 24 },
-    [194855] = { name = "Burnished Ink", weight = 24 },
-    [198421] = { name = "Shimmering Pigment", weight = 6 },
-    [198423] = { name = "Shimmering Pigment", weight = 6 },
-    [198422] = { name = "Shimmering Pigment", weight = 6 },
-    [198418] = { name = "Blazing Pigment", weight = 16 },
-    [198420] = { name = "Blazing Pigment", weight = 16 },
-    [198419] = { name = "Blazing Pigment", weight = 16 },
-    [194751] = { name = "Blazing Ink", weight = 14 },
-    [194752] = { name = "Blazing Ink", weight = 14 },
-    [194846] = { name = "Blazing Ink", weight = 14 },
-    [194850] = { name = "Flourishing Ink", weight = 14 },
-    [194758] = { name = "Flourishing Ink", weight = 14 },
-    [194852] = { name = "Flourishing Ink", weight = 14 },
-    [194859] = { name = "Chilled Rune", weight = 34 },
-    [194767] = { name = "Chilled Rune", weight = 34 },
-    [194768] = { name = "Chilled Rune", weight = 34 },
-    [194754] = { name = "Cosmic Ink", weight = 42 },
-    [194756] = { name = "Cosmic Ink", weight = 42 },
-    [194755] = { name = "Cosmic Ink", weight = 42 },
-    [198415] = { name = "Flourishing Pigment", weight = 16 },
-    [198416] = { name = "Flourishing Pigment", weight = 16 },
-    [198417] = { name = "Flourishing Pigment", weight = 16 },
-    [198412] = { name = "Serene Pigment", weight = 16 },
-    [198413] = { name = "Serene Pigment", weight = 16 },
-    [198414] = { name = "Serene Pigment", weight = 16 },
-    [192859] = { name = "Ysemerald", weight = 108 },
-    [192860] = { name = "Ysemerald", weight = 108 },
-    [192861] = { name = "Ysemerald", weight = 108 },
-    [192869] = { name = "Illimited Diamond", weight = 254 },
-    [192871] = { name = "Illimited Diamond", weight = 254 },
-    [192870] = { name = "Illimited Diamond", weight = 254 },
-    [192834] = { name = "Shimmering Clasp", weight = 20 },
-    [192835] = { name = "Shimmering Clasp", weight = 20 },
-    [192836] = { name = "Shimmering Clasp", weight = 20 },
-    [192852] = { name = "Alexstraszite", weight = 108 },
-    [192855] = { name = "Alexstraszite", weight = 108 },
-    [192853] = { name = "Alexstraszite", weight = 108 },
-    [193029] = { name = "Projection Prism", weight = 31 },
-    [193031] = { name = "Projection Prism", weight = 31 },
-    [193030] = { name = "Projection Prism", weight = 31 },
-    [192867] = { name = "Nozdorite", weight = 88 },
-    [192866] = { name = "Nozdorite", weight = 88 },
-    [192868] = { name = "Nozdorite", weight = 88 },
-    [193242] = { name = "Earthshine Scales", weight = 45 },
-    [193244] = { name = "Earthshine Scales", weight = 45 },
-    [193243] = { name = "Earthshine Scales", weight = 45 },
-    [193248] = { name = "Infurious Scales", weight = 42 },
-    [193249] = { name = "Infurious Scales", weight = 42 },
-    [193250] = { name = "Infurious Scales", weight = 42 },
-    [193236] = { name = "Infurious Hide", weight = 42 },
-    [193237] = { name = "Infurious Hide", weight = 42 },
-    [193238] = { name = "Infurious Hide", weight = 42 },
-    [193926] = { name = "Wildercloth Bolt", weight = 9 },
-    [193927] = { name = "Wildercloth Bolt", weight = 9 },
-    [193928] = { name = "Wildercloth Bolt", weight = 9 },
-    [194014] = { name = "Temporal Spellthread", weight = 218 },
-    [194016] = { name = "Temporal Spellthread", weight = 218 },
-    [194015] = { name = "Temporal Spellthread", weight = 218 },
-    [193936] = { name = "Chronocloth Bolt", weight = 117 },
-    [193935] = { name = "Chronocloth Bolt", weight = 117 },
-    [193937] = { name = "Chronocloth Bolt", weight = 117 },
-    [194011] = { name = "Frozen Spellthread", weight = 218 },
-    [194013] = { name = "Frozen Spellthread", weight = 218 },
-    [194012] = { name = "Frozen Spellthread", weight = 218 },
-    [193938] = { name = "Azureweave Bolt", weight = 117 },
-    [193939] = { name = "Azureweave Bolt", weight = 117 },
-    [193940] = { name = "Azureweave Bolt", weight = 117 },
-    [192096] = { name = "Spool of Wilderthread", weight = 4 },
-    [192095] = { name = "Spool of Wilderthread", weight = 4 },
-    [192097] = { name = "Spool of Wilderthread", weight = 4 },
-    [193932] = { name = "Infurious Wildercloth Bolt", weight = 29 },
-    [193933] = { name = "Infurious Wildercloth Bolt", weight = 29 },
-    [193934] = { name = "Infurious Wildercloth Bolt", weight = 29 },
-    [194008] = { name = "Vibrant Spellthread", weight = 123 },
-    [194010] = { name = "Vibrant Spellthread", weight = 123 },
-    [194009] = { name = "Vibrant Spellthread", weight = 123 }
+	[188658] = {
+		weight = 10,
+	},
+	[189143] = {
+		weight = 10,
+	},
+	[189541] = {
+		weight = 48,
+	},
+	[189542] = {
+		weight = 48,
+	},
+	[189543] = {
+		weight = 48,
+	},
+	[190311] = {
+		weight = 10,
+	},
+	[190312] = {
+		weight = 14,
+	},
+	[190313] = {
+		weight = 14,
+	},
+	[190314] = {
+		weight = 14,
+	},
+	[190394] = {
+		weight = 3,
+	},
+	[190395] = {
+		weight = 3,
+	},
+	[190396] = {
+		weight = 3,
+	},
+	[190530] = {
+		weight = 48,
+	},
+	[190531] = {
+		weight = 48,
+	},
+	[190532] = {
+		weight = 48,
+	},
+	[190533] = {
+		weight = 78,
+	},
+	[190534] = {
+		weight = 78,
+	},
+	[190535] = {
+		weight = 78,
+	},
+	[190536] = {
+		weight = 33,
+	},
+	[190537] = {
+		weight = 33,
+	},
+	[190538] = {
+		weight = 33,
+	},
+	[191460] = {
+		weight = 3,
+	},
+	[191461] = {
+		weight = 3,
+	},
+	[191462] = {
+		weight = 3,
+	},
+	[191464] = {
+		weight = 6,
+	},
+	[191465] = {
+		weight = 6,
+	},
+	[191466] = {
+		weight = 6,
+	},
+	[191467] = {
+		weight = 6,
+	},
+	[191468] = {
+		weight = 6,
+	},
+	[191469] = {
+		weight = 6,
+	},
+	[191470] = {
+		weight = 6,
+	},
+	[191471] = {
+		weight = 6,
+	},
+	[191472] = {
+		weight = 6,
+	},
+	[191474] = {
+		weight = 11,
+	},
+	[191475] = {
+		weight = 11,
+	},
+	[191476] = {
+		weight = 11,
+	},
+	[191493] = {
+		weight = 39,
+	},
+	[191494] = {
+		weight = 39,
+	},
+	[191495] = {
+		weight = 39,
+	},
+	[191496] = {
+		weight = 12,
+	},
+	[191497] = {
+		weight = 12,
+	},
+	[191498] = {
+		weight = 12,
+	},
+	[192095] = {
+		weight = 4,
+	},
+	[192096] = {
+		weight = 4,
+	},
+	[192097] = {
+		weight = 4,
+	},
+	[192834] = {
+		weight = 20,
+	},
+	[192835] = {
+		weight = 20,
+	},
+	[192836] = {
+		weight = 20,
+	},
+	[192837] = {
+		weight = 25,
+	},
+	[192838] = {
+		weight = 25,
+	},
+	[192839] = {
+		weight = 25,
+	},
+	[192840] = {
+		weight = 25,
+	},
+	[192841] = {
+		weight = 25,
+	},
+	[192842] = {
+		weight = 25,
+	},
+	[192843] = {
+		weight = 25,
+	},
+	[192844] = {
+		weight = 25,
+	},
+	[192845] = {
+		weight = 25,
+	},
+	[192846] = {
+		weight = 25,
+	},
+	[192847] = {
+		weight = 25,
+	},
+	[192848] = {
+		weight = 25,
+	},
+	[192849] = {
+		weight = 15,
+	},
+	[192850] = {
+		weight = 15,
+	},
+	[192851] = {
+		weight = 15,
+	},
+	[192852] = {
+		weight = 108,
+	},
+	[192853] = {
+		weight = 108,
+	},
+	[192855] = {
+		weight = 108,
+	},
+	[192856] = {
+		weight = 108,
+	},
+	[192857] = {
+		weight = 108,
+	},
+	[192858] = {
+		weight = 108,
+	},
+	[192859] = {
+		weight = 108,
+	},
+	[192860] = {
+		weight = 108,
+	},
+	[192861] = {
+		weight = 108,
+	},
+	[192862] = {
+		weight = 108,
+	},
+	[192863] = {
+		weight = 108,
+	},
+	[192865] = {
+		weight = 108,
+	},
+	[192866] = {
+		weight = 88,
+	},
+	[192867] = {
+		weight = 88,
+	},
+	[192868] = {
+		weight = 88,
+	},
+	[192869] = {
+		weight = 254,
+	},
+	[192870] = {
+		weight = 254,
+	},
+	[192871] = {
+		weight = 254,
+	},
+	[192876] = {
+		weight = 26,
+	},
+	[192877] = {
+		weight = 26,
+	},
+	[192878] = {
+		weight = 26,
+	},
+	[192883] = {
+		weight = 21,
+	},
+	[192884] = {
+		weight = 21,
+	},
+	[192885] = {
+		weight = 21,
+	},
+	[192887] = {
+		weight = 291,
+	},
+	[193029] = {
+		weight = 31,
+	},
+	[193030] = {
+		weight = 31,
+	},
+	[193031] = {
+		weight = 31,
+	},
+	[193208] = {
+		weight = 2,
+	},
+	[193210] = {
+		weight = 2,
+	},
+	[193211] = {
+		weight = 2,
+	},
+	[193213] = {
+		weight = 2,
+	},
+	[193214] = {
+		weight = 2,
+	},
+	[193215] = {
+		weight = 2,
+	},
+	[193216] = {
+		weight = 31,
+	},
+	[193217] = {
+		weight = 31,
+	},
+	[193218] = {
+		weight = 31,
+	},
+	[193222] = {
+		weight = 31,
+	},
+	[193223] = {
+		weight = 31,
+	},
+	[193224] = {
+		weight = 31,
+	},
+	[193226] = {
+		weight = 45,
+	},
+	[193227] = {
+		weight = 45,
+	},
+	[193228] = {
+		weight = 45,
+	},
+	[193229] = {
+		weight = 45,
+	},
+	[193230] = {
+		weight = 45,
+	},
+	[193231] = {
+		weight = 45,
+	},
+	[193236] = {
+		weight = 42,
+	},
+	[193237] = {
+		weight = 42,
+	},
+	[193238] = {
+		weight = 42,
+	},
+	[193242] = {
+		weight = 45,
+	},
+	[193243] = {
+		weight = 45,
+	},
+	[193244] = {
+		weight = 45,
+	},
+	[193245] = {
+		weight = 45,
+	},
+	[193246] = {
+		weight = 45,
+	},
+	[193247] = {
+		weight = 45,
+	},
+	[193248] = {
+		weight = 42,
+	},
+	[193249] = {
+		weight = 42,
+	},
+	[193250] = {
+		weight = 42,
+	},
+	[193368] = {
+		weight = 20,
+	},
+	[193369] = {
+		weight = 20,
+	},
+	[193370] = {
+		weight = 20,
+	},
+	[193378] = {
+		weight = 291,
+	},
+	[193379] = {
+		weight = 291,
+	},
+	[193926] = {
+		weight = 9,
+	},
+	[193927] = {
+		weight = 9,
+	},
+	[193928] = {
+		weight = 9,
+	},
+	[193929] = {
+		weight = 54,
+	},
+	[193930] = {
+		weight = 54,
+	},
+	[193931] = {
+		weight = 54,
+	},
+	[193932] = {
+		weight = 29,
+	},
+	[193933] = {
+		weight = 29,
+	},
+	[193934] = {
+		weight = 29,
+	},
+	[193935] = {
+		weight = 117,
+	},
+	[193936] = {
+		weight = 117,
+	},
+	[193937] = {
+		weight = 117,
+	},
+	[193938] = {
+		weight = 117,
+	},
+	[193939] = {
+		weight = 117,
+	},
+	[193940] = {
+		weight = 117,
+	},
+	[194727] = {
+		weight = 5,
+	},
+	[194728] = {
+		weight = 5,
+	},
+	[194729] = {
+		weight = 5,
+	},
+	[194751] = {
+		weight = 14,
+	},
+	[194752] = {
+		weight = 14,
+	},
+	[194754] = {
+		weight = 42,
+	},
+	[194755] = {
+		weight = 42,
+	},
+	[194756] = {
+		weight = 42,
+	},
+	[194758] = {
+		weight = 14,
+	},
+	[194760] = {
+		weight = 24,
+	},
+	[194761] = {
+		weight = 24,
+	},
+	[194767] = {
+		weight = 34,
+	},
+	[194768] = {
+		weight = 34,
+	},
+	[194846] = {
+		weight = 14,
+	},
+	[194850] = {
+		weight = 14,
+	},
+	[194852] = {
+		weight = 14,
+	},
+	[194855] = {
+		weight = 24,
+	},
+	[194856] = {
+		weight = 14,
+	},
+	[194857] = {
+		weight = 14,
+	},
+	[194858] = {
+		weight = 14,
+	},
+	[194859] = {
+		weight = 34,
+	},
+	[194862] = {
+		weight = 46,
+	},
+	[194863] = {
+		weight = 46,
+	},
+	[194864] = {
+		weight = 46,
+	},
+	[198183] = {
+		weight = 7,
+	},
+	[198184] = {
+		weight = 7,
+	},
+	[198185] = {
+		weight = 7,
+	},
+	[198186] = {
+		weight = 9,
+	},
+	[198187] = {
+		weight = 9,
+	},
+	[198188] = {
+		weight = 9,
+	},
+	[198189] = {
+		weight = 13,
+	},
+	[198190] = {
+		weight = 13,
+	},
+	[198191] = {
+		weight = 13,
+	},
+	[198192] = {
+		weight = 26,
+	},
+	[198193] = {
+		weight = 26,
+	},
+	[198194] = {
+		weight = 26,
+	},
+	[198195] = {
+		weight = 51,
+	},
+	[198196] = {
+		weight = 51,
+	},
+	[198197] = {
+		weight = 51,
+	},
+	[198198] = {
+		weight = 75,
+	},
+	[198199] = {
+		weight = 75,
+	},
+	[198200] = {
+		weight = 75,
+	},
+	[198201] = {
+		weight = 19,
+	},
+	[198202] = {
+		weight = 19,
+	},
+	[198203] = {
+		weight = 19,
+	},
+	[198412] = {
+		weight = 16,
+	},
+	[198413] = {
+		weight = 16,
+	},
+	[198414] = {
+		weight = 16,
+	},
+	[198415] = {
+		weight = 16,
+	},
+	[198416] = {
+		weight = 16,
+	},
+	[198417] = {
+		weight = 16,
+	},
+	[198418] = {
+		weight = 16,
+	},
+	[198419] = {
+		weight = 16,
+	},
+	[198420] = {
+		weight = 16,
+	},
+	[198421] = {
+		weight = 6,
+	},
+	[198422] = {
+		weight = 6,
+	},
+	[198423] = {
+		weight = 6,
+	},
+	[204994] = {
+		weight = 33,
+	},
+	[204995] = {
+		weight = 33,
+	},
+	[204996] = {
+		weight = 33,
+	},
+	[210796] = {
+		weight = 1,
+	},
+	[210797] = {
+		weight = 1,
+	},
+	[210798] = {
+		weight = 1,
+	},
+	[210799] = {
+		weight = 1,
+	},
+	[210800] = {
+		weight = 1,
+	},
+	[210801] = {
+		weight = 1,
+	},
+	[210802] = {
+		weight = 1,
+	},
+	[210803] = {
+		weight = 1,
+	},
+	[210804] = {
+		weight = 1,
+	},
+	[210805] = {
+		weight = 1,
+	},
+	[210806] = {
+		weight = 1,
+	},
+	[210807] = {
+		weight = 1,
+	},
+	[210808] = {
+		weight = 1,
+	},
+	[210809] = {
+		weight = 1,
+	},
+	[210810] = {
+		weight = 1,
+	},
+	[210930] = {
+		weight = 1,
+	},
+	[210931] = {
+		weight = 1,
+	},
+	[210932] = {
+		weight = 1,
+	},
+	[210933] = {
+		weight = 1,
+	},
+	[210934] = {
+		weight = 1,
+	},
+	[210935] = {
+		weight = 1,
+	},
+	[210936] = {
+		weight = 1,
+	},
+	[210937] = {
+		weight = 1,
+	},
+	[210938] = {
+		weight = 1,
+	},
+	[211806] = {
+		weight = 11,
+	},
+	[211807] = {
+		weight = 11,
+	},
+	[211808] = {
+		weight = 11,
+	},
+	[212563] = {
+		weight = 20,
+	},
+	[212564] = {
+		weight = 20,
+	},
+	[212565] = {
+		weight = 20,
+	},
+	[212664] = {
+		weight = 5,
+	},
+	[212665] = {
+		weight = 5,
+	},
+	[212666] = {
+		weight = 5,
+	},
+	[212667] = {
+		weight = 5,
+	},
+	[212668] = {
+		weight = 5,
+	},
+	[212669] = {
+		weight = 5,
+	},
+	[212670] = {
+		weight = 15,
+	},
+	[212672] = {
+		weight = 15,
+	},
+	[212673] = {
+		weight = 15,
+	},
+	[212674] = {
+		weight = 15,
+	},
+	[212675] = {
+		weight = 15,
+	},
+	[212676] = {
+		weight = 15,
+	},
+	[213219] = {
+		weight = 3,
+	},
+	[213220] = {
+		weight = 3,
+	},
+	[213221] = {
+		weight = 3,
+	},
+	[213750] = {
+		weight = 5,
+	},
+	[213751] = {
+		weight = 5,
+	},
+	[213752] = {
+		weight = 5,
+	},
+	[213753] = {
+		weight = 5,
+	},
+	[213754] = {
+		weight = 5,
+	},
+	[213755] = {
+		weight = 5,
+	},
+	[213756] = {
+		weight = 5,
+	},
+	[213757] = {
+		weight = 5,
+	},
+	[213758] = {
+		weight = 5,
+	},
+	[213759] = {
+		weight = 5,
+	},
+	[213760] = {
+		weight = 5,
+	},
+	[213761] = {
+		weight = 5,
+	},
+	[219543] = {
+		weight = 34,
+	},
+	[219544] = {
+		weight = 34,
+	},
+	[219545] = {
+		weight = 34,
+	},
+	[219546] = {
+		weight = 34,
+	},
+	[219547] = {
+		weight = 34,
+	},
+	[219548] = {
+		weight = 34,
+	},
+	[219549] = {
+		weight = 34,
+	},
+	[219550] = {
+		weight = 34,
+	},
+	[219551] = {
+		weight = 34,
+	},
+	[219552] = {
+		weight = 34,
+	},
+	[219553] = {
+		weight = 34,
+	},
+	[219554] = {
+		weight = 34,
+	},
+	[219880] = {
+		weight = 45,
+	},
+	[219881] = {
+		weight = 45,
+	},
+	[219882] = {
+		weight = 45,
+	},
+	[219883] = {
+		weight = 45,
+	},
+	[219884] = {
+		weight = 45,
+	},
+	[219885] = {
+		weight = 45,
+	},
+	[219886] = {
+		weight = 45,
+	},
+	[219887] = {
+		weight = 45,
+	},
+	[219888] = {
+		weight = 45,
+	},
+	[219889] = {
+		weight = 45,
+	},
+	[219890] = {
+		weight = 45,
+	},
+	[219891] = {
+		weight = 45,
+	},
+	[219892] = {
+		weight = 45,
+	},
+	[219893] = {
+		weight = 45,
+	},
+	[219894] = {
+		weight = 45,
+	},
+	[219895] = {
+		weight = 45,
+	},
+	[219896] = {
+		weight = 45,
+	},
+	[219897] = {
+		weight = 45,
+	},
+	[219898] = {
+		weight = 45,
+	},
+	[219899] = {
+		weight = 45,
+	},
+	[219900] = {
+		weight = 45,
+	},
+	[219901] = {
+		weight = 45,
+	},
+	[219902] = {
+		weight = 45,
+	},
+	[219903] = {
+		weight = 45,
+	},
+	[219946] = {
+		weight = 1,
+	},
+	[219947] = {
+		weight = 1,
+	},
+	[219948] = {
+		weight = 1,
+	},
+	[219949] = {
+		weight = 1,
+	},
+	[219950] = {
+		weight = 1,
+	},
+	[219951] = {
+		weight = 1,
+	},
+	[219952] = {
+		weight = 1,
+	},
+	[219954] = {
+		weight = 1,
+	},
+	[219955] = {
+		weight = 1,
+	},
+	[221648] = {
+		weight = 1,
+	},
+	[221649] = {
+		weight = 1,
+	},
+	[221650] = {
+		weight = 1,
+	},
+	[221651] = {
+		weight = 1,
+	},
+	[221652] = {
+		weight = 1,
+	},
+	[221653] = {
+		weight = 1,
+	},
+	[221654] = {
+		weight = 1,
+	},
+	[221655] = {
+		weight = 1,
+	},
+	[221656] = {
+		weight = 1,
+	},
+	[221853] = {
+		weight = 2,
+	},
+	[221854] = {
+		weight = 2,
+	},
+	[221855] = {
+		weight = 2,
+	},
+	[221856] = {
+		weight = 4,
+	},
+	[221857] = {
+		weight = 4,
+	},
+	[221858] = {
+		weight = 4,
+	},
+	[221859] = {
+		weight = 6,
+	},
+	[221860] = {
+		weight = 6,
+	},
+	[221861] = {
+		weight = 6,
+	},
+	[221862] = {
+		weight = 6,
+	},
+	[221863] = {
+		weight = 6,
+	},
+	[221864] = {
+		weight = 6,
+	},
+	[221865] = {
+		weight = 6,
+	},
+	[221866] = {
+		weight = 6,
+	},
+	[221867] = {
+		weight = 6,
+	},
+	[221868] = {
+		weight = 6,
+	},
+	[221869] = {
+		weight = 6,
+	},
+	[221870] = {
+		weight = 6,
+	},
+	[222417] = {
+		weight = 1,
+	},
+	[222418] = {
+		weight = 1,
+	},
+	[222419] = {
+		weight = 1,
+	},
+	[222420] = {
+		weight = 1,
+	},
+	[222421] = {
+		weight = 1,
+	},
+	[222422] = {
+		weight = 1,
+	},
+	[222423] = {
+		weight = 1,
+	},
+	[222424] = {
+		weight = 1,
+	},
+	[222425] = {
+		weight = 1,
+	},
+	[222426] = {
+		weight = 1,
+	},
+	[222427] = {
+		weight = 1,
+	},
+	[222428] = {
+		weight = 1,
+	},
+	[222555] = {
+		weight = 1,
+	},
+	[222556] = {
+		weight = 1,
+	},
+	[222557] = {
+		weight = 1,
+	},
+	[222558] = {
+		weight = 1,
+	},
+	[222559] = {
+		weight = 1,
+	},
+	[222560] = {
+		weight = 1,
+	},
+	[222609] = {
+		weight = 1,
+	},
+	[222610] = {
+		weight = 1,
+	},
+	[222611] = {
+		weight = 1,
+	},
+	[222612] = {
+		weight = 1,
+	},
+	[222613] = {
+		weight = 1,
+	},
+	[222614] = {
+		weight = 1,
+	},
+	[222615] = {
+		weight = 1,
+	},
+	[222616] = {
+		weight = 1,
+	},
+	[222617] = {
+		weight = 1,
+	},
+	[222618] = {
+		weight = 1,
+	},
+	[222619] = {
+		weight = 1,
+	},
+	[222620] = {
+		weight = 1,
+	},
+	[222789] = {
+		weight = 1,
+	},
+	[222790] = {
+		weight = 1,
+	},
+	[222791] = {
+		weight = 1,
+	},
+	[222792] = {
+		weight = 1,
+	},
+	[222793] = {
+		weight = 1,
+	},
+	[222794] = {
+		weight = 1,
+	},
+	[222795] = {
+		weight = 1,
+	},
+	[222796] = {
+		weight = 1,
+	},
+	[222797] = {
+		weight = 1,
+	},
+	[222798] = {
+		weight = 1,
+	},
+	[222799] = {
+		weight = 1,
+	},
+	[222800] = {
+		weight = 1,
+	},
+	[222801] = {
+		weight = 1,
+	},
+	[222802] = {
+		weight = 1,
+	},
+	[222803] = {
+		weight = 1,
+	},
+	[222804] = {
+		weight = 1,
+	},
+	[222805] = {
+		weight = 1,
+	},
+	[222806] = {
+		weight = 1,
+	},
+	[224800] = {
+		weight = 1,
+	},
+	[224801] = {
+		weight = 1,
+	},
+	[224802] = {
+		weight = 1,
+	},
+	[224803] = {
+		weight = 1,
+	},
+	[224804] = {
+		weight = 1,
+	},
+	[224805] = {
+		weight = 1,
+	},
+	[224824] = {
+		weight = 1,
+	},
+	[224826] = {
+		weight = 1,
+	},
+	[224828] = {
+		weight = 1,
+	},
+	[224832] = {
+		weight = 1,
+	},
+	[224833] = {
+		weight = 1,
+	},
+	[224834] = {
+		weight = 1,
+	},
+	[228231] = {
+		weight = 1,
+	},
+	[228232] = {
+		weight = 1,
+	},
+	[228233] = {
+		weight = 1,
+	},
+	[228234] = {
+		weight = 1,
+	},
+	[228235] = {
+		weight = 1,
+	},
+	[228236] = {
+		weight = 1,
+	},
+	[213097] = {
+		weight = 3,
+	},
+	[221551] = {
+		weight = 4,
+	},
+	[221554] = {
+		weight = 4,
+	},
+	[221557] = {
+		weight = 4,
+	},
+	[221639] = {
+		weight = 4,
+	},
+	[221642] = {
+		weight = 4,
+	},
+	[221645] = {
+		weight = 4,
+	},
+	[222349] = {
+		weight = 4,
+	},
+	[222350] = {
+		weight = 4,
+	},
+	[222351] = {
+		weight = 4,
+	},
+	[222352] = {
+		weight = 4,
+	},
+	[222353] = {
+		weight = 4,
+	},
+	[222354] = {
+		weight = 4,
+	},
+	[222355] = {
+		weight = 4,
+	},
+	[222356] = {
+		weight = 4,
+	},
+	[222357] = {
+		weight = 4,
+	},
+	[221552] = {
+		weight = 4,
+	},
+	[221555] = {
+		weight = 4,
+	},
+	[221558] = {
+		weight = 4,
+	},
+	[221640] = {
+		weight = 4,
+	},
+	[221643] = {
+		weight = 4,
+	},
+	[221646] = {
+		weight = 4,
+	},
+	[221553] = {
+		weight = 4,
+	},
+	[221556] = {
+		weight = 4,
+	},
+	[221559] = {
+		weight = 4,
+	},
+	[221641] = {
+		weight = 4,
+	},
+	[221644] = {
+		weight = 4,
+	},
+	[221647] = {
+		weight = 4,
+	},
+	[221566] = {
+		weight = 9,
+	},
+	[222364] = {
+		weight = 9,
+	},
+	[222365] = {
+		weight = 9,
+	},
+	[222366] = {
+		weight = 9,
+	},
+	[221567] = {
+		weight = 9,
+	},
+	[221568] = {
+		weight = 9,
+	},
+	[221560] = {
+		weight = 54,
+	},
+	[221563] = {
+		weight = 54,
+	},
+	[222358] = {
+		weight = 54,
+	},
+	[222359] = {
+		weight = 54,
+	},
+	[222360] = {
+		weight = 54,
+	},
+	[222361] = {
+		weight = 54,
+	},
+	[222362] = {
+		weight = 54,
+	},
+	[222363] = {
+		weight = 54,
+	},
+	[221561] = {
+		weight = 54,
+	},
+	[221564] = {
+		weight = 54,
+	},
+	[221562] = {
+		weight = 54,
+	},
+	[221565] = {
+		weight = 54,
+	},
+	[222172] = {
+		weight = 14,
+	},
+	[222173] = {
+		weight = 14,
+	},
+	[222174] = {
+		weight = 14,
+	},
+	[222178] = {
+		weight = 14,
+	},
+	[222179] = {
+		weight = 14,
+	},
+	[222180] = {
+		weight = 14,
+	},
+	[222121] = {
+		weight = 34,
+	},
+	[222122] = {
+		weight = 34,
+	},
+	[222123] = {
+		weight = 34,
+	},
+	[222118] = {
+		weight = 46,
+	},
+	[222119] = {
+		weight = 46,
+	},
+	[222120] = {
+		weight = 46,
+	},
+	[222181] = {
+		weight = 16,
+	},
+	[222182] = {
+		weight = 16,
+	},
+	[222183] = {
+		weight = 16,
+	},
+	[222175] = {
+		weight = 16,
+	},
+	[222176] = {
+		weight = 16,
+	},
+	[222177] = {
+		weight = 16,
+	},
 }

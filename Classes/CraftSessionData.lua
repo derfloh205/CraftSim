@@ -65,13 +65,12 @@ function CraftSim.CraftSessionData:AddCraftResult(craftResult)
         end)
 
         if craftResultItemB then
-            -- as this should be the same reference, this is also updated in the CraftRecipeData
             craftResultItemB.quantity = craftResultItemB.quantity +
                 (craftResultItemA.quantity + craftResultItemA.quantityMulticraft)
             craftResultItemB.quantityMulticraft = craftResultItemB.quantityMulticraft +
                 craftResultItemA.quantityMulticraft
         else
-            table.insert(self.totalItems, craftResultItemA)
+            table.insert(self.totalItems, craftResultItemA:Copy())
         end
     end
 

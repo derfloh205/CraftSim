@@ -22,7 +22,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         local clickCallback = function(self)
             print("sim mode click callback")
             CraftSim.SIMULATION_MODE.isActive = self:GetChecked()
-            local bestQBox = schematicForm.AllocateBestQualityCheckBox
+            local bestQBox = schematicForm.AllocateBestQualityCheckbox
             if bestQBox:GetChecked() and CraftSim.SIMULATION_MODE.isActive then
                 bestQBox:Click()
             end
@@ -297,66 +297,11 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             simModeDetailsFrame.content.recipeDifficultyMod, "LEFT", valueOffsetX, valueOffsetY)
         simModeDetailsFrame.content.recipeDifficultyValue:SetText("0")
 
-        -- Inspiration
-        simModeDetailsFrame.content.inspirationTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.inspirationTitle:SetPoint("TOPLEFT",
-            simModeDetailsFrame.content.recipeDifficultyTitle, "TOPLEFT", 0, offsetY)
-        simModeDetailsFrame.content.inspirationTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .INSPIRATION_LABEL))
-        simModeDetailsFrame.content.inspirationTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_EXPLANATION_TOOLTIP),
-            simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationTitle, "RIGHT", "LEFT", -20, 0)
-
-        simModeDetailsFrame.content.inspirationMod = CraftSim.FRAME:CreateNumericInput(
-            "CraftSimSimModeInspirationModInput", simModeDetailsFrame.content,
-            simModeDetailsFrame.content.recipeDifficultyMod,
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true,
-            function(_, userInput)
-                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-            end)
-        frames.inspirationMod = simModeDetailsFrame.content.inspirationMod
-        simModeDetailsFrame.content.inspirationMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_INSPIRATION
-
-        simModeDetailsFrame.content.inspirationValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.inspirationValue:SetPoint("RIGHT", simModeDetailsFrame.content.inspirationMod, "LEFT",
-            valueOffsetX, valueOffsetY)
-        simModeDetailsFrame.content.inspirationValue:SetText("0")
-
-        -- Inspiration Skill
-        simModeDetailsFrame.content.inspirationSkillTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.inspirationSkillTitle:SetPoint("TOPLEFT",
-            simModeDetailsFrame.content.inspirationTitle, "TOPLEFT", 0, offsetY)
-        simModeDetailsFrame.content.inspirationSkillTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .INSPIRATION_SKILL_LABEL))
-        simModeDetailsFrame.content.inspirationSkillTitle.helper = CraftSim.FRAME:CreateHelpIcon(
-            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_SKILL_EXPLANATION_TOOLTIP),
-            simModeDetailsFrame.content, simModeDetailsFrame.content.inspirationTitle, "RIGHT", "LEFT", -20, 0)
-
-        simModeDetailsFrame.content.inspirationSkillMod = CraftSim.FRAME:CreateNumericInput(
-            "CraftSimSimModeInspirationSkillModInput", simModeDetailsFrame.content,
-            simModeDetailsFrame.content.inspirationMod,
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true,
-            function(_, userInput)
-                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-            end)
-        frames.inspirationSkillMod = simModeDetailsFrame.content.inspirationSkillMod
-        simModeDetailsFrame.content.inspirationSkillMod.stat = CraftSim.CONST.STAT_MAP
-            .CRAFTING_DETAILS_INSPIRATION_SKILL
-
-        simModeDetailsFrame.content.inspirationSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        simModeDetailsFrame.content.inspirationSkillValue:SetPoint("RIGHT",
-            simModeDetailsFrame.content.inspirationSkillMod, "LEFT", valueOffsetX, valueOffsetY)
-        simModeDetailsFrame.content.inspirationSkillValue:SetText("0")
-
         -- Multicraft
         simModeDetailsFrame.content.multicraftTitle = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
             'GameFontHighlight')
         simModeDetailsFrame.content.multicraftTitle:SetPoint("TOPLEFT", simModeDetailsFrame.content
-            .inspirationSkillTitle, "TOPLEFT", 0, offsetY)
+            .recipeDifficultyTitle, "TOPLEFT", 0, offsetY)
         simModeDetailsFrame.content.multicraftTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_LABEL))
         simModeDetailsFrame.content.multicraftTitle.helper = CraftSim.FRAME:CreateHelpIcon(
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP),
@@ -364,7 +309,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
 
         simModeDetailsFrame.content.multicraftMod = CraftSim.FRAME:CreateNumericInput(
             "CraftSimSimModeMulticraftModInput", simModeDetailsFrame.content,
-            simModeDetailsFrame.content.inspirationSkillMod,
+            simModeDetailsFrame.content.recipeDifficultyMod,
             "TOPRIGHT", "TOPRIGHT", 0, offsetY, 30, 20, 0, true,
             function(_, userInput)
                 CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
@@ -542,32 +487,6 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
             offsetY)
         qualityFrame.nextQualityMissingSkillValue:SetText("???")
 
-        qualityFrame.nextQualityMissingSkillInspiration = qualityFrame:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        qualityFrame.nextQualityMissingSkillInspiration:SetPoint("TOPLEFT", qualityFrame.nextQualityMissingSkillTitle,
-            "TOPLEFT", 0, offsetY)
-        qualityFrame.nextQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .MISSING_SKILL_INSPIRATION_LABEL) .. ":")
-
-        qualityFrame.nextQualityMissingSkillInspirationValue = qualityFrame:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        qualityFrame.nextQualityMissingSkillInspirationValue:SetPoint("TOPRIGHT",
-            qualityFrame.nextQualityMissingSkillValue, "TOPRIGHT", 0, offsetY)
-        qualityFrame.nextQualityMissingSkillInspirationValue:SetText("???")
-
-        qualityFrame.skipQualityMissingSkillInspiration = qualityFrame:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        qualityFrame.skipQualityMissingSkillInspiration:SetPoint("TOPLEFT",
-            qualityFrame.nextQualityMissingSkillInspiration, "TOPLEFT", 0, offsetY)
-        qualityFrame.skipQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .MISSING_SKILL_INSPIRATION_LABEL) .. ":")
-
-        qualityFrame.skipQualityMissingSkillInspirationValue = qualityFrame:CreateFontString(nil, 'OVERLAY',
-            'GameFontHighlight')
-        qualityFrame.skipQualityMissingSkillInspirationValue:SetPoint("TOPRIGHT",
-            qualityFrame.nextQualityMissingSkillInspirationValue, "TOPRIGHT", 0, offsetY)
-        qualityFrame.skipQualityMissingSkillInspirationValue:SetText("???")
-
         return frames
     end
 
@@ -663,7 +582,6 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
         local legendText = [[
             Legend:
 
-            IN ..... Inspiration
             MC ... Multicraft
             MCI .. Multicraft Extra Items
             R ....... Resourcefulness
@@ -1108,34 +1026,6 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     local simModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
     local detailsFrame = simModeFrames.detailsFrame
 
-
-    -- Inspiration Display
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationTitle, recipeData.supportsInspiration)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationTitle.helper, recipeData.supportsInspiration)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationValue, recipeData.supportsInspiration)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationMod, recipeData.supportsInspiration)
-    if recipeData.supportsInspiration then
-        local baseInspiration = professionStats.inspiration.value - professionStatsMod.inspiration.value
-        local percentText = GUTIL:Round(professionStats.inspiration:GetPercent(), 1) .. "%"
-        detailsFrame.content.inspirationValue:SetText(professionStats.inspiration.value ..
-            " (" .. baseInspiration .. "+" .. professionStatsMod.inspiration.value .. ") " .. percentText)
-    end
-
-    -- Inspiration Skill Display
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationSkillTitle, recipeData.supportsInspiration)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationSkillTitle.helper, recipeData.supportsInspiration)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationSkillValue, recipeData.supportsInspiration)
-    CraftSim.FRAME:ToggleFrame(detailsFrame.content.inspirationSkillMod, recipeData.supportsInspiration)
-    if recipeData.supportsInspiration then
-        local baseInspirationSkill = professionStats.inspiration.extraValue
-        detailsFrame.content.inspirationSkillValue:SetText(GUTIL:Round(
-                professionStats.inspiration:GetExtraValueByFactor(), 1) ..
-            " (" .. GUTIL:Round(baseInspirationSkill, 1) ..
-            "*" ..
-            GUTIL:Round(1 + professionStats.inspiration.extraFactor, 2) ..
-            "+" .. professionStatsMod.inspiration.extraValueAfterFactor .. ")")
-    end
-
     -- Multicraft Display
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftTitle, recipeData.supportsMulticraft)
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.multicraftTitle.helper, recipeData.supportsMulticraft)
@@ -1191,49 +1081,6 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
             professionStats.recipeDifficulty.value, CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
         qualityFrame.currentQualityIcon:SetQuality(recipeData.resultData.expectedQuality)
         qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[recipeData.resultData.expectedQuality - 1] or 0))
-
-        local hasNextQuality = recipeData.resultData.expectedQuality < recipeData.maxQuality
-        local canSkipQuality = recipeData.resultData.expectedQuality < (recipeData.maxQuality - 1)
-        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityIcon, hasNextQuality)
-        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityThreshold, hasNextQuality)
-        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityTitle, hasNextQuality)
-        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillTitle, hasNextQuality)
-        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillInspiration, hasNextQuality)
-        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillValue, hasNextQuality)
-        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillInspirationValue, hasNextQuality)
-
-        CraftSim.FRAME:ToggleFrame(qualityFrame.skipQualityMissingSkillInspiration, canSkipQuality)
-        CraftSim.FRAME:ToggleFrame(qualityFrame.skipQualityMissingSkillInspirationValue, canSkipQuality)
-        if hasNextQuality then
-            local nextQualityThreshold = thresholds[recipeData.resultData.expectedQuality]
-            local missingSkill = nextQualityThreshold - professionStats.skill.value
-            local missingSkillInspiration = nextQualityThreshold -
-                (professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor())
-            missingSkill = missingSkill > 0 and missingSkill or 0
-            missingSkillInspiration = missingSkillInspiration > 0 and missingSkillInspiration or 0
-            qualityFrame.nextQualityMissingSkillValue:SetText(GUTIL:Round(missingSkill, 1))
-            local missingSkillText = GUTIL:ColorizeText(GUTIL:Round(missingSkillInspiration, 1),
-                missingSkillInspiration == 0 and GUTIL.COLORS.GREEN or GUTIL.COLORS.RED)
-            local nextQualityIconText = GUTIL:GetQualityIconString(recipeData.resultData.expectedQuality + 1, 20, 20)
-            qualityFrame.nextQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-                .MISSING_SKILL_INSPIRATION_LABEL) .. " " .. nextQualityIconText)
-            qualityFrame.nextQualityMissingSkillInspirationValue:SetText(missingSkillText)
-            qualityFrame.nextQualityIcon:SetQuality(recipeData.resultData.expectedQuality + 1)
-            qualityFrame.nextQualityThreshold:SetText("> " .. thresholds[recipeData.resultData.expectedQuality])
-
-            if canSkipQuality then
-                local skipQualityIconText = GUTIL:GetQualityIconString(recipeData.resultData.expectedQuality + 2, 20, 20)
-                local skipQualityThreshold = thresholds[recipeData.resultData.expectedQuality + 1]
-                local missingSkillInspirationSkip = skipQualityThreshold -
-                    (professionStats.skill.value + professionStats.inspiration:GetExtraValueByFactor())
-                missingSkillInspirationSkip = missingSkillInspirationSkip > 0 and missingSkillInspirationSkip or 0
-                local missinSkillText = GUTIL:ColorizeText(GUTIL:Round(missingSkillInspirationSkip, 1),
-                    missingSkillInspirationSkip == 0 and GUTIL.COLORS.GREEN or GUTIL.COLORS.RED)
-                qualityFrame.skipQualityMissingSkillInspirationValue:SetText(missinSkillText)
-                qualityFrame.skipQualityMissingSkillInspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-                    .MISSING_SKILL_INSPIRATION_LABEL) .. " " .. skipQualityIconText)
-            end
-        end
 
         -- Skill
         local reagentSkillIncrease = recipeData.reagentData:GetSkillFromRequiredReagents()
@@ -1318,12 +1165,6 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
                     local label = ""
                     if professionStats.skill.value > 0 then
                         label = label .. "SK+" .. professionStats.skill.value .. " "
-                    end
-                    if professionStats.inspiration.value > 0 then
-                        label = label .. "IN+" .. professionStats.inspiration.value .. " "
-                    end
-                    if professionStats.inspiration.extraFactor > 0 then
-                        label = label .. "ISK+" .. (professionStats.inspiration.extraFactor * 100) .. "% "
                     end
                     if professionStats.multicraft.value > 0 then
                         label = label .. "MC+" .. professionStats.multicraft.value .. " "
@@ -1440,14 +1281,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     local simModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
     local bestQBox = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        bestQBox = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.AllocateBestQualityCheckBox
+        bestQBox = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.AllocateBestQualityCheckbox
         specializationInfoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Reagents,
             not CraftSim.SIMULATION_MODE.isActive and recipeData.hasReagents)
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.OptionalReagents,
             not CraftSim.SIMULATION_MODE.isActive and hasOptionalReagents)
     else
-        bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
+        bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckbox
         CraftSim.FRAME:ToggleFrame(ProfessionsFrame.CraftingPage.SchematicForm.Reagents,
             not CraftSim.SIMULATION_MODE.isActive and
             (recipeData.hasReagents or recipeData.isSalvageRecipe))

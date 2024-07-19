@@ -9,7 +9,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 CraftSim.NodeRule = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData?
----@param nodeRuleData table
+---@param nodeRuleData CraftSim.SPECIALIZATION_DATA.RULE_DATA
 ---@param nodeData CraftSim.NodeData
 function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.affectsRecipe = false
@@ -25,20 +25,18 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.idMapping = CraftSim.IDMapping(recipeData, nodeRuleData.idMapping, nodeRuleData.exceptionRecipeIDs)
 
     self.professionStats.skill.value = nodeRuleData.skill or 0
-    self.professionStats.inspiration.value = nodeRuleData.inspiration or 0
     self.professionStats.multicraft.value = nodeRuleData.multicraft or 0
     self.professionStats.resourcefulness.value = nodeRuleData.resourcefulness or 0
+    self.professionStats.ingenuity.value = nodeRuleData.ingenuity or 0
     self.professionStats.craftingspeed.value = nodeRuleData.craftingspeed or 0
 
-    self.professionStats.inspiration.extraFactor = nodeRuleData.inspirationBonusSkillFactor or 0
     self.professionStats.multicraft.extraFactor = nodeRuleData.multicraftExtraItemsFactor or 0
     self.professionStats.resourcefulness.extraFactor = nodeRuleData.resourcefulnessExtraItemsFactor or 0
 
     self.equalsSkill = nodeRuleData.equalsSkill or false
     self.equalsMulticraft = nodeRuleData.equalsMulticraft or false
-    self.equalsInspiration = nodeRuleData.equalsInspiration or false
-    self.equalsInspirationBonusSkillFactor = nodeRuleData.equalsInspirationBonusSkillFactor or false
     self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or false
+    self.equalsIngenuity = nodeRuleData.equalsIngenuity or false
     self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or false
     self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or false
     self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or false
@@ -70,16 +68,12 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
         self.professionStats.multicraft.value = math.max(0, rank)
     end
 
-    if self.equalsInspiration then
-        self.professionStats.inspiration.value = math.max(0, rank)
-    end
-
-    if self.equalsInspirationBonusSkillFactor then
-        self.professionStats.inspiration.extraFactor = math.max(0, rank * 0.01)
-    end
-
     if self.equalsResourcefulness then
         self.professionStats.resourcefulness.value = math.max(0, rank)
+    end
+
+    if self.equalsIngenuity then
+        self.professionStats.ingenuity.value = math.max(0, rank)
     end
 
     if self.equalsCraftingspeed then
@@ -97,11 +91,6 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
     if self.equalsPotionExperimentationChanceFactor then
         self.professionStats.potionExperimentationFactor.extraFactor = math.max(0, rank * 0.01)
     end
-
-    if self.nodeData.nodeName == "Curing and Tanning" then
-        print("NodeRule: Rule stats after updating rule: ")
-        print(self.professionStats, true, nil, 1)
-    end
 end
 
 function CraftSim.NodeRule:Debug()
@@ -111,8 +100,8 @@ function CraftSim.NodeRule:Debug()
         "threshold: " .. tostring(self.threshold),
         "equalsSkill: " .. tostring(self.equalsSkill),
         "equalsMulticraft: " .. tostring(self.equalsMulticraft),
-        "equalsInspiration: " .. tostring(self.equalsInspiration),
         "equalsResourcefulness: " .. tostring(self.equalsResourcefulness),
+        "equalsIngenuity: " .. tostring(self.equalsIngenuity),
         "equalsCraftingspeed: " .. tostring(self.equalsCraftingspeed),
         "equalsResourcefulnessExtraItemsFactor: " .. tostring(self.equalsResourcefulnessExtraItemsFactor),
     }
@@ -131,8 +120,8 @@ function CraftSim.NodeRule:GetJSON(indent)
     jb:Add("professionStats", self.professionStats)
     jb:Add("equalsSkill", self.equalsSkill)
     jb:Add("equalsMulticraft", self.equalsMulticraft)
-    jb:Add("equalsInspiration", self.equalsInspiration)
     jb:Add("equalsResourcefulness", self.equalsResourcefulness)
+    jb:Add("equalsIngenuity", self.equalsIngenuity)
     jb:Add("equalsCraftingspeed", self.equalsCraftingspeed)
     jb:Add("equalsResourcefulnessExtraItemsFactor", self.equalsResourcefulnessExtraItemsFactor)
     jb:Add("equalsPhialExperimentationChanceFactor", self.equalsPhialExperimentationChanceFactor)

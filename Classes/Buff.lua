@@ -19,7 +19,7 @@ CraftSim.Buff = CraftSim.CraftSimObject:extend()
 function CraftSim.Buff:new(recipeData, buffID, professionStats, qualityID, valuePointData, displayBuffID, customTooltip)
     ---@type CraftSim.ProfessionStats
     self.professionStats = professionStats
-    local spellInfo = { GetSpellInfo(buffID) }
+    local spellInfo = C_Spell.GetSpellInfo(buffID)
     local qualityIcon = ""
     self.valuePointData = valuePointData
     self.qualityID = qualityID
@@ -27,7 +27,7 @@ function CraftSim.Buff:new(recipeData, buffID, professionStats, qualityID, value
     if self.qualityID then
         qualityIcon = " " .. GUTIL:GetQualityIconString(self.qualityID, 20, 20)
     end
-    self.name = spellInfo[1] .. qualityIcon
+    self.name = spellInfo.name .. qualityIcon
     self.buffID = buffID
     self.displayBuffID = displayBuffID or buffID
     self.active = false

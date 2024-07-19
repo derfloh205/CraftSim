@@ -8,9 +8,9 @@ function CraftSim.LOCAL_EN:GetData()
     local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     return {
         -- REQUIRED:
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION] = "Inspiration",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Multicraft",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Resourcefulness",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY] = "Ingenuity",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Crafting Speed",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Equip:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Enchanted:",
@@ -32,6 +32,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.EXPANSION_BATTLE_FOR_AZEROTH] = "Battle of Azeroth",
         [CraftSim.CONST.TEXT.EXPANSION_SHADOWLANDS] = "Shadowlands",
         [CraftSim.CONST.TEXT.EXPANSION_DRAGONFLIGHT] = "Dragonflight",
+        [CraftSim.CONST.TEXT.EXPANSION_THE_WAR_WITHIN] = "The War Within",
 
         -- professions
 
@@ -54,7 +55,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STAT_SKILL] = "Skill",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS] = "Multicraft ExtraItems",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "Resourcefulness ExtraItems",
-        [CraftSim.CONST.TEXT.STAT_INSPIRATION_BONUS] = "Inspiration SkillBonus",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS] = "Crafting Speed",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "Phial Breakthrough",
         [CraftSim.CONST.TEXT.STAT_POTION_EXPERIMENTATION] = "Potion Breakthrough",
@@ -62,35 +62,15 @@ function CraftSim.LOCAL_EN:GetData()
         -- Profit Breakdown Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
         "Resourcefulness procs for every material individually and then saves about 30% of its quantity.\n\nThe average value it saves is the average saved value of EVERY combination and their chances.\n(All materials proccing at once is very unlikely but saves a lot)\n\nThe average total saved material costs is the sum of the saved material costs of all combinations weighted against their chance.",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP] =
-        "This number shows the average amount of items that are additionally created by multicraft.\n\nThis considers your chance and assumes for multicraft that\n(1-2.5y)*any_spec_bonus additional items are created where y is base average of items created for 1 craft",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_VALUE_EXPLANATION_TOOLTIP] =
-        "This is the average number of additional items created by multicraft times the sell price of the result item on this quality",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_HIGHER_VALUE_EXPLANATION_TOOLTIP] =
-        "This is the average number of additional items created by multicraft and inspiration times the sell price of the result item on the quality reached by inspiration",
-        [CraftSim.CONST.TEXT.MULTICRAFT_ADDITIONAL_ITEMS_HIGHER_QUALITY_EXPLANATION_TOOLTIP] =
-        "This number shows the average amount of items that are additionally created by multicraft proccing with inspiration.\n\nThis considers your multicraft and inspiration chance and reflects the additional items created when both procc at once",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_EXPLANATION_TOOLTIP] =
-        "This number shows the average amount of items that are created on your current guaranteed quality, when inspiration does not procc",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_HIGHER_QUALITY_EXPLANATION_TOOLTIP] =
-        "This number shows the average amount of items that are created on the next reachable quality with inspiration",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_VALUE_EXPLANATION_TOOLTIP] =
-        "This is the average number of items created on the guaranteed quality times the sell price of the result item on this quality",
-        [CraftSim.CONST.TEXT.INSPIRATION_ADDITIONAL_ITEMS_HIGHER_VALUE_EXPLANATION_TOOLTIP] =
-        "This is the average number of items created on the quality reached with inspiration times the sell price of the result item on the quality reached by inspiration",
 
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP] =
         "Recipe difficulty determines where the breakpoints of the different qualities are.\n\nFor recipes with five qualities they are at 20%, 50%, 80% and 100% recipe difficulty as skill.\nFor recipes with three qualities they are at 50% and 100%",
-        [CraftSim.CONST.TEXT.INSPIRATION_EXPLANATION_TOOLTIP] =
-        "Inspiration gives you a chance to add skill to your craft.\n\nThis may lead to higher quality crafts if the added skill puts your skill over the threshold for the next quality.\nFor recipes with 5 qualities the base bonus skill is a sixth (16.67%) of the base recipe difficulty.\nFor recipes with 3 qualities its a third (33.33%)",
-        [CraftSim.CONST.TEXT.INSPIRATION_SKILL_EXPLANATION_TOOLTIP] =
-        "This is the skill that is added on top of your current skill if inspiration procs.\n\nIf your current skill plus this bonus skill reaches the threshold\nof the next quality, you craft the item in this higher quality.",
         [CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP] =
         "Multicraft gives you a chance of crafting more items than you would usually produce with a recipe.\n\nThe additional amount is usually between 1 and 2.5y\nwhere y = the usual amount 1 craft yields.",
         [CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP] =
-        "The quality of your materials can give you a maximum of 25% of the base recipe difficulty as bonus skill.\n\nAll Q1 Materials: 0% Bonus\nAll Q2 Materials: 12.5% Bonus\nAll Q3 Materials: 25% Bonus\n\nThe skill is calculated by the amount of materials of each quality weighted against their quality\nand a specific weight value that is unique to each individual dragon flight crafting material item\n\nThis is however different for recrafts. There the maximum the reagents can increase the quality\nis dependent on the quality of materials the item was originally crafted with.\nThe exact workings are not known.\nHowever, CraftSim internally compares the achieved skill with all q3 and calculates\nthe max skill increase based on that.",
+        "The quality of your materials can give you a maximum of 40% of the base recipe difficulty as bonus skill.\n\nAll Q1 Materials: 0% Bonus\nAll Q2 Materials: 20% Bonus\nAll Q3 Materials: 40% Bonus\n\nThe skill is calculated by the amount of materials of each quality weighted against their quality\nand a specific weight value that is unique to each individual dragon flight crafting material item\n\nThis is however different for recrafts. There the maximum the reagents can increase the quality\nis dependent on the quality of materials the item was originally crafted with.\nThe exact workings are not known.\nHowever, CraftSim internally compares the achieved skill with all q3 and calculates\nthe max skill increase based on that.",
         [CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP] =
-        "The maximum the materials can contribute to a recipe is most of the time 25% of the base recipe difficulty.\n\nHowever in the case of recrafting, this value can vary based on previous crafts\nand the quality of materials that were used.",
+        "The maximum the materials can contribute to a recipe is most of the time 40% of the base recipe difficulty.\n\nHowever in the case of recrafting, this value can vary based on previous crafts\nand the quality of materials that were used.",
 
         -- Simulation Mode
         [CraftSim.CONST.TEXT.SIMULATION_MODE_NONE] = "None",
@@ -103,8 +83,6 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Details Frame
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Recipe Difficulty: ",
-        [CraftSim.CONST.TEXT.INSPIRATION_LABEL] = "Inspiration: ",
-        [CraftSim.CONST.TEXT.INSPIRATION_SKILL_LABEL] = "Inspiration Skill: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Multicraft: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Resourcefulness: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Resourcefulness Item Bonus: ",
@@ -113,13 +91,8 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Expected Quality: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Next Quality: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Missing Skill: ",
-        [CraftSim.CONST.TEXT.MISSING_SKILL_INSPIRATION_LABEL] = "Missing Skill (Inspiration)",
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Skill: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Multicraft Item Bonus: ",
-
-        -- Customer Service Module
-        [CraftSim.CONST.TEXT.HSV_EXPLANATION] =
-        "HSV stands for 'Hidden Skill Value' and is a hidden skill increase between 0 to 5% of your recipe difficulty whenever you craft something.\n\nThis hidden skill value can bring you to the next quality similar to inspiration.\n\nHowever, the closer you are to the next quality the higher is the chance!",
 
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] =
@@ -131,25 +104,26 @@ function CraftSim.LOCAL_EN:GetData()
             "However, you will notice that the different chances of your procs do not sum up to one\n" ..
             "(Which is required for such a distribution as it means you got a 100% chance that anything can happen)\n\n" ..
             "This is because procs like " ..
-            f.bb("Inspiration ") .. "and" .. f.bb(" Multicraft") .. " can happen " .. f.g("at the same time.\n") ..
+            f.bb("Resourcefulness ") .. "and" .. f.bb(" Multicraft") .. " can happen " .. f.g("at the same time.\n") ..
             "So we first need to convert our proc chances to a " ..
             f.l("Probability Distribution ") .. " with chances\n" ..
             "summing to 100% (Which would mean that every case is covered)\n" ..
-            "And for this we would need to calculate " .. f.l("every") .. " possible outcome of a craft\n\n" ..
+            "And for this we would need to calculate " .. f.l("every") .. " possible outcome of one craft\n\n" ..
             "Like: \n" ..
             f.p .. "What if " .. f.bb("nothing") .. " procs?\n" ..
-            f.p .. "What if " .. f.bb("everything") .. " procs?\n" ..
-            f.p .. "What if only " .. f.bb("Inspiration") .. " and " .. f.bb("Multicraft") .. " procs?\n" ..
+            f.p .. "What if either " .. f.bb("Resourcefulness") .. " or " .. f.bb("Multicraft") .. " procs?\n" ..
+            f.p .. "What if both " .. f.bb("Resourcefulness") .. " and " .. f.bb("Multicraft") .. " procs?\n" ..
             f.p .. "And so on..\n\n" ..
-            "For a recipe that considers all three procs, that would be 2 to the power of 3 outcome possibilities, which is a neat 8.\n" ..
-            "To get the chance of only " .. f.bb("Inspiration") .. " occuring, we have to consider all other procs!\n" ..
+            "For a recipe that considers all procs, that would be 2 to the power of 2 outcome possibilities, which is a neat 4.\n" ..
+            "To get the chance of only " ..
+            f.bb("Multicraft") .. " occuring, we have to consider all other possibilities!\n" ..
             "The chance to proc " ..
-            f.l("only") .. f.bb(" Inspiration ") .. "is actually the chance to proc " .. f.bb("Inspiration\n") ..
-            "But to " .. f.l("not ") .. "proc " .. f.bb("Multicraft") .. " or " .. f.bb("Resourcefulness.\n") ..
+            f.l("only") .. f.bb(" Multicraft ") .. "is actually the chance to proc " .. f.bb("Multicraft\n") ..
+            "and " .. f.l("not ") .. "proc " .. f.bb("Resourcefulness\n") ..
             "And Math tells us that the chance of something not occuring is 1 minus the chance of it occuring.\n" ..
             "So the chance to proc only " ..
-            f.bb("Inspiration ") ..
-            "is actually " .. f.g("inspirationChance * (1-multicraftChance) * (1-resourcefulnessChance)\n\n") ..
+            f.bb("Multicraft ") ..
+            "is actually " .. f.g("multicraftChance * (1-resourcefulnessChance)\n\n") ..
             "After calculating each possibility in that way the individual chances indeed sum up to one!\n" ..
             "Which means we can now apply statistical formulas. The most interesting one in our case is the " ..
             f.bb("Expected Value") .. "\n" ..
@@ -170,53 +144,6 @@ function CraftSim.LOCAL_EN:GetData()
             f.bb("\nE(X) = -100*0.3 + 300*0.7  ") .. "which is " .. f.m((-100 * 0.3 + 300 * 0.7) * 10000) .. "\n" ..
             "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
         ,
-        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_EXPLANATION] =
-            "The " ..
-            f.l("Hidden Skill Value (HSV)") ..
-            " is an additional random factor that occurs everytime you craft something. It is not mentioned anywhere in the game.\n" ..
-            "However you can observe a visualization of the proc: When you craft something the " ..
-            f.bb("Quality Meter") ..
-            "\nfills up to a certain point. And this can 'shoot' quite a bit over your current shown skill.\n" ..
-            "\n" .. cm(CraftSim.MEDIA.IMAGES.HSV_EXAMPLE) .. "\n\n" ..
-            "This extra skill is always between 0% and 5% of your " ..
-            f.bb("Base Recipe Difficulty") ..
-            ".\nMeaning if you have a recipe with 400 difficulty. You can get up to 20 Skill.\n" ..
-            "And tests tell us that this is " ..
-            f.bb("uniformly distributed") .. ". Meaning every percent value has the same chance.\n" ..
-            f.l("HSV") ..
-            " can influence profits heavily when close to a quality! In CraftSim it is treated as an additional proc, like " ..
-            f.bb("Inspiration") .. " or " .. f.bb("Multicraft.\n") ..
-            "However, its effect is depending on your current skill, the recipe difficulty, and the skill you need to reach the next quality.\n" ..
-            "So CraftSim calculates the " ..
-            f.bb("missing skill") ..
-            " to reach the next quality and converts it to " .. f.bb("percent relative to the recipe difficulty\n\n") ..
-            "So for a recipe with 400 difficulty:if you have 190 Skill, and need 200 to reach the next quality, the missing skill would be 10\n" ..
-            "To get this value in percent relative to the difficulty you can calculate it like this: " ..
-            f.bb("10 / (400 / 100)") .. " which is " .. f.bb("2.5%\n\n") ..
-            "Then we need to remember that the " .. f.l("HSV") .. " can give us anywhere between 0 and 5 percent.\n" ..
-            "So we need to calculate the " ..
-            f.bb("chance of getting 2.5 or more") .. " when getting a random number between 0 and 5\n" ..
-            "to know the chance of " .. f.l("HSV") .. " giving us a higher quality.\n\n" ..
-            "Statistics tell us that such a uniform chance to receive something between two boundaries is called a " ..
-            f.l("Continuous Uniform Probability Distribution\n") ..
-            "And thus there is a formula which yields exactly what we need:\n\n" ..
-            f.bb("(upperBound - X) / (upperBound - lowerBound)") .. "\nwhere\n" ..
-            f.bb("upperBound") .. " is 5\n" ..
-            f.bb("lowerBound") .. " is 0\n" ..
-            "and " .. f.bb("X") .. " is the desired value where we want equal or more from. In this case 2.5\n" ..
-            "In this case we are right in the middle of the " ..
-            f.l("HSV 'Area'") .. " so that we have a chance of\n\n" ..
-            f.bb("(5 - 2.5) / (5 - 0) = 0.5") .. " aka 50% to get to next quality by " .. f.l("HSV") .. " alone.\n" ..
-            "If we would have more missing skill we would have less chance and the other way round!\n" ..
-            "Also, if you are missing skill of 5% or more the chance is 0 or negative, meaning it is not possible that " ..
-            f.l("HSV") .. " alone triggers an upgrade.\n\n" ..
-            "However, it is possible that you also reach the next quality when " ..
-            f.bb("Inspiration") .. " and " .. f.l("HSV") .. " occur together and\n" ..
-            "the skill from " ..
-            f.bb("Inspiration") ..
-            " plus the skill from " ..
-            f.l("HSV") .. " give you enough skill to reach the next quality! This is also considered by CraftSim."
-        ,
 
         -- Popups
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM] = "No Supported Price Source Available!",
@@ -227,9 +154,6 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Material Optimization",
-        [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT] = "Reach Inspiration Breakpoint",
-        [CraftSim.CONST.TEXT.MATERIALS_INSPIRATION_BREAKPOINT_TOOLTIP] =
-        "Try to reach the skill breakpoint where an inspiration proc upgrades to the next higher quality with the cheapest material combination",
         [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Reachable Quality: ",
         [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Materials missing",
         [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Materials available",
@@ -242,7 +166,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "CraftSim Specialization Info",
         [CraftSim.CONST.TEXT.SPEC_INFO_SIMULATE_KNOWLEDGE_DISTRIBUTION] = "Simulate Knowledge Distribution",
         [CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP] = "This node grants you following stats for this recipe:",
-        [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "SpecInfo Work in Progress",
+        [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "Specialization Info\nWork in Progress",
 
         -- Crafting Results Frame
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE] = "CraftSim Crafting Results",
@@ -263,7 +187,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_3] = "Real Ø Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_4] = "Real Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_5] = "Procs - Real / Expected: ",
-        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_6] = "Inspiration: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7] = "Multicraft: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8] = "- Ø Extra Items: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9] = "Resourcefulness Procs: ",
@@ -284,7 +207,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON] = "Hide Statistics",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Ø Profit / Craft: ",
         [CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB] = "Basic Profit Calculation",
-        [CraftSim.CONST.TEXT.EXPLANATIONS_HSV_TAB] = "HSV Consideration",
 
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "CraftSim Cost Optimization",
@@ -315,72 +237,10 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_AFTER] = " after",
         [CraftSim.CONST.TEXT.STATISTICS_CRAFTS] = "Crafts: ",
         [CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER] = "Quality",
-        [CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER] = "Chance",
-        [CraftSim.CONST.TEXT.STATISTICS_CHANCE_MIN_HEADER] = "Chance (Min)",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Ø Expected Crafts",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_MIN_HEADER] = "Ø Expected Crafts (Min)",
-        [CraftSim.CONST.TEXT.STATISTICS_INSPIRATION_HEADER] = "Inspiration",
         [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "Multicraft",
         [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "Resourcefulness",
-        [CraftSim.CONST.TEXT.STATISTICS_HSV_NEXT] = "HSV Next",
-        [CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP] = "HSV Skip",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "Expected Profit",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "Recipe Probability Table",
-        [CraftSim.CONST.TEXT.PROBABILITY_TABLE_EXPLANATION] =
-            "This table shows all possible proc combinations of the current recipe.\n\n" ..
-            f.l("HSV Next") ..
-            " .. HSV chance for next quality\n\n" ..
-            f.l("HSV Skip") .. " .. HSV chance to skip a quality with inspiration",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "Ø Expected Costs",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_MIN_HEADER] = "Ø Expected Costs (Min)",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "With Ø Sell Return",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_MIN_WITH_RETURN_HEADER] = "With Ø Sell Return (Min)",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPLANATION_ICON] =
-            "This table gives you the average (Ø) expected crafts and costs per quality.\n\n" ..
-            f.g("Chance") ..
-            " is the chance of crafting this item considering your " ..
-            f.bb("Inspiration") ..
-            " and " ..
-            f.l("HSV") ..
-            "\n\n" ..
-            f.g("Expected Crafts") ..
-            " tells you how often, on average, you have to craft this recipe to craft this quality\n\n" ..
-            f.g("Expected Costs per Item") ..
-            " tells you, on average, what the costs for 1 resulting item in this quality are (this can be below the crafting costs since it is per item and considers stats like " ..
-            f.bb("Multicraft"),
-
-        -- Customer Service Frame
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TITLE] = "CraftSim Customer Service",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RECIPE_WHISPER] = "Recipe Whisper",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW] = "Live Preview",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_WHISPER] = "Whisper",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_MESSAGE_FORMAT] = "Message Format",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_RESET_TO_DEFAULT] = "Reset to Defaults",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_ALLOW_CONNECTIONS] = "Allow Connections",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_SEND_INVITE] = "Send Invite",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_EXPLANATION] =
-        "Enable the automatic answering with the highest possible results and material costs when someone whispers you the command and an item link for an item you can craft!",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_AUTO_REPLY_FORMAT_EXPLANATION] =
-        "Each line is a seperate chat message in the whisper.\n\nYou can use following labels to insert information about the recipe:\n%gc .. link of the guaranteed result quality\n%ic .. link of the result quality reachable with inspiration\n%insp .. your inspiration chance e.g. 18%\n%mc .. your multicraft chance\n%res .. your resourcefulness chance\n%cc .. the crafting costs\n%ccd .. the detailed costs per reagent used (preferably in its own line)\n%orl .. a simple list of all used optional reagents\n%rl .. a simple list of all required reagents",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_EXPLANATION] =
-        "Enable live crafting preview connections to you via CraftSim Preview Links.\nAnyone who has CraftSim and clicks the shared link can live connect to your crafting information to check out your crafting abilities",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX] = "Highest Guaranteed",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_HIGHEST_GUARANTEED_CHECKBOX_EXPLANATION] =
-        "Check for the highest guaranteed quality the crafter can craft this recipe. And optimize for lowest crafting costs.\n\nIf toggled off. The highest reachable quality with inspiration will be optimized for crafting costs.",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LIVE_PREVIEW_TITLE] = "CraftSim Live Preview",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTER_PROFESSION] = "Crafter's Profession",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES] = "Learned Recipes",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_LEARNED_RECIPES_INITIAL] = "Select Recipe",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUESTING_UPDATE] = "Requesting Update",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_TIMEOUT] = "Timeout (Player Offline?)",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_OPTIONAL] = "Optional",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENT_FINISHING] = "Finishing",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_CRAFTING_COSTS] = "Crafting Costs",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_RESULTS] = "Expected Result",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_EXPECTED_INSPIRATION] = "Chance for",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REQUIRED_MATERIALS] = "Required Materials",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_NONE] = "None",
-        [CraftSim.CONST.TEXT.CUSTOMER_SERVICE_REAGENTS_LOCKED] = "Locked",
 
         -- Price Details Frame
         [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "CraftSim Price Details",
@@ -474,13 +334,11 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_MUTLICRAFT] = "New Multicraft\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_CRAFTING_SPEED] = "New Crafting Speed\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_RESOURCEFULNESS] = "New Resourcefulness\n",
-        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_INSPIRATION] = "New Inspiration\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_SKILL] = "New Skill\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_UNHANDLED] = "Unhandled Sim Mode",
 
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_PROFIT] = "Top Profit",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_SKILL] = "Top Skill",
-        [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_INSPIRATION] = "Top Inspiration",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_MULTICRAFT] = "Top Multicraft",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_RESOURCEFULNESS] = "Top Resourcefulness",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_CRAFTING_SPEED] = "Top Crafting Speed",
@@ -547,7 +405,7 @@ function CraftSim.LOCAL_EN:GetData()
         "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Material Optimization",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP] =
-        "Suggests the cheapest materials to reach the highest quality/inspiration threshold.",
+        "Suggests the cheapest materials to reach the highest quality threshold.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Price Overrides",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] =
         "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically.",
@@ -566,9 +424,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Recipe Scan",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_TOOLTIP] =
         "Module that scans your recipe list based on various options",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_LABEL] = "Customer Service",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_SERVICE_TOOLTIP] =
-        "Module that offers various options to interact with potential customers",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_LABEL] = "Customer History",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CUSTOMER_HISTORY_TOOLTIP] =
         "Module that provides a history of conversations with customers, crafted items and commissions",

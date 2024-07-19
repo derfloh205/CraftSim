@@ -40,7 +40,6 @@ Optimizes professionGearSet based on the given mode. Automatically calls Update(
 Possible modes are
 - "Top Profit"
 - "Top Skill"
-- "Top Inspiration"
 - "Top Multicraft"
 - "Top Resourcefulness"
 - "Top Crafting Speed"
@@ -54,6 +53,10 @@ Automatically calls Update()
 ### recipeData:SetAllReagentsBySchematicForm()
 
 This sets all required and optional reagents based on the set reagents in the visible default blizzard crafting GUI.
+
+### recipeData:SetConcentrationBySchematicForm()
+
+Toggle the concentrating property of the recipe based on the visible default blizzard crafting GUI
 
 ### recipeData:SetOptionalReagents(itemIDList: number[])
 
@@ -78,7 +81,7 @@ Automatically calls Update()
 
 ### Example
 
-An example that uses CraftSim's API to fetch a recipeData object, optimizes gear and reagents for profit (using inspiration breakpoints) and then prints the resulting profit
+An example that uses CraftSim's API to fetch a recipeData object, optimizes gear and reagents for profit and then prints the resulting profit
 
     local recipeData = CraftSimAPI:GetRecipeData(367713)
     recipeData:OptimizeProfit(true)

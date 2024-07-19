@@ -54,7 +54,7 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     -- Profession Tools
     [389508] = { name = "Draconic Deftness", q1 = 199961, q2 = 200003, q3 = 200045 },
     [389513] = { name = "Draconic Finesse", q1 = 199962, q2 = 200004, q3 = 200046 },
-    [389519] = { name = "Draconic Inspiration", q1 = 199963, q2 = 200005, q3 = 200047 },
+    [389519] = { name = "Draconic ???", q1 = 199963, q2 = 200005, q3 = 200047 },
     [389525] = { name = "Draconic Perception", q1 = 199964, q2 = 200006, q3 = 200048 },
     [389530] = { name = "Draconic Resourcefulness", q1 = 199965, q2 = 200007, q3 = 200049 },
 

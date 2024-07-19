@@ -58,6 +58,14 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Migrate()
 
         CraftSimDB.itemOptimizedCostsDB.version = 2
     end
+
+    -- 2 -> 3 (17.0.0 - TWW)
+    if CraftSimDB.itemOptimizedCostsDB.version == 2 then
+        -- clear the db for a reset
+        self:ClearAll()
+
+        CraftSimDB.itemOptimizedCostsDB.version = 3
+    end
 end
 
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:ClearAll()
@@ -88,25 +96,16 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(recipeData)
 
         -- only if reachable
         for qualityID, item in ipairs(recipeData.resultData.itemsByQuality) do
-            local chance = recipeData.resultData.chanceByQuality[qualityID] or 0
-            local minChance = recipeData.resultData.chancebyMinimumQuality[qualityID] or 0
-            if minChance > 0 then
-                print("Caching Optimized Costs Data for: " .. recipeData.recipeName)
-                local itemID = item:GetItemID()
-                CraftSimDB.itemOptimizedCostsDB.data[itemID] = CraftSimDB.itemOptimizedCostsDB.data[itemID] or {}
+            print("Caching Optimized Costs Data for: " .. recipeData.recipeName)
+            local itemID = item:GetItemID()
+            CraftSimDB.itemOptimizedCostsDB.data[itemID] = CraftSimDB.itemOptimizedCostsDB.data[itemID] or {}
 
-                CraftSimDB.itemOptimizedCostsDB.data[itemID][recipeData:GetCrafterUID()] = {
-                    crafter = recipeData:GetCrafterUID(),
-                    qualityID = qualityID,
-                    craftingChance = chance,
-                    craftingChanceMin = minChance,
-                    expectedCosts = recipeData.priceData.expectedCostsByQuality[qualityID],
-                    expectedCostsMin = recipeData.priceData.expectedCostsByMinimumQuality[qualityID],
-                    expectedCrafts = recipeData.resultData.expectedCraftsByQuality[qualityID],
-                    expectedCraftsMin = recipeData.resultData.expectedCraftsByMinimumQuality[qualityID],
-                    profession = recipeData.professionData.professionInfo.profession,
-                }
-            end
+            CraftSimDB.itemOptimizedCostsDB.data[itemID][recipeData:GetCrafterUID()] = {
+                crafter = recipeData:GetCrafterUID(),
+                qualityID = qualityID,
+                expectedCostsPerItem = recipeData.priceData.expectedCostsPerItem,
+                profession = recipeData.professionData.professionInfo.profession,
+            }
         end
     end
 end

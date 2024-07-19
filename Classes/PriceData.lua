@@ -16,9 +16,7 @@ function CraftSim.PriceData:new(recipeData)
     ---@type number[]
     self.qualityPriceList = {}
     --- Per 1 Item
-    self.expectedCostsByQuality = {}
-    --- Per 1 Item
-    self.expectedCostsByMinimumQuality = {}
+    self.expectedCostsPerItem = nil
     self.craftingCosts = 0
     --- list of itemIDs of reagents where the selfcrafted price is used
     ---@type ItemID[]
@@ -38,9 +36,8 @@ function CraftSim.PriceData:Update()
     self.craftingCosts = 0
     self.craftingCostsRequired = 0
     self.craftingCostsFixed = 0
+    self.expectedCostsPerItem = 0
     wipe(self.qualityPriceList)
-    wipe(self.expectedCostsByQuality)
-    wipe(self.expectedCostsByMinimumQuality)
     wipe(self.selfCraftedReagents)
 
     local useSubRecipes = self.recipeData.subRecipeCostsEnabled
@@ -153,24 +150,11 @@ function CraftSim.PriceData:Update()
         avgSavedCostsRes = CraftSim.CALC:GetResourcefulnessSavedCosts(self.recipeData) *
             self.recipeData.professionStats.resourcefulness:GetPercent(true)
     end
-    for qualityID, chance in pairs(self.recipeData.resultData.chanceByQuality) do
-        local minChance = self.recipeData.resultData.chancebyMinimumQuality[qualityID] or 0
-        --- this instead of the expectedYieldForQuality because the chance for the quality is already baked into the expected crafts
-        local expectedItemsPerCraft = CraftSim.CALC:GetExpectedItemAmountMulticraft(self.recipeData)
-        local avgCraftingCostsRes = self.craftingCosts - avgSavedCostsRes
-        local expectedCraftsForQuality = self.recipeData.resultData.expectedCraftsByQuality[qualityID]
-        local expectedCraftsForMinQuality = self.recipeData.resultData.expectedCraftsByMinimumQuality[qualityID]
 
-        if chance > 0 and expectedItemsPerCraft > 0 then
-            self.expectedCostsByQuality[qualityID] = (avgCraftingCostsRes * expectedCraftsForQuality) /
-                expectedItemsPerCraft
-        end
+    local expectedYieldPerCraft = self.recipeData.resultData.expectedYieldPerCraft
+    local avgCraftingCostsRes = self.craftingCosts - avgSavedCostsRes
 
-        if minChance > 0 and expectedItemsPerCraft > 0 then
-            self.expectedCostsByMinimumQuality[qualityID] = (avgCraftingCostsRes * expectedCraftsForMinQuality) /
-                expectedItemsPerCraft
-        end
-    end
+    self.expectedCostsPerItem = (avgCraftingCostsRes) / expectedYieldPerCraft
 
     print("calculated crafting costs: " .. tostring(self.craftingCosts))
 end
@@ -194,7 +178,7 @@ function CraftSim.PriceData:Copy(recipeData)
     copy.craftingCosts = self.craftingCosts
     copy.craftingCostsFixed = self.craftingCostsFixed
     copy.craftingCostsRequired = self.craftingCostsRequired
-    copy.expectedCostsByQuality = CopyTable(self.expectedCostsByQuality or {})
+    copy.expectedCostsPerItem = self.expectedCostsPerItem
     copy.selfCraftedReagents = CopyTable(self.selfCraftedReagents or {})
     return copy
 end
@@ -206,7 +190,8 @@ function CraftSim.PriceData:GetJSON(indent)
     jb:AddList("qualityPriceList", self.qualityPriceList)
     jb:Add("craftingCosts", self.craftingCosts)
     jb:Add("craftingCostsRequired", self.craftingCostsRequired)
-    jb:Add("craftingCostsFixed", self.craftingCostsFixed, true)
+    jb:Add("craftingCostsFixed", self.craftingCostsFixed)
+    jb:Add("expectedCostsPerItem", self.expectedCostsPerItem, true)
     jb:End()
     return jb.json
 end

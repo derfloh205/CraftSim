@@ -26,7 +26,7 @@ function CraftSim.SpecializationData:new(recipeData)
     ---@type number[][]
     self.numNodesPerLayer = {} -- needed for spec sim tree buildup
 
-    self.isImplemented = CraftSim.UTIL:IsSpecImplemented(recipeData.professionData.professionInfo.profession)
+    self.isImplemented = recipeData:IsSpecializationInfoImplemented()
     self.isGatheringProfession = CraftSim.CONST.GATHERING_PROFESSIONS
         [recipeData.professionData.professionInfo.profession]
 
@@ -34,9 +34,11 @@ function CraftSim.SpecializationData:new(recipeData)
         return
     end
 
-    local nodeNameData = CraftSim.SPEC_DATA:GetNodes(recipeData.professionData.professionInfo.profession)
-    local professionRuleNodes = CraftSim.SPEC_DATA:RULE_NODES()[recipeData.professionData.professionInfo.profession]
-    local baseRuleNodes = CraftSim.SPEC_DATA:BASE_RULE_NODES()[recipeData.professionData.professionInfo.profession]
+    local profession = recipeData.professionData.professionInfo.profession
+    local expansionID = recipeData.professionData.expansionID
+
+    local professionRuleNodes = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID][profession]
+    local baseRuleNodes = CraftSim.SPECIALIZATION_DATA.BASE_NODES[expansionID][profession]
 
     local baseRuleNodeIDs = GUTIL:Map(baseRuleNodes, function(nameID)
         local ruleNode = professionRuleNodes[nameID]
@@ -50,18 +52,8 @@ function CraftSim.SpecializationData:new(recipeData)
     local baseNodeIndex = 1
     local function parseNode(nodeID, parentNodeData, layer)
         local ruleNodes = GUTIL:Filter(professionRuleNodes, function(n) return n.nodeID == nodeID end)
-        local nodeName = CraftSim.LOCAL:GetText(nodeID);
 
-        if not nodeName then
-            nodeName = GUTIL:Find(nodeNameData,
-                function(nodeNameEntry) return nodeNameEntry.nodeID == nodeID end).name
-        end
-        local nodeData = CraftSim.NodeData(self.recipeData, nodeName, ruleNodes, parentNodeData)
-
-        --- DEBUG
-        if nodeData.nodeName == "Curing and Tanning" then
-            print("@node: " .. nodeData.nodeName)
-        end
+        local nodeData = CraftSim.NodeData(self.recipeData, ruleNodes, parentNodeData)
 
         nodeData:UpdateAffectance()
         nodeData:UpdateProfessionStats()
@@ -94,7 +86,6 @@ end
 function CraftSim.SpecializationData:GetExtraFactors()
     local extraFactors = CraftSim.ProfessionStats()
 
-    extraFactors.inspiration.extraFactor = self.professionStats.inspiration.extraFactor
     extraFactors.multicraft.extraFactor = self.professionStats.multicraft.extraFactor
     extraFactors.resourcefulness.extraFactor = self.professionStats.resourcefulness.extraFactor
 
@@ -199,13 +190,14 @@ end
 ---@return CraftSim.SpecializationData
 function CraftSim.SpecializationData:Deserialize(serializedData, recipeData)
     local specializationData = CraftSim.SpecializationData()
-    self.isImplemented = CraftSim.UTIL:IsSpecImplemented(recipeData.professionData.professionInfo.profession)
+    self.isImplemented = recipeData:IsSpecializationInfoImplemented()
     specializationData.numNodesPerLayer = serializedData.numNodesPerLayer
     specializationData.professionStats = CraftSim.ProfessionStats()
     specializationData.maxProfessionStats = CraftSim.ProfessionStats()
 
     local nodeIDMap = {} -- to restore references
-    local professionRuleNodes = CraftSim.SPEC_DATA:RULE_NODES()[recipeData.professionData.professionInfo.profession]
+    local professionRuleNodes = CraftSim.SPECIALIZATION_DATA.NODE_DATA[recipeData.professionData.expansionID]
+    [recipeData.professionData.professionInfo.profession]
 
     specializationData.nodeData = GUTIL:Map(serializedData.nodeData, function(nodeDataSerialized)
         return CraftSim.NodeData:Deserialize(nodeDataSerialized, recipeData, nodeIDMap, professionRuleNodes)

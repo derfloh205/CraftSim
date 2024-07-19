@@ -13,7 +13,6 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.TOP_GEAR)
 CraftSim.TOPGEAR.SIM_MODES = {
     PROFIT = CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_PROFIT,
     SKILL = CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_SKILL,
-    INSPIRATION = CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_INSPIRATION,
     MULTICRAFT = CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_MULTICRAFT,
     RESOURCEFULNESS = CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_RESOURCEFULNESS,
     CRAFTING_SPEED = CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_CRAFTING_SPEED
@@ -53,10 +52,6 @@ function CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData
 
     if recipeData.supportsQualities then
         table.insert(availableModes, CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.SKILL))
-    end
-
-    if recipeData.supportsInspiration then
-        table.insert(availableModes, CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.INSPIRATION))
     end
 
     if recipeData.supportsMulticraft then
@@ -379,15 +374,6 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
         results = GUTIL:Sort(results, function(resultA, resultB)
             return resultA.averageProfit > resultB.averageProfit
         end)
-    elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.INSPIRATION) then
-        print("Top Gear Mode: Inspiration")
-        results = GUTIL:Filter(results, function(result)
-            return result.relativeStats.inspiration.value > 0
-        end)
-        results = GUTIL:Sort(results, function(resultA, resultB)
-            return resultA.professionGearSet.professionStats.inspiration.value >
-                resultB.professionGearSet.professionStats.inspiration.value
-        end)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.MULTICRAFT) then
         print("Top Gear Mode: Multicraft")
         results = GUTIL:Filter(results, function(result)
@@ -418,10 +404,8 @@ function CraftSim.TOPGEAR:OptimizeTopGear(recipeData, topGearMode)
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.SKILL) then
         print("Top Gear Mode: Skill")
         results = GUTIL:Sort(results, function(resultA, resultB)
-            local maxSkillA = resultA.professionGearSet.professionStats.skill.value +
-                resultA.professionGearSet.professionStats.inspiration:GetExtraValueByFactor()
-            local maxSkillB = resultB.professionGearSet.professionStats.skill.value +
-                resultB.professionGearSet.professionStats.inspiration:GetExtraValueByFactor()
+            local maxSkillA = resultA.professionGearSet.professionStats.skill.value
+            local maxSkillB = resultB.professionGearSet.professionStats.skill.value
             return maxSkillA > maxSkillB
         end)
     end

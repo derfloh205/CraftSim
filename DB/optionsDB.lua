@@ -135,7 +135,7 @@ function CraftSim.DB.OPTIONS:Migrate()
                 CraftSimOptions
                 .customResourcefulnessConstant
 
-            -- CUSTOMER SERVICE
+            -- CUSTOMER SERVICE (legacy)
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CUSTOMER_SERVICE_WHISPER_FORMAT] =
                 CraftSimOptions
                 .customerServiceRecipeWhisperFormat
@@ -205,6 +205,15 @@ function CraftSim.DB.OPTIONS:Migrate()
             self:Save("LIB_ICON_DB", _G["CraftSimLibIconDB"])
         end
         CraftSimDB.optionsDB.version = 2
+    end
+
+    if CraftSimDB.optionsDB.version == 2 then
+        CraftSimDB.optionsDB.data["MODULE_CUSTOMER_SERVICE"] = nil
+        CraftSimDB.optionsDB.data["CUSTOMER_SERVICE_WHISPER_FORMAT"] = nil
+        CraftSimDB.optionsDB.data["CUSTOMER_SERVICE_ALLOW_LIVE_PREVIEW"] = nil
+        CraftSimDB.optionsDB.data["CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS"] = nil
+
+        CraftSimDB.optionsDB.version = 3
     end
 end
 

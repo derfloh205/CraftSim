@@ -28,6 +28,8 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     local crafterUID = self:GetCrafterUID()
 
+    self.concentrating = false
+
     -- important for recipedata of alts to check if data was cached (and for any recipe data creation b4 tradeskill is ready)
     self.specializationDataCached = false
     self.operationInfoCached = false
@@ -104,13 +106,18 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.relativeProfitCached = nil
     self.isQuestRecipe = tContains(CraftSim.CONST.QUEST_RECIPE_IDS, recipeID)
 
+    self.isGear = false
+
     if self.recipeInfo.hyperlink then
-        local subclassID = select(7, C_Item.GetItemInfoInstant(self.recipeInfo.hyperlink))
+        local itemInfoInstant = { C_Item.GetItemInfoInstant(self.recipeInfo.hyperlink) }
+        local subclassID = itemInfoInstant[7]
         ---@type number?
         self.subtypeID = subclassID
+        -- 4th return value is item equip slot, so if its of non type its not equipable, otherwise its gear
+        self.isGear = itemInfoInstant[4] ~= CraftSim.CONST.INVENTORY_TYPE_NON_EQUIP_IGNORE
     end
 
-    self.isOldWorldRecipe = not self:IsDragonflightRecipe()
+    self.isOldWorldRecipe = self:IsOldWorldRecipe()
     self.isRecraft = isRecraft or false
     if self.orderData then
         self.isRecraft = self.orderData.isRecraft
@@ -129,11 +136,10 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@type string?
     self.allocationItemGUID = nil
     self.maxQuality = self.recipeInfo.maxQuality
-    self.isGear = self.recipeInfo.hasSingleItemOutput and self.recipeInfo.qualityIlvlBonuses ~= nil
 
-    self.supportsInspiration = false
     self.supportsMulticraft = false
     self.supportsResourcefulness = false
+    self.supportsIngenuity = false
     self.supportsCraftingspeed = true -- this is always supported (but does not show in details UI when 0)
 
     if not self.isCooking then
@@ -181,7 +187,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.baseOperationInfo = nil
     if self.orderData then
         self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
-            self.orderData.orderID)
+            self.orderData.orderID, self.concentrating)
     else
         self.baseOperationInfo = self:GetCraftingOperationInfoForRecipeCrafter()
     end
@@ -200,9 +206,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     if self.isSalvageRecipe then
         self.supportsResourcefulness = true
     end
-
-    self.baseProfessionStats:SetInspirationBaseBonusSkill(self.baseProfessionStats.recipeDifficulty.value,
-        self.maxQuality)
 
     if self.professionData:UsesGear() then
         CraftSim.DEBUG:StartProfiling("- RD: ProfessionGearCache")
@@ -401,6 +404,16 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
     end
 end
 
+function CraftSim.RecipeData:SetConcentrationBySchematicForm()
+    local schematicForm = CraftSim.UTIL:GetSchematicFormByVisibility()
+    if not schematicForm then
+        return
+    end
+
+    local currentTransaction = schematicForm:GetTransaction()
+    self.concentrating = currentTransaction:IsApplyingConcentration()
+end
+
 ---@param itemID number
 function CraftSim.RecipeData:SetOptionalReagent(itemID)
     self.reagentData:SetOptionalReagent(itemID)
@@ -430,9 +443,6 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     local buffStats = self.buffData.professionStats
 
     self.professionStats:Clear()
-
-    -- Dont forget to set this.. cause it is ignored by add/subtract
-    self.professionStats:SetInspirationBaseBonusSkill(self.baseProfessionStats.recipeDifficulty.value, self.maxQuality)
 
     self.professionStats:add(self.baseProfessionStats)
 
@@ -471,6 +481,7 @@ end
 function CraftSim.RecipeData:Copy()
     ---@type CraftSim.RecipeData
     local copy = CraftSim.RecipeData(self.recipeID, self.isRecraft, self.orderData ~= nil, self.crafterData)
+    copy.concentrating = self.concentrating
     copy.reagentData = self.reagentData:Copy(copy)
     copy.professionGearSet = self.professionGearSet:Copy()
     copy.professionStats = self.professionStats:Copy()
@@ -601,6 +612,7 @@ function CraftSim.RecipeData:GetJSON(indent)
     jb:Add("recipeID", self.recipeID)
     jb:Add("categoryID", self.categoryID)
     jb:Add("subtypeID", self.subtypeID)
+    jb:Add("concentrating", self.concentrating)
     jb:Add("learned", self.learned)
     jb:Add("numSkillUps", self.numSkillUps)
     jb:Add("recipeIcon", self.recipeIcon)
@@ -609,7 +621,6 @@ function CraftSim.RecipeData:GetJSON(indent)
     jb:Add("hasQualityReagents", self.hasQualityReagents)
     jb:Add("supportsQualities", self.supportsQualities)
     jb:Add("supportsCraftingStats", self.supportsCraftingStats)
-    jb:Add("supportsInspiration", self.supportsInspiration)
     jb:Add("supportsMulticraft", self.supportsMulticraft)
     jb:Add("supportsResourcefulness", self.supportsResourcefulness)
     jb:Add("supportsCraftingspeed", self.supportsCraftingspeed)
@@ -674,18 +685,10 @@ function CraftSim.RecipeData:GetForgeFinderExport(indent)
     end
     if self.supportsCraftingStats then
         if self.supportsMulticraft then
-            if not self.supportsInspiration and not self.supportsResourcefulness then
+            if not self.supportsResourcefulness then
                 jb:Add("multicraft", professionStatsForExport.multicraft:GetPercent(true), true)
             else
                 jb:Add("multicraft", professionStatsForExport.multicraft:GetPercent(true))
-            end
-        end
-        if self.supportsInspiration then
-            jb:Add("inspiration", professionStatsForExport.inspiration:GetPercent(true))
-            if not self.supportsMulticraft and not self.supportsResourcefulness then
-                jb:Add("inspirationSkill", self.professionStats.inspiration:GetExtraValueByFactor(), true)
-            else
-                jb:Add("inspirationSkill", self.professionStats.inspiration:GetExtraValueByFactor())
             end
         end
         if self.supportsResourcefulness then
@@ -772,10 +775,12 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
         if operationInfo then
             self.operationInfoCached = true
         else
-            operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
+            operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID,
+                self.concentrating)
         end
     else
-        operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID)
+        operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID,
+            self.concentrating)
 
         -- check for too early access?
         CraftSim.DB.CRAFTER:SaveOperationInfoForRecipe(crafterUID, self.recipeID, operationInfo)
@@ -830,6 +835,10 @@ function CraftSim.RecipeData:GetCooldownDataForRecipeCrafter()
     return cooldownData
 end
 
+function CraftSim.RecipeData:GetExpansionID()
+    local professionExpansions = CraftSim.CONST.TRADESKILLLINEIDS[self.professionData.professionInfo.profession]
+end
+
 function CraftSim.RecipeData:IsCrafterInfoCached()
     if self:IsCrafter() then
         return true
@@ -868,17 +877,23 @@ function CraftSim.RecipeData:CrafterDataEquals(crafterData)
     return nameEquals and realmEquals and classEquals
 end
 
-function CraftSim.RecipeData:IsDragonflightRecipe()
-    local recipeInfo = self.recipeInfo
-    if recipeInfo then
-        local professionInfo = self.professionData.professionInfo
-        if not professionInfo.profession then return false end
-        local isDragonflightRecipe = professionInfo.professionID ==
-            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT]
-        return isDragonflightRecipe
+function CraftSim.RecipeData:IsOldWorldRecipe()
+    return self.professionData.expansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT
+end
+
+---@param expansionID CraftSim.EXPANSION_IDS
+function CraftSim.RecipeData:IsExpansionRecipe(expansionID)
+    if self.professionData and self.professionData.skillLineID then
+        return self.professionData.skillLineID ==
+            CraftSim.CONST.TRADESKILLLINEIDS[self.professionData.professionInfo.profession][expansionID]
     end
 
     return false
+end
+
+function CraftSim.RecipeData:IsSpecializationInfoImplemented()
+    return tContains(CraftSim.CONST.IMPLEMENTED_SPECIALIZATION_DATA[self.professionData.expansionID],
+        self.professionData.professionInfo.profession)
 end
 
 --- returns recipe crafting info for all required and all active optional reagents

@@ -1,10 +1,10 @@
-## Interface: 100207
+## Interface: 110000
 ## DefaultState: enabled
 
 ## Title: CraftSim
 ## Notes: Calculates the average profit based on your profession stats and other tools for dragonflight gold making
 ## Author: genju
-## Version: 16.1.8
+## Version: 17.0.0
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
@@ -59,9 +59,6 @@ Modules/CraftQueue/Frames.lua
 
 Modules/Cooldowns/Cooldowns.lua
 Modules/Cooldowns/Frames.lua
-
-Modules/CustomerService/CustomerService.lua
-Modules/CustomerService/Frames.lua
 
 Modules/CustomerHistory/CustomerHistory.lua
 Modules/CustomerHistory/Frames.lua
@@ -128,15 +125,17 @@ Data/ReagentWeightData.lua
 Data/OptionalReagentData.lua
 Data/News.lua
 
-Data/SpecNodeData/SpecData.lua
-Data/SpecNodeData/Alchemy.lua
-Data/SpecNodeData/Blacksmithing.lua
-Data/SpecNodeData/Enchanting.lua
-Data/SpecNodeData/Inscription.lua
-Data/SpecNodeData/Jewelcrafting.lua
-Data/SpecNodeData/Leatherworking.lua
-Data/SpecNodeData/Tailoring.lua
-Data/SpecNodeData/Engineering.lua
+Data/SpecializationData/Dragonflight/Alchemy.lua
+Data/SpecializationData/Dragonflight/Blacksmithing.lua
+Data/SpecializationData/Dragonflight/Enchanting.lua
+Data/SpecializationData/Dragonflight/Inscription.lua
+Data/SpecializationData/Dragonflight/Jewelcrafting.lua
+Data/SpecializationData/Dragonflight/Leatherworking.lua
+Data/SpecializationData/Dragonflight/Tailoring.lua
+Data/SpecializationData/Dragonflight/Engineering.lua
+Data/SpecializationData/TheWarWithin/Blacksmithing.lua
+# needs to be last
+Data/SpecializationData/SpecializationData.lua
 
 Classes/CraftSimObject.lua
 Classes/CooldownData.lua
