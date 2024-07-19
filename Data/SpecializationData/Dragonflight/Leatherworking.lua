@@ -7,7 +7,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
     LEATHERWORKING_DISCIPLINE_1 = {
         childNodeIDs = { "SHEAR_MASTERY_OF_LEATHER_1", "AWL_INSPIRING_WORKS_1", "BONDING_AND_STITCHING_1", "CURING_AND_TANNING_1" },
         nodeID = 31184,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     LEATHERWORKING_DISCIPLINE_2 = {
@@ -41,7 +41,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
     },
     SHEAR_MASTERY_OF_LEATHER_1 = {
         nodeID = 31183,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     SHEAR_MASTERY_OF_LEATHER_2 = {
@@ -127,7 +127,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
     },
     BONDING_AND_STITCHING_1 = {
         nodeID = 31181,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.PROFESSION_EQUIPMENT] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.ALCHEMY,
@@ -211,7 +211,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
     },
     CURING_AND_TANNING_1 = {
         nodeID = 31180,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ARMOR_KITS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
@@ -285,10 +285,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         },
     },
     -- Primordial Leatherworking
-    PRIMORDIAL_LEATHERWORKING_1 = {     -- mapped
+    PRIMORDIAL_LEATHERWORKING_1 = { -- mapped
         childNodeIDs = { "ELEMENTAL_MASTERY_1", "BESTIAL_PRIMACY_1", "DECAYING_GRASP_1" },
         nodeID = 31146,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ELEMENTAL_PATTERNS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
@@ -305,17 +305,17 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     PRIMORDIAL_LEATHERWORKING_2 = {
@@ -338,17 +338,17 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     PRIMORDIAL_LEATHERWORKING_3 = {
@@ -372,17 +372,17 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     PRIMORDIAL_LEATHERWORKING_4 = {
@@ -405,17 +405,17 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     PRIMORDIAL_LEATHERWORKING_5 = {
@@ -439,17 +439,17 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     PRIMORDIAL_LEATHERWORKING_6 = {
@@ -473,22 +473,22 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     ELEMENTAL_MASTERY_1 = {
         nodeID = 31145,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.ELEMENTAL_PATTERNS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
@@ -496,9 +496,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
         },
     },
     ELEMENTAL_MASTERY_2 = {
@@ -511,9 +511,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
         },
     },
     ELEMENTAL_MASTERY_3 = {
@@ -527,9 +527,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
         },
     },
     ELEMENTAL_MASTERY_4 = {
@@ -543,9 +543,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
         },
     },
     ELEMENTAL_MASTERY_5 = {
@@ -559,14 +559,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375178,     -- Earthshine Scales
-            375174,     -- Mireslush Hide
-            375161,     -- Frosted Armor Kit
+            375178, -- Earthshine Scales
+            375174, -- Mireslush Hide
+            375161, -- Frosted Armor Kit
         },
     },
     BESTIAL_PRIMACY_1 = {
         nodeID = 31144,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.BESTIAL_PATTERNS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
@@ -575,10 +575,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
         },
     },
     BESTIAL_PRIMACY_2 = {
@@ -593,10 +593,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
         },
     },
     BESTIAL_PRIMACY_3 = {
@@ -610,10 +610,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
         },
     },
     BESTIAL_PRIMACY_4 = {
@@ -628,10 +628,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
         },
     },
     BESTIAL_PRIMACY_5 = {
@@ -646,15 +646,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375180,     -- Infurious Scales
-            375176,     -- Infurious Hide
-            375159,     -- Fang Adornments
-            375162,     -- Fierce Armor Kit
+            375180, -- Infurious Scales
+            375176, -- Infurious Hide
+            375159, -- Fang Adornments
+            375162, -- Fierce Armor Kit
         },
     },
     DECAYING_GRASP_1 = {
         nodeID = 31143,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.LEATHERWORKING.DECAYED_PATTERNS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.LEATHERWORKING.MAIL,
@@ -662,10 +662,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     DECAYING_GRASP_2 = {
@@ -679,10 +679,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     DECAYING_GRASP_3 = {
@@ -695,10 +695,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     DECAYING_GRASP_4 = {
@@ -712,10 +712,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     DECAYING_GRASP_5 = {
@@ -729,61 +729,61 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
             },
         },
         exceptionRecipeIDs = {
-            375179,     -- Frostbite Scales
-            375173,     -- Stonecrust Hide
-            375160,     -- Toxified Armor Patch
-            375199,     -- Witherrot Tome
+            375179, -- Frostbite Scales
+            375173, -- Stonecrust Hide
+            375160, -- Toxified Armor Patch
+            375199, -- Witherrot Tome
         },
     },
     -- Leather Armor Crafting
-    LEATHER_ARMOR_CRAFTING_1 = {     --mapped
+    LEATHER_ARMOR_CRAFTING_1 = { --mapped
         childNodeIDs = { "SHAPED_LEATHER_ARMOR_1", "EMBROIDERED_LEATHER_ARMOR_1" },
         nodeID = 28546,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --- shaped leather armor
             -- chest
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
             -- helms
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
             -- shoulder
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
             -- wrist
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
             --- embroidered leather armor
             -- legs
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
             -- gloves
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
             -- belts
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
             -- boots
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     LEATHER_ARMOR_CRAFTING_2 = {
@@ -793,47 +793,47 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         exceptionRecipeIDs = {
             --- shaped leather armor
             -- chest
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
             -- helms
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
             -- shoulder
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
             -- wrist
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
             --- embroidered leather armor
             -- legs
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
             -- gloves
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
             -- belts
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
             -- boots
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     LEATHER_ARMOR_CRAFTING_3 = {
@@ -844,47 +844,47 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         exceptionRecipeIDs = {
             --- shaped leather armor
             -- chest
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
             -- helms
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
             -- shoulder
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
             -- wrist
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
             --- embroidered leather armor
             -- legs
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
             -- gloves
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
             -- belts
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
             -- boots
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     LEATHER_ARMOR_CRAFTING_4 = {
@@ -894,47 +894,47 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         exceptionRecipeIDs = {
             --- shaped leather armor
             -- chest
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
             -- helms
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
             -- shoulder
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
             -- wrist
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
             --- embroidered leather armor
             -- legs
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
             -- gloves
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
             -- belts
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
             -- boots
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     LEATHER_ARMOR_CRAFTING_5 = {
@@ -946,75 +946,75 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         exceptionRecipeIDs = {
             --- shaped leather armor
             -- chest
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
             -- helms
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
             -- shoulder
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
             -- wrist
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
             --- embroidered leather armor
             -- legs
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
             -- gloves
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
             -- belts
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
             -- boots
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
-    SHAPED_LEATHER_ARMOR_1 = {     -- mapped
+    SHAPED_LEATHER_ARMOR_1 = { -- mapped
         childNodeIDs = { "CHESTPIECES_1", "HELMS_1", "SHOULDERPADS_1", "WRISTWRAPS_1" },
         nodeID = 28545,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --- shaped leather armor
             -- chest
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
             -- helms
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
             -- shoulder
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
             -- wrist
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
         },
     },
     SHAPED_LEATHER_ARMOR_2 = {
@@ -1023,25 +1023,25 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         exceptionRecipeIDs = {
             -- chest
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
             -- helms
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
             -- shoulder
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
             -- wrist
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
         },
     },
     SHAPED_LEATHER_ARMOR_3 = {
@@ -1051,25 +1051,25 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         resourcefulness = 10,
         exceptionRecipeIDs = {
             -- chest
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
             -- helms
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
             -- shoulder
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
             -- wrist
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
         },
     },
     SHAPED_LEATHER_ARMOR_4 = {
@@ -1078,35 +1078,35 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 25,
         exceptionRecipeIDs = {
             -- chest
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
             -- helms
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
             -- shoulder
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
             -- wrist
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
         },
     },
     CHESTPIECES_1 = {
         nodeID = 28544,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
         },
     },
     CHESTPIECES_2 = {
@@ -1114,10 +1114,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
         },
     },
     CHESTPIECES_3 = {
@@ -1125,10 +1125,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
         },
     },
     CHESTPIECES_4 = {
@@ -1136,22 +1136,22 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            375105,     -- (Rare) Pioneer's Leather Tunic
-            375109,     -- (Epic) Life-bound Chestpiece
-            375144,     -- (Epic Bestial) Allied heartwarming Fur Coat
-            375127,     -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
+            375105, -- (Rare) Pioneer's Leather Tunic
+            375109, -- (Epic) Life-bound Chestpiece
+            375144, -- (Epic Bestial) Allied heartwarming Fur Coat
+            375127, -- (Green Bestial) Crimson Combatant's Resilient Chestpiece
         },
     },
     HELMS_1 = {
         nodeID = 28543,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- helms
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
         },
     },
     HELMS_2 = {
@@ -1159,11 +1159,11 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
         },
     },
     HELMS_3 = {
@@ -1171,11 +1171,11 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
         },
     },
     HELMS_4 = {
@@ -1183,21 +1183,21 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            395864,     -- (Rare) Pioneer's Practiced Cowl
-            375112,     -- (Epic) Life-bound Cap
-            375197,     -- (Epic Elemental) Flaring Cowl
-            375148,     -- (Epic Bestial) Infurious Spirit's Hood
-            375126,     -- (Green Bestial) Crimson Combatant's Resilient Mask
+            395864, -- (Rare) Pioneer's Practiced Cowl
+            375112, -- (Epic) Life-bound Cap
+            375197, -- (Epic Elemental) Flaring Cowl
+            375148, -- (Epic Bestial) Infurious Spirit's Hood
+            375126, -- (Green Bestial) Crimson Combatant's Resilient Mask
         },
     },
     SHOULDERPADS_1 = {
         nodeID = 28542,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- shoulder
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
         },
     },
     SHOULDERPADS_2 = {
@@ -1205,9 +1205,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
         },
     },
     SHOULDERPADS_3 = {
@@ -1215,9 +1215,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
         },
     },
     SHOULDERPADS_4 = {
@@ -1225,20 +1225,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            395868,     -- (Rare) Pioneer's Practiced Shoulderpads
-            375114,     -- (Epic) Life-bound Shoulderpads
-            375129,     -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
+            395868, -- (Rare) Pioneer's Practiced Shoulderpads
+            375114, -- (Epic) Life-bound Shoulderpads
+            375129, -- (Green Bestial) Crimson Combatant's Resilient Shoulderpads
         },
     },
     WRISTWRAPS_1 = {
         nodeID = 28541,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- wrist
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
         },
     },
     WRISTWRAPS_2 = {
@@ -1246,10 +1246,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
         },
     },
     WRISTWRAPS_3 = {
@@ -1257,10 +1257,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
         },
     },
     WRISTWRAPS_4 = {
@@ -1268,39 +1268,39 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            375104,     -- (Rare) Pioneer's Leather Wristguards
-            375116,     -- (Epic) Life-bound Bindings
-            375145,     -- (Epic Elemental) Old Spirit's Wristwraps
-            375132,     -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
+            375104, -- (Rare) Pioneer's Leather Wristguards
+            375116, -- (Epic) Life-bound Bindings
+            375145, -- (Epic Elemental) Old Spirit's Wristwraps
+            375132, -- (Green Bestial) Crimson Combatant's Resilient Wristwraps
         },
     },
-    EMBROIDERED_LEATHER_ARMOR_1 = {     -- mapped
+    EMBROIDERED_LEATHER_ARMOR_1 = { -- mapped
         childNodeIDs = { "LEGGUARDS_1", "GLOVES_1", "LEATHER_BELTS_1", "LEATHER_BOOTS_1" },
         nodeID = 28540,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --- embroidered leather armor
             -- legs
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
             -- gloves
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
             -- belts
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
             -- boots
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     EMBROIDERED_LEATHER_ARMOR_2 = {
@@ -1309,26 +1309,26 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         exceptionRecipeIDs = {
             -- legs
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
             -- gloves
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
             -- belts
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
             -- boots
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     EMBROIDERED_LEATHER_ARMOR_3 = {
@@ -1338,26 +1338,26 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         resourcefulness = 10,
         exceptionRecipeIDs = {
             -- legs
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
             -- gloves
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
             -- belts
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
             -- boots
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     EMBROIDERED_LEATHER_ARMOR_4 = {
@@ -1366,36 +1366,36 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 25,
         exceptionRecipeIDs = {
             -- legs
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
             -- gloves
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
             -- belts
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
             -- boots
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     LEGGUARDS_1 = {
         nodeID = 28539,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- legs
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
         },
     },
     LEGGUARDS_2 = {
@@ -1403,9 +1403,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
         },
     },
     LEGGUARDS_3 = {
@@ -1413,9 +1413,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
         },
     },
     LEGGUARDS_4 = {
@@ -1423,20 +1423,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            395867,     -- (Rare) Pioneer's Practiced Leggins
-            375113,     -- (Epic) Life-bound Trousers
-            375128,     -- (Green Bestial) Crimson Combatant's Resilient Trousers
+            395867, -- (Rare) Pioneer's Practiced Leggins
+            375113, -- (Epic) Life-bound Trousers
+            375128, -- (Green Bestial) Crimson Combatant's Resilient Trousers
         },
     },
     GLOVES_1 = {
         nodeID = 28538,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- gloves
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
         },
     },
     GLOVES_2 = {
@@ -1444,10 +1444,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
         },
     },
     GLOVES_3 = {
@@ -1455,10 +1455,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
         },
     },
     GLOVES_4 = {
@@ -1466,21 +1466,21 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            395865,     -- (Rare) Pioneer's Practiced Gloves
-            375111,     -- (Epic) Life-bound Gloves
-            375146,     -- (Epic Elemental) Snowball Makers
-            375130,     -- (Green Bestial) Crimson Combatant's Resilient Gloves
+            395865, -- (Rare) Pioneer's Practiced Gloves
+            375111, -- (Epic) Life-bound Gloves
+            375146, -- (Epic Elemental) Snowball Makers
+            375130, -- (Green Bestial) Crimson Combatant's Resilient Gloves
         },
     },
     LEATHER_BELTS_1 = {
         nodeID = 28537,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- belts
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
         },
     },
     LEATHER_BELTS_2 = {
@@ -1488,10 +1488,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
         },
     },
     LEATHER_BELTS_3 = {
@@ -1499,10 +1499,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
         },
     },
     LEATHER_BELTS_4 = {
@@ -1510,23 +1510,23 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            395863,     -- (Rare) Pioneer's Practiced Belt
-            375115,     -- (Epic) Life-bound Belt
-            375147,     -- (Epic Elemental) String of Spiritual Knick-Knacks
-            375133,     -- (Green Bestial) Crimson Combatant's Resilient Belt
+            395863, -- (Rare) Pioneer's Practiced Belt
+            375115, -- (Epic) Life-bound Belt
+            375147, -- (Epic Elemental) String of Spiritual Knick-Knacks
+            375133, -- (Green Bestial) Crimson Combatant's Resilient Belt
         },
     },
     LEATHER_BOOTS_1 = {
         nodeID = 28536,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- boots
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     LEATHER_BOOTS_2 = {
@@ -1534,12 +1534,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     LEATHER_BOOTS_3 = {
@@ -1547,12 +1547,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     LEATHER_BOOTS_4 = {
@@ -1560,62 +1560,62 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            375103,     -- (Rare) Pioneer's Leather Boots
-            375110,     -- (Epic) Life-bound Boots
-            375149,     -- (Epic Bestial) Infurious Footwraps of Indemnity
-            375131,     -- (Green Bestial) Crimson Combatant's Resilient Boots
-            375142,     -- (Epic Decayed) Slimy Expulsion Boots
-            375143,     -- (Epic Decayed) Toxic Thorn Footwraps
+            375103, -- (Rare) Pioneer's Leather Boots
+            375110, -- (Epic) Life-bound Boots
+            375149, -- (Epic Bestial) Infurious Footwraps of Indemnity
+            375131, -- (Green Bestial) Crimson Combatant's Resilient Boots
+            375142, -- (Epic Decayed) Slimy Expulsion Boots
+            375143, -- (Epic Decayed) Toxic Thorn Footwraps
         },
     },
     -- Mail Armor Crafting
-    MAIL_ARMOR_CRAFTING_1 = {     --mapped
+    MAIL_ARMOR_CRAFTING_1 = { --mapped
         childNodeIDs = { "LARGE_MAIL_1", "INTRICATE_MAIL_1" },
         nodeID = 28438,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --- large mail
             -- chest
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
             -- helms
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
             -- shoulders
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
             -- bracers
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
             --- intricate mail
             -- greaves
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
             -- gauntlets
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
             -- belts
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
             -- boots
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     MAIL_ARMOR_CRAFTING_2 = {
@@ -1625,46 +1625,46 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         exceptionRecipeIDs = {
             --- large mail
             -- chest
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
             -- helms
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
             -- shoulders
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
             -- bracers
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
             --- intricate mail
             -- greaves
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
             -- gauntlets
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
             -- belts
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
             -- boots
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     MAIL_ARMOR_CRAFTING_3 = {
@@ -1675,46 +1675,46 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         exceptionRecipeIDs = {
             --- large mail
             -- chest
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
             -- helms
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
             -- shoulders
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
             -- bracers
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
             --- intricate mail
             -- greaves
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
             -- gauntlets
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
             -- belts
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
             -- boots
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     MAIL_ARMOR_CRAFTING_4 = {
@@ -1724,46 +1724,46 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         exceptionRecipeIDs = {
             --- large mail
             -- chest
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
             -- helms
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
             -- shoulders
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
             -- bracers
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
             --- intricate mail
             -- greaves
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
             -- gauntlets
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
             -- belts
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
             -- boots
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     MAIL_ARMOR_CRAFTING_5 = {
@@ -1775,72 +1775,72 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         exceptionRecipeIDs = {
             --- large mail
             -- chest
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
             -- helms
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
             -- shoulders
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
             -- bracers
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
             --- intricate mail
             -- greaves
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
             -- gauntlets
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
             -- belts
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
             -- boots
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
-    LARGE_MAIL_1 = {     -- mapped
+    LARGE_MAIL_1 = { -- mapped
         childNodeIDs = { "MAIL_SHIRTS_1", "MAIL_HELMS_1", "SHOULDERGUARDS_1", "BRACERS_1" },
         nodeID = 28437,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --- large mail
             -- chest
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
             -- helms
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
             -- shoulders
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
             -- bracers
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
         },
     },
     LARGE_MAIL_2 = {
@@ -1849,23 +1849,23 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         exceptionRecipeIDs = {
             -- chest
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
             -- helms
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
             -- shoulders
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
             -- bracers
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
         },
     },
     LARGE_MAIL_3 = {
@@ -1875,23 +1875,23 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         resourcefulness = 10,
         exceptionRecipeIDs = {
             -- chest
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
             -- helms
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
             -- shoulders
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
             -- bracers
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
         },
     },
     LARGE_MAIL_4 = {
@@ -1900,33 +1900,33 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 25,
         exceptionRecipeIDs = {
             -- chest
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
             -- helms
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
             -- shoulders
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
             -- bracers
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
         },
     },
     MAIL_SHIRTS_1 = {
         nodeID = 28436,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- chest
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
         },
     },
     MAIL_SHIRTS_2 = {
@@ -1934,9 +1934,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
         },
     },
     MAIL_SHIRTS_3 = {
@@ -1944,9 +1944,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
         },
     },
     MAIL_SHIRTS_4 = {
@@ -1954,20 +1954,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            375108,     -- (Rare) Trailblazer's Scale Vest
-            375117,     -- (Epic) Flame-Touched Chainmail
-            375135,     -- (Green Bestial) Crimson Combatant's Adamant Chainmail
+            375108, -- (Rare) Trailblazer's Scale Vest
+            375117, -- (Epic) Flame-Touched Chainmail
+            375135, -- (Green Bestial) Crimson Combatant's Adamant Chainmail
         },
     },
     MAIL_HELMS_1 = {
         nodeID = 28434,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- helms
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
         },
     },
     MAIL_HELMS_2 = {
@@ -1975,10 +1975,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
         },
     },
     MAIL_HELMS_3 = {
@@ -1986,10 +1986,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
         },
     },
     MAIL_HELMS_4 = {
@@ -1997,21 +1997,21 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            395839,     -- (Rare) Trailblazer's Toughened Coif
-            375120,     -- (Epic) Flame-Touched Helmet
-            375156,     -- (Epic Bestial) Infurious Chainhelm Protector
-            375134,     -- (Green Bestial) Crimson Combatant's Adamant Cowl
+            395839, -- (Rare) Trailblazer's Toughened Coif
+            375120, -- (Epic) Flame-Touched Helmet
+            375156, -- (Epic Bestial) Infurious Chainhelm Protector
+            375134, -- (Green Bestial) Crimson Combatant's Adamant Cowl
         },
     },
     SHOULDERGUARDS_1 = {
         nodeID = 28429,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- shoulders
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
         },
     },
     SHOULDERGUARDS_2 = {
@@ -2019,10 +2019,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
         },
     },
     SHOULDERGUARDS_3 = {
@@ -2030,10 +2030,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
         },
     },
     SHOULDERGUARDS_4 = {
@@ -2041,20 +2041,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            395851,     -- (Rare) Trailblazer's Toughened Spikes
-            375122,     -- (Epic) Flame-Touched Spaulders
-            375153,     -- (Epic Elemental) Ancestor's Dew Drippers
-            375137,     -- (Green Bestial) Crimson Combatant's Adamant Epauletters
+            395851, -- (Rare) Trailblazer's Toughened Spikes
+            375122, -- (Epic) Flame-Touched Spaulders
+            375153, -- (Epic Elemental) Ancestor's Dew Drippers
+            375137, -- (Green Bestial) Crimson Combatant's Adamant Epauletters
         },
     },
     BRACERS_1 = {
         nodeID = 28433,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- bracers
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
         },
     },
     BRACERS_2 = {
@@ -2062,9 +2062,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
         },
     },
     BRACERS_3 = {
@@ -2072,9 +2072,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
         },
     },
     BRACERS_4 = {
@@ -2082,39 +2082,39 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            375107,     -- (Rare) Trailblazer's Scale Bracers
-            375124,     -- (Epic) Flame-Touched Cuffs
-            375140,     -- (Green Bestial) Crimson Combatant's Adamant Cuffs
+            375107, -- (Rare) Trailblazer's Scale Bracers
+            375124, -- (Epic) Flame-Touched Cuffs
+            375140, -- (Green Bestial) Crimson Combatant's Adamant Cuffs
         },
     },
-    INTRICATE_MAIL_1 = {     -- mapped
+    INTRICATE_MAIL_1 = { -- mapped
         childNodeIDs = { "GREAVES_1", "GAUNTLETS_1", "MAIL_BELTS_1", "MAIL_BOOTS_1" },
         nodeID = 28432,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --- intricate mail
             -- greaves
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
             -- gauntlets
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
             -- belts
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
             -- boots
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     INTRICATE_MAIL_2 = {
@@ -2123,27 +2123,27 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         exceptionRecipeIDs = {
             -- greaves
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
             -- gauntlets
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
             -- belts
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
             -- boots
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     INTRICATE_MAIL_3 = {
@@ -2153,27 +2153,27 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         resourcefulness = 10,
         exceptionRecipeIDs = {
             -- greaves
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
             -- gauntlets
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
             -- belts
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
             -- boots
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     INTRICATE_MAIL_4 = {
@@ -2182,38 +2182,38 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 25,
         exceptionRecipeIDs = {
             -- greaves
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
             -- gauntlets
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
             -- belts
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
             -- boots
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     GREAVES_1 = {
         nodeID = 28435,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- greaves
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
         },
     },
     GREAVES_2 = {
@@ -2221,10 +2221,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
         },
     },
     GREAVES_3 = {
@@ -2232,10 +2232,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
         },
     },
     GREAVES_4 = {
@@ -2243,21 +2243,21 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            395847,     -- (Rare) Trailblazer's Toughened Legguards
-            375121,     -- (Epic) Flame-Touched Legguards
-            375157,     -- (Epic Bestial) Allied Legguards of Sansok Khan
-            375136,     -- (Green Bestial) Crimson Combatant's Adamant Leggins
+            395847, -- (Rare) Trailblazer's Toughened Legguards
+            375121, -- (Epic) Flame-Touched Legguards
+            375157, -- (Epic Bestial) Allied Legguards of Sansok Khan
+            375136, -- (Green Bestial) Crimson Combatant's Adamant Leggins
         },
     },
     GAUNTLETS_1 = {
         nodeID = 28431,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- gauntlets
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
         },
     },
     GAUNTLETS_2 = {
@@ -2265,10 +2265,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
         },
     },
     GAUNTLETS_3 = {
@@ -2276,10 +2276,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
         },
     },
     GAUNTLETS_4 = {
@@ -2287,21 +2287,21 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            395845,     -- (Rare) Trailblazer's Toughened Grips
-            375119,     -- (Epic) Flame-Touched Handguards
-            375154,     -- (Epic Elemental) Scale Rein Grips
-            375138,     -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
+            395845, -- (Rare) Trailblazer's Toughened Grips
+            375119, -- (Epic) Flame-Touched Handguards
+            375154, -- (Epic Elemental) Scale Rein Grips
+            375138, -- (Green Bestial) Crimson Combatant's Adamant Gauntlets
         },
     },
     MAIL_BELTS_1 = {
         nodeID = 28428,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- belts
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
         },
     },
     MAIL_BELTS_2 = {
@@ -2309,10 +2309,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
         },
     },
     MAIL_BELTS_3 = {
@@ -2320,10 +2320,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
         },
     },
     MAIL_BELTS_4 = {
@@ -2331,23 +2331,23 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            395844,     -- (Rare) Trailblazer's Toughened Chainbelt
-            375123,     -- (Epic) Flame-Touched Chain
-            375152,     -- (Epic Elemental) Wind Spirit's Lasso
-            375141,     -- (Green Bestial) Crimson Combatant's Adamant Gridle
+            395844, -- (Rare) Trailblazer's Toughened Chainbelt
+            375123, -- (Epic) Flame-Touched Chain
+            375152, -- (Epic Elemental) Wind Spirit's Lasso
+            375141, -- (Green Bestial) Crimson Combatant's Adamant Gridle
         },
     },
     MAIL_BOOTS_1 = {
         nodeID = 28430,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- boots
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     MAIL_BOOTS_2 = {
@@ -2355,12 +2355,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     MAIL_BOOTS_3 = {
@@ -2368,12 +2368,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
     MAIL_BOOTS_4 = {
@@ -2381,12 +2381,12 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA = {
         threshold = 15,
         skill = 10,
         exceptionRecipeIDs = {
-            375106,     -- (Rare) Trailblazer's Scale Boots
-            375118,     -- (Epic) Flame-Touched Treads
-            375155,     -- (Epic Bestial) Infurious Boots of Reprieve
-            375139,     -- (Green Bestial) Crimson Combatant's Adamant Treads
-            375151,     -- (Epic Decayed) Acidic Hailstone Treads
-            375150,     -- (Epic Decayed) Venom-Steeped Stompers
+            375106, -- (Rare) Trailblazer's Scale Boots
+            375118, -- (Epic) Flame-Touched Treads
+            375155, -- (Epic Bestial) Infurious Boots of Reprieve
+            375139, -- (Green Bestial) Crimson Combatant's Adamant Treads
+            375151, -- (Epic Decayed) Acidic Hailstone Treads
+            375150, -- (Epic Decayed) Venom-Steeped Stompers
         },
     },
 }

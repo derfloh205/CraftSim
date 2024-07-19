@@ -4,10 +4,10 @@ local CraftSim = select(2, ...)
 ---@type table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
     -- HAMMER CONTROL
-    HAMMER_CONTROL_1 = {     -- mapped
+    HAMMER_CONTROL_1 = { -- mapped
         childNodeIDs = { "SAFETY_SMITHING_1", "POIGNANT_PLANS_1" },
         nodeID = 42828,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     HAMMER_CONTROL_2 = {
@@ -72,7 +72,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
     },
     SAFETY_SMITHING_5 = {
         nodeID = 42827,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     POIGNANT_PLANS_1 = {
@@ -116,10 +116,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     -- Speciality Smithing
-    SPECIALITY_SMITHING_1 = {     -- tools mapped, stonework mapped, smelting mapped
+    SPECIALITY_SMITHING_1 = { -- tools mapped, stonework mapped, smelting mapped
         childNodeIDs = { "TOOLSMITHING_1", "STONEWORK_1", "SMELTING_1" },
         nodeID = 23765,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- toolsmithing
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS] = {
@@ -265,7 +265,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
     },
     TOOLSMITHING_1 = {
         nodeID = 23764,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- toolsmithing
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.TOOLS] = {
@@ -353,7 +353,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
     },
     STONEWORK_1 = {
         nodeID = 23762,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- stonework
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.STONEWORK] = {
@@ -411,7 +411,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
     },
     SMELTING_1 = {
         nodeID = 23761,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- smelting
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SMELTING] = {
@@ -468,10 +468,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         },
     },
     -- Weapon Smithing
-    WEAPON_SMITHING_1 = {     -- blades mapped, hafted mapped
+    WEAPON_SMITHING_1 = { -- blades mapped, hafted mapped
         childNodeIDs = { "BLADES_1", "HAFTED_1" },
         nodeID = 23727,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                 --- blades
@@ -500,14 +500,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         exceptionRecipeIDs = {
             -- blades
             -- short blades
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
             -- hafted
             -- maces
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         }
     },
     WEAPON_SMITHING_2 = {
@@ -542,14 +542,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         exceptionRecipeIDs = {
             -- blades
             -- short blades
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
             -- hafted
             -- maces
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         }
     },
     WEAPON_SMITHING_3 = {
@@ -585,14 +585,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         exceptionRecipeIDs = {
             -- blades
             -- short blades
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
             -- hafted
             -- maces
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         }
     },
     WEAPON_SMITHING_4 = {
@@ -627,14 +627,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         exceptionRecipeIDs = {
             -- blades
             -- short blades
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
             -- hafted
             -- maces
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         }
     },
     WEAPON_SMITHING_5 = {
@@ -671,20 +671,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         exceptionRecipeIDs = {
             -- blades
             -- short blades
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
             -- hafted
             -- maces
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         }
     },
-    HAFTED_1 = {     -- axes mapped, maces mapped
+    HAFTED_1 = { -- axes mapped, maces mapped
         childNodeIDs = { "AXES_1", "MACES_1" },
         nodeID = 23723,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                 -- hafted
@@ -705,8 +705,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         exceptionRecipeIDs = {
             -- hafted
             -- maces
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         },
     },
     HAFTED_2 = {
@@ -730,8 +730,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         },
         exceptionRecipeIDs = {
             -- maces
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         },
     },
     HAFTED_3 = {
@@ -756,8 +756,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         },
         exceptionRecipeIDs = {
             -- maces
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         },
     },
     HAFTED_4 = {
@@ -781,13 +781,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         },
         exceptionRecipeIDs = {
             -- maces
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         },
     },
     AXES_1 = {
         nodeID = 23721,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                 -- axes
@@ -848,7 +848,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
     },
     MACES_1 = {
         nodeID = 23722,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                 -- maces
@@ -858,8 +858,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         },
         exceptionRecipeIDs = {
             -- maces
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         }
     },
     MACES_2 = {
@@ -873,8 +873,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         }
     },
     MACES_3 = {
@@ -888,8 +888,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         }
     },
     MACES_4 = {
@@ -903,14 +903,14 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            371372,     -- epic hammer
-            371412,     -- blue hammer
+            371372, -- epic hammer
+            371412, -- blue hammer
         }
     },
-    BLADES_1 = {     -- short blades mapped, long blades mapped
+    BLADES_1 = { -- short blades mapped, long blades mapped
         childNodeIDs = { "SHORT_BLADES_1", "LONG_BLADES_1" },
         nodeID = 23726,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                 -- short blades
@@ -924,10 +924,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         },
         exceptionRecipeIDs = {
             -- short blades
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
         }
     },
     BLADES_2 = {
@@ -947,10 +947,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         },
         exceptionRecipeIDs = {
             -- short blades
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
         }
     },
     BLADES_3 = {
@@ -971,10 +971,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         },
         exceptionRecipeIDs = {
             -- short blades
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
         }
     },
     BLADES_4 = {
@@ -994,15 +994,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         },
         exceptionRecipeIDs = {
             -- short blades
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
         }
     },
     SHORT_BLADES_1 = {
         nodeID = 23725,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                 -- short blades
@@ -1012,10 +1012,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         },
         exceptionRecipeIDs = {
             -- short blades
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
         }
     },
     SHORT_BLADES_2 = {
@@ -1029,10 +1029,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
         }
     },
     SHORT_BLADES_3 = {
@@ -1046,10 +1046,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
         }
     },
     SHORT_BLADES_4 = {
@@ -1063,15 +1063,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            371369,     -- blue lw knife
-            371367,     -- blue sk knife
-            371338,     -- green lw knife
-            371304,     -- green sk knife
+            371369, -- blue lw knife
+            371367, -- blue sk knife
+            371338, -- green lw knife
+            371304, -- green sk knife
         }
     },
     LONG_BLADES_1 = {
         nodeID = 23724,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.WEAPONS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
@@ -1129,53 +1129,53 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         }
     },
     -- Armor Smithing
-    ARMOR_SMITHING_1 = {     -- large plate mapped, sculpted armor mapped, fine armor mapped
+    ARMOR_SMITHING_1 = { -- large plate mapped, sculpted armor mapped, fine armor mapped
         childNodeIDs = { "LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1" },
         nodeID = 23912,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --- large plate armor
             -- breastplates
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
             -- greaves
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
             --- sculpted armor
             -- helms
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
             -- pauldrons
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
             -- sabatons
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
             --- fine armor
             -- belts
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
             -- vambraces
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
             -- gauntlets
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS] = {
@@ -1192,46 +1192,46 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         exceptionRecipeIDs = {
             --- large plate armor
             -- breastplates
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
             -- greaves
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
             --- sculpted armor
             -- helms
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
             -- pauldrons
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
             -- sabatons
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
             --- fine armor
             -- belts
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
             -- vambraces
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
             -- gauntlets
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS] = {
@@ -1249,46 +1249,46 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         exceptionRecipeIDs = {
             --- large plate armor
             -- breastplates
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
             -- greaves
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
             --- sculpted armor
             -- helms
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
             -- pauldrons
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
             -- sabatons
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
             --- fine armor
             -- belts
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
             -- vambraces
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
             -- gauntlets
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS] = {
@@ -1305,46 +1305,46 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         exceptionRecipeIDs = {
             --- large plate armor
             -- breastplates
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
             -- greaves
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
             --- sculpted armor
             -- helms
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
             -- pauldrons
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
             -- sabatons
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
             --- fine armor
             -- belts
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
             -- vambraces
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
             -- gauntlets
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS] = {
@@ -1363,46 +1363,46 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         exceptionRecipeIDs = {
             --- large plate armor
             -- breastplates
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
             -- greaves
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
             --- sculpted armor
             -- helms
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
             -- pauldrons
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
             -- sabatons
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
             --- fine armor
             -- belts
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
             -- vambraces
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
             -- gauntlets
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS] = {
@@ -1412,22 +1412,22 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
             }
         },
     },
-    LARGE_PLATE_ARMOR_1 = {     -- breastplates mapped, shields mapped, greaves mapped
+    LARGE_PLATE_ARMOR_1 = { -- breastplates mapped, shields mapped, greaves mapped
         childNodeIDs = { "BREASTPLATES_1", "SHIELDS_1", "GREAVES_1" },
         nodeID = 23911,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --- large plate armor
             -- breastplates
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
             -- greaves
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
         },
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS] = {
@@ -1443,15 +1443,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         exceptionRecipeIDs = {
             -- breastplates
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
             -- greaves
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
         },
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS] = {
@@ -1466,15 +1466,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         resourcefulness = 10,
         exceptionRecipeIDs = {
             -- breastplates
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
             -- greaves
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
         },
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS] = {
@@ -1488,15 +1488,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         exceptionRecipeIDs = {
             -- breastplates
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
             -- greaves
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
         },
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS] = {
@@ -1506,13 +1506,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
     },
     BREASTPLATES_1 = {
         nodeID = 23910,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- breastplates
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
         },
     },
     BREASTPLATES_2 = {
@@ -1520,10 +1520,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
         },
     },
     BREASTPLATES_3 = {
@@ -1531,10 +1531,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
         },
     },
     BREASTPLATES_4 = {
@@ -1542,10 +1542,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
         },
     },
     BREASTPLATES_5 = {
@@ -1553,15 +1553,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         skill = 5,
         exceptionRecipeIDs = {
-            376618,     -- pvp green breast
-            395886,     -- blue breast
-            367608,     -- epic breast
-            367615,     -- epic breast
+            376618, -- pvp green breast
+            395886, -- blue breast
+            367608, -- epic breast
+            367615, -- epic breast
         },
     },
     SHIELDS_1 = {
         nodeID = 23909,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.SHIELDS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS
@@ -1610,13 +1610,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
     },
     GREAVES_1 = {
         nodeID = 23908,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- greaves
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
         },
     },
     GREAVES_2 = {
@@ -1624,10 +1624,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
         },
     },
     GREAVES_3 = {
@@ -1635,10 +1635,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
         },
     },
     GREAVES_4 = {
@@ -1646,10 +1646,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
         },
     },
     GREAVES_5 = {
@@ -1657,32 +1657,32 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         skill = 5,
         exceptionRecipeIDs = {
-            376620,     -- pvp green
-            395881,     -- blue
-            367619,     -- epic
-            367604,     -- epic
+            376620, -- pvp green
+            395881, -- blue
+            367619, -- epic
+            367604, -- epic
         },
     },
-    SCULPTED_ARMOR_1 = {     -- helms mapped, pauldrons mapped, sabatons mapped
+    SCULPTED_ARMOR_1 = { -- helms mapped, pauldrons mapped, sabatons mapped
         childNodeIDs = { "HELMS_1", "PAULDRONS_1", "SABATONS_1" },
         nodeID = 23907,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --- sculpted armor
             -- helms
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
             -- pauldrons
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
             -- sabatons
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
         },
     },
     SCULPTED_ARMOR_2 = {
@@ -1691,19 +1691,19 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         exceptionRecipeIDs = {
             -- helms
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
             -- pauldrons
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
             -- sabatons
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
         },
     },
     SCULPTED_ARMOR_3 = {
@@ -1713,19 +1713,19 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         resourcefulness = 10,
         exceptionRecipeIDs = {
             -- helms
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
             -- pauldrons
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
             -- sabatons
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
         },
     },
     SCULPTED_ARMOR_4 = {
@@ -1734,30 +1734,30 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         exceptionRecipeIDs = {
             -- helms
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
             -- pauldrons
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
             -- sabatons
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
         },
     },
     HELMS_1 = {
         nodeID = 23906,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- helms
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
         },
     },
     HELMS_2 = {
@@ -1765,10 +1765,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
         },
     },
     HELMS_3 = {
@@ -1776,10 +1776,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
         },
     },
     HELMS_4 = {
@@ -1787,10 +1787,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
         },
     },
     HELMS_5 = {
@@ -1798,20 +1798,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         skill = 5,
         exceptionRecipeIDs = {
-            376621,     -- pvp green
-            395883,     -- blue
-            367617,     -- epic
-            367605,     -- epic
+            376621, -- pvp green
+            395883, -- blue
+            367617, -- epic
+            367605, -- epic
         },
     },
     PAULDRONS_1 = {
         nodeID = 23905,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- pauldrons
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
         },
     },
     PAULDRONS_2 = {
@@ -1819,9 +1819,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
         },
     },
     PAULDRONS_3 = {
@@ -1829,9 +1829,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
         },
     },
     PAULDRONS_4 = {
@@ -1839,9 +1839,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
         },
     },
     PAULDRONS_5 = {
@@ -1849,20 +1849,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         skill = 5,
         exceptionRecipeIDs = {
-            395880,     -- blue
-            376622,     -- pvp
-            367603,     -- epic
+            395880, -- blue
+            376622, -- pvp
+            367603, -- epic
         },
     },
     SABATONS_1 = {
         nodeID = 23904,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- sabatons
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
         },
     },
     SABATONS_2 = {
@@ -1870,10 +1870,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
         },
     },
     SABATONS_3 = {
@@ -1881,10 +1881,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
         },
     },
     SABATONS_4 = {
@@ -1892,10 +1892,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
         },
     },
     SABATONS_5 = {
@@ -1903,33 +1903,33 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         skill = 5,
         exceptionRecipeIDs = {
-            367610,     -- blue
-            376623,     -- pvp
-            367616,     -- epic
-            367607,     -- epic
+            367610, -- blue
+            376623, -- pvp
+            367616, -- epic
+            367607, -- epic
         },
     },
-    FINE_ARMOR_1 = {     -- belts mapped, vambraces mapped, gauntlets mapped
+    FINE_ARMOR_1 = { -- belts mapped, vambraces mapped, gauntlets mapped
         childNodeIDs = { "BELTS_1", "VAMBRACES_1", "GAUNTLETS_1" },
         nodeID = 23903,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --- fine armor
             -- belts
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
             -- vambraces
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
             -- gauntlets
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
     },
     FINE_ARMOR_2 = {
@@ -1938,20 +1938,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         exceptionRecipeIDs = {
             -- belts
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
             -- vambraces
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
             -- gauntlets
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
     },
     FINE_ARMOR_3 = {
@@ -1961,20 +1961,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         resourcefulness = 10,
         exceptionRecipeIDs = {
             -- belts
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
             -- vambraces
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
             -- gauntlets
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
     },
     FINE_ARMOR_4 = {
@@ -1983,32 +1983,32 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         exceptionRecipeIDs = {
             -- belts
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
             -- vambraces
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
             -- gauntlets
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
     },
     BELTS_1 = {
         nodeID = 23902,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- belts
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
         },
     },
     BELTS_2 = {
@@ -2016,11 +2016,11 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
         },
     },
     BELTS_3 = {
@@ -2028,11 +2028,11 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
         },
     },
     BELTS_4 = {
@@ -2040,11 +2040,11 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
         },
     },
     BELTS_5 = {
@@ -2052,22 +2052,22 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         skill = 5,
         exceptionRecipeIDs = {
-            367611,     -- blue
-            376624,     -- pvp
-            367602,     -- epic
-            367618,     -- epic
-            408288,     -- belt clasp
+            367611, -- blue
+            376624, -- pvp
+            367602, -- epic
+            367618, -- epic
+            408288, -- belt clasp
         },
     },
     VAMBRACES_1 = {
         nodeID = 23901,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- vambraces
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
         },
     },
     VAMBRACES_2 = {
@@ -2075,10 +2075,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
         },
     },
     VAMBRACES_3 = {
@@ -2086,10 +2086,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
         },
     },
     VAMBRACES_4 = {
@@ -2097,10 +2097,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
         },
     },
     VAMBRACES_5 = {
@@ -2108,20 +2108,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         skill = 5,
         exceptionRecipeIDs = {
-            367609,     -- blue
-            376617,     -- pvp
-            367614,     -- epic
-            367601,     -- epic
+            367609, -- blue
+            376617, -- pvp
+            367614, -- epic
+            367601, -- epic
         },
     },
     GAUNTLETS_1 = {
         nodeID = 23900,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- gauntlets
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
     },
     GAUNTLETS_2 = {
@@ -2129,9 +2129,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
     },
     GAUNTLETS_3 = {
@@ -2139,9 +2139,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 10,
         skill = 5,
         exceptionRecipeIDs = {
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
     },
     GAUNTLETS_4 = {
@@ -2149,9 +2149,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
     },
     GAUNTLETS_5 = {
@@ -2159,9 +2159,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA = {
         threshold = 25,
         skill = 5,
         exceptionRecipeIDs = {
-            395879,     -- blue
-            376619,     -- pvp
-            367606,     -- epic
+            395879, -- blue
+            376619, -- pvp
+            367606, -- epic
         },
     },
 }

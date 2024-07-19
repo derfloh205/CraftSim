@@ -33,14 +33,14 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.professionStats.multicraft.extraFactor = nodeRuleData.multicraftExtraItemsFactor or 0
     self.professionStats.resourcefulness.extraFactor = nodeRuleData.resourcefulnessExtraItemsFactor or 0
 
-    self.equalsSkill = nodeRuleData.equalsSkill or false
-    self.equalsMulticraft = nodeRuleData.equalsMulticraft or false
-    self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or false
-    self.equalsIngenuity = nodeRuleData.equalsIngenuity or false
-    self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or false
-    self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or false
-    self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or false
-    self.equalsPotionExperimentationChanceFactor = nodeRuleData.equalsPotionExperimentationChanceFactor or false
+    self.equalsSkill = nodeRuleData.equalsSkill or 0
+    self.equalsMulticraft = nodeRuleData.equalsMulticraft or 0
+    self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or 0
+    self.equalsIngenuity = nodeRuleData.equalsIngenuity or 0
+    self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or 0
+    self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or 0
+    self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or 0
+    self.equalsPotionExperimentationChanceFactor = nodeRuleData.equalsPotionExperimentationChanceFactor or 0
 end
 
 function CraftSim.NodeRule:UpdateAffectance()
@@ -60,36 +60,38 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
         print("updating curing and tanning node rule stats with rank: " .. tostring(rank))
     end
 
-    if self.equalsSkill then
-        self.professionStats.skill.value = math.max(0, rank)
+    if self.equalsSkill > 0 then
+        self.professionStats.skill.value = math.max(0, rank * self.equalsSkill)
     end
 
-    if self.equalsMulticraft then
-        self.professionStats.multicraft.value = math.max(0, rank)
+    if self.equalsMulticraft > 0 then
+        self.professionStats.multicraft.value = math.max(0, rank * self.equalsMulticraft)
     end
 
-    if self.equalsResourcefulness then
-        self.professionStats.resourcefulness.value = math.max(0, rank)
+    if self.equalsResourcefulness > 0 then
+        self.professionStats.resourcefulness.value = math.max(0, rank * self.equalsResourcefulness)
     end
 
-    if self.equalsIngenuity then
-        self.professionStats.ingenuity.value = math.max(0, rank)
+    if self.equalsIngenuity > 0 then
+        self.professionStats.ingenuity.value = math.max(0, rank * self.equalsIngenuity)
     end
 
-    if self.equalsCraftingspeed then
-        self.professionStats.craftingspeed.value = math.max(0, rank)
+    if self.equalsCraftingspeed > 0 then
+        self.professionStats.craftingspeed.value = math.max(0, rank * self.equalsCraftingspeed)
     end
 
-    if self.equalsResourcefulnessExtraItemsFactor then
-        self.professionStats.resourcefulness.extraFactor = math.max(0, rank * 0.01)
+    if self.equalsResourcefulnessExtraItemsFactor > 0 then
+        self.professionStats.resourcefulness.extraFactor = math.max(0, rank * self.equalsResourcefulnessExtraItemsFactor)
     end
 
-    if self.equalsPhialExperimentationChanceFactor then
-        self.professionStats.phialExperimentationFactor.extraFactor = math.max(0, rank * 0.01)
+    if self.equalsPhialExperimentationChanceFactor > 0 then
+        self.professionStats.phialExperimentationFactor.extraFactor = math.max(0,
+            rank * self.equalsPhialExperimentationChanceFactor)
     end
 
-    if self.equalsPotionExperimentationChanceFactor then
-        self.professionStats.potionExperimentationFactor.extraFactor = math.max(0, rank * 0.01)
+    if self.equalsPotionExperimentationChanceFactor > 0 then
+        self.professionStats.potionExperimentationFactor.extraFactor = math.max(0,
+            rank * self.equalsPotionExperimentationChanceFactor)
     end
 end
 

@@ -10,14 +10,14 @@ CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 ---@field threshold? number
 ---@field idMapping? table<CraftSim.RecipeCategories, CraftSim.RecipeItemSubTypes>
 ---@field exceptionRecipeIDs? number[]
----@field equalsSkill? boolean
----@field equalsResourcefulness? boolean
----@field equalsMulticraft? boolean
----@field equalsIngenuity? boolean
----@field equalsCraftingspeed? boolean
----@field equalsResourcefulnessExtraItemsFactor? boolean
----@field equalsPhialExperimentationChanceFactor? boolean
----@field equalsPotionExperimentationChanceFactor? boolean
+---@field equalsSkill? number
+---@field equalsResourcefulness? number
+---@field equalsMulticraft? number
+---@field equalsIngenuity? number
+---@field equalsCraftingspeed? number
+---@field equalsResourcefulnessExtraItemsFactor? number
+---@field equalsPhialExperimentationChanceFactor? number
+---@field equalsPotionExperimentationChanceFactor? number
 ---@field skill? number
 ---@field resourcefulness? number
 ---@field multicraft? number
