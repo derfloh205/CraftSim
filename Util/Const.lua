@@ -13,10 +13,18 @@ CraftSim.CONST.FEATURE_TOGGLES = {
 }
 
 CraftSim.CONST.PERCENT_MODS = {
+  THE_WAR_WITHIN = {
+    MULTICRAFT = 0.000302,
+    RESOURCEFULNESS = 0.00037,
+    INGENUITY = 0.000333,
+    CRAFTINGSPEED = 0.001114,
+  },
+  DRAGONFLIGHT = {
     MULTICRAFT = 0.0009,
     RESOURCEFULNESS = 0.00111,
     INGENUITY = 0.000333,
     CRAFTINGSPEED = 0.002,
+  }
 }
 
 -- some dummy recipes are not flagged as dummy ..........
