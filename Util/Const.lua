@@ -1320,7 +1320,14 @@ CraftSim.CONST.IMPLEMENTED_SPECIALIZATION_DATA =
         Enum.Profession.Tailoring,
     },
     [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
+        Enum.Profession.Alchemy,
         Enum.Profession.Blacksmithing,
+        Enum.Profession.Enchanting,
+        Enum.Profession.Engineering,
+        Enum.Profession.Inscription,
+        Enum.Profession.Jewelcrafting,
+        Enum.Profession.Leatherworking,
+        Enum.Profession.Tailoring,
     },
 }
 
@@ -1472,6 +1479,13 @@ CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES = {
         x = 25,
         y = 25,
     },
+    CRAFTER = {
+        isAtlas = true,
+        texture = "UI-ChatIcon-App",
+        x = 25,
+        y = 25,
+    },
+}
     CRAFTER = {
         isAtlas = true,
         texture = "UI-ChatIcon-App",
