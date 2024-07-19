@@ -3,10 +3,10 @@ local CraftSim = select(2, ...)
 
 ---@type table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
-    RUNE_MASTERY_1 = {     -- all mapped
+    RUNE_MASTERY_1 = { -- all mapped
         childNodeIDs = { "PERFECT_PRACTICE_1", "INFINITE_DISCOVERY_1", "UNDERSTANDING_FLORA_1", "FLAWLESS_INKS_1" },
         nodeID = 34835,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     RUNE_MASTERY_2 = {
@@ -54,7 +54,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     PERFECT_PRACTICE_1 = {
         nodeID = 34834,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     PERFECT_PRACTICE_2 = {
@@ -140,7 +140,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     UNDERSTANDING_FLORA_1 = {
         nodeID = 34832,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.INSCRIPTION_ESSENTIALS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.INSCRIPTION.MILLING
@@ -200,7 +200,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     FLAWLESS_INKS_1 = {
         nodeID = 34831,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.INKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -255,10 +255,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
             }
         },
     },
-    ARCHIVING_1 = {     -- dm mapped, sk mapped, ss mapped
+    ARCHIVING_1 = { -- dm mapped, sk mapped, ss mapped
         childNodeIDs = { "DARKMOON_MYSTERIES_1", "SHARED_KNOWLEDGE_1", "SCALE_SIGILS_1" },
         nodeID = 43535,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- dm mysteries
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
@@ -285,19 +285,19 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         exceptionRecipeIDs = {
             --- dm mysteries
             --fire
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
             -- frost
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
             --air
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
             -- earth
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
             -- scale sigils
-            383533,     -- Azurescale Sigil
-            383535,     -- Emberscale Sigil
-            383534,     -- Sagescale Sigil
-            383536,     -- Bronzescale Sigil
-            383538,     -- Jetscale Sigil
+            383533, -- Azurescale Sigil
+            383535, -- Emberscale Sigil
+            383534, -- Sagescale Sigil
+            383536, -- Bronzescale Sigil
+            383538, -- Jetscale Sigil
         },
     },
     ARCHIVING_2 = {
@@ -330,19 +330,19 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         exceptionRecipeIDs = {
             --- dm mysteries
             --fire
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
             -- frost
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
             --air
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
             -- earth
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
             -- scale sigils
-            383533,     -- Azurescale Sigil
-            383535,     -- Emberscale Sigil
-            383534,     -- Sagescale Sigil
-            383536,     -- Bronzescale Sigil
-            383538,     -- Jetscale Sigil
+            383533, -- Azurescale Sigil
+            383535, -- Emberscale Sigil
+            383534, -- Sagescale Sigil
+            383536, -- Bronzescale Sigil
+            383538, -- Jetscale Sigil
         },
     },
     ARCHIVING_3 = {
@@ -376,19 +376,19 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         exceptionRecipeIDs = {
             --- dm mysteries
             --fire
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
             -- frost
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
             --air
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
             -- earth
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
             -- scale sigils
-            383533,     -- Azurescale Sigil
-            383535,     -- Emberscale Sigil
-            383534,     -- Sagescale Sigil
-            383536,     -- Bronzescale Sigil
-            383538,     -- Jetscale Sigil
+            383533, -- Azurescale Sigil
+            383535, -- Emberscale Sigil
+            383534, -- Sagescale Sigil
+            383536, -- Bronzescale Sigil
+            383538, -- Jetscale Sigil
         },
     },
     ARCHIVING_4 = {
@@ -422,25 +422,25 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         exceptionRecipeIDs = {
             --- dm mysteries
             --fire
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
             -- frost
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
             --air
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
             -- earth
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
             -- scale sigils
-            383533,     -- Azurescale Sigil
-            383535,     -- Emberscale Sigil
-            383534,     -- Sagescale Sigil
-            383536,     -- Bronzescale Sigil
-            383538,     -- Jetscale Sigil
+            383533, -- Azurescale Sigil
+            383535, -- Emberscale Sigil
+            383534, -- Sagescale Sigil
+            383536, -- Bronzescale Sigil
+            383538, -- Jetscale Sigil
         },
     },
-    DARKMOON_MYSTERIES_1 = {     -- fire mapped, frost mapped, air mapped, earth mapped
+    DARKMOON_MYSTERIES_1 = { -- fire mapped, frost mapped, air mapped, earth mapped
         childNodeIDs = { "FIRE_1", "FROST_1", "AIR_1", "EARTH_1" },
         nodeID = 43534,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- dm mysteries
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.MYSTERIES] = {
@@ -450,13 +450,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         exceptionRecipeIDs = {
             --- dm mysteries
             --fire
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
             -- frost
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
             --air
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
             -- earth
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
         },
     },
     DARKMOON_MYSTERIES_2 = {
@@ -466,13 +466,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         skill = 5,
         exceptionRecipeIDs = {
             --fire
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
             -- frost
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
             --air
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
             -- earth
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
         },
     },
     DARKMOON_MYSTERIES_3 = {
@@ -482,13 +482,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         skill = 5,
         exceptionRecipeIDs = {
             --fire
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
             -- frost
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
             --air
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
             -- earth
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
         },
     },
     DARKMOON_MYSTERIES_4 = {
@@ -509,13 +509,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         craftingspeedBonusFactor = 0.10,
         exceptionRecipeIDs = {
             --fire
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
             -- frost
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
             --air
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
             -- earth
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
         },
     },
     DARKMOON_MYSTERIES_6 = {
@@ -542,10 +542,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     FIRE_1 = {
         nodeID = 43533,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --fire
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
         },
     },
     FIRE_2 = {
@@ -553,7 +553,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
         },
     },
     FIRE_3 = {
@@ -561,15 +561,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 25,
         skill = 10,
         exceptionRecipeIDs = {
-            383325,     -- Darkmoon Deck Box: Inferno
+            383325, -- Darkmoon Deck Box: Inferno
         },
     },
     FROST_1 = {
         nodeID = 43532,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- frost
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
         },
     },
     FROST_2 = {
@@ -577,7 +577,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
         },
     },
     FROST_3 = {
@@ -585,15 +585,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 25,
         skill = 10,
         exceptionRecipeIDs = {
-            383767,     -- Darkmoon Deck Box: Rime
+            383767, -- Darkmoon Deck Box: Rime
         },
     },
     AIR_1 = {
         nodeID = 43531,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             --air
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
         },
     },
     AIR_2 = {
@@ -601,7 +601,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
         },
     },
     AIR_3 = {
@@ -609,15 +609,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 25,
         skill = 10,
         exceptionRecipeIDs = {
-            383770,     -- Darkmoon Deck Box: Dance
+            383770, -- Darkmoon Deck Box: Dance
         },
     },
     EARTH_1 = {
         nodeID = 43530,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- earth
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
         },
     },
     EARTH_2 = {
@@ -625,7 +625,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
         },
     },
     EARTH_3 = {
@@ -633,13 +633,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 25,
         skill = 10,
         exceptionRecipeIDs = {
-            383772,     -- Darkmoon Deck Box: Watcher
+            383772, -- Darkmoon Deck Box: Watcher
         },
     },
-    SHARED_KNOWLEDGE_1 = {     -- c and m mapped, dt mapped
+    SHARED_KNOWLEDGE_1 = { -- c and m mapped, dt mapped
         childNodeIDs = { "CONTRACTS_AND_MISSIVES_1", "DRACONIC_TREATISES_1" },
         nodeID = 43529,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = {
             -- contracts and missives
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
@@ -790,7 +790,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     CONTRACTS_AND_MISSIVES_1 = {
         nodeID = 43528,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- contracts and missives
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.CONTRACTS] = {
@@ -902,7 +902,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     DRACONIC_TREATISES_1 = {
         nodeID = 43527,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = {
             -- draconic treatises
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.DRACONIC_TREATISES] = {
@@ -953,24 +953,24 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
             }
         },
     },
-    SCALE_SIGILS_1 = {     -- all mapped
+    SCALE_SIGILS_1 = { -- all mapped
         childNodeIDs = { "AZURESCALE_SIGIL_1", "EMBERSCALE_SIGIL_1", "SAGESCALE_SIGIL_1", "BRONZESCALE_SIGIL_1", "JETSCALE_SIGIL_1" },
         nodeID = 43526,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- scale sigils
-            383533,     -- Azurescale Sigil
-            383535,     -- Emberscale Sigil
-            383534,     -- Sagescale Sigil
-            383536,     -- Bronzescale Sigil
-            383538,     -- Jetscale Sigil
+            383533, -- Azurescale Sigil
+            383535, -- Emberscale Sigil
+            383534, -- Sagescale Sigil
+            383536, -- Bronzescale Sigil
+            383538, -- Jetscale Sigil
         },
     },
     AZURESCALE_SIGIL_1 = {
         nodeID = 43525,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
-            383533,     -- Azurescale Sigil
+            383533, -- Azurescale Sigil
         },
     },
     AZURESCALE_SIGIL_2 = {
@@ -978,21 +978,21 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 5,
         resourcefulness = 5,
         exceptionRecipeIDs = {
-            383533,     -- Azurescale Sigil
+            383533, -- Azurescale Sigil
         },
     },
     AZURESCALE_SIGIL_3 = {
         nodeID = 43525,
         threshold = 10,
         exceptionRecipeIDs = {
-            383533,     -- Azurescale Sigil
+            383533, -- Azurescale Sigil
         },
     },
     EMBERSCALE_SIGIL_1 = {
         nodeID = 43524,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
-            383535,     -- Emberscale Sigil
+            383535, -- Emberscale Sigil
         },
     },
     EMBERSCALE_SIGIL_2 = {
@@ -1000,21 +1000,21 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 5,
         resourcefulness = 5,
         exceptionRecipeIDs = {
-            383535,     -- Emberscale Sigil
+            383535, -- Emberscale Sigil
         },
     },
     EMBERSCALE_SIGIL_3 = {
         nodeID = 43524,
         threshold = 10,
         exceptionRecipeIDs = {
-            383535,     -- Emberscale Sigil
+            383535, -- Emberscale Sigil
         },
     },
     SAGESCALE_SIGIL_1 = {
         nodeID = 43523,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
-            383534,     -- Sagescale Sigil
+            383534, -- Sagescale Sigil
         },
     },
     SAGESCALE_SIGIL_2 = {
@@ -1022,21 +1022,21 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 5,
         resourcefulness = 5,
         exceptionRecipeIDs = {
-            383534,     -- Sagescale Sigil
+            383534, -- Sagescale Sigil
         },
     },
     SAGESCALE_SIGIL_3 = {
         nodeID = 43523,
         threshold = 10,
         exceptionRecipeIDs = {
-            383534,     -- Sagescale Sigil
+            383534, -- Sagescale Sigil
         },
     },
     BRONZESCALE_SIGIL_1 = {
         nodeID = 43522,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
-            383536,     -- Bronzescale Sigil
+            383536, -- Bronzescale Sigil
         },
     },
     BRONZESCALE_SIGIL_2 = {
@@ -1044,21 +1044,21 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 5,
         resourcefulness = 5,
         exceptionRecipeIDs = {
-            383536,     -- Bronzescale Sigil
+            383536, -- Bronzescale Sigil
         },
     },
     BRONZESCALE_SIGIL_3 = {
         nodeID = 43522,
         threshold = 10,
         exceptionRecipeIDs = {
-            383536,     -- Bronzescale Sigil
+            383536, -- Bronzescale Sigil
         },
     },
     JETSCALE_SIGIL_1 = {
         nodeID = 43521,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
-            383538,     -- Jetscale Sigil
+            383538, -- Jetscale Sigil
         },
     },
     JETSCALE_SIGIL_2 = {
@@ -1066,20 +1066,20 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
         threshold = 5,
         resourcefulness = 5,
         exceptionRecipeIDs = {
-            383538,     -- Jetscale Sigil
+            383538, -- Jetscale Sigil
         },
     },
     JETSCALE_SIGIL_3 = {
         nodeID = 43521,
         threshold = 10,
         exceptionRecipeIDs = {
-            383538,     -- Jetscale Sigil
+            383538, -- Jetscale Sigil
         },
     },
-    RUNEBINDING_1 = {     -- woodcarving mapped, rs mapped
+    RUNEBINDING_1 = { -- woodcarving mapped, rs mapped
         childNodeIDs = { "WOODCARVING_1", "RUNIC_SCRIPTURE_1" },
         nodeID = 34893,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             --- woodcarving
             -- prof tools
@@ -1199,10 +1199,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
             },
         },
     },
-    WOODCARVING_1 = {     -- tools mapped, staves mapped
+    WOODCARVING_1 = { -- tools mapped, staves mapped
         childNodeIDs = { "PROFESSION_TOOLS_1", "STAVES_1" },
         nodeID = 34892,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             --- woodcarving
             -- prof tools
@@ -1279,7 +1279,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     PROFESSION_TOOLS_1 = {
         nodeID = 34891,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- prof tools
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.PROFESSION_EQUIPMENT] = {
@@ -1318,7 +1318,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     STAVES_1 = {
         nodeID = 34890,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- staves
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
@@ -1364,10 +1364,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
             }
         },
     },
-    RUNIC_SCRIPTURE_1 = {     -- codexes mapped, vr mapped, fauna runes mapped
+    RUNIC_SCRIPTURE_1 = { -- codexes mapped, vr mapped, fauna runes mapped
         childNodeIDs = { "CODEXES_1", "VANTUS_RUNES_1", "FAUNA_RUNES_1" },
         nodeID = 34889,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
                 -- codexes
@@ -1453,7 +1453,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     CODEXES_1 = {
         nodeID = 34888,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- codexes
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.WEAPONS] = {
@@ -1511,7 +1511,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     VANTUS_RUNES_1 = {
         nodeID = 34887,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
                 -- vantus runes
@@ -1572,7 +1572,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA = {
     },
     FAUNA_RUNES_1 = {
         nodeID = 34886,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.INSCRIPTION.RUNES_AND_SIGILS] = {
                 -- fauna runes

@@ -3,10 +3,10 @@ local CraftSim = select(2, ...)
 
 ---@type table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
-    OPTIMIZED_EFFICIENCY_1 = {     -- all mapped
+    OPTIMIZED_EFFICIENCY_1 = { -- all mapped
         childNodeIDs = { "PIECES_PARTS_1", "SCRAPPER_1", "GENERALIST_1" },
         nodeID = 50993,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     OPTIMIZED_EFFICIENCY_2 = {
@@ -49,7 +49,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
     },
     PIECES_PARTS_1 = {
         nodeID = 50992,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.PARTS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENGINEERING.PARTS
@@ -127,7 +127,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
     },
     SCRAPPER_1 = {
         nodeID = 50991,
-        equalsResourcefulnessExtraItemsFactor = true,
+        equalsResourcefulnessExtraItemsFactor = 0.01,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     SCRAPPER_2 = {
@@ -155,7 +155,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
     },
     GENERALIST_1 = {
         nodeID = 50990,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     GENERALIST_2 = {
@@ -206,10 +206,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
         resourcefulness = 15,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
-    EXPLOSIVES_1 = {     -- creation mapped, short fuse mapped, ez thro mapped
+    EXPLOSIVES_1 = { -- creation mapped, short fuse mapped, ez thro mapped
         childNodeIDs = { "CREATION_1", "SHORT_FUSE_1", "EZ_THRO_1" },
         nodeID = 50894,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.EXPLOSIVES] = {
                 -- creation
@@ -219,19 +219,19 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
         },
         exceptionRecipeIDs = {
             -- short fuse
-            382343,     -- gravitational displacer
-            382323,     -- grease grenade
-            382322,     -- primal deconstruction charge
-            382330,     -- creature combustion canister
-            382354,     -- suspiciously ticking crate
-            382333,     -- sticky warp grenade
-            382353,     -- I.W.I.N button mk10
+            382343, -- gravitational displacer
+            382323, -- grease grenade
+            382322, -- primal deconstruction charge
+            382330, -- creature combustion canister
+            382354, -- suspiciously ticking crate
+            382333, -- sticky warp grenade
+            382353, -- I.W.I.N button mk10
             -- ez thro
-            382355,     -- ez-thro creature combustion canister
-            382356,     -- ez-thro gravitational displacer
-            386670,     -- ez-thro grease grenade
-            382357,     -- ez-thro primal deconstruction charge
-            382358,     -- suspiciously silent crate
+            382355, -- ez-thro creature combustion canister
+            382356, -- ez-thro gravitational displacer
+            386670, -- ez-thro grease grenade
+            382357, -- ez-thro primal deconstruction charge
+            382358, -- suspiciously silent crate
         },
     },
     EXPLOSIVES_2 = {
@@ -248,24 +248,24 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
         },
         exceptionRecipeIDs = {
             -- short fuse
-            382343,     -- gravitational displacer
-            382323,     -- grease grenade
-            382322,     -- primal deconstruction charge
-            382330,     -- creature combustion canister
-            382354,     -- suspiciously ticking crate
-            382333,     -- sticky warp grenade
-            382353,     -- I.W.I.N button mk10
+            382343, -- gravitational displacer
+            382323, -- grease grenade
+            382322, -- primal deconstruction charge
+            382330, -- creature combustion canister
+            382354, -- suspiciously ticking crate
+            382333, -- sticky warp grenade
+            382353, -- I.W.I.N button mk10
             -- ez thro
-            382355,     -- ez-thro creature combustion canister
-            382356,     -- ez-thro gravitational displacer
-            386670,     -- ez-thro grease grenade
-            382357,     -- ez-thro primal deconstruction charge
-            382358,     -- suspiciously silent crate
+            382355, -- ez-thro creature combustion canister
+            382356, -- ez-thro gravitational displacer
+            386670, -- ez-thro grease grenade
+            382357, -- ez-thro primal deconstruction charge
+            382358, -- suspiciously silent crate
         },
     },
     CREATION_1 = {
         nodeID = 50893,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.EXPLOSIVES] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENGINEERING.EXPLOSIVES_AND_DEVICES,
@@ -330,16 +330,16 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
     },
     SHORT_FUSE_1 = {
         nodeID = 50892,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- short fuse
-            382343,     -- gravitational displacer
-            382323,     -- grease grenade
-            382322,     -- primal deconstruction charge
-            382330,     -- creature combustion canister
-            382354,     -- suspiciously ticking crate
-            382333,     -- sticky warp grenade
-            382353,     -- I.W.I.N button mk10
+            382343, -- gravitational displacer
+            382323, -- grease grenade
+            382322, -- primal deconstruction charge
+            382330, -- creature combustion canister
+            382354, -- suspiciously ticking crate
+            382333, -- sticky warp grenade
+            382353, -- I.W.I.N button mk10
         },
     },
     SHORT_FUSE_2 = {
@@ -347,13 +347,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
         threshold = 10,
         resourcefulness = 10,
         exceptionRecipeIDs = {
-            382343,     -- gravitational displacer
-            382323,     -- grease grenade
-            382322,     -- primal deconstruction charge
-            382330,     -- creature combustion canister
-            382354,     -- suspiciously ticking crate
-            382333,     -- sticky warp grenade
-            382353,     -- I.W.I.N button mk10
+            382343, -- gravitational displacer
+            382323, -- grease grenade
+            382322, -- primal deconstruction charge
+            382330, -- creature combustion canister
+            382354, -- suspiciously ticking crate
+            382333, -- sticky warp grenade
+            382353, -- I.W.I.N button mk10
         },
     },
     SHORT_FUSE_3 = {
@@ -361,38 +361,38 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
         threshold = 20,
         multicraft = 20,
         exceptionRecipeIDs = {
-            382343,     -- gravitational displacer
-            382323,     -- grease grenade
-            382322,     -- primal deconstruction charge
-            382330,     -- creature combustion canister
-            382354,     -- suspiciously ticking crate
-            382333,     -- sticky warp grenade
-            382353,     -- I.W.I.N button mk10
+            382343, -- gravitational displacer
+            382323, -- grease grenade
+            382322, -- primal deconstruction charge
+            382330, -- creature combustion canister
+            382354, -- suspiciously ticking crate
+            382333, -- sticky warp grenade
+            382353, -- I.W.I.N button mk10
         },
     },
     SHORT_FUSE_4 = {
         nodeID = 50892,
         threshold = 25,
         exceptionRecipeIDs = {
-            382343,     -- gravitational displacer
-            382323,     -- grease grenade
-            382322,     -- primal deconstruction charge
-            382330,     -- creature combustion canister
-            382354,     -- suspiciously ticking crate
-            382333,     -- sticky warp grenade
-            382353,     -- I.W.I.N button mk10
+            382343, -- gravitational displacer
+            382323, -- grease grenade
+            382322, -- primal deconstruction charge
+            382330, -- creature combustion canister
+            382354, -- suspiciously ticking crate
+            382333, -- sticky warp grenade
+            382353, -- I.W.I.N button mk10
         },
     },
     EZ_THRO_1 = {
         nodeID = 50891,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- ez thro
-            382355,     -- ez-thro creature combustion canister
-            382356,     -- ez-thro gravitational displacer
-            386670,     -- ez-thro grease grenade
-            382357,     -- ez-thro primal deconstruction charge
-            382358,     -- suspiciously silent crate
+            382355, -- ez-thro creature combustion canister
+            382356, -- ez-thro gravitational displacer
+            386670, -- ez-thro grease grenade
+            382357, -- ez-thro primal deconstruction charge
+            382358, -- suspiciously silent crate
         },
     },
     EZ_THRO_2 = {
@@ -400,11 +400,11 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
         threshold = 5,
         skill = 5,
         exceptionRecipeIDs = {
-            382355,     -- ez-thro creature combustion canister
-            382356,     -- ez-thro gravitational displacer
-            386670,     -- ez-thro grease grenade
-            382357,     -- ez-thro primal deconstruction charge
-            382358,     -- suspiciously silent crate
+            382355, -- ez-thro creature combustion canister
+            382356, -- ez-thro gravitational displacer
+            386670, -- ez-thro grease grenade
+            382357, -- ez-thro primal deconstruction charge
+            382358, -- suspiciously silent crate
         },
     },
     EZ_THRO_3 = {
@@ -412,11 +412,11 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
         threshold = 10,
         resourcefulness = 10,
         exceptionRecipeIDs = {
-            382355,     -- ez-thro creature combustion canister
-            382356,     -- ez-thro gravitational displacer
-            386670,     -- ez-thro grease grenade
-            382357,     -- ez-thro primal deconstruction charge
-            382358,     -- suspiciously silent crate
+            382355, -- ez-thro creature combustion canister
+            382356, -- ez-thro gravitational displacer
+            386670, -- ez-thro grease grenade
+            382357, -- ez-thro primal deconstruction charge
+            382358, -- suspiciously silent crate
         },
     },
     EZ_THRO_4 = {
@@ -424,28 +424,28 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
         threshold = 20,
         multicraft = 20,
         exceptionRecipeIDs = {
-            382355,     -- ez-thro creature combustion canister
-            382356,     -- ez-thro gravitational displacer
-            386670,     -- ez-thro grease grenade
-            382357,     -- ez-thro primal deconstruction charge
-            382358,     -- suspiciously silent crate
+            382355, -- ez-thro creature combustion canister
+            382356, -- ez-thro gravitational displacer
+            386670, -- ez-thro grease grenade
+            382357, -- ez-thro primal deconstruction charge
+            382358, -- suspiciously silent crate
         },
     },
     EZ_THRO_5 = {
         nodeID = 50891,
         threshold = 25,
         exceptionRecipeIDs = {
-            382355,     -- ez-thro creature combustion canister
-            382356,     -- ez-thro gravitational displacer
-            386670,     -- ez-thro grease grenade
-            382357,     -- ez-thro primal deconstruction charge
-            382358,     -- suspiciously silent crate
+            382355, -- ez-thro creature combustion canister
+            382356, -- ez-thro gravitational displacer
+            386670, -- ez-thro grease grenade
+            382357, -- ez-thro primal deconstruction charge
+            382358, -- suspiciously silent crate
         },
     },
-    FUNCTION_OVER_FORM_1 = {     -- gear mapped, g for g mapped, utility mapped
+    FUNCTION_OVER_FORM_1 = { -- gear mapped, g for g mapped, utility mapped
         childNodeIDs = { "GEAR_1", "GEARS_FOR_GEAR_1", "UTILITY_1" },
         nodeID = 50929,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.GOGGLES] = {
                 -- gear
@@ -866,7 +866,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
     },
     UTILITY_1 = {
         nodeID = 50926,
-        equalsMulticraft = true,
+        equalsMulticraft = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.SCOPES_AND_AMMO] = {
                 -- utility
@@ -908,15 +908,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
             }
         },
     },
-    MECHANICAL_MIND_1 = {     -- all mapped
+    MECHANICAL_MIND_1 = { -- all mapped
         childNodeIDs = { "INVENTIONS_1", "NOVELTIES_1" },
         nodeID = 50956,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     INVENTIONS_1 = {
         nodeID = 50955,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ENGINEERING.TINKERS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENGINEERING.OTHER

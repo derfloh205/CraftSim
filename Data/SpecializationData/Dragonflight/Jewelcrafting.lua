@@ -3,9 +3,9 @@ local CraftSim = select(2, ...)
 
 ---@type table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
-    TOOLSET_MASTERY_1 = {     -- all mapped
+    TOOLSET_MASTERY_1 = { -- all mapped
         childNodeIDs = { "SAVING_SLIVERS_1", "BRILLIANT_BAUBLING_1" },
-        equalsSkill = true,
+        equalsSkill = 1,
         nodeID = 28672,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
@@ -47,7 +47,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
     },
     SAVING_SLIVERS_1 = {
         nodeID = 81119,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     SAVING_SLIVERS_2 = {
@@ -132,10 +132,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
 
-    FACETING_1 = {     -- air mapped, earth mapped, fire mapped, frost mapped
+    FACETING_1 = { -- air mapped, earth mapped, fire mapped, frost mapped
         nodeID = 28660,
         childNodeIDs = { "AIR_1", "EARTH_1", "FIRE_1", "FROST_1" },
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.RUDI_GEMS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -155,10 +155,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air,
-            374468,     -- Primalist Earth
-            374465,     -- Primalist Fire
-            374470,     -- Primalist Frost
+            374467, -- Primalist Air,
+            374468, -- Primalist Earth
+            374465, -- Primalist Fire
+            374470, -- Primalist Frost
         },
     },
     FACETING_2 = {
@@ -184,10 +184,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air,
-            374468,     -- Primalist Earth
-            374465,     -- Primalist Fire
-            374470,     -- Primalist Frost
+            374467, -- Primalist Air,
+            374468, -- Primalist Earth
+            374465, -- Primalist Fire
+            374470, -- Primalist Frost
         },
     },
     FACETING_3 = {
@@ -214,10 +214,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air,
-            374468,     -- Primalist Earth
-            374465,     -- Primalist Fire
-            374470,     -- Primalist Frost
+            374467, -- Primalist Air,
+            374468, -- Primalist Earth
+            374465, -- Primalist Fire
+            374470, -- Primalist Frost
         },
     },
     FACETING_4 = {
@@ -244,10 +244,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air,
-            374468,     -- Primalist Earth
-            374465,     -- Primalist Fire
-            374470,     -- Primalist Frost
+            374467, -- Primalist Air,
+            374468, -- Primalist Earth
+            374465, -- Primalist Fire
+            374470, -- Primalist Frost
         },
     },
     FACETING_5 = {
@@ -274,10 +274,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air,
-            374468,     -- Primalist Earth
-            374465,     -- Primalist Fire
-            374470,     -- Primalist Frost
+            374467, -- Primalist Air,
+            374468, -- Primalist Earth
+            374465, -- Primalist Fire
+            374470, -- Primalist Frost
         },
     },
     FACETING_6 = {
@@ -304,22 +304,22 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
 
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air,
-            374468,     -- Primalist Earth
-            374465,     -- Primalist Fire
-            374470,     -- Primalist Frost
+            374467, -- Primalist Air,
+            374468, -- Primalist Earth
+            374465, -- Primalist Fire
+            374470, -- Primalist Frost
         },
     },
     AIR_1 = {
         nodeID = 28659,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.AIR_GEMS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.JEWELCRAFTING.GEMS
             }
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air
+            374467, -- Primalist Air
         },
     },
     AIR_2 = {
@@ -330,7 +330,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air
+            374467, -- Primalist Air
         },
         threshold = 5,
         skill = 5,
@@ -343,7 +343,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air
+            374467, -- Primalist Air
         },
         threshold = 15,
         skill = 5,
@@ -356,7 +356,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air
+            374467, -- Primalist Air
         },
         threshold = 25,
         skill = 5,
@@ -369,7 +369,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374467,     -- Primalist Air
+            374467, -- Primalist Air
         },
         threshold = 35,
         skill = 5,
@@ -383,9 +383,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374468,     -- Primalist Earth
+            374468, -- Primalist Earth
         },
-        equalsSkill = true,
+        equalsSkill = 1,
     },
     EARTH_2 = {
         nodeID = 28658,
@@ -395,7 +395,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374468,     -- Primalist Earth
+            374468, -- Primalist Earth
         },
         threshold = 5,
         skill = 5,
@@ -408,7 +408,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374468,     -- Primalist Earth
+            374468, -- Primalist Earth
         },
         threshold = 15,
         skill = 5,
@@ -421,7 +421,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374468,     -- Primalist Earth
+            374468, -- Primalist Earth
         },
         threshold = 25,
         skill = 5,
@@ -434,7 +434,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374468,     -- Primalist Earth
+            374468, -- Primalist Earth
         },
         threshold = 35,
         skill = 5,
@@ -448,9 +448,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374465,     -- Primalist Fire
+            374465, -- Primalist Fire
         },
-        equalsSkill = true,
+        equalsSkill = 1,
     },
     FIRE_2 = {
         nodeID = 28657,
@@ -460,7 +460,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374465,     -- Primalist Fire
+            374465, -- Primalist Fire
         },
         threshold = 5,
         skill = 5,
@@ -473,7 +473,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374465,     -- Primalist Fire
+            374465, -- Primalist Fire
         },
         threshold = 15,
         skill = 5,
@@ -486,7 +486,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374465,     -- Primalist Fire
+            374465, -- Primalist Fire
         },
         threshold = 25,
         skill = 5,
@@ -499,7 +499,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374465,     -- Primalist Fire
+            374465, -- Primalist Fire
         },
         threshold = 35,
         skill = 5,
@@ -512,9 +512,9 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374470,     -- Primalist Frost
+            374470, -- Primalist Frost
         },
-        equalsSkill = true,
+        equalsSkill = 1,
     },
     FROST_2 = {
         nodeID = 28656,
@@ -524,7 +524,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374470,     -- Primalist Frost
+            374470, -- Primalist Frost
         },
         threshold = 5,
         skill = 5,
@@ -537,7 +537,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374470,     -- Primalist Frost
+            374470, -- Primalist Frost
         },
         threshold = 15,
         skill = 5,
@@ -550,7 +550,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374470,     -- Primalist Frost
+            374470, -- Primalist Frost
         },
         threshold = 25,
         skill = 5,
@@ -563,16 +563,16 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             }
         },
         exceptionRecipeIDs = {
-            374470,     -- Primalist Frost
+            374470, -- Primalist Frost
         },
         threshold = 35,
         skill = 5,
     },
     -- Setting
-    SETTING_1 = {     -- jewelry mapped, carving mapped
+    SETTING_1 = { -- jewelry mapped, carving mapped
         childNodeIDs = { "JEWELRY_1", "CARVING_1" },
         nodeID = 28728,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- setting
             [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.MISC] = {
@@ -689,10 +689,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             374496
         },
     },
-    JEWELRY_1 = {     -- necks mapped, rings mapped
+    JEWELRY_1 = { -- necks mapped, rings mapped
         childNodeIDs = { "NECKLACES_1", "RINGS_1" },
         nodeID = 28727,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             -- necks
             374501,
@@ -745,10 +745,10 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             374496
         },
     },
-    CARVING_1 = {     -- idols mapped, stone mapped
+    CARVING_1 = { -- idols mapped, stone mapped
         childNodeIDs = { "IDOLS_1", "STONE_1" },
         nodeID = 28724,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.TRINKETS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
@@ -824,7 +824,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             374495,
             374494
         },
-        equalsSkill = true,
+        equalsSkill = 1,
     },
     NECKLACES_2 = {
         nodeID = 28726,
@@ -886,7 +886,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
             376233,
             374496
         },
-        equalsSkill = true,
+        equalsSkill = 1,
     },
     RINGS_2 = {
         nodeID = 28725,
@@ -943,7 +943,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
             }
         },
-        equalsSkill = true,
+        equalsSkill = 1,
     },
     IDOLS_2 = {
         nodeID = 28723,
@@ -1001,7 +1001,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
             }
         },
-        equalsSkill = true,
+        equalsSkill = 1,
     },
     STONE_2 = {
         nodeID = 28722,
@@ -1053,13 +1053,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         threshold = 25,
         resourcefulness = 5,
     },
-    ENTERPRISING_1 = {     -- p mapped, extra mapped, glass mapped
+    ENTERPRISING_1 = { -- p mapped, extra mapped, glass mapped
         nodeID = 28610,
         childNodeIDs = { "PROSPECTING_1", "EXTRAVAGANCIES_1", "GLASSWARE_1" },
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
-            374627,     -- prospecting
-            395696,     -- crushing
+            374627, -- prospecting
+            395696, -- crushing
         },
         idMapping = {
             -- Extravagancies
@@ -1077,8 +1077,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         childNodeIDs = { "PROSPECTING_1", "EXTRAVAGANCIES_1", "GLASSWARE_1" },
         threshold = 5,
         exceptionRecipeIDs = {
-            374627,     -- prospecting
-            395696,     -- crushing
+            374627, -- prospecting
+            395696, -- crushing
         },
         idMapping = {
             -- Extravagancies
@@ -1097,8 +1097,8 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         threshold = 25,
         resourcefulness = 5,
         exceptionRecipeIDs = {
-            374627,     -- prospecting
-            395696,     -- crushing
+            374627, -- prospecting
+            395696, -- crushing
         },
         idMapping = {
             -- Extravagancies
@@ -1113,17 +1113,17 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
     },
     PROSPECTING_1 = {
         nodeID = 28609,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
-            374627,     -- prospecting
-            395696,     -- crushing
+            374627, -- prospecting
+            395696, -- crushing
         }
     },
     PROSPECTING_2 = {
         nodeID = 28609,
         exceptionRecipeIDs = {
-            374627,     -- prospecting
-            395696,     -- crushing
+            374627, -- prospecting
+            395696, -- crushing
         },
         threshold = 5,
         craftingspeedBonusFactor = 0.15,
@@ -1131,16 +1131,16 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
     PROSPECTING_3 = {
         nodeID = 28609,
         exceptionRecipeIDs = {
-            374627,     -- prospecting
-            395696,     -- crushing
+            374627, -- prospecting
+            395696, -- crushing
         },
         threshold = 15,
     },
     PROSPECTING_4 = {
         nodeID = 28609,
         exceptionRecipeIDs = {
-            374627,     -- prospecting
-            395696,     -- crushing
+            374627, -- prospecting
+            395696, -- crushing
         },
         threshold = 25,
         craftingspeedBonusFactor = 0.25,
@@ -1155,17 +1155,17 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- 'non glassware reagents'
-            374480,     -- glossy stone
-            374475,     -- shimmering clasp
-            374553,     -- elemental harmony
-            395662,     -- insight
-            374483,     -- sand
-            374484,     -- pounce
+            374480, -- glossy stone
+            374475, -- shimmering clasp
+            374553, -- elemental harmony
+            395662, -- insight
+            374483, -- sand
+            374484, -- pounce
             -- novelties
-            374525,     -- Convergent Prism
-            374522,     -- Jeweled Offering
+            374525, -- Convergent Prism
+            374522, -- Jeweled Offering
         },
-        equalsSkill = true,
+        equalsSkill = 1,
     },
     EXTRAVAGANCIES_2 = {
         nodeID = 28608,
@@ -1176,15 +1176,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- 'non glassware reagents'
-            374480,     -- glossy stone
-            374475,     -- shimmering clasp
-            374553,     -- elemental harmony
-            395662,     -- insight
-            374483,     -- sand
-            374484,     -- pounce
+            374480, -- glossy stone
+            374475, -- shimmering clasp
+            374553, -- elemental harmony
+            395662, -- insight
+            374483, -- sand
+            374484, -- pounce
             -- novelties
-            374525,     -- Convergent Prism
-            374522,     -- Jeweled Offering
+            374525, -- Convergent Prism
+            374522, -- Jeweled Offering
         },
         threshold = 5,
     },
@@ -1197,15 +1197,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- 'non glassware reagents'
-            374480,     -- glossy stone
-            374475,     -- shimmering clasp
-            374553,     -- elemental harmony
-            395662,     -- insight
-            374483,     -- sand
-            374484,     -- pounce
+            374480, -- glossy stone
+            374475, -- shimmering clasp
+            374553, -- elemental harmony
+            395662, -- insight
+            374483, -- sand
+            374484, -- pounce
             -- novelties
-            374525,     -- Convergent Prism
-            374522,     -- Jeweled Offering
+            374525, -- Convergent Prism
+            374522, -- Jeweled Offering
         },
         threshold = 10,
         resourcefulness = 5,
@@ -1219,15 +1219,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- 'non glassware reagents'
-            374480,     -- glossy stone
-            374475,     -- shimmering clasp
-            374553,     -- elemental harmony
-            395662,     -- insight
-            374483,     -- sand
-            374484,     -- pounce
+            374480, -- glossy stone
+            374475, -- shimmering clasp
+            374553, -- elemental harmony
+            395662, -- insight
+            374483, -- sand
+            374484, -- pounce
             -- novelties
-            374525,     -- Convergent Prism
-            374522,     -- Jeweled Offering
+            374525, -- Convergent Prism
+            374522, -- Jeweled Offering
         },
         threshold = 15,
         multicraft = 20,
@@ -1241,15 +1241,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- 'non glassware reagents'
-            374480,     -- glossy stone
-            374475,     -- shimmering clasp
-            374553,     -- elemental harmony
-            395662,     -- insight
-            374483,     -- sand
-            374484,     -- pounce
+            374480, -- glossy stone
+            374475, -- shimmering clasp
+            374553, -- elemental harmony
+            395662, -- insight
+            374483, -- sand
+            374484, -- pounce
             -- novelties
-            374525,     -- Convergent Prism
-            374522,     -- Jeweled Offering
+            374525, -- Convergent Prism
+            374522, -- Jeweled Offering
         },
         threshold = 20,
         resourcefulness = 5,
@@ -1263,15 +1263,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- 'non glassware reagents'
-            374480,     -- glossy stone
-            374475,     -- shimmering clasp
-            374553,     -- elemental harmony
-            395662,     -- insight
-            374483,     -- sand
-            374484,     -- pounce
+            374480, -- glossy stone
+            374475, -- shimmering clasp
+            374553, -- elemental harmony
+            395662, -- insight
+            374483, -- sand
+            374484, -- pounce
             -- novelties
-            374525,     -- Convergent Prism
-            374522,     -- Jeweled Offering
+            374525, -- Convergent Prism
+            374522, -- Jeweled Offering
         },
         threshold = 25,
     },
@@ -1284,15 +1284,15 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- 'non glassware reagents'
-            374480,     -- glossy stone
-            374475,     -- shimmering clasp
-            374553,     -- elemental harmony
-            395662,     -- insight
-            374483,     -- sand
-            374484,     -- pounce
+            374480, -- glossy stone
+            374475, -- shimmering clasp
+            374553, -- elemental harmony
+            395662, -- insight
+            374483, -- sand
+            374484, -- pounce
             -- novelties
-            374525,     -- Convergent Prism
-            374522,     -- Jeweled Offering
+            374525, -- Convergent Prism
+            374522, -- Jeweled Offering
         },
         threshold = 30,
         skill = 5,
@@ -1300,7 +1300,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
     },
     GLASSWARE_1 = {
         nodeID = 28607,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             -- glasswares
             [CraftSim.CONST.RECIPE_CATEGORIES.JEWELCRAFTING.EXTRA_GLASSWARES] = {
@@ -1309,13 +1309,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- novelties
-            374518,     -- Projection Prism
-            375063,     -- "Rhinestone" Sunglasses
-            377960,     -- Split-Lens Specs
+            374518, -- Projection Prism
+            375063, -- "Rhinestone" Sunglasses
+            377960, -- Split-Lens Specs
             -- items crafted with fractured glass
-            374478,     -- Frameless Lense
-            392697,     -- Empty Sould Cage
-            374477,     -- Draconic Vial
+            374478, -- Frameless Lense
+            392697, -- Empty Sould Cage
+            374477, -- Draconic Vial
         },
     },
     GLASSWARE_2 = {
@@ -1327,13 +1327,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- novelties
-            374518,     -- Projection Prism
-            375063,     -- "Rhinestone" Sunglasses
-            377960,     -- Split-Lens Specs
+            374518, -- Projection Prism
+            375063, -- "Rhinestone" Sunglasses
+            377960, -- Split-Lens Specs
             -- items crafted with fractured glass
-            374478,     -- Frameless Lense
-            392697,     -- Empty Sould Cage
-            374477,     -- Draconic Vial
+            374478, -- Frameless Lense
+            392697, -- Empty Sould Cage
+            374477, -- Draconic Vial
         },
         threshold = 5,
         multicraft = 10,
@@ -1347,13 +1347,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- novelties
-            374518,     -- Projection Prism
-            375063,     -- "Rhinestone" Sunglasses
-            377960,     -- Split-Lens Specs
+            374518, -- Projection Prism
+            375063, -- "Rhinestone" Sunglasses
+            377960, -- Split-Lens Specs
             -- items crafted with fractured glass
-            374478,     -- Frameless Lense
-            392697,     -- Empty Sould Cage
-            374477,     -- Draconic Vial
+            374478, -- Frameless Lense
+            392697, -- Empty Sould Cage
+            374477, -- Draconic Vial
         },
         threshold = 15,
         resourcefulness = 5,
@@ -1367,13 +1367,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- novelties
-            374518,     -- Projection Prism
-            375063,     -- "Rhinestone" Sunglasses
-            377960,     -- Split-Lens Specs
+            374518, -- Projection Prism
+            375063, -- "Rhinestone" Sunglasses
+            377960, -- Split-Lens Specs
             -- items crafted with fractured glass
-            374478,     -- Frameless Lense
-            392697,     -- Empty Sould Cage
-            374477,     -- Draconic Vial
+            374478, -- Frameless Lense
+            392697, -- Empty Sould Cage
+            374477, -- Draconic Vial
         },
         threshold = 30,
         resourcefulness = 5,
@@ -1387,13 +1387,13 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA = {
         },
         exceptionRecipeIDs = {
             -- novelties
-            374518,     -- Projection Prism
-            375063,     -- "Rhinestone" Sunglasses
-            377960,     -- Split-Lens Specs
+            374518, -- Projection Prism
+            375063, -- "Rhinestone" Sunglasses
+            377960, -- Split-Lens Specs
             -- items crafted with fractured glass
-            374478,     -- Frameless Lense
-            392697,     -- Empty Sould Cage
-            374477,     -- Draconic Vial
+            374478, -- Frameless Lense
+            392697, -- Empty Sould Cage
+            374477, -- Draconic Vial
         },
         threshold = 40,
         multicraft = 10,

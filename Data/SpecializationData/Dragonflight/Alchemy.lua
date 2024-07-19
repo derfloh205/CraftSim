@@ -7,7 +7,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     ALCHEMICAL_THEORY_1 = { -- mapped
         childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
         nodeID = 19539,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     ALCHEMICAL_THEORY_2 = {
@@ -53,7 +53,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     TRANSMUTATION_1 = {
         nodeID = 19538,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.TRANSMUTATIONS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
@@ -100,7 +100,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     CHEMICAL_SYNTHESIS_1 = {
         nodeID = 19537,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.REAGENT] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
@@ -269,7 +269,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     DECAYOLOGY_1 = {
         nodeID = 19536,
-        equalsSkill = true,
+        equalsSkill = 1,
         exceptionRecipeIDs = {
             370521, -- air potion
             370536, -- frost potion
@@ -352,7 +352,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     RESOURCEFUL_ROUTINES_1 = {
         nodeID = 19535,
-        equalsResourcefulness = true,
+        equalsResourcefulness = 1,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
     RESOURCEFUL_ROUTINES_2 = {
@@ -440,7 +440,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     PHIAL_MASTERY_1 = { -- frost mapped, air mapped, lore mapped
         childNodeIDs = { "FROST_PHIALS_1", "PHIAL_LORE_1", "AIR_PHIALS_1" },
         nodeID = 22483,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -516,7 +516,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     PHIAL_LORE_1 = { -- experimentation mapped, batch mapped
         childNodeIDs = { "PHIAL_EXPERIMENTATION_1", "PHIAL_BATCH_PRODUCTION_1" },
         nodeID = 22480,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -614,7 +614,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     FROST_PHIALS_1 = {
         nodeID = 22482,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -707,7 +707,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     AIR_PHIALS_1 = {
         nodeID = 22481,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.AIR] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -800,7 +800,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     PHIAL_EXPERIMENTATION_1 = {
         nodeID = 22479,
-        equalsPhialExperimentationChanceFactor = true,
+        equalsPhialExperimentationChanceFactor = 0.01,
         exceptionRecipeIDs = {
             -- phial experimentation
             370746, -- basic
@@ -836,7 +836,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     PHIAL_BATCH_PRODUCTION_1 = {
         nodeID = 22478,
-        equalsMulticraft = true,
+        equalsMulticraft = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.PHIALS.FROST] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
@@ -965,7 +965,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     POTION_MASTERY_1 = { -- frost mapped, air mapped, lore mapped
         childNodeIDs = { "FROST_POTIONS_1", "POTION_LORE_1", "AIR_POTIONS_1" },
         nodeID = 19487,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
@@ -1047,7 +1047,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     POTION_LORE_1 = { -- experimentation mapped, batch mapped
         childNodeIDs = { "POTION_EXPERIMENTATION_1", "POTION_BATCH_PRODUCTION_1" },
         nodeID = 19484,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
@@ -1153,7 +1153,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     FROST_POTIONS_1 = {
         nodeID = 19486,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
@@ -1242,7 +1242,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     AIR_POTIONS_1 = {
         nodeID = 19485,
-        equalsSkill = true,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.AIR] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
@@ -1330,7 +1330,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     POTION_EXPERIMENTATION_1 = {
         nodeID = 19483,
-        equalsPotionExperimentationChanceFactor = true,
+        equalsPotionExperimentationChanceFactor = 0.01,
         exceptionRecipeIDs = {
             -- potion experimentation
             370743, -- basic
@@ -1366,7 +1366,7 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
     },
     POTION_BATCH_PRODUCTION_1 = {
         nodeID = 19482,
-        equalsMulticraft = true,
+        equalsMulticraft = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.POTIONS.FROST] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
