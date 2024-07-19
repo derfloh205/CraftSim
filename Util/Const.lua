@@ -13,10 +13,9 @@ CraftSim.CONST.FEATURE_TOGGLES = {
 }
 
 CraftSim.CONST.PERCENT_MODS = {
-    INSPIRATION = 0.001,
-    MULTICRAFT = 0.0009,
-    RESOURCEFULNESS = 0.00111,
-    CRAFTINGSPEED = 0.002,
+    MULTICRAFT = 0.000302,
+    RESOURCEFULNESS = 0.00037,
+    CRAFTINGSPEED = 0.001114,
 }
 
 -- some dummy recipes are not flagged as dummy ..........
