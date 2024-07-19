@@ -464,7 +464,7 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     -- its the only one which uses "extraValueAfterFactor"
 
     -- since ooey gooey chocolate gives us math.huge on multicraft we need to limit it to 100%
-    self.professionStats.multicraft.value = math.min(1 / CraftSim.CONST.PERCENT_MODS.MULTICRAFT,
+    self.professionStats.multicraft.value = math.min(1 / self.professionStats.multicraft.percentMod,
         self.professionStats.multicraft.value)
 end
 
