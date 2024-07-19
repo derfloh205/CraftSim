@@ -1486,10 +1486,3 @@ CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES = {
         y = 25,
     },
 }
-    CRAFTER = {
-        isAtlas = true,
-        texture = "UI-ChatIcon-App",
-        x = 25,
-        y = 25,
-    },
-}
