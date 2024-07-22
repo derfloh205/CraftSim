@@ -197,7 +197,7 @@ function CraftSim.SpecializationData:Deserialize(serializedData, recipeData)
 
     local nodeIDMap = {} -- to restore references
     local professionRuleNodes = CraftSim.SPECIALIZATION_DATA.NODE_DATA[recipeData.professionData.expansionID]
-    [recipeData.professionData.professionInfo.profession]
+        [recipeData.professionData.professionInfo.profession]
 
     specializationData.nodeData = GUTIL:Map(serializedData.nodeData, function(nodeDataSerialized)
         return CraftSim.NodeData:Deserialize(nodeDataSerialized, recipeData, nodeIDMap, professionRuleNodes)

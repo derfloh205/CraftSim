@@ -41,6 +41,7 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.equalsIngenuity = nodeRuleData.equalsIngenuity or 0
     self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or 0
     self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or 0
+    self.equalsIngenuityExtraConcentrationFactor = nodeRuleData.equalsIngenuityExtraConcentrationFactor or 0
     self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or 0
     self.equalsPotionExperimentationChanceFactor = nodeRuleData.equalsPotionExperimentationChanceFactor or 0
 end
@@ -55,10 +56,6 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
     -- only if I affect the recipe
     if not self.affectsRecipe then
         return
-    end
-
-    if self.equalsSkill > 0 then
-        self.professionStats.skill.value = math.max(0, rank * self.equalsSkill)
     end
 
     if self.equalsSkill > 0 then
@@ -83,6 +80,11 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
 
     if self.equalsResourcefulnessExtraItemsFactor > 0 then
         self.professionStats.resourcefulness.extraFactor = math.max(0, rank * self.equalsResourcefulnessExtraItemsFactor)
+    end
+
+    if self.equalsIngenuityExtraConcentrationFactor > 0 then
+        self.professionStats.ingenuity.extraFactor = math.max(0,
+            rank * self.equalsIngenuityExtraConcentrationFactor)
     end
 
     if self.equalsPhialExperimentationChanceFactor > 0 then

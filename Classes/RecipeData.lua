@@ -29,6 +29,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     local crafterUID = self:GetCrafterUID()
 
     self.concentrating = false
+    self.concentrationCost = 0
 
     -- important for recipedata of alts to check if data was cached (and for any recipe data creation b4 tradeskill is ready)
     self.specializationDataCached = false
@@ -443,6 +444,8 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     local buffStats = self.buffData.professionStats
 
     self.concentrationCost = concentrationCost
+
+    self.professionStats:Clear()
 
     self.professionStats:add(self.baseProfessionStats)
 
