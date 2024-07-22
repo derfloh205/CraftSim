@@ -27,6 +27,7 @@ CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 ---@field craftingspeed? number
 ---@field resourcefulnessExtraItemsFactor? number
 ---@field ingenuityExtraConcentrationFactor? number
+---@field concentrationLessUsageFactor? number
 ---@field multicraftExtraItemsFactor? number
 ---@field craftingspeedBonusFactor? number
 
