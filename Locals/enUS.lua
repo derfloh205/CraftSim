@@ -86,6 +86,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Multicraft: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Resourcefulness: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Resourcefulness Item Bonus: ",
+        [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Concentration: ",
         [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "Material Quality Bonus: ",
         [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "Material Quality Maximum %: ",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Expected Quality: ",

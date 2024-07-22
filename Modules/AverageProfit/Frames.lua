@@ -17,7 +17,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROF
 
 function CraftSim.AVERAGEPROFIT.FRAMES:Init()
     local sizeX = 320
-    local sizeY = 100
+    local sizeY = 110
     local offsetX = -10
     local offsetY = 30
     CraftSim.AVERAGEPROFIT.frame = GGUI.Frame({
@@ -73,7 +73,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
         local moneyColumnWidth = 180
         frame.content.profitList = GGUI.FrameList {
             parent = frame.content, anchorParent = frame.content,
-            anchorA = "TOP", anchorB = "TOP", offsetY = -30,
+            anchorA = "TOP", anchorB = "TOP", offsetY = -30, scale = 0.95,
             sizeY = 100,
             rowHeight = 18,
             columnOptions = {
@@ -149,6 +149,10 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts)
         if statWeights.resourcefulnessWeight then
             addToList(L(CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL), f.mw(statWeights.resourcefulnessWeight),
                 f.white("Profit increase " .. f.l("per point ") .. f.bb("Resourcefulness")))
+        end
+        if statWeights.concentrationWeight then
+            addToList(L(CraftSim.CONST.TEXT.CONCENTRATION_LABEL), f.mw(statWeights.concentrationWeight),
+                f.white("Profit increase " .. f.l("per point ") .. f.bb("Concentration")))
         end
     end
 
