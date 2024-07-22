@@ -74,7 +74,6 @@ CraftSim.SPECIALIZATION_DATA.BASE_NODES = {
         [Enum.Profession.Inscription] = { "PURSUIT_OF_KNOWLEDGE_1", "PURSUIT_OF_PERFECTION_1", "CAREFUL_CARVINGS_1", "ARCHIVAL_ADDITIONS_1" },
         [Enum.Profession.Leatherworking] = { "LEARNED_LEATHERWORKER_1", "LUXURIOUS_LEATHERS_1", "CONCRETE_CHITIN_1", "FLAWLESS_FORTRES_1" },
         [Enum.Profession.Tailoring] = { "THREADS_OF_DEVOTION_1", "FROM_DAWN_UNTIL_DUSK_1", "QUALITY_FABRIC_1", "TEXTILE_TREASURES_1" },
-        -- TODO
-        [Enum.Profession.Jewelcrafting] = { "TOOLSET_MASTERY_1", "FACETING_1", "SETTING_1", "ENTERPRISING_1" },
+        [Enum.Profession.Jewelcrafting] = { "GEMCUTTING_1", "JEWELRY_CRAFTING_1", "SHAPING_1" },
     },
 }
