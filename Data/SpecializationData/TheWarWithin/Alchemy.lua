@@ -10,7 +10,11 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
     },
     MYCOBLOOM_LORE_1 = {
         nodeID = 99019,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
+        affectedReagentIDs = {
+            210796, -- Mycobloom q1, q2, q3
+            210797,
+            210798
+        },
     },
     LUREDROP_LORE_1 = {
         nodeID = 99018,

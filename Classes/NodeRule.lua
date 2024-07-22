@@ -22,7 +22,8 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.threshold = nodeRuleData.threshold or -42 -- dont ask why 42
 
     ---@type CraftSim.IDMapping
-    self.idMapping = CraftSim.IDMapping(recipeData, nodeRuleData.idMapping, nodeRuleData.exceptionRecipeIDs)
+    self.idMapping = CraftSim.IDMapping(recipeData, nodeRuleData.idMapping, nodeRuleData.exceptionRecipeIDs,
+        nodeRuleData.affectedReagentIDs)
 
     self.professionStats.skill.value = nodeRuleData.skill or 0
     self.professionStats.multicraft.value = nodeRuleData.multicraft or 0

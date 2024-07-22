@@ -66,7 +66,6 @@ function CraftSim.SpecializationData:new(recipeData)
         local childNodeNameIDs = ruleNodes[1].childNodeIDs
 
         for _, childNodeNameID in pairs(childNodeNameIDs or {}) do
-            print("childNodeNameID: " .. tostring(childNodeNameID))
             local childNodeID = professionRuleNodes[childNodeNameID].nodeID
             local childNodeData = parseNode(childNodeID, nodeData, layer + 1)
             table.insert(nodeData.childNodes, childNodeData)

@@ -10,7 +10,6 @@ CraftSim.NodeData = CraftSim.CraftSimObject:extend()
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 ---@param recipeData CraftSim.RecipeData?
----@param nodeName string
 ---@param nodeRulesData table
 ---@param parentNode CraftSim.NodeData
 function CraftSim.NodeData:new(recipeData, nodeRulesData, parentNode)

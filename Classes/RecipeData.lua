@@ -142,11 +142,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.supportsIngenuity = false
     self.supportsCraftingspeed = true -- this is always supported (but does not show in details UI when 0)
 
-    if not self.isCooking then
-        ---@type CraftSim.SpecializationData?
-        self.specializationData = self:GetSpecializationDataForRecipeCrafter()
-    end
-
     self.cooldownData = self:GetCooldownDataForRecipeCrafter()
 
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft) -- is working even if profession is not learned on the character!
@@ -170,7 +165,12 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.minItemAmount = schematicInfo.quantityMin
     self.maxItemAmount = schematicInfo.quantityMax
 
-    -- EXCEPTION for Sturdy Expedition Shovel - 388279
+    if not self.isCooking then
+        ---@type CraftSim.SpecializationData?
+        self.specializationData = self:GetSpecializationDataForRecipeCrafter()
+    end
+
+    -- EXCEPTION for Dragonflight - Sturdy Expedition Shovel - 388279
     -- Due to a blizzard bug the recipe's baseItemAmount is 2 although it only produces 1
     if self.recipeID == 388279 then
         self.baseItemAmount = 1
