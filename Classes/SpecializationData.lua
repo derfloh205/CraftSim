@@ -66,6 +66,7 @@ function CraftSim.SpecializationData:new(recipeData)
         local childNodeNameIDs = ruleNodes[1].childNodeIDs
 
         for _, childNodeNameID in pairs(childNodeNameIDs or {}) do
+            print("childNodeNameID: " .. tostring(childNodeNameID))
             local childNodeID = professionRuleNodes[childNodeNameID].nodeID
             local childNodeData = parseNode(childNodeID, nodeData, layer + 1)
             table.insert(nodeData.childNodes, childNodeData)
@@ -197,7 +198,7 @@ function CraftSim.SpecializationData:Deserialize(serializedData, recipeData)
 
     local nodeIDMap = {} -- to restore references
     local professionRuleNodes = CraftSim.SPECIALIZATION_DATA.NODE_DATA[recipeData.professionData.expansionID]
-    [recipeData.professionData.professionInfo.profession]
+        [recipeData.professionData.professionInfo.profession]
 
     specializationData.nodeData = GUTIL:Map(serializedData.nodeData, function(nodeDataSerialized)
         return CraftSim.NodeData:Deserialize(nodeDataSerialized, recipeData, nodeIDMap, professionRuleNodes)

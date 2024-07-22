@@ -45,12 +45,12 @@ CraftSim.SPECIALIZATION_DATA.NODE_DATA = {
     [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
         [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA,
         [Enum.Profession.Alchemy] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA,
-        [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.LEATHERWORKING_DATA,
-        [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.JEWELCRAFTING_DATA,
-        [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA,
-        [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA,
-        [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.INSCRIPTION_DATA,
-        [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA
+        [Enum.Profession.Leatherworking] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.LEATHERWORKING_DATA,
+        [Enum.Profession.Jewelcrafting] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.JEWELCRAFTING_DATA,
+        [Enum.Profession.Enchanting] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENCHANTING_DATA,
+        [Enum.Profession.Tailoring] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA,
+        [Enum.Profession.Inscription] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.INSCRIPTION_DATA,
+        [Enum.Profession.Engineering] = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENGINEERING_DATA
     },
 }
 
@@ -69,12 +69,12 @@ CraftSim.SPECIALIZATION_DATA.BASE_NODES = {
     [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
         [Enum.Profession.Blacksmithing] = { "EVER_BURNING_FORGE_1", "MEANS_OF_PRODUCTION_1", "WEAPON_SMITHING_1", "ARMOR_SMITHING_1" },
         [Enum.Profession.Alchemy] = { "ALCHEMICAL_MASTERY_1", "FANTASTIC_FLASKS_1", "POTENT_POTIONS_1", "THAUMATURGY_1" },
+        [Enum.Profession.Enchanting] = { "SUPPLEMENTARY_SHATTERING_1", "DESIGNATED_DISENCHANTER_1", "EVERLASTING_ENCHANTMENTS_1", "EPHEMERALS_ENRICHMENTS_AND_EQUIPMENT_1" },
+        [Enum.Profession.Engineering] = { "ENGINEERED_EQUIPMENT_1", "DEVICES_1", "INVENTING_1" },
+        [Enum.Profession.Inscription] = { "PURSUIT_OF_KNOWLEDGE_1", "PURSUIT_OF_PERFECTION_1", "CAREFUL_CARVINGS_1", "ARCHIVAL_ADDITIONS_1" },
         -- TODO
         [Enum.Profession.Leatherworking] = { "LEATHERWORKING_DISCIPLINE_1", "LEATHER_ARMOR_CRAFTING_1", "MAIL_ARMOR_CRAFTING_1", "PRIMORDIAL_LEATHERWORKING_1" },
         [Enum.Profession.Jewelcrafting] = { "TOOLSET_MASTERY_1", "FACETING_1", "SETTING_1", "ENTERPRISING_1" },
-        [Enum.Profession.Enchanting] = { "ENCHANTMENT_1", "INSIGHT_OF_THE_BLUE_1", "RODS_RUNES_AND_RUSES_1" },
         [Enum.Profession.Tailoring] = { "TAILORING_MASTERY_1", "TEXTILES_1", "DRACONIC_NEEDLEWORK_1", "GARMENTCRAFTING_1" },
-        [Enum.Profession.Inscription] = { "RUNE_MASTERY_1", "ARCHIVING_1", "RUNEBINDING_1" },
-        [Enum.Profession.Engineering] = { "OPTIMIZED_EFFICIENCY_1", "EXPLOSIVES_1", "FUNCTION_OVER_FORM_1", "MECHANICAL_MIND_1" },
     },
 }
