@@ -33,6 +33,7 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
 
     self.professionStats.multicraft.extraFactor = nodeRuleData.multicraftExtraItemsFactor or 0
     self.professionStats.resourcefulness.extraFactor = nodeRuleData.resourcefulnessExtraItemsFactor or 0
+    self.professionStats.ingenuity.extraFactor = nodeRuleData.ingenuityExtraConcentrationFactor or 0
 
     self.equalsSkill = nodeRuleData.equalsSkill or 0
     self.equalsMulticraft = nodeRuleData.equalsMulticraft or 0
@@ -40,6 +41,7 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.equalsIngenuity = nodeRuleData.equalsIngenuity or 0
     self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or 0
     self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or 0
+    self.equalsIngenuityExtraConcentrationFactor = nodeRuleData.equalsIngenuityExtraConcentrationFactor or 0
     self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or 0
     self.equalsPotionExperimentationChanceFactor = nodeRuleData.equalsPotionExperimentationChanceFactor or 0
 end
