@@ -39,7 +39,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param baseAverageProfit number
 ---@return number statWeight
-function CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, baseMeanProfit)
+function CraftSim.AVERAGEPROFIT:GetMulticraftWeight(recipeData, baseAverageProfit)
     if not recipeData.supportsMulticraft then
         return 0
     end
@@ -108,10 +108,11 @@ function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
 
     print("calculate stat weights avg profit: " .. tostring(CraftSim.GUTIL:FormatMoney(averageProfit, true)))
 
-    local multicraftWeight = CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, averageProfit)
-    local resourcefulnessWeight = CraftSim.AVERAGEPROFIT:getResourcefulnessWeight(recipeData, averageProfit)
+    local multicraftWeight = CraftSim.AVERAGEPROFIT:GetMulticraftWeight(recipeData, averageProfit)
+    local resourcefulnessWeight = CraftSim.AVERAGEPROFIT:GetResourcefulnessWeight(recipeData, averageProfit)
+    local concentrationWeight = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData, averageProfit)
 
     recipeData:Update() -- revert
 
-    return CraftSim.Statweights(averageProfit, multicraftWeight, resourcefulnessWeight)
+    return CraftSim.Statweights(averageProfit, multicraftWeight, resourcefulnessWeight, concentrationWeight)
 end
