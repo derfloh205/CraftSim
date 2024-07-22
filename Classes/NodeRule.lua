@@ -58,11 +58,6 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
         return
     end
 
-    -- DEBUG
-    if self.nodeData.nodeName == "Curing and Tanning" then
-        print("updating curing and tanning node rule stats with rank: " .. tostring(rank))
-    end
-
     if self.equalsSkill > 0 then
         self.professionStats.skill.value = math.max(0, rank * self.equalsSkill)
     end
@@ -87,6 +82,11 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
         self.professionStats.resourcefulness.extraFactor = math.max(0, rank * self.equalsResourcefulnessExtraItemsFactor)
     end
 
+    if self.equalsIngenuityExtraConcentrationFactor > 0 then
+        self.professionStats.ingenuity.extraFactor = math.max(0,
+            rank * self.equalsIngenuityExtraConcentrationFactor)
+    end
+
     if self.equalsPhialExperimentationChanceFactor > 0 then
         self.professionStats.phialExperimentationFactor.extraFactor = math.max(0,
             rank * self.equalsPhialExperimentationChanceFactor)
@@ -109,6 +109,7 @@ function CraftSim.NodeRule:Debug()
         "equalsIngenuity: " .. tostring(self.equalsIngenuity),
         "equalsCraftingspeed: " .. tostring(self.equalsCraftingspeed),
         "equalsResourcefulnessExtraItemsFactor: " .. tostring(self.equalsResourcefulnessExtraItemsFactor),
+        "equalsIngenuityExtraConcentrationFactor: " .. tostring(self.equalsIngenuityExtraConcentrationFactor),
     }
     local statLines = self.professionStats:Debug()
     statLines = CraftSim.GUTIL:Map(statLines, function(line) return "-" .. line end)
@@ -129,6 +130,7 @@ function CraftSim.NodeRule:GetJSON(indent)
     jb:Add("equalsIngenuity", self.equalsIngenuity)
     jb:Add("equalsCraftingspeed", self.equalsCraftingspeed)
     jb:Add("equalsResourcefulnessExtraItemsFactor", self.equalsResourcefulnessExtraItemsFactor)
+    jb:Add("equalsIngenuityExtraConcentrationFactor", self.equalsIngenuityExtraConcentrationFactor)
     jb:Add("equalsPhialExperimentationChanceFactor", self.equalsPhialExperimentationChanceFactor)
     jb:Add("equalsPotionExperimentationChanceFactor", self.equalsPotionExperimentationChanceFactor, true)
     jb:End()
