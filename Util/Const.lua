@@ -488,10 +488,12 @@ CraftSim.CONST.STAT_MAP = {
     ITEM_MOD_RESOURCEFULNESS_SHORT = "resourcefulness",
     ITEM_MOD_MULTICRAFT_SHORT = "multicraft",
     ITEM_MOD_CRAFTING_SPEED_SHORT = "craftingspeed",
+    ITEM_MOD_INGENUITY_SHORT = "ingenuity",
     CRAFTING_DETAILS_RECIPE_DIFFICULTY = "recipedifficulty",
     CRAFTING_DETAILS_SKILL = "skill",
     CRAFTING_DETAILS_MULTICRAFT = "multicraft",
     CRAFTING_DETAILS_RESOURCEFULNESS = "resourcefulness",
+    CRAFTING_DETAILS_INGENUITY = "ingenuity",
 }
 
 CraftSim.CONST.EMPTY_SLOT_LINK = "empty"
@@ -508,38 +510,6 @@ CraftSim.CONST.REAGENT_TYPE = {
 CraftSim.CONST.AUCTION_HOUSE_CUT = 0.95
 
 CraftSim.CONST.ENCHANTING_VELLUM_ID = 38682
-
-CraftSim.CONST.RECIPE_TYPES = {
-    GEAR = 0,                -- like blue gear
-    SOULBOUND_GEAR = 1,      -- like purple gear
-    NO_QUALITY_MULTIPLE = 2, -- like transmuted air
-    NO_QUALITY_SINGLE = 3,   -- like repair hammer
-    MULTIPLE = 4,            -- like potions..
-    SINGLE = 5,              -- like omnium draconis
-    NO_CRAFT_OPERATION = 6,  -- like reclaim from alchemy or old world stuff
-    GATHERING = 7,
-    NO_ITEM = 8,             -- like phial experimentation
-    ENCHANT = 9,
-}
-
-CraftSim.CONST.DEFAULT_POSITIONS = {
-    REAGENT_FRAME = {
-        x = 0,
-        y = 0,
-    },
-    PRICE_DETAILS_FRAME = {
-        x = 0,
-        y = 10,
-    },
-    TOP_GEAR_FRAME = {
-        x = -5,
-        y = 3,
-    },
-    STAT_WEIGHT_FRAME = {
-        x = 0,
-        y = -80,
-    }
-}
 
 ---@class CraftSim.RecipeCategories
 CraftSim.CONST.RECIPE_CATEGORIES = {
@@ -1320,11 +1290,19 @@ CraftSim.CONST.IMPLEMENTED_SPECIALIZATION_DATA =
         Enum.Profession.Tailoring,
     },
     [CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN] = {
+        Enum.Profession.Alchemy,
         Enum.Profession.Blacksmithing,
+        Enum.Profession.Enchanting,
+        Enum.Profession.Engineering,
+        Enum.Profession.Inscription,
+        Enum.Profession.Jewelcrafting,
+        Enum.Profession.Leatherworking,
+        Enum.Profession.Tailoring,
     },
 }
 
 CraftSim.CONST.BASE_RECRAFT_RECIPE_IDS = {
+    -- DF
     385304, -- Blacksmithing
     389195, -- Leatherworking
     389191, -- Enchanting
@@ -1357,20 +1335,6 @@ CraftSim.CONST.ITEM_IDS = {
 }
 
 CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME = 'CraftSim CraftQueue'
-
-CraftSim.CONST.MAX_KNOWLEDGEPOINTS = {
-    ALCHEMY = 510,
-    BLACKSMITHING = 800,
-    ENCHANTING = 565,
-    ENGINEERING = 525,
-    HERBALISM = 520,
-    INSCRIPTION = 680,
-    JEWELCRAFTING = 630,
-    LEATHERWORKING = 750,
-    MINING = 455,
-    SKINNING = 400,
-    TAILORING = 630,
-}
 
 
 CraftSim.CONST.ATLAS_TEXTURES = {

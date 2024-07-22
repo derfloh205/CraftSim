@@ -29,6 +29,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     local crafterUID = self:GetCrafterUID()
 
     self.concentrating = false
+    self.concentrationCost = 0
 
     -- important for recipedata of alts to check if data was cached (and for any recipe data creation b4 tradeskill is ready)
     self.specializationDataCached = false
@@ -142,11 +143,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.supportsIngenuity = false
     self.supportsCraftingspeed = true -- this is always supported (but does not show in details UI when 0)
 
-    if not self.isCooking then
-        ---@type CraftSim.SpecializationData?
-        self.specializationData = self:GetSpecializationDataForRecipeCrafter()
-    end
-
     self.cooldownData = self:GetCooldownDataForRecipeCrafter()
 
     local schematicInfo = C_TradeSkillUI.GetRecipeSchematic(self.recipeID, self.isRecraft) -- is working even if profession is not learned on the character!
@@ -170,7 +166,12 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.minItemAmount = schematicInfo.quantityMin
     self.maxItemAmount = schematicInfo.quantityMax
 
-    -- EXCEPTION for Sturdy Expedition Shovel - 388279
+    if not self.isCooking then
+        ---@type CraftSim.SpecializationData?
+        self.specializationData = self:GetSpecializationDataForRecipeCrafter()
+    end
+
+    -- EXCEPTION for Dragonflight - Sturdy Expedition Shovel - 388279
     -- Due to a blizzard bug the recipe's baseItemAmount is 2 although it only produces 1
     if self.recipeID == 388279 then
         self.baseItemAmount = 1
@@ -437,10 +438,12 @@ end
 
 -- Update the professionStats property of the RecipeData according to set reagents and gearSet (and any stat modifiers)
 function CraftSim.RecipeData:UpdateProfessionStats()
-    local skillRequiredReagents = self.reagentData:GetSkillFromRequiredReagents()
+    local skillRequiredReagents, concentrationCost = self.reagentData:GetSkillAndConcentrationCostFromRequiredReagents()
     local optionalStats = self.reagentData:GetProfessionStatsByOptionals()
     local itemStats = self.professionGearSet.professionStats
     local buffStats = self.buffData.professionStats
+
+    self.concentrationCost = concentrationCost
 
     self.professionStats:Clear()
 

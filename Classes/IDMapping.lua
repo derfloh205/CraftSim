@@ -8,12 +8,14 @@ CraftSim.IDMapping = CraftSim.CraftSimObject:extend()
 
 ---@param idMappingData table
 ---@param exceptionRecipeIDs number[]
+---@param affectedReagentIDs number[]
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.IDMapping:new(recipeData, idMappingData, exceptionRecipeIDs)
+function CraftSim.IDMapping:new(recipeData, idMappingData, exceptionRecipeIDs, affectedReagentIDs)
     self.recipeData = recipeData
     ---@type CraftSim.IDCategory[]
     self.categories = {}
     self.exceptionRecipeIDs = exceptionRecipeIDs or {}
+    self.affectedReagentIDs = affectedReagentIDs or {}
 
     for categoryID, subtypeIDs in pairs(idMappingData or {}) do
         table.insert(self.categories, CraftSim.IDCategory(categoryID, subtypeIDs))
@@ -66,6 +68,11 @@ function CraftSim.IDMapping:AffectsRecipe()
                 return true
             end
         end
+    end
+
+    -- if recipe uses an affected reagent it automatically is affected by this rule
+    if #self.affectedReagentIDs > 0 and recipeData.reagentData:HasOneOfReagents(self.affectedReagentIDs) then
+        return true
     end
 
     return false
