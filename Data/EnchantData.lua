@@ -2,6 +2,73 @@
 local CraftSim = select(2, ...)
 
 CraftSim.ENCHANT_RECIPE_DATA = {
+
+    -- TWW Boot
+    [445335] = { name = "Cavalry's March", q1 = 223618, q2 = 223649, q3 = 223650 },
+    [445396] = { name = "Defender's March", q1 = 223654, q2 = 223655, q3 = 223656 },
+    [445368] = { name = "Scout's March", q1 = 223651, q2 = 223652, q3 = 223653 },
+
+    -- TWW Bracer
+    [445334] = { name = "Chant of Armored Avoidance", q1 = 223711, q2 = 223712, q3 = 223713 },
+    [445325] = { name = "Chant of Armored Leech", q1 = 223717, q2 = 223718, q3 = 223719 },
+    [445330] = { name = "Chant of Armored Speed", q1 = 223723, q2 = 223724, q3 = 223725 },
+    [445374] = { name = "Whisper of Armored Leech", q1 = 223714, q2 = 223715, q3 = 223716 },
+    [445376] = { name = "Whisper of Armored Speed", q1 = 223720, q2 = 223721, q3 = 223722 },
+    [445392] = { name = "Whisper of Armored Avoidance", q1 = 223708, q2 = 223709, q3 = 223710 },
+
+    -- TWW Chest
+    [445322] = { name = "Council's Intellect", q1 = 223684, q2 = 223685, q3 = 223686 },
+    [445333] = { name = "Crystalline Radiance", q1 = 223690, q2 = 223691, q3 = 223692 },
+    [445321] = { name = "Oathsworn's Strength", q1 = 223687, q2 = 223688, q3 = 223689 },
+    [445353] = { name = "Stormrider's Agility", q1 = 223681, q2 = 223682, q3 = 223683 },
+
+    -- TWW Cloak
+    [445389] = { name = "Chant of Burrowed Rapidity", q1 = 223798, q2 = 223799, q3 = 223800 },
+    [445393] = { name = "Chant of Leeching Fangs", q1 = 223735, q2 = 223736, q3 = 223737 },
+    [445386] = { name = "Chant of Winged Grace", q1 = 223729, q2 = 223730, q3 = 223731 },
+    [445373] = { name = "Whisper of Silken Speed", q1 = 223738, q2 = 223739, q3 = 223740 },
+    [445348] = { name = "Whisper of Silken Leech", q1 = 223732, q2 = 223733, q3 = 223734 },
+    [445344] = { name = "Whisper of Silken Avoidance", q1 = 223726, q2 = 223727, q3 = 223728 },
+
+    -- TWW Profession Tools
+    [445364] = { name = "Algari Deftness", q1 = 223693, q2 = 223694, q3 = 223695 },
+    [445328] = { name = "Algari Finesse", q1 = 223696, q2 = 223697, q3 = 223698 },
+    [445378] = { name = "Algari Ingenuity", q1 = 223699, q2 = 223700, q3 = 223701 },
+    [445380] = { name = "Algari Perception", q1 = 223702, q2 = 223703, q3 = 223704 },
+    [445398] = { name = "Algari Resourcefulness", q1 = 223705, q2 = 223706, q3 = 223707 },
+
+    -- TWW Ring
+    [445387] = { name = "Radiant Critical Strike", q1 = 223660, q2 = 223661, q3 = 223662 },
+    [445320] = { name = "Radiant Haste", q1 = 223672, q2 = 223673, q3 = 223674 },
+    [445375] = { name = "Radiant Mastery", q1 = 223675, q2 = 223676, q3 = 223677 },
+    [445349] = { name = "Radiant Versatility", q1 = 223678, q2 = 223679, q3 = 223680 },
+    [445394] = { name = "Cursed Critical Strike", q1 = 223785, q2 = 223786, q3 = 223787 },
+    [445388] = { name = "Cursed Haste", q1 = 223788, q2 = 223789, q3 = 223790 },
+    [445359] = { name = "Cursed Mastery", q1 = 223791, q2 = 223792, q3 = 223793 },
+    [445383] = { name = "Cursed Versatility", q1 = 223794, q2 = 223795, q3 = 223796 },
+    [445340] = { name = "Glimmering Versatility", q1 = 223669, q2 = 223670, q3 = 223671 },
+    [445381] = { name = "Glimmering Mastery", q1 = 223666, q2 = 223667, q3 = 223668 },
+    [445358] = { name = "Glimmering Critical Strike", q1 = 223657, q2 = 223658, q3 = 223659 },
+    [445384] = { name = "Glimmering Haste", q1 = 223663, q2 = 223664, q3 = 223665 },
+
+    -- TWW Weapon
+    [445331] = { name = "Authority of Air", q1 = 223773, q2 = 223774, q3 = 223775 },
+    [445403] = { name = "Authority of Fiery Resolve", q1 = 223776, q2 = 223777, q3 = 223778 },
+    [445339] = { name = "Authority of Radiant Power", q1 = 223779, q2 = 223780, q3 = 223781 },
+    [445336] = { name = "Authority of Storms", q1 = 223770, q2 = 223771, q3 = 223772 },
+    [445341] = { name = "Authority of the Depths", q1 = 223782, q2 = 223783, q3 = 223784 },
+    [445379] = { name = "Council's Guile", q1 = 223757, q2 = 223758, q3 = 223759 },
+    [445351] = { name = "Oathsworn's Tenacity", q1 = 223766, q2 = 223767, q3 = 223768 },
+    [445385] = { name = "Stonebound Artistry", q1 = 223763, q2 = 223764, q3 = 223765 },
+    [445317] = { name = "Stormrider's Fury", q1 = 223760, q2 = 223761, q3 = 223762 },
+
+    -- TWW Illusory Adornment
+    [445401] = { name = "Illusory Adornment: Radiance", q1 = 223748, q2 = 223749, q3 = 223750 },
+    [445360] = { name = "Illusory Adornment: Runes", q1 = 223751, q2 = 223752, q3 = 223753 },
+    [445337] = { name = "Illusory Adornment: Shadow", q1 = 223754, q2 = 223755, q3 = 223756 },
+    [445327] = { name = "Illusory Adornment: Crystal", q1 = 223746, q2 = 223745, q3 = 223747 },
+
+    -- DF Ring
     [388930] = { name = "Writ of Critical Strike", q1 = 199957, q2 = 199999, q3 = 200041 },
     [389135] = { name = "Writ of Haste", q1 = 199958, q2 = 200000, q3 = 200042 },
     [389136] = { name = "Writ of Mastery", q1 = 199959, q2 = 200001, q3 = 200043 },
@@ -12,7 +79,7 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     [389294] = { name = "Devotion of Mastery", q1 = 199955, q2 = 199997, q3 = 200039 },
     [389295] = { name = "Devotion of Versatility", q1 = 199956, q2 = 199998, q3 = 200040 },
 
-    -- Cloak
+    -- DF Cloak
     [389403] = { name = "Graceful Avoidance", q1 = 199947, q2 = 199989, q3 = 200031 },
     [389405] = { name = "Homebound Speed", q1 = 199948, q2 = 199990, q3 = 200032 },
     [389404] = { name = "Regenerative Leech", q1 = 199949, q2 = 199991, q3 = 200033 },
@@ -20,13 +87,13 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     [389398] = { name = "Writ of Leech", q1 = 199951, q2 = 199993, q3 = 200035 },
     [389400] = { name = "Writ of Speed", q1 = 199952, q2 = 199994, q3 = 200036 },
 
-    -- Chest
+    -- DF Chest
     [389416] = { name = "Accelerated Agility", q1 = 199943, q2 = 199985, q3 = 200027 },
     [389417] = { name = "Reserve of Intellect", q1 = 199944, q2 = 199986, q3 = 200028 },
     [389419] = { name = "Sustained Strength", q1 = 199945, q2 = 199987, q3 = 200029 },
     [389410] = { name = "Waking Stats", q1 = 199946, q2 = 199988, q3 = 200030 },
 
-    -- Bracer
+    -- DF Bracer
     [389301] = { name = "Devotion of Avoidance", q1 = 199937, q2 = 199979, q3 = 200021 },
     [389303] = { name = "Devotion of Leech", q1 = 199938, q2 = 199980, q3 = 200022 },
     [389304] = { name = "Devotion of Speed", q1 = 199939, q2 = 199981, q3 = 200023 },
@@ -34,12 +101,12 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     [389298] = { name = "Writ of Leech", q1 = 199941, q2 = 199983, q3 = 200025 },
     [389300] = { name = "Writ of Speed", q1 = 199942, q2 = 199984, q3 = 200026 },
 
-    -- Boot
+    -- DF Boot
     [389479] = { name = "Plainsrunner's Breeze", q1 = 199934, q2 = 199976, q3 = 200018 },
     [389480] = { name = "Rider's Reassurance", q1 = 199935, q2 = 199977, q3 = 200019 },
     [389484] = { name = "Watcher's Loam", q1 = 199936, q2 = 199978, q3 = 200020 },
 
-    -- Weapon
+    -- DF Weapon
     [389547] = { name = "Burning Devotion", q1 = 199966, q2 = 200008, q3 = 200050 },
     [389549] = { name = "Earthen Devotion", q1 = 199968, q2 = 200010, q3 = 200052 },
     [389551] = { name = "Frozen Devotion", q1 = 199972, q2 = 200014, q3 = 200056 },
@@ -51,14 +118,14 @@ CraftSim.ENCHANT_RECIPE_DATA = {
     [389542] = { name = "Sophic Writ", q1 = 199971, q2 = 200013, q3 = 200055 },
     [389546] = { name = "Wafting Writ", q1 = 199975, q2 = 200017, q3 = 200059 },
 
-    -- Profession Tools
+    -- DF Profession Tools
     [389508] = { name = "Draconic Deftness", q1 = 199961, q2 = 200003, q3 = 200045 },
     [389513] = { name = "Draconic Finesse", q1 = 199962, q2 = 200004, q3 = 200046 },
     [389519] = { name = "Draconic ???", q1 = 199963, q2 = 200005, q3 = 200047 },
     [389525] = { name = "Draconic Perception", q1 = 199964, q2 = 200006, q3 = 200048 },
     [389530] = { name = "Draconic Resourcefulness", q1 = 199965, q2 = 200007, q3 = 200049 },
 
-    -- Cosmetic
+    -- DF Cosmetic
     [391811] = { name = "Illusory Adornment: Earth", q1 = 201315, q2 = 201314, q3 = 201313 },
     [391809] = { name = "Illusory Adornment: Frost", q1 = 201312, q2 = 201311, q3 = 201310 },
     [390951] = { name = "Illusory Adornment: Fire", q1 = 200614, q2 = 200615, q3 = 200616 },
