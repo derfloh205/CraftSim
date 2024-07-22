@@ -29,6 +29,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     local crafterUID = self:GetCrafterUID()
 
     self.concentrating = false
+    self.concentrationCost = 0
 
     -- important for recipedata of alts to check if data was cached (and for any recipe data creation b4 tradeskill is ready)
     self.specializationDataCached = false
@@ -437,10 +438,12 @@ end
 
 -- Update the professionStats property of the RecipeData according to set reagents and gearSet (and any stat modifiers)
 function CraftSim.RecipeData:UpdateProfessionStats()
-    local skillRequiredReagents = self.reagentData:GetSkillFromRequiredReagents()
+    local skillRequiredReagents, concentrationCost = self.reagentData:GetSkillAndConcentrationCostFromRequiredReagents()
     local optionalStats = self.reagentData:GetProfessionStatsByOptionals()
     local itemStats = self.professionGearSet.professionStats
     local buffStats = self.buffData.professionStats
+
+    self.concentrationCost = concentrationCost
 
     self.professionStats:Clear()
 
