@@ -245,7 +245,6 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CRAFTER_HEADER] = "Fabricant",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER] = "Recette",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER] = "Apprise",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_GUARANTEED_HEADER] = "Garantie",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER] = "Profit moyen",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TOP_GEAR_HEADER] = "Meilleur équipement",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Sac/HV",

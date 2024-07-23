@@ -119,8 +119,8 @@ function CraftSim.DB.OPTIONS:Migrate()
                 .recipeScanImportAllProfessions
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_OPTIMIZE_SUBRECIPES] = CraftSimOptions
                 .recipeScanOptimizeSubRecipes
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_SORT_BY_PROFIT_MARGIN] = CraftSimOptions
-                .recipeScanSortByProfitMargin
+            CraftSimDB.optionsDB.data["RECIPESCAN_SORT_BY_PROFIT_MARGIN"] = CraftSimOptions
+                ["recipeScanSortByProfitMargin"]
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_USE_INSIGHT] = CraftSimOptions
                 .recipeScanUseInsight
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.RECIPESCAN_INCLUDED_PROFESSIONS] = CraftSimOptions
@@ -214,6 +214,13 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data["CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS"] = nil
 
         CraftSimDB.optionsDB.version = 3
+    end
+
+    if CraftSimDB.optionsDB.version == 3 then
+        CraftSimDB.optionsDB.data["RECIPESCAN_SORT_MODE"] = "PROFIT"
+        CraftSimDB.optionsDB.data["RECIPESCAN_SORT_BY_PROFIT_MARGIN"] = nil
+
+        CraftSimDB.optionsDB.version = 4
     end
 end
 

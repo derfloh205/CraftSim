@@ -349,18 +349,26 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
 
     local columnOptions = {
         {
+            --label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER),
+            width = 15,
+            justifyOptions = { type = "H", align = "CENTER" }
+        },
+        {
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER),
-            width = 300,
+            width = 160,
         },
         {
-            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER),
+            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_RESULT_HEADER),
+            width = 90,
+            justifyOptions = { type = "H", align = "CENTER" }
+        },
+        {
+            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_VALUE_HEADER),
+            width = 100,
+        },
+        {
+            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_COST_HEADER),
             width = 60,
-            justifyOptions = { type = "H", align = "CENTER" }
-        },
-        {
-            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_GUARANTEED_HEADER),
-            width = 80,
-            justifyOptions = { type = "H", align = "CENTER" }
         },
         {
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER),
@@ -378,7 +386,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
         }
     }
 
-    ---@type GGUI.FrameList | GGUI.Widget
+    ---@type GGUI.FrameList
     content.resultList = GGUI.FrameList({
         parent = content,
         anchorParent = content.scanButton.frame,
@@ -400,12 +408,14 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
             end
         },
         rowConstructor = function(columns)
-            local recipeColumn = columns[1]
-            local learnedColumn = columns[2]
+            local learnedColumn = columns[1]
+            local recipeColumn = columns[2]
             local expectedResultColumn = columns[3]
-            local averageProfitColumn = columns[4]
-            local topGearColumn = columns[5]
-            local countColumn = columns[6]
+            local concentrationValueColumn = columns[4]
+            local concentrationCostColumn = columns[5]
+            local averageProfitColumn = columns[6]
+            local topGearColumn = columns[7]
+            local countColumn = columns[8]
 
             recipeColumn.text = GGUI.Text({
                 parent = recipeColumn,
@@ -418,21 +428,33 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
                 wrap = true,
             })
 
+            local learnedIconSize = 0.08
+            local learnedIcon = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, learnedIconSize)
+            local notLearnedIcon = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, learnedIconSize)
+
             learnedColumn.text = GGUI.Text({
-                parent = learnedColumn, anchorParent = learnedColumn, justifyOptions = { type = "H", align = "CENTER" },
+                parent = learnedColumn,
+                anchorParent = learnedColumn,
+                justifyOptions = { type = "H", align = "CENTER" },
+                offsetY = -1,
+                tooltipOptions = {
+                    owner = learnedColumn,
+                    anchor = "ANCHOR_CURSOR_RIGHT",
+                    text = notLearnedIcon .. " .. not learned\n" .. learnedIcon .. " .. learned"
+                },
             })
 
             function learnedColumn:SetLearned(learned)
                 if learned then
-                    learnedColumn.text:SetText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.TRUE, 0.125))
+                    learnedColumn.text:SetText(learnedIcon)
                 else
-                    learnedColumn.text:SetText(CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.FALSE, 0.125))
+                    learnedColumn.text:SetText(notLearnedIcon)
                 end
             end
 
             local iconSize = 23
 
-            ---@type GGUI.Icon | GGUI.Widget
+            ---@type GGUI.Icon
             expectedResultColumn.itemIcon = GGUI.Icon({
                 parent = expectedResultColumn,
                 anchorParent = expectedResultColumn,
@@ -442,7 +464,23 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
                 qualityIconScale = 1.4,
             })
 
-            ---@type GGUI.Text | GGUI.Widget
+            ---@type GGUI.Text
+            concentrationValueColumn.text = GGUI.Text({
+                parent = concentrationValueColumn,
+                anchorParent = concentrationValueColumn,
+                anchorA = "LEFT",
+                anchorB = "LEFT"
+            })
+
+            ---@type GGUI.Text
+            concentrationCostColumn.text = GGUI.Text({
+                parent = concentrationCostColumn,
+                anchorParent = concentrationCostColumn,
+                anchorA = "LEFT",
+                anchorB = "LEFT"
+            })
+
+            ---@type GGUI.Text
             averageProfitColumn.text = GGUI.Text({
                 parent = averageProfitColumn, anchorParent = averageProfitColumn, anchorA = "LEFT", anchorB = "LEFT"
             })
@@ -602,10 +640,38 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitScanOptionsTab(scanOptionsTab)
         end
     })
 
+    local initialSortModeValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_MODE")
+    local initialSortModeLabel = L(CraftSim.RECIPE_SCAN.SORT_MODES_TRANSLATION_MAP[initialSortModeValue])
+
+    content.sortMode = GGUI.Dropdown({
+        parent = content,
+        anchorParent = content.scanMode.frame,
+        anchorA = "TOP",
+        anchorB = "BOTTOM",
+        width = 170,
+        offsetY = -10,
+        initialValue = initialSortModeValue,
+        initialLabel = initialSortModeLabel,
+        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE),
+        initialData = GUTIL:Sort(GUTIL:Map(CraftSim.RECIPE_SCAN.SORT_MODES,
+            function(sortMode)
+                local localizationID = CraftSim.RECIPE_SCAN.SORT_MODES_TRANSLATION_MAP[sortMode]
+                return {
+                    label = L(localizationID),
+                    value = sortMode
+                }
+            end), function(a, b) -- make the resulting dropdown data table sorted by label alphabetically
+            return a.label > b.label
+        end),
+        clickCallback = function(_, _, value)
+            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SORT_MODE", value)
+        end
+    })
+
     local checkBoxSpacingY = 0
 
     content.includeSoulboundCB = GGUI.Checkbox {
-        parent = content, anchorParent = content.scanMode.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY, offsetX = -80,
+        parent = content, anchorParent = content.sortMode.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY, offsetX = -80,
         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND),
         tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP),
         initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_INCLUDE_SOULBOUND"),
@@ -655,18 +721,8 @@ function CraftSim.RECIPE_SCAN.FRAMES:InitScanOptionsTab(scanOptionsTab)
         end
     }
 
-    content.sortByProfitMarginCB = GGUI.Checkbox {
-        parent = content, anchorParent = content.optimizeProfessionToolsCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN),
-        tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN_TOOLTIP),
-        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SORT_BY_PROFIT_MARGIN"),
-        clickCallback = function(_, checked)
-            CraftSim.DB.OPTIONS:Save("RECIPESCAN_SORT_BY_PROFIT_MARGIN", checked)
-        end
-    }
-
     content.useInsightCB = GGUI.Checkbox {
-        parent = content, anchorParent = content.sortByProfitMarginCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
+        parent = content, anchorParent = content.optimizeProfessionToolsCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX),
         tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP),
         initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_USE_INSIGHT"),
@@ -733,12 +789,14 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
         function(row)
             local columns = row.columns
 
-            local recipeColumn = columns[1]
-            local learnedColumn = columns[2]
+            local learnedColumn = columns[1]
+            local recipeColumn = columns[2]
             local expectedResultColumn = columns[3]
-            local averageProfitColumn = columns[4]
-            local topGearColumn = columns[5]
-            local countColumn = columns[6]
+            local concentrationValueColumn = columns[4]
+            local concentrationCostColumn = columns[5]
+            local averageProfitColumn = columns[6]
+            local topGearColumn = columns[7]
+            local countColumn = columns[8]
 
             row.recipeData = recipeData
 
@@ -768,6 +826,11 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
             averageProfitColumn.text:SetText(GUTIL:FormatMoney(averageProfit, true, relativeTo))
             row.averageProfit = averageProfit
             row.relativeProfit = GUTIL:GetPercentRelativeTo(averageProfit, recipeData.priceData.craftingCosts)
+            row.concentrationWeight = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData, averageProfit)
+            recipeData.resultData:Update() -- switch back
+            row.concentrationCost = recipeData.concentrationCost
+            concentrationCostColumn.text:SetText(row.concentrationCost)
+            concentrationValueColumn.text:SetText(GUTIL:FormatMoney(row.concentrationWeight, true))
 
             if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS") then
                 if recipeData.professionGearSet:IsEquipped() then
