@@ -232,8 +232,6 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_WARNING] = "如果你的背包中有很多工具\n掃描期間可能會降低遊戲效能",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER] = "配方",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER] = "已學會",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_GUARANTEED_HEADER] = "保證",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_HIGHEST_RESULT_HEADER] = "最高結果",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER] = "平均利潤",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TOP_GEAR_HEADER] = "最佳裝備",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Inv/AH",

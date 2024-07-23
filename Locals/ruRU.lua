@@ -245,8 +245,6 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CRAFTER_HEADER] = "Ремесленник",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER] = "Рецепт",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER] = "Изучено",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_GUARANTEED_HEADER] = "Гарантировано",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_HIGHEST_RESULT_HEADER] = "Наивысший результат",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER] = "Средняя прибыль",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TOP_GEAR_HEADER] = "Лучшая экипировка",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Инв/Аук",
