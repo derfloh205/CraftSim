@@ -350,7 +350,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
     local columnOptions = {
         {
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER),
-            width = 190,
+            width = 300,
         },
         {
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER),
@@ -360,11 +360,6 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
         {
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_GUARANTEED_HEADER),
             width = 80,
-            justifyOptions = { type = "H", align = "CENTER" }
-        },
-        {
-            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_HIGHEST_RESULT_HEADER), -- icon + upgrade chance
-            width = 110,
             justifyOptions = { type = "H", align = "CENTER" }
         },
         {
@@ -408,10 +403,9 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
             local recipeColumn = columns[1]
             local learnedColumn = columns[2]
             local expectedResultColumn = columns[3]
-            local highestResultColumn = columns[4]
-            local averageProfitColumn = columns[5]
-            local topGearColumn = columns[6]
-            local countColumn = columns[7]
+            local averageProfitColumn = columns[4]
+            local topGearColumn = columns[5]
+            local countColumn = columns[6]
 
             recipeColumn.text = GGUI.Text({
                 parent = recipeColumn,
@@ -446,34 +440,6 @@ function CraftSim.RECIPE_SCAN.FRAMES:CreateProfessionTabContent(row, content)
                 sizeY =
                     iconSize,
                 qualityIconScale = 1.4,
-            })
-
-            ---@type GGUI.Icon | GGUI.Widget
-            highestResultColumn.itemIcon = GGUI.Icon({
-                parent = highestResultColumn,
-                anchorParent = highestResultColumn,
-                sizeX = iconSize,
-                sizeY = iconSize,
-                qualityIconScale = 1.4,
-                offsetX = -25
-            })
-
-            ---@type GGUI.Text | GGUI.Widget
-            highestResultColumn.noneText = GGUI.Text({
-                parent = highestResultColumn,
-                anchorParent = highestResultColumn,
-                text = GUTIL:ColorizeText("-",
-                    GUTIL.COLORS.GREY)
-            })
-
-            ---@type GGUI.Text | GGUI.Widget
-            highestResultColumn.chance = GGUI.Text({
-                parent = highestResultColumn,
-                anchorParent = highestResultColumn.itemIcon.frame,
-                anchorA = "LEFT",
-                anchorB =
-                "RIGHT",
-                offsetX = 10,
             })
 
             ---@type GGUI.Text | GGUI.Widget
@@ -770,10 +736,9 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
             local recipeColumn = columns[1]
             local learnedColumn = columns[2]
             local expectedResultColumn = columns[3]
-            local highestResultColumn = columns[4]
-            local averageProfitColumn = columns[5]
-            local topGearColumn = columns[6]
-            local countColumn = columns[7]
+            local averageProfitColumn = columns[4]
+            local topGearColumn = columns[5]
+            local countColumn = columns[6]
 
             row.recipeData = recipeData
 
@@ -795,17 +760,6 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
 
             expectedResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItem)
 
-            if recipeData.resultData.canUpgradeQuality then
-                highestResultColumn.itemIcon:Show()
-                highestResultColumn.chance:Show()
-                highestResultColumn.noneText:Hide()
-                highestResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItemUpgrade)
-                highestResultColumn.chance:SetText(GUTIL:Round(recipeData.resultData.chanceUpgrade * 100, 1) .. "%")
-            else
-                highestResultColumn.noneText:Show()
-                highestResultColumn.itemIcon:Hide()
-                highestResultColumn.chance:Hide()
-            end
             local averageProfit = recipeData:GetAverageProfit()
             local relativeTo = nil
             if showProfit then

@@ -287,7 +287,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER] = "Recipe",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER] = "Learned",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_GUARANTEED_HEADER] = "Guaranteed",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_HIGHEST_RESULT_HEADER] = "Highest Result",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER] = "Average Profit",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TOP_GEAR_HEADER] = "Top Gear",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Inv/AH",
