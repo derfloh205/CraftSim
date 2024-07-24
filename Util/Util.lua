@@ -1,15 +1,9 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-local CraftSimAddonName = select(1, ...)
 
 CraftSim.UTIL = {}
 
 CraftSim.UTIL.frameLevel = 100
-
-local inspirationFactor = 0.001
-local multicraftFactor = 0.0009
-local resourcefulnessFactor = 0.00111
-local craftingspeedFactor = 0.002
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.UTIL)
 
@@ -17,107 +11,6 @@ function CraftSim.UTIL:NextFrameLevel()
     local frameLevel = CraftSim.UTIL.frameLevel
     CraftSim.UTIL.frameLevel = CraftSim.UTIL.frameLevel + 50
     return frameLevel
-end
-
-function CraftSim.UTIL:GetInspirationStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / inspirationFactor
-end
-
-function CraftSim.UTIL:GetCraftingSpeedStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / craftingspeedFactor
-end
-
-function CraftSim.UTIL:GetMulticraftStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / multicraftFactor
-end
-
-function CraftSim.UTIL:GetResourcefulnessStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / resourcefulnessFactor
-end
-
-function CraftSim.UTIL:GetInspirationPercentByStat(stat)
-    return stat * inspirationFactor
-end
-
-function CraftSim.UTIL:GetCraftingSpeedPercentByStat(stat)
-    return stat * craftingspeedFactor
-end
-
-function CraftSim.UTIL:GetMulticraftPercentByStat(stat)
-    return stat * multicraftFactor
-end
-
-function CraftSim.UTIL:GetResourcefulnessPercentByStat(stat)
-    return stat * resourcefulnessFactor
-end
-
-function CraftSim.UTIL:IsMyVersionHigher(versionB)
-    local versionA = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version") or ""
-    local subVersionsA = strsplittable(".", versionA)
-    local subVersionsB = strsplittable(".", versionB)
-
-    -- TODO: refactor recursively to get rid of this abomination
-    if subVersionsA[1] and subVersionsB[1] then
-        if subVersionsA[1] < subVersionsB[1] then
-            return false
-        elseif subVersionsA[1] > subVersionsB[1] then
-            return true
-        end
-
-        if subVersionsA[2] and subVersionsB[2] then
-            if subVersionsA[2] < subVersionsB[2] then
-                return false
-            elseif subVersionsA[2] > subVersionsB[2] then
-                return true
-            end
-
-            if subVersionsA[3] and subVersionsB[3] then
-                if subVersionsA[3] < subVersionsB[3] then
-                    return false
-                elseif subVersionsA[3] > subVersionsB[3] then
-                    return true
-                end
-
-                if subVersionsA[4] and subVersionsB[4] then
-                    if subVersionsA[4] < subVersionsB[4] then
-                        return false
-                    elseif subVersionsA[4] > subVersionsB[4] then
-                        return true
-                    end
-                else
-                    if subVersionsB[4] then
-                        return false
-                    end
-                end
-            else
-                if subVersionsB[3] then
-                    return false
-                end
-            end
-        else
-            if subVersionsB[2] then
-                return false
-            end
-        end
-    else
-        if subVersionsB[1] then
-            return false
-        end
-    end
-
-    return true
 end
 
 -- thx ketho forum guy
@@ -193,13 +86,6 @@ function CraftSim.UTIL:KethoEditBox_Show(text)
     KethoEditBox:Show()
 end
 
-function CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
-    local linkLevel, specializationID = string.match(itemString, "item:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d*:(%d+):(%d+)")
-    local bonusIDString = linkLevel .. ":" .. specializationID
-
-    return string.gsub(itemString, bonusIDString, "")
-end
-
 --> built into GGUI
 function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     local inputNumber = inputBox:GetNumber()
@@ -224,31 +110,6 @@ function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     return inputNumber
 end
 
-function CraftSim.UTIL:WrapText(text, width)
-    local char_pattern = ".[\128-\191]*" -- for UTF-8 texts
-    -- local char_pattern = "."           -- for 1-byte encodings
-
-    local function wrap(text, width)
-        local tail, lines = text .. " ", {}
-        while tail do
-            lines[#lines + 1], tail = tail
-                :gsub("^%s+", "")
-                :gsub(char_pattern, "\0%0\0", width)
-                :gsub("%z%z", "")
-                :gsub("(%S)%z(%s)", "%1%2\0")
-                :gsub("^(%z[^\r\n%z]*)%f[%s](%Z*)%z(.*)$", "%1\0%2%3")
-                :match "^%z(%Z+)%z(.*)$"
-        end
-        return table.concat(lines, "\n")
-    end
-
-    return wrap(text, width)
-end
-
-function CraftSim.UTIL:IsSpecImplemented(professionID)
-    return tContains(CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP(), professionID)
-end
-
 function CraftSim.UTIL:GetExportModeByVisibility()
     return (ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER) or
         CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER
@@ -256,19 +117,6 @@ end
 
 function CraftSim.UTIL:IsWorkOrder()
     return ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible()
-end
-
-function CraftSim.UTIL:FormatFactorToPercent(factor)
-    local percentText = CraftSim.GUTIL:Round((factor % 1) * 100)
-    return "+" .. percentText .. "%"
-end
-
-function CraftSim.UTIL:GreyOutByCondition(text, condition)
-    if condition then
-        CraftSim.GUTIL:ColorizeText(text, CraftSim.GUTIL.COLORS.GREY)
-    else
-        return text
-    end
 end
 
 -- from stackoverflow:

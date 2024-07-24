@@ -44,22 +44,6 @@ function CraftSim.CRAFT_BUFFS:GetRecipeScanBuffsByProfessionID(profession)
 end
 
 ---@param recipeData CraftSim.RecipeData?
----@return CraftSim.Buff incense
-function CraftSim.CRAFT_BUFFS:CreateIncenseBuff(recipeData)
-    local incenseStats = CraftSim.ProfessionStats()
-    incenseStats.inspiration:addValue(20)
-    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.INSPIRATION_INCENSE, incenseStats)
-end
-
----@param recipeData CraftSim.RecipeData?
----@return CraftSim.Buff alchemicallyInspired
-function CraftSim.CRAFT_BUFFS:CreateAlchemicallyInspiredBuff(recipeData)
-    local alchemicallyInspiredStats = CraftSim.ProfessionStats()
-    alchemicallyInspiredStats.inspiration:addValue(20)
-    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.ALCHEMICALLY_INSPIRED, alchemicallyInspiredStats)
-end
-
----@param recipeData CraftSim.RecipeData?
 ---@return CraftSim.Buff chefsHat
 function CraftSim.CRAFT_BUFFS:CreateChefsHatBuff(recipeData)
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.CHEFS_HAT, CraftSim.ProfessionStats(), nil, nil, nil,

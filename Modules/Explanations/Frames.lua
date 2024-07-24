@@ -38,16 +38,6 @@ function CraftSim.EXPLANATIONS.FRAMES:Init()
                 label = L(CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB),
             },
         }
-        frame.content.hsvExplanationTab = GGUI.BlizzardTab {
-            parent = frame.content, anchorParent = frame.content,
-            sizeX = 900, sizeY = 500,
-            top = true,
-            buttonOptions = {
-                anchorParent = frame.content.profitExplanationTab.button,
-                anchorA = "LEFT", anchorB = "RIGHT",
-                label = L(CraftSim.CONST.TEXT.EXPLANATIONS_HSV_TAB),
-            },
-        }
 
         frame.content.profitExplanationTab.content.description = GGUI.Text {
             parent = frame.content.profitExplanationTab.content, anchorParent = frame.content.profitExplanationTab.content,
@@ -56,13 +46,7 @@ function CraftSim.EXPLANATIONS.FRAMES:Init()
         }
 
 
-        frame.content.hsvExplanationTab.content.description = GGUI.Text {
-            parent = frame.content.hsvExplanationTab.content, anchorParent = frame.content.hsvExplanationTab.content,
-            offsetY = -20, justifyOptions = { type = "H", align = "LEFT" },
-            text = L(CraftSim.CONST.TEXT.EXPLANATIONS_HSV_EXPLANATION)
-        }
-
-        GGUI.BlizzardTabSystem { frame.content.profitExplanationTab, frame.content.hsvExplanationTab }
+        GGUI.BlizzardTabSystem { frame.content.profitExplanationTab }
     end
 
     createContent(CraftSim.EXPLANATIONS.frame)

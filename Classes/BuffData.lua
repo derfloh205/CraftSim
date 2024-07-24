@@ -25,15 +25,6 @@ end
 
 function CraftSim.BuffData:CreateBuffsByRecipeData()
     -- by professionID and professionStats
-    if self.recipeData.supportsInspiration then
-        --- General Buffs
-        table.insert(self.buffs, CraftSim.CRAFT_BUFFS:CreateIncenseBuff(self.recipeData))
-
-        --- Alchemy
-        if debug or self.recipeData.professionData.professionInfo.profession == Enum.Profession.Alchemy then
-            table.insert(self.buffs, CraftSim.CRAFT_BUFFS:CreateAlchemicallyInspiredBuff(self.recipeData))
-        end
-    end
 
     if self.recipeData.supportsCraftingspeed then
         --- General

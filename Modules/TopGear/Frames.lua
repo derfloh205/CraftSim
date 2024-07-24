@@ -148,9 +148,6 @@ function CraftSim.TOPGEAR.FRAMES:Init()
         frame.content.statDiff:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY - 50)
 
         local statTxtSpacingY = -15
-        frame.content.statDiff.inspiration = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-        frame.content.statDiff.inspiration:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY * 1)
-        frame.content.statDiff.inspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_LABEL))
 
         frame.content.statDiff.multicraft = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         frame.content.statDiff.multicraft:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY * 2)
@@ -213,7 +210,6 @@ function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData, isClear, export
     CraftSim.FRAME:ToggleFrame(topGearFrame.content.simulateButton, isClear)
     CraftSim.FRAME:ToggleFrame(topGearFrame.content.equipButton, not isClear)
 
-    topGearFrame.content.statDiff.inspiration:SetText("")
     topGearFrame.content.statDiff.multicraft:SetText("")
     topGearFrame.content.statDiff.resourcefulness:SetText("")
     topGearFrame.content.statDiff.craftingspeed:SetText("")
@@ -287,10 +283,6 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, expo
         topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
                 .TOP_GEAR_SIMULATE_NEW_RESOURCEFULNESS) ..
             CraftSim.GUTIL:Round(topResult.relativeStats.resourcefulness:GetPercent(), 2) .. "%")
-    elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.INSPIRATION) then
-        topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-                .TOP_GEAR_SIMULATE_NEW_INSPIRATION) ..
-            CraftSim.GUTIL:Round(topResult.relativeStats.inspiration:GetPercent(), 2) .. "%")
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.SKILL) then
         topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_SKILL) ..
             topResult.relativeStats.skill.value)
@@ -301,21 +293,6 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, expo
     topGearFrame.content.equipButton:Show()
     topGearFrame.content.simulateButton:Hide()
 
-    local inspirationBonusSkillText = ""
-    if topResult.relativeStats.inspiration.extraFactor ~= 0 then
-        local prefix = "+"
-        if topResult.relativeStats.inspiration.extraFactor <= 0 then
-            prefix = ""
-        end
-        inspirationBonusSkillText = " (" ..
-            prefix ..
-            CraftSim.GUTIL:Round(topResult.relativeStats.inspiration.extraFactor * 100, 0) ..
-            " % " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) .. ")"
-    end
-
-    topGearFrame.content.statDiff.inspiration:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.INSPIRATION_LABEL) ..
-        CraftSim.FRAME:FormatStatDiffpercentText(topResult.relativeStats.inspiration:GetPercent(), 2, "%") ..
-        inspirationBonusSkillText)
     topGearFrame.content.statDiff.multicraft:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MULTICRAFT_LABEL) ..
         CraftSim.FRAME:FormatStatDiffpercentText(topResult.relativeStats.multicraft:GetPercent(), 2, "%"))
     topGearFrame.content.statDiff.resourcefulness:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT

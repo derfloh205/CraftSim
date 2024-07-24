@@ -160,14 +160,6 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     recipeData.professionStatModifiers.skill:addValue(skillMod)
 
     -- update other stats
-    if recipeData.supportsInspiration then
-        local inspirationMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.inspirationMod, true)
-        local inspirationSkillMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.inspirationSkillMod, true)
-
-        recipeData.professionStatModifiers.inspiration:addValue(inspirationMod)
-        recipeData.professionStatModifiers.inspiration:addExtraValueAfterFactor(inspirationSkillMod)
-    end
-
     if recipeData.supportsMulticraft then
         local multicraftMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.multicraftMod, true)
         recipeData.professionStatModifiers.multicraft:addValue(multicraftMod)

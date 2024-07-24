@@ -5,12 +5,12 @@ local CraftSim = select(2, ...)
 CraftSim.Statweights = CraftSim.CraftSimObject:extend()
 
 ---@param averageProfit number
----@param inspirationWeight number
 ---@param multicraftWeight number
 ---@param resourcefulnessWeight number
-function CraftSim.Statweights:new(averageProfit, inspirationWeight, multicraftWeight, resourcefulnessWeight)
+---@param concentrationWeight number
+function CraftSim.Statweights:new(averageProfit, multicraftWeight, resourcefulnessWeight, concentrationWeight)
     self.averageProfit = averageProfit
-    self.inspirationWeight = inspirationWeight
     self.multicraftWeight = multicraftWeight
     self.resourcefulnessWeight = resourcefulnessWeight
+    self.concentrationWeight = concentrationWeight
 end

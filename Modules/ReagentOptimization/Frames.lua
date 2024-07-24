@@ -233,7 +233,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, o
             materialFrame.content.allocateButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_ASSIGN))
             materialFrame.content.allocateButton:SetScript("OnClick", function(self)
                 -- uncheck best quality box if checked
-                local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckBox
+                local bestQBox = ProfessionsFrame.CraftingPage.SchematicForm.AllocateBestQualityCheckbox
                 if bestQBox:GetChecked() then
                     bestQBox:Click()
                 end

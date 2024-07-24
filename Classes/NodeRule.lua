@@ -9,7 +9,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 CraftSim.NodeRule = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData?
----@param nodeRuleData table
+---@param nodeRuleData CraftSim.SPECIALIZATION_DATA.RULE_DATA
 ---@param nodeData CraftSim.NodeData
 function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.affectsRecipe = false
@@ -22,27 +22,28 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.threshold = nodeRuleData.threshold or -42 -- dont ask why 42
 
     ---@type CraftSim.IDMapping
-    self.idMapping = CraftSim.IDMapping(recipeData, nodeRuleData.idMapping, nodeRuleData.exceptionRecipeIDs)
+    self.idMapping = CraftSim.IDMapping(recipeData, nodeRuleData.idMapping, nodeRuleData.exceptionRecipeIDs,
+        nodeRuleData.affectedReagentIDs)
 
     self.professionStats.skill.value = nodeRuleData.skill or 0
-    self.professionStats.inspiration.value = nodeRuleData.inspiration or 0
     self.professionStats.multicraft.value = nodeRuleData.multicraft or 0
     self.professionStats.resourcefulness.value = nodeRuleData.resourcefulness or 0
+    self.professionStats.ingenuity.value = nodeRuleData.ingenuity or 0
     self.professionStats.craftingspeed.value = nodeRuleData.craftingspeed or 0
 
-    self.professionStats.inspiration.extraFactor = nodeRuleData.inspirationBonusSkillFactor or 0
     self.professionStats.multicraft.extraFactor = nodeRuleData.multicraftExtraItemsFactor or 0
     self.professionStats.resourcefulness.extraFactor = nodeRuleData.resourcefulnessExtraItemsFactor or 0
+    self.professionStats.ingenuity.extraFactor = nodeRuleData.ingenuityExtraConcentrationFactor or 0
 
-    self.equalsSkill = nodeRuleData.equalsSkill or false
-    self.equalsMulticraft = nodeRuleData.equalsMulticraft or false
-    self.equalsInspiration = nodeRuleData.equalsInspiration or false
-    self.equalsInspirationBonusSkillFactor = nodeRuleData.equalsInspirationBonusSkillFactor or false
-    self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or false
-    self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or false
-    self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or false
-    self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or false
-    self.equalsPotionExperimentationChanceFactor = nodeRuleData.equalsPotionExperimentationChanceFactor or false
+    self.equalsSkill = nodeRuleData.equalsSkill or 0
+    self.equalsMulticraft = nodeRuleData.equalsMulticraft or 0
+    self.equalsResourcefulness = nodeRuleData.equalsResourcefulness or 0
+    self.equalsIngenuity = nodeRuleData.equalsIngenuity or 0
+    self.equalsCraftingspeed = nodeRuleData.equalsCraftingspeed or 0
+    self.equalsResourcefulnessExtraItemsFactor = nodeRuleData.equalsResourcefulnessExtraItemsFactor or 0
+    self.equalsIngenuityExtraConcentrationFactor = nodeRuleData.equalsIngenuityExtraConcentrationFactor or 0
+    self.equalsPhialExperimentationChanceFactor = nodeRuleData.equalsPhialExperimentationChanceFactor or 0
+    self.equalsPotionExperimentationChanceFactor = nodeRuleData.equalsPotionExperimentationChanceFactor or 0
 end
 
 function CraftSim.NodeRule:UpdateAffectance()
@@ -57,50 +58,43 @@ function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
         return
     end
 
-    -- DEBUG
-    if self.nodeData.nodeName == "Curing and Tanning" then
-        print("updating curing and tanning node rule stats with rank: " .. tostring(rank))
+    if self.equalsSkill > 0 then
+        self.professionStats.skill.value = math.max(0, rank * self.equalsSkill)
     end
 
-    if self.equalsSkill then
-        self.professionStats.skill.value = math.max(0, rank)
+    if self.equalsMulticraft > 0 then
+        self.professionStats.multicraft.value = math.max(0, rank * self.equalsMulticraft)
     end
 
-    if self.equalsMulticraft then
-        self.professionStats.multicraft.value = math.max(0, rank)
+    if self.equalsResourcefulness > 0 then
+        self.professionStats.resourcefulness.value = math.max(0, rank * self.equalsResourcefulness)
     end
 
-    if self.equalsInspiration then
-        self.professionStats.inspiration.value = math.max(0, rank)
+    if self.equalsIngenuity > 0 then
+        self.professionStats.ingenuity.value = math.max(0, rank * self.equalsIngenuity)
     end
 
-    if self.equalsInspirationBonusSkillFactor then
-        self.professionStats.inspiration.extraFactor = math.max(0, rank * 0.01)
+    if self.equalsCraftingspeed > 0 then
+        self.professionStats.craftingspeed.value = math.max(0, rank * self.equalsCraftingspeed)
     end
 
-    if self.equalsResourcefulness then
-        self.professionStats.resourcefulness.value = math.max(0, rank)
+    if self.equalsResourcefulnessExtraItemsFactor > 0 then
+        self.professionStats.resourcefulness.extraFactor = math.max(0, rank * self.equalsResourcefulnessExtraItemsFactor)
     end
 
-    if self.equalsCraftingspeed then
-        self.professionStats.craftingspeed.value = math.max(0, rank)
+    if self.equalsIngenuityExtraConcentrationFactor > 0 then
+        self.professionStats.ingenuity.extraFactor = math.max(0,
+            rank * self.equalsIngenuityExtraConcentrationFactor)
     end
 
-    if self.equalsResourcefulnessExtraItemsFactor then
-        self.professionStats.resourcefulness.extraFactor = math.max(0, rank * 0.01)
+    if self.equalsPhialExperimentationChanceFactor > 0 then
+        self.professionStats.phialExperimentationFactor.extraFactor = math.max(0,
+            rank * self.equalsPhialExperimentationChanceFactor)
     end
 
-    if self.equalsPhialExperimentationChanceFactor then
-        self.professionStats.phialExperimentationFactor.extraFactor = math.max(0, rank * 0.01)
-    end
-
-    if self.equalsPotionExperimentationChanceFactor then
-        self.professionStats.potionExperimentationFactor.extraFactor = math.max(0, rank * 0.01)
-    end
-
-    if self.nodeData.nodeName == "Curing and Tanning" then
-        print("NodeRule: Rule stats after updating rule: ")
-        print(self.professionStats, true, nil, 1)
+    if self.equalsPotionExperimentationChanceFactor > 0 then
+        self.professionStats.potionExperimentationFactor.extraFactor = math.max(0,
+            rank * self.equalsPotionExperimentationChanceFactor)
     end
 end
 
@@ -111,10 +105,11 @@ function CraftSim.NodeRule:Debug()
         "threshold: " .. tostring(self.threshold),
         "equalsSkill: " .. tostring(self.equalsSkill),
         "equalsMulticraft: " .. tostring(self.equalsMulticraft),
-        "equalsInspiration: " .. tostring(self.equalsInspiration),
         "equalsResourcefulness: " .. tostring(self.equalsResourcefulness),
+        "equalsIngenuity: " .. tostring(self.equalsIngenuity),
         "equalsCraftingspeed: " .. tostring(self.equalsCraftingspeed),
         "equalsResourcefulnessExtraItemsFactor: " .. tostring(self.equalsResourcefulnessExtraItemsFactor),
+        "equalsIngenuityExtraConcentrationFactor: " .. tostring(self.equalsIngenuityExtraConcentrationFactor),
     }
     local statLines = self.professionStats:Debug()
     statLines = CraftSim.GUTIL:Map(statLines, function(line) return "-" .. line end)
@@ -131,10 +126,11 @@ function CraftSim.NodeRule:GetJSON(indent)
     jb:Add("professionStats", self.professionStats)
     jb:Add("equalsSkill", self.equalsSkill)
     jb:Add("equalsMulticraft", self.equalsMulticraft)
-    jb:Add("equalsInspiration", self.equalsInspiration)
     jb:Add("equalsResourcefulness", self.equalsResourcefulness)
+    jb:Add("equalsIngenuity", self.equalsIngenuity)
     jb:Add("equalsCraftingspeed", self.equalsCraftingspeed)
     jb:Add("equalsResourcefulnessExtraItemsFactor", self.equalsResourcefulnessExtraItemsFactor)
+    jb:Add("equalsIngenuityExtraConcentrationFactor", self.equalsIngenuityExtraConcentrationFactor)
     jb:Add("equalsPhialExperimentationChanceFactor", self.equalsPhialExperimentationChanceFactor)
     jb:Add("equalsPotionExperimentationChanceFactor", self.equalsPotionExperimentationChanceFactor, true)
     jb:End()

@@ -72,8 +72,11 @@ function CraftSim.ReagentData:GetProfessionStatsByOptionals()
         totalStats:add(stat)
     end)
 
+    -- TODO
+    local statPercentModTable = CraftSim.CONST.PERCENT_MODS[CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN]
+
     -- since ooey gooey chocolate gives us math.huge on multicraft we need to limit it to 100%
-    totalStats.multicraft.value = math.min(1 / CraftSim.CONST.PERCENT_MODS.MULTICRAFT, totalStats.multicraft.value)
+    totalStats.multicraft.value = math.min(1 / statPercentModTable.MULTICRAFT, totalStats.multicraft.value)
 
 
     return totalStats
@@ -190,13 +193,14 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
     local operationInfoWithReagents = nil
     if self.recipeData.orderData then
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
-            self.recipeData.orderData.orderID)
+            self.recipeData.orderData.orderID, self.recipeData.concentrating)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID,
-            maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID)
+            maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID, self.recipeData.concentrating)
     else
-        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
+            self.recipeData.concentrating)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, maxQualityReagentsCraftingTbl,
-            self.recipeData.allocationItemGUID)
+            self.recipeData.allocationItemGUID, self.recipeData.concentrating)
     end
 
     if baseOperationInfo and operationInfoWithReagents then
@@ -205,6 +209,10 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
 
         local maxSkill = skillWithReagents - baseSkill
 
+        if maxSkill == 0 then
+            -- division by zero not possible so just configure that reagents do not influence skill at all by returning a factor of 0
+            return 0
+        end
         local maxReagentIncreaseFactor = self.recipeData.baseProfessionStats.recipeDifficulty.value / maxSkill
 
         print("ReagentData: maxReagentIncreaseFactor: " .. tostring(maxReagentIncreaseFactor))
@@ -219,7 +227,9 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
     print("ReagentData: Could not determine max reagent skill factor: operationInfos nil")
 end
 
-function CraftSim.ReagentData:GetSkillFromRequiredReagents()
+---@return number skillWithReagents
+---@return number concentrationCosts
+function CraftSim.ReagentData:GetSkillAndConcentrationCostFromRequiredReagents()
     local requiredTbl = self:GetRequiredCraftingReagentInfoTbl()
 
     local recipeID = self.recipeData.recipeID
@@ -228,20 +238,21 @@ function CraftSim.ReagentData:GetSkillFromRequiredReagents()
     local operationInfoWithReagents = nil
     if self.recipeData.orderData then
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
-            self.recipeData.orderData.orderID)
+            self.recipeData.orderData.orderID, self.recipeData.concentrating)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, requiredTbl,
-            self.recipeData.orderData.orderID)
+            self.recipeData.orderData.orderID, self.recipeData.concentrating)
     else
-        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID)
+        baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
+            self.recipeData.concentrating)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, requiredTbl,
-            self.recipeData.allocationItemGUID)
+            self.recipeData.allocationItemGUID, self.recipeData.concentrating)
     end
 
     if baseOperationInfo and operationInfoWithReagents then
         local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
         local skillWithReagents = operationInfoWithReagents.baseSkill + operationInfoWithReagents.bonusSkill
 
-        return skillWithReagents - baseSkill
+        return skillWithReagents - baseSkill, operationInfoWithReagents.concentrationCost or 0
     end
     print("ReagentData: Could not determine required reagent skill: operationInfos nil")
     return 0
@@ -338,7 +349,8 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     local hasVellumIfneeded = true
 
     if self.recipeData.isEnchantingRecipe then
-        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST.ENCHANTING_VELLUM_ID)
+        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST
+            .ENCHANTING_VELLUM_ID)
         hasVellumIfneeded = itemCount >= multiplier
     end
 
@@ -375,7 +387,8 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
 
     local vellumMinimumFit = math.huge
     if self.recipeData.isEnchantingRecipe then
-        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST.ENCHANTING_VELLUM_ID)
+        local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, CraftSim.CONST
+            .ENCHANTING_VELLUM_ID)
         vellumMinimumFit = itemCount
         print("minimum vellum fit: " .. tostring(vellumMinimumFit))
     end
