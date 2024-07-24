@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                                 ( You are awesome! )"),
         newP("17.0.0"),
         f.P .. f.l("The War Within") .. " Update",
+        f.P .. "Behold! Many updates to come to adapt" .. f.l(" CraftSim"),
+        f.a .. "to the new profession changes!",
         f.s .. "Goodbye " .. f.bb("Inspiration") .. "!",
         f.a .. "Inspiration support replaced with concentration support",
         f.s .. "Thanks updating enchant data:",
