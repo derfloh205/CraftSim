@@ -70,7 +70,7 @@ end
 ---@param baseAverageProfit number
 ---@return number statWeight
 function CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData, baseAverageProfit)
-    if not recipeData.supportsQualities or recipeData.concentrationCost <= 0 or recipeData.concentrating then
+    if not recipeData.supportsQualities or recipeData.concentrating or recipeData.concentrationCost <= 0 then
         return 0
     end
 

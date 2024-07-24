@@ -443,7 +443,7 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     local itemStats = self.professionGearSet.professionStats
     local buffStats = self.buffData.professionStats
 
-    self.concentrationCost = concentrationCost
+    self.concentrationCost = concentrationCost or 0
 
     self.professionStats:Clear()
 
