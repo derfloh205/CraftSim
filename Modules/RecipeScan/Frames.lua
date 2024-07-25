@@ -804,7 +804,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
 
             local cooldownInfoText = ""
             local cooldownData = recipeData:GetCooldownDataForRecipeCrafter()
-            if cooldownData and cooldownData.isCooldownRecipe and not cooldownData.isDayCooldown then
+            if cooldownData and cooldownData.isCooldownRecipe then
                 local timeIcon = CreateAtlasMarkup(CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.COOLDOWN.texture, 13, 13)
                 local currentCharges = cooldownData:GetCurrentCharges()
                 cooldownInfoText = " " .. timeIcon ..

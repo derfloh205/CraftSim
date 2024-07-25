@@ -26,13 +26,13 @@ function CraftSim.SpecializationData:new(recipeData)
     ---@type number[][]
     self.numNodesPerLayer = {} -- needed for spec sim tree buildup
 
-    self.isImplemented = recipeData:IsSpecializationInfoImplemented()
     self.isGatheringProfession = CraftSim.CONST.GATHERING_PROFESSIONS
         [recipeData.professionData.professionInfo.profession]
 
     if recipeData.isOldWorldRecipe or not recipeData:IsCrafter() or self.isGatheringProfession then
         return
     end
+    self.isImplemented = recipeData:IsSpecializationInfoImplemented()
 
     local profession = recipeData.professionData.professionInfo.profession
     local expansionID = recipeData.professionData.expansionID

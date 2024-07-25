@@ -231,7 +231,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
             end
 
             if restockAmount > 0 then
-                if recipeData.cooldownData.isCooldownRecipe and not recipeData.cooldownData.isDayCooldown then
+                if recipeData.cooldownData.isCooldownRecipe then
                     local charges = recipeData.cooldownData:GetCurrentCharges()
                     if charges > 0 then
                         CraftSim.CRAFTQ.craftQueue:AddRecipe({
@@ -286,7 +286,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                     end
 
                     if restockAmount > 0 then
-                        if recipeData.cooldownData.isCooldownRecipe and not recipeData.cooldownData.isDayCooldown then
+                        if recipeData.cooldownData.isCooldownRecipe then
                             local charges = recipeData.cooldownData:GetCurrentCharges()
                             if charges > 0 then
                                 CraftSim.CRAFTQ.craftQueue:AddRecipe({

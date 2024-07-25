@@ -486,6 +486,7 @@ function CraftSim.RecipeData:Copy()
     local copy = CraftSim.RecipeData(self.recipeID, self.isRecraft, self.orderData ~= nil, self.crafterData)
     copy.concentrating = self.concentrating
     copy.reagentData = self.reagentData:Copy(copy)
+    copy.cooldownData = self.cooldownData:Copy()
     copy.professionGearSet = self.professionGearSet:Copy()
     copy.professionStats = self.professionStats:Copy()
     copy.baseProfessionStats = self.baseProfessionStats:Copy()
@@ -828,7 +829,7 @@ function CraftSim.RecipeData:GetCooldownDataForRecipeCrafter()
         cooldownData:Update()
 
         -- cache only learned recipes from current expac that can be on cooldown
-        if cooldownData.isCooldownRecipe and self.recipeInfo.learned and not self.isOldWorldRecipe then
+        if cooldownData.isCooldownRecipe and self.recipeInfo.learned then -- and not self.isOldWorldRecipe then
             cooldownData:Save(crafterUID)
         end
     else

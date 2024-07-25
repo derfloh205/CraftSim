@@ -154,7 +154,6 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateDisplay()
     CraftSim.COOLDOWNS.FRAMES:UpdateTimers()
 end
 
---- TODO: check if this can be made more efficient without deserializing all the time
 function CraftSim.COOLDOWNS.FRAMES:UpdateList()
     local cooldownList = CraftSim.COOLDOWNS.frame.content.cooldownList
 
