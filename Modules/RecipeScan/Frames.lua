@@ -823,7 +823,7 @@ function CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
             if showProfit then
                 relativeTo = recipeData.priceData.craftingCosts
             end
-            averageProfitColumn.text:SetText(GUTIL:FormatMoney(averageProfit, true, relativeTo))
+            averageProfitColumn.text:SetText(GUTIL:FormatMoney(averageProfit, true, relativeTo, true))
             row.averageProfit = averageProfit
             row.relativeProfit = GUTIL:GetPercentRelativeTo(averageProfit, recipeData.priceData.craftingCosts)
             row.concentrationWeight = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData, averageProfit)
