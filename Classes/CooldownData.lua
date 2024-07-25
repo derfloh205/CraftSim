@@ -8,6 +8,7 @@ local GUTIL = CraftSim.GUTIL
 CraftSim.CooldownData = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.DEBUG:SetDebugPrint("COOLDOWNS")
+local DAY_COOLDOWN = 86400
 
 ---@param recipeID RecipeID
 function CraftSim.CooldownData:new(recipeID)
@@ -37,10 +38,8 @@ function CraftSim.CooldownData:Update()
     self.maxCharges = maxCharges or 0
 
     if self.isDayCooldown then
-        local _, maxCooldown = select(2, C_Spell.GetSpellCooldown(self.recipeID))
-        self.maxCooldown = maxCooldown -- for day cooldowns only (cd reductions inclusive)
-        local elapsedTimeSinceCooldownStart = (self.maxCooldown - currentCooldown)
-        self.startTime = math.max(GetServerTime() - elapsedTimeSinceCooldownStart, 0)
+        local spellCooldownInfo = C_Spell.GetSpellCooldown(self.recipeID)
+        self.startTime = spellCooldownInfo.startTime
     else
         self.cooldownPerCharge = C_Spell.GetSpellCharges(self.recipeID).cooldownDuration
         if self.currentCharges < self.maxCharges then
@@ -56,7 +55,7 @@ function CraftSim.CooldownData:OnCooldown()
     if not self.isCooldownRecipe then return false end
 
     if self.isDayCooldown or self.maxCharges == 0 then
-        return GetServerTime() - (self.startTime + self.maxCooldown) <= 0
+        return self.startTime and self.startTime == 0
     else
         return self:GetCurrentCharges() == 0 and self.maxCharges > 0
     end
@@ -95,7 +94,7 @@ function CraftSim.CooldownData:GetFormattedTimerNextCharge()
     end
 
     if self.isDayCooldown or self.maxCharges == 0 then
-        local restTime = math.max((self.startTime + self.maxCooldown) - currentTime, 0)
+        local restTime = math.max((self.startTime + DAY_COOLDOWN) - currentTime, 0)
         local restTimeDate = date("!*t", restTime)
 
         if restTime == 0 then
@@ -104,6 +103,8 @@ function CraftSim.CooldownData:GetFormattedTimerNextCharge()
 
         return string.format("%02d:%02d:%02d", restTimeDate.hour, restTimeDate.min, restTimeDate.sec), false
     end
+
+    return "", false
 end
 
 function CraftSim.CooldownData:GetAllChargesFullTimestamp()
@@ -112,7 +113,7 @@ function CraftSim.CooldownData:GetAllChargesFullTimestamp()
     end
 
     if self.isDayCooldown or self.maxCharges == 0 then
-        return self.startTime + self.maxCooldown
+        return self.startTime + DAY_COOLDOWN
     end
 end
 
@@ -150,7 +151,6 @@ end
 ---@field maxCharges number
 ---@field startTime number
 ---@field cooldownPerCharge number?
----@field maxCooldown number?
 ---@field sharedCD CraftSim.SHARED_PROFESSION_COOLDOWNS?
 
 function CraftSim.CooldownData:Serialize()
@@ -163,7 +163,6 @@ function CraftSim.CooldownData:Serialize()
         maxCharges = self.maxCharges,
         startTime = self.startTime,
         cooldownPerCharge = self.cooldownPerCharge,
-        maxCooldown = self.maxCooldown,
         sharedCD = self.sharedCD,
     }
     return serialized
@@ -178,7 +177,6 @@ function CraftSim.CooldownData:Deserialize(serialized)
     cooldownData.maxCharges = serialized.maxCharges
     cooldownData.startTime = serialized.startTime
     cooldownData.cooldownPerCharge = serialized.cooldownPerCharge
-    cooldownData.maxCooldown = serialized.maxCooldown
     cooldownData.sharedCD = serialized.sharedCD
     return cooldownData
 end
