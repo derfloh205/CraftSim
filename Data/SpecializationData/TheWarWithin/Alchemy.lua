@@ -7,8 +7,14 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         childNodeIDs = { "MYCOBLOOM_LORE_1", "LUREDROP_LORE_1", "ORBINID_LORE_1", "ARATHORS_SPEAR_LORE_1", "BLESSING_BLOSSOM_LORE_1" },
         nodeID = 99020,
 		threshold = 0,
-		equalsSkill = 1,
-		skill = 3,
+        equalsSkill = 1,
+        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
+    },
+    ALCHEMICAL_MASTERY_12 = {
+        childNodeIDs = { "MYCOBLOOM_LORE_1", "LUREDROP_LORE_1", "ORBINID_LORE_1", "ARATHORS_SPEAR_LORE_1", "BLESSING_BLOSSOM_LORE_1" },
+        nodeID = 99020,
+		threshold = 0,
+        skill = 3,
         idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
     },
 	ALCHEMICAL_MASTERY_2 = {
@@ -84,20 +90,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210797,
             210798
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	MYCOBLOOM_LORE_2 = {
         nodeID = 99019,
@@ -108,20 +101,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210797,
             210798
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	MYCOBLOOM_LORE_3 = {
         nodeID = 99019,
@@ -132,20 +112,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210797,
             210798
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	MYCOBLOOM_LORE_4 = {
         nodeID = 99019,
@@ -156,20 +123,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210797,
             210798
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	MYCOBLOOM_LORE_5 = {
         nodeID = 99019,
@@ -179,20 +133,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210797,
             210798
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	MYCOBLOOM_LORE_6 = {
         nodeID = 99019,
@@ -203,20 +144,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210797,
             210798
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	MYCOBLOOM_LORE_7 = {
         nodeID = 99019,
@@ -227,20 +155,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210797,
             210798
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	MYCOBLOOM_LORE_8 = {
         nodeID = 99019,
@@ -251,20 +166,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210797,
             210798
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	MYCOBLOOM_LORE_9 = {
         nodeID = 99019,
@@ -274,20 +176,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210797,
             210798
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
     LUREDROP_LORE_1 = {
         nodeID = 99018,
@@ -298,20 +187,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210800,
             210801
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	LUREDROP_LORE_2 = {
         nodeID = 99018,
@@ -322,20 +198,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210800,
             210801
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	LUREDROP_LORE_3 = {
         nodeID = 99018,
@@ -346,20 +209,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210800,
             210801
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	LUREDROP_LORE_4 = {
         nodeID = 99018,
@@ -370,20 +220,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210800,
             210801
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	LUREDROP_LORE_5 = {
         nodeID = 99018,
@@ -394,20 +231,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210800,
             210801
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	LUREDROP_LORE_6 = {
         nodeID = 99018,
@@ -418,20 +242,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210800,
             210801
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	LUREDROP_LORE_7 = {
         nodeID = 99018,
@@ -442,20 +253,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210800,
             210801
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	LUREDROP_LORE_8 = {
         nodeID = 99018,
@@ -466,20 +264,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210800,
             210801
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	LUREDROP_LORE_9 = {
         nodeID = 99018,
@@ -489,20 +274,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210800,
             210801
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
     ORBINID_LORE_1 = {
         nodeID = 99017,
@@ -513,20 +285,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210803,
             210804
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ORBINID_LORE_2 = {
         nodeID = 99017,
@@ -537,20 +296,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210803,
             210804
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ORBINID_LORE_3 = {
         nodeID = 99017,
@@ -561,20 +307,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210803,
             210804
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ORBINID_LORE_4 = {
         nodeID = 99017,
@@ -585,20 +318,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210803,
             210804
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ORBINID_LORE_5 = {
         nodeID = 99017,
@@ -609,20 +329,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210803,
             210804
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ORBINID_LORE_6 = {
         nodeID = 99017,
@@ -633,20 +340,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210803,
             210804
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ORBINID_LORE_7 = {
         nodeID = 99017,
@@ -657,20 +351,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210803,
             210804
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ORBINID_LORE_8 = {
         nodeID = 99017,
@@ -681,20 +362,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210803,
             210804
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ORBINID_LORE_9 = {
         nodeID = 99017,
@@ -704,20 +372,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210803,
             210804
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
     ARATHORS_SPEAR_LORE_1 = {
         nodeID =  99016,
@@ -728,20 +383,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210809,
             210810
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ARATHORS_SPEAR_LORE_2 = {
         nodeID = 99016,
@@ -752,20 +394,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210809,
             210810
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ARATHORS_SPEAR_LORE_3 = {
         nodeID = 99016,
@@ -776,20 +405,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210809,
             210810
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ARATHORS_SPEAR_LORE_4 = {
         nodeID = 99016,
@@ -800,20 +416,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210809,
             210810
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ARATHORS_SPEAR_LORE_5 = {
         nodeID = 99016,
@@ -824,20 +427,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210809,
             210810
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ARATHORS_SPEAR_LORE_6 = {
         nodeID = 99016,
@@ -848,20 +438,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210809,
             210810
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ARATHORS_SPEAR_LORE_7 = {
         nodeID = 99016,
@@ -872,20 +449,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210809,
             210810
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ARATHORS_SPEAR_LORE_8 = {
         nodeID = 99016,
@@ -896,20 +460,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210809,
             210810
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	ARATHORS_SPEAR_LORE_9 = {
         nodeID = 99016,
@@ -919,20 +470,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210809,
             210810
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	BLESSING_BLOSSOM_LORE_1 = {
         nodeID =  99015,
@@ -943,20 +481,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210806,
             210807
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	BLESSING_BLOSSOM_LORE_2 = {
         nodeID = 99015,
@@ -967,20 +492,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210806,
             210807
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	BLESSING_BLOSSOM_LORE_3 = {
         nodeID = 99015,
@@ -991,20 +503,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210806,
             210807
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	BLESSING_BLOSSOM_LORE_4 = {
         nodeID = 99015,
@@ -1015,20 +514,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210806,
             210807
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	BLESSING_BLOSSOM_LORE_5 = {
         nodeID = 99015,
@@ -1039,20 +525,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210806,
             210807
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	BLESSING_BLOSSOM_LORE_6 = {
         nodeID = 99015,
@@ -1063,20 +536,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210806,
             210807
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	BLESSING_BLOSSOM_LORE_7 = {
         nodeID = 99015,
@@ -1087,20 +547,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210806,
             210807
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	BLESSING_BLOSSOM_LORE_8 = {
         nodeID = 99015,
@@ -1111,20 +558,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210806,
             210807
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
 	BLESSING_BLOSSOM_LORE_9 = {
         nodeID = 99015,
@@ -1134,20 +568,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             210806,
             210807
         },
-		idMapping = { 
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.PHIALS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-        },
+		
     },
     FANTASTIC_FLASKS_1 = {
         childNodeIDs = { "BULK_PRODUCTION_FLASKS_1", "PROFESSION_PHIALS_1" },
@@ -1162,6 +583,12 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
+        exceptionRecipeIDs = {
+            432962, --Algari Flask Cauldron
+        },
+        exceptionRecipeIDs = {
+            432962, --Algari Flask Cauldron
+        },
     },
     FANTASTIC_FLASKS_2 = {
         childNodeIDs = { "BULK_PRODUCTION_FLASKS_1", "PROFESSION_PHIALS_1" },
@@ -1174,6 +601,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
+        },
+        exceptionRecipeIDs = {
+            432962, --Algari Flask Cauldron
         },
     },
     FANTASTIC_FLASKS_3 = {
@@ -1188,6 +618,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
+        exceptionRecipeIDs = {
+            432962, --Algari Flask Cauldron
+        },
     },
     FANTASTIC_FLASKS_4 = {
         childNodeIDs = { "BULK_PRODUCTION_FLASKS_1", "PROFESSION_PHIALS_1" },
@@ -1201,6 +634,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
+        exceptionRecipeIDs = {
+            432962, --Algari Flask Cauldron
+        },
     },
     FANTASTIC_FLASKS_5 = {
         childNodeIDs = { "BULK_PRODUCTION_FLASKS_1", "PROFESSION_PHIALS_1" },
@@ -1213,6 +649,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
+        },
+        exceptionRecipeIDs = {
+            432962, --Algari Flask Cauldron
         },
     },
     FANTASTIC_FLASKS_6 = {
@@ -1228,6 +667,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
+        exceptionRecipeIDs = {
+            432962, --Algari Flask Cauldron
+        },
     },
     FANTASTIC_FLASKS_7 = {
         childNodeIDs = { "BULK_PRODUCTION_FLASKS_1", "PROFESSION_PHIALS_1" },
@@ -1241,12 +683,15 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
         },
+        exceptionRecipeIDs = {
+            432962, --Algari Flask Cauldron
+        },
     },
     BULK_PRODUCTION_FLASKS_1 = {
         nodeID = 98952,
         threshold = 0,
         equalsMulticraft = 5,
-        idMapping = { 
+        idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
@@ -1255,9 +700,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             },
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
         },
     },
@@ -1265,7 +707,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         nodeID = 98952,
         threshold = 5,
         resourcefulnessExtraItemsFactor = 5,
-        idMapping = { 
+        idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
@@ -1274,16 +716,13 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             },
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
         },
     },
     BULK_PRODUCTION_FLASKS_3 = {
         nodeID = 98952,
         threshold = 10,
-        idMapping = { 
+        idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
@@ -1292,9 +731,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             },
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
         },
     },
@@ -1312,15 +748,12 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
         },
     },
     BULK_PRODUCTION_FLASKS_5 = {
         nodeID = 98952,
         threshold = 20,
-        idMapping = { 
+        idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
@@ -1329,16 +762,13 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             },
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
         },
     },
     BULK_PRODUCTION_FLASKS_6 = {
         nodeID = 98952,
         threshold = 25,
-        idMapping = { 
+        idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
             },
@@ -1347,9 +777,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             },
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.VICIOUS_FLASKS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
         },
     },
@@ -1421,6 +848,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
         },
+        exceptionRecipeIDs = {
+            432963, --Algari Potion Cauldron
+        },
     },
     POTENT_POTIONS_2 = {
         childNodeIDs = { "BULK_PRODUCTION_POTIONS_1" },
@@ -1431,6 +861,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
+        },
+        exceptionRecipeIDs = {
+            432963, --Algari Potion Cauldron
         },
     },
     POTENT_POTIONS_3 = {
@@ -1443,6 +876,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
         },
+        exceptionRecipeIDs = {
+            432963, --Algari Potion Cauldron
+        },
     },
     POTENT_POTIONS_4 = {
         childNodeIDs = { "BULK_PRODUCTION_POTIONS_1" },
@@ -1452,6 +888,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
+        },
+        exceptionRecipeIDs = {
+            432963, --Algari Potion Cauldron
         },
     },
     POTENT_POTIONS_5 = {
@@ -1464,6 +903,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
         },
+        exceptionRecipeIDs = {
+            432963, --Algari Potion Cauldron
+        },
     },
     POTENT_POTIONS_6 = {
         childNodeIDs = { "BULK_PRODUCTION_POTIONS_1" },
@@ -1475,6 +917,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
         },
+        exceptionRecipeIDs = {
+            432963, --Algari Potion Cauldron
+        },
     },
     POTENT_POTIONS_7 = {
         childNodeIDs = { "BULK_PRODUCTION_POTIONS_1" },
@@ -1484,6 +929,9 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
             [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.THEWARWITHIN.POTIONS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
             },
+        },
+        exceptionRecipeIDs = {
+            432963, --Algari Potion Cauldron
         },
     },
     BULK_PRODUCTION_POTIONS_1 = {
@@ -1792,7 +1240,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     VOLATILE_MATERIALS_1 = {
-        nodeID = 100208,
+        nodeID = 100207,
         threshold = 0,
         equalsSkill = 1,
         exceptionRecipeIDs = {
@@ -1803,7 +1251,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     VOLATILE_MATERIALS_2 = {
-        nodeID = 100208,
+        nodeID = 100207,
         threshold = 5,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
@@ -1813,7 +1261,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     VOLATILE_MATERIALS_3 = {
-        nodeID = 100208,
+        nodeID = 100207,
         threshold = 10,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
@@ -1823,7 +1271,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     VOLATILE_MATERIALS_4 = {
-        nodeID = 100208,
+        nodeID = 100207,
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
@@ -1834,7 +1282,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     VOLATILE_MATERIALS_5 = {
-        nodeID = 100208,
+        nodeID = 100207,
         threshold = 20,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
@@ -1844,7 +1292,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     VOLATILE_MATERIALS_6 = {
-        nodeID = 100208,
+        nodeID = 100207,
         threshold = 25,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
@@ -1854,7 +1302,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     OMINOUS_MATERIALS_1 = {
-        nodeID = 100208,
+        nodeID = 100206,
         threshold = 0,
         equalsSkill = 1,
         exceptionRecipeIDs = {
@@ -1866,7 +1314,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     OMINOUS_MATERIALS_2 = {
-        nodeID = 100208,
+        nodeID = 100206,
         threshold = 5,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
@@ -1877,7 +1325,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     OMINOUS_MATERIALS_3 = {
-        nodeID = 100208,
+        nodeID = 100206,
         threshold = 10,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
@@ -1888,7 +1336,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     OMINOUS_MATERIALS_4 = {
-        nodeID = 100208,
+        nodeID = 100206,
         threshold = 15,
         skill = 5,
         exceptionRecipeIDs = {
@@ -1900,7 +1348,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     OMINOUS_MATERIALS_5 = {
-        nodeID = 100208,
+        nodeID = 100206,
         threshold = 20,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
@@ -1911,7 +1359,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
         },
     },
     OMINOUS_MATERIALS_6 = {
-        nodeID = 100208,
+        nodeID = 100206,
         threshold = 25,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
@@ -1939,6 +1387,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
     GLEAMING_TRANSMUTAGEN_3 = {
         nodeID = 100205,
         threshold = 10,
+        skill = 5,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
         },
@@ -1946,21 +1395,12 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
     GLEAMING_TRANSMUTAGEN_4 = {
         nodeID = 100205,
         threshold = 15,
-        skill = 5,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
         },
     },
     GLEAMING_TRANSMUTAGEN_5 = {
         nodeID = 100205,
-        equalsSkill = 20,
-        exceptionRecipeIDs = {
-            430315, --Thaumaturgy
-        },
-    },
-    GLEAMING_TRANSMUTAGEN_6 = {
-        nodeID = 100205,
-        threshold = 25,
         exceptionRecipeIDs = {
             430315, --Thaumaturgy
         },
