@@ -948,7 +948,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     local reagentFramesSpacingY = -25
     local reagentFramesInputSpacingX = 20
     local function createReagentFrame(i)
-        ---@class CraftSim.CRAFTQ.FRAMES.ReagentFrame : Frame
+        ---@class CraftSim.CRAFTQ.UI.ReagentFrame : Frame
         ---@field reagent CraftSim.Reagent?
         ---@field isActive? boolean
         local reagentFrame = CreateFrame("frame", nil, editRecipeFrame.content)
@@ -977,7 +977,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             end
         end
 
-        ---@param reagentInput CraftSim.CRAFTQ.FRAMES.ReagentInput
+        ---@param reagentInput CraftSim.CRAFTQ.UI.ReagentInput
         local function onReagentInput(reagentInput)
             if reagentFrame:IsRequiredQuantity() then
                 -- reagentFrame.maxQuantityLabel:SetText("test")
@@ -1005,20 +1005,20 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             end
         end
 
-        ---@class CraftSim.CRAFTQ.FRAMES.ReagentInput : GGUI.NumericInput
+        ---@class CraftSim.CRAFTQ.UI.ReagentInput : GGUI.NumericInput
         ---@field reagentItem CraftSim.ReagentItem?
         reagentFrame.q1Input = GGUI.NumericInput {
             parent = reagentFrame, anchorParent = reagentFrame.icon.frame, minValue = 0, incrementOneButtons = true, sizeX = 30, anchorA = "LEFT", anchorB = "RIGHT",
             offsetX = 10, onNumberValidCallback = onReagentInput, borderAdjustWidth = 1.3,
         }
 
-        ---@class CraftSim.CRAFTQ.FRAMES.ReagentInput
+        ---@class CraftSim.CRAFTQ.UI.ReagentInput
         reagentFrame.q2Input = GGUI.NumericInput {
             parent = reagentFrame, anchorParent = reagentFrame.q1Input.textInput.frame, minValue = 0, incrementOneButtons = true, sizeX = 30, anchorA = "LEFT", anchorB = "RIGHT",
             offsetX = reagentFramesInputSpacingX, onNumberValidCallback = onReagentInput, borderAdjustWidth = 1.3,
         }
 
-        ---@class CraftSim.CRAFTQ.FRAMES.ReagentInput
+        ---@class CraftSim.CRAFTQ.UI.ReagentInput
         reagentFrame.q3Input = GGUI.NumericInput {
             parent = reagentFrame, anchorParent = reagentFrame.q2Input.textInput.frame, minValue = 0, incrementOneButtons = true, sizeX = 30, anchorA = "LEFT", anchorB = "RIGHT",
             offsetX = reagentFramesInputSpacingX, onNumberValidCallback = onReagentInput, borderAdjustWidth = 1.3,
@@ -1030,7 +1030,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         }
         return reagentFrame
     end
-    ---@type CraftSim.CRAFTQ.FRAMES.ReagentFrame[]
+    ---@type CraftSim.CRAFTQ.UI.ReagentFrame[]
     editRecipeFrame.content.reagentFrames = {}
 
     for i = 0, numReagentFrames - 1 do table.insert(editRecipeFrame.content.reagentFrames, createReagentFrame(i)) end

@@ -12,7 +12,7 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
 
     local cached = CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID]
-    if cached then
+    if cached and cached.currencyID then
         cached:Update()
         return cached
     end

@@ -138,12 +138,12 @@ function CraftSim.CRAFTQ:AddRecipe(options)
         amount = options.amount,
     })
 
-    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
+    CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
 end
 
 function CraftSim.CRAFTQ:ClearAll()
     CraftSim.CRAFTQ.craftQueue:ClearAll()
-    CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:UpdateDisplay()
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -244,7 +244,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
             end
         end
 
-        CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
+        CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     else
         local queueTab = CraftSim.CRAFTQ.frame.content.queueTab --[[@as CraftSim.CraftQueue.QueueTab]]
         local importButton = queueTab.content.importRecipeScanButton
@@ -299,10 +299,10 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                     end
                 end
 
-                CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
+                CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
             end, function()
                 -- finally update all subrecipes and update display one last time
-                CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
+                CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
                 importButton:SetStatus("Ready")
             end)
     end
@@ -688,5 +688,5 @@ function CraftSim.CRAFTQ:NEW_RECIPE_LEARNED(recipeID)
         end
     end
 
-    self.FRAMES:UpdateDisplay()
+    self.UI:UpdateDisplay()
 end
