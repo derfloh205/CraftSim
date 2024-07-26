@@ -583,6 +583,8 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.COOLDOWNS_NEXT_HEADER] = "Next Charge",
         [CraftSim.CONST.TEXT.COOLDOWNS_ALL_HEADER] = "Charges Full",
 
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_TITLE] = "CraftSim Concentration",
+
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",
         [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "No",

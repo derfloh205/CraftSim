@@ -7,6 +7,7 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CUSTOMER_HISTORY.UI
 CraftSim.CUSTOMER_HISTORY.UI = {}
 
+---@type CraftSim.CUSTOMER_HISTORY.FRAME
 CraftSim.CUSTOMER_HISTORY.frame = nil
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CUSTOMER_HISTORY)
@@ -20,6 +21,7 @@ end
 function CraftSim.CUSTOMER_HISTORY.UI:Init()
     local sizeX = 1050
     local sizeY = 500
+    ---@class CraftSim.CUSTOMER_HISTORY.FRAME : GGUI.Frame
     CraftSim.CUSTOMER_HISTORY.frame = GGUI.Frame({
         parent = ProfessionsFrame,
         anchorParent = ProfessionsFrame,

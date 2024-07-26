@@ -276,6 +276,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.CRAFTQ.UI:Init()
 		CraftSim.CRAFT_BUFFS.UI:Init()
 		CraftSim.COOLDOWNS.UI:Init()
+		CraftSim.CONCENTRATION_TRACKER.UI:Init()
 
 		CraftSim.INIT:HookToEvent()
 		CraftSim.INIT:HookToProfessionsFrame()
@@ -436,6 +437,7 @@ function CraftSim.INIT:HideAllModules(keepControlPanel)
 	CraftSim.CRAFT_BUFFS.frameWO:Hide()
 	CraftSim.COOLDOWNS.frame:Hide()
 	CraftSim.CRAFT_RESULTS.frame:Hide()
+	CraftSim.CONCENTRATION_TRACKER.frame:Hide()
 	customerHistoryFrame:Hide()
 	priceOverrideFrame:Hide()
 	priceOverrideFrameWO:Hide()
@@ -463,7 +465,6 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		return
 	end
 
-	local customerHistoryFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CUSTOMER_HISTORY)
 	local priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
 	local priceOverrideFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
 		CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER)
@@ -480,7 +481,6 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
 	local craftBuffsFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS)
 	local craftBuffsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER)
-	local cooldownsFrame = CraftSim.COOLDOWNS.frame
 
 	if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
 		CraftSim.INIT:HideAllModules()
@@ -564,6 +564,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	local showCooldowns = true
 	local showExplanations = true
 	local showStatistics = true
+	local showConcentrationTracker = true
 
 	if recipeData.supportsCraftingStats then
 		showAverageProfit = true
@@ -595,12 +596,13 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	showExplanations = showExplanations and CraftSim.DB.OPTIONS:Get("MODULE_EXPLANATIONS")
 	showStatistics = showStatistics and CraftSim.DB.OPTIONS:Get("MODULE_STATISTICS")
 
-	CraftSim.FRAME:ToggleFrame(CraftSim.RECIPE_SCAN.frame, showRecipeScan)
-	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFTQ.frame, showCraftQueue)
-	CraftSim.FRAME:ToggleFrame(CraftSim.EXPLANATIONS.frame, showExplanations)
-	CraftSim.FRAME:ToggleFrame(CraftSim.CRAFT_RESULTS.frame, showCraftResults)
-	CraftSim.FRAME:ToggleFrame(customerHistoryFrame, showCustomerHistory)
-	CraftSim.FRAME:ToggleFrame(cooldownsFrame, showCooldowns)
+	CraftSim.RECIPE_SCAN.frame:SetVisible(showRecipeScan)
+	CraftSim.CRAFTQ.frame:SetVisible(showCraftQueue)
+	CraftSim.EXPLANATIONS.frame:SetVisible(showExplanations)
+	CraftSim.CRAFT_RESULTS.frame:SetVisible(showCraftResults)
+	CraftSim.CUSTOMER_HISTORY.frame:SetVisible(showCustomerHistory)
+	CraftSim.COOLDOWNS.frame:SetVisible(showCooldowns)
+	CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(showConcentrationTracker)
 
 	if showCooldowns then
 		CraftSim.COOLDOWNS.UI:UpdateDisplay()

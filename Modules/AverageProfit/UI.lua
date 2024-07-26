@@ -13,7 +13,7 @@ CraftSim.AVERAGEPROFIT = CraftSim.AVERAGEPROFIT
 ---@class CraftSim.AVERAGEPROFIT.UI
 CraftSim.AVERAGEPROFIT.UI = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
+local print = CraftSim.DEBUG:SetDebugPrint("AVERAGE_PROFIT")
 
 function CraftSim.AVERAGEPROFIT.UI:Init()
     local sizeX = 320
@@ -21,7 +21,6 @@ function CraftSim.AVERAGEPROFIT.UI:Init()
     local offsetX = -10
     local offsetY = 30
     CraftSim.AVERAGEPROFIT.frame = GGUI.Frame({
-        debug = true,
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorParent = ProfessionsFrame,
         anchorA = "BOTTOMRIGHT",
