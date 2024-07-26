@@ -29,6 +29,7 @@ function CraftSim.ConcentrationData:Copy()
 end
 
 function CraftSim.ConcentrationData:Update()
+    print("Updating ConcentrationData")
     local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(self.currencyID)
     self.lastUpdated = GetServerTime() -- is in seconds
     self.amount = currencyInfo.quantity
@@ -79,6 +80,19 @@ end
 ---@return boolean ready
 function CraftSim.ConcentrationData:GetFormattedTimerUntilMax()
     return self:GetFormattedTimerUntil(self.maxQuantity)
+end
+
+function CraftSim.ConcentrationData:GetTimestampMax()
+    return GetServerTime() + self:GetTimeUntilMax()
+end
+
+function CraftSim.ConcentrationData:GetFormattedDateMax()
+    local maxDate = self:GetTimestampMax()
+
+    local date = date("*t", maxDate) -- with local time support
+
+    return string.format("%02d.%02d.%d %02d:%02d", date.day, date.month, date.year, date.hour, date.min),
+        not self:OnCooldown()
 end
 
 function CraftSim.ConcentrationData:OnCooldown()

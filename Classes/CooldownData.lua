@@ -124,10 +124,12 @@ function CraftSim.CooldownData:GetCurrentCharges()
     end
 end
 
+---@return string formattedString
+---@return boolean ready
 function CraftSim.CooldownData:GetAllChargesFullDateFormatted()
     local allChargesFullTime = self:GetAllChargesFullTimestamp()
 
-    local date = date("*t", allChargesFullTime) -- with local time support = *t instead of !*T ?
+    local date = date("*t", allChargesFullTime) -- with local time support
 
     return string.format("%02d.%02d.%d %02d:%02d", date.day, date.month, date.year, date.hour, date.min),
         GetServerTime() <= allChargesFullTime

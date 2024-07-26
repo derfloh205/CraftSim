@@ -400,7 +400,7 @@ function CraftSim.INIT:PLAYER_LOGIN()
 			C_UI.Reload()
 		else
 			-- open options if any other command or no command is given
-			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+			Settings.OpenToCategory(CraftSim.OPTIONS.optionsPanel.name)
 		end
 	end
 
@@ -604,6 +604,10 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	CraftSim.COOLDOWNS.frame:SetVisible(showCooldowns)
 	CraftSim.CONCENTRATION_TRACKER.frame:SetVisible(showConcentrationTracker)
 
+	if showConcentrationTracker then
+		CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
+	end
+
 	if showCooldowns then
 		CraftSim.COOLDOWNS.UI:UpdateDisplay()
 	end
@@ -725,7 +729,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 end
 
 function CraftSim_OnAddonCompartmentClick()
-	InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+	Settings.OpenToCategory(CraftSim.OPTIONS.optionsPanel.name)
 end
 
 function CraftSim.INIT:InitializeMinimapButton()
@@ -737,7 +741,7 @@ function CraftSim.INIT:InitializeMinimapButton()
 		icon = "Interface\\Addons\\CraftSim\\Media\\Images\\craftsim",
 		OnClick = function()
 			-- local historyFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.HISTORY_FRAME)
-			InterfaceOptionsFrame_OpenToCategory(CraftSim.OPTIONS.optionsPanel)
+			Settings.OpenToCategory(CraftSim.OPTIONS.optionsPanel.name)
 		end,
 	})
 

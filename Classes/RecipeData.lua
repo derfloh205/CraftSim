@@ -63,6 +63,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.professionData = CraftSim.ProfessionData(self, recipeID)
     self.professionInfoCached = self.professionData.professionInfoCached
 
+    self.expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(self.professionData.skillLineID)
 
     if isWorkOrder then
         ---@type CraftingOrderInfo
@@ -849,15 +850,17 @@ function CraftSim.RecipeData:GetConcentrationDataForCrafter()
     local crafterUID = self:GetCrafterUID()
     local concentrationData
     if self:IsCrafter() then
-        local currencyID = self.baseOperationInfo.concentrationCurrencyID
+        local currencyID = C_TradeSkillUI.GetConcentrationCurrencyID(self.professionData.skillLineID)
         concentrationData = CraftSim.ConcentrationData(currencyID)
         concentrationData:Update()
         -- save in crafterDB
         CraftSim.DB.CRAFTER:SaveCrafterConcentrationData(crafterUID, self.professionData.professionInfo.profession,
+            self.expansionID,
             concentrationData)
     else
         concentrationData =
-            CraftSim.DB.CRAFTER:GetCrafterConcentrationData(crafterUID, self.professionData.professionInfo.profession)
+            CraftSim.DB.CRAFTER:GetCrafterConcentrationData(crafterUID, self.professionData.professionInfo.profession,
+                self.expansionID)
     end
 
     return concentrationData
