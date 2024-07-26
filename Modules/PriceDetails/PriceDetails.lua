@@ -8,5 +8,5 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAIL
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
 function CraftSim.PRICE_DETAILS:UpdateDisplay(recipeData, exportMode)
-    CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, exportMode)
+    CraftSim.PRICE_DETAILS.UI:UpdateDisplay(recipeData, exportMode)
 end

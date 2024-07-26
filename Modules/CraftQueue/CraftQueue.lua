@@ -136,8 +136,6 @@ function CraftSim.CRAFTQ:AddRecipe(options)
     CraftSim.CRAFTQ.craftQueue:AddRecipe({
         recipeData = options.recipeData,
         amount = options.amount,
-        targetItemCountByQuality =
-            options.targetItemCountByQuality
     })
 
     CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
@@ -303,7 +301,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
 
                 CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
             end, function()
-                -- finally update all subrecipes in target mode and update display one last time
+                -- finally update all subrecipes and update display one last time
                 CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
                 importButton:SetStatus("Ready")
             end)
@@ -376,64 +374,62 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListPerCharacter()
     local reagentMapPerCharacter = {}
     -- create a map of all used reagents in the queue and their quantity
     for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
-        if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE") or craftQueueItem.targetMode then
-            local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
-            local crafterUID = craftQueueItem.recipeData:GetCrafterUID()
-            reagentMapPerCharacter[crafterUID] = reagentMapPerCharacter[crafterUID] or {}
-            for _, reagent in pairs(requiredReagents) do
-                if reagent.hasQuality then
-                    for qualityID, reagentItem in pairs(reagent.items) do
-                        local itemID = reagentItem.item:GetItemID()
-                        local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-                        if not isSelfCrafted then
-                            reagentMapPerCharacter[crafterUID][itemID] = reagentMapPerCharacter
-                                [crafterUID][itemID] or {
-                                    itemName = reagentItem.item:GetItemName(),
-                                    qualityID = nil,
-                                    quantity = 0
-                                }
-                            reagentMapPerCharacter[crafterUID][itemID].quantity = reagentMapPerCharacter
-                                [crafterUID][itemID]
-                                .quantity + (reagentItem.quantity * craftQueueItem.amount)
-                            reagentMapPerCharacter[crafterUID][itemID].qualityID = qualityID
-                        end
-                    end
-                else
-                    local reagentItem = reagent.items[1]
+        local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
+        local crafterUID = craftQueueItem.recipeData:GetCrafterUID()
+        reagentMapPerCharacter[crafterUID] = reagentMapPerCharacter[crafterUID] or {}
+        for _, reagent in pairs(requiredReagents) do
+            if reagent.hasQuality then
+                for qualityID, reagentItem in pairs(reagent.items) do
                     local itemID = reagentItem.item:GetItemID()
                     local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
                     if not isSelfCrafted then
                         reagentMapPerCharacter[crafterUID][itemID] = reagentMapPerCharacter
-                            [crafterUID]
-                            [itemID] or {
+                            [crafterUID][itemID] or {
                                 itemName = reagentItem.item:GetItemName(),
                                 qualityID = nil,
                                 quantity = 0
                             }
                         reagentMapPerCharacter[crafterUID][itemID].quantity = reagentMapPerCharacter
-                            [crafterUID][itemID].quantity +
-                            (reagentItem.quantity * craftQueueItem.amount)
-                        print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
-                        print("quantity: " ..
-                            tostring(reagentMapPerCharacter[crafterUID][itemID].quantity))
+                            [crafterUID][itemID]
+                            .quantity + (reagentItem.quantity * craftQueueItem.amount)
+                        reagentMapPerCharacter[crafterUID][itemID].qualityID = qualityID
                     end
                 end
-            end
-            local activeReagents = craftQueueItem.recipeData.reagentData:GetActiveOptionalReagents()
-            for _, optionalReagent in pairs(activeReagents) do
-                local itemID = optionalReagent.item:GetItemID()
+            else
+                local reagentItem = reagent.items[1]
+                local itemID = reagentItem.item:GetItemID()
                 local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-                if not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+                if not isSelfCrafted then
                     reagentMapPerCharacter[crafterUID][itemID] = reagentMapPerCharacter
-                        [crafterUID][itemID] or {
-                            itemName = optionalReagent.item:GetItemName(),
-                            qualityID = optionalReagent.qualityID,
+                        [crafterUID]
+                        [itemID] or {
+                            itemName = reagentItem.item:GetItemName(),
+                            qualityID = nil,
                             quantity = 0
                         }
                     reagentMapPerCharacter[crafterUID][itemID].quantity = reagentMapPerCharacter
-                        [crafterUID][itemID]
-                        .quantity + craftQueueItem.amount
+                        [crafterUID][itemID].quantity +
+                        (reagentItem.quantity * craftQueueItem.amount)
+                    print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
+                    print("quantity: " ..
+                        tostring(reagentMapPerCharacter[crafterUID][itemID].quantity))
                 end
+            end
+        end
+        local activeReagents = craftQueueItem.recipeData.reagentData:GetActiveOptionalReagents()
+        for _, optionalReagent in pairs(activeReagents) do
+            local itemID = optionalReagent.item:GetItemID()
+            local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
+            if not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+                reagentMapPerCharacter[crafterUID][itemID] = reagentMapPerCharacter
+                    [crafterUID][itemID] or {
+                        itemName = optionalReagent.item:GetItemName(),
+                        qualityID = optionalReagent.qualityID,
+                        quantity = 0
+                    }
+                reagentMapPerCharacter[crafterUID][itemID].quantity = reagentMapPerCharacter
+                    [crafterUID][itemID]
+                    .quantity + craftQueueItem.amount
             end
         end
     end
@@ -479,26 +475,10 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
     local reagentMap = {}
     -- create a map of all used reagents in the queue and their quantity
     for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
-        if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE") or craftQueueItem.targetMode then
-            local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
-            for _, reagent in pairs(requiredReagents) do
-                if reagent.hasQuality then
-                    for qualityID, reagentItem in pairs(reagent.items) do
-                        local itemID = reagentItem.item:GetItemID()
-                        local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-                        if not isSelfCrafted then
-                            reagentMap[itemID] = reagentMap[itemID] or {
-                                itemName = reagentItem.item:GetItemName(),
-                                qualityID = nil,
-                                quantity = 0
-                            }
-                            reagentMap[itemID].quantity = reagentMap[itemID]
-                                .quantity + (reagentItem.quantity * craftQueueItem.amount)
-                            reagentMap[itemID].qualityID = qualityID
-                        end
-                    end
-                else
-                    local reagentItem = reagent.items[1]
+        local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
+        for _, reagent in pairs(requiredReagents) do
+            if reagent.hasQuality then
+                for qualityID, reagentItem in pairs(reagent.items) do
                     local itemID = reagentItem.item:GetItemID()
                     local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
                     if not isSelfCrafted then
@@ -507,26 +487,40 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
                             qualityID = nil,
                             quantity = 0
                         }
-                        reagentMap[itemID].quantity = reagentMap[itemID].quantity +
-                            (reagentItem.quantity * craftQueueItem.amount)
-                        print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
-                        print("quantity: " .. tostring(reagentMap[itemID].quantity))
+                        reagentMap[itemID].quantity = reagentMap[itemID]
+                            .quantity + (reagentItem.quantity * craftQueueItem.amount)
+                        reagentMap[itemID].qualityID = qualityID
                     end
                 end
-            end
-            local activeReagents = craftQueueItem.recipeData.reagentData:GetActiveOptionalReagents()
-            for _, optionalReagent in pairs(activeReagents) do
-                local itemID = optionalReagent.item:GetItemID()
+            else
+                local reagentItem = reagent.items[1]
+                local itemID = reagentItem.item:GetItemID()
                 local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-                if not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+                if not isSelfCrafted then
                     reagentMap[itemID] = reagentMap[itemID] or {
-                        itemName = optionalReagent.item:GetItemName(),
-                        qualityID = optionalReagent.qualityID,
+                        itemName = reagentItem.item:GetItemName(),
+                        qualityID = nil,
                         quantity = 0
                     }
-                    reagentMap[itemID].quantity = reagentMap[itemID]
-                        .quantity + craftQueueItem.amount
+                    reagentMap[itemID].quantity = reagentMap[itemID].quantity +
+                        (reagentItem.quantity * craftQueueItem.amount)
+                    print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
+                    print("quantity: " .. tostring(reagentMap[itemID].quantity))
                 end
+            end
+        end
+        local activeReagents = craftQueueItem.recipeData.reagentData:GetActiveOptionalReagents()
+        for _, optionalReagent in pairs(activeReagents) do
+            local itemID = optionalReagent.item:GetItemID()
+            local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
+            if not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+                reagentMap[itemID] = reagentMap[itemID] or {
+                    itemName = optionalReagent.item:GetItemName(),
+                    qualityID = optionalReagent.qualityID,
+                    quantity = 0
+                }
+                reagentMap[itemID].quantity = reagentMap[itemID]
+                    .quantity + craftQueueItem.amount
             end
         end
     end

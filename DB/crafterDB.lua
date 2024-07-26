@@ -25,6 +25,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 ---@field professionGear table<Enum.Profession, CraftSim.DB.CrafterDBData.ProfessionGearData>
 ---@field class ClassFile
 ---@field cooldownData table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>
+---@field concentrationData table<Enum.Profession, CraftSim.ConcentrationData.Serialized>
 
 function CraftSim.DB.CRAFTER:Init()
     if not CraftSimDB.crafterDB then
@@ -338,6 +339,31 @@ function CraftSim.DB.CRAFTER:GetCrafterCooldownData()
     end
 
     return crafterCooldownData
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@param concentrationData CraftSim.ConcentrationData
+function CraftSim.DB.CRAFTER:SaveCrafterConcentrationData(crafterUID, profession, concentrationData)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].concentrationData = CraftSimDB.crafterDB.data[crafterUID].concentrationData or
+        {}
+    CraftSimDB.crafterDB.data[crafterUID].concentrationData[profession] = concentrationData:Serialize()
+end
+
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+---@return CraftSim.ConcentrationData?
+function CraftSim.DB.CRAFTER:GetCrafterConcentrationData(crafterUID, profession)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].concentrationData = CraftSimDB.crafterDB.data[crafterUID].concentrationData or
+        {}
+    local serializedData = CraftSimDB.crafterDB.data[crafterUID].concentrationData[profession]
+    if serializedData then
+        return CraftSim.ConcentrationData:Deserialize(serializedData)
+    end
+
+    return nil
 end
 
 ---@return table<CrafterUID, CraftSim.DB.CrafterDBData>

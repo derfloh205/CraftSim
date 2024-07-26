@@ -7,12 +7,12 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CRAFT_RESULTS
 CraftSim.CRAFT_RESULTS = CraftSim.CRAFT_RESULTS
 
----@class CraftSim.CRAFT_RESULTS.FRAMES
-CraftSim.CRAFT_RESULTS.FRAMES = {}
+---@class CraftSim.CRAFT_RESULTS.UI
+CraftSim.CRAFT_RESULTS.UI = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
 
-function CraftSim.CRAFT_RESULTS.FRAMES:Init()
+function CraftSim.CRAFT_RESULTS.UI:Init()
     ---@class CraftSim.CRAFT_RESULTS.FRAME : GGUI.Frame
     local frame = GGUI.Frame({
         parent = ProfessionsFrame.CraftingPage,
@@ -78,7 +78,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:Init()
 end
 
 ---@param craftProfitsTab CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB
-function CraftSim.CRAFT_RESULTS.FRAMES:InitCraftProfitsTab(craftProfitsTab)
+function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
     ---@class CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB
     craftProfitsTab = craftProfitsTab
     ---@class CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT : Frame
@@ -107,7 +107,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitCraftProfitsTab(craftProfitsTab)
             content.craftedItemsFrame.resultFeed:SetText("")
             content.totalProfitAllValue:SetText(CraftSim.GUTIL:FormatMoney(0, true))
             CraftSim.CRAFT_RESULTS:ResetData()
-            CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
+            CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
         end
     })
 
@@ -172,7 +172,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitCraftProfitsTab(craftProfitsTab)
 end
 
 ---@param statisticsTrackerTab CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB
-function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTrackerTab)
+function CraftSim.CRAFT_RESULTS.UI:InitStatisticsTrackerTab(statisticsTrackerTab)
     ---@class CraftSim.CRAFT_RESULTS.STATISTICS_TRACKER_TAB.CONTENT : Frame
     local content = statisticsTrackerTab.content
 
@@ -352,7 +352,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:InitStatisticsTrackerTab(statisticsTracke
     }
 end
 
-function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
+function CraftSim.CRAFT_RESULTS.UI:UpdateItemList()
     local craftResultFrame = CraftSim.CRAFT_RESULTS.frame
 
     -- total items
@@ -392,7 +392,7 @@ function CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
     end
 end
 
-function CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(recipeID)
+function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
     local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFT_RESULTS)
     print("Update RecipeData: " .. tostring(recipeID))
 

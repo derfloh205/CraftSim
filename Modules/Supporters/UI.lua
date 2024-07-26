@@ -8,10 +8,10 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.SUPPORTERS
 CraftSim.SUPPORTERS = CraftSim.SUPPORTERS
 
----@class CraftSim.SUPPORTERS.FRAMES
-CraftSim.SUPPORTERS.FRAMES = {}
+---@class CraftSim.SUPPORTERS.UI
+CraftSim.SUPPORTERS.UI = {}
 
-function CraftSim.SUPPORTERS.FRAMES:Init()
+function CraftSim.SUPPORTERS.UI:Init()
     local sizeX = 600
     local sizeY = 500
 
