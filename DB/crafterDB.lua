@@ -25,7 +25,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 ---@field professionGear table<Enum.Profession, CraftSim.DB.CrafterDBData.ProfessionGearData>
 ---@field class ClassFile
 ---@field cooldownData table<CooldownDataSerializationID, CraftSim.CooldownData.Serialized>
----@field concentrationData table<Enum.Profession, CraftSim.ConcentrationData.Serialized>
+---@field concentrationData table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.ConcentrationData.Serialized>>
 
 function CraftSim.DB.CRAFTER:Init()
     if not CraftSimDB.crafterDB then

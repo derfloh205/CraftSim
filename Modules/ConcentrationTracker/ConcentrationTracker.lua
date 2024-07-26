@@ -11,6 +11,11 @@ CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache = {}
 function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
 
+    local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+
+    -- check if old world
+    if not expansionID or expansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT then return end
+
     local cached = CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID]
     if cached and cached.currencyID then
         cached:Update()
@@ -18,7 +23,7 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     end
 
     local currencyID = C_TradeSkillUI.GetConcentrationCurrencyID(skillLineID)
-    if currencyID then
+    if currencyID and skillLineID > 0 then
         local concentrationData = CraftSim.ConcentrationData(currencyID)
         concentrationData:Update()
         -- save in crafterDB

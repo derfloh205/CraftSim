@@ -204,7 +204,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.baseProfessionStats:SetStatsByOperationInfo(self, self.baseOperationInfo)
     CraftSim.DEBUG:StopProfiling("- RD: OperationInfo")
 
-    if self.supportsIngenuity then
+    if self.supportsIngenuity and not self.isOldWorldRecipe then
         self.concentrationData = self:GetConcentrationDataForCrafter()
     end
 
