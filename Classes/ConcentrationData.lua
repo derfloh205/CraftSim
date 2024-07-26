@@ -29,7 +29,9 @@ function CraftSim.ConcentrationData:Copy()
 end
 
 function CraftSim.ConcentrationData:Update()
+    print("Updating ConcentrationData")
     local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(self.currencyID)
+    if not currencyInfo then return end
     self.lastUpdated = GetServerTime() -- is in seconds
     self.amount = currencyInfo.quantity
     self.maxQuantity = currencyInfo.maxQuantity
@@ -81,6 +83,19 @@ function CraftSim.ConcentrationData:GetFormattedTimerUntilMax()
     return self:GetFormattedTimerUntil(self.maxQuantity)
 end
 
+function CraftSim.ConcentrationData:GetTimestampMax()
+    return GetServerTime() + self:GetTimeUntilMax()
+end
+
+function CraftSim.ConcentrationData:GetFormattedDateMax()
+    local maxDate = self:GetTimestampMax()
+
+    local date = date("*t", maxDate) -- with local time support
+
+    return string.format("%02d.%02d %02d:%02d", date.day, date.month, date.hour, date.min),
+        not self:OnCooldown()
+end
+
 function CraftSim.ConcentrationData:OnCooldown()
     return self:GetCurrentAmount() < self.maxQuantity
 end
@@ -88,6 +103,7 @@ end
 ---@class CraftSim.ConcentrationData.Serialized
 ---@field currencyID number
 ---@field lastUpdated number
+---@field maxQuantity number
 ---@field amount number
 ---@field rechargeTimePerPoint number
 
@@ -97,6 +113,7 @@ function CraftSim.ConcentrationData:Serialize()
         currencyID = self.currencyID,
         lastUpdated = self.lastUpdated,
         amount = self.amount,
+        maxQuantity = self.maxQuantity,
         rechargeTimePerPoint = self.rechargingDurationMS,
     }
     return serialized
@@ -105,9 +122,10 @@ end
 ---@param serialized CraftSim.ConcentrationData.Serialized
 ---@return CraftSim.ConcentrationData
 function CraftSim.ConcentrationData:Deserialize(serialized)
-    local ConcentrationData = CraftSim.ConcentrationData(serialized.currencyID)
-    ConcentrationData.lastUpdated = serialized.lastUpdated
-    ConcentrationData.amount = serialized.amount
-    ConcentrationData.rechargingDurationMS = serialized.rechargeTimePerPoint
-    return ConcentrationData
+    local concentrationData = CraftSim.ConcentrationData(serialized.currencyID)
+    concentrationData.lastUpdated = serialized.lastUpdated
+    concentrationData.maxQuantity = serialized.maxQuantity
+    concentrationData.amount = serialized.amount
+    concentrationData.rechargingDurationMS = serialized.rechargeTimePerPoint
+    return concentrationData
 end

@@ -379,7 +379,7 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData)
     if newAmount and newAmount <= 0 and CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED") then
         FlashClientIcon()
     end
-    CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:UpdateDisplay()
 end
 
 function CraftSim.CraftQueue:UpdateSubRecipesTargetItemCounts()
