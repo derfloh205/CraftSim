@@ -148,6 +148,7 @@ Data/SpecializationData/SpecializationData.lua
 Classes/CraftSimObject.lua
 Classes/CooldownData.lua
 Classes/ProfessionData.lua
+Classes/ConcentrationData.lua
 Classes/RecipeData.lua
 Classes/PriceData.lua
 Classes/ReagentData.lua

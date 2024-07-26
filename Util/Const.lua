@@ -281,6 +281,7 @@ CraftSim.CONST.DEBUG_IDS = {
     BUFFDATA = "BUFFDATA",
     CACHE_ITEM_COUNT = "CACHE_ITEM_COUNT",
     SUB_RECIPE_DATA = "SUB_RECIPE_DATA",
+    CONCENTRATION = "CONCENTRATION",
 }
 
 --- TODO: Move to options? or maybe create Const folder with different const files
