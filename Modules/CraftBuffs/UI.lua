@@ -7,14 +7,14 @@ local GGUI = CraftSim.GGUI
 ---@class CraftSim.CRAFT_BUFFS
 CraftSim.CRAFT_BUFFS = CraftSim.CRAFT_BUFFS
 
----@class CraftSim.CRAFT_BUFFS.FRAMES
-CraftSim.CRAFT_BUFFS.FRAMES = {}
+---@class CraftSim.CRAFT_BUFFS.UI
+CraftSim.CRAFT_BUFFS.UI = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.BUFFDATA)
 
 ---@type table<string, boolean>
 CraftSim.CRAFT_BUFFS.simulatedBuffs = {}
-function CraftSim.CRAFT_BUFFS.FRAMES:Init()
+function CraftSim.CRAFT_BUFFS.UI:Init()
     local sizeX = 330
     local sizeY = 200
     local offsetX = 0
@@ -155,7 +155,7 @@ end
 local emptyStats = nil
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode CraftSim.EXPORT_MODE
-function CraftSim.CRAFT_BUFFS.FRAMES:UpdateDisplay(recipeData, exportMode)
+function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
     ---@type CraftSim.CRAFT_BUFFS.FRAME
     local craftbuffsFrame
 

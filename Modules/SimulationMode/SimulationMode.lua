@@ -17,7 +17,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_M
 function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()
 
-    CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData() -- revert
+    CraftSim.SIMULATION_MODE.UI:InitSpecModBySpecData() -- revert
     CraftSim.INIT:TriggerModuleUpdate()
 end
 
@@ -32,7 +32,7 @@ function CraftSim.SIMULATION_MODE:MaxSpecData()
     end
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
-    CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData() -- update
+    CraftSim.SIMULATION_MODE.UI:InitSpecModBySpecData() -- update
     CraftSim.INIT:TriggerModuleUpdate()
 end
 
@@ -109,7 +109,7 @@ function CraftSim.SIMULATION_MODE:OnInputAllocationChanged(inputBox, userInput)
 end
 
 function CraftSim.SIMULATION_MODE:AllocateAllByQuality(qualityID)
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
     local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
 
     for _, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
@@ -149,7 +149,7 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     end
 
 
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
 
     -- update difficulty based on input
     local recipeDifficultyMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.recipeDifficultyMod, true)
@@ -179,7 +179,7 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     end
     print("Update Reagent Input Frames:")
 
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
 
     ---@type CraftSim.SimulationMode.ReagentOverwriteFrame
     local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
@@ -222,7 +222,7 @@ function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
     CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
     CraftSim.SIMULATION_MODE.recipeData:Update() -- update recipe Data by modifiers/reagents and such
-    CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
+    CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
@@ -256,10 +256,10 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     end
 
     -- update frame visiblity and initialize the input fields
-    CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
-    CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames(CraftSim.SIMULATION_MODE.recipeData)
-    CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentItemSelectors(CraftSim.SIMULATION_MODE.recipeData)
-    CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
+    CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
+    CraftSim.SIMULATION_MODE.UI:InitReagentOverwriteFrames(CraftSim.SIMULATION_MODE.recipeData)
+    CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(CraftSim.SIMULATION_MODE.recipeData)
+    CraftSim.SIMULATION_MODE.UI:InitSpecModBySpecData()
 
     -- -- update simulation recipe data and frontend
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()

@@ -9,12 +9,12 @@ local L = CraftSim.UTIL:GetLocalizer()
 ---@class CraftSim.STATISTICS
 CraftSim.STATISTICS = CraftSim.STATISTICS
 
----@class CraftSim.STATISTICS.FRAMES
-CraftSim.STATISTICS.FRAMES = {}
+---@class CraftSim.STATISTICS.UI
+CraftSim.STATISTICS.UI = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.STATISTICS)
+local print = CraftSim.DEBUG:SetDebugPrint("STATISTICS")
 
-function CraftSim.STATISTICS.FRAMES:Init()
+function CraftSim.STATISTICS.UI:Init()
     local sizeX = 500
     local sizeY = 400
 
@@ -111,7 +111,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
                 if not recipeData then
                     return
                 end
-                CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
+                CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
             end
         })
 
@@ -246,7 +246,7 @@ function CraftSim.STATISTICS.FRAMES:Init()
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
+function CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
     local statisticsFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.STATISTICS)
     local meanProfit, probabilityTable = recipeData:GetAverageProfit()
 
@@ -300,7 +300,7 @@ function CraftSim.STATISTICS.FRAMES:UpdateDisplay(recipeData)
     statisticsFrame.content.probabilityValue:SetText(roundedProfit .. "%")
 end
 
-function CraftSim.STATISTICS.FRAMES:SetVisible(showModule, exportMode)
+function CraftSim.STATISTICS.UI:SetVisible(showModule, exportMode)
     CraftSim.STATISTICS.frameWO:SetVisible(showModule and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
     CraftSim.STATISTICS.frameNO_WO:SetVisible(showModule and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
 end

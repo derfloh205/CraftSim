@@ -21,7 +21,7 @@ Init/GLibs.lua
 Util/Const.lua
 
 Modules/Debug/Debug.lua
-Modules/Debug/Frames.lua
+Modules/Debug/UI.lua
 
 Util/Util.lua
 
@@ -52,60 +52,60 @@ Pricing/PriceData.lua
 Modules/ItemCount/ItemCount.lua
 
 Modules/Explanations/Explanations.lua
-Modules/Explanations/Frames.lua
+Modules/Explanations/UI.lua
 
 Modules/CraftQueue/CraftQueue.lua
-Modules/CraftQueue/Frames.lua
+Modules/CraftQueue/UI.lua
 
 Modules/Cooldowns/Cooldowns.lua
-Modules/Cooldowns/Frames.lua
+Modules/Cooldowns/UI.lua
 
 Modules/CustomerHistory/CustomerHistory.lua
-Modules/CustomerHistory/Frames.lua
+Modules/CustomerHistory/UI.lua
 
 Modules/Statistics/Statistics.lua
-Modules/Statistics/Frames.lua
+Modules/Statistics/UI.lua
 
 Modules/CraftResults/CraftResults.lua
-Modules/CraftResults/Frames.lua
+Modules/CraftResults/UI.lua
 
 Modules/PriceOverride/PriceOverride.lua
-Modules/PriceOverride/Frames.lua
+Modules/PriceOverride/UI.lua
 
 Modules/ControlPanel/ControlPanel.lua
-Modules/ControlPanel/Frames.lua
+Modules/ControlPanel/UI.lua
 
 Modules/SpecializationInfo/SpecializationInfo.lua
-Modules/SpecializationInfo/Frames.lua
+Modules/SpecializationInfo/UI.lua
 
 Modules/Options/Options.lua
 
 Modules/SimulationMode/SimulationMode.lua
-Modules/SimulationMode/Frames.lua
+Modules/SimulationMode/UI.lua
 
 Modules/AverageProfit/AverageProfit.lua
-Modules/AverageProfit/Frames.lua
+Modules/AverageProfit/UI.lua
 
 Modules/ReagentOptimization/ReagentOptimization.lua
-Modules/ReagentOptimization/Frames.lua
+Modules/ReagentOptimization/UI.lua
 
 Modules/TopGear/TopGear.lua
-Modules/TopGear/Frames.lua
+Modules/TopGear/UI.lua
 
 Modules/RecipeScan/RecipeScan.lua
-Modules/RecipeScan/Frames.lua
+Modules/RecipeScan/UI.lua
 
 Modules/PriceDetails/PriceDetails.lua
-Modules/PriceDetails/Frames.lua
+Modules/PriceDetails/UI.lua
 
 Modules/CostOptimization/CostOptimization.lua
-Modules/CostOptimization/Frames.lua
+Modules/CostOptimization/UI.lua
 
 Modules/Supporters/Supporters.lua
-Modules/Supporters/Frames.lua
+Modules/Supporters/UI.lua
 
 Modules/CraftBuffs/CraftBuffs.lua
-Modules/CraftBuffs/Frames.lua
+Modules/CraftBuffs/UI.lua
 
 Modules/ConcentrationTracker/ConcentrationTracker.lua
 Modules/ConcentrationTracker/Frames.lua

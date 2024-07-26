@@ -1,14 +1,15 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-CraftSim.PRICE_DETAILS.FRAMES = {}
+---@class CraftSim.PRICE_DETAILS.UI
+CraftSim.PRICE_DETAILS.UI = {}
 
 CraftSim.PRICE_DETAILS.frame = nil
 CraftSim.PRICE_DETAILS.frameWO = nil
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_DETAILS)
+local print = CraftSim.DEBUG:SetDebugPrint("PRICE_DETAILS")
 
-function CraftSim.PRICE_DETAILS.FRAMES:Init()
+function CraftSim.PRICE_DETAILS.UI:Init()
     local sizeX = 410
     local sizeY = 200
     local offsetX = -5
@@ -137,7 +138,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
-function CraftSim.PRICE_DETAILS.FRAMES:UpdateDisplay(recipeData, exportMode)
+function CraftSim.PRICE_DETAILS.UI:UpdateDisplay(recipeData, exportMode)
     local priceDetailsFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         priceDetailsFrame = CraftSim.PRICE_DETAILS.frameWO

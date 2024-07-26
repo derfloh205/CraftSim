@@ -10,12 +10,12 @@ local L = CraftSim.UTIL:GetLocalizer()
 ---@class CraftSim.AVERAGEPROFIT
 CraftSim.AVERAGEPROFIT = CraftSim.AVERAGEPROFIT
 
----@class CraftSim.AVERAGEPROFIT.FRAMES
-CraftSim.AVERAGEPROFIT.FRAMES = {}
+---@class CraftSim.AVERAGEPROFIT.UI
+CraftSim.AVERAGEPROFIT.UI = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
 
-function CraftSim.AVERAGEPROFIT.FRAMES:Init()
+function CraftSim.AVERAGEPROFIT.UI:Init()
     local sizeX = 320
     local sizeY = 110
     local offsetX = -10
@@ -109,7 +109,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:Init()
 end
 
 ---@param statWeights CraftSim.Statweights
-function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts)
+function CraftSim.AVERAGEPROFIT.UI:UpdateDisplay(statWeights, craftingCosts)
     local averageProfitFrame = self:GetFrameByExportMode()
     local showProfitPercentage = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
 
@@ -160,7 +160,7 @@ function CraftSim.AVERAGEPROFIT.FRAMES:UpdateDisplay(statWeights, craftingCosts)
 end
 
 ---@return GGUI.Frame
-function CraftSim.AVERAGEPROFIT.FRAMES:GetFrameByExportMode()
+function CraftSim.AVERAGEPROFIT.UI:GetFrameByExportMode()
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
 
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then

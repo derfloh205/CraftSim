@@ -101,7 +101,7 @@ function CraftSim.RECIPE_SCAN:EndScan(row)
     CraftSim.RECIPE_SCAN:ToggleScanButton(row, true)
     CraftSim.RECIPE_SCAN.isScanning = false
 
-    CraftSim.CRAFTQ.FRAMES:UpdateRecipeScanRestockButton(row.currentResults)
+    CraftSim.CRAFTQ.UI:UpdateRecipeScanRestockButton(row.currentResults)
 
     local resultList = row.content.resultList
     resultList:UpdateDisplay(self:GetSortFunction())
@@ -339,7 +339,7 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
 
         local function continueScan()
             CraftSim.DEBUG:StopProfiling("Single Recipe Scan")
-            CraftSim.RECIPE_SCAN.FRAMES:AddRecipe(row, recipeData)
+            CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
             table.insert(row.currentResults, recipeData)
 
@@ -352,7 +352,7 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
 
     printS("End Scan")
     CraftSim.RECIPE_SCAN:ToggleScanButton(row, false)
-    CraftSim.RECIPE_SCAN.FRAMES:ResetResults(row)
+    CraftSim.RECIPE_SCAN.UI:ResetResults(row)
     scanRecipesByInterval()
 end
 
@@ -392,7 +392,7 @@ function CraftSim.RECIPE_SCAN:UpdateProfessionListByCache()
     -- wait til the currently open profession is cached then update list
 
     local function update()
-        CraftSim.RECIPE_SCAN.FRAMES:UpdateProfessionList()
+        CraftSim.RECIPE_SCAN.UI:UpdateProfessionList()
     end
 
     GUTIL:WaitFor(function()

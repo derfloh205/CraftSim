@@ -13,11 +13,12 @@ function CraftSim.PRICE_OVERRIDE.OverrideDropdownData:new(item, isResult, qualit
     self.qualityID = qualityID
 end
 
-CraftSim.PRICE_OVERRIDE.FRAMES = {}
+---@class CraftSim.PRICE_OVERRIDE.UI
+CraftSim.PRICE_OVERRIDE.UI = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_OVERRIDE)
 
-function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
+function CraftSim.PRICE_OVERRIDE.UI:Init()
     local sizeX = 450
     local sizeY = 300
 
@@ -62,7 +63,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
         local function selectionCallback(_, _, overrideData)
             print("Selected itemID: " .. tostring(overrideData.item:GetItemID()))
             frame.currentDropdownData = overrideData
-            CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideItem(overrideData)
+            CraftSim.PRICE_OVERRIDE.UI:UpdateOverrideItem(overrideData)
             overrideOptions:updateButtonStatus()
         end
 
@@ -239,7 +240,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:Init()
 end
 
 ---@param overrideData CraftSim.PRICE_OVERRIDE.overrideDropdownData
-function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideItem(overrideData)
+function CraftSim.PRICE_OVERRIDE.UI:UpdateOverrideItem(overrideData)
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local priceOverrideFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
@@ -258,7 +259,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
-function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)
+function CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
     local priceOverrideFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES
@@ -267,7 +268,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)
         priceOverrideFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.PRICE_OVERRIDE)
     end
 
-    CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideList(priceOverrideFrame)
+    CraftSim.PRICE_OVERRIDE.UI:UpdateOverrideList(priceOverrideFrame)
 
     if priceOverrideFrame.recipeID == recipeData.recipeID then
         -- same recipe, stay
@@ -383,7 +384,7 @@ function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateDisplay(recipeData, exportMode)
     end
 end
 
-function CraftSim.PRICE_OVERRIDE.FRAMES:UpdateOverrideList(priceOverrideFrame)
+function CraftSim.PRICE_OVERRIDE.UI:UpdateOverrideList(priceOverrideFrame)
     local overrideText = priceOverrideFrame.content.activeOverridesBox.overrideList
 
     local globalOverrides = CraftSim.DB.PRICE_OVERRIDE:GetGlobalOverrides()

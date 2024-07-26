@@ -4,12 +4,12 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.SPECIALIZATION_INFO.FRAMES
-CraftSim.SPECIALIZATION_INFO.FRAMES = {}
+---@class CraftSim.SPECIALIZATION_INFO.UI
+CraftSim.SPECIALIZATION_INFO.UI = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
+local print = CraftSim.DEBUG:SetDebugPrint("SPECDATA")
 
-function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
+function CraftSim.SPECIALIZATION_INFO.UI:Init()
     local sizeX = 290
     local sizeY = 340
     local offsetX = 260
@@ -153,7 +153,7 @@ function CraftSim.SPECIALIZATION_INFO.FRAMES:Init()
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.SPECIALIZATION_INFO.FRAMES:UpdateInfo(recipeData)
+function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     ---@type CraftSim.SPEC_INFO.FRAME
     local specInfoFrame
