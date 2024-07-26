@@ -107,6 +107,9 @@ Modules/Supporters/Frames.lua
 Modules/CraftBuffs/CraftBuffs.lua
 Modules/CraftBuffs/Frames.lua
 
+Modules/ConcentrationTracker/ConcentrationTracker.lua
+Modules/ConcentrationTracker/Frames.lua
+
 Locals/Localization.lua
 Locals/enUS.lua
 Locals/deDE.lua
