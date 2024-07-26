@@ -4,8 +4,8 @@ local CraftSim = select(2, ...)
 ---@class CraftSim.COST_OPTIMIZATION
 CraftSim.COST_OPTIMIZATION = CraftSim.COST_OPTIMIZATION
 
----@class CraftSim.COST_OPTIMIZATION.FRAMES
-CraftSim.COST_OPTIMIZATION.FRAMES = {}
+---@class CraftSim.COST_OPTIMIZATION.UI
+CraftSim.COST_OPTIMIZATION.UI = {}
 
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
@@ -16,7 +16,7 @@ CraftSim.COST_OPTIMIZATION.frameWO = nil
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COST_OPTIMIZATION)
 local f = CraftSim.GUTIL:GetFormatter()
 
-function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
+function CraftSim.COST_OPTIMIZATION.UI:Init()
     local sizeX = 520
     local sizeY = 280
     local offsetX = -5
@@ -253,7 +253,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:Init()
 end
 
 ---@param subRecipeOptionsTab CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab
-function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptionsTab)
+function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
     ---@class CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab.Content : Frame
     local content = subRecipeOptionsTab.content
 
@@ -315,7 +315,7 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:InitSubRecipeOptions(subRecipeOptions
             selectedRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.SELECTED_LIGHT_GREEN,
             hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_GREEN,
             selectionCallback = function(row, userInput)
-                CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
+                CraftSim.COST_OPTIMIZATION.UI:UpdateRecipeOptionsSubRecipeOptions()
             end
         },
     }
@@ -534,11 +534,11 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
     end
 
     reagentList:UpdateDisplay()
-    CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeList(recipeData)
+    CraftSim.COST_OPTIMIZATION.UI:UpdateRecipeOptionsSubRecipeList(recipeData)
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeList(recipeData)
+function CraftSim.COST_OPTIMIZATION.UI:UpdateRecipeOptionsSubRecipeList(recipeData)
     local subRecipeOptionsTab = CraftSim.COST_OPTIMIZATION.frame.content
         .subRecipeOptions --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab]]
     local content = subRecipeOptionsTab.content --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab.Content]]
@@ -580,10 +580,10 @@ function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeList(reci
         -- only auto select new row when switching recipes
         subRecipeList:SelectRow(1)
     end
-    CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
+    CraftSim.COST_OPTIMIZATION.UI:UpdateRecipeOptionsSubRecipeOptions()
 end
 
-function CraftSim.COST_OPTIMIZATION.FRAMES:UpdateRecipeOptionsSubRecipeOptions()
+function CraftSim.COST_OPTIMIZATION.UI:UpdateRecipeOptionsSubRecipeOptions()
     local subRecipeOptionsTab = CraftSim.COST_OPTIMIZATION.frame.content
         .subRecipeOptions --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab]]
     local content = subRecipeOptionsTab.content --[[@as CraftSim.COST_OPTIMIZATION.SubRecipeOptionsTab.Content]]

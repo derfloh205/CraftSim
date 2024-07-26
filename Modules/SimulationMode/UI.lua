@@ -4,18 +4,18 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
----@class CraftSim.SIMULATION_MODE.FRAMES
-CraftSim.SIMULATION_MODE.FRAMES = {}
+---@class CraftSim.SIMULATION_MODE.UI
+CraftSim.SIMULATION_MODE.UI = {}
 
 ---@class CraftSim.SIMULATION_MODE.FRAMES.WORKORDER
-CraftSim.SIMULATION_MODE.FRAMES.WORKORDER = {}
+CraftSim.SIMULATION_MODE.UI.WORKORDER = {}
 
 ---@class CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER
-CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER = {}
+CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_MODE)
+local print = CraftSim.DEBUG:SetDebugPrint("SIMULATION_MODE")
 
-function CraftSim.SIMULATION_MODE.FRAMES:Init()
+function CraftSim.SIMULATION_MODE.UI:Init()
     local function createSimulationModeFrames(schematicForm, workOrder)
         local frames = {}
         -- CHECK BUTTON
@@ -176,22 +176,22 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         local offsetY = -45
 
         table.insert(reagentOverwriteFrame.reagentOverwriteInputs,
-            CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
+            CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
                 reagentOverwriteFrameOffsetX, 0, baseX, inputOffsetX))
         table.insert(reagentOverwriteFrame.reagentOverwriteInputs,
-            CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
+            CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
                 reagentOverwriteFrameOffsetX, offsetY, baseX, inputOffsetX))
         table.insert(reagentOverwriteFrame.reagentOverwriteInputs,
-            CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
+            CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
                 reagentOverwriteFrameOffsetX, offsetY * 2, baseX, inputOffsetX))
         table.insert(reagentOverwriteFrame.reagentOverwriteInputs,
-            CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
+            CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
                 reagentOverwriteFrameOffsetX, offsetY * 3, baseX, inputOffsetX))
         table.insert(reagentOverwriteFrame.reagentOverwriteInputs,
-            CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
+            CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
                 reagentOverwriteFrameOffsetX, offsetY * 4, baseX, inputOffsetX))
         table.insert(reagentOverwriteFrame.reagentOverwriteInputs,
-            CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
+            CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteFrame(reagentOverwriteFrame.content,
                 reagentOverwriteFrameOffsetX, offsetY * 5, baseX, inputOffsetX))
 
         frames.reagentOverwriteFrame = reagentOverwriteFrame
@@ -490,13 +490,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:Init()
         return frames
     end
 
-    CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER = createSimulationModeFrames(ProfessionsFrame.CraftingPage
+    CraftSim.SIMULATION_MODE.UI.NO_WORKORDER = createSimulationModeFrames(ProfessionsFrame.CraftingPage
         .SchematicForm)
-    CraftSim.SIMULATION_MODE.FRAMES.WORKORDER = createSimulationModeFrames(ProfessionsFrame.OrdersPage.OrderView
+    CraftSim.SIMULATION_MODE.UI.WORKORDER = createSimulationModeFrames(ProfessionsFrame.OrdersPage.OrderView
         .OrderDetails.SchematicForm)
 end
 
-function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
+function CraftSim.SIMULATION_MODE.UI:InitSpecModifier()
     local sizeX = 1000
     local sizeY = 700
 
@@ -944,14 +944,14 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModifier()
     createContent(frameNO_WO)
 end
 
-function CraftSim.SIMULATION_MODE.FRAMES:ResetAllNodeModFramesForTab(tab)
+function CraftSim.SIMULATION_MODE.UI:ResetAllNodeModFramesForTab(tab)
     for _, nodeModFrame in pairs(tab.content.nodeModFrames) do
         nodeModFrame:Hide()
         nodeModFrame.showParentLine:Hide()
     end
 end
 
-function CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(tabIndex, layer, layerMaxNodes)
+function CraftSim.SIMULATION_MODE.UI:GetSpecNodeModFramesByTabAndLayerAndLayerMax(tabIndex, layer, layerMaxNodes)
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local specSimFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
@@ -974,8 +974,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLay
     return {}
 end
 
-function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOverwriteFrame, offsetX, offsetY, baseX,
-                                                                     inputOffsetX)
+function CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteFrame(reagentOverwriteFrame, offsetX, offsetY, baseX,
+                                                                 inputOffsetX)
     local overwriteInput = CreateFrame("frame", nil, reagentOverwriteFrame)
     overwriteInput:SetPoint("TOPLEFT", reagentOverwriteFrame, "TOPLEFT", offsetX, offsetY)
     overwriteInput:SetSize(50, 50)
@@ -989,10 +989,10 @@ function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOver
         anchorB = "LEFT",
     })
 
-    overwriteInput.inputq1 = CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteInput(overwriteInput, baseX, 1)
-    overwriteInput.inputq2 = CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteInput(overwriteInput,
+    overwriteInput.inputq1 = CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteInput(overwriteInput, baseX, 1)
+    overwriteInput.inputq2 = CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteInput(overwriteInput,
         baseX + inputOffsetX, 2)
-    overwriteInput.inputq3 = CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteInput(overwriteInput,
+    overwriteInput.inputq3 = CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteInput(overwriteInput,
         baseX + inputOffsetX * 2, 3)
 
     overwriteInput.requiredQuantity = overwriteInput:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -1002,7 +1002,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteFrame(reagentOver
     return overwriteInput
 end
 
-function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteInput(overwriteInputFrame, offsetX, qualityID)
+function CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteInput(overwriteInputFrame, offsetX, qualityID)
     local inputWidth = 30
     local inputBox = CraftSim.FRAME:CreateNumericInput(
         nil, overwriteInputFrame, overwriteInputFrame.icon.frame, "LEFT", "RIGHT", offsetX, 0, inputWidth, 20, 0, false,
@@ -1013,7 +1013,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:CreateReagentOverwriteInput(overwriteIn
     return inputBox
 end
 
-function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
+function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
     if not recipeData then
         return
@@ -1023,7 +1023,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     local professionStats = recipeData.professionStats
     local professionStatsMod = recipeData.professionStatModifiers
 
-    local simModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+    local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
     local detailsFrame = simModeFrames.detailsFrame
 
     -- Multicraft Display
@@ -1084,7 +1084,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
 
         -- Skill
         local reagentSkillIncrease, concentrationCost = recipeData.reagentData
-        :GetSkillAndConcentrationCostFromRequiredReagents()
+            :GetSkillAndConcentrationCostFromRequiredReagents()
         local skillNoReagents = professionStats.skill.value - reagentSkillIncrease
         local professionStatsOptionals = recipeData.reagentData:GetProfessionStatsByOptionals()
         local fullRecipeDifficulty = recipeData.professionStats.recipeDifficulty.value
@@ -1108,7 +1108,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateCraftingDetailsPanel()
     end
 end
 
-function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
+function CraftSim.SIMULATION_MODE.UI:InitSpecModBySpecData()
     local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
     local specializationData = CraftSim.SIMULATION_MODE.specializationData
 
@@ -1141,7 +1141,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
             print("init node: " .. tostring(nodeData.nodeName))
             local nodesOnLayer = layerCount[layer]
             print("getnodemodframes: " .. tabNr .. "," .. layer .. "," .. nodesOnLayer)
-            local nodeModFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSpecNodeModFramesByTabAndLayerAndLayerMax(tabNr,
+            local nodeModFrames = CraftSim.SIMULATION_MODE.UI:GetSpecNodeModFramesByTabAndLayerAndLayerMax(tabNr,
                 layer, nodesOnLayer)
             --print("found nodemodframes on this layer: " .. tostring(#nodeModFrames) .. " expected: " .. tostring(layerCount[layer]))
             print("current node on layer: " .. tostring(currentNodeOnLayer[layer]))
@@ -1224,7 +1224,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
     for i = 1, 4, 1 do
         local specTabName = baseNodeNames[i]
         local specTab = specModFrame.content.specializationTabs[i]
-        CraftSim.SIMULATION_MODE.FRAMES:ResetAllNodeModFramesForTab(specTab)
+        CraftSim.SIMULATION_MODE.UI:ResetAllNodeModFramesForTab(specTab)
         if specTabName then
             specTab:Show()
             initTab(i, specTab, specTabName, specializationData.baseNodeData[i], specializationData.numNodesPerLayer[i])
@@ -1235,11 +1235,11 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitSpecModBySpecData()
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentItemSelectors(recipeData)
+function CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(recipeData)
     local optionalReagentSlots = recipeData.reagentData.optionalReagentSlots
     local finishingReagentSlots = recipeData.reagentData.finishingReagentSlots
 
-    local simModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+    local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
 
     ---@type CraftSim.SimulationMode.ReagentOverwriteFrame
     local reagentOverwriteFrame = simModeFrames.reagentOverwriteFrame
@@ -1265,7 +1265,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitOptionalReagentItemSelectors(recipe
     end
 end
 
-function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
+function CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
     local recipeData = CraftSim.INIT.currentRecipeData
     if not recipeData then
         return -- In what case is this nil?
@@ -1279,7 +1279,7 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
     local hasOptionalReagents = recipeData.reagentData:HasOptionalReagents()
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local specializationInfoFrame = nil
-    local simModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+    local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
     local bestQBox = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         bestQBox = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.AllocateBestQualityCheckbox
@@ -1338,8 +1338,8 @@ function CraftSim.SIMULATION_MODE.FRAMES:UpdateVisibility()
 end
 
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames(recipeData)
-    local simModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+function CraftSim.SIMULATION_MODE.UI:InitReagentOverwriteFrames(recipeData)
+    local simModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
 
     ---@type CraftSim.SimulationMode.ReagentOverwriteFrame
     local reagentOverwriteFrame = simModeFrames.reagentOverwriteFrame
@@ -1380,13 +1380,13 @@ function CraftSim.SIMULATION_MODE.FRAMES:InitReagentOverwriteFrames(recipeData)
     end
 end
 
-function CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+function CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     local simModeFrames = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        simModeFrames = CraftSim.SIMULATION_MODE.FRAMES.WORKORDER
+        simModeFrames = CraftSim.SIMULATION_MODE.UI.WORKORDER
     else
-        simModeFrames = CraftSim.SIMULATION_MODE.FRAMES.NO_WORKORDER
+        simModeFrames = CraftSim.SIMULATION_MODE.UI.NO_WORKORDER
     end
 
     return simModeFrames

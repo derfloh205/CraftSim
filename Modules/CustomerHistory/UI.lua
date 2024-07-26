@@ -4,8 +4,8 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
-CraftSim.CUSTOMER_HISTORY.FRAMES = {}
-CraftSim.CUSTOMER_HISTORY.timeoutSeconds = 5
+---@class CraftSim.CUSTOMER_HISTORY.UI
+CraftSim.CUSTOMER_HISTORY.UI = {}
 
 CraftSim.CUSTOMER_HISTORY.frame = nil
 
@@ -17,7 +17,7 @@ local function L(LOCALIZATION_ID)
     return CraftSim.LOCAL:GetText(LOCALIZATION_ID)
 end
 
-function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
+function CraftSim.CUSTOMER_HISTORY.UI:Init()
     local sizeX = 1050
     local sizeY = 500
     CraftSim.CUSTOMER_HISTORY.frame = GGUI.Frame({
@@ -107,7 +107,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
             end,
             selectionOptions = {
                 selectionCallback = function(row)
-                    CraftSim.CUSTOMER_HISTORY.FRAMES:OnCustomerSelected(row.customerHistory)
+                    CraftSim.CUSTOMER_HISTORY.UI:OnCustomerSelected(row.customerHistory)
                 end
             }
         })
@@ -315,11 +315,11 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:Init()
     createContent(CraftSim.CUSTOMER_HISTORY.frame)
 end
 
-function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateDisplay()
-    CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
+function CraftSim.CUSTOMER_HISTORY.UI:UpdateDisplay()
+    CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerHistoryList()
 end
 
-function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
+function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerHistoryList()
     local customerList = CraftSim.CUSTOMER_HISTORY.frame.content.customerList --[[@as GGUI.FrameList]]
     customerList:Remove()
     local customerHistoryData = CraftSim.DB.CUSTOMER_HISTORY:GetAll()
@@ -382,7 +382,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
 end
 
 ---@param customerHistory CraftSim.DB.CustomerHistory
-function CraftSim.CUSTOMER_HISTORY.FRAMES:OnCustomerSelected(customerHistory)
+function CraftSim.CUSTOMER_HISTORY.UI:OnCustomerSelected(customerHistory)
     ---@type GGUI.Text
     local customerName = CraftSim.CUSTOMER_HISTORY.frame.content.customerName
     local fullName = customerHistory.customer .. "-" .. customerHistory.realm
@@ -391,12 +391,12 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:OnCustomerSelected(customerHistory)
         CraftSim.CUSTOMER_HISTORY:StartWhisper(fullName)
     end
 
-    CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerChatHistory(customerHistory.customer, customerHistory.chatHistory)
-    CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerCraftHistory(customerHistory.craftHistory)
+    CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerChatHistory(customerHistory.customer, customerHistory.chatHistory)
+    CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerCraftHistory(customerHistory.craftHistory)
 end
 
 ---@param craftHistory CraftSim.DB.CustomerHistory.Craft
-function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerCraftHistory(craftHistory)
+function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerCraftHistory(craftHistory)
     ---@type GGUI.FrameList
     local craftList = CraftSim.CUSTOMER_HISTORY.frame.content.craftList
 
@@ -419,7 +419,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerCraftHistory(craftHistor
             local reagentColumn = columns[4]
             local noteColumn = columns[5]
 
-            timeColumn.text:SetText(CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedDayString(craft.timestamp))
+            timeColumn.text:SetText(CraftSim.CUSTOMER_HISTORY.UI:GetNormalizedDayString(craft.timestamp))
 
             resultColumn.text:SetText(tostring(craft.itemLink))
             tipColumn.text:SetText(f.m(craft.tip))
@@ -450,7 +450,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerCraftHistory(craftHistor
 end
 
 ---@param chatHistory CraftSim.DB.CustomerHistory.ChatMessage
-function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerChatHistory(customer, chatHistory)
+function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerChatHistory(customer, chatHistory)
     ---@type GGUI.FrameList
     local chatMessageList = CraftSim.CUSTOMER_HISTORY.frame.content.chatMessageList
 
@@ -469,7 +469,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerChatHistory(customer, ch
     local chatMessages = {}
     local currentDate = nil
     for _, chatMessage in pairs(chatMessagesReversed) do
-        local dayString = CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedDayString(chatMessage.timestamp)
+        local dayString = CraftSim.CUSTOMER_HISTORY.UI:GetNormalizedDayString(chatMessage.timestamp)
         if currentDate ~= dayString then
             table.insert(chatMessages, {
                 day = dayString
@@ -492,7 +492,7 @@ function CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerChatHistory(customer, ch
                 messageColumn.text:SetText("")
             else
                 timeColumn.text:SetText(f.whisper("[" ..
-                    CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedTimeString(chatMessage.timestamp) .. "]"))
+                    CraftSim.CUSTOMER_HISTORY.UI:GetNormalizedTimeString(chatMessage.timestamp) .. "]"))
 
                 local sender = "[" .. tostring(customer) .. "]: "
 
@@ -522,14 +522,14 @@ end
 
 ---@param timestamp number
 ---@return string
-function CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedDayString(timestamp)
+function CraftSim.CUSTOMER_HISTORY.UI:GetNormalizedDayString(timestamp)
     local date = date("*t", timestamp)
     return string.format("%02d.%02d.%02d", date.day, date.month, date.year)
 end
 
 ---@param timestamp number
 ---@return string
-function CraftSim.CUSTOMER_HISTORY.FRAMES:GetNormalizedTimeString(timestamp)
+function CraftSim.CUSTOMER_HISTORY.UI:GetNormalizedTimeString(timestamp)
     local date = date("*t", timestamp)
     return string.format("%02d:%02d:%02d", date.hour, date.min, date.sec)
 end

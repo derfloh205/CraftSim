@@ -10,10 +10,10 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.EXPLANATIONS
 CraftSim.EXPLANATIONS = CraftSim.EXPLANATIONS
 
----@class CraftSim.EXPLANATIONS.FRAMES
-CraftSim.EXPLANATIONS.FRAMES = {}
+---@class CraftSim.EXPLANATIONS.UI
+CraftSim.EXPLANATIONS.UI = {}
 
-function CraftSim.EXPLANATIONS.FRAMES:Init()
+function CraftSim.EXPLANATIONS.UI:Init()
     CraftSim.EXPLANATIONS.frame = GGUI.Frame {
         title = L(CraftSim.CONST.TEXT.EXPLANATIONS_TITLE),
         parent = ProfessionsFrame, anchorParent = ProfessionsFrame,

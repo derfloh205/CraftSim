@@ -7,10 +7,10 @@ local GGUI = CraftSim.GGUI
 ---@class CraftSim.CONTROL_PANEL
 CraftSim.CONTROL_PANEL = CraftSim.CONTROL_PANEL
 
----@class CraftSim.CONTROL_PANEL.FRAMES
-CraftSim.CONTROL_PANEL.FRAMES = {}
+---@class CraftSim.CONTROL_PANEL.UI
+CraftSim.CONTROL_PANEL.UI = {}
 
-function CraftSim.CONTROL_PANEL.FRAMES:Init()
+function CraftSim.CONTROL_PANEL.UI:Init()
     local currentVersion = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version")
 
     ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
