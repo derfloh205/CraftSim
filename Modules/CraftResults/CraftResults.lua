@@ -119,7 +119,7 @@ function CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
     craftProfitsTabContent.totalProfitAllValue:SetText(GUTIL:FormatMoney(
         CraftSim.CRAFT_RESULTS.currentSessionData.totalProfit, true))
 
-    CraftSim.CRAFT_RESULTS.FRAMES:UpdateItemList()
+    CraftSim.CRAFT_RESULTS.UI:UpdateItemList()
 end
 
 ---Adds Results to the UI
@@ -180,7 +180,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     craftProfitsTabContent.scrollingMessageFrame:AddMessage("\n" .. newText)
 
     CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
-    CraftSim.CRAFT_RESULTS.FRAMES:UpdateRecipeData(craftResult.recipeID)
+    CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(craftResult.recipeID)
     CraftSim.DEBUG:StopProfiling("PROCESS_CRAFT_RESULTS_UI_UPDATE")
 end
 

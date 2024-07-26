@@ -166,13 +166,13 @@ function CraftSim.DB.OPTIONS:Migrate()
                 CraftSimOptions.craftQueueGeneralRestockRestockAmount
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_GENERAL_RESTOCK_SALE_RATE_THRESHOLD] =
                 CraftSimOptions.craftQueueGeneralRestockSaleRateThreshold
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET] =
+            CraftSimDB.optionsDB.data["CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET"] =
                 CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_RESTOCK_PER_RECIPE_OPTIONS] =
                 CraftSimOptions.craftQueueRestockPerRecipeOptions
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER] =
                 CraftSimOptions.craftQueueShoppingListPerCharacter
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE] =
+            CraftSimDB.optionsDB.data["CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE"] =
                 CraftSimOptions.craftQueueShoppingListTargetMode
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED] =
                 CraftSimOptions.craftQueueFlashTaskbarOnCraftFinished
@@ -214,6 +214,20 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data["CUSTOMER_SERVICE_ACTIVE_PREVIEW_IDS"] = nil
 
         CraftSimDB.optionsDB.version = 3
+    end
+
+    if CraftSimDB.optionsDB.version == 3 then
+        CraftSimDB.optionsDB.data["RECIPESCAN_SORT_MODE"] = "PROFIT"
+        CraftSimDB.optionsDB.data["RECIPESCAN_SORT_BY_PROFIT_MARGIN"] = nil
+
+        CraftSimDB.optionsDB.version = 4
+    end
+
+    if CraftSimDB.optionsDB.version == 4 then
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE"] = nil
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET"] = nil
+
+        CraftSimDB.optionsDB.version = 5
     end
 end
 

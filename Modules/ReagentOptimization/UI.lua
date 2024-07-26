@@ -1,11 +1,12 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
-CraftSim.REAGENT_OPTIMIZATION.FRAMES = {}
+---@class CraftSim.REAGENT_OPTIMIZATION.UI
+CraftSim.REAGENT_OPTIMIZATION.UI = {}
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
 
-function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
+function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
     local sizeX = 310
     local sizeY = 250
     local offsetX = -5
@@ -105,22 +106,22 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
         frame.content.reagentFrames.numReagents = 0
         local iconSize = 30
         table.insert(frame.content.reagentFrames.rows,
-            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+            CraftSim.REAGENT_OPTIMIZATION.UI:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
                 iconsOffsetY, iconSize))
         table.insert(frame.content.reagentFrames.rows,
-            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+            CraftSim.REAGENT_OPTIMIZATION.UI:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
                 iconsOffsetY - iconsSpacingY, iconSize))
         table.insert(frame.content.reagentFrames.rows,
-            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+            CraftSim.REAGENT_OPTIMIZATION.UI:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
                 iconsOffsetY - iconsSpacingY * 2, iconSize))
         table.insert(frame.content.reagentFrames.rows,
-            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+            CraftSim.REAGENT_OPTIMIZATION.UI:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
                 iconsOffsetY - iconsSpacingY * 3, iconSize))
         table.insert(frame.content.reagentFrames.rows,
-            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+            CraftSim.REAGENT_OPTIMIZATION.UI:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
                 iconsOffsetY - iconsSpacingY * 4, iconSize))
         table.insert(frame.content.reagentFrames.rows,
-            CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
+            CraftSim.REAGENT_OPTIMIZATION.UI:CreateReagentFrame(frame.content, frame.content.allocateButton.frame,
                 iconsOffsetY - iconsSpacingY * 5, iconSize))
 
         frame:Hide()
@@ -130,7 +131,7 @@ function CraftSim.REAGENT_OPTIMIZATION.FRAMES:Init()
     createContent(frameWO)
 end
 
-function CraftSim.REAGENT_OPTIMIZATION.FRAMES:CreateReagentFrame(parent, hookFrame, y, iconSize)
+function CraftSim.REAGENT_OPTIMIZATION.UI:CreateReagentFrame(parent, hookFrame, y, iconSize)
     local reagentFrame = CreateFrame("frame", nil, parent)
     reagentFrame:SetSize(parent:GetWidth(), iconSize)
     reagentFrame:SetPoint("TOP", hookFrame, "TOP", 10, y)
@@ -190,7 +191,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param optimizationResult? CraftSim.ReagentOptimizationResult
 ---@param exportMode number
-function CraftSim.REAGENT_OPTIMIZATION.FRAMES:UpdateReagentDisplay(recipeData, optimizationResult, exportMode)
+function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData, optimizationResult, exportMode)
     local materialFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         materialFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,

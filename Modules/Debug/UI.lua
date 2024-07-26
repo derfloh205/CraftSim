@@ -4,15 +4,15 @@ local CraftSim = select(2, ...)
 ---@class CraftSim.DEBUG
 CraftSim.DEBUG = CraftSim.DEBUG
 
----@class CraftSim.DEBUG.FRAMES
-CraftSim.DEBUG.FRAMES = {}
+---@class CraftSim.DEBUG.UI
+CraftSim.DEBUG.UI = {}
 
 local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 
 local f = GUTIL:GetFormatter()
 
-function CraftSim.DEBUG.FRAMES:Init()
+function CraftSim.DEBUG.UI:Init()
     local sizeX = 400
     local sizeY = 400
     ---@class CraftSim.DEBUG.FRAME : GGUI.Frame
@@ -39,10 +39,10 @@ function CraftSim.DEBUG.FRAMES:Init()
 
     CraftSim.DEBUG.frame = debugFrame
 
-    CraftSim.DEBUG.FRAMES:InitDebugFrame(debugFrame)
+    CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
 end
 
-function CraftSim.DEBUG.FRAMES:InitDebugFrame(debugFrame)
+function CraftSim.DEBUG.UI:InitDebugFrame(debugFrame)
     CraftSim.FRAME:ToggleFrame(debugFrame, CraftSim.DB.OPTIONS:Get("DEBUG_VISIBLE"))
 
     debugFrame:HookScript("OnShow", function() CraftSim.DB.OPTIONS:Save("DEBUG_VISIBLE", true) end)
@@ -102,12 +102,12 @@ function CraftSim.DEBUG.FRAMES:InitDebugFrame(debugFrame)
         end
     end)
 
-    CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
+    CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
 
     GGUI:EnableHyperLinksForFrameAndChilds(debugFrame.content)
 end
 
-function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
+function CraftSim.DEBUG.UI:InitControlPanel(debugFrame)
     local tabSizeX = 400
     local tabSizeY = 400
 
@@ -181,12 +181,12 @@ function CraftSim.DEBUG.FRAMES:InitControlPanel(debugFrame)
 
     GGUI.BlizzardTabSystem { controlPanel.content.logTab, controlPanel.content.dbTab, controlPanel.content.modulesTab }
 
-    CraftSim.DEBUG.FRAMES:InitLogOptionsTab(controlPanel.content.logTab)
-    CraftSim.DEBUG.FRAMES:InitCacheTab(controlPanel.content.dbTab)
-    CraftSim.DEBUG.FRAMES:InitModuleDebugToolsTab(controlPanel.content.modulesTab)
+    CraftSim.DEBUG.UI:InitLogOptionsTab(controlPanel.content.logTab)
+    CraftSim.DEBUG.UI:InitCacheTab(controlPanel.content.dbTab)
+    CraftSim.DEBUG.UI:InitModuleDebugToolsTab(controlPanel.content.modulesTab)
 end
 
-function CraftSim.DEBUG.FRAMES:InitLogOptionsTab(logOptionsTab)
+function CraftSim.DEBUG.UI:InitLogOptionsTab(logOptionsTab)
     local content = logOptionsTab.content
 
     content.debugIDList = GGUI.FrameList {
@@ -244,7 +244,7 @@ function CraftSim.DEBUG.FRAMES:InitLogOptionsTab(logOptionsTab)
 end
 
 ---@deprecated
-function CraftSim.DEBUG.FRAMES:InitCacheTab(cacheTab)
+function CraftSim.DEBUG.UI:InitCacheTab(cacheTab)
     local content = cacheTab.content
 
     content.clearCacheButton = GGUI.Button({
@@ -340,7 +340,7 @@ function CraftSim.DEBUG.FRAMES:InitCacheTab(cacheTab)
     content.cacheList:UpdateDisplay()
 end
 
-function CraftSim.DEBUG.FRAMES:InitModuleDebugToolsTab(moduleToolsTab)
+function CraftSim.DEBUG.UI:InitModuleDebugToolsTab(moduleToolsTab)
     local content = moduleToolsTab.content
 
     local tabX = 380
@@ -402,15 +402,15 @@ function CraftSim.DEBUG.FRAMES:InitModuleDebugToolsTab(moduleToolsTab)
         backdropOptions = CraftSim.CONST.BACKDROPS.OPTIONS_CONTENT_FRAME,
     }
 
-    CraftSim.DEBUG.FRAMES:InitModuleToolsMainTab(content.mainTab)
-    CraftSim.DEBUG.FRAMES:InitModuleToolsRecipeScanTab(content.recipeScanTab)
-    CraftSim.DEBUG.FRAMES:InitModuleToolsCraftQueueTab(content.craftQueueTab)
-    CraftSim.DEBUG.FRAMES:InitModuleToolsSpecInfoTab(content.specInfoTab)
+    CraftSim.DEBUG.UI:InitModuleToolsMainTab(content.mainTab)
+    CraftSim.DEBUG.UI:InitModuleToolsRecipeScanTab(content.recipeScanTab)
+    CraftSim.DEBUG.UI:InitModuleToolsCraftQueueTab(content.craftQueueTab)
+    CraftSim.DEBUG.UI:InitModuleToolsSpecInfoTab(content.specInfoTab)
 
     GGUI.BlizzardTabSystem { content.mainTab, content.recipeScanTab, content.craftQueueTab, content.specInfoTab }
 end
 
-function CraftSim.DEBUG.FRAMES:InitModuleToolsMainTab(mainTab)
+function CraftSim.DEBUG.UI:InitModuleToolsMainTab(mainTab)
     local content = mainTab.content
 
     content.inspectCraftSimButton = GGUI.Button {
@@ -442,7 +442,7 @@ function CraftSim.DEBUG.FRAMES:InitModuleToolsMainTab(mainTab)
     }
 end
 
-function CraftSim.DEBUG.FRAMES:InitModuleToolsRecipeScanTab(recipeScanTab)
+function CraftSim.DEBUG.UI:InitModuleToolsRecipeScanTab(recipeScanTab)
     local content = recipeScanTab.content
 
     content.inspectResultsButton = GGUI.Button {
@@ -469,7 +469,7 @@ function CraftSim.DEBUG.FRAMES:InitModuleToolsRecipeScanTab(recipeScanTab)
     }
 end
 
-function CraftSim.DEBUG.FRAMES:InitModuleToolsCraftQueueTab(craftQueueTab)
+function CraftSim.DEBUG.UI:InitModuleToolsCraftQueueTab(craftQueueTab)
     local content = craftQueueTab.content
 
     content.inspectQueueButton = GGUI.Button {
@@ -490,7 +490,7 @@ function CraftSim.DEBUG.FRAMES:InitModuleToolsCraftQueueTab(craftQueueTab)
     }
 end
 
-function CraftSim.DEBUG.FRAMES:InitModuleToolsSpecInfoTab(specInfoTab)
+function CraftSim.DEBUG.UI:InitModuleToolsSpecInfoTab(specInfoTab)
     local content = specInfoTab.content
 
     content.nodeDebugInput = GGUI.TextInput {

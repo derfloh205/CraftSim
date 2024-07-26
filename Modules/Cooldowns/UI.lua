@@ -4,8 +4,8 @@ local CraftSim = select(2, ...)
 ---@class CraftSim.COOLDOWNS
 CraftSim.COOLDOWNS = CraftSim.COOLDOWNS
 
----@class CraftSim.COOLDOWNS.FRAMES
-CraftSim.COOLDOWNS.FRAMES = {}
+---@class CraftSim.COOLDOWNS.UI
+CraftSim.COOLDOWNS.UI = {}
 
 ---@class CraftSim.COOLDOWNS.FRAME : GGUI.Frame
 CraftSim.COOLDOWNS.frame = nil
@@ -18,7 +18,7 @@ local LID = CraftSim.CONST.TEXT
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COOLDOWNS)
 
-function CraftSim.COOLDOWNS.FRAMES:Init()
+function CraftSim.COOLDOWNS.UI:Init()
     local sizeX = 670
     local sizeY = 220
     local offsetX = 0
@@ -149,13 +149,12 @@ function CraftSim.COOLDOWNS.FRAMES:Init()
     end)
 end
 
-function CraftSim.COOLDOWNS.FRAMES:UpdateDisplay()
-    CraftSim.COOLDOWNS.FRAMES:UpdateList()
-    CraftSim.COOLDOWNS.FRAMES:UpdateTimers()
+function CraftSim.COOLDOWNS.UI:UpdateDisplay()
+    CraftSim.COOLDOWNS.UI:UpdateList()
+    CraftSim.COOLDOWNS.UI:UpdateTimers()
 end
 
---- TODO: check if this can be made more efficient without deserializing all the time
-function CraftSim.COOLDOWNS.FRAMES:UpdateList()
+function CraftSim.COOLDOWNS.UI:UpdateList()
     local cooldownList = CraftSim.COOLDOWNS.frame.content.cooldownList
 
     cooldownList:Remove()
@@ -250,7 +249,7 @@ function CraftSim.COOLDOWNS.FRAMES:UpdateList()
         end)
 end
 
-function CraftSim.COOLDOWNS.FRAMES:UpdateTimers()
+function CraftSim.COOLDOWNS.UI:UpdateTimers()
     local cooldownList = CraftSim.COOLDOWNS.frame.content.cooldownList
 
     for _, activeRow in pairs(cooldownList.activeRows) do

@@ -104,13 +104,13 @@ end
 
 function CraftSim.CUSTOMER_HISTORY:PurgeZeroTipCustomers()
     CraftSim.DB.CUSTOMER_HISTORY:DeleteZeroTipCustomers()
-    CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateCustomerHistoryList()
+    CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerHistoryList()
 end
 
 ---@param customerHistory CraftSim.DB.CustomerHistory
 function CraftSim.CUSTOMER_HISTORY:RemoveCustomer(row, customerHistory)
     CraftSim.DB.CUSTOMER_HISTORY:Delete(customerHistory)
-    CraftSim.CUSTOMER_HISTORY.FRAMES:UpdateDisplay()
+    CraftSim.CUSTOMER_HISTORY.UI:UpdateDisplay()
     if row == CraftSim.CUSTOMER_HISTORY.frame.content.customerList.selectedRow then
         CraftSim.CUSTOMER_HISTORY.frame.content.customerList:SelectRow(1)
     end

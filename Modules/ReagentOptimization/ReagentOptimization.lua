@@ -196,7 +196,7 @@ end
 
 ---@param optimizationResult CraftSim.ReagentOptimizationResult
 function CraftSim.REAGENT_OPTIMIZATION:AssignBestAllocation(optimizationResult)
-    local simulationModeFrames = CraftSim.SIMULATION_MODE.FRAMES:GetSimulationModeFramesByVisibility()
+    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
     local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
     if CraftSim.SIMULATION_MODE.isActive then
         for reagentIndex, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do

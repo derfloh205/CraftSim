@@ -423,8 +423,8 @@ function CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
     if hasResults and not recipeData.professionGearSet:Equals(results[1].professionGearSet) then
         print("best result")
         print(results[1])
-        CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, exportMode)
+        CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMode)
     else
-        CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData, false, exportMode)
+        CraftSim.TOPGEAR.UI:ClearTopGearDisplay(recipeData, false, exportMode)
     end
 end

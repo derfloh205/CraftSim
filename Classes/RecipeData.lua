@@ -63,6 +63,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.professionData = CraftSim.ProfessionData(self, recipeID)
     self.professionInfoCached = self.professionData.professionInfoCached
 
+    self.expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(self.professionData.skillLineID)
 
     if isWorkOrder then
         ---@type CraftingOrderInfo
@@ -202,6 +203,10 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     self.baseProfessionStats:SetStatsByOperationInfo(self, self.baseOperationInfo)
     CraftSim.DEBUG:StopProfiling("- RD: OperationInfo")
+
+    if self.supportsIngenuity and not self.isOldWorldRecipe then
+        self.concentrationData = self:GetConcentrationDataForCrafter()
+    end
 
     -- exception: when salvage recipe, then resourcefulness is supported!
     if self.isSalvageRecipe then
@@ -443,7 +448,7 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     local itemStats = self.professionGearSet.professionStats
     local buffStats = self.buffData.professionStats
 
-    self.concentrationCost = concentrationCost
+    self.concentrationCost = concentrationCost or 0
 
     self.professionStats:Clear()
 
@@ -486,12 +491,14 @@ function CraftSim.RecipeData:Copy()
     local copy = CraftSim.RecipeData(self.recipeID, self.isRecraft, self.orderData ~= nil, self.crafterData)
     copy.concentrating = self.concentrating
     copy.reagentData = self.reagentData:Copy(copy)
+    copy.cooldownData = self.cooldownData:Copy()
     copy.professionGearSet = self.professionGearSet:Copy()
     copy.professionStats = self.professionStats:Copy()
     copy.baseProfessionStats = self.baseProfessionStats:Copy()
     copy.professionStatModifiers = self.professionStatModifiers:Copy()
     copy.priceData = self.priceData:Copy(copy)
     copy.resultData = self.resultData:Copy(copy)
+    copy.concentrationData = self.concentrationData:Copy()
     copy.orderData = self.orderData
     copy.crafterData = self.crafterData
     copy.subRecipeCostsEnabled = self.subRecipeCostsEnabled
@@ -828,7 +835,7 @@ function CraftSim.RecipeData:GetCooldownDataForRecipeCrafter()
         cooldownData:Update()
 
         -- cache only learned recipes from current expac that can be on cooldown
-        if cooldownData.isCooldownRecipe and self.recipeInfo.learned and not self.isOldWorldRecipe then
+        if cooldownData.isCooldownRecipe and self.recipeInfo.learned then -- and not self.isOldWorldRecipe then
             cooldownData:Save(crafterUID)
         end
     else
@@ -838,8 +845,25 @@ function CraftSim.RecipeData:GetCooldownDataForRecipeCrafter()
     return cooldownData
 end
 
-function CraftSim.RecipeData:GetExpansionID()
-    local professionExpansions = CraftSim.CONST.TRADESKILLLINEIDS[self.professionData.professionInfo.profession]
+---@return CraftSim.ConcentrationData?
+function CraftSim.RecipeData:GetConcentrationDataForCrafter()
+    local crafterUID = self:GetCrafterUID()
+    local concentrationData
+    if self:IsCrafter() then
+        local currencyID = C_TradeSkillUI.GetConcentrationCurrencyID(self.professionData.skillLineID)
+        concentrationData = CraftSim.ConcentrationData(currencyID)
+        concentrationData:Update()
+        -- save in crafterDB
+        CraftSim.DB.CRAFTER:SaveCrafterConcentrationData(crafterUID, self.professionData.professionInfo.profession,
+            self.expansionID,
+            concentrationData)
+    else
+        concentrationData =
+            CraftSim.DB.CRAFTER:GetCrafterConcentrationData(crafterUID, self.professionData.professionInfo.profession,
+                self.expansionID)
+    end
+
+    return concentrationData
 end
 
 function CraftSim.RecipeData:IsCrafterInfoCached()
@@ -873,10 +897,6 @@ function CraftSim.RecipeData:CrafterDataEquals(crafterData)
     local nameEquals = self.crafterData.name == crafterData.name
     local realmEquals = self.crafterData.realm == crafterData.realm
     local classEquals = self.crafterData.class == crafterData.class
-    -- local print = CraftSim.DEBUG:SetDebugPrint("RECIPE_SCAN")
-    -- print("---nameEquals: " .. tostring(nameEquals))
-    -- print("---realmEquals: " .. tostring(realmEquals))
-    -- print("---classEquals: " .. tostring(classEquals))
     return nameEquals and realmEquals and classEquals
 end
 

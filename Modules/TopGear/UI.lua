@@ -6,12 +6,12 @@ local GGUI = CraftSim.GGUI
 ---@class CraftSim.TOP_GEAR
 CraftSim.TOPGEAR = CraftSim.TOPGEAR
 
----@class CraftSim.TOP_GEAR.FRAMES
-CraftSim.TOPGEAR.FRAMES = {}
+---@class CraftSim.TOPGEAR.UI
+CraftSim.TOPGEAR.UI = {}
 
-local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.TOP_GEAR)
+local print = CraftSim.DEBUG:SetDebugPrint("TOP_GEAR")
 
-function CraftSim.TOPGEAR.FRAMES:Init()
+function CraftSim.TOPGEAR.UI:Init()
     local sizeX = 270
     local sizeY = 320
     local offsetX = -5
@@ -190,7 +190,7 @@ function CraftSim.TOPGEAR.FRAMES:Init()
     createContent(frameWO)
 end
 
-function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData, isClear, exportMode)
+function CraftSim.TOPGEAR.UI:ClearTopGearDisplay(recipeData, isClear, exportMode)
     local topGearFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
         return
@@ -201,7 +201,7 @@ function CraftSim.TOPGEAR.FRAMES:ClearTopGearDisplay(recipeData, isClear, export
     end
 
     local emptyProfessionGearSet = CraftSim.ProfessionGearSet(recipeData)
-    CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(emptyProfessionGearSet, exportMode)
+    CraftSim.TOPGEAR.UI:UpdateCombinationIcons(emptyProfessionGearSet, exportMode)
 
     topGearFrame.content.equipButton:SetEnabled(false)
     topGearFrame.content.profitText:SetText(isClear and "" or
@@ -221,7 +221,7 @@ end
 ---@param professionGearSet CraftSim.ProfessionGearSet
 ---@param exportMode number
 ---@param gIconsOverride? table
-function CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(professionGearSet, exportMode, gIconsOverride)
+function CraftSim.TOPGEAR.UI:UpdateCombinationIcons(professionGearSet, exportMode, gIconsOverride)
     local topGearFrame
     local gIcons
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
@@ -253,7 +253,7 @@ end
 ---@param results CraftSim.TopGearResult[]
 ---@param topGearMode string
 ---@param exportMode number
-function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, exportMode)
+function CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMode)
     local topGearFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.SCAN then
         return
@@ -263,7 +263,7 @@ function CraftSim.TOPGEAR.FRAMES:UpdateTopGearDisplay(results, topGearMode, expo
         topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
     end
     local topResult = results[1] -- as they are already sorted
-    CraftSim.TOPGEAR.FRAMES:UpdateCombinationIcons(topResult.professionGearSet, exportMode)
+    CraftSim.TOPGEAR.UI:UpdateCombinationIcons(topResult.professionGearSet, exportMode)
     if not CraftSim.TOPGEAR.IsEquipping then
         topGearFrame.currentTopResult = topResult
     end
@@ -315,7 +315,7 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
-function CraftSim.TOPGEAR.FRAMES:UpdateModeDropdown(recipeData, exportMode)
+function CraftSim.TOPGEAR.UI:UpdateModeDropdown(recipeData, exportMode)
     local topGearFrame = nil
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
         topGearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)

@@ -23,7 +23,6 @@ function CraftSim.CraftQueue:AddRecipe(options)
     options = options or {}
     local recipeData = options.recipeData
     local amount = options.amount or 1
-    local targetItemCountByQuality = options.targetItemCountByQuality
 
     print("Adding Recipe to Queue: " .. recipeData.recipeName, true)
 
@@ -42,19 +41,7 @@ function CraftSim.CraftQueue:AddRecipe(options)
     local craftQueueItem = self:FindRecipe(recipeData)
 
     if craftQueueItem then
-        if craftQueueItem.targetMode and targetItemCountByQuality then
-            -- add target items to already existing target item array
-            craftQueueItem:AddTargetItemCount(targetItemCountByQuality)
-        elseif not craftQueueItem.targetMode and targetItemCountByQuality then
-            -- if recipe to queue is target mode and the already queued one is not, convert to target mode and replace amount by given
-            craftQueueItem.targetMode = true
-            craftQueueItem.targetItemCountByQuality = targetItemCountByQuality
-        elseif craftQueueItem.targetMode and not targetItemCountByQuality then
-            -- if recipe to queue is not target mode and the already queued on is, ignore? TODO: maybe some compromise or even make target mode and non target mode recipes coexisting?
-        else -- if none are target mode just add amount
-            -- only increase amount
-            craftQueueItem.amount = craftQueueItem.amount + amount
-        end
+        craftQueueItem.amount = craftQueueItem.amount + amount
 
         -- Check if I have parent recipes that the already queued recipe does not have and merge if yes
         craftQueueItem.recipeData:AddParentRecipeInfosFrom(recipeData)
@@ -62,7 +49,6 @@ function CraftSim.CraftQueue:AddRecipe(options)
         craftQueueItem = CraftSim.CraftQueueItem({
             recipeData = recipeData:Copy(),
             amount = amount,
-            targetItemCountByQuality = targetItemCountByQuality
         })
         -- create a new queue item
         table.insert(self.craftQueueItems, craftQueueItem)
@@ -80,12 +66,8 @@ function CraftSim.CraftQueue:AddRecipe(options)
                     if subRecipe then
                         print("Found self crafted reagent: queue into cq: " .. subRecipe.recipeName)
                         subRecipe:SetNonQualityReagentsMax()
-                        -- local currentItemCount = CraftSim.ITEM_COUNT:Get(itemID, true, false, true,
-                        --     recipeData:GetCrafterUID())
-                        -- local restItemCount = math.max(0, reagentItem.quantity - currentItemCount)
-                        -- print("Restitemcount: " .. tostring(restItemCount))
                         if reagentItem.quantity > 0 then
-                            self:AddRecipe({ recipeData = subRecipe, amount = 1, targetItemCountByQuality = { [qualityID] = reagentItem.quantity } })
+                            self:AddRecipe({ recipeData = subRecipe, amount = reagentItem.quantity }) -- TODO
                         end
                     end
                 end
@@ -114,8 +96,8 @@ function CraftSim.CraftQueue:SetAmount(recipeData, amount, relative)
             craftQueueItem.amount = amount
         end
 
-        -- if amount is <= 0 then remove recipe from queue (if not in targetmode)
-        if not craftQueueItem.targetMode and craftQueueItem.amount <= 0 then
+        -- if amount is <= 0 then remove recipe from queue
+        if craftQueueItem.amount <= 0 then
             self:Remove(craftQueueItem)
         end
 
@@ -392,16 +374,12 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData)
 
     if not craftQueueItem then return end
 
-    if craftQueueItem.targetMode then
-        CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
-    else
-        -- decrement by one and refresh list
-        local newAmount = CraftSim.CRAFTQ.craftQueue:SetAmount(recipeData, -1, true)
-        if newAmount and newAmount <= 0 and CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED") then
-            FlashClientIcon()
-        end
+    -- decrement by one and refresh list
+    local newAmount = CraftSim.CRAFTQ.craftQueue:SetAmount(recipeData, -1, true)
+    if newAmount and newAmount <= 0 and CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED") then
+        FlashClientIcon()
     end
-    CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:UpdateDisplay()
 end
 
 function CraftSim.CraftQueue:UpdateSubRecipesTargetItemCounts()

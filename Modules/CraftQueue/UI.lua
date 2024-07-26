@@ -7,15 +7,15 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CRAFTQ
 CraftSim.CRAFTQ = CraftSim.CRAFTQ
 
----@class CraftSim.CRAFTQ.FRAMES
-CraftSim.CRAFTQ.FRAMES = {}
+---@class CraftSim.CRAFTQ.UI
+CraftSim.CRAFTQ.UI = {}
 
 local L = CraftSim.UTIL:GetLocalizer()
 local f = GUTIL:GetFormatter()
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
-function CraftSim.CRAFTQ.FRAMES:Init()
+function CraftSim.CRAFTQ.UI:Init()
     local sizeX = 1130
     local sizeY = 420
 
@@ -588,22 +588,6 @@ function CraftSim.CRAFTQ.FRAMES:Init()
                     CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER", checked)
                 end
             })
-
-            queueTab.content.shoppingListTargetModeOnly = GGUI.Checkbox({
-                parent = queueTab.content,
-                anchorParent = queueTab.content.shoppingListPerCharacterCB.labelText.frame,
-                anchorA = "LEFT",
-                anchorB = "RIGHT",
-                offsetX = 5,
-                labelOptions = {
-                    text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX),
-                },
-                tooltip = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP),
-                initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE"),
-                clickCallback = function(_, checked)
-                    CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE", checked)
-                end
-            })
         end
 
         -- summaries
@@ -650,7 +634,7 @@ function CraftSim.CRAFTQ.FRAMES:Init()
         })
 
 
-        queueTab.content.editRecipeFrame = CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(queueTab.content, frame.content)
+        queueTab.content.editRecipeFrame = CraftSim.CRAFTQ.UI:InitEditRecipeFrame(queueTab.content, frame.content)
 
         -- restock Options
 
@@ -749,29 +733,6 @@ function CraftSim.CRAFTQ.FRAMES:Init()
 
         generalOptionsFrame.saleRateHelpIcon = GGUI.HelpIcon { parent = generalOptionsFrame, anchorParent = generalOptionsFrame.saleRateTitle.frame,
             anchorA = "RIGHT", anchorB = "LEFT", offsetX = -2, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL)
-        }
-
-        local targetModecraftOffsetTooltipOptions = {
-            owner = generalOptionsFrame,
-            anchor = "ANCHOR_CURSOR",
-            text = f.white("Add additional crafts to the calculated minimum crafts for target mode recipes"),
-            textWrap = true,
-        }
-
-        generalOptionsFrame.targetModeCraftOffsetInput = GGUI.NumericInput {
-            parent = generalOptionsFrame, anchorParent = generalOptionsFrame.saleRateInput.textInput.frame, anchorA = "TOP", anchorB = "BOTTOM",
-            allowDecimals = false, initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET"), minValue = 0,
-            sizeX = 40,
-            labelOptions = {
-                text = "Target Mode Crafts: ",
-                tooltipOptions = targetModecraftOffsetTooltipOptions
-            },
-            tooltipOptions = targetModecraftOffsetTooltipOptions,
-            onNumberValidCallback = function(input)
-                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_GENERAL_RESTOCK_TARGET_MODE_CRAFTOFFSET",
-                    tonumber(input.currentValue))
-                self:UpdateQueueDisplay()
-            end
         }
 
         restockOptionsTab.content.recipeOptionsFrame = CreateFrame("Frame", nil, restockOptionsTab.content)
@@ -894,7 +855,7 @@ end
 ---@param parent frame
 ---@param anchorParent Region
 ---@return CraftSim.CRAFTQ.EditRecipeFrame editRecipeFrame
-function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
+function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     local editFrameX = 600
     local editFrameY = 330
     ---@class CraftSim.CRAFTQ.EditRecipeFrame : GGUI.Frame
@@ -930,8 +891,8 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
         clickCallback = function()
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 editRecipeFrame.craftQueueItem.recipeData.reagentData:SetReagentsMaxByQuality(1)
-                CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
-                CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
             end
         end
     }
@@ -941,8 +902,8 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
         clickCallback = function()
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 editRecipeFrame.craftQueueItem.recipeData.reagentData:SetReagentsMaxByQuality(2)
-                CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
-                CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
             end
         end
     }
@@ -952,8 +913,8 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
         clickCallback = function()
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 editRecipeFrame.craftQueueItem.recipeData.reagentData:SetReagentsMaxByQuality(3)
-                CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
-                CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
             end
         end
     }
@@ -987,7 +948,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
     local reagentFramesSpacingY = -25
     local reagentFramesInputSpacingX = 20
     local function createReagentFrame(i)
-        ---@class CraftSim.CRAFTQ.FRAMES.ReagentFrame : Frame
+        ---@class CraftSim.CRAFTQ.UI.ReagentFrame : Frame
         ---@field reagent CraftSim.Reagent?
         ---@field isActive? boolean
         local reagentFrame = CreateFrame("frame", nil, editRecipeFrame.content)
@@ -1016,7 +977,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
             end
         end
 
-        ---@param reagentInput CraftSim.CRAFTQ.FRAMES.ReagentInput
+        ---@param reagentInput CraftSim.CRAFTQ.UI.ReagentInput
         local function onReagentInput(reagentInput)
             if reagentFrame:IsRequiredQuantity() then
                 -- reagentFrame.maxQuantityLabel:SetText("test")
@@ -1026,8 +987,8 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
                 if editRecipeFrame:ValidateReagentQuantities() then
                     editRecipeFrame:UpdateReagentQuantities()
                     editRecipeFrame.craftQueueItem.recipeData:Update()
-                    CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
-                    CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                    CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
                 end
             else
                 -- adapt input if its too much
@@ -1044,20 +1005,20 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
             end
         end
 
-        ---@class CraftSim.CRAFTQ.FRAMES.ReagentInput : GGUI.NumericInput
+        ---@class CraftSim.CRAFTQ.UI.ReagentInput : GGUI.NumericInput
         ---@field reagentItem CraftSim.ReagentItem?
         reagentFrame.q1Input = GGUI.NumericInput {
             parent = reagentFrame, anchorParent = reagentFrame.icon.frame, minValue = 0, incrementOneButtons = true, sizeX = 30, anchorA = "LEFT", anchorB = "RIGHT",
             offsetX = 10, onNumberValidCallback = onReagentInput, borderAdjustWidth = 1.3,
         }
 
-        ---@class CraftSim.CRAFTQ.FRAMES.ReagentInput
+        ---@class CraftSim.CRAFTQ.UI.ReagentInput
         reagentFrame.q2Input = GGUI.NumericInput {
             parent = reagentFrame, anchorParent = reagentFrame.q1Input.textInput.frame, minValue = 0, incrementOneButtons = true, sizeX = 30, anchorA = "LEFT", anchorB = "RIGHT",
             offsetX = reagentFramesInputSpacingX, onNumberValidCallback = onReagentInput, borderAdjustWidth = 1.3,
         }
 
-        ---@class CraftSim.CRAFTQ.FRAMES.ReagentInput
+        ---@class CraftSim.CRAFTQ.UI.ReagentInput
         reagentFrame.q3Input = GGUI.NumericInput {
             parent = reagentFrame, anchorParent = reagentFrame.q2Input.textInput.frame, minValue = 0, incrementOneButtons = true, sizeX = 30, anchorA = "LEFT", anchorB = "RIGHT",
             offsetX = reagentFramesInputSpacingX, onNumberValidCallback = onReagentInput, borderAdjustWidth = 1.3,
@@ -1069,7 +1030,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
         }
         return reagentFrame
     end
-    ---@type CraftSim.CRAFTQ.FRAMES.ReagentFrame[]
+    ---@type CraftSim.CRAFTQ.UI.ReagentFrame[]
     editRecipeFrame.content.reagentFrames = {}
 
     for i = 0, numReagentFrames - 1 do table.insert(editRecipeFrame.content.reagentFrames, createReagentFrame(i)) end
@@ -1133,8 +1094,8 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
             print("setting reagent: " .. tostring(item and item:GetItemLink()))
             itemSelector.slot:SetReagent((item and item:GetItemID()) or nil)
             editRecipeFrame.craftQueueItem.recipeData:Update()
-            CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
-            CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+            CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+            CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
         end
     end
 
@@ -1179,16 +1140,16 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
                     itemSelector.professionGear:SetItem(item:GetItemLink())
                     editRecipeFrame.craftQueueItem.recipeData.professionGearSet:UpdateProfessionStats()
                     editRecipeFrame.craftQueueItem.recipeData:Update()
-                    CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
-                    CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                    CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
                 end)
             else
                 print("setting gear to no gear")
                 itemSelector.professionGear:SetItem(nil)
                 editRecipeFrame.craftQueueItem.recipeData.professionGearSet:UpdateProfessionStats()
                 editRecipeFrame.craftQueueItem.recipeData:Update()
-                CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
-                CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
             end
         end
     end
@@ -1207,8 +1168,8 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
                     optimizeGear = true,
                     optimizeReagents = true,
                 })
-                CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
-                CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+                CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
             end
         end
     }
@@ -1235,13 +1196,6 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
         offsetY = -5, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL),
     }
 
-    editRecipeFrame.content.targetModeCB = GGUI.Checkbox {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.resultTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 70,
-        offsetY = -2,
-        clickCallback = nil, -- dynamically set
-        label = "Target Mode",
-    }
-
     editRecipeFrame.content.resultList = GGUI.FrameList {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.resultTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         hideScrollbar = true, offsetX = -5, sizeY = 100,
@@ -1249,33 +1203,15 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
             {
                 width = 30, -- icon
             },
-            {
-                width = 40, -- chance
-            },
-            {
-                width = 100, -- target count mode input
-            },
         },
         rowConstructor = function(columns, row)
             local iconColumn = columns[1]
-            local chanceColumn = columns[2]
-            local targetColumn = columns[3]
 
             ---@type QualityID
             row.qualityID = nil
 
             iconColumn.icon = GGUI.Icon {
                 parent = iconColumn, anchorParent = iconColumn, sizeX = 25, sizeY = 25, anchorA = "LEFT", anchorB = "LEFT", offsetX = 3,
-            }
-
-            chanceColumn.text = GGUI.Text {
-                parent = chanceColumn, anchorParent = chanceColumn, scale = 1.1, offsetX = 5, offsetY = 0.5,
-            }
-
-            targetColumn.input = GGUI.NumericInput {
-                parent = targetColumn, anchorParent = targetColumn,
-                minValue = 0, allowDecimals = false, incrementOneButtons = true,
-                sizeX = 50, sizeY = 25, offsetX = 10,
             }
         end
     }
@@ -1284,7 +1220,7 @@ function CraftSim.CRAFTQ.FRAMES:InitEditRecipeFrame(parent, anchorParent)
     return editRecipeFrame
 end
 
-function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
+function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     -- multiples should be possible (different reagent setup)
     -- but if there already is a configuration just increase the count?
 
@@ -1334,11 +1270,11 @@ function CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
     CraftSim.DEBUG:StopProfiling("FrameListUpdate")
 end
 
-function CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
+function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     --- use a cache to prevent multiple redundant calls of ItemCount thus increasing performance
     CraftSim.CRAFTQ.itemCountCache = {}
 
-    CraftSim.CRAFTQ.FRAMES:UpdateFrameListByCraftQueue()
+    CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     local craftQueueFrame = CraftSim.CRAFTQ.frame
     local queueTab = craftQueueFrame.content.queueTab --[[@as CraftSim.CraftQueue.QueueTab]]
 
@@ -1382,7 +1318,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
     CraftSim.CRAFTQ.itemCountCache = nil
 end
 
-function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueTotalProfitDisplay()
+function CraftSim.CRAFTQ.UI:UpdateCraftQueueTotalProfitDisplay()
     local queueTab = CraftSim.CRAFTQ.frame.content.queueTab --[[@as GGUI.BlizzardTab]]
     local craftList = queueTab.content.craftList --[[@as GGUI.FrameList]]
 
@@ -1404,14 +1340,14 @@ end
 
 --- called when switching tab or when ending scan on selected row
 ---@param activeTabResults CraftSim.RecipeData[]
-function CraftSim.CRAFTQ.FRAMES:UpdateRecipeScanRestockButton(activeTabResults)
+function CraftSim.CRAFTQ.UI:UpdateRecipeScanRestockButton(activeTabResults)
     local craftQueueFrame = CraftSim.CRAFTQ.frame
     local queueTab = craftQueueFrame.content.queueTab --[[@as CraftSim.CraftQueue.QueueTab]]
     local resultsPresent = #activeTabResults > 0
     queueTab.content.importRecipeScanButton:SetEnabled(resultsPresent)
 end
 
-function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
+function CraftSim.CRAFTQ.UI:UpdateRestockOptionsDisplay()
     if not CraftSim.CRAFTQ.frame then
         return
     end
@@ -1500,13 +1436,13 @@ function CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
     end
 end
 
-function CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
-    CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
-    CraftSim.CRAFTQ.FRAMES:UpdateRestockOptionsDisplay()
+function CraftSim.CRAFTQ.UI:UpdateDisplay()
+    CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
+    CraftSim.CRAFTQ.UI:UpdateRestockOptionsDisplay()
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
-function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
+function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     ---@type CraftSim.CRAFTQ.EditRecipeFrame
     local editRecipeFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE)
     local recipeData = craftQueueItem.recipeData
@@ -1709,51 +1645,21 @@ function CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
 
     local resultList = editRecipeFrame.content.resultList --[[@as GGUI.FrameList]]
 
-    editRecipeFrame.content.targetModeCB.clickCallback = function(_, checked)
-        craftQueueItem.targetMode = checked
-        self:UpdateFrameListByCraftQueue()
-        self:UpdateEditRecipeFrameDisplay(craftQueueItem)
-    end
-
-    editRecipeFrame.content.targetModeCB:SetChecked(craftQueueItem.targetMode)
-
     resultList:Remove()
 
-    for qualityID, item in ipairs(resultData.itemsByQuality) do
-        local chance = resultData.chanceByQuality[qualityID]
-        if chance and chance > 0 then
-            resultList:Add(function(row, columns)
-                local iconColumn = columns[1]
-                local chanceColumn = columns[2]
-                local targetColumn = columns[3]
+    resultList:Add(function(row, columns)
+        local iconColumn = columns[1]
+        row.qualityID = resultData.expectedQuality --[[@as QualityID]]
 
-                row.qualityID = qualityID --[[@as QualityID]]
-
-                iconColumn.icon:SetItem(item)
-                chanceColumn.text:SetText(GUTIL:Round(chance * 100, 1) .. "%")
-
-                local targetCountInput = targetColumn.input --[[@as GGUI.NumericInput]]
-                targetCountInput:SetVisible(craftQueueItem.targetMode)
-
-                if craftQueueItem.targetMode then
-                    targetCountInput.onNumberValidCallback = function(input)
-                        local amount = input.currentValue
-                        craftQueueItem:SetTargetCount(qualityID, amount)
-                        craftQueueItem.amount = craftQueueItem:GetMinimumCraftsForTargetCount()
-                        self:UpdateFrameListByCraftQueue()
-                    end
-                    targetCountInput.textInput:SetText(craftQueueItem:GetTargetCount(qualityID))
-                end
-            end)
-        end
-    end
+        iconColumn.icon:SetItem(resultData.expectedItem)
+    end)
 
     resultList:UpdateDisplay()
 end
 
 ---@param row GGUI.FrameList.Row
 ---@param craftQueueItem CraftSim.CraftQueueItem
-function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueItem)
+function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueItem)
     local recipeData = craftQueueItem.recipeData
     local profilingID = "- FrameListUpdate Add Recipe: " .. craftQueueItem.recipeData.recipeName
     CraftSim.DEBUG:StartProfiling(profilingID)
@@ -1774,7 +1680,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
 
     editButtonColumn.editButton.clickCallback = function()
         print("show edit recipe frame")
-        CraftSim.CRAFTQ.FRAMES:UpdateEditRecipeFrameDisplay(craftQueueItem)
+        CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
         if not CraftSim.CRAFTQ.frame.content.queueTab.content.editRecipeFrame:IsVisible() then
             CraftSim.CRAFTQ.frame.content.queueTab.content.editRecipeFrame:Show()
         end
@@ -1810,13 +1716,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
 
 
     local craftAmountTooltipText = ""
-    if craftQueueItem.targetMode then
-        craftAmountTooltipText = "\n\nExpected minimum amount of crafts: " ..
-            craftQueueItem
-            .amount
-    else
-        craftAmountTooltipText = "\n\nQueued Crafts: " .. craftQueueItem.amount
-    end
+    craftAmountTooltipText = "\n\nQueued Crafts: " .. craftQueueItem.amount
 
     row.tooltipOptions = {
         text = recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
@@ -1870,65 +1770,16 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
     end
 
     local targetList = craftAmountColumn.targetList
-    if craftQueueItem.targetMode and craftQueueItem.targetItemCountByQuality then
-        craftAmountColumn.input:Hide()
-        targetList:Show()
-
-        targetList:Remove()
-        local addedTargets = 0
-        for qualityID, targetCount in pairs(craftQueueItem.targetItemCountByQuality) do
-            if targetCount > 0 then
-                addedTargets = addedTargets + 1
-                targetList:Add(function(row, columns)
-                    row.qualityID = qualityID
-                    local qualityColumn = columns[1]
-                    local countColumn = columns[2]
-                    local itemID = recipeData.resultData.itemsByQuality[qualityID]:GetItemID()
-                    qualityColumn.icon:SetQuality(qualityID)
-
-                    row.tooltipOptions = {
-                        anchor = "ANCHOR_RIGHT",
-                        owner = row.frame,
-                        itemID = itemID
-                    }
-                    local itemCount = CraftSim.ITEM_COUNT:Get(recipeData:GetCrafterUID(), itemID)
-                    countColumn:SetCount(itemCount, targetCount)
-                end)
-            end
+    row.frame:SetSize(row:GetWidth(), row.frameList.rowHeight)
+    craftAmountColumn.input:Show()
+    targetList:Hide()
+    craftAmountColumn.input.textInput:SetText(craftQueueItem.amount, false)
+    craftAmountColumn.input.onEnterPressedCallback =
+        function(_, value)
+            craftQueueItem.amount = value or 1
+            craftAmountColumn.unsavedMarker:Hide()
+            CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
         end
-
-        if addedTargets == 0 then
-            targetList:Add(function(row, columns)
-                local qualityColumn = columns[1]
-                local countColumn = columns[2]
-                local maxColumn = columns[3]
-
-                qualityColumn.icon:SetQuality(nil)
-                countColumn.text:SetText(f.g("-"))
-                maxColumn.text:SetText("")
-            end)
-        end
-
-        -- adjust row height based on result list height
-        targetList.autoAdjustHeightCallback = function(newHeight)
-            row.frame:SetSize(row:GetWidth(), (newHeight - 4) * targetList.frame:GetScale())
-        end
-
-        targetList:UpdateDisplay(function(rowA, rowB)
-            return rowA.qualityID < rowB.qualityID
-        end)
-    else
-        row.frame:SetSize(row:GetWidth(), row.frameList.rowHeight)
-        craftAmountColumn.input:Show()
-        targetList:Hide()
-        craftAmountColumn.input.textInput:SetText(craftQueueItem.amount, false)
-        craftAmountColumn.input.onEnterPressedCallback =
-            function(_, value)
-                craftQueueItem.amount = value or 1
-                craftAmountColumn.unsavedMarker:Hide()
-                CraftSim.CRAFTQ.FRAMES:UpdateQueueDisplay()
-            end
-    end
 
     craftButtonColumn.craftButton.clickCallback = nil
     craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft)
@@ -1988,7 +1839,7 @@ function CraftSim.CRAFTQ.FRAMES:UpdateCraftQueueRowByCraftQueueItem(row, craftQu
 
     removeRowColumn.removeButton.clickCallback = function()
         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem)
-        CraftSim.CRAFTQ.FRAMES:UpdateDisplay()
+        CraftSim.CRAFTQ.UI:UpdateDisplay()
     end
 
     CraftSim.DEBUG:StopProfiling(profilingID)
