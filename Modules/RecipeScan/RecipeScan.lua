@@ -230,6 +230,7 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
             return false
         end
     end
+    printF("Is not expansion: Exclude (ExpacID: " .. tostring(expansionID) .. ")")
     return false
 end
 
