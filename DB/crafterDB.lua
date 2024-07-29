@@ -98,6 +98,21 @@ function CraftSim.DB.CRAFTER:Migrate()
 
         CraftSimDB.crafterDB.version = 2
     end
+
+    -- 2 -> 3 remove fishing if in concentrationData
+    if CraftSimDB.crafterDB.version == 2 then
+        for crafterUID, data in pairs(CraftSimDB.crafterDB.data or {}) do
+            for expansionID, professionConDataList in pairs(data.concentrationData or {}) do
+                for profession, _ in pairs(professionConDataList) do
+                    if profession == Enum.Profession.Fishing then
+                        CraftSimDB.crafterDB.data[crafterUID].concentrationData[expansionID][profession] = nil
+                    end
+                end
+            end
+        end
+
+        CraftSimDB.crafterDB.version = 3
+    end
 end
 
 ---@param crafterUID CrafterUID

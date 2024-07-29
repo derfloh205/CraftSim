@@ -23,7 +23,7 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     end
 
     local currencyID = C_TradeSkillUI.GetConcentrationCurrencyID(skillLineID)
-    if currencyID and skillLineID > 0 then
+    if currencyID and skillLineID > 0 and C_ProfSpecs.SkillLineHasSpecialization(skillLineID) then
         local concentrationData = CraftSim.ConcentrationData(currencyID)
         concentrationData:Update()
         -- save in crafterDB

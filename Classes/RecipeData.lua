@@ -62,6 +62,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@type CraftSim.ProfessionData
     self.professionData = CraftSim.ProfessionData(self, recipeID)
     self.professionInfoCached = self.professionData.professionInfoCached
+    self.supportsSpecializations = C_ProfSpecs.SkillLineHasSpecialization(self.professionData.skillLineID)
 
     self.expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(self.professionData.skillLineID)
 
@@ -167,7 +168,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.minItemAmount = schematicInfo.quantityMin
     self.maxItemAmount = schematicInfo.quantityMax
 
-    if not self.isCooking then
+    if self.supportsSpecializations then
         ---@type CraftSim.SpecializationData?
         self.specializationData = self:GetSpecializationDataForRecipeCrafter()
     end
@@ -204,7 +205,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.baseProfessionStats:SetStatsByOperationInfo(self, self.baseOperationInfo)
     CraftSim.DEBUG:StopProfiling("- RD: OperationInfo")
 
-    if self.supportsIngenuity and not self.isOldWorldRecipe then
+    if self.supportsIngenuity and self.supportsSpecializations then
         self.concentrationData = self:GetConcentrationDataForCrafter()
     end
 
@@ -462,7 +463,7 @@ function CraftSim.RecipeData:UpdateProfessionStats()
 
     self.professionStats:add(itemStats)
 
-    if not self.isCooking then
+    if self.supportsSpecializations then
         local specExtraFactors = self.specializationData:GetExtraFactors()
         self.professionStats:add(specExtraFactors)
     end
@@ -849,7 +850,7 @@ end
 function CraftSim.RecipeData:GetConcentrationDataForCrafter()
     local crafterUID = self:GetCrafterUID()
     local concentrationData
-    if self:IsCrafter() then
+    if self:IsCrafter() and self.supportsSpecializations then
         local currencyID = C_TradeSkillUI.GetConcentrationCurrencyID(self.professionData.skillLineID)
         concentrationData = CraftSim.ConcentrationData(currencyID)
         concentrationData:Update()
