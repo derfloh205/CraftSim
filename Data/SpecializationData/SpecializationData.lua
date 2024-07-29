@@ -11,6 +11,7 @@ CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 ---@field idMapping? table<CraftSim.RecipeCategories, CraftSim.RecipeItemSubTypes>
 ---@field exceptionRecipeIDs? number[]
 ---@field affectedReagentIDs? number[]
+---@field activationBuffIDs? number[]
 ---@field equalsSkill? number
 ---@field equalsResourcefulness? number
 ---@field equalsMulticraft? number

@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 ---@class CraftSim.IDMapping : CraftSim.CraftSimObject
@@ -10,12 +12,13 @@ CraftSim.IDMapping = CraftSim.CraftSimObject:extend()
 ---@param exceptionRecipeIDs number[]
 ---@param affectedReagentIDs number[]
 ---@param recipeData CraftSim.RecipeData
-function CraftSim.IDMapping:new(recipeData, idMappingData, exceptionRecipeIDs, affectedReagentIDs)
+function CraftSim.IDMapping:new(recipeData, idMappingData, exceptionRecipeIDs, affectedReagentIDs, activationBuffIDs)
     self.recipeData = recipeData
     ---@type CraftSim.IDCategory[]
     self.categories = {}
     self.exceptionRecipeIDs = exceptionRecipeIDs or {}
     self.affectedReagentIDs = affectedReagentIDs or {}
+    self.activationBuffIDs = activationBuffIDs or {}
 
     for categoryID, subtypeIDs in pairs(idMappingData or {}) do
         table.insert(self.categories, CraftSim.IDCategory(categoryID, subtypeIDs))
@@ -48,6 +51,15 @@ function CraftSim.IDMapping:AffectsRecipe()
     -- print("ID Mapping affect?")
     -- print("categoryID: " .. tostring(recipeData.categoryID))
     -- print("subtypeID: " .. tostring(recipeData.subtypeID))
+
+    if #self.activationBuffIDs > 0 then
+        local atLeastOneActive = GUTIL:Some(self.activationBuffIDs, function(buffID)
+            return recipeData.buffData:IsBuffActive(buffID)
+        end)
+        if not atLeastOneActive then
+            return false
+        end
+    end
 
     -- an exception always matches
     if tContains(self.exceptionRecipeIDs, recipeData.recipeID) then

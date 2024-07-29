@@ -170,6 +170,14 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.minItemAmount = schematicInfo.quantityMin
     self.maxItemAmount = schematicInfo.quantityMax
 
+    -- needs to load before spec data
+    ---@type CraftSim.BuffData
+    self.buffData = CraftSim.BuffData(self)
+    -- no need to search for craft buffs when I am not even the crafter
+    if self:IsCrafter() then
+        self.buffData:Update()
+    end
+
     if self.supportsSpecializations then
         ---@type CraftSim.SpecializationData?
         self.specializationData = self:GetSpecializationDataForRecipeCrafter()
@@ -223,13 +231,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         CraftSim.DEBUG:StopProfiling("- RD: ProfessionGearCache")
 
         self.baseProfessionStats:subtract(self.professionGearSet.professionStats)
-    end
-
-    ---@type CraftSim.BuffData
-    self.buffData = CraftSim.BuffData(self)
-    -- no need to search for craft buffs when I am not even the crafter
-    if self:IsCrafter() then
-        self.buffData:Update()
     end
 
     self.baseProfessionStats:subtract(self.buffData.professionStats)

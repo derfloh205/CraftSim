@@ -44,6 +44,13 @@ function CraftSim.CRAFT_BUFFS:GetRecipeScanBuffsByProfessionID(profession)
 end
 
 ---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff everburningIgnition
+function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.EVERBURNING_IGNITION, CraftSim.ProfessionStats(), nil, nil,
+        nil, nil)
+end
+
+---@param recipeData CraftSim.RecipeData?
 ---@return CraftSim.Buff chefsHat
 function CraftSim.CRAFT_BUFFS:CreateChefsHatBuff(recipeData)
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.CHEFS_HAT, CraftSim.ProfessionStats(), nil, nil, nil,

@@ -535,27 +535,27 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
         SHIELDS = 1786,
     },
     ALCHEMY = {
-		DRAGONFLIGHT ={
-			ELEMENTAL_BOTH = 1646,
-			PHIALS = {
-				AIR = 1603,
-				FROST = 1644,
-			},
-			POTIONS = {
-				AIR = 1602,
-				FROST = 1645
-			},
-			REAGENT = 1611,
-			FINISHING_REAGENT = 1608,
-			OPTIONAL_REAGENTS = 1609,
-			INCENSE = 1610,
-			TRANSMUTATIONS = 1604,
-			ESSENTIALS = 1681,
-			ALCHEMIST_STONES = 1605,
-			CAULDRONS = 1612,
-		},
-		THEWARWITHIN = {
-			ALCHEMY_ESSENTIALS = 1944,
+        DRAGONFLIGHT = {
+            ELEMENTAL_BOTH = 1646,
+            PHIALS = {
+                AIR = 1603,
+                FROST = 1644,
+            },
+            POTIONS = {
+                AIR = 1602,
+                FROST = 1645
+            },
+            REAGENT = 1611,
+            FINISHING_REAGENT = 1608,
+            OPTIONAL_REAGENTS = 1609,
+            INCENSE = 1610,
+            TRANSMUTATIONS = 1604,
+            ESSENTIALS = 1681,
+            ALCHEMIST_STONES = 1605,
+            CAULDRONS = 1612,
+        },
+        THEWARWITHIN = {
+            ALCHEMY_ESSENTIALS = 1944,
             REAGENTS = 1972,
             BASIC_CONCOCTIONS = 1979,
             POTIONS = 1973,
@@ -565,8 +565,8 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
             TRANSMUTATIONS = 1976,
             ALCHEMIST_STONES = 1977,
             CAULDRONS = 1978,
-		}
-	},
+        }
+    },
     ENCHANTING = {
         FINISHING_REAGENTS = 1792,
         CLOAK_ENCHANTMENTS = 1778,
@@ -694,12 +694,12 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
         SHIELDS = 6,
     },
     ALCHEMY = {
-        PHIALS = 3,   -- "Flask"
+        PHIALS = 3,                -- "Flask"
         POTIONS = 1,
-        REAGENT = 11, -- "Other"
-        ALCHEMY = 6,  -- "Transmutations" TWW
+        REAGENT = 11,              -- "Other"
+        ALCHEMY = 6,               -- "Transmutations" TWW
         OTHER_TRANSMUTATIONS = 11, -- "Transmutations" TWW
-        JEWELCRAFTING = 4, -- "Transmutations" TWW
+        JEWELCRAFTING = 4,         -- "Transmutations" TWW
         FINISHING_REAGENT = 19,
         OPTIONAL_REAGENTS = 18,
         INCENSE = 8,                -- "other"
@@ -821,6 +821,7 @@ CraftSim.CONST.RECIPE_ITEM_SUBTYPES = {
 
 ---@enum CraftSim.BuffID
 CraftSim.CONST.BUFF_IDS = {
+    --- DF
     -- all professions
     PHIAL_OF_QUICK_HANDS = 393665,
     PHIAL_OF_QUICK_HANDS_SPELL_Q1 = 381264,
@@ -836,6 +837,10 @@ CraftSim.CONST.BUFF_IDS = {
     ELEMENTAL_SHATTER_EARTH = 392812,
     ELEMENTAL_SHATTER_FROST = 392820,
     ELEMENTAL_SHATTER_ORDER = 392821,
+
+    --- TWW
+    -- Blacksmithing
+    EVERBURNING_IGNITION = 453734,
 }
 
 CraftSim.CONST.LOCALES = {
