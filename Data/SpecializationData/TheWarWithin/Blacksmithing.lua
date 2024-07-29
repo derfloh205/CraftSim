@@ -182,7 +182,82 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA =
     MEANS_OF_PRODUCTION_1 = {
         childNodeIDs = { "TOOLS_OF_THE_TRADE_1", "STONEWORK_1", "FORTUITOUS_FORGES_1" },
         nodeID = 99589,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.SMELTING] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.FRAMEWORKS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.STONEWORK] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    MEANS_OF_PRODUCTION_2 = {
+        childNodeIDs = { "TOOLS_OF_THE_TRADE_1", "STONEWORK_1", "FORTUITOUS_FORGES_1" },
+        nodeID = 99589,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.SMELTING] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.FRAMEWORKS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.STONEWORK] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    MEANS_OF_PRODUCTION_3 = {
+        childNodeIDs = { "TOOLS_OF_THE_TRADE_1", "STONEWORK_1", "FORTUITOUS_FORGES_1" },
+        nodeID = 99589,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.SMELTING] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.FRAMEWORKS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.STONEWORK] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    MEANS_OF_PRODUCTION_13 = {
+        childNodeIDs = { "TOOLS_OF_THE_TRADE_1", "STONEWORK_1", "FORTUITOUS_FORGES_1" },
+        nodeID = 99589,
+        threshold = 25,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.SMELTING] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.FRAMEWORKS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.STONEWORK] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
     },
     TOOLS_OF_THE_TRADE_1 = {
         childNodeIDs = { "TRADE_TOOLS_1", "TRADE_ACCESSORIES_1" },

@@ -527,12 +527,20 @@ CraftSim.CONST.ENCHANTING_VELLUM_ID = 38682
 CraftSim.CONST.RECIPE_CATEGORIES = {
     ALL = 999999,
     BLACKSMITHING = {
-        STONEWORK = 1684,
-        SMELTING = 1678,
-        TOOLS = 1677,
-        WEAPONS = 1675,
-        ARMOR = 1567,
-        SHIELDS = 1786,
+        DRAGONFLIGHT = {
+            STONEWORK = 1684,
+            SMELTING = 1678,
+            TOOLS = 1677,
+            WEAPONS = 1675,
+            ARMOR = 1567,
+            SHIELDS = 1786,
+        },
+        THE_WAR_WITHIN = {
+            PROFESSION_EQUIPMENT = 2024,
+            SMELTING = 2019,
+            FRAMEWORKS = 2118,
+            STONEWORK = 2119,
+        },
     },
     ALCHEMY = {
         DRAGONFLIGHT = {
