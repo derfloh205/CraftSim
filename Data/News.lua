@@ -15,7 +15,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
-        newP("17.0.2"),
+        newP("17.0.3"),
         f.P .. f.l("The War Within") .. " Update",
         f.P .. "Behold! Many updates to come to adapt" .. f.l(" CraftSim"),
         f.P .. "Goodbye " .. f.bb("Inspiration") .. "!",
@@ -25,6 +25,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.P .. f.b("Craft Results") .. " now includes a craft analyser tab",
         f.s .. "Thanks updating enchant data:",
         f.a .. f.bb("https://github.com/Williwams"),
+        f.s .. "Thanks for helping with SpecInfo Mappings:",
+        f.a .. f.bb("https://github.com/EloMoose"),
         newP("16.1.8"),
         f.P .. "Fixed 10.2.7 Bugs",
         f.p .. "Fixed module collapsed content showing on tab switch",
