@@ -132,8 +132,7 @@ function CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
         end
     end
 
-    CraftSim.DEBUG:SystemPrint("CraftSim Error: Missing skillLineID mapping for: " .. tostring(skillLineID))
-    return 0 -- if map is kept up to date this should not happen
+    return 0 -- sometimes happens if not yet initialized
 end
 
 -- from stackoverflow:
