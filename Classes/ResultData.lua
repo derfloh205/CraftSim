@@ -54,7 +54,8 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
         for _, itemID in pairs(itemIDs) do
             table.insert(self.itemsByQuality, Item:CreateFromItemID(itemID))
         end
-    elseif recipeData.isGear then
+        -- only for quality supporting gear, non quality gear would be the toylike Scepter of Spectacle: Air for example
+    elseif recipeData.isGear and recipeData.supportsQualities then
         local itemLinks = CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeData.recipeID,
             craftingReagentInfoTbl, recipeData.allocationItemGUID, recipeData.maxQuality)
 
@@ -71,7 +72,7 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
         end
     end
 
-    if not recipeData.isGear and self.itemsByQuality[1] and self.itemsByQuality[2] and not recipeData.supportsQualities then
+    if self.itemsByQuality[1] and self.itemsByQuality[2] and not recipeData.supportsQualities then
         if self.itemsByQuality[1]:GetItemID() == self.itemsByQuality[2]:GetItemID() then
             self.itemsByQuality = { self.itemsByQuality[1] } -- force one of an item (illustrious insight e.g. has always 3 items in it for whatever reason)
         end
