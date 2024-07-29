@@ -111,13 +111,16 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     self.isGear = false
 
-    if self.recipeInfo.hyperlink then
+    self.isEnchantingRecipe = self.recipeInfo.isEnchantingRecipe or false
+
+
+    if self.recipeInfo.hyperlink and not self.isEnchantingRecipe then
         local itemInfoInstant = { C_Item.GetItemInfoInstant(self.recipeInfo.hyperlink) }
         local subclassID = itemInfoInstant[7]
         ---@type number?
         self.subtypeID = subclassID
         -- 4th return value is item equip slot, so if its of non type its not equipable, otherwise its gear
-        self.isGear = itemInfoInstant[4] ~= CraftSim.CONST.INVENTORY_TYPE_NON_EQUIP_IGNORE
+        self.isGear = not tContains(CraftSim.CONST.INVENTORY_TYPES_NON_GEAR, itemInfoInstant[4])
     end
 
     self.isOldWorldRecipe = self:IsOldWorldRecipe()
@@ -132,7 +135,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.recipeName = self.recipeInfo.name
     self.supportsQualities = self.recipeInfo.supportsQualities or false
     self.supportsCraftingStats = self.recipeInfo.supportsCraftingStats or false
-    self.isEnchantingRecipe = self.recipeInfo.isEnchantingRecipe or false
     self.isCooking = self.professionData.professionInfo.profession == Enum.Profession.Cooking
     self.isSalvageRecipe = self.recipeInfo.isSalvageRecipe or false
     self.isAlchemicalExperimentation = tContains(CraftSim.CONST.ALCHEMICAL_EXPERIMENTATION_RECIPE_IDS, recipeID)
