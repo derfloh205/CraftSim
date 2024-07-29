@@ -540,6 +540,7 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
             SMELTING = 2019,
             FRAMEWORKS = 2118,
             STONEWORK = 2119,
+            WEAPONS = 2021,
         },
     },
     ALCHEMY = {

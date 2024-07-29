@@ -745,6 +745,12 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA =
     WEAPON_SMITHING_1 = {
         childNodeIDs = { "BLADES_1", "HAFTED_1" },
         nodeID = 99453,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+            -- TODO: "Big Profession Tools" ?!
+        },
 
     },
     BLADES_1 = {
