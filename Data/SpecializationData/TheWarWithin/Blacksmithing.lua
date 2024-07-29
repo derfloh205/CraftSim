@@ -262,11 +262,82 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA =
     TOOLS_OF_THE_TRADE_1 = {
         childNodeIDs = { "TRADE_TOOLS_1", "TRADE_ACCESSORIES_1" },
         nodeID = 99588,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    TOOLS_OF_THE_TRADE_2 = {
+        childNodeIDs = { "TRADE_TOOLS_1", "TRADE_ACCESSORIES_1" },
+        nodeID = 99588,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    TOOLS_OF_THE_TRADE_3 = {
+        childNodeIDs = { "TRADE_TOOLS_1", "TRADE_ACCESSORIES_1" },
+        nodeID = 99588,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    TOOLS_OF_THE_TRADE_4 = {
+        childNodeIDs = { "TRADE_TOOLS_1", "TRADE_ACCESSORIES_1" },
+        nodeID = 99588,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    TOOLS_OF_THE_TRADE_5 = {
+        childNodeIDs = { "TRADE_TOOLS_1", "TRADE_ACCESSORIES_1" },
+        nodeID = 99588,
+        threshold = 20,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    TOOLS_OF_THE_TRADE_6 = {
+        childNodeIDs = { "TRADE_TOOLS_1", "TRADE_ACCESSORIES_1" },
+        nodeID = 99588,
+        threshold = 25,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    TOOLS_OF_THE_TRADE_7 = {
+        childNodeIDs = { "TRADE_TOOLS_1", "TRADE_ACCESSORIES_1" },
+        nodeID = 99588,
+        threshold = 30,
+        ingenuity = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.PROFESSION_EQUIPMENT] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
     },
     TRADE_TOOLS_1 = {
         nodeID = 99587,
-
     },
     TRADE_ACCESSORIES_1 = {
         nodeID = 99586,

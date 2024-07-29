@@ -8,7 +8,7 @@ CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 ---@field nodeID number
 ---@field childNodeIDs? string[]
 ---@field threshold? number
----@field idMapping? table<CraftSim.RecipeCategories, CraftSim.RecipeItemSubTypes>
+---@field idMapping? table<CraftSim.RecipeCategories, CraftSim.RecipeItemSubTypes | Enum.InventoryType>
 ---@field exceptionRecipeIDs? number[]
 ---@field affectedReagentIDs? number[]
 ---@field activationBuffIDs? number[]

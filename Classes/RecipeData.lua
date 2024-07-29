@@ -119,6 +119,11 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         local subclassID = itemInfoInstant[7]
         ---@type number?
         self.subtypeID = subclassID
+        ---@type Enum.InventoryType?
+        self.inventoryType = nil
+        if itemInfoInstant[1] then
+            self.inventoryType = C_Item.GetItemInventoryTypeByID(itemInfoInstant[1])
+        end
         -- 4th return value is item equip slot, so if its of non type its not equipable, otherwise its gear
         self.isGear = not tContains(CraftSim.CONST.INVENTORY_TYPES_NON_GEAR, itemInfoInstant[4])
     end

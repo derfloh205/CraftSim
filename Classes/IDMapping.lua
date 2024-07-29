@@ -72,11 +72,14 @@ function CraftSim.IDMapping:AffectsRecipe()
 
     -- for all categories check if its subtypes contain the recipesubtype or all
     -- if the specific categoryID to subtypeIDs combination matches it matches
+    -- inventory type id is also a possibility
     for _, idCategory in pairs(self.categories) do
         if recipeData.categoryID == idCategory.categoryID then
             if tContains(idCategory.subtypeIDs, CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL) then
                 return true
             elseif tContains(idCategory.subtypeIDs, recipeData.subtypeID) then
+                return true
+            elseif recipeData.inventoryType and tContains(idCategory.subtypeIDs, recipeData.inventoryType) then
                 return true
             end
         end
