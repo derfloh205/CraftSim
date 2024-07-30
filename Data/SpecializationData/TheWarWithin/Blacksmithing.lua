@@ -745,39 +745,453 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA =
     WEAPON_SMITHING_1 = {
         childNodeIDs = { "BLADES_1", "HAFTED_1" },
         nodeID = 99453,
+        threshold = 0,
+        equalsSkill = 1,
         idMapping = {
             [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
                 CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
             },
-            -- TODO: "Big Profession Tools" ?!
+            -- TODO: "Big Profession Tools" - All Profession Tools listed in learned/unlearned seem not to be affected
         },
-
+    },
+    WEAPON_SMITHING_2 = {
+        childNodeIDs = { "BLADES_1", "HAFTED_1" },
+        nodeID = 99453,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    WEAPON_SMITHING_3 = {
+        childNodeIDs = { "BLADES_1", "HAFTED_1" },
+        nodeID = 99453,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    WEAPON_SMITHING_4 = {
+        childNodeIDs = { "BLADES_1", "HAFTED_1" },
+        nodeID = 99453,
+        threshold = 15,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    WEAPON_SMITHING_5 = {
+        childNodeIDs = { "BLADES_1", "HAFTED_1" },
+        nodeID = 99453,
+        threshold = 20,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    WEAPON_SMITHING_6 = {
+        childNodeIDs = { "BLADES_1", "HAFTED_1" },
+        nodeID = 99453,
+        threshold = 25,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
+    },
+    WEAPON_SMITHING_7 = {
+        childNodeIDs = { "BLADES_1", "HAFTED_1" },
+        nodeID = 99453,
+        threshold = 30,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL
+            },
+        },
     },
     BLADES_1 = {
         childNodeIDs = { "SHORT_BLADES_1", "LONG_BLADES_1" },
         nodeID = 99452,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+            },
+        },
+    },
+    BLADES_2 = {
+        childNodeIDs = { "SHORT_BLADES_1", "LONG_BLADES_1" },
+        nodeID = 99452,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+            },
+        },
+    },
+    BLADES_3 = {
+        childNodeIDs = { "SHORT_BLADES_1", "LONG_BLADES_1" },
+        nodeID = 99452,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+            },
+        },
+    },
+    BLADES_4 = {
+        childNodeIDs = { "SHORT_BLADES_1", "LONG_BLADES_1" },
+        nodeID = 99452,
+        threshold = 15,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+            },
+        },
+    },
+    BLADES_5 = {
+        childNodeIDs = { "SHORT_BLADES_1", "LONG_BLADES_1" },
+        nodeID = 99452,
+        threshold = 20,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+            },
+        },
     },
     SHORT_BLADES_1 = {
         nodeID = 99451,
-
+        threshold = 0,
+        equalsSkill = 1,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+            },
+        },
+    },
+    SHORT_BLADES_2 = {
+        nodeID = 99451,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+            },
+        },
+    },
+    SHORT_BLADES_3 = {
+        nodeID = 99451,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+            },
+        },
+    },
+    SHORT_BLADES_4 = {
+        nodeID = 99451,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+            },
+        },
+    },
+    SHORT_BLADES_5 = {
+        nodeID = 99451,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.DAGGERS,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.FIST,
+            },
+        },
     },
     LONG_BLADES_1 = {
         nodeID = 99450,
-
+        threshold = 0,
+        equalsSkill = 1,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+            },
+        },
+    },
+    LONG_BLADES_2 = {
+        nodeID = 99450,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+            },
+        },
+    },
+    LONG_BLADES_3 = {
+        nodeID = 99450,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+            },
+        },
+    },
+    LONG_BLADES_4 = {
+        nodeID = 99450,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+            },
+        },
+    },
+    LONG_BLADES_5 = {
+        nodeID = 99450,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SWORDS_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.WARGLAIVES,
+            },
+        },
     },
     HAFTED_1 = {
         childNodeIDs = { "MACES_1", "AXES_AND_POLEARMS_1" },
         nodeID = 99449,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+            },
+        },
+    },
+    HAFTED_2 = {
+        childNodeIDs = { "MACES_1", "AXES_AND_POLEARMS_1" },
+        nodeID = 99449,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+            },
+        },
+    },
+    HAFTED_3 = {
+        childNodeIDs = { "MACES_1", "AXES_AND_POLEARMS_1" },
+        nodeID = 99449,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+            },
+        },
+    },
+    HAFTED_4 = {
+        childNodeIDs = { "MACES_1", "AXES_AND_POLEARMS_1" },
+        nodeID = 99449,
+        threshold = 15,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+            },
+        },
+    },
+    HAFTED_5 = {
+        childNodeIDs = { "MACES_1", "AXES_AND_POLEARMS_1" },
+        nodeID = 99449,
+        threshold = 20,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+            },
+        },
     },
     MACES_1 = {
         nodeID = 99448,
-
+        threshold = 0,
+        equalsSkill = 1,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+            },
+        },
+    },
+    MACES_2 = {
+        nodeID = 99448,
+        threshold = 5,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+            },
+        },
+    },
+    MACES_3 = {
+        nodeID = 99448,
+        threshold = 10,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+            },
+        },
+    },
+    MACES_4 = {
+        nodeID = 99448,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.MACE_2H,
+            },
+        },
     },
     AXES_AND_POLEARMS_1 = {
         nodeID = 99447,
-
+        threshold = 0,
+        equalsSkill = 1,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+            },
+        },
+    },
+    AXES_AND_POLEARMS_2 = {
+        nodeID = 99447,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+            },
+        },
+    },
+    AXES_AND_POLEARMS_3 = {
+        nodeID = 99447,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+            },
+        },
+    },
+    AXES_AND_POLEARMS_4 = {
+        nodeID = 99447,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+            },
+        },
+    },
+    AXES_AND_POLEARMS_5 = {
+        nodeID = 99447,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.WEAPONS] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_1H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.AXE_2H,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.POLEARM,
+            },
+        },
     },
 
     -- ARMOR SMITHING
