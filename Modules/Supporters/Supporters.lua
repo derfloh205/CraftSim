@@ -19,6 +19,12 @@ function CraftSim.SUPPORTERS:GetList()
     return {
 
         {
+            name = f.bb("Zach B."),
+            type = paypal,
+            message = "For my favourite addon",
+            date = "30.07.2024",
+        },
+        {
             name = f.bb("Hademar"),
             type = kofi,
             message = "Thanks for still working on this great addon and good luck going into TWW! <3",
