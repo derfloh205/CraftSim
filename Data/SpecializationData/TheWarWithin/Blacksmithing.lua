@@ -1198,57 +1198,673 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA =
     ARMOR_SMITHING_1 = {
         childNodeIDs = { "LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1" },
         nodeID = 99239,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
+            },
+        },
+    },
+    ARMOR_SMITHING_2 = {
+        childNodeIDs = { "LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1" },
+        nodeID = 99239,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
+            },
+        },
+    },
+    ARMOR_SMITHING_3 = {
+        childNodeIDs = { "LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1" },
+        nodeID = 99239,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
+            },
+        },
+    },
+    ARMOR_SMITHING_4 = {
+        childNodeIDs = { "LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1" },
+        nodeID = 99239,
+        threshold = 20,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
+            },
+        },
+    },
+    ARMOR_SMITHING_5 = {
+        childNodeIDs = { "LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1" },
+        nodeID = 99239,
+        threshold = 25,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
+            },
+        },
+    },
+    ARMOR_SMITHING_6 = {
+        childNodeIDs = { "LARGE_PLATE_ARMOR_1", "SCULPTED_ARMOR_1", "FINE_ARMOR_1" },
+        nodeID = 99239,
+        threshold = 30,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALL,
+            },
+        },
     },
     LARGE_PLATE_ARMOR_1 = {
         childNodeIDs = { "BREASTPLATES_1", "GREAVES_1", "SHIELDS_1" },
         nodeID = 99238,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexChestType,
+                Enum.InventoryType.IndexLegsType,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS,
+            },
+        },
+    },
+    LARGE_PLATE_ARMOR_2 = {
+        childNodeIDs = { "BREASTPLATES_1", "GREAVES_1", "SHIELDS_1" },
+        nodeID = 99238,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexChestType,
+                Enum.InventoryType.IndexLegsType,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS,
+            },
+        },
+    },
+    LARGE_PLATE_ARMOR_3 = {
+        childNodeIDs = { "BREASTPLATES_1", "GREAVES_1", "SHIELDS_1" },
+        nodeID = 99238,
+        threshold = 15,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexChestType,
+                Enum.InventoryType.IndexLegsType,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS,
+            },
+        },
+    },
+    LARGE_PLATE_ARMOR_4 = {
+        childNodeIDs = { "BREASTPLATES_1", "GREAVES_1", "SHIELDS_1" },
+        nodeID = 99238,
+        threshold = 25,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexChestType,
+                Enum.InventoryType.IndexLegsType,
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS,
+            },
+        },
     },
     BREASTPLATES_1 = {
         nodeID = 99237,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexChestType,
+            },
+        },
+    },
+    BREASTPLATES_2 = {
+        nodeID = 99237,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexChestType,
+            },
+        },
+    },
+    BREASTPLATES_3 = {
+        nodeID = 99237,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexChestType,
+            },
+        },
+    },
+    BREASTPLATES_4 = {
+        nodeID = 99237,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexChestType,
+            },
+        },
+    },
+    BREASTPLATES_5 = {
+        nodeID = 99237,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexChestType,
+            },
+        },
     },
     GREAVES_1 = {
         nodeID = 99236,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexLegsType,
+            },
+        },
+    },
+    GREAVES_2 = {
+        nodeID = 99236,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexLegsType,
+            },
+        },
+    },
+    GREAVES_3 = {
+        nodeID = 99236,
+        threshold = 5,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexLegsType,
+            },
+        },
+    },
+    GREAVES_4 = {
+        nodeID = 99236,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexLegsType,
+            },
+        },
+    },
+    GREAVES_5 = {
+        nodeID = 99236,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexLegsType,
+            },
+        },
     },
     SHIELDS_1 = {
         nodeID = 99235,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS,
+            },
+        },
+    },
+    SHIELDS_2 = {
+        nodeID = 99235,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS,
+            },
+        },
+    },
+    SHIELDS_3 = {
+        nodeID = 99235,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS,
+            },
+        },
+    },
+    SHIELDS_4 = {
+        nodeID = 99235,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS,
+            },
+        },
+    },
+    SHIELDS_5 = {
+        nodeID = 99235,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.BLACKSMITHING.SHIELDS,
+            },
+        },
     },
     SCULPTED_ARMOR_1 = {
         childNodeIDs = { "HELMS_1", "PAULDRONS_1", "SABATONS_1" },
         nodeID = 99234,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHeadType,
+                Enum.InventoryType.IndexShoulderType,
+                Enum.InventoryType.IndexFeetType,
+            },
+        },
+    },
+    SCULPTED_ARMOR_2 = {
+        childNodeIDs = { "HELMS_1", "PAULDRONS_1", "SABATONS_1" },
+        nodeID = 99234,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHeadType,
+                Enum.InventoryType.IndexShoulderType,
+                Enum.InventoryType.IndexFeetType,
+            },
+        },
+    },
+    SCULPTED_ARMOR_3 = {
+        childNodeIDs = { "HELMS_1", "PAULDRONS_1", "SABATONS_1" },
+        nodeID = 99234,
+        threshold = 15,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHeadType,
+                Enum.InventoryType.IndexShoulderType,
+                Enum.InventoryType.IndexFeetType,
+            },
+        },
+    },
+    SCULPTED_ARMOR_4 = {
+        childNodeIDs = { "HELMS_1", "PAULDRONS_1", "SABATONS_1" },
+        nodeID = 99234,
+        threshold = 25,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHeadType,
+                Enum.InventoryType.IndexShoulderType,
+                Enum.InventoryType.IndexFeetType,
+            },
+        },
     },
     HELMS_1 = {
         nodeID = 99233,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHeadType,
+            },
+        },
+    },
+    HELMS_2 = {
+        nodeID = 99233,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHeadType,
+            },
+        },
+    },
+    HELMS_3 = {
+        nodeID = 99233,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHeadType,
+            },
+        },
+    },
+    HELMS_4 = {
+        nodeID = 99233,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHeadType,
+            },
+        },
+    },
+    HELMS_5 = {
+        nodeID = 99233,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHeadType,
+            },
+        },
     },
     PAULDRONS_1 = {
         nodeID = 99232,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexShoulderType,
+            },
+        },
+    },
+    PAULDRONS_2 = {
+        nodeID = 99232,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexShoulderType,
+            },
+        },
+    },
+    PAULDRONS_3 = {
+        nodeID = 99232,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexShoulderType,
+            },
+        },
+    },
+    PAULDRONS_4 = {
+        nodeID = 99232,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexShoulderType,
+            },
+        },
+    },
+    PAULDRONS_5 = {
+        nodeID = 99232,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexShoulderType,
+            },
+        },
     },
     SABATONS_1 = {
         nodeID = 99231,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexFeetType,
+            },
+        },
+    },
+    SABATONS_2 = {
+        nodeID = 99231,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexFeetType,
+            },
+        },
+    },
+    SABATONS_3 = {
+        nodeID = 99231,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexFeetType,
+            },
+        },
+    },
+    SABATONS_4 = {
+        nodeID = 99231,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexFeetType,
+            },
+        },
+    },
+    SABATONS_5 = {
+        nodeID = 99231,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexFeetType,
+            },
+        },
     },
     FINE_ARMOR_1 = {
         childNodeIDs = { "BELTS_1", "VAMBRACES_1", "GAUNTLETS_1" },
         nodeID = 99230,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWaistType,
+                Enum.InventoryType.IndexWristType,
+                Enum.InventoryType.IndexHandType,
+            },
+        },
+    },
+    FINE_ARMOR_2 = {
+        childNodeIDs = { "BELTS_1", "VAMBRACES_1", "GAUNTLETS_1" },
+        nodeID = 99230,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWaistType,
+                Enum.InventoryType.IndexWristType,
+                Enum.InventoryType.IndexHandType,
+            },
+        },
+    },
+    FINE_ARMOR_3 = {
+        childNodeIDs = { "BELTS_1", "VAMBRACES_1", "GAUNTLETS_1" },
+        nodeID = 99230,
+        threshold = 15,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWaistType,
+                Enum.InventoryType.IndexWristType,
+                Enum.InventoryType.IndexHandType,
+            },
+        },
+    },
+    FINE_ARMOR_4 = {
+        childNodeIDs = { "BELTS_1", "VAMBRACES_1", "GAUNTLETS_1" },
+        nodeID = 99230,
+        threshold = 25,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWaistType,
+                Enum.InventoryType.IndexWristType,
+                Enum.InventoryType.IndexHandType,
+            },
+        },
     },
     BELTS_1 = {
         nodeID = 99229,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWaistType,
+            },
+        },
+    },
+    BELTS_2 = {
+        nodeID = 99229,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWaistType,
+            },
+        },
+    },
+    BELTS_3 = {
+        nodeID = 99229,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWaistType,
+            },
+        },
+    },
+    BELTS_4 = {
+        nodeID = 99229,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWaistType,
+            },
+        },
+    },
+    BELTS_5 = {
+        nodeID = 99229,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWaistType,
+            },
+        },
     },
     VAMBRACES_1 = {
         nodeID = 99228,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWristType,
+            },
+        },
+    },
+    VAMBRACES_2 = {
+        nodeID = 99228,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWristType,
+            },
+        },
+    },
+    VAMBRACES_3 = {
+        nodeID = 99228,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWristType,
+            },
+        },
+    },
+    VAMBRACES_4 = {
+        nodeID = 99228,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWristType,
+            },
+        },
+    },
+    VAMBRACES_5 = {
+        nodeID = 99228,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexWristType,
+            },
+        },
     },
     GAUNTLETS_1 = {
         nodeID = 99227,
-
+        threshold = 0,
+        equalsSkill = 1,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHandType,
+            },
+        },
+    },
+    GAUNTLETS_2 = {
+        nodeID = 99227,
+        threshold = 5,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHandType,
+            },
+        },
+    },
+    GAUNTLETS_3 = {
+        nodeID = 99227,
+        threshold = 10,
+        skill = 5,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHandType,
+            },
+        },
+    },
+    GAUNTLETS_4 = {
+        nodeID = 99227,
+        threshold = 15,
+        skill = 10,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHandType,
+            },
+        },
+    },
+    GAUNTLETS_5 = {
+        nodeID = 99227,
+        threshold = 20,
+        skill = 15,
+        idMapping = {
+            [CraftSim.CONST.RECIPE_CATEGORIES.BLACKSMITHING.THE_WAR_WITHIN.ARMOR] = {
+                Enum.InventoryType.IndexHandType,
+            },
+        },
     },
 }

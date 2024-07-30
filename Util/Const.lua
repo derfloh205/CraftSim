@@ -541,6 +541,7 @@ CraftSim.CONST.RECIPE_CATEGORIES = {
             FRAMEWORKS = 2118,
             STONEWORK = 2119,
             WEAPONS = 2021,
+            ARMOR = 2016,
         },
     },
     ALCHEMY = {
