@@ -79,7 +79,7 @@ function CraftSim.IDMapping:AffectsRecipe()
                 return true
             elseif tContains(idCategory.subtypeIDs, recipeData.subtypeID) then
                 return true
-            elseif recipeData.inventoryType and tContains(idCategory.subtypeIDs, recipeData.inventoryType) then
+            elseif recipeData.itemEquipLocation and tContains(idCategory.subtypeIDs, recipeData.itemEquipLocation) then
                 return true
             end
         end
