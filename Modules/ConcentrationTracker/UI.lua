@@ -178,7 +178,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTooltipFrame(content)
 
     for _, crafterUID in ipairs(crafterUIDs) do
         local concentrationDataList = CraftSimDB.crafterDB.data[crafterUID].concentrationData
-        for expansionID, professionDataList in pairs(concentrationDataList) do
+        for expansionID, professionDataList in pairs(concentrationDataList or {}) do
             for profession, serializedData in pairs(professionDataList) do
                 crafterConcentrationTable[crafterUID] = crafterConcentrationTable[crafterUID] or {}
 
