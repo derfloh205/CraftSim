@@ -22,27 +22,40 @@ function CraftSim.ITEM_COUNT:Get(crafterUID, itemID)
 
     if isPlayer then
         -- always from api and then save
-        local count = C_Item.GetItemCount(itemID, true, false, true)
+        self:UpdateAllCountsForItemID(itemID)
+
         local altCount = nil
+        -- if player then return inclusive accountBankCount
+        local itemCount = CraftSim.DB.ITEM_COUNT:Get(crafterUID, itemID, true, true)
         if alternativeItemID then
-            altCount = C_Item.GetItemCount(alternativeItemID, true, false, true)
-            CraftSim.DB.ITEM_COUNT:Save(crafterUID, alternativeItemID, altCount)
+            self:UpdateAllCountsForItemID(alternativeItemID)
+            altCount = CraftSim.DB.ITEM_COUNT:Get(crafterUID, alternativeItemID, true, true)
         end
-        CraftSim.DB.ITEM_COUNT:Save(crafterUID, itemID, count)
-        return count, alternativeItemID, altCount
+        return itemCount, alternativeItemID, altCount
     end
 
-
-    local count = CraftSim.DB.ITEM_COUNT:Get(crafterUID, itemID)
+    -- for alts do not include accountBank
+    local count = CraftSim.DB.ITEM_COUNT:Get(crafterUID, itemID, true, false)
     local altCount = nil
     if alternativeItemID then
-        altCount = CraftSim.DB.ITEM_COUNT:Get(crafterUID, alternativeItemID)
+        altCount = CraftSim.DB.ITEM_COUNT:Get(crafterUID, alternativeItemID, true, false)
     end
     if not count then
         return 0 -- not cached yet
     else
         return count, alternativeItemID, altCount
     end
+end
+
+---@param itemID ItemID
+function CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
+    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
+
+    local inventoryCount = C_Item.GetItemCount(itemID, false, false, false, false)
+    local bankCount = math.max(0, C_Item.GetItemCount(itemID, true, false, true, false) - inventoryCount)
+    local accountBankCount = math.max(0, C_Item.GetItemCount(itemID, false, false, false, true) - inventoryCount)
+
+    CraftSim.DB.ITEM_COUNT:UpdateItemCounts(crafterUID, itemID, inventoryCount, bankCount, accountBankCount)
 end
 
 function CraftSim.ITEM_COUNT:BAG_UPDATE_DELAYED()
@@ -56,7 +69,6 @@ end
 --- loops all of a players inventory+bank bags and updates all tradegoods item count
 function CraftSim.ITEM_COUNT:UpdateItemCountForCharacter()
     local alreadyUpdated = {} -- small map to cache already updated IDs to not double update them
-    local crafterUID = CraftSim.UTIL:GetPlayerCrafterUID()
     print("Start Bag Update..")
     local function countBagItems(bagID)
         for slot = 1, C_Container.GetContainerNumSlots(bagID) do
@@ -70,14 +82,14 @@ function CraftSim.ITEM_COUNT:UpdateItemCountForCharacter()
                     if not alreadyUpdated[itemID] then
                         print("Updating Count: " .. GUTIL:IconToText(itemIcon, 20, 20))
                         alreadyUpdated[itemID] = true
-                        local itemCount = C_Item.GetItemCount(itemID, true, false, true)
-                        CraftSim.DB.ITEM_COUNT:Save(crafterUID, itemID, itemCount)
+                        self:UpdateAllCountsForItemID(itemID)
                     end
                 end
             end
         end
     end
-    for bagID = REAGENTBANK_CONTAINER, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+    -- +6 to account for accountBank / warband bank
+    for bagID = REAGENTBANK_CONTAINER, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS + 6 do
         countBagItems(bagID)
     end
 end

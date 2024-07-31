@@ -343,8 +343,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
             slot = slot
             for _, possibleReagent in pairs(slot.possibleReagents) do
                 local itemID = possibleReagent.item:GetItemID()
-                local itemCount = C_Item.GetItemCount(itemID, true, false, true)
-                CraftSim.DB.ITEM_COUNT:Save(crafterUID, itemID, itemCount)
+                CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
             end
         end
     end
