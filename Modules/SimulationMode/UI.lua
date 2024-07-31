@@ -4,6 +4,8 @@ local CraftSim = select(2, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
+local f = GUTIL:GetFormatter()
+
 ---@class CraftSim.SIMULATION_MODE.UI
 CraftSim.SIMULATION_MODE.UI = {}
 
@@ -435,6 +437,38 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         simModeDetailsFrame.content.reagentMaxFactorValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP",
             valueOffsetX - 15, offsetY * 2 - 5)
         simModeDetailsFrame.content.reagentMaxFactorValue:SetText("0")
+
+        simModeDetailsFrame.content.concentrationCB = GGUI.Checkbox {
+            parent = simModeDetailsFrame.content,
+            anchorParent = simModeDetailsFrame.content.reagentMaxFactorValue,
+            anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
+            labelOptions = {
+                text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) .. " Concentration",
+                anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -7,
+                anchorParent = simModeDetailsFrame.content.reagentMaxFactorTitle
+            },
+            clickCallback = function()
+                CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
+            end
+        }
+
+        frames.concentrationToggleMod = simModeDetailsFrame.content.concentrationCB
+
+        simModeDetailsFrame.content.concentrationCostTitle = GGUI.Text {
+            parent = simModeDetailsFrame.content,
+            anchorParent = simModeDetailsFrame.content.concentrationCB.labelText.frame,
+            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -7,
+            justifyOptions = { type = "H", align = "LEFT" },
+            text = "Concentration Cost: ",
+        }
+
+        simModeDetailsFrame.content.concentrationCostValue = GGUI.Text {
+            parent = simModeDetailsFrame.content,
+            anchorParent = simModeDetailsFrame.content.concentrationCB.frame,
+            anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -2, offsetX = -2,
+            justifyOptions = { type = "H", align = "RIGHT" },
+            text = "0",
+        }
 
         simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
         simModeDetailsFrame.content.qualityFrame:SetSize(simModeDetailsFrame:GetWidth() - 40, 230)
@@ -1082,6 +1116,19 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
         qualityFrame.currentQualityIcon:SetQuality(recipeData.resultData.expectedQuality)
         qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[recipeData.resultData.expectedQuality - 1] or 0))
 
+        local hasNextQuality = recipeData.resultData.expectedQuality < recipeData.maxQuality
+        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityIcon, hasNextQuality)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityThreshold, hasNextQuality)
+        CraftSim.FRAME:ToggleFrame(qualityFrame.nextQualityMissingSkillValue, hasNextQuality)
+        if hasNextQuality then
+            qualityFrame.nextQualityIcon:SetQuality(recipeData.resultData.expectedQuality + 1)
+            qualityFrame.nextQualityThreshold:SetText("> " .. (thresholds[recipeData.resultData.expectedQuality] or 0))
+            qualityFrame.nextQualityMissingSkillValue:SetText(math.max(
+                (thresholds[recipeData.resultData.expectedQuality] or 0) - recipeData.professionStats.skill.value, 0))
+        end
+
+
+
         -- Skill
         local reagentSkillIncrease = recipeData.reagentData
             :GetSkillFromRequiredReagents()
@@ -1104,6 +1151,16 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             detailsFrame.content.reagentSkillIncreaseValue:SetText(GUTIL:Round(reagentSkillIncrease, 0) ..
                 " / " .. GUTIL:Round(maxReagentSkillIncrease, 0))
             detailsFrame.content.reagentMaxFactorValue:SetText(GUTIL:Round(maxSkillFactor * 100, 1) .. " %")
+        end
+
+        -- Concentration
+
+        simModeFrames.concentrationToggleMod:SetVisible(recipeData.supportsQualities)
+        detailsFrame.content.concentrationCostTitle:SetVisible(recipeData.supportsQualities)
+        detailsFrame.content.concentrationCostValue:SetVisible(recipeData.supportsQualities)
+        if recipeData.supportsQualities then
+            simModeFrames.concentrationToggleMod:SetChecked(recipeData.concentrating)
+            detailsFrame.content.concentrationCostValue:SetText(f.gold(recipeData.concentrationCost))
         end
     end
 end
