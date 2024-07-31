@@ -185,6 +185,8 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
         return rr:GetCraftingReagentInfoByQuality(3, true)
     end)
 
+    -- explicitly do not use concentration flag here
+
     print("max quality reagents crafting tbl:")
     print(maxQualityReagentsCraftingTbl, true)
 
@@ -193,14 +195,14 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
     local operationInfoWithReagents = nil
     if self.recipeData.orderData then
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
-            self.recipeData.orderData.orderID, self.recipeData.concentrating)
+            self.recipeData.orderData.orderID, false)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID,
-            maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID, self.recipeData.concentrating)
+            maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID, false)
     else
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
-            self.recipeData.concentrating)
+            false)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, maxQualityReagentsCraftingTbl,
-            self.recipeData.allocationItemGUID, self.recipeData.concentrating)
+            self.recipeData.allocationItemGUID, false)
     end
 
     if baseOperationInfo and operationInfoWithReagents then

@@ -457,10 +457,17 @@ function CraftSim.RecipeData:GetConcentrationCosts()
     -- includes required and optionals
     local allReagentsTbl = self.reagentData:GetCraftingReagentInfoTbl()
     -- on purpose do not use concentration so we will always get the costs
-    local operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, allReagentsTbl, self.allocationItemGUID,
-        false)
+    local operationInfo
+    if self.orderData then
+        operationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, allReagentsTbl,
+            self.orderData.orderID,
+            false)
+    else
+        operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, allReagentsTbl, self.allocationItemGUID,
+            false)
+    end
 
-    return operationInfo.concentrationCost or 0
+    return (operationInfo and operationInfo.concentrationCost) or 0
 end
 
 -- Update the professionStats property of the RecipeData according to set reagents and gearSet (and any stat modifiers)
@@ -745,10 +752,13 @@ function CraftSim.RecipeData:Craft(amount)
     if self.isEnchantingRecipe then
         local vellumLocation = GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
         if vellumLocation then
-            C_TradeSkillUI.CraftEnchant(self.recipeID, amount, craftingReagentInfoTbl, vellumLocation)
+            C_TradeSkillUI.CraftEnchant(self.recipeID, amount, craftingReagentInfoTbl, vellumLocation, self
+                .concentrating)
         end
     else
-        C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl)
+        C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil,
+            self.orderData and self.orderData.orderID,
+            self.concentrating)
     end
 end
 

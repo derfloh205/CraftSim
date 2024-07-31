@@ -645,7 +645,6 @@ function CraftSim.CRAFTQ.UI:Init()
             justifyOptions = { type = "H", align = "RIGHT" }
         })
 
-
         queueTab.content.editRecipeFrame = CraftSim.CRAFTQ.UI:InitEditRecipeFrame(queueTab.content, frame.content)
 
         -- restock Options
@@ -1203,9 +1202,18 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         text = GUTIL:FormatMoney(0, true), justifyOptions = { type = "H", align = "LEFT" }, scale = 0.9, offsetY = -1,
     }
 
+
+
     editRecipeFrame.content.resultTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.optimizeReagents.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        offsetY = -5, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL),
+        offsetY = -25, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL),
+    }
+
+    editRecipeFrame.content.concentrationCB = GGUI.Checkbox {
+        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.resultTitle.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPLEFT",
+        labelOptions = {
+            text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) .. " Concentration"
+        }
     }
 
     editRecipeFrame.content.resultList = GGUI.FrameList {
@@ -1344,10 +1352,10 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueTotalProfitDisplay()
             totalAverageProfit = totalAverageProfit + row.averageProfit
             totalCraftingCosts = totalCraftingCosts + row.craftingCosts
         end
-    end
 
-    queueTab.content.totalAverageProfit:SetText(GUTIL:FormatMoney(totalAverageProfit, true, totalCraftingCosts))
-    queueTab.content.totalCraftingCosts:SetText(f.r(GUTIL:FormatMoney(totalCraftingCosts)))
+        queueTab.content.totalAverageProfit:SetText(GUTIL:FormatMoney(totalAverageProfit, true, totalCraftingCosts))
+        queueTab.content.totalCraftingCosts:SetText(f.r(GUTIL:FormatMoney(totalCraftingCosts)))
+    end
 end
 
 --- called when switching tab or when ending scan on selected row
@@ -1727,8 +1735,20 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         craftingCostsColumn.text:SetText(f.r(GUTIL:FormatMoney(row.craftingCosts)))
     end
 
-    if craftQueueItem.recipeData.concentrating then
-        concentrationColumn.text:SetText(f.gold(craftQueueItem.recipeData.concentrationCost * craftQueueItem.amount))
+    local concentrationData = craftQueueItem.recipeData.concentrationData
+    if craftQueueItem.recipeData.concentrating and concentrationData then
+        if craftQueueItem.isCrafter then
+            concentrationData:Update() -- consider concentration usage on crafting before refresh
+        end
+        local concentrationCost = craftQueueItem.recipeData.concentrationCost * craftQueueItem.amount
+        local currentAmount = concentrationData:GetCurrentAmount()
+        if concentrationCost <= currentAmount then
+            concentrationColumn.text:SetText(f.g(concentrationCost))
+        elseif craftQueueItem.recipeData.concentrationCost < currentAmount then
+            concentrationColumn.text:SetText(f.l(concentrationCost))
+        else
+            concentrationColumn.text:SetText(f.r(concentrationCost))
+        end
     else
         concentrationColumn.text:SetText(f.g("-"))
     end

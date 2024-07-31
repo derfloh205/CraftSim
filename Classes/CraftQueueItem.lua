@@ -20,6 +20,7 @@ function CraftSim.CraftQueueItem:new(options)
     self.recipeData = options.recipeData
     ---@type number
     self.amount = options.amount or 1
+    self.concentrating = self.recipeData.concentrating
 
     -- canCraft caches
     self.allowedToCraft = false
@@ -59,6 +60,7 @@ end
 ---@class CraftSim.CraftQueueItem.Serialized
 ---@field recipeID number
 ---@field amount? number
+---@field concentrating? boolean
 ---@field crafterData CraftSim.CrafterData
 ---@field requiredReagents CraftSim.Reagent.Serialized[]
 ---@field optionalReagents CraftingReagentInfo[]
@@ -75,6 +77,7 @@ function CraftSim.CraftQueueItem:Serialize()
         local serializedData = {
             recipeID = recipeData.recipeID,
             crafterData = recipeData.crafterData,
+            concentrating = recipeData.concentrating,
             requiredReagents = recipeData.reagentData:SerializeRequiredReagents(),
             optionalReagents = recipeData.reagentData:GetOptionalCraftingReagentInfoTbl(),
             professionGearSet = recipeData.professionGearSet:Serialize(),
@@ -94,6 +97,7 @@ function CraftSim.CraftQueueItem:Serialize()
 
     local serializedCraftQueueItem = serializeCraftQueueRecipeData(self.recipeData)
     serializedCraftQueueItem.amount = self.amount
+    serializedCraftQueueItem.concentrating = self.concentrating
 
     return serializedCraftQueueItem
 end
@@ -110,6 +114,7 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
         local recipeData = CraftSim.RecipeData(serializedCraftQueueItem.recipeID, nil, nil,
             serializedCraftQueueItem.crafterData)
         recipeData.subRecipeDepth = serializedCraftQueueItem.subRecipeDepth or 0
+        recipeData.concentrating = serializedCraftQueueItem.concentrating
         recipeData.subRecipeCostsEnabled = serializedCraftQueueItem.subRecipeCostsEnabled
         recipeData.parentRecipeInfo = serializedCraftQueueItem.parentRecipeInfo or {}
 
