@@ -221,7 +221,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                     anchorParent = messageColumn,
                     anchorA = "TOPLEFT",
                     anchorB = "TOPLEFT",
-                    justifyOptions = { type = "HV", alignH = "LEFT", alignV = "LEFT" },
+                    justifyOptions = { type = "HV", alignH = "LEFT", alignV = "CENTER" },
                     text = "Message",
                     fixedWidth = chatMessageColumnWidth,
                     offsetY = -4.1,
