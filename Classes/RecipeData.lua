@@ -474,7 +474,8 @@ function CraftSim.RecipeData:UpdateProfessionStats()
 
     self.professionStats:add(itemStats)
 
-    if self.supportsSpecializations then
+    -- this should cover each case of non specialization data implemented professions
+    if self.specializationData then
         local specExtraFactors = self.specializationData:GetExtraFactors()
         self.professionStats:add(specExtraFactors)
     end
