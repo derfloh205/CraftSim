@@ -169,6 +169,8 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
         local resourcefulnessMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.resourcefulnessMod, true)
         recipeData.professionStatModifiers.resourcefulness:addValue(resourcefulnessMod)
     end
+
+    recipeData.concentrating = simulationModeFrames.concentrationToggleMod:GetChecked()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()

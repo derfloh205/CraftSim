@@ -185,6 +185,8 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
         return rr:GetCraftingReagentInfoByQuality(3, true)
     end)
 
+    -- explicitly do not use concentration flag here
+
     print("max quality reagents crafting tbl:")
     print(maxQualityReagentsCraftingTbl, true)
 
@@ -193,14 +195,14 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
     local operationInfoWithReagents = nil
     if self.recipeData.orderData then
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
-            self.recipeData.orderData.orderID, self.recipeData.concentrating)
+            self.recipeData.orderData.orderID, false)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID,
-            maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID, self.recipeData.concentrating)
+            maxQualityReagentsCraftingTbl, self.recipeData.orderData.orderID, false)
     else
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
-            self.recipeData.concentrating)
+            false)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, maxQualityReagentsCraftingTbl,
-            self.recipeData.allocationItemGUID, self.recipeData.concentrating)
+            self.recipeData.allocationItemGUID, false)
     end
 
     if baseOperationInfo and operationInfoWithReagents then
@@ -228,31 +230,32 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
 end
 
 ---@return number skillWithReagents
----@return number concentrationCosts
-function CraftSim.ReagentData:GetSkillAndConcentrationCostFromRequiredReagents()
+function CraftSim.ReagentData:GetSkillFromRequiredReagents()
     local requiredTbl = self:GetRequiredCraftingReagentInfoTbl()
 
     local recipeID = self.recipeData.recipeID
+
+    -- explicitly do not u use concentration here
 
     local baseOperationInfo = nil
     local operationInfoWithReagents = nil
     if self.recipeData.orderData then
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
-            self.recipeData.orderData.orderID, self.recipeData.concentrating)
+            self.recipeData.orderData.orderID, false)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, requiredTbl,
-            self.recipeData.orderData.orderID, self.recipeData.concentrating)
+            self.recipeData.orderData.orderID, false)
     else
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
-            self.recipeData.concentrating)
+            false)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, requiredTbl,
-            self.recipeData.allocationItemGUID, self.recipeData.concentrating)
+            self.recipeData.allocationItemGUID, false)
     end
 
     if baseOperationInfo and operationInfoWithReagents then
         local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
         local skillWithReagents = operationInfoWithReagents.baseSkill + operationInfoWithReagents.bonusSkill
 
-        return skillWithReagents - baseSkill, operationInfoWithReagents.concentrationCost or 0
+        return skillWithReagents - baseSkill
     end
     print("ReagentData: Could not determine required reagent skill: operationInfos nil")
     return 0

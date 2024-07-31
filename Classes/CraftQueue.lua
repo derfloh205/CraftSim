@@ -213,7 +213,7 @@ function CraftSim.CraftQueue:RestoreFromDB()
             return nil
         end)
 
-        -- at last restore subrecipe target mode item counts (and recipes)
+        -- at last restore subrecipes)
         self:UpdateSubRecipesTargetItemCounts()
 
         print("CraftQueue Restore Finished")
@@ -253,11 +253,6 @@ function CraftSim.CraftQueue:FilterSortByPriority()
     end)
     local sortedCharacterRecipes = GUTIL:Sort(characterRecipesNoAltDependency,
         function(a, b)
-            if a:IsTargetCountSatisfied() and not b:IsTargetCountSatisfied() then
-                return false
-            elseif not a:IsTargetCountSatisfied() and b:IsTargetCountSatisfied() then
-                return true
-            end
             if a.allowedToCraft and not b.allowedToCraft then
                 return true
             elseif not a.allowedToCraft and b.allowedToCraft then
@@ -281,12 +276,6 @@ function CraftSim.CraftQueue:FilterSortByPriority()
 
     -- then sort the rest items by subrecipedepth and character names / profit
     local sortedRestRecipes = GUTIL:Sort(restRecipes, function(a, b)
-        if a:IsTargetCountSatisfied() and not b:IsTargetCountSatisfied() then
-            return false
-        elseif not a:IsTargetCountSatisfied() and b:IsTargetCountSatisfied() then
-            return true
-        end
-
         if a.recipeData.subRecipeDepth > b.recipeData.subRecipeDepth then
             return true
         elseif a.recipeData.subRecipeDepth < b.recipeData.subRecipeDepth then

@@ -453,14 +453,31 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
     end
 end
 
+function CraftSim.RecipeData:GetConcentrationCosts()
+    -- includes required and optionals
+    local allReagentsTbl = self.reagentData:GetCraftingReagentInfoTbl()
+    -- on purpose do not use concentration so we will always get the costs
+    local operationInfo
+    if self.orderData then
+        operationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, allReagentsTbl,
+            self.orderData.orderID,
+            false)
+    else
+        operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, allReagentsTbl, self.allocationItemGUID,
+            false)
+    end
+
+    return (operationInfo and operationInfo.concentrationCost) or 0
+end
+
 -- Update the professionStats property of the RecipeData according to set reagents and gearSet (and any stat modifiers)
 function CraftSim.RecipeData:UpdateProfessionStats()
-    local skillRequiredReagents, concentrationCost = self.reagentData:GetSkillAndConcentrationCostFromRequiredReagents()
+    local skillRequiredReagents = self.reagentData:GetSkillFromRequiredReagents()
     local optionalStats = self.reagentData:GetProfessionStatsByOptionals()
     local itemStats = self.professionGearSet.professionStats
     local buffStats = self.buffData.professionStats
 
-    self.concentrationCost = concentrationCost or 0
+    self.concentrationCost = self:GetConcentrationCosts()
 
     self.professionStats:Clear()
 
@@ -503,6 +520,8 @@ function CraftSim.RecipeData:Copy()
     ---@type CraftSim.RecipeData
     local copy = CraftSim.RecipeData(self.recipeID, self.isRecraft, self.orderData ~= nil, self.crafterData)
     copy.concentrating = self.concentrating
+    copy.concentrationCost = self.concentrationCost
+    copy.concentrationData = self.concentrationData and self.concentrationData:Copy()
     copy.reagentData = self.reagentData:Copy(copy)
     copy.cooldownData = self.cooldownData:Copy()
     copy.professionGearSet = self.professionGearSet:Copy()
@@ -511,7 +530,6 @@ function CraftSim.RecipeData:Copy()
     copy.professionStatModifiers = self.professionStatModifiers:Copy()
     copy.priceData = self.priceData:Copy(copy)
     copy.resultData = self.resultData:Copy(copy)
-    copy.concentrationData = self.concentrationData:Copy()
     copy.orderData = self.orderData
     copy.crafterData = self.crafterData
     copy.subRecipeCostsEnabled = self.subRecipeCostsEnabled
@@ -734,10 +752,13 @@ function CraftSim.RecipeData:Craft(amount)
     if self.isEnchantingRecipe then
         local vellumLocation = GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
         if vellumLocation then
-            C_TradeSkillUI.CraftEnchant(self.recipeID, amount, craftingReagentInfoTbl, vellumLocation)
+            C_TradeSkillUI.CraftEnchant(self.recipeID, amount, craftingReagentInfoTbl, vellumLocation, self
+                .concentrating)
         end
     else
-        C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl)
+        C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil,
+            self.orderData and self.orderData.orderID,
+            self.concentrating)
     end
 end
 
@@ -759,6 +780,13 @@ function CraftSim.RecipeData:CanCraft(amount)
     local craftAbleAmount = self.reagentData:GetCraftableAmount(self:GetCrafterUID())
 
     local isChargeRecipe = self.cooldownData.maxCharges > 0
+
+    local concentrationAmount = math.huge
+    if self.concentrating and self.concentrationCost > 0 then
+        concentrationAmount = math.floor(self.concentrationData:GetCurrentAmount() / (self.concentrationCost * amount))
+    end
+
+    craftAbleAmount = math.min(craftAbleAmount, concentrationAmount)
 
     if not isChargeRecipe then
         return hasEnoughReagents, craftAbleAmount
