@@ -472,7 +472,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
         simModeDetailsFrame.content.qualityFrame = CreateFrame("frame", nil, simModeDetailsFrame.content)
         simModeDetailsFrame.content.qualityFrame:SetSize(simModeDetailsFrame:GetWidth() - 40, 230)
-        simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY * 12)
+        simModeDetailsFrame.content.qualityFrame:SetPoint("TOP", simModeDetailsFrame.content, "TOP", 0, offsetY * 13)
         local qualityFrame = simModeDetailsFrame.content.qualityFrame
         qualityFrame.currentQualityTitle = qualityFrame:CreateFontString(nil, 'OVERLAY', 'GameFontHighlight')
         qualityFrame.currentQualityTitle:SetPoint("TOPLEFT", qualityFrame, "TOPLEFT", 0, 0)
@@ -1110,6 +1110,10 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
         recipeData.supportsQualities and recipeData.hasQualityReagents)
     CraftSim.FRAME:ToggleFrame(detailsFrame.content.reagentMaxFactorValue,
         recipeData.supportsQualities and recipeData.hasQualityReagents)
+    simModeFrames.concentrationToggleMod.labelText:SetVisible(recipeData.supportsQualities)
+    simModeFrames.concentrationToggleMod:SetVisible(recipeData.supportsQualities)
+    detailsFrame.content.concentrationCostTitle:SetVisible(recipeData.supportsQualities)
+    detailsFrame.content.concentrationCostValue:SetVisible(recipeData.supportsQualities)
     if recipeData.supportsQualities then
         local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality,
             professionStats.recipeDifficulty.value, CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
@@ -1155,9 +1159,6 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
 
         -- Concentration
 
-        simModeFrames.concentrationToggleMod:SetVisible(recipeData.supportsQualities)
-        detailsFrame.content.concentrationCostTitle:SetVisible(recipeData.supportsQualities)
-        detailsFrame.content.concentrationCostValue:SetVisible(recipeData.supportsQualities)
         if recipeData.supportsQualities then
             simModeFrames.concentrationToggleMod:SetChecked(recipeData.concentrating)
             detailsFrame.content.concentrationCostValue:SetText(f.gold(recipeData.concentrationCost))
