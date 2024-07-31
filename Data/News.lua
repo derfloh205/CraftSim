@@ -23,10 +23,11 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "to the new profession changes!",
         f.P .. f.g("New: Concentration Tracker with Alt-Overview"),
         f.P .. f.b("Craft Results") .. " now includes a craft analyser tab",
-        f.s .. "Thanks updating enchant data:",
+        f.s .. "Thanks a lot to contributers:",
         f.a .. f.bb("https://github.com/Williwams"),
-        f.s .. "Thanks for helping with SpecInfo Mappings:",
+        f.a .. f.bb("https://github.com/rowaasr13"),
         f.a .. f.bb("https://github.com/EloMoose"),
+
         newP("16.1.8"),
         f.P .. "Fixed 10.2.7 Bugs",
         f.p .. "Fixed module collapsed content showing on tab switch",
