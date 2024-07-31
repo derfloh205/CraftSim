@@ -1083,8 +1083,8 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
         qualityFrame.currentQualityThreshold:SetText("> " .. (thresholds[recipeData.resultData.expectedQuality - 1] or 0))
 
         -- Skill
-        local reagentSkillIncrease, concentrationCost = recipeData.reagentData
-            :GetSkillAndConcentrationCostFromRequiredReagents()
+        local reagentSkillIncrease = recipeData.reagentData
+            :GetSkillFromRequiredReagents()
         local skillNoReagents = professionStats.skill.value - reagentSkillIncrease
         local professionStatsOptionals = recipeData.reagentData:GetProfessionStatsByOptionals()
         local fullRecipeDifficulty = recipeData.professionStats.recipeDifficulty.value

@@ -783,7 +783,7 @@ function CraftSim.RecipeData:CanCraft(amount)
 
     local concentrationAmount = math.huge
     if self.concentrating and self.concentrationCost > 0 then
-        concentrationAmount = math.floor(self.concentrationData:GetCurrentAmount() / self.concentrationCost)
+        concentrationAmount = math.floor(self.concentrationData:GetCurrentAmount() / (self.concentrationCost * amount))
     end
 
     craftAbleAmount = math.min(craftAbleAmount, concentrationAmount)

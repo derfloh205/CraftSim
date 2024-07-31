@@ -16,7 +16,7 @@ local f = GUTIL:GetFormatter()
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
 function CraftSim.CRAFTQ.UI:Init()
-    local sizeX = 1130
+    local sizeX = 1200
     local sizeY = 420
 
     ---@class CraftSim.CraftQueue.Frame : GGUI.Frame
@@ -99,7 +99,7 @@ function CraftSim.CRAFTQ.UI:Init()
         local columnOptions = {
             {
                 label = "", -- edit button
-                width = 35,
+                width = 30,
                 justifyOptions = { type = "H", align = "CENTER" }
             },
             {
@@ -110,6 +110,11 @@ function CraftSim.CRAFTQ.UI:Init()
             {
                 label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER),
                 width = 150,
+            },
+            {
+                label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_RESULT_HEADER),
+                width = 50,
+                justifyOptions = { type = "H", align = "CENTER" },
             },
             {
                 label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER),
@@ -187,6 +192,7 @@ function CraftSim.CRAFTQ.UI:Init()
             },
             sizeY = 232,
             offsetY = -70,
+            offsetX = -10,
             columnOptions = columnOptions,
             rowConstructor = function(columns, row)
                 ---@class CraftSim.CraftQueue.CraftList.EditButtonColumn : Frame
@@ -195,24 +201,26 @@ function CraftSim.CRAFTQ.UI:Init()
                 local crafterColumn = columns[2]
                 ---@class CraftSim.CraftQueue.CraftList.RecipeColumn : Frame
                 local recipeColumn = columns[3]
+                ---@class CraftSim.CraftQueue.CraftList.ResultColumn : Frame
+                local resultColumn = columns[4]
                 ---@class CraftSim.CraftQueue.CraftList.AverageProfitColumn : Frame
-                local averageProfitColumn = columns[4]
+                local averageProfitColumn = columns[5]
                 ---@class CraftSim.CraftQueue.CraftList.CraftingCostColumn : Frame
-                local craftingCostsColumn = columns[5]
+                local craftingCostsColumn = columns[6]
                 ---@class CraftSim.CraftQueue.CraftList.ConcentrationColumn : Frame
-                local concentrationColumn = columns[6]
+                local concentrationColumn = columns[7]
                 ---@class CraftSim.CraftQueue.CraftList.TopGearColumn : Frame
-                local topGearColumn = columns[7]
+                local topGearColumn = columns[8]
                 ---@class CraftSim.CraftQueue.CraftList.CraftAbleColumn : Frame
-                local craftAbleColumn = columns[8]
+                local craftAbleColumn = columns[9]
                 ---@class CraftSim.CraftQueue.CraftList.CraftAmountColumn : Frame
-                local craftAmountColumn = columns[9]
+                local craftAmountColumn = columns[10]
                 ---@class CraftSim.CraftQueue.CraftList.StatusColumn : Frame
-                local statusColumn = columns[10]
+                local statusColumn = columns[11]
                 ---@class CraftSim.CraftQueue.CraftList.CraftButtonColumn : Frame
-                local craftButtonColumn = columns[11]
+                local craftButtonColumn = columns[12]
                 ---@class CraftSim.CraftQueue.CraftList.RemoveRowColumn : Frame
-                local removeRowColumn = columns[12]
+                local removeRowColumn = columns[13]
 
                 editButtonColumn.editButton = GGUI.Button({
                     parent = editButtonColumn,
@@ -238,6 +246,14 @@ function CraftSim.CRAFTQ.UI:Init()
                 })
 
                 local iconSize = 23
+
+                resultColumn.icon = GGUI.Icon {
+                    parent = resultColumn,
+                    anchorParent = resultColumn,
+                    qualityIconScale = 1.2,
+                    sizeX = iconSize,
+                    sizeY = iconSize,
+                }
 
                 ---@type GGUI.Text | GGUI.Widget
                 averageProfitColumn.text = GGUI.Text(
@@ -902,6 +918,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         clickCallback = function()
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 editRecipeFrame.craftQueueItem.recipeData.reagentData:SetReagentsMaxByQuality(1)
+                editRecipeFrame.craftQueueItem.recipeData:Update()
                 CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
                 CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
             end
@@ -913,6 +930,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         clickCallback = function()
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 editRecipeFrame.craftQueueItem.recipeData.reagentData:SetReagentsMaxByQuality(2)
+                editRecipeFrame.craftQueueItem.recipeData:Update()
                 CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
                 CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
             end
@@ -924,6 +942,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         clickCallback = function()
             if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
                 editRecipeFrame.craftQueueItem.recipeData.reagentData:SetReagentsMaxByQuality(3)
+                editRecipeFrame.craftQueueItem.recipeData:Update()
                 CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
                 CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
             end
@@ -1206,22 +1225,32 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
 
     editRecipeFrame.content.resultTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.optimizeReagents.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        offsetY = -25, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL),
+        offsetY = -40, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL),
     }
 
     editRecipeFrame.content.concentrationCB = GGUI.Checkbox {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.resultTitle.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPLEFT",
+        offsetY = 5, scale = 2,
         labelOptions = {
-            text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) .. " Concentration"
-        }
+            text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) .. L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CONCENTRATION_CHECKBOX)
+        },
+        clickCallback = function(_, checked)
+            if editRecipeFrame.craftQueueItem and editRecipeFrame.craftQueueItem.recipeData then
+                editRecipeFrame.craftQueueItem.recipeData.concentrating = checked
+                editRecipeFrame.craftQueueItem.concentrating = checked
+                editRecipeFrame.craftQueueItem.recipeData:Update()
+                CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
+                CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(editRecipeFrame.craftQueueItem)
+            end
+        end
     }
 
     editRecipeFrame.content.resultList = GGUI.FrameList {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.resultTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        hideScrollbar = true, offsetX = -5, sizeY = 100,
+        hideScrollbar = true, offsetX = -10, sizeY = 100, rowHeight = 30,
         columnOptions = {
             {
-                width = 30, -- icon
+                width = 40, -- icon
             },
         },
         rowConstructor = function(columns, row)
@@ -1231,7 +1260,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             row.qualityID = nil
 
             iconColumn.icon = GGUI.Icon {
-                parent = iconColumn, anchorParent = iconColumn, sizeX = 25, sizeY = 25, anchorA = "LEFT", anchorB = "LEFT", offsetX = 3,
+                parent = iconColumn, anchorParent = iconColumn, sizeX = 30, sizeY = 30, anchorA = "LEFT", anchorB = "LEFT", offsetX = 3,
             }
         end
     }
@@ -1474,8 +1503,14 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
         " " .. recipeData.recipeName)
     editRecipeFrame.content.averageProfitValue:SetText(GUTIL:FormatMoney(recipeData.averageProfitCached, true,
         recipeData.priceData.craftingCosts))
+    local concentrationCostText = ""
+    if editRecipeFrame.craftQueueItem.concentrating then
+        concentrationCostText = " + " ..
+            GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) ..
+            " " .. f.gold(editRecipeFrame.craftQueueItem.recipeData.concentrationCost)
+    end
     editRecipeFrame.content.craftingCostsValue:SetText(GUTIL:ColorizeText(
-        GUTIL:FormatMoney(recipeData.priceData.craftingCosts), GUTIL.COLORS.RED))
+        GUTIL:FormatMoney(recipeData.priceData.craftingCosts), GUTIL.COLORS.RED) .. concentrationCostText)
 
     local reagentFrames = editRecipeFrame.content.reagentFrames
 
@@ -1675,6 +1710,8 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
     end)
 
     resultList:UpdateDisplay()
+
+    editRecipeFrame.content.concentrationCB:SetChecked(craftQueueItem.concentrating)
 end
 
 ---@param row GGUI.FrameList.Row
@@ -1687,15 +1724,16 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     local editButtonColumn = columns[1] --[[@as CraftSim.CraftQueue.CraftList.EditButtonColumn]]
     local crafterColumn = columns[2] --[[@as CraftSim.CraftQueue.CraftList.CrafterColumn]]
     local recipeColumn = columns[3] --[[@as CraftSim.CraftQueue.CraftList.RecipeColumn]]
-    local averageProfitColumn = columns[4] --[[@as CraftSim.CraftQueue.CraftList.AverageProfitColumn]]
-    local craftingCostsColumn = columns[5] --[[@as CraftSim.CraftQueue.CraftList.CraftingCostColumn]]
-    local concentrationColumn = columns[6] --[[@as CraftSim.CraftQueue.CraftList.ConcentrationColumn]]
-    local topGearColumn = columns[7] --[[@as CraftSim.CraftQueue.CraftList.TopGearColumn]]
-    local craftAbleColumn = columns[8] --[[@as CraftSim.CraftQueue.CraftList.CraftAbleColumn]]
-    local craftAmountColumn = columns[9] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
-    local statusColumn = columns[10] --[[@as CraftSim.CraftQueue.CraftList.StatusColumn]]
-    local craftButtonColumn = columns[11] --[[@as CraftSim.CraftQueue.CraftList.CraftButtonColumn]]
-    local removeRowColumn = columns[12] --[[@as CraftSim.CraftQueue.CraftList.RemoveRowColumn]]
+    local resultColumn = columns[4] --[[@as CraftSim.CraftQueue.CraftList.ResultColumn]]
+    local averageProfitColumn = columns[5] --[[@as CraftSim.CraftQueue.CraftList.AverageProfitColumn]]
+    local craftingCostsColumn = columns[6] --[[@as CraftSim.CraftQueue.CraftList.CraftingCostColumn]]
+    local concentrationColumn = columns[7] --[[@as CraftSim.CraftQueue.CraftList.ConcentrationColumn]]
+    local topGearColumn = columns[8] --[[@as CraftSim.CraftQueue.CraftList.TopGearColumn]]
+    local craftAbleColumn = columns[9] --[[@as CraftSim.CraftQueue.CraftList.CraftAbleColumn]]
+    local craftAmountColumn = columns[10] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
+    local statusColumn = columns[11] --[[@as CraftSim.CraftQueue.CraftList.StatusColumn]]
+    local craftButtonColumn = columns[12] --[[@as CraftSim.CraftQueue.CraftList.CraftButtonColumn]]
+    local removeRowColumn = columns[13] --[[@as CraftSim.CraftQueue.CraftList.RemoveRowColumn]]
 
     row.craftQueueItem = craftQueueItem
 
@@ -1726,6 +1764,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             upgradeArrow --.. "(" .. craftQueueItem.recipeData.subRecipeDepth .. ")"
     end
     recipeColumn.text:SetText(recipeData.recipeName .. upCraftText)
+
+    resultColumn.icon:SetItem(recipeData.resultData.expectedItem)
 
     if craftQueueItem.recipeData:IsSubRecipe() then
         averageProfitColumn.text:SetText(f.g("-"))

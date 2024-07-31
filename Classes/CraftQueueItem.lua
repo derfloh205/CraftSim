@@ -42,7 +42,9 @@ end
 --- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
 function CraftSim.CraftQueueItem:CalculateCanCraft()
     CraftSim.DEBUG:StartProfiling('CraftSim.CraftQueueItem:CalculateCanCraft')
-    self.canCraftOnce, self.craftAbleAmount = self.recipeData:CanCraft(1)
+    local _, craftAbleAmount = self.recipeData:CanCraft(1)
+    self.craftAbleAmount = craftAbleAmount
+    self.canCraftOnce = craftAbleAmount > 0
     self.gearEquipped = self.recipeData.professionGearSet:IsEquipped() or false
     self.correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
     self.notOnCooldown = not self.recipeData:OnCooldown()

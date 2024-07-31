@@ -235,18 +235,20 @@ function CraftSim.ReagentData:GetSkillFromRequiredReagents()
 
     local recipeID = self.recipeData.recipeID
 
+    -- explicitly do not u use concentration here
+
     local baseOperationInfo = nil
     local operationInfoWithReagents = nil
     if self.recipeData.orderData then
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {},
-            self.recipeData.orderData.orderID, self.recipeData.concentrating)
+            self.recipeData.orderData.orderID, false)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, requiredTbl,
-            self.recipeData.orderData.orderID, self.recipeData.concentrating)
+            self.recipeData.orderData.orderID, false)
     else
         baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, {}, self.recipeData.allocationItemGUID,
-            self.recipeData.concentrating)
+            false)
         operationInfoWithReagents = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, requiredTbl,
-            self.recipeData.allocationItemGUID, self.recipeData.concentrating)
+            self.recipeData.allocationItemGUID, false)
     end
 
     if baseOperationInfo and operationInfoWithReagents then
