@@ -228,8 +228,7 @@ function CraftSim.ReagentData:GetMaxSkillFactor()
 end
 
 ---@return number skillWithReagents
----@return number concentrationCosts
-function CraftSim.ReagentData:GetSkillAndConcentrationCostFromRequiredReagents()
+function CraftSim.ReagentData:GetSkillFromRequiredReagents()
     local requiredTbl = self:GetRequiredCraftingReagentInfoTbl()
 
     local recipeID = self.recipeData.recipeID
@@ -252,7 +251,7 @@ function CraftSim.ReagentData:GetSkillAndConcentrationCostFromRequiredReagents()
         local baseSkill = baseOperationInfo.baseSkill + baseOperationInfo.bonusSkill
         local skillWithReagents = operationInfoWithReagents.baseSkill + operationInfoWithReagents.bonusSkill
 
-        return skillWithReagents - baseSkill, operationInfoWithReagents.concentrationCost or 0
+        return skillWithReagents - baseSkill
     end
     print("ReagentData: Could not determine required reagent skill: operationInfos nil")
     return 0
