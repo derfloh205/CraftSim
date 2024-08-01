@@ -892,6 +892,9 @@ CraftSim.CONST.BUFF_IDS = {
     --- TWW
     -- Blacksmithing
     EVERBURNING_IGNITION = 453734,
+
+    -- Enchanting
+    SHATTERING_ESSENCE = 445798,
 }
 
 CraftSim.CONST.LOCALES = {

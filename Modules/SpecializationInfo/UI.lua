@@ -188,6 +188,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         return
     end
 
+    specializationData:UpdateProfessionStats()
+
+
     local affectedNodeDataList = GUTIL:Filter(specializationData.nodeData, function(nodeData)
         return nodeData.affectsRecipe
     end)

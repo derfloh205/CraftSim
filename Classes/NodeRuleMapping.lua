@@ -5,7 +5,7 @@ local GUTIL = CraftSim.GUTIL
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
----@class CraftSim.IDMapping : CraftSim.CraftSimObject
+---@class CraftSim.NodeRuleMapping : CraftSim.CraftSimObject
 CraftSim.NodeRuleMapping = CraftSim.CraftSimObject:extend()
 
 ---@param idMapping table
@@ -65,15 +65,6 @@ function CraftSim.NodeRuleMapping:AffectsRecipe()
     -- print("ID Mapping affect?")
     -- print("categoryID: " .. tostring(recipeData.categoryID))
     -- print("subtypeID: " .. tostring(recipeData.subtypeID))
-
-    if #self.activationBuffIDs > 0 then
-        local atLeastOneActive = GUTIL:Some(self.activationBuffIDs, function(buffID)
-            return recipeData.buffData:IsBuffActive(buffID)
-        end)
-        if not atLeastOneActive then
-            return false
-        end
-    end
 
     -- an exception always matches
     if tContains(self.exceptionRecipeIDs, recipeData.recipeID) then

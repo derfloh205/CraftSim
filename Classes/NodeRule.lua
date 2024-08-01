@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 
@@ -13,6 +15,7 @@ CraftSim.NodeRule = CraftSim.CraftSimObject:extend()
 ---@param nodeData CraftSim.NodeData
 function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.affectsRecipe = false
+    self.recipeData = recipeData
     if not recipeData then
         return
     end
@@ -21,23 +24,23 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
     self.professionStats = CraftSim.ProfessionStats()
     self.threshold = nodeRuleData.threshold or -42 -- dont ask why 42
 
-    ---@type CraftSim.IDMapping
-    self.idMapping = CraftSim.NodeRuleMapping(recipeData, nodeRuleData.idMapping, nodeRuleData.locMapping,
+    ---@type CraftSim.NodeRuleMapping
+    self.nodeRuleMapping = CraftSim.NodeRuleMapping(recipeData, nodeRuleData.idMapping, nodeRuleData.locMapping,
         nodeRuleData.idLocMapping,
         nodeRuleData.exceptionRecipeIDs,
         nodeRuleData.affectedReagentIDs, self.activationBuffIDs)
 
     self.activationBuffIDs = nodeRuleData.activationBuffIDs
 
-    self.professionStats.skill.value = nodeRuleData.skill or 0
-    self.professionStats.multicraft.value = nodeRuleData.multicraft or 0
-    self.professionStats.resourcefulness.value = nodeRuleData.resourcefulness or 0
-    self.professionStats.ingenuity.value = nodeRuleData.ingenuity or 0
-    self.professionStats.craftingspeed.value = nodeRuleData.craftingspeed or 0
+    self.skill = nodeRuleData.skill or 0
+    self.multicraft = nodeRuleData.multicraft or 0
+    self.resourcefulness = nodeRuleData.resourcefulness or 0
+    self.ingenuity = nodeRuleData.ingenuity or 0
+    self.craftingspeed = nodeRuleData.craftingspeed or 0
 
-    self.professionStats.multicraft.extraFactor = nodeRuleData.multicraftExtraItemsFactor or 0
-    self.professionStats.resourcefulness.extraFactor = nodeRuleData.resourcefulnessExtraItemsFactor or 0
-    self.professionStats.ingenuity.extraFactor = nodeRuleData.ingenuityExtraConcentrationFactor or 0
+    self.multicraftExtraItemsFactor = nodeRuleData.multicraftExtraItemsFactor or 0
+    self.resourcefulnessExtraItemsFactor = nodeRuleData.resourcefulnessExtraItemsFactor or 0
+    self.ingenuityExtraConcentrationFactor = nodeRuleData.ingenuityExtraConcentrationFactor or 0
 
     self.equalsSkill = nodeRuleData.equalsSkill or 0
     self.equalsMulticraft = nodeRuleData.equalsMulticraft or 0
@@ -51,16 +54,38 @@ function CraftSim.NodeRule:new(recipeData, nodeRuleData, nodeData)
 end
 
 function CraftSim.NodeRule:UpdateAffectance()
-    self.affectsRecipe = self.idMapping:AffectsRecipe()
+    self.affectsRecipe = self.nodeRuleMapping:AffectsRecipe()
     print(self.nodeData.nodeName .. "-Rule affects recipe: " .. tostring(self.affectsRecipe))
 end
 
 ---@param rank number
-function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank)
+---@param overrideRequiredBuffs? boolean
+function CraftSim.NodeRule:UpdateProfessionStatsByRank(rank, overrideRequiredBuffs)
     -- only if I affect the recipe
     if not self.affectsRecipe then
         return
     end
+
+    -- if I am based on a buff, only if this buff is active
+    if not overrideRequiredBuffs and self.activationBuffIDs and #self.activationBuffIDs > 0 then
+        local atLeastOneActive = GUTIL:Some(self.activationBuffIDs, function(buffID)
+            return self.recipeData.buffData:IsBuffActive(buffID)
+        end)
+        if not atLeastOneActive then
+            self.professionStats:Clear()
+            return false
+        end
+    end
+
+    self.professionStats.skill.value = self.skill
+    self.professionStats.multicraft.value = self.multicraft
+    self.professionStats.resourcefulness.value = self.resourcefulness
+    self.professionStats.ingenuity.value = self.ingenuity
+    self.professionStats.craftingspeed.value = self.craftingspeed
+
+    self.professionStats.multicraft.extraFactor = self.multicraftExtraItemsFactor
+    self.professionStats.resourcefulness.extraFactor = self.resourcefulnessExtraItemsFactor
+    self.professionStats.ingenuity.extraFactor = self.ingenuityExtraConcentrationFactor
 
     if self.equalsSkill > 0 then
         self.professionStats.skill.value = math.max(0, rank * self.equalsSkill)

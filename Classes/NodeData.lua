@@ -106,7 +106,7 @@ function CraftSim.NodeData:UpdateProfessionStats()
         -- only use rules that affect the recipe
         if nodeRule.affectsRecipe then
             -- for maxProfessionStats always use max rank
-            nodeRule:UpdateProfessionStatsByRank(self.maxRank)
+            nodeRule:UpdateProfessionStatsByRank(self.maxRank, true)
             self.maxProfessionStats:add(nodeRule.professionStats)
 
             -- then do it again for actual rank if its active
@@ -156,7 +156,6 @@ function CraftSim.NodeData:GetJSON(indent)
     jb:Add("nodeName", self.nodeName)
     jb:Add("affectsRecipe", self.affectsRecipe)
     jb:Add("professionStats", self.professionStats)
-    jb:Add("idMapping", self.idMapping)
     jb:Add("parentNodeID", (self.parentNode and self.parentNode.nodeID) or nil)
     jb:AddList("nodeRules", self.nodeRules)
     jb:AddList("childNodeIDs", GUTIL:Map(self.childNodes, function(cn) return cn.nodeID end), true)

@@ -68,11 +68,6 @@ function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
     print("new rank: " .. nodeData.rank)
     print("new active: " .. tostring(nodeData.active))
 
-    nodeData:UpdateProfessionStats()
-
-    print("nodeData stats: ")
-    print(nodeData.professionStats, true, false, 2)
-
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
 
     CraftSim.INIT:TriggerModuleUpdate()
@@ -140,9 +135,14 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     local baseProfessionStatsSpec = nil
     local professionStatsSpec = nil
     local professionStatsSpecDiff = nil
-    if not recipeData.isCooking then
+    if recipeData.specializationData then
+        CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
         baseProfessionStatsSpec = CraftSim.SIMULATION_MODE.specializationData.professionStats
         professionStatsSpec = recipeData.specializationData.professionStats
+
+        print("base stats spec multi: " .. baseProfessionStatsSpec.multicraft.value)
+        print("profession stats spec multi: " .. professionStatsSpec.multicraft.value)
+
         professionStatsSpecDiff = baseProfessionStatsSpec:Copy()
         professionStatsSpecDiff:subtract(professionStatsSpec)
         recipeData.professionStatModifiers:add(professionStatsSpecDiff)
@@ -220,9 +220,9 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
 end
 
 function CraftSim.SIMULATION_MODE:UpdateSimulationMode()
+    CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
     CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
-    CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
     CraftSim.SIMULATION_MODE.recipeData:Update() -- update recipe Data by modifiers/reagents and such
     CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
 end
@@ -253,7 +253,7 @@ end
 function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.SIMULATION_MODE.recipeData = recipeData
 
-    if not recipeData.isCooking and not recipeData.isOldWorldRecipe then
+    if recipeData.specializationData then
         CraftSim.SIMULATION_MODE.specializationData = recipeData.specializationData:Copy()
     end
 

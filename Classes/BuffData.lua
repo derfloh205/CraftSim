@@ -36,10 +36,19 @@ end
 function CraftSim.BuffData:CreateBuffsByRecipeData()
     -- by professionID and professionStats
 
+    local profession = self.recipeData.professionData.professionInfo.profession
+
+    print("Creating initial buff data objects: " .. tostring(profession), false, true)
+
     -- TWW Buffs
     if self.recipeData.expansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
-        if self.recipeData.professionData.professionInfo.profession == Enum.Profession.Blacksmithing then
+        if profession == Enum.Profession.Blacksmithing then
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(self.recipeData))
+        end
+
+        if profession == Enum.Profession.Enchanting then
+            print("Creating shattering essence buff")
+            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(self.recipeData))
         end
     end
 
@@ -57,7 +66,7 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
 
         if self.recipeData.supportsQualities then
             --- enchanting
-            if self.recipeData.professionData.professionInfo.profession == Enum.Profession.Enchanting then
+            if profession == Enum.Profession.Enchanting then
                 -- elemental shatter fire
                 if self.recipeData.reagentData:HasOneOfReagents({ 190320, 190321 }) then
                     tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateElementalShatterFireBuff(self.recipeData))

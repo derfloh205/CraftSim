@@ -882,7 +882,8 @@ function CraftSim.SIMULATION_MODE.UI:InitSpecModifier()
                 createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX / 2, baseOffsetY + nodeFrameOffsetY *
                     2, 2, 2, tabNr, 2),
 
-                -- last row is either 11, 9, 8, 5, 4, 2, 0
+
+                -- last row is either 11, 9, 8, 7, 5, 4, 2, 0
                 createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX * 5, baseOffsetY + nodeFrameOffsetY *
                     3, 3, 11, tabNr, 1),
                 createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX * 4, baseOffsetY + nodeFrameOffsetY *
@@ -939,6 +940,20 @@ function CraftSim.SIMULATION_MODE.UI:InitSpecModifier()
                     baseOffsetY + nodeFrameOffsetY * 3, 3, 8, tabNr, 7),
                 createNodeModFrame(parent, parent, "TOP", "TOP", (nodeFrameSpacingX / 2) + nodeFrameSpacingX * 3,
                     baseOffsetY + nodeFrameOffsetY * 3, 3, 8, tabNr, 8),
+
+                createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX * 3, baseOffsetY + nodeFrameOffsetY *
+                    3, 3, 7, tabNr, 1),
+                createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX * 2, baseOffsetY + nodeFrameOffsetY *
+                    3, 3, 7, tabNr, 2),
+                createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX, baseOffsetY + nodeFrameOffsetY * 3,
+                    3, 7, tabNr, 3),
+                createNodeModFrame(parent, parent, "TOP", "TOP", 0, baseOffsetY + nodeFrameOffsetY * 3, 3, 7, tabNr, 4),
+                createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX, baseOffsetY + nodeFrameOffsetY * 3, 3,
+                    7, tabNr, 5),
+                createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX * 2, baseOffsetY + nodeFrameOffsetY *
+                    3, 3, 7, tabNr, 6),
+                createNodeModFrame(parent, parent, "TOP", "TOP", nodeFrameSpacingX * 3, baseOffsetY + nodeFrameOffsetY *
+                    3, 3, 7, tabNr, 7),
 
                 createNodeModFrame(parent, parent, "TOP", "TOP", -nodeFrameSpacingX * 2, baseOffsetY + nodeFrameOffsetY *
                     3, 3, 5, tabNr, 1),
@@ -1204,7 +1219,6 @@ function CraftSim.SIMULATION_MODE.UI:InitSpecModBySpecData()
             --print("found nodemodframes on this layer: " .. tostring(#nodeModFrames) .. " expected: " .. tostring(layerCount[layer]))
             print("current node on layer: " .. tostring(currentNodeOnLayer[layer]))
             local nodeModFrame = nodeModFrames[currentNodeOnLayer[layer]]
-            print("debugID: " .. tostring(nodeModFrame.debugID))
             -- make name break and smaller
             local adaptedName = string.gsub(nodeData.nodeName, " ", "\n", 1)
             nodeModFrame.nodeName:SetText(adaptedName)
