@@ -1,6 +1,6 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-CraftSim.THE_WAR_WITHIN.SKINNING_DATA = {
+CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.SKINNING_DATA = {
 	["440929"] = {
 		{
 			perkID = "96767",

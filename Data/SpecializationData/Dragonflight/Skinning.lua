@@ -1,6 +1,6 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-CraftSim.DRAGONFLIGHT.SKINNING_DATA = {
+CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.SKINNING_DATA = {
 	["375731"] = {
 		{
 			perkID = "34689",
