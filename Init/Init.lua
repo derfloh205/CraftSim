@@ -391,7 +391,10 @@ function CraftSim.INIT:PLAYER_LOGIN()
 		elseif command == "debug" then
 			CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
 		elseif command == "export" then
-			if CraftSim.INIT.currentRecipeData then
+			if rest == "recipeids" then
+				local recipeIDs = CraftSim.UTIL:ExportRecipeIDsForExpacCSV()
+				CraftSim.UTIL:KethoEditBox_Show(recipeIDs)
+			elseif CraftSim.INIT.currentRecipeData then
 				local json = CraftSim.INIT.currentRecipeData:GetJSON()
 				CraftSim.UTIL:KethoEditBox_Show(json)
 			end
