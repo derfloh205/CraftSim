@@ -57,6 +57,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "Resourcefulness ExtraItems",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS] = "Crafting Speed",
         [CraftSim.CONST.TEXT.STAT_INGENUITY_BONUS] = "Ingenuity Saved Conc",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY_LESS_CONCENTRATION] = "Less Concentration Use",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "Phial Breakthrough",
         [CraftSim.CONST.TEXT.STAT_POTION_EXPERIMENTATION] = "Potion Breakthrough",
 
