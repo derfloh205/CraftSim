@@ -4,6 +4,12 @@ local CraftSim = select(2, ...)
 ---@class CraftSim.SPECIALIZATION_DATA
 CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 
+---@class CraftSim.RawPerkData
+---@field nodeID number
+---@field maxRank number
+---@field stat? string
+---@field stat_amount? number
+
 ---@class CraftSim.SPECIALIZATION_DATA.RULE_DATA
 ---@field nodeID number
 ---@field childNodeIDs? string[]

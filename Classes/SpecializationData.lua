@@ -6,7 +6,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.SpecializationData : CraftSim.CraftSimObject
----@overload fun(recipeData:CraftSim.RecipeData):CraftSim.SpecializationData
+---@overload fun(recipeData:CraftSim.RecipeData?):CraftSim.SpecializationData
 CraftSim.SpecializationData = CraftSim.CraftSimObject:extend()
 
 ---@param recipeData CraftSim.RecipeData
@@ -21,10 +21,6 @@ function CraftSim.SpecializationData:new(recipeData)
     self.maxProfessionStats = CraftSim.ProfessionStats()
     ---@type CraftSim.NodeData[]
     self.nodeData = {}
-    ---@type CraftSim.NodeData[]
-    self.baseNodeData = {}     -- needed for spec sim tree buildup
-    ---@type number[][]
-    self.numNodesPerLayer = {} -- needed for spec sim tree buildup
 
     self.isGatheringProfession = CraftSim.CONST.GATHERING_PROFESSIONS
         [recipeData.professionData.professionInfo.profession]
@@ -37,50 +33,39 @@ function CraftSim.SpecializationData:new(recipeData)
     local profession = recipeData.professionData.professionInfo.profession
     local expansionID = recipeData.professionData.expansionID
 
-    local professionRuleNodes = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID][profession]
-    local baseRuleNodes = CraftSim.SPECIALIZATION_DATA.BASE_NODES[expansionID][profession]
+    local professionSpecData = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID][profession]
+    local recipeMapping = professionSpecData.recipeMapping
 
-    local baseRuleNodeIDs = GUTIL:Map(baseRuleNodes, function(nameID)
-        local ruleNode = professionRuleNodes[nameID]
-        if ruleNode then
-            return ruleNode.nodeID
+    local recipePerks = recipeMapping[recipeData.recipeID]
+
+    local professionNodeData = professionSpecData.nodeData
+
+    local nodePerkMap = {}
+
+    for _, perkID in ipairs(recipePerks or {}) do
+        local perkData = professionNodeData[perkID]
+        nodePerkMap[perkData.nodeID] = nodePerkMap[perkData.nodeID] or {}
+        if perkID ~= perkData.nodeID then
+            tinsert(nodePerkMap[perkData.nodeID], perkID)
         end
-    end)
-
-    baseRuleNodeIDs = GUTIL:ToSet(baseRuleNodeIDs)
-
-    local baseNodeIndex = 1
-    local function parseNode(nodeID, parentNodeData, layer)
-        local ruleNodes = GUTIL:Filter(professionRuleNodes, function(n) return n.nodeID == nodeID end)
-
-        local nodeData = CraftSim.NodeData(self.recipeData, ruleNodes, parentNodeData)
-
-        nodeData:UpdateAffectance()
-        nodeData:UpdateProfessionStats()
-
-        self.professionStats:add(nodeData.professionStats)
-        self.maxProfessionStats:add(nodeData.maxProfessionStats)
-
-        table.insert(self.nodeData, nodeData)
-
-        local childNodeNameIDs = ruleNodes[1].childNodeIDs
-
-        for _, childNodeNameID in pairs(childNodeNameIDs or {}) do
-            local childNodeID = professionRuleNodes[childNodeNameID].nodeID
-            local childNodeData = parseNode(childNodeID, nodeData, layer + 1)
-            table.insert(nodeData.childNodes, childNodeData)
-        end
-
-        self.numNodesPerLayer[baseNodeIndex] = (self.numNodesPerLayer[baseNodeIndex] or {})
-        self.numNodesPerLayer[baseNodeIndex][layer] = (self.numNodesPerLayer[baseNodeIndex][layer] or 0) + 1
-
-        return nodeData
     end
 
-    for _, nodeID in pairs(baseRuleNodeIDs) do
-        table.insert(self.baseNodeData, parseNode(nodeID, nil, 1))
-        baseNodeIndex = baseNodeIndex + 1
+    -- CraftSim.DEBUG:InspectTable(recipePerks, "recipePerks")
+    -- CraftSim.DEBUG:InspectTable(professionNodeData, "professionNodeData")
+    -- CraftSim.DEBUG:InspectTable(nodePerkMap, "nodePerkMap")
+
+
+    for nodeID, perks in pairs(nodePerkMap or {}) do
+        local baseNodeData = professionNodeData[nodeID]
+        local perkMap = {}
+        for _, perkID in ipairs(perks) do
+            perkMap[perkID] = professionNodeData[perkID]
+        end
+        tinsert(self.nodeData, CraftSim.NodeData(recipeData, baseNodeData, perkMap))
     end
+
+    self:UpdateRanks()
+    self:UpdateProfessionStats()
 end
 
 function CraftSim.SpecializationData:GetExtraFactors()
@@ -92,18 +77,28 @@ function CraftSim.SpecializationData:GetExtraFactors()
     return extraFactors
 end
 
+function CraftSim.SpecializationData:UpdateRanks()
+    for _, nodeData in pairs(self.nodeData) do
+        nodeData:UpdateRank()
+    end
+end
+
 function CraftSim.SpecializationData:UpdateProfessionStats()
     self.professionStats:Clear()
+    self.maxProfessionStats:Clear()
     for _, nodeData in pairs(self.nodeData) do
-        nodeData:UpdateProfessionStats()
-        self.professionStats:add(nodeData.professionStats)
+        nodeData:Update()
+        if nodeData.active then
+            self.professionStats:add(nodeData.professionStats)
+        end
+        self.maxProfessionStats:add(nodeData.maxProfessionStats)
     end
 end
 
 function CraftSim.SpecializationData:Debug()
     local debugLines = {}
 
-    for _, nodeData in pairs(self.baseNodeData) do
+    for _, nodeData in pairs(self.nodeData) do
         local lines = nodeData:Debug()
         lines = GUTIL:Map(lines, function(line)
             return "-" .. line
@@ -146,43 +141,26 @@ function CraftSim.SpecializationData:GetJSON(indent)
     jb:Begin()
     jb:Add("isImplemented", self.isImplemented)
     jb:AddList("nodeData", self.nodeData)
-    local layernumlist = {}
-    table.foreach(self.numNodesPerLayer, function(index, value)
-        local listString = "["
-        table.foreach(value, function(index, v)
-            if index < #value then
-                listString = listString .. v .. ","
-            else
-                listString = listString .. v
-            end
-        end)
-
-        listString = listString .. "]"
-        layernumlist[index] = listString
-    end)
-    jb:AddList("numNodesPerLayer", layernumlist)
     jb:Add("professionStats", self.professionStats, true)
     jb:End()
     return jb.json
 end
 
 ---@class CraftSim.SpecializationData.Serialized
----@field numNodesPerLayer table<number, number>[]
 ---@field nodeData CraftSim.NodeData.Serialized[]
----@field baseNodeIDs table<number, number> -- to restore baseNodeIDs via nodeIDmap
+---@field professionStats CraftSim.ProfessionStats.Serialized
+---@field maxProfessionStats CraftSim.ProfessionStats.Serialized
 
 ---@return CraftSim.SpecializationData.Serialized
 function CraftSim.SpecializationData:Serialize()
     ---@type CraftSim.SpecializationData.Serialized
-    local serializedData = {}
-    serializedData.numNodesPerLayer = CopyTable(self.numNodesPerLayer)
-    serializedData.nodeData = GUTIL:Map(self.nodeData, function(nodeData)
-        return nodeData:Serialize()
-    end)
-    serializedData.baseNodeIDs = GUTIL:Map(self.baseNodeData, function(nodeData)
-        return nodeData.nodeID
-    end)
-
+    local serializedData = {
+        nodeData = GUTIL:Map(self.nodeData, function(nodeData)
+            return nodeData:Serialize()
+        end),
+        professionStats = self.professionStats:Serialize(),
+        maxProfessionStats = self.maxProfessionStats:Serialize(),
+    }
     return serializedData
 end
 
@@ -191,23 +169,12 @@ end
 function CraftSim.SpecializationData:Deserialize(serializedData, recipeData)
     local specializationData = CraftSim.SpecializationData()
     self.isImplemented = recipeData:IsSpecializationInfoImplemented()
-    specializationData.numNodesPerLayer = serializedData.numNodesPerLayer
     specializationData.professionStats = CraftSim.ProfessionStats()
     specializationData.maxProfessionStats = CraftSim.ProfessionStats()
 
-    local nodeIDMap = {} -- to restore references
-    local professionRuleNodes = CraftSim.SPECIALIZATION_DATA.NODE_DATA[recipeData.professionData.expansionID]
-        [recipeData.professionData.professionInfo.profession]
-
     specializationData.nodeData = GUTIL:Map(serializedData.nodeData, function(nodeDataSerialized)
-        return CraftSim.NodeData:Deserialize(nodeDataSerialized, recipeData, nodeIDMap, professionRuleNodes)
+        return CraftSim.NodeData:Deserialize(nodeDataSerialized, recipeData)
     end)
-
-    specializationData.baseNodeData = GUTIL:Map(serializedData.baseNodeIDs, function(nodeID)
-        return nodeIDMap[nodeID]
-    end)
-
-    specializationData:UpdateProfessionStats()
 
     return specializationData
 end

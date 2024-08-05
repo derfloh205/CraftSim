@@ -857,11 +857,11 @@ function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
         -- if too early, use from db
         if not self.isOldWorldRecipe and #specializationData.nodeData == 0 then
             specializationData = CraftSim.DB.CRAFTER:GetSpecializationData(crafterUID, self)
+            return specializationData
         else
             CraftSim.DB.CRAFTER:SaveSpecializationData(crafterUID, specializationData)
+            return specializationData
         end
-
-        return specializationData
     end
 end
 

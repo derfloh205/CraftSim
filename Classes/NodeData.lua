@@ -4,92 +4,94 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.NodeData : CraftSim.CraftSimObject
----@overload fun(recipeData: CraftSim.RecipeData?, nodeRulesData: table?, parentNode:CraftSim.NodeData?): CraftSim.NodeData
+---@overload fun(recipeData: CraftSim.RecipeData?, baseNodeData: CraftSim.RawPerkData?, perkMap?: table<number, CraftSim.RawPerkData>): CraftSim.NodeData
 CraftSim.NodeData = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
 ---@param recipeData CraftSim.RecipeData?
----@param nodeRulesData table
----@param parentNode CraftSim.NodeData
-function CraftSim.NodeData:new(recipeData, nodeRulesData, parentNode)
-    self.affectsRecipe = false
+---@param baseNodeData CraftSim.RawPerkData
+---@param perkMap table<number, CraftSim.RawPerkData>
+function CraftSim.NodeData:new(recipeData, baseNodeData, perkMap)
     if not recipeData then
         return
     end
-    self.parentNode         = parentNode
+    self.nodeID             = baseNodeData.nodeID
     self.recipeData         = recipeData
-    ---@type CraftSim.NodeData[]
-    self.childNodes         = {}
-    ---@type number
-    self.nodeID             = nodeRulesData[1].nodeID
+    self.maxRank            = baseNodeData.maxRank
+
     ---@type CraftSim.ProfessionStats
     self.professionStats    = CraftSim.ProfessionStats()
     ---@type CraftSim.ProfessionStats
     self.maxProfessionStats = CraftSim.ProfessionStats()
-    ---@type CraftSim.NodeRule[]
-    self.nodeRules          = {}
 
-    self.configID           = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)
-    local nodeInfo          = C_Traits.GetNodeInfo(self.configID, self.nodeID)
-    self.entryIDs           = nodeInfo.entryIDs
-    self.entryInfos         = GUTIL:Map(self.entryIDs, function(entryID)
-        return C_Traits.GetEntryInfo(self.configID, entryID)
+    local configID          = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)
+    local nodeInfo          = C_Traits.GetNodeInfo(configID, self.nodeID)
+
+    self.rank               = nodeInfo.activeRank -
+        1 -- (a node with 30 max rank will have 31 if maxxed out, so >0 will be active)
+
+    self.active             = false
+
+    local entryIDs          = nodeInfo.entryIDs
+    local entryInfos        = GUTIL:Map(entryIDs, function(entryID)
+        return C_Traits.GetEntryInfo(configID, entryID)
     end)
-    local definitionInfos   = GUTIL:Map(self.entryInfos, function(entryInfo)
+    local definitionInfos   = GUTIL:Map(entryInfos, function(entryInfo)
         return C_Traits.GetDefinitionInfo(entryInfo.definitionID)
     end)
     if definitionInfos[1] then
         self.icon = definitionInfos[1].overrideIcon
         -- each entry of a node has the same overrideName but could have different descriptions, this is used for the professions to contain the node names..
-        self.nodeName = definitionInfos[1].overrideName
+        self.name = definitionInfos[1].overrideName
     end
-    self.nodeName = self.nodeName or "<nodeName?>"
+    self.name = self.name or "<nodeName?>"
+    ---@type CraftSim.PerkData[]
+    self.perkData = {}
 
-    self.perkInfos = C_ProfSpecs.GetPerksForPath(self.nodeID)
-
-    if (nodeInfo) then
-        self.active = nodeInfo.activeRank > 0
-        self.rank = nodeInfo.activeRank - 1
-        self.maxRank = nodeInfo.maxRanks - 1
-    else
-        self.active = false
-        self.rank = 0
-        self.maxRank = 0
+    for perkID, perkData in pairs(perkMap or {}) do
+        tinsert(self.perkData, CraftSim.PerkData(self, perkID, perkData))
     end
 
-    table.foreach(nodeRulesData, function(_, nodeRuleData)
-        table.insert(self.nodeRules, CraftSim.NodeRule(self.recipeData, nodeRuleData, self))
-    end)
+    local stat = baseNodeData.stat
+    local amount = baseNodeData.stat_amount or 0
+
+    -- for base node equality stat assignments
+    self.equalsSkill = (stat == "skill" and amount) or 0
+    self.equalsMulticraft = (stat == "multicraft" and amount) or 0
+    self.equalsResourcefulness = (stat == "resourcefulness" and amount) or 0
+    self.equalsIngenuity = (stat == "ingenuity" and amount) or 0
+    self.equalsResourcefulnessExtraItemsFactor = (stat == "reagentssavedfromresourcefulness" and amount) or 0
+    self.equalsIngenuityExtraConcentrationFactor = (stat == "ingenuityrefundincrease" and amount) or 0
+    self.equalsCraftingspeed = (stat == "craftingspeed" and amount) or 0
 end
 
 function CraftSim.NodeData:Debug()
     local debugLines = {
-        "nodeName: " .. tostring(self.nodeName),
+        "nodeName: " .. tostring(self.name),
         "nodeID: " .. tostring(self.nodeID),
-        "affectsRecipe: " .. tostring(self.affectsRecipe),
         "active: " .. tostring(self.active),
         "rank: " .. tostring(self.rank) .. " / " .. tostring(self.maxRank),
     }
-
-    for _, childNode in pairs(self.childNodes) do
-        local lines = childNode:Debug()
-        lines = GUTIL:Map(lines, function(line) return "-" .. line end)
-
-        debugLines = GUTIL:Concat({ debugLines, lines })
-    end
     return debugLines
 end
 
-function CraftSim.NodeData:UpdateAffectance()
-    for _, nodeRule in pairs(self.nodeRules) do
-        nodeRule:UpdateAffectance()
+function CraftSim.NodeData:Update()
+    self.active = self.rank >= 0
+    for _, perkData in pairs(self.perkData) do
+        perkData:Update()
     end
-    -- if at least one rule node of the node affects the recipe, the node affects the recipe
-    self.affectsRecipe = GUTIL:Count(self.nodeRules, function(nr) return nr.affectsRecipe end) > 0
 
-    if self.affectsRecipe and self.rank > -1 then
-        self.active = true
+    self:UpdateProfessionStats()
+end
+
+function CraftSim.NodeData:UpdateRank()
+    local configID = C_ProfSpecs.GetConfigIDForSkillLine(self.recipeData.professionData.skillLineID)
+    local nodeInfo = C_Traits.GetNodeInfo(configID, self.nodeID)
+    if nodeInfo and nodeInfo.activeRank then
+        self.rank = nodeInfo.activeRank - 1
+    else
+        self.rank = -1
     end
 end
 
@@ -98,37 +100,56 @@ function CraftSim.NodeData:UpdateProfessionStats()
     -- this is important so that stats change to 0 when its not active anymore in the simulator!
     self.professionStats:Clear()
     self.maxProfessionStats:Clear()
-    if not self.affectsRecipe then
-        return
-    end
 
-    for i, nodeRule in pairs(self.nodeRules) do
-        -- only use rules that affect the recipe
-        if nodeRule.affectsRecipe then
-            -- for maxProfessionStats always use max rank
-            nodeRule:UpdateProfessionStatsByRank(self.maxRank, true)
-            self.maxProfessionStats:add(nodeRule.professionStats)
+    -- first add based on stat equalities (for max always add based on maxRank)
 
-            -- then do it again for actual rank if its active
-            nodeRule:UpdateProfessionStatsByRank(self.rank)
-            if self.rank >= nodeRule.threshold then
-                self.professionStats:add(nodeRule.professionStats)
-            end
+    local rank = self.rank
+    local maxRank = self.maxRank
+
+    self.professionStats.skill.value = math.max(0, rank * self.equalsSkill)
+    self.maxProfessionStats.skill.value = math.max(0, maxRank * self.equalsSkill)
+
+    self.professionStats.multicraft.value = math.max(0, rank * self.equalsMulticraft)
+    self.maxProfessionStats.multicraft.value = math.max(0, maxRank * self.equalsMulticraft)
+
+    self.professionStats.resourcefulness.value = math.max(0, rank * self.equalsResourcefulness)
+    self.maxProfessionStats.resourcefulness.value = math.max(0, maxRank * self.equalsResourcefulness)
+
+    self.professionStats.ingenuity.value = math.max(0, rank * self.equalsIngenuity)
+    self.maxProfessionStats.ingenuity.value = math.max(0, maxRank * self.equalsIngenuity)
+
+    self.professionStats.craftingspeed.value = math.max(0, rank * self.equalsCraftingspeed)
+    self.maxProfessionStats.craftingspeed.value = math.max(0, maxRank * self.equalsCraftingspeed)
+
+    self.professionStats.resourcefulness.extraFactor = math.max(0, rank * self.equalsResourcefulnessExtraItemsFactor)
+    self.maxProfessionStats.resourcefulness.extraFactor = math.max(0,
+        maxRank * self.equalsResourcefulnessExtraItemsFactor)
+
+    self.professionStats.ingenuity.extraFactor = math.max(0, rank * self.equalsIngenuityExtraConcentrationFactor)
+    self.maxProfessionStats.ingenuity.extraFactor = math.max(0, maxRank * self.equalsIngenuityExtraConcentrationFactor)
+
+    -- then add stats from perks
+    for _, perkData in pairs(self.perkData) do
+        -- for maxProfessionStats always add
+        self.maxProfessionStats:add(perkData.professionStats)
+
+        -- otherwise only if active
+        if perkData.active then
+            self.professionStats:add(perkData.professionStats)
         end
     end
 end
 
 ---@return string
 function CraftSim.NodeData:GetTooltipText()
-    local header = GUTIL:IconToText(self.icon, 30, 30) .. " " .. self.nodeName
+    local header = GUTIL:IconToText(self.icon, 30, 30) .. " " .. tostring(self.name)
     local tooltipText = header ..
         "\n\n" .. GUTIL:ColorizeText(tostring(C_ProfSpecs.GetDescriptionForPath(self.nodeID)), GUTIL.COLORS.WHITE)
-    for _, perkInfo in ipairs(self.perkInfos) do
-        local unlockRank = C_ProfSpecs.GetUnlockRankForPerk(perkInfo.perkID)
-        local rankText = "Rank " .. unlockRank .. ":\n"
-        local perkDescription = C_ProfSpecs.GetDescriptionForPerk(perkInfo.perkID)
+    for _, perkData in ipairs(self.perkData) do
+        local rankText = "Rank " .. perkData.threshold .. ":\n"
+        local perkDescription = C_ProfSpecs.GetDescriptionForPerk(perkData.perkID)
 
-        if self.rank >= unlockRank then
+        if perkData.active then
             rankText = GUTIL:ColorizeText(rankText, GUTIL.COLORS.GREEN)
             perkDescription = GUTIL:ColorizeText(perkDescription, GUTIL.COLORS.WHITE)
         else
@@ -153,85 +174,60 @@ function CraftSim.NodeData:GetJSON(indent)
     jb:Add("active", self.active)
     jb:Add("rank", self.rank)
     jb:Add("maxRank", self.maxRank)
-    jb:Add("nodeName", self.nodeName)
-    jb:Add("affectsRecipe", self.affectsRecipe)
+    jb:Add("nodeName", self.name)
     jb:Add("professionStats", self.professionStats)
-    jb:Add("parentNodeID", (self.parentNode and self.parentNode.nodeID) or nil)
-    jb:AddList("nodeRules", self.nodeRules)
-    jb:AddList("childNodeIDs", GUTIL:Map(self.childNodes, function(cn) return cn.nodeID end), true)
+    jb:AddList("perkData", self.perkData)
     jb:End()
     return jb.json
 end
 
 ---@class CraftSim.NodeData.Serialized
 ---@field nodeID number
----@field parentNodeID number
----@field childNodes CraftSim.NodeData.Serialized[]
----@field nodeName string
----@field configID number
----@field entryIDs number[]
----@field entryInfos TraitEntryInfo[]
+---@field perkData CraftSim.PerkData.Serialized[]
+---@field professionStats CraftSim.ProfessionStats.Serialized
+---@field maxProfessionStats CraftSim.ProfessionStats.Serialized
+---@field name string
 ---@field icon number
----@field perkInfos SpecPerkInfo[]
 ---@field active boolean
 ---@field rank number
 ---@field maxRank number
----@field affectsRecipe boolean
 
 ---@return CraftSim.NodeData.Serialized
 function CraftSim.NodeData:Serialize()
     ---@type CraftSim.NodeData.Serialized
     local serializedData = {}
     serializedData.nodeID = self.nodeID
-    if self.parentNode then
-        serializedData.parentNodeID = self.parentNode.nodeID
-    end
-    serializedData.nodeName = self.nodeName
-    serializedData.configID = self.configID
-    serializedData.entryIDs = CopyTable(self.entryIDs)
-    serializedData.entryInfos = CopyTable(self.entryInfos)
+    serializedData.name = self.name
     serializedData.icon = self.icon
-    serializedData.perkInfos = CopyTable(self.perkInfos)
-    serializedData.active = self.active
+    serializedData.professionStats = self.professionStats:Serialize()
+    serializedData.maxProfessionStats = self.maxProfessionStats:Serialize()
     serializedData.rank = self.rank
     serializedData.maxRank = self.maxRank
-    serializedData.affectsRecipe = self.affectsRecipe
+    serializedData.active = self.active
+    serializedData.perkData = GUTIL:Map(self.perkData, function(perkData)
+        return perkData:Serialize()
+    end)
 
     return serializedData
 end
 
 ---@param serializedData CraftSim.NodeData.Serialized
 ---@param recipeData CraftSim.RecipeData
----@param nodeIDMap table<number, CraftSim.NodeData>
----@param professionRuleNodes table<string, table>
 ---@return CraftSim.NodeData
-function CraftSim.NodeData:Deserialize(serializedData, recipeData, nodeIDMap, professionRuleNodes)
+function CraftSim.NodeData:Deserialize(serializedData, recipeData)
     local nodeData = CraftSim.NodeData()
-    nodeData.professionStats = CraftSim.ProfessionStats()
-    nodeData.maxProfessionStats = CraftSim.ProfessionStats()
+    nodeData.professionStats = CraftSim.ProfessionStats:Deserialize(serializedData.professionStats)
+    nodeData.maxProfessionStats = CraftSim.ProfessionStats:Deserialize(serializedData.maxProfessionStats)
     nodeData.nodeID = serializedData.nodeID
-    nodeIDMap[serializedData.nodeID] = nodeData
     nodeData.recipeData = recipeData
-    nodeData.nodeName = serializedData.nodeName
-    nodeData.configID = serializedData.configID
-    nodeData.entryIDs = serializedData.entryIDs
-    nodeData.entryInfos = serializedData.entryInfos
+    nodeData.name = serializedData.name
     nodeData.icon = serializedData.icon
-    nodeData.perkInfos = serializedData.perkInfos
     nodeData.active = serializedData.active
     nodeData.rank = serializedData.rank
     nodeData.maxRank = serializedData.maxRank
-    nodeData.affectsRecipe = serializedData.affectsRecipe
-    nodeData.nodeRules = {}
-
-    local ruleNodes = GUTIL:Filter(professionRuleNodes, function(n) return n.nodeID == nodeData.nodeID end)
-
-    for _, ruleNode in pairs(ruleNodes) do
-        local nodeRule = CraftSim.NodeRule(recipeData, ruleNode, nodeData)
-        table.insert(nodeData.nodeRules, nodeRule) -- no need to serialize/deserialize nodeRules, just built again
-    end
-
-    nodeData:UpdateAffectance()
+    nodeData.perkData = GUTIL:Map(serializedData.perkData, function(serializedPerkData)
+        return CraftSim.PerkData:Deserialize(nodeData, serializedPerkData)
+    end)
 
     return nodeData
 end
