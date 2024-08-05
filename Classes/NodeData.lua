@@ -125,12 +125,13 @@ function CraftSim.NodeData:UpdateProfessionStats()
     self.professionStats.craftingspeed.value = math.max(0, rank * self.equalsCraftingspeed)
     self.maxProfessionStats.craftingspeed.value = math.max(0, maxRank * self.equalsCraftingspeed)
 
-    self.professionStats.resourcefulness.extraFactor = math.max(0, rank * self.equalsResourcefulnessExtraItemsFactor)
-    self.maxProfessionStats.resourcefulness.extraFactor = math.max(0,
-        maxRank * self.equalsResourcefulnessExtraItemsFactor)
+    self.professionStats.resourcefulness:SetExtraValue(math.max(0, rank * self.equalsResourcefulnessExtraItemsFactor))
+    self.maxProfessionStats.resourcefulness:SetExtraValue(math.max(0,
+        maxRank * self.equalsResourcefulnessExtraItemsFactor))
 
-    self.professionStats.ingenuity.extraFactor = math.max(0, rank * self.equalsIngenuityExtraConcentrationFactor)
-    self.maxProfessionStats.ingenuity.extraFactor = math.max(0, maxRank * self.equalsIngenuityExtraConcentrationFactor)
+    self.professionStats.ingenuity:SetExtraValue(math.max(0, rank * self.equalsIngenuityExtraConcentrationFactor))
+    self.maxProfessionStats.ingenuity:SetExtraValue(math.max(0, maxRank * self
+        .equalsIngenuityExtraConcentrationFactor), 2)
 
     -- then add stats from perks
     for _, perkData in pairs(self.perkData) do

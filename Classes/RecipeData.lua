@@ -233,7 +233,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.baseProfessionStats:subtract(self.buffData.professionStats)
     -- As we dont know in this case what the factors are without gear and reagents and such
     -- we set them to 0 and let them accumulate in UpdateProfessionStats
-    self.baseProfessionStats:ClearFactors()
+    self.baseProfessionStats:ClearExtraValues()
 
     self:UpdateProfessionStats()
 
@@ -482,13 +482,12 @@ function CraftSim.RecipeData:UpdateProfessionStats()
 
     -- this should cover each case of non specialization data implemented professions
     if self.specializationData then
-        local specExtraFactors = self.specializationData:GetExtraFactors()
-        self.professionStats:add(specExtraFactors)
+        local specExtraValues = self.specializationData:GetExtraValues()
+        self.professionStats:add(specExtraValues)
     end
 
     -- finally add any custom modifiers
     self.professionStats:add(self.professionStatModifiers)
-    -- its the only one which uses "extraValueAfterFactor"
 
     -- since ooey gooey chocolate gives us math.huge on multicraft we need to limit it to 100%
     self.professionStats.multicraft.value = math.min(1 / self.professionStats.multicraft.percentMod,

@@ -625,7 +625,7 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
         detailsFrame.content.multicraftValue:SetText(GUTIL:Round(professionStats.multicraft.value, 1) ..
             " (" .. baseMulticraft .. "+" .. professionStatsMod.multicraft.value .. ") " .. percentText)
 
-        detailsFrame.content.multicraftBonusValue:SetText(professionStats.multicraft.extraFactor * 100 .. "%")
+        detailsFrame.content.multicraftBonusValue:SetText(professionStats.multicraft:GetExtraValue() * 100 .. "%")
     end
 
     -- Resourcefulness Display
@@ -643,7 +643,8 @@ function CraftSim.SIMULATION_MODE.UI:UpdateCraftingDetailsPanel()
             GUTIL:Round(baseResourcefulness) ..
             "+" .. GUTIL:Round(professionStatsMod.resourcefulness.value) .. ") " .. percentText)
 
-        detailsFrame.content.resourcefulnessBonusValue:SetText(professionStats.resourcefulness.extraFactor * 100 .. "%")
+        detailsFrame.content.resourcefulnessBonusValue:SetText(professionStats.resourcefulness:GetExtraValue() * 100 ..
+            "%")
     end
 
     local qualityFrame = detailsFrame.content.qualityFrame

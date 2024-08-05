@@ -40,11 +40,10 @@ function CraftSim.PerkData:new(baseNode, perkID, perkData)
     self.professionStats.ingenuity.value = (stat == "ingenuity" and amount) or 0
     self.professionStats.craftingspeed.value = (stat == "craftingspeed" and amount) or 0
 
-    self.professionStats.ingenuity.extraFactor = (stat == "ingenuityrefundincrease" and (amount / 100)) or 0
-    self.professionStats.resourcefulness.extraFactor = (stat == "reagentssavedfromresourcefulness" and (amount / 100)) or
-        0
-    self.professionStats.multicraft.extraFactor = (stat == "additionalitemscraftedwithmulticraft" and (amount / 100)) or
-        0
+    self.professionStats.ingenuity:SetExtraValue((stat == "ingenuityrefundincrease" and (amount / 100)))
+    self.professionStats.ingenuity:SetExtraValue((stat == "reduceconcentrationcost" and (amount / 100)), 2)
+    self.professionStats.resourcefulness:SetExtraValue((stat == "reagentssavedfromresourcefulness" and (amount / 100)))
+    self.professionStats.multicraft:SetExtraValue((stat == "additionalitemscraftedwithmulticraft" and (amount / 100)))
 
     self.unlocksReagentSlot = stat == "unlockreagentslot"
 end
@@ -98,13 +97,6 @@ end
 ---@field threshold number
 ---@field professionStats CraftSim.ProfessionStats.Serialized
 ---@field unlocksReagentSlot boolean
----@field equalsSkill boolean
----@field equalsMulticraft boolean
----@field equalsResourcefulness boolean
----@field equalsIngenuity boolean
----@field equalsResourcefulnessExtraItemsFactor boolean
----@field equalsIngenuityExtraConcentrationFactor boolean
----@field equalsCraftingspeed boolean
 ---@field stat string
 ---@field stat_amount number
 
@@ -118,13 +110,6 @@ function CraftSim.PerkData:Serialize()
         threshold = self.threshold,
         professionStats = self.professionStats:Serialize(),
         unlocksReagentSlot = self.unlocksReagentSlot,
-        equalsSkill = self.equalsSkill,
-        equalsMulticraft = self.equalsMulticraft,
-        equalsResourcefulness = self.equalsResourcefulness,
-        equalsIngenuity = self.equalsIngenuity,
-        equalsResourcefulnessExtraItemsFactor = self.equalsResourcefulnessExtraItemsFactor,
-        equalsCraftingspeed = self.equalsCraftingspeed,
-        equalsIngenuityExtraConcentrationFactor = self.equalsIngenuityExtraConcentrationFactor,
         stat = self.stat,
         stat_amount = self.stat_amount,
     }
@@ -142,13 +127,6 @@ function CraftSim.PerkData:Deserialize(baseNode, serializedData)
     perkData.perkID = serializedData.perkID
     perkData.threshold = serializedData.threshold
     perkData.unlocksReagentSlot = self.unlocksReagentSlot
-    perkData.equalsSkill = self.equalsSkill
-    perkData.equalsMulticraft = self.equalsMulticraft
-    perkData.equalsResourcefulness = self.equalsResourcefulness
-    perkData.equalsIngenuity = self.equalsIngenuity
-    perkData.equalsResourcefulnessExtraItemsFactor = self.equalsResourcefulnessExtraItemsFactor
-    perkData.equalsCraftingspeed = self.equalsCraftingspeed
-    perkData.equalsIngenuityExtraConcentrationFactor = self.equalsIngenuityExtraConcentrationFactor
     perkData.stat = self.stat
     perkData.stat_amount = self.stat_amount
     return perkData

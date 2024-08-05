@@ -50,11 +50,6 @@ function CraftSim.SpecializationData:new(recipeData)
         end
     end
 
-    -- CraftSim.DEBUG:InspectTable(recipePerks, "recipePerks")
-    -- CraftSim.DEBUG:InspectTable(professionNodeData, "professionNodeData")
-    -- CraftSim.DEBUG:InspectTable(nodePerkMap, "nodePerkMap")
-
-
     for nodeID, perks in pairs(nodePerkMap or {}) do
         local baseNodeData = professionNodeData[nodeID]
         local perkMap = {}
@@ -68,13 +63,15 @@ function CraftSim.SpecializationData:new(recipeData)
     self:UpdateProfessionStats()
 end
 
-function CraftSim.SpecializationData:GetExtraFactors()
-    local extraFactors = CraftSim.ProfessionStats()
+function CraftSim.SpecializationData:GetExtraValues()
+    local extraValues = CraftSim.ProfessionStats()
 
-    extraFactors.multicraft.extraFactor = self.professionStats.multicraft.extraFactor
-    extraFactors.resourcefulness.extraFactor = self.professionStats.resourcefulness.extraFactor
+    extraValues.multicraft.extraValues = CopyTable(self.professionStats.multicraft.extraValues)
+    extraValues.resourcefulness.extraValues = CopyTable(self.professionStats.resourcefulness.extraValues)
+    extraValues.ingenuity.extraValues = CopyTable(self.professionStats.ingenuity.extraValues)
+    extraValues.craftingspeed.extraValues = CopyTable(self.professionStats.craftingspeed.extraValues)
 
-    return extraFactors
+    return extraValues
 end
 
 function CraftSim.SpecializationData:UpdateRanks()
