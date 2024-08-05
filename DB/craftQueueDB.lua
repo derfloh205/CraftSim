@@ -37,6 +37,12 @@ function CraftSim.DB.CRAFT_QUEUE:Migrate()
         CraftSim.DB.CRAFT_QUEUE:ClearAll()
         CraftSimDB.craftQueueDB.version = 2
     end
+
+    -- 2 -> 3 (specData refactor)
+    if CraftSimDB.craftQueueDB.version == 2 then
+        CraftSim.DB.CRAFT_QUEUE:ClearAll()
+        CraftSimDB.craftQueueDB.version = 3
+    end
 end
 
 function CraftSim.DB.CRAFT_QUEUE:ClearAll()

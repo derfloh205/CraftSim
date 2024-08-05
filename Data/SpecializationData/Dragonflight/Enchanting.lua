@@ -1,1802 +1,4387 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-
----@type table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENCHANTING_DATA = {
-    ENCHANTMENT_1 = { -- primal mapped, material mapped
-        childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
-        nodeID = 64143,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    ENCHANTMENT_2 = {
-        childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
-        nodeID = 64143,
-        threshold = 0,
-        skill = 5,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    ENCHANTMENT_3 = {
-        childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
-        nodeID = 64143,
-        threshold = 5,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    ENCHANTMENT_4 = {
-        childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
-        nodeID = 64143,
-        threshold = 15,
-        resourcefulness = 5,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    ENCHANTMENT_5 = {
-        childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
-        nodeID = 64143,
-        threshold = 25,
-        craftingspeedBonusFactor = 0.10,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    ENCHANTMENT_6 = {
-        childNodeIDs = { "PRIMAL_1", "MATERIAL_MANIPULATION_1" },
-        nodeID = 64143,
-        threshold = 30,
-        skill = 10,
-        resourcefulness = 5,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    PRIMAL_1 = { -- burning mapped, earthen mapped, sophic mapped, frozen mapped, wafting mapped
-        childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
-        nodeID = 64142,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-    },
-    PRIMAL_2 = {
-        childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
-        nodeID = 64142,
-        threshold = 5,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-    },
-    PRIMAL_3 = {
-        childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
-        nodeID = 64142,
-        threshold = 15,
-        resourcefulness = 5,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-    },
-    PRIMAL_4 = {
-        childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
-        nodeID = 64142,
-        threshold = 25,
-        skill = 5,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-    },
-    PRIMAL_5 = {
-        childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
-        nodeID = 64142,
-        threshold = 30,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-    },
-    PRIMAL_6 = {
-        childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
-        nodeID = 64142,
-        threshold = 40,
-        skill = 10,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-    },
-    PRIMAL_7 = {
-        childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
-        nodeID = 64142,
-        threshold = 45,
-        resourcefulness = 10,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-    },
-    PRIMAL_8 = {
-        childNodeIDs = { "BURNING_1", "EARTHEN_1", "SOPHIC_1", "FROZEN_1", "WAFTING_1" },
-        nodeID = 64142,
-        threshold = 50,
-        craftingspeedBonusFactor = 0.10,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-    },
-    MATERIAL_MANIPULATION_1 = { -- adaptive mapped, artistry mapped, magical mapped
-        childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
-        nodeID = 64136,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MATERIAL_MANIPULATION_2 = {
-        childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
-        nodeID = 64136,
-        threshold = 0,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MATERIAL_MANIPULATION_3 = {
-        childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
-        nodeID = 64136,
-        threshold = 5,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MATERIAL_MANIPULATION_4 = {
-        childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
-        nodeID = 64136,
-        threshold = 15,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MATERIAL_MANIPULATION_5 = {
-        childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
-        nodeID = 64136,
-        threshold = 20,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MATERIAL_MANIPULATION_6 = {
-        childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
-        nodeID = 64136,
-        threshold = 30,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MATERIAL_MANIPULATION_7 = {
-        childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
-        nodeID = 64136,
-        threshold = 35,
-        skill = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MATERIAL_MANIPULATION_8 = {
-        childNodeIDs = { "ADAPTIVE_1", "ARTISTRY_1", "MAGICAL_REINFORCEMENT_1" },
-        nodeID = 64136,
-        threshold = 40,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK,
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    BURNING_1 = {
-        nodeID = 64141,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- Burning
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-        },
-    },
-    BURNING_2 = {
-        nodeID = 64141,
-        threshold = 5,
-        skill = 5,
-        exceptionRecipeIDs = {
-            389547, -- Burning Devotion
-            389537, -- Burning Writ
-        },
-    },
-    EARTHEN_1 = {
-        nodeID = 64140,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- earthen
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-        },
-    },
-    EARTHEN_2 = {
-        nodeID = 64140,
-        threshold = 5,
-        skill = 5,
-        exceptionRecipeIDs = {
-            389549, -- Earthen Devotion
-            389540, -- Earthen Writ
-        },
-    },
-    SOPHIC_1 = {
-        nodeID = 64139,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- sophic
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-        },
-    },
-    SOPHIC_2 = {
-        nodeID = 64139,
-        threshold = 5,
-        skill = 5,
-        exceptionRecipeIDs = {
-            389550, -- Sophic Devotion
-            389542, -- Sophic Writ
-        },
-    },
-    FROZEN_1 = {
-        nodeID = 64138,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- frozen
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-        },
-    },
-    FROZEN_2 = {
-        nodeID = 64138,
-        threshold = 5,
-        skill = 5,
-        exceptionRecipeIDs = {
-            389551, -- Frozen Devotion
-            389543, -- Frozen Writ
-        },
-    },
-    WAFTING_1 = {
-        nodeID = 64137,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- wafting
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-    },
-    WAFTING_2 = {
-        nodeID = 64137,
-        threshold = 5,
-        skill = 5,
-        exceptionRecipeIDs = {
-            389558, -- Wafting Devotion
-            389546, -- Wafting Writ
-        },
-    },
-    ADAPTIVE_1 = {
-        nodeID = 64135,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- adaptive
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            }
-        },
-    },
-    ADAPTIVE_2 = {
-        nodeID = 64135,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            }
-        },
-    },
-    ADAPTIVE_3 = {
-        nodeID = 64135,
-        threshold = 15,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            }
-        },
-    },
-    ADAPTIVE_4 = {
-        nodeID = 64135,
-        threshold = 25,
-        skill = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            }
-        },
-    },
-    ADAPTIVE_5 = {
-        nodeID = 64135,
-        threshold = 30,
-        craftingspeedBonusFactor = 0.10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            }
-        },
-    },
-    ARTISTRY_1 = {
-        nodeID = 64134,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- artistry
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            },
-        },
-    },
-    ARTISTRY_2 = {
-        nodeID = 64134,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    ARTISTRY_3 = {
-        nodeID = 64134,
-        threshold = 10,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    ARTISTRY_4 = {
-        nodeID = 64134,
-        threshold = 20,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    ARTISTRY_5 = {
-        nodeID = 64134,
-        threshold = 25,
-        skill = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    ARTISTRY_6 = {
-        nodeID = 64134,
-        threshold = 30,
-        craftingspeedBonusFactor = 0.10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    MAGICAL_REINFORCEMENT_1 = {
-        nodeID = 64133,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- magical
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MAGICAL_REINFORCEMENT_2 = {
-        nodeID = 64133,
-        threshold = 5,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MAGICAL_REINFORCEMENT_3 = {
-        nodeID = 64133,
-        threshold = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MAGICAL_REINFORCEMENT_4 = {
-        nodeID = 64133,
-        threshold = 15,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MAGICAL_REINFORCEMENT_5 = {
-        nodeID = 64133,
-        threshold = 25,
-        skill = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    MAGICAL_REINFORCEMENT_6 = {
-        nodeID = 64133,
-        threshold = 30,
-        craftingspeedBonusFactor = 0.10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            }
-        },
-    },
-    INSIGHT_OF_THE_BLUE_1 = { -- draconic mapped, primal mapped
-        childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
-        nodeID = 68402,
-    },
-    INSIGHT_OF_THE_BLUE_2 = {
-        childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
-        nodeID = 68402,
-        threshold = 5,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- draconic, primal
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                -- draconic, primal
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- draconic, primal
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                -- draconic, primal
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- draconic, primal
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                -- draconic, primal
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- draconic, primal
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    INSIGHT_OF_THE_BLUE_3 = {
-        childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
-        nodeID = 68402,
-        threshold = 15,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    INSIGHT_OF_THE_BLUE_4 = {
-        childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
-        nodeID = 68402,
-        threshold = 20,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    INSIGHT_OF_THE_BLUE_5 = {
-        childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
-        nodeID = 68402,
-        threshold = 30,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    INSIGHT_OF_THE_BLUE_6 = {
-        childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
-        nodeID = 68402,
-        threshold = 40,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    INSIGHT_OF_THE_BLUE_7 = {
-        childNodeIDs = { "DRACONIC_DISENCHANTMENT_1", "PRIMAL_EXTRACTION_1" },
-        nodeID = 68402,
-        threshold = 45,
-        skill = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    DRACONIC_DISENCHANTMENT_1 = {
-        nodeID = 68401,
-        -- gives extraitems when disenchanting
-    },
-    DRACONIC_DISENCHANTMENT_2 = {
-        nodeID = 68401,
-        threshold = 5,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                -- draconic
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    DRACONIC_DISENCHANTMENT_3 = {
-        nodeID = 68401,
-        threshold = 15,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    DRACONIC_DISENCHANTMENT_4 = {
-        nodeID = 68401,
-        threshold = 25,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    DRACONIC_DISENCHANTMENT_5 = {
-        nodeID = 68401,
-        threshold = 35,
-        skill = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    PRIMAL_EXTRACTION_1 = {
-        nodeID = 68400,
-        -- more rousing elements
-    },
-    PRIMAL_EXTRACTION_2 = {
-        nodeID = 68400,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    PRIMAL_EXTRACTION_3 = {
-        nodeID = 68400,
-        threshold = 15,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    PRIMAL_EXTRACTION_4 = {
-        nodeID = 68400,
-        threshold = 25,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    PRIMAL_EXTRACTION_5 = {
-        nodeID = 68400,
-        threshold = 30,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    PRIMAL_EXTRACTION_6 = {
-        nodeID = 68400,
-        threshold = 35,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CLOAK_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CLOAK
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.CHEST_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.CHEST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BRACER_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WRIST
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.BOOT_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FEET
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RING_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.FINGER
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.WEAPON_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WEAPON
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.PROFESSION_TOOL_ENCHANTMENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.PROFESSION_TOOL
-            }
-        },
-    },
-    RODS_RUNES_AND_RUSES_1 = { -- mapped all
-        childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
-        nodeID = 68445,
-        equalsSkill = 1,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RODS_RUNES_AND_RUSES_2 = {
-        childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
-        nodeID = 68445,
-        threshold = 0,
-        craftingspeedBonusFactor = 0.10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RODS_RUNES_AND_RUSES_3 = {
-        childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
-        nodeID = 68445,
-        threshold = 5,
-        skill = 5,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RODS_RUNES_AND_RUSES_4 = {
-        childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
-        nodeID = 68445,
-        threshold = 15,
-        skill = 5,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RODS_RUNES_AND_RUSES_5 = {
-        childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
-        nodeID = 68445,
-        threshold = 25,
-        craftingspeedBonusFactor = 0.10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RODS_RUNES_AND_RUSES_6 = {
-        childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
-        nodeID = 68445,
-        threshold = 35,
-        skill = 5,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RODS_RUNES_AND_RUSES_7 = {
-        childNodeIDs = { "RODS_AND_WANDS_1", "ILLUSORY_GOODS_1", "RESOURCEFUL_WRIT_1", "INSPIRED_DEVOTION_1" },
-        nodeID = 68445,
-        threshold = 40,
-        skill = 10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RODS_AND_WANDS_1 = {
-        nodeID = 68444,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RODS_AND_WANDS] = {
-                -- rods and wands
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.RODS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WANDS
-            }
-        },
-    },
-    RODS_AND_WANDS_2 = {
-        nodeID = 68444,
-        threshold = 5,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RODS_AND_WANDS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.RODS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WANDS
-            }
-        },
-    },
-    RODS_AND_WANDS_3 = {
-        nodeID = 68444,
-        threshold = 15,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RODS_AND_WANDS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.RODS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WANDS
-            }
-        },
-    },
-    RODS_AND_WANDS_4 = {
-        nodeID = 68444,
-        threshold = 25,
-        skill = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RODS_AND_WANDS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.RODS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WANDS
-            }
-        },
-    },
-    RODS_AND_WANDS_5 = {
-        nodeID = 68444,
-        threshold = 35,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RODS_AND_WANDS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.RODS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WANDS
-            }
-        },
-    },
-    RODS_AND_WANDS_6 = {
-        nodeID = 68444,
-        threshold = 40,
-        skill = 15,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RODS_AND_WANDS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.RODS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WANDS
-            }
-        },
-    },
-    RODS_AND_WANDS_7 = {
-        nodeID = 68444,
-        threshold = 45,
-        craftingspeedBonusFactor = 0.10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.RODS_AND_WANDS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.RODS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.WANDS
-            }
-        },
-    },
-    ILLUSORY_GOODS_1 = {
-        nodeID = 68443,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.ILLUSORY_GOODS] = {
-                -- illusory goods
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSIONS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSORY_ADORNMENTS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.SCEPTERS
-            },
-        },
-    },
-    ILLUSORY_GOODS_2 = {
-        nodeID = 68443,
-        threshold = 0,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.ILLUSORY_GOODS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSIONS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSORY_ADORNMENTS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.SCEPTERS
-            }
-        },
-    },
-    ILLUSORY_GOODS_3 = {
-        nodeID = 68443,
-        threshold = 5,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.ILLUSORY_GOODS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSIONS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSORY_ADORNMENTS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.SCEPTERS
-            }
-        },
-    },
-    ILLUSORY_GOODS_4 = {
-        nodeID = 68443,
-        threshold = 15,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.ILLUSORY_GOODS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSIONS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSORY_ADORNMENTS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.SCEPTERS
-            }
-        },
-    },
-    ILLUSORY_GOODS_5 = {
-        nodeID = 68443,
-        threshold = 25,
-        skill = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ENCHANTING.ILLUSORY_GOODS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSIONS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.ILLUSORY_ADORNMENTS,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ENCHANTING.SCEPTERS
-            }
-        },
-    },
-    INSPIRED_DEVOTION_1 = {
-        nodeID = 68441,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRED_DEVOTION_2 = {
-        nodeID = 68441,
-        threshold = 0,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRED_DEVOTION_3 = {
-        nodeID = 68441,
-        threshold = 5,
-        skill = 5,
-        exceptionRecipeIDs = {
-            -- Ring Devotions
-            389292, -- Crit
-            389293, -- Haste
-            389294, -- Mastery
-            389295, -- Vers
-            -- Bracer Devotions
-            389301, -- Avoidance
-            389303, -- Leech
-            389304, -- Speed
-            -- Weapon Devotions
-            389547, -- Burning
-            389549, -- Earthen
-            389551, -- Frozen
-            389550, -- Sophic
-            389558, -- Wafting
-        },
-    },
-    INSPIRED_DEVOTION_4 = {
-        nodeID = 68441,
-        threshold = 10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRED_DEVOTION_5 = {
-        nodeID = 68441,
-        threshold = 15,
-        skill = 10,
-        exceptionRecipeIDs = {
-            -- Ring Devotions
-            389292, -- Crit
-            389293, -- Haste
-            389294, -- Mastery
-            389295, -- Vers
-            -- Bracer Devotions
-            389301, -- Avoidance
-            389303, -- Leech
-            389304, -- Speed
-            -- Weapon Devotions
-            389547, -- Burning
-            389549, -- Earthen
-            389551, -- Frozen
-            389550, -- Sophic
-            389558, -- Wafting
-        },
-    },
-    INSPIRED_DEVOTION_6 = {
-        nodeID = 68441,
-        threshold = 20,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRED_DEVOTION_7 = {
-        nodeID = 68441,
-        threshold = 25,
-        exceptionRecipeIDs = {
-            -- Ring Devotions
-            389292, -- Crit
-            389293, -- Haste
-            389294, -- Mastery
-            389295, -- Vers
-            -- Bracer Devotions
-            389301, -- Avoidance
-            389303, -- Leech
-            389304, -- Speed
-            -- Weapon Devotions
-            389547, -- Burning
-            389549, -- Earthen
-            389551, -- Frozen
-            389550, -- Sophic
-            389558, -- Wafting
-        },
-    },
-    INSPIRED_DEVOTION_8 = {
-        nodeID = 68441,
-        threshold = 30,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_WRIT_1 = {
-        nodeID = 68442,
-        equalsResourcefulness = 1,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_WRIT_2 = {
-        nodeID = 68442,
-        threshold = 0,
-        resourcefulnessExtraItemsFactor = 0.05,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_WRIT_3 = {
-        nodeID = 68442,
-        threshold = 5,
-        skill = 5,
-        exceptionRecipeIDs = {
-            -- Cloak Writs
-            389397, -- Avoidance
-            389398, -- Leech
-            389400, -- Speed
-            -- Bracer Writs
-            389297, -- Avoidance
-            389298, -- Leech
-            389300, -- Speed
-            -- Ring Writs
-            388930, -- Crit
-            389135, -- Haste
-            389136, -- Mastery
-            389151, -- Vers
-            -- Weapon Writs
-            389537, -- Burning
-            389540, -- Earthen
-            389543, -- Frozen
-            389542, -- Sophic
-            389546, -- Wafting
-        },
-    },
-    RESOURCEFUL_WRIT_4 = {
-        nodeID = 68442,
-        threshold = 10,
-        resourcefulnessExtraItemsFactor = 0.10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_WRIT_5 = {
-        nodeID = 68442,
-        threshold = 15,
-        skill = 10,
-        exceptionRecipeIDs = {
-            -- Cloak Writs
-            389397, -- Avoidance
-            389398, -- Leech
-            389400, -- Speed
-            -- Bracer Writs
-            389297, -- Avoidance
-            389298, -- Leech
-            389300, -- Speed
-            -- Ring Writs
-            388930, -- Crit
-            389135, -- Haste
-            389136, -- Mastery
-            389151, -- Vers
-            -- Weapon Writs
-            389537, -- Burning
-            389540, -- Earthen
-            389543, -- Frozen
-            389542, -- Sophic
-            389546, -- Wafting
-        },
-    },
-    RESOURCEFUL_WRIT_6 = {
-        nodeID = 68442,
-        threshold = 20,
-        resourcefulnessExtraItemsFactor = 0.10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_WRIT_7 = {
-        nodeID = 68442,
-        threshold = 25,
-        resourcefulness = 10,
-        exceptionRecipeIDs = {
-            -- Cloak Writs
-            389397, -- Avoidance
-            389398, -- Leech
-            389400, -- Speed
-            -- Bracer Writs
-            389297, -- Avoidance
-            389298, -- Leech
-            389300, -- Speed
-            -- Ring Writs
-            388930, -- Crit
-            389135, -- Haste
-            389136, -- Mastery
-            389151, -- Vers
-            -- Weapon Writs
-            389537, -- Burning
-            389540, -- Earthen
-            389543, -- Frozen
-            389542, -- Sophic
-            389546, -- Wafting
-        },
-    },
-    RESOURCEFUL_WRIT_8 = {
-        nodeID = 68442,
-        threshold = 30,
-        resourcefulnessExtraItemsFactor = 0.25,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    }
+	recipeMapping = {
+		[388930] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389135] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389136] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389151] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389191] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389292] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389293] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389294] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389295] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389297] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389298] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389300] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389301] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389303] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389304] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389397] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389398] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389400] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389403] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389404] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389405] = {
+			64135,
+			64089,
+			64087,
+			64085,
+			64084,
+			64084,
+			64084,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389410] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389416] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389417] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389419] = {
+			64133,
+			64075,
+			64074,
+			64073,
+			64071,
+			64070,
+			64070,
+			64070,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389479] = {
+			64137,
+			64101,
+			64100,
+			64100,
+			64140,
+			64110,
+			64109,
+			64109,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389480] = {
+			64137,
+			64101,
+			64100,
+			64100,
+			64140,
+			64110,
+			64109,
+			64109,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389484] = {
+			64137,
+			64101,
+			64100,
+			64100,
+			64140,
+			64110,
+			64109,
+			64109,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389508] = {
+			64134,
+			64082,
+			64081,
+			64079,
+			64078,
+			64077,
+			64077,
+			64077,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389513] = {
+			64134,
+			64082,
+			64081,
+			64079,
+			64078,
+			64077,
+			64077,
+			64077,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389519] = {
+			64134,
+			64082,
+			64081,
+			64079,
+			64078,
+			64077,
+			64077,
+			64077,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389525] = {
+			64134,
+			64082,
+			64081,
+			64079,
+			64078,
+			64077,
+			64077,
+			64077,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389530] = {
+			64134,
+			64082,
+			64081,
+			64079,
+			64078,
+			64077,
+			64077,
+			64077,
+			64136,
+			64099,
+			64098,
+			64096,
+			64095,
+			64093,
+			64092,
+			64091,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389537] = {
+			64141,
+			64113,
+			64112,
+			64112,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389540] = {
+			64140,
+			64110,
+			64109,
+			64109,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389542] = {
+			64139,
+			64107,
+			64106,
+			64106,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389543] = {
+			64138,
+			64104,
+			64103,
+			64103,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389546] = {
+			64137,
+			64101,
+			64100,
+			64100,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68415,
+			68414,
+			68413,
+			68412,
+			68411,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389547] = {
+			64141,
+			64113,
+			64112,
+			64112,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389549] = {
+			64140,
+			64110,
+			64109,
+			64109,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389550] = {
+			64139,
+			64107,
+			64106,
+			64106,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389551] = {
+			64138,
+			64104,
+			64103,
+			64103,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[389558] = {
+			64137,
+			64101,
+			64100,
+			64100,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[390823] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[390825] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[390831] = {
+			64139,
+			64107,
+			64106,
+			64106,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[390839] = {
+			64137,
+			64101,
+			64100,
+			64100,
+			64138,
+			64104,
+			64103,
+			64103,
+			64140,
+			64110,
+			64109,
+			64109,
+			64141,
+			64113,
+			64112,
+			64112,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[390855] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[390951] = {
+			64141,
+			64113,
+			64112,
+			64112,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391176] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391179] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391185] = {
+			64137,
+			64101,
+			64100,
+			64100,
+			64138,
+			64104,
+			64103,
+			64103,
+			64139,
+			64107,
+			64106,
+			64106,
+			64140,
+			64110,
+			64109,
+			64109,
+			64141,
+			64113,
+			64112,
+			64112,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391196] = {
+			64141,
+			64113,
+			64112,
+			64112,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391197] = {
+			64138,
+			64104,
+			64103,
+			64103,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391202] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391302] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391304] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391806] = {
+			64137,
+			64101,
+			64100,
+			64100,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391807] = {
+			64140,
+			64110,
+			64109,
+			64109,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391808] = {
+			64139,
+			64107,
+			64106,
+			64106,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391809] = {
+			64138,
+			64104,
+			64103,
+			64103,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391810] = {
+			64137,
+			64101,
+			64100,
+			64100,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391811] = {
+			64140,
+			64110,
+			64109,
+			64109,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391812] = {
+			64139,
+			64107,
+			64106,
+			64106,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391813] = {
+			64137,
+			64101,
+			64100,
+			64100,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391814] = {
+			64140,
+			64110,
+			64109,
+			64109,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391815] = {
+			64141,
+			64113,
+			64112,
+			64112,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[391816] = {
+			64138,
+			64104,
+			64103,
+			64103,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[394189] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[400809] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[404859] = {
+			64140,
+			64110,
+			64109,
+			64109,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[405076] = {
+			64141,
+			64113,
+			64112,
+			64112,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[405650] = {
+			64140,
+			64110,
+			64109,
+			64109,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[405803] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68444,
+			68432,
+			68431,
+			68429,
+			68428,
+			90061,
+			68426,
+			68425,
+			68424,
+			68424,
+			68424,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[405937] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[406108] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[406413] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[406418] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[414946] = {
+			64139,
+			64107,
+			64106,
+			64106,
+			64140,
+			64110,
+			64109,
+			64109,
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68443,
+			68423,
+			68422,
+			68420,
+			68418,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[414985] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[414988] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[414989] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[416047] = {
+			64139,
+			64107,
+			64106,
+			64106,
+			64140,
+			64110,
+			64109,
+			64109,
+			64142,
+			64124,
+			64122,
+			64120,
+			64119,
+			64117,
+			64116,
+			64115,
+			64143,
+			64132,
+			64131,
+			64129,
+			64127,
+			64127,
+			64126,
+			64126,
+			68378,
+			68376,
+			68374,
+			68373,
+			68372,
+			68387,
+			68385,
+			68383,
+			68381,
+			68398,
+			68396,
+			68395,
+			68393,
+			68391,
+			68390,
+			68441,
+			68409,
+			68408,
+			68407,
+			68406,
+			68405,
+			68404,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[429945] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[429947] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+		[429948] = {
+			68441,
+			68409,
+			68407,
+			68405,
+			68403,
+			68442,
+			68416,
+			68414,
+			68412,
+			68410,
+			68445,
+			80762,
+			68440,
+			68438,
+			68436,
+			68434,
+			68433,
+		},
+	},
+	nodeData = {
+		[64133] = {
+			nodeID = 64133,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64075] = {
+			nodeID = 64133,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[64074] = {
+			nodeID = 64133,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[64073] = {
+			nodeID = 64133,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64071] = {
+			nodeID = 64133,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[64070] = {
+			nodeID = 64133,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[64136] = {
+			nodeID = 64136,
+			maxRank = 40,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64099] = {
+			nodeID = 64136,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[64098] = {
+			nodeID = 64136,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64096] = {
+			nodeID = 64136,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[64095] = {
+			nodeID = 64136,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64093] = {
+			nodeID = 64136,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[64092] = {
+			nodeID = 64136,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[64091] = {
+			nodeID = 64136,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[64143] = {
+			nodeID = 64143,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64132] = {
+			nodeID = 64143,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64131] = {
+			nodeID = 64143,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[64129] = {
+			nodeID = 64143,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[64127] = {
+			nodeID = 64143,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 10,
+		},
+		[64126] = {
+			nodeID = 64143,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[68378] = {
+			nodeID = 68400,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[68376] = {
+			nodeID = 68400,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68374] = {
+			nodeID = 68400,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[68373] = {
+			nodeID = 68400,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68372] = {
+			nodeID = 68400,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[68387] = {
+			nodeID = 68401,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68385] = {
+			nodeID = 68401,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68383] = {
+			nodeID = 68401,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68381] = {
+			nodeID = 68401,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[68398] = {
+			nodeID = 68402,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[68396] = {
+			nodeID = 68402,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[68395] = {
+			nodeID = 68402,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68393] = {
+			nodeID = 68402,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[68391] = {
+			nodeID = 68402,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[68390] = {
+			nodeID = 68402,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[68441] = {
+			nodeID = 68441,
+			maxRank = 30,
+			stat = "ingenuity",
+			stat_amount = 1,
+		},
+		[68409] = {
+			nodeID = 68441,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 5,
+		},
+		[68407] = {
+			nodeID = 68441,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 10,
+		},
+		[68405] = {
+			nodeID = 68441,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 10,
+		},
+		[68403] = {
+			nodeID = 68441,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 25,
+		},
+		[68442] = {
+			nodeID = 68442,
+			maxRank = 30,
+			stat = "resourcefulness",
+			stat_amount = 1,
+		},
+		[68416] = {
+			nodeID = 68442,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 5,
+		},
+		[68415] = {
+			nodeID = 68442,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68414] = {
+			nodeID = 68442,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 10,
+		},
+		[68413] = {
+			nodeID = 68442,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[68412] = {
+			nodeID = 68442,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 10,
+		},
+		[68411] = {
+			nodeID = 68442,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[68410] = {
+			nodeID = 68442,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 25,
+		},
+		[68445] = {
+			nodeID = 68445,
+			maxRank = 40,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[80762] = {
+			nodeID = 68445,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 10,
+		},
+		[68440] = {
+			nodeID = 68445,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68438] = {
+			nodeID = 68445,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68436] = {
+			nodeID = 68445,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 10,
+		},
+		[68434] = {
+			nodeID = 68445,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68433] = {
+			nodeID = 68445,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[68408] = {
+			nodeID = 68441,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68406] = {
+			nodeID = 68441,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[68404] = {
+			nodeID = 68441,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[64135] = {
+			nodeID = 64135,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64089] = {
+			nodeID = 64135,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[64087] = {
+			nodeID = 64135,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64085] = {
+			nodeID = 64135,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[64084] = {
+			nodeID = 64135,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[64137] = {
+			nodeID = 64137,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64101] = {
+			nodeID = 64137,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64100] = {
+			nodeID = 64137,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[64140] = {
+			nodeID = 64140,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64110] = {
+			nodeID = 64140,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64109] = {
+			nodeID = 64140,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[64142] = {
+			nodeID = 64142,
+			maxRank = 50,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64124] = {
+			nodeID = 64142,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[64122] = {
+			nodeID = 64142,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[64120] = {
+			nodeID = 64142,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64119] = {
+			nodeID = 64142,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[64117] = {
+			nodeID = 64142,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[64116] = {
+			nodeID = 64142,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[64115] = {
+			nodeID = 64142,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 10,
+		},
+		[64134] = {
+			nodeID = 64134,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64082] = {
+			nodeID = 64134,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[64081] = {
+			nodeID = 64134,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64079] = {
+			nodeID = 64134,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[64078] = {
+			nodeID = 64134,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[64077] = {
+			nodeID = 64134,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[64141] = {
+			nodeID = 64141,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64113] = {
+			nodeID = 64141,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64112] = {
+			nodeID = 64141,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[64139] = {
+			nodeID = 64139,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64107] = {
+			nodeID = 64139,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64106] = {
+			nodeID = 64139,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[64138] = {
+			nodeID = 64138,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[64104] = {
+			nodeID = 64138,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[64103] = {
+			nodeID = 64138,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[68444] = {
+			nodeID = 68444,
+			maxRank = 45,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[68432] = {
+			nodeID = 68444,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[68431] = {
+			nodeID = 68444,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68429] = {
+			nodeID = 68444,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[68428] = {
+			nodeID = 68444,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[90061] = {
+			nodeID = 68444,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[68426] = {
+			nodeID = 68444,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[68425] = {
+			nodeID = 68444,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 15,
+		},
+		[68424] = {
+			nodeID = 68444,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[68443] = {
+			nodeID = 68443,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[68423] = {
+			nodeID = 68443,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[68422] = {
+			nodeID = 68443,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[68420] = {
+			nodeID = 68443,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[68418] = {
+			nodeID = 68443,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+	},
 }

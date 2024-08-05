@@ -20,9 +20,9 @@ function CraftSim.OptionalReagent:new(craftingReagent)
         self.professionStats.multicraft.value = stats.multicraft or 0
 
         self.professionStats.resourcefulness.value = stats.resourcefulness or 0
-        self.professionStats.resourcefulness.extraFactor = stats.resourcefulnessExtraItemsFactor or 0
+        self.professionStats.resourcefulness:SetExtraValue(stats.resourcefulnessExtraItemsFactor)
 
-        self.professionStats.craftingspeed.extraFactor = stats.craftingspeedBonusFactor or 0
+        self.professionStats.craftingspeed:SetExtraValue(stats.craftingspeedBonusFactor)
     end
 end
 

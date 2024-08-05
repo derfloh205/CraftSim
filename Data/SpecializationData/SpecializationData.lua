@@ -4,40 +4,20 @@ local CraftSim = select(2, ...)
 ---@class CraftSim.SPECIALIZATION_DATA
 CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 
----@class CraftSim.SPECIALIZATION_DATA.RULE_DATA
+---@class CraftSim.RawPerkData
 ---@field nodeID number
----@field childNodeIDs? string[]
----@field threshold? number
----@field idMapping? table<CraftSim.RecipeCategories, CraftSim.RecipeItemSubTypes[]>
----@field locMapping? table<CraftSim.RecipeCategories, CraftSim.ItemEquipLocation[]>
----@field idLocMapping? table<CraftSim.RecipeCategories, table<CraftSim.RecipeItemSubTypes, CraftSim.ItemEquipLocation>[]>
----@field exceptionRecipeIDs? number[]
----@field affectedReagentIDs? number[]
----@field activationBuffIDs? number[]
----@field equalsSkill? number
----@field equalsResourcefulness? number
----@field equalsMulticraft? number
----@field equalsIngenuity? number
----@field equalsCraftingspeed? number
----@field equalsResourcefulnessExtraItemsFactor? number
----@field equalsIngenuityExtraConcentrationFactor? number
----@field equalsPhialExperimentationChanceFactor? number
----@field equalsPotionExperimentationChanceFactor? number
----@field skill? number
----@field resourcefulness? number
----@field multicraft? number
----@field ingenuity? number
----@field craftingspeed? number
----@field resourcefulnessExtraItemsFactor? number
----@field ingenuityExtraConcentrationFactor? number
----@field concentrationLessUsageFactor? number
----@field multicraftExtraItemsFactor? number
----@field craftingspeedBonusFactor? number
+---@field maxRank number
+---@field stat? string
+---@field stat_amount? number
+
+---@class CraftSim.RawNodeData
+---@field recipeMapping table<RecipeID, number[]>
+---@field nodeData table<number, CraftSim.RawPerkData>
 
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SPECDATA)
 
----@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.SPECIALIZATION_DATA.RULE_DATA>>
+---@type table<CraftSim.EXPANSION_IDS, table<Enum.Profession, CraftSim.RawNodeData>>
 CraftSim.SPECIALIZATION_DATA.NODE_DATA = {
     [CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT] = {
         [Enum.Profession.Blacksmithing] = CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.BLACKSMITHING_DATA,

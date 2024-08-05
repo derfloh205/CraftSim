@@ -1,2017 +1,5964 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-
----@type table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.TAILORING_DATA = {
-    TAILORING_MASTERY_1 = { -- all mapped
-        childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
-        nodeID = 40008,
-        equalsSkill = 1,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    TAILORING_MASTERY_2 = {
-        childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
-        nodeID = 40008,
-        threshold = 0,
-        skill = 3,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    TAILORING_MASTERY_3 = {
-        childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
-        nodeID = 40008,
-        threshold = 5,
-        skill = 2,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    TAILORING_MASTERY_4 = {
-        childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
-        nodeID = 40008,
-        threshold = 15,
-        skill = 3,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    TAILORING_MASTERY_5 = {
-        childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
-        nodeID = 40008,
-        threshold = 25,
-        skill = 2,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    TAILORING_MASTERY_6 = {
-        childNodeIDs = { "CLOTH_COLLECTION_1", "SPARING_SEWING_1", "SHREWD_STITCHERY_1", },
-        nodeID = 40008,
-        threshold = 30,
-        resourcefulness = 15,
-        craftingspeedBonusFactor = 0.15,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    CLOTH_COLLECTION_1 = {
-        nodeID = 40007,
-    },
-    SPARING_SEWING_1 = {
-        nodeID = 40006,
-        equalsResourcefulness = 1,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SPARING_SEWING_2 = {
-        nodeID = 40006,
-        threshold = 0,
-        resourcefulnessExtraItemsFactor = 0.05,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SPARING_SEWING_3 = {
-        nodeID = 40006,
-        threshold = 5,
-        resourcefulness = 10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SPARING_SEWING_4 = {
-        nodeID = 40006,
-        threshold = 10,
-        resourcefulnessExtraItemsFactor = 0.10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SPARING_SEWING_5 = {
-        nodeID = 40006,
-        threshold = 15,
-        resourcefulness = 10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SPARING_SEWING_6 = {
-        nodeID = 40006,
-        threshold = 20,
-        resourcefulnessExtraItemsFactor = 0.10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SPARING_SEWING_7 = {
-        nodeID = 40006,
-        threshold = 25,
-        resourcefulness = 10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SPARING_SEWING_8 = {
-        nodeID = 40006,
-        threshold = 30,
-        resourcefulnessExtraItemsFactor = 0.25,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SHREWD_STITCHERY_1 = {
-        nodeID = 40005,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SHREWD_STITCHERY_2 = {
-        nodeID = 40005,
-        threshold = 0,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SHREWD_STITCHERY_3 = {
-        nodeID = 40005,
-        threshold = 5,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SHREWD_STITCHERY_4 = {
-        nodeID = 40005,
-        threshold = 10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SHREWD_STITCHERY_5 = {
-        nodeID = 40005,
-        threshold = 15,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SHREWD_STITCHERY_6 = {
-        nodeID = 40005,
-        threshold = 20,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SHREWD_STITCHERY_7 = {
-        nodeID = 40005,
-        threshold = 25,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    SHREWD_STITCHERY_8 = {
-        nodeID = 40005,
-        threshold = 30,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    TEXTILES_1 = { -- spinning mapped, waeving mapped, embroidery mapped
-        childNodeIDs = { "SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
-        nodeID = 40038,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.SPELLTHREAD] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.SPELLTHREAD
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    TEXTILES_2 = {
-        childNodeIDs = { "SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
-        nodeID = 40038,
-        threshold = 0,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.SPELLTHREAD] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.SPELLTHREAD
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    TEXTILES_3 = {
-        childNodeIDs = { "SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
-        nodeID = 40038,
-        threshold = 10,
-        craftingspeed = 20,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.SPELLTHREAD] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.SPELLTHREAD
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    TEXTILES_4 = {
-        childNodeIDs = { "SPINNING_1", "WEAVING_1", "EMBROIDERY_1", },
-        nodeID = 40038,
-        threshold = 20,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.SPELLTHREAD] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.SPELLTHREAD
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    SPINNING_1 = {
-        nodeID = 40037,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.SPELLTHREAD] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.SPELLTHREAD
-            }
-        },
-    },
-    SPINNING_2 = {
-        nodeID = 40037,
-        threshold = 5,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.SPELLTHREAD] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.SPELLTHREAD
-            }
-        },
-    },
-    SPINNING_3 = {
-        nodeID = 40037,
-        threshold = 10,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.SPELLTHREAD] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.SPELLTHREAD
-            }
-        },
-    },
-    SPINNING_4 = {
-        nodeID = 40037,
-        threshold = 15,
-        craftingspeed = 15,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.SPELLTHREAD] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.SPELLTHREAD
-            }
-        },
-    },
-    SPINNING_5 = {
-        nodeID = 40037,
-        threshold = 20,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.SPELLTHREAD] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.SPELLTHREAD
-            }
-        },
-    },
-    SPINNING_6 = {
-        nodeID = 40037,
-        threshold = 25,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.UNRAVELLING] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.UNRAVELLING
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.SPELLTHREAD] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.SPELLTHREAD
-            }
-        },
-    },
-    WEAVING_1 = {
-        nodeID = 40036,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
-            }
-        },
-    },
-    WEAVING_2 = {
-        nodeID = 40036,
-        threshold = 0,
-        multicraft = 20,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
-            }
-        },
-    },
-    WEAVING_3 = {
-        nodeID = 40036,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
-            }
-        },
-    },
-    WEAVING_4 = {
-        nodeID = 40036,
-        threshold = 10,
-        multicraft = 20,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
-            }
-        },
-    },
-    WEAVING_5 = {
-        nodeID = 40036,
-        threshold = 15,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
-            }
-        },
-    },
-    WEAVING_6 = {
-        nodeID = 40036,
-        threshold = 20,
-        multicraft = 40,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CLOTH_BOLTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.CLOTH_BOLTS
-            }
-        },
-    },
-    EMBROIDERY_1 = {
-        nodeID = 40035,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    EMBROIDERY_2 = {
-        nodeID = 40035,
-        threshold = 0,
-        resourcefulness = 15,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    EMBROIDERY_3 = {
-        nodeID = 40035,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    EMBROIDERY_4 = {
-        nodeID = 40035,
-        threshold = 10,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    EMBROIDERY_5 = {
-        nodeID = 40035,
-        threshold = 15,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    EMBROIDERY_6 = {
-        nodeID = 40035,
-        threshold = 20,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    EMBROIDERY_7 = {
-        nodeID = 40035,
-        threshold = 25,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.FINISHING_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.FINISHING_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.BAGS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BAG,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.REAGENT_BAG
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.ASSORTED_EMBROIDERY] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.BANDAGES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.TOYS_AND_BANNERS
-            }
-        },
-    },
-    DRACONIC_NEEDLEWORK_1 = { -- azure mapped, chrono mapped
-        childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
-        nodeID = 40074,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            -- azure
-            376556, -- Azureweave Bolt
-            376541, -- Blue Silken Lining
-            376546, -- Dragoncloth Tailoring Vestments
-            376539, -- Frozen Spellthread
-            376529, -- Azureweave Expedition Pack
-            376568, -- Cold Cushion
-            -- chrono
-            376557, -- Chronocloth Bolt
-            376542, -- Bronzed Grip Wrappings
-            376546, -- Dragoncloth Tailoring Vestments
-            376540, -- Temporal Spellthread
-            376561, -- Chronocloth Reagent Bag
-            376567, -- Cushion of Time Travel
-        },
-    },
-    DRACONIC_NEEDLEWORK_2 = {
-        childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
-        nodeID = 40074,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            -- azure
-            376556, -- Azureweave Bolt
-            376541, -- Blue Silken Lining
-            376546, -- Dragoncloth Tailoring Vestments
-            376539, -- Frozen Spellthread
-            376529, -- Azureweave Expedition Pack
-            376568, -- Cold Cushion
-            -- chrono
-            376557, -- Chronocloth Bolt
-            376542, -- Bronzed Grip Wrappings
-            376546, -- Dragoncloth Tailoring Vestments
-            376540, -- Temporal Spellthread
-            376561, -- Chronocloth Reagent Bag
-            376567, -- Cushion of Time Travel
-        },
-    },
-    DRACONIC_NEEDLEWORK_3 = {
-        childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
-        nodeID = 40074,
-        threshold = 10,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            -- azure
-            376556, -- Azureweave Bolt
-            376541, -- Blue Silken Lining
-            376546, -- Dragoncloth Tailoring Vestments
-            376539, -- Frozen Spellthread
-            376529, -- Azureweave Expedition Pack
-            376568, -- Cold Cushion
-            -- chrono
-            376557, -- Chronocloth Bolt
-            376542, -- Bronzed Grip Wrappings
-            376546, -- Dragoncloth Tailoring Vestments
-            376540, -- Temporal Spellthread
-            376561, -- Chronocloth Reagent Bag
-            376567, -- Cushion of Time Travel
-        },
-    },
-    DRACONIC_NEEDLEWORK_4 = {
-        childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
-        nodeID = 40074,
-        threshold = 20,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            -- azure
-            376556, -- Azureweave Bolt
-            376541, -- Blue Silken Lining
-            376546, -- Dragoncloth Tailoring Vestments
-            376539, -- Frozen Spellthread
-            376529, -- Azureweave Expedition Pack
-            376568, -- Cold Cushion
-            -- chrono
-            376557, -- Chronocloth Bolt
-            376542, -- Bronzed Grip Wrappings
-            376546, -- Dragoncloth Tailoring Vestments
-            376540, -- Temporal Spellthread
-            376561, -- Chronocloth Reagent Bag
-            376567, -- Cushion of Time Travel
-        },
-    },
-    DRACONIC_NEEDLEWORK_5 = {
-        childNodeIDs = { "AZUREWEAVE_TAILORING_1", "CHRONOCLOTH_TAILORING_1" },
-        nodeID = 40074,
-        threshold = 25,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            -- azure
-            376556, -- Azureweave Bolt
-            376541, -- Blue Silken Lining
-            376546, -- Dragoncloth Tailoring Vestments
-            376539, -- Frozen Spellthread
-            376529, -- Azureweave Expedition Pack
-            376568, -- Cold Cushion
-            -- chrono
-            376557, -- Chronocloth Bolt
-            376542, -- Bronzed Grip Wrappings
-            376546, -- Dragoncloth Tailoring Vestments
-            376540, -- Temporal Spellthread
-            376561, -- Chronocloth Reagent Bag
-            376567, -- Cushion of Time Travel
-        },
-    },
-    AZUREWEAVE_TAILORING_1 = { -- azure mapped
-        childNodeIDs = { "AZUREWEAVING_1" },
-        nodeID = 40073,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            376556, -- Azureweave Bolt
-            376541, -- Blue Silken Lining
-            376546, -- Dragoncloth Tailoring Vestments
-            376539, -- Frozen Spellthread
-            376529, -- Azureweave Expedition Pack
-            376568, -- Cold Cushion
-        },
-    },
-    AZUREWEAVE_TAILORING_2 = {
-        childNodeIDs = { "AZUREWEAVING_1" },
-        nodeID = 40073,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            376556, -- Azureweave Bolt
-            376541, -- Blue Silken Lining
-            376546, -- Dragoncloth Tailoring Vestments
-            376539, -- Frozen Spellthread
-            376529, -- Azureweave Expedition Pack
-            376568, -- Cold Cushion
-        },
-    },
-    AZUREWEAVE_TAILORING_3 = {
-        childNodeIDs = { "AZUREWEAVING_1" },
-        nodeID = 40073,
-        threshold = 20,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            376556, -- Azureweave Bolt
-            376541, -- Blue Silken Lining
-            376546, -- Dragoncloth Tailoring Vestments
-            376539, -- Frozen Spellthread
-            376529, -- Azureweave Expedition Pack
-            376568, -- Cold Cushion
-        },
-    },
-    AZUREWEAVE_TAILORING_4 = {
-        childNodeIDs = { "AZUREWEAVING_1" },
-        nodeID = 40073,
-        threshold = 25,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.AZUREWEAVE_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            376556, -- Azureweave Bolt
-            376541, -- Blue Silken Lining
-            376546, -- Dragoncloth Tailoring Vestments
-            376539, -- Frozen Spellthread
-            376529, -- Azureweave Expedition Pack
-            376568, -- Cold Cushion
-        },
-    },
-    AZUREWEAVING_1 = {
-        nodeID = 40072,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            376556, -- Azureweave Bolt
-        }
-    },
-    AZUREWEAVING_2 = {
-        nodeID = 40072,
-        threshold = 5,
-        multicraft = 10,
-        exceptionRecipeIDs = {
-            376556, -- Azureweave Bolt
-        }
-    },
-    AZUREWEAVING_3 = {
-        nodeID = 40072,
-        threshold = 10,
-        skill = 5,
-        exceptionRecipeIDs = {
-            376556, -- Azureweave Bolt
-        }
-    },
-    AZUREWEAVING_4 = {
-        nodeID = 40072,
-        threshold = 15,
-        multicraft = 10,
-        exceptionRecipeIDs = {
-            376556, -- Azureweave Bolt
-        }
-    },
-    CHRONOCLOTH_TAILORING_1 = { -- time mapped
-        childNodeIDs = { "TIMEWEAVING_1" },
-        nodeID = 40071,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            -- chrono
-            376557, -- Chronocloth Bolt
-            376542, -- Bronzed Grip Wrappings
-            376546, -- Dragoncloth Tailoring Vestments
-            376540, -- Temporal Spellthread
-            376561, -- Chronocloth Reagent Bag
-            376567, -- Cushion of Time Travel
-        },
-    },
-    CHRONOCLOTH_TAILORING_2 = {
-        childNodeIDs = { "TIMEWEAVING_1" },
-        nodeID = 40071,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            376557, -- Chronocloth Bolt
-            376542, -- Bronzed Grip Wrappings
-            376546, -- Dragoncloth Tailoring Vestments
-            376540, -- Temporal Spellthread
-            376561, -- Chronocloth Reagent Bag
-            376567, -- Cushion of Time Travel
-        },
-    },
-    CHRONOCLOTH_TAILORING_3 = {
-        childNodeIDs = { "TIMEWEAVING_1" },
-        nodeID = 40071,
-        threshold = 20,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            376557, -- Chronocloth Bolt
-            376542, -- Bronzed Grip Wrappings
-            376546, -- Dragoncloth Tailoring Vestments
-            376540, -- Temporal Spellthread
-            376561, -- Chronocloth Reagent Bag
-            376567, -- Cushion of Time Travel
-        },
-    },
-    CHRONOCLOTH_TAILORING_4 = {
-        childNodeIDs = { "TIMEWEAVING_1" },
-        nodeID = 40071,
-        threshold = 25,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.TAILORING.CHRONOCLOTH_ARMOR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.TAILORING.ARMOR
-            }
-        },
-        exceptionRecipeIDs = {
-            376557, -- Chronocloth Bolt
-            376542, -- Bronzed Grip Wrappings
-            376546, -- Dragoncloth Tailoring Vestments
-            376540, -- Temporal Spellthread
-            376561, -- Chronocloth Reagent Bag
-            376567, -- Cushion of Time Travel
-        },
-    },
-    TIMEWEAVING_1 = {
-        nodeID = 40070,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            376557, -- Chronocloth Bolt
-        }
-    },
-    TIMEWEAVING_2 = {
-        nodeID = 40070,
-        threshold = 5,
-        multicraft = 10,
-        exceptionRecipeIDs = {
-            376557, -- Chronocloth Bolt
-        }
-    },
-    TIMEWEAVING_3 = {
-        nodeID = 40070,
-        threshold = 10,
-        skill = 5,
-        exceptionRecipeIDs = {
-            376557, -- Chronocloth Bolt
-        }
-    },
-    TIMEWEAVING_4 = {
-        nodeID = 40070,
-        threshold = 15,
-        multicraft = 10,
-        exceptionRecipeIDs = {
-            376557, -- Chronocloth Bolt
-        }
-    },
-    GARMENTCRAFTING_1 = { -- ow mapped, outfits mapped, embelishments mapped
-        childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
-        nodeID = 40226,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-            ---- outfits
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-            --- embelishments
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
-    GARMENTCRAFTING_2 = {
-        childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
-        nodeID = 40226,
-        threshold = 0,
-        skill = 10,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-            ---- outfits
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-            --- embelishments
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
-    GARMENTCRAFTING_3 = {
-        childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
-        nodeID = 40226,
-        threshold = 10,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-            ---- outfits
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-            --- embelishments
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
-    GARMENTCRAFTING_4 = {
-        childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
-        nodeID = 40226,
-        threshold = 20,
-        resourcefulness = 5,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-            ---- outfits
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-            --- embelishments
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
-    GARMENTCRAFTING_5 = {
-        childNodeIDs = { "OUTERWEAR_1", "OUTFITS_1", "EMBELLISHMENTS_1" },
-        nodeID = 40226,
-        threshold = 30,
-        resourcefulness = 10,
-        craftingspeedBonusFactor = 0.15,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-            ---- outfits
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-            --- embelishments
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
-    OUTERWEAR_1 = { -- gloves mapped, footwear mapped, hats mapped, cloaks mapped
-        childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
-        nodeID = 40222,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-        },
-    },
-    OUTERWEAR_2 = {
-        childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
-        nodeID = 40222,
-        threshold = 5,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-        },
-    },
-    OUTERWEAR_3 = {
-        childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
-        nodeID = 40222,
-        threshold = 15,
-        resourcefulness = 10,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-        },
-    },
-    OUTERWEAR_4 = {
-        childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
-        nodeID = 40222,
-        threshold = 35,
-        resourcefulness = 10,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-        },
-    },
-    OUTERWEAR_5 = {
-        childNodeIDs = { "GLOVES_1", "FOOTWEAR_1", "HATS_1", "CLOAKS_1" },
-        nodeID = 40222,
-        threshold = 45,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-        },
-    },
-    GLOVES_1 = {
-        nodeID = 40221,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- gloves
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-        },
-    },
-    GLOVES_2 = {
-        nodeID = 40221,
-        threshold = 5,
-        skill = 10,
-        exceptionRecipeIDs = {
-            395813, -- (Rare) Surveyor's Seasoned Gloves
-            376513, -- (Epic) Vibrant Wildercloth Handwraps
-            376503, -- (Epic Chrono) Chronocloth Gloves
-            376522, -- (Green) Crimson Combatant's Wildercloth Gloves
-        },
-    },
-    FOOTWEAR_1 = {
-        nodeID = 40220,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- footwear
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-        },
-    },
-    FOOTWEAR_2 = {
-        nodeID = 40220,
-        threshold = 5,
-        skill = 10,
-        exceptionRecipeIDs = {
-            376508, -- (Rare) Surveyor's Cloth Treads
-            376512, -- (Epic) Vibrant Wildercloth Slippers
-            376501, -- (Epic Azure) Azureweave Slippers
-            376496, -- (Epic Azure) Blue Dragon Soles
-            376521, -- (Green) Crimson Combatant's Wildercloth Treads
-        },
-    },
-    HATS_1 = {
-        nodeID = 40219,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            --- hats
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-        },
-    },
-    HATS_2 = {
-        nodeID = 40219,
-        threshold = 5,
-        skill = 10,
-        exceptionRecipeIDs = {
-            -- Armor
-            395807, -- (Rare) Surveyor's Seasoned Hood
-            376514, -- (Epic) Vibrant Wildercloth Headcover
-            376492, -- (Epic Chrono) Hood of Surging Time
-            376523, -- (Green) Crimson Combatant's Wildercloth Hood
-
-            -- Profession Equipment
-            -- Cooking
-            376548, -- (Rare) Master's Wildercloth Chef's Hat
-            376547, -- (Green) Wildercloth Chef's Hat
-            -- Enchanting
-            376550, -- (Rare) Master's Wildercloth Enchanter's Hat
-            376549, -- (Green) Wildercloth Enchanter's Hat
-            -- Fishing
-            376552, -- (Rare) Master's Wildercloth Fishing Cap
-            376551, -- (Green) Wildercloth Fishing Cap
-            -- Herbalism
-            376554, -- (Rare) Master's Wildercloth Gardening Hat
-            376553, -- (Green) Wildercloth Gardening Hat
-        },
-    },
-    CLOAKS_1 = {
-        nodeID = 40218,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- cloaks
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-        },
-    },
-    CLOAKS_2 = {
-        nodeID = 40218,
-        threshold = 5,
-        skill = 10,
-        exceptionRecipeIDs = {
-            376506, -- (Rare) Surveyor's Tailored Cloak
-            376510, -- (Epic) Vibrant Wildercloth Shawl
-            376519, -- (Green) Crimson Combatant's Wildercloth Cloak
-        },
-    },
-    OUTFITS_1 = { -- robes mapped, leggings mapped
-        childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
-        nodeID = 40225,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            ---- outfits
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-        },
-    },
-    OUTFITS_2 = {
-        childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
-        nodeID = 40225,
-        threshold = 5,
-        skill = 5,
-        exceptionRecipeIDs = {
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-        },
-    },
-    OUTFITS_3 = {
-        childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
-        nodeID = 40225,
-        threshold = 15,
-        exceptionRecipeIDs = {
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-        },
-    },
-    OUTFITS_4 = {
-        childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
-        nodeID = 40225,
-        threshold = 25,
-        skill = 5,
-        exceptionRecipeIDs = {
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-        },
-    },
-    OUTFITS_5 = {
-        childNodeIDs = { "ROBES_1", "LEGGINGS_1" },
-        nodeID = 40225,
-        threshold = 35,
-        resourcefulness = 10,
-        exceptionRecipeIDs = {
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-        },
-    },
-    ROBES_1 = {
-        nodeID = 40224,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            --- robes
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-        },
-    },
-    ROBES_2 = {
-        nodeID = 40224,
-        threshold = 5,
-        skill = 10,
-        exceptionRecipeIDs = {
-            -- Armor
-            376507, -- (Rare) Surveyor's Cloth Robe
-            376511, -- (Epic) Vibrant Wildercloth Vestments
-            376500, -- (Epic Azure) Azureweave Robe
-            376520, -- (Green) Crimson Combatant's Wildercloth Tunic
-
-            -- Profession Equipment
-            -- Tailoring
-            376546, -- (Epic) Dragoncloth Tailoring Vestments
-            376545, -- (Green) Wildercloth Tailor's Coat
-            -- Alchemy
-            376544, -- (Rare) Master's Wildercloth Alchemist's Robe
-            376543, -- (Green) Wildercloth Alchemist's Robe
-        },
-    },
-    LEGGINGS_1 = {
-        nodeID = 40223,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- leggings
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-        },
-    },
-    LEGGINGS_2 = {
-        nodeID = 40223,
-        threshold = 5,
-        skill = 10,
-        exceptionRecipeIDs = {
-            395814, -- (Rare) Surveyor's Seasoned Pants
-            376515, -- (Epic) Vibrant Wildercloth Slacks
-            376504, -- (Epic Chrono) Chronocloth Leggings
-            376495, -- (Epic Chrono) Infurious Legwraps of Possibility
-            376524, -- (Green) Crimson Combatant's Wildercloth Leggings
-        },
-    },
-    EMBELLISHMENTS_1 = { -- mantles mapped, armbands mapped, belts mapped
-        childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
-        nodeID = 40217,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            --- embelishments
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
-    EMBELLISHMENTS_2 = {
-        childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
-        nodeID = 40217,
-        threshold = 5,
-        skill = 5,
-        exceptionRecipeIDs = {
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
-    EMBELLISHMENTS_3 = {
-        childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
-        nodeID = 40217,
-        threshold = 15,
-        exceptionRecipeIDs = {
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
-    EMBELLISHMENTS_4 = {
-        childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
-        nodeID = 40217,
-        threshold = 25,
-        resourcefulness = 10,
-        exceptionRecipeIDs = {
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
-    EMBELLISHMENTS_5 = {
-        childNodeIDs = { "MANTLES_1", "ARMBANDS_1", "BELTS_1" },
-        nodeID = 40217,
-        threshold = 35,
-        skill = 5,
-        exceptionRecipeIDs = {
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
-    MANTLES_1 = {
-        nodeID = 40216,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- mantles
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-        },
-    },
-    MANTLES_2 = {
-        nodeID = 40216,
-        threshold = 5,
-        skill = 10,
-        exceptionRecipeIDs = {
-            395815, -- (Rare) Surveyor's Seasoned Shoulders
-            376516, -- (Epic) Vibrant Wildercloth Shoulderspikes
-            376493, -- (Epic Azure) Amice of the Blue
-            376502, -- (Epic Azure) Azureweave Mantle
-            376525, -- (Green) Crimson Combatant's Wildercloth Shoulderpads
-        },
-    },
-    ARMBANDS_1 = {
-        nodeID = 40215,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- armbands
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-        },
-    },
-    ARMBANDS_2 = {
-        nodeID = 40215,
-        threshold = 5,
-        skill = 10,
-        exceptionRecipeIDs = {
-            376509, -- (Rare) Surveyor's Cloth Bands
-            376518, -- (Epic) Vibrant Wildercloth Wristwraps
-            376497, -- (Epic Chrono) Allied Wristguards of Time Dilation
-            376527, -- (Green) Crimson Combatant's Wildercloth Bands
-        },
-    },
-    BELTS_1 = {
-        nodeID = 40214,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            -- belts
-            395809, -- (Rare) Surveyor's Seasoned Cord
-            376517, -- (Epic) Vibrant Widercloth Girdle)
-            376494, -- (Epic Azure) Infurious Binding of Gesticulation
-            376505, -- (Epic Chrono) Chronocloth Sash
-            376526, -- (Green) Crimson Combatant's Wildercloth Sash
-        },
-    },
+	recipeMapping = {
+		[376492] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40071,
+			40049,
+			40046,
+			40045,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376493] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40216,
+			40158,
+			40157,
+			40157,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376494] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40214,
+			40152,
+			40151,
+			40151,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376495] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40071,
+			40049,
+			40046,
+			40045,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40223,
+			40193,
+			40192,
+			40192,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376496] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40220,
+			40176,
+			40175,
+			40175,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376497] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40071,
+			40049,
+			40046,
+			40045,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40215,
+			40155,
+			40154,
+			40154,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376500] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376501] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40220,
+			40176,
+			40175,
+			40175,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376502] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40216,
+			40158,
+			40157,
+			40157,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376503] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40071,
+			40049,
+			40046,
+			40045,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40221,
+			40179,
+			40178,
+			40178,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376504] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40071,
+			40049,
+			40046,
+			40045,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40223,
+			40193,
+			40192,
+			40192,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376505] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40071,
+			40049,
+			40046,
+			40045,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40214,
+			40152,
+			40151,
+			40151,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376506] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40218,
+			40170,
+			40169,
+			40169,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376507] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376508] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40220,
+			40176,
+			40175,
+			40175,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376509] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40215,
+			40155,
+			40154,
+			40154,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376510] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40218,
+			40170,
+			40169,
+			40169,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376511] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376512] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40220,
+			40176,
+			40175,
+			40175,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376513] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40221,
+			40179,
+			40178,
+			40178,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376514] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376515] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40223,
+			40193,
+			40192,
+			40192,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376516] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40216,
+			40158,
+			40157,
+			40157,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376517] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40214,
+			40152,
+			40151,
+			40151,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376518] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40215,
+			40155,
+			40154,
+			40154,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376519] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40218,
+			40170,
+			40169,
+			40169,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376520] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376521] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40220,
+			40176,
+			40175,
+			40175,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376522] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40221,
+			40179,
+			40178,
+			40178,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376523] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376524] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40223,
+			40193,
+			40192,
+			40192,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376525] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40216,
+			40158,
+			40157,
+			40157,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376526] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40214,
+			40152,
+			40151,
+			40151,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376527] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40215,
+			40155,
+			40154,
+			40154,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376528] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376529] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+		},
+		[376530] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376531] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376532] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376533] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376534] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376535] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40037,
+			40026,
+			40025,
+			40024,
+			40023,
+			40022,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376536] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40037,
+			40026,
+			40025,
+			40024,
+			40023,
+			40022,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376537] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40037,
+			40026,
+			40025,
+			40024,
+			40023,
+			40022,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376538] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40037,
+			40026,
+			40025,
+			40024,
+			40023,
+			40022,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376539] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40037,
+			40026,
+			40025,
+			40024,
+			40023,
+			40022,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+		},
+		[376540] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40037,
+			40026,
+			40025,
+			40024,
+			40023,
+			40022,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+			40071,
+			40049,
+			40046,
+			40045,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+		},
+		[376541] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376542] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376543] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376544] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376545] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376546] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40071,
+			40049,
+			40046,
+			40045,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376547] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376548] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376549] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376550] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376551] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376552] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376553] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376554] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[376555] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40036,
+			40020,
+			40019,
+			40018,
+			40017,
+			40016,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376556] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40036,
+			40020,
+			40019,
+			40018,
+			40017,
+			40016,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+			40072,
+			40054,
+			40053,
+			40052,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+		},
+		[376557] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40036,
+			40020,
+			40019,
+			40018,
+			40017,
+			40016,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+			40070,
+			40042,
+			40041,
+			40040,
+			40071,
+			40049,
+			40046,
+			40045,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+		},
+		[376558] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40036,
+			40020,
+			40019,
+			40018,
+			40017,
+			40016,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376559] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40036,
+			40020,
+			40019,
+			40018,
+			40017,
+			40016,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376560] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376561] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+			40071,
+			40049,
+			40046,
+			40045,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+		},
+		[376562] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40037,
+			40026,
+			40025,
+			40024,
+			40023,
+			40022,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376563] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+		},
+		[376564] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+		},
+		[376565] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376566] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376567] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+			40071,
+			40049,
+			40046,
+			40045,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+		},
+		[376568] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+			40073,
+			40061,
+			40058,
+			40057,
+			40074,
+			40068,
+			40067,
+			40066,
+			40066,
+			40065,
+			40064,
+		},
+		[376569] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376570] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[376699] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+		},
+		[389196] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+		},
+		[395807] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[395809] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40214,
+			40152,
+			40151,
+			40151,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[395813] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40221,
+			40179,
+			40178,
+			40178,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[395814] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40223,
+			40193,
+			40192,
+			40192,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[395815] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40216,
+			40158,
+			40157,
+			40157,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[400815] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+		},
+		[403149] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40218,
+			40170,
+			40169,
+			40169,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[403150] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[403151] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40220,
+			40176,
+			40175,
+			40175,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[403152] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40221,
+			40179,
+			40178,
+			40178,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[403153] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[403154] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40223,
+			40193,
+			40192,
+			40192,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[403155] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40216,
+			40158,
+			40157,
+			40157,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[403156] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40214,
+			40152,
+			40151,
+			40151,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[403157] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40215,
+			40155,
+			40154,
+			40154,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[405974] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[408304] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[408318] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40218,
+			40170,
+			40169,
+			40169,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[409839] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[419022] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40218,
+			40170,
+			40169,
+			40169,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[419023] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[419024] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40220,
+			40176,
+			40175,
+			40175,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[419025] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40221,
+			40179,
+			40178,
+			40178,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[419026] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[419027] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40223,
+			40193,
+			40192,
+			40192,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[419028] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40216,
+			40158,
+			40157,
+			40157,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[419029] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40214,
+			40152,
+			40151,
+			40151,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[419030] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40215,
+			40155,
+			40154,
+			40154,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[426434] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40035,
+			40015,
+			40014,
+			40013,
+			40012,
+			40011,
+			40010,
+			40009,
+			40038,
+			40034,
+			40032,
+			40030,
+			40028,
+			40028,
+		},
+		[430073] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40218,
+			40170,
+			40169,
+			40169,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[430074] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40224,
+			40196,
+			40195,
+			40195,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[430075] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40220,
+			40176,
+			40175,
+			40175,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[430076] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40221,
+			40179,
+			40178,
+			40178,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[430077] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40219,
+			40173,
+			40172,
+			40172,
+			40222,
+			40191,
+			40191,
+			40190,
+			40188,
+			40184,
+			40182,
+			40181,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[430078] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40223,
+			40193,
+			40192,
+			40192,
+			40225,
+			40206,
+			40206,
+			40205,
+			40203,
+			40201,
+			40199,
+			40198,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[430079] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40216,
+			40158,
+			40157,
+			40157,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[430080] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40214,
+			40152,
+			40151,
+			40151,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+		[430081] = {
+			40005,
+			39980,
+			39979,
+			39978,
+			39977,
+			39976,
+			39975,
+			39974,
+			40006,
+			39987,
+			39986,
+			39985,
+			39984,
+			39983,
+			39982,
+			39981,
+			40008,
+			80766,
+			40004,
+			40002,
+			40000,
+			39999,
+			39999,
+			39999,
+			40215,
+			40155,
+			40154,
+			40154,
+			40217,
+			40168,
+			40168,
+			40167,
+			40165,
+			40163,
+			40161,
+			40160,
+			40226,
+			40213,
+			40211,
+			40209,
+			40207,
+			40207,
+			40207,
+		},
+	},
+	nodeData = {
+		[40005] = {
+			nodeID = 40005,
+			maxRank = 30,
+			stat = "ingenuity",
+			stat_amount = 1,
+		},
+		[39980] = {
+			nodeID = 40005,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 5,
+		},
+		[39979] = {
+			nodeID = 40005,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[39978] = {
+			nodeID = 40005,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 10,
+		},
+		[39977] = {
+			nodeID = 40005,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[39976] = {
+			nodeID = 40005,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 10,
+		},
+		[39975] = {
+			nodeID = 40005,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[39974] = {
+			nodeID = 40005,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 25,
+		},
+		[40006] = {
+			nodeID = 40006,
+			maxRank = 30,
+			stat = "resourcefulness",
+			stat_amount = 1,
+		},
+		[39987] = {
+			nodeID = 40006,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 5,
+		},
+		[39986] = {
+			nodeID = 40006,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[39985] = {
+			nodeID = 40006,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 10,
+		},
+		[39984] = {
+			nodeID = 40006,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[39983] = {
+			nodeID = 40006,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 10,
+		},
+		[39982] = {
+			nodeID = 40006,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[39981] = {
+			nodeID = 40006,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 25,
+		},
+		[40008] = {
+			nodeID = 40008,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[80766] = {
+			nodeID = 40008,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 3,
+		},
+		[40004] = {
+			nodeID = 40008,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 2,
+		},
+		[40002] = {
+			nodeID = 40008,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 3,
+		},
+		[40000] = {
+			nodeID = 40008,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 2,
+		},
+		[39999] = {
+			nodeID = 40008,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 15,
+		},
+		[40071] = {
+			nodeID = 40071,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40049] = {
+			nodeID = 40071,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40046] = {
+			nodeID = 40071,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[40045] = {
+			nodeID = 40071,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40074] = {
+			nodeID = 40074,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40068] = {
+			nodeID = 40074,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[40067] = {
+			nodeID = 40074,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[40066] = {
+			nodeID = 40074,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40065] = {
+			nodeID = 40074,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[40064] = {
+			nodeID = 40074,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[40219] = {
+			nodeID = 40219,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40173] = {
+			nodeID = 40219,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[40172] = {
+			nodeID = 40219,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40222] = {
+			nodeID = 40222,
+			maxRank = 50,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40191] = {
+			nodeID = 40222,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40190] = {
+			nodeID = 40222,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40188] = {
+			nodeID = 40222,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[40184] = {
+			nodeID = 40222,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[40182] = {
+			nodeID = 40222,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40181] = {
+			nodeID = 40222,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40226] = {
+			nodeID = 40226,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40213] = {
+			nodeID = 40226,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[40211] = {
+			nodeID = 40226,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[40209] = {
+			nodeID = 40226,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[40207] = {
+			nodeID = 40226,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[40073] = {
+			nodeID = 40073,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40061] = {
+			nodeID = 40073,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40058] = {
+			nodeID = 40073,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[40057] = {
+			nodeID = 40073,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40216] = {
+			nodeID = 40216,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40158] = {
+			nodeID = 40216,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[40157] = {
+			nodeID = 40216,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40217] = {
+			nodeID = 40217,
+			maxRank = 40,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40168] = {
+			nodeID = 40217,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40167] = {
+			nodeID = 40217,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[40165] = {
+			nodeID = 40217,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40163] = {
+			nodeID = 40217,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[40161] = {
+			nodeID = 40217,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[40160] = {
+			nodeID = 40217,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40214] = {
+			nodeID = 40214,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40152] = {
+			nodeID = 40214,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[40151] = {
+			nodeID = 40214,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40223] = {
+			nodeID = 40223,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40193] = {
+			nodeID = 40223,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[40192] = {
+			nodeID = 40223,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40225] = {
+			nodeID = 40225,
+			maxRank = 40,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40206] = {
+			nodeID = 40225,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40205] = {
+			nodeID = 40225,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[40203] = {
+			nodeID = 40225,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40201] = {
+			nodeID = 40225,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[40199] = {
+			nodeID = 40225,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[40198] = {
+			nodeID = 40225,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40220] = {
+			nodeID = 40220,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40176] = {
+			nodeID = 40220,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[40175] = {
+			nodeID = 40220,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40215] = {
+			nodeID = 40215,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40155] = {
+			nodeID = 40215,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[40154] = {
+			nodeID = 40215,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40224] = {
+			nodeID = 40224,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40196] = {
+			nodeID = 40224,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[40195] = {
+			nodeID = 40224,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40221] = {
+			nodeID = 40221,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40179] = {
+			nodeID = 40221,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[40178] = {
+			nodeID = 40221,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40218] = {
+			nodeID = 40218,
+			maxRank = 10,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40170] = {
+			nodeID = 40218,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[40169] = {
+			nodeID = 40218,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40035] = {
+			nodeID = 40035,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40015] = {
+			nodeID = 40035,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 15,
+		},
+		[40014] = {
+			nodeID = 40035,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40013] = {
+			nodeID = 40035,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[40012] = {
+			nodeID = 40035,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40011] = {
+			nodeID = 40035,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[40010] = {
+			nodeID = 40035,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[40009] = {
+			nodeID = 40035,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40038] = {
+			nodeID = 40038,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40034] = {
+			nodeID = 40038,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[40032] = {
+			nodeID = 40038,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 20,
+		},
+		[40030] = {
+			nodeID = 40038,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[40028] = {
+			nodeID = 40038,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[40037] = {
+			nodeID = 40037,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40026] = {
+			nodeID = 40037,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[40025] = {
+			nodeID = 40037,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[40024] = {
+			nodeID = 40037,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 15,
+		},
+		[40023] = {
+			nodeID = 40037,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[40022] = {
+			nodeID = 40037,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[40036] = {
+			nodeID = 40036,
+			maxRank = 20,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40020] = {
+			nodeID = 40036,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 20,
+		},
+		[40019] = {
+			nodeID = 40036,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40018] = {
+			nodeID = 40036,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 20,
+		},
+		[40017] = {
+			nodeID = 40036,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[40016] = {
+			nodeID = 40036,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 40,
+		},
+		[40072] = {
+			nodeID = 40072,
+			maxRank = 20,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40054] = {
+			nodeID = 40072,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 10,
+		},
+		[40053] = {
+			nodeID = 40072,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[40052] = {
+			nodeID = 40072,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 10,
+		},
+		[40070] = {
+			nodeID = 40070,
+			maxRank = 20,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[40042] = {
+			nodeID = 40070,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 10,
+		},
+		[40041] = {
+			nodeID = 40070,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[40040] = {
+			nodeID = 40070,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 10,
+		},
+	},
 }

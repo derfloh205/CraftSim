@@ -26,12 +26,6 @@ function CraftSim.ProfessionStats:new(serialized)
 	self.ingenuity = CraftSim.ProfessionStat("ingenuity", 0, statPercentModTable.INGENUITY)
 	---@type CraftSim.ProfessionStat
 	self.craftingspeed = CraftSim.ProfessionStat("craftingspeed", 0, statPercentModTable.CRAFTINGSPEED)
-
-	-- alchemy specific
-	---@type CraftSim.ProfessionStat
-	self.phialExperimentationFactor = CraftSim.ProfessionStat("phialExperimentationFactor")
-	---@type CraftSim.ProfessionStat
-	self.potionExperimentationFactor = CraftSim.ProfessionStat("potionExperimentationFactor")
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -70,10 +64,9 @@ end
 
 function CraftSim.ProfessionStats:GetStatList()
 	return { self.recipeDifficulty, self.skill, self.multicraft, self.resourcefulness, self.ingenuity, self
-		.craftingspeed, self.phialExperimentationFactor, self.potionExperimentationFactor }
+		.craftingspeed }
 end
 
----@params professionStatsA CraftSim.ProfessionStats
 ---@params professionStatsB CraftSim.ProfessionStats
 function CraftSim.ProfessionStats:subtract(professionStatsB)
 	local statsA = self:GetStatList()
@@ -82,13 +75,11 @@ function CraftSim.ProfessionStats:subtract(professionStatsB)
 	for index, professionStatA in pairs(statsA) do
 		local professionStatB = statsB[index]
 		professionStatA:subtractValue(professionStatB.value)
-		professionStatA:subtractFactor(professionStatB.extraFactor)
-		professionStatA:subtractExtraValueAfterFactor(professionStatB.extraValueAfterFactor)
+		professionStatA:subtractExtraValues(professionStatB)
 	end
 end
 
----@params professionStatsA CraftSim.ProfessionStats
----@params professionStatsB CraftSim.ProfessionStats
+---@param professionStatsB CraftSim.ProfessionStats
 function CraftSim.ProfessionStats:add(professionStatsB)
 	local statsA = self:GetStatList()
 	local statsB = professionStatsB:GetStatList()
@@ -96,8 +87,7 @@ function CraftSim.ProfessionStats:add(professionStatsB)
 	for index, professionStatA in pairs(statsA) do
 		local professionStatB = statsB[index]
 		professionStatA:addValue(professionStatB.value)
-		professionStatA:addFactor(professionStatB.extraFactor)
-		professionStatA:addExtraValueAfterFactor(professionStatB.extraValueAfterFactor)
+		professionStatA:addExtraValues(professionStatB)
 	end
 end
 
@@ -109,11 +99,11 @@ function CraftSim.ProfessionStats:Clear()
 	end
 end
 
-function CraftSim.ProfessionStats:ClearFactors()
+function CraftSim.ProfessionStats:ClearExtraValues()
 	local statList = self:GetStatList()
 
 	for _, stat in pairs(statList) do
-		stat.extraFactor = 0
+		wipe(stat.extraValues)
 	end
 end
 
@@ -122,19 +112,12 @@ function CraftSim.ProfessionStats:Debug()
 		"RecipeDifficulty: " .. self.recipeDifficulty.value,
 		"Skill: " .. self.skill.value,
 		"Multicraft: " .. self.multicraft.value .. " (" .. self.multicraft:GetPercent() .. "%)",
-		"Multicraft Factor: " .. self.multicraft.extraFactor,
+		"Multicraft Factor: " .. (self.multicraft:GetExtraValue()),
 		"Resourcefulness: " .. self.resourcefulness.value .. " (" .. self.resourcefulness:GetPercent() .. "%)",
-		"Resourcefulness Factor: " .. self.resourcefulness.extraFactor,
+		"Resourcefulness Factor: " .. (self.resourcefulness:GetExtraValue()),
 		"Ingenuity: " .. self.ingenuity.value .. " (" .. self.ingenuity:GetPercent() .. "%)",
 		"CraftingSpeed: " .. self.craftingspeed.value .. " (" .. self.craftingspeed:GetPercent() .. "%)",
 	}
-
-	if self.phialExperimentationFactor.extraFactor > 0 then
-		table.insert(debugLines, "Phial Experimentation: " .. tostring(self.phialExperimentationFactor.extraFactor))
-	end
-	if self.potionExperimentationFactor.extraFactor > 0 then
-		table.insert(debugLines, "Potion Experimentation: " .. tostring(self.potionExperimentationFactor.extraFactor))
-	end
 
 	return debugLines
 end
@@ -147,12 +130,14 @@ function CraftSim.ProfessionStats:GetTooltipText(maxProfessionStats)
 		local text =
 			((self.skill.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) .. ": " .. r(self.skill.value) .. "\n")) or "") ..
 			((self.multicraft.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT) .. ": " .. r(self.multicraft.value) .. "\n")) or "") ..
-			((self.multicraft.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS) .. ": " .. r(self.multicraft.extraFactor * 100) .. "%" .. "\n")) or "") ..
+			((self.multicraft:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS) .. ": " .. r(self.multicraft:GetExtraValue() * 100) .. "%" .. "\n")) or "") ..
 			((self.resourcefulness.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS) .. ": " .. r(self.resourcefulness.value) .. "\n")) or "") ..
-			((self.resourcefulness.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS) .. ": " .. r(self.resourcefulness.extraFactor * 100) .. "%" .. "\n")) or "") ..
+			((self.resourcefulness:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS) .. ": " .. r(self.resourcefulness:GetExtraValue() * 100) .. "%" .. "\n")) or "") ..
 			((self.ingenuity.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY) .. ": " .. r(self.ingenuity.value) .. "\n")) or "") ..
+			((self.ingenuity:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY_BONUS) .. ": " .. r(self.ingenuity:GetExtraValue() * 100) .. "%" .. "\n")) or "") ..
+			((self.ingenuity:GetExtraValue(2) > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY_LESS_CONCENTRATION) .. ": " .. r(self.ingenuity:GetExtraValue(2) * 100) .. "%" .. "\n")) or "") ..
 			((self.craftingspeed.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED) .. ": " .. r(self.craftingspeed.value) .. "\n")) or "") ..
-			((self.craftingspeed.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS) .. ": " .. r(self.craftingspeed.extraFactor * 100) .. "%" .. "\n")) or "")
+			((self.craftingspeed:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS) .. ": " .. r(self.craftingspeed:GetExtraValue() * 100) .. "%" .. "\n")) or "")
 		return text
 	end
 
@@ -162,12 +147,14 @@ function CraftSim.ProfessionStats:GetTooltipText(maxProfessionStats)
 	local text =
 		((maxProfessionStats.skill.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_SKILL) .. ": " .. r(self.skill.value) .. " / " .. f.grey(r(maxProfessionStats.skill.value)) .. "\n")) or "") ..
 		((maxProfessionStats.multicraft.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT) .. ": " .. r(self.multicraft.value) .. " / " .. f.grey(r(maxProfessionStats.multicraft.value)) .. "\n")) or "") ..
-		((maxProfessionStats.multicraft.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS) .. ": " .. r(self.multicraft.extraFactor * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.multicraft.extraFactor * 100) .. "%") .. "\n")) or "") ..
+		((maxProfessionStats.multicraft:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS) .. ": " .. r(self.multicraft:GetExtraValue() * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.multicraft:GetExtraValue() * 100) .. "%") .. "\n")) or "") ..
 		((maxProfessionStats.resourcefulness.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS) .. ": " .. r(self.resourcefulness.value) .. " / " .. f.grey(r(maxProfessionStats.resourcefulness.value)) .. "\n")) or "") ..
-		((maxProfessionStats.resourcefulness.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS) .. ": " .. r(self.resourcefulness.extraFactor * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.resourcefulness.extraFactor * 100) .. "%") .. "\n")) or "") ..
+		((maxProfessionStats.resourcefulness:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS) .. ": " .. r(self.resourcefulness:GetExtraValue() * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.resourcefulness:GetExtraValue() * 100) .. "%") .. "\n")) or "") ..
 		((maxProfessionStats.ingenuity.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY) .. ": " .. r(self.ingenuity.value) .. " / " .. f.grey(r(maxProfessionStats.ingenuity.value)) .. "\n")) or "") ..
+		((maxProfessionStats.ingenuity:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY_BONUS) .. ": " .. r(self.ingenuity:GetExtraValue() * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.ingenuity:GetExtraValue() * 100) .. "%") .. "\n")) or "") ..
+		((maxProfessionStats.ingenuity:GetExtraValue(2) > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_INGENUITY_LESS_CONCENTRATION) .. ": " .. r(self.ingenuity:GetExtraValue(2) * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.ingenuity:GetExtraValue(2) * 100) .. "%") .. "\n")) or "") ..
 		((maxProfessionStats.craftingspeed.value > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED) .. ": " .. r(self.craftingspeed.value) .. " / " .. f.grey(r(maxProfessionStats.craftingspeed.value)) .. "\n")) or "") ..
-		((maxProfessionStats.craftingspeed.extraFactor > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS) .. ": " .. r(self.craftingspeed.extraFactor * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.craftingspeed.extraFactor * 100) .. "%") .. "\n")) or "")
+		((maxProfessionStats.craftingspeed:GetExtraValue() > 0 and (CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS) .. ": " .. r(self.craftingspeed:GetExtraValue() * 100) .. "%" .. " / " .. f.grey(r(maxProfessionStats.craftingspeed:GetExtraValue() * 100) .. "%") .. "\n")) or "")
 	return text
 end
 
@@ -188,8 +175,6 @@ function CraftSim.ProfessionStats:GetJSON(indent)
 	jb:Add("resourcefulness", self.resourcefulness)
 	jb:Add("ingenuity", self.ingenuity)
 	jb:Add("craftingspeed", self.craftingspeed)
-	jb:Add("phialExperimentationFactor", self.phialExperimentationFactor)
-	jb:Add("potionExperimentationFactor", self.potionExperimentationFactor, true)
 	jb:End()
 	return jb.json
 end
@@ -201,9 +186,6 @@ end
 ---@field resourcefulness CraftSim.ProfessionStat.Serialized
 ---@field ingenuity CraftSim.ProfessionStat.Serialized
 ---@field craftingspeed CraftSim.ProfessionStat.Serialized
----@field phialExperimentationFactor CraftSim.ProfessionStat.Serialized
----@field potionExperimentationFactor CraftSim.ProfessionStat.Serialized
-
 
 ---@return CraftSim.ProfessionStats.Serialized
 function CraftSim.ProfessionStats:Serialize()
@@ -215,8 +197,6 @@ function CraftSim.ProfessionStats:Serialize()
 		resourcefulness = self.resourcefulness:Serialize(),
 		ingenuity = self.ingenuity:Serialize(),
 		craftingspeed = self.craftingspeed:Serialize(),
-		phialExperimentationFactor = self.phialExperimentationFactor:Serialize(),
-		potionExperimentationFactor = self.potionExperimentationFactor:Serialize(),
 	}
 	return serializedData
 end
@@ -231,9 +211,5 @@ function CraftSim.ProfessionStats:Deserialize(serializedData)
 	professionStats.resourcefulness = CraftSim.ProfessionStat:Deserialize(serializedData.resourcefulness)
 	professionStats.ingenuity = CraftSim.ProfessionStat:Deserialize(serializedData.ingenuity)
 	professionStats.craftingspeed = CraftSim.ProfessionStat:Deserialize(serializedData.craftingspeed)
-	professionStats.phialExperimentationFactor = CraftSim.ProfessionStat:Deserialize(serializedData
-		.phialExperimentationFactor)
-	professionStats.potionExperimentationFactor = CraftSim.ProfessionStat:Deserialize(serializedData
-		.potionExperimentationFactor)
 	return professionStats
 end

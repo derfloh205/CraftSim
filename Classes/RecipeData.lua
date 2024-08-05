@@ -116,17 +116,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     if self.recipeInfo.hyperlink and not self.isEnchantingRecipe then
         local itemInfoInstant = { C_Item.GetItemInfoInstant(self.recipeInfo.hyperlink) }
-        local subclassID = itemInfoInstant[7]
-        ---@type number?
-        self.subtypeID = subclassID
-        ---@type Enum.InventoryType?
-        self.inventoryType = nil
-        ---@type CraftSim.ItemEquipLocation?
-        self.itemEquipLocation = nil
-        if itemInfoInstant[1] then
-            self.inventoryType = C_Item.GetItemInventoryTypeByID(itemInfoInstant[1])
-            self.itemEquipLocation = itemInfoInstant[4]
-        end
         -- 4th return value is item equip slot, so if its of non type its not equipable, otherwise its gear
         self.isGear = not tContains(CraftSim.CONST.INVENTORY_TYPES_NON_GEAR, itemInfoInstant[4])
     end
@@ -244,7 +233,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.baseProfessionStats:subtract(self.buffData.professionStats)
     -- As we dont know in this case what the factors are without gear and reagents and such
     -- we set them to 0 and let them accumulate in UpdateProfessionStats
-    self.baseProfessionStats:ClearFactors()
+    self.baseProfessionStats:ClearExtraValues()
 
     self:UpdateProfessionStats()
 
@@ -493,13 +482,12 @@ function CraftSim.RecipeData:UpdateProfessionStats()
 
     -- this should cover each case of non specialization data implemented professions
     if self.specializationData then
-        local specExtraFactors = self.specializationData:GetExtraFactors()
-        self.professionStats:add(specExtraFactors)
+        local specExtraValues = self.specializationData:GetExtraValues()
+        self.professionStats:add(specExtraValues)
     end
 
     -- finally add any custom modifiers
     self.professionStats:add(self.professionStatModifiers)
-    -- its the only one which uses "extraValueAfterFactor"
 
     -- since ooey gooey chocolate gives us math.huge on multicraft we need to limit it to 100%
     self.professionStats.multicraft.value = math.min(1 / self.professionStats.multicraft.percentMod,
@@ -652,7 +640,6 @@ function CraftSim.RecipeData:GetJSON(indent)
     jb:Begin()
     jb:Add("recipeID", self.recipeID)
     jb:Add("categoryID", self.categoryID)
-    jb:Add("subtypeID", self.subtypeID)
     jb:Add("concentrating", self.concentrating)
     jb:Add("learned", self.learned)
     jb:Add("numSkillUps", self.numSkillUps)
@@ -857,11 +844,11 @@ function CraftSim.RecipeData:GetSpecializationDataForRecipeCrafter()
         -- if too early, use from db
         if not self.isOldWorldRecipe and #specializationData.nodeData == 0 then
             specializationData = CraftSim.DB.CRAFTER:GetSpecializationData(crafterUID, self)
+            return specializationData
         else
             CraftSim.DB.CRAFTER:SaveSpecializationData(crafterUID, specializationData)
+            return specializationData
         end
-
-        return specializationData
     end
 end
 

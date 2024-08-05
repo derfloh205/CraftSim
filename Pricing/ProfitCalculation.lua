@@ -8,7 +8,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PROFIT_CALCU
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.CALC:GetResourcefulnessSavedCosts(recipeData)
     local priceData = recipeData.priceData
-    local extraSavedItemsFactor = recipeData.professionStats.resourcefulness:GetExtraFactor(true)
+    local extraSavedItemsFactor = 1 + recipeData.professionStats.resourcefulness:GetExtraValue()
 
     local savedCosts = 0
     if recipeData.supportsResourcefulness then
@@ -34,7 +34,7 @@ function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
     end
 
     local maxExtraItems = (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT") * recipeData.baseItemAmount) *
-        recipeData.professionStats.multicraft:GetExtraFactor(true)
+        (1 + recipeData.professionStats.multicraft:GetExtraValue())
     local expectedExtraItems = (1 + maxExtraItems) / 2
     local expectedItems = recipeData.baseItemAmount + expectedExtraItems
 

@@ -135,6 +135,21 @@ function CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
     return 0 -- sometimes happens if not yet initialized
 end
 
+function CraftSim.UTIL:ExportRecipeIDsForExpacCSV()
+    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    local expansionID = self:GetExpansionIDBySkillLineID(skillLineID)
+
+    local recipeIDs = C_TradeSkillUI.GetFilteredRecipeIDs()
+
+    local text = "SpellID"
+    for _, recipeID in ipairs(recipeIDs or {}) do
+        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+
+        text = text .. "\n" .. recipeID
+    end
+    return text
+end
+
 -- from stackoverflow:
 -- https://stackoverflow.com/questions/9079853/lua-print-integer-as-a-binary
 function CraftSim.UTIL:toBits(num, bits)

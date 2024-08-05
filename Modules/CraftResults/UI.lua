@@ -469,8 +469,8 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
                 end
                 local averageExtraItems = 0
                 local expectedAdditionalItems = 0
-                local multicraftExtraItemsFactor = CraftSim.INIT.currentRecipeData.professionStats.multicraft
-                    :GetExtraFactor(true)
+                local multicraftExtraItemsFactor = 1 + CraftSim.INIT.currentRecipeData.professionStats.multicraft
+                    :GetExtraValue()
 
                 local maxExtraItems = (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT") * CraftSim.INIT.currentRecipeData.baseItemAmount) *
                     multicraftExtraItemsFactor

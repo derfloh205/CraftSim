@@ -2,7 +2,7 @@
 local CraftSim = select(2, ...)
 
 ---@class CraftSim.ProfessionStat : CraftSim.CraftSimObject
----@overload fun(name: string, value: number?, percentMod: number?): CraftSim.ProfessionStat
+---@overload fun(name: string?, value: number?, percentMod: number?): CraftSim.ProfessionStat
 CraftSim.ProfessionStat = CraftSim.CraftSimObject:extend()
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
@@ -14,18 +14,20 @@ function CraftSim.ProfessionStat:new(name, value, percentMod)
     self.name = name
     self.value = value or 0
     self.percentMod = percentMod or 0
-    self.extraFactor = 0
-    self.extraValue = 0
-    self.extraValueAfterFactor = 0
+    ---@type number[]
+    self.extraValues = {} -- for special values like extra items from multicraft or concentration saved and so on
 end
 
----@param multiplicative boolean e.g. False: 0.5 or True: 1.5
-function CraftSim.ProfessionStat:GetExtraFactor(multiplicative)
-    if not multiplicative then
-        return self.extraFactor
-    else
-        return self.extraFactor + 1
-    end
+---@param index? number default: 1
+---@return number extraValue default: 0
+function CraftSim.ProfessionStat:GetExtraValue(index)
+    return self.extraValues[index or 1] or 0
+end
+
+---@param value number
+---@param index number? default: 1
+function CraftSim.ProfessionStat:SetExtraValue(value, index)
+    self.extraValues[index or 1] = value or 0
 end
 
 function CraftSim.ProfessionStat:GetPercent(decimal)
@@ -47,13 +49,7 @@ end
 
 function CraftSim.ProfessionStat:Clear()
     self.value = 0
-    self.extraFactor = 0
-    self.extraValue = 0
-    self.extraValueAfterFactor = 0
-end
-
-function CraftSim.ProfessionStat:GetExtraValueByFactor()
-    return (self.extraValue * (1 + self.extraFactor)) + self.extraValueAfterFactor
+    wipe(self.extraValues)
 end
 
 ---@param value number
@@ -61,19 +57,25 @@ function CraftSim.ProfessionStat:addValue(value)
     self.value = self.value + value
 end
 
----@param factor number
-function CraftSim.ProfessionStat:addFactor(factor)
-    self.extraFactor = self.extraFactor + factor
+---@param extraValue number
+---@param index? number default: 1
+function CraftSim.ProfessionStat:addExtraValue(extraValue, index)
+    index = index or 1
+    self:SetExtraValue(self:GetExtraValue(index) + extraValue, index)
 end
 
 ---@param extraValue number
-function CraftSim.ProfessionStat:addExtraValue(extraValue)
-    self.extraValue = self.extraValue + extraValue
+---@param index? number default: 1
+function CraftSim.ProfessionStat:subtractExtraValue(extraValue, index)
+    index = index or 1
+    self:SetExtraValue(self:GetExtraValue(index) - extraValue, index)
 end
 
----@param extraValueAfterFactor number
-function CraftSim.ProfessionStat:addExtraValueAfterFactor(extraValueAfterFactor)
-    self.extraValueAfterFactor = self.extraValueAfterFactor + extraValueAfterFactor
+---@param professionStat CraftSim.ProfessionStat
+function CraftSim.ProfessionStat:addExtraValues(professionStat)
+    for index, extraValue in pairs(professionStat.extraValues) do
+        self:addExtraValue(extraValue, index)
+    end
 end
 
 ---@param value number
@@ -81,19 +83,11 @@ function CraftSim.ProfessionStat:subtractValue(value)
     self.value = self.value - value
 end
 
----@param factor number
-function CraftSim.ProfessionStat:subtractFactor(factor)
-    self.extraFactor = self.extraFactor - factor
-end
-
----@param extraValue number
-function CraftSim.ProfessionStat:subtractExtraValue(extraValue)
-    self.extraValue = self.extraValue - extraValue
-end
-
----@param extraValueAfterFactor number
-function CraftSim.ProfessionStat:subtractExtraValueAfterFactor(extraValueAfterFactor)
-    self.extraValueAfterFactor = self.extraValueAfterFactor - extraValueAfterFactor
+---@param professionStat CraftSim.ProfessionStat
+function CraftSim.ProfessionStat:subtractExtraValues(professionStat)
+    for index, extraValue in pairs(professionStat.extraValues) do
+        self:subtractExtraValue(extraValue, index)
+    end
 end
 
 function CraftSim.ProfessionStat:GetJSON(indent)
@@ -103,9 +97,7 @@ function CraftSim.ProfessionStat:GetJSON(indent)
     jb:Add("name", self.name)
     jb:Add("value", self.value)
     jb:Add("percentMod", self.percentMod)
-    jb:Add("extraFactor", self.extraFactor)
-    jb:Add("extraValue", self.extraValue)
-    jb:Add("extraValueAfterFactor", self.extraValueAfterFactor, true)
+    jb:AddList("extraValues", self.extraValues, true)
     jb:End()
     return jb.json
 end
@@ -114,9 +106,7 @@ end
 ---@field name string
 ---@field value number
 ---@field percentMod number
----@field extraFactor number
----@field extraValue number
----@field extraValueAfterFactor number
+---@field extraValues number[]
 
 ---@return CraftSim.ProfessionStat.Serialized
 function CraftSim.ProfessionStat:Serialize()
@@ -124,10 +114,8 @@ function CraftSim.ProfessionStat:Serialize()
     local serializedData = {
         name = self.name,
         value = self.value,
+        extraValues = self.extraValues,
         percentMod = self.percentMod,
-        extraFactor = self.extraFactor,
-        extraValue = self.extraValue,
-        extraValueAfterFactor = self.extraValueAfterFactor,
     }
     return serializedData
 end
@@ -138,9 +126,7 @@ function CraftSim.ProfessionStat:Deserialize(serializedData)
     professionStat.name = serializedData.name
     professionStat.value = serializedData.value
     professionStat.percentMod = serializedData.percentMod
-    professionStat.extraFactor = serializedData.extraFactor
-    professionStat.extraValue = serializedData.extraValue
-    professionStat.extraValueAfterFactor = serializedData.extraValueAfterFactor
+    professionStat.extraValues = serializedData.extraValues or {}
 
     return professionStat
 end

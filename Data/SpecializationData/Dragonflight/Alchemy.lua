@@ -1,1482 +1,3489 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-
----@type table<string, CraftSim.SPECIALIZATION_DATA.RULE_DATA>
 CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ALCHEMY_DATA = {
-    -- Alchemical Theory
-    ALCHEMICAL_THEORY_1 = { -- mapped
-        childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
-        nodeID = 19539,
-        equalsSkill = 1,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    ALCHEMICAL_THEORY_2 = {
-        childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
-        nodeID = 19539,
-        threshold = 0,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    ALCHEMICAL_THEORY_3 = {
-        childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
-        nodeID = 19539,
-        threshold = 10,
-        resourcefulness = 5,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    ALCHEMICAL_THEORY_4 = {
-        childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
-        nodeID = 19539,
-        threshold = 20,
-        craftingspeedBonusFactor = 0.10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    ALCHEMICAL_THEORY_5 = {
-        childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
-        nodeID = 19539,
-        threshold = 30,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    ALCHEMICAL_THEORY_6 = {
-        childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
-        nodeID = 19539,
-        threshold = 40,
-        resourcefulness = 5,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    ALCHEMICAL_THEORY_7 = {
-        childNodeIDs = { "TRANSMUTATION_1", "CHEMICAL_SYNTHESIS_1", "DECAYOLOGY_1", "RESOURCEFUL_ROUTINES_1", "INSPIRING_AMBIENCE_1" },
-        nodeID = 19539,
-        threshold = 50,
-        resourcefulness = 15,
-        craftingspeedBonusFactor = 0.15,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    TRANSMUTATION_1 = {
-        nodeID = 19538,
-        equalsResourcefulness = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.TRANSMUTATIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.ELEMENTAL,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.METAL_AND_STONE,
-            }
-        },
-    },
-    TRANSMUTATION_2 = {
-        nodeID = 19538,
-        threshold = 0,
-        resourcefulness = (0.05 / CraftSim.CONST.PERCENT_MODS[CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT].RESOURCEFULNESS),
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.TRANSMUTATIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.ELEMENTAL,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.METAL_AND_STONE,
-            }
-        },
-    },
-    TRANSMUTATION_3 = {
-        nodeID = 19538,
-        threshold = 5,
-        resourcefulness = (0.05 / CraftSim.CONST.PERCENT_MODS[CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT].RESOURCEFULNESS),
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.TRANSMUTATIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.ELEMENTAL,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.METAL_AND_STONE,
-            }
-        },
-    },
-    TRANSMUTATION_4 = {
-        nodeID = 19538,
-        threshold = 15,
-        resourcefulness = (0.15 / CraftSim.CONST.PERCENT_MODS[CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT].RESOURCEFULNESS),
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.TRANSMUTATIONS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.EXPLOSIVES_AND_DEVICES,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.ELEMENTAL,
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.METAL_AND_STONE,
-            }
-        },
-    },
-    CHEMICAL_SYNTHESIS_1 = {
-        nodeID = 19537,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.FINISHING_REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.INCENSE] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
-            }
-        },
-    },
-    CHEMICAL_SYNTHESIS_2 = {
-        nodeID = 19537,
-        threshold = 0,
-        multicraft = 20,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.FINISHING_REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.INCENSE] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
-            }
-        },
-    },
-    CHEMICAL_SYNTHESIS_3 = {
-        nodeID = 19537,
-        threshold = 5,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.FINISHING_REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.INCENSE] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
-            }
-        },
-    },
-    CHEMICAL_SYNTHESIS_4 = {
-        nodeID = 19537,
-        threshold = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.FINISHING_REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.INCENSE] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
-            }
-        },
-    },
-    CHEMICAL_SYNTHESIS_5 = {
-        nodeID = 19537,
-        threshold = 15,
-        multicraft = 20,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.FINISHING_REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.INCENSE] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
-            }
-        },
-    },
-    CHEMICAL_SYNTHESIS_6 = {
-        nodeID = 19537,
-        threshold = 20,
-        craftingspeedBonusFactor = 0.10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.FINISHING_REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.INCENSE] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
-            }
-        },
-    },
-    CHEMICAL_SYNTHESIS_7 = {
-        nodeID = 19537,
-        threshold = 25,
-        multicraft = 20,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.FINISHING_REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.INCENSE] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
-            }
-        },
-    },
-    CHEMICAL_SYNTHESIS_8 = {
-        nodeID = 19537,
-        threshold = 30,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.FINISHING_REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.INCENSE] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
-            }
-        },
-    },
-    CHEMICAL_SYNTHESIS_9 = {
-        nodeID = 19537,
-        threshold = 40,
-        multicraftExtraItemsFactor = 0.50,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.FINISHING_REAGENT] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.FINISHING_REAGENT
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.OPTIONAL_REAGENTS] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.OPTIONAL_REAGENTS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.INCENSE] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.INCENSE
-            }
-        },
-    },
-    DECAYOLOGY_1 = {
-        nodeID = 19536,
-        equalsSkill = 1,
-        exceptionRecipeIDs = {
-            370521, -- air potion
-            370536, -- frost potion
-            370525, -- frost potion
-            370528, -- frost potion
-            370457, -- frost phial
-            370456, -- frost phial
-            370714, -- decay transmutation
-            405832, -- Stinky Bright Potion
-            405879, -- Cauldron of Extracted Putrescense
-            415810, -- Potion of Withering Dreams
-        },
-    },
-    DECAYOLOGY_2 = {
-        nodeID = 19536,
-        threshold = 5,
-        resourcefulness = 10,
-        exceptionRecipeIDs = {
-            370521, -- air potion
-            370536, -- frost potion
-            370525, -- frost potion
-            370528, -- frost potion
-            370457, -- frost phial
-            370456, -- frost phial
-            370714, -- decay transmutation
-            405832, -- Stinky Bright Potion
-            405879, -- Cauldron of Extracted Putrescense
-            415810, -- Potion of Withering Dreams
-        },
-    },
-    DECAYOLOGY_3 = {
-        nodeID = 19536,
-        threshold = 15,
-        exceptionRecipeIDs = {
-            370521, -- air potion
-            370536, -- frost potion
-            370525, -- frost potion
-            370528, -- frost potion
-            370457, -- frost phial
-            370456, -- frost phial
-            370714, -- decay transmutation
-            405832, -- Stinky Bright Potion
-            405879, -- Cauldron of Extracted Putrescense
-            415810, -- Potion of Withering Dreams
-        },
-    },
-    DECAYOLOGY_4 = {
-        nodeID = 19536,
-        threshold = 25,
-        resourcefulness = 10,
-        exceptionRecipeIDs = {
-            370521, -- air potion
-            370536, -- frost potion
-            370525, -- frost potion
-            370528, -- frost potion
-            370457, -- frost phial
-            370456, -- frost phial
-            370714, -- decay transmutation
-            405832, -- Stinky Bright Potion
-            405879, -- Cauldron of Extracted Putrescense
-            415810, -- Potion of Withering Dreams
-        },
-    },
-    DECAYOLOGY_5 = {
-        nodeID = 19536,
-        threshold = 30,
-        skill = 10,
-        exceptionRecipeIDs = {
-            370521, -- air potion
-            370536, -- frost potion
-            370525, -- frost potion
-            370528, -- frost potion
-            370457, -- frost phial
-            370456, -- frost phial
-            370714, -- decay transmutation
-            405832, -- Stinky Bright Potion
-            405879, -- Cauldron of Extracted Putrescense
-            415810, -- Potion of Withering Dreams
-        },
-    },
-    RESOURCEFUL_ROUTINES_1 = {
-        nodeID = 19535,
-        equalsResourcefulness = 1,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_ROUTINES_2 = {
-        nodeID = 19535,
-        threshold = 0,
-        resourcefulnessExtraItemsFactor = 0.05,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_ROUTINES_3 = {
-        nodeID = 19535,
-        threshold = 5,
-        resourcefulness = 10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_ROUTINES_4 = {
-        nodeID = 19535,
-        threshold = 10,
-        resourcefulnessExtraItemsFactor = 0.10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_ROUTINES_5 = {
-        nodeID = 19535,
-        threshold = 15,
-        resourcefulness = 10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_ROUTINES_6 = {
-        nodeID = 19535,
-        threshold = 20,
-        resourcefulnessExtraItemsFactor = 0.10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_ROUTINES_7 = {
-        nodeID = 19535,
-        threshold = 25,
-        resourcefulness = 10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    RESOURCEFUL_ROUTINES_8 = {
-        nodeID = 19535,
-        threshold = 25,
-        resourcefulnessExtraItemsFactor = 0.25,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRING_AMBIENCE_1 = {
-        nodeID = 19534,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRING_AMBIENCE_2 = {
-        nodeID = 19534,
-        threshold = 0,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRING_AMBIENCE_3 = {
-        nodeID = 19534,
-        threshold = 5,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRING_AMBIENCE_4 = {
-        nodeID = 19534,
-        threshold = 10,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRING_AMBIENCE_5 = {
-        nodeID = 19534,
-        threshold = 15,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRING_AMBIENCE_6 = {
-        nodeID = 19534,
-        threshold = 20,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRING_AMBIENCE_7 = {
-        nodeID = 19534,
-        threshold = 25,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    INSPIRING_AMBIENCE_8 = {
-        nodeID = 19534,
-        threshold = 30,
-        idMapping = { [CraftSim.CONST.RECIPE_CATEGORIES.ALL] = {} },
-    },
-    -- Phial Mastery
-    PHIAL_MASTERY_1 = { -- frost mapped, air mapped, lore mapped
-        childNodeIDs = { "FROST_PHIALS_1", "PHIAL_LORE_1", "AIR_PHIALS_1" },
-        nodeID = 22483,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            -- lore
-            370676, -- phial trinket
-            -- phial experimentation
-            370746, -- basic
-            370747, -- advanced
-            -- batch production
-            406106, -- phial cauldron
-        }
-    },
-    PHIAL_MASTERY_2 = {
-        childNodeIDs = { "FROST_PHIALS_1", "PHIAL_LORE_1", "AIR_PHIALS_1" },
-        nodeID = 22483,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            -- lore
-            370676, -- phial trinket
-            -- phial experimentation
-            370746, -- basic
-            370747, -- advanced
-            -- batch production
-            406106, -- phial cauldron
-        }
-    },
-    PHIAL_MASTERY_3 = {
-        childNodeIDs = { "FROST_PHIALS_1", "PHIAL_LORE_1", "AIR_PHIALS_1" },
-        nodeID = 22483,
-        threshold = 25,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            -- lore
-            370676, -- phial trinket
-            -- phial experimentation
-            370746, -- basic
-            370747, -- advanced
-            -- batch production
-            406106, -- phial cauldron
-        }
-    },
-    PHIAL_LORE_1 = { -- experimentation mapped, batch mapped
-        childNodeIDs = { "PHIAL_EXPERIMENTATION_1", "PHIAL_BATCH_PRODUCTION_1" },
-        nodeID = 22480,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-        },
-        exceptionRecipeIDs = {
-            -- lore
-            370676, -- phial trinket
-            -- phial experimentation
-            370746, -- basic
-            370747, -- advanced
-            -- batch production
-            406106, -- phial cauldron
-        },
-    },
-    PHIAL_LORE_2 = {
-        childNodeIDs = { "PHIAL_EXPERIMENTATION_1", "PHIAL_BATCH_PRODUCTION_1" },
-        nodeID = 22480,
-        threshold = 0,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-        },
-        exceptionRecipeIDs = {
-            370676, -- phial trinket
-            -- phial experimentation
-            370746, -- basic
-            370747, -- advanced
-            -- batch production
-            406106, -- phial cauldron
-        },
-    },
-    PHIAL_LORE_3 = {
-        childNodeIDs = { "PHIAL_EXPERIMENTATION_1", "PHIAL_BATCH_PRODUCTION_1" },
-        nodeID = 22480,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-        },
-        exceptionRecipeIDs = {
-            370676, -- phial trinket
-            -- phial experimentation
-            370746, -- basic
-            370747, -- advanced
-            -- batch production
-            406106, -- phial cauldron
-        },
-    },
-    PHIAL_LORE_4 = {
-        childNodeIDs = { "PHIAL_EXPERIMENTATION_1", "PHIAL_BATCH_PRODUCTION_1" },
-        nodeID = 22480,
-        threshold = 15,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-        },
-        exceptionRecipeIDs = {
-            370676, -- phial trinket
-            -- phial experimentation
-            370746, -- basic
-            370747, -- advanced
-            -- batch production
-            406106, -- phial cauldron
-        },
-    },
-    FROST_PHIALS_1 = {
-        nodeID = 22482,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    FROST_PHIALS_2 = {
-        nodeID = 22482,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    FROST_PHIALS_3 = {
-        nodeID = 22482,
-        threshold = 10,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    FROST_PHIALS_4 = {
-        nodeID = 22482,
-        threshold = 15,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    FROST_PHIALS_5 = {
-        nodeID = 22482,
-        threshold = 20,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    FROST_PHIALS_6 = {
-        nodeID = 22482,
-        threshold = 25,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    AIR_PHIALS_1 = {
-        nodeID = 22481,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    AIR_PHIALS_2 = {
-        nodeID = 22481,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    AIR_PHIALS_3 = {
-        nodeID = 22481,
-        threshold = 10,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    AIR_PHIALS_4 = {
-        nodeID = 22481,
-        threshold = 15,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    AIR_PHIALS_5 = {
-        nodeID = 22481,
-        threshold = 20,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    AIR_PHIALS_6 = {
-        nodeID = 22481,
-        threshold = 25,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            }
-        },
-        exceptionRecipeIDs = {
-            406106, -- phial cauldron
-        }
-    },
-    PHIAL_EXPERIMENTATION_1 = {
-        nodeID = 22479,
-        equalsPhialExperimentationChanceFactor = 0.01,
-        exceptionRecipeIDs = {
-            -- phial experimentation
-            370746, -- basic
-            370747, -- advanced
-        }
-    },
-    PHIAL_EXPERIMENTATION_2 = {
-        nodeID = 22479,
-        threshold = 0,
-        phialExperimentationChanceFactor = 0.10,
-        exceptionRecipeIDs = {
-            370746, -- basic
-            370747, -- advanced
-        }
-    },
-    PHIAL_EXPERIMENTATION_3 = {
-        nodeID = 22479,
-        threshold = 5,
-        phialExperimentationChanceFactor = 0.05,
-        exceptionRecipeIDs = {
-            370746, -- basic
-            370747, -- advanced
-        }
-    },
-    PHIAL_EXPERIMENTATION_4 = {
-        nodeID = 22479,
-        threshold = 15,
-        phialExperimentationChanceFactor = 0.05,
-        exceptionRecipeIDs = {
-            370746, -- basic
-            370747, -- advanced
-        }
-    },
-    PHIAL_BATCH_PRODUCTION_1 = {
-        nodeID = 22478,
-        equalsMulticraft = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370746,            -- basic
-            370747,            -- advanced
-            -- lore
-            406106,            -- phial cauldron
-        },
-    },
-    PHIAL_BATCH_PRODUCTION_2 = {
-        nodeID = 22478,
-        threshold = 0,
-        multicraft = 60,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370746,            -- basic
-            370747,            -- advanced
-            406106,            -- phial cauldron
-        },
-    },
-    PHIAL_BATCH_PRODUCTION_3 = {
-        nodeID = 22478,
-        threshold = 5,
-        craftingspeedBonusFactor = 0.10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370746,            -- basic
-            370747,            -- advanced
-            406106,            -- phial cauldron
-        },
-    },
-    PHIAL_BATCH_PRODUCTION_4 = {
-        nodeID = 22478,
-        threshold = 10,
-        multicraft = 60,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370746,            -- basic
-            370747,            -- advanced
-            406106,            -- phial cauldron
-        },
-    },
-    PHIAL_BATCH_PRODUCTION_5 = {
-        nodeID = 22478,
-        threshold = 15,
-        craftingspeedBonusFactor = 0.10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370746,            -- basic
-            370747,            -- advanced
-            406106,            -- phial cauldron
-        },
-    },
-    PHIAL_BATCH_PRODUCTION_6 = {
-        nodeID = 22478,
-        threshold = 20,
-        multicraftExtraItemsFactor = 0.50,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.PHIALS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.PHIALS
-            },
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370746,            -- basic
-            370747,            -- advanced
-            406106,            -- phial cauldron
-        },
-    },
-
-    -- Potion Mastery
-    POTION_MASTERY_1 = { -- frost mapped, air mapped, lore mapped
-        childNodeIDs = { "FROST_POTIONS_1", "POTION_LORE_1", "AIR_POTIONS_1" },
-        nodeID = 19487,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            -- frost
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-            -- lore
-            370677, -- potion trinket
-            -- potion experimentation
-            370743, -- basic
-            370745, -- advanced
-        },
-    },
-    POTION_MASTERY_2 = {
-        childNodeIDs = { "FROST_POTIONS_1", "POTION_LORE_1", "AIR_POTIONS_1" },
-        nodeID = 19487,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            -- frost
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-            -- lore
-            370677, -- potion trinket
-            -- potion experimentation
-            370743, -- basic
-            370745, -- advanced
-        },
-    },
-    POTION_MASTERY_3 = {
-        childNodeIDs = { "FROST_POTIONS_1", "POTION_LORE_1", "AIR_POTIONS_1" },
-        nodeID = 19487,
-        threshold = 25,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            -- frost
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-            -- lore
-            370677, -- potion trinket
-            -- potion experimentation
-            370743, -- basic
-            370745, -- advanced
-        },
-    },
-    POTION_LORE_1 = { -- experimentation mapped, batch mapped
-        childNodeIDs = { "POTION_EXPERIMENTATION_1", "POTION_BATCH_PRODUCTION_1" },
-        nodeID = 19484,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            -- lore
-            370677, -- potion trinket
-            -- potion experimentation
-            370743, -- basic
-            370745, -- advanced
-            -- batch
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    POTION_LORE_2 = {
-        childNodeIDs = { "POTION_EXPERIMENTATION_1", "POTION_BATCH_PRODUCTION_1" },
-        nodeID = 19484,
-        threshold = 0,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370677, -- potion trinket
-            -- potion experimentation
-            370743, -- basic
-            370745, -- advanced
-            -- batch
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    POTION_LORE_3 = {
-        childNodeIDs = { "POTION_EXPERIMENTATION_1", "POTION_BATCH_PRODUCTION_1" },
-        nodeID = 19484,
-        threshold = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370677, -- potion trinket
-            -- potion experimentation
-            370743, -- basic
-            370745, -- advanced
-            -- batch
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    POTION_LORE_4 = {
-        childNodeIDs = { "POTION_EXPERIMENTATION_1", "POTION_BATCH_PRODUCTION_1" },
-        nodeID = 19484,
-        threshold = 15,
-        resourcefulness = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370677, -- potion trinket
-            -- potion experimentation
-            370743, -- basic
-            370745, -- advanced
-            -- batch
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    FROST_POTIONS_1 = {
-        nodeID = 19486,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            -- frost
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    FROST_POTIONS_2 = {
-        nodeID = 19486,
-        threshold = 5,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    FROST_POTIONS_3 = {
-        nodeID = 19486,
-        threshold = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    FROST_POTIONS_4 = {
-        nodeID = 19486,
-        threshold = 20,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    FROST_POTIONS_5 = {
-        nodeID = 19486,
-        threshold = 25,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    AIR_POTIONS_1 = {
-        nodeID = 19485,
-        equalsSkill = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    AIR_POTIONS_2 = {
-        nodeID = 19485,
-        threshold = 5,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    AIR_POTIONS_3 = {
-        nodeID = 19485,
-        threshold = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    AIR_POTIONS_4 = {
-        nodeID = 19485,
-        threshold = 20,
-        skill = 5,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    AIR_POTIONS_5 = {
-        nodeID = 19485,
-        threshold = 25,
-        resourcefulness = 10,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = {
-            370672, -- ultimate power cauldron
-            370668, -- power cauldron
-            370673, -- pooka cauldron
-        },
-    },
-    POTION_EXPERIMENTATION_1 = {
-        nodeID = 19483,
-        equalsPotionExperimentationChanceFactor = 0.01,
-        exceptionRecipeIDs = {
-            -- potion experimentation
-            370743, -- basic
-            370745, -- advanced
-        }
-    },
-    POTION_EXPERIMENTATION_2 = {
-        nodeID = 19483,
-        threshold = 0,
-        potionExperimentationChanceFactor = 0.10,
-        exceptionRecipeIDs = {
-            370743, -- basic
-            370745, -- advanced
-        }
-    },
-    POTION_EXPERIMENTATION_3 = {
-        nodeID = 19483,
-        threshold = 5,
-        potionExperimentationChanceFactor = 0.05,
-        exceptionRecipeIDs = {
-            370743, -- basic
-            370745, -- advanced
-        }
-    },
-    POTION_EXPERIMENTATION_4 = {
-        nodeID = 19483,
-        threshold = 15,
-        potionExperimentationChanceFactor = 0.05,
-        exceptionRecipeIDs = {
-            370743, -- basic
-            370745, -- advanced
-        }
-    },
-    POTION_BATCH_PRODUCTION_1 = {
-        nodeID = 19482,
-        equalsMulticraft = 1,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370743,            -- basic
-            370745,            -- advanced
-            -- batch
-            370672,            -- ultimate power cauldron
-            370668,            -- power cauldron
-            370673,            -- pooka cauldron
-        },
-    },
-    POTION_BATCH_PRODUCTION_2 = {
-        nodeID = 19482,
-        threshold = 0,
-        multicraft = 60,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370743,            -- basic
-            370745,            -- advanced
-            370672,            -- ultimate power cauldron
-            370668,            -- power cauldron
-            370673,            -- pooka cauldron
-        },
-    },
-    POTION_BATCH_PRODUCTION_3 = {
-        nodeID = 19482,
-        threshold = 5,
-        craftingspeedBonusFactor = 0.20,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370743,            -- basic
-            370745,            -- advanced
-            370672,            -- ultimate power cauldron
-            370668,            -- power cauldron
-            370673,            -- pooka cauldron
-        },
-    },
-    POTION_BATCH_PRODUCTION_4 = {
-        nodeID = 19482,
-        threshold = 15,
-        multicraft = 60,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370743,            -- basic
-            370745,            -- advanced
-            370672,            -- ultimate power cauldron
-            370668,            -- power cauldron
-            370673,            -- pooka cauldron
-        },
-    },
-    POTION_BATCH_PRODUCTION_5 = {
-        nodeID = 19482,
-        threshold = 20,
-        multicraftExtraItemsFactor = 0.50,
-        idMapping = {
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.FROST] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.POTIONS.AIR] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            },
-            [CraftSim.CONST.RECIPE_CATEGORIES.ALCHEMY.DRAGONFLIGHT.ELEMENTAL_BOTH] = {
-                CraftSim.CONST.RECIPE_ITEM_SUBTYPES.ALCHEMY.POTIONS
-            }
-        },
-        exceptionRecipeIDs = { -- the crafting speed effects experimentations
-            370743,            -- basic
-            370745,            -- advanced
-            370672,            -- ultimate power cauldron
-            370668,            -- power cauldron
-            370673,            -- pooka cauldron
-        },
-    },
+	recipeMapping = {
+		[370438] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22481,
+			22462,
+			22461,
+			22460,
+			22459,
+			22458,
+			22457,
+			22457,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370453] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22481,
+			22462,
+			22461,
+			22460,
+			22459,
+			22458,
+			22457,
+			22457,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370456] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19536,
+			19507,
+			19505,
+			19503,
+			19502,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22482,
+			22469,
+			22468,
+			22467,
+			22466,
+			22465,
+			22464,
+			22464,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370457] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19536,
+			19507,
+			19505,
+			19503,
+			19502,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22482,
+			22469,
+			22468,
+			22467,
+			22466,
+			22465,
+			22464,
+			22464,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370460] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22481,
+			22462,
+			22461,
+			22460,
+			22459,
+			22458,
+			22457,
+			22457,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370462] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22482,
+			22469,
+			22468,
+			22467,
+			22466,
+			22465,
+			22464,
+			22464,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370463] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22481,
+			22462,
+			22461,
+			22460,
+			22459,
+			22458,
+			22457,
+			22457,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370465] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22482,
+			22469,
+			22468,
+			22467,
+			22466,
+			22465,
+			22464,
+			22464,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370472] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22481,
+			22462,
+			22461,
+			22460,
+			22459,
+			22458,
+			22457,
+			22457,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370473] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22482,
+			22469,
+			22468,
+			22467,
+			22466,
+			22465,
+			22464,
+			22464,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370476] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22481,
+			22462,
+			22461,
+			22460,
+			22459,
+			22458,
+			22457,
+			22457,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370478] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370483] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22482,
+			22469,
+			22468,
+			22467,
+			22466,
+			22465,
+			22464,
+			22464,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370504] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22481,
+			22462,
+			22461,
+			22460,
+			22459,
+			22458,
+			22457,
+			22457,
+			22482,
+			22469,
+			22468,
+			22467,
+			22466,
+			22465,
+			22464,
+			22464,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370521] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19536,
+			19507,
+			19505,
+			19503,
+			19502,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370524] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370525] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19536,
+			19507,
+			19505,
+			19503,
+			19502,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370528] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19536,
+			19507,
+			19505,
+			19503,
+			19502,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370533] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370536] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19536,
+			19507,
+			19505,
+			19503,
+			19502,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370539] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370543] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370547] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370551] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370556] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370558] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370561] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370668] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370672] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370673] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370676] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370677] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370707] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19538,
+			19522,
+			19521,
+			19519,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370708] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19538,
+			19522,
+			19521,
+			19519,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370710] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19538,
+			19522,
+			19521,
+			19519,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370711] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19538,
+			19522,
+			19521,
+			19519,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370714] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19538,
+			19522,
+			19521,
+			19519,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370715] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19538,
+			19522,
+			19521,
+			19519,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370717] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370722] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370723] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370724] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370725] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370728] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370729] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370730] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370731] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370732] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370733] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370735] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370738] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19537,
+			19517,
+			19516,
+			19515,
+			19514,
+			19513,
+			19512,
+			19511,
+			19510,
+			19510,
+			19509,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370743] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370745] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[370746] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370747] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[370748] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[377978] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[381270] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22481,
+			22462,
+			22461,
+			22460,
+			22459,
+			22458,
+			22457,
+			22457,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[400270] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[405832] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19485,
+			19466,
+			19465,
+			19463,
+			19462,
+			19461,
+			19461,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19536,
+			19507,
+			19505,
+			19503,
+			19502,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[405847] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19538,
+			19522,
+			19521,
+			19519,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[405879] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[406106] = {
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+			22478,
+			22445,
+			22444,
+			22443,
+			22442,
+			22441,
+			22480,
+			22456,
+			22455,
+			22453,
+			22451,
+			22451,
+			22481,
+			22462,
+			22461,
+			22460,
+			22459,
+			22458,
+			22457,
+			22457,
+			22482,
+			22469,
+			22468,
+			22467,
+			22466,
+			22465,
+			22464,
+			22464,
+			22483,
+			22476,
+			22472,
+			22471,
+		},
+		[415628] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+		[415810] = {
+			19482,
+			19449,
+			19448,
+			19446,
+			19445,
+			19484,
+			19460,
+			19459,
+			19457,
+			19455,
+			19455,
+			19486,
+			19473,
+			19472,
+			19470,
+			19469,
+			19468,
+			19468,
+			19487,
+			19480,
+			19476,
+			19475,
+			19534,
+			19494,
+			19493,
+			19492,
+			19491,
+			19490,
+			19489,
+			19488,
+			19535,
+			19501,
+			19500,
+			19499,
+			19498,
+			19497,
+			19496,
+			19495,
+			19536,
+			19507,
+			19505,
+			19503,
+			19502,
+			19539,
+			19533,
+			19531,
+			19529,
+			19527,
+			19525,
+			19523,
+			19523,
+			19523,
+		},
+	},
+	nodeData = {
+		[19534] = {
+			nodeID = 19534,
+			maxRank = 30,
+			stat = "ingenuity",
+			stat_amount = 1,
+		},
+		[19494] = {
+			nodeID = 19534,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 5,
+		},
+		[19493] = {
+			nodeID = 19534,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[19492] = {
+			nodeID = 19534,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 10,
+		},
+		[19491] = {
+			nodeID = 19534,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[19490] = {
+			nodeID = 19534,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 10,
+		},
+		[19489] = {
+			nodeID = 19534,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[19488] = {
+			nodeID = 19534,
+			maxRank = 1,
+			stat = "ingenuityrefundincrease",
+			stat_amount = 25,
+		},
+		[19535] = {
+			nodeID = 19535,
+			maxRank = 30,
+			stat = "resourcefulness",
+			stat_amount = 1,
+		},
+		[19501] = {
+			nodeID = 19535,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 5,
+		},
+		[19500] = {
+			nodeID = 19535,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[19499] = {
+			nodeID = 19535,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 10,
+		},
+		[19498] = {
+			nodeID = 19535,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[19497] = {
+			nodeID = 19535,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 10,
+		},
+		[19496] = {
+			nodeID = 19535,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[19495] = {
+			nodeID = 19535,
+			maxRank = 1,
+			stat = "reagentssavedfromresourcefulness",
+			stat_amount = 25,
+		},
+		[19539] = {
+			nodeID = 19539,
+			maxRank = 50,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[19533] = {
+			nodeID = 19539,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[19531] = {
+			nodeID = 19539,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[19529] = {
+			nodeID = 19539,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 10,
+		},
+		[19527] = {
+			nodeID = 19539,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[19525] = {
+			nodeID = 19539,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[19523] = {
+			nodeID = 19539,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 15,
+		},
+		[22478] = {
+			nodeID = 22478,
+			maxRank = 20,
+			stat = "multicraft",
+			stat_amount = 1,
+		},
+		[22445] = {
+			nodeID = 22478,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 60,
+		},
+		[22444] = {
+			nodeID = 22478,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 10,
+		},
+		[22443] = {
+			nodeID = 22478,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 60,
+		},
+		[22442] = {
+			nodeID = 22478,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 10,
+		},
+		[22441] = {
+			nodeID = 22478,
+			maxRank = 1,
+			stat = "additionalitemscraftedwithmulticraft",
+			stat_amount = 50,
+		},
+		[22480] = {
+			nodeID = 22480,
+			maxRank = 25,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[22456] = {
+			nodeID = 22480,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[22455] = {
+			nodeID = 22480,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[22453] = {
+			nodeID = 22480,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[22451] = {
+			nodeID = 22480,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[22481] = {
+			nodeID = 22481,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[22462] = {
+			nodeID = 22481,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[22461] = {
+			nodeID = 22481,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[22460] = {
+			nodeID = 22481,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[22459] = {
+			nodeID = 22481,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[22458] = {
+			nodeID = 22481,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[22457] = {
+			nodeID = 22481,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[22483] = {
+			nodeID = 22483,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[22476] = {
+			nodeID = 22483,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[22472] = {
+			nodeID = 22483,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[22471] = {
+			nodeID = 22483,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[19536] = {
+			nodeID = 19536,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[19507] = {
+			nodeID = 19536,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[19505] = {
+			nodeID = 19536,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[19503] = {
+			nodeID = 19536,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[19502] = {
+			nodeID = 19536,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 10,
+		},
+		[22482] = {
+			nodeID = 22482,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[22469] = {
+			nodeID = 22482,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[22468] = {
+			nodeID = 22482,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[22467] = {
+			nodeID = 22482,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[22466] = {
+			nodeID = 22482,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[22465] = {
+			nodeID = 22482,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[22464] = {
+			nodeID = 22482,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[19482] = {
+			nodeID = 19482,
+			maxRank = 20,
+			stat = "multicraft",
+			stat_amount = 1,
+		},
+		[19449] = {
+			nodeID = 19482,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 60,
+		},
+		[19448] = {
+			nodeID = 19482,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 20,
+		},
+		[19446] = {
+			nodeID = 19482,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 60,
+		},
+		[19445] = {
+			nodeID = 19482,
+			maxRank = 1,
+			stat = "additionalitemscraftedwithmulticraft",
+			stat_amount = 50,
+		},
+		[19484] = {
+			nodeID = 19484,
+			maxRank = 25,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[19460] = {
+			nodeID = 19484,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[19459] = {
+			nodeID = 19484,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[19457] = {
+			nodeID = 19484,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[19455] = {
+			nodeID = 19484,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[19486] = {
+			nodeID = 19486,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[19473] = {
+			nodeID = 19486,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[19472] = {
+			nodeID = 19486,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[19470] = {
+			nodeID = 19486,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[19469] = {
+			nodeID = 19486,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[19468] = {
+			nodeID = 19486,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[19487] = {
+			nodeID = 19487,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[19480] = {
+			nodeID = 19487,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 5,
+		},
+		[19476] = {
+			nodeID = 19487,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[19475] = {
+			nodeID = 19487,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[19485] = {
+			nodeID = 19485,
+			maxRank = 30,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[19466] = {
+			nodeID = 19485,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[19465] = {
+			nodeID = 19485,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[19463] = {
+			nodeID = 19485,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[19462] = {
+			nodeID = 19485,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 10,
+		},
+		[19461] = {
+			nodeID = 19485,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[19538] = {
+			nodeID = 19538,
+			maxRank = 20,
+			stat = "resourcefulness",
+			stat_amount = 1,
+		},
+		[19522] = {
+			nodeID = 19538,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[19521] = {
+			nodeID = 19538,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 5,
+		},
+		[19519] = {
+			nodeID = 19538,
+			maxRank = 1,
+			stat = "resourcefulness",
+			stat_amount = 15,
+		},
+		[19537] = {
+			nodeID = 19537,
+			maxRank = 40,
+			stat = "skill",
+			stat_amount = 1,
+		},
+		[19517] = {
+			nodeID = 19537,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 20,
+		},
+		[19516] = {
+			nodeID = 19537,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[19515] = {
+			nodeID = 19537,
+			maxRank = 1,
+			stat = "ingenuity",
+			stat_amount = 10,
+		},
+		[19514] = {
+			nodeID = 19537,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 20,
+		},
+		[19513] = {
+			nodeID = 19537,
+			maxRank = 1,
+			stat = "craftingspeed",
+			stat_amount = 10,
+		},
+		[19512] = {
+			nodeID = 19537,
+			maxRank = 1,
+			stat = "multicraft",
+			stat_amount = 20,
+		},
+		[19511] = {
+			nodeID = 19537,
+			maxRank = 1,
+			stat = "skill",
+			stat_amount = 5,
+		},
+		[19510] = {
+			nodeID = 19537,
+			maxRank = 1,
+			stat = "unlockreagentslot",
+			stat_amount = 0,
+		},
+		[19509] = {
+			nodeID = 19537,
+			maxRank = 1,
+			stat = "additionalitemscraftedwithmulticraft",
+			stat_amount = 50,
+		},
+	},
 }

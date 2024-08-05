@@ -168,9 +168,7 @@ Classes/OptionalReagent.lua
 Classes/SalvageReagentSlot.lua
 Classes/SpecializationData.lua
 Classes/NodeData.lua
-Classes/NodeRule.lua
-Classes/NodeRuleMapping.lua
-Classes/CategoryMapping.lua
+Classes/PerkData.lua
 Classes/Statweights.lua
 Classes/ReagentOptimizationResult.lua
 Classes/TopGearResult.lua
