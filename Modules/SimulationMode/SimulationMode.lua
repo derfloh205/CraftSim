@@ -261,7 +261,6 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.SIMULATION_MODE.UI:UpdateVisibility()
     CraftSim.SIMULATION_MODE.UI:InitReagentOverwriteFrames(CraftSim.SIMULATION_MODE.recipeData)
     CraftSim.SIMULATION_MODE.UI:InitOptionalReagentItemSelectors(CraftSim.SIMULATION_MODE.recipeData)
-    CraftSim.SIMULATION_MODE.UI:InitSpecModBySpecData()
 
     -- -- update simulation recipe data and frontend
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()
