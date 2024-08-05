@@ -116,17 +116,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     if self.recipeInfo.hyperlink and not self.isEnchantingRecipe then
         local itemInfoInstant = { C_Item.GetItemInfoInstant(self.recipeInfo.hyperlink) }
-        local subclassID = itemInfoInstant[7]
-        ---@type number?
-        self.subtypeID = subclassID
-        ---@type Enum.InventoryType?
-        self.inventoryType = nil
-        ---@type CraftSim.ItemEquipLocation?
-        self.itemEquipLocation = nil
-        if itemInfoInstant[1] then
-            self.inventoryType = C_Item.GetItemInventoryTypeByID(itemInfoInstant[1])
-            self.itemEquipLocation = itemInfoInstant[4]
-        end
         -- 4th return value is item equip slot, so if its of non type its not equipable, otherwise its gear
         self.isGear = not tContains(CraftSim.CONST.INVENTORY_TYPES_NON_GEAR, itemInfoInstant[4])
     end
@@ -652,7 +641,6 @@ function CraftSim.RecipeData:GetJSON(indent)
     jb:Begin()
     jb:Add("recipeID", self.recipeID)
     jb:Add("categoryID", self.categoryID)
-    jb:Add("subtypeID", self.subtypeID)
     jb:Add("concentrating", self.concentrating)
     jb:Add("learned", self.learned)
     jb:Add("numSkillUps", self.numSkillUps)
