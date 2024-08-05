@@ -53,6 +53,10 @@ function CraftSim.NodeData:new(recipeData, baseNodeData, perkMap)
         tinsert(self.perkData, CraftSim.PerkData(self, perkID, perkData))
     end
 
+    table.sort(self.perkData, function(a, b)
+        return a.threshold < b.threshold
+    end)
+
     local stat = baseNodeData.stat
     local amount = baseNodeData.stat_amount or 0
 

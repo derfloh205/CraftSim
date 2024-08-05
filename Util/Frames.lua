@@ -76,12 +76,6 @@ function CraftSim.FRAME:RestoreModulePositions()
         CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
     local debugFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
     local infoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
-    local livePreviewFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.LIVE_PREVIEW)
-    local specsim = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
-    local specsimWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_INFO_WO)
-
-    specsim:RestoreSavedConfig(UIParent)
-    specsimWO:RestoreSavedConfig(UIParent)
 
     infoFrame:RestoreSavedConfig(UIParent)
     debugFrame:RestoreSavedConfig(UIParent)

@@ -73,41 +73,22 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
 
         frame:Hide()
 
-        frame.content.knowledgePointSimulationButton = GGUI.Button({
-            parent = frame.content,
-            anchorParent = frame.title.frame,
-            anchorA = "TOP",
-            anchorB = "TOP",
-            offsetY = -20,
-            sizeX = 15,
-            sizeY = 20,
-            adjustWidth = true,
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_SIMULATE_KNOWLEDGE_DISTRIBUTION),
-            clickCallback = function()
-                local specSimFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
-                CraftSim.FRAME:ToggleFrame(GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM),
-                    not specSimFrame:IsVisible())
-            end
-        })
-
-        frame.content.knowledgePointSimulationButton:SetEnabled(false)
-
         frame.content.notImplementedText = CraftSim.FRAME:CreateText(
             GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS),
                 GUTIL.COLORS.LEGENDARY),
-            frame.content, frame.content.knowledgePointSimulationButton.frame, "CENTER", "CENTER", 0, 0)
+            frame.content, frame.content, "CENTER", "CENTER", 0, 0)
 
         frame.content.notImplementedText:Hide()
 
         frame.content.statsText = GGUI.Text({
             parent = frame.content,
-            anchorParent = frame.content.knowledgePointSimulationButton.frame,
+            anchorParent = frame.content,
             anchorA = "TOPLEFT",
-            anchorB = "BOTTOMLEFT",
+            anchorB = "TOPLEFT",
             text = "",
             justifyOptions = { type = 'H', align = "LEFT" },
-            offsetX = 5,
-            offsetY = -10
+            offsetX = 20,
+            offsetY = -35,
         })
 
         frame.content.nodeList = GGUI.FrameList {
@@ -171,11 +152,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
     if not specializationData or not specializationData.isImplemented then
         content.nodeList:Hide()
         content.notImplementedText:Show()
-        content.knowledgePointSimulationButton:Hide()
         content.statsText:Hide()
     else
         content.nodeList:Show()
-        content.knowledgePointSimulationButton:Show()
         content.statsText:Show()
         content.notImplementedText:Hide()
     end
@@ -188,14 +167,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         return
     end
 
-    specializationData:UpdateProfessionStats()
+    local nodeDataList = specializationData.nodeData
 
-
-    local affectedNodeDataList = GUTIL:Filter(specializationData.nodeData, function(nodeData)
-        return nodeData.affectsRecipe
-    end)
-
-    for _, affectedNodeData in pairs(affectedNodeDataList) do
+    for _, nodeData in pairs(nodeDataList) do
         content.nodeList:Add(function(row)
             local columns = row.columns
             ---@class CraftSim.SPEC_INFO.NODE_LIST.NAME_COLUMN : Frame
@@ -204,39 +178,46 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
             ---@class CraftSim.SPEC_INFO.NODE_LIST.RANK_COLUMN : Frame
             local rankColumn = columns[2]
 
-            nameColumn.iconTexture:SetTexture(affectedNodeData.icon)
+            nameColumn.iconTexture:SetTexture(nodeData.icon)
 
-            if affectedNodeData.active then
-                nameColumn.text:SetText(affectedNodeData.nodeName)
+            if nodeData.active then
+                nameColumn.text:SetText(nodeData.name)
                 rankColumn.text:SetText("(" ..
-                    tostring(affectedNodeData.rank) .. "/" .. tostring(affectedNodeData.maxRank) .. ")")
+                    tostring(nodeData.rank) .. "/" .. tostring(nodeData.maxRank) .. ")")
             else
-                nameColumn.text:SetText(GUTIL:ColorizeText(affectedNodeData.nodeName, GUTIL.COLORS.GREY))
-                rankColumn.text:SetText(GUTIL:ColorizeText("(-/" .. tostring(affectedNodeData.maxRank) .. ")",
+                nameColumn.text:SetText(GUTIL:ColorizeText(nodeData.name, GUTIL.COLORS.GREY))
+                rankColumn.text:SetText(GUTIL:ColorizeText("(-/" .. tostring(nodeData.maxRank) .. ")",
                     GUTIL.COLORS.GREY))
             end
-            local nodeProfessionStats = affectedNodeData.professionStats
 
             row.tooltipOptions = {
-                text = affectedNodeData:GetTooltipText(),
+                text = nodeData:GetTooltipText(),
                 textWrap = true,
                 owner = row.frame,
                 anchor = "ANCHOR_RIGHT",
             }
 
             -- used to sort
-            row.active = affectedNodeData.active
+            row.active = nodeData.active
+            row.rank = nodeData.rank
+            row.isMax = nodeData.maxRank == nodeData.rank
         end)
     end
 
     content.nodeList:UpdateDisplay(function(rowA, rowB)
         if rowA.active and not rowB.active then
             return true
-        end
-        if not rowA.active and rowB.active then
+        elseif not rowA.active and rowB.active then
             return false
         end
-        return false
+
+        if rowA.isMax and not rowB.isMax then
+            return true
+        elseif not rowA.isMax and rowB.isMax then
+            return false
+        end
+
+        return rowA.rank > rowB.rank
     end)
 
     specInfoFrame.content.statsText:SetText(specializationData.professionStats:GetTooltipText(specializationData
