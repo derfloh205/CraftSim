@@ -11,7 +11,7 @@ local print = CraftSim.DEBUG:SetDebugPrint("SPECDATA")
 
 function CraftSim.SPECIALIZATION_INFO.UI:Init()
     local sizeX = 290
-    local sizeY = 340
+    local sizeY = 370
     local offsetX = 260
     local offsetY = 341
 

@@ -126,7 +126,7 @@ function CraftSim.ProfessionStat:Deserialize(serializedData)
     professionStat.name = serializedData.name
     professionStat.value = serializedData.value
     professionStat.percentMod = serializedData.percentMod
-    professionStat.extraValues = serializedData.extraValues
+    professionStat.extraValues = serializedData.extraValues or {}
 
     return professionStat
 end
