@@ -125,6 +125,42 @@ function CraftSim.SPECIALIZATION_INFO.UI:Init()
                 rankColumn.text = GGUI.Text {
                     parent = rankColumn, anchorParent = rankColumn,
                 }
+
+                rankColumn.simInput = GGUI.NumericInput {
+                    parent = rankColumn, anchorParent = rankColumn,
+                    sizeX = 25, sizeY = 25, minValue = -1, anchorA = "LEFT", anchorB = "LEFT",
+                    borderAdjustWidth = 1.5,
+                    onEnterPressedCallback = function(input)
+                        CraftSim.SIMULATION_MODE:OnSpecModified(true, input)
+                    end
+                }
+
+                rankColumn.simText = GGUI.Text {
+                    parent = rankColumn, anchorParent = rankColumn.simInput.textInput.frame,
+                    anchorA = "LEFT", anchorB = "RIGHT", offsetX = 1, offsetY = 1
+                }
+            end
+        }
+
+        frame.content.simResetButton = GGUI.Button {
+            parent = frame.content, anchorPoints = { { anchorParent = frame.content.nodeList.frame, anchorA = "TOPLEFT", anchorB = "TOPRIGHT", offsetY = -3, offsetX = -3 } },
+            labelTextureOptions = {
+                atlas = "talents-button-undo"
+            },
+            sizeX = 23, sizeY = 23,
+            clickCallback = function()
+                CraftSim.SIMULATION_MODE:ResetSpecData()
+            end
+        }
+
+        frame.content.simMaxButton = GGUI.Button {
+            parent = frame.content, anchorPoints = { { anchorParent = frame.content.simResetButton.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -1 } },
+            labelTextureOptions = {
+                atlas = "LevelUp-Icon-Arrow"
+            },
+            sizeX = 23, sizeY = 23,
+            clickCallback = function()
+                CraftSim.SIMULATION_MODE:MaxSpecData()
             end
         }
     end
@@ -159,6 +195,9 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         content.notImplementedText:Hide()
     end
 
+    content.simResetButton:SetVisible(CraftSim.SIMULATION_MODE.isActive)
+    content.simMaxButton:SetVisible(CraftSim.SIMULATION_MODE.isActive)
+
     if CraftSim.SIMULATION_MODE.isActive then
         specializationData = CraftSim.SIMULATION_MODE.specializationData
     end
@@ -179,16 +218,32 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
             local rankColumn = columns[2]
 
             nameColumn.iconTexture:SetTexture(nodeData.icon)
-
-            if nodeData.active then
-                nameColumn.text:SetText(nodeData.name)
-                rankColumn.text:SetText("(" ..
-                    tostring(nodeData.rank) .. "/" .. tostring(nodeData.maxRank) .. ")")
+            rankColumn.text:SetVisible(not CraftSim.SIMULATION_MODE.isActive)
+            rankColumn.simText:SetVisible(CraftSim.SIMULATION_MODE.isActive)
+            rankColumn.simInput:SetVisible(CraftSim.SIMULATION_MODE.isActive)
+            if CraftSim.SIMULATION_MODE.isActive then
+                rankColumn.simInput.nodeData = nodeData
+                rankColumn.simInput.textInput:SetText(nodeData.rank)
+                if nodeData.active then
+                    nameColumn.text:SetText(nodeData.name)
+                    rankColumn.simText:SetText(" / " .. tostring(nodeData.maxRank))
+                else
+                    nameColumn.text:SetText(GUTIL:ColorizeText(nodeData.name, GUTIL.COLORS.GREY))
+                    rankColumn.simText:SetText(GUTIL:ColorizeText(" / " .. tostring(nodeData.maxRank),
+                        GUTIL.COLORS.GREY))
+                end
             else
-                nameColumn.text:SetText(GUTIL:ColorizeText(nodeData.name, GUTIL.COLORS.GREY))
-                rankColumn.text:SetText(GUTIL:ColorizeText("(-/" .. tostring(nodeData.maxRank) .. ")",
-                    GUTIL.COLORS.GREY))
+                if nodeData.active then
+                    nameColumn.text:SetText(nodeData.name)
+                    rankColumn.text:SetText("(" ..
+                        tostring(nodeData.rank) .. "/" .. tostring(nodeData.maxRank) .. ")")
+                else
+                    nameColumn.text:SetText(GUTIL:ColorizeText(nodeData.name, GUTIL.COLORS.GREY))
+                    rankColumn.text:SetText(GUTIL:ColorizeText("(-/" .. tostring(nodeData.maxRank) .. ")",
+                        GUTIL.COLORS.GREY))
+                end
             end
+
 
             row.tooltipOptions = {
                 text = nodeData:GetTooltipText(),
@@ -204,21 +259,26 @@ function CraftSim.SPECIALIZATION_INFO.UI:UpdateInfo(recipeData)
         end)
     end
 
-    content.nodeList:UpdateDisplay(function(rowA, rowB)
-        if rowA.active and not rowB.active then
-            return true
-        elseif not rowA.active and rowB.active then
-            return false
-        end
+    -- sort only if sim mode not active
+    if not CraftSim.SIMULATION_MODE.isActive then
+        content.nodeList:UpdateDisplay(function(rowA, rowB)
+            if rowA.active and not rowB.active then
+                return true
+            elseif not rowA.active and rowB.active then
+                return false
+            end
 
-        if rowA.isMax and not rowB.isMax then
-            return true
-        elseif not rowA.isMax and rowB.isMax then
-            return false
-        end
+            if rowA.isMax and not rowB.isMax then
+                return true
+            elseif not rowA.isMax and rowB.isMax then
+                return false
+            end
 
-        return rowA.rank > rowB.rank
-    end)
+            return rowA.rank > rowB.rank
+        end)
+    else
+        content.nodeList:UpdateDisplay()
+    end
 
     specInfoFrame.content.statsText:SetText(specializationData.professionStats:GetTooltipText(specializationData
         .maxProfessionStats))

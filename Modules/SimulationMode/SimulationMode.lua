@@ -17,7 +17,6 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.SIMULATION_M
 function CraftSim.SIMULATION_MODE:ResetSpecData()
     CraftSim.SIMULATION_MODE.specializationData = CraftSim.SIMULATION_MODE.recipeData.specializationData:Copy()
 
-    CraftSim.SIMULATION_MODE.UI:InitSpecModBySpecData() -- revert
     CraftSim.INIT:TriggerModuleUpdate()
 end
 
@@ -27,43 +26,42 @@ function CraftSim.SIMULATION_MODE:MaxSpecData()
     end
     for _, nodeData in pairs(CraftSim.SIMULATION_MODE.specializationData.nodeData) do
         nodeData.rank = nodeData.maxRank
-        nodeData:UpdateAffectance()
-        nodeData:UpdateProfessionStats()
     end
 
     CraftSim.SIMULATION_MODE.specializationData:UpdateProfessionStats()
-    CraftSim.SIMULATION_MODE.UI:InitSpecModBySpecData() -- update
     CraftSim.INIT:TriggerModuleUpdate()
 end
 
-function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, nodeModFrame)
+---@param userInput boolean
+---@param numericInput GGUI.NumericInput
+function CraftSim.SIMULATION_MODE:OnSpecModified(userInput, numericInput)
     local recipeData = CraftSim.SIMULATION_MODE.recipeData
     if not userInput or not recipeData then
         return
     end
 
-    local inputNumber = CraftSim.UTIL:ValidateNumberInput(nodeModFrame.input, true)
+    local inputNodeData = numericInput.nodeData --[[@as CraftSim.NodeData]]
+
+    if not inputNodeData then return end
+
+    local inputNumber = math.min(numericInput.currentValue, inputNodeData.maxRank)
+
+    if inputNumber > inputNodeData.maxRank then
+        -- adjust input number in input field
+        numericInput.textInput:SetText(tonumber(inputNumber), false)
+    end
 
     print("startinput after validation: " .. inputNumber)
-
-    if inputNumber > nodeModFrame.nodeProgressBar.maxValue then
-        inputNumber = nodeModFrame.nodeProgressBar.maxValue
-    elseif inputNumber < -1 then
-        inputNumber = -1
-    end
-    nodeModFrame.Update(inputNumber)
-
-    print("inputNumber after update: " .. inputNumber)
 
     -- update specdata
     ---@type CraftSim.NodeData
     local nodeData = GUTIL:Find(CraftSim.SIMULATION_MODE.specializationData.nodeData,
-        function(nodeData) return nodeData.nodeID == nodeModFrame.nodeID end)
+        function(nodeData) return nodeData.nodeID == inputNodeData.nodeID end)
+
     if not nodeData then
         return
     end
     nodeData.rank = inputNumber
-    nodeData.active = inputNumber > -1
 
     print("new rank: " .. nodeData.rank)
     print("new active: " .. tostring(nodeData.active))
