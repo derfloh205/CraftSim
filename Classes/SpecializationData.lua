@@ -55,7 +55,19 @@ function CraftSim.SpecializationData:new(recipeData)
         local perkMap = {}
         for _, perkID in ipairs(perks) do
             perkMap[perkID] = professionNodeData[perkID]
+            if not perkMap[perkID] then
+                error("CraftSim Error: No Data mapped for perk: " .. tostring(perkID))
+            end
         end
+        if not baseNodeData then
+            -- if not mapped then get the basic info for that node via api
+            local nodeInfo = C_Traits.GetNodeInfo(recipeData.professionData.configID, nodeID)
+            baseNodeData = {
+                nodeID = nodeID,
+                maxRank = nodeInfo.maxRanks - 1
+            }
+        end
+
         tinsert(self.nodeData, CraftSim.NodeData(recipeData, baseNodeData, perkMap))
     end
 
