@@ -40,6 +40,7 @@ function CraftSim.ProfessionData:new(recipeData, recipeID)
 		end
 	end
 	self.skillLineID = self.professionInfo.professionID
+	self.configID = C_ProfSpecs.GetConfigIDForSkillLine(self.skillLineID)
 	for expansionID, skillLineID in pairs(CraftSim.CONST.TRADESKILLLINEIDS[self.professionInfo.profession]) do
 		if skillLineID == self.skillLineID then
 			self.expansionID = expansionID
