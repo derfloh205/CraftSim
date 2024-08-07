@@ -442,21 +442,68 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
     end
 end
 
-function CraftSim.RecipeData:GetConcentrationCosts()
-    -- includes required and optionals
-    local allReagentsTbl = self.reagentData:GetCraftingReagentInfoTbl()
-    -- on purpose do not use concentration so we will always get the costs
-    local operationInfo
-    if self.orderData then
-        operationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, allReagentsTbl,
-            self.orderData.orderID,
-            false)
-    else
-        operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, allReagentsTbl, self.allocationItemGUID,
-            false)
-    end
+---@return number concentrationCost
+---@return CraftSim.ConcentrationCurveData? curveData
+function CraftSim.RecipeData:GetConcentrationCost()
+    local craftingDataID = self.baseOperationInfo.craftingDataID
 
-    return (operationInfo and operationInfo.concentrationCost) or 0
+    ---@class CraftSim.ConcentrationCurveData
+    ---@field costConstant number
+    ---@field curveData table<number, number>
+    local concentrationCurveData = CraftSim.CONCENTRATION_CURVE_DATA[craftingDataID]
+
+    if concentrationCurveData then
+        -- get skill bracket and associated start and end skillCurveValues
+        local playerSkill = self.professionStats.skill.value
+        local baseDifficulty = self.baseOperationInfo.baseDifficulty -- TODO: what about varying difficulty?
+        -- remap to find the inbetween bracket easier
+        local thresholdList = {}
+        for recipeDifficultyFactor, skillCurveValue in pairs(concentrationCurveData.curveData) do
+            local skillTreshold = baseDifficulty * recipeDifficultyFactor
+            tinsert(thresholdList, { skillThreshold = skillTreshold, skillCurveValue = skillCurveValue })
+        end
+        table.sort(thresholdList, function(a, b)
+            return a.skillThreshold < b.skillThreshold
+        end)
+        -- find bracket
+        for i, thresholdData in ipairs(thresholdList) do
+            local skillStart = thresholdData.skillThreshold
+            if playerSkill >= skillStart then
+                local nextThreshold = thresholdList[i + 1]
+                local skillEnd = (nextThreshold and nextThreshold.skillThreshold) or baseDifficulty
+                if playerSkill <= skillEnd then
+                    local skillCurveValueStart = thresholdData.skillCurveValue
+                    local skillCurveValueEnd = (nextThreshold and nextThreshold.skillCurveValue) or 0
+                    return CraftSim.UTIL:CalculateConcentrationCost(
+                        concentrationCurveData.costConstant,
+                        playerSkill,
+                        skillStart,
+                        skillEnd,
+                        skillCurveValueStart,
+                        skillCurveValueEnd), concentrationCurveData
+                end
+            end
+        end
+    else
+        -- if by any chance the data for this recipe is not mapped in the db2 data, get a good guess via the api
+        -- this works for reagent skill but not for any custom skill changes like in simulation mode or when simming different skill from profession tools...
+
+        -- includes required and optionals
+        local allReagentsTbl = self.reagentData:GetCraftingReagentInfoTbl()
+        -- on purpose do not use concentration so we will always get the costs
+        local operationInfo
+        if self.orderData then
+            operationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, allReagentsTbl,
+                self.orderData.orderID,
+                false)
+        else
+            operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, allReagentsTbl,
+                self.allocationItemGUID,
+                false)
+        end
+
+        return (operationInfo and operationInfo.concentrationCost) or 0, nil
+    end
 end
 
 -- Update the professionStats property of the RecipeData according to set reagents and gearSet (and any stat modifiers)
@@ -466,7 +513,7 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     local itemStats = self.professionGearSet.professionStats
     local buffStats = self.buffData.professionStats
 
-    self.concentrationCost = self:GetConcentrationCosts()
+    self.concentrationCost = self:GetConcentrationCost()
 
     self.professionStats:Clear()
 

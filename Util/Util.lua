@@ -270,3 +270,24 @@ function CraftSim.UTIL:GetLocalizer()
         return CraftSim.LOCAL:GetText(ID)
     end
 end
+
+---@param costConstant number
+---@param playerSkill number
+---@param skillStart number
+---@param skillEnd number
+---@param skillCurveValueStart number
+---@param skillCurveValueEnd number
+function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, skillStart, skillEnd, skillCurveValueStart,
+                                                  skillCurveValueEnd)
+    local skillDifference = skillEnd - skillStart
+    local valueDifference = skillCurveValueStart - skillCurveValueEnd
+    local skillValueStep = valueDifference / skillDifference
+
+    local playerSkillDifference = playerSkill - skillStart
+    local playerSkillCurveValueDifference = playerSkillDifference * skillValueStep
+
+    local playerSkillCurveValue = skillCurveValueStart - playerSkillCurveValueDifference
+
+    local concentrationCost = playerSkillCurveValue * costConstant
+    return CraftSim.GUTIL:Round(concentrationCost)
+end
