@@ -301,7 +301,9 @@ end
 ---@param recipeDifficulty number
 ---@param curveConstantData CraftSim.UTIL.FindBracketData
 ---@param nextCurveConstantData CraftSim.UTIL.FindBracketData
+---@return number curveConstant
 function CraftSim.UTIL:CalculateCurveConstant(recipeDifficulty, curveConstantData, nextCurveConstantData)
+    if not nextCurveConstantData then return curveConstantData.data end
     local difficultyDifference = math.abs(nextCurveConstantData.index - curveConstantData.index)
     local valueDifference = math.abs(nextCurveConstantData.data - curveConstantData.data)
     local difficultyValueStep = (difficultyDifference > 0 and valueDifference / difficultyDifference) or 0
