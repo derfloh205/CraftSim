@@ -8,10 +8,10 @@ resultDirectoryPrefix = "Result/"
 
 def downloadWagoTablesCSV(db2Tables):
     for table in db2Tables:
-        print("Downloading " + table + ".csv")
-        filename = dataDirectoryPrefix + table + ".csv"
+        print(f"Downloading {table}.csv")
+        filename = f"{dataDirectoryPrefix}{table}.csv"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        download = httpx.get("https://wago.tools/db2/"+table+"/csv")
+        download = httpx.get(f"https://wago.tools/db2/{table}/csv")
         decoded_content = download.content.decode('utf-8')
         with open(filename, 'w') as f:
             f.writelines(decoded_content)
@@ -19,14 +19,14 @@ def downloadWagoTablesCSV(db2Tables):
 def loadCSVTables(db2Tables):
     csvTables = []
     for table in db2Tables:
-        print("Loading Table: " + table)
-        with open(dataDirectoryPrefix + table + '.csv', mode='r') as file:
+        print(f"Loading Table: {table}")
+        with open(f"{dataDirectoryPrefix}{table}.csv", mode='r') as file:
             csv_reader = csv.DictReader(file)
             data_table = []
             for row in csv_reader:
                 data_table.append(row)
         csvTables.append(data_table)
-        print("- Size: " + str(len(data_table)))
+        print(f"- Size: {str(len(data_table))}")
     return csvTables
 
 def getWagoTables(db2Tables, download):
@@ -36,7 +36,7 @@ def getWagoTables(db2Tables, download):
 
 
 def writeLuaTable(dataTable, fileName, prefix):
-    print("Writing Lua File: " + fileName)
-    fileName = resultDirectoryPrefix + fileName + ".lua"
+    print(f"Writing Lua File: {fileName}")
+    fileName = f"{resultDirectoryPrefix}{fileName}.lua"
     os.makedirs(os.path.dirname(fileName), exist_ok=True)
     luadata.write(fileName, dataTable, encoding="utf-8", indent="\t", prefix=prefix)

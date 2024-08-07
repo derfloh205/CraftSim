@@ -17,7 +17,7 @@ if __name__ == '__main__':
     for craftingData in craftingDataTable:
         craftingDataID = int(craftingData["ID"])
         craftingDifficultyID = craftingData["CraftingDifficultyID"]
-        print("Mapping Crafting Data: " + str(craftingDataID))
+        print(f"Mapping Crafting Data: {str(craftingDataID)}")
         for craftingDifficulty in craftingDifficultyTable:
             if craftingDifficulty["ID"] == craftingDifficultyID:
                 curveID = craftingDifficulty["ConcentrationSkillCurveID"]

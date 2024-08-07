@@ -79,7 +79,7 @@ if __name__ == '__main__':
         if not recipeID in professionDataTable[expansion][profession]["recipeMapping"]:
             professionDataTable[expansion][profession]["recipeMapping"][recipeID] = []
 
-        print("adding recipe for " + expansion + ": " + profession + "-> " + str(recipeID))
+        print(f"Adding recipe for {expansion}: {profession} -> {str(recipeID)}")
         professionDataTable[expansion][profession]["recipeMapping"][recipeID].append(perkID)
 
         professionDataTable[expansion][profession]["nodeData"][perkID] = {
@@ -92,5 +92,5 @@ if __name__ == '__main__':
     for expansion, professions in professionDataTable.items():
         for profession, dataTable in professions.items():
             resultFileName = expansion.upper() + "/" + profession
-            prefix = "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.SPECIALIZATION_DATA."+expansion.upper()+"."+profession.upper()+"_DATA = "
+            prefix = f"---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.SPECIALIZATION_DATA.{expansion.upper()}.{profession.upper()}_DATA = "
             db2Tools.writeLuaTable(dataTable, resultFileName, prefix)
