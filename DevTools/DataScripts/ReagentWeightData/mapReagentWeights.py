@@ -2,6 +2,7 @@ import sys
 sys.path.append('../')
 import db2Tools
 
+buildVersion = "11.0.2.55959"
 db2Tables = ["Item", "ModifiedCraftingReagentItem", "ModifiedCraftingCategory"]
 
 def getItemWeight(reagentItemID, reagentItemTable, craftingCategoryTable):
@@ -16,7 +17,7 @@ def getItemWeight(reagentItemID, reagentItemTable, craftingCategoryTable):
 if __name__ == '__main__':
     args = sys.argv[1:]
     download = len(args) > 0 and args[0] == "true"
-    csvTables = db2Tools.getWagoTables(db2Tables, download)
+    csvTables = db2Tools.getWagoTables(db2Tables, download, buildVersion)
     tradeSkillItemTable = csvTables[0]
     reagentItemTable = csvTables[1]
     craftingCategoryTable = csvTables[2]
@@ -30,5 +31,5 @@ if __name__ == '__main__':
         if weight and weight > 0:
             itemWeightTable[int(itemID)] = {"weight": weight}
 
-    db2Tools.writeLuaTable(itemWeightTable, "ReagentWeightData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.REAGENT_DATA = ")
+    db2Tools.writeLuaTable(itemWeightTable, "ReagentWeightData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.REAGENT_DATA = ", buildVersion)
         

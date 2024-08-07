@@ -5,22 +5,31 @@ import csv
 
 dataDirectoryPrefix = "Data/"
 resultDirectoryPrefix = "Result/"
+latestDirectoryPrefix = "Latest/"
 
-def downloadWagoTablesCSV(db2Tables):
+def getBuildDirectoryPrefix(buildVersion):
+    if buildVersion:
+        return f"{buildVersion}/"
+    return latestDirectoryPrefix
+
+def downloadWagoTablesCSV(db2Tables, buildVersion):
     for table in db2Tables:
         print(f"Downloading {table}.csv")
-        filename = f"{dataDirectoryPrefix}{table}.csv"
+        filename = f"{dataDirectoryPrefix}{getBuildDirectoryPrefix(buildVersion)}{table}.csv"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        download = httpx.get(f"https://wago.tools/db2/{table}/csv")
+        buildParameter = f"?build={buildVersion}"
+        if buildVersion == None:
+            buildParameter = ""
+        download = httpx.get(f"https://wago.tools/db2/{table}/csv{buildParameter}")
         decoded_content = download.content.decode('utf-8')
         with open(filename, 'w') as f:
             f.writelines(decoded_content)
 
-def loadCSVTables(db2Tables):
+def loadCSVTables(db2Tables, buildVersion):
     csvTables = []
     for table in db2Tables:
         print(f"Loading Table: {table}")
-        with open(f"{dataDirectoryPrefix}{table}.csv", mode='r') as file:
+        with open(f"{dataDirectoryPrefix}{getBuildDirectoryPrefix(buildVersion)}{table}.csv", mode='r') as file:
             csv_reader = csv.DictReader(file)
             data_table = []
             for row in csv_reader:
@@ -29,14 +38,14 @@ def loadCSVTables(db2Tables):
         print(f"- Size: {str(len(data_table))}")
     return csvTables
 
-def getWagoTables(db2Tables, download):
+def getWagoTables(db2Tables, download, buildVersion):
     if download:
-        downloadWagoTablesCSV(db2Tables)
-    return loadCSVTables(db2Tables)
+        downloadWagoTablesCSV(db2Tables, buildVersion)
+    return loadCSVTables(db2Tables, buildVersion)
 
 
-def writeLuaTable(dataTable, fileName, prefix):
+def writeLuaTable(dataTable, fileName, prefix, buildVersion):
     print(f"Writing Lua File: {fileName}")
-    fileName = f"{resultDirectoryPrefix}{fileName}.lua"
+    fileName = f"{resultDirectoryPrefix}{getBuildDirectoryPrefix(buildVersion)}{fileName}.lua"
     os.makedirs(os.path.dirname(fileName), exist_ok=True)
     luadata.write(fileName, dataTable, encoding="utf-8", indent="\t", prefix=prefix)
