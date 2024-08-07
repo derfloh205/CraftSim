@@ -1,25 +1,16 @@
-import csv
-import luadata
+import sys
+sys.path.append('../')
+import db2Tools
 
-def getDataTable(tableName):
-    with open(tableName + '.csv', mode='r') as file:
-        csv_reader = csv.DictReader(file)
-        data_table = []
-        for row in csv_reader:
-            data_table.append(row)
-    return data_table
-
-def writeLuaTable(dataTable, fileName, prefix):
-    luadata.write(fileName + ".lua", dataTable, encoding="utf-8", indent="\t", prefix=prefix)
+db2Tables = ["CraftingData", "CraftingDifficulty", "CurvePoint"]
 
 if __name__ == '__main__':
-    craftingDataTable = getDataTable("CraftingData")
-    craftingDifficultyTable = getDataTable("CraftingDifficulty")
-    curvePointTable = getDataTable("CurvePoint")
-
-    print("craftingData: " + str(len(craftingDataTable)))
-    print("craftingDifficulty: " + str(len(craftingDifficultyTable)))
-    print("curvePoint: " + str(len(curvePointTable)))
+    args = sys.argv[1:]
+    download = len(args) > 0 and args[0] == "true"
+    csvTables = db2Tools.getWagoTables(db2Tables, download)
+    craftingDataTable = csvTables[0]
+    craftingDifficultyTable = csvTables[1]
+    curvePointTable = csvTables[2]
 
     concentrationCostDataTable = {}
 
@@ -52,5 +43,5 @@ if __name__ == '__main__':
 
                                 concentrationCostDataTable[craftingDataID]["curveData"][recipeDifficultyThreshold] = skillCurveValue
 
-    writeLuaTable(concentrationCostDataTable, "ConcentrationCurveData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.CONCENTRATION_CURVE_DATA = ")
+    db2Tools.writeLuaTable(concentrationCostDataTable, "ConcentrationCurveData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.CONCENTRATION_CURVE_DATA = ")
         

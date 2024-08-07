@@ -1,5 +1,6 @@
-import csv
-import luadata
+import sys
+sys.path.append('../')
+import db2Tools
 
 professionsDF = {
     "2822": "Blacksmithing",
@@ -29,27 +30,8 @@ professionsTWW = {
      "2878": "Inscription"
 }
 
-def getRawDataForProfession():
-    # Open the CSV file for reading
-    with open('profTalentData.csv', mode='r') as file:
-        # Create a CSV reader with DictReader
-        csv_reader = csv.DictReader(file)
-    
-        # Initialize an empty list to store the dictionaries
-        data_table = []
-    
-        # Iterate through each row in the CSV file
-        for row in csv_reader:
-            data_table.append(row)
-    return data_table
-
-def writeLuaTable(expansion, profession, dictData):
-    luadata.write(expansion.upper() + "/" + profession + ".lua", dictData, encoding="utf-8", indent="\t", prefix="---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.SPECIALIZATION_DATA."+expansion.upper()+"."+profession.upper()+"_DATA = ")
-
 if __name__ == '__main__':
-    rawDataTable = getRawDataForProfession()
-
-    print("rawDataTable: " + str(len(rawDataTable)))
+    rawDataTable = db2Tools.loadCSVTables(["profTalentData"])[0]
 
     professionDataTable = {
         "DRAGONFLIGHT": {},
@@ -109,4 +91,6 @@ if __name__ == '__main__':
 
     for expansion, professions in professionDataTable.items():
         for profession, dataTable in professions.items():
-            writeLuaTable(expansion, profession, dataTable)
+            resultFileName = expansion.upper() + "/" + profession
+            prefix = "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.SPECIALIZATION_DATA."+expansion.upper()+"."+profession.upper()+"_DATA = "
+            db2Tools.writeLuaTable(dataTable, resultFileName, prefix)
