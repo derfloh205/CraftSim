@@ -24,3 +24,4 @@ ignore:
   - Libs/LibStub/tests
   - Libs/**/*.textile
   - README.md
+  - DevTools

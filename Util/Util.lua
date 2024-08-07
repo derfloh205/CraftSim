@@ -270,3 +270,93 @@ function CraftSim.UTIL:GetLocalizer()
         return CraftSim.LOCAL:GetText(ID)
     end
 end
+
+---@param costConstant number
+---@param playerSkill number
+---@param skillStart number
+---@param skillEnd number
+---@param skillCurveValueStart number
+---@param skillCurveValueEnd number
+function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, skillStart, skillEnd, skillCurveValueStart,
+                                                  skillCurveValueEnd)
+    local skillDifference = math.abs(skillEnd - skillStart)
+    local valueDifference = math.abs(skillCurveValueStart - skillCurveValueEnd) -- can go up or down
+    local skillValueStep = valueDifference / skillDifference
+
+    local playerSkillDifference = math.abs(playerSkill - skillStart)
+    local playerSkillCurveValueDifference = playerSkillDifference * skillValueStep
+
+    local playerSkillCurveValue
+    if skillCurveValueStart < skillCurveValueEnd then
+        playerSkillCurveValue = skillCurveValueStart + playerSkillCurveValueDifference
+    else
+        playerSkillCurveValue = skillCurveValueStart - playerSkillCurveValueDifference
+    end
+
+
+    local concentrationCost = playerSkillCurveValue * costConstant
+    return CraftSim.GUTIL:Round(concentrationCost)
+end
+
+---@param recipeDifficulty number
+---@param curveConstantData CraftSim.UTIL.FindBracketData
+---@param nextCurveConstantData CraftSim.UTIL.FindBracketData
+---@return number curveConstant
+function CraftSim.UTIL:CalculateCurveConstant(recipeDifficulty, curveConstantData, nextCurveConstantData)
+    if not nextCurveConstantData then return curveConstantData.data end
+    local difficultyDifference = math.abs(nextCurveConstantData.index - curveConstantData.index)
+    local valueDifference = math.abs(nextCurveConstantData.data - curveConstantData.data)
+    local difficultyValueStep = (difficultyDifference > 0 and valueDifference / difficultyDifference) or 0
+
+    if difficultyValueStep == 0 then
+        return curveConstantData.data
+    end
+
+    local recipeDifficultyDifference = math.abs(recipeDifficulty - curveConstantData.index)
+    local recipeDifficultyConstantDifference = recipeDifficultyDifference * difficultyValueStep
+
+    local recipeDifficultyConstant
+    if curveConstantData.data < nextCurveConstantData.data then
+        recipeDifficultyConstant = curveConstantData.data + recipeDifficultyConstantDifference
+    else
+        recipeDifficultyConstant = curveConstantData.data - recipeDifficultyConstantDifference
+    end
+
+    return recipeDifficultyConstant
+end
+
+---@class CraftSim.UTIL.FindBracketData
+---@field index number
+---@field data any
+
+--- for tables with sorted number indices, find the data that lies at start of a gap based on given value
+---@generic T
+---@param indexValue number value to search for
+---@param t table<number, any> table containing the data with numbered indices
+---@return CraftSim.UTIL.FindBracketData?, CraftSim.UTIL.FindBracketData?
+function CraftSim.UTIL:FindBracketData(indexValue, t)
+    local dataList = {}
+    for index, data in pairs(t) do
+        tinsert(dataList, { index = index, data = data })
+    end
+    table.sort(dataList, function(a, b)
+        return a.index < b.index
+    end)
+
+    -- find bracket
+    for i, data in ipairs(dataList) do
+        local indexStart = data.index
+        if indexValue >= indexStart then
+            local nextData = dataList[i + 1]
+            local indexEnd = (nextData and nextData.index)
+
+            if not indexEnd then return data, nil end
+
+            if indexValue <= indexEnd then
+                return data, nextData
+            end
+        end
+    end
+
+    return nil, nil
+end
