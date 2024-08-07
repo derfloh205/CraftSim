@@ -460,7 +460,7 @@ function CraftSim.RecipeData:GetConcentrationCost()
         local playerSkillFactor = (playerSkill / (baseDifficulty / 100)) / 100
 
         -- recipeDifficulty here or playerSkill ?
-        local curveConstantData, nextCurveConstantData = CraftSim.UTIL:FindBracketData(baseDifficulty,
+        local curveConstantData, nextCurveConstantData = CraftSim.UTIL:FindBracketData(playerSkill,
             concentrationCurveData.costConstantData)
         local curveData, nextCurveData = CraftSim.UTIL:FindBracketData(playerSkillFactor,
             concentrationCurveData.curveData)
