@@ -457,14 +457,16 @@ function CraftSim.RecipeData:GetConcentrationCost()
         -- get skill bracket and associated start and end skillCurveValues
         local playerSkill = self.professionStats.skill.value
         local baseDifficulty = self.baseOperationInfo.baseDifficulty -- TODO: what about varying difficulty?
-        local playerSkillPercent = playerSkill / (baseDifficulty / 100)
+        local playerSkillFactor = (playerSkill / (baseDifficulty / 100)) / 100
 
         -- recipeDifficulty here or playerSkill ?
-        local curveConstantData = CraftSim.UTIL:FindBracketData(baseDifficulty, concentrationCurveData.costConstantData)
-        local curveData, nextCurveData = CraftSim.UTIL:FindBracketData(playerSkillPercent,
+        local curveConstantData, nextCurveConstantData = CraftSim.UTIL:FindBracketData(baseDifficulty,
+            concentrationCurveData.costConstantData)
+        local curveData, nextCurveData = CraftSim.UTIL:FindBracketData(playerSkillFactor,
             concentrationCurveData.curveData)
 
-        local curveConstant = (curveConstantData and curveConstantData.data) or 0
+        local curveConstant = CraftSim.UTIL:CalculateCurveConstant(baseDifficulty, curveConstantData,
+            nextCurveConstantData)
         local recipeDifficultyFactor = (curveData and curveData.index) or 0
         local nextRecipeDifficultyFactor = (nextCurveData and nextCurveData.index) or 1
         local skillCurveValueStart = (curveData and curveData.data) or 0
@@ -475,6 +477,7 @@ function CraftSim.RecipeData:GetConcentrationCost()
         CraftSim.DEBUG:InspectTable({
             concentrationCurveData = concentrationCurveData or {},
             curveConstantData = curveConstantData or {},
+            nextCurveConstantData = nextCurveConstantData or {},
             curveData = curveData or {},
             nextCurveData = nextCurveData or {},
             calculationData = {
