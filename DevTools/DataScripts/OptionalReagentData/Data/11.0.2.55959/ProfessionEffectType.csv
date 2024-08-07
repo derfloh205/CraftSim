@@ -1,0 +1,32 @@
+ID,Name_lang,EnumID
+1,Skill,0
+2,Inspiration,1
+3,Resourcefulness,2
+4,Finesse,3
+5,Deftness,4
+6,Perception,5
+7,"Crafting Speed",6
+8,Multicraft,7
+9,"Unlock Reagent Slot (DNT - write manually!)",8
+10,Inspiration,9
+11,Resourcefulness,10
+12,Finesse,11
+13,Deftness,12
+14,Perception,13
+15,"Crafting Speed",14
+16,Multicraft,15
+17,Deftness,16
+18,"Gather Range Rating (DNT - write manually!)",17
+19,"additional items crafted with Multicraft (DNT - write manually!)",18
+20,"basic reagents gathered from Finesse (DNT - write manually!)",19
+21,"bonus Crafting Skill from Inspiration (DNT - write manually!)",20
+22,"reagents saved from Resourcefulness (DNT - write manually!)",21
+23,"Decrease Difficulty",22
+24,"Increase Difficulty",23
+25,"Modify Skill Gain",24
+26,"Trait Ranks By Points-Modifier Label (DNT)",25
+27,Ingenuity,26
+28,"reduce concentration cost (DNT - write manually)",27
+29,"Dummy Effect For # Tokenization (DNT)",28
+30,Ingenuity,29
+31,"Ingenuity Refund Increase (DNT - write manually!)",30
