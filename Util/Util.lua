@@ -291,3 +291,39 @@ function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, ski
     local concentrationCost = playerSkillCurveValue * costConstant
     return CraftSim.GUTIL:Round(concentrationCost)
 end
+
+---@class CraftSim.UTIL.FindBracketData
+---@field index number
+---@field data any
+
+--- for tables with sorted number indices, find the data that lies at start of a gap based on given value
+---@generic T
+---@param indexValue number value to search for
+---@param t table<number, any> table containing the data with numbered indices
+---@return CraftSim.UTIL.FindBracketData?, CraftSim.UTIL.FindBracketData?
+function CraftSim.UTIL:FindBracketData(indexValue, t)
+    local dataList = {}
+    for index, data in pairs(t) do
+        tinsert(dataList, { index = index, data = data })
+    end
+    table.sort(dataList, function(a, b)
+        return a.index < b.index
+    end)
+
+    -- find bracket
+    for i, data in ipairs(dataList) do
+        local indexStart = data.index
+        if indexValue >= indexStart then
+            local nextData = dataList[i + 1]
+            local indexEnd = (nextData and nextData.index)
+
+            if not indexEnd then return data, nil end
+
+            if indexValue <= indexEnd then
+                return data, nextData
+            end
+        end
+    end
+
+    return nil, nil
+end

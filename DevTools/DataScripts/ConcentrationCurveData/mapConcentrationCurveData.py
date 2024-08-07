@@ -25,13 +25,19 @@ if __name__ == '__main__':
 
                 if craftingDataID not in concentrationCostDataTable:
                     concentrationCostDataTable[craftingDataID] = {
-                        "costConstant": None,
+                        "costConstantData": {},
                         "curveData": {}
                     }
 
                 for curvePoint in curvePointTable:
                     if curvePoint["CurveID"] == constantCurveID:
-                        concentrationCostDataTable[craftingDataID]["costConstant"] = float(curvePoint["Pos_1"])
+                        if curvePoint["Pos_0"] is not None:
+                            if curvePoint["Pos_1"] is not None:
+
+                                recipeDifficultyThreshold = float(curvePoint["Pos_0"])
+                                multiplier = float(curvePoint["Pos_1"])
+                                
+                                concentrationCostDataTable[craftingDataID]["costConstantData"][recipeDifficultyThreshold] = multiplier
 
                 for curvePoint in curvePointTable:
                     if curvePoint["CurveID"] == curveID:
