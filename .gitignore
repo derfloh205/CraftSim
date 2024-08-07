@@ -2,3 +2,4 @@
 .release/
 Libs/
 !Libs/classic.lua
+DevTools/DataScripts/__pycache__

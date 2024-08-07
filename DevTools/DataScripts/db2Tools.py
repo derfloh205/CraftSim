@@ -1,4 +1,4 @@
-import requests
+import httpx
 import os
 import luadata
 import csv
@@ -11,11 +11,10 @@ def downloadWagoTablesCSV(db2Tables):
         print("Downloading " + table + ".csv")
         filename = dataDirectoryPrefix + table + ".csv"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        with requests.Session() as s:
-            download = s.get("https://wago.tools/db2/"+table+"/csv")
-            decoded_content = download.content.decode('utf-8')
-            with open(filename, 'w') as f:
-                f.writelines(decoded_content)
+        download = httpx.get("https://wago.tools/db2/"+table+"/csv")
+        decoded_content = download.content.decode('utf-8')
+        with open(filename, 'w') as f:
+            f.writelines(decoded_content)
 
 def loadCSVTables(db2Tables):
     csvTables = []
