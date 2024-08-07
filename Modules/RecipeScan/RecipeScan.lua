@@ -179,8 +179,10 @@ function CraftSim.RECIPE_SCAN.FilterRecipeInfo(crafterUID, recipeInfo)
     end)
 
     if recipeExpansionIncluded and recipeInfo.isEnchantingRecipe then
+        local baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfo(recipeInfo.recipeID, {}, nil, false)
+        if not baseOperationInfo then return false end
         -- except if its a tinker with no output
-        local enchantData = CraftSim.ENCHANT_RECIPE_DATA[recipeInfo.recipeID]
+        local enchantData = CraftSim.ENCHANT_RECIPE_DATA[baseOperationInfo.craftingDataID]
         if enchantData then
             if enchantData.noOutputTinker then
                 printF("Is noOutputTinker: Exclude")

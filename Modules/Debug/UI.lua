@@ -440,17 +440,6 @@ function CraftSim.DEBUG.UI:InitModuleToolsMainTab(mainTab)
             end
         end
     }
-
-    content.printRecipeIDsButton = GGUI.Button {
-        label = "Print Recipe IDs",
-        parent = content,
-        anchorParent = content.inspectOpenRecipeButton.frame,
-        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
-        adjustWidth = true, sizeX = 15, sizeY = 25,
-        clickCallback = function()
-            CraftSim.DEBUG:PrintRecipeIDs(CraftSim.INIT.currentRecipeID)
-        end
-    }
 end
 
 function CraftSim.DEBUG.UI:InitModuleToolsRecipeScanTab(recipeScanTab)

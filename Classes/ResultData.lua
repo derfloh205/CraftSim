@@ -40,15 +40,17 @@ function CraftSim.ResultData:UpdatePossibleResultItems()
     self.itemsByQuality = {}
     local craftingReagentInfoTbl = recipeData.reagentData:GetCraftingReagentInfoTbl()
 
-    if recipeData.isEnchantingRecipe then
-        if not CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID] then
-            print("CraftSim: Enchant Recipe Missing in Data: " .. recipeData.recipeID)
+
+    if recipeData.isEnchantingRecipe and recipeData.baseOperationInfo then
+        local craftingDataID = self.recipeData.baseOperationInfo.craftingDataID
+        if not CraftSim.ENCHANT_RECIPE_DATA[craftingDataID] then
+            print("CraftSim: Enchant Recipe Missing in Data: " .. recipeData.recipeID .. "/" .. craftingDataID)
             return
         end
         local itemIDs = {
-            CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID].q1,
-            CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID].q2,
-            CraftSim.ENCHANT_RECIPE_DATA[recipeData.recipeID].q3,
+            CraftSim.ENCHANT_RECIPE_DATA[craftingDataID].q1,
+            CraftSim.ENCHANT_RECIPE_DATA[craftingDataID].q2,
+            CraftSim.ENCHANT_RECIPE_DATA[craftingDataID].q3,
         }
 
         for _, itemID in pairs(itemIDs) do

@@ -90,48 +90,6 @@ function CraftSim.DEBUG:CompareStatData()
     end
 end
 
-function CraftSim.DEBUG:PrintRecipeIDs(recipeID)
-    recipeID = recipeID or CraftSim.INIT.currentRecipeData.recipeID
-    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
-
-    if not recipeInfo then
-        print("No RecipeInfo found")
-        return
-    end
-
-    local itemID = nil
-    if recipeInfo.isEnchantingRecipe then
-        local enchantOutput = CraftSim.ENCHANT_RECIPE_DATA[recipeInfo.recipeID]
-        if enchantOutput then
-            itemID = CraftSim.ENCHANT_RECIPE_DATA[recipeInfo.recipeID].q1
-        else
-            print("no output for enchanting recipe found")
-            return
-        end
-    else
-        itemID = CraftSim.GUTIL:GetItemIDByLink(recipeInfo.hyperlink)
-    end
-    local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType,
-    itemStackCount, itemEquipLoc, itemTexture, sellPrice, classID, subclassID, bindType,
-    expacID, setID, isCraftingReagent
-                                      = C_Item.GetItemInfo(itemID)
-    ---@diagnostic disable-next-line: missing-parameter
-    local data                        = C_TradeSkillUI.GetCategoryInfo(recipeInfo.categoryID)
-    local inventoryType               = C_Item.GetItemInventoryTypeByID(itemID)
-
-    print("--")
-    print("RecipeID: " .. recipeInfo.recipeID)
-    print("ItemLevel: " .. tostring(recipeInfo.itemLevel))
-    print("SubTypeID: " .. subclassID)
-    print("SubType: " .. itemSubType)
-    print("itemEquipLoc: " .. tostring(itemEquipLoc))
-    print("inventoryType: " .. tostring(inventoryType))
-    print("Category: " .. data.name)
-    print("ID: " .. recipeInfo.categoryID)
-    print("ParentCategoryID: " .. tostring(data.parentCategoryID))
-    print("ParentSectionID: " .. tostring(data.parentSectionID))
-end
-
 function CraftSim.DEBUG:ProfilingUpdate(label)
     local time = debugprofilestop()
     local diff = time - CraftSim.DEBUG.profilings[label]
