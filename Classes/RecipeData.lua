@@ -474,21 +474,21 @@ function CraftSim.RecipeData:GetConcentrationCost()
         local skillStart = baseDifficulty * recipeDifficultyFactor
         local skillEnd = baseDifficulty * nextRecipeDifficultyFactor
 
-        CraftSim.DEBUG:InspectTable({
-            concentrationCurveData = concentrationCurveData or {},
-            curveConstantData = curveConstantData or {},
-            nextCurveConstantData = nextCurveConstantData or {},
-            curveData = curveData or {},
-            nextCurveData = nextCurveData or {},
-            calculationData = {
-                curveConstant = curveConstant,
-                playerSkill = playerSkill,
-                skillStart = skillStart,
-                skillEnd = skillEnd,
-                skillCurveValueStart = skillCurveValueStart,
-                skillCurveValueEnd = skillCurveValueEnd,
-            },
-        }, "debugGetConcentrationCost")
+        -- CraftSim.DEBUG:InspectTable({
+        --     concentrationCurveData = concentrationCurveData or {},
+        --     curveConstantData = curveConstantData or {},
+        --     nextCurveConstantData = nextCurveConstantData or {},
+        --     curveData = curveData or {},
+        --     nextCurveData = nextCurveData or {},
+        --     calculationData = {
+        --         curveConstant = curveConstant,
+        --         playerSkill = playerSkill,
+        --         skillStart = skillStart,
+        --         skillEnd = skillEnd,
+        --         skillCurveValueStart = skillCurveValueStart,
+        --         skillCurveValueEnd = skillCurveValueEnd,
+        --     },
+        -- }, "debugGetConcentrationCost")
 
         return CraftSim.UTIL:CalculateConcentrationCost(
             curveConstant,
