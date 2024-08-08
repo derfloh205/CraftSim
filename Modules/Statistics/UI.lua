@@ -341,8 +341,9 @@ function CraftSim.STATISTICS.UI:InitConcentrationTab(tab)
         parent = content,
         anchorParent = content.graphTitle.frame,
         anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
-        text = "This graph shows concentration cost scaling based on player skill.\n" ..
-            ""
+        text = "Concentration Cost based on Player Skill for given Recipe\n" ..
+            f.bb("X Axis: ") .. " Player Skill\n" ..
+            f.bb("Y Axis: ") .. " Concentration Cost",
     }
 end
 

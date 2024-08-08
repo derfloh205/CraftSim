@@ -19,6 +19,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.P .. "Optional Reagents now based on Datamined Data",
         f.P .. "Enchant Mapping now based on Datamined Data",
         f.P .. "Concentration Calculation now based on Datamined Data",
+        f.a .. f.r("WARNING: ") .. "Cost Simulation only working in TWW BETA",
         f.P .. "Specialization Info now based on Datamined Data",
         f.P .. f.bb("Statistics Module"),
         f.a .. "Added a Concentration Cost Visualization",
