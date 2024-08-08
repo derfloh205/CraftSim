@@ -2,7 +2,7 @@ import sys
 sys.path.append('../')
 import wagoTools
 
-buildVersion = "11.0.0.55960"
+buildVersion = "11.0.2.56044"
 wagoTables = ["CraftingData", "CraftingDifficulty", "CurvePoint"]
 
 if __name__ == '__main__':
@@ -15,10 +15,15 @@ if __name__ == '__main__':
 
     concentrationCostDataTable = {}
 
+    print("Mapping Concentration Curve Data")
+
+    counter = 0
+    total = len(craftingDataTable)
     for craftingData in craftingDataTable:
+        counter = counter + 1
         craftingDataID = int(craftingData["ID"])
         craftingDifficultyID = craftingData["CraftingDifficultyID"]
-        print(f"Mapping Crafting Data: {str(craftingDataID)}")
+        wagoTools.updateProgressBar(counter, total, craftingDataID)
         for craftingDifficulty in craftingDifficultyTable:
             if craftingDifficulty["ID"] == craftingDifficultyID:
                 curveID = craftingDifficulty["ConcentrationSkillCurveID"]

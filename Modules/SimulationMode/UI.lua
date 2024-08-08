@@ -388,18 +388,22 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             simModeDetailsFrame.content.resourcefulnessBonusTitle, "TOPLEFT", 0, offsetY)
         simModeDetailsFrame.content.baseSkillTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SKILL_LABEL))
 
-        simModeDetailsFrame.content.baseSkillMod = CraftSim.FRAME:CreateNumericInput(
-            "CraftSimSimModeSkillModInput", simModeDetailsFrame.content, simModeDetailsFrame.content.resourcefulnessMod,
-            "TOPRIGHT", "TOPRIGHT", 0, offsetY * 2, 30, 20, 0, true,
-            function(_, userInput)
-                CraftSim.SIMULATION_MODE:OnStatModifierChanged(userInput)
-            end)
+        simModeDetailsFrame.content.baseSkillMod = GGUI.NumericInput {
+            parent = simModeDetailsFrame.content, anchorParent = simModeDetailsFrame.content.resourcefulnessMod,
+            anchorA = "TOPRIGHT", anchorB = "TOPRIGHT", allowDecimals = false, offsetX = 0, offsetY = offsetY * 2, sizeX = 30, sizeY = 20,
+            initialValue = 0, incrementOneButtons = true, onNumberValidCallback = function(input)
+            CraftSim.SIMULATION_MODE:OnStatModifierChanged(true)
+        end,
+            borderAdjustHeight = 1.2, borderAdjustWidth = 1.3,
+        }
         frames.baseSkillMod = simModeDetailsFrame.content.baseSkillMod
         simModeDetailsFrame.content.baseSkillMod.stat = CraftSim.CONST.STAT_MAP.CRAFTING_DETAILS_SKILL
 
         simModeDetailsFrame.content.baseSkillValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
             'GameFontHighlight')
-        simModeDetailsFrame.content.baseSkillValue:SetPoint("RIGHT", simModeDetailsFrame.content.baseSkillMod, "LEFT",
+        simModeDetailsFrame.content.baseSkillValue:SetPoint("RIGHT",
+            simModeDetailsFrame.content.baseSkillMod.textInput.frame,
+            "LEFT",
             valueOffsetX, valueOffsetY)
         simModeDetailsFrame.content.baseSkillValue:SetText("0")
 
@@ -417,7 +421,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
         simModeDetailsFrame.content.reagentSkillIncreaseValue = simModeDetailsFrame.content:CreateFontString(nil,
             'OVERLAY', 'GameFontHighlight')
-        simModeDetailsFrame.content.reagentSkillIncreaseValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod,
+        simModeDetailsFrame.content.reagentSkillIncreaseValue:SetPoint("TOP",
+            simModeDetailsFrame.content.baseSkillMod.textInput.frame,
             "TOP", valueOffsetX - 15, offsetY - 5)
         simModeDetailsFrame.content.reagentSkillIncreaseValue:SetText("0")
 
@@ -434,7 +439,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
 
         simModeDetailsFrame.content.reagentMaxFactorValue = simModeDetailsFrame.content:CreateFontString(nil, 'OVERLAY',
             'GameFontHighlight')
-        simModeDetailsFrame.content.reagentMaxFactorValue:SetPoint("TOP", simModeDetailsFrame.content.baseSkillMod, "TOP",
+        simModeDetailsFrame.content.reagentMaxFactorValue:SetPoint("TOP",
+            simModeDetailsFrame.content.baseSkillMod.textInput.frame, "TOP",
             valueOffsetX - 15, offsetY * 2 - 5)
         simModeDetailsFrame.content.reagentMaxFactorValue:SetText("0")
 
