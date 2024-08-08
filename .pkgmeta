@@ -12,6 +12,7 @@ externals:
   Libs/AceSerializer-3.0: https://repos.curseforge.com/wow/ace3/trunk/AceSerializer-3.0
   Libs/LibCompress: https://repos.curseforge.com/wow/libcompress/trunk
   Libs/LibDBIcon-1.0: https://repos.curseforge.com/wow/libdbicon-1-0/trunk
+  Libs/LibGraph-2.0: https://repos.curseforge.com/wow/libgraph-2-0/trunk
 
   Libs/GUTIL:
     url: https://github.com/derfloh205/GUTIL.git
@@ -23,5 +24,6 @@ externals:
 ignore:
   - Libs/LibStub/tests
   - Libs/**/*.textile
+  - Libs/**/*.txt
   - README.md
   - DevTools
