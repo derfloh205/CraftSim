@@ -9,6 +9,8 @@ CraftSim.CONST.infoBoxSizeX = 500
 CraftSim.CONST.infoBoxSizeY = 400
 ----------------
 
+CraftSim.CONST.CURRENT_BETA_BUILD = "11.0.2"
+
 CraftSim.CONST.FEATURE_TOGGLES = {
 }
 

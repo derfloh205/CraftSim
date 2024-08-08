@@ -31,6 +31,11 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     self.concentrating = false
     self.concentrationCost = 0
 
+    ---@class CraftSim.ConcentrationCurveData
+    ---@field costConstantData table<number, number>
+    ---@field curveData table<number, number>
+    self.concentrationCurveData = nil
+
     -- important for recipedata of alts to check if data was cached (and for any recipe data creation b4 tradeskill is ready)
     self.specializationDataCached = false
     self.operationInfoCached = false
@@ -443,17 +448,16 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
 end
 
 ---@return number concentrationCost
----@return CraftSim.ConcentrationCurveData? curveData
 function CraftSim.RecipeData:GetConcentrationCost()
     if not self.baseOperationInfo then return 0, nil end
     local craftingDataID = self.baseOperationInfo.craftingDataID
 
-    ---@class CraftSim.ConcentrationCurveData
-    ---@field costConstantData table<number, number>
-    ---@field curveData table<number, number>
-    local concentrationCurveData = CraftSim.CONCENTRATION_CURVE_DATA[craftingDataID]
+    self.concentrationCurveData = CraftSim.CONCENTRATION_CURVE_DATA[craftingDataID]
 
-    if concentrationCurveData then
+    local isBeta = CraftSim.UTIL:IsBetaBuild()
+
+    -- try to only enable it for simulation mode?
+    if self.concentrationCurveData and isBeta and CraftSim.SIMULATION_MODE.isActive then
         -- get skill bracket and associated start and end skillCurveValues
         local playerSkill = self.professionStats.skill.value
         local baseDifficulty = self.baseOperationInfo.baseDifficulty -- TODO: what about varying difficulty?
@@ -461,9 +465,9 @@ function CraftSim.RecipeData:GetConcentrationCost()
 
         -- recipeDifficulty here or playerSkill ?
         local curveConstantData, nextCurveConstantData = CraftSim.UTIL:FindBracketData(playerSkill,
-            concentrationCurveData.costConstantData)
+            self.concentrationCurveData.costConstantData)
         local curveData, nextCurveData = CraftSim.UTIL:FindBracketData(playerSkillFactor,
-            concentrationCurveData.curveData)
+            self.concentrationCurveData.curveData)
 
         local curveConstant = CraftSim.UTIL:CalculateCurveConstant(baseDifficulty, curveConstantData,
             nextCurveConstantData)
@@ -475,7 +479,7 @@ function CraftSim.RecipeData:GetConcentrationCost()
         local skillEnd = baseDifficulty * nextRecipeDifficultyFactor
 
         -- CraftSim.DEBUG:InspectTable({
-        --     concentrationCurveData = concentrationCurveData or {},
+        --     concentrationCurveData = self.concentrationCurveData or {},
         --     curveConstantData = curveConstantData or {},
         --     nextCurveConstantData = nextCurveConstantData or {},
         --     curveData = curveData or {},
@@ -496,9 +500,10 @@ function CraftSim.RecipeData:GetConcentrationCost()
             skillStart,
             skillEnd,
             skillCurveValueStart,
-            skillCurveValueEnd), concentrationCurveData
+            skillCurveValueEnd)
     else
         -- if by any chance the data for this recipe is not mapped in the db2 data, get a good guess via the api
+        -- or if we are not in the current beta (08.08.2024)
         -- this works for reagent skill but not for any custom skill changes like in simulation mode or when simming different skill from profession tools...
 
         -- includes required and optionals
@@ -515,7 +520,7 @@ function CraftSim.RecipeData:GetConcentrationCost()
                 false)
         end
 
-        return (operationInfo and operationInfo.concentrationCost) or 0, nil
+        return (operationInfo and operationInfo.concentrationCost) or 0
     end
 end
 

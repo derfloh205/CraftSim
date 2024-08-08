@@ -360,3 +360,9 @@ function CraftSim.UTIL:FindBracketData(indexValue, t)
 
     return nil, nil
 end
+
+function CraftSim.UTIL:IsBetaBuild()
+    local build = select(1, GetBuildInfo())
+
+    return build == CraftSim.CONST.CURRENT_BETA_BUILD
+end
