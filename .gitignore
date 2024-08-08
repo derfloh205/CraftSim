@@ -3,3 +3,4 @@
 Libs/
 !Libs/classic.lua
 DevTools/DataScripts/__pycache__
+*.csv

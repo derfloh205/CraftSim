@@ -1,14 +1,14 @@
 import sys
 sys.path.append('../')
-import db2Tools
+import wagoTools
 
 buildVersion = "11.0.2.55959" # Beta 07.08.2024
-db2Tables = ["CraftingData", "CraftingDataEnchantQuality"]
+wagoTables = ["CraftingData", "CraftingDataEnchantQuality"]
 
 if __name__ == '__main__':
     args = sys.argv[1:]
     download = len(args) > 0 and args[0] == "true"
-    csvTables = db2Tools.getWagoTables(db2Tables, download, buildVersion)
+    csvTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
     craftingDataTable = csvTables[0]
     enchantDataTable = csvTables[1]
 
@@ -28,5 +28,5 @@ if __name__ == '__main__':
 
 
 
-    db2Tools.writeLuaTable(enchantDataMappedTable, "EnchantData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.ENCHANT_RECIPE_DATA = ", buildVersion)
+    wagoTools.writeLuaTable(enchantDataMappedTable, "EnchantData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.ENCHANT_RECIPE_DATA = ", buildVersion)
         

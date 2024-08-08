@@ -1,55 +1,91 @@
 import sys
 sys.path.append('../')
-import db2Tools
+import wagoTools
 
-buildVersion = "11.0.2.55959" # Beta 07.08.2024
-db2Tables = ["Item", "ModifiedCraftingReagentItem", "CraftingReagentEffect", "ProfessionEffect", "ProfessionEffectType"]
+buildVersion = "11.0.2.56044" # Beta 08.08.2024
+wagoTables = ["Item", "ModifiedCraftingReagentItem", "CraftingReagentEffect", "ProfessionEffect", "ProfessionEffectType", "CraftingReagentQuality", "ItemSparse"]
+
+def printD(text, enabled):
+    if enabled:
+        print(text)
 
 if __name__ == '__main__':
     args = sys.argv[1:]
     download = len(args) > 0 and args[0] == "true"
-    csvTables = db2Tools.getWagoTables(db2Tables, download, buildVersion)
-    Item = csvTables[0]
-    ModifiedCraftingReagentItem = csvTables[1]
-    CraftingReagentEffect = csvTables[2]
-    ProfessionEffect = csvTables[3]
-    ProfessionEffectType = csvTables[4]
+    wagoTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
+    Item = wagoTables[0]
+    ModifiedCraftingReagentItem = wagoTables[1]
+    CraftingReagentEffect = wagoTables[2]
+    ProfessionEffect = wagoTables[3]
+    ProfessionEffectType = wagoTables[4]
+    CraftingReagentQualityTable = wagoTables[5]
 
     # itemID -> qualityID, {stat: statvalue}
     optionalReagentsDataTable = {}
 
-    for itemData in Item:
-        if itemData["ClassID"] == "7": # TradeSkill
-            isFinishing = itemData["SubclassID"] == "19"
-            isOptional = itemData["SubclassID"] == "18"
-            qualityID = int(itemData["CraftingQualityID"])
-            itemID = int(itemData["ID"])
-            if isFinishing or isOptional:
-                modifiedCraftingReagentItemID = itemData["ModifiedCraftingReagentItemID"]
-                for modifiedCraftingReagentItemData in ModifiedCraftingReagentItem:
-                    if modifiedCraftingReagentItemData["ID"] == modifiedCraftingReagentItemID:
-                        modifiedCraftingCategoryID = modifiedCraftingReagentItemData["ModifiedCraftingCategoryID"]
-                        for craftingReagentEffectData in CraftingReagentEffect:
-                            if craftingReagentEffectData["ModifiedCraftingCategoryID"] == modifiedCraftingCategoryID:
-                                professionEffectID = craftingReagentEffectData["ProfessionEffectID"]
-                                for professionEffectData in ProfessionEffect:
-                                    if professionEffectData["ID"] == professionEffectID:
-                                        amount = int(professionEffectData["Amount"])
-                                        professionEffectTypeEnumID = professionEffectData["ProfessionEffectTypeEnumID"]
-                                        if itemID not in optionalReagentsDataTable:
-                                            optionalReagentsDataTable[itemID] = {
-                                                "stats": []
-                                            }
-                                        if qualityID != None:
-                                            optionalReagentsDataTable[itemID]["qualityID"] = qualityID
-                                        for professionEffectTypeData in ProfessionEffectType:
-                                            if professionEffectTypeData["ID"] == professionEffectTypeEnumID:
-                                                stat = professionEffectTypeData["Name_lang"]
-                                                optionalReagentsDataTable[itemID]["stats"].append({
-                                                    "stat": stat.replace("(DNT - write manually)", "").replace("(DNT)", "").replace(" ", "").lower(),
-                                                    "amount": amount
-                                                })
+    optionalReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "18"}})
+    finishingReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "19"}})
 
+    Reagents = optionalReagents + finishingReagents
 
-    db2Tools.writeLuaTable(optionalReagentsDataTable, "OptionalReagentData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.OPTIONAL_REAGENT_DATA = ", buildVersion)
+    for reagentData in Reagents:
+        qualityID = int(reagentData["CraftingQualityID"])
+        itemID = int(reagentData["ID"])
+        modifiedCraftingReagentItemID = reagentData["ModifiedCraftingReagentItemID"]
+
+        debug = False
+
+        printD(f"Item: {itemID}", debug)
+        printD(f"modifiedCraftingReagentItemID: {modifiedCraftingReagentItemID}", debug)
+
+        craftingReagentQuality = wagoTools.searchTable(CraftingReagentQualityTable, {"singleResult": True, "conditions": {"ItemID": str(itemID)}})
+
+        if craftingReagentQuality:
+            difficultyIncrease = int(craftingReagentQuality["MaxDifficultyAdjustment"])
+            if difficultyIncrease > 0:
+                optionalReagentsDataTable[itemID] = {
+                    "qualityID": qualityID,
+                    "stats": [
+                        {
+                            "increasedifficulty": difficultyIncrease
+                        }
+                    ]
+                }
+                continue
+
+        modifiedCraftingReagent = wagoTools.searchTable(ModifiedCraftingReagentItem, {"singleResult": True, "conditions": {"ID": modifiedCraftingReagentItemID}})
+        if not modifiedCraftingReagent:
+            continue
+
+        printD(f"categoryID: {modifiedCraftingReagent["ModifiedCraftingCategoryID"]}", debug)
+
+        craftingReagentEffects = wagoTools.searchTable(CraftingReagentEffect, {"conditions": {"ModifiedCraftingCategoryID": modifiedCraftingReagent["ModifiedCraftingCategoryID"]}})
+
+        if len(craftingReagentEffects) == 0:
+            continue
+
+        statList = []
+        for craftingReagentEffect in craftingReagentEffects:
+            professionEffects = wagoTools.searchTable(ProfessionEffect, {"conditions": {"ID": craftingReagentEffect["ProfessionEffectID"]}})
+            for professionEffect in professionEffects:
+                professionEffectEnum = wagoTools.searchTable(ProfessionEffectType, {"singleResult": True, "conditions": {"EnumID": professionEffect["ProfessionEffectTypeEnumID"]}})
+                if not professionEffectEnum:
+                    continue
+                statName = professionEffectEnum["Name_lang"].replace("(DNT - write manually)", "").replace("(DNT - write manually!)", "").replace("(DNT)", "").replace(" ", "").lower()
+                if statName == "dummyeffectfor#tokenization":
+                    continue
+                amount = int(professionEffect["Amount"])
+                statList.append({
+                    "stat": statName,
+                    "amount": amount
+                })
+                printD(f"- ProfessionEffect {professionEffect["ID"]} / {professionEffectEnum["ID"]} : {statName} -> {amount}", debug)
+
+        if len(statList) > 0:
+            optionalReagentsDataTable[itemID] = {
+                "qualityID": qualityID,
+                "stats": statList
+            }
+
+    wagoTools.writeLuaTable(optionalReagentsDataTable, "OptionalReagentData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.OPTIONAL_REAGENT_DATA = ", buildVersion)
         

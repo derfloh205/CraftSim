@@ -1,14 +1,14 @@
 import sys
 sys.path.append('../')
-import db2Tools
+import wagoTools
 
 buildVersion = "11.0.0.55960"
-db2Tables = ["CraftingData", "CraftingDifficulty", "CurvePoint"]
+wagoTables = ["CraftingData", "CraftingDifficulty", "CurvePoint"]
 
 if __name__ == '__main__':
     args = sys.argv[1:]
     download = len(args) > 0 and args[0] == "true"
-    csvTables = db2Tools.getWagoTables(db2Tables, download, buildVersion)
+    csvTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
     craftingDataTable = csvTables[0]
     craftingDifficultyTable = csvTables[1]
     curvePointTable = csvTables[2]
@@ -50,5 +50,5 @@ if __name__ == '__main__':
 
                                 concentrationCostDataTable[craftingDataID]["curveData"][recipeDifficultyThreshold] = skillCurveValue
 
-    db2Tools.writeLuaTable(concentrationCostDataTable, "ConcentrationCurveData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.CONCENTRATION_CURVE_DATA = ", buildVersion)
+    wagoTools.writeLuaTable(concentrationCostDataTable, "ConcentrationCurveData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.CONCENTRATION_CURVE_DATA = ", buildVersion)
         
