@@ -7,14 +7,23 @@ dataDirectoryPrefix = "Data/"
 resultDirectoryPrefix = "Result/"
 latestDirectoryPrefix = "Latest/"
 
+# just a utility to make it easier to wait ;D
+def updateProgressBar(progress, total, label=""):
+    percent = 100 * (progress / float(total))
+    bar = '█' * int(percent) + '-' * (100 - int(percent))
+    print(f"\r|{bar}| {percent:.2f}% {label}", end='                                                     \r')
+
 def getBuildDirectoryPrefix(buildVersion):
     if buildVersion:
         return f"{buildVersion}/"
     return latestDirectoryPrefix
 
 def downloadWagoTablesCSV(wagoTables, buildVersion):
+    count = 0
+    total = len(wagoTables)
     for table in wagoTables:
-        print(f"Downloading {table}.csv")
+        count = count + 1
+        updateProgressBar(count, total, table)
         filename = f"{dataDirectoryPrefix}{getBuildDirectoryPrefix(buildVersion)}{table}.csv"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         buildParameter = f"?build={buildVersion}"
@@ -22,13 +31,13 @@ def downloadWagoTablesCSV(wagoTables, buildVersion):
             buildParameter = ""
         download = httpx.get(f"https://wago.tools/db2/{table}/csv{buildParameter}")
         decoded_content = download.content.decode('utf-8')
-        with open(filename, 'w') as f:
+        with open(filename, 'w', errors="replace") as f:
             f.writelines(decoded_content)
 
 def loadCSVTables(wagoTables, buildVersion):
     csvTables = []
     for table in wagoTables:
-        print(f"Loading Table: {table}")
+        print(f"Loading {table}: ", end='')
         with open(f"{dataDirectoryPrefix}{getBuildDirectoryPrefix(buildVersion)}{table}.csv", mode='r') as file:
             csv_reader = csv.DictReader(file)
             data_table = []
@@ -40,7 +49,9 @@ def loadCSVTables(wagoTables, buildVersion):
 
 def getWagoTables(wagoTables, download, buildVersion):
     if download:
+        print("Downloading Tables")
         downloadWagoTablesCSV(wagoTables, buildVersion)
+    print("Loading Tables")
     return loadCSVTables(wagoTables, buildVersion)
 
 # searchTerms: {multiple: boolean, conditions: dict}
@@ -64,10 +75,6 @@ def searchTable(table, searchTerms):
         return None
             
     return results
-
-
-
-
 
 def writeLuaTable(dataTable, fileName, prefix, buildVersion):
     print(f"Writing Lua File: {fileName}")

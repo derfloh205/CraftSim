@@ -19,6 +19,7 @@ if __name__ == '__main__':
     ProfessionEffect = wagoTables[3]
     ProfessionEffectType = wagoTables[4]
     CraftingReagentQualityTable = wagoTables[5]
+    ItemSparse = wagoTables[6]
 
     # itemID -> qualityID, {stat: statvalue}
     optionalReagentsDataTable = {}
@@ -28,14 +29,33 @@ if __name__ == '__main__':
 
     Reagents = optionalReagents + finishingReagents
 
+    print("Mapping Optional Items")
+    counter = 0
+    reagentCount = len(Reagents)
     for reagentData in Reagents:
-        qualityID = int(reagentData["CraftingQualityID"])
+        counter = counter + 1
         itemID = int(reagentData["ID"])
-        modifiedCraftingReagentItemID = reagentData["ModifiedCraftingReagentItemID"]
 
         debug = False
 
-        printD(f"Item: {itemID}", debug)
+        wagoTools.updateProgressBar(counter, reagentCount, itemID)
+
+        itemSparseData = wagoTools.searchTable(ItemSparse, {"singleResult": True, "conditions": {"ID": str(itemID)}})
+
+        if not itemSparseData:
+            continue # item does not exist
+
+        itemName = itemSparseData["Display_lang"]
+
+        if "elete me" in itemName.lower():
+            continue
+
+        expansionID = int(itemSparseData["ExpansionID"])
+        qualityID = int(reagentData["CraftingQualityID"])
+        
+        modifiedCraftingReagentItemID = reagentData["ModifiedCraftingReagentItemID"]
+        
+        
         printD(f"modifiedCraftingReagentItemID: {modifiedCraftingReagentItemID}", debug)
 
         craftingReagentQuality = wagoTools.searchTable(CraftingReagentQualityTable, {"singleResult": True, "conditions": {"ItemID": str(itemID)}})
@@ -45,6 +65,8 @@ if __name__ == '__main__':
             if difficultyIncrease > 0:
                 optionalReagentsDataTable[itemID] = {
                     "qualityID": qualityID,
+                    "name": itemName,
+                    "expansionID": expansionID,
                     "stats": [
                         {
                             "increasedifficulty": difficultyIncrease
@@ -84,7 +106,9 @@ if __name__ == '__main__':
         if len(statList) > 0:
             optionalReagentsDataTable[itemID] = {
                 "qualityID": qualityID,
-                "stats": statList
+                "name": itemName,
+                "expansionID": expansionID,
+                "stats": statList,
             }
 
     wagoTools.writeLuaTable(optionalReagentsDataTable, "OptionalReagentData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.OPTIONAL_REAGENT_DATA = ", buildVersion)
