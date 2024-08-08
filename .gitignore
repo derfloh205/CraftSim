@@ -3,4 +3,6 @@
 Libs/
 !Libs/classic.lua
 DevTools/DataScripts/__pycache__
-*.csv
+DevTools/DataScripts/**/Result/
+DevTools/DataScripts/**/Data/
+!**/*.py
