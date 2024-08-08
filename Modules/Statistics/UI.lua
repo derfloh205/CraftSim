@@ -466,18 +466,22 @@ function CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
             end)
             graph:SetGridSpacing(recipeDifficulty / 10, maxCost / 10)
 
-            CraftSim.DEBUG:InspectTable(points, "Graph Points")
             graph:AddDataSeries(points, CraftSim.STATISTICS.UI.CONCENTRATION_GRAPH_LINE_COLOR)
 
             -- draw current skill?
             local currentSkill = recipeData.professionStats.skill.value
             local currentCost = recipeData.concentrationCost
-            local yOffset = (maxCost / 100) * 3 -- % of yMax
+            local yOffset = (maxCost / 100) * 1.5        -- % of yMax
+            local xOffset = (recipeDifficulty / 100) * 1 -- % of xMax
 
-            graph:AddDataSeries({ { currentSkill, currentCost - yOffset }, { currentSkill, currentCost + yOffset } },
+            -- draw it in X shape
+            graph:AddDataSeries(
+                { { currentSkill - xOffset, currentCost - yOffset }, { currentSkill + xOffset, currentCost + yOffset } },
                 { 0, 1, 0, 1 })
-
-            local fontString = graph:FindFontString()
+            -- draw it in X shape
+            graph:AddDataSeries(
+                { { currentSkill - xOffset, currentCost + yOffset }, { currentSkill + xOffset, currentCost - yOffset } },
+                { 0, 1, 0, 1 })
         end
     end
 end

@@ -531,10 +531,6 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     local itemStats = self.professionGearSet.professionStats
     local buffStats = self.buffData.professionStats
 
-    if self.supportsQualities then
-        self.concentrationCost = self:GetConcentrationCost()
-    end
-
     self.professionStats:Clear()
 
     self.professionStats:add(self.baseProfessionStats)
@@ -559,6 +555,10 @@ function CraftSim.RecipeData:UpdateProfessionStats()
     -- since ooey gooey chocolate gives us math.huge on multicraft we need to limit it to 100%
     self.professionStats.multicraft.value = math.min(1 / self.professionStats.multicraft.percentMod,
         self.professionStats.multicraft.value)
+
+    if self.supportsQualities then
+        self.concentrationCost = self:GetConcentrationCost()
+    end
 end
 
 --- Updates professionStats based on reagentData and professionGearSet -> Then updates resultData based on professionStats -> Then updates priceData based on resultData

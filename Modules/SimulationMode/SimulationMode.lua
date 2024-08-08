@@ -154,7 +154,7 @@ function CraftSim.SIMULATION_MODE:UpdateProfessionStatModifiersByInputs()
     recipeData.professionStatModifiers.recipeDifficulty:addValue(recipeDifficultyMod)
 
     -- update skill based on input
-    local skillMod = CraftSim.UTIL:ValidateNumberInput(simulationModeFrames.baseSkillMod, true)
+    local skillMod = simulationModeFrames.baseSkillMod.currentValue
     recipeData.professionStatModifiers.skill:addValue(skillMod)
 
     -- update other stats
