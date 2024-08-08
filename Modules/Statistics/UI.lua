@@ -332,7 +332,7 @@ function CraftSim.STATISTICS.UI:InitConcentrationTab(tab)
         anchorPoints = { {
             anchorParent = content.concentrationCurveGraph,
             anchorA = "BOTTOM",
-            anchorB = "TOP"
+            anchorB = "TOP", offsetY = 5,
         } },
         text = "Concentration Cost Curve"
     }
@@ -468,6 +468,16 @@ function CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
 
             CraftSim.DEBUG:InspectTable(points, "Graph Points")
             graph:AddDataSeries(points, CraftSim.STATISTICS.UI.CONCENTRATION_GRAPH_LINE_COLOR)
+
+            -- draw current skill?
+            local currentSkill = recipeData.professionStats.skill.value
+            local currentCost = recipeData.concentrationCost
+            local yOffset = (maxCost / 100) * 3 -- % of yMax
+
+            graph:AddDataSeries({ { currentSkill, currentCost - yOffset }, { currentSkill, currentCost + yOffset } },
+                { 0, 1, 0, 1 })
+
+            local fontString = graph:FindFontString()
         end
     end
 end
