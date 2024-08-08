@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
         itemName = itemSparseData["Display_lang"]
 
-        if "elete me" in itemName.lower():
+        if "delete me" in itemName.lower():
             continue
 
         expansionID = int(itemSparseData["ExpansionID"])

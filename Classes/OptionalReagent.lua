@@ -10,19 +10,44 @@ function CraftSim.OptionalReagent:new(craftingReagent)
     self.item = Item:CreateFromItemID(craftingReagent.itemID)
     ---@type CraftSim.ProfessionStats
     self.professionStats = CraftSim.ProfessionStats()
-    local stats = CraftSim.OPTIONAL_REAGENT_DATA[craftingReagent.itemID]
+    local reagentData = CraftSim.OPTIONAL_REAGENT_DATA[craftingReagent.itemID]
 
-    if stats then
-        self.qualityID = stats.qualityID
-        self.professionStats.recipeDifficulty.value = stats.recipeDifficulty or 0
+    if reagentData then
+        self.qualityID = reagentData.qualityID
+        self.expansionID = reagentData.expansionID
+        self.name = reagentData.name
+
+        ---@type table<string, number>
+        local stats = reagentData.stats or {}
+
+        self.professionStats.recipeDifficulty.value = stats.increasedifficulty or 0
+
         self.professionStats.skill.value = stats.skill or 0
-
         self.professionStats.multicraft.value = stats.multicraft or 0
-
         self.professionStats.resourcefulness.value = stats.resourcefulness or 0
-        self.professionStats.resourcefulness:SetExtraValue(stats.resourcefulnessExtraItemsFactor)
+        self.professionStats.ingenuity.value = stats.ingenuity or 0
 
-        self.professionStats.craftingspeed:SetExtraValue(stats.craftingspeedBonusFactor)
+        if stats.reagentssavedfromresourcefulness then
+            self.professionStats.resourcefulness:SetExtraValue(stats.reagentssavedfromresourcefulness / 100)
+        end
+
+        if stats.ingenuityrefundincrease then
+            self.professionStats.ingenuity:SetExtraValue(stats.ingenuityrefundincrease / 100)
+        end
+
+        if stats.reduceconcentrationcost then
+            self.professionStats.ingenuity:SetExtraValue(stats.reduceconcentrationcost / 100, 2)
+        end
+
+        if stats.craftingspeed then
+            self.professionStats.craftingspeed:SetExtraValue(stats.craftingspeed / 100)
+        end
+
+        if stats.additionalitemscraftedwithmulticraft then
+            self.professionStats.multicraft:SetExtraValue(stats.additionalitemscraftedwithmulticraft / 100)
+        end
+
+        -- ignore: modifyskillgain
     end
 end
 

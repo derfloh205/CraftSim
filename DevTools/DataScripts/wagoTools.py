@@ -77,7 +77,7 @@ def searchTable(table, searchTerms):
     return results
 
 def writeLuaTable(dataTable, fileName, prefix, buildVersion):
-    print(f"Writing Lua File: {fileName}")
+    print(f"\nWriting Lua File: {fileName}")
     fileName = f"{resultDirectoryPrefix}{getBuildDirectoryPrefix(buildVersion)}{fileName}.lua"
     os.makedirs(os.path.dirname(fileName), exist_ok=True)
     luadata.write(fileName, dataTable, encoding="utf-8", indent="\t", prefix=prefix)
