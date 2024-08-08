@@ -5,12 +5,15 @@ local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 
 local L = CraftSim.UTIL:GetLocalizer()
+local f = GUTIL:GetFormatter()
 
 ---@class CraftSim.STATISTICS
 CraftSim.STATISTICS = CraftSim.STATISTICS
 
 ---@class CraftSim.STATISTICS.UI
 CraftSim.STATISTICS.UI = {}
+
+CraftSim.STATISTICS.UI.CONCENTRATION_GRAPH_LINE_COLOR = { 0.93, 0.79, 0.0, 0.8 }
 
 local print = CraftSim.DEBUG:SetDebugPrint("STATISTICS")
 
@@ -102,7 +105,7 @@ function CraftSim.STATISTICS.UI:Init()
         })
 
         self:InitProbabilityTableTab(frame.content.probabilityTableTab)
-        --self:InitConcentrationTab(frame.content.concentrationTab)
+        self:InitConcentrationTab(frame.content.concentrationTab)
 
         GGUI.BlizzardTabSystem { frame.content.probabilityTableTab, frame.content.concentrationTab }
     end
@@ -210,7 +213,7 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
         anchorA = "TOP",
         anchorB = "TOP",
         text = L(CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE),
-        offsetY = -180,
+        offsetY = -150,
     })
 
     ---@type GGUI.FrameList | GGUI.Widget
@@ -299,62 +302,174 @@ function CraftSim.STATISTICS.UI:InitProbabilityTableTab(tab)
     })
 end
 
+function CraftSim.STATISTICS.UI:InitConcentrationTab(tab)
+    ---@class CraftSim.STATISTICS.UI.PROBABILITY_TABLE_TAB
+    tab = tab
+
+    ---@class CraftSim.STATISTICS.UI.PROBABILITY_TABLE_TAB.CONTENT : Frame
+    local content = tab.content
+
+    content.concentrationCurveGraph = CraftSim.LibGraph:CreateGraphLine("TestLineGraph", content, "TOP", "TOP", 0,
+        -20, 450, 320)
+    content.concentrationCurveGraph:SetXAxis(0, 1)
+    content.concentrationCurveGraph:SetYAxis(0, 1)
+    -- content.concentrationCurveGraph:LockYMin(true)
+    content.concentrationCurveGraph:SetGridSpacing(0.1, 0.3)
+    content.concentrationCurveGraph:SetGridColor({ 0.5, 0.5, 0.5, 0.5 })
+    content.concentrationCurveGraph:SetAxisDrawing(true, true)
+    content.concentrationCurveGraph:SetAxisColor({ 1.0, 1.0, 1.0, 1.0 })
+    content.concentrationCurveGraph:SetAutoScale(true)
+    content.concentrationCurveGraph:SetYLabels(true)
+
+    function content.concentrationCurveGraph:SetDefault()
+        local Data1 = { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } }
+
+        content.concentrationCurveGraph:AddDataSeries(Data1, CraftSim.STATISTICS.UI.CONCENTRATION_GRAPH_LINE_COLOR)
+    end
+
+    content.graphTitle = GGUI.Text {
+        parent = content,
+        anchorPoints = { {
+            anchorParent = content.concentrationCurveGraph,
+            anchorA = "BOTTOM",
+            anchorB = "TOP"
+        } },
+        text = "Concentration Cost Curve"
+    }
+
+    GGUI.HelpIcon {
+        parent = content,
+        anchorParent = content.graphTitle.frame,
+        anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
+        text = "This graph shows concentration cost scaling based on player skill.\n" ..
+            ""
+    }
+end
+
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
     local statisticsFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.STATISTICS)
     local meanProfit, probabilityTable = recipeData:GetAverageProfit()
 
-    if not probabilityTable or not statisticsFrame then
+    if not statisticsFrame then return end
+
+    if not probabilityTable then
+        statisticsFrame.content.concentrationTab.content.concentrationCurveGraph:ResetData()
+        statisticsFrame.content.concentrationTab.content.concentrationCurveGraph:AddDefault()
         return
     end
 
-    local content = statisticsFrame.content.probabilityTableTab
-        .content --[[@as CraftSim.STATISTICS.UI.PROBABILITY_TABLE_TAB.CONTENT]]
+    --- ProbabilityTableTab
+    do
+        local content = statisticsFrame.content.probabilityTableTab
+            .content --[[@as CraftSim.STATISTICS.UI.PROBABILITY_TABLE_TAB.CONTENT]]
 
-    content.probabilityTable:Remove()
+        content.probabilityTable:Remove()
 
-    for _, probabilityInfo in pairs(probabilityTable) do
-        content.probabilityTable:Add(function(row)
-            local chanceColumn = row.columns[1]
-            local multicraftColumn = row.columns[2]
-            local resourcefulnessColumn = row.columns[3]
-            local profitColumn = row.columns[4]
+        for _, probabilityInfo in pairs(probabilityTable) do
+            content.probabilityTable:Add(function(row)
+                local chanceColumn = row.columns[1]
+                local multicraftColumn = row.columns[2]
+                local resourcefulnessColumn = row.columns[3]
+                local profitColumn = row.columns[4]
 
-            row.chance = probabilityInfo.chance
-            chanceColumn.text:SetText(GUTIL:Round(row.chance * 100, 2) .. "%")
-            profitColumn.text:SetText(GUTIL:FormatMoney(probabilityInfo.profit, true))
+                row.chance = probabilityInfo.chance
+                chanceColumn.text:SetText(GUTIL:Round(row.chance * 100, 2) .. "%")
+                profitColumn.text:SetText(GUTIL:FormatMoney(probabilityInfo.profit, true))
 
-            if recipeData.supportsMulticraft then
-                multicraftColumn:SetChecked(probabilityInfo.multicraft)
-            else
-                multicraftColumn:SetIrrelevant()
-            end
-            if recipeData.supportsResourcefulness then
-                resourcefulnessColumn:SetChecked(probabilityInfo.resourcefulness)
-            else
-                resourcefulnessColumn:SetIrrelevant()
-            end
+                if recipeData.supportsMulticraft then
+                    multicraftColumn:SetChecked(probabilityInfo.multicraft)
+                else
+                    multicraftColumn:SetIrrelevant()
+                end
+                if recipeData.supportsResourcefulness then
+                    resourcefulnessColumn:SetChecked(probabilityInfo.resourcefulness)
+                else
+                    resourcefulnessColumn:SetIrrelevant()
+                end
+            end)
+        end
+
+        content.probabilityTable:UpdateDisplay(function(rowA, rowB)
+            return rowA.chance > rowB.chance
         end)
+
+        local numCrafts = content.numCraftsInput.currentValue
+
+        local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable,
+            numCrafts)
+
+        content.expectedProfitValue:SetText(GUTIL:FormatMoney(meanProfit, true))
+        local roundedProfit = GUTIL:Round(probabilityPositive * 100, 5)
+        if probabilityPositive == 1 then
+            -- if e.g. every craft has a positive outcome
+            roundedProfit = "100.00000"
+        elseif tonumber(roundedProfit) >= 100 then
+            -- if the probability is not 1 but the rounded is 100 then show that there is a smaaaall chance of failure
+            roundedProfit = ">99.99999"
+        end
+        content.probabilityValue:SetText(roundedProfit .. "%")
     end
 
-    content.probabilityTable:UpdateDisplay(function(rowA, rowB)
-        return rowA.chance > rowB.chance
-    end)
+    --- ConcentrationTab
+    do
+        local content = statisticsFrame.content.concentrationTab
+            .content --[[@as CraftSim.STATISTICS.UI.CONCENTRATION_TAB.CONTENT]]
 
-    local numCrafts = content.numCraftsInput.currentValue
+        local graph = content.concentrationCurveGraph
 
-    local probabilityPositive = CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityTable, numCrafts)
+        local concentrationCurveData = recipeData.concentrationCurveData
 
-    content.expectedProfitValue:SetText(GUTIL:FormatMoney(meanProfit, true))
-    local roundedProfit = GUTIL:Round(probabilityPositive * 100, 5)
-    if probabilityPositive == 1 then
-        -- if e.g. every craft has a positive outcome
-        roundedProfit = "100.00000"
-    elseif tonumber(roundedProfit) >= 100 then
-        -- if the probability is not 1 but the rounded is 100 then show that there is a smaaaall chance of failure
-        roundedProfit = ">99.99999"
+        graph:ResetData()
+
+        if not concentrationCurveData then
+            graph:SetDefault()
+        else
+            -- draw points and modify them based on stats they represent
+            local recipeDifficulty = recipeData.professionStats.recipeDifficulty.value
+
+            local curveData = concentrationCurveData.curveData
+            local costConstantData = concentrationCurveData.costConstantData
+
+
+
+
+            local points = {}
+            for x, y in pairs(curveData) do
+                local pointDifficulty = x * recipeDifficulty
+                local curveConstantData, nextCurveConstantData = CraftSim.UTIL:FindBracketData(pointDifficulty,
+                    costConstantData)
+                local curveData, nextCurveData = CraftSim.UTIL:FindBracketData(x,
+                    curveData)
+                local pointConstant = CraftSim.UTIL:CalculateCurveConstant(pointDifficulty, curveConstantData,
+                    nextCurveConstantData)
+                local recipeDifficultyFactor = (curveData and curveData.index) or 0
+                local nextRecipeDifficultyFactor = (nextCurveData and nextCurveData.index) or 1
+                local skillCurveValueStart = (curveData and curveData.data) or 0
+                local skillCurveValueEnd = (nextCurveData and nextCurveData.data) or 1
+                local skillStart = recipeDifficulty * recipeDifficultyFactor
+                local skillEnd = recipeDifficulty * nextRecipeDifficultyFactor
+                local pointCost = CraftSim.UTIL:CalculateConcentrationCost(pointConstant, pointDifficulty, skillStart,
+                    skillEnd, skillCurveValueStart, skillCurveValueEnd)
+                tinsert(points, { pointDifficulty, pointCost })
+            end
+            table.sort(points, function(a, b)
+                return a[1] < b[1]
+            end)
+
+            -- set grid spacing anew based on recipeDifficulty and maxCost
+            local maxCost = GUTIL:Fold(points, 0, function(foldValue, nextElement)
+                if nextElement[2] > foldValue then
+                    return nextElement[2]
+                end
+                return foldValue
+            end)
+            graph:SetGridSpacing(recipeDifficulty / 10, maxCost / 10)
+
+            CraftSim.DEBUG:InspectTable(points, "Graph Points")
+            graph:AddDataSeries(points, CraftSim.STATISTICS.UI.CONCENTRATION_GRAPH_LINE_COLOR)
+        end
     end
-    content.probabilityValue:SetText(roundedProfit .. "%")
 end
 
 function CraftSim.STATISTICS.UI:SetVisible(showModule, exportMode)
