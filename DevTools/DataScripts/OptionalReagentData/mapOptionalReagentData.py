@@ -86,7 +86,7 @@ if __name__ == '__main__':
         if len(craftingReagentEffects) == 0:
             continue
 
-        statList = []
+        statMap = {}
         for craftingReagentEffect in craftingReagentEffects:
             professionEffects = wagoTools.searchTable(ProfessionEffect, {"conditions": {"ID": craftingReagentEffect["ProfessionEffectID"]}})
             for professionEffect in professionEffects:
@@ -97,18 +97,15 @@ if __name__ == '__main__':
                 if statName == "dummyeffectfor#tokenization":
                     continue
                 amount = int(professionEffect["Amount"])
-                statList.append({
-                    "stat": statName,
-                    "amount": amount
-                })
+                statMap[statName] = amount
                 printD(f"- ProfessionEffect {professionEffect["ID"]} / {professionEffectEnum["ID"]} : {statName} -> {amount}", debug)
 
-        if len(statList) > 0:
+        if len(statMap) > 0:
             optionalReagentsDataTable[itemID] = {
                 "qualityID": qualityID,
                 "name": itemName,
                 "expansionID": expansionID,
-                "stats": statList,
+                "stats": statMap,
             }
 
     wagoTools.writeLuaTable(optionalReagentsDataTable, "OptionalReagentData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.OPTIONAL_REAGENT_DATA = ", buildVersion)
