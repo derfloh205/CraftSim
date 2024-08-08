@@ -1,6 +1,6 @@
 import sys
 sys.path.append('../')
-import db2Tools
+import wagoTools
 
 professionsDF = {
     "2822": "Blacksmithing",
@@ -31,7 +31,7 @@ professionsTWW = {
 }
 
 if __name__ == '__main__':
-    rawDataTable = db2Tools.loadCSVTables(["profTalentData"])[0]
+    rawDataTable = wagoTools.loadCSVTables(["profTalentData"])[0]
 
     professionDataTable = {
         "DRAGONFLIGHT": {},
@@ -93,4 +93,4 @@ if __name__ == '__main__':
         for profession, dataTable in professions.items():
             resultFileName = expansion.upper() + "/" + profession
             prefix = f"---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.SPECIALIZATION_DATA.{expansion.upper()}.{profession.upper()}_DATA = "
-            db2Tools.writeLuaTable(dataTable, resultFileName, prefix)
+            wagoTools.writeLuaTable(dataTable, resultFileName, prefix)
