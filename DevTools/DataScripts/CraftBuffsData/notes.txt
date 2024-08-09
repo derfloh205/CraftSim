@@ -1,0 +1,22 @@
+Test Buff: Phial of Quick Hands
+
+each phial item (different qualities each) have different item ids and spellids respective
+
+q1 phial:
+itemID: 197720
+spellID: 381264 (ItemEffect ("ItemID" -> "ID") -> ItemXItemEffect ("ID" -> "SpellID")) "The spell that is triggered when the item is used"
+
+spellID -> SpellEffect ("SpellID" -> "EffectTriggerSpell") "This is the spellID of the buff/aura" Note: EffectAura is 0 (None) for this one
+effectTriggerSpellID = 393665
+
+SpellEffect ("SpellID" = effectTriggerSpellID)
+effectAura: 285 (LINKED_2)
+effect: 6 (APPLY_AURA)
+"EffectTriggerSpell": 395802 -> This seems to be the aura spellid for the "baseAura"
+
+plug again into SpellEffect to receive a spellID that states effectAura: 511 (APPLY_PROFESSION_EFFECT)
+EffectMiscValue_0: 176 ... maybe a hint at the 18% crafting speed?
+
+
+
+
