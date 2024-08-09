@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append('../')
 import wagoTools
 
@@ -31,13 +32,24 @@ professionsTWW = {
 }
 
 if __name__ == '__main__':
-    rawDataTable = wagoTools.loadCSVTables(["profTalentData"])[0]
+    os.makedirs("Data/Latest", exist_ok=True)
+    os.chdir("wow-profession-tree")
+    exec(open('generate_database.py').read())
+    exec(open('get_csv_output.py').read())
+    os.chdir("..")
+    os.replace('wow-profession-tree/output/profTalentData.csv', 'Data/Latest/profTalentData.csv')
+
+    rawDataTable = wagoTools.loadCSVTables(["profTalentData"], None)[0]
 
     professionDataTable = {
         "DRAGONFLIGHT": {},
         "THE_WAR_WITHIN": {}
     }
+    print("Mapping Profession Talents\n")
+    count = 0
+    total = len(rawDataTable)
     for row in rawDataTable:
+        count = count + 1
         skillLineID = row["ProfessionExpansionID"]
 
         if not skillLineID:
@@ -79,7 +91,8 @@ if __name__ == '__main__':
         if not recipeID in professionDataTable[expansion][profession]["recipeMapping"]:
             professionDataTable[expansion][profession]["recipeMapping"][recipeID] = []
 
-        print(f"Adding recipe for {expansion}: {profession} -> {str(recipeID)}")
+        wagoTools.updateProgressBar(count, total, f"{expansion}->{profession}->{recipeID}")
+
         professionDataTable[expansion][profession]["recipeMapping"][recipeID].append(perkID)
 
         professionDataTable[expansion][profession]["nodeData"][perkID] = {
@@ -89,8 +102,10 @@ if __name__ == '__main__':
             "stat_amount": stat_amount,
         }
 
+    print("\nWriting Lua Files")
     for expansion, professions in professionDataTable.items():
         for profession, dataTable in professions.items():
             resultFileName = expansion.upper() + "/" + profession
             prefix = f"---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.SPECIALIZATION_DATA.{expansion.upper()}.{profession.upper()}_DATA = "
-            wagoTools.writeLuaTable(dataTable, resultFileName, prefix)
+            wagoTools.writeLuaTable(dataTable, resultFileName, prefix, None, True)
+    print("Done")

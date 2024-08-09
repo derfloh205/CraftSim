@@ -5,4 +5,5 @@ Libs/
 DevTools/DataScripts/__pycache__
 DevTools/DataScripts/**/Result/
 DevTools/DataScripts/**/Data/
+DevTools/DataScripts/**.db
 !**/*.py
