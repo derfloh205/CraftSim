@@ -17,6 +17,5 @@ effect: 6 (APPLY_AURA)
 plug again into SpellEffect to receive a spellID that states effectAura: 511 (APPLY_PROFESSION_EFFECT)
 EffectMiscValue_0: 176 ... maybe a hint at the 18% crafting speed?
 
-
-
-
+in SpellEffectAutoDescription: Use 511 as ID
+here in the description one can see that its the crafting speed buff
