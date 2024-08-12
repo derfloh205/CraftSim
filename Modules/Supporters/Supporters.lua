@@ -19,6 +19,12 @@ function CraftSim.SUPPORTERS:GetList()
     return {
 
         {
+            name = f.bb("Ten"),
+            type = kofi,
+            message = "Thank you for the hard work",
+            date = "09.08.2024",
+        },
+        {
             name = f.bb("Endriss"),
             type = kofi,
             message = "Thank you for your work!",
