@@ -449,18 +449,16 @@ end
 
 ---@return number concentrationCost
 function CraftSim.RecipeData:GetConcentrationCost()
-    if not self.baseOperationInfo then return 0, nil end
+    if not self.baseOperationInfo then return 0 end
     local craftingDataID = self.baseOperationInfo.craftingDataID
 
     self.concentrationCurveData = CraftSim.CONCENTRATION_CURVE_DATA[craftingDataID]
 
-    local isBeta = CraftSim.UTIL:IsBetaBuild()
-
     -- try to only enable it for simulation mode?
-    if self.concentrationCurveData and isBeta and CraftSim.SIMULATION_MODE.isActive then
+    if self.concentrationCurveData and CraftSim.SIMULATION_MODE.isActive then
         -- get skill bracket and associated start and end skillCurveValues
         local playerSkill = self.professionStats.skill.value
-        local baseDifficulty = self.baseOperationInfo.baseDifficulty -- TODO: what about varying difficulty?
+        local baseDifficulty = self.baseOperationInfo.baseDifficulty
         local playerSkillFactor = (playerSkill / (baseDifficulty / 100)) / 100
 
         -- recipeDifficulty here or playerSkill ?
@@ -477,22 +475,6 @@ function CraftSim.RecipeData:GetConcentrationCost()
         local skillCurveValueEnd = (nextCurveData and nextCurveData.data) or 1
         local skillStart = baseDifficulty * recipeDifficultyFactor
         local skillEnd = baseDifficulty * nextRecipeDifficultyFactor
-
-        -- CraftSim.DEBUG:InspectTable({
-        --     concentrationCurveData = self.concentrationCurveData or {},
-        --     curveConstantData = curveConstantData or {},
-        --     nextCurveConstantData = nextCurveConstantData or {},
-        --     curveData = curveData or {},
-        --     nextCurveData = nextCurveData or {},
-        --     calculationData = {
-        --         curveConstant = curveConstant,
-        --         playerSkill = playerSkill,
-        --         skillStart = skillStart,
-        --         skillEnd = skillEnd,
-        --         skillCurveValueStart = skillCurveValueStart,
-        --         skillCurveValueEnd = skillCurveValueEnd,
-        --     },
-        -- }, "debugGetConcentrationCost")
 
         return CraftSim.UTIL:CalculateConcentrationCost(
             curveConstant,
