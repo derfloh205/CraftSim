@@ -2,7 +2,7 @@ import sys
 sys.path.append('../')
 import wagoTools
 
-buildVersion = "11.0.2.55959"
+buildVersion = "11.0.2.56110"
 wagoTables = ["Item", "ModifiedCraftingReagentItem", "ModifiedCraftingCategory"]
 
 def getItemWeight(reagentItemID, reagentItemTable, craftingCategoryTable):

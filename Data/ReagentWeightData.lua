@@ -64,6 +64,102 @@ CraftSim.REAGENT_DATA = {
 	[190538] = {
 		weight = 33,
 	},
+	[191250] = {
+		weight = 10,
+	},
+	[191253] = {
+		weight = 10,
+	},
+	[191318] = {
+		weight = 35,
+	},
+	[191319] = {
+		weight = 35,
+	},
+	[191320] = {
+		weight = 35,
+	},
+	[191339] = {
+		weight = 32,
+	},
+	[191340] = {
+		weight = 32,
+	},
+	[191341] = {
+		weight = 32,
+	},
+	[191357] = {
+		weight = 35,
+	},
+	[191358] = {
+		weight = 35,
+	},
+	[191359] = {
+		weight = 35,
+	},
+	[191363] = {
+		weight = 21,
+	},
+	[191364] = {
+		weight = 21,
+	},
+	[191365] = {
+		weight = 21,
+	},
+	[191369] = {
+		weight = 21,
+	},
+	[191370] = {
+		weight = 21,
+	},
+	[191371] = {
+		weight = 21,
+	},
+	[191378] = {
+		weight = 11,
+	},
+	[191379] = {
+		weight = 11,
+	},
+	[191380] = {
+		weight = 11,
+	},
+	[191384] = {
+		weight = 14,
+	},
+	[191385] = {
+		weight = 14,
+	},
+	[191386] = {
+		weight = 14,
+	},
+	[191387] = {
+		weight = 22,
+	},
+	[191388] = {
+		weight = 22,
+	},
+	[191389] = {
+		weight = 22,
+	},
+	[191393] = {
+		weight = 21,
+	},
+	[191394] = {
+		weight = 21,
+	},
+	[191395] = {
+		weight = 21,
+	},
+	[191396] = {
+		weight = 20,
+	},
+	[191397] = {
+		weight = 20,
+	},
+	[191398] = {
+		weight = 20,
+	},
 	[191460] = {
 		weight = 3,
 	},
@@ -109,6 +205,15 @@ CraftSim.REAGENT_DATA = {
 	[191476] = {
 		weight = 11,
 	},
+	[191488] = {
+		weight = 42,
+	},
+	[191489] = {
+		weight = 42,
+	},
+	[191490] = {
+		weight = 42,
+	},
 	[191493] = {
 		weight = 39,
 	},
@@ -126,6 +231,12 @@ CraftSim.REAGENT_DATA = {
 	},
 	[191498] = {
 		weight = 12,
+	},
+	[191872] = {
+		weight = 10,
+	},
+	[191873] = {
+		weight = 10,
 	},
 	[192095] = {
 		weight = 4,
@@ -328,6 +439,15 @@ CraftSim.REAGENT_DATA = {
 	[193231] = {
 		weight = 45,
 	},
+	[193232] = {
+		weight = 45,
+	},
+	[193233] = {
+		weight = 45,
+	},
+	[193234] = {
+		weight = 45,
+	},
 	[193236] = {
 		weight = 42,
 	},
@@ -336,6 +456,15 @@ CraftSim.REAGENT_DATA = {
 	},
 	[193238] = {
 		weight = 42,
+	},
+	[193239] = {
+		weight = 45,
+	},
+	[193240] = {
+		weight = 45,
+	},
+	[193241] = {
+		weight = 45,
 	},
 	[193242] = {
 		weight = 45,
@@ -424,6 +553,36 @@ CraftSim.REAGENT_DATA = {
 	[193940] = {
 		weight = 117,
 	},
+	[194008] = {
+		weight = 123,
+	},
+	[194009] = {
+		weight = 123,
+	},
+	[194010] = {
+		weight = 123,
+	},
+	[194011] = {
+		weight = 218,
+	},
+	[194012] = {
+		weight = 218,
+	},
+	[194013] = {
+		weight = 218,
+	},
+	[194014] = {
+		weight = 218,
+	},
+	[194015] = {
+		weight = 218,
+	},
+	[194016] = {
+		weight = 218,
+	},
+	[194050] = {
+		weight = 34,
+	},
 	[194727] = {
 		weight = 5,
 	},
@@ -496,6 +655,15 @@ CraftSim.REAGENT_DATA = {
 	[194864] = {
 		weight = 46,
 	},
+	[198177] = {
+		weight = 60,
+	},
+	[198178] = {
+		weight = 60,
+	},
+	[198179] = {
+		weight = 60,
+	},
 	[198183] = {
 		weight = 7,
 	},
@@ -559,6 +727,33 @@ CraftSim.REAGENT_DATA = {
 	[198203] = {
 		weight = 19,
 	},
+	[198228] = {
+		weight = 20,
+	},
+	[198229] = {
+		weight = 20,
+	},
+	[198230] = {
+		weight = 20,
+	},
+	[198239] = {
+		weight = 21,
+	},
+	[198240] = {
+		weight = 21,
+	},
+	[198241] = {
+		weight = 21,
+	},
+	[198278] = {
+		weight = 22,
+	},
+	[198279] = {
+		weight = 22,
+	},
+	[198280] = {
+		weight = 22,
+	},
 	[198412] = {
 		weight = 16,
 	},
@@ -605,174 +800,255 @@ CraftSim.REAGENT_DATA = {
 		weight = 33,
 	},
 	[210796] = {
-		weight = 1,
+		weight = 3,
 	},
 	[210797] = {
-		weight = 1,
+		weight = 3,
 	},
 	[210798] = {
-		weight = 1,
+		weight = 3,
 	},
 	[210799] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210800] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210801] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210802] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210803] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210804] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210805] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210806] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210807] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210808] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210809] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210810] = {
-		weight = 1,
+		weight = 5,
 	},
 	[210930] = {
-		weight = 1,
+		weight = 3,
 	},
 	[210931] = {
-		weight = 1,
+		weight = 3,
 	},
 	[210932] = {
-		weight = 1,
+		weight = 3,
 	},
 	[210933] = {
-		weight = 1,
+		weight = 4,
 	},
 	[210934] = {
-		weight = 1,
+		weight = 4,
 	},
 	[210935] = {
-		weight = 1,
+		weight = 4,
 	},
 	[210936] = {
-		weight = 1,
+		weight = 4,
 	},
 	[210937] = {
-		weight = 1,
+		weight = 4,
 	},
 	[210938] = {
-		weight = 1,
+		weight = 4,
 	},
 	[211806] = {
-		weight = 11,
+		weight = 29,
 	},
 	[211807] = {
-		weight = 11,
+		weight = 29,
 	},
 	[211808] = {
-		weight = 11,
+		weight = 29,
+	},
+	[211878] = {
+		weight = 24,
+	},
+	[211879] = {
+		weight = 24,
+	},
+	[211880] = {
+		weight = 24,
+	},
+	[212242] = {
+		weight = 32,
+	},
+	[212243] = {
+		weight = 32,
+	},
+	[212244] = {
+		weight = 32,
+	},
+	[212263] = {
+		weight = 33,
+	},
+	[212264] = {
+		weight = 33,
+	},
+	[212265] = {
+		weight = 33,
+	},
+	[212266] = {
+		weight = 33,
+	},
+	[212267] = {
+		weight = 33,
+	},
+	[212268] = {
+		weight = 33,
 	},
 	[212563] = {
-		weight = 20,
+		weight = 39,
 	},
 	[212564] = {
-		weight = 20,
+		weight = 39,
 	},
 	[212565] = {
-		weight = 20,
+		weight = 39,
 	},
 	[212664] = {
-		weight = 5,
+		weight = 2,
 	},
 	[212665] = {
-		weight = 5,
+		weight = 2,
 	},
 	[212666] = {
-		weight = 5,
+		weight = 2,
 	},
 	[212667] = {
-		weight = 5,
+		weight = 2,
 	},
 	[212668] = {
-		weight = 5,
+		weight = 2,
 	},
 	[212669] = {
-		weight = 5,
+		weight = 2,
 	},
 	[212670] = {
-		weight = 15,
+		weight = 70,
 	},
 	[212672] = {
-		weight = 15,
+		weight = 70,
 	},
 	[212673] = {
-		weight = 15,
+		weight = 70,
 	},
 	[212674] = {
-		weight = 15,
+		weight = 70,
 	},
 	[212675] = {
-		weight = 15,
+		weight = 70,
 	},
 	[212676] = {
-		weight = 15,
+		weight = 70,
 	},
 	[213219] = {
-		weight = 3,
+		weight = 12,
 	},
 	[213220] = {
-		weight = 3,
+		weight = 12,
 	},
 	[213221] = {
-		weight = 3,
+		weight = 12,
 	},
 	[213750] = {
-		weight = 5,
+		weight = 8,
 	},
 	[213751] = {
-		weight = 5,
+		weight = 8,
 	},
 	[213752] = {
-		weight = 5,
+		weight = 8,
 	},
 	[213753] = {
-		weight = 5,
+		weight = 35,
 	},
 	[213754] = {
-		weight = 5,
+		weight = 35,
 	},
 	[213755] = {
-		weight = 5,
+		weight = 35,
 	},
 	[213756] = {
-		weight = 5,
+		weight = 4,
 	},
 	[213757] = {
-		weight = 5,
+		weight = 4,
 	},
 	[213758] = {
-		weight = 5,
+		weight = 4,
 	},
 	[213759] = {
-		weight = 5,
+		weight = 73,
 	},
 	[213760] = {
-		weight = 5,
+		weight = 73,
 	},
 	[213761] = {
+		weight = 73,
+	},
+	[213762] = {
+		weight = 5,
+	},
+	[213763] = {
+		weight = 5,
+	},
+	[213764] = {
+		weight = 5,
+	},
+	[213765] = {
+		weight = 5,
+	},
+	[213766] = {
+		weight = 5,
+	},
+	[213767] = {
+		weight = 5,
+	},
+	[213768] = {
+		weight = 5,
+	},
+	[213769] = {
+		weight = 5,
+	},
+	[213770] = {
+		weight = 5,
+	},
+	[213771] = {
+		weight = 5,
+	},
+	[213772] = {
+		weight = 5,
+	},
+	[213773] = {
+		weight = 5,
+	},
+	[213774] = {
+		weight = 5,
+	},
+	[213775] = {
+		weight = 5,
+	},
+	[213776] = {
 		weight = 5,
 	},
 	[219543] = {
@@ -811,383 +1087,620 @@ CraftSim.REAGENT_DATA = {
 	[219554] = {
 		weight = 34,
 	},
+	[219558] = {
+		weight = 34,
+	},
+	[219559] = {
+		weight = 34,
+	},
+	[219560] = {
+		weight = 34,
+	},
+	[219561] = {
+		weight = 34,
+	},
+	[219562] = {
+		weight = 34,
+	},
+	[219563] = {
+		weight = 34,
+	},
+	[219564] = {
+		weight = 34,
+	},
+	[219565] = {
+		weight = 34,
+	},
+	[219566] = {
+		weight = 34,
+	},
 	[219880] = {
-		weight = 45,
+		weight = 105,
 	},
 	[219881] = {
-		weight = 45,
+		weight = 105,
 	},
 	[219882] = {
-		weight = 45,
+		weight = 105,
 	},
 	[219883] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219884] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219885] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219886] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219887] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219888] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219889] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219890] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219891] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219892] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219893] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219894] = {
-		weight = 45,
+		weight = 97,
 	},
 	[219895] = {
-		weight = 45,
+		weight = 85,
 	},
 	[219896] = {
-		weight = 45,
+		weight = 85,
 	},
 	[219897] = {
-		weight = 45,
+		weight = 85,
 	},
 	[219898] = {
-		weight = 45,
+		weight = 62,
 	},
 	[219899] = {
-		weight = 45,
+		weight = 62,
 	},
 	[219900] = {
-		weight = 45,
+		weight = 62,
 	},
 	[219901] = {
-		weight = 45,
+		weight = 64,
 	},
 	[219902] = {
-		weight = 45,
+		weight = 64,
 	},
 	[219903] = {
-		weight = 45,
+		weight = 64,
 	},
 	[219946] = {
-		weight = 1,
+		weight = 7,
 	},
 	[219947] = {
-		weight = 1,
+		weight = 7,
 	},
 	[219948] = {
-		weight = 1,
+		weight = 7,
 	},
 	[219949] = {
-		weight = 1,
+		weight = 26,
 	},
 	[219950] = {
-		weight = 1,
+		weight = 26,
 	},
 	[219951] = {
-		weight = 1,
+		weight = 26,
 	},
 	[219952] = {
-		weight = 1,
+		weight = 93,
 	},
 	[219954] = {
-		weight = 1,
+		weight = 93,
 	},
 	[219955] = {
-		weight = 1,
+		weight = 93,
 	},
 	[221648] = {
-		weight = 1,
+		weight = 41,
 	},
 	[221649] = {
-		weight = 1,
+		weight = 41,
 	},
 	[221650] = {
-		weight = 1,
+		weight = 41,
 	},
 	[221651] = {
-		weight = 1,
+		weight = 41,
 	},
 	[221652] = {
-		weight = 1,
+		weight = 41,
 	},
 	[221653] = {
-		weight = 1,
+		weight = 41,
 	},
 	[221654] = {
-		weight = 1,
+		weight = 22,
 	},
 	[221655] = {
-		weight = 1,
+		weight = 22,
 	},
 	[221656] = {
-		weight = 1,
+		weight = 22,
 	},
 	[221853] = {
-		weight = 2,
+		weight = 8,
 	},
 	[221854] = {
-		weight = 2,
+		weight = 8,
 	},
 	[221855] = {
-		weight = 2,
+		weight = 8,
 	},
 	[221856] = {
-		weight = 4,
+		weight = 7,
 	},
 	[221857] = {
-		weight = 4,
+		weight = 7,
 	},
 	[221858] = {
-		weight = 4,
+		weight = 7,
 	},
 	[221859] = {
-		weight = 6,
+		weight = 17,
 	},
 	[221860] = {
-		weight = 6,
+		weight = 17,
 	},
 	[221861] = {
-		weight = 6,
+		weight = 17,
 	},
 	[221862] = {
-		weight = 6,
+		weight = 20,
 	},
 	[221863] = {
-		weight = 6,
+		weight = 20,
 	},
 	[221864] = {
-		weight = 6,
+		weight = 20,
 	},
 	[221865] = {
-		weight = 6,
+		weight = 26,
 	},
 	[221866] = {
-		weight = 6,
+		weight = 26,
 	},
 	[221867] = {
-		weight = 6,
+		weight = 26,
 	},
 	[221868] = {
-		weight = 6,
+		weight = 41,
 	},
 	[221869] = {
-		weight = 6,
+		weight = 41,
 	},
 	[221870] = {
-		weight = 6,
+		weight = 41,
+	},
+	[221911] = {
+		weight = 10,
+	},
+	[221912] = {
+		weight = 10,
+	},
+	[221913] = {
+		weight = 10,
+	},
+	[221914] = {
+		weight = 10,
+	},
+	[221915] = {
+		weight = 10,
+	},
+	[221916] = {
+		weight = 10,
+	},
+	[221917] = {
+		weight = 10,
+	},
+	[221918] = {
+		weight = 10,
+	},
+	[221919] = {
+		weight = 10,
+	},
+	[221920] = {
+		weight = 10,
+	},
+	[221921] = {
+		weight = 10,
+	},
+	[221922] = {
+		weight = 10,
+	},
+	[221923] = {
+		weight = 10,
+	},
+	[221924] = {
+		weight = 10,
+	},
+	[221925] = {
+		weight = 10,
+	},
+	[221926] = {
+		weight = 10,
+	},
+	[221927] = {
+		weight = 10,
+	},
+	[221928] = {
+		weight = 10,
+	},
+	[221929] = {
+		weight = 10,
+	},
+	[221930] = {
+		weight = 10,
+	},
+	[221931] = {
+		weight = 10,
+	},
+	[221932] = {
+		weight = 10,
+	},
+	[221933] = {
+		weight = 10,
+	},
+	[221934] = {
+		weight = 10,
+	},
+	[221935] = {
+		weight = 10,
+	},
+	[221936] = {
+		weight = 10,
+	},
+	[221937] = {
+		weight = 10,
+	},
+	[221938] = {
+		weight = 10,
+	},
+	[221939] = {
+		weight = 10,
+	},
+	[221940] = {
+		weight = 10,
+	},
+	[221941] = {
+		weight = 10,
+	},
+	[221942] = {
+		weight = 10,
+	},
+	[221943] = {
+		weight = 10,
 	},
 	[222417] = {
-		weight = 1,
+		weight = 27,
 	},
 	[222418] = {
-		weight = 1,
+		weight = 27,
 	},
 	[222419] = {
-		weight = 1,
+		weight = 27,
 	},
 	[222420] = {
-		weight = 1,
+		weight = 46,
 	},
 	[222421] = {
-		weight = 1,
+		weight = 46,
 	},
 	[222422] = {
-		weight = 1,
+		weight = 46,
 	},
 	[222423] = {
-		weight = 1,
+		weight = 70,
 	},
 	[222424] = {
-		weight = 1,
+		weight = 70,
 	},
 	[222425] = {
-		weight = 1,
+		weight = 70,
 	},
 	[222426] = {
-		weight = 1,
+		weight = 45,
 	},
 	[222427] = {
-		weight = 1,
+		weight = 45,
 	},
 	[222428] = {
-		weight = 1,
+		weight = 45,
 	},
 	[222555] = {
-		weight = 1,
+		weight = 36,
 	},
 	[222556] = {
-		weight = 1,
+		weight = 36,
 	},
 	[222557] = {
-		weight = 1,
+		weight = 36,
 	},
 	[222558] = {
-		weight = 1,
+		weight = 35,
 	},
 	[222559] = {
-		weight = 1,
+		weight = 35,
 	},
 	[222560] = {
-		weight = 1,
+		weight = 35,
 	},
 	[222609] = {
-		weight = 1,
+		weight = 18,
 	},
 	[222610] = {
-		weight = 1,
+		weight = 18,
 	},
 	[222611] = {
-		weight = 1,
+		weight = 18,
 	},
 	[222612] = {
-		weight = 1,
+		weight = 3,
 	},
 	[222613] = {
-		weight = 1,
+		weight = 3,
 	},
 	[222614] = {
-		weight = 1,
+		weight = 3,
 	},
 	[222615] = {
-		weight = 1,
+		weight = 17,
 	},
 	[222616] = {
-		weight = 1,
+		weight = 17,
 	},
 	[222617] = {
-		weight = 1,
+		weight = 17,
 	},
 	[222618] = {
-		weight = 1,
+		weight = 2,
 	},
 	[222619] = {
-		weight = 1,
+		weight = 2,
 	},
 	[222620] = {
-		weight = 1,
+		weight = 2,
+	},
+	[222785] = {
+		weight = 4,
+	},
+	[222786] = {
+		weight = 4,
 	},
 	[222789] = {
-		weight = 1,
+		weight = 13,
 	},
 	[222790] = {
-		weight = 1,
+		weight = 13,
 	},
 	[222791] = {
-		weight = 1,
+		weight = 13,
 	},
 	[222792] = {
-		weight = 1,
+		weight = 13,
 	},
 	[222793] = {
-		weight = 1,
+		weight = 13,
 	},
 	[222794] = {
-		weight = 1,
+		weight = 13,
 	},
 	[222795] = {
-		weight = 1,
+		weight = 3,
 	},
 	[222796] = {
-		weight = 1,
+		weight = 3,
 	},
 	[222797] = {
-		weight = 1,
+		weight = 3,
 	},
 	[222798] = {
-		weight = 1,
+		weight = 41,
 	},
 	[222799] = {
-		weight = 1,
+		weight = 41,
 	},
 	[222800] = {
-		weight = 1,
+		weight = 41,
 	},
 	[222801] = {
-		weight = 1,
+		weight = 41,
 	},
 	[222802] = {
-		weight = 1,
+		weight = 41,
 	},
 	[222803] = {
-		weight = 1,
+		weight = 41,
 	},
 	[222804] = {
-		weight = 1,
+		weight = 22,
 	},
 	[222805] = {
-		weight = 1,
+		weight = 22,
 	},
 	[222806] = {
-		weight = 1,
+		weight = 22,
+	},
+	[222888] = {
+		weight = 232,
+	},
+	[222889] = {
+		weight = 232,
+	},
+	[222890] = {
+		weight = 232,
+	},
+	[222891] = {
+		weight = 350,
+	},
+	[222892] = {
+		weight = 350,
+	},
+	[222893] = {
+		weight = 350,
+	},
+	[222894] = {
+		weight = 350,
+	},
+	[222895] = {
+		weight = 350,
+	},
+	[222896] = {
+		weight = 350,
 	},
 	[224800] = {
-		weight = 1,
+		weight = 3,
 	},
 	[224801] = {
-		weight = 1,
+		weight = 3,
 	},
 	[224802] = {
-		weight = 1,
+		weight = 3,
 	},
 	[224803] = {
-		weight = 1,
+		weight = 3,
 	},
 	[224804] = {
-		weight = 1,
+		weight = 3,
 	},
 	[224805] = {
-		weight = 1,
+		weight = 3,
 	},
 	[224824] = {
-		weight = 1,
+		weight = 10,
 	},
 	[224826] = {
-		weight = 1,
+		weight = 10,
 	},
 	[224828] = {
-		weight = 1,
+		weight = 7,
 	},
 	[224832] = {
-		weight = 1,
+		weight = 34,
 	},
 	[224833] = {
-		weight = 1,
+		weight = 34,
 	},
 	[224834] = {
-		weight = 1,
+		weight = 34,
+	},
+	[225984] = {
+		weight = 5,
+	},
+	[225985] = {
+		weight = 5,
+	},
+	[225986] = {
+		weight = 5,
+	},
+	[225987] = {
+		weight = 5,
+	},
+	[225988] = {
+		weight = 5,
+	},
+	[225989] = {
+		weight = 5,
+	},
+	[226022] = {
+		weight = 34,
+	},
+	[226023] = {
+		weight = 34,
+	},
+	[226024] = {
+		weight = 34,
+	},
+	[226025] = {
+		weight = 34,
+	},
+	[226026] = {
+		weight = 34,
+	},
+	[226027] = {
+		weight = 34,
+	},
+	[226028] = {
+		weight = 34,
+	},
+	[226029] = {
+		weight = 34,
+	},
+	[226030] = {
+		weight = 34,
+	},
+	[226031] = {
+		weight = 34,
+	},
+	[226032] = {
+		weight = 34,
+	},
+	[226033] = {
+		weight = 34,
 	},
 	[228231] = {
-		weight = 1,
+		weight = 7,
 	},
 	[228232] = {
-		weight = 1,
+		weight = 7,
 	},
 	[228233] = {
-		weight = 1,
+		weight = 10,
 	},
 	[228234] = {
-		weight = 1,
+		weight = 10,
 	},
 	[228235] = {
-		weight = 1,
+		weight = 10,
 	},
 	[228236] = {
-		weight = 1,
+		weight = 10,
+	},
+	[228401] = {
+		weight = 5,
+	},
+	[228402] = {
+		weight = 5,
+	},
+	[228403] = {
+		weight = 5,
+	},
+	[228404] = {
+		weight = 5,
+	},
+	[228405] = {
+		weight = 5,
+	},
+	[228406] = {
+		weight = 5,
+	},
+	[222019] = {
+		weight = 10,
+	},
+	[222020] = {
+		weight = 10,
 	},
 	[213097] = {
 		weight = 3,
@@ -1327,6 +1840,63 @@ CraftSim.REAGENT_DATA = {
 	[221565] = {
 		weight = 54,
 	},
+	[221738] = {
+		weight = 123,
+	},
+	[221741] = {
+		weight = 123,
+	},
+	[221744] = {
+		weight = 123,
+	},
+	[222404] = {
+		weight = 123,
+	},
+	[222405] = {
+		weight = 123,
+	},
+	[222406] = {
+		weight = 123,
+	},
+	[222407] = {
+		weight = 123,
+	},
+	[222408] = {
+		weight = 123,
+	},
+	[222409] = {
+		weight = 123,
+	},
+	[222410] = {
+		weight = 123,
+	},
+	[222411] = {
+		weight = 123,
+	},
+	[222412] = {
+		weight = 123,
+	},
+	[221739] = {
+		weight = 123,
+	},
+	[221742] = {
+		weight = 123,
+	},
+	[221745] = {
+		weight = 123,
+	},
+	[221740] = {
+		weight = 123,
+	},
+	[221743] = {
+		weight = 123,
+	},
+	[221746] = {
+		weight = 123,
+	},
+	[221749] = {
+		weight = 34,
+	},
 	[222172] = {
 		weight = 14,
 	},
@@ -1380,5 +1950,8 @@ CraftSim.REAGENT_DATA = {
 	},
 	[222177] = {
 		weight = 16,
+	},
+	[222787] = {
+		weight = 4,
 	},
 }
