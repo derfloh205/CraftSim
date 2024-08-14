@@ -2,7 +2,7 @@ import sys
 sys.path.append('../')
 import wagoTools
 
-buildVersion = "11.0.2.56044" # Beta 08.08.2024
+buildVersion = "11.0.2.56110" # Live 14 08 2024
 wagoTables = ["Item", "ModifiedCraftingReagentItem", "CraftingReagentEffect", "ProfessionEffect", "ProfessionEffectType", "CraftingReagentQuality", "ItemSparse"]
 
 def printD(text, enabled):
