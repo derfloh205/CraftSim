@@ -469,8 +469,8 @@ function CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
 
             graph:AddDataSeries(points, CraftSim.STATISTICS.UI.CONCENTRATION_GRAPH_LINE_COLOR)
 
-            -- draw current skill?
-            local currentSkill = recipeData.professionStats.skill.value
+            -- draw current skill, but set maximum x to recipedifficulty
+            local currentSkill = math.min(recipeData.professionStats.skill.value, recipeDifficulty)
             local currentCost = recipeData.concentrationCost
             local yOffset = (maxCost / 100) * 1.5        -- % of yMax
             local xOffset = (recipeDifficulty / 100) * 1 -- % of xMax
