@@ -15,6 +15,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("17.0.8"),
+        f.p .. "DB2 Data Update",
+        supporterListUpdate,
         newP("17.0.7"),
         f.P .. "Optional Reagents now based on Datamined Data",
         f.P .. "Enchant Mapping now based on Datamined Data",
