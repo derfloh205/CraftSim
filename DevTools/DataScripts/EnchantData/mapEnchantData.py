@@ -2,7 +2,7 @@ import sys
 sys.path.append('../')
 import wagoTools
 
-buildVersion = "11.0.2.55959" # Beta 07.08.2024
+buildVersion = "11.0.2.56110" 
 wagoTables = ["CraftingData", "CraftingDataEnchantQuality"]
 
 if __name__ == '__main__':
