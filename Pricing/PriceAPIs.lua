@@ -140,6 +140,8 @@ function CraftSimTSM:GetAuctionAmountByItemLink(itemLink)
     return TSM_API.GetAuctionQuantity(TSM_API.ToItemString(itemLink))
 end
 
+---@param itemID string
+---@param isReagent boolean?
 function CraftSimTSM:GetMinBuyoutByItemID(itemID, isReagent)
     if itemID == nil then
         return
@@ -176,6 +178,8 @@ function CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString, isReagent)
     end
 end
 
+---@param itemLink string
+---@param isReagent boolean?
 function CraftSimTSM:GetMinBuyoutByItemLink(itemLink, isReagent)
     if itemLink == nil then
         return
@@ -250,13 +254,15 @@ function CraftSimEXCHANGE:GetMinBuyoutByItemLink(itemLink)
 end
 
 ---@param itemID ItemID
+---@param isReagent boolean?
 ---@return number 0
-function CraftSimNO_PRICE_API:GetMinBuyoutByItemID(itemID)
+function CraftSimNO_PRICE_API:GetMinBuyoutByItemID(itemID, isReagent)
     return 0
 end
 
 ---@param itemLink string
+---@param isReagent boolean?
 ---@return number 0
-function CraftSimNO_PRICE_API:GetMinBuyoutByItemLink(itemLink)
+function CraftSimNO_PRICE_API:GetMinBuyoutByItemLink(itemLink, isReagent)
     return 0
 end
