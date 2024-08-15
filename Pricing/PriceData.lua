@@ -29,7 +29,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
 ---@return number usedPrice
 ---@return CraftSim.PriceData.PriceInfo priceInfo
 function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice, considerSubCrafts)
-    local ahPrice = CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID)
+    local ahPrice = CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, isReagent)
     ---@type CraftSim.PriceData.PriceInfo
     local priceInfo = {
         ahPrice = ahPrice or 0,
