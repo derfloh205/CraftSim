@@ -15,7 +15,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("17.0.9"),
+        f.p .. "Fixed TSM Price Expression for Results used for Materials",
         newP("17.0.8"),
+        f.P .. "Concentration Cost Calc now also working in Retail",
         f.p .. "DB2 Data Update",
         supporterListUpdate,
         newP("17.0.7"),
