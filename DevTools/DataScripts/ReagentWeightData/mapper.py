@@ -1,8 +1,8 @@
 import sys
 sys.path.append('../')
 import wagoTools
+import shutil
 
-buildVersion = "11.0.2.56110"
 wagoTables = ["Item", "ModifiedCraftingReagentItem", "ModifiedCraftingCategory"]
 
 def getItemWeight(reagentItemID, reagentItemTable, craftingCategoryTable):
@@ -14,10 +14,10 @@ def getItemWeight(reagentItemID, reagentItemTable, craftingCategoryTable):
                         return int(craftingCategory["MatQualityWeight"])
     return 0
 
-if __name__ == '__main__':
-    args = sys.argv[1:]
-    download = len(args) > 0 and args[0] == "true"
-    buildVersion = (len(args) > 1 and args[1]) or buildVersion
+def copy(buildVersion):
+    shutil.copy(f"Result/{buildVersion}/ReagentWeightData.lua", "../../../Data/ReagentWeightData.lua")
+
+def map(download, buildVersion):
     csvTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
     tradeSkillItemTable = csvTables[0]
     reagentItemTable = csvTables[1]
@@ -33,4 +33,13 @@ if __name__ == '__main__':
             itemWeightTable[int(itemID)] = {"weight": weight}
 
     wagoTools.writeLuaTable(itemWeightTable, "ReagentWeightData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.REAGENT_DATA = ", buildVersion)
-        
+
+def update(buildVersion):
+    map(True, buildVersion)
+    copy(buildVersion)
+
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    buildVersion = (len(args) > 0 and args[0]) or buildVersion
+
+    update(buildVersion)

@@ -1,26 +1,26 @@
 import sys
 sys.path.append('../')
 import wagoTools
+import shutil
 
-buildVersion = "11.0.2.56110" # Live 14 08 2024
 wagoTables = ["Item", "ModifiedCraftingReagentItem", "CraftingReagentEffect", "ProfessionEffect", "ProfessionEffectType", "CraftingReagentQuality", "ItemSparse"]
+
+def copy(buildVersion):
+    shutil.copy(f"Result/{buildVersion}/OptionalReagentData.lua", "../../../Data/OptionalReagentData.lua")
 
 def printD(text, enabled):
     if enabled:
         print(text)
 
-if __name__ == '__main__':
-    args = sys.argv[1:]
-    download = len(args) > 0 and args[0] == "true"
-    buildVersion = (len(args) > 1 and args[1]) or buildVersion
-    wagoTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
-    Item = wagoTables[0]
-    ModifiedCraftingReagentItem = wagoTables[1]
-    CraftingReagentEffect = wagoTables[2]
-    ProfessionEffect = wagoTables[3]
-    ProfessionEffectType = wagoTables[4]
-    CraftingReagentQualityTable = wagoTables[5]
-    ItemSparse = wagoTables[6]
+def map(download, buildVersion):
+    dataTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
+    Item = dataTables[0]
+    ModifiedCraftingReagentItem = dataTables[1]
+    CraftingReagentEffect = dataTables[2]
+    ProfessionEffect = dataTables[3]
+    ProfessionEffectType = dataTables[4]
+    CraftingReagentQualityTable = dataTables[5]
+    ItemSparse = dataTables[6]
 
     # itemID -> qualityID, {stat: statvalue}
     optionalReagentsDataTable = {}
@@ -110,4 +110,13 @@ if __name__ == '__main__':
             }
 
     wagoTools.writeLuaTable(optionalReagentsDataTable, "OptionalReagentData", "---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.OPTIONAL_REAGENT_DATA = ", buildVersion)
-        
+
+def update(buildVersion):
+    map(True, buildVersion)
+    copy(buildVersion)        
+
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    buildVersion = (len(args) > 0 and args[0]) or "Latest"
+
+    update(buildVersion)
