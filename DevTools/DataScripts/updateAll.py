@@ -12,4 +12,4 @@ if __name__ == '__main__':
     for folderName in dataScripts:
         os.chdir(folderName)
         exec(open('mapper.py').read())
-        os.chir("..")
+        os.chdir("..")
