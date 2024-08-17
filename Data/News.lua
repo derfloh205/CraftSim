@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                                 ( You are awesome! )"),
         newP("17.0.9"),
         f.p .. "Fixed TSM Price Expression for Results used for Materials",
+        f.p .. "Thanks for contributing: ",
+        f.a .. f.bb("https://github.com/ergh99"),
         newP("17.0.8"),
         f.P .. "Concentration Cost Calc now also working in Retail",
         f.p .. "DB2 Data Update",

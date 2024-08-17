@@ -2,6 +2,16 @@ import sys
 import os
 sys.path.append('../')
 import wagoTools
+import shutil
+import urllib
+
+import sqlite3
+import csv
+import http.client
+import json
+import urllib.parse
+import requests
+from pathlib import Path
 
 professionsDF = {
     "2822": "Blacksmithing",
@@ -31,19 +41,19 @@ professionsTWW = {
      "2878": "Inscription"
 }
 
-if __name__ == '__main__':
-    os.makedirs("Data/Latest", exist_ok=True)
-    os.chdir("wow-profession-tree")
-    exec(open('generate_database.py').read())
-    exec(open('get_csv_output.py').read())
-    os.chdir("..")
-    os.replace('wow-profession-tree/output/profTalentData.csv', 'Data/Latest/profTalentData.csv')
+def map():
+    # os.makedirs("Data/Latest", exist_ok=True)
+    # os.chdir("wow-profession-tree")
+    # exec(open('generate_database.py').read())
+    # exec(open('profession_traits/get_csv_output.py').read())
+    # os.chdir("..")
+    # os.replace('wow-profession-tree/output/csv_profession_traits.csv', 'Data/Latest/csv_profession_traits.csv')
 
-    rawDataTable = wagoTools.loadCSVTables(["profTalentData"], None)[0]
+    rawDataTable = wagoTools.loadCSVTables(["csv_profession_traits"], None)[0]
 
     professionDataTable = {
-        "DRAGONFLIGHT": {},
-        "THE_WAR_WITHIN": {}
+        "Dragonflight": {},
+        "The_War_Within": {}
     }
     print("Mapping Profession Talents\n")
     count = 0
@@ -75,11 +85,11 @@ if __name__ == '__main__':
         expansion = None
         profession = None
         if professionDF is not None:
-            expansion = "DRAGONFLIGHT"
+            expansion = "Dragonflight"
             profession = professionDF
             
         if professionTWW is not None:
-            expansion = "THE_WAR_WITHIN"
+            expansion = "The_War_Within"
             profession = professionTWW
 
         if not profession in professionDataTable[expansion]:
@@ -105,7 +115,16 @@ if __name__ == '__main__':
     print("\nWriting Lua Files")
     for expansion, professions in professionDataTable.items():
         for profession, dataTable in professions.items():
-            resultFileName = expansion.upper() + "/" + profession
+            resultFileName = expansion + "/" + profession
             prefix = f"---@class CraftSim\nlocal CraftSim = select(2, ...)\nCraftSim.SPECIALIZATION_DATA.{expansion.upper()}.{profession.upper()}_DATA = "
             wagoTools.writeLuaTable(dataTable, resultFileName, prefix, None, True)
     print("Done")
+
+    # copy to destination
+    for expansion, professions in professionDataTable.items():
+        os.makedirs(f"../../../Data/SpecializationData/{expansion}", exist_ok=True)
+        for profession, dataTable in professions.items():
+            shutil.copy(f"Result/Latest/{expansion}/{profession}.lua", f"../../../Data/SpecializationData/{expansion}/{profession}.lua")
+
+if __name__ == '__main__':
+    map()
