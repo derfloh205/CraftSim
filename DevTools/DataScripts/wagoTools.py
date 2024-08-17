@@ -77,6 +77,9 @@ def searchTable(table, searchTerms):
             
     return results
 
+def copyResult(file, destination):
+    shutil.copy(file, destination)
+
 def writeLuaTable(dataTable, fileName, prefix, buildVersion=None, silent=False):
     if not silent: print(f"\nWriting Lua File: {fileName}")
     fileName = f"{resultDirectoryPrefix}{getBuildDirectoryPrefix(buildVersion)}{fileName}.lua"

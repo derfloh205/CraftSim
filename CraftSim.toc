@@ -138,14 +138,14 @@ Data/SpecializationData/Dragonflight/Leatherworking.lua
 Data/SpecializationData/Dragonflight/Tailoring.lua
 Data/SpecializationData/Dragonflight/Engineering.lua
 
-Data/SpecializationData/TheWarWithin/Alchemy.lua
-Data/SpecializationData/TheWarWithin/Blacksmithing.lua
-Data/SpecializationData/TheWarWithin/Enchanting.lua
-Data/SpecializationData/TheWarWithin/Inscription.lua
-Data/SpecializationData/TheWarWithin/Jewelcrafting.lua
-Data/SpecializationData/TheWarWithin/Leatherworking.lua
-Data/SpecializationData/TheWarWithin/Tailoring.lua
-Data/SpecializationData/TheWarWithin/Engineering.lua
+Data/SpecializationData/The_War_Within/Alchemy.lua
+Data/SpecializationData/The_War_Within/Blacksmithing.lua
+Data/SpecializationData/The_War_Within/Enchanting.lua
+Data/SpecializationData/The_War_Within/Inscription.lua
+Data/SpecializationData/The_War_Within/Jewelcrafting.lua
+Data/SpecializationData/The_War_Within/Leatherworking.lua
+Data/SpecializationData/The_War_Within/Tailoring.lua
+Data/SpecializationData/The_War_Within/Engineering.lua
 # needs to be last
 Data/SpecializationData/SpecializationData.lua
 
