@@ -4085,506 +4085,590 @@ CraftSim.SPECIALIZATION_DATA.DRAGONFLIGHT.ENGINEERING_DATA = {
 		[50904] = {
 			nodeID = 50927,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50902] = {
 			nodeID = 50927,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50928] = {
 			nodeID = 50928,
 			maxRank = 35,
-			stat = "ingenuity",
-			stat_amount = 1,
+			stats = {
+				ingenuity = 1,
+			},
 		},
 		[50915] = {
 			nodeID = 50928,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[50914] = {
 			nodeID = 50928,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50913] = {
 			nodeID = 50928,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50912] = {
 			nodeID = 50928,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50911] = {
 			nodeID = 50928,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[50910] = {
 			nodeID = 50928,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 5,
+			stats = {
+				ingenuity = 5,
+			},
 		},
 		[50909] = {
 			nodeID = 50928,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50929] = {
 			nodeID = 50929,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[50925] = {
 			nodeID = 50929,
 			maxRank = 1,
-			stat = "craftingspeed",
-			stat_amount = 15,
+			stats = {
+				craftingspeed = 15,
+			},
 		},
 		[50923] = {
 			nodeID = 50929,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50921] = {
 			nodeID = 50929,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[50920] = {
 			nodeID = 50929,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[50918] = {
 			nodeID = 50929,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 25,
+			stats = {
+				ingenuity = 25,
+			},
 		},
 		[50917] = {
 			nodeID = 50929,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 10,
+			stats = {
+				skill = 10,
+			},
 		},
 		[50954] = {
 			nodeID = 50954,
 			maxRank = 30,
-			stat = "ingenuityrefundincrease",
-			stat_amount = 1,
+			stats = {
+				ingenuityrefundincrease = 1,
+			},
 		},
 		[50956] = {
 			nodeID = 50956,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[50990] = {
 			nodeID = 50990,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[50965] = {
 			nodeID = 50990,
 			maxRank = 1,
-			stat = "craftingspeed",
-			stat_amount = 10,
+			stats = {
+				craftingspeed = 10,
+			},
 		},
 		[50964] = {
 			nodeID = 50990,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 10,
+			stats = {
+				multicraft = 10,
+			},
 		},
 		[50963] = {
 			nodeID = 50990,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 10,
+			stats = {
+				multicraft = 10,
+			},
 		},
 		[50962] = {
 			nodeID = 50990,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[50961] = {
 			nodeID = 50990,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[50960] = {
 			nodeID = 50990,
 			maxRank = 1,
-			stat = "craftingspeed",
-			stat_amount = 10,
+			stats = {
+				craftingspeed = 10,
+			},
 		},
 		[50959] = {
 			nodeID = 50990,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 10,
+			stats = {
+				multicraft = 10,
+			},
 		},
 		[50957] = {
 			nodeID = 50990,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[50991] = {
 			nodeID = 50991,
 			maxRank = 40,
-			stat = "reagentssavedfromresourcefulness",
-			stat_amount = 1,
+			stats = {
+				reagentssavedfromresourcefulness = 1,
+			},
 		},
 		[50973] = {
 			nodeID = 50991,
 			maxRank = 1,
-			stat = "reagentssavedfromresourcefulness",
-			stat_amount = 5,
+			stats = {
+				reagentssavedfromresourcefulness = 5,
+			},
 		},
 		[50971] = {
 			nodeID = 50991,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 5,
+			stats = {
+				ingenuity = 5,
+			},
 		},
 		[50968] = {
 			nodeID = 50991,
 			maxRank = 1,
-			stat = "reagentssavedfromresourcefulness",
-			stat_amount = 5,
+			stats = {
+				reagentssavedfromresourcefulness = 5,
+			},
 		},
 		[50967] = {
 			nodeID = 50991,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[50993] = {
 			nodeID = 50993,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[80765] = {
 			nodeID = 50993,
 			maxRank = 1,
-			stat = "craftingspeed",
-			stat_amount = 10,
+			stats = {
+				craftingspeed = 10,
+			},
 		},
 		[50988] = {
 			nodeID = 50993,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 5,
+			stats = {
+				ingenuity = 5,
+			},
 		},
 		[50986] = {
 			nodeID = 50993,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 10,
+			stats = {
+				multicraft = 10,
+			},
 		},
 		[50985] = {
 			nodeID = 50993,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 25,
+			stats = {
+				ingenuity = 25,
+			},
 		},
 		[50983] = {
 			nodeID = 50993,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 5,
+			stats = {
+				ingenuity = 5,
+			},
 		},
 		[50982] = {
 			nodeID = 50993,
 			maxRank = 1,
-			stat = "ingenuityrefundincrease",
-			stat_amount = 20,
+			stats = {
+				ingenuityrefundincrease = 20,
+			},
 		},
 		[50892] = {
 			nodeID = 50892,
 			maxRank = 30,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[50872] = {
 			nodeID = 50892,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[50871] = {
 			nodeID = 50892,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50870] = {
 			nodeID = 50892,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 20,
+			stats = {
+				multicraft = 20,
+			},
 		},
 		[50869] = {
 			nodeID = 50892,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 25,
+			stats = {
+				ingenuity = 25,
+			},
 		},
 		[50893] = {
 			nodeID = 50893,
 			maxRank = 30,
-			stat = "resourcefulness",
-			stat_amount = 1,
+			stats = {
+				resourcefulness = 1,
+			},
 		},
 		[50881] = {
 			nodeID = 50893,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[50880] = {
 			nodeID = 50893,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[50879] = {
 			nodeID = 50893,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 20,
+			stats = {
+				multicraft = 20,
+			},
 		},
 		[50878] = {
 			nodeID = 50893,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 10,
+			stats = {
+				multicraft = 10,
+			},
 		},
 		[50877] = {
 			nodeID = 50893,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[50875] = {
 			nodeID = 50893,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50894] = {
 			nodeID = 50894,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[50890] = {
 			nodeID = 50894,
 			maxRank = 1,
-			stat = "craftingspeed",
-			stat_amount = 15,
+			stats = {
+				craftingspeed = 15,
+			},
 		},
 		[50885] = {
 			nodeID = 50894,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[50955] = {
 			nodeID = 50955,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[50942] = {
 			nodeID = 50955,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[50941] = {
 			nodeID = 50955,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 25,
+			stats = {
+				ingenuity = 25,
+			},
 		},
 		[50939] = {
 			nodeID = 50955,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[50937] = {
 			nodeID = 50955,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[50950] = {
 			nodeID = 50956,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50947] = {
 			nodeID = 50956,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50926] = {
 			nodeID = 50926,
 			maxRank = 30,
-			stat = "multicraft",
-			stat_amount = 1,
+			stats = {
+				multicraft = 1,
+			},
 		},
 		[50900] = {
 			nodeID = 50926,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[50898] = {
 			nodeID = 50926,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[50896] = {
 			nodeID = 50926,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 20,
+			stats = {
+				multicraft = 20,
+			},
 		},
 		[50895] = {
 			nodeID = 50926,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50927] = {
 			nodeID = 50927,
 			maxRank = 30,
-			stat = "ingenuity",
-			stat_amount = 1,
+			stats = {
+				ingenuity = 1,
+			},
 		},
 		[50907] = {
 			nodeID = 50927,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[50905] = {
 			nodeID = 50927,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50903] = {
 			nodeID = 50927,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 10,
+			stats = {
+				multicraft = 10,
+			},
 		},
 		[50992] = {
 			nodeID = 50992,
 			maxRank = 30,
-			stat = "resourcefulness",
-			stat_amount = 1,
+			stats = {
+				resourcefulness = 1,
+			},
 		},
 		[50981] = {
 			nodeID = 50992,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50980] = {
 			nodeID = 50992,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[50979] = {
 			nodeID = 50992,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 5,
+			stats = {
+				ingenuity = 5,
+			},
 		},
 		[50978] = {
 			nodeID = 50992,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50977] = {
 			nodeID = 50992,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[50976] = {
 			nodeID = 50992,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 10,
+			stats = {
+				multicraft = 10,
+			},
 		},
 		[50891] = {
 			nodeID = 50891,
 			maxRank = 30,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[50866] = {
 			nodeID = 50891,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[50865] = {
 			nodeID = 50891,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[50864] = {
 			nodeID = 50891,
 			maxRank = 1,
-			stat = "unlockreagentslot",
-			stat_amount = 0,
+			stats = {
+				unlockreagentslot = 0,
+			},
 		},
 		[50863] = {
 			nodeID = 50891,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 20,
+			stats = {
+				multicraft = 20,
+			},
 		},
 		[50862] = {
 			nodeID = 50891,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 25,
+			stats = {
+				ingenuity = 25,
+			},
 		},
 	},
 }

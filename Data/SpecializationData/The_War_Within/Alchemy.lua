@@ -1503,704 +1503,823 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 		[19534] = {
 			nodeID = 19534,
 			maxRank = 30,
-			stat = "ingenuity",
-			stat_amount = 1,
+			stats = {
+				ingenuity = 1,
+			},
 		},
 		[19494] = {
 			nodeID = 19534,
 			maxRank = 1,
-			stat = "ingenuityrefundincrease",
-			stat_amount = 5,
+			stats = {
+				ingenuityrefundincrease = 5,
+			},
 		},
 		[19493] = {
 			nodeID = 19534,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 10,
+			stats = {
+				ingenuity = 10,
+			},
 		},
 		[19492] = {
 			nodeID = 19534,
 			maxRank = 1,
-			stat = "ingenuityrefundincrease",
-			stat_amount = 10,
+			stats = {
+				ingenuityrefundincrease = 10,
+			},
 		},
 		[19491] = {
 			nodeID = 19534,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 10,
+			stats = {
+				ingenuity = 10,
+			},
 		},
 		[19490] = {
 			nodeID = 19534,
 			maxRank = 1,
-			stat = "ingenuityrefundincrease",
-			stat_amount = 10,
+			stats = {
+				ingenuityrefundincrease = 10,
+			},
 		},
 		[19489] = {
 			nodeID = 19534,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 10,
+			stats = {
+				ingenuity = 10,
+			},
 		},
 		[19488] = {
 			nodeID = 19534,
 			maxRank = 1,
-			stat = "ingenuityrefundincrease",
-			stat_amount = 25,
+			stats = {
+				ingenuityrefundincrease = 25,
+			},
 		},
 		[19535] = {
 			nodeID = 19535,
 			maxRank = 30,
-			stat = "resourcefulness",
-			stat_amount = 1,
+			stats = {
+				resourcefulness = 1,
+			},
 		},
 		[19501] = {
 			nodeID = 19535,
 			maxRank = 1,
-			stat = "reagentssavedfromresourcefulness",
-			stat_amount = 5,
+			stats = {
+				reagentssavedfromresourcefulness = 5,
+			},
 		},
 		[19500] = {
 			nodeID = 19535,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[19499] = {
 			nodeID = 19535,
 			maxRank = 1,
-			stat = "reagentssavedfromresourcefulness",
-			stat_amount = 10,
+			stats = {
+				reagentssavedfromresourcefulness = 10,
+			},
 		},
 		[19498] = {
 			nodeID = 19535,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[19497] = {
 			nodeID = 19535,
 			maxRank = 1,
-			stat = "reagentssavedfromresourcefulness",
-			stat_amount = 10,
+			stats = {
+				reagentssavedfromresourcefulness = 10,
+			},
 		},
 		[19496] = {
 			nodeID = 19535,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 10,
+			stats = {
+				resourcefulness = 10,
+			},
 		},
 		[19495] = {
 			nodeID = 19535,
 			maxRank = 1,
-			stat = "reagentssavedfromresourcefulness",
-			stat_amount = 25,
+			stats = {
+				reagentssavedfromresourcefulness = 25,
+			},
 		},
 		[19539] = {
 			nodeID = 19539,
 			maxRank = 50,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[19533] = {
 			nodeID = 19539,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 5,
+			stats = {
+				ingenuity = 5,
+			},
 		},
 		[19531] = {
 			nodeID = 19539,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 5,
+			stats = {
+				resourcefulness = 5,
+			},
 		},
 		[19529] = {
 			nodeID = 19539,
 			maxRank = 1,
-			stat = "craftingspeed",
-			stat_amount = 10,
+			stats = {
+				craftingspeed = 10,
+			},
 		},
 		[19527] = {
 			nodeID = 19539,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 5,
+			stats = {
+				ingenuity = 5,
+			},
 		},
 		[19525] = {
 			nodeID = 19539,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 5,
+			stats = {
+				resourcefulness = 5,
+			},
 		},
 		[19523] = {
 			nodeID = 19539,
 			maxRank = 1,
-			stat = "craftingspeed",
-			stat_amount = 15,
+			stats = {
+				ingenuity = 15,
+				resourcefulness = 15,
+				craftingspeed = 15,
+			},
 		},
 		[99020] = {
 			nodeID = 99020,
 			maxRank = 50,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[99014] = {
 			nodeID = 99020,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[99012] = {
 			nodeID = 99020,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[99006] = {
 			nodeID = 99020,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 15,
+			stats = {
+				multicraft = 15,
+			},
 		},
 		[99004] = {
 			nodeID = 99020,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 10,
+			stats = {
+				skill = 10,
+			},
 		},
 		[99059] = {
 			nodeID = 99059,
 			maxRank = 55,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[99056] = {
 			nodeID = 99059,
 			maxRank = 1,
-			stat = "traitranksbypoints-modifierlabel(dnt)",
-			stat_amount = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
 		},
 		[100205] = {
 			nodeID = 100205,
 			maxRank = 20,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100182] = {
 			nodeID = 100205,
 			maxRank = 1,
-			stat = "traitranksbypoints-modifierlabel(dnt)",
-			stat_amount = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
 		},
 		[100180] = {
 			nodeID = 100205,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100179] = {
 			nodeID = 100205,
 			maxRank = 1,
-			stat = "traitranksbypoints-modifierlabel(dnt)",
-			stat_amount = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
 		},
 		[100206] = {
 			nodeID = 100206,
 			maxRank = 25,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100187] = {
 			nodeID = 100206,
 			maxRank = 1,
-			stat = "traitranksbypoints-modifierlabel(dnt)",
-			stat_amount = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
 		},
 		[100186] = {
 			nodeID = 100206,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100185] = {
 			nodeID = 100206,
 			maxRank = 1,
-			stat = "traitranksbypoints-modifierlabel(dnt)",
-			stat_amount = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
 		},
 		[100207] = {
 			nodeID = 100207,
 			maxRank = 25,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100193] = {
 			nodeID = 100207,
 			maxRank = 1,
-			stat = "traitranksbypoints-modifierlabel(dnt)",
-			stat_amount = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
 		},
 		[100192] = {
 			nodeID = 100207,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100191] = {
 			nodeID = 100207,
 			maxRank = 1,
-			stat = "traitranksbypoints-modifierlabel(dnt)",
-			stat_amount = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
 		},
 		[100208] = {
 			nodeID = 100208,
 			maxRank = 25,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100199] = {
 			nodeID = 100208,
 			maxRank = 1,
-			stat = "traitranksbypoints-modifierlabel(dnt)",
-			stat_amount = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
 		},
 		[100198] = {
 			nodeID = 100208,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100197] = {
 			nodeID = 100208,
 			maxRank = 1,
-			stat = "traitranksbypoints-modifierlabel(dnt)",
-			stat_amount = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
 		},
 		[99019] = {
 			nodeID = 99019,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[99002] = {
 			nodeID = 99019,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[99001] = {
 			nodeID = 99019,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 10,
+			stats = {
+				ingenuity = 10,
+			},
 		},
 		[99000] = {
 			nodeID = 99019,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[98997] = {
 			nodeID = 99019,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[98996] = {
 			nodeID = 99019,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 20,
+			stats = {
+				ingenuity = 20,
+			},
 		},
 		[98995] = {
 			nodeID = 99019,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 15,
+			stats = {
+				multicraft = 15,
+			},
 		},
 		[99040] = {
 			nodeID = 99040,
 			maxRank = 25,
-			stat = "multicraft",
-			stat_amount = 3,
+			stats = {
+				multicraft = 3,
+			},
 		},
 		[99031] = {
 			nodeID = 99040,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 18,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 18,
+			},
 		},
 		[99030] = {
 			nodeID = 99040,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[99028] = {
 			nodeID = 99040,
 			maxRank = 1,
-			stat = "reagentssavedfromresourcefulness",
-			stat_amount = 5,
+			stats = {
+				reagentssavedfromresourcefulness = 5,
+			},
 		},
 		[99027] = {
 			nodeID = 99040,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 5,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 5,
+			},
 		},
 		[99026] = {
 			nodeID = 99040,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 100,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 100,
+			},
 		},
 		[99041] = {
 			nodeID = 99041,
 			maxRank = 30,
-			stat = "skill",
-			stat_amount = 2,
+			stats = {
+				skill = 2,
+			},
 		},
 		[99037] = {
 			nodeID = 99041,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[99036] = {
 			nodeID = 99041,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[99034] = {
 			nodeID = 99041,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[99033] = {
 			nodeID = 99041,
 			maxRank = 1,
-			stat = "reduceconcentrationcost",
-			stat_amount = 5,
+			stats = {
+				reduceconcentrationcost = 5,
+			},
 		},
 		[99015] = {
 			nodeID = 99015,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[98962] = {
 			nodeID = 99015,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[98961] = {
 			nodeID = 99015,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 10,
+			stats = {
+				ingenuity = 10,
+			},
 		},
 		[98960] = {
 			nodeID = 99015,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[98958] = {
 			nodeID = 99015,
 			maxRank = 1,
-			stat = "reduceconcentrationcost",
-			stat_amount = 5,
+			stats = {
+				reduceconcentrationcost = 5,
+			},
 		},
 		[98957] = {
 			nodeID = 99015,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[98956] = {
 			nodeID = 99015,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 20,
+			stats = {
+				ingenuity = 20,
+			},
 		},
 		[98955] = {
 			nodeID = 99015,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 15,
+			stats = {
+				multicraft = 15,
+			},
 		},
 		[99017] = {
 			nodeID = 99017,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[98982] = {
 			nodeID = 99017,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[98981] = {
 			nodeID = 99017,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 10,
+			stats = {
+				ingenuity = 10,
+			},
 		},
 		[98980] = {
 			nodeID = 99017,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[98978] = {
 			nodeID = 99017,
 			maxRank = 1,
-			stat = "reduceconcentrationcost",
-			stat_amount = 5,
+			stats = {
+				reduceconcentrationcost = 5,
+			},
 		},
 		[98977] = {
 			nodeID = 99017,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[98976] = {
 			nodeID = 99017,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 20,
+			stats = {
+				ingenuity = 20,
+			},
 		},
 		[98975] = {
 			nodeID = 99017,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 15,
+			stats = {
+				multicraft = 15,
+			},
 		},
 		[99018] = {
 			nodeID = 99018,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[98992] = {
 			nodeID = 99018,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[98991] = {
 			nodeID = 99018,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 10,
+			stats = {
+				ingenuity = 10,
+			},
 		},
 		[98990] = {
 			nodeID = 99018,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[98988] = {
 			nodeID = 99018,
 			maxRank = 1,
-			stat = "reduceconcentrationcost",
-			stat_amount = 5,
+			stats = {
+				reduceconcentrationcost = 5,
+			},
 		},
 		[98987] = {
 			nodeID = 99018,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[98986] = {
 			nodeID = 99018,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 20,
+			stats = {
+				ingenuity = 20,
+			},
 		},
 		[98985] = {
 			nodeID = 99018,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 15,
+			stats = {
+				multicraft = 15,
+			},
 		},
 		[99016] = {
 			nodeID = 99016,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[98972] = {
 			nodeID = 99016,
 			maxRank = 1,
-			stat = "resourcefulness",
-			stat_amount = 15,
+			stats = {
+				resourcefulness = 15,
+			},
 		},
 		[98971] = {
 			nodeID = 99016,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 10,
+			stats = {
+				ingenuity = 10,
+			},
 		},
 		[98970] = {
 			nodeID = 99016,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[98968] = {
 			nodeID = 99016,
 			maxRank = 1,
-			stat = "reduceconcentrationcost",
-			stat_amount = 5,
+			stats = {
+				reduceconcentrationcost = 5,
+			},
 		},
 		[98967] = {
 			nodeID = 99016,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[98966] = {
 			nodeID = 99016,
 			maxRank = 1,
-			stat = "ingenuity",
-			stat_amount = 20,
+			stats = {
+				ingenuity = 20,
+			},
 		},
 		[98965] = {
 			nodeID = 99016,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 15,
+			stats = {
+				multicraft = 15,
+			},
 		},
 		[98952] = {
 			nodeID = 98952,
 			maxRank = 25,
-			stat = "multicraft",
-			stat_amount = 3,
+			stats = {
+				multicraft = 3,
+			},
 		},
 		[98943] = {
 			nodeID = 98952,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 18,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 18,
+			},
 		},
 		[98942] = {
 			nodeID = 98952,
 			maxRank = 1,
-			stat = "reagentssavedfromresourcefulness",
-			stat_amount = 5,
+			stats = {
+				reagentssavedfromresourcefulness = 5,
+			},
 		},
 		[98940] = {
 			nodeID = 98952,
 			maxRank = 1,
-			stat = "reagentssavedfromresourcefulness",
-			stat_amount = 5,
+			stats = {
+				reagentssavedfromresourcefulness = 5,
+			},
 		},
 		[98938] = {
 			nodeID = 98952,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 100,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 100,
+			},
 		},
 		[98953] = {
 			nodeID = 98953,
 			maxRank = 30,
-			stat = "skill",
-			stat_amount = 2,
+			stats = {
+				skill = 2,
+			},
 		},
 		[98949] = {
 			nodeID = 98953,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 50,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 50,
+			},
 		},
 		[98947] = {
 			nodeID = 98953,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 50,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 50,
+			},
 		},
 		[98945] = {
 			nodeID = 98953,
 			maxRank = 1,
-			stat = "reduceconcentrationcost",
-			stat_amount = 5,
+			stats = {
+				reduceconcentrationcost = 5,
+			},
 		},
 		[98951] = {
 			nodeID = 98951,
 			maxRank = 25,
-			stat = "skill",
-			stat_amount = 2,
+			stats = {
+				skill = 2,
+			},
 		},
 		[98937] = {
 			nodeID = 98951,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 18,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 18,
+			},
 		},
 		[98936] = {
 			nodeID = 98951,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 15,
+			stats = {
+				multicraft = 15,
+			},
 		},
 		[98933] = {
 			nodeID = 98951,
 			maxRank = 1,
-			stat = "multicraft",
-			stat_amount = 15,
+			stats = {
+				multicraft = 15,
+			},
 		},
 		[98932] = {
 			nodeID = 98951,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 100,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 100,
+			},
 		},
 		[99058] = {
 			nodeID = 99058,
 			maxRank = 30,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[99048] = {
 			nodeID = 99058,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 2,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 2,
+			},
 		},
 		[99047] = {
 			nodeID = 99058,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[99046] = {
 			nodeID = 99058,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[99044] = {
 			nodeID = 99058,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[99043] = {
 			nodeID = 99058,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[99042] = {
 			nodeID = 99058,
 			maxRank = 1,
-			stat = "dummyeffectfor#tokenization(dnt)",
-			stat_amount = 5,
+			stats = {
+				["dummyeffectfor#tokenization(dnt)"] = 5,
+			},
 		},
 	},
 }

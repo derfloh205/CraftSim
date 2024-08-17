@@ -1015,506 +1015,590 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.MINING_DATA = {
 		[100111] = {
 			nodeID = 100111,
 			maxRank = 60,
-			stat = "finesse",
-			stat_amount = 3,
+			stats = {
+				finesse = 3,
+			},
 		},
 		[100107] = {
 			nodeID = 100111,
 			maxRank = 1,
-			stat = "deftness",
-			stat_amount = 45,
+			stats = {
+				deftness = 45,
+			},
 		},
 		[100106] = {
 			nodeID = 100111,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 10,
+			stats = {
+				skill = 10,
+			},
 		},
 		[100105] = {
 			nodeID = 100111,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 15,
+			stats = {
+				perception = 15,
+			},
 		},
 		[100104] = {
 			nodeID = 100111,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 		[100103] = {
 			nodeID = 100111,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 10,
+			stats = {
+				skill = 10,
+			},
 		},
 		[100102] = {
 			nodeID = 100111,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 		[100101] = {
 			nodeID = 100111,
 			maxRank = 1,
-			stat = "deftness",
-			stat_amount = 150,
+			stats = {
+				deftness = 150,
+			},
 		},
 		[100100] = {
 			nodeID = 100111,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 45,
+			stats = {
+				perception = 45,
+			},
 		},
 		[100099] = {
 			nodeID = 100111,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 45,
+			stats = {
+				finesse = 45,
+			},
 		},
 		[100084] = {
 			nodeID = 100084,
 			maxRank = 45,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100070] = {
 			nodeID = 100084,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100069] = {
 			nodeID = 100084,
 			maxRank = 1,
-			stat = "deftness",
-			stat_amount = 30,
+			stats = {
+				deftness = 30,
+			},
 		},
 		[100068] = {
 			nodeID = 100084,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100067] = {
 			nodeID = 100084,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 30,
+			stats = {
+				finesse = 30,
+			},
 		},
 		[100065] = {
 			nodeID = 100084,
 			maxRank = 1,
-			stat = "deftness",
-			stat_amount = 150,
+			stats = {
+				deftness = 150,
+			},
 		},
 		[100064] = {
 			nodeID = 100084,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100063] = {
 			nodeID = 100084,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 		[100085] = {
 			nodeID = 100085,
 			maxRank = 50,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100081] = {
 			nodeID = 100085,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100080] = {
 			nodeID = 100085,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 30,
+			stats = {
+				finesse = 30,
+			},
 		},
 		[100078] = {
 			nodeID = 100085,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 15,
+			stats = {
+				perception = 15,
+			},
 		},
 		[100077] = {
 			nodeID = 100085,
 			maxRank = 1,
-			stat = "deftness",
-			stat_amount = 45,
+			stats = {
+				deftness = 45,
+			},
 		},
 		[100075] = {
 			nodeID = 100085,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 10,
+			stats = {
+				skill = 10,
+			},
 		},
 		[100074] = {
 			nodeID = 100085,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 75,
+			stats = {
+				finesse = 75,
+			},
 		},
 		[100072] = {
 			nodeID = 100085,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 45,
+			stats = {
+				perception = 45,
+			},
 		},
 		[100071] = {
 			nodeID = 100085,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 15,
+			stats = {
+				skill = 15,
+			},
 		},
 		[100083] = {
 			nodeID = 100083,
 			maxRank = 45,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100060] = {
 			nodeID = 100083,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100059] = {
 			nodeID = 100083,
 			maxRank = 1,
-			stat = "deftness",
-			stat_amount = 30,
+			stats = {
+				deftness = 30,
+			},
 		},
 		[100058] = {
 			nodeID = 100083,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100057] = {
 			nodeID = 100083,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 30,
+			stats = {
+				finesse = 30,
+			},
 		},
 		[100055] = {
 			nodeID = 100083,
 			maxRank = 1,
-			stat = "deftness",
-			stat_amount = 150,
+			stats = {
+				deftness = 150,
+			},
 		},
 		[100054] = {
 			nodeID = 100083,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100053] = {
 			nodeID = 100083,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 		[100082] = {
 			nodeID = 100082,
 			maxRank = 45,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100050] = {
 			nodeID = 100082,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100049] = {
 			nodeID = 100082,
 			maxRank = 1,
-			stat = "deftness",
-			stat_amount = 30,
+			stats = {
+				deftness = 30,
+			},
 		},
 		[100048] = {
 			nodeID = 100082,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100047] = {
 			nodeID = 100082,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 30,
+			stats = {
+				finesse = 30,
+			},
 		},
 		[100045] = {
 			nodeID = 100082,
 			maxRank = 1,
-			stat = "deftness",
-			stat_amount = 150,
+			stats = {
+				deftness = 150,
+			},
 		},
 		[100044] = {
 			nodeID = 100082,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100043] = {
 			nodeID = 100082,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 		[100110] = {
 			nodeID = 100110,
 			maxRank = 25,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100097] = {
 			nodeID = 100110,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[100096] = {
 			nodeID = 100110,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 15,
+			stats = {
+				perception = 15,
+			},
 		},
 		[100095] = {
 			nodeID = 100110,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[100093] = {
 			nodeID = 100110,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 		[100092] = {
 			nodeID = 100110,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[100109] = {
 			nodeID = 100109,
 			maxRank = 25,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100091] = {
 			nodeID = 100109,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[100090] = {
 			nodeID = 100109,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 15,
+			stats = {
+				perception = 15,
+			},
 		},
 		[100089] = {
 			nodeID = 100109,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[100087] = {
 			nodeID = 100109,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 		[100086] = {
 			nodeID = 100109,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 3,
+			stats = {
+				skill = 3,
+			},
 		},
 		[100161] = {
 			nodeID = 100161,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100146] = {
 			nodeID = 100161,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 30,
+			stats = {
+				finesse = 30,
+			},
 		},
 		[100145] = {
 			nodeID = 100161,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100144] = {
 			nodeID = 100161,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 45,
+			stats = {
+				perception = 45,
+			},
 		},
 		[100142] = {
 			nodeID = 100161,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 45,
+			stats = {
+				finesse = 45,
+			},
 		},
 		[100141] = {
 			nodeID = 100161,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100140] = {
 			nodeID = 100161,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 		[100162] = {
 			nodeID = 100162,
 			maxRank = 45,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100160] = {
 			nodeID = 100160,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100137] = {
 			nodeID = 100160,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 30,
+			stats = {
+				finesse = 30,
+			},
 		},
 		[100136] = {
 			nodeID = 100160,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100135] = {
 			nodeID = 100160,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 45,
+			stats = {
+				perception = 45,
+			},
 		},
 		[100133] = {
 			nodeID = 100160,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 45,
+			stats = {
+				finesse = 45,
+			},
 		},
 		[100132] = {
 			nodeID = 100160,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100131] = {
 			nodeID = 100160,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 		[100159] = {
 			nodeID = 100159,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100128] = {
 			nodeID = 100159,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 30,
+			stats = {
+				finesse = 30,
+			},
 		},
 		[100127] = {
 			nodeID = 100159,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100126] = {
 			nodeID = 100159,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 45,
+			stats = {
+				perception = 45,
+			},
 		},
 		[100124] = {
 			nodeID = 100159,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 45,
+			stats = {
+				finesse = 45,
+			},
 		},
 		[100123] = {
 			nodeID = 100159,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100122] = {
 			nodeID = 100159,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 		[100158] = {
 			nodeID = 100158,
 			maxRank = 40,
-			stat = "skill",
-			stat_amount = 1,
+			stats = {
+				skill = 1,
+			},
 		},
 		[100119] = {
 			nodeID = 100158,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 30,
+			stats = {
+				finesse = 30,
+			},
 		},
 		[100118] = {
 			nodeID = 100158,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100117] = {
 			nodeID = 100158,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 45,
+			stats = {
+				perception = 45,
+			},
 		},
 		[100115] = {
 			nodeID = 100158,
 			maxRank = 1,
-			stat = "finesse",
-			stat_amount = 45,
+			stats = {
+				finesse = 45,
+			},
 		},
 		[100114] = {
 			nodeID = 100158,
 			maxRank = 1,
-			stat = "skill",
-			stat_amount = 5,
+			stats = {
+				skill = 5,
+			},
 		},
 		[100113] = {
 			nodeID = 100158,
 			maxRank = 1,
-			stat = "perception",
-			stat_amount = 60,
+			stats = {
+				perception = 60,
+			},
 		},
 	},
 }

@@ -25,27 +25,28 @@ function CraftSim.PerkData:new(baseNode, perkID, perkData)
 
     self.threshold = C_ProfSpecs.GetUnlockRankForPerk(perkID)
     self.active = false
+    self.raw_stats = perkData.stats or {}
 
-    self.stat = perkData.stat
-    self.stat_amount = perkData.stat_amount
 
-    if not perkData.stat then return end
-
-    local stat = perkData.stat
-    local amount = perkData.stat_amount
-
-    self.professionStats.skill.value = (stat == "skill" and amount) or 0
-    self.professionStats.multicraft.value = (stat == "multicraft" and amount) or 0
-    self.professionStats.resourcefulness.value = (stat == "resourcefulness" and amount) or 0
-    self.professionStats.ingenuity.value = (stat == "ingenuity" and amount) or 0
-    self.professionStats.craftingspeed.value = (stat == "craftingspeed" and amount) or 0
-
-    self.professionStats.ingenuity:SetExtraValue((stat == "ingenuityrefundincrease" and (amount / 100)))
-    self.professionStats.ingenuity:SetExtraValue((stat == "reduceconcentrationcost" and (amount / 100)), 2)
-    self.professionStats.resourcefulness:SetExtraValue((stat == "reagentssavedfromresourcefulness" and (amount / 100)))
-    self.professionStats.multicraft:SetExtraValue((stat == "additionalitemscraftedwithmulticraft" and (amount / 100)))
-
-    self.unlocksReagentSlot = stat == "unlockreagentslot"
+    for stat, amount in pairs(self.raw_stats) do
+        -- skill
+        -- multicraft
+        -- resourcefulness
+        -- ingenuity
+        -- craftingspeed
+        if self.professionStats[stat] then
+            self.professionStats[stat].value = amount or 0
+        end
+        if stat == "ingenuityrefundincrease" then
+            self.professionStats.ingenuity:SetExtraValue((stat == "ingenuityrefundincrease" and (amount / 100)))
+        elseif stat == "reduceconcentrationcost" then
+            self.professionStats.ingenuity:SetExtraValue((stat == "reduceconcentrationcost" and (amount / 100)), 2)
+        elseif stat == "reagentssavedfromresourcefulness" then
+            self.professionStats.resourcefulness:SetExtraValue((stat == "reagentssavedfromresourcefulness" and (amount / 100)))
+        elseif stat == "additionalitemscraftedwithmulticraft" then
+            self.professionStats.multicraft:SetExtraValue((stat == "additionalitemscraftedwithmulticraft" and (amount / 100)))
+        end
+    end
 end
 
 function CraftSim.PerkData:Update()
@@ -54,16 +55,8 @@ end
 
 function CraftSim.PerkData:Debug()
     local debugLines = {
-        "nodeID: " .. tostring(self.nodeData.nodeID),
-        "affectsRecipe: " .. tostring(self.affectsRecipe),
+        "perkID: " .. tostring(self.perkID),
         "threshold: " .. tostring(self.threshold),
-        "equalsSkill: " .. tostring(self.equalsSkill),
-        "equalsMulticraft: " .. tostring(self.equalsMulticraft),
-        "equalsResourcefulness: " .. tostring(self.equalsResourcefulness),
-        "equalsIngenuity: " .. tostring(self.equalsIngenuity),
-        "equalsCraftingspeed: " .. tostring(self.equalsCraftingspeed),
-        "equalsResourcefulnessExtraItemsFactor: " .. tostring(self.equalsResourcefulnessExtraItemsFactor),
-        "equalsIngenuityExtraConcentrationFactor: " .. tostring(self.equalsIngenuityExtraConcentrationFactor),
     }
     local statLines = self.professionStats:Debug()
     statLines = CraftSim.GUTIL:Map(statLines, function(line) return "-" .. line end)

@@ -7,8 +7,7 @@ CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 ---@class CraftSim.RawPerkData
 ---@field nodeID number
 ---@field maxRank number
----@field stat? string
----@field stat_amount? number
+---@field stats table<string, number> statname -> amount
 
 ---@class CraftSim.RawNodeData
 ---@field recipeMapping table<RecipeID, number[]>
