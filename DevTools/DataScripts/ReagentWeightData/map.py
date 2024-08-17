@@ -17,6 +17,7 @@ def getItemWeight(reagentItemID, reagentItemTable, craftingCategoryTable):
 if __name__ == '__main__':
     args = sys.argv[1:]
     download = len(args) > 0 and args[0] == "true"
+    buildVersion = (len(args) > 1 and args[1]) or buildVersion
     csvTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
     tradeSkillItemTable = csvTables[0]
     reagentItemTable = csvTables[1]

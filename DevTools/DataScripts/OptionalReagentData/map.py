@@ -12,6 +12,7 @@ def printD(text, enabled):
 if __name__ == '__main__':
     args = sys.argv[1:]
     download = len(args) > 0 and args[0] == "true"
+    buildVersion = (len(args) > 1 and args[1]) or buildVersion
     wagoTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
     Item = wagoTables[0]
     ModifiedCraftingReagentItem = wagoTables[1]
