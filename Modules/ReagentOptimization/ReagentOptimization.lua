@@ -314,6 +314,10 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
         --print("fold " .. a .. " and " .. b)
         return CraftSim.REAGENT_OPTIMIZATION:GetGCD(a, b)
     end)
+    -- prevent division-by-zero when no reagents are weighted
+    if weightGCD == 0 then
+        weightGCD = 1
+    end
 
     --print("gcd: " .. tostring(weightGCD))
     -- create the ks items
