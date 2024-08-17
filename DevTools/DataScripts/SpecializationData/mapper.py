@@ -105,12 +105,15 @@ def map():
 
         professionDataTable[expansion][profession]["recipeMapping"][recipeID].append(perkID)
 
-        professionDataTable[expansion][profession]["nodeData"][perkID] = {
-            "nodeID": nodeID,
-            "maxRank": maxRank,
-            "stat": stat.lower().replace(" ", "").replace("(dnt-writemanually!)", "").replace("(dnt-writemanually)", ""),
-            "stat_amount": stat_amount,
-        }
+        if not perkID in professionDataTable[expansion][profession]["nodeData"]:
+            professionDataTable[expansion][profession]["nodeData"][perkID] = {
+                "nodeID": nodeID,
+                "maxRank": maxRank,
+                "stats": {}
+            }
+
+        cleanStatName = stat.lower().replace(" ", "").replace("(dnt-writemanually!)", "").replace("(dnt-writemanually)", "")
+        professionDataTable[expansion][profession]["nodeData"][perkID]["stats"][cleanStatName] = stat_amount
 
     print("\nWriting Lua Files")
     for expansion, professions in professionDataTable.items():
