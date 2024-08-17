@@ -29,14 +29,14 @@ function CraftSim.PerkData:new(baseNode, perkID, perkData)
 
 
     for stat, amount in pairs(self.raw_stats) do
+        -- skill
+        -- multicraft
+        -- resourcefulness
+        -- ingenuity
+        -- craftingspeed
         if self.professionStats[stat] then
             self.professionStats[stat].value = amount or 0
         end
-        -- self.professionStats.skill.value = (stat == "skill" and amount) or 0
-        -- self.professionStats.multicraft.value = (stat == "multicraft" and amount) or 0
-        -- self.professionStats.resourcefulness.value = (stat == "resourcefulness" and amount) or 0
-        -- self.professionStats.ingenuity.value = (stat == "ingenuity" and amount) or 0
-        -- self.professionStats.craftingspeed.value = (stat == "craftingspeed" and amount) or 0
         if stat == "ingenuityrefundincrease" then
             self.professionStats.ingenuity:SetExtraValue((stat == "ingenuityrefundincrease" and (amount / 100)))
         elseif stat == "reduceconcentrationcost" then

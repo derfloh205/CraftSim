@@ -57,17 +57,36 @@ function CraftSim.NodeData:new(recipeData, baseNodeData, perkMap)
         return a.threshold < b.threshold
     end)
 
-    local stat = baseNodeData.stat
-    local amount = baseNodeData.stat_amount or 0
-
     -- for base node equality stat assignments
-    self.equalsSkill = (stat == "skill" and amount) or 0
-    self.equalsMulticraft = (stat == "multicraft" and amount) or 0
-    self.equalsResourcefulness = (stat == "resourcefulness" and amount) or 0
-    self.equalsIngenuity = (stat == "ingenuity" and amount) or 0
-    self.equalsResourcefulnessExtraItemsFactor = (stat == "reagentssavedfromresourcefulness" and amount) or 0
-    self.equalsIngenuityExtraConcentrationFactor = (stat == "ingenuityrefundincrease" and amount) or 0
-    self.equalsCraftingspeed = (stat == "craftingspeed" and amount) or 0
+
+    self.raw_stats = baseNodeData.stats or {}
+
+    self.equalsSkill = 0
+    self.equalsMulticraft = 0
+    self.equalsResourcefulness = 0
+    self.equalsIngenuity = 0
+    self.equalsResourcefulnessExtraItemsFactor = 0
+    self.equalsIngenuityExtraConcentrationFactor = 0
+    self.equalsCraftingspeed = 0
+
+    for stat, amount in pairs(self.raw_stats) do
+        amount = amount or 0
+        if stat == "skill" then
+            self.equalsSkill = amount
+        elseif stat == "multicraft" then
+            self.equalsMulticraft = amount
+        elseif stat == "resourcefulness" then
+            self.equalsResourcefulness = amount
+        elseif stat == "ingenuity" then
+            self.equalsIngenuity = amount
+        elseif stat == "reagentssavedfromresourcefulness" then
+            self.equalsResourcefulnessExtraItemsFactor = amount / 100
+        elseif stat == "ingenuityrefundincrease" then
+            self.equalsIngenuityExtraConcentrationFactor = amount / 100
+        elseif stat == "craftingspeed" then
+            self.equalsCraftingspeed = amount / 100
+        end
+    end
 end
 
 function CraftSim.NodeData:Debug()
