@@ -197,7 +197,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[438891] = {
-			100428,
 			100429,
 			100404,
 			100403,
@@ -357,10 +356,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[438893] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -1026,7 +1021,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			100336,
 			100334,
 			100332,
-			100428,
 			100429,
 			100404,
 			100403,
@@ -1194,7 +1188,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			100336,
 			100334,
 			100332,
-			100428,
 			100429,
 			100404,
 			100403,
@@ -1480,7 +1473,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446937] = {
-			100428,
 			100429,
 			100404,
 			100403,
@@ -1798,10 +1790,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446941] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -2212,7 +2200,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446955] = {
-			100428,
 			100429,
 			100404,
 			100403,
@@ -2530,10 +2517,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446959] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -2944,10 +2927,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446964] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -3000,10 +2979,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446965] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -3056,10 +3031,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446966] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -3306,10 +3277,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446969] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -3362,10 +3329,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446970] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -3418,10 +3381,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446971] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -3474,10 +3433,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446972] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -3627,10 +3582,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			101782,
 		},
 		[446974] = {
-			100428,
-			100399,
-			100398,
-			100397,
 			100513,
 			100514,
 			100485,
@@ -5994,13 +5945,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 				unlockreagentslot = 0,
 			},
 		},
-		[100428] = {
-			nodeID = 100427,
-			maxRank = 20,
-			stats = {
-				skill = 10,
-			},
-		},
 		[100429] = {
 			nodeID = 100428,
 			maxRank = 1,
@@ -6375,27 +6319,6 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.TAILORING_DATA = {
 			maxRank = 1,
 			stats = {
 				skill = 10,
-			},
-		},
-		[100399] = {
-			nodeID = 100427,
-			maxRank = 1,
-			stats = {
-				skill = 10,
-			},
-		},
-		[100398] = {
-			nodeID = 100427,
-			maxRank = 1,
-			stats = {
-				skill = 10,
-			},
-		},
-		[100397] = {
-			nodeID = 100427,
-			maxRank = 1,
-			stats = {
-				unlockreagentslot = 0,
 			},
 		},
 		[100513] = {

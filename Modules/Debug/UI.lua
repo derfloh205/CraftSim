@@ -440,6 +440,20 @@ function CraftSim.DEBUG.UI:InitModuleToolsMainTab(mainTab)
             end
         end
     }
+
+    content.inspectOpenRecipeButton = GGUI.Button {
+        label = "Inspect Specialization Data",
+        parent = content,
+        anchorParent = content.inspectOpenRecipeButton.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        adjustWidth = true, sizeX = 15, sizeY = 25,
+        clickCallback = function()
+            if DevTool then
+                DevTool.MainWindow:Show()
+                DevTool:AddData(CraftSim.INIT.currentRecipeData.specializationData, "Open Recipe - SpecializationData")
+            end
+        end
+    }
 end
 
 function CraftSim.DEBUG.UI:InitModuleToolsRecipeScanTab(recipeScanTab)

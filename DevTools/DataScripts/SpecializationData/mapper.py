@@ -19,7 +19,7 @@ outdatedNodeIDs = [
     ## Threads of Devotion
     101419, 100431, 100603, 100517,
     ## Hats
-    101415, 100592,
+    101415, 100592, 100427,
     ## Weathering Wear
     100595, 100516, 100430, 101418,
     ## Cloaks
