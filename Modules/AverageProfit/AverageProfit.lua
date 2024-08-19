@@ -69,6 +69,7 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param baseAverageProfit number
 ---@return number statWeight
+---@return number averageProfitConcentration
 function CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData, baseAverageProfit)
     if not recipeData.supportsQualities or recipeData.concentrating or recipeData.concentrationCost <= 0 then
         return 0
@@ -81,7 +82,7 @@ function CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData, baseAveragePr
     local profitDiff = averageProfitConcentration - baseAverageProfit
     local statWeight = profitDiff / recipeData.concentrationCost
     recipeData.concentrating = false
-    return statWeight
+    return statWeight, averageProfitConcentration
 end
 
 ---@param recipeData CraftSim.RecipeData
