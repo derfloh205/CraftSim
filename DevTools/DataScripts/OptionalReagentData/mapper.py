@@ -68,11 +68,10 @@ def map(download, buildVersion):
                     "qualityID": qualityID,
                     "name": itemName,
                     "expansionID": expansionID,
-                    "stats": [
-                        {
+                    "stats": {
                             "increasedifficulty": difficultyIncrease
                         }
-                    ]
+                    
                 }
                 continue
 
