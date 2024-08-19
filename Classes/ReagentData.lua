@@ -28,7 +28,7 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
     end
     for _, reagentSlotSchematic in pairs(schematicInfo.reagentSlotSchematics) do
         local reagentType = reagentSlotSchematic.reagentType
-        -- for now only consider the required reagents
+
         if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
             table.insert(self.requiredReagents, CraftSim.Reagent(reagentSlotSchematic))
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
