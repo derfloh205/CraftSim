@@ -103,7 +103,8 @@ def map():
 
         wagoTools.updateProgressBar(count, total, f"{expansion}->{profession}->{recipeID}")
 
-        professionDataTable[expansion][profession]["recipeMapping"][recipeID].append(perkID)
+        if not perkID in professionDataTable[expansion][profession]["recipeMapping"][recipeID]:
+            professionDataTable[expansion][profession]["recipeMapping"][recipeID].append(perkID)
 
         if not perkID in professionDataTable[expansion][profession]["nodeData"]:
             professionDataTable[expansion][profession]["nodeData"][perkID] = {
