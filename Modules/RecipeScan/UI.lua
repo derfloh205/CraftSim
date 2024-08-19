@@ -340,6 +340,16 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         end
     })
 
+    content.concentrationToggleCB = GGUI.Checkbox {
+        parent = content, anchorParent = content.cancelScanButton.frame, anchorA = "LEFT", anchorB = "RIGHT",
+        labelOptions = { text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) .. " Concentration" },
+        tooltip = "Toggle Concentration",
+        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("RECIPESCAN_ENABLE_CONCENTRATION", checked)
+        end
+    }
+
     content.resultAmount = GGUI.Text {
         parent = content, anchorParent = content.scanButton.frame, anchorA = "RIGHT", anchorB = "LEFT",
         offsetX = -15, justifyOptions = { type = "H", align = "RIGHT" }, text = "",
@@ -477,12 +487,16 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                 parent = concentrationCostColumn,
                 anchorParent = concentrationCostColumn,
                 anchorA = "LEFT",
-                anchorB = "LEFT"
+                anchorB = "LEFT",
+                scale = 0.95,
             })
 
-            ---@type GGUI.Text
             averageProfitColumn.text = GGUI.Text({
-                parent = averageProfitColumn, anchorParent = averageProfitColumn, anchorA = "LEFT", anchorB = "LEFT"
+                parent = averageProfitColumn,
+                anchorParent = averageProfitColumn,
+                anchorA = "LEFT",
+                anchorB = "LEFT",
+                scale = 0.95,
             })
 
             topGearColumn.gear2Icon = GGUI.Icon({
@@ -800,6 +814,8 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
             row.recipeData = recipeData
 
+            local enableConcentration = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
+
             local recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
 
             local cooldownInfoText = ""
@@ -811,26 +827,38 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                     "(" .. currentCharges .. "/" .. cooldownData.maxCharges .. ")"
             end
 
-
             recipeColumn.text:SetText(recipeRarity.hex .. recipeData.recipeName .. "|r" .. cooldownInfoText)
 
             learnedColumn:SetLearned(recipeData.learned)
 
-            expectedResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItem)
+            if enableConcentration then
+                expectedResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItemConcentration)
+            else
+                expectedResultColumn.itemIcon:SetItem(recipeData.resultData.expectedItem)
+            end
 
-            local averageProfit = recipeData:GetAverageProfit()
+
             local relativeTo = nil
             if showProfit then
                 relativeTo = recipeData.priceData.craftingCosts
             end
-            averageProfitColumn.text:SetText(GUTIL:FormatMoney(averageProfit, true, relativeTo, true))
+
+            local averageProfit = recipeData:GetAverageProfit()
+            row.concentrationWeight, row.concentrationProfit = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData,
+                averageProfit)
+
+            if enableConcentration and row.concentrationProfit then
+                averageProfit = row.concentrationProfit
+            end
+
             row.averageProfit = averageProfit
             row.relativeProfit = GUTIL:GetPercentRelativeTo(averageProfit, recipeData.priceData.craftingCosts)
-            row.concentrationWeight = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData, averageProfit)
             recipeData.resultData:Update() -- switch back
             row.concentrationCost = recipeData.concentrationCost
             concentrationCostColumn.text:SetText(row.concentrationCost)
             concentrationValueColumn.text:SetText(GUTIL:FormatMoney(row.concentrationWeight, true))
+
+            averageProfitColumn.text:SetText(GUTIL:FormatMoney(averageProfit, true, relativeTo, true))
 
             if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS") then
                 if recipeData.professionGearSet:IsEquipped() then
