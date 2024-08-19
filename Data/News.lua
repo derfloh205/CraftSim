@@ -15,6 +15,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("17.0.10"),
+        f.p .. "Fixed " .. f.bb("OptionalReagents") .. " difficulty in simulation mode",
         newP("17.0.9"),
         f.p .. "Fixed " .. f.bb("TSM Price Expression ") .. "for Results used for Materials",
         f.p .. "Fixed " .. f.bb("Resourcefulness Extra Item Bonus") .. " being overinflated",
