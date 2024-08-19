@@ -14,7 +14,7 @@ function CraftSim.UTIL:NextFrameLevel()
 end
 
 -- thx ketho forum guy
-function CraftSim.UTIL:KethoEditBox_Show(text)
+function CraftSim.UTIL:ShowTextCopyBox(text)
     if not KethoEditBox then
         local f = CreateFrame("Frame", "KethoEditBox", UIParent, "DialogBoxFrame")
         f:SetPoint("CENTER")

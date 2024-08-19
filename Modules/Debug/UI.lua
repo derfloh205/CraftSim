@@ -440,6 +440,20 @@ function CraftSim.DEBUG.UI:InitModuleToolsMainTab(mainTab)
             end
         end
     }
+
+    content.inspectOpenRecipeButton = GGUI.Button {
+        label = "Inspect Specialization Data",
+        parent = content,
+        anchorParent = content.inspectOpenRecipeButton.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        adjustWidth = true, sizeX = 15, sizeY = 25,
+        clickCallback = function()
+            if DevTool then
+                DevTool.MainWindow:Show()
+                DevTool:AddData(CraftSim.INIT.currentRecipeData.specializationData, "Open Recipe - SpecializationData")
+            end
+        end
+    }
 end
 
 function CraftSim.DEBUG.UI:InitModuleToolsRecipeScanTab(recipeScanTab)
@@ -493,41 +507,19 @@ end
 function CraftSim.DEBUG.UI:InitModuleToolsSpecInfoTab(specInfoTab)
     local content = specInfoTab.content
 
-    content.nodeDebugInput = GGUI.TextInput {
-        parent = content, anchorParent = content,
-        anchorA = "TOP", anchorB = "TOP", offsetX = -50, offsetY = -40, sizeX = 120, sizeY = 20,
-    }
-
-    content.debugNodeButton = GGUI.Button({
-        label = "Debug Node",
+    content.showOutdatedNodes = GGUI.Button({
+        label = "Fetch Outdated Nodes",
         parent = content,
-        anchorParent = content.nodeDebugInput.frame,
-        anchorA = "LEFT",
-        anchorB = "RIGHT",
-        sizeX = 15,
-        sizeY = 25,
-        adjustWidth = true,
-        clickCallback = function()
-            local nodeIdentifier = content.nodeDebugInput:GetText()
-            CraftSim.DEBUG:CheckSpecNode(nodeIdentifier)
-        end,
-        offsetX = 10,
-    })
-
-
-    content.compareData = GGUI.Button({
-        label = "Compare UI/Spec Data",
-        parent = content,
-        anchorParent = content.nodeDebugInput.frame,
+        anchorParent = content,
         anchorA = "TOPLEFT",
         anchorB = "TOPLEFT",
         sizeX = 15,
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            CraftSim.DEBUG:CompareStatData()
+            CraftSim.DEBUG:ShowOutdatedSpecNodes()
         end,
-        offsetX = -5,
-        offsetY = -25,
+        offsetX = 10,
+        offsetY = -10
     })
 end
