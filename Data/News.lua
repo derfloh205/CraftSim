@@ -15,7 +15,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
-        newP("17.1.0"),
+        newP("17.1.1"),
+        f.p .. "Fixed duplicated Tailoring SpecInfo",
         f.P .. f.bb("RecipeScan") .. " now has a " .. f.gold("Concentration ") .. "Toggle",
         f.p .. "Fixed " .. f.bb("OptionalReagents") .. " difficulty in simulation mode",
         newP("17.0.9"),
