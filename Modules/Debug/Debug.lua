@@ -77,19 +77,6 @@ function CraftSim.DEBUG:PrintTable(t, debugID, recursive, level)
     end
 end
 
-function CraftSim.DEBUG:CheckSpecNode(nodeID)
-    local function print(text, r, l) -- override
-        CraftSim.DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SPECDATA, r, l)
-    end
-end
-
----@deprecated
-function CraftSim.DEBUG:CompareStatData()
-    local function print(text, r, l) -- override
-        CraftSim.DEBUG:print(text, CraftSim.CONST.DEBUG_IDS.SPECDATA, r, l)
-    end
-end
-
 function CraftSim.DEBUG:ProfilingUpdate(label)
     local time = debugprofilestop()
     local diff = time - CraftSim.DEBUG.profilings[label]
@@ -117,4 +104,47 @@ end
 function CraftSim.DEBUG:GetCacheGlobalsList()
     return {
     }
+end
+
+function CraftSim.DEBUG:ShowOutdatedSpecNodes()
+    local specializationData = CraftSim.INIT.currentRecipeData.specializationData
+    if not specializationData then return end
+
+    local sortedNodes = GUTIL:Sort(specializationData.nodeData, function(a, b)
+        if a.name > b.name then
+            return true
+        elseif a.name < b.name then
+            return false
+        end
+
+        return a.nodeID < b.nodeID
+    end)
+
+    ---@type CraftSim.NodeData[]
+    local outliers = {}
+
+    for i = 1, #sortedNodes do
+        local nodeData = sortedNodes[i]
+        local nextData = sortedNodes[i + 1]
+        if nodeData and nextData then
+            if nodeData.name == nextData.name then
+                tinsert(outliers, nodeData)
+            end
+        end
+    end
+
+    if #outliers == 0 then return end
+
+    local currentName = outliers[1].name
+    local text = "## " .. currentName .. "\n"
+
+    for _, nodeData in ipairs(outliers) do
+        if currentName ~= nodeData.name then
+            text = text .. "\n## " .. nodeData.name .. "\n"
+            currentName = nodeData.name
+        end
+        text = text .. nodeData.nodeID .. ", "
+    end
+
+    CraftSim.UTIL:ShowTextCopyBox(text)
 end

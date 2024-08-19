@@ -123,7 +123,7 @@ function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
         label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_EXPORT_JSON),
         clickCallback = function()
             local json = CraftSim.CRAFT_RESULTS:ExportJSON()
-            CraftSim.UTIL:KethoEditBox_Show(json)
+            CraftSim.UTIL:ShowTextCopyBox(json)
         end
     })
 
