@@ -13,6 +13,19 @@ import urllib.parse
 import requests
 from pathlib import Path
 
+# because blizzard does not clean up its databases..
+outdatedNodeIDs = [
+    # TWW Tailoring
+    ## Threads of Devotion
+    101419, 100431, 100603, 100517,
+    ## Hats
+    101415, 100592,
+    ## Weathering Wear
+    100595, 100516, 100430, 101418,
+    ## Cloaks
+    100426,
+]
+
 professionsDF = {
     "2822": "Blacksmithing",
     "2830": "Leatherworking",
@@ -71,6 +84,13 @@ def map():
         maxRank = int(row["MaxRanks"])
         stat = row["Stat"]
         stat_amount = int(row["Amount"])
+        nodeName = row["NodeName"] or ""
+
+        # ignore outdated nodeIDs
+        if perkID in outdatedNodeIDs:
+            continue
+        if nodeID in outdatedNodeIDs:
+            continue
 
         professionDF = None
         professionTWW = None
@@ -115,6 +135,7 @@ def map():
 
         cleanStatName = stat.lower().replace(" ", "").replace("(dnt-writemanually!)", "").replace("(dnt-writemanually)", "")
         professionDataTable[expansion][profession]["nodeData"][perkID]["stats"][cleanStatName] = stat_amount
+    
 
     print("\nWriting Lua Files")
     for expansion, professions in professionDataTable.items():
