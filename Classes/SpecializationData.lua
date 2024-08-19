@@ -44,9 +44,11 @@ function CraftSim.SpecializationData:new(recipeData)
 
     for _, perkID in ipairs(recipePerks or {}) do
         local perkData = professionNodeData[perkID]
-        nodePerkMap[perkData.nodeID] = nodePerkMap[perkData.nodeID] or {}
-        if perkID ~= perkData.nodeID then
-            tinsert(nodePerkMap[perkData.nodeID], perkID)
+        local baseNodeID = perkData.nodeID
+        -- perks have max rank 1, base nodes have max rank > 1
+        if perkData.maxRank == 1 then
+            nodePerkMap[baseNodeID] = nodePerkMap[baseNodeID] or {}
+            tinsert(nodePerkMap[baseNodeID], perkID)
         end
     end
 

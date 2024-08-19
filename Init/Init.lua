@@ -392,10 +392,10 @@ function CraftSim.INIT:PLAYER_LOGIN()
 		elseif command == "export" then
 			if rest == "recipeids" then
 				local recipeIDs = CraftSim.UTIL:ExportRecipeIDsForExpacCSV()
-				CraftSim.UTIL:KethoEditBox_Show(recipeIDs)
+				CraftSim.UTIL:ShowTextCopyBox(recipeIDs)
 			elseif CraftSim.INIT.currentRecipeData then
 				local json = CraftSim.INIT.currentRecipeData:GetJSON()
-				CraftSim.UTIL:KethoEditBox_Show(json)
+				CraftSim.UTIL:ShowTextCopyBox(json)
 			end
 		elseif command == "resetdb" then
 			CraftSimDB = nil

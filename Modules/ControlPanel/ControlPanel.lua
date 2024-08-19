@@ -88,7 +88,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
                 end
 
                 jb.json = jb.json .. "\n]"
-                CraftSim.UTIL:KethoEditBox_Show(jb.json)
+                CraftSim.UTIL:ShowTextCopyBox(jb.json)
             end
         end
 
