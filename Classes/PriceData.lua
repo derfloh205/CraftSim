@@ -144,17 +144,17 @@ function CraftSim.PriceData:Update()
         table.insert(self.qualityPriceList, itemPrice)
     end
 
-    local avgSavedCostsRes = 0
+    self.resourcefulnessSavedCosts = 0
     if self.recipeData.supportsResourcefulness then
+        self.resourcefulnessSavedCosts = CraftSim.CALC:GetResourcefulnessSavedCosts(self.recipeData)
         -- in this case we need the average saved costs per craft
-        avgSavedCostsRes = CraftSim.CALC:GetResourcefulnessSavedCosts(self.recipeData) *
+        self.resourcefulnessSavedCostsAverage = self.resourcefulnessSavedCosts *
             self.recipeData.professionStats.resourcefulness:GetPercent(true)
     end
 
     local expectedYieldPerCraft = self.recipeData.resultData.expectedYieldPerCraft
-    local avgCraftingCostsRes = self.craftingCosts - avgSavedCostsRes
-
-    self.expectedCostsPerItem = (avgCraftingCostsRes) / expectedYieldPerCraft
+    self.averageCraftingCosts = self.craftingCosts - self.resourcefulnessSavedCostsAverage
+    self.expectedCostsPerItem = self.averageCraftingCosts / expectedYieldPerCraft
 
     print("calculated crafting costs: " .. tostring(self.craftingCosts))
 end
@@ -180,6 +180,9 @@ function CraftSim.PriceData:Copy(recipeData)
     copy.craftingCostsRequired = self.craftingCostsRequired
     copy.expectedCostsPerItem = self.expectedCostsPerItem
     copy.selfCraftedReagents = CopyTable(self.selfCraftedReagents or {})
+    copy.averageCraftingCosts = self.averageCraftingCosts
+    copy.resourcefulnessSavedCosts = self.resourcefulnessSavedCosts
+    copy.resourcefulnessSavedCostsAverage = self.resourcefulnessSavedCostsAverage
     return copy
 end
 

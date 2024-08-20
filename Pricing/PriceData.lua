@@ -65,12 +65,12 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
                     if allowCooldown then
                         local itemOptimizedCostsData = CraftSim.DB.ITEM_OPTIMIZED_COSTS:Get(itemID,
                             recipeCrafter)
-                        if itemOptimizedCostsData and itemOptimizedCostsData.craftingChanceMin > 0 then
+                        if itemOptimizedCostsData then
                             priceInfo.expectedCostsData = itemOptimizedCostsData
                             -- only set as used price if its lower then ah price or no ah price for this item exists
-                            if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCostsMin < priceInfo.ahPrice then
+                            if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCostsPerItem < priceInfo.ahPrice then
                                 priceInfo.isExpectedCost = true
-                                return itemOptimizedCostsData.expectedCostsMin, priceInfo
+                                return itemOptimizedCostsData.expectedCostsPerItem, priceInfo
                             end
                         end
                     end

@@ -44,6 +44,12 @@ function CraftSim.DB.RECIPE_SUB_CRAFTER:Migrate()
 
         CraftSimDB.recipeSubCrafterDB.version = 2
     end
+
+    -- reset for tww refactor
+    if CraftSimDB.recipeSubCrafterDB.version == 2 then
+        self:ClearAll()
+        CraftSimDB.recipeSubCrafterDB.version = 3
+    end
 end
 
 function CraftSim.DB.RECIPE_SUB_CRAFTER:ClearAll()

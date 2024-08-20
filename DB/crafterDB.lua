@@ -113,6 +113,13 @@ function CraftSim.DB.CRAFTER:Migrate()
 
         CraftSimDB.crafterDB.version = 3
     end
+
+    -- clear data
+    if CraftSimDB.crafterDB.version == 3 then
+        self:ClearAll()
+
+        CraftSimDB.crafterDB.version = 4
+    end
 end
 
 ---@param crafterUID CrafterUID

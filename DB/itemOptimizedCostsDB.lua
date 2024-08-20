@@ -94,13 +94,11 @@ end
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(recipeData)
     -- cache the results if not gear and if its learned only
     if not recipeData.isGear and recipeData.learned then
-        --print("Caching Optimized Costs Data for: " .. self.recipeName)
-
         -- only if reachable
         for qualityID, item in ipairs(recipeData.resultData.itemsByQuality) do
             local reachable = qualityID <= recipeData.resultData.expectedQualityConcentration
             if reachable then
-                print("Caching Optimized Costs Data for: " .. recipeData.recipeName)
+                print("Caching Optimized Costs Data for: " .. recipeData.recipeName .. " q" .. qualityID)
                 local itemID = item:GetItemID()
                 CraftSimDB.itemOptimizedCostsDB.data[itemID] = CraftSimDB.itemOptimizedCostsDB.data[itemID] or {}
 
@@ -111,6 +109,7 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(recipeData)
                     expectedCostsPerItem = recipeData.priceData.expectedCostsPerItem,
                     expectedYieldPerCraft = recipeData.resultData.expectedYieldPerCraft,
                     concentration = qualityID == recipeData.resultData.expectedQualityConcentration,
+                    concentrationCosts = recipeData.concentrationCost,
                     profession = recipeData.professionData.professionInfo.profession,
                 }
             end
