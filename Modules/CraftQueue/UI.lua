@@ -228,6 +228,10 @@ function CraftSim.CRAFTQ.UI:Init()
                     sizeX = 25,
                     sizeY = 25,
                     label = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.EDIT_PEN, 0.7),
+                    tooltipOptions = {
+                        text = "Edit",
+                        anchor = "ANCHOR_CURSOR_RIGHT",
+                    },
                 })
 
                 crafterColumn.text = GGUI.Text {
@@ -1747,7 +1751,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         end
     end
 
-    editButtonColumn.editButton:SetEnabled(row.craftQueueItem.recipeData.subRecipeDepth == 0)
+    editButtonColumn.editButton:SetVisible(row.craftQueueItem.recipeData.subRecipeDepth == 0)
 
     crafterColumn.text:SetText(recipeData:GetFormattedCrafterText(true, true, 20, 20))
 
