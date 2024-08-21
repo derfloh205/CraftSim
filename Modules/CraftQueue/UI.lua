@@ -1711,6 +1711,8 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
 
     resultList:UpdateDisplay()
 
+    editRecipeFrame.content.concentrationCB:SetVisible(craftQueueItem.recipeData.supportsQualities)
+
     editRecipeFrame.content.concentrationCB:SetChecked(craftQueueItem.concentrating)
 end
 

@@ -172,7 +172,7 @@ end
 ---@return CraftSim.CraftQueueItem | nil
 function CraftSim.CraftQueue:FindRecipeByParentRecipeInfo(prI)
     return self.recipeCrafterMap
-    [prI.crafterUID .. ":" .. prI.recipeID .. ":" .. prI.subRecipeDepth .. ":" .. tostring(prI.concentrating)]
+        [prI.crafterUID .. ":" .. prI.recipeID .. ":" .. prI.subRecipeDepth .. ":" .. tostring(prI.concentrating)]
 end
 
 function CraftSim.CraftQueue:ClearAll()
