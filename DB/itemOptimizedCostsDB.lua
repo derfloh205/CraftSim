@@ -104,13 +104,18 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(recipeData)
                 local itemID = item:GetItemID()
                 CraftSimDB.itemOptimizedCostsDB.data[itemID] = CraftSimDB.itemOptimizedCostsDB.data[itemID] or {}
 
+                local concentrationAvailable = recipeData.concentrationCost > 0
+                local concentration = qualityID == recipeData.resultData.expectedQualityConcentration and
+                    concentrationAvailable
+
+
                 ---@type CraftSim.ExpectedCraftingCostsData
                 CraftSimDB.itemOptimizedCostsDB.data[itemID][recipeData:GetCrafterUID()] = {
                     crafter = recipeData:GetCrafterUID(),
                     qualityID = qualityID,
                     expectedCostsPerItem = recipeData.priceData.expectedCostsPerItem,
                     expectedYieldPerCraft = recipeData.resultData.expectedYieldPerCraft,
-                    concentration = qualityID == recipeData.resultData.expectedQualityConcentration,
+                    concentration = concentration,
                     concentrationCost = recipeData.concentrationCost,
                     profession = recipeData.professionData.professionInfo.profession,
                 }

@@ -66,11 +66,16 @@ function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, isReagent, forceAHPr
                         local itemOptimizedCostsData = CraftSim.DB.ITEM_OPTIMIZED_COSTS:Get(itemID,
                             recipeCrafter)
                         if itemOptimizedCostsData then
-                            priceInfo.expectedCostsData = itemOptimizedCostsData
-                            -- only set as used price if its lower then ah price or no ah price for this item exists
-                            if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCostsPerItem < priceInfo.ahPrice then
-                                priceInfo.isExpectedCost = true
-                                return itemOptimizedCostsData.expectedCostsPerItem, priceInfo
+                            local allowConcentration =
+                                CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION") or
+                                not itemOptimizedCostsData.concentration
+                            if allowConcentration then
+                                priceInfo.expectedCostsData = itemOptimizedCostsData
+                                -- only set as used price if its lower then ah price or no ah price for this item exists
+                                if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCostsPerItem < priceInfo.ahPrice then
+                                    priceInfo.isExpectedCost = true
+                                    return itemOptimizedCostsData.expectedCostsPerItem, priceInfo
+                                end
                             end
                         end
                     end

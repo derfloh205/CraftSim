@@ -269,7 +269,7 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
     local content = subRecipeOptionsTab.content
 
     content.maxRecipeDepthSlider = GGUI.Slider {
-        parent = content, anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -50, offsetX = 70,
+        parent = content, anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -30, offsetX = 70,
         label = "Sub Recipe Calculation Depth", minValue = 1, maxValue = 5, initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH"),
         lowText = "1", highText = "5", step = 1,
         onValueChangedCallback = function(self, value)
@@ -277,8 +277,22 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
         end
     }
 
-    content.includeCooldownsCB = GGUI.Checkbox {
+    content.useConcentrationCB = GGUI.Checkbox {
         parent = content, anchorParent = content.maxRecipeDepthSlider.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        labelOptions = {
+            anchorA = "RIGHT", anchorB = "LEFT", text = "Enable Concentration", justifyOptions = { type = "H", align = "RIGHT" },
+            offsetX = -7,
+        },
+        tooltip = "If enabled, " .. f.l("CraftSim") .. " will include reagent qualities even if concentration is necessary.",
+        initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION", checked)
+            CraftSim.INIT:TriggerModulesByRecipeType()
+        end
+    }
+
+    content.includeCooldownsCB = GGUI.Checkbox {
+        parent = content, anchorParent = content.useConcentrationCB.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         labelOptions = {
             anchorA = "RIGHT", anchorB = "LEFT", text = "Include Cooldown Recipes", justifyOptions = { type = "H", align = "RIGHT" },
             offsetX = -7,

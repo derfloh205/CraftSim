@@ -310,12 +310,12 @@ end
 
 ---@param recipeData CraftSim.RecipeData
 ---@param amount number
----@param enchantItemTarget ItemLocationMixin?
-function CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount, enchantItemTarget)
+---@param enchantItemTargetOrRecipeLevel ItemLocationMixin|number?
+function CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount, enchantItemTargetOrRecipeLevel)
     -- find the current queue item and set it to currentlyCraftedQueueItem
     -- if an enchant was crafted that was not on a vellum, ignore
-    if enchantItemTarget and enchantItemTarget:IsValid() then
-        if C_Item.GetItemID(enchantItemTarget) ~= CraftSim.CONST.ENCHANTING_VELLUM_ID then
+    if enchantItemTargetOrRecipeLevel and type(enchantItemTargetOrRecipeLevel) ~= "number" and enchantItemTargetOrRecipeLevel:IsValid() then
+        if C_Item.GetItemID(enchantItemTargetOrRecipeLevel) ~= CraftSim.CONST.ENCHANTING_VELLUM_ID then
             CraftSim.CRAFTQ.currentlyCraftedRecipeData = nil
             return
         end
