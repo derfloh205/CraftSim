@@ -6,7 +6,7 @@ CraftSim.COMM = LibStub("AceAddon-3.0"):NewAddon("CraftSim.COMM", "AceComm-3.0",
 
 CraftSim.COMM.registeredPrefixes = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COMM)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COMM)
 
 local function encodeData(data)
     local serializedData = CraftSim.COMM:Serialize(data)

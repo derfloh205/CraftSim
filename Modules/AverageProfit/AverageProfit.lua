@@ -1,9 +1,15 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+---@class CraftSim.AVERAGEPROFIT
 CraftSim.AVERAGEPROFIT = {}
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
+---@type GGUI.Frame
+CraftSim.AVERAGEPROFIT.frame = nil
+---@type GGUI.Frame
+CraftSim.AVERAGEPROFIT.frameWO = nil
+
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.AVERAGE_PROFIT)
 
 local statIncreaseFactor = 5
 
@@ -20,59 +26,63 @@ function CraftSim.AVERAGEPROFIT:GetQualityThresholds(maxQuality, recipeDifficult
 end
 
 ---@param recipeData CraftSim.RecipeData
----@param baseMeanProfit number
-function CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseMeanProfit)
+---@param baseAverageProfit number
+function CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseAverageProfit)
     recipeData:Update()
     local meanProfitModified = CraftSim.CALC:GetAverageProfit(recipeData)
-    local profitDiff = meanProfitModified - baseMeanProfit
+    local profitDiff = meanProfitModified - baseAverageProfit
     local statWeight = profitDiff / statIncreaseFactor
 
     return statWeight
 end
 
 ---@param recipeData CraftSim.RecipeData
----@param baseMeanProfit number
+---@param baseAverageProfit number
 ---@return number statWeight
-function CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, baseMeanProfit)
-    if not recipeData.supportsInspiration then
-        return 0
-    end
-    -- increase modifier
-    recipeData.professionStatModifiers.inspiration:addValue(statIncreaseFactor)
-    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseMeanProfit)
-    -- revert change (probably more performant than just to copy the whole thing)
-    recipeData.professionStatModifiers.inspiration:subtractValue(statIncreaseFactor)
-    return statWeight
-end
-
----@param recipeData CraftSim.RecipeData
----@param baseMeanProfit number
----@return number statWeight
-function CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, baseMeanProfit)
+function CraftSim.AVERAGEPROFIT:GetMulticraftWeight(recipeData, baseAverageProfit)
     if not recipeData.supportsMulticraft then
         return 0
     end
     -- increase modifier
     recipeData.professionStatModifiers.multicraft:addValue(statIncreaseFactor)
-    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseMeanProfit)
+    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseAverageProfit)
     -- revert change (probably more performant than just to copy the whole thing)
     recipeData.professionStatModifiers.multicraft:subtractValue(statIncreaseFactor)
     return statWeight
 end
 
 ---@param recipeData CraftSim.RecipeData
----@param baseMeanProfit number
+---@param baseAverageProfit number
 ---@return number statWeight
-function CraftSim.AVERAGEPROFIT:getResourcefulnessWeight(recipeData, baseMeanProfit)
+function CraftSim.AVERAGEPROFIT:GetResourcefulnessWeight(recipeData, baseAverageProfit)
     if not recipeData.supportsResourcefulness then
         return 0
     end
     -- increase modifier
     recipeData.professionStatModifiers.resourcefulness:addValue(statIncreaseFactor)
-    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseMeanProfit)
+    local statWeight = CraftSim.AVERAGEPROFIT:CalculateStatWeightByModifiedData(recipeData, baseAverageProfit)
     -- revert change (probably more performant than just to copy the whole thing)
     recipeData.professionStatModifiers.resourcefulness:subtractValue(statIncreaseFactor)
     return statWeight
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param baseAverageProfit number
+---@return number statWeight
+---@return number averageProfitConcentration
+function CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData, baseAverageProfit)
+    if not recipeData.supportsQualities or recipeData.concentrating or recipeData.concentrationCost <= 0 then
+        return 0
+    end
+
+    -- switch on concentration
+    recipeData.concentrating = true
+    recipeData.resultData:Update() -- to make concentration take effect
+    local averageProfitConcentration = recipeData:GetAverageProfit()
+    local profitDiff = averageProfitConcentration - baseAverageProfit
+    local statWeight = profitDiff / recipeData.concentrationCost
+    recipeData.concentrating = false
+    return statWeight, averageProfitConcentration
 end
 
 ---@param recipeData CraftSim.RecipeData
@@ -80,7 +90,7 @@ end
 function CraftSim.AVERAGEPROFIT:GetExpectedQualityBySkill(recipeData, skill)
     local expectedQuality = 1
     local thresholds = CraftSim.AVERAGEPROFIT:GetQualityThresholds(recipeData.maxQuality,
-        recipeData.professionStats.recipeDifficulty.value, CraftSimOptions.breakPointOffset)
+        recipeData.professionStats.recipeDifficulty.value, CraftSim.DB.OPTIONS:Get("QUALITY_BREAKPOINT_OFFSET"))
 
     for _, threshold in pairs(thresholds) do
         if skill >= threshold then
@@ -99,11 +109,11 @@ function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
 
     print("calculate stat weights avg profit: " .. tostring(CraftSim.GUTIL:FormatMoney(averageProfit, true)))
 
-    local inspirationWeight = CraftSim.AVERAGEPROFIT:getInspirationWeight(recipeData, averageProfit)
-    local multicraftWeight = CraftSim.AVERAGEPROFIT:getMulticraftWeight(recipeData, averageProfit)
-    local resourcefulnessWeight = CraftSim.AVERAGEPROFIT:getResourcefulnessWeight(recipeData, averageProfit)
+    local multicraftWeight = CraftSim.AVERAGEPROFIT:GetMulticraftWeight(recipeData, averageProfit)
+    local resourcefulnessWeight = CraftSim.AVERAGEPROFIT:GetResourcefulnessWeight(recipeData, averageProfit)
+    local concentrationWeight = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData, averageProfit)
 
     recipeData:Update() -- revert
 
-    return CraftSim.Statweights(averageProfit, inspirationWeight, multicraftWeight, resourcefulnessWeight)
+    return CraftSim.Statweights(averageProfit, multicraftWeight, resourcefulnessWeight, concentrationWeight)
 end

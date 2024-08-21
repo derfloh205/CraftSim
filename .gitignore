@@ -1,2 +1,9 @@
-.replit
-replit.nix
+.vscode
+.release/
+Libs/
+!Libs/classic.lua
+DevTools/DataScripts/__pycache__
+DevTools/DataScripts/**/Result/
+DevTools/DataScripts/**/Data/
+DevTools/DataScripts/**.db
+!**/*.py

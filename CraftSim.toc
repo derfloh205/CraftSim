@@ -1,102 +1,114 @@
-## Interface: 100205
+## Interface: 110002
 ## DefaultState: enabled
 
 ## Title: CraftSim
 ## Notes: Calculates the average profit based on your profession stats and other tools for dragonflight gold making
 ## Author: genju
-## Version: 14.4.1
+## Version: 17.1.3
 ## X-Curse-Project-ID: 705015
 ## X-Wago-ID: 0mNwaPKo
 ## X-WoWI-ID: 26519
 ## AddonCompartmentFunc: CraftSim_OnAddonCompartmentClick
 ## IconTexture: Interface\Icons\inv_misc_coin_02
-## SavedVariables: CraftSimDebugData, CraftSimOptions, CraftSimGGUIConfig, CraftSimPriceOverridesV2, CraftSimLoadedProfessionRecipes, CraftSimCustomerHistoryV2, CraftSimCustomerHistory, CraftSimLibIconDB, CraftSimRecipeDataCache, CraftSimCraftQueueCache, CraftSimItemCountCache
+## SavedVariables: CraftSimDB
 ## Dependencies: Blizzard_Professions
 ## OptionalDeps: Auctionator, TradeSkillMaster, RECrystallize, OribosExchange
 
 embeds.xml
 
-Libs/Libs.lua
+Init/GLibs.lua
 
 Util/Const.lua
+
+Modules/Debug/Debug.lua
+Modules/Debug/UI.lua
+
 Util/Util.lua
 
-Cache/Cache.lua
-Cache/ItemCount.lua
-Cache/RecipeData.lua
-Cache/CraftQueue.lua
+DB/DB.lua
+DB/optionsDB.lua
+DB/itemCountDB.lua
+DB/craftQueueDB.lua
+DB/itemRecipeDB.lua
+DB/itemOptimizedCostsDB.lua
+DB/recipeSubCrafterDB.lua
+DB/multicraftPreloadDB.lua
+DB/customerHistoryDB.lua
+DB/crafterDB.lua
+DB/priceOverrideDB.lua
 
 Media/Media.lua
 
-Util/Debug.lua
-Util/Tooltip.lua
 Util/Frames.lua
 Util/Comm.lua
 Util/API.lua
 
-Main/CraftSim.lua
+Init/Init.lua
 
 Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
-Pricing/PriceData.lua
+Pricing/PriceSource.lua
+
+Modules/ItemCount/ItemCount.lua
+
+Modules/Explanations/Explanations.lua
+Modules/Explanations/UI.lua
 
 Modules/CraftQueue/CraftQueue.lua
-Modules/CraftQueue/Frames.lua
+Modules/CraftQueue/UI.lua
 
 Modules/Cooldowns/Cooldowns.lua
-Modules/Cooldowns/Frames.lua
-
-Modules/CustomerService/CustomerService.lua
-Modules/CustomerService/Frames.lua
+Modules/Cooldowns/UI.lua
 
 Modules/CustomerHistory/CustomerHistory.lua
-Modules/CustomerHistory/Frames.lua
-Modules/CustomerHistory/DB.lua
+Modules/CustomerHistory/UI.lua
 
-Modules/CraftStatistics/CraftStatistics.lua
-Modules/CraftStatistics/Frames.lua
+Modules/Statistics/Statistics.lua
+Modules/Statistics/UI.lua
 
 Modules/CraftResults/CraftResults.lua
-Modules/CraftResults/Frames.lua
+Modules/CraftResults/UI.lua
 
 Modules/PriceOverride/PriceOverride.lua
-Modules/PriceOverride/Frames.lua
+Modules/PriceOverride/UI.lua
 
 Modules/ControlPanel/ControlPanel.lua
-Modules/ControlPanel/Frames.lua
+Modules/ControlPanel/UI.lua
 
 Modules/SpecializationInfo/SpecializationInfo.lua
-Modules/SpecializationInfo/Frames.lua
+Modules/SpecializationInfo/UI.lua
 
 Modules/Options/Options.lua
-Modules/Options/AccountSync.lua
 
 Modules/SimulationMode/SimulationMode.lua
-Modules/SimulationMode/Frames.lua
+Modules/SimulationMode/UI.lua
 
 Modules/AverageProfit/AverageProfit.lua
-Modules/AverageProfit/Frames.lua
+Modules/AverageProfit/UI.lua
 
 Modules/ReagentOptimization/ReagentOptimization.lua
-Modules/ReagentOptimization/Frames.lua
+Modules/ReagentOptimization/UI.lua
 
 Modules/TopGear/TopGear.lua
-Modules/TopGear/Frames.lua
+Modules/TopGear/UI.lua
 
 Modules/RecipeScan/RecipeScan.lua
-Modules/RecipeScan/Frames.lua
+Modules/RecipeScan/UI.lua
 
 Modules/PriceDetails/PriceDetails.lua
-Modules/PriceDetails/Frames.lua
+Modules/PriceDetails/UI.lua
 
-Modules/CostDetails/CostDetails.lua
-Modules/CostDetails/Frames.lua
+Modules/CostOptimization/CostOptimization.lua
+Modules/CostOptimization/UI.lua
 
 Modules/Supporters/Supporters.lua
-Modules/Supporters/Frames.lua
+Modules/Supporters/UI.lua
 
 Modules/CraftBuffs/CraftBuffs.lua
-Modules/CraftBuffs/Frames.lua
+Modules/CraftBuffs/UI.lua
+
+Modules/ConcentrationTracker/ConcentrationTracker.lua
+Modules/ConcentrationTracker/UI.lua
 
 Locals/Localization.lua
 Locals/enUS.lua
@@ -113,51 +125,61 @@ Locals/zhCN.lua
 
 Data/EnchantData.lua
 Data/ReagentWeightData.lua
+Data/ConcentrationCurveData.lua
 Data/OptionalReagentData.lua
 Data/News.lua
 
-Data/SpecNodeData/SpecData.lua
-Data/SpecNodeData/Alchemy.lua
-Data/SpecNodeData/Blacksmithing.lua
-Data/SpecNodeData/Enchanting.lua
-Data/SpecNodeData/Inscription.lua
-Data/SpecNodeData/Jewelcrafting.lua
-Data/SpecNodeData/Leatherworking.lua
-Data/SpecNodeData/Tailoring.lua
-Data/SpecNodeData/Engineering.lua
+Data/SpecializationData/Dragonflight/Alchemy.lua
+Data/SpecializationData/Dragonflight/Blacksmithing.lua
+Data/SpecializationData/Dragonflight/Enchanting.lua
+Data/SpecializationData/Dragonflight/Inscription.lua
+Data/SpecializationData/Dragonflight/Jewelcrafting.lua
+Data/SpecializationData/Dragonflight/Leatherworking.lua
+Data/SpecializationData/Dragonflight/Tailoring.lua
+Data/SpecializationData/Dragonflight/Engineering.lua
 
-Data/Classes/CooldownData.lua
-Data/Classes/ProfessionData.lua
-Data/Classes/RecipeData.lua
-Data/Classes/PriceData.lua
-Data/Classes/ReagentData.lua
-Data/Classes/Reagent.lua
-Data/Classes/ReagentItem.lua
-Data/Classes/ReagentListItem.lua
-Data/Classes/ProfessionStats.lua
-Data/Classes/ProfessionStat.lua
-Data/Classes/ProfessionGearSet.lua
-Data/Classes/ProfessionGear.lua
-Data/Classes/ResultData.lua
-Data/Classes/OptionalReagentSlot.lua
-Data/Classes/OptionalReagent.lua
-Data/Classes/SalvageReagentSlot.lua
-Data/Classes/SpecializationData.lua
-Data/Classes/NodeData.lua
-Data/Classes/NodeRule.lua
-Data/Classes/IDMapping.lua
-Data/Classes/IDCategory.lua
-Data/Classes/Statweights.lua
-Data/Classes/ReagentOptimizationResult.lua
-Data/Classes/TopGearResult.lua
-Data/Classes/CraftResult.lua
-Data/Classes/CraftResultItem.lua
-Data/Classes/CraftResultSavedReagent.lua
-Data/Classes/CraftResultSavedReagent.lua
-Data/Classes/CraftSessionData.lua
-Data/Classes/CraftRecipeData.lua
-Data/Classes/JSONBuilder.lua
-Data/Classes/BuffData.lua
-Data/Classes/Buff.lua
-Data/Classes/CraftQueue.lua
-Data/Classes/CraftQueueItem.lua
+Data/SpecializationData/The_War_Within/Alchemy.lua
+Data/SpecializationData/The_War_Within/Blacksmithing.lua
+Data/SpecializationData/The_War_Within/Enchanting.lua
+Data/SpecializationData/The_War_Within/Inscription.lua
+Data/SpecializationData/The_War_Within/Jewelcrafting.lua
+Data/SpecializationData/The_War_Within/Leatherworking.lua
+Data/SpecializationData/The_War_Within/Tailoring.lua
+Data/SpecializationData/The_War_Within/Engineering.lua
+# needs to be last
+Data/SpecializationData/SpecializationData.lua
+
+Classes/CraftSimObject.lua
+Classes/CooldownData.lua
+Classes/ProfessionData.lua
+Classes/ConcentrationData.lua
+Classes/RecipeData.lua
+Classes/PriceData.lua
+Classes/ReagentData.lua
+Classes/Reagent.lua
+Classes/ReagentItem.lua
+Classes/ReagentListItem.lua
+Classes/ProfessionStats.lua
+Classes/ProfessionStat.lua
+Classes/ProfessionGearSet.lua
+Classes/ProfessionGear.lua
+Classes/ResultData.lua
+Classes/OptionalReagentSlot.lua
+Classes/OptionalReagent.lua
+Classes/SalvageReagentSlot.lua
+Classes/SpecializationData.lua
+Classes/NodeData.lua
+Classes/PerkData.lua
+Classes/Statweights.lua
+Classes/ReagentOptimizationResult.lua
+Classes/TopGearResult.lua
+Classes/CraftResult.lua
+Classes/CraftResultItem.lua
+Classes/CraftResultSavedReagent.lua
+Classes/CraftSessionData.lua
+Classes/CraftRecipeData.lua
+Classes/JSONBuilder.lua
+Classes/BuffData.lua
+Classes/Buff.lua
+Classes/CraftQueue.lua
+Classes/CraftQueueItem.lua

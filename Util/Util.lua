@@ -1,136 +1,20 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
-local CraftSimAddonName = select(1, ...)
 
 CraftSim.UTIL = {}
 
-local inspirationFactor = 0.001
-local multicraftFactor = 0.0009
-local resourcefulnessFactor = 0.00111
-local craftingspeedFactor = 0.002
+CraftSim.UTIL.frameLevel = 100
 
----@param debugID CraftSim.DEBUG_IDS
-function CraftSim.UTIL:SetDebugPrint(debugID)
-    local function print(text, recursive, l, level)
-        if CraftSim_DEBUG and CraftSim.GGUI.GetFrame and CraftSim.GGUI:GetFrame(CraftSim.MAIN.FRAMES, CraftSim.CONST.FRAMES.DEBUG) then
-            CraftSim_DEBUG:print(text, debugID, recursive, l, level)
-        else
-            print(text)
-        end
-    end
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.UTIL)
 
-    return print
-end
-
-function CraftSim.UTIL:SystemPrint(text)
-    print(text)
-end
-
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.UTIL)
-
-function CraftSim.UTIL:GetInspirationStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / inspirationFactor
-end
-
-function CraftSim.UTIL:GetCraftingSpeedStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / craftingspeedFactor
-end
-
-function CraftSim.UTIL:GetMulticraftStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / multicraftFactor
-end
-
-function CraftSim.UTIL:GetResourcefulnessStatByPercent(percent)
-    if percent == nil then
-        return 0
-    end
-    return percent / resourcefulnessFactor
-end
-
-function CraftSim.UTIL:GetInspirationPercentByStat(stat)
-    return stat * inspirationFactor
-end
-
-function CraftSim.UTIL:GetCraftingSpeedPercentByStat(stat)
-    return stat * craftingspeedFactor
-end
-
-function CraftSim.UTIL:GetMulticraftPercentByStat(stat)
-    return stat * multicraftFactor
-end
-
-function CraftSim.UTIL:GetResourcefulnessPercentByStat(stat)
-    return stat * resourcefulnessFactor
-end
-
-function CraftSim.UTIL:IsMyVersionHigher(versionB)
-    local versionA = C_AddOns.GetAddOnMetadata(CraftSimAddonName, "Version") or ""
-    local subVersionsA = strsplittable(".", versionA)
-    local subVersionsB = strsplittable(".", versionB)
-
-    -- TODO: refactor recursively to get rid of this abomination
-    if subVersionsA[1] and subVersionsB[1] then
-        if subVersionsA[1] < subVersionsB[1] then
-            return false
-        elseif subVersionsA[1] > subVersionsB[1] then
-            return true
-        end
-
-        if subVersionsA[2] and subVersionsB[2] then
-            if subVersionsA[2] < subVersionsB[2] then
-                return false
-            elseif subVersionsA[2] > subVersionsB[2] then
-                return true
-            end
-
-            if subVersionsA[3] and subVersionsB[3] then
-                if subVersionsA[3] < subVersionsB[3] then
-                    return false
-                elseif subVersionsA[3] > subVersionsB[3] then
-                    return true
-                end
-
-                if subVersionsA[4] and subVersionsB[4] then
-                    if subVersionsA[4] < subVersionsB[4] then
-                        return false
-                    elseif subVersionsA[4] > subVersionsB[4] then
-                        return true
-                    end
-                else
-                    if subVersionsB[4] then
-                        return false
-                    end
-                end
-            else
-                if subVersionsB[3] then
-                    return false
-                end
-            end
-        else
-            if subVersionsB[2] then
-                return false
-            end
-        end
-    else
-        if subVersionsB[1] then
-            return false
-        end
-    end
-
-    return true
+function CraftSim.UTIL:NextFrameLevel()
+    local frameLevel = CraftSim.UTIL.frameLevel
+    CraftSim.UTIL.frameLevel = CraftSim.UTIL.frameLevel + 50
+    return frameLevel
 end
 
 -- thx ketho forum guy
-function CraftSim.UTIL:KethoEditBox_Show(text)
+function CraftSim.UTIL:ShowTextCopyBox(text)
     if not KethoEditBox then
         local f = CreateFrame("Frame", "KethoEditBox", UIParent, "DialogBoxFrame")
         f:SetPoint("CENTER")
@@ -202,40 +86,6 @@ function CraftSim.UTIL:KethoEditBox_Show(text)
     KethoEditBox:Show()
 end
 
--- for debug purposes
-function CraftSim.UTIL:PrintTable(t, debugID, recursive, level)
-    level = level or 0
-    local levelString = ""
-    for i = 1, level, 1 do
-        levelString = levelString .. "-"
-    end
-
-    if t.Debug then
-        for _, line in pairs(t:Debug()) do
-            CraftSim_DEBUG:print(levelString .. tostring(line), debugID, false)
-        end
-        return
-    end
-
-    for k, v in pairs(t) do
-        if type(v) == 'function' then
-            CraftSim_DEBUG:print(levelString .. tostring(k) .. ": function", debugID, false)
-        elseif not recursive or type(v) ~= "table" then
-            CraftSim_DEBUG:print(levelString .. tostring(k) .. ": " .. tostring(v), debugID, false)
-        elseif type(v) == "table" then
-            CraftSim_DEBUG:print(levelString .. tostring(k) .. ": ", debugID, false)
-            CraftSim.UTIL:PrintTable(v, debugID, recursive, level + 1)
-        end
-    end
-end
-
-function CraftSim.UTIL:RemoveLevelSpecBonusIDStringFromItemString(itemString)
-    local linkLevel, specializationID = string.match(itemString, "item:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d*:(%d+):(%d+)")
-    local bonusIDString = linkLevel .. ":" .. specializationID
-
-    return string.gsub(itemString, bonusIDString, "")
-end
-
 --> built into GGUI
 function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     local inputNumber = inputBox:GetNumber()
@@ -260,31 +110,6 @@ function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     return inputNumber
 end
 
-function CraftSim.UTIL:WrapText(text, width)
-    local char_pattern = ".[\128-\191]*" -- for UTF-8 texts
-    -- local char_pattern = "."           -- for 1-byte encodings
-
-    local function wrap(text, width)
-        local tail, lines = text .. " ", {}
-        while tail do
-            lines[#lines + 1], tail = tail
-                :gsub("^%s+", "")
-                :gsub(char_pattern, "\0%0\0", width)
-                :gsub("%z%z", "")
-                :gsub("(%S)%z(%s)", "%1%2\0")
-                :gsub("^(%z[^\r\n%z]*)%f[%s](%Z*)%z(.*)$", "%1\0%2%3")
-                :match "^%z(%Z+)%z(.*)$"
-        end
-        return table.concat(lines, "\n")
-    end
-
-    return wrap(text, width)
-end
-
-function CraftSim.UTIL:IsSpecImplemented(professionID)
-    return tContains(CraftSim.CONST.IMPLEMENTED_SKILL_BUILD_UP(), professionID)
-end
-
 function CraftSim.UTIL:GetExportModeByVisibility()
     return (ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER) or
         CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER
@@ -294,17 +119,35 @@ function CraftSim.UTIL:IsWorkOrder()
     return ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible()
 end
 
-function CraftSim.UTIL:FormatFactorToPercent(factor)
-    local percentText = CraftSim.GUTIL:Round((factor % 1) * 100)
-    return "+" .. percentText .. "%"
+---@param skillLineID number
+---@return CraftSim.EXPANSION_IDS expansionID
+function CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
+    local skillLineIDMap = CraftSim.CONST.TRADESKILLLINEIDS
+
+    for _, expansionData in pairs(skillLineIDMap) do
+        for expansionID, _skillLineID in pairs(expansionData) do
+            if _skillLineID == skillLineID then
+                return expansionID
+            end
+        end
+    end
+
+    return 0 -- sometimes happens if not yet initialized
 end
 
-function CraftSim.UTIL:GreyOutByCondition(text, condition)
-    if condition then
-        CraftSim.GUTIL:ColorizeText(text, CraftSim.GUTIL.COLORS.GREY)
-    else
-        return text
+function CraftSim.UTIL:ExportRecipeIDsForExpacCSV()
+    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    local expansionID = self:GetExpansionIDBySkillLineID(skillLineID)
+
+    local recipeIDs = C_TradeSkillUI.GetFilteredRecipeIDs()
+
+    local text = "SpellID"
+    for _, recipeID in ipairs(recipeIDs or {}) do
+        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+
+        text = text .. "\n" .. recipeID
     end
+    return text
 end
 
 -- from stackoverflow:
@@ -318,24 +161,6 @@ function CraftSim.UTIL:toBits(num, bits)
         num = math.floor((num - t[b]) / 2)
     end
     return t
-end
-
-local profilings = {}
-function CraftSim.UTIL:StartProfiling(label)
-    local time = debugprofilestop();
-    profilings[label] = time
-end
-
-function CraftSim.UTIL:StopProfiling(label)
-    local startTime = profilings[label]
-    if not startTime then
-        print("Util Profiling Label not found on Stop: " .. tostring(label))
-        return
-    end
-    local time = debugprofilestop()
-    local diff = time - startTime
-    profilings[label] = nil
-    CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms", CraftSim.CONST.DEBUG_IDS.PROFILING)
 end
 
 local playerCrafterDataCached = nil
@@ -364,87 +189,26 @@ function CraftSim.UTIL:GetCrafterUIDFromCrafterData(crafterData)
     return crafterData.name .. "-" .. crafterData.realm
 end
 
+---@param crafterUID CrafterUID
+---@return CraftSim.CrafterData? crafterData nil if not fully cached
+function CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafterUID)
+    local name, realm = strsplit("-", crafterUID)
+    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+
+    if name and realm and crafterClass then
+        ---@type CraftSim.CrafterData
+        local crafterData = {
+            name = name,
+            realm = realm,
+            class = crafterClass,
+        }
+        return crafterData
+    end
+end
+
 ---@return string crafterUID
 function CraftSim.UTIL:GetPlayerCrafterUID()
     return CraftSim.UTIL:GetCrafterUIDFromCrafterData(CraftSim.UTIL:GetPlayerCrafterData())
-end
-
-function CraftSim.UTIL:ProfilingUpdate(label)
-    local time = debugprofilestop()
-    local diff = time - profilings[label]
-    CraftSim_DEBUG:print(label .. ": " .. CraftSim.GUTIL:Round(diff) .. " ms (u)", CraftSim.CONST.DEBUG_IDS.PROFILING)
-end
-
-function CraftSim.UTIL:GetFormatter()
-    local b = CraftSim.GUTIL.COLORS.DARK_BLUE
-    local bb = CraftSim.GUTIL.COLORS.BRIGHT_BLUE
-    local g = CraftSim.GUTIL.COLORS.GREEN
-    local grey = CraftSim.GUTIL.COLORS.GREY
-    local r = CraftSim.GUTIL.COLORS.RED
-    local l = CraftSim.GUTIL.COLORS.LEGENDARY
-    local e = CraftSim.GUTIL.COLORS.EPIC
-    local patreon = CraftSim.GUTIL.COLORS.PATREON
-    local whisper = CraftSim.GUTIL.COLORS.WHISPER
-    local white = CraftSim.GUTIL.COLORS.WHITE
-    local c = function(text, color)
-        return CraftSim.GUTIL:ColorizeText(text, color)
-    end
-    local p = CraftSim.GUTIL:GetQualityIconString(1, 15, 15) .. " "
-    local s = CraftSim.GUTIL:GetQualityIconString(2, 15, 15) .. " "
-    local P = CraftSim.GUTIL:GetQualityIconString(3, 15, 15) .. " "
-    local a = "     "
-
-    local formatter = {}
-    formatter.b = function(text)
-        return c(text, b)
-    end
-    formatter.bb = function(text)
-        return c(text, bb)
-    end
-    formatter.g = function(text)
-        return c(text, g)
-    end
-    formatter.r = function(text)
-        return c(text, r)
-    end
-    formatter.l = function(text)
-        return c(text, l)
-    end
-    formatter.e = function(text)
-        return c(text, e)
-    end
-    formatter.grey = function(text)
-        return c(text, grey)
-    end
-    formatter.patreon = function(text)
-        return c(text, patreon)
-    end
-    formatter.whisper = function(text)
-        return c(text, whisper)
-    end
-    formatter.white = function(text)
-        return c(text, white)
-    end
-    formatter.p = p
-    formatter.s = s
-    formatter.P = P
-    formatter.a = a
-    formatter.m = function(m)
-        return CraftSim.GUTIL:FormatMoney(m, true)
-    end
-    formatter.mw = function(m)
-        return CraftSim.GUTIL:FormatMoney(m)
-    end
-
-    formatter.i = function(i, h, w)
-        return CraftSim.GUTIL:IconToText(i, h, w)
-    end
-
-    formatter.cm = function(i, s)
-        return CraftSim.MEDIA:GetAsTextIcon(i, s)
-    end
-
-    return formatter
 end
 
 function CraftSim.UTIL:GetSchematicFormByVisibility()
@@ -505,4 +269,100 @@ function CraftSim.UTIL:GetLocalizer()
     return function(ID)
         return CraftSim.LOCAL:GetText(ID)
     end
+end
+
+---@param costConstant number
+---@param playerSkill number
+---@param skillStart number
+---@param skillEnd number
+---@param skillCurveValueStart number
+---@param skillCurveValueEnd number
+function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, skillStart, skillEnd, skillCurveValueStart,
+                                                  skillCurveValueEnd)
+    local skillDifference = math.abs(skillEnd - skillStart)
+    local valueDifference = math.abs(skillCurveValueStart - skillCurveValueEnd) -- can go up or down
+    local skillValueStep = valueDifference / skillDifference
+
+    local playerSkillDifference = math.abs(playerSkill - skillStart)
+    local playerSkillCurveValueDifference = playerSkillDifference * skillValueStep
+
+    local playerSkillCurveValue
+    if skillCurveValueStart < skillCurveValueEnd then
+        playerSkillCurveValue = skillCurveValueStart + playerSkillCurveValueDifference
+    else
+        playerSkillCurveValue = skillCurveValueStart - playerSkillCurveValueDifference
+    end
+
+
+    local concentrationCost = playerSkillCurveValue * costConstant
+    return CraftSim.GUTIL:Round(concentrationCost)
+end
+
+---@param recipeDifficulty number
+---@param curveConstantData CraftSim.UTIL.FindBracketData
+---@param nextCurveConstantData CraftSim.UTIL.FindBracketData
+---@return number curveConstant
+function CraftSim.UTIL:CalculateCurveConstant(recipeDifficulty, curveConstantData, nextCurveConstantData)
+    if not nextCurveConstantData then return curveConstantData.data end
+    local difficultyDifference = math.abs(nextCurveConstantData.index - curveConstantData.index)
+    local valueDifference = math.abs(nextCurveConstantData.data - curveConstantData.data)
+    local difficultyValueStep = (difficultyDifference > 0 and valueDifference / difficultyDifference) or 0
+
+    if difficultyValueStep == 0 then
+        return curveConstantData.data
+    end
+
+    local recipeDifficultyDifference = math.abs(recipeDifficulty - curveConstantData.index)
+    local recipeDifficultyConstantDifference = recipeDifficultyDifference * difficultyValueStep
+
+    local recipeDifficultyConstant
+    if curveConstantData.data < nextCurveConstantData.data then
+        recipeDifficultyConstant = curveConstantData.data + recipeDifficultyConstantDifference
+    else
+        recipeDifficultyConstant = curveConstantData.data - recipeDifficultyConstantDifference
+    end
+
+    return recipeDifficultyConstant
+end
+
+---@class CraftSim.UTIL.FindBracketData
+---@field index number
+---@field data any
+
+--- for tables with sorted number indices, find the data that lies at start of a gap based on given value
+---@generic T
+---@param indexValue number value to search for
+---@param t table<number, any> table containing the data with numbered indices
+---@return CraftSim.UTIL.FindBracketData?, CraftSim.UTIL.FindBracketData?
+function CraftSim.UTIL:FindBracketData(indexValue, t)
+    local dataList = {}
+    for index, data in pairs(t) do
+        tinsert(dataList, { index = index, data = data })
+    end
+    table.sort(dataList, function(a, b)
+        return a.index < b.index
+    end)
+
+    -- find bracket
+    for i, data in ipairs(dataList) do
+        local indexStart = data.index
+        if indexValue >= indexStart then
+            local nextData = dataList[i + 1]
+            local indexEnd = (nextData and nextData.index)
+
+            if not indexEnd then return data, nil end
+
+            if indexValue <= indexEnd then
+                return data, nextData
+            end
+        end
+    end
+
+    return nil, nil
+end
+
+function CraftSim.UTIL:IsBetaBuild()
+    local build = select(1, GetBuildInfo())
+
+    return build == CraftSim.CONST.CURRENT_BETA_BUILD
 end

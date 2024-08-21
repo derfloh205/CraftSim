@@ -1,6 +1,10 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
+local f = GUTIL:GetFormatter()
+
 ---@class CraftSim.SUPPORTERS
 CraftSim.SUPPORTERS = {}
 
@@ -10,10 +14,70 @@ CraftSim.SUPPORTERS = {}
 ---@field note string
 
 function CraftSim.SUPPORTERS:GetList()
-    local f = CraftSim.UTIL:GetFormatter()
     local kofi = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.KOFI, 0.45)
     local paypal = " " .. CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PAYPAL, 0.35)
     return {
+        {
+            name = f.bb("Ten"),
+            type = kofi,
+            message = "Thank you for the hard work",
+            date = "09.08.2024",
+        },
+        {
+            name = f.bb("John S."),
+            type = kofi,
+            message =
+            "Love what you do for the game! Donated enough for a cheeseburger (or multiple coffees if that is your preference).",
+            date = "13.08.2024",
+        },
+        {
+            name = f.bb("Ten"),
+            type = kofi,
+            message = "Thank you for the hard work",
+            date = "09.08.2024",
+        },
+        {
+            name = f.bb("Endriss"),
+            type = kofi,
+            message = "Thank you for your work!",
+            date = "09.08.2024",
+        },
+        {
+            name = f.bb("Sarge"),
+            type = kofi,
+            message = "Thank you for your help! Great addon.",
+            date = "09.08.2024",
+        },
+        {
+            name = f.bb("Helge"),
+            type = kofi,
+            message = "Great work!",
+            date = "06.08.2024",
+        },
+        {
+            name = f.bb("Krixi"),
+            type = kofi,
+            message = "Thanks for all your work!",
+            date = "05.08.2024",
+        },
+        {
+            name = f.bb("Zach B."),
+            type = paypal,
+            message = "For my favourite addon",
+            date = "30.07.2024",
+        },
+        {
+            name = f.bb("Hademar"),
+            type = kofi,
+            message = "Thanks for still working on this great addon and good luck going into TWW! <3",
+            date = "13.06.2024",
+        },
+        {
+            name = f.bb("Fracguru"),
+            type = paypal,
+            message = "good addon",
+            date = "29.04.2024",
+        },
         {
             name = f.bb("Darrell L."),
             type = paypal,

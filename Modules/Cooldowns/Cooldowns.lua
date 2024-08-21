@@ -7,7 +7,7 @@ CraftSim.COOLDOWNS = {}
 local GUTIL = CraftSim.GUTIL
 local GGUI = CraftSim.GGUI
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COOLDOWNS)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.COOLDOWNS)
 
 CraftSim.COOLDOWNS.isUpdatingTimers = false
 
@@ -25,6 +25,6 @@ end
 
 function CraftSim.COOLDOWNS:PeriodicTimerUpdate()
     if not CraftSim.COOLDOWNS.isUpdatingTimers then return end
-    CraftSim.COOLDOWNS.FRAMES:UpdateTimers()
+    CraftSim.COOLDOWNS.UI:UpdateTimers()
     C_Timer.After(1, CraftSim.COOLDOWNS.PeriodicTimerUpdate)
 end

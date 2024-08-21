@@ -5,7 +5,7 @@ CraftSim.MEDIA = {}
 
 CraftSim.MEDIA.BASE_PATH = "Interface/Addons/CraftSim/Media/Images/"
 
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.MEDIA)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.MEDIA)
 
 function CraftSim.MEDIA:GetAsTextIcon(image, scale)
     if tContains(CraftSim.MEDIA.IMAGES, image) then

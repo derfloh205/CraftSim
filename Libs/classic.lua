@@ -10,9 +10,11 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+---@class classicObject
 local Object = {}
 Object.__index = Object
 
+---@class CraftSim.Object : classicObject
 CraftSim.Object = Object
 
 

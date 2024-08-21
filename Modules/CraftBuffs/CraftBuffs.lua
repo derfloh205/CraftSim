@@ -3,7 +3,7 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-local print = CraftSim.UTIL:SetDebugPrint("BUFFDATA")
+local print = CraftSim.DEBUG:SetDebugPrint("BUFFDATA")
 
 local L = CraftSim.UTIL:GetLocalizer()
 
@@ -44,19 +44,16 @@ function CraftSim.CRAFT_BUFFS:GetRecipeScanBuffsByProfessionID(profession)
 end
 
 ---@param recipeData CraftSim.RecipeData?
----@return CraftSim.Buff incense
-function CraftSim.CRAFT_BUFFS:CreateIncenseBuff(recipeData)
-    local incenseStats = CraftSim.ProfessionStats()
-    incenseStats.inspiration:addValue(20)
-    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.INSPIRATION_INCENSE, incenseStats)
+---@return CraftSim.Buff everburningIgnition
+function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.EVERBURNING_IGNITION, CraftSim.ProfessionStats(), nil, nil,
+        nil, nil)
 end
 
 ---@param recipeData CraftSim.RecipeData?
----@return CraftSim.Buff alchemicallyInspired
-function CraftSim.CRAFT_BUFFS:CreateAlchemicallyInspiredBuff(recipeData)
-    local alchemicallyInspiredStats = CraftSim.ProfessionStats()
-    alchemicallyInspiredStats.inspiration:addValue(20)
-    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.ALCHEMICALLY_INSPIRED, alchemicallyInspiredStats)
+---@return CraftSim.Buff shatteringEssence
+function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE, CraftSim.ProfessionStats())
 end
 
 ---@param recipeData CraftSim.RecipeData?
@@ -154,12 +151,12 @@ function CraftSim.CRAFT_BUFFS:COMBAT_LOG_EVENT_UNFILTERED()
                 local auraID = select(12, CombatLogGetCurrentEventInfo())
                 print("Buff changed: " .. tostring(auraID))
                 if tContains(CraftSim.CONST.BUFF_IDS, auraID) then
-                    if CraftSim.MAIN.currentRecipeID then
+                    if CraftSim.INIT.currentRecipeID then
                         local isWorkOrder = ProfessionsFrame.OrdersPage:IsVisible()
                         if isWorkOrder then
-                            CraftSim.MAIN:TriggerModuleUpdate(false)
+                            CraftSim.INIT:TriggerModuleUpdate(false)
                         else
-                            CraftSim.MAIN:TriggerModuleUpdate(false)
+                            CraftSim.INIT:TriggerModuleUpdate(false)
                         end
                     end
                 end

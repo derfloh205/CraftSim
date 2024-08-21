@@ -2,6 +2,11 @@
 local CraftSim = select(2, ...)
 local CraftSimAddonName = select(1, ...)
 
+local GUTIL = CraftSim.GUTIL
+
+local f = GUTIL:GetFormatter()
+
+---@class CraftSim.PRICE_API
 CraftSim.PRICE_API = {}
 CraftSim.PRICE_APIS = {}
 
@@ -9,22 +14,21 @@ CraftSimTSM = { name = "TradeSkillMaster" }
 CraftSimAUCTIONATOR = { name = "Auctionator" }
 CraftSimRECRYSTALLIZE = { name = "RECrystallize" }
 CraftSimEXCHANGE = { name = "OribosExchange" }
-CraftSimDEBUG_PRICE_API = { name = "Debug" }
+CraftSimNO_PRICE_API = { name = "None" }
 
-CraftSimDebugData = CraftSimDebugData or {}
 CraftSim.PRICE_APIS.available = true
 
 local systemPrint = print
-local print = CraftSim.UTIL:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_APIS)
+local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICE_APIS)
 
 function CraftSim.PRICE_API:InitPriceSource()
     local loadedSources = CraftSim.PRICE_APIS:GetAvailablePriceSourceAddons()
 
     if #loadedSources == 0 then
-        CraftSim.UTIL:SystemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) ..
+        systemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) ..
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM))
         CraftSim.PRICE_APIS.available = false
-        if not CraftSimOptions.doNotRemindPriceSource then
+        if not CraftSim.DB.OPTIONS:Get("PRICE_SOURCE_REMINDER_DISABLED") then
             CraftSim.GGUI:ShowPopup({
                 sizeX = 400,
                 sizeY = 250,
@@ -39,17 +43,17 @@ function CraftSim.PRICE_API:InitPriceSource()
                 end
             })
         end
-        CraftSim.PRICE_API = CraftSimDEBUG_PRICE_API
+        CraftSim.PRICE_API = CraftSimNO_PRICE_API
         return
     end
 
-    local savedSource = CraftSimOptions.priceSource
+    local savedSource = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE)
 
     if tContains(loadedSources, savedSource) then
         CraftSim.PRICE_APIS:SwitchAPIByAddonName(savedSource)
     else
         CraftSim.PRICE_APIS:SwitchAPIByAddonName(loadedSources[1])
-        CraftSimOptions.priceSource = loadedSources[1]
+        CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE, loadedSources[1])
     end
 end
 
@@ -136,11 +140,13 @@ function CraftSimTSM:GetAuctionAmountByItemLink(itemLink)
     return TSM_API.GetAuctionQuantity(TSM_API.ToItemString(itemLink))
 end
 
+---@param itemID string
+---@param isReagent boolean?
 function CraftSimTSM:GetMinBuyoutByItemID(itemID, isReagent)
     if itemID == nil then
         return
     end
-    local _, itemLink = GetItemInfo(itemID)
+    local _, itemLink = C_Item.GetItemInfo(itemID)
     local tsmItemString = ""
     if itemLink == nil then
         tsmItemString = "i:" .. itemID -- manually, if the link was not generated
@@ -154,9 +160,9 @@ end
 function CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString, isReagent)
     local minBuyoutPriceSourceKey = nil
     if isReagent then
-        minBuyoutPriceSourceKey = CraftSimOptions.tsmPriceKeyMaterials
+        minBuyoutPriceSourceKey = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS)
     else
-        minBuyoutPriceSourceKey = CraftSimOptions.tsmPriceKeyItems
+        minBuyoutPriceSourceKey = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_ITEMS)
     end
 
     local vendorBuy = "VendorBuy"
@@ -172,6 +178,8 @@ function CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString, isReagent)
     end
 end
 
+---@param itemLink string
+---@param isReagent boolean?
 function CraftSimTSM:GetMinBuyoutByItemLink(itemLink, isReagent)
     if itemLink == nil then
         return
@@ -186,7 +194,6 @@ function CraftSimTSM:GetItemSaleRate(itemLink)
     local tsmItemString = TSM_API.ToItemString(itemLink)
     local salerate, error = TSM_API.GetCustomPriceValue(key, tsmItemString)
     if error then
-        local f = CraftSim.UTIL:GetFormatter()
         print(f.r("CraftSimTSM:GetItemSaleRate Error: " .. tostring(error)), false, true)
         print("itemLink: " .. tostring(itemLink))
     end
@@ -246,38 +253,16 @@ function CraftSimEXCHANGE:GetMinBuyoutByItemLink(itemLink)
     return output
 end
 
-function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemID(itemID)
-    local debugItem = CraftSimDebugData[itemID]
-    if debugItem == nil then
-        local itemName = GetItemInfo(itemID)
-        if itemName == nil then
-            print("itemData not loaded yet, add to debugData next time..")
-            return 0
-        end
-        print("PriceData not in ItemID Debugdata for: " .. tostring(itemName) .. " .. creating")
-        CraftSimDebugData[itemID] = {
-            itemName = itemName,
-            minBuyout = 0
-        }
-    end
-    return CraftSimDebugData[itemID].minBuyout
+---@param itemID ItemID
+---@param isReagent boolean?
+---@return number 0
+function CraftSimNO_PRICE_API:GetMinBuyoutByItemID(itemID, isReagent)
+    return 0
 end
 
-function CraftSimDEBUG_PRICE_API:GetMinBuyoutByItemLink(itemLink)
-    local itemString = select(3, strfind(itemLink, "|H(.+)%["))
-    --print("itemString: " .. itemString)
-    local debugItem = CraftSimDebugData[itemString]
-    if debugItem == nil then
-        local itemName = GetItemInfo(itemLink)
-        if itemName == nil then
-            print("itemData not loaded yet, add to debugData next time..")
-            return 0
-        end
-        print("PriceData not in ItemString Debugdata for: " .. itemName .. " .. creating")
-        CraftSimDebugData[itemString] = {
-            itemName = itemName,
-            minBuyout = 0
-        }
-    end
-    return CraftSimDebugData[itemString].minBuyout
+---@param itemLink string
+---@param isReagent boolean?
+---@return number 0
+function CraftSimNO_PRICE_API:GetMinBuyoutByItemLink(itemLink, isReagent)
+    return 0
 end
