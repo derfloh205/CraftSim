@@ -165,7 +165,7 @@ function CraftSim.Reagent:HasQuantityXTimes(crafterUID)
             --print("-" .. tostring(reagentItem.item:GetItemName()) .. "(" .. q .. ")")
             -- use original item if available
             local itemID = (reagentItem.originalItem and reagentItem.originalItem:GetItemID()) or
-            reagentItem.item:GetItemID()
+                reagentItem.item:GetItemID()
             local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
             --print("--player item count: " .. tostring(itemCount))
             --print("--reagentItem.quantity: " .. tostring(reagentItem.quantity))
@@ -181,9 +181,9 @@ end
 
 function CraftSim.Reagent:SetCheapestQualityMax()
     if self.hasQuality then
-        local itemPriceQ1 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[1].item:GetItemID(), true)
-        local itemPriceQ2 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[2].item:GetItemID(), true)
-        local itemPriceQ3 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[3].item:GetItemID(), true)
+        local itemPriceQ1 = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[1].item:GetItemID(), true)
+        local itemPriceQ2 = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[2].item:GetItemID(), true)
+        local itemPriceQ3 = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[3].item:GetItemID(), true)
 
         local cheapest = math.min(itemPriceQ1, itemPriceQ2, itemPriceQ3)
 

@@ -411,7 +411,8 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
                 local tooltip = ""
                 row.columns[1].itemIcon:SetItem(reagentItem.item)
                 local itemID = reagentItem.item:GetItemID()
-                local price, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, considerSubRecipes)
+                local price, priceInfo = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false,
+                    considerSubRecipes)
 
                 if priceInfo.noAHPriceFound then
                     tooltip = tooltip .. "Auction Buyout: " .. f.grey("-")
@@ -481,7 +482,7 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
             row.columns[1].itemIcon:SetItem(optionalReagent.item)
             local tooltip = ""
             local itemID = optionalReagent.item:GetItemID()
-            local price, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, considerSubRecipes)
+            local price, priceInfo = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, considerSubRecipes)
             row.columns[2].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.ahPrice))
             if priceInfo.noAHPriceFound then
                 tooltip = tooltip .. "Auction Buyout: " .. f.grey("-")
