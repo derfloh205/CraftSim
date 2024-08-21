@@ -1745,6 +1745,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         end
     end
 
+    editButtonColumn.editButton:SetEnabled(row.craftQueueItem.recipeData.subRecipeDepth == 0)
+
     crafterColumn.text:SetText(recipeData:GetFormattedCrafterText(true, true, 20, 20))
 
     -- update price data and profit?

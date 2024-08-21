@@ -1051,12 +1051,12 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
 
     -- used to show what is reachable
     wipe(self.optimizedSubRecipes)
-    -- used to cache already optimized recipes
-    ---@type CraftSim.RecipeData[]
-    local optimized = {}
+
+    -- TODO: Maybe introduce optimizing via caching again here at some point
 
     -- optimize recipes and map itemIDs
     for _, data in pairs(subRecipeData) do
+        print("looping subrecipeData: " .. data.itemID .. " - q" .. data.qualityID)
         local recipeID = data.recipeID
         -- fall back to the first crafter if nothing is set?
         local crafterUID = CraftSim.DB.RECIPE_SUB_CRAFTER:GetCrafter(data.recipeID) or
@@ -1073,18 +1073,10 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
         -- inf loop breaker
         if not infLoop then
             local crafterData = CraftSim.UTIL:GetCrafterDataFromCrafterUID(crafterUID)
-            local reagentRecipeData = GUTIL:Find(optimized, function(recipeData)
-                return recipeData.recipeID == recipeID
-            end)
-            if reagentRecipeData then
-                -- if we already optimized the crafting cost of this reagent (another quality e.g.) then check if reachable
-                -- TODO: maybe use IsMinimumQualityReachable when craftingqueue has feature to consider higher quality reagents?
-                local reagentQualityReachable = reagentRecipeData.resultData:IsMinimumQualityReachable(data.qualityID)
-                if reagentQualityReachable then
-                    self.optimizedSubRecipes[data.itemID] = reagentRecipeData
-                end
-                reagentRecipeData:AddParentRecipe(self)
-            elseif recipeID and crafterData then
+            -- local reagentRecipeData = GUTIL:Find(optimized, function(recipeData)
+            --     return recipeData.recipeID == recipeID
+            -- end)
+            if recipeID and crafterData then
                 -- only continue of the recipe in question is learned by the target crafter
                 local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID)
 
@@ -1101,7 +1093,8 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
 
                     if not ignoreCooldownRecipe then
                         recipeData.subRecipeDepth = subRecipeDepth + 1
-                        print("- Checking SubRecipe: " .. recipeData.recipeName)
+                        print("- Checking SubRecipe: " ..
+                            recipeData.recipeName .. "( q" .. tostring(data.qualityID) .. ")")
                         -- go deep!
                         local success = recipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeIDs,
                             subRecipeDepth + 1)
@@ -1113,11 +1106,18 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                             recipeData:OptimizeProfit(optimizeOptions)
                             print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
 
-                            optimized[data.itemID] = recipeData
                             -- if the necessary item quality is reachable, map it to the recipe
-                            local reagentQualityReachable = recipeData.resultData:IsMinimumQualityReachable(data
-                                .qualityID)
-                            print("- Quality Reachable: " .. tostring(reagentQualityReachable))
+                            local reagentQualityReachable, concentrationOnly = recipeData.resultData
+                                :IsMinimumQualityReachable(data
+                                    .qualityID)
+
+                            if concentrationOnly then
+                                recipeData.concentrating = true
+                                recipeData:Update()
+                            end
+
+                            print("- Quality Reachable: " ..
+                                tostring(reagentQualityReachable) .. " C: " .. tostring(concentrationOnly))
                             if reagentQualityReachable then
                                 self.optimizedSubRecipes[data.itemID] = recipeData
                             end
@@ -1224,10 +1224,12 @@ end
 
 ---@alias RecipeCraftQueueUID string
 
----Returns a unique id for the recipe within the craftqueue
+--- Returns a unique id for the recipe within the craftqueue
+--- Unique in recipeID, depth, crafter and concentration usage
 ---@return RecipeCraftQueueUID
 function CraftSim.RecipeData:GetRecipeCraftQueueUID()
-    return self:GetCrafterUID() .. ":" .. self.recipeID .. ":" .. self.subRecipeDepth
+    return self:GetCrafterUID() ..
+        ":" .. self.recipeID .. ":" .. self.subRecipeDepth .. ":" .. tostring(self.concentrating)
 end
 
 ---@return boolean hasActiveSubRecipes

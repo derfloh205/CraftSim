@@ -76,6 +76,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                 parent = frame.content,
                 anchorParent = frame.content,
                 label = "Reagent Costs",
+                offsetY = -2,
             },
             top = true,
             initialTab = true,
@@ -637,7 +638,7 @@ function CraftSim.COST_OPTIMIZATION.UI:UpdateRecipeOptionsSubRecipeOptions()
                                     if optimizedCostData.concentration then
                                         tooltipText = tooltipText ..
                                             f.white("\n- " .. f.gold("Concentration: ") ..
-                                                GUTIL:FormatMoney(optimizedCostData.concentrationCost)) .. "\n"
+                                                optimizedCostData.concentrationCost) .. "\n"
                                     end
                                 end
                             end
