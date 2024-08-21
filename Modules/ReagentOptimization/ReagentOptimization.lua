@@ -240,11 +240,11 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, useSubRecipeCosts)
         ksItem.crumb[j].value = inf
     end
 
-    local q3ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[3].item:GetItemID(), true, false,
+    local q3ItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(ksItem.reagent.items[3].item:GetItemID(), true, false,
         useSubRecipeCosts)
-    local q2ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[2].item:GetItemID(), true, false,
+    local q2ItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(ksItem.reagent.items[2].item:GetItemID(), true, false,
         useSubRecipeCosts)
-    local q1ItemPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(ksItem.reagent.items[1].item:GetItemID(), true, false,
+    local q1ItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(ksItem.reagent.items[1].item:GetItemID(), true, false,
         useSubRecipeCosts)
 
     --print("start crumb creation: " .. ksItem.name)
@@ -282,12 +282,11 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
     end
 
     if not recipeData.supportsQualities then
-        -- TODO: return cheapest quality for each reagent
         local result = CraftSim.ReagentOptimizationResult(recipeData)
         table.foreach(recipeData.reagentData.requiredReagents, function(_, reagent)
             if reagent.hasQuality then
                 local resultReagent = reagent:Copy()
-                resultReagent:SetCheapestQualityMax()
+                resultReagent:SetCheapestQualityMax(recipeData.subRecipeCostsEnabled)
                 table.insert(result.reagents, resultReagent)
             end
         end)

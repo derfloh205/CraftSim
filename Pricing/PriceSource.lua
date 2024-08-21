@@ -3,12 +3,12 @@ local CraftSim = select(2, ...)
 
 local GUTIL = CraftSim.GUTIL
 
-CraftSim.PRICEDATA = {}
+CraftSim.PRICE_SOURCE = {}
 
-CraftSim.PRICEDATA.noPriceDataLinks = {}
+CraftSim.PRICE_SOURCE.noPriceDataLinks = {}
 
-CraftSim.PRICEDATA.overrideResultProfits = {} -- mapped by qualityID
-CraftSim.PRICEDATA.overrideCraftingCosts = nil
+CraftSim.PRICE_SOURCE.overrideResultProfits = {} -- mapped by qualityID
+CraftSim.PRICE_SOURCE.overrideCraftingCosts = nil
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
 
@@ -28,7 +28,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
 ---@param considerSubCrafts? boolean
 ---@return number usedPrice
 ---@return CraftSim.PriceData.PriceInfo priceInfo
-function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice, considerSubCrafts)
+function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice, considerSubCrafts)
     local ahPrice = CraftSim.PRICE_API:GetMinBuyoutByItemID(itemID, isReagent)
     ---@type CraftSim.PriceData.PriceInfo
     local priceInfo = {
@@ -65,12 +65,17 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
                     if allowCooldown then
                         local itemOptimizedCostsData = CraftSim.DB.ITEM_OPTIMIZED_COSTS:Get(itemID,
                             recipeCrafter)
-                        if itemOptimizedCostsData and itemOptimizedCostsData.craftingChanceMin > 0 then
-                            priceInfo.expectedCostsData = itemOptimizedCostsData
-                            -- only set as used price if its lower then ah price or no ah price for this item exists
-                            if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCostsMin < priceInfo.ahPrice then
-                                priceInfo.isExpectedCost = true
-                                return itemOptimizedCostsData.expectedCostsMin, priceInfo
+                        if itemOptimizedCostsData then
+                            local allowConcentration =
+                                CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION") or
+                                not itemOptimizedCostsData.concentration
+                            if allowConcentration then
+                                priceInfo.expectedCostsData = itemOptimizedCostsData
+                                -- only set as used price if its lower then ah price or no ah price for this item exists
+                                if priceInfo.noAHPriceFound or itemOptimizedCostsData.expectedCostsPerItem < priceInfo.ahPrice then
+                                    priceInfo.isExpectedCost = true
+                                    return itemOptimizedCostsData.expectedCostsPerItem, priceInfo
+                                end
                             end
                         end
                     end
@@ -94,7 +99,7 @@ end
 ---@param considerSubCrafts? boolean
 ---@return number usedPrice
 ---@return CraftSim.PriceData.PriceInfo priceInfo
-function CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink, isReagent, forceAHPrice, considerSubCrafts)
+function CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink, isReagent, forceAHPrice, considerSubCrafts)
     local ahPrice = CraftSim.PRICE_API:GetMinBuyoutByItemLink(itemLink)
 
     local priceInfo = {
@@ -111,9 +116,9 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemLink(itemLink, isReagent, forceAHP
     end
 
     if ahPrice == nil then
-        if CraftSim.PRICEDATA.noPriceDataLinks[itemLink] == nil then
+        if CraftSim.PRICE_SOURCE.noPriceDataLinks[itemLink] == nil then
             -- not beautiful but hey, easy map
-            CraftSim.PRICEDATA.noPriceDataLinks[itemLink] = itemLink
+            CraftSim.PRICE_SOURCE.noPriceDataLinks[itemLink] = itemLink
         end
         ahPrice = 0
     end
@@ -170,7 +175,7 @@ end
 --- returns the amount of the item the player has in the AH or nil if no price source addon is loaded that can fetch this for us
 ---@param idOrLink? number | string
 ---@return number? auctionAmount
-function CraftSim.PRICEDATA:GetAuctionAmount(idOrLink)
+function CraftSim.PRICE_SOURCE:GetAuctionAmount(idOrLink)
     if C_AddOns.IsAddOnLoaded(CraftSimTSM.name) then
         return CraftSimTSM:GetAuctionAmount(idOrLink)
     else

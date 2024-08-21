@@ -93,12 +93,17 @@ end
 --- Returns true if either the given quality or any higher quality than it is craftable
 ---@param qualityID any
 ---@return boolean craftable
+---@return boolean concentrationOnly reachable only with concentration
 function CraftSim.ResultData:IsMinimumQualityReachable(qualityID)
     if not self.recipeData.supportsQualities then
-        return true
+        return true, false
     end
 
-    return qualityID <= self.expectedQualityConcentration
+    local reachable = qualityID <= self.expectedQualityConcentration
+    local concentrationOnly = self.expectedQuality < self.expectedQualityConcentration and
+    qualityID == self.expectedQualityConcentration
+
+    return reachable, concentrationOnly
 end
 
 --- Updates based on professionStats and reagentData

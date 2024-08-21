@@ -76,6 +76,7 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                 parent = frame.content,
                 anchorParent = frame.content,
                 label = "Reagent Costs",
+                offsetY = -2,
             },
             top = true,
             initialTab = true,
@@ -180,10 +181,15 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                 },
             },
             rowConstructor = function(columns)
+                ---@class CraftSim.COST_OPTIMIZATION.UI.REAGENT_LIST.ITEM_COLUMN : Frame
                 local itemColumn = columns[1]
+                ---@class CraftSim.COST_OPTIMIZATION.UI.REAGENT_LIST.AH_COLUMN : Frame
                 local ahPriceColumn = columns[2]
+                ---@class CraftSim.COST_OPTIMIZATION.UI.REAGENT_LIST.OVERRIDE_COLUMN : Frame
                 local overrideColumn = columns[3]
+                ---@class CraftSim.COST_OPTIMIZATION.UI.REAGENT_LIST.CRAFTING_COLUMN : Frame
                 local craftingCostsColumn = columns[4]
+                ---@class CraftSim.COST_OPTIMIZATION.UI.REAGENT_LIST.SOURCE_COLUMN : Frame
                 local usedPriceColumn = columns[5]
 
                 itemColumn.itemIcon = GGUI.Icon({
@@ -236,10 +242,16 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                     usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText("-", CraftSim.GUTIL.COLORS.RED))
                 end
 
-                function usedPriceColumn:SetCrafter(crafterUID, profession)
+                function usedPriceColumn:SetCrafter(crafterUID, profession, needsConcentration)
+                    local iconSize = 15
                     local crafterName = f.class(select(1, strsplit("-", crafterUID)),
                         CraftSim.DB.CRAFTER:GetClass(crafterUID))
-                    crafterName = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[profession], 15, 15) .. crafterName
+                    crafterName = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[profession], iconSize, iconSize) ..
+                        crafterName
+                    if needsConcentration then
+                        crafterName = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, iconSize, iconSize) ..
+                            crafterName
+                    end
                     usedPriceColumn.text:SetText(crafterName)
                 end
             end
@@ -258,16 +270,31 @@ function CraftSim.COST_OPTIMIZATION.UI:InitSubRecipeOptions(subRecipeOptionsTab)
     local content = subRecipeOptionsTab.content
 
     content.maxRecipeDepthSlider = GGUI.Slider {
-        parent = content, anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -50, offsetX = 70,
+        parent = content, anchorParent = content, anchorA = "TOP", anchorB = "TOP", offsetY = -30, offsetX = 70,
         label = "Sub Recipe Calculation Depth", minValue = 1, maxValue = 5, initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH"),
         lowText = "1", highText = "5", step = 1,
-        onValueChangedCallback = function(self, value)
+        onValueChangedCallback = function(_, value)
             CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH", value)
+            CraftSim.INIT:TriggerModulesByRecipeType() -- to let it calculate the optimizations again
+        end
+    }
+
+    content.useConcentrationCB = GGUI.Checkbox {
+        parent = content, anchorParent = content.maxRecipeDepthSlider.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        labelOptions = {
+            anchorA = "RIGHT", anchorB = "LEFT", text = "Enable Concentration", justifyOptions = { type = "H", align = "RIGHT" },
+            offsetX = -7,
+        },
+        tooltip = "If enabled, " .. f.l("CraftSim") .. " will include reagent qualities even if concentration is necessary.",
+        initialValue = CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION", checked)
+            CraftSim.INIT:TriggerModulesByRecipeType()
         end
     }
 
     content.includeCooldownsCB = GGUI.Checkbox {
-        parent = content, anchorParent = content.maxRecipeDepthSlider.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        parent = content, anchorParent = content.useConcentrationCB.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         labelOptions = {
             anchorA = "RIGHT", anchorB = "LEFT", text = "Include Cooldown Recipes", justifyOptions = { type = "H", align = "RIGHT" },
             offsetX = -7,
@@ -404,71 +431,16 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
     local reagentList = costOptimizationFrame.content.reagentCostsTab.content.reagentList --[[@as GGUI.FrameList]]
     reagentList:Remove() --[[@as GGUI.FrameList]]
 
-    for _, reagent in pairs(recipeData.reagentData.requiredReagents) do
+    ---@type ItemMixin[]
+    local itemList = {}
+
+    for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do
         for _, reagentItem in pairs(reagent.items) do
-            print("Adding: " .. tostring(reagentItem.item:GetItemLink()))
-            reagentList:Add(function(row)
-                local tooltip = ""
-                row.columns[1].itemIcon:SetItem(reagentItem.item)
-                local itemID = reagentItem.item:GetItemID()
-                local price, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, considerSubRecipes)
-
-                if priceInfo.noAHPriceFound then
-                    tooltip = tooltip .. "Auction Buyout: " .. f.grey("-")
-                    row.columns[2].text:SetText(f.grey("-"))
-                else
-                    row.columns[2].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.ahPrice))
-                    tooltip = tooltip .. "Auction Buyout: " .. CraftSim.GUTIL:FormatMoney(priceInfo.ahPrice)
-                end
-                if priceInfo.isOverride then
-                    row.columns[3].text:SetText(CraftSim.GUTIL:FormatMoney(price))
-                    tooltip = tooltip .. "\n\nOverride" .. CraftSim.GUTIL:FormatMoney(priceInfo.ahPrice) .. "\n"
-                else
-                    row.columns[3].text:SetText(f.grey("-"))
-                end
-                print("Has expectedCostsData: " .. tostring(priceInfo.expectedCostsData ~= nil))
-                if priceInfo.expectedCostsData then
-                    row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin))
-                    local class = CraftSim.DB.CRAFTER:GetClass(priceInfo.expectedCostsData.crafter)
-                    local crafterName = priceInfo.expectedCostsData.crafter
-                    if class then
-                        crafterName = C_ClassColor.GetClassColor(class):WrapTextInColorCode(crafterName)
-                    end
-                    crafterName = GUTIL:IconToText(
-                            CraftSim.CONST.PROFESSION_ICONS[priceInfo.expectedCostsData.profession], 13, 13) ..
-                        " " .. crafterName
-                    tooltip = tooltip ..
-                        "\n\nCrafting " .. crafterName ..
-                        ":" ..
-                        "\n- Expected Costs Min per Item: " ..
-                        CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin) ..
-                        "\n- Expected Crafts Min per Item: " ..
-                        GUTIL:Round(priceInfo.expectedCostsData.expectedCraftsMin, 1) ..
-                        "\n- Expected Chance Min per Item: " ..
-                        priceInfo.expectedCostsData.craftingChanceMin * 100 .. "%"
-                else
-                    row.columns[4].text:SetText(f.grey("-"))
-                end
-
-                if priceInfo.isExpectedCost then
-                    row.columns[5]:SetCrafter(priceInfo.expectedCostsData.crafter, priceInfo.expectedCostsData
-                        .profession)
-                elseif priceInfo.isAHPrice then
-                    row.columns[5]:SetAH()
-                elseif priceInfo.isOverride then
-                    row.columns[5]:SetOverride()
-                else
-                    row.columns[5]:SetUnknown()
-                end
-                row.tooltipOptions = {
-                    anchor = "ANCHOR_CURSOR",
-                    owner = row.frame,
-                    text = f.white(tooltip),
-                }
-            end)
+            tinsert(itemList, reagentItem.item)
         end
     end
 
+    ---@type CraftSim.OptionalReagent[]
     local possibleOptionals = {}
     local slots = CraftSim.GUTIL:Concat({ recipeData.reagentData.optionalReagentSlots, recipeData.reagentData
         .finishingReagentSlots })
@@ -476,29 +448,39 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
         possibleOptionals = CraftSim.GUTIL:Concat({ possibleOptionals, slot.possibleReagents })
     end
 
-    for _, optionalReagent in pairs(possibleOptionals) do
-        reagentList:Add(function(row)
-            row.columns[1].itemIcon:SetItem(optionalReagent.item)
+    for _, optional in ipairs(possibleOptionals) do
+        tinsert(itemList, optional.item)
+    end
+
+    for _, reagentItemMixin in pairs(itemList) do
+        reagentList:Add(function(row, columns)
+            local itemColumn = columns[1] --[[@as CraftSim.COST_OPTIMIZATION.UI.REAGENT_LIST.ITEM_COLUMN]]
+            local ahColumn = columns[2] --[[@as CraftSim.COST_OPTIMIZATION.UI.REAGENT_LIST.AH_COLUMN]]
+            local overrideColumn = columns[3] --[[@as CraftSim.COST_OPTIMIZATION.UI.REAGENT_LIST.OVERRIDE_COLUMN]]
+            local craftingColumn = columns[4] --[[@as CraftSim.COST_OPTIMIZATION.UI.REAGENT_LIST.CRAFTING_COLUMN]]
+            local sourceColumn = columns[5] --[[@as CraftSim.COST_OPTIMIZATION.UI.REAGENT_LIST.SOURCE_COLUMN]]
+
+            itemColumn.itemIcon:SetItem(reagentItemMixin)
             local tooltip = ""
-            local itemID = optionalReagent.item:GetItemID()
-            local price, priceInfo = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true, false, considerSubRecipes)
-            row.columns[2].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.ahPrice))
+            local itemID = reagentItemMixin:GetItemID()
+            local price, priceInfo = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, considerSubRecipes)
+            ahColumn.text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.ahPrice))
             if priceInfo.noAHPriceFound then
                 tooltip = tooltip .. "Auction Buyout: " .. f.grey("-")
-                row.columns[2].text:SetText(f.grey("-"))
+                ahColumn.text:SetText(f.grey("-"))
             else
-                row.columns[2].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.ahPrice))
+                ahColumn.text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.ahPrice))
                 tooltip = tooltip .. "Auction Buyout: " .. CraftSim.GUTIL:FormatMoney(priceInfo.ahPrice)
             end
             if priceInfo.isOverride then
-                row.columns[3].text:SetText(CraftSim.GUTIL:FormatMoney(price))
+                overrideColumn.text:SetText(CraftSim.GUTIL:FormatMoney(price))
                 tooltip = tooltip .. "\n\nOverride" .. CraftSim.GUTIL:FormatMoney(priceInfo.ahPrice) .. "\n"
             else
-                row.columns[3].text:SetText(f.grey("-"))
+                overrideColumn.text:SetText(f.grey("-"))
             end
 
             if priceInfo.isExpectedCost and priceInfo.expectedCostsData then
-                row.columns[4].text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin))
+                craftingColumn.text:SetText(CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsPerItem))
                 local class = CraftSim.DB.CRAFTER:GetClass(priceInfo.expectedCostsData.crafter)
                 local crafterName = f.class(priceInfo.expectedCostsData.crafter, class)
                 crafterName = GUTIL:IconToText(CraftSim.CONST.PROFESSION_ICONS[priceInfo.expectedCostsData.profession],
@@ -507,23 +489,25 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
                 tooltip = tooltip ..
                     "\n\nCrafting " .. crafterName ..
                     ":" ..
-                    "\n- Expected Costs Min per Item: " ..
-                    CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsMin) ..
-                    "\n- Expected Crafts Min per Item: " ..
-                    GUTIL:Round(priceInfo.expectedCostsData.expectedCraftsMin, 1) ..
-                    "\n- Expected Chance Min per Item: " .. priceInfo.expectedCostsData.craftingChanceMin * 100 .. "%"
+                    "\n- Expected Costs Per Item: " ..
+                    CraftSim.GUTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsPerItem)
+                if priceInfo.expectedCostsData.concentration then
+                    tooltip = tooltip ..
+                        "\n- " .. f.gold("Concentration Cost: ") .. priceInfo.expectedCostsData.concentrationCost
+                end
             else
-                row.columns[4].text:SetText(f.grey("-"))
+                craftingColumn.text:SetText(f.grey("-"))
             end
 
             if priceInfo.isExpectedCost then
-                row.columns[5]:SetCrafter(priceInfo.expectedCostsData.crafter, priceInfo.expectedCostsData.profession)
+                sourceColumn:SetCrafter(priceInfo.expectedCostsData.crafter, priceInfo.expectedCostsData.profession,
+                    priceInfo.expectedCostsData.concentration)
             elseif priceInfo.isAHPrice then
-                row.columns[5]:SetAH()
+                sourceColumn:SetAH()
             elseif priceInfo.isOverride then
-                row.columns[5]:SetOverride()
+                sourceColumn:SetOverride()
             else
-                row.columns[5]:SetUnknown()
+                sourceColumn:SetUnknown()
             end
             row.tooltipOptions = {
                 anchor = "ANCHOR_CURSOR",
@@ -650,12 +634,13 @@ function CraftSim.COST_OPTIMIZATION.UI:UpdateRecipeOptionsSubRecipeOptions()
                                         "\n" .. GUTIL:IconToText(item:GetItemIcon(), 20, 20) .. " "
                                         ..
                                         GUTIL:GetQualityIconString(optimizedCostData.qualityID, 20, 20) ..
-                                        f.white("\n- Chance: " ..
-                                            GUTIL:Round(optimizedCostData.craftingChanceMin * 100) .. "%") ..
-                                        f.white("\n- Expected Crafts: " ..
-                                            GUTIL:Round(optimizedCostData.expectedCraftsMin, 1)) ..
-                                        f.white("\n- Expected Costs: " ..
-                                            GUTIL:FormatMoney(optimizedCostData.expectedCostsMin))
+                                        f.white("\n- Expected Costs Per Item: " ..
+                                            GUTIL:FormatMoney(optimizedCostData.expectedCostsPerItem))
+                                    if optimizedCostData.concentration then
+                                        tooltipText = tooltipText ..
+                                            f.white("\n- " .. f.gold("Concentration: ") ..
+                                                optimizedCostData.concentrationCost) .. "\n"
+                                    end
                                 end
                             end
                         end

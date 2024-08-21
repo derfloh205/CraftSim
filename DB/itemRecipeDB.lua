@@ -62,6 +62,12 @@ function CraftSim.DB.ITEM_RECIPE:Migrate()
         CraftSimDB.itemCountDB.data = CraftSimDB.itemCountDB.data or {}
         CraftSimDB.itemRecipeDB.version = 3
     end
+
+    --  TWW Refactor
+    if CraftSimDB.itemRecipeDB.version == 3 then
+        self:ClearAll()
+        CraftSimDB.itemRecipeDB.version = 4
+    end
 end
 
 function CraftSim.DB.ITEM_RECIPE:ClearAll()

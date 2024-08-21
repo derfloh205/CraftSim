@@ -170,6 +170,41 @@ function CraftSim.CraftQueueItem:IsCrafter()
     return self.recipeData:IsCrafter()
 end
 
+function CraftSim.CraftQueueItem:UpdateCountByParentRecipes()
+    if self.recipeData.subRecipeDepth == 0 then return end
+
+    local parentCraftQueueItems = GUTIL:Map(self.recipeData.parentRecipeInfo, function(prI)
+        print("searching for ")
+        print(prI, true, "PRI", 1)
+        return CraftSim.CRAFTQ.craftQueue:FindRecipeByParentRecipeInfo(prI)
+    end)
+
+    local itemID = self.recipeData.resultData.expectedItem:GetItemID()
+    local totalCount = GUTIL:Fold(parentCraftQueueItems, 0, function(foldValue, cqi)
+        if not cqi then return foldValue end
+        local itemCount = cqi.recipeData.reagentData:GetReagentQuantityByItemID(itemID) * cqi.amount
+
+        return itemCount + foldValue
+    end)
+
+    -- if I am the crafter also use warbank count otherwise not
+    local inventoryCount = CraftSim.DB.ITEM_COUNT:Get(self.recipeData:GetCrafterUID(), itemID, true, self.isCrafter)
+
+    local restCount = math.max(0, totalCount - inventoryCount)
+
+    local minimumCrafts = math.max(0, restCount / self.recipeData.baseItemAmount)
+
+    self.amount = minimumCrafts
+
+    print("Updated amount for " .. tostring(self.recipeData.resultData.expectedItem:GetItemLink()) .. ": " .. self
+        .amount)
+    print("parentCraftQueueItems: " .. #parentCraftQueueItems)
+    print("totalCount: " .. totalCount)
+    print("inventoryCount: " .. inventoryCount)
+    print("restCount: " .. restCount)
+    print("minimumCrafts: " .. minimumCrafts)
+end
+
 function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
     if not self.recipeData:HasActiveSubRecipes() then return end
 
@@ -182,10 +217,13 @@ function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
         if subRecipeData then
             if self.recipeData:GetReagentQuantityByItemID(itemID) > 0 then
                 local cqi = CraftSim.CRAFTQ.craftQueue:FindRecipe(subRecipeData)
+                print(" - Searching in queue for " ..
+                    subRecipeData.recipeName .. "\n" .. subRecipeData:GetRecipeCraftQueueUID())
                 if not cqi then
-                    print("- Adding Subrecipe to queue: " ..
-                        subRecipeData.recipeName .. " - " .. subRecipeData:GetCrafterUID())
+                    print(" - Not Found, Adding to queue")
                     cqi = CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = subRecipeData, amount = 1, })
+                else
+                    print(" - Subrecipe already in queue")
                 end
 
                 return cqi

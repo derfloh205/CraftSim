@@ -47,7 +47,7 @@ Init/Init.lua
 
 Pricing/ProfitCalculation.lua
 Pricing/PriceAPIs.lua
-Pricing/PriceData.lua
+Pricing/PriceSource.lua
 
 Modules/ItemCount/ItemCount.lua
 
