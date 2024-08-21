@@ -898,7 +898,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             for _, resultItem in pairs(recipeData.resultData.itemsByQuality) do
                 -- links are already loaded here
                 totalCountInv = totalCountInv + C_Item.GetItemCount(resultItem:GetItemLink(), true, false, true)
-                local countAH = CraftSim.PRICEDATA:GetAuctionAmount(resultItem:GetItemLink())
+                local countAH = CraftSim.PRICE_SOURCE:GetAuctionAmount(resultItem:GetItemLink())
 
                 if countAH then
                     totalCountAH = (totalCountAH or 0) + countAH

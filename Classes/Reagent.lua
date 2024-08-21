@@ -165,7 +165,7 @@ function CraftSim.Reagent:HasQuantityXTimes(crafterUID)
             --print("-" .. tostring(reagentItem.item:GetItemName()) .. "(" .. q .. ")")
             -- use original item if available
             local itemID = (reagentItem.originalItem and reagentItem.originalItem:GetItemID()) or
-            reagentItem.item:GetItemID()
+                reagentItem.item:GetItemID()
             local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
             --print("--player item count: " .. tostring(itemCount))
             --print("--reagentItem.quantity: " .. tostring(reagentItem.quantity))
@@ -179,22 +179,26 @@ function CraftSim.Reagent:HasQuantityXTimes(crafterUID)
     return currentMinTimes
 end
 
-function CraftSim.Reagent:SetCheapestQualityMax()
+---@param considerSubCrafts boolean?
+function CraftSim.Reagent:SetCheapestQualityMax(considerSubCrafts)
     if self.hasQuality then
-        local itemPriceQ1 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[1].item:GetItemID(), true)
-        local itemPriceQ2 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[2].item:GetItemID(), true)
-        local itemPriceQ3 = CraftSim.PRICEDATA:GetMinBuyoutByItemID(self.items[3].item:GetItemID(), true)
+        local itemPriceQ1 = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[1].item:GetItemID(), true, false,
+            considerSubCrafts)
+        local itemPriceQ2 = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[2].item:GetItemID(), true, false,
+            considerSubCrafts)
+        local itemPriceQ3 = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(self.items[3].item:GetItemID(), true, false,
+            considerSubCrafts)
 
         local cheapest = math.min(itemPriceQ1, itemPriceQ2, itemPriceQ3)
 
         self:Clear()
 
-        if itemPriceQ1 == cheapest then
-            self.items[1].quantity = self.requiredQuantity
+        if itemPriceQ3 == cheapest then
+            self.items[3].quantity = self.requiredQuantity
         elseif itemPriceQ2 == cheapest then
             self.items[2].quantity = self.requiredQuantity
-        elseif itemPriceQ3 == cheapest then
-            self.items[3].quantity = self.requiredQuantity
+        elseif itemPriceQ1 == cheapest then
+            self.items[1].quantity = self.requiredQuantity
         end
     else
         self.items[1].quantity = self.requiredQuantity

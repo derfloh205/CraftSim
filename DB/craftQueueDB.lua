@@ -43,6 +43,12 @@ function CraftSim.DB.CRAFT_QUEUE:Migrate()
         CraftSim.DB.CRAFT_QUEUE:ClearAll()
         CraftSimDB.craftQueueDB.version = 3
     end
+
+    -- (subRecipes refactor)
+    if CraftSimDB.craftQueueDB.version == 3 then
+        CraftSim.DB.CRAFT_QUEUE:ClearAll()
+        CraftSimDB.craftQueueDB.version = 4
+    end
 end
 
 function CraftSim.DB.CRAFT_QUEUE:ClearAll()

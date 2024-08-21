@@ -12,13 +12,11 @@ CraftSim.DB.ITEM_OPTIMIZED_COSTS = CraftSim.DB:RegisterRepository()
 ---@class CraftSim.ExpectedCraftingCostsData
 ---@field qualityID QualityID
 ---@field crafter CrafterUID
----@field expectedCosts number
----@field expectedCostsMin number
----@field craftingChance number
----@field craftingChanceMin number
----@field expectedCrafts number
----@field expectedCraftsMin number
+---@field expectedCostsPerItem number
+---@field expectedYieldPerCraft number
 ---@field profession Enum.Profession
+---@field concentration boolean
+---@field concentrationCost number
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 
@@ -63,8 +61,14 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Migrate()
     if CraftSimDB.itemOptimizedCostsDB.version == 2 then
         -- clear the db for a reset
         self:ClearAll()
-
         CraftSimDB.itemOptimizedCostsDB.version = 3
+    end
+
+    -- 3 -> 4 (TWW SubRecipe Rework)
+    if CraftSimDB.itemOptimizedCostsDB.version == 3 then
+        -- clear the db for a reset
+        self:ClearAll()
+        CraftSimDB.itemOptimizedCostsDB.version = 4
     end
 end
 
@@ -92,20 +96,30 @@ end
 function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(recipeData)
     -- cache the results if not gear and if its learned only
     if not recipeData.isGear and recipeData.learned then
-        --print("Caching Optimized Costs Data for: " .. self.recipeName)
-
         -- only if reachable
         for qualityID, item in ipairs(recipeData.resultData.itemsByQuality) do
-            print("Caching Optimized Costs Data for: " .. recipeData.recipeName)
-            local itemID = item:GetItemID()
-            CraftSimDB.itemOptimizedCostsDB.data[itemID] = CraftSimDB.itemOptimizedCostsDB.data[itemID] or {}
+            local reachable = qualityID <= recipeData.resultData.expectedQualityConcentration
+            if reachable then
+                print("Caching Optimized Costs Data for: " .. recipeData.recipeName .. " q" .. qualityID)
+                local itemID = item:GetItemID()
+                CraftSimDB.itemOptimizedCostsDB.data[itemID] = CraftSimDB.itemOptimizedCostsDB.data[itemID] or {}
 
-            CraftSimDB.itemOptimizedCostsDB.data[itemID][recipeData:GetCrafterUID()] = {
-                crafter = recipeData:GetCrafterUID(),
-                qualityID = qualityID,
-                expectedCostsPerItem = recipeData.priceData.expectedCostsPerItem,
-                profession = recipeData.professionData.professionInfo.profession,
-            }
+                local concentrationAvailable = recipeData.concentrationCost > 0
+                local concentration = qualityID == recipeData.resultData.expectedQualityConcentration and
+                    concentrationAvailable
+
+
+                ---@type CraftSim.ExpectedCraftingCostsData
+                CraftSimDB.itemOptimizedCostsDB.data[itemID][recipeData:GetCrafterUID()] = {
+                    crafter = recipeData:GetCrafterUID(),
+                    qualityID = qualityID,
+                    expectedCostsPerItem = recipeData.priceData.expectedCostsPerItem,
+                    expectedYieldPerCraft = recipeData.resultData.expectedYieldPerCraft,
+                    concentration = concentration,
+                    concentrationCost = recipeData.concentrationCost,
+                    profession = recipeData.professionData.professionInfo.profession,
+                }
+            end
         end
     end
 end

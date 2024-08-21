@@ -99,7 +99,7 @@ function CraftSim.ReagentOptimizationResult:OptimizeQualityIDs(considerSubCrafts
         local lastQuality = 1
         local lastReagentItem = nil
         for q, reagentItem in ipairs(reagent.items) do
-            local currentPrice = CraftSim.PRICEDATA:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true, false,
+            local currentPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(reagentItem.item:GetItemID(), true, false,
                 considerSubCrafts)
 
             if q > lastQuality then

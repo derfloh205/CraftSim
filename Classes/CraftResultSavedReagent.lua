@@ -11,7 +11,7 @@ CraftSim.CraftResultSavedReagent = CraftSim.CraftSimObject:extend()
 function CraftSim.CraftResultSavedReagent:new(recipeData, itemID, quantity)
     self.item = Item:CreateFromItemID(itemID)
     self.quantity = quantity
-    self.savedCosts = CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, true) * self.quantity
+    self.savedCosts = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true) * self.quantity
     self.qualityID = recipeData.reagentData:GetReagentQualityIDByItemID(itemID)
 end
 
