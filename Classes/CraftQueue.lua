@@ -24,7 +24,7 @@ function CraftSim.CraftQueue:AddRecipe(options)
     local recipeData = options.recipeData
     local amount = options.amount or 1
 
-    print("Adding Recipe to Queue: " .. recipeData.recipeName, true)
+    print("Adding Recipe to Queue: " .. recipeData.recipeName .. " x" .. amount, true)
 
     local recipeCrafterUID = recipeData:GetRecipeCraftQueueUID()
 
@@ -64,7 +64,7 @@ function CraftSim.CraftQueue:AddRecipe(options)
                     -- queue recipeData
                     local subRecipe = recipeData.optimizedSubRecipes[itemID]
                     if subRecipe then
-                        print("Found self crafted reagent: queue into cq: " .. subRecipe.recipeName)
+                        print("Found self crafted reagent: queue into cq: " .. subRecipe.recipeName .. " q" .. qualityID)
                         subRecipe:SetNonQualityReagentsMax()
                         if reagentItem.quantity > 0 then
                             self:AddRecipe({ recipeData = subRecipe, amount = reagentItem.quantity }) -- TODO
@@ -214,8 +214,8 @@ function CraftSim.CraftQueue:RestoreFromDB()
             return nil
         end)
 
-        -- at last restore subrecipes)
-        self:UpdateSubRecipesTargetItemCounts()
+        -- at last restore subrecipes
+        self:UpdateSubRecipes()
 
         print("CraftQueue Restore Finished")
 
@@ -372,8 +372,9 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData)
     CraftSim.CRAFTQ.UI:UpdateDisplay()
 end
 
-function CraftSim.CraftQueue:UpdateSubRecipesTargetItemCounts()
-    -- get max sub recipe depth in queue then step down to this -1
+-- add subrecipes not yet existing
+function CraftSim.CraftQueue:UpdateSubRecipes()
+    --  get max sub recipe depth in queue then step down to this -1
     local maxDepth = GUTIL:Fold(self.craftQueueItems, 0, function(maxDepth, nextElement, key)
         if nextElement.recipeData.subRecipeDepth > maxDepth then
             return nextElement.recipeData.subRecipeDepth
@@ -386,6 +387,26 @@ function CraftSim.CraftQueue:UpdateSubRecipesTargetItemCounts()
             if cqi.recipeData.subRecipeDepth == depth then
                 cqi:UpdateSubRecipesInQueue()
             end
+        end
+    end
+
+    self:UpdateSubRecipesItemCount()
+    self:RemoveZeroCountSubRecipes()
+end
+
+function CraftSim.CraftQueue:UpdateSubRecipesItemCount()
+    print("Update Sub Recipe Item Counts")
+    for _, cqi in ipairs(self.craftQueueItems) do
+        cqi:UpdateCountByParentRecipes()
+    end
+end
+
+function CraftSim.CraftQueue:RemoveZeroCountSubRecipes()
+    print("Remove Zero Count")
+    for _, cqi in ipairs(CopyTable(self.craftQueueItems, true)) do
+        if cqi and cqi.recipeData.subRecipeDepth > 0 and cqi.amount <= 0 then
+            print("- Removing: " .. cqi.recipeData.recipeName)
+            self:Remove(cqi)
         end
     end
 end

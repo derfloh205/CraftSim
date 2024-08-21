@@ -1193,7 +1193,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             editRecipeFrame.content.professionGearSelectors, OnSelectProfessionGear, "TOPRIGHT", "TOPLEFT", 0, -25)
     end
 
-    editRecipeFrame.content.optimizeReagents = GGUI.Button {
+    editRecipeFrame.content.optimizeProfitButton = GGUI.Button {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.professionGearTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -50,
         label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_OPTIMIZE_PROFIT_BUTTON), adjustWidth = true,
         clickCallback = function()
@@ -1228,7 +1228,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
 
 
     editRecipeFrame.content.resultTitle = GGUI.Text {
-        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.optimizeReagents.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.optimizeProfitButton.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         offsetY = -40, text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL),
     }
 
@@ -1286,7 +1286,7 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
 
     local craftQueue = CraftSim.CRAFTQ.craftQueue or CraftSim.CraftQueue()
 
-    craftQueue:UpdateSubRecipesTargetItemCounts()
+    craftQueue:UpdateSubRecipes()
 
     --- precalculate craftable status and subrecipetargetcounts before sorting to increase performance
     table.foreach(craftQueue.craftQueueItems,
