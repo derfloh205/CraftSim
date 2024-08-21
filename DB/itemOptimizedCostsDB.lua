@@ -15,6 +15,8 @@ CraftSim.DB.ITEM_OPTIMIZED_COSTS = CraftSim.DB:RegisterRepository()
 ---@field expectedCostsPerItem number
 ---@field expectedYieldPerCraft number
 ---@field profession Enum.Profession
+---@field concentration boolean
+---@field concentrationCost number
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DB)
 
@@ -109,7 +111,7 @@ function CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(recipeData)
                     expectedCostsPerItem = recipeData.priceData.expectedCostsPerItem,
                     expectedYieldPerCraft = recipeData.resultData.expectedYieldPerCraft,
                     concentration = qualityID == recipeData.resultData.expectedQualityConcentration,
-                    concentrationCosts = recipeData.concentrationCost,
+                    concentrationCost = recipeData.concentrationCost,
                     profession = recipeData.professionData.professionInfo.profession,
                 }
             end

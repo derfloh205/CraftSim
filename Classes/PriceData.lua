@@ -16,8 +16,12 @@ function CraftSim.PriceData:new(recipeData)
     ---@type number[]
     self.qualityPriceList = {}
     --- Per 1 Item
-    self.expectedCostsPerItem = nil
     self.craftingCosts = 0
+    self.craftingCostsRequired = 0
+    self.craftingCostsFixed = 0
+    self.expectedCostsPerItem = 0
+    self.resourcefulnessSavedCosts = 0
+    self.resourcefulnessSavedCostsAverage = 0
     --- list of itemIDs of reagents where the selfcrafted price is used
     ---@type ItemID[]
     self.selfCraftedReagents = {}
@@ -37,6 +41,8 @@ function CraftSim.PriceData:Update()
     self.craftingCostsRequired = 0
     self.craftingCostsFixed = 0
     self.expectedCostsPerItem = 0
+    self.resourcefulnessSavedCosts = 0
+    self.resourcefulnessSavedCostsAverage = 0
     wipe(self.qualityPriceList)
     wipe(self.selfCraftedReagents)
 
@@ -144,7 +150,7 @@ function CraftSim.PriceData:Update()
         table.insert(self.qualityPriceList, itemPrice)
     end
 
-    self.resourcefulnessSavedCosts = 0
+
     if self.recipeData.supportsResourcefulness then
         self.resourcefulnessSavedCosts = CraftSim.CALC:GetResourcefulnessSavedCosts(self.recipeData)
         -- in this case we need the average saved costs per craft
