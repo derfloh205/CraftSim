@@ -56,6 +56,7 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     ---@field profession Enum.Profession
     ---@field recipeName string
     ---@field subRecipeDepth number
+    ---@field concentrating boolean
     --- recipeData references for which the recipeData is used as subRecipe
     ---@type CraftSim.RecipeData.ParentRecipeInfo[]
     self.parentRecipeInfo = {}
@@ -1181,7 +1182,8 @@ end
 function CraftSim.RecipeData:HasParentRecipeInfo(prI)
     return GUTIL:Some(self.parentRecipeInfo, function(parentRecipeInfo)
         return parentRecipeInfo.recipeID == prI.recipeID and parentRecipeInfo.crafterUID == prI.crafterUID and
-            parentRecipeInfo.subRecipeDepth == prI.subRecipeDepth
+            parentRecipeInfo.subRecipeDepth == prI.subRecipeDepth and parentRecipeInfo.concentrating == prI
+            .concentrating
     end)
 end
 
@@ -1195,6 +1197,7 @@ function CraftSim.RecipeData:CreateParentRecipeInfo()
         profession = self.professionData.professionInfo.profession,
         recipeName = self.recipeName,
         subRecipeDepth = self.subRecipeDepth,
+        concentrating = self.concentrating,
     }
     return pri
 end
