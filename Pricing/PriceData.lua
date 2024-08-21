@@ -51,7 +51,7 @@ function CraftSim.PRICEDATA:GetMinBuyoutByItemID(itemID, isReagent, forceAHPrice
             priceInfo.isOverride = true
             return priceOverrideData.price, priceInfo
         end
-
+        -- TODO: cost optimization ui fixes
         if considerSubCrafts then
             -- get costs from set crafter
             local itemRecipeData = CraftSim.DB.ITEM_RECIPE:Get(itemID)
