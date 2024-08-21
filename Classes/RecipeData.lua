@@ -1034,7 +1034,13 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
     subRecipeDepth = subRecipeDepth or 0
     visitedRecipeIDs = visitedRecipeIDs or {}
 
-    print("Optimize SubRecipes for " .. self.recipeName)
+    local print = function(t, r, l)
+        if true then --self.recipeID == 376556 then
+            printD(t, r, l, subRecipeDepth)
+        end
+    end
+
+    print("Optimize SubRecipes for " .. self.recipeName .. " C: " .. tostring(self.concentrating))
     print("- Depth: " .. subRecipeDepth)
 
     if subRecipeDepth > CraftSim.DB.OPTIONS:Get("COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH") then
@@ -1043,11 +1049,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
     end
 
     --- DEBUG
-    local print = function(t, r, l)
-        if true then --self.recipeID == 376556 then
-            printD(t, r, l, subRecipeDepth)
-        end
-    end
+
     local subRecipeData = self:GetSubRecipeCraftingInfos()
 
     -- used to show what is reachable
@@ -1101,7 +1103,6 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                             subRecipeDepth + 1)
                         if success then
                             recipeData:SetSubRecipeCostsUsage(true)
-                            recipeData:AddParentRecipe(self)
 
                             -- caches the expect costs info automatically
                             recipeData:OptimizeProfit(optimizeOptions)
@@ -1115,7 +1116,15 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                             if concentrationOnly then
                                 recipeData.concentrating = true
                                 recipeData:Update()
+                                -- post update concentration flag in pri info in sub recipes of this item quality
+                                for _, subRecipeData in pairs(recipeData.optimizedSubRecipes) do
+                                    for _, prI in pairs(subRecipeData.parentRecipeInfo) do
+                                        prI.concentrating = true
+                                    end
+                                end
                             end
+
+                            recipeData:AddParentRecipe(self)
 
                             print("- Quality Reachable: " ..
                                 tostring(reagentQualityReachable) .. " C: " .. tostring(concentrationOnly))

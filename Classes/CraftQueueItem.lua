@@ -174,6 +174,8 @@ function CraftSim.CraftQueueItem:UpdateCountByParentRecipes()
     if self.recipeData.subRecipeDepth == 0 then return end
 
     local parentCraftQueueItems = GUTIL:Map(self.recipeData.parentRecipeInfo, function(prI)
+        print("searching for ")
+        print(prI, true, "PRI", 1)
         return CraftSim.CRAFTQ.craftQueue:FindRecipeByParentRecipeInfo(prI)
     end)
 
@@ -185,9 +187,22 @@ function CraftSim.CraftQueueItem:UpdateCountByParentRecipes()
         return itemCount + foldValue
     end)
 
-    local minimumCrafts = math.max(0, totalCount / self.recipeData.baseItemAmount)
+    -- if I am the crafter also use warbank count otherwise not
+    local inventoryCount = CraftSim.DB.ITEM_COUNT:Get(self.recipeData:GetCrafterUID(), itemID, true, self.isCrafter)
+
+    local restCount = math.max(0, totalCount - inventoryCount)
+
+    local minimumCrafts = math.max(0, restCount / self.recipeData.baseItemAmount)
 
     self.amount = minimumCrafts
+
+    print("Updated amount for " .. tostring(self.recipeData.resultData.expectedItem:GetItemLink()) .. ": " .. self
+        .amount)
+    print("parentCraftQueueItems: " .. #parentCraftQueueItems)
+    print("totalCount: " .. totalCount)
+    print("inventoryCount: " .. inventoryCount)
+    print("restCount: " .. restCount)
+    print("minimumCrafts: " .. minimumCrafts)
 end
 
 function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()

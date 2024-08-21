@@ -25,6 +25,7 @@ function CraftSim.CraftQueue:AddRecipe(options)
     local amount = options.amount or 1
 
     print("Adding Recipe to Queue: " .. recipeData.recipeName .. " x" .. amount, true)
+    print("concentrating: " .. tostring(recipeData.concentrating))
 
     local recipeCrafterUID = recipeData:GetRecipeCraftQueueUID()
 
@@ -33,7 +34,7 @@ function CraftSim.CraftQueue:AddRecipe(options)
     for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do
         if reagent.hasQuality then
             if reagent:GetTotalQuantity() < reagent.requiredQuantity then
-                reagent:SetCheapestQualityMax()
+                reagent:SetCheapestQualityMax(recipeData.subRecipeCostsEnabled)
             end
         end
     end
@@ -66,8 +67,17 @@ function CraftSim.CraftQueue:AddRecipe(options)
                     if subRecipe then
                         print("Found self crafted reagent: queue into cq: " .. subRecipe.recipeName .. " q" .. qualityID)
                         subRecipe:SetNonQualityReagentsMax()
-                        if reagentItem.quantity > 0 then
-                            self:AddRecipe({ recipeData = subRecipe, amount = reagentItem.quantity }) -- TODO
+
+                        -- its allocated but is it also necessary to craft? Or do I own enough?
+                        -- include warbank only when crafter is player
+                        local inventoryCount = CraftSim.DB.ITEM_COUNT:Get(subRecipe:GetCrafterUID(), itemID, true,
+                            subRecipe:IsCrafter())
+                        local restCount = math.max(0, (reagentItem.quantity * craftQueueItem.amount) - inventoryCount)
+                        if restCount > 0 then
+                            local minimumCrafts = math.max(0, restCount / subRecipe.baseItemAmount)
+                            if minimumCrafts > 0 then
+                                self:AddRecipe({ recipeData = subRecipe, amount = minimumCrafts })
+                            end
                         end
                     end
                 end
@@ -113,7 +123,8 @@ function CraftSim.CraftQueue:FindRecipe(recipeData)
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
-function CraftSim.CraftQueue:Remove(craftQueueItem)
+---@param removeParentSubcraftInformation boolean?
+function CraftSim.CraftQueue:Remove(craftQueueItem, removeParentSubcraftInformation)
     local _, index = GUTIL:Find(self.craftQueueItems, function(cqI)
         return craftQueueItem == cqI
     end)
@@ -149,21 +160,23 @@ function CraftSim.CraftQueue:Remove(craftQueueItem)
     -- if i was a subrecipe, check my parent recipes, and set the item I crafted there to not be crafted anymore by me (reoptimize needed?)
     -- by removing the optimizedSubRecipe and selfCraftedReagents entry
 
-    for _, prI in ipairs(craftQueueItem.recipeData.parentRecipeInfo) do
-        local parentCQI = self:FindRecipeByParentRecipeInfo(prI)
+    if removeParentSubcraftInformation then
+        for _, prI in ipairs(craftQueueItem.recipeData.parentRecipeInfo) do
+            local parentCQI = self:FindRecipeByParentRecipeInfo(prI)
 
-        if parentCQI then
-            -- remove all references to this subrecipe and update priceData and profit
-            for itemID, optimizedSubRecipe in pairs(parentCQI.recipeData.optimizedSubRecipes) do
-                if optimizedSubRecipe then
-                    if optimizedSubRecipe:GetRecipeCraftQueueUID() == craftQueueItem.recipeData:GetRecipeCraftQueueUID() then
-                        parentCQI.recipeData.optimizedSubRecipes[itemID] = nil
+            if parentCQI then
+                -- remove all references to this subrecipe and update priceData and profit
+                for itemID, optimizedSubRecipe in pairs(parentCQI.recipeData.optimizedSubRecipes) do
+                    if optimizedSubRecipe then
+                        if optimizedSubRecipe:GetRecipeCraftQueueUID() == craftQueueItem.recipeData:GetRecipeCraftQueueUID() then
+                            parentCQI.recipeData.optimizedSubRecipes[itemID] = nil
+                        end
                     end
                 end
-            end
 
-            parentCQI.recipeData.priceData:Update()
-            parentCQI.recipeData:GetAverageProfit()
+                parentCQI.recipeData.priceData:Update()
+                parentCQI.recipeData:GetAverageProfit()
+            end
         end
     end
 end
@@ -372,17 +385,22 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData)
     CraftSim.CRAFTQ.UI:UpdateDisplay()
 end
 
--- add subrecipes not yet existing
-function CraftSim.CraftQueue:UpdateSubRecipes()
-    --  get max sub recipe depth in queue then step down to this -1
-    local maxDepth = GUTIL:Fold(self.craftQueueItems, 0, function(maxDepth, nextElement, key)
+---@return number maxDepth
+function CraftSim.CraftQueue:GetMaxRecipeDepth()
+    return GUTIL:Fold(self.craftQueueItems, 0, function(maxDepth, nextElement)
         if nextElement.recipeData.subRecipeDepth > maxDepth then
             return nextElement.recipeData.subRecipeDepth
         else
             return maxDepth
         end
     end)
-    for depth = 0, maxDepth - 1 do
+end
+
+-- add subrecipes not yet existing
+function CraftSim.CraftQueue:UpdateSubRecipes()
+    print("Update Subrecipes")
+    local maxDepth = self:GetMaxRecipeDepth()
+    for depth = 0, maxDepth do
         for _, cqi in ipairs(self.craftQueueItems) do
             if cqi.recipeData.subRecipeDepth == depth then
                 cqi:UpdateSubRecipesInQueue()
@@ -395,9 +413,14 @@ function CraftSim.CraftQueue:UpdateSubRecipes()
 end
 
 function CraftSim.CraftQueue:UpdateSubRecipesItemCount()
+    local maxDepth = self:GetMaxRecipeDepth()
     print("Update Sub Recipe Item Counts")
-    for _, cqi in ipairs(self.craftQueueItems) do
-        cqi:UpdateCountByParentRecipes()
+    for depth = 0, maxDepth do
+        for _, cqi in ipairs(self.craftQueueItems) do
+            if cqi.recipeData.subRecipeDepth == depth then
+                cqi:UpdateCountByParentRecipes()
+            end
+        end
     end
 end
 
