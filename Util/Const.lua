@@ -1148,9 +1148,12 @@ CraftSim.CONST.EXCEPTION_ORDER_ITEM_IDS = {
 }
 
 CraftSim.CONST.SPECIAL_TOOL_STATS = {
-    [191228] = { -- Epic BS Hammer
-
-    }
+    [191228] = { -- DF https://www.wowhead.com/beta/item=191228/black-dragon-touched-hammer
+        ingenuityrefundincrease = 5
+    },
+    [224116] = { -- TWW https://www.wowhead.com/beta/item=224116/runed-null-stone-rod
+        reduceconcentrationcost = 1
+    },
 }
 
 CraftSim.CONST.ITEM_IDS = {

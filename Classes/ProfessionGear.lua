@@ -50,6 +50,9 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 	local itemID = self.item:GetItemID()
 	if CraftSim.CONST.SPECIAL_TOOL_STATS[itemID] then
 		local stats = CraftSim.CONST.SPECIAL_TOOL_STATS[itemID]
+
+		self.professionStats.ingenuity:addExtraValue((stats.ingenuityrefundincrease or 0) / 100)
+		self.professionStats.ingenuity:addExtraValue((stats.reduceconcentrationcost or 0) / 100, 2)
 	end
 
 	local parsedSkill = 0
