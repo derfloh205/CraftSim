@@ -80,6 +80,10 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
                 tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateFlaskSpillOverBuff(self.recipeData))
             end
         end
+
+        if profession == Enum.Profession.Engineering then
+            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateInventorsGuileBuff(self.recipeData))
+        end
     end
 
     -- DF Buffs

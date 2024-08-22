@@ -82,6 +82,17 @@ function CraftSim.CRAFT_BUFFS:CreateWeaversTutelageBuff(recipeData)
 end
 
 ---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateInventorsGuileBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+
+    buffStats.multicraft:addValue(150)
+    buffStats.ingenuity:addValue(150)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.INVENTORS_GUILE, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Buff potionSpillOverBuff
 function CraftSim.CRAFT_BUFFS:CreatePotionSpillOverBuff(recipeData)
     local buffStats = CraftSim.ProfessionStats()
