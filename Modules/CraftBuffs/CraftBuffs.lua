@@ -147,10 +147,97 @@ function CraftSim.CRAFT_BUFFS:CreatePhialSpillOverBuff(recipeData)
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_SPILL_OVER, buffStats)
 end
 
----@param recipeData CraftSim.RecipeData?
+---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Buff shatteringEssence
 function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)
-    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE, CraftSim.ProfessionStats())
+    local buffStats = CraftSim.ProfessionStats()
+    --- Shattering Essence Traits "Buff Perks"
+    --- not coded into db2 so need to do it manually
+    local buffPerkData = {
+        {
+            nodeID = 100040, -- Supplementary Shattering
+            thresholds = {
+                [0] = {
+                    resourcefulness = 15,
+                    ingenuity = 15,
+                    multicraft = 15,
+                },
+                [5] = {
+                    resourcefulness = 15,
+                    ingenuity = 15,
+                    multicraft = 15,
+                },
+                [25] = {
+                    resourcefulness = 15,
+                    ingenuity = 15,
+                    multicraft = 15,
+                },
+                [30] = {
+                    resourcefulness = 30,
+                    ingenuity = 30,
+                    multicraft = 30,
+                },
+            },
+        },
+        {
+            nodeID = 100039, -- Resourceful Residue
+            thresholds = {
+                [5] = {
+                    resourcefulness = 30,
+                },
+                [15] = {
+                    resourcefulness = 30,
+                },
+                [25] = {
+                    resourcefulness = 30,
+                },
+            },
+        },
+        {
+            nodeID = 100038, -- Immaculate Ingenuity
+            thresholds = {
+                [5] = {
+                    ingenuity = 30,
+                },
+                [15] = {
+                    ingenuity = 30,
+                },
+                [25] = {
+                    ingenuity = 30,
+                },
+            },
+        },
+        {
+            nodeID = 100037, -- Magnificient Multicrafting
+            thresholds = {
+                [5] = {
+                    multicraft = 30,
+                },
+                [15] = {
+                    multicraft = 30,
+                },
+                [25] = {
+                    multicraft = 30,
+                },
+            },
+        },
+    }
+
+    for _, buffData in ipairs(buffPerkData) do
+        local nodeInfo = C_Traits.GetNodeInfo(recipeData.professionData.configID, buffData.nodeID)
+        if nodeInfo then
+            local rank = nodeInfo.activeRank - 1
+            for threshold, stats in pairs(buffData.thresholds) do
+                if rank >= threshold then
+                    for stat, amount in pairs(stats) do
+                        buffStats[stat]:addValue(amount)
+                    end
+                end
+            end
+        end
+    end
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE, buffStats)
 end
 
 ---@param recipeData CraftSim.RecipeData?

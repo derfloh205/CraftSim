@@ -52,7 +52,7 @@ function CraftSim.Buff:Update()
     end
 
     self.active = true
-    self.stacks = auraData.applications or 1
+    self.stacks = math.max(1, auraData.applications)
 
     if self.valuePointData then
         self.active = (auraData.points[self.valuePointData.index] / self.stacks) == self.valuePointData.value
