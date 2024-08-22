@@ -93,6 +93,50 @@ function CraftSim.CRAFT_BUFFS:CreatePotionSpillOverBuff(recipeData)
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.POTION_SPILL_OVER, buffStats)
 end
 
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff flaskSpillOverBuff
+function CraftSim.CRAFT_BUFFS:CreateFlaskSpillOverBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+    local bulkProductionNodeID = 98952
+    local nodeData = CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, bulkProductionNodeID, 10,
+        Enum.Profession.Alchemy)
+    local isDouble = nodeData.rank >= 25
+
+    if isDouble then
+        buffStats.ingenuity:addValue(24)
+        buffStats.multicraft:addValue(24)
+        buffStats.resourcefulness:addValue(24)
+    else
+        buffStats.ingenuity:addValue(12)
+        buffStats.multicraft:addValue(12)
+        buffStats.resourcefulness:addValue(12)
+    end
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.FLASK_SPILL_OVER, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff phialSpillOverBuff
+function CraftSim.CRAFT_BUFFS:CreatePhialSpillOverBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+    local bulkProductionNodeID = 98951
+    local nodeData = CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, bulkProductionNodeID, 10,
+        Enum.Profession.Alchemy)
+    local isDouble = nodeData.rank >= 25
+
+    if isDouble then
+        buffStats.ingenuity:addValue(24)
+        buffStats.multicraft:addValue(24)
+        buffStats.resourcefulness:addValue(24)
+    else
+        buffStats.ingenuity:addValue(12)
+        buffStats.multicraft:addValue(12)
+        buffStats.resourcefulness:addValue(12)
+    end
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_SPILL_OVER, buffStats)
+end
+
 ---@param recipeData CraftSim.RecipeData?
 ---@return CraftSim.Buff shatteringEssence
 function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)

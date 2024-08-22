@@ -607,6 +607,8 @@ CraftSim.CONST.BUFF_IDS = {
 
     -- Alchemy
     POTION_SPILL_OVER = 433187,
+    FLASK_SPILL_OVER = 433188,
+    PHIAL_SPILL_OVER = 433230,
 }
 
 CraftSim.CONST.LOCALES = {

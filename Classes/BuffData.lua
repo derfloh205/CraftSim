@@ -62,12 +62,21 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         end
 
         if profession == Enum.Profession.Alchemy then
-            local potionBulkProductionNodeID = 99040
             -- only for potions (check if the potion spec talent is enabled for this recipe)
             local recipePerks = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA.recipeMapping
                 [self.recipeData.recipeID]
-            if tContains(recipePerks or {}, potionBulkProductionNodeID) then
+
+            local isPotionRecipe = tContains(recipePerks or {}, 99040) -- potion - bulkproduction
+            local isFlaskRecipe = tContains(recipePerks or {}, 98952)  -- flask - bulkproduction
+            local isPhialRecipe = tContains(recipePerks or {}, 98951)  -- flask - profession phials
+            if isPotionRecipe then
                 tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreatePotionSpillOverBuff(self.recipeData))
+            end
+            if isPhialRecipe then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialSpillOverBuff(self.recipeData))
+            end
+            if isFlaskRecipe and not isPhialRecipe then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateFlaskSpillOverBuff(self.recipeData))
             end
         end
     end
