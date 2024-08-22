@@ -64,12 +64,9 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
 
         if profession == Enum.Profession.Alchemy then
             -- only for potions (check if the potion spec talent is enabled for this recipe)
-            local recipePerks = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA.recipeMapping
-                [self.recipeData.recipeID]
-
-            local isPotionRecipe = tContains(recipePerks or {}, 99040) -- potion - bulkproduction
-            local isFlaskRecipe = tContains(recipePerks or {}, 98952)  -- flask - bulkproduction
-            local isPhialRecipe = tContains(recipePerks or {}, 98951)  -- flask - profession phials
+            local isPotionRecipe = CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 99040) -- potion - bulkproduction
+            local isFlaskRecipe = CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 98952)  -- flask - bulkproduction
+            local isPhialRecipe = CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 98951)  -- flask - profession phials
             if isPotionRecipe then
                 tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreatePotionSpillOverBuff(self.recipeData))
             end
@@ -86,7 +83,10 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         end
 
         if profession == Enum.Profession.Inscription then
-            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedCiphersBuff(self.recipeData))
+            -- Improved Ciphers
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101626) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedCiphersBuff(self.recipeData))
+            end
         end
     end
 

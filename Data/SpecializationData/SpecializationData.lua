@@ -86,3 +86,15 @@ function CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, nodeID, expa
 
     return nodeData
 end
+
+---@param recipeData CraftSim.RecipeData
+---@param nodeID number
+---@return boolean affected
+function CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(recipeData, nodeID)
+    local recipePerks = self.NODE_DATA[recipeData.professionData.expansionID]
+        [recipeData.professionData.professionInfo.profession].recipeMapping
+
+    if not recipePerks then return false end
+
+    return tContains(recipePerks[recipeData.recipeID] or {}, nodeID)
+end
