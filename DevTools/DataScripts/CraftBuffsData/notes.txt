@@ -19,3 +19,22 @@ EffectMiscValue_0: 176 ... maybe a hint at the 18% crafting speed?
 
 in SpellEffectAutoDescription: Use 511 as ID
 here in the description one can see that its the crafting speed buff
+
+-> use Jechett's Data
+
+-> List of Buffs per Profession:
+(Ignore Gathering)
+
+TWW
+
+General:
+
+Blacksmithing:
+    - Everburning Ignition
+        - 3 Stats
+        - Trait Dependend
+        - Effects all Blacksmithing Recipes
+Alchemy:
+    - Shatter
+    - 
+
