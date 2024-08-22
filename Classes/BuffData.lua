@@ -46,7 +46,7 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
 
         local currentSeason = CraftSim.UTIL:GetCurrentSeason()
         -- only gives resourcefulness / is relevant in winter and spring
-        if currentSeason == 1 or currentSeason == 2 then
+        if currentSeason == 0 or currentSeason == 1 then
             tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfBountifulSeasonsBuffs(self.recipeData))
         end
 
@@ -55,7 +55,6 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         end
 
         if profession == Enum.Profession.Enchanting then
-            print("Creating shattering essence buff")
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(self.recipeData))
         end
     end
