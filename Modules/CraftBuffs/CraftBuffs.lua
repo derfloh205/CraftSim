@@ -68,6 +68,12 @@ function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
         buffStats:add(nodeData.professionStats)
     end
 
+    if CraftSim.UTIL:CheckIfBagIsEquipped(CraftSim.CONST.ITEM_IDS.PROFESSION_BAGS.IGNITION_SATCHEL) then
+        buffStats.ingenuity:addValue(20)
+        buffStats.resourcefulness:addValue(20)
+        buffStats.multicraft:addValue(20)
+    end
+
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.EVERBURNING_IGNITION, buffStats)
 end
 
@@ -309,6 +315,12 @@ function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)
                 end
             end
         end
+    end
+
+    if CraftSim.UTIL:CheckIfBagIsEquipped(CraftSim.CONST.ITEM_IDS.PROFESSION_BAGS.MAGICALLY_INFINITE_MESSENGER) then
+        buffStats.ingenuity:addValue(20)
+        buffStats.resourcefulness:addValue(20)
+        buffStats.multicraft:addValue(20)
     end
 
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE, buffStats)
