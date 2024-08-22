@@ -13,6 +13,7 @@ CraftSim.CRAFT_BUFFS = GUTIL:CreateRegistreeForEvents({ "COMBAT_LOG_EVENT_UNFILT
 --- Buffs created by this method do not have a recipeData reference!
 ---@param profession Enum.Profession
 ---@return CraftSim.Buff[] professionBuffs
+---@deprecated
 function CraftSim.CRAFT_BUFFS:GetRecipeScanBuffsByProfessionID(profession)
     local buffs = {}
 
@@ -43,6 +44,17 @@ function CraftSim.CRAFT_BUFFS:GetRecipeScanBuffsByProfessionID(profession)
     return buffs
 end
 
+-- Global
+
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff chefsHat
+function CraftSim.CRAFT_BUFFS:CreateChefsHatBuff(recipeData)
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.CHEFS_HAT, CraftSim.ProfessionStats(), nil, nil, nil,
+        L(CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP))
+end
+
+-- TWW
+
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Buff everburningIgnition
 function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
@@ -56,8 +68,7 @@ function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
         buffStats:add(nodeData.professionStats)
     end
 
-    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.EVERBURNING_IGNITION, buffStats, nil, nil,
-        nil, nil)
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.EVERBURNING_IGNITION, buffStats)
 end
 
 ---@param recipeData CraftSim.RecipeData?
@@ -66,12 +77,7 @@ function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE, CraftSim.ProfessionStats())
 end
 
----@param recipeData CraftSim.RecipeData?
----@return CraftSim.Buff chefsHat
-function CraftSim.CRAFT_BUFFS:CreateChefsHatBuff(recipeData)
-    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.CHEFS_HAT, CraftSim.ProfessionStats(), nil, nil, nil,
-        L(CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP))
-end
+-- DRAGONFLIGHT
 
 ---@param recipeData CraftSim.RecipeData?
 ---@return CraftSim.Buff elementalShatter
@@ -150,6 +156,25 @@ function CraftSim.CRAFT_BUFFS:CreateQuickPhialBuffs(recipeData)
     }, CraftSim.CONST.BUFF_IDS.PHIAL_OF_QUICK_HANDS_SPELL_Q3))
 
     return buffs
+end
+
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff incenseBuff
+function CraftSim.CRAFT_BUFFS:CreateIncenseBuff(recipeData)
+    local incenseStats = CraftSim.ProfessionStats()
+    incenseStats.ingenuity:addValue(20)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SAGACIOUS_INCENSE, incenseStats)
+end
+
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff alchemicallyInspiredBuff
+function CraftSim.CRAFT_BUFFS:CreateAlchemicallyInspiredBuff(recipeData)
+    local stats = CraftSim.ProfessionStats()
+    stats.ingenuity:addValue(20)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.ALCHEMICALLY_INSPIRED, stats, nil, nil, nil,
+        "Whenever you achieve a major breakthrough in experimentation\ngain +20 Ingenuity for 4 hours for all Alchemy crafts.")
 end
 
 function CraftSim.CRAFT_BUFFS:COMBAT_LOG_EVENT_UNFILTERED()

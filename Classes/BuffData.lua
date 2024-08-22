@@ -65,6 +65,14 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         end
 
         if self.recipeData.supportsQualities then
+            --- general
+            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateIncenseBuff(self.recipeData))
+
+            -- alchemy
+            if profession == Enum.Profession.Alchemy then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateAlchemicallyInspiredBuff(self.recipeData))
+            end
+
             --- enchanting
             if profession == Enum.Profession.Enchanting then
                 -- elemental shatter fire

@@ -193,6 +193,9 @@ function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
             end
             local currentStats = buff.active and buff.professionStats or emptyStats
 
+            row.active = buff.active
+            row.buffName = buff.name
+
             row.tooltipOptions = {
                 anchor = "ANCHOR_CURSOR",
                 owner = row.frame,
@@ -202,16 +205,18 @@ function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
     end
 
     craftBuffsContent.buffList:UpdateDisplay(function(rowA, rowB)
-        local activeA = rowA.columns[1].active
-        local activeB = rowB.columns[1].active
+        local activeA = rowA.active
+        local activeB = rowB.active
         if activeA and not activeB then
             return true
         end
-        if activeB then
+        if activeB and not activeA then
             return false
         end
 
-        return false
+        -- else sort by buffname
+
+        return rowA.buffName < rowB.buffName
     end)
 
     craftBuffsContent.simulateBuffSelector:SetItems(GUTIL:Map(buffData.buffs, function(buff)
