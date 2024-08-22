@@ -596,6 +596,7 @@ CraftSim.CONST.BUFF_IDS = {
 
     -- all professions
     PHIAL_OF_BOUNTIFUL_SEASONS = 432286,
+    PHIAL_OF_AMBIDEXTERITY = 432304,
 
     -- Blacksmithing
     EVERBURNING_IGNITION = 453734,

@@ -111,6 +111,40 @@ function CraftSim.CRAFT_BUFFS:CreatePhialOfBountifulSeasonsBuffs(recipeData)
     return buffs
 end
 
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff[] phialBuffs
+function CraftSim.CRAFT_BUFFS:CreatePhialOfAmbidexterityBuffs(recipeData)
+    local buffs = {}
+    -- phial 1
+    local q1Stats = CraftSim.ProfessionStats()
+    q1Stats.craftingspeed:SetValueByPercent(0.05)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_AMBIDEXTERITY, q1Stats, 1, {
+        index = 1,
+        value = 5
+    }, nil, nil, 212311))
+
+    -- phial 2
+    local q2Stats = CraftSim.ProfessionStats()
+    q2Stats.craftingspeed:SetValueByPercent(0.1)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_AMBIDEXTERITY, q2Stats, 2, {
+        index = 1,
+        value = 10,
+    }, nil, nil, 212312))
+
+    -- phial 3
+    local q3Stats = CraftSim.ProfessionStats()
+    q3Stats.craftingspeed:SetValueByPercent(0.15)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_AMBIDEXTERITY, q3Stats, 3, {
+        index = 1,
+        value = 15,
+    }, nil, nil, 212313))
+
+    return buffs
+end
+
 -- DRAGONFLIGHT
 
 ---@param recipeData CraftSim.RecipeData?

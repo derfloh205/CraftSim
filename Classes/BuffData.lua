@@ -50,6 +50,8 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
             tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfBountifulSeasonsBuffs(self.recipeData))
         end
 
+        tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfAmbidexterityBuffs(self.recipeData))
+
         if profession == Enum.Profession.Blacksmithing then
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(self.recipeData))
         end
