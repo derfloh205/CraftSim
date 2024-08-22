@@ -159,6 +159,15 @@ function CraftSim.CRAFT_BUFFS:CreatePhialSpillOverBuff(recipeData)
 end
 
 ---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateImprovedCiphersBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+    buffStats.craftingspeed:SetValueByPercent(0.02)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.IMPROVED_CIPHERS, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Buff shatteringEssence
 function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)
     local buffStats = CraftSim.ProfessionStats()

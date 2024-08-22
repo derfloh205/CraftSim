@@ -223,7 +223,7 @@ function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
             end
             local currentStats = buff.active and buff.professionStats or emptyStats
 
-            row.active = buff.active
+            row.activeBuff = buff.active
             row.buffName = buff.name
 
             row.tooltipOptions = {
@@ -235,12 +235,12 @@ function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
     end
 
     craftBuffsContent.buffList:UpdateDisplay(function(rowA, rowB)
-        local activeA = rowA.active
-        local activeB = rowB.active
+        local activeA = rowA.activeBuff
+        local activeB = rowB.activeBuff
         if activeA and not activeB then
             return true
         end
-        if activeB and not activeA then
+        if not activeA and activeB then
             return false
         end
 

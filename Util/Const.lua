@@ -613,6 +613,9 @@ CraftSim.CONST.BUFF_IDS = {
 
     -- Engineering
     INVENTORS_GUILE = 452519,
+
+    -- Inscription
+    IMPROVED_CIPHERS = 454547,
 }
 
 CraftSim.CONST.LOCALES = {

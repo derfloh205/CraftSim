@@ -84,6 +84,10 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         if profession == Enum.Profession.Engineering then
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateInventorsGuileBuff(self.recipeData))
         end
+
+        if profession == Enum.Profession.Inscription then
+            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedCiphersBuff(self.recipeData))
+        end
     end
 
     -- DF Buffs
