@@ -16,6 +16,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("17.1.3"),
+        f.p .. "Spec Info Update",
         newP("17.1.2"),
         f.P .. f.g("Sub Recipe Optimization") .. " is back",
         f.a .. "Added a toggle for reagent concentration usage",
