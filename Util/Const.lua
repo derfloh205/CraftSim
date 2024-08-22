@@ -577,6 +577,8 @@ CraftSim.CONST.BUFF_IDS = {
     PHIAL_OF_QUICK_HANDS_SPELL_Q2 = 393689,
     PHIAL_OF_QUICK_HANDS_SPELL_Q3 = 393692,
 
+    SAGACIOUS_INCENSE = 371234,
+
     -- cooking
     CHEFS_HAT = 67556,
 
@@ -587,12 +589,38 @@ CraftSim.CONST.BUFF_IDS = {
     ELEMENTAL_SHATTER_FROST = 392820,
     ELEMENTAL_SHATTER_ORDER = 392821,
 
+    -- alchemy
+    ALCHEMICALLY_INSPIRED = 382093,
+
     --- TWW
+
+    -- all professions
+    PHIAL_OF_BOUNTIFUL_SEASONS = 432286,
+    PHIAL_OF_AMBIDEXTERITY = 432304,
+    PHIAL_OF_CONCENTRATED_INGENUITY = 432306,
+    WEAVERS_TUTELAGE = 442981,
+
     -- Blacksmithing
     EVERBURNING_IGNITION = 453734,
 
     -- Enchanting
     SHATTERING_ESSENCE = 445798,
+
+    -- Alchemy
+    POTION_SPILL_OVER = 433187,
+    FLASK_SPILL_OVER = 433188,
+    PHIAL_SPILL_OVER = 433230,
+
+    -- Engineering
+    INVENTORS_GUILE = 452519,
+
+    -- Inscription
+    IMPROVED_CIPHERS = 454547,
+    IMPROVED_MILLING = 454548,
+    IMPROVED_INKS = 454549,
+    IMPROVED_CONTRACTS = 454550,
+    IMPROVED_MISSIVES = 454551,
+    IMPROVED_VANTUS = 454552,
 }
 
 CraftSim.CONST.LOCALES = {
@@ -1120,16 +1148,29 @@ CraftSim.CONST.EXCEPTION_ORDER_ITEM_IDS = {
 }
 
 CraftSim.CONST.SPECIAL_TOOL_STATS = {
-    [191228] = { -- Epic BS Hammer
-
-    }
+    [191228] = { -- DF https://www.wowhead.com/beta/item=191228/black-dragon-touched-hammer
+        ingenuityrefundincrease = 5
+    },
+    [224116] = { -- TWW https://www.wowhead.com/beta/item=224116/runed-null-stone-rod
+        reduceconcentrationcost = 1
+    },
 }
 
 CraftSim.CONST.ITEM_IDS = {
     OPTIONAL_REAGENTS = {
         ILLUSTRIOUS_INSIGHT = 191529,
         LESSER_ILLUSTRIOUS_INSIGHT = 191526,
-    }
+    },
+    PROFESSION_BAGS = {
+        HIDESHAPERS_WORKBAG = 222861,          -- leatherworking reagents
+        MAGICALLY_INFINITE_MESSENGER = 222862, -- ench shatter buff
+        IGNITION_SATCHEL = 222860,             -- bs ignition buff
+        CONCOCTORS_CLUTCH = 222859,            -- alchemy experiments
+        DARKMOON_DUFFLE = 222864,              -- inscription darkmoon cards
+        JEWELERS_PURSE = 222867,               -- Jewelcrafting crushing
+        PRODIGYS_TOOLBOX = 222863,             -- Engineering piles of rusted scrap
+        THE_SEVERED_SATCHEL = 224852,          -- Tailoring Unraveling
+    },
 }
 
 CraftSim.CONST.AUCTIONATOR_SHOPPING_LIST_QUEUE_NAME = 'CraftSim CraftQueue'

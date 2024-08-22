@@ -116,13 +116,30 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
                 statusColumn.active = false
 
                 local spellIconSize = 20
-                nameColumn.icon = GGUI.SpellIcon {
+                nameColumn.spellIcon = GGUI.SpellIcon {
                     parent = nameColumn, anchorParent = nameColumn, sizeX = spellIconSize, sizeY = spellIconSize,
                     anchorA = "LEFT", anchorB = "LEFT", offsetX = 0,
                 }
 
+                nameColumn.itemIcon = GGUI.Icon {
+                    parent = nameColumn, anchorParent = nameColumn, sizeX = spellIconSize, sizeY = spellIconSize,
+                    anchorA = "LEFT", anchorB = "LEFT", offsetX = 0, qualityIconScale = 1.2,
+                }
+
+                function nameColumn:SetSpell(spellID)
+                    nameColumn.spellIcon:SetSpell(spellID)
+                    nameColumn.spellIcon:Show()
+                    nameColumn.itemIcon:Hide()
+                end
+
+                function nameColumn:SetItem(itemID)
+                    nameColumn.itemIcon:SetItem(itemID)
+                    nameColumn.itemIcon:Show()
+                    nameColumn.spellIcon:Hide()
+                end
+
                 nameColumn.text = GGUI.Text {
-                    parent = nameColumn, anchorParent = nameColumn.icon.frame, justifyOptions = { type = "H", align = "LEFT" },
+                    parent = nameColumn, anchorParent = nameColumn.spellIcon.frame, justifyOptions = { type = "H", align = "LEFT" },
                     anchorA = "LEFT", anchorB = "RIGHT", text = "<buffname>", offsetX = 5,
                 }
 
@@ -135,11 +152,13 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
                     self.active = active
                     if active then
                         statusColumn.texture:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CRAFT_BUFF_ACTIVE)
-                        nameColumn.icon:Saturate()
+                        nameColumn.spellIcon:Saturate()
+                        nameColumn.itemIcon:Saturate()
                         nameColumn.text:SetColor()
                     else
                         statusColumn.texture:SetAtlas(CraftSim.CONST.ATLAS_TEXTURES.CRAFT_BUFF_NOT_ACTIVE)
-                        nameColumn.icon:Desaturate()
+                        nameColumn.spellIcon:Desaturate()
+                        nameColumn.itemIcon:Desaturate()
                         nameColumn.text:SetColor(GUTIL.COLORS.GREY)
                     end
                 end
@@ -184,8 +203,19 @@ function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
             local statusColumn = columns[1] --[[@as CraftSim.CRAFT_BUFFS.buffList.statusColumn]]
             local nameColumn = columns[2] --[[@as CraftSim.CRAFT_BUFFS.buffList.nameColumn]]
 
-            nameColumn.icon:SetSpell(buff.displayBuffID)
-            nameColumn.text:SetText(buff.name)
+            if buff.displayBuffID then
+                nameColumn:SetSpell(buff.displayBuffID)
+            end
+
+            if buff.displayItemID then
+                nameColumn:SetItem(buff.displayItemID)
+            end
+
+            local stacksText = ""
+            if buff.stacks > 1 then
+                stacksText = " (" .. buff.stacks .. ")"
+            end
+            nameColumn.text:SetText(buff.name .. stacksText)
             statusColumn:SetActive(buff.active)
 
             if not emptyStats then
@@ -193,25 +223,35 @@ function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
             end
             local currentStats = buff.active and buff.professionStats or emptyStats
 
+            row.activeBuff = buff.active
+            row.buffName = buff.name
             row.tooltipOptions = {
                 anchor = "ANCHOR_CURSOR",
                 owner = row.frame,
-                text = buff.customTooltip or currentStats:GetTooltipText(buff.professionStats)
             }
+            if buff.showItemTooltip then
+                row.tooltipOptions.text = nil
+                row.tooltipOptions.itemID = buff.displayItemID
+            else
+                row.tooltipOptions.text = buff.customTooltip or currentStats:GetTooltipText(buff.professionStats)
+                row.tooltipOptions.itemID = nil
+            end
         end)
     end
 
     craftBuffsContent.buffList:UpdateDisplay(function(rowA, rowB)
-        local activeA = rowA.columns[1].active
-        local activeB = rowB.columns[1].active
+        local activeA = rowA.activeBuff
+        local activeB = rowB.activeBuff
         if activeA and not activeB then
             return true
         end
-        if activeB then
+        if not activeA and activeB then
             return false
         end
 
-        return false
+        -- else sort by buffname
+
+        return rowA.buffName < rowB.buffName
     end)
 
     craftBuffsContent.simulateBuffSelector:SetItems(GUTIL:Map(buffData.buffs, function(buff)

@@ -42,13 +42,111 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
 
     -- TWW Buffs
     if self.recipeData.expansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
+        -- general
+
+        local currentSeason = CraftSim.UTIL:GetCurrentSeason()
+        -- only gives resourcefulness / is relevant in winter and spring
+        if currentSeason == 0 or currentSeason == 1 then
+            tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfBountifulSeasonsBuffs(self.recipeData))
+        end
+
+        tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfAmbidexterityBuffs(self.recipeData))
+        tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfConcentratedIngenuityBuffs(self.recipeData))
+        tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateWeaversTutelageBuff(self.recipeData))
+
+        if profession == Enum.Profession.Jewelcrafting then
+            -- Crushing
+            if self.recipeData.recipeID == 434020 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateJewelersPurseBuff(self.recipeData))
+            end
+        end
+
+        if profession == Enum.Profession.Tailoring then
+            -- Unraveling Only
+            if self.recipeData.recipeID == 446926 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateSeveredSatchelBuff(self.recipeData))
+            end
+        end
+
+        if profession == Enum.Profession.Leatherworking then
+            -- for reagent category only
+            if self.recipeData.categoryID == 2051 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateHideshapersWorkbagBuff(self.recipeData))
+            end
+        end
+
         if profession == Enum.Profession.Blacksmithing then
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(self.recipeData))
         end
 
         if profession == Enum.Profession.Enchanting then
-            print("Creating shattering essence buff")
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(self.recipeData))
+        end
+
+        if profession == Enum.Profession.Alchemy then
+            -- only for potions (check if the potion spec talent is enabled for this recipe)
+            local isPotionRecipe = CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 99040) -- potion - bulkproduction
+            local isFlaskRecipe = CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 98952)  -- flask - bulkproduction
+            local isPhialRecipe = CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 98951)  -- flask - profession phials
+            if isPotionRecipe then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreatePotionSpillOverBuff(self.recipeData))
+            end
+            if isPhialRecipe then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialSpillOverBuff(self.recipeData))
+            end
+            if isFlaskRecipe and not isPhialRecipe then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateFlaskSpillOverBuff(self.recipeData))
+            end
+            -- if tww alchemy experimentation recipe
+            if self.recipeData.recipeID == 430345 or self.recipeData.recipeID == 427174 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateConcoctorsClutchBuff(self.recipeData))
+            end
+        end
+
+        if profession == Enum.Profession.Engineering then
+            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateInventorsGuileBuff(self.recipeData))
+
+            -- tinkering essentials
+            -- not really affect the recipes I think but may be neat to see
+            if self.recipeData.categoryID == 2107 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateProdigysToolboxBuff(self.recipeData))
+            end
+        end
+
+        if profession == Enum.Profession.Inscription then
+            -- Improved Ciphers
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101626) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedCiphersBuff(self.recipeData))
+            end
+
+            -- Improved Milling
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101625) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedMillingBuff(self.recipeData))
+            end
+
+            -- Improved Inks
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101624) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedInksBuff(self.recipeData))
+            end
+
+            -- Improved Contracts
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101874) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedContractsBuff(self.recipeData))
+            end
+
+            -- Improved Missives
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101873) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedMissivesBuff(self.recipeData))
+            end
+
+            -- Improved Vantus
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101872) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedVantusBuff(self.recipeData))
+            end
+
+            if self.recipeData.categoryID == 2064 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateDarkmoonDuffleBuff(self.recipeData))
+            end
         end
     end
 
@@ -65,6 +163,14 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         end
 
         if self.recipeData.supportsQualities then
+            --- general
+            tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateIncenseBuff(self.recipeData))
+
+            -- alchemy
+            if profession == Enum.Profession.Alchemy then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateAlchemicallyInspiredBuff(self.recipeData))
+            end
+
             --- enchanting
             if profession == Enum.Profession.Enchanting then
                 -- elemental shatter fire

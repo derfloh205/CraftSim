@@ -63,3 +63,38 @@ CraftSim.SPECIALIZATION_DATA.BASE_NODES = {
         [Enum.Profession.Jewelcrafting] = { "GEMCUTTING_1", "JEWELRY_CRAFTING_1", "SHAPING_1" },
     },
 }
+
+-- used for e.g. craft buffs to determine trait dependend stats
+---@param recipeData CraftSim.RecipeData
+---@param nodeID number
+---@param expansionID CraftSim.EXPANSION_IDS
+---@param professionID Enum.Profession
+function CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, nodeID, expansionID, professionID)
+    local RawNodeDataList = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID][professionID].nodeData
+    local rawBaseNodeData = RawNodeDataList[nodeID]
+
+    local perkMap = {}
+    for perkID, rawPerkData in pairs(RawNodeDataList) do
+        if rawPerkData.nodeID == nodeID and rawPerkData.maxRank == 1 then
+            perkMap[perkID] = rawPerkData
+        end
+    end
+
+    local nodeData = CraftSim.NodeData(recipeData, rawBaseNodeData, perkMap)
+    nodeData:UpdateRank()
+    nodeData:Update()
+
+    return nodeData
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param nodeID number
+---@return boolean affected
+function CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(recipeData, nodeID)
+    local recipePerks = self.NODE_DATA[recipeData.professionData.expansionID]
+        [recipeData.professionData.professionInfo.profession].recipeMapping
+
+    if not recipePerks then return false end
+
+    return tContains(recipePerks[recipeData.recipeID] or {}, nodeID)
+end
