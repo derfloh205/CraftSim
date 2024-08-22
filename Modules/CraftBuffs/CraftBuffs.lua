@@ -43,10 +43,20 @@ function CraftSim.CRAFT_BUFFS:GetRecipeScanBuffsByProfessionID(profession)
     return buffs
 end
 
----@param recipeData CraftSim.RecipeData?
+---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Buff everburningIgnition
 function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
-    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.EVERBURNING_IGNITION, CraftSim.ProfessionStats(), nil, nil,
+    local buffStats = CraftSim.ProfessionStats()
+    --- EverburningForge Traits
+    local nodeIDs = { 99267, 99266, 99265, 99264 }
+
+    for _, nodeID in ipairs(nodeIDs) do
+        local nodeData = CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, nodeID,
+            CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN, Enum.Profession.Blacksmithing)
+        buffStats:add(nodeData.professionStats)
+    end
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.EVERBURNING_IGNITION, buffStats, nil, nil,
         nil, nil)
 end
 
