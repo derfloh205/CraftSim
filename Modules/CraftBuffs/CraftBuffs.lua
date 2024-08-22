@@ -53,6 +53,41 @@ function CraftSim.CRAFT_BUFFS:CreateChefsHatBuff(recipeData)
         L(CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP))
 end
 
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateSeveredSatchelBuff(recipeData)
+    return CraftSim.BagBuff(recipeData, CraftSim.CONST.ITEM_IDS.PROFESSION_BAGS.THE_SEVERED_SATCHEL,
+        CraftSim.ProfessionStats())
+end
+
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateConcoctorsClutchBuff(recipeData)
+    return CraftSim.BagBuff(recipeData, CraftSim.CONST.ITEM_IDS.PROFESSION_BAGS.CONCOCTORS_CLUTCH,
+        CraftSim.ProfessionStats())
+end
+
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateDarkmoonDuffleBuff(recipeData)
+    return CraftSim.BagBuff(recipeData, CraftSim.CONST.ITEM_IDS.PROFESSION_BAGS.DARKMOON_DUFFLE,
+        CraftSim.ProfessionStats())
+end
+
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateProdigysToolboxBuff(recipeData)
+    return CraftSim.BagBuff(recipeData, CraftSim.CONST.ITEM_IDS.PROFESSION_BAGS.PRODIGYS_TOOLBOX,
+        CraftSim.ProfessionStats())
+end
+
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateJewelersPurseBuff(recipeData)
+    return CraftSim.BagBuff(recipeData, CraftSim.CONST.ITEM_IDS.PROFESSION_BAGS.JEWELERS_PURSE,
+        CraftSim.ProfessionStats())
+end
+
 -- TWW
 
 ---@param recipeData CraftSim.RecipeData

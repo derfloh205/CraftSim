@@ -225,12 +225,17 @@ function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
 
             row.activeBuff = buff.active
             row.buffName = buff.name
-
             row.tooltipOptions = {
                 anchor = "ANCHOR_CURSOR",
                 owner = row.frame,
-                text = buff.customTooltip or currentStats:GetTooltipText(buff.professionStats)
             }
+            if buff.showItemTooltip then
+                row.tooltipOptions.text = nil
+                row.tooltipOptions.itemID = buff.displayItemID
+            else
+                row.tooltipOptions.text = buff.customTooltip or currentStats:GetTooltipText(buff.professionStats)
+                row.tooltipOptions.itemID = nil
+            end
         end)
     end
 

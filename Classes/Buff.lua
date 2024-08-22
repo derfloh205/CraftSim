@@ -35,6 +35,7 @@ function CraftSim.Buff:new(recipeData, buffID, professionStats, qualityID, value
     self.displayItemID = displayItemID
     self.active = false
     self.customTooltip = customTooltip
+    self.showItemTooltip = false
     self.stacks = 1
 end
 
@@ -113,6 +114,7 @@ function CraftSim.BagBuff:new(recipeData, bagItemID, professionStats)
     self.displayItemID = bagItemID
     self.active = false
     self.stacks = 1
+    self.showItemTooltip = true
     self.name = select(1, C_Item.GetItemInfo(bagItemID)) or "BagBuff"
 end
 

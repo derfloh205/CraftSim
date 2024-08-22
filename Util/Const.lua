@@ -1162,9 +1162,14 @@ CraftSim.CONST.ITEM_IDS = {
         LESSER_ILLUSTRIOUS_INSIGHT = 191526,
     },
     PROFESSION_BAGS = {
-        HIDESHAPERS_WORKBAG = 222861,
-        MAGICALLY_INFINITE_MESSENGER = 222862,
-        IGNITION_SATCHEL = 222860,
+        HIDESHAPERS_WORKBAG = 222861,          -- leatherworking reagents
+        MAGICALLY_INFINITE_MESSENGER = 222862, -- ench shatter buff
+        IGNITION_SATCHEL = 222860,             -- bs ignition buff
+        CONCOCTORS_CLUTCH = 222859,            -- alchemy experiments
+        DARKMOON_DUFFLE = 222864,              -- inscription darkmoon cards
+        JEWELERS_PURSE = 222867,               -- Jewelcrafting crushing
+        PRODIGYS_TOOLBOX = 222863,             -- Engineering piles of rusted scrap
+        THE_SEVERED_SATCHEL = 224852,          -- Tailoring Unraveling
     },
 }
 

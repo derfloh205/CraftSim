@@ -54,6 +54,20 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfConcentratedIngenuityBuffs(self.recipeData))
         tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateWeaversTutelageBuff(self.recipeData))
 
+        if profession == Enum.Profession.Jewelcrafting then
+            -- Crushing
+            if self.recipeData.recipeID == 434020 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateJewelersPurseBuff(self.recipeData))
+            end
+        end
+
+        if profession == Enum.Profession.Tailoring then
+            -- Unraveling Only
+            if self.recipeData.recipeID == 446926 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateSeveredSatchelBuff(self.recipeData))
+            end
+        end
+
         if profession == Enum.Profession.Leatherworking then
             -- for reagent category only
             if self.recipeData.categoryID == 2051 then
@@ -83,10 +97,20 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
             if isFlaskRecipe and not isPhialRecipe then
                 tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateFlaskSpillOverBuff(self.recipeData))
             end
+            -- if tww alchemy experimentation recipe
+            if self.recipeData.recipeID == 430345 or self.recipeData.recipeID == 427174 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateConcoctorsClutchBuff(self.recipeData))
+            end
         end
 
         if profession == Enum.Profession.Engineering then
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateInventorsGuileBuff(self.recipeData))
+
+            -- tinkering essentials
+            -- not really affect the recipes I think but may be neat to see
+            if self.recipeData.categoryID == 2107 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateProdigysToolboxBuff(self.recipeData))
+            end
         end
 
         if profession == Enum.Profession.Inscription then
@@ -118,6 +142,10 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
             -- Improved Vantus
             if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101872) then
                 tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedVantusBuff(self.recipeData))
+            end
+
+            if self.recipeData.categoryID == 2064 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateDarkmoonDuffleBuff(self.recipeData))
             end
         end
     end
