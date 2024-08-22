@@ -145,6 +145,40 @@ function CraftSim.CRAFT_BUFFS:CreatePhialOfAmbidexterityBuffs(recipeData)
     return buffs
 end
 
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff[] phialBuffs
+function CraftSim.CRAFT_BUFFS:CreatePhialOfConcentratedIngenuityBuffs(recipeData)
+    local buffs = {}
+    -- phial 1
+    local q1Stats = CraftSim.ProfessionStats()
+    q1Stats.ingenuity:addValue(84)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_CONCENTRATED_INGENUITY, q1Stats, 1, {
+        index = 1,
+        value = 84
+    }, nil, nil, 212305))
+
+    -- phial 2
+    local q2Stats = CraftSim.ProfessionStats()
+    q2Stats.ingenuity:addValue(106)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_CONCENTRATED_INGENUITY, q2Stats, 2, {
+        index = 1,
+        value = 106,
+    }, nil, nil, 212306))
+
+    -- phial 3
+    local q3Stats = CraftSim.ProfessionStats()
+    q3Stats.ingenuity:addValue(135)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_CONCENTRATED_INGENUITY, q3Stats, 3, {
+        index = 1,
+        value = 135,
+    }, nil, nil, 212307))
+
+    return buffs
+end
+
 -- DRAGONFLIGHT
 
 ---@param recipeData CraftSim.RecipeData?
