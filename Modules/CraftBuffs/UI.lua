@@ -211,7 +211,11 @@ function CraftSim.CRAFT_BUFFS.UI:UpdateDisplay(recipeData, exportMode)
                 nameColumn:SetItem(buff.displayItemID)
             end
 
-            nameColumn.text:SetText(buff.name)
+            local stacksText = ""
+            if buff.stacks > 1 then
+                stacksText = " (" .. buff.stacks .. ")"
+            end
+            nameColumn.text:SetText(buff.name .. stacksText)
             statusColumn:SetActive(buff.active)
 
             if not emptyStats then

@@ -60,6 +60,16 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         if profession == Enum.Profession.Enchanting then
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(self.recipeData))
         end
+
+        if profession == Enum.Profession.Alchemy then
+            local potionBulkProductionNodeID = 99040
+            -- only for potions (check if the potion spec talent is enabled for this recipe)
+            local recipePerks = CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA.recipeMapping
+                [self.recipeData.recipeID]
+            if tContains(recipePerks or {}, potionBulkProductionNodeID) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreatePotionSpillOverBuff(self.recipeData))
+            end
+        end
     end
 
     -- DF Buffs

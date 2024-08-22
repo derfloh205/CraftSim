@@ -71,6 +71,28 @@ function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.EVERBURNING_IGNITION, buffStats)
 end
 
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff potionSpillOverBuff
+function CraftSim.CRAFT_BUFFS:CreatePotionSpillOverBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+    local potionBulkProductionNodeID = 99040
+    local nodeData = CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, potionBulkProductionNodeID, 10,
+        Enum.Profession.Alchemy)
+    local isDouble = nodeData.rank >= 25
+
+    if isDouble then
+        buffStats.ingenuity:addValue(24)
+        buffStats.multicraft:addValue(24)
+        buffStats.resourcefulness:addValue(24)
+    else
+        buffStats.ingenuity:addValue(12)
+        buffStats.multicraft:addValue(12)
+        buffStats.resourcefulness:addValue(12)
+    end
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.POTION_SPILL_OVER, buffStats)
+end
+
 ---@param recipeData CraftSim.RecipeData?
 ---@return CraftSim.Buff shatteringEssence
 function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)

@@ -20,6 +20,7 @@ function CraftSim.Buff:new(recipeData, buffID, professionStats, qualityID, value
                            displayItemID)
     ---@type CraftSim.ProfessionStats
     self.professionStats = professionStats
+    self.baseProfessionStats = professionStats:Copy()
     local spellInfo = C_Spell.GetSpellInfo(buffID)
     local qualityIcon = ""
     self.valuePointData = valuePointData
@@ -34,6 +35,7 @@ function CraftSim.Buff:new(recipeData, buffID, professionStats, qualityID, value
     self.displayItemID = displayItemID
     self.active = false
     self.customTooltip = customTooltip
+    self.stacks = 1
 end
 
 ---@class CraftSim.Buff.ValuePointData
@@ -50,9 +52,17 @@ function CraftSim.Buff:Update()
     end
 
     self.active = true
+    self.stacks = auraData.applications or 1
 
     if self.valuePointData then
-        self.active = auraData.points[self.valuePointData.index] == self.valuePointData.value
+        self.active = (auraData.points[self.valuePointData.index] / self.stacks) == self.valuePointData.value
+    end
+
+    -- update stats (for stackable buffs)
+    self.professionStats:Clear()
+
+    for _ = 1, self.stacks do
+        self.professionStats:add(self.baseProfessionStats)
     end
 end
 

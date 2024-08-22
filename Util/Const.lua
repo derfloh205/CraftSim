@@ -604,6 +604,9 @@ CraftSim.CONST.BUFF_IDS = {
 
     -- Enchanting
     SHATTERING_ESSENCE = 445798,
+
+    -- Alchemy
+    POTION_SPILL_OVER = 433187,
 }
 
 CraftSim.CONST.LOCALES = {
