@@ -386,3 +386,16 @@ function CraftSim.UTIL:IsBetaBuild()
 
     return build == CraftSim.CONST.CURRENT_BETA_BUILD
 end
+
+--- for buff bag detection
+---@param itemID number bag itemID
+function CraftSim.UTIL:CheckIfBagIsEquipped(itemID)
+    -- There are 5 bag slots
+    for bagSlot = 0, 5 do
+        local equippedBagID = GetInventoryItemID("player", C_Container.ContainerIDToInventoryID(bagSlot + 1))
+        if equippedBagID == itemID then
+            return true
+        end
+    end
+    return false
+end

@@ -69,7 +69,7 @@ end
 --- returns a unique id as string for this buff and its quality
 ---@return string uuid
 function CraftSim.Buff:GetUID()
-    return self.buffID .. ":" .. (self.qualityID or 0)
+    return (self.buffID or self.name) .. ":" .. (self.qualityID or 0)
 end
 
 function CraftSim.Buff:Debug()
@@ -95,4 +95,27 @@ function CraftSim.Buff:GetJSON(indent)
     jb:Add("professionStats", self.professionStats)
     jb:End()
     return jb.json
+end
+
+-- bag buffs..
+
+---@class CraftSim.BagBuff : CraftSim.Buff
+---@overload fun(recipeData: CraftSim.RecipeData, bagItemID: ItemID, professionStats:CraftSim.ProfessionStats): CraftSim.Buff
+CraftSim.BagBuff = CraftSim.Buff:extend()
+
+---@param recipeData CraftSim.RecipeData
+---@param bagItemID ItemID
+---@param professionStats CraftSim.ProfessionStats
+function CraftSim.BagBuff:new(recipeData, bagItemID, professionStats)
+    self.professionStats = professionStats
+    self.baseProfessionStats = professionStats:Copy()
+    self.recipeData = recipeData
+    self.displayItemID = bagItemID
+    self.active = false
+    self.stacks = 1
+    self.name = select(1, C_Item.GetItemInfo(bagItemID)) or "BagBuff"
+end
+
+function CraftSim.BagBuff:Update()
+    self.active = CraftSim.UTIL:CheckIfBagIsEquipped(self.displayItemID)
 end

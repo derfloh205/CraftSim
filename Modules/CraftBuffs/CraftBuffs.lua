@@ -213,6 +213,15 @@ function CraftSim.CRAFT_BUFFS:CreateImprovedVantusBuff(recipeData)
 end
 
 ---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateHideshapersWorkbagBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+    buffStats.resourcefulness:addValue(90)
+
+    return CraftSim.BagBuff(recipeData, CraftSim.CONST.ITEM_IDS.PROFESSION_BAGS.HIDESHAPERS_WORKBAG, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Buff shatteringEssence
 function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)
     local buffStats = CraftSim.ProfessionStats()
