@@ -72,6 +72,16 @@ function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
 end
 
 ---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateWeaversTutelageBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+
+    buffStats.craftingspeed:SetValueByPercent(0.2)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.WEAVERS_TUTELAGE, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Buff potionSpillOverBuff
 function CraftSim.CRAFT_BUFFS:CreatePotionSpillOverBuff(recipeData)
     local buffStats = CraftSim.ProfessionStats()
