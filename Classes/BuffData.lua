@@ -42,6 +42,14 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
 
     -- TWW Buffs
     if self.recipeData.expansionID == CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN then
+        -- general
+
+        local currentSeason = CraftSim.UTIL:GetCurrentSeason()
+        -- only gives resourcefulness / is relevant in winter and spring
+        if currentSeason == 1 or currentSeason == 2 then
+            tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfBountifulSeasonsBuffs(self.recipeData))
+        end
+
         if profession == Enum.Profession.Blacksmithing then
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(self.recipeData))
         end

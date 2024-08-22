@@ -593,6 +593,10 @@ CraftSim.CONST.BUFF_IDS = {
     ALCHEMICALLY_INSPIRED = 382093,
 
     --- TWW
+
+    -- all professions
+    PHIAL_OF_BOUNTIFUL_SEASONS = 432286,
+
     -- Blacksmithing
     EVERBURNING_IGNITION = 453734,
 

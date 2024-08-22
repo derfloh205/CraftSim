@@ -77,6 +77,40 @@ function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)
     return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.SHATTERING_ESSENCE, CraftSim.ProfessionStats())
 end
 
+---@param recipeData CraftSim.RecipeData?
+---@return CraftSim.Buff[] phialBuffs
+function CraftSim.CRAFT_BUFFS:CreatePhialOfBountifulSeasonsBuffs(recipeData)
+    local buffs = {}
+    -- phial 1
+    local q1Stats = CraftSim.ProfessionStats()
+    q1Stats.resourcefulness:addValue(84)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_BOUNTIFUL_SEASONS, q1Stats, 1, {
+        index = 1,
+        value = 84
+    }, nil, nil, 212314))
+
+    -- phial 2
+    local q2Stats = CraftSim.ProfessionStats()
+    q2Stats.resourcefulness:addValue(106)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_BOUNTIFUL_SEASONS, q2Stats, 2, {
+        index = 1,
+        value = 106,
+    }, nil, nil, 212315))
+
+    -- phial 3
+    local q3Stats = CraftSim.ProfessionStats()
+    q3Stats.resourcefulness:addValue(135)
+
+    table.insert(buffs, CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.PHIAL_OF_BOUNTIFUL_SEASONS, q3Stats, 3, {
+        index = 1,
+        value = 135,
+    }, nil, nil, 212316))
+
+    return buffs
+end
+
 -- DRAGONFLIGHT
 
 ---@param recipeData CraftSim.RecipeData?

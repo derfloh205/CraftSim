@@ -115,6 +115,26 @@ function CraftSim.UTIL:GetExportModeByVisibility()
         CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER
 end
 
+--- used for e.g. phial of bountiful seasons
+---@return number season 0 -> winter, 1 -> spring, 2 -> summer, 3 -> fall
+function CraftSim.UTIL:GetCurrentSeason()
+    -- Get the current in-game date
+    local month, day = tonumber(date("%m")), tonumber(date("%d"))
+
+    -- Determine the season based on the month and day
+    if (month == 12 and day >= 21) or (month >= 1 and month < 3) or (month == 3 and day < 20) then
+        return 0
+    elseif (month == 3 and day >= 20) or (month >= 4 and month < 6) or (month == 6 and day < 21) then
+        return 1
+    elseif (month == 6 and day >= 21) or (month >= 7 and month < 9) or (month == 9 and day < 23) then
+        return 2
+    elseif (month == 9 and day >= 23) or (month >= 10 and month < 12) or (month == 12 and day < 21) then
+        return 3
+    end
+
+    return 2
+end
+
 function CraftSim.UTIL:IsWorkOrder()
     return ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible()
 end
