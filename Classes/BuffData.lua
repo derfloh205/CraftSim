@@ -54,6 +54,13 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
         tAppendAll(self.buffs, CraftSim.CRAFT_BUFFS:CreatePhialOfConcentratedIngenuityBuffs(self.recipeData))
         tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateWeaversTutelageBuff(self.recipeData))
 
+        if profession == Enum.Profession.Leatherworking then
+            -- for reagent category only
+            if self.recipeData.categoryID == 2051 then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateHideshapersWorkbagBuff(self.recipeData))
+            end
+        end
+
         if profession == Enum.Profession.Blacksmithing then
             tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(self.recipeData))
         end
