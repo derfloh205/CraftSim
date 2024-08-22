@@ -168,6 +168,51 @@ function CraftSim.CRAFT_BUFFS:CreateImprovedCiphersBuff(recipeData)
 end
 
 ---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateImprovedMillingBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+    buffStats.craftingspeed:SetValueByPercent(0.02)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.IMPROVED_MILLING, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateImprovedInksBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+    buffStats.craftingspeed:SetValueByPercent(0.02)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.IMPROVED_INKS, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateImprovedContractsBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+    buffStats.craftingspeed:SetValueByPercent(0.02)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.IMPROVED_CONTRACTS, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateImprovedMissivesBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+    buffStats.craftingspeed:SetValueByPercent(0.02)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.IMPROVED_MISSIVES, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
+---@return CraftSim.Buff buff
+function CraftSim.CRAFT_BUFFS:CreateImprovedVantusBuff(recipeData)
+    local buffStats = CraftSim.ProfessionStats()
+    buffStats.craftingspeed:SetValueByPercent(0.02)
+
+    return CraftSim.Buff(recipeData, CraftSim.CONST.BUFF_IDS.IMPROVED_VANTUS, buffStats)
+end
+
+---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.Buff shatteringEssence
 function CraftSim.CRAFT_BUFFS:CreateShatteringEssenceBuff(recipeData)
     local buffStats = CraftSim.ProfessionStats()

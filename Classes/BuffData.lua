@@ -87,6 +87,31 @@ function CraftSim.BuffData:CreateBuffsByRecipeData()
             if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101626) then
                 tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedCiphersBuff(self.recipeData))
             end
+
+            -- Improved Milling
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101625) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedMillingBuff(self.recipeData))
+            end
+
+            -- Improved Inks
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101624) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedInksBuff(self.recipeData))
+            end
+
+            -- Improved Contracts
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101874) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedContractsBuff(self.recipeData))
+            end
+
+            -- Improved Missives
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101873) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedMissivesBuff(self.recipeData))
+            end
+
+            -- Improved Vantus
+            if CraftSim.SPECIALIZATION_DATA:IsRecipeDataAffectedByNodeID(self.recipeData, 101872) then
+                tinsert(self.buffs, CraftSim.CRAFT_BUFFS:CreateImprovedVantusBuff(self.recipeData))
+            end
         end
     end
 
