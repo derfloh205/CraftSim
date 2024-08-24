@@ -671,6 +671,25 @@ function CraftSim.CRAFTQ:AddOpenRecipe()
     CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
 end
 
+function CraftSim.CRAFTQ:AddFirstCrafts()
+    local openRecipeIDs = C_TradeSkillUI.GetFilteredRecipeIDs()
+
+    local firstCraftRecipeIDs = GUTIL:Map(openRecipeIDs or {}, function(recipeID)
+        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+        if recipeInfo and recipeInfo.learned and recipeInfo.firstCraft then
+            return recipeID
+        end
+
+        return nil
+    end)
+
+    GUTIL:FrameDistributedIteration(firstCraftRecipeIDs, function(_, recipeID, counter)
+        local recipeData = CraftSim.RecipeData(recipeID, false, false)
+        recipeData.reagentData:SetReagentsMaxByQuality(1)
+        self:AddRecipe({ recipeData = recipeData })
+    end)
+end
+
 function CraftSim.CRAFTQ:OnRecipeEditSave()
     print("OnRecipeEditSave")
     ---@type CraftSim.CRAFTQ.EditRecipeFrame

@@ -512,6 +512,19 @@ function CraftSim.CRAFTQ.UI:Init()
             end
         })
 
+        queueTab.content.addAllFirstCraftsButton = GGUI.Button({
+            parent = queueTab.content,
+            anchorParent = queueTab.content.addCurrentRecipeButton.frame,
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
+            offsetY = 0,
+            adjustWidth = true,
+            label = "Add First Crafts",
+            clickCallback = function()
+                CraftSim.CRAFTQ:AddFirstCrafts()
+            end
+        })
+
         ---@type GGUI.Button
         queueTab.content.clearAllButton = GGUI.Button({
             parent = queueTab.content,
