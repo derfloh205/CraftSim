@@ -480,6 +480,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
             if reagent.hasQuality then
                 for qualityID, reagentItem in pairs(reagent.items) do
                     local itemID = reagentItem.item:GetItemID()
+                    print("Shopping List Creation: Item: " .. (reagentItem.item:GetItemLink() or ""))
                     local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
                     if not isSelfCrafted then
                         reagentMap[itemID] = reagentMap[itemID] or {
@@ -529,6 +530,8 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
         return cqi.recipeData:GetCrafterUID()
     end)
 
+    local crafterUIDs = GUTIL:ToSet(crafterUIDs)
+
     --- convert to Auctionator Search Strings and deduct item count (of all crafters total)
     local searchStrings = GUTIL:Map(reagentMap, function(info, itemID)
         itemID = CraftSim.CRAFTQ:GetNonSoulboundAlternativeItemID(itemID)
@@ -540,6 +543,8 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
             local itemCountForCrafter = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
             return itemCount + itemCountForCrafter
         end)
+
+        print("total item count " .. itemID .. "-> " .. totalItemCount)
 
         local searchTerm = {
             searchString = info.itemName,
