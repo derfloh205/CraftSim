@@ -80,6 +80,7 @@ end
 ---@param includeAccountBank? boolean
 ---@return number itemCount
 function CraftSim.DB.ITEM_COUNT:Get(crafterUID, itemID, includeBank, includeAccountBank)
+    CraftSimDB.itemCountDB.data.characters = CraftSimDB.itemCountDB.data.characters or {}
     CraftSimDB.itemCountDB.data.characters[crafterUID] = CraftSimDB.itemCountDB.data.characters[crafterUID] or {
         bank = {},
         inventory = {}
@@ -101,6 +102,7 @@ end
 ---@param itemID number
 ---@param count number
 function CraftSim.DB.ITEM_COUNT:SaveInventoryCount(crafterUID, itemID, count)
+    CraftSimDB.itemCountDB.data.characters = CraftSimDB.itemCountDB.data.characters or {}
     CraftSimDB.itemCountDB.data.characters[crafterUID] = CraftSimDB.itemCountDB.data.characters[crafterUID] or {
         bank = {},
         inventory = {}
@@ -112,6 +114,7 @@ end
 ---@param itemID number
 ---@param count number
 function CraftSim.DB.ITEM_COUNT:SaveBankCount(crafterUID, itemID, count)
+    CraftSimDB.itemCountDB.data.characters = CraftSimDB.itemCountDB.data.characters or {}
     CraftSimDB.itemCountDB.data.characters[crafterUID] = CraftSimDB.itemCountDB.data.characters[crafterUID] or {
         bank = {},
         inventory = {}
@@ -122,6 +125,7 @@ end
 ---@param itemID number
 ---@param count number
 function CraftSim.DB.ITEM_COUNT:SaveAccountBankCount(itemID, count)
+    CraftSimDB.itemCountDB.data.accountBank = CraftSimDB.itemCountDB.data.accountBank or {}
     CraftSimDB.itemCountDB.data.accountBank[itemID] = count
 end
 
@@ -139,5 +143,6 @@ end
 ---@param itemID number
 ---@return number count
 function CraftSim.DB.ITEM_COUNT:GetAccountBankCount(itemID)
+    CraftSimDB.itemCountDB.data.accountBank = CraftSimDB.itemCountDB.data.accountBank or {}
     return CraftSimDB.itemCountDB.data.accountBank[itemID] or 0
 end
