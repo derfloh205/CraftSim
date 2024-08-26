@@ -673,6 +673,7 @@ end
 
 function CraftSim.CRAFTQ:AddFirstCrafts()
     local openRecipeIDs = C_TradeSkillUI.GetFilteredRecipeIDs()
+    local currentSkillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
 
     local firstCraftRecipeIDs = GUTIL:Map(openRecipeIDs or {}, function(recipeID)
         local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
@@ -685,8 +686,14 @@ function CraftSim.CRAFTQ:AddFirstCrafts()
 
     GUTIL:FrameDistributedIteration(firstCraftRecipeIDs, function(_, recipeID, counter)
         local recipeData = CraftSim.RecipeData(recipeID, false, false)
-        recipeData.reagentData:SetReagentsMaxByQuality(1)
-        self:AddRecipe({ recipeData = recipeData })
+        local isSkillLine = recipeData.professionData.skillLineID == currentSkillLineID
+        local ignoreAcuity = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_ACUITY_RECIPES")
+        local usesAcuity = recipeData.reagentData:HasOneOfReagents({ CraftSim.CONST.ITEM_IDS.CURRENCY.ARTISANS_ACUITY })
+        local queueRecipe = isSkillLine and (not ignoreAcuity or not usesAcuity)
+        if queueRecipe then
+            recipeData.reagentData:SetReagentsMaxByQuality(1)
+            self:AddRecipe({ recipeData = recipeData })
+        end
     end)
 end
 

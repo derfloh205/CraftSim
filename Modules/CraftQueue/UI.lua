@@ -525,6 +525,17 @@ function CraftSim.CRAFTQ.UI:Init()
             end
         })
 
+        queueTab.content.ignoreAcuityRecipesCB = GGUI.Checkbox {
+            parent = queueTab.content, anchorParent = queueTab.content.addAllFirstCraftsButton.frame,
+            scale = 0.9, anchorA = "LEFT", anchorB = "RIGHT", labelOptions = { text = "Ignore Acuity Recipes" },
+            offsetX = 5,
+            initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_ACUITY_RECIPES"),
+            clickCallback = function(_, checked)
+                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_ACUITY_RECIPES", checked)
+            end,
+            tooltip = "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
+        }
+
         ---@type GGUI.Button
         queueTab.content.clearAllButton = GGUI.Button({
             parent = queueTab.content,
