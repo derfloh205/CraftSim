@@ -15,6 +15,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("17.1.9"),
+        f.p .. "Fixed Average Yield Calculation for Sub Recipe Optimization",
+        f.a .. "- Thank you " .. f.bb("DiegoSnoop") .. " for pointing that out!",
         newP("17.1.8"),
         f.p .. "Fixed concentration calculation not considering",
         f.a .. "less concentration usage from specs",

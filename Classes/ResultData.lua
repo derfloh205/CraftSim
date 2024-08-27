@@ -101,7 +101,7 @@ function CraftSim.ResultData:IsMinimumQualityReachable(qualityID)
 
     local reachable = qualityID <= self.expectedQualityConcentration
     local concentrationOnly = self.expectedQuality < self.expectedQualityConcentration and
-    qualityID == self.expectedQualityConcentration
+        qualityID == self.expectedQualityConcentration
 
     return reachable, concentrationOnly
 end
@@ -138,7 +138,8 @@ function CraftSim.ResultData:Update()
 
     local professionStats = self.recipeData.professionStats
 
-    self.expectedYieldPerCraft = CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
+    self.expectedYieldPerCraft = self.recipeData.baseItemAmount +
+    (select(2, CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)) * professionStats.multicraft:GetPercent(true))
 
     -- special case for no quality results. Needed for expectedCrafts and such
     if not recipeData.supportsQualities then
