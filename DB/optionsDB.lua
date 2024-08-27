@@ -229,6 +229,15 @@ function CraftSim.DB.OPTIONS:Migrate()
 
         CraftSimDB.optionsDB.version = 5
     end
+
+    -- migrate constant change
+    if CraftSimDB.optionsDB.version == 5 then
+        if CraftSimDB.optionsDB.data["PROFIT_CALCULATION_MULTICRAFT_CONSTANT"] == 2.5 then
+            CraftSimDB.optionsDB.data["PROFIT_CALCULATION_MULTICRAFT_CONSTANT"] = CraftSim.CONST.MULTICRAFT_CONSTANT
+        end
+
+        CraftSimDB.optionsDB.version = 6
+    end
 end
 
 function CraftSim.DB.OPTIONS:CleanUp()

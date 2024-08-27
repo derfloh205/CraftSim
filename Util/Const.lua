@@ -46,7 +46,7 @@ CraftSim.CONST.ALCHEMICAL_EXPERIMENTATION_RECIPE_IDS = {
 -- this average comes from 20-40% resources saved on proc with a minimum of 1
 -- currently this is just an approximation
 CraftSim.CONST.BASE_RESOURCEFULNESS_AVERAGE_SAVE_FACTOR = 0.30
-CraftSim.CONST.MULTICRAFT_CONSTANT = 2.5
+CraftSim.CONST.MULTICRAFT_CONSTANT = 2.2
 
 CraftSim.CONST.DISCORD_INVITE_URL = "https://discord.gg/7vqKMgezXR"
 CraftSim.CONST.PAYPAL_ME_URL = "https://www.paypal.com/paypalme/CraftSim"
