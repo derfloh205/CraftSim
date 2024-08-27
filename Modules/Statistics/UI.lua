@@ -432,8 +432,8 @@ function CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
             local curveData = concentrationCurveData.curveData
             local costConstantData = concentrationCurveData.costConstantData
 
-
-
+            local specExtraValues = recipeData.specializationData:GetExtraValues()
+            local lessConcentrationUsageFactor = specExtraValues.ingenuity:GetExtraValue(2)
 
             local points = {}
             for x, y in pairs(curveData) do
@@ -450,8 +450,9 @@ function CraftSim.STATISTICS.UI:UpdateDisplay(recipeData)
                 local skillCurveValueEnd = (nextCurveData and nextCurveData.data) or 1
                 local skillStart = recipeDifficulty * recipeDifficultyFactor
                 local skillEnd = recipeDifficulty * nextRecipeDifficultyFactor
+
                 local pointCost = CraftSim.UTIL:CalculateConcentrationCost(pointConstant, pointDifficulty, skillStart,
-                    skillEnd, skillCurveValueStart, skillCurveValueEnd)
+                    skillEnd, skillCurveValueStart, skillCurveValueEnd, lessConcentrationUsageFactor)
                 tinsert(points, { pointDifficulty, pointCost })
             end
             table.sort(points, function(a, b)

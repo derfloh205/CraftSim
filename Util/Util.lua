@@ -297,8 +297,9 @@ end
 ---@param skillEnd number
 ---@param skillCurveValueStart number
 ---@param skillCurveValueEnd number
+---@param lessConcentrationUsageFactor number
 function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, skillStart, skillEnd, skillCurveValueStart,
-                                                  skillCurveValueEnd)
+                                                  skillCurveValueEnd, lessConcentrationUsageFactor)
     local skillDifference = math.abs(skillEnd - skillStart)
     local valueDifference = math.abs(skillCurveValueStart - skillCurveValueEnd) -- can go up or down
     local skillValueStep = valueDifference / skillDifference
@@ -314,7 +315,7 @@ function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, ski
     end
 
 
-    local concentrationCost = playerSkillCurveValue * costConstant
+    local concentrationCost = (playerSkillCurveValue * costConstant) * (1 - lessConcentrationUsageFactor)
     return CraftSim.GUTIL:Round(concentrationCost)
 end
 
