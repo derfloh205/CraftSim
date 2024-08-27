@@ -54,8 +54,61 @@ function CraftSim.COOLDOWNS.UI:Init()
     ---@class CraftSim.COOLDOWNS.FRAME.CONTENT : Frame
     local content = CraftSim.COOLDOWNS.frame.content
 
+    content.overviewTab = GGUI.BlizzardTab({
+        buttonOptions = {
+            parent = content,
+            anchorParent = content,
+            offsetY = -2,
+            label = "Overview",
+        },
+        parent = content,
+        anchorParent = content,
+        sizeX = sizeX,
+        sizeY = sizeY,
+        canBeEnabled = true,
+        offsetY = -30,
+        initialTab = true,
+        top = true,
+    })
+    content.cooldownOptionsTab = GGUI.BlizzardTab({
+        buttonOptions = {
+            parent = content,
+            anchorParent = content.overviewTab.button,
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
+            label = "Options",
+        },
+        parent = content,
+        anchorParent = content,
+        sizeX = sizeX,
+        sizeY = sizeY,
+        canBeEnabled = true,
+        offsetY = -30,
+        top = true,
+    })
+    ---@class CraftSim.COOLDOWNS.UI.OVERVIEW_TAB : GGUI.BlizzardTab
+    local overviewTab = content.overviewTab
+    ---@class CraftSim.COOLDOWNS.UI.OVERVIEW_TAB.CONTENT : Frame
+    overviewTab.content = overviewTab.content
+
+    self:InitalizeOverviewTab(overviewTab)
+
+    ---@class CraftSim.COOLDOWNS.UI.COOLDOWN_OPTIONS_TAB : GGUI.BlizzardTab
+    local cooldownOptionsTab = content.cooldownOptionsTab
+    ---@class CraftSim.COOLDOWNS.UI.COOLDOWN_OPTIONS_TAB.CONTENT : Frame
+    cooldownOptionsTab.content = cooldownOptionsTab.content
+
+    self:InitializeCooldownOptionsTab(cooldownOptionsTab)
+
+    GGUI.BlizzardTabSystem { overviewTab, cooldownOptionsTab }
+end
+
+---@param overviewTab CraftSim.COOLDOWNS.UI.OVERVIEW_TAB
+function CraftSim.COOLDOWNS.UI:InitalizeOverviewTab(overviewTab)
+    local content = overviewTab.content
+
     content.cooldownList = GGUI.FrameList {
-        parent = content, anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -60, offsetX = 20,
+        parent = content, anchorParent = content, anchorA = "TOPLEFT", anchorB = "TOPLEFT", offsetY = -30, offsetX = 20,
         showBorder = true, sizeY = 147, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE },
         columnOptions = {
             {
@@ -141,12 +194,47 @@ function CraftSim.COOLDOWNS.UI:Init()
 
     }
 
-    CraftSim.COOLDOWNS.frame:HookScript("OnShow", function()
+    content:HookScript("OnShow", function()
         CraftSim.COOLDOWNS:StartTimerUpdate()
     end)
-    CraftSim.COOLDOWNS.frame:HookScript("OnHide", function()
+    content:HookScript("OnHide", function()
         CraftSim.COOLDOWNS:StopTimerUpdate()
     end)
+end
+
+---@param cooldownOptionsTab CraftSim.COOLDOWNS.UI.COOLDOWN_OPTIONS_TAB
+function CraftSim.COOLDOWNS.UI:InitializeCooldownOptionsTab(cooldownOptionsTab)
+    local content = cooldownOptionsTab.content
+
+    content.expansionSelector = GGUI.CheckboxSelector {
+        savedVariablesTable = CraftSim.DB.OPTIONS:Get("COOLDOWNS_FILTERED_EXPANSIONS"),
+        initialItems = GUTIL:Sort(GUTIL:Map(CraftSim.CONST.EXPANSION_IDS,
+            function(expansionID)
+                ---@type GGUI.CheckboxSelector.CheckboxItem
+                local item = {
+                    name = L(CraftSim.CONST.EXPANSION_LOCALIZATION_IDS[expansionID]),
+                    savedVariableProperty = expansionID,
+                    selectionID = expansionID,
+                }
+                return item
+            end), function(a, b)
+            return a.selectionID > b.selectionID
+        end),
+        selectionFrameOptions = {
+            backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+            sizeX = 240, sizeY = 260, anchorA = "LEFT", anchorB = "RIGHT",
+
+        },
+        buttonOptions = {
+            parent = content, anchorParent = content,
+            anchorA = "TOP", anchorB = "TOP", offsetY = -10,
+            label = "Expansion Filter",
+            adjustWidth = true, sizeX = 20,
+        },
+        onSelectCallback = function(_, _, _)
+            CraftSim.COOLDOWNS.UI:UpdateDisplay()
+        end
+    }
 end
 
 function CraftSim.COOLDOWNS.UI:UpdateDisplay()
@@ -155,89 +243,99 @@ function CraftSim.COOLDOWNS.UI:UpdateDisplay()
 end
 
 function CraftSim.COOLDOWNS.UI:UpdateList()
-    local cooldownList = CraftSim.COOLDOWNS.frame.content.cooldownList
+    local cooldownList = CraftSim.COOLDOWNS.frame.content.overviewTab.content.cooldownList
 
     cooldownList:Remove()
 
     local crafterCooldownData = CraftSim.DB.CRAFTER:GetCrafterCooldownData()
+    local includedExpansionIDs = CraftSim.COOLDOWNS:GetIncludedExpansions()
 
     for crafterUID, recipeCooldowns in pairs(crafterCooldownData) do
         for serializationID, cooldownDataSerialized in pairs(recipeCooldowns) do
             local cooldownData = CraftSim.CooldownData:Deserialize(cooldownDataSerialized)
             local recipeID = cooldownData.recipeID
+            local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID) or
+                C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
 
-            cooldownList:Add(
-            ---@param row CraftSim.COOLDOWNS.CooldownList.Row
-                function(row)
-                    row.cooldownData = cooldownData
-                    local columns = row.columns
-                    local crafterColumn = columns[1] --[[@as CraftSim.COOLDOWNS.CooldownList.CrafterColumn]]
-                    local recipeColumn = columns[2] --[[@as CraftSim.COOLDOWNS.CooldownList.RecipeColumn]]
-                    local chargesColumn = columns[3] --[[@as CraftSim.COOLDOWNS.CooldownList.ChargesColumn]]
-                    local nextColumn = columns[4] --[[@as CraftSim.COOLDOWNS.CooldownList.NextColumn]]
-                    local allColumn = columns[5] --[[@as CraftSim.COOLDOWNS.CooldownList.AllColumn]]
+            local skillLineID = professionInfo.professionID
+            local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
 
-                    local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
-                    local crafterName = f.class(select(1, strsplit("-", crafterUID), crafterClass))
-                    local tooltipText = f.class(crafterUID, crafterClass)
+            local expansionIncluded = tContains(includedExpansionIDs, expansionID)
 
-                    local professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID) or
-                        C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)
-                    local professionIcon = ""
-                    if professionInfo.profession then
-                        professionIcon = CraftSim.CONST.PROFESSION_ICONS[professionInfo.profession]
-                        professionIcon = GUTIL:IconToText(professionIcon, 20, 20) .. " "
-                    end
+            if expansionIncluded then
+                cooldownList:Add(
+                ---@param row CraftSim.COOLDOWNS.CooldownList.Row
+                    function(row)
+                        row.cooldownData = cooldownData
+                        local columns = row.columns
+                        local crafterColumn = columns[1] --[[@as CraftSim.COOLDOWNS.CooldownList.CrafterColumn]]
+                        local recipeColumn = columns[2] --[[@as CraftSim.COOLDOWNS.CooldownList.RecipeColumn]]
+                        local chargesColumn = columns[3] --[[@as CraftSim.COOLDOWNS.CooldownList.ChargesColumn]]
+                        local nextColumn = columns[4] --[[@as CraftSim.COOLDOWNS.CooldownList.NextColumn]]
+                        local allColumn = columns[5] --[[@as CraftSim.COOLDOWNS.CooldownList.AllColumn]]
 
-                    crafterColumn.text:SetText(professionIcon .. crafterName)
-
-                    local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID) or
-                        C_TradeSkillUI.GetRecipeInfo(recipeID)
+                        local crafterClass = CraftSim.DB.CRAFTER:GetClass(crafterUID)
+                        local crafterName = f.class(select(1, strsplit("-", crafterUID), crafterClass))
+                        local tooltipText = f.class(crafterUID, crafterClass)
 
 
-                    if cooldownData.sharedCD then
-                        recipeColumn.text:SetText(L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS[cooldownData.sharedCD]))
-                        local recipeListText = ""
-                        for _, sharedRecipeID in pairs(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES[cooldownData.sharedCD]) do
-                            local sharedRecipeIDInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, sharedRecipeID) or
-                                C_TradeSkillUI.GetRecipeInfo(sharedRecipeID)
+                        local professionIcon = ""
+                        if professionInfo.profession then
+                            professionIcon = CraftSim.CONST.PROFESSION_ICONS[professionInfo.profession]
+                            professionIcon = GUTIL:IconToText(professionIcon, 20, 20) .. " "
+                        end
 
-                            if sharedRecipeIDInfo then
-                                recipeListText = recipeListText .. "\n" .. sharedRecipeIDInfo.name
+                        crafterColumn.text:SetText(professionIcon .. crafterName)
+
+                        local recipeInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, recipeID) or
+                            C_TradeSkillUI.GetRecipeInfo(recipeID)
+
+
+                        if cooldownData.sharedCD then
+                            recipeColumn.text:SetText(L(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS
+                                [cooldownData.sharedCD]))
+                            local recipeListText = ""
+                            for _, sharedRecipeID in pairs(CraftSim.CONST.SHARED_PROFESSION_COOLDOWNS_RECIPES[cooldownData.sharedCD]) do
+                                local sharedRecipeIDInfo = CraftSim.DB.CRAFTER:GetRecipeInfo(crafterUID, sharedRecipeID) or
+                                    C_TradeSkillUI.GetRecipeInfo(sharedRecipeID)
+
+                                if sharedRecipeIDInfo then
+                                    recipeListText = recipeListText .. "\n" .. sharedRecipeIDInfo.name
+                                end
+                            end
+                            if #recipeListText > 0 then
+                                tooltipText = tooltipText ..
+                                    f.bb("\n\nRecipes sharing this Cooldown:\n") .. f.white(recipeListText)
+                            end
+                        else
+                            recipeColumn.text:SetText((recipeInfo and recipeInfo.name) or serializationID)
+                        end
+
+                        row.tooltipOptions = {
+                            text = tooltipText,
+                            owner = row.frame,
+                            anchor = "ANCHOR_CURSOR",
+                        }
+
+                        row.UpdateTimers = function(self)
+                            print("Updating Timers for " .. tostring(recipeInfo.name))
+                            local cooldownData = self.cooldownData
+                            chargesColumn:SetCharges(cooldownData:GetCurrentCharges(), cooldownData.maxCharges)
+                            local allFullTS, ready = cooldownData:GetAllChargesFullTimestamp()
+                            local cdReady = ready or cooldownData:GetCurrentCharges() >= cooldownData.maxCharges
+                            nextColumn.text:SetText(cdReady and f.grey("-") or
+                                f.bb(cooldownData:GetFormattedTimerNextCharge()))
+                            row.allchargesFullTimestamp = allFullTS
+                            if cdReady then
+                                allColumn.text:SetText(f.g("Ready"))
+                            else
+                                allColumn.text:SetText(f.g(cooldownData:GetAllChargesFullDateFormatted()))
                             end
                         end
-                        if #recipeListText > 0 then
-                            tooltipText = tooltipText ..
-                                f.bb("\n\nRecipes sharing this Cooldown:\n") .. f.white(recipeListText)
-                        end
-                    else
-                        recipeColumn.text:SetText((recipeInfo and recipeInfo.name) or serializationID)
-                    end
 
-                    row.tooltipOptions = {
-                        text = tooltipText,
-                        owner = row.frame,
-                        anchor = "ANCHOR_CURSOR",
-                    }
-
-                    row.UpdateTimers = function(self)
-                        print("Updating Timers for " .. tostring(recipeInfo.name))
-                        local cooldownData = self.cooldownData
-                        chargesColumn:SetCharges(cooldownData:GetCurrentCharges(), cooldownData.maxCharges)
-                        local allFullTS, ready = cooldownData:GetAllChargesFullTimestamp()
-                        local cdReady = ready or cooldownData:GetCurrentCharges() >= cooldownData.maxCharges
-                        nextColumn.text:SetText(cdReady and f.grey("-") or
-                            f.bb(cooldownData:GetFormattedTimerNextCharge()))
-                        row.allchargesFullTimestamp = allFullTS
-                        if cdReady then
-                            allColumn.text:SetText(f.g("Ready"))
-                        else
-                            allColumn.text:SetText(f.g(cooldownData:GetAllChargesFullDateFormatted()))
-                        end
-                    end
-
-                    row:UpdateTimers()
-                end)
+                        row:UpdateTimers()
+                    end)
+            end
         end
     end
 
@@ -250,7 +348,7 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
 end
 
 function CraftSim.COOLDOWNS.UI:UpdateTimers()
-    local cooldownList = CraftSim.COOLDOWNS.frame.content.cooldownList
+    local cooldownList = CraftSim.COOLDOWNS.frame.content.overviewTab.content.cooldownList
 
     for _, activeRow in pairs(cooldownList.activeRows) do
         activeRow:UpdateTimers()

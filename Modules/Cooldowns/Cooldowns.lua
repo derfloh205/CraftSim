@@ -28,3 +28,16 @@ function CraftSim.COOLDOWNS:PeriodicTimerUpdate()
     CraftSim.COOLDOWNS.UI:UpdateTimers()
     C_Timer.After(1, CraftSim.COOLDOWNS.PeriodicTimerUpdate)
 end
+
+---@return CraftSim.EXPANSION_IDS[]
+function CraftSim.COOLDOWNS:GetIncludedExpansions()
+    local expansionIDs = {}
+
+    for expansionID, included in pairs(CraftSim.DB.OPTIONS:Get("COOLDOWNS_FILTERED_EXPANSIONS") or {}) do
+        if included then
+            tinsert(expansionIDs, expansionID)
+        end
+    end
+
+    return expansionIDs
+end
