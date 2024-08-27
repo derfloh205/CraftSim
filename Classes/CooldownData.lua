@@ -39,7 +39,7 @@ function CraftSim.CooldownData:Update()
     currentCooldown = currentCooldown or 0
     -- some new recipes in TWW are not marked as day cds even if they are... like inventing
     -- they only have a cd shown when on cd otherwise same info as regular recipes.. great
-    self.isCooldownRecipe = isDayCooldown or (maxCharges and maxCharges > 0) or currentCooldown
+    self.isCooldownRecipe = isDayCooldown or (maxCharges and maxCharges > 0) or currentCooldown > 0
     if not self.isCooldownRecipe then
         return
     end
@@ -49,7 +49,7 @@ function CraftSim.CooldownData:Update()
     self.maxCharges = maxCharges or 0
 
     -- daily cooldowns will be treated as cooldown recipes with 1 charge and a cooldown of 24h per charge
-    if isDayCooldown or (self.maxCharges == 0 and currentCooldown) then
+    if isDayCooldown or (self.maxCharges == 0 and currentCooldown > 0) then
         print("Is Day Cooldown or other cooldown")
         local spellCooldownInfo = C_Spell.GetSpellCooldown(self.recipeID)
         self.cooldownPerCharge = spellCooldownInfo.duration

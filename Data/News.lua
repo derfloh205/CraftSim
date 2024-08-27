@@ -18,6 +18,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("17.1.8"),
         f.p .. "Fixed concentration calculation not considering",
         f.a .. "less concentration usage from specs",
+        f.p .. "Fixed",
         newP("17.1.7"),
         f.s .. "Added an " .. f.g("Add First Crafts Button") .. " to the " .. f.bb("CraftQueue"),
         f.a .. "Now only queues recipes for open profession",
