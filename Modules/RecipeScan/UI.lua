@@ -479,7 +479,8 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
                 parent = concentrationValueColumn,
                 anchorParent = concentrationValueColumn,
                 anchorA = "LEFT",
-                anchorB = "LEFT"
+                anchorB = "LEFT",
+                justifyOptions = { type = "H", align = "LEFT" },
             })
 
             ---@type GGUI.Text
