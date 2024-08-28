@@ -394,6 +394,20 @@ function CraftSim.DB.CRAFTER:GetCrafterConcentrationData(crafterUID, profession,
     return nil
 end
 
+---@param crafterUID CrafterUID
+---@param expansionID CraftSim.EXPANSION_IDS
+---@return table<Enum.Profession, CraftSim.ConcentrationData>
+function CraftSim.DB.CRAFTER:GetConcentrationDataListForExpansion(crafterUID, expansionID)
+    CraftSimDB.crafterDB.data[crafterUID] = CraftSimDB.crafterDB.data[crafterUID] or {}
+    CraftSimDB.crafterDB.data[crafterUID].concentrationData = CraftSimDB.crafterDB.data[crafterUID].concentrationData or
+        {}
+    CraftSimDB.crafterDB.data[crafterUID].concentrationData[expansionID] = CraftSimDB.crafterDB.data[crafterUID]
+        .concentrationData[expansionID] or {}
+
+    return CraftSimDB.crafterDB.data[crafterUID]
+        .concentrationData[expansionID]
+end
+
 ---@return table<CrafterUID, CraftSim.DB.CrafterDBData>
 function CraftSim.DB.CRAFTER:GetAll()
     return CraftSimDB.crafterDB.data

@@ -175,20 +175,20 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTooltipFrame(content)
 
     local crafterUIDs = CraftSim.DB.CRAFTER:GetCrafterUIDs()
     local crafterConcentrationTable = {}
+    local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
+    local openExpansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
 
     for _, crafterUID in ipairs(crafterUIDs) do
-        local concentrationDataList = CraftSimDB.crafterDB.data[crafterUID].concentrationData
-        for expansionID, professionDataList in pairs(concentrationDataList or {}) do
-            for profession, serializedData in pairs(professionDataList) do
-                crafterConcentrationTable[crafterUID] = crafterConcentrationTable[crafterUID] or {}
+        local professionDataList = CraftSim.DB.CRAFTER:GetConcentrationDataListForExpansion(crafterUID, openExpansionID)
+        for profession, serializedData in pairs(professionDataList) do
+            crafterConcentrationTable[crafterUID] = crafterConcentrationTable[crafterUID] or {}
 
-                if serializedData then
-                    tinsert(crafterConcentrationTable[crafterUID], {
-                        profession = profession,
-                        expansionID = expansionID,
-                        serializedData = serializedData
-                    })
-                end
+            if serializedData then
+                tinsert(crafterConcentrationTable[crafterUID], {
+                    profession = profession,
+                    expansionID = openExpansionID,
+                    serializedData = serializedData
+                })
             end
         end
     end

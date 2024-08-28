@@ -15,6 +15,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("17.1.10"),
+        f.p .. f.bb("Concentration Tracker") .. " Tooltip now only lists",
+        f.a .. "tracked professions from currently open expansion",
+        f.p .. f.bb("Specialization Data Update") .. " for 11.0.2.56313",
         newP("17.1.9"),
         f.p .. "Fixed Average Yield Calculation for Sub Recipe Optimization",
         f.a .. "- Thank you " .. f.bb("DiegoSnoop") .. " for pointing that out!",

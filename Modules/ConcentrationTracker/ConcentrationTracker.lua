@@ -13,7 +13,7 @@ function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
 
     local expansionID = CraftSim.UTIL:GetExpansionIDBySkillLineID(skillLineID)
 
-    -- check if old world
+    -- if not shown profession's expac dont show
     if not expansionID or expansionID < CraftSim.CONST.EXPANSION_IDS.DRAGONFLIGHT then return end
 
     local cached = CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache[skillLineID]
