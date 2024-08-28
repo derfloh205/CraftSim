@@ -1359,10 +1359,10 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueTotalProfitDisplay()
             totalAverageProfit = totalAverageProfit + row.averageProfit
             totalCraftingCosts = totalCraftingCosts + row.craftingCosts
         end
-
-        queueTab.content.totalAverageProfit:SetText(GUTIL:FormatMoney(totalAverageProfit, true, totalCraftingCosts))
-        queueTab.content.totalCraftingCosts:SetText(f.r(GUTIL:FormatMoney(totalCraftingCosts)))
     end
+
+    queueTab.content.totalAverageProfit:SetText(GUTIL:FormatMoney(totalAverageProfit, true, totalCraftingCosts))
+    queueTab.content.totalCraftingCosts:SetText(f.r(GUTIL:FormatMoney(totalCraftingCosts)))
 end
 
 --- called when switching tab or when ending scan on selected row
