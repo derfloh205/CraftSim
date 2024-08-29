@@ -133,7 +133,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         anchorA = "RIGHT",
         anchorB = "LEFT",
         offsetX = -3,
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPLANATION)
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION)
     })
 
     frame.content.debugButton = GGUI.Button({
