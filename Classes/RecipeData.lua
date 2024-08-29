@@ -780,6 +780,52 @@ function CraftSim.RecipeData:GetForgeFinderExport(indent)
     return jb.json
 end
 
+function CraftSim.RecipeData:GetEasycraftExport(indent)
+    indent = indent or 0
+    local jb = CraftSim.JSONBuilder(indent)
+
+    jb:Begin()
+    jb:AddList("itemIDs", GUTIL:Map(self.resultData.itemsByQuality, function(item)
+        return item:GetItemID()
+    end))
+    local reagents = {}
+    for _, reagent in pairs(self.reagentData.requiredReagents) do
+        for _, reagentItem in pairs(reagent.items) do
+            reagents[reagentItem.item:GetItemID()] = reagent.requiredQuantity
+        end
+    end
+
+    local professionStatsForExport = self.professionStats:Copy()
+    professionStatsForExport:subtract(self.buffData.professionStats)
+
+    jb:Add("spellID", self.recipeID)
+    jb:Add("expectedQuality", self.resultData.expectedQuality)
+    jb:Add("expectedQualityConcentration", self.resultData.expectedQualityConcentration)
+    jb:Add("reagents", reagents) -- itemID mapped to required quantity
+    if self.supportsQualities then
+        print("json, adding skill: ")
+        jb:Add("skill", self.professionStats.skill.value)                     -- skill without reagent bonus TODO: if single export, consider removing reagent bonus
+        jb:Add("difficulty", self.baseProfessionStats.recipeDifficulty.value) -- base difficulty (without optional reagents)
+        jb:Add("concentration", self.concentrationCost)
+        jb:Add("ingenuity", self.professionStats.ingenuity.value)
+    end
+    if self.supportsCraftingStats then
+        if self.supportsMulticraft then
+            if not self.supportsResourcefulness then
+                jb:Add("multicraft", professionStatsForExport.multicraft:GetPercent(true), true)
+            else
+                jb:Add("multicraft", professionStatsForExport.multicraft:GetPercent(true))
+            end
+        end
+        if self.supportsResourcefulness then
+            jb:Add("resourcefulness", professionStatsForExport.resourcefulness:GetPercent(true), true)
+        end
+    end
+    jb:End()
+
+    return jb.json
+end
+
 --- Requires a hardware event
 ---@param amount number? default: 1, how many crafts should be queued
 function CraftSim.RecipeData:Craft(amount)

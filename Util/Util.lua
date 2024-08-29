@@ -419,6 +419,8 @@ function CraftSim.UTIL:CheckIfBagIsEquipped(itemID)
     return false
 end
 
+-- encode a string to base64
+---@param str string string to encore
 function CraftSim.UTIL:atob(str)
     local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 

@@ -394,6 +394,9 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Réinit. Position fenêtres",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Options",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "News",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT] = f.l("Easycraft") .. " Export",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORTING] = "En cours...",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] = "Aucune recette trouvée pour l'extension The War Within",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = f.l("ForgeFinder") .. " Export",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING] = "Exporting",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPLANATION] = f.l("www.wowforgefinder.com") ..
