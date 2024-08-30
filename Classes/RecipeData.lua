@@ -463,6 +463,8 @@ function CraftSim.RecipeData:GetConcentrationCost()
         local playerSkillFactor = (playerSkill / (baseDifficulty / 100)) / 100
         local specExtraValues = self.specializationData:GetExtraValues()
         local lessConcentrationUsageFactor = specExtraValues.ingenuity:GetExtraValue(2)
+        local optionalReagentStats = self.reagentData:GetProfessionStatsByOptionals()
+        local lessConcentrationUsageFactor2 = optionalReagentStats.ingenuity:GetExtraValue(2)
 
         -- recipeDifficulty here or playerSkill ?
         local curveConstantData, nextCurveConstantData = CraftSim.UTIL:FindBracketData(playerSkill,
@@ -485,7 +487,7 @@ function CraftSim.RecipeData:GetConcentrationCost()
             skillStart,
             skillEnd,
             skillCurveValueStart,
-            skillCurveValueEnd, lessConcentrationUsageFactor)
+            skillCurveValueEnd, { lessConcentrationUsageFactor, lessConcentrationUsageFactor2 })
     else
         -- if by any chance the data for this recipe is not mapped in the db2 data, get a good guess via the api
         -- or if we are not in the current beta (08.08.2024)
@@ -1155,7 +1157,7 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                             -- caches the expect costs info automatically
                             recipeData:OptimizeProfit(optimizeOptions)
                             print("- Profit: " ..
-                            CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
+                                CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
 
                             -- if the necessary item quality is reachable, map it to the recipe
                             local reagentQualityReachable, concentrationOnly = recipeData.resultData

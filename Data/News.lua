@@ -18,7 +18,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("17.2.0"),
-        f.P .. "Added an" .. f.l("easycraft.io") .. " export",
+        f.P .. "Added an" .. f.l(" easycraft.io") .. " export",
         f.p .. "Fixed " .. f.bb("Skill Gain Finishing Reagents") .. " adding",
         f.a .. "difficulty instead of skill",
         newP("17.1.11"),
