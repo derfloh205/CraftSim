@@ -91,7 +91,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            CraftSim.CONTROL_PANEL:EasyraftExportAll()
+            CraftSim.CONTROL_PANEL:EasycraftExportAll()
         end,
         initialStatusID = "READY",
     })
