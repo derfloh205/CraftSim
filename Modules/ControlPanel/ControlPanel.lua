@@ -56,7 +56,9 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
             -- finally check if its a dragon isle recipe
 
             local isDragonIsleRecipe = CraftSim.UTIL:IsDragonflightRecipe(recipeInfo.recipeID)
-            if not isDragonIsleRecipe then
+            local isTWWRecipe = CraftSim.UTIL:IsTWWRecipe(recipeInfo.recipeID)
+            if not isDragonIsleRecipe and not isTWWRecipe then
+                print("not correct expac")
                 return false
             end
 
@@ -198,7 +200,7 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
 
         if (numRecipes == 0) then
             CraftSim.DEBUG:SystemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) ..
-            " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND))
+                " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND))
             return
         end
 
