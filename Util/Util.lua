@@ -270,6 +270,24 @@ function CraftSim.UTIL:IsDragonflightRecipe(recipeID)
 
     return false
 end
+---@param recipeID number
+function CraftSim.UTIL:IsTWWRecipe(recipeID)
+    local recipeInfo = C_TradeSkillUI.GetRecipeInfo(recipeID)
+    if recipeInfo then
+        local professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeInfo.recipeID)
+        if not professionInfo.profession then
+            print("No Profession loaded yet?", false, true)
+            print(professionInfo, true)
+        end
+
+        -- do not use C_TradeSkillUI.IsRecipeInSkillLine because its not using cached data..
+        local IsTWWRecipe = professionInfo.professionID ==
+            CraftSim.CONST.TRADESKILLLINEIDS[professionInfo.profession][CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN]
+        return IsTWWRecipe
+    end
+
+    return false
+end
 
 function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID,
                                                                  maxQuality)
@@ -401,6 +419,23 @@ function CraftSim.UTIL:CheckIfBagIsEquipped(itemID)
         end
     end
     return false
+end
+
+-- encode a string to base64
+---@param str string string to encore
+function CraftSim.UTIL:atob(str)
+    local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+    return ((str:gsub('.', function(x) 
+        local r,b='',x:byte()
+        for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
+        return r;
+    end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
+        if (#x < 6) then return '' end
+        local c=0
+        for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
+        return b:sub(c+1,c+1)
+    end)..({ '', '==', '=' })[#str%3+1])
 end
 
 --- wrapper to use the money format use texture option

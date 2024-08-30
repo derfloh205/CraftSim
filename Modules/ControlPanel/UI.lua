@@ -81,24 +81,33 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         end
     })
 
-    frame.content.debugButton = GGUI.Button({
-        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG),
+    frame.content.exportEasycraftButton = GGUI.Button({
+        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT),
         parent = frame.content,
         anchorParent = frame.content.newsButton.frame,
-        anchorA = "TOPLEFT",
-        anchorB = "BOTTOMLEFT",
+        anchorA = "TOPRIGHT",
+        anchorB = "BOTTOMRIGHT",
         sizeX = 15,
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
-        end
+            CraftSim.CONTROL_PANEL:EasycraftExportAll()
+        end,
+        initialStatusID = "READY",
+    })
+
+    frame.content.exportEasycraftButton:SetStatusList({
+        {
+            statusID = "READY",
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT),
+            enabled = true,
+        }
     })
 
     frame.content.exportForgeFinderButton = GGUI.Button({
         label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT),
         parent = frame.content,
-        anchorParent = frame.content.debugButton.frame,
+        anchorParent = frame.content.exportEasycraftButton.frame,
         anchorA = "RIGHT",
         anchorB = "LEFT",
         sizeX = 15,
@@ -124,15 +133,29 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         anchorA = "RIGHT",
         anchorB = "LEFT",
         offsetX = -3,
-        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPLANATION)
+        text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION)
+    })
+
+    frame.content.debugButton = GGUI.Button({
+        label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG),
+        parent = frame.content,
+        anchorParent = frame.content.exportEasycraftButton.frame,
+        anchorA = "TOPRIGHT",
+        anchorB = "BOTTOMRIGHT",
+        sizeX = 25,
+        sizeY = 25,
+        adjustWidth = true,
+        clickCallback = function()
+            GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG):Show()
+        end
     })
 
     local pixelHeart = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIXEL_HEART, 0.2)
     frame.content.supportersButton = GGUI.Button({
         parent = frame.content,
         anchorParent = frame.content.debugButton.frame,
-        anchorA = "TOPRIGHT",
-        anchorB = "BOTTOMRIGHT",
+        anchorA = "RIGHT",
+        anchorB = "LEFT",
         label = pixelHeart .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_SUPPORTERS_BUTTON) .. pixelHeart,
         sizeX = 25,
         sizeY = 25,

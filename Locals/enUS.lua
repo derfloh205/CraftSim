@@ -446,10 +446,13 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Reset Frame Positions",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Options",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "News",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT] = f.l("Easycraft") .. " Export",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORTING] = "Exporting",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] = "No recipe to export for The War Within expansion",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = f.l("ForgeFinder") .. " Export",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING] = "Exporting",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPLANATION] = f.l("www.wowforgefinder.com") ..
-            "\nis a website to search and offer " .. f.bb("WoW Crafting Orders"),
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") .. " and " .. f.l("easycraft.io") ..
+            "\nare websites to search and offer " .. f.bb("WoW Crafting Orders"),
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "Debug",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "Control Panel",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_SUPPORTERS_BUTTON] = f.patreon("Supporters"),

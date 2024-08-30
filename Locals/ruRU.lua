@@ -452,9 +452,12 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Сбросить позиции",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Параметры",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "Новости",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT] = "Экспорт " .. f.l("Easycraft"),
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORTING] = "Экспорт",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] = "Нет рецепта для экспорта для дополнения The War Within",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = "Экспорт " .. f.l("ForgeFinder"),
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING] = "Экспорт",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPLANATION] = f.l("www.wowforgefinder.com") ..
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") .. " & " .. f.l("easycraft.io") ..
             "\n- веб-сайт для поиска и предложения " .. f.bb("заказов в WoW"),
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "Отладка",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "Панель управления",
