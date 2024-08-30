@@ -13,7 +13,7 @@ def printD(text, enabled):
         print(text)
 
 def map(download, buildVersion):
-    dataTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
+    dataTables = wagoTools.getWagoTables(wagoTables, False, buildVersion)
     Item = dataTables[0]
     ModifiedCraftingReagentItem = dataTables[1]
     CraftingReagentEffect = dataTables[2]
@@ -29,7 +29,6 @@ def map(download, buildVersion):
     finishingReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "19"}})
 
     Reagents = optionalReagents + finishingReagents
-
     print("Mapping Optional Items")
     counter = 0
     reagentCount = len(Reagents)
@@ -76,6 +75,11 @@ def map(download, buildVersion):
                 }
                 continue
 
+        reagentEffectPct = 1
+        if craftingReagentQuality and len(craftingReagentQuality) > 0 and not isOptional:
+            reagentEffectPct = float(craftingReagentQuality["ReagentEffectPct"]) / 100
+
+
         modifiedCraftingReagent = wagoTools.searchTable(ModifiedCraftingReagentItem, {"singleResult": True, "conditions": {"ID": modifiedCraftingReagentItemID}})
         if not modifiedCraftingReagent:
             continue
@@ -97,7 +101,8 @@ def map(download, buildVersion):
                 statName = professionEffectEnum["Name_lang"].replace("(DNT - write manually)", "").replace("(DNT - write manually!)", "").replace("(DNT)", "").replace(" ", "").lower()
                 if statName == "dummyeffectfor#tokenization":
                     continue
-                amount = int(professionEffect["Amount"])
+
+                amount = int(professionEffect["Amount"]) * reagentEffectPct
                 statMap[statName] = amount
                 printD(f"- ProfessionEffect {professionEffect["ID"]} / {professionEffectEnum["ID"]} : {statName} -> {amount}", debug)
 
