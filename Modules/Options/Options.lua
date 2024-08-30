@@ -2,6 +2,9 @@
 local CraftSim = select(2, ...)
 
 local GGUI = CraftSim.GGUI
+local GUTIL = CraftSim.GUTIL
+
+local f = GUTIL:GetFormatter()
 
 local L = CraftSim.UTIL:GetLocalizer()
 
@@ -129,7 +132,7 @@ function CraftSim.OPTIONS:Init()
     end
 
 
-    local historyMaxSizeInput = GGUI.NumericInput {
+    GGUI.NumericInput {
         parent = ModulesTab.content, anchorParent = ModulesTab.content,
         anchorA = "TOP", anchorB = "TOP", label = "Max history entries per client",
         offsetX = -30,
@@ -238,8 +241,19 @@ function CraftSim.OPTIONS:Init()
         end
     }
 
+    local coinMoneyFormatDB = GGUI.Checkbox {
+        label = " " .. "Use Coin Textures: " .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
+        tooltip = "Use coin icons to format money",
+        initialValue = CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"),
+        parent = GeneralTab.content, anchorParent = hideMinimapButtonCheckbox.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("MONEY_FORMAT_USE_TEXTURES", checked)
+        end
+    }
+
     local supportedPriceSources = GeneralTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
-    supportedPriceSources:SetPoint("TOP", 0, -200)
+    supportedPriceSources:SetPoint("TOP", 0, -210)
     supportedPriceSources:SetText(L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES) ..
         "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
 
@@ -275,8 +289,9 @@ function CraftSim.OPTIONS:Init()
         end
     }
 
-    local category = Settings.RegisterCanvasLayoutCategory(self.optionsPanel, self.optionsPanel.name)
-    Settings.RegisterAddOnCategory(category)
+    CraftSim.OPTIONS.category = Settings.RegisterCanvasLayoutCategory(self.optionsPanel, self.optionsPanel.name)
+    CraftSim.OPTIONS.category.ID = self.optionsPanel.name
+    Settings.RegisterAddOnCategory(CraftSim.OPTIONS.category)
 end
 
 function CraftSim.OPTIONS:InitTSMTab(TSMTab)

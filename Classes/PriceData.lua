@@ -168,11 +168,11 @@ end
 function CraftSim.PriceData:Debug()
     local debugLines = {
         "PriceData: ",
-        "Crafting Costs: " .. GUTIL:FormatMoney(self.craftingCosts),
+        "Crafting Costs: " .. CraftSim.UTIL:FormatMoney(self.craftingCosts),
     }
 
     for q, qualityPrice in pairs(self.qualityPriceList) do
-        table.insert(debugLines, "-Q" .. q .. ": " .. GUTIL:FormatMoney(qualityPrice))
+        table.insert(debugLines, "-Q" .. q .. ": " .. CraftSim.UTIL:FormatMoney(qualityPrice))
     end
 
     return debugLines

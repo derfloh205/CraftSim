@@ -77,13 +77,13 @@ function CraftSim.CraftRecipeData:Debug()
     local debugLines = {
         "recipeID: " .. self.recipeID,
         "numCrafts: " .. self.numCrafts,
-        "totalProfit: " .. CraftSim.GUTIL:FormatMoney(self.totalProfit, true),
-        "totalExpectedProfit: " .. CraftSim.GUTIL:FormatMoney(self.totalExpectedProfit, true),
+        "totalProfit: " .. CraftSim.UTIL:FormatMoney(self.totalProfit, true),
+        "totalExpectedProfit: " .. CraftSim.UTIL:FormatMoney(self.totalExpectedProfit, true),
         "numMulticraft: " .. self.numMulticraft,
         "numMulticraftExtraItems: " .. self.numMulticraftExtraItems,
         "numResourcefulness: " .. self.numResourcefulness,
-        "totalSavedCosts: " .. CraftSim.GUTIL:FormatMoney(self.totalSavedCosts),
-        "totalExpectedSavedCosts: " .. CraftSim.GUTIL:FormatMoney(self.totalExpectedSavedCosts),
+        "totalSavedCosts: " .. CraftSim.UTIL:FormatMoney(self.totalSavedCosts),
+        "totalExpectedSavedCosts: " .. CraftSim.UTIL:FormatMoney(self.totalExpectedSavedCosts),
     }
     return debugLines
 end

@@ -116,7 +116,7 @@ function CraftSim.CRAFT_RESULTS:AddCraftResult(craftResult)
     CraftSim.CRAFT_RESULTS.currentSessionData:AddCraftResult(craftResult)
 
     -- update frames
-    craftProfitsTabContent.totalProfitAllValue:SetText(GUTIL:FormatMoney(
+    craftProfitsTabContent.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(
         CraftSim.CRAFT_RESULTS.currentSessionData.totalProfit, true))
 
     CraftSim.CRAFT_RESULTS.UI:UpdateItemList()
@@ -143,7 +143,7 @@ function CraftSim.CRAFT_RESULTS:AddResult(recipeData, craftResult)
     end
 
     local roundedProfit = GUTIL:Round(craftResult.profit * 10000) / 10000
-    local profitText = GUTIL:FormatMoney(roundedProfit, true)
+    local profitText = CraftSim.UTIL:FormatMoney(roundedProfit, true)
     local chanceText = ""
 
     if not recipeData.isSalvageRecipe and recipeData.supportsCraftingStats then
@@ -205,7 +205,7 @@ function CraftSim.CRAFT_RESULTS:GetProfitForCraft(recipeData, craftResult)
             CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink) or 0
         resultValue = resultValue + resultItemPrice * quantity
         print("resultitem: " .. (itemLink or 0))
-        print("result value: " .. GUTIL:FormatMoney(resultValue, true))
+        print("result value: " .. CraftSim.UTIL:FormatMoney(resultValue, true))
         if priceOverrideData then
             print("(result price overridden)")
         end

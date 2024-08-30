@@ -18,7 +18,7 @@ end
 function CraftSim.CraftResultSavedReagent:Debug()
     return {
         "Q" .. self.qualityID .. " " .. (self.item:GetItemLink() or self.item:GetItemID()) .. " x " .. self.quantity,
-        "Saved Costs: " .. CraftSim.GUTIL:FormatMoney(self.savedCosts),
+        "Saved Costs: " .. CraftSim.UTIL:FormatMoney(self.savedCosts),
     }
 end
 

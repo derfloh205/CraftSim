@@ -615,7 +615,7 @@ function CraftSim.CRAFTQ.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 5,
-            text = GUTIL:FormatMoney(0, true),
+            text = CraftSim.UTIL:FormatMoney(0, true),
             justifyOptions = { type = "H", align = "LEFT" }
         })
         queueTab.content.totalCraftingCostsLabel = GGUI.Text({
@@ -635,7 +635,7 @@ function CraftSim.CRAFTQ.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 5,
-            text = GUTIL:FormatMoney(0, true),
+            text = CraftSim.UTIL:FormatMoney(0, true),
             justifyOptions = { type = "H", align = "RIGHT" }
         })
 
@@ -1188,7 +1188,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     }
     editRecipeFrame.content.craftingCostsValue = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.craftingCostsTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
-        text = GUTIL:FormatMoney(0, true), justifyOptions = { type = "H", align = "LEFT" }, scale = 0.9, offsetY = -1,
+        text = CraftSim.UTIL:FormatMoney(0, true), justifyOptions = { type = "H", align = "LEFT" }, scale = 0.9, offsetY = -1,
     }
     editRecipeFrame.content.averageProfitTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.craftingCostsTitle.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
@@ -1196,7 +1196,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
     }
     editRecipeFrame.content.averageProfitValue = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.averageProfitTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
-        text = GUTIL:FormatMoney(0, true), justifyOptions = { type = "H", align = "LEFT" }, scale = 0.9, offsetY = -1,
+        text = CraftSim.UTIL:FormatMoney(0, true), justifyOptions = { type = "H", align = "LEFT" }, scale = 0.9, offsetY = -1,
     }
 
 
@@ -1361,8 +1361,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueTotalProfitDisplay()
         end
     end
 
-    queueTab.content.totalAverageProfit:SetText(GUTIL:FormatMoney(totalAverageProfit, true, totalCraftingCosts))
-    queueTab.content.totalCraftingCosts:SetText(f.r(GUTIL:FormatMoney(totalCraftingCosts)))
+    queueTab.content.totalAverageProfit:SetText(CraftSim.UTIL:FormatMoney(totalAverageProfit, true, totalCraftingCosts))
+    queueTab.content.totalCraftingCosts:SetText(f.r(CraftSim.UTIL:FormatMoney(totalCraftingCosts)))
 end
 
 --- called when switching tab or when ending scan on selected row
@@ -1479,7 +1479,7 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
 
     editRecipeFrame.content.recipeName:SetText(GUTIL:IconToText(recipeData.recipeIcon, 15, 15) ..
         " " .. recipeData.recipeName)
-    editRecipeFrame.content.averageProfitValue:SetText(GUTIL:FormatMoney(recipeData.averageProfitCached, true,
+    editRecipeFrame.content.averageProfitValue:SetText(CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached, true,
         recipeData.priceData.craftingCosts))
     local concentrationCostText = ""
     if editRecipeFrame.craftQueueItem.concentrating then
@@ -1488,7 +1488,7 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
             " " .. f.gold(editRecipeFrame.craftQueueItem.recipeData.concentrationCost)
     end
     editRecipeFrame.content.craftingCostsValue:SetText(GUTIL:ColorizeText(
-        GUTIL:FormatMoney(recipeData.priceData.craftingCosts), GUTIL.COLORS.RED) .. concentrationCostText)
+        CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts), GUTIL.COLORS.RED) .. concentrationCostText)
 
     local reagentFrames = editRecipeFrame.content.reagentFrames
 
@@ -1753,8 +1753,8 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         averageProfitColumn.text:SetText(f.g("-"))
         craftingCostsColumn.text:SetText(f.g("-"))
     else
-        averageProfitColumn.text:SetText(GUTIL:FormatMoney(select(1, row.averageProfit), true, row.craftingCosts))
-        craftingCostsColumn.text:SetText(f.r(GUTIL:FormatMoney(row.craftingCosts)))
+        averageProfitColumn.text:SetText(CraftSim.UTIL:FormatMoney(select(1, row.averageProfit), true, row.craftingCosts))
+        craftingCostsColumn.text:SetText(f.r(CraftSim.UTIL:FormatMoney(row.craftingCosts)))
     end
 
     local concentrationData = craftQueueItem.recipeData.concentrationData

@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 CraftSim.UTIL = {}
 
 CraftSim.UTIL.frameLevel = 100
@@ -434,4 +436,13 @@ function CraftSim.UTIL:atob(str)
         for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
         return b:sub(c+1,c+1)
     end)..({ '', '==', '=' })[#str%3+1])
+end
+
+--- wrapper to use the money format use texture option
+---@param copperValue number
+---@param useColor? boolean -- colors the numbers green if positive and red if negative
+---@param percentRelativeTo number? if included: will be treated as 100% and a % value in relation to the coppervalue will be added
+function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
+    return GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, true,
+        CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"))
 end

@@ -270,7 +270,7 @@ function CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMo
 
     if topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT) then
         topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE) .. CraftSim.GUTIL:FormatMoney(topResult.relativeProfit, true))
+            .TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE) .. CraftSim.UTIL:FormatMoney(topResult.relativeProfit, true))
     elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.MULTICRAFT) then
         topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
                 .TOP_GEAR_SIMULATE_NEW_MUTLICRAFT) ..

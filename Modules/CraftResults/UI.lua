@@ -87,7 +87,7 @@ function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
     content.totalProfitAllTitle = CraftSim.FRAME:CreateText(
         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_SESSION_PROFIT), content, content,
         "TOP", "TOP", 140, -60, nil, nil, { type = "H", value = "LEFT" })
-    content.totalProfitAllValue = CraftSim.FRAME:CreateText(CraftSim.GUTIL:FormatMoney(0, true), content,
+    content.totalProfitAllValue = CraftSim.FRAME:CreateText(CraftSim.UTIL:FormatMoney(0, true), content,
         content.totalProfitAllTitle,
         "TOPLEFT", "BOTTOMLEFT", 0, -5, nil, nil, { type = "H", value = "LEFT" })
 
@@ -105,7 +105,7 @@ function CraftSim.CRAFT_RESULTS.UI:InitCraftProfitsTab(craftProfitsTab)
         clickCallback = function()
             content.scrollingMessageFrame:Clear()
             content.craftedItemsFrame.resultFeed:SetText("")
-            content.totalProfitAllValue:SetText(CraftSim.GUTIL:FormatMoney(0, true))
+            content.totalProfitAllValue:SetText(CraftSim.UTIL:FormatMoney(0, true))
             CraftSim.CRAFT_RESULTS:ResetData()
             CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(CraftSim.INIT.currentRecipeData.recipeID)
         end
@@ -428,16 +428,16 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
         local craftProfitsContent = craftResultFrame.content.craftProfitsTab
             .content --[[@as CraftSim.CRAFT_RESULTS.CRAFT_PROFITS_TAB.CONTENT]]
         local statisticsText = ""
-        local expectedAverageProfit = CraftSim.GUTIL:FormatMoney(0, true)
-        local actualAverageProfit = CraftSim.GUTIL:FormatMoney(0, true)
+        local expectedAverageProfit = CraftSim.UTIL:FormatMoney(0, true)
+        local actualAverageProfit = CraftSim.UTIL:FormatMoney(0, true)
         if craftRecipeData.numCrafts > 0 then
-            expectedAverageProfit = CraftSim.GUTIL:FormatMoney(
+            expectedAverageProfit = CraftSim.UTIL:FormatMoney(
                 (craftRecipeData.totalExpectedProfit / craftRecipeData.numCrafts) or 0, true)
-            actualAverageProfit = CraftSim.GUTIL:FormatMoney(
+            actualAverageProfit = CraftSim.UTIL:FormatMoney(
                 (craftRecipeData.totalProfit / craftRecipeData.numCrafts) or 0,
                 true)
         end
-        local actualProfit = CraftSim.GUTIL:FormatMoney(craftRecipeData.totalProfit, true)
+        local actualProfit = CraftSim.UTIL:FormatMoney(craftRecipeData.totalProfit, true)
         statisticsText = statisticsText ..
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_1) .. craftRecipeData.numCrafts .. "\n\n"
 
@@ -516,18 +516,18 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
                         "\n" ..
                         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10) ..
-                        CraftSim.GUTIL:ColorizeText(CraftSim.GUTIL:FormatMoney(averageSavedCosts),
+                        CraftSim.GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts),
                             CraftSim.GUTIL.COLORS.GREEN) ..
-                        " / " .. CraftSim.GUTIL:FormatMoney(expectedAverageSavedCosts)
+                        " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
                 else
                     statisticsText = statisticsText ..
                         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9) ..
                         CraftSim.GUTIL:ColorizeText(craftRecipeData.numResourcefulness, CraftSim.GUTIL.COLORS.GREEN) ..
                         "\n" ..
                         CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10) ..
-                        CraftSim.GUTIL:ColorizeText(CraftSim.GUTIL:FormatMoney(averageSavedCosts),
+                        CraftSim.GUTIL:ColorizeText(CraftSim.UTIL:FormatMoney(averageSavedCosts),
                             CraftSim.GUTIL.COLORS.RED) ..
-                        " / " .. CraftSim.GUTIL:FormatMoney(expectedAverageSavedCosts)
+                        " / " .. CraftSim.UTIL:FormatMoney(expectedAverageSavedCosts)
                 end
             end
         else

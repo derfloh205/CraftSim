@@ -95,7 +95,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                     anchorB = "RIGHT",
                     offsetX = -10,
                     justifyOptions = { type = "H", align = "RIGHT" },
-                    text = CraftSim.GUTIL:FormatMoney(0),
+                    text = CraftSim.UTIL:FormatMoney(0),
                     scale = rowContentScale
                 })
                 removeColumn.removeButton = GGUI.Button({
@@ -335,7 +335,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerHistoryList()
                 local removeColumn = columns[3]
                 row.customerHistory = customerHistory
                 customerColumn.text:SetText(customerHistory.customer)
-                tipColumn.text:SetText(CraftSim.GUTIL:FormatMoney(customerHistory.totalTip or 0))
+                tipColumn.text:SetText(CraftSim.UTIL:FormatMoney(customerHistory.totalTip or 0))
                 removeColumn.removeButton.clickCallback = function()
                     GGUI:ShowPopup({
                         sizeY = 120,
@@ -424,7 +424,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:UpdateCustomerCraftHistory(craftHistory)
             timeColumn.text:SetText(CraftSim.CUSTOMER_HISTORY.UI:GetNormalizedDayString(craft.timestamp))
 
             resultColumn.text:SetText(tostring(craft.itemLink))
-            tipColumn.text:SetText(f.m(craft.tip))
+            tipColumn.text:SetText(CraftSim.UTIL:FormatMoney(craft.tip, true))
 
             noteColumn.icon:SetText(craft.customerNotes)
             noteColumn.icon:SetEnabled(#craft.customerNotes > 0)

@@ -107,7 +107,7 @@ function CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
     print("Get Average Profit", false, true)
     local averageProfit = CraftSim.CALC:GetAverageProfit(recipeData)
 
-    print("calculate stat weights avg profit: " .. tostring(CraftSim.GUTIL:FormatMoney(averageProfit, true)))
+    print("calculate stat weights avg profit: " .. tostring(CraftSim.UTIL:FormatMoney(averageProfit, true)))
 
     local multicraftWeight = CraftSim.AVERAGEPROFIT:GetMulticraftWeight(recipeData, averageProfit)
     local resourcefulnessWeight = CraftSim.AVERAGEPROFIT:GetResourcefulnessWeight(recipeData, averageProfit)

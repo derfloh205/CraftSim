@@ -72,11 +72,11 @@ function CraftSim.STATISTICS:GetProbabilityOfPositiveProfitByCrafts(probabilityT
     local standardDeviationNumCrafts = math.sqrt(numCrafts) * standardDeviation
     local meanNumCrafts = meanOneCraft * numCrafts
 
-    print("mean (profit) of 1 craft: " .. CraftSim.GUTIL:FormatMoney(meanOneCraft, true))
-    print("mean (profit) of " .. numCrafts .. " crafts: " .. CraftSim.GUTIL:FormatMoney(meanNumCrafts, true))
-    print("standardDeviation 1 craft: " .. CraftSim.GUTIL:FormatMoney(standardDeviation, true))
+    print("mean (profit) of 1 craft: " .. CraftSim.UTIL:FormatMoney(meanOneCraft, true))
+    print("mean (profit) of " .. numCrafts .. " crafts: " .. CraftSim.UTIL:FormatMoney(meanNumCrafts, true))
+    print("standardDeviation 1 craft: " .. CraftSim.UTIL:FormatMoney(standardDeviation, true))
     print("standardDeviation " .. numCrafts ..
-        " crafts: " .. CraftSim.GUTIL:FormatMoney(standardDeviationNumCrafts, true))
+        " crafts: " .. CraftSim.UTIL:FormatMoney(standardDeviationNumCrafts, true))
 
 
     -- CDF:
