@@ -133,9 +133,11 @@ function CraftSim.LOCAL_CN:GetData()
             "这告诉我们机率分配 " .. f.l("X") .. " 的期望值 " .. f.l("E") .. " 是所有数值与其可能性的乘积的总和。\n" ..
             "所以如果我们有一个 " ..
             f.bb("情况 A 机率 30%") ..
-            " 利润 " .. f.m(-100 * 10000) ..
-            " 和一个" .. f.bb("情况 B 机率 70%") .. " 利润 " .. f.m(300 * 10000) .. " 那该情况的期望利润就是\n" ..
-            f.bb("\nE(X) = -100*0.3 + 300*0.7 ") .. " 是 " .. f.m((-100 * 0.3 + 300 * 0.7) * 10000) .. "\n" ..
+            " 利润 " .. CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            " 和一个" ..
+            f.bb("情况 B 机率 70%") .. " 利润 " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " 那该情况的期望利润就是\n" ..
+            f.bb("\nE(X) = -100*0.3 + 300*0.7 ") ..
+            " 是 " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
             "你可以在" .. f.bb("统计数据") .. "窗口中查看当前配方的所有情况！"
         ,
 
@@ -438,7 +440,7 @@ function CraftSim.LOCAL_CN:GetData()
         "显示你激活和缺失的制造增益效果的模块",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL] = "解释",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP] =
-        "该模块向你展示" .. f.l(" CraftSim") .. " 是如何计算的",
+            "该模块向你展示" .. f.l(" CraftSim") .. " 是如何计算的",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "重置框架位置",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "选项",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "更新信息",
