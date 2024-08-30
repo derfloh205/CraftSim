@@ -2390,7 +2390,8 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		name = "Glittering Gemdust",
 		expansionID = 10,
 		stats = {
-			increasedifficulty = 100,
+			skill = 50,
+			modifyskillgain = 25,
 		},
 	},
 	[222499] = {
@@ -2614,7 +2615,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		name = "Apprentice's Crafting License",
 		expansionID = 10,
 		stats = {
-			increasedifficulty = 100,
+			skill = 5,
 		},
 	},
 	[225671] = {
@@ -2622,7 +2623,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		name = "Stack of Pentagold Reviews",
 		expansionID = 10,
 		stats = {
-			increasedifficulty = 100,
+			skill = 10,
 		},
 	},
 	[225672] = {
@@ -2630,7 +2631,7 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 		name = "Unraveled Instructions",
 		expansionID = 10,
 		stats = {
-			increasedifficulty = 100,
+			skill = 20,
 		},
 	},
 	[225673] = {

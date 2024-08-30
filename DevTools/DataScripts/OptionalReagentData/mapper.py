@@ -36,6 +36,7 @@ def map(download, buildVersion):
     for reagentData in Reagents:
         counter = counter + 1
         itemID = int(reagentData["ID"])
+        isOptional = reagentData["SubclassID"] == "18"
 
         debug = False
 
@@ -61,7 +62,7 @@ def map(download, buildVersion):
 
         craftingReagentQuality = wagoTools.searchTable(CraftingReagentQualityTable, {"singleResult": True, "conditions": {"ItemID": str(itemID)}})
 
-        if craftingReagentQuality:
+        if craftingReagentQuality and isOptional:
             difficultyIncrease = int(craftingReagentQuality["MaxDifficultyAdjustment"])
             if difficultyIncrease > 0:
                 optionalReagentsDataTable[itemID] = {
