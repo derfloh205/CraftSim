@@ -18,6 +18,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("17.1.11"),
+        f.P .. "Added an option to toggle " .. f.bb("Money String Format"),
+        f.P .. "Addon options should now correctly open via button",
         supporterListUpdate,
         newP("17.1.10"),
         f.p .. f.bb("Concentration Tracker") .. " Tooltip now only lists",

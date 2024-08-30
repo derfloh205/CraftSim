@@ -151,7 +151,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            Settings.OpenToCategory(CraftSim.OPTIONS.optionsPanel.name)
+            Settings.OpenToCategory(CraftSim.OPTIONS.category.ID)
         end,
         label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS)
     })

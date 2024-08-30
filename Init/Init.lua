@@ -402,7 +402,7 @@ function CraftSim.INIT:PLAYER_LOGIN()
 			C_UI.Reload()
 		else
 			-- open options if any other command or no command is given
-			Settings.OpenToCategory(CraftSim.OPTIONS.optionsPanel.name)
+			Settings.OpenToCategory(CraftSim.OPTIONS.category.ID)
 		end
 	end
 
@@ -731,7 +731,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 end
 
 function CraftSim_OnAddonCompartmentClick()
-	Settings.OpenToCategory(CraftSim.OPTIONS.optionsPanel.name)
+	Settings.OpenToCategory(CraftSim.OPTIONS.category.ID)
 end
 
 function CraftSim.INIT:InitializeMinimapButton()
@@ -743,7 +743,7 @@ function CraftSim.INIT:InitializeMinimapButton()
 		icon = "Interface\\Addons\\CraftSim\\Media\\Images\\craftsim",
 		OnClick = function()
 			-- local historyFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.HISTORY_FRAME)
-			Settings.OpenToCategory(CraftSim.OPTIONS.optionsPanel.name)
+			Settings.OpenToCategory(CraftSim.OPTIONS.category.ID)
 		end,
 	})
 
