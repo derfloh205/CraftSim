@@ -9,7 +9,6 @@ local GUTIL = CraftSim.GUTIL
 ---@class CraftSim.CONTROL_PANEL.FRAME : GGUI.Frame
 CraftSim.CONTROL_PANEL.frame = nil
 
-local systemPrint = print;
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CONTROL_PANEL)
 
 function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
@@ -131,7 +130,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
     end
 end
 
-function CraftSim.CONTROL_PANEL:EasyraftExportAll()
+function CraftSim.CONTROL_PANEL:EasycraftExportAll()
     print("Easycraft Export..")
 
     if not C_TradeSkillUI.IsTradeSkillReady() then
@@ -198,7 +197,7 @@ function CraftSim.CONTROL_PANEL:EasyraftExportAll()
         local data = {}
 
         if (numRecipes == 0) then
-            systemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) ..
+            CraftSim.DEBUG:SystemPrint(CraftSim.GUTIL:ColorizeText("CraftSim:", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) ..
             " " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND))
             return
         end
