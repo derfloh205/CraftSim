@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 CraftSim.UTIL = {}
 
 CraftSim.UTIL.frameLevel = 100
@@ -399,4 +401,14 @@ function CraftSim.UTIL:CheckIfBagIsEquipped(itemID)
         end
     end
     return false
+end
+
+--- wrapper to use the money format use texture option
+---@param copperValue number
+---@param useColor? boolean -- colors the numbers green if positive and red if negative
+---@param percentRelativeTo number? if included: will be treated as 100% and a % value in relation to the coppervalue will be added
+---@param seperateThousands? boolean
+function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo, seperateThousands)
+    return GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, seperateThousands,
+        CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"))
 end

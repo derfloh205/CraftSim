@@ -2,6 +2,9 @@
 local CraftSim = select(2, ...)
 
 local GGUI = CraftSim.GGUI
+local GUTIL = CraftSim.GUTIL
+
+local f = GUTIL:GetFormatter()
 
 local L = CraftSim.UTIL:GetLocalizer()
 
@@ -129,7 +132,7 @@ function CraftSim.OPTIONS:Init()
     end
 
 
-    local historyMaxSizeInput = GGUI.NumericInput {
+    GGUI.NumericInput {
         parent = ModulesTab.content, anchorParent = ModulesTab.content,
         anchorA = "TOP", anchorB = "TOP", label = "Max history entries per client",
         offsetX = -30,
@@ -235,6 +238,17 @@ function CraftSim.OPTIONS:Init()
             else
                 CraftSim.LibIcon:Show("CraftSim")
             end
+        end
+    }
+
+    local coinMoneyFormatDB = GGUI.Checkbox {
+        label = " " .. "Money Format: " .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
+        tooltip = "Use coin icons to format money",
+        initialValue = CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"),
+        parent = GeneralTab.content, anchorParent = showNewsCheckbox.frame,
+        anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("MONEY_FORMAT_USE_TEXTURES", checked)
         end
     }
 
