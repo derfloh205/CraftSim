@@ -407,8 +407,7 @@ end
 ---@param copperValue number
 ---@param useColor? boolean -- colors the numbers green if positive and red if negative
 ---@param percentRelativeTo number? if included: will be treated as 100% and a % value in relation to the coppervalue will be added
----@param seperateThousands? boolean
-function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo, seperateThousands)
-    return GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, seperateThousands,
+function CraftSim.UTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
+    return GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, true,
         CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"))
 end

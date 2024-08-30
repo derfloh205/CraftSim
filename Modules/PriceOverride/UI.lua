@@ -405,7 +405,7 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateOverrideList(priceOverrideFrame)
         local text = ""
         table.foreach(globalOverrides, function(_, priceOverrideData)
             local item = Item:CreateFromItemID(priceOverrideData.itemID)
-            text = text .. item:GetItemLink() .. ": " .. CraftSim.GUTIL:FormatMoney(priceOverrideData.price) .. "\n"
+            text = text .. item:GetItemLink() .. ": " .. CraftSim.UTIL:FormatMoney(priceOverrideData.price) .. "\n"
         end)
 
         table.foreach(recipeOverrides, function(_, resultOverrideList)
@@ -414,7 +414,7 @@ function CraftSim.PRICE_OVERRIDE.UI:UpdateOverrideList(priceOverrideFrame)
                 text = text ..
                     item:GetItemLink() ..
                     ": " ..
-                    CraftSim.GUTIL:FormatMoney(resultOverride.price) ..
+                    CraftSim.UTIL:FormatMoney(resultOverride.price) ..
                     " " .. CraftSim.GUTIL:ColorizeText("(as result)", CraftSim.GUTIL.COLORS.BRIGHT_BLUE) .. "\n"
             end)
         end)

@@ -10,7 +10,7 @@ function CraftSim.LOCAL_RU:GetData()
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Перепроизводство",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Находчивость",
-		[CraftSim.CONST.TEXT.STAT_INGENUITY] = "Изобретательность",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY] = "Изобретательность",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Скорость изготовления",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Если на персонаже:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Чары:",
@@ -56,7 +56,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS] = "Бонус предметов от перепроизводства",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "Бонус предметов от наход.",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS] = "Скорость изготовления",
-		[CraftSim.CONST.TEXT.STAT_INGENUITY_BONUS] = "Сохраненная изобретательностью концентрация",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY_BONUS] = "Сохраненная изобретательностью концентрация",
         [CraftSim.CONST.TEXT.STAT_INGENUITY_LESS_CONCENTRATION] = "Снижение затрат концентрации",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "Прорыв в экспериментах с флаконами",
         [CraftSim.CONST.TEXT.STAT_POTION_EXPERIMENTATION] = "Прорыв в экспериментах с зельями",
@@ -64,8 +64,8 @@ function CraftSim.LOCAL_RU:GetData()
         -- Profit Breakdown Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
         "Находчивость прокает для каждого материала индивидуально, а затем сохраняет около 30% его количества.\n\nСреднее сохраненное значение - это среднее сохраненное значение КАЖДОЙ комбинации и их шансов.\n(Прок всех материалов одновременно очень маловероятен, но сохраняет очень много)\n\nСредняя общая сэкономленная стоимость материалов представляет собой сумму сэкономленных затрат на материалы всех комбинаций, взвешенную с учетом их вероятности.",
-        
-		[CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP] =
+
+        [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP] =
         "Сложность рецепта определяет, где находятся контрольные точки различных качеств.\n\nДля рецептов с пятью качествами они составляют 20%, 50%, 80% и 100% сложности рецепта в очках навыка.\nДля рецептов с тремя качествами они составляют 50% и 100%",
         [CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP] =
         "Перепроизводство дает вам возможность создать больше предметов, чем вы обычно производите по рецепту.\n\nДополнительная сумма обычно составляет от 1 до 2.5y\nгде y = обычная сумма, которую дает 1 крафт.",
@@ -88,7 +88,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Перепроизводство: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Находчивость: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Бонус предметов от находчивости: ",
-		[CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Концентрация: ",
+        [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Концентрация: ",
         [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "Бонус от качества материалов: ",
         [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "Наиб. бонус от кач. материалов в %: ",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Ожидаемое качество: ",
@@ -100,7 +100,7 @@ function CraftSim.LOCAL_RU:GetData()
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] =
         "Это рассчитывается с использованием аппроксимации Абрамовица и Стегуна (1985) CDF (кумулятивной функции распределения)\n\nВы заметите, что это всегда около 50% для 1 крафта.\nЭто потому, что в большинстве случаев 0 близок к средней прибыли.\nИ вероятность получения среднего значения CDF всегда составляет 50%.\n\nОднако скорость изменения может сильно различаться в зависимости от рецепта.\nЕсли вероятность получения положительной прибыли выше, чем отрицательной, он будет постоянно увеличиваться.\nЭто, конечно, верно и для другого направления.",
-		[CraftSim.CONST.TEXT.EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION] =
+        [CraftSim.CONST.TEXT.EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION] =
             f.r("Внимание: ") .. " Впереди математика!\n\n" ..
             "Когда вы создаете что-то, у вас есть разные шансы на разные результаты в зависимости от ваших показателей крафта.\n" ..
             "И в статистике это называется " .. f.l("Распределением вероятностей.\n") ..
@@ -115,7 +115,7 @@ function CraftSim.LOCAL_RU:GetData()
             "Например: \n" ..
             f.p .. "Что, если " .. f.bb("ничего") .. " не прокнет?\n" ..
             f.p .. "Что, если прокнет или " .. f.bb("Находчивость") .. ", или " .. f.bb("Перепроизводство") .. "?\n" ..
-			f.p .. "Что, если прокнут и " .. f.bb("Находчивость") .. " и " .. f.bb("Перепроизводство") .. " ?\n" ..
+            f.p .. "Что, если прокнут и " .. f.bb("Находчивость") .. " и " .. f.bb("Перепроизводство") .. " ?\n" ..
             f.p .. "И так далее..\n\n" ..
             "Для рецепта, учитывающего все проки, это будет 2 в степени 2 вариантов результата, что составляет аккуратные 4.\n" ..
             "Чтобы получить возможность появления только " ..
@@ -140,11 +140,12 @@ function CraftSim.LOCAL_RU:GetData()
             "Так что в " ..
             f.bb("случае A с шансом 30%") ..
             " и прибылью " ..
-            f.m(-100 * 10000) ..
+            CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
             " и " ..
             f.bb("случае B с шансом 70%") ..
             " и прибылью " .. f.m(300 * 10000) .. " ожидаемая прибыль равна\n" ..
-            f.bb("\nE(X) = -100*0.3 + 300*0.7  ") .. "что равно " .. f.m((-100 * 0.3 + 300 * 0.7) * 10000) .. "\n" ..
+            f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
+            "что равно " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
             "Вы можете просмотреть все случаи для вашего текущего рецепта в окне " .. f.bb("Статистика") .. "!"
         ,
 
@@ -168,7 +169,8 @@ function CraftSim.LOCAL_RU:GetData()
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "Информация о специализации CraftSim",
         [CraftSim.CONST.TEXT.SPEC_INFO_SIMULATE_KNOWLEDGE_DISTRIBUTION] = "Симулировать распределение знаний",
-        [CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP] = "Этот узел предоставляет вам следующие характеристики для этого рецепта:",
+        [CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP] =
+        "Этот узел предоставляет вам следующие характеристики для этого рецепта:",
         [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "Работа над SpecInfo продолжается",
 
         -- Crafting Results Frame
@@ -224,7 +226,8 @@ function CraftSim.LOCAL_RU:GetData()
             f.bb("Изготовление") ..
             " .. Ожидаемые затраты на изготовление самостоятельно\n" ..
             f.l("OR") ..
-            " всегда будет использоваться, если установлено. " .. f.bb("Стоимость изготовления") .. " будет использоваться, только если ниже " .. f.g("AH"),
+            " всегда будет использоваться, если установлено. " ..
+            f.bb("Стоимость изготовления") .. " будет использоваться, только если ниже " .. f.g("AH"),
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS] = "Стоимость изготовления: ",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER] = "Предмет",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_AH_PRICE_HEADER] = "Цена AH",
@@ -269,7 +272,7 @@ function CraftSim.LOCAL_RU:GetData()
         -- Recipe Scan Frame
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE] = "Сканирование рецептов CraftSim",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE] = "Режим сканирования",
-		[CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE] = "Режим сортировки",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE] = "Режим сортировки",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_RECIPIES] = "Сканировать рецепты",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_CANCEL] = "Отмена",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING] = "Сканирование",
@@ -280,7 +283,8 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP] =
         "Включайте персональные рецепты в сканирование рецептов.\n\nРекомендуется установить переопределение цены (например, для симуляции целевой комиссии)\nin в Модуле переопределения цены для предметов, созданных по этому рецепту",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR] = "Включить снаряжение",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP] = "Включить в сканирование рецептов все рецепты снаряжения",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP] =
+        "Включить в сканирование рецептов все рецепты снаряжения",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS] = "Оптимизация инструментов",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP] =
         "Для каждого рецепта оптимизировать инструменты для наибольшей прибыли\n\n",
@@ -289,9 +293,9 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CRAFTER_HEADER] = "Ремесленник",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER] = "Рецепт",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER] = "Изучено",
-		[CraftSim.CONST.TEXT.RECIPE_SCAN_RESULT_HEADER] = "Результат",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_RESULT_HEADER] = "Результат",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER] = "Средняя прибыль",
-		[CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_VALUE_HEADER] = "Значение конц.",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_VALUE_HEADER] = "Значение конц.",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_COST_HEADER] = "Затраты конц.",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TOP_GEAR_HEADER] = "Лучшая экипировка",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Инв/Аук",
@@ -301,7 +305,9 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX] = "По возможности использовать " .. f.bb("Озарение"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP] = "Использовать " ..
             f.bb("Блистательное озарение") ..
-            " или\n" .. f.bb("Малое блистательное озарение") .. " в качестве дополнительного реагента для рецептов, которые это позволяют.",
+            " или\n" ..
+            f.bb("Малое блистательное озарение") ..
+            " в качестве дополнительного реагента для рецептов, которые это позволяют.",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX] = "Только избранное",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP] = "Сканировать только ваши избранные рецепты",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Надето",
@@ -309,7 +315,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Качество материала 2",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Качество материала 3",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Оптимизировать реагенты",
-		[CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_PROFIT] = "Прибыль",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_PROFIT] = "Прибыль",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_RELATIVE_PROFIT] = "Относительная прибыль",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_CONCENTRATION_VALUE] = "Значение концентрации",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_CONCENTRATION_COST] = "Затраты концентрации",
@@ -382,7 +388,8 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Модуль снаряжения",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Модуль обзора стоимости",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "Модуль информации о специализации",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] = "Максимальное количество сообщений\nистории клиентов на одного клиента",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] =
+        "Максимальное количество сообщений\nистории клиентов на одного клиента",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Сместить точки навыков на 1",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] =
         "Предложение по комбинации материалов будет пытаться достичь точки + 1 вместо того, чтобы точно соответствовать требуемому навыку",
@@ -427,7 +434,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_LABEL] = "Данные о стоимости",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COST_OPTIMIZATION_TOOLTIP] =
         "Модуль, показывающий подробную информацию о стоимости крафта",
-		[CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_LABEL] = "Статистика",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_LABEL] = "Статистика",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_STATISTICS_TOOLTIP] =
         "Модуль, который показывает подробную статистику результатов для текущего открытого рецепта",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_RECIPE_SCAN_LABEL] = "Скан. рецептов",
@@ -439,7 +446,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_LABEL] = "Усиления",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_BUFFS_TOOLTIP] =
         "Модуль, который показывает ваши активные и недостающие ремесленные усиления",
-		[CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL] = "Объяснения",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL] = "Объяснения",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP] =
             "Модуль, который показывает вам различные объяснения того, как" .. f.l(" CraftSim") .. " проводит вычисления",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Сбросить позиции",
@@ -478,7 +485,8 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP] =
         "Вы уверены, что хотите удалить\nвсе данные для %s?",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE] = "Удалить историю клиентов",
-        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] = "Удалить историю клиентов с 0 чаевыми",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] =
+        "Удалить историю клиентов с 0 чаевыми",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL] = "Интервал автоматического удаления (Дней)",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP] =
         "CraftSim автоматически удалит всех клиентов с 0 чаевыми при входе в систему через X дней после последнего удаления.\nЕсли установлено значение 0, CraftSim никогда не будет удалять автоматически.",
@@ -501,7 +509,8 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "Нет материалов",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "Добавить открытый рецепт",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Очистить все",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Пополнить запасы на основе сканирования рецептов",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] =
+        "Пополнить запасы на основе сканирования рецептов",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Неправильная профессия",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN] = "На перезарядке",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER] = "Неправильный крафтер",
@@ -510,7 +519,8 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT] = "Можно создать",
         [CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL] = "Создать список покупок Auctionator",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL] = "Очередь крафта",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL] = "Помигать иконкой панели задач по завершении крафта в " ..
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL] =
+            "Помигать иконкой панели задач по завершении крафта в " ..
             f.bb("Очереди крафта"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP] =
             "Когда ваш клиент WoW свернут и крафт рецепта в " .. f.bb("Очереди крафта") ..
@@ -552,14 +562,16 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CRAFTING_COSTS_LABEL] = "Стоимость изготовления: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_AVERAGE_PROFIT_LABEL] = "Средняя прибыль: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL] = "Результаты",
-		[CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CONCENTRATION_CHECKBOX] = " Концентрация",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CONCENTRATION_CHECKBOX] = " Концентрация",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX] = "Для персонажа",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP] = "Создать " ..
-            f.bb("Список покупок Auctionator") .. " для каждого персонажа-крафтера\nвместо одного списка покупок для всех",
-			[CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX] = "Только целевой режим",
+            f.bb("Список покупок Auctionator") ..
+            " для каждого персонажа-крафтера\nвместо одного списка покупок для всех",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX] = "Только целевой режим",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP] = "Создать " ..
             f.bb("Список покупок Auctionator") .. " только для рецептов целевого режима",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white("Величина очереди не сохранена.\nНажмите Enter для сохранения"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white(
+            "Величина очереди не сохранена.\nНажмите Enter для сохранения"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Рецепт изучен"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Не восстанавливается"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_MATERIALS] = f.white("Материалы доступны"),

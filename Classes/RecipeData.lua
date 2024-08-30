@@ -1108,7 +1108,8 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
 
                             -- caches the expect costs info automatically
                             recipeData:OptimizeProfit(optimizeOptions)
-                            print("- Profit: " .. GUTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
+                            print("- Profit: " ..
+                            CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached, true, nil, true))
 
                             -- if the necessary item quality is reachable, map it to the recipe
                             local reagentQualityReachable, concentrationOnly = recipeData.resultData

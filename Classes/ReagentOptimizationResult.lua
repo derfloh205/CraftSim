@@ -77,7 +77,7 @@ end
 function CraftSim.ReagentOptimizationResult:Debug()
     local debugLines = {
         "qualityID: " .. tostring(self.qualityID),
-        "craftingCosts: " .. CraftSim.GUTIL:FormatMoney(self.craftingCosts),
+        "craftingCosts: " .. CraftSim.UTIL:FormatMoney(self.craftingCosts),
     }
 
     table.foreach(self.reagents, function(_, reagent)

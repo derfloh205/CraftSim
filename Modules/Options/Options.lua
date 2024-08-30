@@ -242,10 +242,10 @@ function CraftSim.OPTIONS:Init()
     }
 
     local coinMoneyFormatDB = GGUI.Checkbox {
-        label = " " .. "Money Format: " .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
+        label = " " .. "Use Coin Textures: " .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
         tooltip = "Use coin icons to format money",
         initialValue = CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"),
-        parent = GeneralTab.content, anchorParent = showNewsCheckbox.frame,
+        parent = GeneralTab.content, anchorParent = hideMinimapButtonCheckbox.frame,
         anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("MONEY_FORMAT_USE_TEXTURES", checked)
@@ -253,7 +253,7 @@ function CraftSim.OPTIONS:Init()
     }
 
     local supportedPriceSources = GeneralTab.content:CreateFontString('priceSources', 'OVERLAY', 'GameFontNormal')
-    supportedPriceSources:SetPoint("TOP", 0, -200)
+    supportedPriceSources:SetPoint("TOP", 0, -210)
     supportedPriceSources:SetText(L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES) ..
         "\n\n" .. table.concat(CraftSim.CONST.SUPPORTED_PRICE_API_ADDONS, "\n"))
 

@@ -22,8 +22,8 @@ end
 
 function CraftSim.TopGearResult:Debug()
     local debugLines = {
-        "Average Profit: " .. CraftSim.GUTIL:FormatMoney(self.averageProfit, true),
-        "Relative Profit: " .. CraftSim.GUTIL:FormatMoney(self.relativeProfit, true),
+        "Average Profit: " .. CraftSim.UTIL:FormatMoney(self.averageProfit, true),
+        "Relative Profit: " .. CraftSim.UTIL:FormatMoney(self.relativeProfit, true),
         "Relative Profit Exact: " .. self.relativeProfit,
         "ExpectedQuality: " .. self.expectedQuality,
         "ExpectedQualityUpgrade: " .. self.expectedQualityUpgrade,

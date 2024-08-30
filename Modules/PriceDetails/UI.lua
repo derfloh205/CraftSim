@@ -167,9 +167,9 @@ function CraftSim.PRICE_DETAILS.UI:UpdateDisplay(recipeData, exportMode)
                 local price = priceOverride or CraftSim.PRICE_SOURCE:GetMinBuyoutByItemLink(itemLink)
                 local profit = (price * CraftSim.CONST.AUCTION_HOUSE_CUT) -
                     (priceData.craftingCosts / recipeData.baseItemAmount)
-                priceColumn.text:SetText(CraftSim.GUTIL:FormatMoney(price) ..
+                priceColumn.text:SetText(CraftSim.UTIL:FormatMoney(price) ..
                     ((priceOverride and CraftSim.GUTIL:ColorizeText(" (OR)", CraftSim.GUTIL.COLORS.LEGENDARY)) or ""))
-                profitColumn.text:SetText(CraftSim.GUTIL:FormatMoney(profit, true))
+                profitColumn.text:SetText(CraftSim.UTIL:FormatMoney(profit, true))
 
                 local itemCount = C_Item.GetItemCount(itemLink, true, false, true)
                 local ahCount = CraftSim.PRICE_SOURCE:GetAuctionAmount(itemLink)

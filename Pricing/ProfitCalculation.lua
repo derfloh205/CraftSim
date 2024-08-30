@@ -134,7 +134,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
             end
 
             combinationProfit = resultValue - craftingCosts
-            --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
+            --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 multicraft = MC,
                 resourcefulness = RES,
@@ -151,7 +151,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         end
 
         print("Probability Sum: " .. tostring(probabilitySum))
-        print("ExpectedProfit: " .. CraftSim.GUTIL:FormatMoney(expectedProfit, true))
+        print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
 
         return expectedProfit, probabilityTable
     elseif not recipeData.supportsMulticraft and recipeData.supportsResourcefulness then
@@ -191,7 +191,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
                 recipeData.baseItemAmount)
 
             combinationProfit = resultValue - craftingCosts
-            --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.GUTIL:FormatMoney(combinationProfit, true))
+            --print(table.concat(combination, "") .. ":" .. CraftSim.GUTIL:Round(combinationChance*100, 2) .. "% -> " .. CraftSim.UTIL:FormatMoney(combinationProfit, true))
             table.insert(probabilityTable, {
                 resourcefulness = RES,
                 chance = combinationChance,
@@ -207,7 +207,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         end
 
         print("Probability Sum: " .. tostring(probabilitySum))
-        print("ExpectedProfit: " .. CraftSim.GUTIL:FormatMoney(expectedProfit, true))
+        print("ExpectedProfit: " .. CraftSim.UTIL:FormatMoney(expectedProfit, true))
 
         return expectedProfit, probabilityTable
     elseif not recipeData.supportsResourcefulness then

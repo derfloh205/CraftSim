@@ -857,9 +857,9 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             recipeData.resultData:Update() -- switch back
             row.concentrationCost = recipeData.concentrationCost
             concentrationCostColumn.text:SetText(row.concentrationCost)
-            concentrationValueColumn.text:SetText(GUTIL:FormatMoney(row.concentrationWeight, true))
+            concentrationValueColumn.text:SetText(CraftSim.UTIL:FormatMoney(row.concentrationWeight, true))
 
-            averageProfitColumn.text:SetText(GUTIL:FormatMoney(averageProfit, true, relativeTo, true))
+            averageProfitColumn.text:SetText(CraftSim.UTIL:FormatMoney(averageProfit, true, relativeTo, true))
 
             if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS") then
                 if recipeData.professionGearSet:IsEquipped() then
