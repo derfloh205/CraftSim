@@ -21,6 +21,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.P .. "Added an" .. f.l(" easycraft.io") .. " export",
         f.p .. "Fixed " .. f.bb("Skill Gain Finishing Reagents") .. " adding",
         f.a .. "difficulty instead of skill",
+        f.p .. "Updated " .. f.bb("Optional Reagents Data"),
         newP("17.1.11"),
         f.P .. "Added an option to toggle " .. f.bb("Money String Format"),
         f.P .. "Addon options should now correctly open via button",
