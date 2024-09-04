@@ -800,7 +800,6 @@ function CraftSim.RecipeData:GetEasycraftExport(indent)
     local professionStatsForExport = self.professionStats:Copy()
     professionStatsForExport:subtract(self.buffData.professionStats)
 
-    jb:Add("spellID", self.recipeID)
     jb:Add("expectedQuality", self.resultData.expectedQuality)
     jb:Add("expectedQualityConcentration", self.resultData.expectedQualityConcentration)
     jb:Add("reagents", reagents) -- itemID mapped to required quantity
@@ -814,15 +813,16 @@ function CraftSim.RecipeData:GetEasycraftExport(indent)
     if self.supportsCraftingStats then
         if self.supportsMulticraft then
             if not self.supportsResourcefulness then
-                jb:Add("multicraft", professionStatsForExport.multicraft:GetPercent(true), true)
+                jb:Add("multicraft", professionStatsForExport.multicraft:GetPercent(true))
             else
                 jb:Add("multicraft", professionStatsForExport.multicraft:GetPercent(true))
             end
         end
         if self.supportsResourcefulness then
-            jb:Add("resourcefulness", professionStatsForExport.resourcefulness:GetPercent(true), true)
+            jb:Add("resourcefulness", professionStatsForExport.resourcefulness:GetPercent(true))
         end
     end
+    jb:Add("spellID", self.recipeID, true)
     jb:End()
 
     return jb.json
