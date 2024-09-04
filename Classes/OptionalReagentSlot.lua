@@ -18,6 +18,7 @@ function CraftSim.OptionalReagentSlot:new(recipeData, reagentSlotSchematic)
 
     if reagentSlotSchematic.slotInfo and reagentSlotSchematic.slotInfo.mcrSlotID then
         self.slotText = reagentSlotSchematic.slotInfo.slotText
+        self.mcrSlotID = reagentSlotSchematic.slotInfo.mcrSlotID
         self.locked, self.lockedReason = C_TradeSkillUI.GetReagentSlotStatus(reagentSlotSchematic.slotInfo.mcrSlotID,
             recipeData.recipeID, recipeData.professionData.skillLineID)
     end
