@@ -793,7 +793,9 @@ function CraftSim.RecipeData:GetEasycraftExport(indent)
 
     local optionalReagentsSlotStatus = {}
     for _, reagent in pairs(self.reagentData.optionalReagentSlots) do
-        optionalReagentsSlotStatus[reagent.mcrSlotID] = reagent.locked
+        if reagent.mcrSlotID then
+            optionalReagentsSlotStatus[reagent.mcrSlotID] = reagent.locked
+        end
     end
     jb:Add("optionalReagentsSlotStatus", optionalReagentsSlotStatus)
 
