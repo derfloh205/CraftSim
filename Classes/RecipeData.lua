@@ -762,8 +762,12 @@ function CraftSim.RecipeData:GetForgeFinderExport(indent)
     jb:Add("reagents", reagents) -- itemID mapped to required quantity
     if self.supportsQualities then
         print("json, adding skill: ")
-        jb:Add("skill", self.professionStats.skill.value)                     -- skill without reagent bonus TODO: if single export, consider removing reagent bonus
-        jb:Add("difficulty", self.baseProfessionStats.recipeDifficulty.value) -- base difficulty (without optional reagents)
+        jb:Add("skill", self.professionStats.skill.value)                               -- skill without reagent bonus TODO: if single export, consider removing reagent bonus
+        if self.supportsMulticraft or self.supportsResourcefulness then
+            jb:Add("difficulty", self.baseProfessionStats.recipeDifficulty.value)       -- base difficulty (without optional reagents)
+        else
+            jb:Add("difficulty", self.baseProfessionStats.recipeDifficulty.value, true) -- base difficulty (without optional reagents)
+        end
     end
     if self.supportsCraftingStats then
         if self.supportsMulticraft then
@@ -785,7 +789,7 @@ end
 function CraftSim.RecipeData:GetEasycraftExport(indent)
     indent = indent or 0
     local jb = CraftSim.JSONBuilder(indent)
-    
+
     jb:Begin()
     jb:AddList("itemIDs", GUTIL:Map(self.resultData.itemsByQuality, function(item)
         return item:GetItemID()
