@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("17.2.3"),
+        f.p .. "Concentration Tracker character name column adaption",
         newP("17.2.2"),
         f.p .. f.l("ForgeFinder Export") .. " now exports both DF and TWW",
         newP("17.2.0"),

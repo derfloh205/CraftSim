@@ -96,7 +96,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Init()
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI.InitTooltipFrame()
-    local sizeX = 280
+    local sizeX = 330
     local sizeY = 40
     local offsetX = 0
     local offsetY = 0
@@ -127,7 +127,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTooltipFrame()
         columnOptions = {
             {
                 label = "Crafter",
-                width = 110,
+                width = 160,
             },
             {
                 label = "Current",
