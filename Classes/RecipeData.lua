@@ -472,9 +472,11 @@ function CraftSim.RecipeData:GetConcentrationCost()
         local playerSkill = math.min(self.professionStats.skill.value, recipeDifficulty) -- cap skill at max difficulty
         local playerSkillFactor = (playerSkill / (recipeDifficulty / 100)) / 100
         local specExtraValues = self.specializationData:GetExtraValues()
-        local lessConcentrationUsageFactor = specExtraValues.ingenuity:GetExtraValue(2)
+        local lessConcentrationFactorSpecs = specExtraValues.ingenuity:GetExtraValue(2)
         local optionalReagentStats = self.reagentData:GetProfessionStatsByOptionals()
-        local lessConcentrationUsageFactor2 = optionalReagentStats.ingenuity:GetExtraValue(2)
+        local professionGearStats = self.professionGearSet.professionStats
+        local lessConcentrationFactorOptionals = optionalReagentStats.ingenuity:GetExtraValue(2)
+        local lessConcentrationFactorGear = professionGearStats.ingenuity:GetExtraValue(2)
 
         local curveConstantData, nextCurveConstantData = CraftSim.UTIL:FindBracketData(playerSkill,
             self.concentrationCurveData.costConstantData)
@@ -496,7 +498,8 @@ function CraftSim.RecipeData:GetConcentrationCost()
             skillStart,
             skillEnd,
             skillCurveValueStart,
-            skillCurveValueEnd, { lessConcentrationUsageFactor, lessConcentrationUsageFactor2 })
+            skillCurveValueEnd,
+            { lessConcentrationFactorSpecs, lessConcentrationFactorOptionals, lessConcentrationFactorGear })
     else
         -- if by any chance the data for this recipe is not mapped in the db2 data, get a good guess via the api
         -- or if we are not in the current beta (08.08.2024)
