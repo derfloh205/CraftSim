@@ -27,8 +27,8 @@ end
 
 ---@param itemLink string?
 function CraftSim.ProfessionGear:SetItem(itemLink)
+	self.professionStats:Clear()
 	if not itemLink then
-		self.professionStats:Clear()
 		self.item = nil
 		return
 	end
@@ -70,10 +70,12 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 	--print(tooltipData.lines, true)
 	for _, line in pairs(tooltipData.lines) do
 		local lineText = line.leftText -- 10.1 Change
-		--for _, arg in pairs(line.args) do
 		if lineText and string.find(lineText, equipMatchString) then
 			-- here the stringVal looks like "Equip: +6 Blacksmithing Skill"
-			parsedSkill = tonumber(string.match(lineText, "(%d+)")) or 0
+			-- make sure it tries to only match the parsed equip line once to prevent special effect confusion (runed epic rod tww)
+			if parsedSkill == 0 then
+				parsedSkill = tonumber(string.match(lineText, "(%d+)")) or 0
+			end
 		end
 		if lineText and string.find(lineText, enchantedMatchString) then
 			if string.find(lineText, resourcefulnessMatchString) then
@@ -82,7 +84,6 @@ function CraftSim.ProfessionGear:SetItem(itemLink)
 				parsedEnchantingStats.multicraft = tonumber(string.match(lineText, "%+(%d+)")) or 0
 			end
 		end
-		--end
 	end
 
 	if parsedSkill > 0 then

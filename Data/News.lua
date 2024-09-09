@@ -20,6 +20,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("17.3.0"),
         f.s .. "Updated " .. f.bb("Specialization Data"),
         f.s .. f.bb("CraftQueue ") .. "should now support " .. f.e("Spark Reagents"),
+        f.p .. itemMap.enchantingRod:GetItemLink() .. " Concentration Bonus now considered",
         newP("17.2.3"),
         f.p .. "Concentration Tracker character name column adaption",
         newP("17.2.2"),
@@ -81,7 +82,7 @@ end
 ---@async
 function CraftSim.NEWS:ShowNews(force)
     local itemMap = {
-        chocolate = Item:CreateFromItemID(194902),
+        enchantingRod = Item:CreateFromItemID(224116),
     }
     CraftSim.GUTIL:ContinueOnAllItemsLoaded(CraftSim.GUTIL:Map(itemMap, function(i) return i end), function()
         local newsText = CraftSim.NEWS:GET_NEWS(itemMap)
