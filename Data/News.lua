@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("17.3.0"),
+        f.s .. "Updated " .. f.bb("Specialization Data"),
         newP("17.2.3"),
         f.p .. "Concentration Tracker character name column adaption",
         newP("17.2.2"),
