@@ -533,9 +533,6 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             if itemCount >= multiplier then
                 quantityText = f.g(tostring(multiplier))
             end
-            local qualityID = GUTIL:GetQualityIDFromLink(self.sparkReagentSlot.activeReagent.item:GetItemLink())
-            qualityID = qualityID or 0
-            local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
             local crafterText = ""
             -- add crafterInfo text if reagent is supposed to be crafted by the player
             local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes
@@ -544,7 +541,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 crafterText = f.white(" (" ..
                     optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
             end
-            text = text .. qualityIcon .. quantityText .. crafterText .. "   "
+            text = text .. quantityText .. crafterText .. "   "
         end
     end
 
@@ -665,11 +662,13 @@ function CraftSim.ReagentData:Debug()
 end
 
 function CraftSim.ReagentData:Copy(recipeData)
+    ---@type CraftSim.ReagentData
     local copy = CraftSim.ReagentData(recipeData)
 
     copy.requiredReagents = GUTIL:Map(self.requiredReagents, function(r) return r:Copy() end)
     copy.optionalReagentSlots = GUTIL:Map(self.optionalReagentSlots, function(r) return r:Copy(recipeData) end)
     copy.finishingReagentSlots = GUTIL:Map(self.finishingReagentSlots, function(r) return r:Copy(recipeData) end)
+    copy.sparkReagentSlot = self.sparkReagentSlot and self.sparkReagentSlot:Copy(recipeData)
 
     return copy
 end
@@ -681,6 +680,7 @@ function CraftSim.ReagentData:GetJSON(indent)
     jb:AddList("requiredReagents", self.requiredReagents)
     jb:AddList("optionalReagentSlots", self.optionalReagentSlots)
     jb:AddList("finishingReagentSlots", self.finishingReagentSlots)
+    jb:Add("sparkReagentSlot", self.sparkReagentSlot)
     jb:Add("salvageReagentSlot", self.salvageReagentSlot, true)
     jb:End()
     return jb.json
