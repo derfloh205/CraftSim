@@ -468,28 +468,27 @@ function CraftSim.RecipeData:GetConcentrationCost()
     -- try to only enable it for simulation mode?
     if self.concentrationCurveData and CraftSim.SIMULATION_MODE.isActive then
         -- get skill bracket and associated start and end skillCurveValues
-        local playerSkill = self.professionStats.skill.value
-        local baseDifficulty = self.baseOperationInfo.baseDifficulty
-        local playerSkillFactor = (playerSkill / (baseDifficulty / 100)) / 100
+        local recipeDifficulty = self.professionStats.recipeDifficulty.value
+        local playerSkill = math.min(self.professionStats.skill.value, recipeDifficulty) -- cap skill at max difficulty
+        local playerSkillFactor = (playerSkill / (recipeDifficulty / 100)) / 100
         local specExtraValues = self.specializationData:GetExtraValues()
         local lessConcentrationUsageFactor = specExtraValues.ingenuity:GetExtraValue(2)
         local optionalReagentStats = self.reagentData:GetProfessionStatsByOptionals()
         local lessConcentrationUsageFactor2 = optionalReagentStats.ingenuity:GetExtraValue(2)
 
-        -- recipeDifficulty here or playerSkill ?
         local curveConstantData, nextCurveConstantData = CraftSim.UTIL:FindBracketData(playerSkill,
             self.concentrationCurveData.costConstantData)
         local curveData, nextCurveData = CraftSim.UTIL:FindBracketData(playerSkillFactor,
             self.concentrationCurveData.curveData)
 
-        local curveConstant = CraftSim.UTIL:CalculateCurveConstant(baseDifficulty, curveConstantData,
+        local curveConstant = CraftSim.UTIL:CalculateCurveConstant(recipeDifficulty, curveConstantData,
             nextCurveConstantData)
         local recipeDifficultyFactor = (curveData and curveData.index) or 0
         local nextRecipeDifficultyFactor = (nextCurveData and nextCurveData.index) or 1
         local skillCurveValueStart = (curveData and curveData.data) or 0
         local skillCurveValueEnd = (nextCurveData and nextCurveData.data) or 1
-        local skillStart = baseDifficulty * recipeDifficultyFactor
-        local skillEnd = baseDifficulty * nextRecipeDifficultyFactor
+        local skillStart = recipeDifficulty * recipeDifficultyFactor
+        local skillEnd = recipeDifficulty * nextRecipeDifficultyFactor
 
         return CraftSim.UTIL:CalculateConcentrationCost(
             curveConstant,
