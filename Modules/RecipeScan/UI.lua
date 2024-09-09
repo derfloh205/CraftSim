@@ -413,7 +413,15 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
             selectionCallback = function(row)
                 local recipeData = row.recipeData --[[@as CraftSim.RecipeData]]
                 if recipeData then
-                    C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
+                    if IsShiftKeyDown() then
+                        -- queue into CraftQueue
+                        if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") then
+                            recipeData.concentrating = true
+                        end
+                        CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
+                    else
+                        C_TradeSkillUI.OpenRecipe(recipeData.recipeID)
+                    end
                 end
             end
         },
@@ -544,6 +552,13 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
             })
         end
     })
+
+    GGUI.HelpIcon {
+        parent = content, anchorParent = content.resultList.frame, anchorA = "BOTTOMLEFT", anchorB = "TOPLEFT", offsetY = -4, offsetX = 65,
+        text = "Press " ..
+            CreateAtlasMarkup("NPE_LeftClick", 20, 20, 2) .. " + shift to queue selected recipe into the " .. f.bb("Craft Queue"),
+        scale = 1.1,
+    }
 
     return content
 end
