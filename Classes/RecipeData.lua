@@ -448,14 +448,10 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
         end
     end
 
-    CraftSim.DEBUG:SystemPrint("SetNonQualityReagentsMax")
     if self.reagentData:HasSparkSlot() then
-        CraftSim.DEBUG:SystemPrint("hasSparkSlot")
         if not self.reagentData.sparkReagentSlot.activeReagent then
-            CraftSim.DEBUG:SystemPrint("hasNoActiveReagent")
             local firstPossibleSparkItem = self.reagentData.sparkReagentSlot.possibleReagents[1]
             if firstPossibleSparkItem then
-                CraftSim.DEBUG:SystemPrint("firstPossibleSparkItem Set ID: " .. firstPossibleSparkItem.item:GetItemID())
                 self.reagentData.sparkReagentSlot:SetReagent(firstPossibleSparkItem.item:GetItemID())
             end
         end
