@@ -20,6 +20,8 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
     self.optionalReagentSlots = {}
     ---@type CraftSim.OptionalReagentSlot[]
     self.finishingReagentSlots = {}
+    ---@type CraftSim.OptionalReagentSlot?
+    self.sparkReagentSlot = nil
     ---@type CraftSim.SalvageReagentSlot
     self.salvageReagentSlot = CraftSim.SalvageReagentSlot(self.recipeData)
 
@@ -32,7 +34,13 @@ function CraftSim.ReagentData:new(recipeData, schematicInfo)
         if reagentType == CraftSim.CONST.REAGENT_TYPE.REQUIRED then
             table.insert(self.requiredReagents, CraftSim.Reagent(reagentSlotSchematic))
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.OPTIONAL then
-            table.insert(self.optionalReagentSlots, CraftSim.OptionalReagentSlot(self.recipeData, reagentSlotSchematic))
+            if reagentSlotSchematic.required then
+                -- spark
+                self.sparkReagentSlot = CraftSim.OptionalReagentSlot(self.recipeData, reagentSlotSchematic)
+            else
+                table.insert(self.optionalReagentSlots,
+                    CraftSim.OptionalReagentSlot(self.recipeData, reagentSlotSchematic))
+            end
         elseif reagentType == CraftSim.CONST.REAGENT_TYPE.FINISHING_REAGENT then
             table.insert(self.finishingReagentSlots, CraftSim.OptionalReagentSlot(self.recipeData, reagentSlotSchematic))
         end
