@@ -54,18 +54,6 @@ function CraftSim.ReagentData:SerializeRequiredReagents()
     end)
 end
 
-function CraftSim.ReagentData:SerializeOptionalReagentSlots()
-    return GUTIL:Map(self.optionalReagentSlots, function(slot)
-        return slot:Serialize()
-    end)
-end
-
-function CraftSim.ReagentData:SerializeFinishingReagentSlots()
-    return GUTIL:Map(self.finishingReagentSlots, function(slot)
-        return slot:Serialize()
-    end)
-end
-
 function CraftSim.ReagentData:GetProfessionStatsByOptionals()
     local totalStats = CraftSim.ProfessionStats()
 
@@ -79,6 +67,12 @@ function CraftSim.ReagentData:GetProfessionStatsByOptionals()
     table.foreach(optionalStats, function(_, stat)
         totalStats:add(stat)
     end)
+
+    if self:HasSparkSlot() then
+        if self.sparkReagentSlot.activeReagent then
+            totalStats:add(self.sparkReagentSlot.activeReagent.professionStats)
+        end
+    end
 
     -- TODO
     local statPercentModTable = CraftSim.CONST.PERCENT_MODS[CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN]
@@ -139,6 +133,12 @@ function CraftSim.ReagentData:GetRequiredCraftingReagentInfoTbl()
         craftingReagentInfoTbl = GUTIL:Concat({ craftingReagentInfoTbl, craftingReagentInfos })
     end
 
+    if self:HasSparkSlot() then
+        if self.sparkReagentSlot.activeReagent then
+            tinsert(craftingReagentInfoTbl, self.sparkReagentSlot:GetCraftingReagentInfo())
+        end
+    end
+
     return craftingReagentInfoTbl
 end
 
@@ -186,6 +186,17 @@ function CraftSim.ReagentData:HasOptionalReagents()
     end
 
     return false
+end
+
+function CraftSim.ReagentData:HasSparkSlot()
+    return self.sparkReagentSlot ~= nil
+end
+
+---@param itemID ItemID
+function CraftSim.ReagentData:SetSparkItem(itemID)
+    if self:HasSparkSlot() then
+        self.sparkReagentSlot:SetReagent(itemID)
+    end
 end
 
 function CraftSim.ReagentData:GetMaxSkillFactor()
@@ -344,6 +355,10 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
         function(optionalReagentSlot)
             return optionalReagentSlot:HasItem(multiplier, crafterUID)
         end)
+    local hasSparkReagent = true
+    if self:HasSparkSlot() then
+        hasSparkReagent = self.sparkReagentSlot:HasItem(multiplier, crafterUID)
+    end
     -- update item cache for all possible optional reagents if I am the crafter
     if crafterUID == CraftSim.UTIL:GetPlayerCrafterUID() then
         for _, slot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
@@ -354,7 +369,15 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
                 CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
             end
         end
+        if hasSparkReagent then
+            for _, possibleSparkReagent in pairs(self.sparkReagentSlot.possibleReagents or {}) do
+                local itemID = possibleSparkReagent.item:GetItemID()
+                CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
+            end
+        end
     end
+
+
 
     local hasVellumIfneeded = true
 
@@ -365,7 +388,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
     end
 
 
-    return hasRequiredReagents and hasOptionalReagents and hasVellumIfneeded
+    return hasRequiredReagents and hasOptionalReagents and hasSparkReagent and hasVellumIfneeded
 end
 
 function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
@@ -379,6 +402,15 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
             return 0
         end
         currentMinimumReagentFit = math.min(requiredReagent:HasQuantityXTimes(crafterUID), currentMinimumReagentFit)
+    end
+
+    if self:HasSparkSlot() then
+        if self.sparkReagentSlot.activeReagent then
+            currentMinimumReagentFit = math.min(self.sparkReagentSlot:HasQuantityXTimes(crafterUID),
+                currentMinimumReagentFit)
+        else
+            currentMinimumReagentFit = 0
+        end
     end
 
     print("minimum required fit: " .. tostring(currentMinimumReagentFit))
@@ -489,6 +521,33 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             text = text .. "\n"
         end
     end
+
+    if self:HasSparkSlot() then
+        if self.sparkReagentSlot.activeReagent then
+            local reagentIcon = self.sparkReagentSlot.activeReagent.item:GetItemIcon()
+            local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
+            text = text .. inlineIcon
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID,
+                self.sparkReagentSlot.activeReagent.item:GetItemID())
+            local quantityText = f.r(tostring(multiplier) .. "(" .. tostring(itemCount) .. ")")
+            if itemCount >= multiplier then
+                quantityText = f.g(tostring(multiplier))
+            end
+            local qualityID = GUTIL:GetQualityIDFromLink(self.sparkReagentSlot.activeReagent.item:GetItemLink())
+            qualityID = qualityID or 0
+            local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
+            local crafterText = ""
+            -- add crafterInfo text if reagent is supposed to be crafted by the player
+            local optimizedReagentRecipeData = self.recipeData.optimizedSubRecipes
+                [self.sparkReagentSlot.activeReagent.item:GetItemID()]
+            if optimizedReagentRecipeData then
+                crafterText = f.white(" (" ..
+                    optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
+            end
+            text = text .. qualityIcon .. quantityText .. crafterText .. "   "
+        end
+    end
+
     for _, optionalReagentSlot in pairs(GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })) do
         ---@type CraftSim.OptionalReagentSlot
         optionalReagentSlot = optionalReagentSlot

@@ -65,6 +65,7 @@ end
 ---@field concentrating? boolean
 ---@field crafterData CraftSim.CrafterData
 ---@field requiredReagents CraftSim.Reagent.Serialized[]
+---@field sparkReagent CraftingReagentInfo?
 ---@field optionalReagents CraftingReagentInfo[]
 ---@field professionGearSet CraftSim.ProfessionGearSet.Serialized
 ---@field subRecipeDepth number
@@ -81,6 +82,8 @@ function CraftSim.CraftQueueItem:Serialize()
             crafterData = recipeData.crafterData,
             concentrating = recipeData.concentrating,
             requiredReagents = recipeData.reagentData:SerializeRequiredReagents(),
+            sparkReagent = recipeData.reagentData:HasSparkSlot() and
+                recipeData.reagentData.sparkReagentSlot:GetCraftingReagentInfo(),
             optionalReagents = recipeData.reagentData:GetOptionalCraftingReagentInfoTbl(),
             professionGearSet = recipeData.professionGearSet:Serialize(),
             subRecipeDepth = recipeData.subRecipeDepth,
@@ -133,6 +136,10 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
             end
 
             recipeData:SetReagentsByCraftingReagentInfoTbl(GUTIL:Concat { requiredReagentsCraftingReagentInfos, serializedCraftQueueItem.optionalReagents })
+
+            if serializedCraftQueueItem.sparkReagent then
+                recipeData.reagentData:SetSparkItem(serializedCraftQueueItem.sparkReagent.itemID)
+            end
 
             recipeData:SetNonQualityReagentsMax()
 
