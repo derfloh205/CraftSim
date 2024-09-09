@@ -369,7 +369,7 @@ function CraftSim.ReagentData:HasEnough(multiplier, crafterUID)
                 CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)
             end
         end
-        if hasSparkReagent then
+        if self:HasSparkSlot() and hasSparkReagent then
             for _, possibleSparkReagent in pairs(self.sparkReagentSlot.possibleReagents or {}) do
                 local itemID = possibleSparkReagent.item:GetItemID()
                 CraftSim.ITEM_COUNT:UpdateAllCountsForItemID(itemID)

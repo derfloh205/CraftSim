@@ -19,6 +19,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                                 ( You are awesome! )"),
         newP("17.3.0"),
         f.s .. "Updated " .. f.bb("Specialization Data"),
+        f.s .. f.bb("CraftQueue ") .. "should now support " .. f.e("Spark Reagents"),
         newP("17.2.3"),
         f.p .. "Concentration Tracker character name column adaption",
         newP("17.2.2"),
