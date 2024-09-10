@@ -38,7 +38,7 @@ function CraftSim.COOLDOWNS.UI:Init()
         title = L(CraftSim.CONST.TEXT.COOLDOWNS_TITLE),
         collapseable = true,
         closeable = true,
-        moveable = true,
+        moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_COOLDOWNS"),
         frameTable = CraftSim.INIT.FRAMES,

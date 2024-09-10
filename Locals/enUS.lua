@@ -595,5 +595,10 @@ greater or equal the configured sale rate threshold.
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",
         [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "No",
+
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_LOCK_FRAMES] = "Lock Frames",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_UNLOCK_FRAMES] = "Unlock Frames",
+        [CraftSim.CONST.TEXT.RELOAD_PROMPT] = "Reload required for changes to take effect",
+        [CraftSim.CONST.TEXT.RELOAD] = "Reload",
     }
 end

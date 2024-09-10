@@ -251,7 +251,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 .CRAFTING_DETAILS,
             backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
             collapseable = true,
-            moveable = true,
+            moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"),
             title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_TITLE),
             frameTable = CraftSim.INIT.FRAMES,
             frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),

@@ -264,7 +264,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         frameID = CraftSim.CONST.FRAMES.INFO,
         closeable = true,
         scrollableContent = true,
-        moveable = true,
+        moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"),
         title = GUTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")",
             GUTIL.COLORS.GREEN),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,

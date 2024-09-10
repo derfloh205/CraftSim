@@ -26,7 +26,7 @@ function CraftSim.CRAFT_RESULTS.UI:Init()
         title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE),
         collapseable = true,
         closeable = true,
-        moveable = true,
+        moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CRAFT_RESULTS"),
         frameTable = CraftSim.INIT.FRAMES,

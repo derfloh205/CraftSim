@@ -29,7 +29,7 @@ function CraftSim.CRAFTQ.UI:Init()
         title = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_TITLE),
         collapseable = true,
         closeable = true,
-        moveable = true,
+        moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CRAFT_QUEUE"),
         frameTable = CraftSim.INIT.FRAMES,
@@ -869,7 +869,7 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
         sizeX = editFrameX, sizeY = editFrameY, backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameID = CraftSim.CONST.FRAMES.CRAFT_QUEUE_EDIT_RECIPE, frameTable = CraftSim.INIT.FRAMES,
         title = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_TITLE),
-        frameStrata = "DIALOG", closeable = true, closeOnClickOutside = true, moveable = true, frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameStrata = "DIALOG", closeable = true, closeOnClickOutside = true, moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"), frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
     }
 
     ---@type CraftSim.CraftQueueItem?

@@ -276,6 +276,7 @@ function CraftSim.INIT:ADDON_LOADED(addon_name)
 		CraftSim.CRAFT_BUFFS.UI:Init()
 		CraftSim.COOLDOWNS.UI:Init()
 		CraftSim.CONCENTRATION_TRACKER.UI:Init()
+		CraftSim.RELOAD_PROMPT.UI:Init()
 
 		CraftSim.INIT:HookToEvent()
 		CraftSim.INIT:HookToProfessionsFrame()
@@ -460,6 +461,7 @@ function CraftSim.INIT:HideAllModules(keepControlPanel)
 	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
 	CraftSim.EXPLANATIONS.frame:Hide()
 	CraftSim.STATISTICS.UI:SetVisible(false)
+	--CraftSim.RELOAD_PROMPT.frame:Hide()
 end
 
 function CraftSim.INIT:TriggerModulesByRecipeType()
