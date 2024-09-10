@@ -192,6 +192,10 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 
 		local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
 
+		if C_TradeSkillUI.IsNPCCrafting() or C_TradeSkillUI.IsRuneforging() or C_TradeSkillUI.IsTradeSkillLinked() or C_TradeSkillUI.IsTradeSkillGuild() then
+			return
+		end
+
 		---@type CraftSim.RecipeData
 		local recipeData
 		-- if craftsim did not call the api and we do not have reagents, set it by gui
