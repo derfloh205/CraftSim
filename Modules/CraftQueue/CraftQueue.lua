@@ -157,6 +157,10 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
 
     local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
 
+    recipeData.concentrating = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
+    recipeData:Update() -- update recipe before importing
+
+
     if not restockOptions.enabled then
         print("restockOptions.disabled")
         -- use general options
@@ -169,6 +173,7 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
             CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_SALE_RATE_THRESHOLD"))
         print("profitThresholdReached: " .. tostring(profitThresholdReached))
         print("saleRateReached: " .. tostring(saleRateReached))
+        print("relativeProfitCached: " .. tostring(recipeData.relativeProfitCached))
         local include = profitThresholdReached and saleRateReached
         if include then
             print(f.g("include"))
@@ -190,6 +195,7 @@ function CraftSim.CRAFTQ.ImportRecipeScanFilter(recipeData) -- . accessor instea
 
     print("profitMarginReached: " .. tostring(profitMarginReached))
     print("saleRateReached: " .. tostring(saleRateReached))
+    print("relativeProfitCached: " .. tostring(recipeData.relativeProfitCached))
 
     local include = profitMarginReached and saleRateReached
     if include then

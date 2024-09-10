@@ -18,7 +18,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("17.3.1"),
-        f.p .. "",
+        f.p .. "Fixed " .. f.bb("CraftQueue Restock Profit Threshold"),
+        f.p .. "Updated " .. f.bb("German Locals"),
+        f.a .. "Thanks to " .. f.bb(""),
         newP("17.3.0"),
         f.P .. f.bb("Recipe Scan") .. ": " .. f.g("New Feature"),
         f.a ..
