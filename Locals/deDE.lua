@@ -10,10 +10,12 @@ function CraftSim.LOCAL_DE:GetData()
         -- ERFORDERLICH:
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Mehrfachherstellung",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Einfallsreichtum",
-        [CraftSim.CONST.TEXT.STAT_INGENUITY] = "Einfallsreichtum",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY] = "Genialität",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Herstellungsgeschwindigkeit",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Anlegen:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Verzaubert:",
+            
+        -- OPTIONAL (Standardmäßig EN, falls nicht verfügbar):
             
         -- gemeinsame Berufs-CDs
         [CraftSim.CONST.TEXT.DF_ALCHEMY_TRANSMUTATIONS] = "DF - Transmutationen",
@@ -54,7 +56,7 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS] = "Mehrfachherstellung Extra-Gegenstände",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "Einfallsreichtum Extra-Gegenstände",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS] = "Herstellungsgeschwindigkeit",
-        [CraftSim.CONST.TEXT.STAT_INGENUITY_BONUS] = "Einfallsreichtum spart Konzentration",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY_BONUS] = "Genialität spart Konzentration",
         [CraftSim.CONST.TEXT.STAT_INGENUITY_LESS_CONCENTRATION] = "Weniger Konzentrationsverbrauch",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "Durchbruch bei Phiolen",
         [CraftSim.CONST.TEXT.STAT_POTION_EXPERIMENTATION] = "Durchbruch bei Tränken",
