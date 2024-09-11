@@ -73,7 +73,7 @@ function CraftSim.STATISTICS.UI:Init()
                 parent = frame.content,
                 anchorParent = frame.content,
                 offsetY = -2,
-                label = "Probability Table",
+                label = L(CraftSim.CONST.TEXT.STATISTICS_PROBABILITY_TABLE_TAB),
             },
             parent = frame.content,
             anchorParent = frame.content,
@@ -92,7 +92,7 @@ function CraftSim.STATISTICS.UI:Init()
                 anchorParent = frame.content.probabilityTableTab.button,
                 anchorA = "LEFT",
                 anchorB = "RIGHT",
-                label = "Concentration",
+                label = L(CraftSim.CONST.TEXT.STATISTICS_CONCENTRATION_TAB),
 
             },
             parent = frame.content,
@@ -334,16 +334,14 @@ function CraftSim.STATISTICS.UI:InitConcentrationTab(tab)
             anchorA = "BOTTOM",
             anchorB = "TOP", offsetY = 5,
         } },
-        text = "Concentration Cost Curve"
+        text = L(CraftSim.CONST.TEXT.STATISTICS_CONCENTRATION_CURVE_GRAPH)
     }
 
     GGUI.HelpIcon {
         parent = content,
         anchorParent = content.graphTitle.frame,
         anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
-        text = "Concentration Cost based on Player Skill for given Recipe\n" ..
-            f.bb("X Axis: ") .. " Player Skill\n" ..
-            f.bb("Y Axis: ") .. " Concentration Cost",
+        text = L(CraftSim.CONST.TEXT.STATISTICS_CONCENTRATION_CURVE_GRAPH_HELP),
     }
 end
 

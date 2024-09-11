@@ -59,7 +59,7 @@ function CraftSim.COOLDOWNS.UI:Init()
             parent = content,
             anchorParent = content,
             offsetY = -2,
-            label = "Overview",
+            label = L(LID.COOLDOWNS_TAB_OVERVIEW),
         },
         parent = content,
         anchorParent = content,
@@ -76,7 +76,7 @@ function CraftSim.COOLDOWNS.UI:Init()
             anchorParent = content.overviewTab.button,
             anchorA = "LEFT",
             anchorB = "RIGHT",
-            label = "Options",
+            Options = L(LID.COOLDOWNS_TAB_OPTIONS),
         },
         parent = content,
         anchorParent = content,
@@ -228,7 +228,7 @@ function CraftSim.COOLDOWNS.UI:InitializeCooldownOptionsTab(cooldownOptionsTab)
         buttonOptions = {
             parent = content, anchorParent = content,
             anchorA = "TOP", anchorB = "TOP", offsetY = -10,
-            label = "Expansion Filter",
+            label = L(LID.COOLDOWNS_EXPANSION_FILTER_BUTTON),
             adjustWidth = true, sizeX = 20,
         },
         onSelectCallback = function(_, _, _)
@@ -305,7 +305,7 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
                             end
                             if #recipeListText > 0 then
                                 tooltipText = tooltipText ..
-                                    f.bb("\n\nRecipes sharing this Cooldown:\n") .. f.white(recipeListText)
+                                    L(CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_LIST_TEXT_TOOLTIP) .. f.white(recipeListText)
                             end
                         else
                             recipeColumn.text:SetText((recipeInfo and recipeInfo.name) or serializationID)
@@ -327,7 +327,7 @@ function CraftSim.COOLDOWNS.UI:UpdateList()
                                 f.bb(cooldownData:GetFormattedTimerNextCharge()))
                             row.allchargesFullTimestamp = allFullTS
                             if cdReady then
-                                allColumn.text:SetText(f.g("Ready"))
+                                allColumn.text:SetText(L(CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_READY))
                             else
                                 allColumn.text:SetText(f.g(cooldownData:GetAllChargesFullDateFormatted()))
                             end

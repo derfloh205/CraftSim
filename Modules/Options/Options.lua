@@ -242,8 +242,8 @@ function CraftSim.OPTIONS:Init()
     }
 
     local coinMoneyFormatDB = GGUI.Checkbox {
-        label = " " .. "Use Coin Textures: " .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
-        tooltip = "Use coin icons to format money",
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX) .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
+        tooltip = L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP),
         initialValue = CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"),
         parent = GeneralTab.content, anchorParent = hideMinimapButtonCheckbox.frame,
         anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
