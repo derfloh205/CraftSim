@@ -4896,6 +4896,35 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENCHANTING_DATA = {
 			100034,
 			100032,
 		},
+		[470726] = {
+			99889,
+			99879,
+			99878,
+			99877,
+			99876,
+			99874,
+			99873,
+			99890,
+			99886,
+			99884,
+			99882,
+			99880,
+			100037,
+			100038,
+			100022,
+			100020,
+			100018,
+			100016,
+			100039,
+			100029,
+			100027,
+			100025,
+			100023,
+			100040,
+			100036,
+			100034,
+			100032,
+		},
 	},
 	nodeData = {
 		[100037] = {
@@ -5752,6 +5781,90 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ENCHANTING_DATA = {
 			stats = {
 				skill = 20,
 				reduceconcentrationcost = 5,
+			},
+		},
+		[99889] = {
+			nodeID = 99889,
+			maxRank = 30,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
+		},
+		[99879] = {
+			nodeID = 99889,
+			maxRank = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 5,
+			},
+		},
+		[99878] = {
+			nodeID = 99889,
+			maxRank = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 5,
+			},
+		},
+		[99877] = {
+			nodeID = 99889,
+			maxRank = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 5,
+			},
+		},
+		[99876] = {
+			nodeID = 99889,
+			maxRank = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 5,
+			},
+		},
+		[99874] = {
+			nodeID = 99889,
+			maxRank = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 10,
+			},
+		},
+		[99873] = {
+			nodeID = 99889,
+			maxRank = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 20,
+			},
+		},
+		[99890] = {
+			nodeID = 99890,
+			maxRank = 30,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 1,
+			},
+		},
+		[99886] = {
+			nodeID = 99890,
+			maxRank = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 5,
+			},
+		},
+		[99884] = {
+			nodeID = 99890,
+			maxRank = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 5,
+			},
+		},
+		[99882] = {
+			nodeID = 99890,
+			maxRank = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 5,
+			},
+		},
+		[99880] = {
+			nodeID = 99890,
+			maxRank = 1,
+			stats = {
+				["traitranksbypoints-modifierlabel(dnt)"] = 20,
 			},
 		},
 	},

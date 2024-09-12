@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("17.3.2"),
+        f.p .. "Specialization Talent Data Updated",
         newP("17.3.1"),
         f.p .. "Fixed " .. f.bb("CraftQueue Restock Profit Threshold"),
         newP("17.3.0"),
