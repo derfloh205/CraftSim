@@ -28,6 +28,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "Thanks to: " .. f.bb("https://github.com/netouss"),
         f.p .. "Fixed " .. f.bb("Blacksmithing") .. " Recipe Scan for alts error",
         f.p .. "Fixed " .. f.bb("Blacksmithing") .. " Queue Cache for alts error",
+        f.p .. "Fixed " .. f.bb("Enchanting") .. " Specialization Info Display Error",
         supporterListUpdate,
         newP("17.3.2"),
         f.p .. "Specialization Talent Data Updated",
