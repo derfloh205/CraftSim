@@ -100,7 +100,9 @@ function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
     for _, nodeID in ipairs(nodeIDs) do
         local nodeData = CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, nodeID,
             CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN, Enum.Profession.Blacksmithing)
-        buffStats:add(nodeData.professionStats)
+        if nodeData then
+            buffStats:add(nodeData.professionStats)
+        end
     end
 
     if CraftSim.UTIL:CheckIfBagIsEquipped(CraftSim.CONST.ITEM_IDS.PROFESSION_BAGS.IGNITION_SATCHEL) then
@@ -140,7 +142,7 @@ function CraftSim.CRAFT_BUFFS:CreatePotionSpillOverBuff(recipeData)
     local potionBulkProductionNodeID = 99040
     local nodeData = CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, potionBulkProductionNodeID, 10,
         Enum.Profession.Alchemy)
-    local isDouble = nodeData.rank >= 25
+    local isDouble = nodeData and nodeData.rank >= 25
 
     if isDouble then
         buffStats.ingenuity:addValue(24)
@@ -162,7 +164,7 @@ function CraftSim.CRAFT_BUFFS:CreateFlaskSpillOverBuff(recipeData)
     local bulkProductionNodeID = 98952
     local nodeData = CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, bulkProductionNodeID, 10,
         Enum.Profession.Alchemy)
-    local isDouble = nodeData.rank >= 25
+    local isDouble = nodeData and nodeData.rank >= 25
 
     if isDouble then
         buffStats.ingenuity:addValue(24)
@@ -184,7 +186,7 @@ function CraftSim.CRAFT_BUFFS:CreatePhialSpillOverBuff(recipeData)
     local bulkProductionNodeID = 98951
     local nodeData = CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, bulkProductionNodeID, 10,
         Enum.Profession.Alchemy)
-    local isDouble = nodeData.rank >= 25
+    local isDouble = nodeData and nodeData.rank >= 25
 
     if isDouble then
         buffStats.ingenuity:addValue(24)
