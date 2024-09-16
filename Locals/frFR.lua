@@ -10,9 +10,10 @@ function CraftSim.LOCAL_FR:GetData()
         -- REQUIRED:
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Fabrication multiple",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Ingéniosité",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY] = "Inventivité",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Vitesse de fabrication",
-        [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Équipé",
-        [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Enchanté:",
+        [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Équipé :",
+        [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Enchanté :",
 
         -- OPTIONAL (Defaulting to EN if not available):
 
@@ -31,6 +32,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.EXPANSION_BATTLE_FOR_AZEROTH] = "Battle of Azeroth",
         [CraftSim.CONST.TEXT.EXPANSION_SHADOWLANDS] = "Shadowlands",
         [CraftSim.CONST.TEXT.EXPANSION_DRAGONFLIGHT] = "Dragonflight",
+        [CraftSim.CONST.TEXT.EXPANSION_THE_WAR_WITHIN] = "The War Within",
 
         -- professions
 
@@ -54,12 +56,15 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS] = "Objets bonus multicraft",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "Objets bonus de l'ingéniosité",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED_BONUS] = "Vitesse d'artisanat'",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY_BONUS] = "Concentration économisée",
+        [CraftSim.CONST.TEXT.STAT_INGENUITY_LESS_CONCENTRATION] = "Moins de concentration utilisée",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "Expérimentation des flacons",
         [CraftSim.CONST.TEXT.STAT_POTION_EXPERIMENTATION] = "Expérimentation des potions",
 
         -- Profit Breakdown Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
         "Resourcefulness procs for every material individually and then saves about 30% of its quantity.\n\nThe average value it saves is the average saved value of EVERY combination and their chances.\n(All materials proccing at once is very unlikely but saves a lot)\n\nThe average total saved material costs is the sum of the saved material costs of all combinations weighted against their chance.",
+
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP] =
         "Recipe difficulty determines where the breakpoints of the different qualities are.\n\nFor recipes with five qualities they are at 20%, 50%, 80% and 100% recipe difficulty as skill.\nFor recipes with three qualities they are at 50% and 100%",
         [CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP] =
@@ -83,6 +88,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Multicraft: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Ingéniosité: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Item Bonus Ingéniosité: ",
+        [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Concentration: ",
         [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "Bonus Qualité Matériaux: ",
         [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "Maximum Qualité Matériaux %: ",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Qualité attendue: ",
@@ -94,6 +100,54 @@ function CraftSim.LOCAL_FR:GetData()
         -- Statistics
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] =
         "This is calculated by using the 'abramowitz and stegun' approximation (1985) of the CDF (Cumulative Distribution Function)\n\nYou will notice that its always around 50% for 1 craft.\nThis is because 0 is most of the time close to the average profit.\nAnd the chance of getting the mean of the CDF is always 50%.\n\nHowever, the rate of change can be very different between recipes.\nIf it is more likely to have a positive profit than a negative one, it will steadly increase.\nThis is of course also true for the other direction.",
+        [CraftSim.CONST.TEXT.EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION] =
+            f.r("Warning: ") .. " Math ahead!\n\n" ..
+            "When you craft something you have different chances for different outcomes based on your crafting stats.\n" ..
+            "And in statistics this is called a " .. f.l("Probability Distribution.\n") ..
+            "However, you will notice that the different chances of your procs do not sum up to one\n" ..
+            "(Which is required for such a distribution as it means you got a 100% chance that anything can happen)\n\n" ..
+            "This is because procs like " ..
+            f.bb("Resourcefulness ") .. "and" .. f.bb(" Multicraft") .. " can happen " .. f.g("at the same time.\n") ..
+            "So we first need to convert our proc chances to a " ..
+            f.l("Probability Distribution ") .. " with chances\n" ..
+            "summing to 100% (Which would mean that every case is covered)\n" ..
+            "And for this we would need to calculate " .. f.l("every") .. " possible outcome of one craft\n\n" ..
+            "Like: \n" ..
+            f.p .. "What if " .. f.bb("nothing") .. " procs?\n" ..
+            f.p .. "What if either " .. f.bb("Resourcefulness") .. " or " .. f.bb("Multicraft") .. " procs?\n" ..
+            f.p .. "What if both " .. f.bb("Resourcefulness") .. " and " .. f.bb("Multicraft") .. " procs?\n" ..
+            f.p .. "And so on..\n\n" ..
+            "For a recipe that considers all procs, that would be 2 to the power of 2 outcome possibilities, which is a neat 4.\n" ..
+            "To get the chance of only " ..
+            f.bb("Multicraft") .. " occuring, we have to consider all other possibilities!\n" ..
+            "The chance to proc " ..
+            f.l("only") .. f.bb(" Multicraft ") .. "is actually the chance to proc " .. f.bb("Multicraft\n") ..
+            "and " .. f.l("not ") .. "proc " .. f.bb("Resourcefulness\n") ..
+            "And Math tells us that the chance of something not occuring is 1 minus the chance of it occuring.\n" ..
+            "So the chance to proc only " ..
+            f.bb("Multicraft ") ..
+            "is actually " .. f.g("multicraftChance * (1-resourcefulnessChance)\n\n") ..
+            "After calculating each possibility in that way the individual chances indeed sum up to one!\n" ..
+            "Which means we can now apply statistical formulas. The most interesting one in our case is the " ..
+            f.bb("Expected Value") .. "\n" ..
+            "Which is, as the name suggests, the value we can expect to get on average, or in our case, the " ..
+            f.bb(" expected profit for a craft!\n") ..
+            "\n" .. cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
+            "This tells us that the expected value " ..
+            f.l("E") ..
+            " of a probability distribution " ..
+            f.l("X") .. " is the sum of all its values multiplied by their chance.\n" ..
+            "So if we have one " ..
+            f.bb("case A with chance 30%") ..
+            " and profit " ..
+            CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            " and a " ..
+            f.bb("case B with chance 70%") ..
+            " and profit " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " then the expected profit of that is\n" ..
+            f.bb("\nE(X) = -100*0.3 + 300*0.7  ") ..
+            "which is " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. "\n" ..
+            "You can view all cases for your current recipe in the " .. f.bb("Statistics") .. " window!"
+        ,
 
         -- Popups
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM] = "Aucune source de prix supporté disponible!",
@@ -187,20 +241,10 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_AFTER] = " après",
         [CraftSim.CONST.TEXT.STATISTICS_CRAFTS] = "Crafts: ",
         [CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER] = "Qualité",
-        [CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER] = "Chance",
-        [CraftSim.CONST.TEXT.STATISTICS_CHANCE_MIN_HEADER] = "Chance (Min)",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Ø Crafts estimés",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_MIN_HEADER] = "Ø Crafts estimés (Min)",
         [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "Multicraft",
         [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "Ingéniosité",
-        [CraftSim.CONST.TEXT.STATISTICS_HSV_NEXT] = "HSV Next",
-        [CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP] = "HSV Skip",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "Profit estimé",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "Table de probabilité de recette",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "Coût estimé Ø",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_MIN_HEADER] = "Ø Coût estimé (Min)",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "Avec une vente Ø de",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_MIN_WITH_RETURN_HEADER] = "Avec une vente Ø (Min) de",
 
         -- Price Details Frame
         [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "Details des prix CraftSim",
@@ -226,6 +270,7 @@ function CraftSim.LOCAL_FR:GetData()
         -- Recipe Scan Frame
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE] = "Scan Recettes CraftSim",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE] = "Mode de scan",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE] = "Mode de tri",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_RECIPIES] = "Scanner recettes",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_CANCEL] = "Annuler",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING] = "Scan...",
@@ -245,7 +290,10 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CRAFTER_HEADER] = "Fabricant",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER] = "Recette",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER] = "Apprise",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_RESULT_HEADER] = "Resultat",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER] = "Profit moyen",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_VALUE_HEADER] = "C. Valeur",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_COST_HEADER] = "C. Coût",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TOP_GEAR_HEADER] = "Meilleur équipement",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INV_AH_HEADER] = "Sac/HV",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_BY_MARGIN] = "Tri %Profit",
@@ -262,6 +310,10 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Matériaux Qualité 2",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Matériaux Qualité 3",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Optimiser Matériaux",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_PROFIT] = "Profit",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_RELATIVE_PROFIT] = "Profit Relatif",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_CONCENTRATION_VALUE] = "Valeur Concentration",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_CONCENTRATION_COST] = "Coût Concentration",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON] = "Extensions",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ALTPROFESSIONS_FILTER_BUTTON] = "Alt Professions",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SCAN_ALL_BUTTON_READY] = "Scan Professions",
@@ -450,7 +502,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFTING_COSTS_HEADER] = "Crafting Costs",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL] = "Craft",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR] = "Wrong Tools",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "No Matériaux",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "Pas de matériaux",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "Add Open Recipe",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Clear All",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Restock from Recipe Scan",
@@ -504,12 +556,20 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CRAFTING_COSTS_LABEL] = "Crafting Costs: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_AVERAGE_PROFIT_LABEL] = "Average Profit: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_RESULTS_LABEL] = "Results",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CONCENTRATION_CHECKBOX] = " Concentration",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX] = "Per Character",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP] = "Create an " ..
             f.bb("Auctionator Shopping List") .. " for each crafter character\ninstead of one shopping list for all",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX] = "Target Mode Only",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP] = "Create an " ..
             f.bb("Auctionator Shopping List") .. " for target mode recipes only",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white("Montant non sauvegardé.\nAppuyez sur ") .. f.bb("Entrée") .. f.white(" pour sauvegarder"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Recette Apprise"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Pas en recharge"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_MATERIALS] = f.white("Materiaux Disponibles"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_GEAR] = f.white("Equipement de Métier Equipé"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("Artisan Correct"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("Profession Ouverte"),
 
         -- craft buffs
 
@@ -529,6 +589,8 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.COOLDOWNS_CHARGES_HEADER] = "Charges",
         [CraftSim.CONST.TEXT.COOLDOWNS_NEXT_HEADER] = "Next Charge",
         [CraftSim.CONST.TEXT.COOLDOWNS_ALL_HEADER] = "Charges Full",
+        
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_TITLE] = "Concentration CraftSim",
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",
