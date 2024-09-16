@@ -31,6 +31,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.p .. "Fixed " .. f.bb("Enchanting") .. " Specialization Info Display Error",
         f.p .. "Fixed " .. f.bb("Concentration Tracker") .. " listing Gathering Professions",
         f.p .. "Fixed " .. f.bb("CraftQueue") .. " craft recognition",
+        f.p .. "Fixed " .. f.bb("Price Override") .. " Clear All Button",
         supporterListUpdate,
         newP("17.3.2"),
         f.p .. "Specialization Talent Data Updated",
