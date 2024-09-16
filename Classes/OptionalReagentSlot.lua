@@ -17,6 +17,7 @@ function CraftSim.OptionalReagentSlot:new(recipeData, reagentSlotSchematic)
     self.possibleReagents = {}
     self.craftingReagentSlotSchematic = reagentSlotSchematic
     self.required = reagentSlotSchematic.required
+    self.maxQuantity = reagentSlotSchematic.quantityRequired or 1
 
     if reagentSlotSchematic.slotInfo and reagentSlotSchematic.slotInfo.mcrSlotID then
         self.slotText = reagentSlotSchematic.slotInfo.slotText
@@ -48,7 +49,7 @@ function CraftSim.OptionalReagentSlot:GetCraftingReagentInfo()
         return {
             itemID = self.activeReagent.item:GetItemID(),
             dataSlotIndex = self.dataSlotIndex,
-            quantity = 1,
+            quantity = self.maxQuantity,
         }
     end
 end
@@ -64,7 +65,7 @@ function CraftSim.OptionalReagentSlot:HasItem(multiplier, crafterUID)
 
     local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, self.activeReagent.item:GetItemID())
 
-    return itemCount >= multiplier
+    return itemCount >= (multiplier * self.maxQuantity)
 end
 
 --- check how many times the player can fulfill the allocated item quantity
@@ -74,7 +75,7 @@ function CraftSim.OptionalReagentSlot:HasQuantityXTimes(crafterUID)
         return math.huge -- yes I have infinite a number of times yes
     end
     local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, self.activeReagent.item:GetItemID())
-    return itemCount -- cause the required amount is always 1
+    return itemCount * self.maxQuantity
 end
 
 function CraftSim.OptionalReagentSlot:Debug()
@@ -107,6 +108,7 @@ function CraftSim.OptionalReagentSlot:Copy(recipeData)
     copy.dataSlotIndex = self.dataSlotIndex
     copy.locked = self.locked
     copy.lockedReason = self.lockedReason
+    copy.maxQuantity = self.maxQuantity
 
     return copy
 end
@@ -117,6 +119,7 @@ end
 ---@field dataSlotIndex number
 ---@field locked boolean
 ---@field lockedReason? string
+---@field maxQuantity number
 
 ---Serializes the optionalReagentSlot for sending via the addon channel
 ---@return CraftSim.OptionalReagentSlot.Serialized
@@ -129,6 +132,7 @@ function CraftSim.OptionalReagentSlot:Serialize()
     serialized.possibleReagents = CraftSim.GUTIL:Map(self.possibleReagents, function(optionalReagent)
         return optionalReagent:Serialize()
     end)
+    serialized.maxQuantity = self.maxQuantity or 1
     return serialized
 end
 
@@ -146,6 +150,7 @@ function CraftSim.OptionalReagentSlot:Deserialize(serializedOptionalReagentSlot)
         function(serializedOptionalReagent)
             return CraftSim.OptionalReagent:Deserialize(serializedOptionalReagent)
         end)
+    deserialized.maxQuantity = self.maxQuantity or 1
     return deserialized
 end
 
@@ -158,6 +163,7 @@ function CraftSim.OptionalReagentSlot:GetJSON(indent)
     jb:Add("slotText", self.slotText)
     jb:Add("dataSlotIndex", self.dataSlotIndex)
     jb:Add("locked", self.locked)
+    jb:Add("maxQuantity", self.maxQuantity)
     jb:Add("lockedReason", self.lockedReason, true)
     jb:End()
     return jb.json

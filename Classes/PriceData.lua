@@ -120,6 +120,14 @@ function CraftSim.PriceData:Update()
             GUTIL:Map(reagentData.optionalReagentSlots, function(slot) return slot.activeReagent end),
             GUTIL:Map(reagentData.finishingReagentSlots, function(slot) return slot.activeReagent end),
         })
+        local quantityMap = {} -- ugly hack
+        if self.recipeData.reagentData:HasSparkSlot() then
+            if self.recipeData.reagentData.sparkReagentSlot.activeReagent then
+                tinsert(activeOptionalReagents, self.recipeData.reagentData.sparkReagentSlot.activeReagent)
+                quantityMap[self.recipeData.reagentData.sparkReagentSlot.activeReagent.item:GetItemID()] =
+                    self.recipeData.reagentData.sparkReagentSlot.maxQuantity
+            end
+        end
         print("num active optionals: " .. #activeOptionalReagents)
         for _, activeOptionalReagent in pairs(activeOptionalReagents) do
             if activeOptionalReagent then
@@ -127,7 +135,7 @@ function CraftSim.PriceData:Update()
                 local itemID = activeOptionalReagent.item:GetItemID()
                 local itemPrice, priceInfo = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false,
                     useSubRecipes and self.recipeData.optimizedSubRecipes[itemID])
-                self.craftingCosts = self.craftingCosts + itemPrice
+                self.craftingCosts = self.craftingCosts + (itemPrice * (quantityMap[itemID] or 1))
 
                 if priceInfo.isExpectedCost then
                     tinsert(self.selfCraftedReagents, itemID)

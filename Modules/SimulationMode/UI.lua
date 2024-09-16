@@ -536,36 +536,6 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         .OrderDetails.SchematicForm)
 end
 
-function CraftSim.SIMULATION_MODE.UI:ResetAllNodeModFramesForTab(tab)
-    for _, nodeModFrame in pairs(tab.content.nodeModFrames) do
-        nodeModFrame:Hide()
-        nodeModFrame.showParentLine:Hide()
-    end
-end
-
-function CraftSim.SIMULATION_MODE.UI:GetSpecNodeModFramesByTabAndLayerAndLayerMax(tabIndex, layer, layerMaxNodes)
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    local specSimFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        specSimFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM_WO)
-    else
-        specSimFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
-    end
-
-    local tab = specSimFrame.content.specializationTabs[tabIndex]
-
-    if tab then
-        local nodeModFrames = tab.content.nodeModFrames
-        local relevantModFrames = GUTIL:Filter(nodeModFrames, function(nodeModFrame)
-            return nodeModFrame.layer == layer and nodeModFrame.layerMaxNodes == layerMaxNodes
-        end)
-
-        return relevantModFrames
-    end
-
-    return {}
-end
-
 function CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteFrame(reagentOverwriteFrame, offsetX, offsetY, baseX,
                                                                  inputOffsetX)
     local overwriteInput = CreateFrame("frame", nil, reagentOverwriteFrame)

@@ -1126,6 +1126,17 @@ function CraftSim.CRAFTQ.UI:InitEditRecipeFrame(parent, anchorParent)
             editRecipeFrame.content.finishingReagentSelectors, OnSelectOptionalReagent)
     end
 
+    editRecipeFrame.content.sparkReagentTitle = GGUI.Text {
+        parent = editRecipeFrame.content, anchorParent = optionalReagentsFrame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -65,
+        text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_SPARK_LABEL), justifyOptions = { type = "H", align = "LEFT" }
+    }
+
+
+    ---@type CraftSim.CRAFTQ.EditRecipeFrame.OptionalReagentSelector[]
+    editRecipeFrame.content.sparkReagentSelectors = {}
+    CreateItemSelector(editRecipeFrame.content, editRecipeFrame.content.sparkReagentTitle.frame,
+        editRecipeFrame.content.sparkReagentSelectors, OnSelectOptionalReagent)
+
     editRecipeFrame.content.professionGearTitle = GGUI.Text {
         parent = editRecipeFrame.content, anchorParent = editRecipeFrame.content.optionalReagentsTitle.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 20,
         text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_PROFESSION_GEAR_LABEL), justifyOptions = { type = "H", align = "LEFT" }
@@ -1578,6 +1589,25 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
         end
     end
 
+    -- Spark
+    local sparkSelector = editRecipeFrame.content.sparkReagentSelectors[1]
+    editRecipeFrame.content.sparkReagentTitle:SetVisible(recipeData.reagentData:HasSparkSlot())
+    local sparkSlot = recipeData.reagentData.sparkReagentSlot
+    if sparkSlot then
+        sparkSelector.slot = sparkSlot
+        sparkSelector:SetItems(GUTIL:Map(sparkSlot.possibleReagents, function(reagent)
+            return reagent.item:GetItemID()
+        end))
+        if sparkSlot.activeReagent then
+            sparkSelector:SetSelectedItem(sparkSlot.activeReagent.item)
+        else
+            sparkSelector:SetSelectedItem(nil)
+        end
+        sparkSelector:Show()
+    else
+        sparkSelector.slot = nil
+        sparkSelector:Hide()
+    end
 
     local gearSelectors = editRecipeFrame.content.professionGearSelectors
     local professionGearSet = recipeData.professionGearSet
