@@ -24,6 +24,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- " .. f.bb("Recipe Scan"),
         f.s .. "Updated German Locals",
         f.a .. "Thanks to: " .. f.bb("https://github.com/Gogadon"), supporterListUpdate,
+        f.s .. "Updated French Locals",
+        f.a .. "Thanks to: " .. f.bb("https://github.com/netouss"), supporterListUpdate,
         newP("17.3.2"),
         f.p .. "Specialization Talent Data Updated",
         newP("17.3.1"),
