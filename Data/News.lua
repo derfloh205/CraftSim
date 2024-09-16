@@ -29,6 +29,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.p .. "Fixed " .. f.bb("Blacksmithing") .. " Recipe Scan for alts error",
         f.p .. "Fixed " .. f.bb("Blacksmithing") .. " Queue Cache for alts error",
         f.p .. "Fixed " .. f.bb("Enchanting") .. " Specialization Info Display Error",
+        f.p .. "Fixed " .. f.bb("Concentration Tracker") .. " listing Gathering Professions",
         supporterListUpdate,
         newP("17.3.2"),
         f.p .. "Specialization Talent Data Updated",
