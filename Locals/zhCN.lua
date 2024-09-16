@@ -374,7 +374,7 @@ function CraftSim.LOCAL_CN:GetData()
             f.l("CraftSim") .. "也会同时优化制造扫描到的配方中缓存的材料配方，\n并使用其" ..
             f.bb("预期成本") .. "来计算最终产品的制作成本。\n\n" ..
             f.r("警告：这可能会降低扫描性能"),
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_CAHCED_RECIPES] = "已扫描的配方：",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES] = "已扫描的配方：",
 
         -- Recipe Top Gear
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim 最佳装备",
@@ -560,7 +560,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR] = "工具错误",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "没有材料",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "加入开放材料",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRATFS_BUTTON_LABEL] = "添加首次制造",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL] = "添加首次制造",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "全部清除",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "根据配方扫描补货",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "专业错误",
