@@ -124,7 +124,6 @@ end
 
 ---@param maxProfessionStats CraftSim.ProfessionStats
 function CraftSim.ProfessionStats:GetTooltipText(maxProfessionStats)
-	-- for customer service disclamer if send from simulation mode
 	local r = math.floor
 	if not maxProfessionStats then
 		local text =

@@ -150,7 +150,7 @@ function CraftSim.NodeData:UpdateProfessionStats()
 
     self.professionStats.ingenuity:SetExtraValue(math.max(0, rank * self.equalsIngenuityExtraConcentrationFactor))
     self.maxProfessionStats.ingenuity:SetExtraValue(math.max(0, maxRank * self
-        .equalsIngenuityExtraConcentrationFactor), 2)
+        .equalsIngenuityExtraConcentrationFactor))
 
     -- then add stats from perks
     for _, perkData in pairs(self.perkData) do
