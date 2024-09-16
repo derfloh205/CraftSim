@@ -220,7 +220,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
             sizeY = 18,
             adjustWidth = true,
             clickCallback = function()
-                CraftSim.PRICE_OVERRIDE:ClearAll()
+                CraftSim.DB.PRICE_OVERRIDE:ClearAll()
                 if frame.currentDropdownData then
                     overrideOptions:updateButtonStatus()
                 end
