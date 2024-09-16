@@ -2938,4 +2938,20 @@ CraftSim.OPTIONAL_REAGENT_DATA = {
 			ingenuity = 50,
 		},
 	},
+	[210232] = {
+		qualityID = 0,
+		name = "Forged Aspirant's Heraldry",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 50,
+		},
+	},
+	[210233] = {
+		qualityID = 0,
+		name = "Forged Gladiator's Heraldry",
+		expansionID = 10,
+		stats = {
+			increasedifficulty = 150,
+		},
+	},
 }
