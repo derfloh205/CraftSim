@@ -119,7 +119,9 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@return CraftSim.CraftQueueItem | nil craftQueueItem
 function CraftSim.CraftQueue:FindRecipe(recipeData)
-    return self.recipeCrafterMap[recipeData:GetRecipeCraftQueueUID()]
+    local craftQueueItem = self.recipeCrafterMap[recipeData:GetRecipeCraftQueueUID()]
+
+    return craftQueueItem
 end
 
 ---@param craftQueueItem CraftSim.CraftQueueItem
@@ -376,6 +378,12 @@ function CraftSim.CraftQueue:OnRecipeCrafted(recipeData)
     local craftQueueItem = self:FindRecipe(recipeData)
 
     if not craftQueueItem then return end
+
+    -- if found only recognize as same crafted if concentration status and more is the same
+
+    if craftQueueItem.recipeData.concentrating ~= recipeData.concentrating then return end
+
+    if craftQueueItem.recipeData:GetReagentUID() ~= recipeData:GetReagentUID() then return end
 
     -- decrement by one and refresh list
     local newAmount = CraftSim.CRAFTQ.craftQueue:SetAmount(recipeData, -1, true)

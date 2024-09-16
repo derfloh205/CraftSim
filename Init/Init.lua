@@ -176,11 +176,19 @@ function CraftSim.INIT:InitStaticPopups()
 end
 
 function CraftSim.INIT:InitCraftRecipeHooks()
-	---@param recipeID number
-	---@param amount number?
-	---@param craftingReagentInfoTbl CraftingReagentInfo[]?
-	---@param itemTarget ItemLocationMixin?
-	local function OnCraft(recipeID, amount, craftingReagentInfoTbl, itemTarget)
+	---@class CraftSim.INIT.OnCraftData
+	---@field recipeID RecipeID
+	---@field amount number
+	---@field recipeLevel number?
+	---@field craftingReagentInfoTbl CraftingReagentInfo[]?
+	---@field itemTarget ItemLocationMixin?
+	---@field isEnchant boolean?
+	---@field isOrder boolean?
+	---@field orderID number?
+	---@field concentrating boolean?
+
+	---@param onCraftData CraftSim.INIT.OnCraftData
+	local function OnCraft(onCraftData)
 		-- create a recipeData instance with given info and forward it to the corresponding modules
 		-- isRecraft and isWorkOrder is omitted cause cant know here
 		-- but recrafts have different reagents.. so they wont be recognized by comparison anyway
@@ -206,7 +214,7 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 				isRecraft = CraftSim.INIT.currentRecipeData.isRecraft
 			end
 			-- this means recraft and work order stuff is important
-			recipeData = CraftSim.RecipeData(recipeID, isRecraft, CraftSim.UTIL:IsWorkOrder())
+			recipeData = CraftSim.RecipeData(onCraftData.recipeID, isRecraft, onCraftData.isOrder)
 
 			recipeData:SetAllReagentsBySchematicForm()
 			recipeData:SetConcentrationBySchematicForm()
@@ -214,12 +222,14 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		else
 			print("api was called via craftsim")
 			-- started via craftsim craft queue
-			recipeData = CraftSim.RecipeData(recipeID, isRecraft, CraftSim.UTIL:IsWorkOrder())
-			recipeData:SetReagentsByCraftingReagentInfoTbl(craftingReagentInfoTbl)
+			recipeData = CraftSim.RecipeData(onCraftData.recipeID, isRecraft, onCraftData.isOrder)
+			recipeData:SetReagentsByCraftingReagentInfoTbl(onCraftData.craftingReagentInfoTbl)
 			recipeData:SetNonQualityReagentsMax()
 		end
 
 		recipeData:SetEquippedProfessionGearSet()
+
+		recipeData.concentrating = onCraftData.concentrating
 
 		recipeData:Update() -- is this necessary? check again if there are performance problems with that
 
@@ -227,15 +237,40 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		print(recipeData.reagentData, true)
 
 		CraftSim.CRAFT_RESULTS:OnCraftRecipe(recipeData)
-		CraftSim.CRAFTQ:OnCraftRecipe(recipeData, amount or 1, itemTarget)
+		CraftSim.CRAFTQ:OnCraftRecipe(recipeData, onCraftData.amount, onCraftData.itemTarget)
 	end
 	local function OnRecraft()
 		if CraftSim.INIT.currentRecipeData then
 			CraftSim.CRAFT_RESULTS:OnCraftRecipe(CraftSim.INIT.currentRecipeData)
 		end
 	end
-	hooksecurefunc(C_TradeSkillUI, "CraftRecipe", OnCraft)
-	hooksecurefunc(C_TradeSkillUI, "CraftEnchant", OnCraft)
+	hooksecurefunc(C_TradeSkillUI, "CraftRecipe",
+		function(recipeID, amount, craftingReagentInfoTbl, recipeLevel, orderID, concentrating)
+			---@type CraftSim.INIT.OnCraftData
+			local onCraftData = {
+				recipeID = recipeID,
+				amount = amount or 1,
+				craftingReagentInfoTbl = craftingReagentInfoTbl or {},
+				recipeLevel = recipeLevel,
+				orderID = orderID,
+				isOrder = orderID ~= nil,
+				concentrating = concentrating,
+			}
+			OnCraft(onCraftData)
+		end)
+	hooksecurefunc(C_TradeSkillUI, "CraftEnchant",
+		function(recipeID, amount, craftingReagentInfoTbl, enchantItemLocation, concentrating)
+			---@type CraftSim.INIT.OnCraftData
+			local onCraftData = {
+				recipeID = recipeID,
+				amount = amount or 1,
+				craftingReagentInfoTbl = craftingReagentInfoTbl or {},
+				itemTarget = enchantItemLocation,
+				isEnchant = true,
+				concentrating = concentrating,
+			}
+			OnCraft(onCraftData)
+		end)
 	hooksecurefunc(C_TradeSkillUI, "RecraftRecipe", OnRecraft)
 	hooksecurefunc(C_TradeSkillUI, "RecraftRecipeForOrder", OnRecraft)
 	hooksecurefunc(C_TradeSkillUI, "CraftSalvage", CraftSim.CRAFT_RESULTS.OnCraftSalvage)

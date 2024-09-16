@@ -1317,7 +1317,7 @@ end
 ---@return RecipeCraftQueueUID
 function CraftSim.RecipeData:GetRecipeCraftQueueUID()
     return self:GetCrafterUID() ..
-        ":" .. self.recipeID .. ":" .. self.subRecipeDepth .. ":" .. tostring(self.concentrating)
+        ":" .. self.recipeID .. ":" .. self.subRecipeDepth -- .. ":" .. tostring(self.concentrating)
 end
 
 ---@return boolean hasActiveSubRecipes
@@ -1334,4 +1334,17 @@ function CraftSim.RecipeData:HasParentsInCraftQueue()
     return GUTIL:Some(self.parentRecipeInfo, function(prI)
         return CraftSim.CRAFTQ.craftQueue:FindRecipeByParentRecipeInfo(prI) ~= nil
     end)
+end
+
+--- returns a unique string based on used reagents
+---@return string
+function CraftSim.RecipeData:GetReagentUID()
+    local craftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
+
+    local uid = ""
+    for _, craftingReagentInfo in ipairs(craftingReagentInfoTbl) do
+        uid = uid .. craftingReagentInfo.itemID .. craftingReagentInfo.quantity
+    end
+
+    return uid
 end
