@@ -542,7 +542,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
                 crafterText = f.white(" (" ..
                     optimizedReagentRecipeData:GetFormattedCrafterText(false, true, 12, 12) .. ")")
             end
-            text = text .. quantityText .. crafterText .. "   "
+            text = text .. " " .. quantityText .. crafterText .. "   "
         end
     end
 

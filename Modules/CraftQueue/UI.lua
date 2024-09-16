@@ -1591,7 +1591,7 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
 
     -- Spark
     local sparkSelector = editRecipeFrame.content.sparkReagentSelectors[1]
-    editRecipeFrame.content.finishingReagentsTitle:SetVisible(recipeData.reagentData:HasSparkSlot())
+    editRecipeFrame.content.sparkReagentTitle:SetVisible(recipeData.reagentData:HasSparkSlot())
     local sparkSlot = recipeData.reagentData.sparkReagentSlot
     if sparkSlot then
         sparkSelector.slot = sparkSlot
