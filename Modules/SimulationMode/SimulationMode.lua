@@ -206,11 +206,23 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     -- optional/finishing
     recipeData.reagentData:ClearOptionalReagents()
 
+    local possibleSparkItemIDs = {}
+    if recipeData.reagentData:HasSparkSlot() then
+        possibleSparkItemIDs = GUTIL:Map(recipeData.reagentData.sparkReagentSlot.possibleReagents, function(reagent)
+            return reagent.item:GetItemID()
+        end)
+    end
+
     local itemIDs = {}
     for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
         local itemID = dropdown.selectedItem and dropdown.selectedItem:GetItemID()
         if itemID then
-            table.insert(itemIDs, itemID)
+            -- try to set spark if available else put to optional/finishing
+            if tContains(possibleSparkItemIDs, itemID) then
+                recipeData.reagentData.sparkReagentSlot:SetReagent(itemID)
+            else
+                table.insert(itemIDs, itemID)
+            end
         end
     end
 
