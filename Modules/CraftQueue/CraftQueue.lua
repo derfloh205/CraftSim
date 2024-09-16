@@ -517,6 +517,14 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
             end
         end
         local activeReagents = craftQueueItem.recipeData.reagentData:GetActiveOptionalReagents()
+        local quantityMap = {} -- ugly hack.. TODO refactor
+        if craftQueueItem.recipeData.reagentData:HasSparkSlot() then
+            if craftQueueItem.recipeData.reagentData.sparkReagentSlot.activeReagent then
+                tinsert(activeReagents, craftQueueItem.recipeData.reagentData.sparkReagentSlot.activeReagent)
+                quantityMap[craftQueueItem.recipeData.reagentData.sparkReagentSlot.activeReagent.item:GetItemID()] =
+                    craftQueueItem.recipeData.reagentData.sparkReagentSlot.maxQuantity or 1
+            end
+        end
         for _, optionalReagent in pairs(activeReagents) do
             local itemID = optionalReagent.item:GetItemID()
             local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
@@ -524,10 +532,10 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
                 reagentMap[itemID] = reagentMap[itemID] or {
                     itemName = optionalReagent.item:GetItemName(),
                     qualityID = optionalReagent.qualityID,
-                    quantity = 0
+                    quantity = quantityMap[itemID] or 1
                 }
                 reagentMap[itemID].quantity = reagentMap[itemID]
-                    .quantity + craftQueueItem.amount
+                    .quantity * craftQueueItem.amount
             end
         end
     end

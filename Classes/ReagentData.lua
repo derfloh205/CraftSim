@@ -529,9 +529,10 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             text = text .. inlineIcon
             local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID,
                 self.sparkReagentSlot.activeReagent.item:GetItemID())
-            local quantityText = f.r(tostring(multiplier) .. "(" .. tostring(itemCount) .. ")")
-            if itemCount >= multiplier then
-                quantityText = f.g(tostring(multiplier))
+            local requiredQuantity = self.sparkReagentSlot.maxQuantity * multiplier
+            local quantityText = f.r(tostring(requiredQuantity) .. "(" .. tostring(itemCount) .. ")")
+            if itemCount >= requiredQuantity then
+                quantityText = f.g(tostring(requiredQuantity))
             end
             local crafterText = ""
             -- add crafterInfo text if reagent is supposed to be crafted by the player

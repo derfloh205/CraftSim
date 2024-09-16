@@ -444,6 +444,11 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
     local possibleOptionals = {}
     local slots = CraftSim.GUTIL:Concat({ recipeData.reagentData.optionalReagentSlots, recipeData.reagentData
         .finishingReagentSlots })
+
+    if recipeData.reagentData:HasSparkSlot() then
+        tinsert(slots, recipeData.reagentData.sparkReagentSlot)
+    end
+
     for _, slot in pairs(slots) do
         possibleOptionals = CraftSim.GUTIL:Concat({ possibleOptionals, slot.possibleReagents })
     end
