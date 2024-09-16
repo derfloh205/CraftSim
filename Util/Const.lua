@@ -50,6 +50,7 @@ CraftSim.CONST.MULTICRAFT_CONSTANT = 2.5
 
 CraftSim.CONST.DISCORD_INVITE_URL = "https://discord.gg/7vqKMgezXR"
 CraftSim.CONST.PAYPAL_ME_URL = "https://www.paypal.com/paypalme/CraftSim"
+CraftSim.CONST.KOFI_URL = "https://ko-fi.com/craftsim"
 
 CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION = "first(DBRecent, DBMinbuyout)"
 

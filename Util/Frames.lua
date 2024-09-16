@@ -284,9 +284,9 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         "Join the Discord!", frame.content, frame.content.discordBox, "BOTTOM", "TOP", 0, 0, 0.75)
 
     frame.content.donateBox = CraftSim.FRAME:CreateInput(
-        nil, frame.content, frame.content, "TOP", "TOP", 120, -20, 250, 30, CraftSim.CONST.PAYPAL_ME_URL, function()
+        nil, frame.content, frame.content, "TOP", "TOP", 120, -20, 250, 30, CraftSim.CONST.KOFI_URL, function()
             -- do not let the player remove the link
-            frame.content.donateBox:SetText(CraftSim.CONST.PAYPAL_ME_URL)
+            frame.content.donateBox:SetText(CraftSim.CONST.KOFI_URL)
         end)
     frame.content.donateBox:SetScale(0.75)
     frame.content.donateBoxLabel = CraftSim.FRAME:CreateText(
