@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 ---@class CraftSim.SPECIALIZATION_DATA
 CraftSim.SPECIALIZATION_DATA = CraftSim.SPECIALIZATION_DATA
 
@@ -80,11 +82,24 @@ function CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, nodeID, expa
         end
     end
 
-    local nodeData = CraftSim.NodeData(recipeData, rawBaseNodeData, perkMap)
-    nodeData:UpdateRank()
-    nodeData:Update()
+    if recipeData:IsCrafter() then
+        local nodeData = CraftSim.NodeData(recipeData, rawBaseNodeData, perkMap)
+        nodeData:UpdateRank()
+        nodeData:Update()
 
-    return nodeData
+        return nodeData
+    else
+        local crafterUID = recipeData:GetCrafterUID()
+        local cachedSpecData = CraftSim.DB.CRAFTER:GetSpecializationData(crafterUID, recipeData)
+
+        if not cachedSpecData then return end
+
+        local nodeData = GUTIL:Find(cachedSpecData.nodeData, function(nData)
+            return nData.nodeID == nodeID
+        end)
+
+        return nodeData
+    end
 end
 
 ---@param recipeData CraftSim.RecipeData
