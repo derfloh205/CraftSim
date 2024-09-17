@@ -468,7 +468,6 @@ end
 
 --- Consideres Order Reagents
 function CraftSim.RecipeData:SetCheapestQualityReagentsMax()
-    if not self.orderData then return end
     for _, reagent in ipairs(self.reagentData.requiredReagents) do
         local isOrderReagent = reagent:IsOrderReagentIn(self)
         if reagent.hasQuality then
@@ -899,6 +898,16 @@ function CraftSim.RecipeData:Craft(amount)
                 .concentrating)
         end
     else
+        if self.orderData then
+            local suppliedIDs = GUTIL:Map(self.orderData.reagents or {}, function(reagentInfo)
+                return reagentInfo.reagent.itemID
+            end)
+
+            craftingReagentInfoTbl = GUTIL:Filter(craftingReagentInfoTbl, function(craftingReagentInfo)
+                return not tContains(suppliedIDs, craftingReagentInfo.itemID)
+            end)
+        end
+
         C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil,
             self.orderData and self.orderData.orderID,
             self.concentrating)

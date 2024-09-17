@@ -411,16 +411,20 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
 
     local currentMinimumReagentFit = math.huge
     for _, requiredReagent in pairs(self.requiredReagents) do
-        if not requiredReagent:HasItems(1, crafterUID) then
-            return 0
+        if not requiredReagent:IsOrderReagentIn(self.recipeData) then
+            if not requiredReagent:HasItems(1, crafterUID) then
+                return 0
+            end
+            currentMinimumReagentFit = math.min(requiredReagent:HasQuantityXTimes(crafterUID), currentMinimumReagentFit)
         end
-        currentMinimumReagentFit = math.min(requiredReagent:HasQuantityXTimes(crafterUID), currentMinimumReagentFit)
     end
 
     if self:HasSparkSlot() then
         if self.sparkReagentSlot.activeReagent then
-            currentMinimumReagentFit = math.min(self.sparkReagentSlot:HasQuantityXTimes(crafterUID),
-                currentMinimumReagentFit)
+            if not self.sparkReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData) then
+                currentMinimumReagentFit = math.min(self.sparkReagentSlot:HasQuantityXTimes(crafterUID),
+                    currentMinimumReagentFit)
+            end
         else
             currentMinimumReagentFit = 0
         end
@@ -432,11 +436,13 @@ function CraftSim.ReagentData:GetCraftableAmount(crafterUID)
     ---@type CraftSim.OptionalReagentSlot[]
     local optionalReagentSlots = GUTIL:Concat({ self.optionalReagentSlots, self.finishingReagentSlots })
     for _, optionalReagentSlot in pairs(optionalReagentSlots) do
-        if not optionalReagentSlot:HasItem(1, crafterUID) then
-            return 0
+        if optionalReagentSlot.activeReagent and not optionalReagentSlot.activeReagent:IsOrderReagentIn(self.recipeData) then
+            if not optionalReagentSlot:HasItem(1, crafterUID) then
+                return 0
+            end
+            currentMinimumReagentFitOptional = math.min(optionalReagentSlot:HasQuantityXTimes(crafterUID),
+                currentMinimumReagentFitOptional)
         end
-        currentMinimumReagentFitOptional = math.min(optionalReagentSlot:HasQuantityXTimes(crafterUID),
-            currentMinimumReagentFitOptional)
     end
     print("minimum optional fit: " .. tostring(currentMinimumReagentFitOptional))
 

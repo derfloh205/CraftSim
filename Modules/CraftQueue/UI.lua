@@ -185,10 +185,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     local craftQueueItem = row.craftQueueItem
                     if craftQueueItem then
                         if craftQueueItem.recipeData then
-                            if craftQueueItem.recipeData.orderData then
-                            else
-                                C_TradeSkillUI.OpenRecipe(craftQueueItem.recipeData.recipeID)
-                            end
+                            C_TradeSkillUI.OpenRecipe(craftQueueItem.recipeData.recipeID)
                         end
                     end
                 end
@@ -1828,6 +1825,10 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     if recipeData.orderData then
         craftOrderInfoText = "\n\nOrder Customer: " .. f.bb(recipeData.orderData.customerName)
 
+        if recipeData.orderData.orderType == Enum.CraftingOrderType.Npc then
+            craftOrderInfoText = craftOrderInfoText .. f.grey(" (NPC)")
+        end
+
         if recipeData.orderData.customerNotes ~= "" then
             craftOrderInfoText = craftOrderInfoText .. f.grey("\n" .. recipeData.orderData.customerNotes)
         end
@@ -1843,6 +1844,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 craftOrderInfoText = craftOrderInfoText .. "\n- " .. reward.count .. "x " .. reward.itemLink
             end
         end
+
+        craftOrderInfoText = craftOrderInfoText ..
+            f.r("\n\nAll supplied reagents have to be in your inventory to craft a work order!")
     end
 
     local craftAmountTooltipText = ""
@@ -1963,8 +1967,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         statusColumn.profession:SetAlpha(statusIconDesaturationAlpha)
     end
 
+    craftButtonColumn.craftButton:SetText("Craft")
 
-    if recipeData.orderData and craftQueueItem.isCrafter then
+    if recipeData.orderData and craftQueueItem.isCrafter and craftQueueItem.correctProfessionOpen then
         local accessToOrders = C_TradeSkillUI.IsNearProfessionSpellFocus(recipeData.professionData.professionInfo
             .profession)
 
@@ -2023,8 +2028,6 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             end
         end
     end
-
-
 
 
     removeRowColumn.removeButton.clickCallback = function()
