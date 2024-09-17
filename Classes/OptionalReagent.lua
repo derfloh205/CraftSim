@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 
 ---@class CraftSim.OptionalReagent : CraftSim.CraftSimObject
 CraftSim.OptionalReagent = CraftSim.CraftSimObject:extend()
@@ -91,4 +93,17 @@ function CraftSim.OptionalReagent:GetJSON(indent)
     jb:Add("itemID", self.item:GetItemID())
     jb:End()
     return jb.json
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.OptionalReagent:IsOrderReagentIn(recipeData)
+    if not recipeData.orderData then return false end
+
+    local itemID = self.item:GetItemID()
+
+    local orderItemIDs = GUTIL:Map(recipeData.orderData.reagents or {}, function(reagentInfo)
+        return reagentInfo.reagent.itemID
+    end)
+
+    return tContains(orderItemIDs, itemID)
 end

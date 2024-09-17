@@ -274,6 +274,14 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     end
 end
 
+---@param orderData CraftingOrderInfo
+function CraftSim.RecipeData:SetOrder(orderData)
+    self.orderData = orderData
+    self.isRecraft = self.orderData.isRecraft
+    self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
+        self.orderData.orderID, self.concentrating)
+end
+
 function CraftSim.RecipeData:SetSubRecipeCostsUsage(enabled)
     self.subRecipeCostsEnabled = enabled
 end
@@ -453,6 +461,28 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
             local firstPossibleSparkItem = self.reagentData.sparkReagentSlot.possibleReagents[1]
             if firstPossibleSparkItem then
                 self.reagentData.sparkReagentSlot:SetReagent(firstPossibleSparkItem.item:GetItemID())
+            end
+        end
+    end
+end
+
+--- Consideres Order Reagents
+function CraftSim.RecipeData:SetCheapestQualityReagentsMax()
+    for _, reagent in ipairs(self.reagentData.requiredReagents) do
+        local isOrderReagent = reagent:IsOrderReagentIn(self)
+        if reagent.hasQuality then
+            if not isOrderReagent then
+                if reagent:GetTotalQuantity() < reagent.requiredQuantity then
+                    reagent:SetCheapestQualityMax(self.subRecipeCostsEnabled)
+                end
+            elseif isOrderReagent then
+                for _, reagentItem in ipairs(reagent.items) do
+                    if reagentItem:IsOrderReagentIn(self) then
+                        reagentItem.quantity = reagent.requiredQuantity
+                    else
+                        reagentItem.quantity = 0
+                    end
+                end
             end
         end
     end
@@ -868,6 +898,16 @@ function CraftSim.RecipeData:Craft(amount)
                 .concentrating)
         end
     else
+        if self.orderData then
+            local suppliedIDs = GUTIL:Map(self.orderData.reagents or {}, function(reagentInfo)
+                return reagentInfo.reagent.itemID
+            end)
+
+            craftingReagentInfoTbl = GUTIL:Filter(craftingReagentInfoTbl, function(craftingReagentInfo)
+                return not tContains(suppliedIDs, craftingReagentInfo.itemID)
+            end)
+        end
+
         C_TradeSkillUI.CraftRecipe(self.recipeID, amount, craftingReagentInfoTbl, nil,
             self.orderData and self.orderData.orderID,
             self.concentrating)
@@ -1317,7 +1357,8 @@ end
 ---@return RecipeCraftQueueUID
 function CraftSim.RecipeData:GetRecipeCraftQueueUID()
     return self:GetCrafterUID() ..
-        ":" .. self.recipeID .. ":" .. self.subRecipeDepth -- .. ":" .. tostring(self.concentrating)
+        ":" ..
+        self.recipeID .. ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0)
 end
 
 ---@return boolean hasActiveSubRecipes

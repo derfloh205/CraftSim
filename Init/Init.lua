@@ -529,6 +529,11 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	end
 
 	CraftSim.CONTROL_PANEL.frame:Show()
+	CraftSim.CRAFTQ.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE"))
+	local professionInfo = C_TradeSkillUI.GetChildProfessionInfo()
+	CraftSim.CRAFTQ.frame.content.queueTab.content.addPatronOrdersButton:SetEnabled(professionInfo and
+		professionInfo.profession and C_TradeSkillUI
+		.IsNearProfessionSpellFocus(professionInfo.profession))
 
 	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.currentRecipeID)
 
@@ -600,7 +605,6 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	local showRecipeScan = true
 	local showCustomerHistory = true
 	local showCostOptimization = true
-	local showCraftQueue = true
 	local showCraftBuffs = true
 	local showCooldowns = true
 	local showExplanations = true
@@ -631,14 +635,12 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	showCraftResults = showCraftResults and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_RESULTS")
 	showCustomerHistory = showCustomerHistory and CraftSim.DB.OPTIONS:Get("MODULE_CUSTOMER_HISTORY")
 	showCostOptimization = showCostOptimization and CraftSim.DB.OPTIONS:Get("MODULE_COST_OPTIMIZATION")
-	showCraftQueue = showCraftQueue and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE")
 	showCraftBuffs = showCraftBuffs and CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_BUFFS")
 	showCooldowns = showCooldowns and CraftSim.DB.OPTIONS:Get("MODULE_COOLDOWNS")
 	showExplanations = showExplanations and CraftSim.DB.OPTIONS:Get("MODULE_EXPLANATIONS")
 	showStatistics = showStatistics and CraftSim.DB.OPTIONS:Get("MODULE_STATISTICS")
 
 	CraftSim.RECIPE_SCAN.frame:SetVisible(showRecipeScan)
-	CraftSim.CRAFTQ.frame:SetVisible(showCraftQueue)
 	CraftSim.EXPLANATIONS.frame:SetVisible(showExplanations)
 	CraftSim.CRAFT_RESULTS.frame:SetVisible(showCraftResults)
 	CraftSim.CUSTOMER_HISTORY.frame:SetVisible(showCustomerHistory)
