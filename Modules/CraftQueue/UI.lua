@@ -1968,22 +1968,24 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         local accessToOrders = C_TradeSkillUI.IsNearProfessionSpellFocus(recipeData.professionData.professionInfo
             .profession)
 
-        CraftSim.DEBUG:SystemPrint("accessToOrders: " .. tostring(accessToOrders))
-
-        if accessToOrders and craftQueueItem.allowedToCraft then
+        if accessToOrders then
             local claimedOrder = C_CraftingOrders.GetClaimedOrder()
 
             if claimedOrder and claimedOrder.orderID == recipeData.orderData.orderID then
-                if claimedOrder.orderState == Enum.CraftingOrderState.Created then
+                if claimedOrder.isFulfillable then
                     craftButtonColumn.craftButton:SetEnabled(true)
                     craftButtonColumn.craftButton:SetText("Submit")
+
                     craftButtonColumn.craftButton.clickCallback = function()
                         C_CraftingOrders.FulfillOrder(recipeData.orderData.orderID, "",
                             recipeData.professionData.professionInfo.profession)
                         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem)
                         self:UpdateDisplay()
                     end
-                else
+                elseif claimedOrder.minQuality and (craftQueueItem.recipeData.resultData.expectedQuality < claimedOrder.minQuality) then
+                    craftButtonColumn.craftButton:SetEnabled(false)
+                    craftButtonColumn.craftButton:SetText("Qual")
+                elseif craftQueueItem.allowedToCraft then
                     craftButtonColumn.craftButton:SetEnabled(true)
                     craftButtonColumn.craftButton:SetText("Craft")
                     craftButtonColumn.craftButton.clickCallback = function()
@@ -1991,6 +1993,9 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                         recipeData:Craft(craftQueueItem.amount)
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
                     end
+                else
+                    craftButtonColumn.craftButton:SetEnabled(false)
+                    craftButtonColumn.craftButton:SetText("Claimed")
                 end
             elseif claimedOrder then
                 craftButtonColumn.craftButton:SetEnabled(false)
@@ -2001,7 +2006,6 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                 craftButtonColumn.craftButton.clickCallback = function()
                     C_CraftingOrders.ClaimOrder(recipeData.orderData.orderID,
                         recipeData.professionData.professionInfo.profession)
-                    self:UpdateDisplay()
                 end
             end
         else

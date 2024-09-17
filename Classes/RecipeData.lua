@@ -466,6 +466,29 @@ function CraftSim.RecipeData:SetNonQualityReagentsMax()
     end
 end
 
+--- Consideres Order Reagents
+function CraftSim.RecipeData:SetCheapestQualityReagentsMax()
+    if not self.orderData then return end
+    for _, reagent in ipairs(self.reagentData.requiredReagents) do
+        local isOrderReagent = reagent:IsOrderReagentIn(self)
+        if reagent.hasQuality then
+            if not isOrderReagent then
+                if reagent:GetTotalQuantity() < reagent.requiredQuantity then
+                    reagent:SetCheapestQualityMax(self.subRecipeCostsEnabled)
+                end
+            elseif isOrderReagent then
+                for _, reagentItem in ipairs(reagent.items) do
+                    if reagentItem:IsOrderReagentIn(self) then
+                        reagentItem.quantity = reagent.requiredQuantity
+                    else
+                        reagentItem.quantity = 0
+                    end
+                end
+            end
+        end
+    end
+end
+
 ---@return number concentrationCost
 function CraftSim.RecipeData:GetConcentrationCost()
     if not self.baseOperationInfo then return 0 end
@@ -1325,7 +1348,8 @@ end
 ---@return RecipeCraftQueueUID
 function CraftSim.RecipeData:GetRecipeCraftQueueUID()
     return self:GetCrafterUID() ..
-        ":" .. self.recipeID .. ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0)
+        ":" ..
+        self.recipeID .. ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0)
 end
 
 ---@return boolean hasActiveSubRecipes

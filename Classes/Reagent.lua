@@ -251,6 +251,7 @@ function CraftSim.Reagent:GetJSON(indent)
 end
 
 ---@param recipeData CraftSim.RecipeData
+---@return boolean
 function CraftSim.Reagent:IsOrderReagentIn(recipeData)
     if not recipeData.orderData then return false end
 

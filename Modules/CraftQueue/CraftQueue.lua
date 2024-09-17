@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.CRAFTQ : Frame
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
-    "NEW_RECIPE_LEARNED" })
+    "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED", "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED" })
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
@@ -116,6 +116,14 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
     end
 end
 
+function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_UPDATED()
+    self.UI:UpdateDisplay()
+end
+
+function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
+    self.UI:UpdateDisplay()
+end
+
 function CraftSim.CRAFTQ:AddPatronOrders()
     local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
     if C_TradeSkillUI.IsNearProfessionSpellFocus(profession) then
@@ -138,6 +146,10 @@ function CraftSim.CRAFTQ:AddPatronOrders()
             callback = C_FunctionContainers.CreateCallback(function(result)
                 if result == Enum.CraftingOrderResult.Ok then
                     local orders = C_CraftingOrders.GetCrafterOrders()
+                    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+                    if claimedOrder then
+                        tinsert(orders, claimedOrder)
+                    end
                     GUTIL:FrameDistributedIteration(orders, function(_, order, _)
                         local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
                         if recipeInfo and recipeInfo.learned then
