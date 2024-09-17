@@ -17,7 +17,11 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
-        newP("17.3.4"),
+        newP("18.0.0"),
+        f.P .. "The " .. f.g("CraftQueue") .. " now supports " .. f.bb("Work Orders"),
+        f.a .. "- Available Patron Orders can now be queued with one click",
+        f.a .. "- Work Orders can now be claimed, crafted and submitted in the " .. f.bb("Craft Queue"),
+        f.a .. f.r("!!") .. " All reagents still need to be in your inventory",
         f.p .. "Changed the wording and setup of all supporter urls",
         f.a .. "and info in the addon",
         newP("17.3.3"),
