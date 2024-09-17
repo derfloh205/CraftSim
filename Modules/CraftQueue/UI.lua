@@ -21,8 +21,8 @@ function CraftSim.CRAFTQ.UI:Init()
 
     ---@class CraftSim.CraftQueue.Frame : GGUI.Frame
     CraftSim.CRAFTQ.frame = GGUI.Frame({
-        parent = ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent = ProfessionsFrame.CraftingPage.SchematicForm,
+        parent = ProfessionsFrame,
+        anchorParent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.CRAFT_QUEUE,
