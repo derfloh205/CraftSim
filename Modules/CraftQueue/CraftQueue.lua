@@ -7,7 +7,7 @@ local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.CRAFTQ : Frame
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
-    "NEW_RECIPE_LEARNED" })
+    "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED", "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED" })
 
 ---@type CraftSim.CraftQueue
 CraftSim.CRAFTQ.craftQueue = nil
@@ -113,6 +113,57 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
 
             CraftSim.CRAFTQ.purchasedItem = nil -- reset
         end)
+    end
+end
+
+function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_UPDATED()
+    self.UI:UpdateDisplay()
+end
+
+function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
+    self.UI:UpdateDisplay()
+end
+
+function CraftSim.CRAFTQ:AddPatronOrders()
+    local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
+    if C_TradeSkillUI.IsNearProfessionSpellFocus(profession) then
+        local request = {
+            orderType = Enum.CraftingOrderType.Npc,
+            searchFavorites = false,
+            initialNonPublicSearch = false,
+            primarySort = {
+                sortType = Enum.CraftingOrderSortType.ItemName,
+                reversed = false,
+            },
+            secondarySort = {
+                sortType = Enum.CraftingOrderSortType.MaxTip,
+                reversed = false,
+            },
+            forCrafter = true,
+            offset = 0,
+            profession = profession,
+            ---@diagnostic disable-next-line: redundant-parameter
+            callback = C_FunctionContainers.CreateCallback(function(result)
+                if result == Enum.CraftingOrderResult.Ok then
+                    local orders = C_CraftingOrders.GetCrafterOrders()
+                    local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+                    if claimedOrder then
+                        tinsert(orders, claimedOrder)
+                    end
+                    GUTIL:FrameDistributedIteration(orders, function(_, order, _)
+                        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
+                        if recipeInfo and recipeInfo.learned then
+                            local recipeData = CraftSim.RecipeData(order.spellID)
+
+                            recipeData:SetOrder(order)
+                            recipeData:Update()
+                            CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                        end
+                    end)
+                end
+            end),
+        }
+        C_CraftingOrders.RequestCrafterOrders(request)
     end
 end
 
@@ -483,10 +534,26 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
     for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
         local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
         for _, reagent in pairs(requiredReagents) do
-            if reagent.hasQuality then
-                for qualityID, reagentItem in pairs(reagent.items) do
+            if not reagent:IsOrderReagentIn(craftQueueItem.recipeData) then
+                if reagent.hasQuality then
+                    for qualityID, reagentItem in pairs(reagent.items) do
+                        local itemID = reagentItem.item:GetItemID()
+                        print("Shopping List Creation: Item: " .. (reagentItem.item:GetItemLink() or ""))
+                        local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
+                        if not isSelfCrafted then
+                            reagentMap[itemID] = reagentMap[itemID] or {
+                                itemName = reagentItem.item:GetItemName(),
+                                qualityID = nil,
+                                quantity = 0
+                            }
+                            reagentMap[itemID].quantity = reagentMap[itemID]
+                                .quantity + (reagentItem.quantity * craftQueueItem.amount)
+                            reagentMap[itemID].qualityID = qualityID
+                        end
+                    end
+                else
+                    local reagentItem = reagent.items[1]
                     local itemID = reagentItem.item:GetItemID()
-                    print("Shopping List Creation: Item: " .. (reagentItem.item:GetItemLink() or ""))
                     local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
                     if not isSelfCrafted then
                         reagentMap[itemID] = reagentMap[itemID] or {
@@ -494,25 +561,11 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
                             qualityID = nil,
                             quantity = 0
                         }
-                        reagentMap[itemID].quantity = reagentMap[itemID]
-                            .quantity + (reagentItem.quantity * craftQueueItem.amount)
-                        reagentMap[itemID].qualityID = qualityID
+                        reagentMap[itemID].quantity = reagentMap[itemID].quantity +
+                            (reagentItem.quantity * craftQueueItem.amount)
+                        print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
+                        print("quantity: " .. tostring(reagentMap[itemID].quantity))
                     end
-                end
-            else
-                local reagentItem = reagent.items[1]
-                local itemID = reagentItem.item:GetItemID()
-                local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-                if not isSelfCrafted then
-                    reagentMap[itemID] = reagentMap[itemID] or {
-                        itemName = reagentItem.item:GetItemName(),
-                        qualityID = nil,
-                        quantity = 0
-                    }
-                    reagentMap[itemID].quantity = reagentMap[itemID].quantity +
-                        (reagentItem.quantity * craftQueueItem.amount)
-                    print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
-                    print("quantity: " .. tostring(reagentMap[itemID].quantity))
                 end
             end
         end
@@ -528,7 +581,8 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
         for _, optionalReagent in pairs(activeReagents) do
             local itemID = optionalReagent.item:GetItemID()
             local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-            if not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+            local isOrderReagent = optionalReagent:IsOrderReagentIn(craftQueueItem.recipeData)
+            if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
                 reagentMap[itemID] = reagentMap[itemID] or {
                     itemName = optionalReagent.item:GetItemName(),
                     qualityID = optionalReagent.qualityID,

@@ -21,8 +21,8 @@ function CraftSim.CRAFTQ.UI:Init()
 
     ---@class CraftSim.CraftQueue.Frame : GGUI.Frame
     CraftSim.CRAFTQ.frame = GGUI.Frame({
-        parent = ProfessionsFrame.CraftingPage.SchematicForm,
-        anchorParent = ProfessionsFrame.CraftingPage.SchematicForm,
+        parent = ProfessionsFrame,
+        anchorParent = ProfessionsFrame,
         sizeX = sizeX,
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.CRAFT_QUEUE,
@@ -522,6 +522,19 @@ function CraftSim.CRAFTQ.UI:Init()
             label = "Add First Crafts",
             clickCallback = function()
                 CraftSim.CRAFTQ:AddFirstCrafts()
+            end
+        })
+
+        queueTab.content.addPatronOrdersButton = GGUI.Button({
+            parent = queueTab.content,
+            anchorParent = queueTab.content.addAllFirstCraftsButton.frame,
+            anchorA = "TOPLEFT",
+            anchorB = "BOTTOMLEFT",
+            offsetY = 0,
+            adjustWidth = true,
+            label = "Add Patron Orders",
+            clickCallback = function()
+                CraftSim.CRAFTQ:AddPatronOrders()
             end
         })
 
@@ -1319,23 +1332,17 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     --- update craft next button
     local itemsPresent = CraftSim.CRAFTQ.craftQueue and #CraftSim.CRAFTQ.craftQueue.craftQueueItems > 0
     if itemsPresent then
+        -- set the craft next button to the same status as the button in the queue on pos 1
         -- if first item can be crafted (so if anything can be crafted cause the items are sorted by craftable status)
-        local firstQueueItem = CraftSim.CRAFTQ.craftQueue.craftQueueItems[1]
-        queueTab.content.craftNextButton:SetEnabled(firstQueueItem.allowedToCraft)
-
-        if firstQueueItem.allowedToCraft then
-            -- set callback to craft the recipe of the top row
-            queueTab.content.craftNextButton.clickCallback =
-                function()
-                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                    firstQueueItem.recipeData:Craft(math.min(firstQueueItem.craftAbleAmount, firstQueueItem.amount))
-                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
-                end
-        else
-            queueTab.content.craftNextButton.clickCallback = nil
-        end
+        local firstRow = queueTab.content.craftList.activeRows[1]
+        local craftButton = firstRow.columns[12].craftButton --[[@as GGUI.Button]]
+        local button = craftButton.frame --[[@as Button]]
+        queueTab.content.craftNextButton:SetEnabled(button:IsEnabled())
+        queueTab.content.craftNextButton.clickCallback = craftButton.clickCallback
+        queueTab.content.craftNextButton:SetText("Next: " .. button:GetText(), 10, true)
     else
         queueTab.content.craftNextButton:SetEnabled(false)
+        queueTab.content.craftNextButton:SetText("Nothing Queued", 10, true)
     end
 
     local currentRecipeData = CraftSim.INIT.currentRecipeData
@@ -1765,15 +1772,17 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
     row.craftingCosts = recipeData.priceData.craftingCosts * craftQueueItem.amount
 
-
     row.averageProfit = (recipeData.averageProfitCached or recipeData:GetAverageProfit()) *
         craftQueueItem.amount
 
     local upCraftText = ""
-    if craftQueueItem.recipeData:IsSubRecipe() then
+    if recipeData:IsSubRecipe() then
         local upgradeArrow = CreateAtlasMarkup(CraftSim.CONST.ATLAS_TEXTURES.UPGRADE_ARROW_2, 10, 10)
         upCraftText = " " ..
             upgradeArrow --.. "(" .. craftQueueItem.recipeData.subRecipeDepth .. ")"
+    end
+    if recipeData.orderData then
+        upCraftText = " " .. CreateAtlasMarkup("UI-ChatIcon-App", 15, 15)
     end
     recipeColumn.text:SetText(recipeData.recipeName .. upCraftText)
 
@@ -1805,13 +1814,44 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         concentrationColumn.text:SetText(f.g("-"))
     end
 
+    local craftOrderInfoText = ""
+
+    if recipeData.orderData then
+        craftOrderInfoText = "\n\nOrder Customer: " .. f.bb(recipeData.orderData.customerName)
+
+        if recipeData.orderData.orderType == Enum.CraftingOrderType.Npc then
+            craftOrderInfoText = craftOrderInfoText .. f.grey(" (NPC)")
+        end
+
+        if recipeData.orderData.customerNotes ~= "" then
+            craftOrderInfoText = craftOrderInfoText .. f.grey("\n" .. recipeData.orderData.customerNotes)
+        end
+
+        if recipeData.orderData.minQuality then
+            craftOrderInfoText = craftOrderInfoText ..
+                "\nMinimum Quality: " .. GUTIL:GetQualityIconString(recipeData.orderData.minQuality, 15, 15)
+        end
+
+        if recipeData.orderData.npcOrderRewards then
+            craftOrderInfoText = craftOrderInfoText .. "\nRewards:"
+            for _, reward in ipairs(recipeData.orderData.npcOrderRewards) do
+                craftOrderInfoText = craftOrderInfoText .. "\n- " .. reward.count .. "x " .. reward.itemLink
+            end
+        end
+
+        craftOrderInfoText = craftOrderInfoText ..
+            f.r("\n\nAll supplied reagents have to be in your inventory to craft a work order!")
+    end
 
     local craftAmountTooltipText = ""
     craftAmountTooltipText = "\n\nQueued Crafts: " .. craftQueueItem.amount
 
+
+
     row.tooltipOptions = {
         text = recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
-            craftQueueItem.recipeData:GetCrafterUID()) .. f.white(craftAmountTooltipText),
+                craftQueueItem.recipeData:GetCrafterUID()) ..
+            f.white(craftAmountTooltipText) .. f.white(craftOrderInfoText),
         owner = row.frame,
         anchor = "ANCHOR_CURSOR",
     }
@@ -1875,7 +1915,6 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     craftAmountColumn.inputText:SetText(craftQueueItem.amount)
 
     craftButtonColumn.craftButton.clickCallback = nil
-    craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft)
 
     local statusIconDesaturationAlpha = 0.3
 
@@ -1922,13 +1961,68 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         statusColumn.profession:SetAlpha(statusIconDesaturationAlpha)
     end
 
-    if craftQueueItem.allowedToCraft then
-        craftButtonColumn.craftButton.clickCallback = function()
-            CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-            recipeData:Craft(craftQueueItem.amount)
-            CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+    craftButtonColumn.craftButton:SetText("Craft")
+
+    if recipeData.orderData and craftQueueItem.isCrafter and craftQueueItem.correctProfessionOpen then
+        local accessToOrders = C_TradeSkillUI.IsNearProfessionSpellFocus(recipeData.professionData.professionInfo
+            .profession)
+
+        if accessToOrders then
+            local claimedOrder = C_CraftingOrders.GetClaimedOrder()
+
+            if claimedOrder and claimedOrder.orderID == recipeData.orderData.orderID then
+                if claimedOrder.isFulfillable then
+                    craftButtonColumn.craftButton:SetEnabled(true)
+                    craftButtonColumn.craftButton:SetText("Submit")
+
+                    craftButtonColumn.craftButton.clickCallback = function()
+                        C_CraftingOrders.FulfillOrder(recipeData.orderData.orderID, "",
+                            recipeData.professionData.professionInfo.profession)
+                        CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem)
+                        self:UpdateDisplay()
+                    end
+                elseif claimedOrder.minQuality and (craftQueueItem.recipeData.resultData.expectedQuality < claimedOrder.minQuality) then
+                    craftButtonColumn.craftButton:SetEnabled(false)
+                    craftButtonColumn.craftButton:SetText(GUTIL:GetQualityIconString(claimedOrder.minQuality, 25, 25))
+                elseif craftQueueItem.allowedToCraft then
+                    craftButtonColumn.craftButton:SetEnabled(true)
+                    craftButtonColumn.craftButton:SetText("Craft")
+                    craftButtonColumn.craftButton.clickCallback = function()
+                        CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
+                        recipeData:Craft(craftQueueItem.amount)
+                        CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+                    end
+                else
+                    craftButtonColumn.craftButton:SetEnabled(false)
+                    craftButtonColumn.craftButton:SetText("Claimed")
+                end
+            elseif claimedOrder then
+                craftButtonColumn.craftButton:SetEnabled(false)
+                craftButtonColumn.craftButton:SetText("Craft")
+            else
+                craftButtonColumn.craftButton:SetEnabled(true)
+                craftButtonColumn.craftButton:SetText("Claim")
+                craftButtonColumn.craftButton.clickCallback = function()
+                    C_CraftingOrders.ClaimOrder(recipeData.orderData.orderID,
+                        recipeData.professionData.professionInfo.profession)
+                end
+            end
+        else
+            craftButtonColumn.craftButton:SetEnabled(false) --[[@as GGUI.Button]]
+            craftButtonColumn.craftButton:SetText("Order")
+        end
+    else
+        craftButtonColumn.craftButton:SetEnabled(craftQueueItem.allowedToCraft)
+        if craftQueueItem.allowedToCraft then
+            craftButtonColumn.craftButton:SetText("Craft")
+            craftButtonColumn.craftButton.clickCallback = function()
+                CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
+                recipeData:Craft(craftQueueItem.amount)
+                CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
+            end
         end
     end
+
 
     removeRowColumn.removeButton.clickCallback = function()
         CraftSim.CRAFTQ.craftQueue:Remove(craftQueueItem, true)
