@@ -529,6 +529,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 	end
 
 	CraftSim.CONTROL_PANEL.frame:Show()
+	CraftSim.CRAFTQ.frame:SetVisible(CraftSim.DB.OPTIONS:Get("MODULE_CRAFT_QUEUE"))
 
 	local recipeInfo = C_TradeSkillUI.GetRecipeInfo(CraftSim.INIT.currentRecipeID)
 

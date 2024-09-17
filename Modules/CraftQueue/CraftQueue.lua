@@ -116,6 +116,45 @@ function CraftSim.CRAFTQ:COMMODITY_PURCHASE_SUCCEEDED()
     end
 end
 
+function CraftSim.CRAFTQ:AddPatronOrders()
+    local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
+    if C_TradeSkillUI.IsNearProfessionSpellFocus(profession) then
+        local request = {
+            orderType = Enum.CraftingOrderType.Npc,
+            searchFavorites = false,
+            initialNonPublicSearch = false,
+            primarySort = {
+                sortType = Enum.CraftingOrderSortType.ItemName,
+                reversed = false,
+            },
+            secondarySort = {
+                sortType = Enum.CraftingOrderSortType.MaxTip,
+                reversed = false,
+            },
+            forCrafter = true,
+            offset = 0,
+            profession = profession,
+            ---@diagnostic disable-next-line: redundant-parameter
+            callback = C_FunctionContainers.CreateCallback(function(result)
+                if result == Enum.CraftingOrderResult.Ok then
+                    local orders = C_CraftingOrders.GetCrafterOrders()
+                    GUTIL:FrameDistributedIteration(orders, function(_, order, _)
+                        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
+                        if recipeInfo and recipeInfo.learned then
+                            local recipeData = CraftSim.RecipeData(order.spellID)
+
+                            recipeData:SetOrder(order)
+                            recipeData:Update()
+                            CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                        end
+                    end)
+                end
+            end),
+        }
+        C_CraftingOrders.RequestCrafterOrders(request)
+    end
+end
+
 function CraftSim.CRAFTQ:InitializeCraftQueue()
     -- load from Saved Variables
     CraftSim.CRAFTQ.craftQueue = CraftSim.CraftQueue()

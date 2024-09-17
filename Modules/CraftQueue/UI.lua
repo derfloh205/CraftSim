@@ -185,7 +185,10 @@ function CraftSim.CRAFTQ.UI:Init()
                     local craftQueueItem = row.craftQueueItem
                     if craftQueueItem then
                         if craftQueueItem.recipeData then
-                            C_TradeSkillUI.OpenRecipe(craftQueueItem.recipeData.recipeID)
+                            if craftQueueItem.recipeData.orderData then
+                            else
+                                C_TradeSkillUI.OpenRecipe(craftQueueItem.recipeData.recipeID)
+                            end
                         end
                     end
                 end
@@ -522,6 +525,19 @@ function CraftSim.CRAFTQ.UI:Init()
             label = "Add First Crafts",
             clickCallback = function()
                 CraftSim.CRAFTQ:AddFirstCrafts()
+            end
+        })
+
+        queueTab.content.addPatronOrdersButton = GGUI.Button({
+            parent = queueTab.content,
+            anchorParent = queueTab.content.addAllFirstCraftsButton.frame,
+            anchorA = "TOPLEFT",
+            anchorB = "BOTTOMLEFT",
+            offsetY = 0,
+            adjustWidth = true,
+            label = "Add Patron Orders",
+            clickCallback = function()
+                CraftSim.CRAFTQ:AddPatronOrders()
             end
         })
 
@@ -1805,13 +1821,37 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
         concentrationColumn.text:SetText(f.g("-"))
     end
 
+    local craftOrderInfoText = ""
+
+    if recipeData.orderData then
+        craftOrderInfoText = "\n\nOrder Customer: " .. f.bb(recipeData.orderData.customerName)
+
+        if recipeData.orderData.customerNotes ~= "" then
+            craftOrderInfoText = craftOrderInfoText .. f.grey("\n" .. recipeData.orderData.customerNotes)
+        end
+
+        if recipeData.orderData.minQuality then
+            craftOrderInfoText = craftOrderInfoText ..
+                "\nMinimum Quality: " .. GUTIL:GetQualityIconString(recipeData.orderData.minQuality, 15, 15)
+        end
+
+        if recipeData.orderData.npcOrderRewards then
+            craftOrderInfoText = craftOrderInfoText .. "\nRewards:"
+            for _, reward in ipairs(recipeData.orderData.npcOrderRewards) do
+                craftOrderInfoText = craftOrderInfoText .. "\n- " .. reward.count .. "x " .. reward.itemLink
+            end
+        end
+    end
 
     local craftAmountTooltipText = ""
     craftAmountTooltipText = "\n\nQueued Crafts: " .. craftQueueItem.amount
 
+
+
     row.tooltipOptions = {
         text = recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
-            craftQueueItem.recipeData:GetCrafterUID()) .. f.white(craftAmountTooltipText),
+                craftQueueItem.recipeData:GetCrafterUID()) ..
+            f.white(craftAmountTooltipText) .. f.white(craftOrderInfoText),
         owner = row.frame,
         anchor = "ANCHOR_CURSOR",
     }

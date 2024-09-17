@@ -274,6 +274,14 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     end
 end
 
+---@param orderData CraftingOrderInfo
+function CraftSim.RecipeData:SetOrder(orderData)
+    self.orderData = orderData
+    self.isRecraft = self.orderData.isRecraft
+    self.baseOperationInfo = C_TradeSkillUI.GetCraftingOperationInfoForOrder(self.recipeID, {},
+        self.orderData.orderID, self.concentrating)
+end
+
 function CraftSim.RecipeData:SetSubRecipeCostsUsage(enabled)
     self.subRecipeCostsEnabled = enabled
 end
@@ -1317,7 +1325,7 @@ end
 ---@return RecipeCraftQueueUID
 function CraftSim.RecipeData:GetRecipeCraftQueueUID()
     return self:GetCrafterUID() ..
-        ":" .. self.recipeID .. ":" .. self.subRecipeDepth -- .. ":" .. tostring(self.concentrating)
+        ":" .. self.recipeID .. ":" .. self.subRecipeDepth .. ":" .. tostring((self.orderData and self.orderData.orderID) or 0)
 end
 
 ---@return boolean hasActiveSubRecipes

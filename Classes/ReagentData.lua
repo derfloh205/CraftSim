@@ -458,6 +458,7 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
     multiplier = multiplier or 1
     local iconSize = 25
     local text = ""
+    local orderData = self.recipeData.orderData
     for _, requiredReagent in pairs(self.requiredReagents) do
         local reagentIcon = requiredReagent.items[1].item:GetItemIcon()
         local inlineIcon = GUTIL:IconToText(reagentIcon, iconSize, iconSize)
