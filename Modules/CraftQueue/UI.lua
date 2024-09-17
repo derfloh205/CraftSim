@@ -1332,23 +1332,17 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     --- update craft next button
     local itemsPresent = CraftSim.CRAFTQ.craftQueue and #CraftSim.CRAFTQ.craftQueue.craftQueueItems > 0
     if itemsPresent then
+        -- set the craft next button to the same status as the button in the queue on pos 1
         -- if first item can be crafted (so if anything can be crafted cause the items are sorted by craftable status)
-        local firstQueueItem = CraftSim.CRAFTQ.craftQueue.craftQueueItems[1]
-        queueTab.content.craftNextButton:SetEnabled(firstQueueItem.allowedToCraft)
-
-        if firstQueueItem.allowedToCraft then
-            -- set callback to craft the recipe of the top row
-            queueTab.content.craftNextButton.clickCallback =
-                function()
-                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                    firstQueueItem.recipeData:Craft(math.min(firstQueueItem.craftAbleAmount, firstQueueItem.amount))
-                    CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
-                end
-        else
-            queueTab.content.craftNextButton.clickCallback = nil
-        end
+        local firstRow = queueTab.content.craftList.activeRows[1]
+        local craftButton = firstRow.columns[12].craftButton --[[@as GGUI.Button]]
+        local button = craftButton.frame --[[@as Button]]
+        queueTab.content.craftNextButton:SetEnabled(button:IsEnabled())
+        queueTab.content.craftNextButton.clickCallback = craftButton.clickCallback
+        queueTab.content.craftNextButton:SetText("Next: " .. button:GetText(), 10, true)
     else
         queueTab.content.craftNextButton:SetEnabled(false)
+        queueTab.content.craftNextButton:SetText("Nothing Queued", 10, true)
     end
 
     local currentRecipeData = CraftSim.INIT.currentRecipeData
