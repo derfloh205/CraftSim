@@ -522,10 +522,26 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
     for _, craftQueueItem in pairs(CraftSim.CRAFTQ.craftQueue.craftQueueItems) do
         local requiredReagents = craftQueueItem.recipeData.reagentData.requiredReagents
         for _, reagent in pairs(requiredReagents) do
-            if reagent.hasQuality then
-                for qualityID, reagentItem in pairs(reagent.items) do
+            if not reagent:IsOrderReagentIn(craftQueueItem.recipeData) then
+                if reagent.hasQuality then
+                    for qualityID, reagentItem in pairs(reagent.items) do
+                        local itemID = reagentItem.item:GetItemID()
+                        print("Shopping List Creation: Item: " .. (reagentItem.item:GetItemLink() or ""))
+                        local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
+                        if not isSelfCrafted then
+                            reagentMap[itemID] = reagentMap[itemID] or {
+                                itemName = reagentItem.item:GetItemName(),
+                                qualityID = nil,
+                                quantity = 0
+                            }
+                            reagentMap[itemID].quantity = reagentMap[itemID]
+                                .quantity + (reagentItem.quantity * craftQueueItem.amount)
+                            reagentMap[itemID].qualityID = qualityID
+                        end
+                    end
+                else
+                    local reagentItem = reagent.items[1]
                     local itemID = reagentItem.item:GetItemID()
-                    print("Shopping List Creation: Item: " .. (reagentItem.item:GetItemLink() or ""))
                     local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
                     if not isSelfCrafted then
                         reagentMap[itemID] = reagentMap[itemID] or {
@@ -533,25 +549,11 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
                             qualityID = nil,
                             quantity = 0
                         }
-                        reagentMap[itemID].quantity = reagentMap[itemID]
-                            .quantity + (reagentItem.quantity * craftQueueItem.amount)
-                        reagentMap[itemID].qualityID = qualityID
+                        reagentMap[itemID].quantity = reagentMap[itemID].quantity +
+                            (reagentItem.quantity * craftQueueItem.amount)
+                        print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
+                        print("quantity: " .. tostring(reagentMap[itemID].quantity))
                     end
-                end
-            else
-                local reagentItem = reagent.items[1]
-                local itemID = reagentItem.item:GetItemID()
-                local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-                if not isSelfCrafted then
-                    reagentMap[itemID] = reagentMap[itemID] or {
-                        itemName = reagentItem.item:GetItemName(),
-                        qualityID = nil,
-                        quantity = 0
-                    }
-                    reagentMap[itemID].quantity = reagentMap[itemID].quantity +
-                        (reagentItem.quantity * craftQueueItem.amount)
-                    print("reagentMap Build: " .. tostring(reagentItem.item:GetItemLink()))
-                    print("quantity: " .. tostring(reagentMap[itemID].quantity))
                 end
             end
         end
@@ -567,7 +569,8 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingListAll()
         for _, optionalReagent in pairs(activeReagents) do
             local itemID = optionalReagent.item:GetItemID()
             local isSelfCrafted = craftQueueItem.recipeData:IsSelfCraftedReagent(itemID)
-            if not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
+            local isOrderReagent = optionalReagent:IsOrderReagentIn(craftQueueItem.recipeData)
+            if not isOrderReagent and not isSelfCrafted and not GUTIL:isItemSoulbound(itemID) then
                 reagentMap[itemID] = reagentMap[itemID] or {
                     itemName = optionalReagent.item:GetItemName(),
                     qualityID = optionalReagent.qualityID,
