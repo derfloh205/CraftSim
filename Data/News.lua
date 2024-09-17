@@ -17,6 +17,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("17.3.4"),
+        f.p .. "Changed the wording and setup of all supporter urls",
+        f.a .. "and info in the addon",
         newP("17.3.3"),
         f.P .. "Fixed " .. f.bb("PvP Reagents") .. " not being considered in",
         f.a .. "- " .. f.bb("Simulation Mode"),
