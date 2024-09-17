@@ -449,7 +449,8 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] = "没有适用于地心之战资料片的导出配方",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = f.l("ForgeFinder") .. " 导出",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING] = "正在导出",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") .. " & " .. f.l("easycraft.io") ..
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") ..
+            " & " .. f.l("easycraft.io") ..
             "\n是个寻找和提供" .. f.bb("魔兽世界制造订单") .. "的网站。",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "调试",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "控制台",
@@ -461,7 +462,6 @@ function CraftSim.LOCAL_CN:GetData()
             "您是否想要支持 CraftSim 并且在这里留下你名字和消息？\n请考虑捐款 <3"),
         [CraftSim.CONST.TEXT.SUPPORTERS_DATE] = "日期",
         [CraftSim.CONST.TEXT.SUPPORTERS_SUPPORTER] = "赞助者",
-        [CraftSim.CONST.TEXT.SUPPORTERS_TYPE] = "类型",
         [CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE] = "留言",
 
         -- Customer History

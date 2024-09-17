@@ -406,10 +406,12 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "Novità",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT] = "Esporta per " .. f.l("Easycraft"),
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORTING] = "Esportazione",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] = "Nessuna ricetta da esportare per l'espansione The War Within",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] =
+        "Nessuna ricetta da esportare per l'espansione The War Within",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = "Esporta per " .. f.l("ForgeFinder"),
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING] = "Esportazione",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") .. " & " .. f.l("easycraft.io") ..
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") ..
+            " & " .. f.l("easycraft.io") ..
             "\nè un sito per la ricerca e l'offerta di " .. f.bb("Ordini d'Artigianato di WoW"),
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "Debug",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "Pannello di Controllo",
@@ -421,7 +423,6 @@ function CraftSim.LOCAL_IT:GetData()
             "Vuoi sostenere CraftSim e essere elencato qui con il tuo messaggio?\nConsidera una donazione <3"),
         [CraftSim.CONST.TEXT.SUPPORTERS_DATE] = "Data",
         [CraftSim.CONST.TEXT.SUPPORTERS_SUPPORTER] = "Sostenitore",
-        [CraftSim.CONST.TEXT.SUPPORTERS_TYPE] = "Tipo",
         [CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE] = "Messaggio",
 
         -- Customer History

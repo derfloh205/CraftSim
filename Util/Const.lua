@@ -1016,7 +1016,6 @@ CraftSim.CONST.TEXT = {
 
     SUPPORTERS_DATE = "Supporters_Date",
     SUPPORTERS_SUPPORTER = "Supporters_Supporter",
-    SUPPORTERS_TYPE = "Supporters_Type",
     SUPPORTERS_MESSAGE = "Supporters_Message",
 
     CUSTOMER_HISTORY_TITLE = 800,

@@ -345,7 +345,8 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] = "没有适用于 The War Within 扩展包的导出配方",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = f.l("ForgeFinder") .. " 匯出",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING] = "正在匯出",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") .. " & " .. f.l("easycraft.io") ..
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") ..
+            " & " .. f.l("easycraft.io") ..
             "\n是個尋找和提供" .. f.bb("魔獸世界製造訂單") .. "的網站。",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "除錯",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "控制台",
@@ -356,7 +357,6 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION_2] = f.l("您是否想要支持 CraftSim 並且在這裡留下你名字和訊息?\n請考慮斗內 <3"),
         [CraftSim.CONST.TEXT.SUPPORTERS_DATE] = "日期",
         [CraftSim.CONST.TEXT.SUPPORTERS_SUPPORTER] = "贊助者",
-        [CraftSim.CONST.TEXT.SUPPORTERS_TYPE] = "類型",
         [CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE] = "留言",
 
         -- Customer History
