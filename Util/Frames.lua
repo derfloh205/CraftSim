@@ -290,7 +290,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         end)
     frame.content.donateBox:SetScale(0.75)
     frame.content.donateBoxLabel = CraftSim.FRAME:CreateText(
-        f.patreon("Support CraftSim, donate <3"), frame.content, frame.content.donateBox, "BOTTOM", "TOP", 0, 0, 0.75)
+        f.patreon("Visit CraftSim on Kofi"), frame.content, frame.content.donateBox, "BOTTOM", "TOP", 0, 0, 0.75)
 
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 10, -45)

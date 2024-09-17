@@ -448,10 +448,12 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "News",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT] = f.l("Easycraft") .. " Export",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORTING] = "En cours...",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] = "Aucune recette trouvée pour l'extension The War Within",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] =
+        "Aucune recette trouvée pour l'extension The War Within",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = f.l("ForgeFinder") .. " Export",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING] = "Exporting",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") .. " and " .. f.l("easycraft.io") ..
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") ..
+            " and " .. f.l("easycraft.io") ..
             "\nsont des platformes permettant de chercher et publier des " .. f.bb("commandes de craft"),
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "Debug",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "Control Panel",
@@ -463,7 +465,6 @@ function CraftSim.LOCAL_FR:GetData()
             "Do you want to support CraftSim and also be listed here with your message?\nConsider donating <3"),
         [CraftSim.CONST.TEXT.SUPPORTERS_DATE] = "Date",
         [CraftSim.CONST.TEXT.SUPPORTERS_SUPPORTER] = "Supporter",
-        [CraftSim.CONST.TEXT.SUPPORTERS_TYPE] = "Type",
         [CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE] = "Messaggio",
 
         -- Customer History
@@ -563,7 +564,8 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX] = "Target Mode Only",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP] = "Create an " ..
             f.bb("Auctionator Shopping List") .. " for target mode recipes only",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white("Montant non sauvegardé.\nAppuyez sur ") .. f.bb("Entrée") .. f.white(" pour sauvegarder"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white("Montant non sauvegardé.\nAppuyez sur ") ..
+        f.bb("Entrée") .. f.white(" pour sauvegarder"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Recette Apprise"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Pas en recharge"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_MATERIALS] = f.white("Materiaux Disponibles"),
@@ -589,7 +591,7 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.COOLDOWNS_CHARGES_HEADER] = "Charges",
         [CraftSim.CONST.TEXT.COOLDOWNS_NEXT_HEADER] = "Next Charge",
         [CraftSim.CONST.TEXT.COOLDOWNS_ALL_HEADER] = "Charges Full",
-        
+
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_TITLE] = "Concentration CraftSim",
 
         -- static popups

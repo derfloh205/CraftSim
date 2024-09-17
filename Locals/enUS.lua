@@ -462,11 +462,10 @@ function CraftSim.LOCAL_EN:GetData()
         -- Supporters
         [CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION] = f.l("Thank you to all those awesome people!"),
         [CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION_2] = f.l(
-            "Do you want to support CraftSim and also be listed here with your message?\nConsider donating <3"),
+            "Do you want to support CraftSim and also be listed here with your message?\nConsider joining the Community!"),
         [CraftSim.CONST.TEXT.SUPPORTERS_DATE] = "Date",
         [CraftSim.CONST.TEXT.SUPPORTERS_SUPPORTER] = "Supporter",
-        [CraftSim.CONST.TEXT.SUPPORTERS_TYPE] = "Type",
-        [CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE] = "Messaggio",
+        [CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE] = "Message",
 
         -- Customer History
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TITLE] = "CraftSim Customer History",

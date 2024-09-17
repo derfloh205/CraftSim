@@ -14,10 +14,10 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Herstellungsgeschwindigkeit",
         [CraftSim.CONST.TEXT.EQUIP_MATCH_STRING] = "Anlegen:",
         [CraftSim.CONST.TEXT.ENCHANTED_MATCH_STRING] = "Verzaubert:",
-            
+
         -- gemeinsame Berufs-CDs
         [CraftSim.CONST.TEXT.DF_ALCHEMY_TRANSMUTATIONS] = "DF - Transmutationen",
-            
+
         -- Erweiterungen
 
         [CraftSim.CONST.TEXT.EXPANSION_VANILLA] = "Classic",
@@ -31,9 +31,9 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.EXPANSION_SHADOWLANDS] = "Shadowlands",
         [CraftSim.CONST.TEXT.EXPANSION_DRAGONFLIGHT] = "Dragonflight",
         [CraftSim.CONST.TEXT.EXPANSION_THE_WAR_WITHIN] = "The War Within",
-            
+
         -- Berufe
-            
+
         [CraftSim.CONST.TEXT.PROFESSIONS_BLACKSMITHING] = "Schmiedekunst",
         [CraftSim.CONST.TEXT.PROFESSIONS_LEATHERWORKING] = "Lederverarbeitung",
         [CraftSim.CONST.TEXT.PROFESSIONS_ALCHEMY] = "Alchemie",
@@ -47,9 +47,9 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.PROFESSIONS_SKINNING] = "Kürschnerei",
         [CraftSim.CONST.TEXT.PROFESSIONS_JEWELCRAFTING] = "Juwelierskunst",
         [CraftSim.CONST.TEXT.PROFESSIONS_INSCRIPTION] = "Inschriftenkunde",
-            
+
         -- Andere Statnamen
-            
+
         [CraftSim.CONST.TEXT.STAT_SKILL] = "Fertigkeit",
         [CraftSim.CONST.TEXT.STAT_MULTICRAFT_BONUS] = "Mehrfachherstellung Extra-Gegenstände",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS_BONUS] = "Einfallsreichtum Extra-Gegenstände",
@@ -58,7 +58,7 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.STAT_INGENUITY_LESS_CONCENTRATION] = "Weniger Konzentrationsverbrauch",
         [CraftSim.CONST.TEXT.STAT_PHIAL_EXPERIMENTATION] = "Durchbruch bei Phiolen",
         [CraftSim.CONST.TEXT.STAT_POTION_EXPERIMENTATION] = "Durchbruch bei Tränken",
-            
+
         -- Gewinnaufschlüsselung Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
         "Einfallsreichtum proct für jedes Material einzeln und spart dann etwa 30 % der Menge.\n\nDer durchschnittliche Wert, den es spart, ist der durchschnittliche gesparte Wert aller Kombinationen und deren Chancen.\n(Dass alle Materialien gleichzeitig proccen, ist sehr unwahrscheinlich, spart aber viel.)\n\nDie durchschnittlichen Gesamtkosten der gesparten Materialien sind die Summe der gesparten Materialkosten aller Kombinationen, gewichtet nach deren Wahrscheinlichkeit.",
@@ -80,7 +80,7 @@ function CraftSim.LOCAL_DE:GetData()
         "Der CraftSim-Simulationsmodus ermöglicht es, ohne Einschränkungen mit einem Rezept herumzuspielen.",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_OPTIONAL] = "Optional #",
         [CraftSim.CONST.TEXT.SIMULATION_MODE_FINISHING] = "Abschluss #",
-            
+
         -- Detailfenster
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_LABEL] = "Rezeptschwierigkeit: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Mehrfachherstellung: ",
@@ -94,66 +94,75 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Fehlende Fertigkeit: ",
         [CraftSim.CONST.TEXT.SKILL_LABEL] = "Fertigkeit: ",
         [CraftSim.CONST.TEXT.MULTICRAFT_BONUS_LABEL] = "Gegenstandsbonus für Mehrfachherstellung: ",
-            
+
         -- Statistiken
         [CraftSim.CONST.TEXT.STATISTICS_CDF_EXPLANATION] =
         "Dies wird durch die 'Abramowitz und Stegun' Näherung (1985) der CDF (Kumulative Verteilungsfunktion) berechnet.\n\nDu wirst feststellen, dass es bei einer Herstellung immer um die 50 % liegt.\nDas liegt daran, dass 0 meistens nahe am durchschnittlichen Gewinn liegt.\nUnd die Wahrscheinlichkeit, den Mittelwert der CDF zu erreichen, beträgt immer 50 %.\n\nAllerdings kann die Änderungsrate zwischen Rezepten sehr unterschiedlich sein.\nWenn es wahrscheinlicher ist, einen positiven Gewinn als einen negativen zu erzielen, wird sie stetig ansteigen.\nDies gilt natürlich auch für die entgegengesetzte Richtung.",
         [CraftSim.CONST.TEXT.EXPLANATIONS_PROFIT_CALCULATION_EXPLANATION] =
-			f.r("Warnung: ") .. " Mathematik voraus!\n\n" ..
-			"Wenn du etwas herstellst, hast du aufgrund deiner Herstellungsstatistiken unterschiedliche Chancen für unterschiedliche Ergebnisse.\n" ..
-			"Und in der Statistik wird dies als " .. f.l("Wahrscheinlichkeitsverteilung.\n") ..
-			"Allerdings wirst du feststellen, dass die unterschiedlichen Chancen deiner Procs sich nicht zu eins addieren\n" ..
-			"(Was für eine solche Verteilung erforderlich ist, da es bedeutet, dass du eine 100%ige Chance hast, dass etwas passieren kann)\n\n" ..
-			"Dies liegt daran, dass Procs wie " ..
-			f.bb("Einfallsreichtum ") .. "und" .. f.bb(" Mehrfachherstellung") .. " gleichzeitig passieren können " .. f.g("gleichzeitig auftreten.\n") ..
-			"Also müssen wir zuerst unsere Proc-Chancen in eine " ..
-			f.l("Wahrscheinlichkeitsverteilung ") .. " mit Chancen\n" ..
-			"umwandeln, die sich auf 100 % summieren (Was bedeuten würde, dass jeder Fall abgedeckt ist)\n" ..
-			"Und dafür müssten wir " .. f.l("jeden") .. " möglichen Ausgang einer Herstellung berechnen\n\n" ..
-			"Zum Beispiel: \n" ..
-			f.p .. "Was, wenn " .. f.bb("nichts") .. " proct?\n" ..
-			f.p .. "Was, wenn entweder " .. f.bb("Einfallsreichtum") .. " oder " .. f.bb("Mehrfachherstellung") .. " proct?\n" ..
-			f.p .. "Was, wenn sowohl " .. f.bb("Einfallsreichtum") .. " als auch " .. f.bb("Mehrfachherstellung") .. " proct?\n" ..
-			f.p .. "Und so weiter..\n\n" ..
-			"Bei einem Rezept, das alle Procs berücksichtigt, wären das 2 hoch 2 Ausgangsmöglichkeiten, also ordentliche 4.\n" ..
-			"Um die Chance zu berechnen, dass nur " ..
-			f.bb("Mehrfachherstellung") .. " auftritt, müssen wir alle anderen Möglichkeiten berücksichtigen!\n" ..
-			"Die Chance, dass nur " ..
-			f.l("nur") .. f.bb(" Mehrfachherstellung ") .. " auftritt, ist tatsächlich die Chance, dass " .. f.bb("Mehrfachherstellung\n") ..
-			"auftritt und " .. f.l("nicht ") .. " " .. f.bb("Einfallsreichtum\n") ..
-			"Und die Mathematik sagt uns, dass die Wahrscheinlichkeit, dass etwas nicht passiert, 1 minus die Wahrscheinlichkeit ist, dass es passiert.\n" ..
-			"Die Chance, dass nur " ..
-			f.bb("Mehrfachherstellung ") ..
-			"auftritt, beträgt tatsächlich " .. f.g("multicraftChance * (1-resourcefulnessChance)\n\n") ..
-			"Nach der Berechnung jeder Möglichkeit summieren sich die einzelnen Chancen tatsächlich auf eins!\n" ..
-			"Das bedeutet, dass wir jetzt statistische Formeln anwenden können. Die interessanteste in unserem Fall ist der " ..
-			f.bb("Erwartungswert") .. "\n" ..
-			"Der ist, wie der Name schon sagt, der Wert, den wir im Durchschnitt erwarten können, oder in unserem Fall, der " ..
-			f.bb(" erwartete Gewinn für eine Herstellung!\n") ..
-			"\n" .. cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
-			"Dies sagt uns, dass der Erwartungswert " ..
-			f.l("E") ..
-			" einer Wahrscheinlichkeitsverteilung " ..
-			f.l("X") .. " die Summe aller ihrer Werte multipliziert mit ihrer Wahrscheinlichkeit ist.\n" ..
-			"Wenn wir also einen " ..
-			f.bb("Fall A mit einer Wahrscheinlichkeit von 30 %") ..
-			" und einen Gewinn von " ..
-			CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
-			" und einen\n" ..
-			f.bb("Fall B mit einer Wahrscheinlichkeit von 70 %") ..
-			" und einen Gewinn von " .. CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " haben, dann beträgt der erwartete Gewinn\n" ..
-			f.bb("\nE(X) = -100*0,3 + 300*0,7  ") ..
-			"was " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. " ergibt.\n" ..
-			"Du kannst alle Fälle für dein aktuelles Rezept im " .. f.bb("Statistik") .. " Fenster anzeigen!"
-		,
-            
+            f.r("Warnung: ") .. " Mathematik voraus!\n\n" ..
+            "Wenn du etwas herstellst, hast du aufgrund deiner Herstellungsstatistiken unterschiedliche Chancen für unterschiedliche Ergebnisse.\n" ..
+            "Und in der Statistik wird dies als " .. f.l("Wahrscheinlichkeitsverteilung.\n") ..
+            "Allerdings wirst du feststellen, dass die unterschiedlichen Chancen deiner Procs sich nicht zu eins addieren\n" ..
+            "(Was für eine solche Verteilung erforderlich ist, da es bedeutet, dass du eine 100%ige Chance hast, dass etwas passieren kann)\n\n" ..
+            "Dies liegt daran, dass Procs wie " ..
+            f.bb("Einfallsreichtum ") ..
+            "und" ..
+            f.bb(" Mehrfachherstellung") .. " gleichzeitig passieren können " .. f.g("gleichzeitig auftreten.\n") ..
+            "Also müssen wir zuerst unsere Proc-Chancen in eine " ..
+            f.l("Wahrscheinlichkeitsverteilung ") .. " mit Chancen\n" ..
+            "umwandeln, die sich auf 100 % summieren (Was bedeuten würde, dass jeder Fall abgedeckt ist)\n" ..
+            "Und dafür müssten wir " .. f.l("jeden") .. " möglichen Ausgang einer Herstellung berechnen\n\n" ..
+            "Zum Beispiel: \n" ..
+            f.p .. "Was, wenn " .. f.bb("nichts") .. " proct?\n" ..
+            f.p ..
+            "Was, wenn entweder " ..
+            f.bb("Einfallsreichtum") .. " oder " .. f.bb("Mehrfachherstellung") .. " proct?\n" ..
+            f.p ..
+            "Was, wenn sowohl " ..
+            f.bb("Einfallsreichtum") .. " als auch " .. f.bb("Mehrfachherstellung") .. " proct?\n" ..
+            f.p .. "Und so weiter..\n\n" ..
+            "Bei einem Rezept, das alle Procs berücksichtigt, wären das 2 hoch 2 Ausgangsmöglichkeiten, also ordentliche 4.\n" ..
+            "Um die Chance zu berechnen, dass nur " ..
+            f.bb("Mehrfachherstellung") .. " auftritt, müssen wir alle anderen Möglichkeiten berücksichtigen!\n" ..
+            "Die Chance, dass nur " ..
+            f.l("nur") ..
+            f.bb(" Mehrfachherstellung ") ..
+            " auftritt, ist tatsächlich die Chance, dass " .. f.bb("Mehrfachherstellung\n") ..
+            "auftritt und " .. f.l("nicht ") .. " " .. f.bb("Einfallsreichtum\n") ..
+            "Und die Mathematik sagt uns, dass die Wahrscheinlichkeit, dass etwas nicht passiert, 1 minus die Wahrscheinlichkeit ist, dass es passiert.\n" ..
+            "Die Chance, dass nur " ..
+            f.bb("Mehrfachherstellung ") ..
+            "auftritt, beträgt tatsächlich " .. f.g("multicraftChance * (1-resourcefulnessChance)\n\n") ..
+            "Nach der Berechnung jeder Möglichkeit summieren sich die einzelnen Chancen tatsächlich auf eins!\n" ..
+            "Das bedeutet, dass wir jetzt statistische Formeln anwenden können. Die interessanteste in unserem Fall ist der " ..
+            f.bb("Erwartungswert") .. "\n" ..
+            "Der ist, wie der Name schon sagt, der Wert, den wir im Durchschnitt erwarten können, oder in unserem Fall, der " ..
+            f.bb(" erwartete Gewinn für eine Herstellung!\n") ..
+            "\n" .. cm(CraftSim.MEDIA.IMAGES.EXPECTED_VALUE) .. "\n\n" ..
+            "Dies sagt uns, dass der Erwartungswert " ..
+            f.l("E") ..
+            " einer Wahrscheinlichkeitsverteilung " ..
+            f.l("X") .. " die Summe aller ihrer Werte multipliziert mit ihrer Wahrscheinlichkeit ist.\n" ..
+            "Wenn wir also einen " ..
+            f.bb("Fall A mit einer Wahrscheinlichkeit von 30 %") ..
+            " und einen Gewinn von " ..
+            CraftSim.UTIL:FormatMoney(-100 * 10000, true) ..
+            " und einen\n" ..
+            f.bb("Fall B mit einer Wahrscheinlichkeit von 70 %") ..
+            " und einen Gewinn von " ..
+            CraftSim.UTIL:FormatMoney(300 * 10000, true) .. " haben, dann beträgt der erwartete Gewinn\n" ..
+            f.bb("\nE(X) = -100*0,3 + 300*0,7  ") ..
+            "was " .. CraftSim.UTIL:FormatMoney((-100 * 0.3 + 300 * 0.7) * 10000, true) .. " ergibt.\n" ..
+            "Du kannst alle Fälle für dein aktuelles Rezept im " .. f.bb("Statistik") .. " Fenster anzeigen!"
+        ,
+
         -- Popups
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_SYSTEM] = "Keine unterstützte Preisquelle verfügbar!",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_TITLE] = "CraftSim Preisquellenwarnung",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] =
         "Keine Preisquelle gefunden!\n\nDu musst mindestens eines der\nfolgenden Preisquellen-Addons installiert haben, um\ndie Gewinnberechnungen von CraftSim zu nutzen:\n\n\n",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Warnung nicht mehr anzeigen",
-            
+
         -- Materialfenster
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Materialoptimierung",
         [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Erreichbare Qualität: ",
@@ -163,13 +172,13 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "Beste Kombination zugewiesen",
         [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "Keine Kombination gefunden,\num die Qualität zu erhöhen",
         [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "Zuweisen",
-            
+
         -- Spezialisierungs-Infofenster
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "CraftSim Spezialisierungsinfo",
         [CraftSim.CONST.TEXT.SPEC_INFO_SIMULATE_KNOWLEDGE_DISTRIBUTION] = "Wissenverteilung simulieren",
         [CraftSim.CONST.TEXT.SPEC_INFO_NODE_TOOLTIP] = "Dieser Knoten gewährt dir folgende Werte für dieses Rezept:",
         [CraftSim.CONST.TEXT.SPEC_INFO_WORK_IN_PROGRESS] = "Spezialisierungsinfo\nIn Arbeit",
-            
+
         -- Herstellungs-Ergebnisse-Fenster
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_TITLE] = "CraftSim Herstellungsergebnisse",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_LOG] = "Herstellungsprotokoll",
@@ -195,11 +204,12 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10] = "- Ø Gesparte Kosten: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_11] = "Gewinn: ",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_SAVED_REAGENTS] = "Gespeicherte Reagenzien",
-        [CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX] = f.l("Aufzeichnung der\nHerstellungsergebnisse deaktivieren"),
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX] = f.l(
+        "Aufzeichnung der\nHerstellungsergebnisse deaktivieren"),
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX_TOOLTIP] =
-			"Wenn aktiviert, wird die Aufzeichnung von Herstellungsergebnissen beim Herstellen gestoppt und kann die " ..
-			f.g("Leistung verbessern"),
-            
+            "Wenn aktiviert, wird die Aufzeichnung von Herstellungsergebnissen beim Herstellen gestoppt und kann die " ..
+            f.g("Leistung verbessern"),
+
         -- Statgewichtungsfenster
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_TITLE] = "CraftSim Durchschnittlicher Gewinn",
         [CraftSim.CONST.TEXT.EXPLANATIONS_TITLE] = "CraftSim Erklärung zum Durchschnittlichen Gewinn",
@@ -209,28 +219,29 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON] = "Statistiken verbergen",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Ø Gewinn / Herstellung: ",
         [CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB] = "Grundlegende Gewinnberechnung",
-            
+
         -- Kostendetailsfenster
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "CraftSim Kostenoptimierung",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_EXPLANATION] =
-			"Hier kannst du eine Übersicht über alle möglichen Preise der verwendeten Materialien sehen.\nDie " ..
-			f.bb("'Verwendete Quelle'") ..
-			" Spalte zeigt an, welche der Preise verwendet wird.\n\n" ..
-			f.g("AH") ..
-			" .. Auktionshauspreis\n" ..
-			f.l("ODER") ..
-			" .. Preisüberschreibung\n" ..
-			f.bb("Jeder Name") ..
-			" .. Erwartete Kosten für die eigene Herstellung\n" ..
-			f.l("ODER") ..
-			" wird immer verwendet, wenn gesetzt. " .. f.bb("Herstellungskosten") .. " werden nur verwendet, wenn sie niedriger sind als " .. f.g("AH"),
+            "Hier kannst du eine Übersicht über alle möglichen Preise der verwendeten Materialien sehen.\nDie " ..
+            f.bb("'Verwendete Quelle'") ..
+            " Spalte zeigt an, welche der Preise verwendet wird.\n\n" ..
+            f.g("AH") ..
+            " .. Auktionshauspreis\n" ..
+            f.l("ODER") ..
+            " .. Preisüberschreibung\n" ..
+            f.bb("Jeder Name") ..
+            " .. Erwartete Kosten für die eigene Herstellung\n" ..
+            f.l("ODER") ..
+            " wird immer verwendet, wenn gesetzt. " ..
+            f.bb("Herstellungskosten") .. " werden nur verwendet, wenn sie niedriger sind als " .. f.g("AH"),
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS] = "Herstellungskosten: ",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER] = "Gegenstand",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_AH_PRICE_HEADER] = "AH-Preis",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_OVERRIDE_HEADER] = "Überschreibung",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_HEADER] = "Herstellung",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_USED_SOURCE] = "Verwendete Quelle",
-            
+
         -- Statistikfenster
         [CraftSim.CONST.TEXT.STATISTICS_TITLE] = "CraftSim Statistiken",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT] = "Erwarteter Gewinn (μ)",
@@ -243,14 +254,14 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "Einfallsreichtum",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "Erwarteter Gewinn",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "Rezeptwahrscheinlichkeitstabelle",
-            
+
         -- Preisdetailsfenster
         [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "CraftSim Preisdaten",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Inventar/AH",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "Gegenstand",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "Preis/Gegenstand",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PROFIT_ITEM] = "Gewinn/Gegenstand",
-            
+
         -- Preisüberschreibungsfenster
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE] = "CraftSim Preisüberschreibungen",
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_REQUIRED_REAGENTS] = "Erforderliche Reagenzien",
@@ -264,7 +275,7 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVE] = "Speichern",
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_SAVED] = "Gespeichert",
         [CraftSim.CONST.TEXT.PRICE_OVERRIDE_REMOVE] = "Entfernen",
-            
+
         -- Rezept-Scan-Fenster
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TITLE] = "CraftSim Rezept-Scan",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE] = "Scanmodus",
@@ -279,7 +290,8 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_SOULBOUND_TOOLTIP] =
         "Seelengebundene Rezepte in den Rezept-Scan einbeziehen.\n\nEs wird empfohlen, eine Preisüberschreibung festzulegen (z.B. um eine Zielprovision zu simulieren)\nim Preisüberschreibungsmodul für die hergestellten Gegenstände dieses Rezepts",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR] = "Ausrüstung einbeziehen",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP] = "Alle Arten von Ausrüstungsrezepten in den Rezept-Scan einbeziehen",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_INCLUDE_GEAR_TOOLTIP] =
+        "Alle Arten von Ausrüstungsrezepten in den Rezept-Scan einbeziehen",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS] = "Berufswerkzeuge optimieren",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_TOOLS_TOOLTIP] =
         "Optimiere für jedes Rezept deine Berufswerkzeuge für den Gewinn\n\n",
@@ -299,8 +311,8 @@ function CraftSim.LOCAL_DE:GetData()
         "Sortiere die Gewinnliste nach Gewinn relativ zu den Herstellungskosten.\n(Ein neuer Scan ist erforderlich)",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX] = "Verwenden " .. f.bb("Erkenntnis") .. " wenn möglich",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_USE_INSIGHT_CHECKBOX_TOOLTIP] = "Verwende " ..
-			f.bb("Illustre Erkenntnis") ..
-			" oder\n" .. f.bb("Geringe illustre Erkenntnis") .. " als optionales Reagenz für Rezepte, die dies zulassen.",
+            f.bb("Illustre Erkenntnis") ..
+            " oder\n" .. f.bb("Geringe illustre Erkenntnis") .. " als optionales Reagenz für Rezepte, die dies zulassen.",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX] = "Nur Favoriten",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP] = "Scanne nur deine Lieblingsrezepte",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Ausgerüstet",
@@ -320,15 +332,16 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_TAB_LABEL_OPTIONS] = "Scan-Optionen",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_LABEL] = "Alle gescannten Berufe",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP] = f.g("Wahr: ") ..
-			"Importiere Scan-Ergebnisse von allen aktivierten und gescannten Berufen\n\n" ..
-			f.r("Falsch: ") .. "Importiere Scan-Ergebnisse nur vom aktuell ausgewählten Beruf",
+            "Importiere Scan-Ergebnisse von allen aktivierten und gescannten Berufen\n\n" ..
+            f.r("Falsch: ") .. "Importiere Scan-Ergebnisse nur vom aktuell ausgewählten Beruf",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES_TOOLTIP] =
-			"Jedes Mal, wenn du ein Rezept auf einem Charakter öffnest oder scannst, " ..
-			f.l("CraftSim") ..
-			" merkt es sich.\n\nNur Rezepte deiner Alts, die " ..
-			f.l("CraftSim") .. " sich merken kann, werden mit " .. f.bb("RecipeScan\n\n") ..
-			"gescannt. Die tatsächliche Anzahl der gescannten Rezepte basiert dann auf deinen " .. f.e("Rezept-Scan-Optionen"),
-            
+            "Jedes Mal, wenn du ein Rezept auf einem Charakter öffnest oder scannst, " ..
+            f.l("CraftSim") ..
+            " merkt es sich.\n\nNur Rezepte deiner Alts, die " ..
+            f.l("CraftSim") .. " sich merken kann, werden mit " .. f.bb("RecipeScan\n\n") ..
+            "gescannt. Die tatsächliche Anzahl der gescannten Rezepte basiert dann auf deinen " ..
+            f.e("Rezept-Scan-Optionen"),
+
         -- Rezept-Beste Ausrüstung
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Beste Ausrüstung",
         [CraftSim.CONST.TEXT.TOP_GEAR_AUTOMATIC] = "Automatisch",
@@ -344,13 +357,13 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_RESOURCEFULNESS] = "Neuer Einfallsreichtum\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_SKILL] = "Neue Fertigkeit\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_UNHANDLED] = "Ungehandelter Simulationsmodus",
-            
+
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_PROFIT] = "Höchster Gewinn",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_SKILL] = "Höchste Fertigkeit",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_MULTICRAFT] = "Beste Mehrfachherstellung",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_RESOURCEFULNESS] = "Bester Einfallsreichtum",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIM_MODES_CRAFTING_SPEED] = "Beste Herstellungsgeschwindigkeit",
-            
+
         -- Optionen
         [CraftSim.CONST.TEXT.OPTIONS_TITLE] = "CraftSim Optionen",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_TAB] = "Allgemein",
@@ -381,7 +394,8 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Modul Beste Ausrüstung",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Kostenübersichtsmodul",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "Spezialisierungsinfo-Modul",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] = "Maximale Nachrichtenanzahl pro Kunde in der Kundenhistorie",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] =
+        "Maximale Nachrichtenanzahl pro Kunde in der Kundenhistorie",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Fertigkeitsschwellenwerte um 1 verschieben",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] =
         "Der Materialkombinationsvorschlag versucht, den Schwellenwert + 1 zu erreichen, anstatt die genaue erforderliche Fertigkeit zu erreichen",
@@ -393,11 +407,11 @@ function CraftSim.LOCAL_DE:GetData()
         "Standard: 0.3\n\nHerstellungsdaten von verschiedenen Datensammlern in der Beta und im frühen Dragonflight deuten darauf hin,\ndass die durchschnittlich eingesparte Menge an Gegenständen 30 % der erforderlichen Menge beträgt.\nWenn du möchtest, kannst du diesen Wert hier ändern.",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX] = "Zeige " .. f.bb("News") .. " Popup",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SHOW_NEWS_CHECKBOX_TOOLTIP] = "Zeige das " ..
-			f.bb("News") .. " Popup für neue " .. f.l("CraftSim") .. " Update-Informationen beim Einloggen ins Spiel",
+            f.bb("News") .. " Popup für neue " .. f.l("CraftSim") .. " Update-Informationen beim Einloggen ins Spiel",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_CHECKBOX] = "Minikarten-Symbol verbergen",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_HIDE_MINIMAP_BUTTON_TOOLTIP] = "Aktiviere dies, um das " ..
-			f.l("CraftSim") .. " Minikarten-Symbol zu verbergen",
-            
+            f.l("CraftSim") .. " Minikarten-Symbol zu verbergen",
+
         -- Steuerungsfeld
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_LABEL] = "Herstellungswarteschl.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_CRAFT_QUEUE_TOOLTIP] =
@@ -440,30 +454,31 @@ function CraftSim.LOCAL_DE:GetData()
         "Modul, das dir deine aktiven und fehlenden Herstellungs-Buffs anzeigt",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL] = "Erklärungen",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP] =
-			"Modul, das dir verschiedene Erklärungen zeigt, wie" .. f.l(" CraftSim") .. " Dinge berechnet",
+            "Modul, das dir verschiedene Erklärungen zeigt, wie" .. f.l(" CraftSim") .. " Dinge berechnet",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Fensterpos. zurücksetzen",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Optionen",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "News",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT] = f.l("Easycraft") .. " Export",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORTING] = "Exportiere",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] = "Kein Rezept zum Exportieren für die The War Within-Erweiterung gefunden",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EASYCRAFT_EXPORT_NO_RECIPE_FOUND] =
+        "Kein Rezept zum Exportieren für die The War Within-Erweiterung gefunden",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORT] = f.l("ForgeFinder") .. " Export",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_FORGEFINDER_EXPORTING] = "Exportiere",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") .. " und " .. f.l("easycraft.io") ..
-			"\nsind Websites, um " .. f.bb("WoW-Aufträge") .. " zu suchen und anzubieten",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_EXPORT_EXPLANATION] = f.l("wowforgefinder.com") ..
+            " und " .. f.l("easycraft.io") ..
+            "\nsind Websites, um " .. f.bb("WoW-Aufträge") .. " zu suchen und anzubieten",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_DEBUG] = "Debug",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE] = "Steuerungsfeld",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_SUPPORTERS_BUTTON] = f.patreon("Unterstützer"),
-            
+
         -- Unterstützer
         [CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION] = f.l("Danke an all diese großartigen Menschen!"),
         [CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION_2] = f.l(
-			"Willst du CraftSim unterstützen und auch hier mit deiner Nachricht aufgeführt werden?\nErwäge eine Spende <3"),
+            "Willst du CraftSim unterstützen und auch hier mit deiner Nachricht aufgeführt werden?\nErwäge eine Spende <3"),
         [CraftSim.CONST.TEXT.SUPPORTERS_DATE] = "Datum",
         [CraftSim.CONST.TEXT.SUPPORTERS_SUPPORTER] = "Unterstützer",
-        [CraftSim.CONST.TEXT.SUPPORTERS_TYPE] = "Typ",
         [CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE] = "Nachricht",
-            
+
         -- Kundenhistorie
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TITLE] = "CraftSim Kundenhistorie",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DROPDOWN_LABEL] = "Wähle einen Kunden",
@@ -480,7 +495,8 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_CONFIRMATION_POPUP] =
         "Bist du sicher, dass du alle Daten für %s löschen möchtest?",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_DELETE_CUSTOMER_POPUP_TITLE] = "Kundenhistorie löschen",
-        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] = "0 Trinkgeld Kundenhistorie löschen",
+        [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_ZERO_TIPS_CONFIRMATION_POPUP_TITLE] =
+        "0 Trinkgeld Kundenhistorie löschen",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_LABEL] = "Automatisches Entfernen-Intervall (Tage)",
         [CraftSim.CONST.TEXT.CUSTOMER_HISTORY_PURGE_DAYS_INPUT_TOOLTIP] =
         "CraftSim wird alle 0-Trinkgeld-Kunden automatisch löschen, wenn du dich nach X Tagen seit der letzten Löschung einloggst.\nWenn auf 0 gesetzt, wird CraftSim nie automatisch löschen.",
@@ -513,31 +529,31 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL] = "Auctionator Einkaufsliste erstellen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL] = "Herstellungswarteschlange",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL] = "Taskleiste blinken bei " ..
-			f.bb("Herstellungswarteschlange") .. " Herstellung beendet",
+            f.bb("Herstellungswarteschlange") .. " Herstellung beendet",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP] =
-			"Wenn dein WoW-Spiel minimiert ist und ein Rezept in der " .. f.bb("Herstellungswarteschlange") ..
-			"," .. f.l(" CraftSim") .. " fertiggestellt wurde, wird das WoW-Taskleistensymbol blinken",
+            "Wenn dein WoW-Spiel minimiert ist und ein Rezept in der " .. f.bb("Herstellungswarteschlange") ..
+            "," .. f.l(" CraftSim") .. " fertiggestellt wurde, wird das WoW-Taskleistensymbol blinken",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL] = "Auffülloptionen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL] = "Gewinnschwelle:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL] = "Verkaufsrate Schwelle:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP] = string.format(
-			[[
+            [[
 Nur verfügbar, wenn %s geladen ist!
-            
+
 Es wird geprüft, ob %s einer Gegenstandsqualität eine Verkaufsrate
 hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
 ]], f.bb("TSM"), f.bb("irgendeine")),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP_GENERAL] = string.format(
-			[[
+            [[
 Nur verfügbar, wenn %s geladen ist!
-            
+
 Es wird geprüft, ob %s einer Gegenstandsqualität eine Verkaufsrate
 hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
 ]], f.bb("TSM"), f.bb("irgendeine")),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_AMOUNT_LABEL] = "Auffüllmenge:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_RESTOCK_TOOLTIP] = "Dies ist die " ..
-			f.bb("Menge an Herstellungen") ..
-			" die für dieses Rezept eingereiht wird.\n\nDie Menge der Gegenstände, die du in deinem Inventar und Bank der überprüften Qualitäten hast, wird von der Auffüllmenge abgezogen, wenn aufgefüllt wird",
+            f.bb("Menge an Herstellungen") ..
+            " die für dieses Rezept eingereiht wird.\n\nDie Menge der Gegenstände, die du in deinem Inventar und Bank der überprüften Qualitäten hast, wird von der Auffüllmenge abgezogen, wenn aufgefüllt wird",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_LABEL] = "Aktivieren:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_OPTIONS_LABEL] = "Allgemeine Optionen (Alle Rezepte)",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP] =
@@ -557,39 +573,40 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_CONCENTRATION_CHECKBOX] = " Konzentration",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX] = "Pro Charakter",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP] = "Erstelle eine " ..
-			f.bb("Auctionator Einkaufsliste") .. " für jeden Handwerkercharakter\nanstatt eine Einkaufsliste für alle",
+            f.bb("Auctionator Einkaufsliste") .. " für jeden Handwerkercharakter\nanstatt eine Einkaufsliste für alle",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX] = "Nur Zielmodus",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP] = "Erstelle eine " ..
-			f.bb("Auctionator Einkaufsliste") .. " nur für Zielmodusrezepte",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white("Nicht gespeicherte Warteschlangenmenge.\nDrücke Enter, um zu speichern"),
+            f.bb("Auctionator Einkaufsliste") .. " nur für Zielmodusrezepte",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white(
+        "Nicht gespeicherte Warteschlangenmenge.\nDrücke Enter, um zu speichern"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Rezept erlernt"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Keine Abklingzeit"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_MATERIALS] = f.white("Materialien verfügbar"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_GEAR] = f.white("Berufsausrüstung angelegt"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("Richtiger Handwerkercharakter"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("Beruf geöffnet"),
-            
+
         -- Herstellungs-Buffs
-            
+
         [CraftSim.CONST.TEXT.CRAFT_BUFFS_TITLE] = "CraftSim Herstellungs-Buffs",
         [CraftSim.CONST.TEXT.CRAFT_BUFFS_SIMULATE_BUTTON] = "Buffs simulieren",
         [CraftSim.CONST.TEXT.CRAFT_BUFF_CHEFS_HAT_TOOLTIP] = f.bb("Wrath of the Lich King Spielzeug.") ..
-        "\nErfordert Nordend-Kochkunst\nSetzt Herstellungsgeschwindigkeit auf " .. f.g("0,5 Sekunden"),
-            
+            "\nErfordert Nordend-Kochkunst\nSetzt Herstellungsgeschwindigkeit auf " .. f.g("0,5 Sekunden"),
+
         -- Abklingzeiten-Modul
-            
+
         [CraftSim.CONST.TEXT.COOLDOWNS_TITLE] = "CraftSim Abklingzeiten",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_LABEL] = "Abklingzeiten",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_COOLDOWNS_TOOLTIP] = "Übersicht über die " ..
-			f.bb("Berufs-Abklingzeiten") .. " deines Accounts",
+            f.bb("Berufs-Abklingzeiten") .. " deines Accounts",
         [CraftSim.CONST.TEXT.COOLDOWNS_CRAFTER_HEADER] = "Handwerker",
         [CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_HEADER] = "Rezept",
         [CraftSim.CONST.TEXT.COOLDOWNS_CHARGES_HEADER] = "Aufladungen",
         [CraftSim.CONST.TEXT.COOLDOWNS_NEXT_HEADER] = "Nächste Aufladung",
         [CraftSim.CONST.TEXT.COOLDOWNS_ALL_HEADER] = "Aufladungen voll",
-            
+
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_TITLE] = "CraftSim Konzentration",
-            
+
         -- statische Popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Ja",
         [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "Nein",
