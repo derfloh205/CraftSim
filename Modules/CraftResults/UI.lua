@@ -471,8 +471,9 @@ function CraftSim.CRAFT_RESULTS.UI:UpdateRecipeData(recipeID)
                 local expectedAdditionalItems = 0
                 local multicraftExtraItemsFactor = 1 + CraftSim.INIT.currentRecipeData.professionStats.multicraft
                     :GetExtraValue()
-
-                local maxExtraItems = (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT") * CraftSim.INIT.currentRecipeData.baseItemAmount) *
+                local mcConstant = CraftSim.UTIL:GetMulticraftConstantByBaseYield(CraftSim.INIT.currentRecipeData
+                    .baseItemAmount)
+                local maxExtraItems = (mcConstant * CraftSim.INIT.currentRecipeData.baseItemAmount) *
                     multicraftExtraItemsFactor
                 expectedAdditionalItems = tonumber(CraftSim.GUTIL:Round((1 + maxExtraItems) / 2, 2)) or 0
 

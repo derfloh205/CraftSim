@@ -33,7 +33,8 @@ function CraftSim.CALC:GetExpectedItemAmountMulticraft(recipeData)
         return recipeData.baseItemAmount, 0
     end
 
-    local maxExtraItems = (CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT") * recipeData.baseItemAmount) *
+    local mcConstant = CraftSim.UTIL:GetMulticraftConstantByBaseYield(recipeData.baseItemAmount)
+    local maxExtraItems = (mcConstant * recipeData.baseItemAmount) *
         (1 + recipeData.professionStats.multicraft:GetExtraValue())
     local expectedExtraItems = (1 + maxExtraItems) / 2
     local expectedItems = recipeData.baseItemAmount + expectedExtraItems

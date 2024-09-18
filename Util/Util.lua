@@ -290,6 +290,15 @@ function CraftSim.UTIL:IsTWWRecipe(recipeID)
     return false
 end
 
+---@param baseYield number
+function CraftSim.UTIL:GetMulticraftConstantByBaseYield(baseYield)
+    local mcConstants = CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANTS")
+    local constant = mcConstants[baseYield]
+    if not constant then
+        return mcConstants.DEFAULT
+    end
+end
+
 function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID,
                                                                  maxQuality)
     local linksByQuality = {}
