@@ -112,7 +112,8 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListRowCachedRecipesInfo(select
     if C_TradeSkillUI.IsTradeSkillReady() then
         if selectedRow.crafterProfessionUID ~= CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID() then
             content.cachedRecipesInfoHelpIcon:Show()
-            content.cachedRecipesInfo:SetText("(" .. L(CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES) .. tostring(#cachedRecipeIDs) .. ") ")
+            content.cachedRecipesInfo:SetText("(" ..
+                L(CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES) .. tostring(#cachedRecipeIDs) .. ") ")
         else
             content.cachedRecipesInfo:SetText("")
             content.cachedRecipesInfoHelpIcon:Hide()
@@ -122,6 +123,10 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListRowCachedRecipesInfo(select
         content.cachedRecipesInfo:SetText("")
         content.cachedRecipesInfoHelpIcon:Hide()
     end
+
+    -- update concentrationToggleCB
+
+    content.concentrationToggleCB:SetChecked(CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION"))
 end
 
 ---@param recipeScanTab CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB
