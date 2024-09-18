@@ -113,7 +113,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 owner = reagentOverwriteFrame.content,
                 anchor = "ANCHOR_CURSOR",
                 textWrap = true,
-                text = "Max All Reagents of Quality " .. GUTIL:GetQualityIconString(1, 20, 20),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) .. GUTIL:GetQualityIconString(1, 20, 20),
             },
         })
         reagentOverwriteFrame.content.quality2Button = GGUI.Button({
@@ -133,7 +133,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 owner = reagentOverwriteFrame.content,
                 anchor = "ANCHOR_CURSOR",
                 textWrap = true,
-                text = "Max All Reagents of Quality " .. GUTIL:GetQualityIconString(2, 20, 20),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) .. GUTIL:GetQualityIconString(2, 20, 20),
             },
         })
 
@@ -154,7 +154,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 owner = reagentOverwriteFrame.content,
                 anchor = "ANCHOR_CURSOR",
                 textWrap = true,
-                text = "Max All Reagents of Quality " .. GUTIL:GetQualityIconString(3, 20, 20),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) .. GUTIL:GetQualityIconString(3, 20, 20),
             },
         })
         reagentOverwriteFrame.content.clearAllocationsButton = GGUI.Button({
@@ -163,7 +163,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = inputOffsetX - 30,
-            label = "Clear",
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CLEAR_BUTTON),
             adjustWidth = true,
             sizeX = 10,
             sizeY = 25,
@@ -449,7 +449,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             anchorParent = simModeDetailsFrame.content.reagentMaxFactorValue,
             anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
             labelOptions = {
-                text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) .. " Concentration",
+                text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION),
                 anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -7,
                 anchorParent = simModeDetailsFrame.content.reagentMaxFactorTitle
             },
@@ -465,7 +465,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             anchorParent = simModeDetailsFrame.content.concentrationCB.labelText.frame,
             anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -7,
             justifyOptions = { type = "H", align = "LEFT" },
-            text = "Concentration Cost: ",
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION_COST),
         }
 
         simModeDetailsFrame.content.concentrationCostValue = GGUI.Text {

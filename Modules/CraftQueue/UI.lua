@@ -75,7 +75,7 @@ function CraftSim.CRAFTQ.UI:Init()
                 tooltipOptions = {
                     owner = frame.content,
                     anchor = "ANCHOR_CURSOR",
-                    text = f.white("Configure the restock behaviour when importing from Recipe Scan"),
+                    text = f.white(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_TOOLTIP)),
                     textWrap = true,
                 },
             },
@@ -153,7 +153,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     ---@diagnostic disable-next-line: assign-type-mismatch
                     anchor = nil,
                     owner = nil,
-                    text = f.white("All Requirements need to be fulfilled in order to craft a recipe"),
+                    text = f.white(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP)),
                     textWrap = true,
                 },
             },
@@ -229,7 +229,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     sizeY = 25,
                     label = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.EDIT_PEN, 0.7),
                     tooltipOptions = {
-                        text = "Edit",
+                        text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_EDIT),
                         anchor = "ANCHOR_CURSOR_RIGHT",
                     },
                 })
@@ -362,7 +362,7 @@ function CraftSim.CRAFTQ.UI:Init()
                             if nextRow then
                                 input.textInput.frame:ClearFocus()
                                 local craftAmountColumn = nextRow.columns
-                                    [8] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
+                                    [10] --[[@as CraftSim.CraftQueue.CraftList.CraftAmountColumn]]
                                 craftAmountColumn.input.textInput.frame:SetFocus()
                             end
                         end
@@ -519,7 +519,7 @@ function CraftSim.CRAFTQ.UI:Init()
             anchorB = "RIGHT",
             offsetY = 0,
             adjustWidth = true,
-            label = "Add First Crafts",
+            label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL),
             clickCallback = function()
                 CraftSim.CRAFTQ:AddFirstCrafts()
             end
@@ -540,13 +540,13 @@ function CraftSim.CRAFTQ.UI:Init()
 
         queueTab.content.ignoreAcuityRecipesCB = GGUI.Checkbox {
             parent = queueTab.content, anchorParent = queueTab.content.addAllFirstCraftsButton.frame,
-            scale = 0.9, anchorA = "LEFT", anchorB = "RIGHT", labelOptions = { text = "Ignore Acuity Recipes" },
+            scale = 0.9, anchorA = "LEFT", anchorB = "RIGHT", labelOptions = { text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL) },
             offsetX = 5,
             initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_ACUITY_RECIPES"),
             clickCallback = function(_, checked)
                 CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_ACUITY_RECIPES", checked)
             end,
-            tooltip = "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
+            tooltip = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP),
         }
 
         ---@type GGUI.Button
@@ -1844,7 +1844,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     end
 
     local craftAmountTooltipText = ""
-    craftAmountTooltipText = "\n\nQueued Crafts: " .. craftQueueItem.amount
+    craftAmountTooltipText = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP) .. craftQueueItem.amount
 
 
 
@@ -1989,7 +1989,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                     craftButtonColumn.craftButton:SetText("Craft")
                     craftButtonColumn.craftButton.clickCallback = function()
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                        recipeData:Craft(craftQueueItem.amount)
+                        recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
                     end
                 else
@@ -2017,7 +2017,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             craftButtonColumn.craftButton:SetText("Craft")
             craftButtonColumn.craftButton.clickCallback = function()
                 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                recipeData:Craft(craftQueueItem.amount)
+                recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
                 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
             end
         end

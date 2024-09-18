@@ -159,20 +159,20 @@ function CraftSim.OPTIONS:Init()
         end
     }
 
-    local customMulticraftConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputMulticraftConstant",
-        ProfitCalculationTab.content, skillBreakpointsCheckbox.frame, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25,
-        CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT"),
-        function()
-            CraftSim.DB.OPTIONS:Save("PROFIT_CALCULATION_MULTICRAFT_CONSTANT",
-                tonumber(CraftSimOptionsInputMulticraftConstant:GetText()))
-        end)
+    -- local customMulticraftConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputMulticraftConstant",
+    --     ProfitCalculationTab.content, skillBreakpointsCheckbox.frame, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25,
+    --     CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT"),
+    --     function()
+    --         CraftSim.DB.OPTIONS:Save("PROFIT_CALCULATION_MULTICRAFT_CONSTANT",
+    --             tonumber(CraftSimOptionsInputMulticraftConstant:GetText()))
+    --     end)
 
-    CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT),
-        ProfitCalculationTab.content, customMulticraftConstantInput, "LEFT", "RIGHT", 5, 0)
+    -- CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT),
+    --     ProfitCalculationTab.content, customMulticraftConstantInput, "LEFT", "RIGHT", 5, 0)
 
-    CraftSim.FRAME:CreateHelpIcon(
-        L(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION),
-        ProfitCalculationTab.content, customMulticraftConstantInput, "RIGHT", "LEFT", -5, 0)
+    -- CraftSim.FRAME:CreateHelpIcon(
+    --     L(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION),
+    --     ProfitCalculationTab.content, customMulticraftConstantInput, "RIGHT", "LEFT", -5, 0)
 
     local customResourcefulnessConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputResourcefulnessConstant",
         ProfitCalculationTab.content, customMulticraftConstantInput, "TOPLEFT", "BOTTOMLEFT", 0, -10, 100, 25,
@@ -242,8 +242,8 @@ function CraftSim.OPTIONS:Init()
     }
 
     local coinMoneyFormatDB = GGUI.Checkbox {
-        label = " " .. "Use Coin Textures: " .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
-        tooltip = "Use coin icons to format money",
+        label = " " .. L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_COIN_MONEY_FORMAT_CHECKBOX) .. GUTIL:FormatMoney(123456789, nil, nil, true, true),
+        tooltip = L(CraftSim.CONST.TEXT.OPTIONS_GENERAL_COIN_MONEY_FORMAT_TOOLTIP),
         initialValue = CraftSim.DB.OPTIONS:Get("MONEY_FORMAT_USE_TEXTURES"),
         parent = GeneralTab.content, anchorParent = hideMinimapButtonCheckbox.frame,
         anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
