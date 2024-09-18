@@ -1989,7 +1989,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
                     craftButtonColumn.craftButton:SetText("Craft")
                     craftButtonColumn.craftButton.clickCallback = function()
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                        recipeData:Craft(craftQueueItem.craftAbleAmount)
+                        recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
                         CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
                     end
                 else
@@ -2017,7 +2017,7 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             craftButtonColumn.craftButton:SetText("Craft")
             craftButtonColumn.craftButton.clickCallback = function()
                 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = true
-                recipeData:Craft(craftQueueItem.craftAbleAmount)
+                recipeData:Craft(math.min(craftQueueItem.craftAbleAmount, craftQueueItem.amount))
                 CraftSim.CRAFTQ.CraftSimCalledCraftRecipe = false
             end
         end
