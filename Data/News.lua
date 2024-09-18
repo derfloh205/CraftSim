@@ -20,6 +20,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("18.0.1"),
         f.p .. "Fixed " .. f.bb("Craft Queue") .. " not crafting when craftmax < queued",
         f.p .. "Fixed " .. f.bb("Craft Queue") .. " tab usage error in input box",
+        f.p .. "Fixed " .. f.bb("Recipe Scan") .. " not updating concentration box",
         f.p .. "Updated Chinese Locals",
         f.a .. "Thanks to: " .. f.bb("https://github.com/LvWind"),
         newP("18.0.0"),
