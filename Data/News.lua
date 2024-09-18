@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("18.0.1"),
+        f.p .. "Fixed " .. f.bb("Craft Queue") .. " not crafting when craftmax < queued",
         newP("18.0.0"),
         f.P .. "The " .. f.g("CraftQueue") .. " now supports " .. f.bb("Work Orders"),
         f.a .. "- Available Patron Orders can now be queued with one click",
