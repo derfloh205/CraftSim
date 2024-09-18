@@ -293,10 +293,7 @@ end
 ---@param baseYield number
 function CraftSim.UTIL:GetMulticraftConstantByBaseYield(baseYield)
     local mcConstants = CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANTS")
-    local constant = mcConstants[baseYield]
-    if not constant then
-        return mcConstants.DEFAULT
-    end
+    return mcConstants[baseYield] or mcConstants.DEFAULT
 end
 
 function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID,
