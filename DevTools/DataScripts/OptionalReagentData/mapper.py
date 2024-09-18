@@ -13,7 +13,7 @@ def printD(text, enabled):
         print(text)
 
 def map(download, buildVersion):
-    dataTables = wagoTools.getWagoTables(wagoTables, False, buildVersion)
+    dataTables = wagoTools.getWagoTables(wagoTables, download, buildVersion)
     Item = dataTables[0]
     ModifiedCraftingReagentItem = dataTables[1]
     CraftingReagentEffect = dataTables[2]
