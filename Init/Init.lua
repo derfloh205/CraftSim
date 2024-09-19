@@ -730,8 +730,15 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		showReagentOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showReagentOptimization then
 		CraftSim.DEBUG:StartProfiling("Reagent Optimization")
-		local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
-		CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData, optimizationResult, exportMode)
+		local maxOptimizationQuality = CraftSim.DB.OPTIONS:Get(
+			"REAGENT_OPTIMIZATION_RECIPE_MAX_OPTIMIZATION_QUALITY")[recipeData.recipeID] or recipeData.maxQuality
+
+		local reagentOptimizedRecipeData = recipeData:Copy()
+		reagentOptimizedRecipeData:OptimizeReagents {
+			maxQuality = maxOptimizationQuality,
+			highestProfit = false -- TODO: Options
+		}
+		CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(reagentOptimizedRecipeData, exportMode)
 		CraftSim.DEBUG:StopProfiling("Reagent Optimization")
 	end
 
@@ -745,7 +752,6 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 			CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
 			CraftSim.DEBUG:StopProfiling("Top Gear")
 		else
-			local isCooking = recipeData.professionID == Enum.Profession.Cooking
 			CraftSim.TOPGEAR.UI:ClearTopGearDisplay(recipeData, true, exportMode)
 		end
 	end
