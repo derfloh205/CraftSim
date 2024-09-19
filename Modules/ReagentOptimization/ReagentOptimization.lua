@@ -126,15 +126,11 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
             minValue = nil,
             allocations = {}
         }
-        if BPs[h] < 0 then --cannot reach this BP
-            outArr[2 * h] = "None"
-            outArr[2 * h + 1] = ""
-        else
+        if BPs[h] >= 0 then  --can reach this BP
             tStart = math.ceil(BPs[h] * maxWeight)
             i = numMaterials -- i was initialized above
             -- walk the last row of the matrix backwards to find the best value (gold cost) for minimum target weight (j = skill bonus)
             i = numMaterials
-            matString = ""
             minValue = inf
 
             -- search the space from target to the end weight (for this breakpoint) to get the lowest cost
@@ -149,12 +145,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
             -- create the list of materials that represent optimization for target BP
             for i = numMaterials, 0, -1 do
-                k = c[i][j]   -- the index into V and W for minValue > target
-                local ifstring = ""
-                if i > 0 then -- TODO + 1 ?
-                    ifstring = ", "
-                end
-                matString = matString .. ks[i].crumb[k].mixDebug .. " " .. tostring(ks[i].name) .. ifstring
+                k = c[i][j] -- the index into V and W for minValue > target
 
                 --print("current matstring: " .. tostring(matString))
                 --print("name: " .. ks[i].name)
@@ -176,8 +167,6 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
                 })
             end
 
-            outArr[2 * h] = minValue
-            outArr[2 * h + 1] = matString
             outAllocation.qualityReached = abs(h - (#BPs + 1))
             outAllocation.minValue = minValue
             table.insert(outResult, outAllocation)
@@ -275,13 +264,14 @@ end
 
 -- By Liqorice's knapsack solution
 ---@param recipeData CraftSim.RecipeData
+---@param options CraftSim.RecipeData.OptimizeReagentOptions
 ---@return CraftSim.ReagentOptimizationResult?
-function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
+function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, options)
     if not recipeData.hasQualityReagents then
         return nil
     end
 
-    if not recipeData.supportsQualities then
+    if not recipeData.supportsQualities or options.maxQuality == 1 then
         local result = CraftSim.ReagentOptimizationResult(recipeData)
         table.foreach(recipeData.reagentData.requiredReagents, function(_, reagent)
             if reagent.hasQuality then
@@ -292,6 +282,8 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
         end)
         return result
     end
+
+    local maxOptimizationQuality = math.min(options.maxQuality, recipeData.maxQuality)
 
     -- Create Knapsacks for required reagents with different Qualities
     local requiredReagents = GUTIL:Filter(recipeData.reagentData.requiredReagents, function(reagent)
@@ -352,7 +344,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
     -- Calculate ArrayBP (The skill breakpoints)
     local numBP = 0
 
-    local craftingDifficultyBP = nil
+    local craftingDifficultyBP = {}
     if recipeData.maxQuality == 3 then
         craftingDifficultyBP = {
             [0] = 1,
@@ -368,6 +360,25 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
             [4] = 0,
         }
     end
+
+    -- consider maxOptimizationQuality by removing the top breakpoints
+    -- e.g. optimizing a maxQ3 recipe for q2 would remove 3-2=1 top breakpoints
+    local bpRemovalCount = recipeData.maxQuality - maxOptimizationQuality
+
+    if bpRemovalCount > 0 then
+        -- manually remove and reorder first entries due to tremove not considering the 0 index
+        local craftingDifficultyBPTrimmed = {}
+        local newIndex = 0
+        for i = bpRemovalCount, #craftingDifficultyBP + 1, 1 do
+            if craftingDifficultyBP[i] then
+                craftingDifficultyBPTrimmed[newIndex] = craftingDifficultyBP[i]
+                newIndex = newIndex + 1
+            end
+        end
+
+        craftingDifficultyBP = craftingDifficultyBPTrimmed
+    end
+
     numBP = #craftingDifficultyBP + 1 -- the 0 index will not be counted..
     --print("numBP: " .. numBP)
 
@@ -448,8 +459,10 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
 
     local bestResult = results[1]
 
-    -- if certain qualityIDs have the same price, use the higher qualityID
-    bestResult:OptimizeQualityIDs(recipeData.subRecipeCostsEnabled)
+    if bestResult then
+        -- if certain qualityIDs have the same price, use the higher qualityID
+        bestResult:OptimizeQualityIDs(recipeData.subRecipeCostsEnabled)
+    end
 
     CraftSim.DEBUG:StopProfiling("optimizeKnapsack")
 
