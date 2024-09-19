@@ -632,13 +632,23 @@ function CraftSim.RecipeData:Copy()
     return copy
 end
 
+---@class CraftSim.RecipeData.OptimizeReagentOptions
+---@field maxQuality number? default: max of recipe
+---@field highestProfit boolean? default: false
+
 --- Optimizes the recipeData's reagents for highest quality / cheapest reagents.
-function CraftSim.RecipeData:OptimizeReagents()
+---@param options CraftSim.RecipeData.OptimizeReagentOptions?
+function CraftSim.RecipeData:OptimizeReagents(options)
     -- do not optimize quest recipes
     if self.isQuestRecipe then
         return
     end
-    local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self)
+
+    options = options or {}
+    options.maxQuality = options.maxQuality or self.maxQuality
+    options.highestProfit = options.highestProfit or false
+
+    local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, options)
     self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
     self:Update()
 end
@@ -674,14 +684,10 @@ end
 ---@param options? CraftSim.RecipeData.OptimizeProfitOptions
 function CraftSim.RecipeData:OptimizeProfit(options)
     options = options or {}
-    if options.optimizeReagents then
-        self:OptimizeReagents()
-    end
-    if options.optimizeGear then -- TEMPORARY: ALWAYS OPTIMIZE IF PARAM IS NOT GIVEN
+    if options.optimizeGear then
         self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
     end
-    if options.optimizeReagents and options.optimizeGear then
-        -- need another because it could be that the optimized gear makes it possible to use cheaper reagents
+    if options.optimizeReagents then
         self:OptimizeReagents()
     end
 

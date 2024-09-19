@@ -96,12 +96,22 @@ function CraftSim.CRAFT_BUFFS:CreateEverburningIgnitionBuff(recipeData)
     local buffStats = CraftSim.ProfessionStats()
     --- EverburningForge Traits
     local nodeIDs = { 99267, 99266, 99265, 99264 }
+    local everburningPerPointStats = CraftSim.ProfessionStats()
+    everburningPerPointStats.ingenuity.value = 3
+    everburningPerPointStats.resourcefulness.value = 3
+    everburningPerPointStats.multicraft.value = 3
 
     for _, nodeID in ipairs(nodeIDs) do
         local nodeData = CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, nodeID,
             CraftSim.CONST.EXPANSION_IDS.THE_WAR_WITHIN, Enum.Profession.Blacksmithing)
         if nodeData then
             buffStats:add(nodeData.professionStats)
+
+            if nodeID == 99267 then
+                for i = 1, nodeData.rank, 1 do
+                    buffStats:add(everburningPerPointStats)
+                end
+            end
         end
     end
 

@@ -538,6 +538,18 @@ function CraftSim.CRAFTQ.UI:Init()
             end
         })
 
+        queueTab.content.allowConcentrationForPatronQueuingCB = GGUI.Checkbox {
+            parent = queueTab.content,
+            anchorParent = queueTab.content.addPatronOrdersButton.frame,
+            scale = 0.9, anchorA = "LEFT", anchorB = "RIGHT", labelOptions = { text = "Allow Concentration" },
+            initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION"),
+            clickCallback = function(_, checked)
+                CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION", checked)
+            end,
+            tooltip = "If minimum quality cannot be reached, use " .. f.l("Concentration") .. " if possible",
+            offsetX = 5,
+        }
+
         queueTab.content.ignoreAcuityRecipesCB = GGUI.Checkbox {
             parent = queueTab.content, anchorParent = queueTab.content.addAllFirstCraftsButton.frame,
             scale = 0.9, anchorA = "LEFT", anchorB = "RIGHT", labelOptions = { text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL) },

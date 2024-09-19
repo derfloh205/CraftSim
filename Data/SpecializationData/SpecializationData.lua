@@ -74,7 +74,6 @@ CraftSim.SPECIALIZATION_DATA.BASE_NODES = {
 function CraftSim.SPECIALIZATION_DATA:GetStaticNodeData(recipeData, nodeID, expansionID, professionID)
     local RawNodeDataList = CraftSim.SPECIALIZATION_DATA.NODE_DATA[expansionID][professionID].nodeData
     local rawBaseNodeData = RawNodeDataList[nodeID]
-
     local perkMap = {}
     for perkID, rawPerkData in pairs(RawNodeDataList) do
         if rawPerkData.nodeID == nodeID and rawPerkData.maxRank == 1 then

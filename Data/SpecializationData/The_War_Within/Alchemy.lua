@@ -2,6 +2,13 @@
 local CraftSim = select(2, ...)
 CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.ALCHEMY_DATA = {
 	recipeMapping = {
+		[400287] = {
+			99020,
+			99014,
+			99012,
+			99006,
+			99004,
+		},
 		[425137] = {
 			99020,
 			99014,
