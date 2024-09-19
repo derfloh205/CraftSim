@@ -199,6 +199,13 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end
         }
 
+        GGUI.HelpIcon {
+            parent = frame.content,
+            anchorParent = frame.content.reagentList.frame,
+            anchorA = "BOTTOMRIGHT", anchorB = "TOPLEFT", offsetX = 45, offsetY = -5,
+            text = "Shift + LMB on numbers to put the item link in chat"
+        }
+
         frame.content.sameAllocationText = GGUI.Text {
             parent = frame.content, anchorPoints = { { anchorParent = frame.content } },
             text = f.g("Best Reagents Assigned"), hide = true,

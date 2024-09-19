@@ -157,6 +157,12 @@ function CraftSim.CRAFTQ:AddPatronOrders()
 
                             recipeData:SetOrder(order)
                             recipeData:Update()
+                            -- try to optimize for target quality
+                            if order.minQuality then
+                                recipeData:OptimizeReagents({
+                                    maxQuality = order.minQuality
+                                })
+                            end
                             CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
                         end
                     end)
