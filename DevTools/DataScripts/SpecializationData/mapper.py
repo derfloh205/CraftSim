@@ -13,46 +13,19 @@ import urllib.parse
 import requests
 from pathlib import Path
 
-# because blizzard does not clean up its databases..
-outdatedNodeIDs = [
-    # TWW Tailoring
-    # ## Threads of Devotion
-    # 101419, 100431, 100603, 100517,
-    # ## Hats
-    # 101415, 100592, 100427, 100513,
-    # ## Weathering Wear
-    # 100595, 100516, 100430, 101418,
-    # ## Cloaks
-    # 100512, 100591, 101414, 100426,
-    # ## Making a Statement
-    # 100422, 100508, 100599, 101410, 
-    # ## Belts
-    # 100419, 100505, 100596, 101407, 
-    # ## Armbands
-    # 100420, 100506, 100597, 101408, 
-    # ## Gloves
-    # 100594, 101417, 100429, 100515,
-    # ## Footwear
-    # 100428, 100593, 101416, 100514,
-    # ## Weighted Garments
-    # 100425, 100511, 100602, 101413, 
-    # ## Leggings
-    # 100423, 100509, 100600, 101411, 
-    # ## Mantles
-    # 100421, 100507, 100598, 101409, 
-    # ## Robes
-    # 100424, 100510, 100601, 101412, 
-    # # ## From Dawn Until Dusk
-    # # 100306, 
-    # # ## Dawnweaving
-    # # 100304, 
-    # # ## Dawnweave Tailoring
-    # # 100305, 
-    # # ## Duskweaving
-    # # 100302, 
-    # # ## Duskweave Tailoring
-    # # 100303, 
-]
+# for missing or incorrect blizz data..
+patchedIDs = {
+    "The_War_Within": {
+        "Blacksmithing": {
+            # Everburning Ignition
+            "99267": {
+                    "nodeID": 99267,
+                    "maxRank": 40,
+                    "stats": {},
+                }
+        }
+    }
+}
 
 professionsDF = {
     "2822": "Blacksmithing",
@@ -114,12 +87,6 @@ def map():
         stat_amount = int(row["Amount"])
         nodeName = row["NodeName"] or ""
 
-        # ignore outdated nodeIDs
-        if perkID in outdatedNodeIDs:
-            continue
-        if nodeID in outdatedNodeIDs:
-            continue
-
         professionDF = None
         professionTWW = None
         if skillLineID in professionsDF:
@@ -159,11 +126,16 @@ def map():
                 "nodeID": nodeID,
                 "maxRank": maxRank,
                 "stats": {}
-            }
+            }            
 
         cleanStatName = stat.lower().replace(" ", "").replace("(dnt-writemanually!)", "").replace("(dnt-writemanually)", "")
         professionDataTable[expansion][profession]["nodeData"][perkID]["stats"][cleanStatName] = stat_amount
-    
+
+    # apply patch
+    for expansion, expansionData in patchedIDs.items():
+        for profession, patchedIDsList in expansionData.items():
+            for patchedNodeID, nodeData in patchedIDsList.items():
+                professionDataTable[expansion][profession]["nodeData"][int(patchedNodeID)] = nodeData
 
     print("\nWriting Lua Files")
     for expansion, professions in professionDataTable.items():

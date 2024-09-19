@@ -3569,5 +3569,10 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 				unlockreagentslot = 0,
 			},
 		},
+		[99267] = {
+			nodeID = 99267,
+			maxRank = 40,
+			stats = {},
+		},
 	},
 }
