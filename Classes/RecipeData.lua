@@ -684,14 +684,10 @@ end
 ---@param options? CraftSim.RecipeData.OptimizeProfitOptions
 function CraftSim.RecipeData:OptimizeProfit(options)
     options = options or {}
-    if options.optimizeReagents then
-        self:OptimizeReagents()
-    end
-    if options.optimizeGear then -- TEMPORARY: ALWAYS OPTIMIZE IF PARAM IS NOT GIVEN
+    if options.optimizeGear then
         self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
     end
-    if options.optimizeReagents and options.optimizeGear then
-        -- need another because it could be that the optimized gear makes it possible to use cheaper reagents
+    if options.optimizeReagents then
         self:OptimizeReagents()
     end
 
