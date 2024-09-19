@@ -87,6 +87,7 @@ function CraftSim.Reagent:GetReagentItemList()
     return reagentItemList
 end
 
+---@return CraftSim.Reagent
 function CraftSim.Reagent:Copy()
     local copy = CraftSim.Reagent()
 
