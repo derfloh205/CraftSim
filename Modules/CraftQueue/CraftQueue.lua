@@ -163,7 +163,20 @@ function CraftSim.CRAFTQ:AddPatronOrders()
                                     maxQuality = order.minQuality
                                 })
                             end
-                            CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+
+                            -- TODO: allow queuing with concentration and concentration optimization in queue options
+                            -- check if the min quality is reached, if not do not queue
+                            if recipeData.resultData.expectedQuality >= order.minQuality then
+                                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                            end
+
+                            if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION") and
+                                recipeData.resultData.expectedQuality == order.minQuality - 1 then
+                                -- use concentration to reach and then queue
+                                recipeData.concentrating = true
+                                recipeData:Update()
+                                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                            end
                         end
                     end)
                 end
