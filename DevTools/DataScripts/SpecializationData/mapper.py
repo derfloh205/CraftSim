@@ -22,9 +22,6 @@ patchedIDs = {
                     "nodeID": 99267,
                     "maxRank": 40,
                     "stats": {
-                        "ingenuity": 3,
-                        "multicraft": 3,
-                        "resourcefulness": 3,
                     },
                 },
             # Everburning Forge - Imaginative Foresight - Base

@@ -3572,11 +3572,7 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 		[99267] = {
 			nodeID = 99267,
 			maxRank = 40,
-			stats = {
-				ingenuity = 3,
-				multicraft = 3,
-				resourcefulness = 3,
-			},
+			stats = {},
 		},
 		[99266] = {
 			nodeID = 99266,
