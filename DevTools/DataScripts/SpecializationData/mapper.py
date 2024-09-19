@@ -17,12 +17,160 @@ from pathlib import Path
 patchedIDs = {
     "The_War_Within": {
         "Blacksmithing": {
-            # Everburning Ignition
+            # Everburning Forge
             "99267": {
                     "nodeID": 99267,
                     "maxRank": 40,
-                    "stats": {},
-                }
+                    "stats": {
+                        "ingenuity": 3,
+                        "multicraft": 3,
+                        "resourcefulness": 3,
+                    },
+                },
+            # Everburning Forge - Imaginative Foresight - Base
+            "99266": {
+                    "nodeID": 99266,
+                    "maxRank": 20,
+                    "stats": {
+                        "ingenuity": 3,
+                    },
+                },
+            # Everburning Forge - Imaginative Foresight - 1
+            "99254": {
+                    "nodeID": 99266,
+                    "maxRank": 1,
+                    "stats": {
+                        "ingenuity": 10,
+                    },
+                },
+            # Everburning Forge - Imaginative Foresight - 2
+            "99253": {
+                    "nodeID": 99266,
+                    "maxRank": 1,
+                    "stats": {
+                        "ingenuity": 10,
+                    },
+                },
+            # Everburning Forge - Imaginative Foresight - 3
+            "99252": {
+                    "nodeID": 99266,
+                    "maxRank": 1,
+                    "stats": {
+                        "ingenuity": 10,
+                    },
+                },
+            # Everburning Forge - Imaginative Foresight - 4
+            "99251": {
+                    "nodeID": 99266,
+                    "maxRank": 1,
+                    "stats": {
+                        "ingenuity": 10,
+                    },
+                },
+            # Everburning Forge - Imaginative Foresight - 5
+            "99250": {
+                    "nodeID": 99266,
+                    "maxRank": 1,
+                    "stats": {
+                        "ingenuity": 10,
+                    },
+                },
+            # Everburning Forge - Discerning Discipline - Base
+            "99265": {
+                    "nodeID": 99265,
+                    "maxRank": 20,
+                    "stats": {
+                        "resourcefulness": 3,
+                    },
+                },
+            # Everburning Forge - Discerning Discipline - 1
+            "99249": {
+                    "nodeID": 99265,
+                    "maxRank": 1,
+                    "stats": {
+                        "resourcefulness": 15,
+                    },
+                },
+            # Everburning Forge - Discerning Discipline - 2
+            "99248": {
+                    "nodeID": 99265,
+                    "maxRank": 1,
+                    "stats": {
+                        "resourcefulness": 15,
+                    },
+                },
+            # Everburning Forge - Discerning Discipline - 3
+            "99247": {
+                    "nodeID": 99265,
+                    "maxRank": 1,
+                    "stats": {
+                        "resourcefulness": 15,
+                    },
+                },
+            # Everburning Forge - Discerning Discipline - 4
+            "99246": {
+                    "nodeID": 99265,
+                    "maxRank": 1,
+                    "stats": {
+                        "resourcefulness": 15,
+                    },
+                },
+            # Everburning Forge - Discerning Discipline - 5
+            "99245": {
+                    "nodeID": 99265,
+                    "maxRank": 1,
+                    "stats": {
+                        "resourcefulness": 15,
+                    },
+                },
+            # Everburning Forge - Gracious Forging - Base
+            "99264": {
+                    "nodeID": 99264,
+                    "maxRank": 20,
+                    "stats": {
+                        "multicraft": 3,
+                    },
+                },
+            # Everburning Forge - Gracious Forging - 1
+            "99244": {
+                    "nodeID": 99264,
+                    "maxRank": 1,
+                    "stats": {
+                        "multicraft": 10,
+                    },
+                },
+            # Everburning Forge - Gracious Forging - 2
+            "99243": {
+                    "nodeID": 99264,
+                    "maxRank": 1,
+                    "stats": {
+                        "multicraft": 10,
+                    },
+                },
+            # Everburning Forge - Gracious Forging - 3
+            "99242": {
+                    "nodeID": 99264,
+                    "maxRank": 1,
+                    "stats": {
+                        "multicraft": 10,
+                    },
+                },
+            # Everburning Forge - Gracious Forging - 4
+            "99241": {
+                    "nodeID": 99264,
+                    "maxRank": 1,
+                    "stats": {
+                        "multicraft": 10,
+                    },
+                },
+            # Everburning Forge - Gracious Forging - 5
+            "99240": {
+                    "nodeID": 99264,
+                    "maxRank": 1,
+                    "stats": {
+                        "multicraft": 10,
+                    },
+                },
         }
     }
 }

@@ -3572,7 +3572,137 @@ CraftSim.SPECIALIZATION_DATA.THE_WAR_WITHIN.BLACKSMITHING_DATA = {
 		[99267] = {
 			nodeID = 99267,
 			maxRank = 40,
-			stats = {},
+			stats = {
+				ingenuity = 3,
+				multicraft = 3,
+				resourcefulness = 3,
+			},
+		},
+		[99266] = {
+			nodeID = 99266,
+			maxRank = 20,
+			stats = {
+				ingenuity = 3,
+			},
+		},
+		[99254] = {
+			nodeID = 99266,
+			maxRank = 1,
+			stats = {
+				ingenuity = 10,
+			},
+		},
+		[99253] = {
+			nodeID = 99266,
+			maxRank = 1,
+			stats = {
+				ingenuity = 10,
+			},
+		},
+		[99252] = {
+			nodeID = 99266,
+			maxRank = 1,
+			stats = {
+				ingenuity = 10,
+			},
+		},
+		[99251] = {
+			nodeID = 99266,
+			maxRank = 1,
+			stats = {
+				ingenuity = 10,
+			},
+		},
+		[99250] = {
+			nodeID = 99266,
+			maxRank = 1,
+			stats = {
+				ingenuity = 10,
+			},
+		},
+		[99265] = {
+			nodeID = 99265,
+			maxRank = 20,
+			stats = {
+				resourcefulness = 3,
+			},
+		},
+		[99249] = {
+			nodeID = 99265,
+			maxRank = 1,
+			stats = {
+				resourcefulness = 15,
+			},
+		},
+		[99248] = {
+			nodeID = 99265,
+			maxRank = 1,
+			stats = {
+				resourcefulness = 15,
+			},
+		},
+		[99247] = {
+			nodeID = 99265,
+			maxRank = 1,
+			stats = {
+				resourcefulness = 15,
+			},
+		},
+		[99246] = {
+			nodeID = 99265,
+			maxRank = 1,
+			stats = {
+				resourcefulness = 15,
+			},
+		},
+		[99245] = {
+			nodeID = 99265,
+			maxRank = 1,
+			stats = {
+				resourcefulness = 15,
+			},
+		},
+		[99264] = {
+			nodeID = 99264,
+			maxRank = 20,
+			stats = {
+				multicraft = 3,
+			},
+		},
+		[99244] = {
+			nodeID = 99264,
+			maxRank = 1,
+			stats = {
+				multicraft = 10,
+			},
+		},
+		[99243] = {
+			nodeID = 99264,
+			maxRank = 1,
+			stats = {
+				multicraft = 10,
+			},
+		},
+		[99242] = {
+			nodeID = 99264,
+			maxRank = 1,
+			stats = {
+				multicraft = 10,
+			},
+		},
+		[99241] = {
+			nodeID = 99264,
+			maxRank = 1,
+			stats = {
+				multicraft = 10,
+			},
+		},
+		[99240] = {
+			nodeID = 99264,
+			maxRank = 1,
+			stats = {
+				multicraft = 10,
+			},
 		},
 	},
 }
