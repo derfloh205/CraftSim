@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("18.0.4"),
+        f.p .. f.bb("Specialization Data") .. " Update for " .. f.l("11.0.2.56647"),
         newP("18.0.3"),
         f.p .. "Adjusted" .. f.bb(" Multicraft Constant") .. " independently per yield",
         f.a .. "- More data still needed, defaults to 2.5",
