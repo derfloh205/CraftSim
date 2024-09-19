@@ -289,6 +289,11 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
         for _, recipeData in pairs(filteredRecipes) do
             local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
             local restockAmount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT")
+
+            if CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS") ~= "" then
+                restockAmount = TSM_API.GetCustomPriceValue(CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS"), TSM_API.ToItemString(recipeData.resultData.expectedItem:GetItemLink()))
+            end            
+            
             if restockOptions.enabled then
                 restockAmount = restockOptions.restockAmount
 
@@ -302,6 +307,9 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                         end
                     end
                 end
+            end
+            if restockAmount == nil then
+                restockAmount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT")
             end
 
             if restockAmount > 0 then
@@ -344,8 +352,13 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                 for _, recipeData in pairs(filteredRecipes) do
                     local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
                     local restockAmount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT")
+                    
+                    if CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS") ~= "" then
+                        restockAmount = TSM_API.GetCustomPriceValue(CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS"), TSM_API.ToItemString(recipeData.resultData.expectedItem:GetItemLink()))
+                    end
+                    
                     if restockOptions.enabled then
-                        restockAmount = restockOptions.restockAmount
+                        restockAmount = restockOptions.restockAmount                        
 
                         for qualityID, use in pairs(restockOptions.restockPerQuality) do
                             if use then
@@ -358,7 +371,9 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                             end
                         end
                     end
-
+                    if restockAmount == nil then
+                        restockAmount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT")
+                    end
                     if restockAmount > 0 then
                         if recipeData.cooldownData.isCooldownRecipe then
                             local charges = recipeData.cooldownData:GetCurrentCharges()

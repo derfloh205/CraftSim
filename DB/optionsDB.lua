@@ -40,6 +40,8 @@ function CraftSim.DB.OPTIONS:Migrate()
                 .tsmPriceKeyMaterials
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_ITEMS] = CraftSimOptions
                 .tsmPriceKeyItems
+            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_RESTOCK_KEY_ITEMS] = CraftSimOptions
+                .tsmRestockKeyItems
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.QUALITY_BREAKPOINT_OFFSET] = CraftSimOptions
                 .breakPointOffset
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TOP_GEAR_MODE] = CraftSimOptions
