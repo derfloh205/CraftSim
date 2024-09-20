@@ -290,7 +290,9 @@ end
 function CraftSim.RecipeData:SetReagents(reagentList)
     -- go through required reagents and set quantity accordingly
 
-    for _, reagent in pairs(self.reagentData.requiredReagents) do
+    self.reagentData:ClearRequiredReagents()
+
+    for _, reagent in ipairs(self.reagentData.requiredReagents) do
         local totalQuantity = 0
         for _, reagentItem in pairs(reagent.items) do
             local listReagent = GUTIL:Find(reagentList,
@@ -738,20 +740,12 @@ function CraftSim.RecipeData:OptimizeConcentration()
         return upgradeCostPerSkill, upgradeInfo
     end
 
-    local startProfit = self.averageProfitCached
-    local startConcentrationCost = self.concentrationCost
-    local averageConcentrationBuyPrice = 0
-
-    local currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, startProfit)
-
-    local maxIterations = 200
+    local maxIterations = 500
     local currentIteration = 0
     local debugData = {}
 
-    local lastCraftingReagentInfoTbl = self.reagentData:GetRequiredCraftingReagentInfoTbl()
-
     CraftSim.DEBUG:StartProfiling("ConcentrationOptimization")
-    while averageConcentrationBuyPrice < currentConcentrationValue and currentIteration < maxIterations do
+    while currentIteration < maxIterations do
         currentIteration = currentIteration + 1
         local skillPerConcentrationPoint = self:GetConcentrationPointsPerSkill()
         local bestReagent
@@ -776,6 +770,11 @@ function CraftSim.RecipeData:OptimizeConcentration()
             break
         end
 
+        local lastProfit = self.averageProfitCached
+        local lastConcentrationCost = self.concentrationCost
+        local lastCraftingReagentInfoTbl = self.reagentData:GetRequiredCraftingReagentInfoTbl()
+        local currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, self.averageProfitCached)
+
         -- not worthwile to upgrade
         if bestConcentrationPointCost >= currentConcentrationValue then
             break
@@ -790,24 +789,19 @@ function CraftSim.RecipeData:OptimizeConcentration()
         self:Update()
 
         -- update limiting values
-        local boughtConcentration = startConcentrationCost - self.concentrationCost
-        local totalConcentrationBuyPrice = startProfit - self.averageProfitCached
-        averageConcentrationBuyPrice = totalConcentrationBuyPrice / boughtConcentration
+        local boughtConcentration = lastConcentrationCost - self.concentrationCost
+        local totalConcentrationBuyPrice = lastProfit - self.averageProfitCached
+        local averageConcentrationBuyPrice = totalConcentrationBuyPrice / boughtConcentration
         currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, self.averageProfitCached)
-
-        -- if we discover that next upgrade was not worthwhile get back and stop
-
-        if averageConcentrationBuyPrice >= currentConcentrationValue then
-            self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
-            self:Update()
-            break
-        end
-
-        lastCraftingReagentInfoTbl = self.reagentData:GetRequiredCraftingReagentInfoTbl()
 
 
         tinsert(debugData, {
             iteration = currentIteration,
+            bestUpgradeInfo = bestUpgradeInfo,
+            lastProfit = GUTIL:FormatMoney(lastProfit, true),
+            currentProfit = GUTIL:FormatMoney(self.averageProfitCached, true),
+            bestUpgradeDebug = bestReagent.items[bestUpgradeInfo.qualityPrev].item:GetItemLink() ..
+                " -> " .. bestReagent.items[bestUpgradeInfo.qualityNext].item:GetItemLink(),
             boughtConcentration = boughtConcentration,
             totalConcentrationBuyPrice = GUTIL:FormatMoney(totalConcentrationBuyPrice),
             averageConcentrationBuyPrice = GUTIL:FormatMoney(averageConcentrationBuyPrice),
@@ -816,6 +810,15 @@ function CraftSim.RecipeData:OptimizeConcentration()
                 return reagent:Copy()
             end)
         })
+
+        -- if we discover that last upgrade was not worthwhile get back and stop
+
+
+        if averageConcentrationBuyPrice >= currentConcentrationValue then
+            self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
+            self:Update()
+            break
+        end
     end
     CraftSim.DEBUG:StopProfiling("ConcentrationOptimization")
 

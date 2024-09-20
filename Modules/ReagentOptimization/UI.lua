@@ -152,8 +152,8 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             sizeY = 20,
             adjustWidth = true,
             clickCallback = function()
-                CraftSim.REAGENT_OPTIMIZATION.UI.recipeData:OptimizeConcentration()
-                CraftSim.SIMULATION_MODE:AllocateReagents(CraftSim.REAGENT_OPTIMIZATION.UI.recipeData)
+                CraftSim.SIMULATION_MODE.recipeData:OptimizeConcentration()
+                CraftSim.SIMULATION_MODE:AllocateReagents(CraftSim.SIMULATION_MODE.recipeData)
             end
         })
 
