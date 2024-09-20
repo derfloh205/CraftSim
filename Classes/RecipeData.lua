@@ -488,8 +488,44 @@ function CraftSim.RecipeData:SetCheapestQualityReagentsMax()
     end
 end
 
+function CraftSim.RecipeData:GetConcentrationCostForSkill(playerSkill)
+    -- get skill bracket and associated start and end skillCurveValues
+    local recipeDifficulty = self.professionStats.recipeDifficulty.value
+    playerSkill = math.min(playerSkill, recipeDifficulty) -- cap skill at max difficulty
+    local playerSkillFactor = (playerSkill / (recipeDifficulty / 100)) / 100
+    local specExtraValues = self.specializationData:GetExtraValues()
+    local lessConcentrationFactorSpecs = specExtraValues.ingenuity:GetExtraValue(2)
+    local optionalReagentStats = self.reagentData:GetProfessionStatsByOptionals()
+    local professionGearStats = self.professionGearSet.professionStats
+    local lessConcentrationFactorOptionals = optionalReagentStats.ingenuity:GetExtraValue(2)
+    local lessConcentrationFactorGear = professionGearStats.ingenuity:GetExtraValue(2)
+
+    local curveConstantData, nextCurveConstantData = CraftSim.UTIL:FindBracketData(playerSkill,
+        self.concentrationCurveData.costConstantData)
+    local curveData, nextCurveData = CraftSim.UTIL:FindBracketData(playerSkillFactor,
+        self.concentrationCurveData.curveData)
+
+    local curveConstant = CraftSim.UTIL:CalculateCurveConstant(recipeDifficulty, curveConstantData,
+        nextCurveConstantData)
+    local recipeDifficultyFactor = (curveData and curveData.index) or 0
+    local nextRecipeDifficultyFactor = (nextCurveData and nextCurveData.index) or 1
+    local skillCurveValueStart = (curveData and curveData.data) or 0
+    local skillCurveValueEnd = (nextCurveData and nextCurveData.data) or 1
+    local skillStart = recipeDifficulty * recipeDifficultyFactor
+    local skillEnd = recipeDifficulty * nextRecipeDifficultyFactor
+
+    return CraftSim.UTIL:CalculateConcentrationCost(
+        curveConstant,
+        playerSkill,
+        skillStart,
+        skillEnd,
+        skillCurveValueStart,
+        skillCurveValueEnd,
+        { lessConcentrationFactorSpecs, lessConcentrationFactorOptionals, lessConcentrationFactorGear })
+end
+
 ---@return number concentrationCost
-function CraftSim.RecipeData:GetConcentrationCost()
+function CraftSim.RecipeData:UpdateConcentrationCost()
     if not self.baseOperationInfo then return 0 end
     local craftingDataID = self.baseOperationInfo.craftingDataID
 
@@ -497,39 +533,7 @@ function CraftSim.RecipeData:GetConcentrationCost()
 
     -- try to only enable it for simulation mode?
     if self.concentrationCurveData and CraftSim.SIMULATION_MODE.isActive then
-        -- get skill bracket and associated start and end skillCurveValues
-        local recipeDifficulty = self.professionStats.recipeDifficulty.value
-        local playerSkill = math.min(self.professionStats.skill.value, recipeDifficulty) -- cap skill at max difficulty
-        local playerSkillFactor = (playerSkill / (recipeDifficulty / 100)) / 100
-        local specExtraValues = self.specializationData:GetExtraValues()
-        local lessConcentrationFactorSpecs = specExtraValues.ingenuity:GetExtraValue(2)
-        local optionalReagentStats = self.reagentData:GetProfessionStatsByOptionals()
-        local professionGearStats = self.professionGearSet.professionStats
-        local lessConcentrationFactorOptionals = optionalReagentStats.ingenuity:GetExtraValue(2)
-        local lessConcentrationFactorGear = professionGearStats.ingenuity:GetExtraValue(2)
-
-        local curveConstantData, nextCurveConstantData = CraftSim.UTIL:FindBracketData(playerSkill,
-            self.concentrationCurveData.costConstantData)
-        local curveData, nextCurveData = CraftSim.UTIL:FindBracketData(playerSkillFactor,
-            self.concentrationCurveData.curveData)
-
-        local curveConstant = CraftSim.UTIL:CalculateCurveConstant(recipeDifficulty, curveConstantData,
-            nextCurveConstantData)
-        local recipeDifficultyFactor = (curveData and curveData.index) or 0
-        local nextRecipeDifficultyFactor = (nextCurveData and nextCurveData.index) or 1
-        local skillCurveValueStart = (curveData and curveData.data) or 0
-        local skillCurveValueEnd = (nextCurveData and nextCurveData.data) or 1
-        local skillStart = recipeDifficulty * recipeDifficultyFactor
-        local skillEnd = recipeDifficulty * nextRecipeDifficultyFactor
-
-        return CraftSim.UTIL:CalculateConcentrationCost(
-            curveConstant,
-            playerSkill,
-            skillStart,
-            skillEnd,
-            skillCurveValueStart,
-            skillCurveValueEnd,
-            { lessConcentrationFactorSpecs, lessConcentrationFactorOptionals, lessConcentrationFactorGear })
+        return self:GetConcentrationCostForSkill(self.professionStats.skill.value)
     else
         -- if by any chance the data for this recipe is not mapped in the db2 data, get a good guess via the api
         -- or if we are not in the current beta (08.08.2024)
@@ -586,7 +590,7 @@ function CraftSim.RecipeData:UpdateProfessionStats()
         self.professionStats.multicraft.value)
 
     if self.supportsQualities then
-        self.concentrationCost = self:GetConcentrationCost()
+        self.concentrationCost = self:UpdateConcentrationCost()
     end
 end
 
@@ -655,6 +659,7 @@ end
 
 --- Optimizes gold value per concentration point
 function CraftSim.RecipeData:OptimizeConcentration()
+    local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CONCENTRATION_OPTIMIZATION)
     -- for each reagent, find its lowest "quality upgrade" costs per skill point
 
     local qualityReagents = GUTIL:Filter(self.reagentData.requiredReagents, function(reagent)
@@ -700,14 +705,38 @@ function CraftSim.RecipeData:OptimizeConcentration()
         }
     end
 
+    ---@param reagent CraftSim.Reagent
     local function GetReagentUpgradeCostPerSkill(reagent)
         local upgradeInfo = GetReagentUpgradeableQualityInfo(reagent)
 
-        local itemPricePrev = nil
+        local qPrev = upgradeInfo.qualityPrev
+        local qNext = upgradeInfo.qualityNext
+        local reagentItemPrev = reagent.items[qPrev]
+        local reagentItemNext = reagent.items[qNext]
+        local itemIDPrev = reagentItemPrev.item:GetItemID()
+        local itemIDNext = reagentItemNext.item:GetItemID()
+        local itemPriceQPrev = self.priceData.reagentPriceInfos[itemIDPrev].itemPrice
+        local itemPriceQNext = self.priceData.reagentPriceInfos[itemIDNext].itemPrice
+
+        local skillContributionPrev = reagentItemPrev:GetSkillContributionPerItem(self)
+        local skillContributionNext = reagentItemNext:GetSkillContributionPerItem(self)
+
+        local itemPriceDiff = itemPriceQNext -
+            itemPriceQPrev                                                          -- can be negative if higher quality is cheaper..
+        local skillContributionDiff = skillContributionNext - skillContributionPrev -- always > 0
+
+        local upgradeCostPerSkill = itemPriceDiff / skillContributionDiff
+
+        return upgradeCostPerSkill
     end
 
-    for _, reagent in ipairs(qualityReagents) do
+    for i, reagent in ipairs(qualityReagents) do
         local upgradeCostPerSkill = GetReagentUpgradeCostPerSkill(reagent)
+
+        print((reagent.items[1].item:GetItemName() or ("R" .. i)) ..
+            " upgradeCostPerSkill: " .. GUTIL:FormatMoney(upgradeCostPerSkill, true))
+
+        local concentrationCostPerSkill = 0
     end
 end
 

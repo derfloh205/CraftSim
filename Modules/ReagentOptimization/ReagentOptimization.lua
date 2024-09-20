@@ -224,14 +224,14 @@ end
 function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, useSubRecipeCosts)
     local inf = math.huge
 
-    local j, k, a, b, c, n, w
+    local j, k, q3Count, q2Count, q1Count, requiredQuantity, allocatedQuantity
     local goldCost
 
-    n = ksItem.n
+    requiredQuantity = ksItem.n
 
     -- APPROACH: do not translate indices here to lua indices cause they are not used for accessing later.. w is used for that
     --print("crumbs init to " .. (2*n))
-    for j = 0, 2 * n, 1 do
+    for j = 0, 2 * requiredQuantity, 1 do
         ksItem.crumb[j] = {}
         ksItem.crumb[j].value = inf
     end
@@ -245,34 +245,34 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, useSubRecipeCosts)
 
     if ksItem.isOrderReagent then
         -- only one available crumb - current allocation
-        a = ksItem.reagent.items[3].quantity
-        b = ksItem.reagent.items[2].quantity
-        c = ksItem.reagent.items[1].quantity
-        w = 2 * a + b
-        goldCost = a * q3ItemPrice + b * q2ItemPrice + c * q1ItemPrice
+        q3Count = ksItem.reagent.items[3].quantity
+        q2Count = ksItem.reagent.items[2].quantity
+        q1Count = ksItem.reagent.items[1].quantity
+        allocatedQuantity = 2 * q3Count + q2Count
+        goldCost = q3Count * q3ItemPrice + q2Count * q2ItemPrice + q1Count * q1ItemPrice
         ksItem.crumb = {
             [0] = {
-                weight = w * ksItem.mWeight,
-                mix = { c, b, a },
+                weight = allocatedQuantity * ksItem.mWeight,
+                mix = { q1Count, q2Count, q3Count },
                 value = goldCost,
             }
         }
     else
-        for k = 0, n, 1 do
+        for k = 0, requiredQuantity, 1 do
             --print("creating crumb #" .. k)
-            for j = k, n, 1 do
-                a = k
-                b = j - k
-                c = n - j
-                w = 2 * a + b
+            for j = k, requiredQuantity, 1 do
+                q3Count = k
+                q2Count = j - k
+                q1Count = requiredQuantity - j
+                allocatedQuantity = 2 * q3Count + q2Count
 
-                goldCost = a * q3ItemPrice + b * q2ItemPrice + c * q1ItemPrice
-                if goldCost < ksItem.crumb[w].value then
+                goldCost = q3Count * q3ItemPrice + q2Count * q2ItemPrice + q1Count * q1ItemPrice
+                if goldCost < ksItem.crumb[allocatedQuantity].value then
                     -- q3, q2, q1
 
-                    ksItem.crumb[w].weight = w * ksItem.mWeight
-                    ksItem.crumb[w].mix = { c, b, a } -- q3, q2, q1
-                    ksItem.crumb[w].value = goldCost
+                    ksItem.crumb[allocatedQuantity].weight = allocatedQuantity * ksItem.mWeight
+                    ksItem.crumb[allocatedQuantity].mix = { q1Count, q2Count, q3Count } -- q3, q2, q1
+                    ksItem.crumb[allocatedQuantity].value = goldCost
                 end
             end
         end
