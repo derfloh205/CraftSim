@@ -192,6 +192,12 @@ function CraftSim.ReagentData:ClearOptionalReagents()
     end
 end
 
+function CraftSim.ReagentData:ClearRequiredReagents()
+    for _, reagent in ipairs(self.requiredReagents) do
+        reagent:Clear()
+    end
+end
+
 ---Wether the recipe has slots for optional or finishing reagents
 function CraftSim.ReagentData:HasOptionalReagents()
     if self.optionalReagentSlots[1] or self.finishingReagentSlots[1] then

@@ -325,8 +325,9 @@ end
 ---@param skillCurveValueStart number
 ---@param skillCurveValueEnd number
 ---@param lessConcentrationUsageFactors number[]
+---@param noRounding boolean?
 function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, skillStart, skillEnd, skillCurveValueStart,
-                                                  skillCurveValueEnd, lessConcentrationUsageFactors)
+                                                  skillCurveValueEnd, lessConcentrationUsageFactors, noRounding)
     local skillDifference = math.abs(skillEnd - skillStart)
     local valueDifference = math.abs(skillCurveValueStart - skillCurveValueEnd) -- can go up or down
     local skillValueStep = valueDifference / skillDifference
@@ -346,7 +347,11 @@ function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, ski
         return foldValue + concentrationCost * nextFactor
     end)
 
-    return CraftSim.GUTIL:Round(concentrationCost - factorSubtraction)
+    if noRounding then
+        return concentrationCost - factorSubtraction
+    else
+        return CraftSim.GUTIL:Round(concentrationCost - factorSubtraction)
+    end
 end
 
 ---@param recipeDifficulty number
