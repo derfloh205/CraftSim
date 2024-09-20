@@ -288,7 +288,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
         local filteredRecipes = GUTIL:Filter(selectedRow.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
         for _, recipeData in pairs(filteredRecipes) do
             local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
-            local restockAmount =  CraftSim.CRAFTQGetRestockQuantity(recipeData.resultData.expectedItem)           
+            local restockAmount =  CraftSim.CRAFTQ:GetRestockQuantity(recipeData.resultData.expectedItem)           
             
             if restockOptions.enabled then
                 restockAmount = restockOptions.restockAmount
