@@ -288,7 +288,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
         local filteredRecipes = GUTIL:Filter(selectedRow.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
         for _, recipeData in pairs(filteredRecipes) do
             local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
-            local restockAmount =  CraftSim.CRAFTQ.GetRestockQuantity(recipeData.resultData.expectedItem)           
+            local restockAmount =  CraftSim.CRAFTQGetRestockQuantity(recipeData.resultData.expectedItem)           
             
             if restockOptions.enabled then
                 restockAmount = restockOptions.restockAmount
@@ -344,7 +344,7 @@ function CraftSim.CRAFTQ:ImportRecipeScan()
                 local filteredRecipes = GUTIL:Filter(row.currentResults, CraftSim.CRAFTQ.ImportRecipeScanFilter)
                 for _, recipeData in pairs(filteredRecipes) do
                     local restockOptions = CraftSim.CRAFTQ:GetRestockOptionsForRecipe(recipeData.recipeID)
-                    local restockAmount =  CraftSim.CRAFTQ.GetRestockQuantity(recipeData.resultData.expectedItem)
+                    local restockAmount =  CraftSim.CRAFTQ:GetRestockQuantity(recipeData.resultData.expectedItem)
                     
                     if restockOptions.enabled then
                         restockAmount = restockOptions.restockAmount                        
@@ -718,8 +718,8 @@ end
 -- @return The restock quantity for the given expected item.
 function CraftSim.CRAFTQ:GetRestockQuantity(expectedItem)
     local defaultRestockAmount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT") or 1
-    if CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS") ~= "" then
-        local restockAmount = TSM_API.GetCustomPriceValue(CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS"), TSM_API.ToItemString(recipeData.resultData.expectedItem:GetItemLink()))
+    if expectedItem and CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS") ~= "" then
+        local restockAmount = TSM_API.GetCustomPriceValue(CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS"), TSM_API.ToItemString(expectedItem:GetItemLink()))
         if restockAmount ~= nil then
             return restockAmount
         else
