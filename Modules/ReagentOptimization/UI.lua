@@ -141,6 +141,22 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end
         })
 
+        frame.content.optimizeConcentrationButton = GGUI.Button({
+            parent = frame.content,
+            anchorParent = frame.content.allocateButton.frame,
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
+            offsetX = 20,
+            label = "Optimize Concentration",
+            sizeX = 15,
+            sizeY = 20,
+            adjustWidth = true,
+            clickCallback = function()
+                CraftSim.REAGENT_OPTIMIZATION.UI.recipeData:OptimizeConcentration()
+                CraftSim.SIMULATION_MODE:AllocateReagents(CraftSim.REAGENT_OPTIMIZATION.UI.recipeData)
+            end
+        })
+
         local reagentListQualityIconHeaderSize = 25
         local reagentListQualityIconOffsetY = -3
         local reagentListQualityColumnWidth = 60
