@@ -57,7 +57,7 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
         offsetX = offsetX,
         frameID = CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER,
         title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_BUFFS_TITLE) ..
-            " " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+            " " .. CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,

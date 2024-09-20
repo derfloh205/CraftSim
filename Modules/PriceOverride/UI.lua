@@ -45,7 +45,7 @@ function CraftSim.PRICE_OVERRIDE.UI:Init()
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.PRICE_OVERRIDE_WORK_ORDER,
         title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.PRICE_OVERRIDE_TITLE) ..
-            " " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+            " " .. CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,

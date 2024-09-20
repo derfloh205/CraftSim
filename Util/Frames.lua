@@ -108,7 +108,7 @@ end
 
 function CraftSim.FRAME:ResetFrames()
     for _, frame in pairs(CraftSim.INIT.FRAMES) do
-        print("resetting frameID: " .. tostring(frame.frameID))
+        print(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FRAMES_RESETTING) .. tostring(frame.frameID))
         frame:ResetPosition()
     end
 end
@@ -265,8 +265,8 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         closeable = true,
         scrollableContent = true,
         moveable = true,
-        title = GUTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")",
-            GUTIL.COLORS.GREEN),
+        title = GUTIL:ColorizeText(
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FRAMES_WHATS_NEW) .. " (" .. currentVersion .. ")", GUTIL.COLORS.GREEN),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
@@ -281,7 +281,7 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         end)
     frame.content.discordBox:SetScale(0.75)
     frame.content.discordBoxLabel = CraftSim.FRAME:CreateText(
-        "Join the Discord!", frame.content, frame.content.discordBox, "BOTTOM", "TOP", 0, 0, 0.75)
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FRAMES_JOIN_DISCORD), frame.content, frame.content.discordBox, "BOTTOM", "TOP", 0, 0, 0.75)
 
     frame.content.donateBox = CraftSim.FRAME:CreateInput(
         nil, frame.content, frame.content, "TOP", "TOP", 120, -20, 250, 30, CraftSim.CONST.KOFI_URL, function()
@@ -290,11 +290,11 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         end)
     frame.content.donateBox:SetScale(0.75)
     frame.content.donateBoxLabel = CraftSim.FRAME:CreateText(
-        f.patreon("Visit CraftSim on Kofi"), frame.content, frame.content.donateBox, "BOTTOM", "TOP", 0, 0, 0.75)
+        f.patreon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FRAMES_DONATE_KOFI)), frame.content, frame.content.donateBox, "BOTTOM", "TOP", 0, 0, 0.75)
 
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 10, -45)
-    frame.content.infoText:SetText("No Info")
+    frame.content.infoText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FRAMES_NO_INFO))
     frame.content.infoText:SetJustifyH("LEFT")
 
     frame.showInfo = function(infoText)

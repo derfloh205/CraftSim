@@ -134,7 +134,7 @@ function CraftSim.OPTIONS:Init()
 
     GGUI.NumericInput {
         parent = ModulesTab.content, anchorParent = ModulesTab.content,
-        anchorA = "TOP", anchorB = "TOP", label = "Max history entries per client",
+        anchorA = "TOP", anchorB = "TOP", label = L(CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT),
         offsetX = -30,
         offsetY = -20, sizeX = 85, sizeY = 10, initialValue = CraftSim.DB.OPTIONS:Get("CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT"), allowDecimals = false, minValue = 1,
         onNumberValidCallback = function(numberInput)
@@ -276,7 +276,7 @@ function CraftSim.OPTIONS:Init()
             CraftSim.DB.OPTIONS:Save("CRAFTING_GARBAGE_COLLECTION_CRAFTS", number)
         end)
 
-    CraftSim.FRAME:CreateText("Crafts", CraftingTab.content, garbageCollectCraftsInput, "LEFT", "RIGHT", 5, 0)
+    CraftSim.FRAME:CreateText(L("OPTIONS_PERFORMANCE_RAM_CRAFTS"), CraftingTab.content, garbageCollectCraftsInput, "LEFT", "RIGHT", 5, 0)
 
     CraftingTab.content.flashTaskBarCD = GGUI.Checkbox {
         parent = CraftingTab.content, anchorParent = enableGarbageCollectWhenCraftingCB.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",

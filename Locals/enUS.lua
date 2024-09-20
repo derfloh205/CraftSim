@@ -159,6 +159,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] =
         "No price source found!\n\nYou need to have installed at least one of the\nfollowing price source addons to\nutilize CraftSim's profit calculations:\n\n\n",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Do not show warning again",
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT] = "OK",
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Material Optimization",
@@ -169,6 +170,18 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "Best combination assigned",
         [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "No combination found \nto increase quality",
         [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "Assign",
+        [CraftSim.CONST.TEXT.MATERIALS_MAXIMUM_QUALITY] = "Maximum Quality: ",
+        [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_LABEL] = "Average Ø Profit: ",
+        [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_TOOLTIP] =
+        f.bb("The Average Profit per Craft") .. " when using " .. f.l("this reagent allocation"),
+        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BEST_ASSIGNED] = "Best Reagents Assigned",
+        [CraftSim.CONST.TEXT.MATERIALS_CONCENTRATION_LABEL] = "Concentration: ",
+        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_INFO] = "Shift + LMB on numbers to put the item link in chat",
+        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON] = "Optimize",
+        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_TOOLTIP] =
+            f.r("Experimental: ") ..
+            "Performance Heavy and Resets on Edit.\nOptimizes for " ..
+            f.gold("Highest Gold Value") .. " per concentration point",
 
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "CraftSim Specialization Info",
@@ -417,6 +430,7 @@ function CraftSim.LOCAL_EN:GetData()
         "Show the complete breakdown of your last used material combination in an item tooltip",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "Supported Price Sources:",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "Enable RAM cleanup while crafting",
+        [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_CRAFTS] = "Crafts",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP] =
         "When enabled, CraftSim will clear your RAM every specified number of crafts from unused data to prevent memory from building up.\nMemory Build Up can also happen because of other addons and is not CraftSim specific.\nA cleanup will affect the whole WoW RAM Usage.",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TAB] = "Modules",
@@ -431,6 +445,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Cost Overview Module",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "Specialization Info Module",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] = "Customer History max messages per client",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] = "Max history entries per client",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Offset Skill Breakpoints by 1",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] =
         "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
@@ -564,6 +579,10 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "No Materials",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "Add Open Recipe",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL] = "Add First Crafts",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_BUTTON_LABEL] = "Add Patron Orders",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_CHECKBOX] = "Allow Concentration",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_TOOLTIP] =
+        "If minimum quality cannot be reached, use " .. f.l("Concentration") .. " if possible",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Clear All",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Restock from Recipe Scan",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Wrong Profession",
@@ -634,10 +653,21 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("Correct Crafter Character"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("Profession Open"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_EDIT] = "Edit",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CRAFT] = "Craft",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CLAIM] = "Claim",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CLAIMED] = "Claimed",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NEXT] = "Next: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NOTHING_QUEUED] = "Nothing Queued",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_ORDER] = "Order",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_SUBMIT] = "Submit",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL] = "Ignore Acuity Recipes",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP] =
         "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP] = "\n\nQueued Crafts: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nOrder Customer: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nMinimum Quality: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\nRewards:",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r("\n\nAll supplied reagents have to be in your inventory to craft a work order!"),
 
         -- craft buffs
 
@@ -676,5 +706,21 @@ greater or equal the configured sale rate threshold.
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",
         [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "No",
+
+        -- frames
+        [CraftSim.CONST.TEXT.FRAMES_RESETTING] = "resetting frameID: ",
+        [CraftSim.CONST.TEXT.FRAMES_WHATS_NEW] = "CraftSim What's New?",
+        [CraftSim.CONST.TEXT.FRAMES_JOIN_DISCORD] = "Join the Discord!",
+        [CraftSim.CONST.TEXT.FRAMES_DONATE_KOFI] = "Visit CraftSim on Kofi",
+        [CraftSim.CONST.TEXT.FRAMES_NO_INFO] = "No Info",
+
+        -- node data
+        [CraftSim.CONST.TEXT.NODE_DATA_RANK_TEXT] = "Rank ",
+        [CraftSim.CONST.TEXT.NODE_DATA_TOOLTIP] = "\n\nTotal Stats from Talent:\n",
+
+        -- columns
+        [CraftSim.CONST.TEXT.SOURCE_COLUMN_AH] = "AH",
+        [CraftSim.CONST.TEXT.SOURCE_COLUMN_OVERRIDE] = "OR",
+        [CraftSim.CONST.TEXT.SOURCE_COLUMN_WO] = "WO",
     }
 end

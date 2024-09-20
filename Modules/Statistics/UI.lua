@@ -47,7 +47,7 @@ function CraftSim.STATISTICS.UI:Init()
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.STATISTICS_WORKORDER,
         title = L(CraftSim.CONST.TEXT.STATISTICS_TITLE) ..
-            " " .. GUTIL:ColorizeText("WO", GUTIL.COLORS.GREY),
+            " " .. GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,

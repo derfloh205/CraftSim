@@ -28,7 +28,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
         sizeY = sizeY,
         frameID = CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER,
         title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE) ..
-            " " .. GUTIL:ColorizeText("WO", GUTIL.COLORS.GREY),
+            " " .. GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -86,7 +86,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
 
         frame.content.maxQualityLabel = GGUI.Text {
             parent = frame.content, anchorPoints = { { anchorParent = frame.content.maxQualityDropdown.frame, anchorA = "RIGHT", anchorB = "LEFT", offsetX = 16, offsetY = 2 } },
-            text = "Maximum Quality: ",
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_MAXIMUM_QUALITY),
             justifyOptions = { type = "H", align = "LEFT" },
         }
 
@@ -111,10 +111,10 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             anchorParent = frame.content.qualityText.frame,
             anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -10,
             justifyOptions = { type = "H", align = "RIGHT" },
-            text = "Average Ø Profit: ",
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_LABEL),
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR_RIGHT",
-                text = f.bb("The Average Profit per Craft") .. " when using " .. f.l("this reagent allocation"),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_TOOLTIP),
             },
         }
 
@@ -131,7 +131,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             anchorParent = frame.content.averageProfitLabel.frame,
             anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -10,
             justifyOptions = { type = "H", align = "RIGHT" },
-            text = "Concentration: ",
+            text =  CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_CONCENTRATION_LABEL),
         }
 
         frame.content.concentrationCostValue = GGUI.Text {
@@ -148,7 +148,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 20,
-            label = "Assign",
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_ASSIGN),
             sizeX = 15,
             sizeY = 20,
             adjustWidth = true,
@@ -163,7 +163,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 20,
-            label = "Optimize",
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON),
             sizeX = 15,
             sizeY = 20,
             adjustWidth = true,
@@ -174,9 +174,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end,
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR_RIGHT",
-                text = f.r("Experimental: ") ..
-                    "Performance Heavy and Resets on Edit.\nOptimizes for " ..
-                    f.gold("Highest Gold Value") .. " per concentration point",
+                text =  CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_TOOLTIP),
             }
         })
 
@@ -248,12 +246,12 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             parent = frame.content,
             anchorParent = frame.content.reagentList.frame,
             anchorA = "BOTTOMRIGHT", anchorB = "TOPLEFT", offsetX = 45, offsetY = -5,
-            text = "Shift + LMB on numbers to put the item link in chat"
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_INFO)
         }
 
         frame.content.sameAllocationText = GGUI.Text {
             parent = frame.content, anchorPoints = { { anchorParent = frame.content } },
-            text = f.g("Best Reagents Assigned"), hide = true,
+            text = f.g(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BEST_ASSIGNED)), hide = true,
         }
 
         frame:Hide()
