@@ -653,6 +653,64 @@ function CraftSim.RecipeData:OptimizeReagents(options)
     self:Update()
 end
 
+--- Optimizes gold value per concentration point
+function CraftSim.RecipeData:OptimizeConcentration()
+    -- for each reagent, find its lowest "quality upgrade" costs per skill point
+
+    local qualityReagents = GUTIL:Filter(self.reagentData.requiredReagents, function(reagent)
+        return reagent.hasQuality and not reagent:IsOrderReagentIn(self)
+    end)
+
+    ---@class ReagentUpgradeableQualityInfo
+    ---@field canBeUpgraded boolean
+    ---@field qualityPrev QualityID?
+    ---@field qualityNext QualityID?
+
+
+    ---@param reagent CraftSim.Reagent
+    ---@return ReagentUpgradeableQualityInfo
+    local function GetReagentUpgradeableQualityInfo(reagent)
+        local q1Count = reagent.items[1].quantity
+        local q2Count = reagent.items[2].quantity
+        local q3Count = reagent.items[3].quantity
+        local required = reagent.requiredQuantity
+        local alreadyMax = q3Count == required
+        if alreadyMax then return { canBeUpgraded = false } end
+
+        -- Case: q1 -> q2
+        if q1Count > 0 then
+            return {
+                canBeUpgraded = true,
+                qualityPrev = 1,
+                qualityNext = 2,
+            }
+        end
+
+        if q2Count > 0 then
+            return {
+                canBeUpgraded = true,
+                qualityPrev = 2,
+                qualityNext = 3,
+            }
+        end
+
+        -- no total quantity supplied, cannot upgrade
+        return {
+            canBeUpgraded = false
+        }
+    end
+
+    local function GetReagentUpgradeCostPerSkill(reagent)
+        local upgradeInfo = GetReagentUpgradeableQualityInfo(reagent)
+
+        local itemPricePrev = nil
+    end
+
+    for _, reagent in ipairs(qualityReagents) do
+        local upgradeCostPerSkill = GetReagentUpgradeCostPerSkill(reagent)
+    end
+end
+
 ---Optimizes the recipeData's professionGearSet by the given mode.
 ---@param topGearMode string
 function CraftSim.RecipeData:OptimizeGear(topGearMode)
