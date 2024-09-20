@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("18.0.5"),
+        f.p .. "Fixed " .. f.bb("Material Optimization - ") .. f.g("Allocate Button"),
         newP("18.0.4"),
         f.P .. "New " .. f.g("Material Optimization ") .. "Features",
         f.a .. "- It is now possible to choose a maximum quality to optimize for",
