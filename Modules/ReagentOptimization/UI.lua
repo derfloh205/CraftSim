@@ -175,7 +175,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR_RIGHT",
                 text = f.r("Experimental: ") ..
-                    "Performance Heavy and Resets on Edit\n.Optimizes for " ..
+                    "Performance Heavy and Resets on Edit.\nOptimizes for " ..
                     f.gold("Highest Gold Value") .. " per concentration point",
             }
         })
