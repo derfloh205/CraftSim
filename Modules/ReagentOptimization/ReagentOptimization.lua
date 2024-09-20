@@ -359,6 +359,8 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
     end
     CraftSim.DEBUG:StopProfiling("KnapsackKsItemCreation")
 
+    --CraftSim.DEBUG:InspectTable(ksItems, "ksItems")
+
     -- Calculate ArrayBP (The skill breakpoints)
     local numBP = 0
 

@@ -117,6 +117,7 @@ function CraftSim.ReagentItem:IsOrderReagentIn(recipeData)
     return tContains(orderItemIDs, self.item:GetItemID())
 end
 
+---@deprecated
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.ReagentItem:GetSkillContributionPerItem(recipeData)
     if self.qualityID <= 1 then
@@ -127,9 +128,7 @@ function CraftSim.ReagentItem:GetSkillContributionPerItem(recipeData)
     local weightList = {}
     for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do
         if reagent.hasQuality then
-            for _, reagentItem in ipairs(reagent.items) do
-                tinsert(weightList, CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(reagentItem.item:GetItemID()))
-            end
+            tinsert(weightList, CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(reagent.items[1].item:GetItemID()))
         end
     end
 
