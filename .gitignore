@@ -7,4 +7,3 @@ DevTools/DataScripts/**/Result/
 DevTools/DataScripts/**/Data/
 DevTools/DataScripts/**.db
 !**/*.py
-/.vs
