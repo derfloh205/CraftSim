@@ -15,7 +15,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTI
 
 function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
     local sizeX = 310
-    local sizeY = 270
+    local sizeY = 290
     local offsetX = -5
     local offsetY = -125
 
@@ -126,6 +126,22 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             justifyOptions = { type = "H", align = "LEFT" },
         }
 
+        frame.content.concentrationCostLabel = GGUI.Text {
+            parent = frame.content,
+            anchorParent = frame.content.averageProfitLabel.frame,
+            anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -10,
+            justifyOptions = { type = "H", align = "RIGHT" },
+            text = "Concentration: ",
+        }
+
+        frame.content.concentrationCostValue = GGUI.Text {
+            parent = frame.content,
+            anchorPoints = {
+                { anchorParent = frame.content.concentrationCostLabel.frame, anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5 },
+            },
+            justifyOptions = { type = "H", align = "LEFT" },
+        }
+
         frame.content.allocateButton = GGUI.Button({
             parent = frame.content,
             anchorParent = frame.content.qualityIcon.frame,
@@ -143,18 +159,25 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
 
         frame.content.optimizeConcentrationButton = GGUI.Button({
             parent = frame.content,
-            anchorParent = frame.content.allocateButton.frame,
+            anchorParent = frame.content.concentrationCostValue.frame,
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 20,
-            label = "Optimize Concentration",
+            label = "Optimize",
             sizeX = 15,
             sizeY = 20,
             adjustWidth = true,
             clickCallback = function()
-                CraftSim.SIMULATION_MODE.recipeData:OptimizeConcentration()
-                CraftSim.SIMULATION_MODE:AllocateReagents(CraftSim.SIMULATION_MODE.recipeData)
-            end
+                CraftSim.REAGENT_OPTIMIZATION.UI.recipeData:OptimizeConcentration()
+                CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(CraftSim.REAGENT_OPTIMIZATION.UI.recipeData,
+                    CraftSim.UTIL:GetExportModeByVisibility())
+            end,
+            tooltipOptions = {
+                anchor = "ANCHOR_CURSOR_RIGHT",
+                text = f.r("Experimental: ") ..
+                    "Performance Heavy and Resets on Edit\n.Optimizes for " ..
+                    f.gold("Highest Gold Value") .. " per concentration point",
+            }
         })
 
         local reagentListQualityIconHeaderSize = 25
@@ -163,7 +186,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
 
         frame.content.reagentList = GGUI.FrameList {
             parent = frame.content,
-            anchorPoints = { { anchorParent = frame.content, offsetY = -120, anchorA = "TOP", anchorB = "TOP", offsetX = -13 } },
+            anchorPoints = { { anchorParent = frame.content, offsetY = -140, anchorA = "TOP", anchorB = "TOP", offsetX = -13 } },
             sizeY = 150, hideScrollbar = true,
             columnOptions = {
                 {
@@ -264,6 +287,8 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData, expor
 
     materialFrame.content.averageProfitValue:SetText(CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached, true,
         recipeData.priceData.craftingCosts))
+
+    materialFrame.content.concentrationCostValue:SetText(f.gold(recipeData.concentrationCost))
 
     if recipeData.supportsQualities then
         local recipeMaxQualities = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_RECIPE_MAX_OPTIMIZATION_QUALITY")
