@@ -8,6 +8,9 @@ local f = GUTIL:GetFormatter()
 ---@class CraftSim.REAGENT_OPTIMIZATION.UI
 CraftSim.REAGENT_OPTIMIZATION.UI = {}
 
+---@type CraftSim.RecipeData
+CraftSim.REAGENT_OPTIMIZATION.UI.recipeData = nil
+
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
 
 function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
@@ -133,6 +136,9 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             sizeX = 15,
             sizeY = 20,
             adjustWidth = true,
+            clickCallback = function()
+                CraftSim.SIMULATION_MODE:AllocateReagents(CraftSim.REAGENT_OPTIMIZATION.UI.recipeData)
+            end
         })
 
         local reagentListQualityIconHeaderSize = 25
@@ -199,7 +205,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end
         }
 
-        GGUI.HelpIcon {
+        frame.content.infoIcon = GGUI.HelpIcon {
             parent = frame.content,
             anchorParent = frame.content.reagentList.frame,
             anchorA = "BOTTOMRIGHT", anchorB = "TOPLEFT", offsetX = 45, offsetY = -5,
@@ -231,13 +237,14 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData, expor
 
     if not materialFrame then return end
 
+    CraftSim.REAGENT_OPTIMIZATION.UI.recipeData = recipeData
+
     local maxQualityDropdown = materialFrame.content.maxQualityDropdown --[[@as GGUI.Dropdown]]
 
     maxQualityDropdown:SetVisible(recipeData.supportsQualities)
     materialFrame.content.maxQualityLabel:SetVisible(recipeData.supportsQualities)
     materialFrame.content.qualityText:SetVisible(recipeData.supportsQualities)
     materialFrame.content.qualityIcon:SetVisible(recipeData.supportsQualities)
-    materialFrame.content.allocateButton:SetVisible(CraftSim.SIMULATION_MODE.isActive)
 
     materialFrame.content.averageProfitValue:SetText(CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached, true,
         recipeData.priceData.craftingCosts))
@@ -275,11 +282,14 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData, expor
                 return reagent.hasQuality
             end))
 
+    materialFrame.content.allocateButton:SetVisible(CraftSim.SIMULATION_MODE.isActive and not isSameAllocation)
+
     local reagentList = materialFrame.content.reagentList --[[@as GGUI.FrameList]]
 
     reagentList:Remove()
 
     materialFrame.content.sameAllocationText:SetVisible(isSameAllocation)
+    materialFrame.content.infoIcon:SetVisible(not isSameAllocation)
     reagentList:SetVisible(not isSameAllocation)
 
     if not isSameAllocation then

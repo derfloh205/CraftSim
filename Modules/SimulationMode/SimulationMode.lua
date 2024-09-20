@@ -278,3 +278,24 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     -- recalculate modules
     CraftSim.INIT:TriggerModuleUpdate()
 end
+
+--- used by allocate button in material optimization module
+---@param recipeData CraftSim.RecipeData
+function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
+    if not CraftSim.SIMULATION_MODE.isActive then return end
+    if not CraftSim.SIMULATION_MODE.recipeData then return end
+
+    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
+    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
+
+    for _, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
+        if currentInput.isActive then
+            for i = 1, 3, 1 do
+                local input = currentInput["inputq" .. i]
+                input:SetText(recipeData.reagentData:GetReagentQuantityByItemID(input.itemID))
+            end
+        end
+    end
+
+    CraftSim.INIT:TriggerModuleUpdate()
+end
