@@ -449,7 +449,7 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
     end
 
     for _, slot in pairs(slots) do
-        possibleOptionals = CraftSim.GUTIL:Concat({ possibleOptionals, slot.possibleReagents })
+        tAppendAll(possibleOptionals, slot.possibleReagents)
     end
 
     for _, optional in ipairs(possibleOptionals) do

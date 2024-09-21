@@ -216,7 +216,8 @@ function CraftSim.PriceData:UpdateReagentPriceInfos()
     end
 
     ---@type CraftSim.OptionalReagent[]
-    local possibleOptionals = (reagentData:HasSparkSlot() and { reagentData.sparkReagentSlot }) or {}
+    local possibleOptionals = (reagentData:HasSparkSlot() and CopyTable(reagentData.sparkReagentSlot.possibleReagents, true)) or
+    {}
     for _, optionalSlot in ipairs(GUTIL:Concat { reagentData.optionalReagentSlots or {}, reagentData.finishingReagentSlots or {} }) do
         tAppendAll(possibleOptionals, optionalSlot.possibleReagents)
     end
