@@ -116,3 +116,35 @@ function CraftSim.ReagentItem:IsOrderReagentIn(recipeData)
 
     return tContains(orderItemIDs, self.item:GetItemID())
 end
+
+---@deprecated
+---@param recipeData CraftSim.RecipeData
+function CraftSim.ReagentItem:GetSkillContributionPerItem(recipeData)
+    if self.qualityID <= 1 then
+        return 0
+    end
+
+    local reagentWeight = CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(self.item:GetItemID())
+    local weightList = {}
+    for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do
+        if reagent.hasQuality then
+            tinsert(weightList, CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(reagent.items[1].item:GetItemID()))
+        end
+    end
+
+    local weightGCD = GUTIL:Fold(weightList, 0, function(a, b)
+        return CraftSim.REAGENT_OPTIMIZATION:GetGCD(a, b)
+    end)
+
+    if weightGCD == 0 then
+        weightGCD = 1
+    end
+
+    local relativeWeight = reagentWeight / weightGCD
+
+    -- quality contribution Q1 = 0
+    -- quality contribution Q2 = relative weight
+    -- quality contribution Q3 = relative weight * 2
+
+    return relativeWeight * (self.qualityID - 1)
+end

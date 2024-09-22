@@ -449,7 +449,7 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
     end
 
     for _, slot in pairs(slots) do
-        possibleOptionals = CraftSim.GUTIL:Concat({ possibleOptionals, slot.possibleReagents })
+        tAppendAll(possibleOptionals, slot.possibleReagents)
     end
 
     for _, optional in ipairs(possibleOptionals) do
@@ -467,18 +467,26 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
             itemColumn.itemIcon:SetItem(reagentItemMixin)
             local tooltip = ""
             local itemID = reagentItemMixin:GetItemID()
-            local price, priceInfo = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(itemID, true, false, considerSubRecipes)
+            local reagentPriceInfo = recipeData.priceData.reagentPriceInfos[itemID]
+            local price = reagentPriceInfo.itemPrice
+            local priceInfo = reagentPriceInfo.priceInfo
             ahColumn.text:SetText(CraftSim.UTIL:FormatMoney(priceInfo.ahPrice))
             if priceInfo.noAHPriceFound then
-                tooltip = tooltip .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT) .. f.grey("-")
+                tooltip = tooltip ..
+                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT) ..
+                    f.grey("-")
                 ahColumn.text:SetText(f.grey("-"))
             else
                 ahColumn.text:SetText(CraftSim.UTIL:FormatMoney(priceInfo.ahPrice))
-                tooltip = tooltip .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT) .. CraftSim.UTIL:FormatMoney(priceInfo.ahPrice)
+                tooltip = tooltip ..
+                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT) ..
+                    CraftSim.UTIL:FormatMoney(priceInfo.ahPrice)
             end
             if priceInfo.isOverride then
                 overrideColumn.text:SetText(CraftSim.UTIL:FormatMoney(price))
-                tooltip = tooltip .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE) .. CraftSim.UTIL:FormatMoney(priceInfo.ahPrice) .. "\n"
+                tooltip = tooltip ..
+                    CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE) ..
+                    CraftSim.UTIL:FormatMoney(priceInfo.ahPrice) .. "\n"
             else
                 overrideColumn.text:SetText(f.grey("-"))
             end
@@ -497,7 +505,9 @@ function CraftSim.COST_OPTIMIZATION:UpdateDisplay(recipeData, exportMode)
                     CraftSim.UTIL:FormatMoney(priceInfo.expectedCostsData.expectedCostsPerItem)
                 if priceInfo.expectedCostsData.concentration then
                     tooltip = tooltip ..
-                        "\n- " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION_COST) .. priceInfo.expectedCostsData.concentrationCost
+                        "\n- " ..
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION_COST) ..
+                        priceInfo.expectedCostsData.concentrationCost
                 end
             else
                 craftingColumn.text:SetText(f.grey("-"))
@@ -638,11 +648,14 @@ function CraftSim.COST_OPTIMIZATION.UI:UpdateRecipeOptionsSubRecipeOptions()
                                         "\n" .. GUTIL:IconToText(item:GetItemIcon(), 20, 20) .. " "
                                         ..
                                         GUTIL:GetQualityIconString(optimizedCostData.qualityID, 20, 20) ..
-                                        f.white(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM) ..
+                                        f.white(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
+                                                .COST_OPTIMIZATION_REAGENT_LIST_EXPECTED_COSTS_PRE_ITEM) ..
                                             CraftSim.UTIL:FormatMoney(optimizedCostData.expectedCostsPerItem))
                                     if optimizedCostData.concentration then
                                         tooltipText = tooltipText ..
-                                            f.white("\n- " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION) ..
+                                            f.white("\n- " ..
+                                                CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
+                                                    .COST_OPTIMIZATION_REAGENT_LIST_CONCENTRATION) ..
                                                 optimizedCostData.concentrationCost) .. "\n"
                                     end
                                 end
