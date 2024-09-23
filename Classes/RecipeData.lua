@@ -208,6 +208,10 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         self.baseOperationInfo = self:GetCraftingOperationInfoForRecipeCrafter()
     end
 
+    -- self.reagentsMaxSkillFactor = self.reagentData:GetMaxSkillFactor()
+    -- self.reagentsMaxSkillContribution = self.reagentsMaxSkillFactor *
+    --     self.baseOperationInfo.baseDifficulty
+
     ---@type CraftSim.ProfessionStats
     self.baseProfessionStats = CraftSim.ProfessionStats()
     ---@type CraftSim.ProfessionStats

@@ -1843,30 +1843,48 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
             craftOrderInfoText = craftOrderInfoText ..
                 "\nMinimum Quality: " .. GUTIL:GetQualityIconString(recipeData.orderData.minQuality, 15, 15)
         end
-
-        if recipeData.orderData.npcOrderRewards then
-            craftOrderInfoText = craftOrderInfoText .. "\nRewards:"
-            for _, reward in ipairs(recipeData.orderData.npcOrderRewards) do
-                craftOrderInfoText = craftOrderInfoText .. "\n- " .. reward.count .. "x " .. reward.itemLink
-            end
-        end
-
-        craftOrderInfoText = craftOrderInfoText ..
-            f.r("\n\nAll supplied reagents have to be in your inventory to craft a work order!")
     end
 
-    local craftAmountTooltipText = ""
-    craftAmountTooltipText = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP) .. craftQueueItem.amount
+    -- if we got npcOrderRewards than we need to delay the tooltip display data
+
+    if recipeData.orderData and recipeData.orderData.npcOrderRewards then
+        craftOrderInfoText = craftOrderInfoText .. "\nRewards:"
+        local rewardItems = GUTIL:Map(recipeData.orderData.npcOrderRewards, function(reward)
+            return {
+                count = reward.count,
+                item = Item:CreateFromItemLink(reward.itemLink)
+            }
+        end)
+        GUTIL:ContinueOnAllItemsLoaded(GUTIL:Map(rewardItems, function(reward) return reward.item end), function()
+            for _, reward in ipairs(rewardItems) do
+                -- itemLinks might contain no name but can be used to fetch id
+                craftOrderInfoText = craftOrderInfoText ..
+                    "\n- " ..
+                    GUTIL:IconToText(reward.item:GetItemIcon(), 20, 20) ..
+                    " " .. (reward.item:GetItemLink() or "<?>") .. " x" .. reward.count
+            end
+
+            row.tooltipOptions = {
+                text = recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
+                        craftQueueItem.recipeData:GetCrafterUID()) ..
+                    f.white(craftOrderInfoText),
+                owner = row.frame,
+                anchor = "ANCHOR_CURSOR",
+            }
+        end)
+    else
+        row.tooltipOptions = {
+            text = recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
+                    craftQueueItem.recipeData:GetCrafterUID()) ..
+                f.white(craftOrderInfoText),
+            owner = row.frame,
+            anchor = "ANCHOR_CURSOR",
+        }
+    end
 
 
 
-    row.tooltipOptions = {
-        text = recipeData.reagentData:GetTooltipText(craftQueueItem.amount,
-                craftQueueItem.recipeData:GetCrafterUID()) ..
-            f.white(craftAmountTooltipText) .. f.white(craftOrderInfoText),
-        owner = row.frame,
-        anchor = "ANCHOR_CURSOR",
-    }
+
 
     if craftQueueItem.gearEquipped and craftQueueItem:IsCrafter() then
         topGearColumn.equippedText:Show()

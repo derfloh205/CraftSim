@@ -142,9 +142,13 @@ function CraftSim.ReagentItem:GetSkillContributionPerItem(recipeData)
 
     local relativeWeight = reagentWeight / weightGCD
 
+    local reagentSkillContributionFactor = relativeWeight * (self.qualityID - 1)
+
+    local skillContribution = recipeData.reagentsMaxSkillContribution * reagentSkillContributionFactor
+
     -- quality contribution Q1 = 0
     -- quality contribution Q2 = relative weight
     -- quality contribution Q3 = relative weight * 2
 
-    return relativeWeight * (self.qualityID - 1)
+    return skillContribution
 end
