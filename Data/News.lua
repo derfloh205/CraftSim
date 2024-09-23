@@ -17,6 +17,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("18.1.1"),
+        f.P .. f.bb("Patron Work Orders"),
+        f.a .. "- Now consider reward items' prices in average profit calculation",
         newP("18.1.0"),
         f.P .. "Added a first draft of a " .. f.gold("Concentration Optimization"),
         f.a .. "- You can find the button in the " .. f.bb("Material Optimization") .. " Module",
