@@ -26,7 +26,7 @@ function CraftSim.SUPPORTERS.UI:Init()
         title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_SUPPORTERS_BUTTON),
         collapseable = true,
         closeable = true,
-        moveable = true,
+        moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),

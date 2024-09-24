@@ -25,7 +25,7 @@ function CraftSim.DEBUG.UI:Init()
         title = "CraftSim Log",
         collapseable = true,
         closeable = true,
-        moveable = true,
+        moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"),
         scrollableContent = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         parent = UIParent,

@@ -25,7 +25,7 @@ function CraftSim.CONTROL_PANEL.UI:Init()
         frameID = CraftSim.CONST.FRAMES.CONTROL_PANEL,
         title = "CraftSim " .. currentVersion .. " - " .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_TITLE),
         collapseable = true,
-        moveable = true,
+        moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
@@ -191,6 +191,24 @@ function CraftSim.CONTROL_PANEL.UI:Init()
             CraftSim.FRAME:ResetFrames()
         end,
         label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES)
+    })
+
+    local isFramesLocked = CraftSim.DB.OPTIONS:Get("LOCK_FRAMES")
+
+    frame.content.lockFramesButton = GGUI.Button({
+        parent = frame.content,
+        anchorParent = frame.content.supportersButton.frame,
+        anchorA = "RIGHT",
+        anchorB = "LEFT",
+        sizeX = 20,
+        sizeY = 25,
+        adjustWidth = true,
+        clickCallback = function()
+            CraftSim.DB.OPTIONS:Save("LOCK_FRAMES", not isFramesLocked)
+            CraftSim.RELOAD_PROMPT.frame:Show()
+        end,
+        label = isFramesLocked and CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_UNLOCK_FRAMES)
+            or CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONTROL_PANEL_LOCK_FRAMES)
     })
 
 

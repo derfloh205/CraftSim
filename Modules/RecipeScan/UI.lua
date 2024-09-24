@@ -28,7 +28,7 @@ function CraftSim.RECIPE_SCAN.UI:Init()
         frameID = CraftSim.CONST.FRAMES.RECIPE_SCAN,
         collapseable = true,
         closeable = true,
-        moveable = true,
+        moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_RECIPE_SCAN"),
         frameTable = CraftSim.INIT.FRAMES,

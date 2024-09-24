@@ -19,7 +19,7 @@ function CraftSim.EXPLANATIONS.UI:Init()
         parent = ProfessionsFrame, anchorParent = ProfessionsFrame,
         sizeX = 1000, sizeY = 600,
         frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"), frameTable = CraftSim.INIT.FRAMES,
-        frameID = CraftSim.CONST.FRAMES.EXPLANATIONS, moveable = true, closeable = true, collapseable = true,
+        frameID = CraftSim.CONST.FRAMES.EXPLANATIONS, moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"), closeable = true, collapseable = true,
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_EXPLANATIONS"),
         frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,

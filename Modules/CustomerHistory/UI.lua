@@ -31,7 +31,7 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
         title = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_TITLE),
         collapseable = true,
         closeable = true,
-        moveable = true,
+        moveable = not CraftSim.DB.OPTIONS:Get("LOCK_FRAMES"),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         onCloseCallback = CraftSim.CONTROL_PANEL:HandleModuleClose("MODULE_CUSTOMER_HISTORY"),
         frameTable = CraftSim.INIT.FRAMES,

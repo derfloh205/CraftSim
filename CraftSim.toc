@@ -110,6 +110,9 @@ Modules/CraftBuffs/UI.lua
 Modules/ConcentrationTracker/ConcentrationTracker.lua
 Modules/ConcentrationTracker/UI.lua
 
+Modules/ReloadPrompt/ReloadPrompt.lua
+Modules/ReloadPrompt/UI.lua
+
 Locals/Localization.lua
 Locals/enUS.lua
 Locals/deDE.lua
