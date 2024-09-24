@@ -90,6 +90,19 @@ function CraftSim.CONCENTRATION_TRACKER.UI:Init()
             parent = content, anchorParent = content,
             anchorA = "LEFT", anchorB = "LEFT", sizeX = 30, sizeY = 30, offsetX = 5,
             texturePath = CraftSim.CONST.CONCENTRATION_ICON }
+
+        local pinButtonLabel = CraftSim.MEDIA:GetAsTextIcon(CraftSim.MEDIA.IMAGES.PIN, 0.5)
+
+        content.pinButton = GGUI.ToggleButton {
+            parent = content, anchorPoints = { { anchorParent = content, anchorA = "RIGHT", anchorB = "RIGHT", offsetX = -15 } },
+            sizeX = 25, sizeY = 25,
+            labelOff = pinButtonLabel,
+            labelOn = pinButtonLabel,
+            tooltipOptions = {
+                anchor = "ANCHOR_RIGHT",
+
+            },
+        }
     end
 
     createContent(CraftSim.CONCENTRATION_TRACKER.frame)
@@ -236,7 +249,8 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
     local formattedDateText, isReady = concentrationData:GetFormattedDateMax()
 
     if not isReady then
-        content.maxTimer:SetText(f.bb(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX_VALUE) .. formattedDateText))
+        content.maxTimer:SetText(f.bb(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX_VALUE) ..
+            formattedDateText))
     else
         content.maxTimer:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FULL))
     end
