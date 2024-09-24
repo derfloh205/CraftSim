@@ -718,11 +718,7 @@ end
 ---@return number restockAmount Restock quantity for the given expected item.
 function CraftSim.CRAFTQ:GetRestockQuantity(expectedItem)
     local defaultRestockAmount = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_GENERAL_RESTOCK_RESTOCK_AMOUNT") or 1
-    if expectedItem and CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS") ~= "" then
-        if not TSM_API then
-            print("Error: TSM_API is not defined.")
-            return defaultRestockAmount
-        end
+    if TSM_API and expectedItem and CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS") ~= "" then
         local restockAmount = TSM_API.GetCustomPriceValue(CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS"), TSM_API.ToItemString(expectedItem:GetItemLink()))
         if restockAmount ~= nil then
             return restockAmount
