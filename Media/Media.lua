@@ -32,4 +32,5 @@ CraftSim.MEDIA.IMAGES = {
     KOFI = { file = "kofi.blp", dimensions = { x = 64, y = 64 } },
     PAYPAL = { file = "paypal.blp", dimensions = { x = 64, y = 64 } },
     EDIT_PEN = { file = "edit.blp", dimensions = { x = 25, y = 25 } },
+    PIN = { file = "pin.tga", dimensions = { x = 512, y = 512 } },
 }
