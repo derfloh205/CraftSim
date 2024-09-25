@@ -159,21 +159,6 @@ function CraftSim.OPTIONS:Init()
         end
     }
 
-    -- local customMulticraftConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputMulticraftConstant",
-    --     ProfitCalculationTab.content, skillBreakpointsCheckbox.frame, "TOPLEFT", "BOTTOMLEFT", 10, -10, 100, 25,
-    --     CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANT"),
-    --     function()
-    --         CraftSim.DB.OPTIONS:Save("PROFIT_CALCULATION_MULTICRAFT_CONSTANT",
-    --             tonumber(CraftSimOptionsInputMulticraftConstant:GetText()))
-    --     end)
-
-    -- CraftSim.FRAME:CreateText(L(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT),
-    --     ProfitCalculationTab.content, customMulticraftConstantInput, "LEFT", "RIGHT", 5, 0)
-
-    -- CraftSim.FRAME:CreateHelpIcon(
-    --     L(CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION),
-    --     ProfitCalculationTab.content, customMulticraftConstantInput, "RIGHT", "LEFT", -5, 0)
-
     local customResourcefulnessConstantInput = CraftSim.FRAME:CreateInput("CraftSimOptionsInputResourcefulnessConstant",
         ProfitCalculationTab.content, customMulticraftConstantInput, "TOPLEFT", "BOTTOMLEFT", 0, -10, 100, 25,
         CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_RESOURCEFULNESS_CONSTANT"),
@@ -395,7 +380,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     validationInfoItems:SetPoint("LEFT", tsmItemsPriceExpression, "RIGHT", 5, 0)
     validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(
         L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
-    
+
     -- Custom source for restock quantity
     local tsmRestockExpression = CreateFrame("EditBox", "CraftSimTSMRestockExpressionItems", TSMTab.content,
         "InputBoxTemplate")
@@ -420,7 +405,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         end
     end)
 
-    GGUI.Button({
+    local tsmRestockDefaultButton = GGUI.Button({
         parent = TSMTab.content,
         anchorParent = tsmRestockExpression,
         anchorA = "RIGHT",
@@ -446,4 +431,14 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(
         L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
 
+    GGUI.Checkbox {
+        parent = TSMTab.content,
+        anchorParent = tsmRestockDefaultButton.frame,
+        anchorA = "RIGHT", anchorB = "LEFT", offsetX = -15, offsetY = -1,
+        tooltip = "Enable TSM Restock Expression",
+        initialValue = CraftSim.DB.OPTIONS:Get("TSM_RESTOCK_KEY_ITEMS_ENABLED"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("TSM_RESTOCK_KEY_ITEMS_ENABLED", checked)
+        end
+    }
 end
