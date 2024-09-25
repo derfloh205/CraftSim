@@ -22,6 +22,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Made Tracker Frame pinnable",
         f.a .. "- Added " .. f.g("Right Click Context Menu") .. " with " .. f.g("Blacklist") .. " Option",
         f.a .. "- Added " .. f.g("Sort Mode") .. " Option",
+        f.a .. "- Added " .. f.g("Format") .. " Option",
         newP("18.1.1"),
         f.P .. f.bb("Patron Work Orders"),
         f.a .. "- Now consider reward items' prices in average profit calculation",
