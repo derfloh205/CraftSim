@@ -84,6 +84,20 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end,
         }
 
+        frame.content.highestProfitCheckbox = GGUI.Checkbox {
+            parent = frame.content, anchorParent = frame.content.maxQualityDropdown.frame,
+            anchorA = "LEFT", anchorB = "RIGHT", offsetX = -5, offsetY = 2,
+            initialValue = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_TOP_PROFIT_ENABLED"),
+            labelOptions = {
+                text = "Top Profit"
+            },
+            tooltip = "If enabled, all qualities up to the max quality will be optimized, and the one with the highest profit will be shown",
+            clickCallback = function(_, checked)
+                CraftSim.DB.OPTIONS:Save("REAGENT_OPTIMIZATION_TOP_PROFIT_ENABLED", checked)
+                CraftSim.INIT:TriggerModulesByRecipeType()
+            end
+        }
+
         frame.content.maxQualityLabel = GGUI.Text {
             parent = frame.content, anchorPoints = { { anchorParent = frame.content.maxQualityDropdown.frame, anchorA = "RIGHT", anchorB = "LEFT", offsetX = 16, offsetY = 2 } },
             text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_MAXIMUM_QUALITY),
@@ -131,7 +145,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             anchorParent = frame.content.averageProfitLabel.frame,
             anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -10,
             justifyOptions = { type = "H", align = "RIGHT" },
-            text =  CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_CONCENTRATION_LABEL),
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_CONCENTRATION_LABEL),
         }
 
         frame.content.concentrationCostValue = GGUI.Text {
@@ -163,7 +177,8 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 20,
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON) .. " " .. GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15, 0, -1),
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON) ..
+                " " .. GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15, 0, -1),
             sizeX = 15,
             sizeY = 20,
             adjustWidth = true,
@@ -174,7 +189,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end,
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR_RIGHT",
-                text =  CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_TOOLTIP),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_TOOLTIP),
             }
         })
 
