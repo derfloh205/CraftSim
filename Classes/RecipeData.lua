@@ -660,7 +660,29 @@ function CraftSim.RecipeData:OptimizeReagents(options)
     options.maxQuality = options.maxQuality or self.maxQuality
     options.highestProfit = options.highestProfit or false
 
-    local optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, options)
+    local optimizationResult
+
+    if options.highestProfit then
+        -- sim for each quality and choose highest raw profit
+        local highestProfit
+
+        for i = 1, options.maxQuality, 1 do
+            local qualityOptimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, {
+                highestProfit = true,
+                maxQuality = i
+            })
+            self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
+            self:Update()
+
+            if not optimizationResult or highestProfit < self.averageProfitCached then
+                optimizationResult = qualityOptimizationResult
+                highestProfit = self.averageProfitCached
+            end
+        end
+    else
+        optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, options)
+    end
+
     self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
     self:Update()
 end
