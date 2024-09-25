@@ -232,7 +232,7 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB] = "Statistik Tracker",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL] = "Ergebnisverteilung",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP] =
-		"Relative Verteilung der hergestellten Gegenstandsergebnisse (Mehrfachherstellungs-Mengen werden ignoriert)",
+	"Relative Verteilung der hergestellten Gegenstandsergebnisse (Mehrfachherstellungs-Mengen werden ignoriert)",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_MULTICRAFT] = "Mehrfachherstellung",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_RESOURCEFULNESS] = "Einfallsreichtum",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_YIELD_DDISTRIBUTION] = "Ertragsverteilung",
@@ -400,8 +400,8 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_TOGGLE_TOOLTIP] = "Konzentration umschalten",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES] = "Unterrezepte optimieren " .. f.bb("(experimentell)"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES_TOOLTIP] = "Wenn aktiviert, optimiert " ..
-			f.l("CraftSim") .. " auch die Herstellung von zwischengespeicherten Reagenz-Rezepten der gescannten Rezepte und verwendet ihre\n" ..
-			f.bb("erwarteten Kosten") .. ", um die Herstellungskosten für das Endprodukt zu berechnen.\n\n" ..
+	    f.l("CraftSim") .. " auch die Herstellung von zwischengespeicherten Reagenz-Rezepten der gescannten Rezepte und verwendet ihre\n" ..
+	    f.bb("erwarteten Kosten") .. ", um die Herstellungskosten für das Endprodukt zu berechnen.\n\n" ..
             f.r("Warnung: Dies könnte die Scan-Leistung verringern"),
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES] = "Zwischengespeicherte Rezepte: ",
 
@@ -444,7 +444,7 @@ function CraftSim.LOCAL_DE:GetData()
         "Zeige die vollständige Aufschlüsselung deiner zuletzt verwendeten Materialkombination in einem Gegenstandstooltip an",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "Unterstützte Preisquellen:",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "RAM-Bereinigung beim Herstellen aktivieren",
-		[CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_CRAFTS] = "Herstellungen",
+	[CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_CRAFTS] = "Herstellungen",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP] =
         "Wenn aktiviert, wird CraftSim dein RAM nach einer bestimmten Anzahl von Herstellungen von ungenutzten Daten bereinigen, um zu verhindern, dass sich der Speicher ansammelt.\nSpeicheraufbau kann auch durch andere Addons verursacht werden und ist nicht CraftSim-spezifisch.\nEine Bereinigung betrifft die gesamte WoW-RAM-Nutzung.",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TAB] = "Module",
@@ -521,7 +521,7 @@ function CraftSim.LOCAL_DE:GetData()
         "Modul, das dir deine aktiven und fehlenden Herstellungs-Buffs anzeigt",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_LABEL] = "Erklärungen",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_EXPLANATIONS_TOOLTIP] =
-            "Modul, das dir verschiedene Erklärungen zeigt, wie" .. f.l(" CraftSim") .. " Dinge berechnet",
+        "Modul, das dir verschiedene Erklärungen zeigt, wie" .. f.l(" CraftSim") .. " Dinge berechnet",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_RESET_FRAMES] = "Fensterpos. zurücksetzen",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_OPTIONS] = "Optionen",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_NEWS] = "News",
@@ -541,7 +541,7 @@ function CraftSim.LOCAL_DE:GetData()
         -- Unterstützer
         [CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION] = f.l("Danke an all diese großartigen Menschen!"),
         [CraftSim.CONST.TEXT.SUPPORTERS_DESCRIPTION_2] = f.l(
-            "Willst du CraftSim unterstützen und auch hier mit deiner Nachricht aufgeführt werden?\nErwäge eine Spende <3"),
+        "Willst du CraftSim unterstützen und auch hier mit deiner Nachricht aufgeführt werden?\nErwäge eine Spende <3"),
         [CraftSim.CONST.TEXT.SUPPORTERS_DATE] = "Datum",
         [CraftSim.CONST.TEXT.SUPPORTERS_SUPPORTER] = "Unterstützer",
         [CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE] = "Nachricht",
@@ -606,7 +606,7 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER] = "Falscher Handwerker",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER] = "Anforderungen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP] =
-		"Alle Anforderungen müssen erfüllt sein, um ein Rezept herzustellen",
+	"Alle Anforderungen müssen erfüllt sein, um ein Rezept herzustellen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL] = "Nächste herstellen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT] = "Herstellbar",
         [CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL] = "Auctionator Einkaufsliste erstellen",
@@ -670,7 +670,7 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("Richtiger Handwerkercharakter"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("Beruf geöffnet"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_EDIT] = "Bearbeiten",
-		[CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CRAFT] = "Herstellen",
+	[CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CRAFT] = "Herstellen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CLAIM] = "Anfordern",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CLAIMED] = "Angefordert",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NEXT] = "Nächstes: ",
@@ -678,10 +678,10 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_ORDER] = "Bestellung",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_SUBMIT] = "Abschicken",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL] = "Händchen fürs Kunsthandwerk-Rezepte ignorieren",
-		[CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP] =
-		"Erstherstellungen, die " .. f.bb("Händchen fürs Kunsthandwerk") .. " verwenden, nicht in die Warteschlange aufnehmen",
-		[CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP] = "\n\nWartende Handwerke: ",
-		        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nBestellung von Kunde: ",
+	[CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP] =
+	"Erstherstellungen, die " .. f.bb("Händchen fürs Kunsthandwerk") .. " verwenden, nicht in die Warteschlange aufnehmen",
+	[CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP] = "\n\nWartende Handwerke: ",
+	[CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nBestellung von Kunde: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nnMindestqualität: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\nBelohnungen:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r("\n\nAlle bereitgestellten Reagenzien müssen sich in deinem Inventar befinden, um einen Arbeitsauftrag auszuführen!"),
@@ -719,7 +719,7 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX] = f.g("MAX"),
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX_VALUE] = "Maximal: ",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FULL] = f.g("Konzentration voll"),
-		[CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CHARACTER] = "Charakter",
+	[CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CHARACTER] = "Charakter",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CONCENTRATION] = "Konzentration",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_PROFESSION] = "Beruf",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE] = "Europa - Max Datum",
