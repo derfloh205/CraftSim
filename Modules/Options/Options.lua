@@ -395,4 +395,55 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     validationInfoItems:SetPoint("LEFT", tsmItemsPriceExpression, "RIGHT", 5, 0)
     validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(
         L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
+    
+    -- Custom source for restock quantity
+    local tsmRestockExpression = CreateFrame("EditBox", "CraftSimTSMRestockExpressionItems", TSMTab.content,
+        "InputBoxTemplate")
+    tsmRestockExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, -160)
+    tsmRestockExpression:SetSize(expressionSizeX, expressionSizeY)
+    tsmRestockExpression:SetAutoFocus(false) -- dont automatically focus
+    tsmRestockExpression:SetFontObject("ChatFontNormal")
+    tsmRestockExpression:SetText(CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_RESTOCK_KEY_ITEMS))
+    tsmRestockExpression:SetScript("OnEscapePressed", function() tsmRestockExpression:ClearFocus() end)
+    tsmRestockExpression:SetScript("OnEnterPressed", function() tsmRestockExpression:ClearFocus() end)
+    tsmRestockExpression:SetScript("OnTextChanged", function()
+        local expression = tsmRestockExpression:GetText()
+        local isValid = TSM_API.IsCustomPriceValid(expression)
+        if not isValid then
+            CraftSimTSMStringValidationInfoRestockItems:SetText(CraftSim.GUTIL:ColorizeText(
+                L(CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION), CraftSim.GUTIL.COLORS.RED))
+        else
+            CraftSimTSMStringValidationInfoRestockItems:SetText(CraftSim.GUTIL:ColorizeText(
+                L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
+            CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.TSM_RESTOCK_KEY_ITEMS,
+                tsmRestockExpression:GetText())
+        end
+    end)
+
+    GGUI.Button({
+        parent = TSMTab.content,
+        anchorParent = tsmRestockExpression,
+        anchorA = "RIGHT",
+        anchorB = "LEFT",
+        offsetX = -10,
+        offsetY = 1,
+        sizeX = 15,
+        sizeY = 20,
+        adjustWidth = true,
+        label = L(CraftSim.CONST.TEXT.OPTIONS_TSM_RESET),
+        clickCallback = function()
+            tsmRestockExpression:SetText("")
+        end
+    })
+
+    local tsmExpressionTitleRestockItems = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    tsmExpressionTitleRestockItems:SetPoint("BOTTOMLEFT", tsmRestockExpression, "TOPLEFT", 0, -10)
+    tsmExpressionTitleRestockItems:SetText("TSM Crafted Items Restock Qty Expression")
+
+    local validationInfoItems = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoRestockItems', 'OVERLAY',
+        'GameFontNormal')
+    validationInfoItems:SetPoint("LEFT", tsmRestockExpression, "RIGHT", 5, 0)
+    validationInfoItems:SetText(CraftSim.GUTIL:ColorizeText(
+        L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
+
 end
