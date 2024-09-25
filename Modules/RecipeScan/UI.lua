@@ -770,8 +770,19 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
         parent = content, anchorParent = content.optimizeProfessionToolsCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES),
         tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES_TOOLTIP),
+        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES"),
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_SUBRECIPES", checked)
+        end
+    }
+
+    content.optimizeReagentsTopProfit = GGUI.Checkbox {
+        parent = content, anchorParent = content.optimizeSubRecipes.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
+        label = "Optimize Reagents - Top Profit Max Quality",
+        tooltip = "If enabled, all recipes will be optimized for their most profitable result quality instead of max quality reachable",
+        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT", checked)
         end
     }
 
@@ -795,7 +806,7 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
 
         },
         buttonOptions = {
-            parent = content, anchorParent = content.optimizeSubRecipes.frame,
+            parent = content, anchorParent = content.optimizeReagentsTopProfit.frame,
             anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = checkBoxSpacingY,
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON), offsetX = 25,
             adjustWidth = true, sizeX = 20,

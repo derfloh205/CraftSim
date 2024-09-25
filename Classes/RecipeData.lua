@@ -965,7 +965,7 @@ end
 
 ---@class CraftSim.RecipeData.OptimizeProfitOptions
 ---@field optimizeGear? boolean
----@field optimizeReagents? boolean
+---@field optimizeReagentOptions? CraftSim.RecipeData.OptimizeReagentOptions
 
 ---Optimizes the recipeData's reagents and gear for highest profit and caches result for crafter
 ---@param options? CraftSim.RecipeData.OptimizeProfitOptions
@@ -974,17 +974,11 @@ function CraftSim.RecipeData:OptimizeProfit(options)
     if options.optimizeGear then
         self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT))
     end
-    if options.optimizeReagents then
-        self:OptimizeReagents()
+    if options.optimizeReagentOptions then
+        self:OptimizeReagents(options.optimizeReagentOptions)
     end
 
     CraftSim.DB.ITEM_OPTIMIZED_COSTS:Add(self)
-end
-
----Optimizes the recipeData's reagents and gear for highest quality
-function CraftSim.RecipeData:OptimizeQuality()
-    self:OptimizeGear(CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.SKILL))
-    self:OptimizeReagents()
 end
 
 ---@param idLinkOrMixin number | string | ItemMixin

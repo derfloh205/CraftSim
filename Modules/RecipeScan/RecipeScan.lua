@@ -319,7 +319,10 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
             recipeData:SetSubRecipeCostsUsage(true)
             recipeData:OptimizeSubRecipes({
                 optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"),
-                optimizeReagents = true,
+                optimizeReagentOptions = {
+                    highestProfit = false,
+                    maxQuality = recipeData.maxQuality,
+                },
             })
             printS("optimizedRecipes: " .. tostring(GUTIL:Count(recipeData.optimizedSubRecipes)))
         end
@@ -333,8 +336,11 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
             -- Optimize gear and/or reagents
             recipeData:OptimizeProfit({
                 optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"),
-                optimizeReagents = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
-                    CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE,
+                optimizeReagentOptions = (CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
+                    CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE) and {
+                    maxQuality = recipeData.maxQuality,
+                    highestProfit = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT")
+                },
             })
         else
             CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
