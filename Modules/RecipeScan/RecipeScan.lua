@@ -343,7 +343,7 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
                 },
             })
 
-            if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE") then
+            if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") and CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE") then
                 recipeData:OptimizeConcentration()
             end
         else

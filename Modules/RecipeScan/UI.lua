@@ -884,8 +884,13 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             end
 
             local averageProfit = recipeData:GetAverageProfit()
-            row.concentrationWeight, row.concentrationProfit = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData,
-                averageProfit)
+            row.concentrationWeight = 0
+            row.concentrationProfit = 0
+            if enableConcentration then
+                row.concentrationWeight, row.concentrationProfit = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(
+                    recipeData,
+                    averageProfit)
+            end
 
             if enableConcentration and row.concentrationProfit then
                 averageProfit = row.concentrationProfit
@@ -895,8 +900,9 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             row.relativeProfit = GUTIL:GetPercentRelativeTo(averageProfit, recipeData.priceData.craftingCosts)
             recipeData.resultData:Update() -- switch back
             row.concentrationCost = recipeData.concentrationCost
-            concentrationCostColumn.text:SetText(row.concentrationCost)
-            concentrationValueColumn.text:SetText(CraftSim.UTIL:FormatMoney(row.concentrationWeight, true))
+            concentrationCostColumn.text:SetText((enableConcentration and row.concentrationCost) or f.grey("-"))
+            concentrationValueColumn.text:SetText((enableConcentration and CraftSim.UTIL:FormatMoney(row.concentrationWeight, true)) or
+                f.grey("-"))
 
             averageProfitColumn.text:SetText(CraftSim.UTIL:FormatMoney(averageProfit, true, relativeTo, true))
 
