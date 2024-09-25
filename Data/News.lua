@@ -17,6 +17,12 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("18.2.1"),
+        f.P .. f.g("Material Optimization"),
+        f.a .. "- Added " .. f.bb("Top Profit") .. " Option",
+        f.a .. "- Optimizes for most profitable quality",
+        f.P .. f.g("Recipe Scan"),
+        f.a .. "- Added Option to use Top Profit Material Optimization",
         newP("18.2.0"),
         f.P .. f.g("Concentration Tracker Overhaul"),
         f.a .. "- Made Tracker Frame pinnable",

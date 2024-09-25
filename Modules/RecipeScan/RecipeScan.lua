@@ -342,6 +342,10 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
                     highestProfit = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT")
                 },
             })
+
+            if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE") then
+                recipeData:OptimizeConcentration()
+            end
         else
             CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
         end

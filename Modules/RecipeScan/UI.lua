@@ -786,6 +786,16 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
         end
     }
 
+    content.optimizeConcentrationValue = GGUI.Checkbox {
+        parent = content, anchorParent = content.optimizeReagentsTopProfit.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
+        label = "Optimize Concentration Value",
+        tooltip = "If enabled, all recipes will be optimized for their best concentration gold value per point\n" .. f.r("!!High Performance Usage!!"),
+        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE", checked)
+        end
+    }
+
     content.expansionSelector = GGUI.CheckboxSelector {
         savedVariablesTable = CraftSim.DB.OPTIONS:Get("RECIPESCAN_FILTERED_EXPANSIONS"),
         initialItems = GUTIL:Sort(GUTIL:Map(CraftSim.CONST.EXPANSION_IDS,
@@ -806,7 +816,7 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
 
         },
         buttonOptions = {
-            parent = content, anchorParent = content.optimizeReagentsTopProfit.frame,
+            parent = content, anchorParent = content.optimizeConcentrationValue.frame,
             anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = checkBoxSpacingY,
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON), offsetX = 25,
             adjustWidth = true, sizeX = 20,
