@@ -28,6 +28,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- If enabled, replaces configured general restock amount",
         f.p .. "Locals Update",
         f.a .. "- Contributed by: " .. f.bb("https://github.com/LvWind"),
+        f.a .. "- Contributed by: " .. f.bb("https://github.com/Gogadon"),
         newP("18.1.1"),
         f.P .. f.bb("Patron Work Orders"),
         f.a .. "- Now consider reward items' prices in average profit calculation",
