@@ -22,10 +22,22 @@ CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE = {
     PROFESSION = "PROFESSION",
 }
 
-CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE_LOCALZATION_IDS = {
+CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE = {
+    EUROPE_MAX_DATE = "EUROPE_MAX_DATE",
+    AMERICA_MAX_DATE = "AMERICA_MAX_DATE",
+    HOURS_LEFT = "HOURS_LEFT",
+}
+
+CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE_LOCALIZATION_IDS = {
     CHARACTER = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CHARACTER,
     CONCENTRATION = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CONCENTRATION,
     PROFESSION = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_PROFESSION,
+}
+
+CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE_LOCALIZATION_IDS = {
+    EUROPE_MAX_DATE = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE,
+    AMERICA_MAX_DATE = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE,
+    HOURS_LEFT = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT,
 }
 
 local f = GUTIL:GetFormatter()
@@ -222,7 +234,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
                 justifyOptions = { type = "H", align = "CENTER" },
             }
         },
-        rowHeight = 15, sizeY = 300,
+        rowHeight = 20, sizeY = 300,
         parent = content.listTab.content, anchorPoints = { { anchorParent = content.listTab.content, anchorA = "TOP", anchorB = "TOP", offsetY = -30, offsetX = -10 } },
         rowConstructor = function(columns, row)
             local crafterProfessionColumn = columns[1]
@@ -231,15 +243,23 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
 
             crafterProfessionColumn.text = GGUI.Text {
                 parent = crafterProfessionColumn, anchorPoints = { { anchorParent = crafterProfessionColumn, anchorA = "LEFT", anchorB = "LEFT" } },
-                justifyOptions = { type = "H", align = "LEFT" }, scale = 0.9,
+                justifyOptions = { type = "H", align = "LEFT" }, scale = 1,
             }
             concentrationColumn.text = GGUI.Text {
                 parent = concentrationColumn, anchorPoints = { { anchorParent = concentrationColumn, anchorA = "CENTER", anchorB = "CENTER" } },
-                justifyOptions = { type = "H", align = "CENTER" }, scale = 0.9,
+                justifyOptions = { type = "H", align = "CENTER" }, scale = 1, fixedWidth = 70,
+                fontOptions = {
+                    fontFile = CraftSim.CONST.FONT_FILES.MONOSPACE,
+                    height = 12,
+                },
             }
             maxedColumn.text = GGUI.Text {
                 parent = maxedColumn, anchorPoints = { { anchorParent = maxedColumn, anchorA = "CENTER", anchorB = "CENTER" } },
-                justifyOptions = { type = "H", align = "CENTER" }, scale = 0.9, fixedWidth = 90,
+                justifyOptions = { type = "H", align = "CENTER" }, scale = 1, fixedWidth = 90,
+                fontOptions = {
+                    fontFile = CraftSim.CONST.FONT_FILES.MONOSPACE,
+                    height = 12,
+                },
             }
         end,
         selectionOptions = {
@@ -273,7 +293,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     }
 
     local intialSortModeValue = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_SORT_MODE")
-    local intialSortModeLabel = L(CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE_LOCALZATION_IDS[intialSortModeValue])
+    local intialSortModeLabel = L(CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE_LOCALIZATION_IDS[intialSortModeValue])
 
     content.optionsTab.content.sortModeDropdown = CreateFrame("DropdownButton", nil, content.optionsTab.content,
         "WowStyle1DropdownTemplate")
@@ -284,7 +304,7 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
     content.optionsTab.content.sortModeDropdown:SetSize(130, 25)
     content.optionsTab.content.sortModeDropdown:SetupMenu(function(dropdown, rootDescription)
         for sortModeOption in pairs(CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE) do
-            local sortModeLabel = L(CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE_LOCALZATION_IDS
+            local sortModeLabel = L(CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE_LOCALIZATION_IDS
                 [sortModeOption])
             rootDescription:CreateButton(sortModeLabel, function()
                 CraftSim.DB.OPTIONS:Save("CONCENTRATION_TRACKER_SORT_MODE", sortModeOption)
@@ -298,6 +318,35 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
         parent = content.optionsTab.content,
         anchorPoints = { { anchorParent = content.optionsTab.content.sortModeDropdown, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -10 } },
         text = "Sort Mode: "
+    }
+
+    local intialFormatModeValue = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_FORMAT_MODE")
+    local intialFormatModeLabel = L(CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE_LOCALIZATION_IDS
+        [intialFormatModeValue])
+
+    content.optionsTab.content.formatModeDropdown = CreateFrame("DropdownButton", nil, content.optionsTab.content,
+        "WowStyle1DropdownTemplate")
+    content.optionsTab.content.formatModeDropdown:SetDefaultText(intialFormatModeLabel)
+    content.optionsTab.content.formatModeDropdown:SetPoint("TOPLEFT", content.optionsTab.content.sortModeDropdown,
+        "BOTTOMLEFT",
+        0, -5)
+    content.optionsTab.content.formatModeDropdown:SetSize(130, 25)
+    content.optionsTab.content.formatModeDropdown:SetupMenu(function(dropdown, rootDescription)
+        for formatModeOption in pairs(CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE) do
+            local formatModeLabel = L(CraftSim.CONCENTRATION_TRACKER.UI.FORMAT_MODE_LOCALIZATION_IDS
+                [formatModeOption])
+            rootDescription:CreateButton(formatModeLabel, function()
+                CraftSim.DB.OPTIONS:Save("CONCENTRATION_TRACKER_FORMAT_MODE", formatModeOption)
+                dropdown:SetDefaultText(formatModeLabel)
+                CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
+            end)
+        end
+    end)
+
+    content.optionsTab.content.formatModeLabel = GGUI.Text {
+        parent = content.optionsTab.content,
+        anchorPoints = { { anchorParent = content.optionsTab.content.formatModeDropdown, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -10 } },
+        text = "Time Format: "
     }
 end
 
@@ -356,13 +405,16 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
 
                 concentrationColumn.text:SetText(math.floor(currentConcentration))
 
-                local formattedMaxDate, isReady = concentrationData:GetFormattedDateMax()
+                local maxedColumnText = ""
+                local concentrationFull = currentConcentration >= concentrationData.maxQuantity
 
-                if not isReady then
-                    maxedColumn.text:SetText(f.bb(formattedMaxDate))
+                if concentrationFull then
+                    maxedColumnText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX)
                 else
-                    maxedColumn.text:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX))
+                    maxedColumnText = f.bb(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData))
                 end
+
+                maxedColumn.text:SetText(maxedColumnText)
             end)
         end
     end
@@ -398,16 +450,14 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
 
     local content = CraftSim.CONCENTRATION_TRACKER.frame.content --[[@as CraftSim.CONCENTRATION_TRACKER.FRAME.CONTENT]]
 
-    content.value:SetText(math.floor(concentrationData:GetCurrentAmount()))
+    local currentConcentration = concentrationData:GetCurrentAmount()
+    content.value:SetText(math.floor(currentConcentration))
     content.maxValue:SetText(concentrationData.maxQuantity)
 
-    local formattedDateText, isReady = concentrationData:GetFormattedDateMax()
-
-    if not isReady then
-        content.maxTimer:SetText(f.bb(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX_VALUE) ..
-            formattedDateText))
-    else
+    if currentConcentration >= concentrationData.maxQuantity then
         content.maxTimer:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FULL))
+    else
+        content.maxTimer:SetText(f.bb(CraftSim.CONCENTRATION_TRACKER:GetMaxFormatByFormatMode(concentrationData)))
     end
 
     local isPinned = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_PINNED")
