@@ -16,6 +16,18 @@ CraftSim.CONCENTRATION_TRACKER.trackerFrame = nil
 ---@class CraftSim.CONCENTRATION_TRACKER.UI
 CraftSim.CONCENTRATION_TRACKER.UI = {}
 
+CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE = {
+    CHARACTER = "CHARACTER",
+    CONCENTRATION = "CONCENTRATION",
+    PROFESSION = "PROFESSION",
+}
+
+CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE_LOCALZATION_IDS = {
+    CHARACTER = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CHARACTER,
+    CONCENTRATION = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CONCENTRATION,
+    PROFESSION = CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_PROFESSION,
+}
+
 local f = GUTIL:GetFormatter()
 local L = CraftSim.UTIL:GetLocalizer()
 
@@ -253,23 +265,40 @@ function CraftSim.CONCENTRATION_TRACKER.UI.InitTrackerFrame()
         anchorPoints = { { anchorParent = content.optionsTab.content, anchorA = "TOP", anchorB = "TOP", offsetY = -25 } },
         label = "Clear Blacklist",
         adjustWidth = true,
-        sizeX = 15,
+        sizeX = 30,
         clickCallback = function()
             CraftSim.CONCENTRATION_TRACKER:ClearBlacklist()
             CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
         end
     }
 
+    local intialSortModeValue = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_SORT_MODE")
+    local intialSortModeLabel = L(CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE_LOCALZATION_IDS[intialSortModeValue])
+
     content.optionsTab.content.sortModeDropdown = CreateFrame("DropdownButton", nil, content.optionsTab.content,
         "WowStyle1DropdownTemplate")
-    content.optionsTab.content.sortModeDropdown:SetDefaultText("Default Text")
-    content.optionsTab.content.sortModeDropdown:SetPoint("TOP", content.optionsTab.content, "TOP", 0, -50)
+    content.optionsTab.content.sortModeDropdown:SetDefaultText(intialSortModeLabel)
+    content.optionsTab.content.sortModeDropdown:SetPoint("TOPLEFT", content.optionsTab.content.clearBlacklistButton
+        .frame, "BOTTOMLEFT",
+        0, -5)
+    content.optionsTab.content.sortModeDropdown:SetSize(130, 25)
     content.optionsTab.content.sortModeDropdown:SetupMenu(function(dropdown, rootDescription)
-        rootDescription:CreateTitle("Test Menu")
-        rootDescription:CreateButton("Button 1", function() print("Clicked button 1") end)
-        rootDescription:CreateButton("Button 2", function() print("Clicked button 2") end)
-        rootDescription:CreateButton("Button 3", function() print("Clicked button 3") end)
+        for sortModeOption in pairs(CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE) do
+            local sortModeLabel = L(CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE_LOCALZATION_IDS
+                [sortModeOption])
+            rootDescription:CreateButton(sortModeLabel, function()
+                CraftSim.DB.OPTIONS:Save("CONCENTRATION_TRACKER_SORT_MODE", sortModeOption)
+                dropdown:SetDefaultText(sortModeLabel)
+                CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
+            end)
+        end
     end)
+
+    content.optionsTab.content.sortModeLabel = GGUI.Text {
+        parent = content.optionsTab.content,
+        anchorPoints = { { anchorParent = content.optionsTab.content.sortModeDropdown, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -10 } },
+        text = "Sort Mode: "
+    }
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
@@ -322,7 +351,10 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
                 local concentrationData = CraftSim.ConcentrationData:Deserialize(professionConcentrationData
                     .serializedData)
 
-                concentrationColumn.text:SetText(math.floor(concentrationData:GetCurrentAmount()))
+                local currentConcentration = concentrationData:GetCurrentAmount()
+                row.concentration = currentConcentration
+
+                concentrationColumn.text:SetText(math.floor(currentConcentration))
 
                 local formattedMaxDate, isReady = concentrationData:GetFormattedDateMax()
 
@@ -335,7 +367,29 @@ function CraftSim.CONCENTRATION_TRACKER.UI:UpdateTrackerDisplay()
         end
     end
 
-    content.concentrationList:UpdateDisplay()
+    local sortMode = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_SORT_MODE")
+
+    content.concentrationList:UpdateDisplay(function(rowA, rowB)
+        if sortMode == CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE.CHARACTER then
+            if rowA.crafterUID > rowB.crafterUID then
+                return true
+            end
+
+            return false
+        elseif sortMode == CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE.PROFESSION then
+            if rowA.profession > rowB.profession then
+                return true
+            end
+
+            return false
+        elseif sortMode == CraftSim.CONCENTRATION_TRACKER.UI.SORT_MODE.CONCENTRATION then
+            if rowA.concentration > rowB.concentration then
+                return true
+            end
+
+            return false
+        end
+    end)
 end
 
 function CraftSim.CONCENTRATION_TRACKER.UI:UpdateDisplay()
