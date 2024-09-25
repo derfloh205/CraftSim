@@ -302,7 +302,8 @@ function CraftSim.CUSTOMER_HISTORY.UI:Init()
                     text = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_LIST_TIP),
                 })
                 reagentColumn.icon = GGUI.HelpIcon({
-                    parent = reagentColumn, anchorParent = reagentColumn, text = L(CraftSim.CONST.TEXT.CUSTOMER_HISTORY_CRAFT_LIST_REAGENTS),
+                    parent = reagentColumn, anchorParent = reagentColumn, text = L(CraftSim.CONST.TEXT
+                .CUSTOMER_HISTORY_CRAFT_LIST_REAGENTS),
                 })
 
                 noteColumn.icon = GGUI.HelpIcon {

@@ -150,26 +150,28 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
             -- create the list of materials that represent optimization for target BP
             for i = numMaterials, 0, -1 do
-                k = c[i][j] -- the index into V and W for minValue > target
+                k = c[i][j]                  -- the index into V and W for minValue > target
+                local crumb = ks[i].crumb[k] -- to work around the single crumb of patron order reagents
+                if crumb then
+                    --print("current matstring: " .. tostring(matString))
+                    --print("name: " .. ks[i].name)
+                    local matAllocations = {}
+                    for qualityIndex, qualityAllocations in pairs(crumb.mix) do
+                        --print("qualityIndex: " .. qualityIndex)
+                        --print("allocations: " .. qualityAllocations)
+                        table.insert(matAllocations, {
+                            quality = qualityIndex,
+                            itemID = ks[i].reagent.items[qualityIndex].item:GetItemID(),
+                            allocations = qualityAllocations
+                        })
+                    end
+                    j = j - crumb.weight
 
-                --print("current matstring: " .. tostring(matString))
-                --print("name: " .. ks[i].name)
-                local matAllocations = {}
-                for qualityIndex, qualityAllocations in pairs(ks[i].crumb[k].mix) do
-                    --print("qualityIndex: " .. qualityIndex)
-                    --print("allocations: " .. qualityAllocations)
-                    table.insert(matAllocations, {
-                        quality = qualityIndex,
-                        itemID = ks[i].reagent.items[qualityIndex].item:GetItemID(),
-                        allocations = qualityAllocations
+                    table.insert(outAllocation.allocations, {
+                        itemName = ks[i].name,
+                        allocations = matAllocations
                     })
                 end
-                j = j - ks[i].crumb[k].weight
-
-                table.insert(outAllocation.allocations, {
-                    itemName = ks[i].name,
-                    allocations = matAllocations
-                })
             end
 
             outAllocation.qualityReached = abs(h - (#BPs + 1))

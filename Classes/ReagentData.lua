@@ -602,7 +602,8 @@ function CraftSim.ReagentData:GetTooltipText(multiplier, crafterUID)
             if itemCount >= multiplier then
                 quantityText = f.g(tostring(multiplier))
             end
-            local qualityID = GUTIL:GetQualityIDFromLink(optionalReagentSlot.activeReagent.item:GetItemLink())
+            local qualityID = C_TradeSkillUI.GetItemReagentQualityByItemInfo(optionalReagentSlot.activeReagent.item
+            :GetItemID())
             qualityID = qualityID or 0
             local qualityIcon = GUTIL:GetQualityIconString(qualityID, 20, 20)
             local crafterText = ""

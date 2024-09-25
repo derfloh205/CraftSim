@@ -221,7 +221,8 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_CRAFT_PROFITS_TAB] = "Craft Profits",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB] = "Statistics Tracker",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_DISTRIBUTION_LABEL] = "Result Distribution",
-        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP] = "Relative distribution of crafted item results.\n(Ignoring Multicraft Quantities)",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_DISTRIBUTION_HELP] =
+        "Relative distribution of crafted item results.\n(Ignoring Multicraft Quantities)",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_MULTICRAFT] = "Multicraft",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_RESOURCEFULNESS] = "Resourcefulness",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_TRACKER_TAB_YIELD_DDISTRIBUTION] = "Yield Distribution",
@@ -258,18 +259,19 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_USED_SOURCE] = "Used Source",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_COSTS_TAB] = "Reagent Costs",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIONS_TAB] = "Sub Recipe Options",
-        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION] = "Sub Recipe Optimization "  .. f.bb("(experimental)"),
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION] = "Sub Recipe Optimization " ..
+            f.bb("(experimental)"),
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION_TOOLTIP] = "If enabled " ..
-        f.l("CraftSim") .. " considers the " .. f.g("optimized crafting costs") ..
-        " of your character and your alts\nif they are able to craft that item.\n\n" ..
-        f.r("Might decrease performance a bit due to a lot of additional calculations"),
+            f.l("CraftSim") .. " considers the " .. f.g("optimized crafting costs") ..
+            " of your character and your alts\nif they are able to craft that item.\n\n" ..
+            f.r("Might decrease performance a bit due to a lot of additional calculations"),
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH_LABEL] = "Sub Recipe Calculation Depth",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION] = "Enable Concentration",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION_TOOLTIP] = "If enabled, " ..
-        f.l("CraftSim") .. " will include reagent qualities even if concentration is necessary.",
+            f.l("CraftSim") .. " will include reagent qualities even if concentration is necessary.",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES] = "Include Cooldown Recipes",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP] = "If enabled, " ..
-        f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted materials",
+            f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted materials",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER] = "Select Recipe Crafter",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT] = "Auction Buyout: ",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE] = "\n\nOverride",
@@ -589,7 +591,8 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_ON_COOLDOWN] = "On Cooldown",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_CRAFTER] = "Wrong Crafter",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_REQUIREMENTS_HEADER] = "Requirements",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP] = "All Requirements need to be fulfilled in order to craft a recipe",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RECIPE_REQUIREMENTS_TOOLTIP] =
+        "All Requirements need to be fulfilled in order to craft a recipe",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_NEXT_BUTTON_LABEL] = "Craft Next",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_AVAILABLE_AMOUNT] = "Craftable",
         [CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL] = "Create Auctionator Shopping List",
@@ -600,7 +603,8 @@ function CraftSim.LOCAL_EN:GetData()
             "When your WoW Game is minimized and a recipe has finished crafting in the " .. f.bb("CraftQueue") ..
             "," .. f.l(" CraftSim") .. " will flash your Taskbar WoW Icon",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL] = "Restock Options",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_TOOLTIP] = "Configure the restock behaviour when importing from Recipe Scan",       
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_TOOLTIP] =
+        "Configure the restock behaviour when importing from Recipe Scan",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL] = "Profit Threshold:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_SALE_RATE_INPUT_LABEL] = "Sale Rate Threshold:",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TSM_SALE_RATE_TOOLTIP] = string.format(
@@ -662,7 +666,7 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_SUBMIT] = "Submit",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL] = "Ignore Acuity Recipes",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP] =
-        "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
+            "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP] = "\n\nQueued Crafts: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nOrder Customer: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nMinimum Quality: ",
@@ -702,6 +706,12 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX] = f.g("MAX"),
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX_VALUE] = "Max: ",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FULL] = f.g("Concentration Full"),
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CHARACTER] = "Character",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CONCENTRATION] = "Concentration",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_PROFESSION] = "Profession",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE] = "European - Max Date",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE] = "American - Max Date",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT] = "Hours Left",
 
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Yes",

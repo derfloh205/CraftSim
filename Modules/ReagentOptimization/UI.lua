@@ -163,7 +163,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 20,
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON),
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON) .. " " .. GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15, 0, -1),
             sizeX = 15,
             sizeY = 20,
             adjustWidth = true,
