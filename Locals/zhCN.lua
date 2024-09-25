@@ -151,6 +151,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] =
         "没有找到价格来源！\n\n至少需要安装下面其中一个价格来源插件，CraftSim 才能计算利润：\n\n\n",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "不要再显示警告",
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT] = "好的",
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim 材料优化",
@@ -161,6 +162,18 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "已分配最佳组合",
         [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "无法找到提高\n品质的组合",
         [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "分配",
+        [CraftSim.CONST.TEXT.MATERIALS_MAXIMUM_QUALITY] = "最高品质：",
+        [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_LABEL] = "平均 Ø 利润：",
+        [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_TOOLTIP] =
+        "当使用" .. f.l("这种材料分配") .. "时" .. f.bb("每个制造的平均利润"),
+        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BEST_ASSIGNED] = "已分配最佳材料",
+        [CraftSim.CONST.TEXT.MATERIALS_CONCENTRATION_LABEL] = "专注：",
+        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_INFO] = "在数字上按Shift+鼠标左键将物品链接放入聊天中",
+        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON] = "优化",
+        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_TOOLTIP] =
+            f.r("实验性：") ..
+            "性能需求繁重，并在编辑时重置。\n为每个集中值的 " ..
+            f.gold("最高金币价值") .. " 优化",
 
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "CraftSim 专精信息",
@@ -183,15 +196,15 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_RECIPE_STATISTICS] = "配方统计数据",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_NOTHING] = "尚未制造任何东西！",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_1] = "制造：",
-        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_2] = "预期 Φ 利润：",
-        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_3] = "实际 Φ 利润：",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_2] = "预期 Ø 利润：",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_3] = "实际 Ø 利润：",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_4] = "实际利润：",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_5] = "过程 - 实际/期望：",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_6] = "灵感：",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_7] = "产能：",
-        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8] = "- Φ 额外物品：",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_8] = "- Ø 额外物品：",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_9] = "充裕过程：",
-        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10] = "- Φ 节省成本：",
+        [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_10] = "- Ø 节省成本：",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_STATISTICS_11] = "利润：",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_SAVED_REAGENTS] = "节省材料",
         [CraftSim.CONST.TEXT.CRAFT_RESULTS_DISABLE_CHECKBOX] = f.l("停用记录制造结果"),
@@ -213,7 +226,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_EXPLANATION_BUTTON] = "隐藏说明",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_SHOW_STATISTICS_BUTTON] = "显示统计数据",
         [CraftSim.CONST.TEXT.STAT_WEIGHTS_HIDE_STATISTICS_BUTTON] = "隐藏统计数据",
-        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Φ 利润/制造：",
+        [CraftSim.CONST.TEXT.STAT_WEIGHTS_PROFIT_CRAFT] = "Ø 利润/制造：",
         [CraftSim.CONST.TEXT.EXPLANATIONS_BASIC_PROFIT_TAB] = "基本利润计算",
 
         -- Cost Details Frame
@@ -222,14 +235,14 @@ function CraftSim.LOCAL_CN:GetData()
             "所有材料可能价格概述如下。\n" ..
             f.bb("'使用来源'") ..
             " 字段指示哪一个价格已被使用。\n\n" ..
-            f.g("拍卖行") ..
+            f.g("拍卖") ..
             " .. 拍卖行价格\n" ..
-            f.l("或") ..
+            f.l("重订") ..
             " .. 重订价格\n" ..
             f.bb("任何名称") ..
             " .. 工匠的制作数据预估成本\n\n" ..
-            f.l("或") ..
-            " 已设置则会优先使用。 " .. f.bb("制造成本") .. " 仅在低于 " .. f.g("拍卖行") .. " 时才会使用。",
+            f.l("重订") ..
+            " 如已设置则会优先使用它。 " .. f.bb("制造成本") .. " 仅在低于 " .. f.g("拍卖") .. " 时才会使用。",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS] = "制造成本：",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER] = "物品",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_AH_PRICE_HEADER] = "拍卖价格",
@@ -267,15 +280,15 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_CRAFTS] = "制造：",
         [CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER] = "品质",
         [CraftSim.CONST.TEXT.STATISTICS_CHANCE_HEADER] = "机率",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Φ 预期制造",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_CRAFTS_HEADER] = "Ø 预期制造",
         [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "产能",
         [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "充裕",
         [CraftSim.CONST.TEXT.STATISTICS_HSV_NEXT] = "HSV提升",
         [CraftSim.CONST.TEXT.STATISTICS_HSV_SKIP] = "HSV跳过",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "预期利润",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "配方概率表",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "每件物品的 Φ 预期成本",
-        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "Φ 销售回报",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_HEADER] = "每件物品的 Ø 预期成本",
+        [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_COSTS_WITH_RETURN_HEADER] = "Ø 销售回报",
         [CraftSim.CONST.TEXT.STATISTICS_PROBABILITY_TABLE_TAB] = "概率表",
         [CraftSim.CONST.TEXT.STATISTICS_CONCENTRATION_TAB] = "专注",
         [CraftSim.CONST.TEXT.STATISTICS_CONCENTRATION_CURVE_GRAPH] = "专注成本曲线",
@@ -385,7 +398,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.TOP_GEAR_EQUIP] = "装备",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_QUALITY] = "品质：",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_EQUIPPED] = "已穿上最佳装备",
-        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE] = "Φ 利润差\n",
+        [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE] = "Ø 利润差\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_MUTLICRAFT] = "新的产能\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_CRAFTING_SPEED] = "新的制造速度\n",
         [CraftSim.CONST.TEXT.TOP_GEAR_SIMULATE_NEW_RESOURCEFULNESS] = "新的充裕\n",
@@ -415,6 +428,7 @@ function CraftSim.LOCAL_CN:GetData()
         "在物品的鼠标提示信息中显示上次使用的材料组合的完整清单。",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "支持的价格来源：",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "制造时启用内存清理",
+        [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_CRAFTS] = "个制造",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP] =
         "启用时，CraftSim 会在每次指定数量的制造后清除内存中未使用的数据，以防止内存堆积。\n内存堆积也有可能是其他插件引起的，并且不是只有 CraftSim。\n清理会影响整个魔兽的内存使用量。",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TAB] = "模块",
@@ -429,6 +443,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "成本概览模块",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "专精信息模块",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] = "每个客户的历史消息上限",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] = "每个客户的最大历史记录条数",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "技能临界点 + 1",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] =
         "材料组合建议会尝试达到临界点 + 1 而不是刚好符合需要的技能点数",
@@ -561,6 +576,10 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "没有材料",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "加入开放材料",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL] = "添加首次制造",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_BUTTON_LABEL] = "添加客户订单",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_CHECKBOX] = "允许使用专注",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_TOOLTIP] =
+        "如果无法达到最低品质要求，尽可能使用" .. f.l("专注"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "全部清除",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "根据配方扫描补货",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "专业错误",
@@ -602,7 +621,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_OPTIONS_LABEL] = "一般选项 (所有配方)",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_ENABLE_RECIPE_TOOLTIP] =
         "如果此选项为关闭，将根据上述的一般选项进补货",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_PROFIT_LABEL] = "总计 Φ 利润：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_PROFIT_LABEL] = "总计 Ø 利润：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_TOTAL_CRAFTING_COSTS_LABEL] = "总计制造成本：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_TITLE] = "编辑配方",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_EDIT_RECIPE_NAME_LABEL] = "配方名称",
@@ -629,10 +648,21 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("正确的工匠角色"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("专业启用"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_EDIT] = "编辑",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CRAFT] = "制造",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CLAIM] = "接单",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CLAIMED] = "已接单",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NEXT] = "下一个：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NOTHING_QUEUED] = "无排队中",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_ORDER] = "订购",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_SUBMIT] = "交单",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL] = "忽略匠人之敏配方",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP] =
         "不要把使用 " .. f.bb("匠人之敏") .. " 的配方先加入制造队列",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP] = "\n\n排队中的制造：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\n订单发布人：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\n最低品质：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\n奖励：",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r("\n\n所有提供的材料都必须在您的库存中才能制作订单！"),
 
         -- craft buffs
 
@@ -671,5 +701,21 @@ function CraftSim.LOCAL_CN:GetData()
         -- static popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "是",
         [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "否",
+
+        -- frames
+        [CraftSim.CONST.TEXT.FRAMES_RESETTING] = "正在重置框架ID： ",
+        [CraftSim.CONST.TEXT.FRAMES_WHATS_NEW] = "CraftSim 有什么新功能？",
+        [CraftSim.CONST.TEXT.FRAMES_JOIN_DISCORD] = "加入 Discord!",
+        [CraftSim.CONST.TEXT.FRAMES_DONATE_KOFI] = "在 Kofi 上访问 CraftSim",
+        [CraftSim.CONST.TEXT.FRAMES_NO_INFO] = "无信息",
+
+        -- node data
+        [CraftSim.CONST.TEXT.NODE_DATA_RANK_TEXT] = "等级 ",
+        [CraftSim.CONST.TEXT.NODE_DATA_TOOLTIP] = "\n\n来自天赋的总计数据：\n",
+
+        -- columns
+        [CraftSim.CONST.TEXT.SOURCE_COLUMN_AH] = "拍卖",
+        [CraftSim.CONST.TEXT.SOURCE_COLUMN_OVERRIDE] = "重订",
+        [CraftSim.CONST.TEXT.SOURCE_COLUMN_WO] = "订单",
     }
 end

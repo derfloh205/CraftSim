@@ -56,8 +56,8 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
         offsetY = offsetY,
         offsetX = offsetX,
         frameID = CraftSim.CONST.FRAMES.COST_OPTIMIZATION_WO,
-        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE) ..
-            " " .. CraftSim.GUTIL:ColorizeText("WO", CraftSim.GUTIL.COLORS.GREY),
+        title = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE) .. " " ..
+            CraftSim.GUTIL:ColorizeText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_WO), CraftSim.GUTIL.COLORS.GREY),
         collapseable = true,
         closeable = true,
         moveable = true,
@@ -226,15 +226,17 @@ function CraftSim.COST_OPTIMIZATION.UI:Init()
                 usedPriceColumn.text = GGUI.Text({
                     parent = usedPriceColumn,
                     anchorParent = usedPriceColumn,
-                    text = CraftSim.GUTIL:ColorizeText("AH", CraftSim.GUTIL.COLORS.GREEN)
+                    text = CraftSim.GUTIL:ColorizeText(
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_AH), CraftSim.GUTIL.COLORS.GREEN)
                 })
-
                 function usedPriceColumn:SetAH()
-                    usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText("AH", CraftSim.GUTIL.COLORS.GREEN))
+                    usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText(
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_AH), CraftSim.GUTIL.COLORS.GREEN))
                 end
 
                 function usedPriceColumn:SetOverride()
-                    usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText("OR", CraftSim.GUTIL.COLORS.LEGENDARY))
+                    usedPriceColumn.text:SetText(CraftSim.GUTIL:ColorizeText(
+                        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SOURCE_COLUMN_OVERRIDE), CraftSim.GUTIL.COLORS.LEGENDARY))
                 end
 
                 function usedPriceColumn:SetUnknown()

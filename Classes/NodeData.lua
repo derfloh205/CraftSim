@@ -170,7 +170,7 @@ function CraftSim.NodeData:GetTooltipText()
     local tooltipText = header ..
         "\n\n" .. GUTIL:ColorizeText(tostring(C_ProfSpecs.GetDescriptionForPath(self.nodeID)), GUTIL.COLORS.WHITE)
     for _, perkData in ipairs(self.perkData) do
-        local rankText = "Rank " .. perkData.threshold .. ":\n"
+        local rankText = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NODE_DATA_RANK_TEXT) .. perkData.threshold .. ":\n"
         local perkDescription = C_ProfSpecs.GetDescriptionForPerk(perkData.perkID)
 
         if perkData.active then
@@ -184,7 +184,7 @@ function CraftSim.NodeData:GetTooltipText()
     end
 
     tooltipText = tooltipText ..
-        "\n\nTotal Stats from Talent:\n" ..
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.NODE_DATA_TOOLTIP) ..
         GUTIL:ColorizeText(self.professionStats:GetTooltipText(self.maxProfessionStats), GUTIL.COLORS.WHITE)
 
     return tooltipText
