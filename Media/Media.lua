@@ -14,8 +14,8 @@ function CraftSim.MEDIA:GetAsTextIcon(image, scale)
         local height = image.dimensions.y * scale
 
         -- a print here causes a stack overflow... so be careful with debugging here
-
-        return CraftSim.GUTIL:IconToText(CraftSim.MEDIA.BASE_PATH .. image.file, height, width)
+        return CraftSim.GUTIL:IconToText(CraftSim.MEDIA.BASE_PATH .. image.file, height, width, 0, 0, image.dimensions.x,
+            image.dimensions.y)
     else
         return "<ImageNotFound>"
     end
@@ -32,4 +32,9 @@ CraftSim.MEDIA.IMAGES = {
     KOFI = { file = "kofi.blp", dimensions = { x = 64, y = 64 } },
     PAYPAL = { file = "paypal.blp", dimensions = { x = 64, y = 64 } },
     EDIT_PEN = { file = "edit.blp", dimensions = { x = 25, y = 25 } },
+    PIN = { file = "pin.tga", dimensions = { x = 32, y = 32 } },
 }
+
+function CraftSim.MEDIA:GetImagePath(image)
+    return CraftSim.MEDIA.BASE_PATH .. image.file
+end
