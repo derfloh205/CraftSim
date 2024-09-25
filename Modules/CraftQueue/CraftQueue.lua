@@ -154,8 +154,9 @@ function CraftSim.CRAFTQ:AddPatronOrders()
                         local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
                         if recipeInfo and recipeInfo.learned then
                             local recipeData = CraftSim.RecipeData(order.spellID)
-
                             recipeData:SetOrder(order)
+
+                            recipeData:SetCheapestQualityReagentsMax() -- considers patron reagents
                             recipeData:Update()
                             -- try to optimize for target quality
                             if order.minQuality then
@@ -170,8 +171,10 @@ function CraftSim.CRAFTQ:AddPatronOrders()
                                 CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
                             end
 
+
+
                             if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION") and
-                                recipeData.resultData.expectedQuality == order.minQuality - 1 then
+                                recipeData.resultData.expectedQualityConcentration == order.minQuality then
                                 -- use concentration to reach and then queue
                                 recipeData.concentrating = true
                                 recipeData:Update()

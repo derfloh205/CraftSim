@@ -29,6 +29,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.p .. "Locals Update",
         f.a .. "- Contributed by: " .. f.bb("https://github.com/LvWind"),
         f.a .. "- Contributed by: " .. f.bb("https://github.com/Gogadon"),
+        f.p .. "Hotfix #1",
+        f.a .. "Fixed patron order concentration usage identification",
         newP("18.1.1"),
         f.P .. f.bb("Patron Work Orders"),
         f.a .. "- Now consider reward items' prices in average profit calculation",
