@@ -7,6 +7,19 @@ CraftSim.CONCENTRATION_TRACKER = {}
 ---@type table<number, CraftSim.ConcentrationData>
 CraftSim.CONCENTRATION_TRACKER.ConcentrationDataCache = {}
 
+---@param crafterUID CrafterUID
+---@param profession Enum.Profession
+function CraftSim.CONCENTRATION_TRACKER:BlacklistData(crafterUID, profession)
+    local concentrationTrackerBlacklist = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_BLACKLIST")
+    concentrationTrackerBlacklist[crafterUID] = concentrationTrackerBlacklist[crafterUID] or {}
+    tinsert(concentrationTrackerBlacklist[crafterUID], profession)
+end
+
+function CraftSim.CONCENTRATION_TRACKER:ClearBlacklist()
+    local concentrationTrackerBlacklist = CraftSim.DB.OPTIONS:Get("CONCENTRATION_TRACKER_BLACKLIST")
+    wipe(concentrationTrackerBlacklist)
+end
+
 ---@return CraftSim.ConcentrationData?
 function CraftSim.CONCENTRATION_TRACKER:GetCurrentConcentrationData()
     local skillLineID = C_TradeSkillUI.GetProfessionChildSkillLineID()
