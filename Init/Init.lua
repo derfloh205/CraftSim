@@ -738,7 +738,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 			maxQuality = maxOptimizationQuality,
 			highestProfit = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_TOP_PROFIT_ENABLED")
 		}
-		CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(reagentOptimizedRecipeData, exportMode)
+		CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(reagentOptimizedRecipeData)
 		CraftSim.DEBUG:StopProfiling("Reagent Optimization")
 	end
 
