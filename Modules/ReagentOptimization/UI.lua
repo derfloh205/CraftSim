@@ -100,14 +100,14 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
 
         frame.content.maxQualityLabel = GGUI.Text {
             parent = frame.content, anchorPoints = { { anchorParent = frame.content.maxQualityDropdown.frame, anchorA = "RIGHT", anchorB = "LEFT", offsetX = 16, offsetY = 2 } },
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_MAXIMUM_QUALITY),
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_MAXIMUM_QUALITY),
             justifyOptions = { type = "H", align = "LEFT" },
         }
 
         frame.content.qualityText = GGUI.Text {
             parent = frame.content, anchorParent = frame.content.maxQualityLabel.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -10,
             justifyOptions = { type = "H", align = "LEFT" },
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY)
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY)
         }
 
         frame.content.qualityIcon = GGUI.QualityIcon({
@@ -125,10 +125,10 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             anchorParent = frame.content.qualityText.frame,
             anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -10,
             justifyOptions = { type = "H", align = "RIGHT" },
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_LABEL),
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_LABEL),
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR_RIGHT",
-                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_TOOLTIP),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_TOOLTIP),
             },
         }
 
@@ -145,7 +145,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             anchorParent = frame.content.averageProfitLabel.frame,
             anchorA = "TOPRIGHT", anchorB = "BOTTOMRIGHT", offsetY = -10,
             justifyOptions = { type = "H", align = "RIGHT" },
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_CONCENTRATION_LABEL),
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL),
         }
 
         frame.content.concentrationCostValue = GGUI.Text {
@@ -162,7 +162,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 20,
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_ASSIGN),
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_ASSIGN),
             sizeX = 15,
             sizeY = 20,
             adjustWidth = true,
@@ -171,7 +171,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end
         })
 
-        local optimizeConcentrationButtonLabel = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON) ..
+        local optimizeConcentrationButtonLabel = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON) ..
             " " .. GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15, 0, -1)
 
         frame.content.optimizeConcentrationButton = GGUI.Button({
@@ -206,7 +206,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end,
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR_RIGHT",
-                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_TOOLTIP),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP),
             }
         })
 
@@ -288,12 +288,12 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             parent = frame.content,
             anchorParent = frame.content.reagentList.frame,
             anchorA = "BOTTOMRIGHT", anchorB = "TOPLEFT", offsetX = 45, offsetY = -5,
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_INFO)
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO)
         }
 
         frame.content.sameAllocationText = GGUI.Text {
             parent = frame.content, anchorPoints = { { anchorParent = frame.content } },
-            text = f.g(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BEST_ASSIGNED)), hide = true,
+            text = f.g(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED)), hide = true,
         }
 
         frame:Hide()
@@ -316,25 +316,27 @@ end
 ---@param recipeData CraftSim.RecipeData
 ---@param exportMode number
 function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
-    local materialFrame = self:GetFrameByExportMode()
+    local reagentOptimizationFrame = self:GetFrameByExportMode()
 
-    if not materialFrame then return end
+    if not reagentOptimizationFrame then return end
 
     CraftSim.REAGENT_OPTIMIZATION.UI.recipeData = recipeData
-    local optimizeConcentrationButton = materialFrame.content.optimizeConcentrationButton --[[@as GGUI.Button]]
+    local optimizeConcentrationButton = reagentOptimizationFrame.content
+    .optimizeConcentrationButton --[[@as GGUI.Button]]
     optimizeConcentrationButton:SetStatus("ENABLED")
 
-    local maxQualityDropdown = materialFrame.content.maxQualityDropdown --[[@as GGUI.Dropdown]]
+    local maxQualityDropdown = reagentOptimizationFrame.content.maxQualityDropdown --[[@as GGUI.Dropdown]]
 
     maxQualityDropdown:SetVisible(recipeData.supportsQualities)
-    materialFrame.content.maxQualityLabel:SetVisible(recipeData.supportsQualities)
-    materialFrame.content.qualityText:SetVisible(recipeData.supportsQualities)
-    materialFrame.content.qualityIcon:SetVisible(recipeData.supportsQualities)
+    reagentOptimizationFrame.content.maxQualityLabel:SetVisible(recipeData.supportsQualities)
+    reagentOptimizationFrame.content.qualityText:SetVisible(recipeData.supportsQualities)
+    reagentOptimizationFrame.content.qualityIcon:SetVisible(recipeData.supportsQualities)
 
-    materialFrame.content.averageProfitValue:SetText(CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached, true,
+    reagentOptimizationFrame.content.averageProfitValue:SetText(CraftSim.UTIL:FormatMoney(recipeData.averageProfitCached,
+        true,
         recipeData.priceData.craftingCosts))
 
-    materialFrame.content.concentrationCostValue:SetText(f.gold(recipeData.concentrationCost))
+    reagentOptimizationFrame.content.concentrationCostValue:SetText(f.gold(recipeData.concentrationCost))
 
     if recipeData.supportsQualities then
         local recipeMaxQualities = CraftSim.DB.OPTIONS:Get("REAGENT_OPTIMIZATION_RECIPE_MAX_OPTIMIZATION_QUALITY")
@@ -360,7 +362,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
             initialLabel = GUTIL:GetQualityIconString(initialValue, qualityIconSize, qualityIconSize, 0, -2),
         }
 
-        materialFrame.content.qualityIcon:SetQuality(recipeData.resultData.expectedQuality)
+        reagentOptimizationFrame.content.qualityIcon:SetQuality(recipeData.resultData.expectedQuality)
     end
 
     local isSameAllocation = recipeData.reagentData:EqualsQualityReagents(
@@ -369,14 +371,14 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
                 return reagent.hasQuality
             end))
 
-    materialFrame.content.allocateButton:SetVisible(CraftSim.SIMULATION_MODE.isActive and not isSameAllocation)
+    reagentOptimizationFrame.content.allocateButton:SetVisible(CraftSim.SIMULATION_MODE.isActive and not isSameAllocation)
 
-    local reagentList = materialFrame.content.reagentList --[[@as GGUI.FrameList]]
+    local reagentList = reagentOptimizationFrame.content.reagentList --[[@as GGUI.FrameList]]
 
     reagentList:Remove()
 
-    materialFrame.content.sameAllocationText:SetVisible(isSameAllocation)
-    materialFrame.content.infoIcon:SetVisible(not isSameAllocation)
+    reagentOptimizationFrame.content.sameAllocationText:SetVisible(isSameAllocation)
+    reagentOptimizationFrame.content.infoIcon:SetVisible(not isSameAllocation)
     reagentList:SetVisible(not isSameAllocation)
 
     if not isSameAllocation then

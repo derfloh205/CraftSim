@@ -89,8 +89,8 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Ingéniosité: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Item Bonus Ingéniosité: ",
         [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Concentration: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "Bonus Qualité Matériaux: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "Maximum Qualité Matériaux %: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "Bonus Qualité Matériaux: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "Maximum Qualité Matériaux %: ",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Qualité attendue: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Qualité suivante: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Comp. Manquante: ",
@@ -156,15 +156,15 @@ function CraftSim.LOCAL_FR:GetData()
         "Aucune source de prix trouvée !\n\nVous devez installer au moins un\nde ces addons de sources de prix\npour utiliser le calcul de profit de CraftSim:\n\n\n",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Ne plus montrer l'avertissement",
 
-        -- Materials Frame
+        -- Reagents Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Optimisation des matériaux CraftSim",
-        [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Qualité atteignable: ",
-        [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Matériaux manquants",
-        [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Matériaux disponibles",
-        [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Matériaux moins cher",
-        [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "Meilleur combinaison assigné",
-        [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "Aucune combinaison trouvée \npour augmenter la qualité",
-        [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "Assigner",
+        [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Qualité atteignable: ",
+        [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Matériaux manquants",
+        [CraftSim.CONST.TEXT.REAGENTS_AVAILABLE] = "Matériaux disponibles",
+        [CraftSim.CONST.TEXT.REAGENTS_CHEAPER] = "Matériaux moins cher",
+        [CraftSim.CONST.TEXT.REAGENTS_BEST_COMBINATION] = "Meilleur combinaison assigné",
+        [CraftSim.CONST.TEXT.REAGENTS_NO_COMBINATION] = "Aucune combinaison trouvée \npour augmenter la qualité",
+        [CraftSim.CONST.TEXT.REAGENTS_ASSIGN] = "Assigner",
 
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "Info de spécialisation CraftSim",
@@ -365,9 +365,6 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE] = "Retenir dernière recette",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP] =
         "Réouverture de la dernière recette sélectionnée lors de l'ouverture de la fenêtre d'artisanat",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP] = "Informations détaillées sur le dernier craft",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP] =
-        "Afficher la décomposition complète de la dernière combinaison de matériaux utilisée dans l'infobulle",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "Source de prix supportées:",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "Activer le nettoyage de la RAM pendant la fabrication",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP] =
@@ -378,7 +375,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Paramètres par défaut",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Expression Invalide",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Expression Valide",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Module Optimisation Matériaux",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_REAGENT_OPTIMIZATION] = "Module Optimisation Matériaux",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Module Profit Moyen",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Module Top Equipement",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Module Vue Coût détaillé",
@@ -503,7 +500,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFTING_COSTS_HEADER] = "Crafting Costs",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL] = "Craft",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR] = "Wrong Tools",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "Pas de matériaux",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_REAGENTS] = "Pas de matériaux",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "Add Open Recipe",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Clear All",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Restock from Recipe Scan",
@@ -565,10 +562,10 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP] = "Create an " ..
             f.bb("Auctionator Shopping List") .. " for target mode recipes only",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white("Montant non sauvegardé.\nAppuyez sur ") ..
-        f.bb("Entrée") .. f.white(" pour sauvegarder"),
+            f.bb("Entrée") .. f.white(" pour sauvegarder"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Recette Apprise"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Pas en recharge"),
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_MATERIALS] = f.white("Materiaux Disponibles"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_REAGENTS] = f.white("Materiaux Disponibles"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_GEAR] = f.white("Equipement de Métier Equipé"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("Artisan Correct"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("Profession Ouverte"),

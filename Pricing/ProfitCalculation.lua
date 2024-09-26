@@ -73,7 +73,7 @@ function CraftSim.CALC:GetAverageProfit(recipeData)
         comissionProfit = (tonumber(recipeData.orderData.tipAmount) or 0) -
             (tonumber(recipeData.orderData.consortiumCut) or 0)
 
-        -- we also need to consider any saved crafting costs from provided materials from the customer and the comission
+        -- we also need to consider any saved crafting costs from provided reagents from the customer and the comission
         for _, reagentdata in ipairs(recipeData.orderData.reagents) do
             local price = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(reagentdata.reagent.itemID, true, false)
             comissionProfit = comissionProfit + (reagentdata.reagent.quantity * price)

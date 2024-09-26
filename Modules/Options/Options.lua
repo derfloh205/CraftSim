@@ -261,7 +261,8 @@ function CraftSim.OPTIONS:Init()
             CraftSim.DB.OPTIONS:Save("CRAFTING_GARBAGE_COLLECTION_CRAFTS", number)
         end)
 
-    CraftSim.FRAME:CreateText(L("OPTIONS_PERFORMANCE_RAM_CRAFTS"), CraftingTab.content, garbageCollectCraftsInput, "LEFT", "RIGHT", 5, 0)
+    CraftSim.FRAME:CreateText(L("OPTIONS_PERFORMANCE_RAM_CRAFTS"), CraftingTab.content, garbageCollectCraftsInput, "LEFT",
+        "RIGHT", 5, 0)
 
     CraftingTab.content.flashTaskBarCD = GGUI.Checkbox {
         parent = CraftingTab.content, anchorParent = enableGarbageCollectWhenCraftingCB.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
@@ -283,32 +284,32 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     local expressionSizeX = 300
     local expressionSizeY = 50
 
-    local tsmMaterialsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionMaterials", TSMTab.content,
+    local tsmReagentsPriceExpression = CreateFrame("EditBox", nil, TSMTab.content,
         "InputBoxTemplate")
-    tsmMaterialsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, 0)
-    tsmMaterialsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
-    tsmMaterialsPriceExpression:SetAutoFocus(false) -- dont automatically focus
-    tsmMaterialsPriceExpression:SetFontObject("ChatFontNormal")
-    tsmMaterialsPriceExpression:SetText(CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS))
-    tsmMaterialsPriceExpression:SetScript("OnEscapePressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
-    tsmMaterialsPriceExpression:SetScript("OnEnterPressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
-    tsmMaterialsPriceExpression:SetScript("OnTextChanged", function()
-        local expression = tsmMaterialsPriceExpression:GetText()
+    tsmReagentsPriceExpression:SetPoint("TOP", TSMTab.content, "TOP", 0, 0)
+    tsmReagentsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
+    tsmReagentsPriceExpression:SetAutoFocus(false) -- dont automatically focus
+    tsmReagentsPriceExpression:SetFontObject("ChatFontNormal")
+    tsmReagentsPriceExpression:SetText(CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_REAGENTS))
+    tsmReagentsPriceExpression:SetScript("OnEscapePressed", function() tsmReagentsPriceExpression:ClearFocus() end)
+    tsmReagentsPriceExpression:SetScript("OnEnterPressed", function() tsmReagentsPriceExpression:ClearFocus() end)
+    tsmReagentsPriceExpression:SetScript("OnTextChanged", function()
+        local expression = tsmReagentsPriceExpression:GetText()
         local isValid = TSM_API.IsCustomPriceValid(expression)
         if not isValid then
-            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText(
+            CraftSimTSMStringValidationInfoReagents:SetText(CraftSim.GUTIL:ColorizeText(
                 L(CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION), CraftSim.GUTIL.COLORS.RED))
         else
-            CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText(
+            CraftSimTSMStringValidationInfoReagents:SetText(CraftSim.GUTIL:ColorizeText(
                 L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
-            CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS,
-                tsmMaterialsPriceExpression:GetText())
+            CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_REAGENTS,
+                tsmReagentsPriceExpression:GetText())
         end
     end)
 
     GGUI.Button({
         parent = TSMTab.content,
-        anchorParent = tsmMaterialsPriceExpression,
+        anchorParent = tsmReagentsPriceExpression,
         anchorA = "RIGHT",
         anchorB = "LEFT",
         offsetX = -10,
@@ -318,18 +319,18 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         adjustWidth = true,
         label = L(CraftSim.CONST.TEXT.OPTIONS_TSM_RESET),
         clickCallback = function()
-            tsmMaterialsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
+            tsmReagentsPriceExpression:SetText(CraftSim.CONST.TSM_DEFAULT_PRICE_EXPRESSION)
         end
     })
 
-    local tsmExpressionTitleMaterials = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-    tsmExpressionTitleMaterials:SetPoint("BOTTOMLEFT", tsmMaterialsPriceExpression, "TOPLEFT", 0, -10)
-    tsmExpressionTitleMaterials:SetText("TSM Crafting Materials Price Expression")
+    local tsmExpressionTitleReagents = TSMTab.content:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    tsmExpressionTitleReagents:SetPoint("BOTTOMLEFT", tsmReagentsPriceExpression, "TOPLEFT", 0, -10)
+    tsmExpressionTitleReagents:SetText("TSM Crafting Reagents Price Expression")
 
-    local validationInfoMaterials = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoMaterials', 'OVERLAY',
+    local validationInfoReagents = TSMTab.content:CreateFontString('CraftSimTSMStringValidationInfoReagents', 'OVERLAY',
         'GameFontNormal')
-    validationInfoMaterials:SetPoint("LEFT", tsmMaterialsPriceExpression, "RIGHT", 5, 0)
-    validationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText(
+    validationInfoReagents:SetPoint("LEFT", tsmReagentsPriceExpression, "RIGHT", 5, 0)
+    validationInfoReagents:SetText(CraftSim.GUTIL:ColorizeText(
         L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
 
     local tsmItemsPriceExpression = CreateFrame("EditBox", "CraftSimTSMPriceExpressionItems", TSMTab.content,

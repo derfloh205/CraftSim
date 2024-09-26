@@ -410,7 +410,7 @@ function CraftSim.CRAFTQ.UI:Init()
                     atlas = CraftSim.CONST.CRAFT_QUEUE_STATUS_TEXTURES.REAGENTS.texture,
                     tooltipOptions = {
                         anchor = "ANCHOR_CURSOR_RIGHT",
-                        text = L("CRAFT_QUEUE_STATUSBAR_MATERIALS"),
+                        text = L("CRAFT_QUEUE_STATUSBAR_REAGENTS"),
                     },
                 }
                 statusColumn.tools = GGUI.Texture {

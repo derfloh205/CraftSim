@@ -113,7 +113,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 owner = reagentOverwriteFrame.content,
                 anchor = "ANCHOR_CURSOR",
                 textWrap = true,
-                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) .. GUTIL:GetQualityIconString(1, 20, 20),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) ..
+                    GUTIL:GetQualityIconString(1, 20, 20),
             },
         })
         reagentOverwriteFrame.content.quality2Button = GGUI.Button({
@@ -133,7 +134,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 owner = reagentOverwriteFrame.content,
                 anchor = "ANCHOR_CURSOR",
                 textWrap = true,
-                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) .. GUTIL:GetQualityIconString(2, 20, 20),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) ..
+                    GUTIL:GetQualityIconString(2, 20, 20),
             },
         })
 
@@ -154,7 +156,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 owner = reagentOverwriteFrame.content,
                 anchor = "ANCHOR_CURSOR",
                 textWrap = true,
-                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) .. GUTIL:GetQualityIconString(3, 20, 20),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) ..
+                    GUTIL:GetQualityIconString(3, 20, 20),
             },
         })
         reagentOverwriteFrame.content.clearAllocationsButton = GGUI.Button({
@@ -414,7 +417,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetPoint("TOPLEFT",
             simModeDetailsFrame.content.baseSkillTitle, "TOPLEFT", 0, offsetY)
         simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .MATERIAL_QUALITY_BONUS_LABEL))
+            .REAGENT_QUALITY_BONUS_LABEL))
         simModeDetailsFrame.content.reagentSkillIncreaseTitle.helper = CraftSim.FRAME:CreateHelpIcon(
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP),
             simModeDetailsFrame.content, simModeDetailsFrame.content.reagentSkillIncreaseTitle, "RIGHT", "LEFT", -20, 0)
@@ -432,7 +435,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         simModeDetailsFrame.content.reagentMaxFactorTitle:SetPoint("TOPLEFT",
             simModeDetailsFrame.content.reagentSkillIncreaseTitle, "TOPLEFT", 0, offsetY)
         simModeDetailsFrame.content.reagentMaxFactorTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .MATERIAL_QUALITY_MAXIMUM_LABEL))
+            .REAGENT_QUALITY_MAXIMUM_LABEL))
         simModeDetailsFrame.content.reagentMaxFactorTitle.helper = CraftSim.FRAME:CreateHelpIcon(
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP),
             simModeDetailsFrame.content, simModeDetailsFrame.content.reagentMaxFactorTitle, "RIGHT", "LEFT", -20, 0)

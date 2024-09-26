@@ -463,9 +463,9 @@ function CraftSim.INIT:HideAllModules(keepControlPanel)
 		CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
 	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
 	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
+	local reagentOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
 		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
+	local reagentOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
 		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
 	-- hide control panel and return
 	if not keepControlPanel then
@@ -492,8 +492,8 @@ function CraftSim.INIT:HideAllModules(keepControlPanel)
 	CraftSim.PRICE_DETAILS.frameWO:Hide()
 	CraftSim.COST_OPTIMIZATION.frame:Hide()
 	CraftSim.COST_OPTIMIZATION.frameWO:Hide()
-	materialOptimizationFrame:Hide()
-	materialOptimizationFrameWO:Hide()
+	reagentOptimizationFrame:Hide()
+	reagentOptimizationFrameWO:Hide()
 	-- hide sim mode toggle button
 	CraftSim.SIMULATION_MODE.UI.WORKORDER.toggleButton:Hide()
 	CraftSim.SIMULATION_MODE.UI.NO_WORKORDER.toggleButton:Hide()
@@ -516,9 +516,9 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
 	local topgearFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
 	local topgearFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-	local materialOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
+	local reagentOptimizationFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
 		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-	local materialOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
+	local reagentOptimizationFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES,
 		CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
 	local craftBuffsFrame = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS)
 	local craftBuffsFrameWO = CraftSim.GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.CRAFT_BUFFS_WORKORDER)
@@ -723,10 +723,10 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		CraftSim.PRICE_OVERRIDE.UI:UpdateDisplay(recipeData, exportMode)
 	end
 
-	-- Material Optimization Module
-	CraftSim.FRAME:ToggleFrame(materialOptimizationFrame,
+	-- Reagent Optimization Module
+	CraftSim.FRAME:ToggleFrame(reagentOptimizationFrame,
 		showReagentOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-	CraftSim.FRAME:ToggleFrame(materialOptimizationFrameWO,
+	CraftSim.FRAME:ToggleFrame(reagentOptimizationFrameWO,
 		showReagentOptimization and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 	if recipeData and showReagentOptimization then
 		CraftSim.DEBUG:StartProfiling("Reagent Optimization")

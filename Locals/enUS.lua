@@ -63,16 +63,16 @@ function CraftSim.LOCAL_EN:GetData()
 
         -- Profit Breakdown Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
-        "Resourcefulness procs for every material individually and then saves about 30% of its quantity.\n\nThe average value it saves is the average saved value of EVERY combination and their chances.\n(All materials proccing at once is very unlikely but saves a lot)\n\nThe average total saved material costs is the sum of the saved material costs of all combinations weighted against their chance.",
+        "Resourcefulness procs for every reagent individually and then saves about 30% of its quantity.\n\nThe average value it saves is the average saved value of EVERY combination and their chances.\n(All reagents proccing at once is very unlikely but saves a lot)\n\nThe average total saved reagent costs is the sum of the saved reagent costs of all combinations weighted against their chance.",
 
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP] =
         "Recipe difficulty determines where the breakpoints of the different qualities are.\n\nFor recipes with five qualities they are at 20%, 50%, 80% and 100% recipe difficulty as skill.\nFor recipes with three qualities they are at 50% and 100%",
         [CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP] =
         "Multicraft gives you a chance of crafting more items than you would usually produce with a recipe.\n\nThe additional amount is usually between 1 and 2.5y\nwhere y = the usual amount 1 craft yields.",
         [CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP] =
-        "The quality of your materials can give you a maximum of 40% of the base recipe difficulty as bonus skill.\n\nAll Q1 Materials: 0% Bonus\nAll Q2 Materials: 20% Bonus\nAll Q3 Materials: 40% Bonus\n\nThe skill is calculated by the amount of materials of each quality weighted against their quality\nand a specific weight value that is unique to each individual dragon flight crafting material item\n\nThis is however different for recrafts. There the maximum the reagents can increase the quality\nis dependent on the quality of materials the item was originally crafted with.\nThe exact workings are not known.\nHowever, CraftSim internally compares the achieved skill with all q3 and calculates\nthe max skill increase based on that.",
+        "The quality of your reagents can give you a maximum of 40% of the base recipe difficulty as bonus skill.\n\nAll Q1 Reagents: 0% Bonus\nAll Q2 Reagents: 20% Bonus\nAll Q3 Reagents: 40% Bonus\n\nThe skill is calculated by the amount of reagents of each quality weighted against their quality\nand a specific weight value that is unique to each individual crafting reagent item with quality\n\nThis is however different for recrafts. There the maximum the reagents can increase the quality\nis dependent on the quality of reagents the item was originally crafted with.\nThe exact workings are not known.\nHowever, CraftSim internally compares the achieved skill with all q3 and calculates\nthe max skill increase based on that.",
         [CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP] =
-        "The maximum the materials can contribute to a recipe is most of the time 40% of the base recipe difficulty.\n\nHowever in the case of recrafting, this value can vary based on previous crafts\nand the quality of materials that were used.",
+        "The maximum the reagents can contribute to a recipe is most of the time 40% of the base recipe difficulty.\n\nHowever in the case of recrafting, this value can vary based on previous crafts\nand the quality of reagents that were used.",
 
         -- Simulation Mode
         [CraftSim.CONST.TEXT.SIMULATION_MODE_NONE] = "None",
@@ -93,8 +93,8 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Resourcefulness: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Resourcefulness Item Bonus: ",
         [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Concentration: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "Material Quality Bonus: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "Material Quality Maximum %: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "Reagent Quality Bonus: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "Reagent Quality Maximum %: ",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Expected Quality: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Next Quality: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Missing Skill: ",
@@ -161,24 +161,24 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Do not show warning again",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT] = "OK",
 
-        -- Materials Frame
-        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Material Optimization",
-        [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Reachable Quality: ",
-        [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Materials missing",
-        [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Materials available",
-        [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Cheapest Materials",
-        [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "Best combination assigned",
-        [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "No combination found \nto increase quality",
-        [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "Assign",
-        [CraftSim.CONST.TEXT.MATERIALS_MAXIMUM_QUALITY] = "Maximum Quality: ",
-        [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_LABEL] = "Average Ø Profit: ",
-        [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_TOOLTIP] =
-        f.bb("The Average Profit per Craft") .. " when using " .. f.l("this reagent allocation"),
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BEST_ASSIGNED] = "Best Reagents Assigned",
-        [CraftSim.CONST.TEXT.MATERIALS_CONCENTRATION_LABEL] = "Concentration: ",
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_INFO] = "Shift + LMB on numbers to put the item link in chat",
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON] = "Optimize",
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_TOOLTIP] =
+        -- Reagents Frame
+        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Reagent Optimization",
+        [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Reachable Quality: ",
+        [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Reagents missing",
+        [CraftSim.CONST.TEXT.REAGENTS_AVAILABLE] = "Reagents available",
+        [CraftSim.CONST.TEXT.REAGENTS_CHEAPER] = "Cheapest Reagents",
+        [CraftSim.CONST.TEXT.REAGENTS_BEST_COMBINATION] = "Best combination assigned",
+        [CraftSim.CONST.TEXT.REAGENTS_NO_COMBINATION] = "No combination found \nto increase quality",
+        [CraftSim.CONST.TEXT.REAGENTS_ASSIGN] = "Assign",
+        [CraftSim.CONST.TEXT.REAGENTS_MAXIMUM_QUALITY] = "Maximum Quality: ",
+        [CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_LABEL] = "Average Ø Profit: ",
+        [CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_TOOLTIP] =
+            f.bb("The Average Profit per Craft") .. " when using " .. f.l("this reagent allocation"),
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED] = "Best Reagents Assigned",
+        [CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL] = "Concentration: ",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "Shift + LMB on numbers to put the item link in chat",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON] = "Optimize",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP] =
             f.r("Experimental: ") ..
             "Performance Heavy and Resets on Edit.\nOptimizes for " ..
             f.gold("Highest Gold Value") .. " per concentration point",
@@ -240,7 +240,7 @@ function CraftSim.LOCAL_EN:GetData()
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "CraftSim Cost Optimization",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_EXPLANATION] =
-            "Here you can see an overview of all possible prices of the used materials.\nThe " ..
+            "Here you can see an overview of all possible prices of the used reagents.\nThe " ..
             f.bb("'Used Source'") ..
             " column indicates which one of the prices is used.\n\n" ..
             f.g("AH") ..
@@ -271,7 +271,7 @@ function CraftSim.LOCAL_EN:GetData()
             f.l("CraftSim") .. " will include reagent qualities even if concentration is necessary.",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES] = "Include Cooldown Recipes",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP] = "If enabled, " ..
-            f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted materials",
+            f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted reagents",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER] = "Select Recipe Crafter",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT] = "Auction Buyout: ",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE] = "\n\nOverride",
@@ -360,9 +360,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX] = "Only Favorites",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP] = "Scan only your favorite recipes",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Equipped",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Materials Quality 1",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Materials Quality 2",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Materials Quality 3",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Reagents Quality 1",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Reagents Quality 2",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Reagents Quality 3",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Optimize Reagents",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_PROFIT] = "Profit",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_RELATIVE_PROFIT] = "Relative Profit",
@@ -427,9 +427,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE] = "Remember Last Recipe",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP] =
         "Reopen last selected recipe when opening the crafting window",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP] = "Detailed Last Crafting Information",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP] =
-        "Show the complete breakdown of your last used material combination in an item tooltip",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "Supported Price Sources:",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "Enable RAM cleanup while crafting",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_CRAFTS] = "Crafts",
@@ -441,7 +438,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Reset Default",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Expression Invalid",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Expression Valid",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Material Optimizing Module",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_REAGENT_OPTIMIZATION] = "Reagent Optimizing Module",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Average Profit Module",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Top Gear Module",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Cost Overview Module",
@@ -450,7 +447,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] = "Max history entries per client",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Offset Skill Breakpoints by 1",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] =
-        "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
+        "The reagent combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT] = "Multicraft Constant",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION] =
         "Default: 2.5\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe maximum extra items one can receive from a multicraft proc is 1+C*y.\nWhere y is the base item amount for one craft and C is 2.5.\nHowever if you wish you can modify this value here.",
@@ -479,12 +476,12 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "Average Profit",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] =
         "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Material Optimization",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Reagent Optimization",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP] =
-        "Suggests the cheapest materials to reach the highest quality threshold.",
+        "Suggests the cheapest reagents to reach the specific quality thresholds.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Price Overrides",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] =
-        "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically.",
+        "Override prices of any reagents, and craft results for all recipes or for one recipe specifically.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL] = "Specialization Info",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP] =
         "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
@@ -578,13 +575,13 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFTING_COSTS_HEADER] = "Crafting Costs",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL] = "Craft",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR] = "Wrong Tools",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "No Materials",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_REAGENTS] = "No Reagents",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "Add Open Recipe",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL] = "Add First Crafts",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_BUTTON_LABEL] = "Add Patron Orders",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_CHECKBOX] = "Allow Concentration",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_TOOLTIP] =
-        "If minimum quality cannot be reached, use " .. f.l("Concentration") .. " if possible",
+            "If minimum quality cannot be reached, use " .. f.l("Concentration") .. " if possible",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Clear All",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Restock from Recipe Scan",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Wrong Profession",
@@ -652,7 +649,7 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white("Unsaved Queue Amount.\nPress Enter to Save"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Recipe Learned"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Not on Cooldown"),
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_MATERIALS] = f.white("Materials Available"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_REAGENTS] = f.white("Reagents Available"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_GEAR] = f.white("Profession Gear Equipped"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("Correct Crafter Character"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("Profession Open"),
@@ -671,7 +668,8 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nOrder Customer: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nMinimum Quality: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\nRewards:",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r("\n\nAll supplied reagents have to be in your inventory to craft a work order!"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r(
+            "\n\nAll supplied reagents have to be in your inventory to craft a work order!"),
 
         -- craft buffs
 

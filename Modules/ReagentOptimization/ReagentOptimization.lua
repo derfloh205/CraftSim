@@ -36,12 +36,12 @@ end
 ---@return CraftSim.ReagentOptimizationResult[] results
 function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     print("optimizeKnapsack...")
-    local numMaterials, i, j, k, maxWeight
+    local numReagents, i, j, k, maxWeight
 
-    numMaterials = #ks or 1 -- should be ks -1 or 1 and behave like UBound(ks, 1)
+    numReagents = #ks or 1 -- should be ks -1 or 1 and behave like UBound(ks, 1)
 
     maxWeight = 0
-    for i = 0, numMaterials, 1 do
+    for i = 0, numReagents, 1 do
         maxWeight = maxWeight + 2 * ks[i].n * ks[i].mWeight
     end
 
@@ -50,7 +50,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     local b = {}
 
     -- initialize the b array
-    for i = 0, numMaterials, 1 do
+    for i = 0, numReagents, 1 do
         for j = 0, maxWeight, 1 do
             if b[i] == nil then
                 b[i] = {}
@@ -62,7 +62,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     local c = {}
 
     -- initialize the c array
-    for i = 0, numMaterials, 1 do
+    for i = 0, numReagents, 1 do
         for j = 0, maxWeight, 1 do
             if c[i] == nil then
                 c[i] = {}
@@ -73,7 +73,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     -- do initial weight first
     local i = 0
-    for k = 0, 2 * ks[i].n, 1 do -- for each weight and value in material(0)
+    for k = 0, 2 * ks[i].n, 1 do -- for each weight and value in reagent(0)
         --print("current crumb: " .. k)
         if ks[i].crumb[k] then
             b[i][ks[i].crumb[k].weight] = ks[i].crumb[k].value
@@ -82,8 +82,8 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     end
 
     -- do next weights
-    for i = 1, numMaterials, 1 do
-        for k = 0, 2 * ks[i].n, 1 do   -- for each weight and value in material(i)
+    for i = 1, numReagents, 1 do
+        for k = 0, 2 * ks[i].n, 1 do   -- for each weight and value in reagent(i)
             for j = 0, maxWeight, 1 do -- for each possible weight value
                 -- look at the previous row for this weight j, if it has a value then...
                 if b[i - 1][j] < inf then
@@ -131,11 +131,11 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
             minValue = nil,
             allocations = {}
         }
-        if BPs[h] >= 0 then  --can reach this BP
+        if BPs[h] >= 0 then --can reach this BP
             tStart = math.ceil(BPs[h] * maxWeight)
-            i = numMaterials -- i was initialized above
+            i = numReagents -- i was initialized above
             -- walk the last row of the matrix backwards to find the best value (gold cost) for minimum target weight (j = skill bonus)
-            i = numMaterials
+            i = numReagents
             minValue = inf
 
             -- search the space from target to the end weight (for this breakpoint) to get the lowest cost
@@ -148,8 +148,8 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
             -- now minValue is set and lowestj points to the correct column
             j = lowestj
 
-            -- create the list of materials that represent optimization for target BP
-            for i = numMaterials, 0, -1 do
+            -- create the list of reagents that represent optimization for target BP
+            for i = numReagents, 0, -1 do
                 k = c[i][j]                  -- the index into V and W for minValue > target
                 local crumb = ks[i].crumb[k] -- to work around the single crumb of patron order reagents
                 if crumb then
@@ -407,7 +407,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
     local reagentMaxSkillFactor = recipeData.reagentData:GetMaxSkillFactor()
     local recipeMaxSkillBonus = reagentMaxSkillFactor * recipeData.baseProfessionStats.recipeDifficulty.value
 
-    -- Calculate the material bonus needed to meet each breakpoint based on the player's
+    -- Calculate the reagent bonus needed to meet each breakpoint based on the player's
     --   existing skill and the recipe difficulty (as a fraction of the recipeMaxSkillBonus
     -- Breakpoints are sorted highest to lowest
     -- Array value = -1 means this breakpoint is unreachable
@@ -454,11 +454,11 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
 
             -- not 100% clear where blizzard has landed on rounding errors, need to check this at some point
             -- we want our array of BP's to be expressed not as skill numbers but as a fraction of
-            -- the recipeMaxSkillBonus. This way when later looking at optimizing for material weights we
+            -- the recipeMaxSkillBonus. This way when later looking at optimizing for reagent weights we
             -- can use the BP% x maxWeight as our markers
             arrayBP[i] = arrayBP[i] / recipeMaxSkillBonus
 
-            if arrayBP[i] > 1 then -- Can't reach this high even with all Q3 materials
+            if arrayBP[i] > 1 then -- Can't reach this high even with all Q3 reagents
                 arrayBP[i] = -1
             end
         end

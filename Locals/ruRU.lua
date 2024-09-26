@@ -89,8 +89,8 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Находчивость: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Бонус предметов от находчивости: ",
         [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Концентрация: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "Бонус от качества материалов: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "Наиб. бонус от кач. материалов в %: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "Бонус от качества материалов: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "Наиб. бонус от кач. материалов в %: ",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Ожидаемое качество: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Следующее качество: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Недостающий навык: ",
@@ -156,15 +156,15 @@ function CraftSim.LOCAL_RU:GetData()
         "Источник цен не найден!\n\nВам необходимо установить хотя бы один из\nследующих аддонов-источников цен, чтобы\nиспользовать расчеты прибыли CraftSim:\n\n\n",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Больше не показывать предупреждение",
 
-        -- Materials Frame
+        -- Reagents Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Оптимизация материалов CraftSim",
-        [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Достижимое качество: ",
-        [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Недостающие материалы",
-        [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Доступные материалы",
-        [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Самые дешевые материалы",
-        [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "Назначена лучшая комбинация",
-        [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "Повышающая качество \nкомбинация не найдена",
-        [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "Назначить",
+        [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Достижимое качество: ",
+        [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Недостающие материалы",
+        [CraftSim.CONST.TEXT.REAGENTS_AVAILABLE] = "Доступные материалы",
+        [CraftSim.CONST.TEXT.REAGENTS_CHEAPER] = "Самые дешевые материалы",
+        [CraftSim.CONST.TEXT.REAGENTS_BEST_COMBINATION] = "Назначена лучшая комбинация",
+        [CraftSim.CONST.TEXT.REAGENTS_NO_COMBINATION] = "Повышающая качество \nкомбинация не найдена",
+        [CraftSim.CONST.TEXT.REAGENTS_ASSIGN] = "Назначить",
 
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "Информация о специализации CraftSim",
@@ -370,9 +370,6 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE] = "Запомнить последний рецепт",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP] =
         "Повторно открыть последний выбранный рецепт при открытии окна крафта",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP] = "Подробная информация о последнем крафте",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP] =
-        "Показать полную информацию о последней использованной вами комбинации материалов во всплывающей подсказке к предмету",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "Поддерживаемые источники цен:",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "Включить очистку оперативной памяти во время крафта",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP] =
@@ -383,7 +380,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Сбросить по умолчанию",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Недопустимое выражение",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Допустимое выражение",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Модуль оптимизации материалов",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_REAGENT_OPTIMIZATION] = "Модуль оптимизации материалов",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Модуль средней прибыли",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Модуль снаряжения",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Модуль обзора стоимости",
@@ -510,7 +507,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFTING_COSTS_HEADER] = "Стоимость изготовления",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL] = "Создать",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR] = "Неправильные инструменты",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "Нет материалов",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_REAGENTS] = "Нет материалов",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "Добавить открытый рецепт",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Очистить все",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] =
@@ -578,7 +575,7 @@ function CraftSim.LOCAL_RU:GetData()
             "Величина очереди не сохранена.\nНажмите Enter для сохранения"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Рецепт изучен"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Не восстанавливается"),
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_MATERIALS] = f.white("Материалы доступны"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_REAGENTS] = f.white("Материалы доступны"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_GEAR] = f.white("Профессиональное снаряжение надето"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("Правильный персонаж-крафтер"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("Профессия открыта"),

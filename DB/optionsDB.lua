@@ -36,7 +36,7 @@ function CraftSim.DB.OPTIONS:Migrate()
                 .doNotRemindPriceSource
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PRICE_DEBUG] = CraftSimOptions.priceDebug
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE] = CraftSimOptions.priceSource
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS] = CraftSimOptions
+            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_REAGENTS] = CraftSimOptions
                 .tsmPriceKeyMaterials
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_ITEMS] = CraftSimOptions
                 .tsmPriceKeyItems
@@ -256,6 +256,13 @@ function CraftSim.DB.OPTIONS:Migrate()
     -- option removal
     if CraftSimDB.optionsDB.version == 8 then
         CraftSimDB.optionsDB.data["CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER"] = nil
+        CraftSimDB.optionsDB.version = 9
+    end
+
+    -- rename material -> reagent
+    if CraftSimDB.optionsDB.version == 8 then
+        CraftSimDB.optionsDB.data["TSM_PRICE_KEY_REAGENTS"] = CraftSimDB.optionsDB.data["TSM_PRICE_KEY_MATERIALS"]
+        CraftSimDB.optionsDB.data["MODULE_REAGENT_OPTIMIZATION"] = CraftSimDB.optionsDB.data["MODULE_MATERIALS"]
         CraftSimDB.optionsDB.version = 9
     end
 end
