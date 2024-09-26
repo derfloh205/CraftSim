@@ -161,7 +161,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Do not show warning again",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT] = "OK",
 
-        -- Materials Frame
+        -- Reagents Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Reagent Optimization",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Reachable Quality: ",
         [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Reagents missing",
@@ -240,7 +240,7 @@ function CraftSim.LOCAL_EN:GetData()
         -- Cost Details Frame
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "CraftSim Cost Optimization",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_EXPLANATION] =
-            "Here you can see an overview of all possible prices of the used materials.\nThe " ..
+            "Here you can see an overview of all possible prices of the used reagents.\nThe " ..
             f.bb("'Used Source'") ..
             " column indicates which one of the prices is used.\n\n" ..
             f.g("AH") ..
@@ -271,7 +271,7 @@ function CraftSim.LOCAL_EN:GetData()
             f.l("CraftSim") .. " will include reagent qualities even if concentration is necessary.",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES] = "Include Cooldown Recipes",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP] = "If enabled, " ..
-            f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted materials",
+            f.l("CraftSim") .. " will ignore cooldown requirements of recipes when calculating self crafted reagents",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER] = "Select Recipe Crafter",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT] = "Auction Buyout: ",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE] = "\n\nOverride",
@@ -360,9 +360,9 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX] = "Only Favorites",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP] = "Scan only your favorite recipes",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Equipped",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Materials Quality 1",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Materials Quality 2",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Materials Quality 3",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Reagents Quality 1",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Reagents Quality 2",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Reagents Quality 3",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Optimize Reagents",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_PROFIT] = "Profit",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_RELATIVE_PROFIT] = "Relative Profit",
@@ -427,9 +427,6 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE] = "Remember Last Recipe",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP] =
         "Reopen last selected recipe when opening the crafting window",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP] = "Detailed Last Crafting Information",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP] =
-        "Show the complete breakdown of your last used material combination in an item tooltip",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "Supported Price Sources:",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "Enable RAM cleanup while crafting",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_CRAFTS] = "Crafts",
@@ -450,7 +447,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] = "Max history entries per client",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Offset Skill Breakpoints by 1",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] =
-        "The material combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
+        "The reagent combination suggestion will try to reach the breakpoint + 1 instead of matching the exact skill required",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT] = "Multicraft Constant",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION] =
         "Default: 2.5\n\nCrafting Data from different data collecting players in beta and early Dragonflight suggest that\nthe maximum extra items one can receive from a multicraft proc is 1+C*y.\nWhere y is the base item amount for one craft and C is 2.5.\nHowever if you wish you can modify this value here.",
@@ -479,12 +476,12 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "Average Profit",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] =
         "Shows the average profit based on your profession stats and the profit stat weights as gold per point.",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Material Optimization",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Reagent Optimization",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP] =
-        "Suggests the cheapest materials to reach the highest quality threshold.",
+        "Suggests the cheapest reagents to reach the specific quality thresholds.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Price Overrides",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] =
-        "Override prices of any materials, optional materials and craft results for all recipes or for one recipe specifically.",
+        "Override prices of any reagents, and craft results for all recipes or for one recipe specifically.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL] = "Specialization Info",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP] =
         "Shows how your profession specializations affect this recipe and makes it possible to simulate any configuration!",
@@ -578,7 +575,7 @@ function CraftSim.LOCAL_EN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFTING_COSTS_HEADER] = "Crafting Costs",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL] = "Craft",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR] = "Wrong Tools",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "No Materials",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_REAGENTS] = "No Reagents",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "Add Open Recipe",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL] = "Add First Crafts",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_BUTTON_LABEL] = "Add Patron Orders",
@@ -652,7 +649,7 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white("Unsaved Queue Amount.\nPress Enter to Save"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Recipe Learned"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Not on Cooldown"),
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_MATERIALS] = f.white("Materials Available"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_REAGENTS] = f.white("Reagents Available"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_GEAR] = f.white("Profession Gear Equipped"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("Correct Crafter Character"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("Profession Open"),

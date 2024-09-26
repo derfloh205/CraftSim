@@ -431,9 +431,6 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE] = "Letztes Rezept merken",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP] =
         "Öffne das zuletzt ausgewählte Rezept beim Öffnen des Herstellungsfensters erneut",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP] = "Detaillierte letzte Herstellungsinformation",
-        [CraftSim.CONST.TEXT.OPTIONS_GENERAL_DETAILED_TOOLTIP_TOOLTIP] =
-        "Zeige die vollständige Aufschlüsselung deiner zuletzt verwendeten Materialkombination in einem Gegenstandstooltip an",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "Unterstützte Preisquellen:",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "RAM-Bereinigung beim Herstellen aktivieren",
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP] =
@@ -583,7 +580,7 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFTING_COSTS_HEADER] = "Herstellungskosten",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL] = "Herstellen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR] = "Falsche Werkzeuge",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_MATS] = "Keine Materialien",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_REAGENTS] = "Keine Materialien",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "Offenes Rezept hinzufügen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL] = "Erstherstellungen hinzufügen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Alles löschen",
@@ -653,7 +650,7 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
             "Nicht gespeicherte Warteschlangenmenge.\nDrücke Enter, um zu speichern"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Rezept erlernt"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Keine Abklingzeit"),
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_MATERIALS] = f.white("Materialien verfügbar"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_REAGENTS] = f.white("Materialien verfügbar"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_GEAR] = f.white("Berufsausrüstung angelegt"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("Richtiger Handwerkercharakter"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("Beruf geöffnet"),

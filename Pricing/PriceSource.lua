@@ -24,7 +24,7 @@ local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.PRICEDATA)
 
 ---Wrapper for Price Source addons price fetch by itemID
 ---@param itemID ItemID
----@param isReagent? boolean Use TSM Expression for materials
+---@param isReagent? boolean Use TSM Expression for reagents
 ---@param considerSubCrafts? boolean
 ---@return number usedPrice
 ---@return CraftSim.PriceData.PriceInfo priceInfo
@@ -95,7 +95,7 @@ end
 
 ---Wrapper for Price Source addons price fetch by itemLink (used mostly by gear and craft results)
 ---@param itemLink string
----@param isReagent? boolean Use TSM Expression for materials
+---@param isReagent? boolean Use TSM Expression for reagents
 ---@param considerSubCrafts? boolean
 ---@return number usedPrice
 ---@return CraftSim.PriceData.PriceInfo priceInfo

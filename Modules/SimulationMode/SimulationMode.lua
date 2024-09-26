@@ -279,7 +279,7 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.INIT:TriggerModuleUpdate()
 end
 
---- used by allocate button in material optimization module
+--- used by allocate button in reagent optimization module
 ---@param recipeData CraftSim.RecipeData
 function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
     if not CraftSim.SIMULATION_MODE.isActive then return end
