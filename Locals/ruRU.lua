@@ -156,7 +156,7 @@ function CraftSim.LOCAL_RU:GetData()
         "Источник цен не найден!\n\nВам необходимо установить хотя бы один из\nследующих аддонов-источников цен, чтобы\nиспользовать расчеты прибыли CraftSim:\n\n\n",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Больше не показывать предупреждение",
 
-        -- Materials Frame
+        -- Reagents Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Оптимизация материалов CraftSim",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Достижимое качество: ",
         [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Недостающие материалы",

@@ -153,7 +153,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "不要再显示警告",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT] = "好的",
 
-        -- Materials Frame
+        -- Reagents Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim 材料优化",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "可达到品质：",
         [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "缺少材料",
