@@ -19,7 +19,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                                 ( You are awesome! )"),
         newP("18.2.2"),
         f.s .. f.g("Material Optimization") .. " renamed to " .. f.bb("Reagent Optimization"),
-        f.p .. "Rewrote optimizations to be frame distributed",
+        f.p .. "Rewrote oome optimizationsptimizations to be frame distributed",
         f.p .. "Fixed " .. f.bb("Craft Queue") .. " Shopping List optional reagent quality bug",
         newP("18.2.1"),
         f.P .. f.g("Reagent Optimization"),
