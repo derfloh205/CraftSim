@@ -171,27 +171,54 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
             end
         })
 
+        local optimizeConcentrationButtonLabel = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON) ..
+            " " .. GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15, 0, -1)
+
         frame.content.optimizeConcentrationButton = GGUI.Button({
             parent = frame.content,
             anchorParent = frame.content.concentrationCostValue.frame,
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = 20,
-            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON) ..
-                " " .. GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15, 0, -1),
+            label = optimizeConcentrationButtonLabel,
+            initialStatusID = "ENABLED",
             sizeX = 15,
             sizeY = 20,
             adjustWidth = true,
             clickCallback = function()
-                CraftSim.REAGENT_OPTIMIZATION.UI.recipeData:OptimizeConcentration()
-                CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(CraftSim.REAGENT_OPTIMIZATION.UI.recipeData,
-                    CraftSim.UTIL:GetExportModeByVisibility())
+                local reagentOptimizationFrame = CraftSim.REAGENT_OPTIMIZATION.UI:GetFrameByExportMode()
+                if reagentOptimizationFrame then
+                    local optimizeConcentrationButton = reagentOptimizationFrame.content
+                        .optimizeConcentrationButton --[[@as GGUI.Button]]
+                    optimizeConcentrationButton:SetEnabled(false)
+                    CraftSim.REAGENT_OPTIMIZATION.UI.recipeData:OptimizeConcentration({
+                        frameDistributedCallback = function()
+                            CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(
+                                CraftSim.REAGENT_OPTIMIZATION.UI.recipeData)
+                            optimizeConcentrationButton:SetEnabled(false) -- keep disabled until update from init
+                            optimizeConcentrationButton:SetText("Optimized")
+                        end,
+                        progressUpdateCallback = function(progress)
+                            optimizeConcentrationButton:SetText(string.format("Calc %00d", progress), 15, true)
+                        end
+                    })
+                end
             end,
             tooltipOptions = {
                 anchor = "ANCHOR_CURSOR_RIGHT",
                 text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_TOOLTIP),
             }
         })
+
+        frame.content.optimizeConcentrationButton:SetStatusList {
+            {
+                statusID = "ENABLED",
+                enabled = true,
+                label = optimizeConcentrationButtonLabel,
+                sizeX = 15,
+                adjustWidth = true
+            }
+        }
 
         local reagentListQualityIconHeaderSize = 25
         local reagentListQualityIconOffsetY = -3
@@ -276,20 +303,26 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
     createContent(frameWO)
 end
 
----@param recipeData CraftSim.RecipeData
----@param exportMode number
-function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData, exportMode)
-    local materialFrame = nil
+function CraftSim.REAGENT_OPTIMIZATION.UI:GetFrameByExportMode()
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
     if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        materialFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+        return GGUI:GetFrame(CraftSim.INIT.FRAMES,
             CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
     else
-        materialFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
+        return GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
     end
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param exportMode number
+function CraftSim.REAGENT_OPTIMIZATION.UI:UpdateReagentDisplay(recipeData)
+    local materialFrame = self:GetFrameByExportMode()
 
     if not materialFrame then return end
 
     CraftSim.REAGENT_OPTIMIZATION.UI.recipeData = recipeData
+    local optimizeConcentrationButton = materialFrame.content.optimizeConcentrationButton --[[@as GGUI.Button]]
+    optimizeConcentrationButton:SetStatus("ENABLED")
 
     local maxQualityDropdown = materialFrame.content.maxQualityDropdown --[[@as GGUI.Dropdown]]
 

@@ -5,6 +5,8 @@ local addonName = select(1, ...)
 local GGUI = CraftSim.GGUI
 local GUTIL = CraftSim.GUTIL
 
+local L = CraftSim.UTIL:GetLocalizer()
+
 ---@class CraftSim.CRAFTQ : Frame
 CraftSim.CRAFTQ = GUTIL:CreateRegistreeForEvents({ "TRADE_SKILL_ITEM_CRAFTED_RESULT", "COMMODITY_PURCHASE_SUCCEEDED",
     "NEW_RECIPE_LEARNED", "CRAFTINGORDERS_CLAIMED_ORDER_UPDATED", "CRAFTINGORDERS_CLAIMED_ORDER_REMOVED" })
@@ -150,38 +152,66 @@ function CraftSim.CRAFTQ:AddPatronOrders()
                     if claimedOrder then
                         tinsert(orders, claimedOrder)
                     end
-                    GUTIL:FrameDistributedIteration(orders, function(_, order, _)
-                        local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
-                        if recipeInfo and recipeInfo.learned then
-                            local recipeData = CraftSim.RecipeData(order.spellID)
-                            recipeData:SetOrder(order)
 
-                            recipeData:SetCheapestQualityReagentsMax() -- considers patron reagents
-                            recipeData:Update()
-                            -- try to optimize for target quality
-                            if order.minQuality then
-                                recipeData:OptimizeReagents({
-                                    maxQuality = order.minQuality
-                                })
-                            end
+                    local queuePatronOrdersButton = CraftSim.CRAFTQ.frame.content.queueTab.content
+                        .addPatronOrdersButton --[[@as GGUI.Button]]
+                    queuePatronOrdersButton:SetEnabled(false)
 
-                            -- TODO: allow queuing with concentration and concentration optimization in queue options
-                            -- check if the min quality is reached, if not do not queue
-                            if recipeData.resultData.expectedQuality >= order.minQuality then
-                                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
-                            end
+                    GUTIL.FrameDistributor {
+                        iterationTable = orders,
+                        iterationsPerFrame = 1,
+                        maxIterations = 100,
+                        finally = function()
+                            queuePatronOrdersButton:SetText(L(CraftSim.CONST.TEXT
+                                .CRAFT_QUEUE_ADD_PATRON_ORDERS_BUTTON_LABEL))
+                            queuePatronOrdersButton:SetEnabled(true)
+                        end,
+                        continue = function(distributor, _, order, _, progress)
+                            queuePatronOrdersButton:SetText(string.format("%.0f%%", progress))
 
+                            local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
+                            if recipeInfo and recipeInfo.learned then
+                                local recipeData = CraftSim.RecipeData(order.spellID)
+                                recipeData:SetOrder(order)
 
-
-                            if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION") and
-                                recipeData.resultData.expectedQualityConcentration == order.minQuality then
-                                -- use concentration to reach and then queue
-                                recipeData.concentrating = true
+                                recipeData:SetCheapestQualityReagentsMax() -- considers patron reagents
                                 recipeData:Update()
-                                CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+
+                                local function queueRecipe()
+                                    -- TODO: allow queuing with concentration and concentration optimization in queue options
+                                    -- check if the min quality is reached, if not do not queue
+                                    if recipeData.resultData.expectedQuality >= order.minQuality then
+                                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                                    end
+
+                                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION") and
+                                        recipeData.resultData.expectedQualityConcentration == order.minQuality then
+                                        -- use concentration to reach and then queue
+                                        recipeData.concentrating = true
+                                        recipeData:Update()
+                                        CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
+                                    end
+
+                                    distributor:Continue()
+                                end
+                                -- try to optimize for target quality
+                                if order.minQuality then
+                                    RunNextFrame(
+                                        function()
+                                            recipeData:OptimizeReagents({
+                                                maxQuality = order.minQuality
+                                            })
+                                            queueRecipe()
+                                        end
+                                    )
+                                else
+                                    queueRecipe()
+                                end
+                            else
+                                distributor:Continue()
                             end
                         end
-                    end)
+                    }:Continue()
                 end
             end),
         }
