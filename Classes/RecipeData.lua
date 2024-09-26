@@ -1174,6 +1174,16 @@ function CraftSim.RecipeData:Craft(amount)
     -- Also what about recipe requirements
     local craftingReagentInfoTbl = self.reagentData:GetCraftingReagentInfoTbl()
 
+    if self.isSalvageRecipe then
+        if self.reagentData.salvageReagentSlot.activeItem then
+            local salvageLocation = GUTIL:GetItemLocationFromItemID(self.reagentData.salvageReagentSlot.activeItem
+                :GetItemID(), true)
+            if salvageLocation then
+                C_TradeSkillUI.CraftSalvage(self.recipeID, amount, salvageLocation, craftingReagentInfoTbl,
+                    self.concentrating)
+            end
+        end
+    end
     if self.isEnchantingRecipe then
         local vellumLocation = GUTIL:GetItemLocationFromItemID(CraftSim.CONST.ENCHANTING_VELLUM_ID)
         if vellumLocation then
@@ -1669,6 +1679,6 @@ function CraftSim.RecipeData:GetReagentUID()
     for _, craftingReagentInfo in ipairs(craftingReagentInfoTbl) do
         uid = uid .. craftingReagentInfo.itemID .. craftingReagentInfo.quantity
     end
-
-    return uid
 end
+
+return uid

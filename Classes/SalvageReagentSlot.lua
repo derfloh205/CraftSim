@@ -16,6 +16,14 @@ function CraftSim.SalvageReagentSlot:new(recipeData)
     self.activeItem = nil
 end
 
+function CraftSim.SalvageReagentSlot:GetCraftingReagentInfo()
+    return {
+        itemID = self.salvageReagentSlot.activeItem:GetItemID(),
+        quantity = self.salvageReagentSlot.requiredQuantity,
+        dataSlotIndex = self.dataSlotIndex,
+    }
+end
+
 ---@param itemID number
 function CraftSim.SalvageReagentSlot:SetItem(itemID)
     local item = CraftSim.GUTIL:Find(self.possibleItems, function(item) return item:GetItemID() == itemID end)
