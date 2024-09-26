@@ -51,8 +51,8 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "複數製造：",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "精明：",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "精明節省加成: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "材料品質加成: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "材料品質最大佔比: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "材料品質加成: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "材料品質最大佔比: ",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "預期品質: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "下一級品質: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "不足技能: ",
@@ -106,7 +106,7 @@ function CraftSim.LOCAL_TW:GetData()
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim 材料最佳化",
-        [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "可達到品質: ",
+        [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "可達到品質: ",
         [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "缺少材料",
         [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "可用材料",
         [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "最便宜材料",
@@ -293,7 +293,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "恢復成預設值",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "語法不正確",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "語法正確",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "材料最佳化模組",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_REAGENT_OPTIMIZATION] = "材料最佳化模組",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "平均利潤模組",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "最佳裝備模組",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "成本概覽模組",

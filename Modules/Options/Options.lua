@@ -261,7 +261,8 @@ function CraftSim.OPTIONS:Init()
             CraftSim.DB.OPTIONS:Save("CRAFTING_GARBAGE_COLLECTION_CRAFTS", number)
         end)
 
-    CraftSim.FRAME:CreateText(L("OPTIONS_PERFORMANCE_RAM_CRAFTS"), CraftingTab.content, garbageCollectCraftsInput, "LEFT", "RIGHT", 5, 0)
+    CraftSim.FRAME:CreateText(L("OPTIONS_PERFORMANCE_RAM_CRAFTS"), CraftingTab.content, garbageCollectCraftsInput, "LEFT",
+        "RIGHT", 5, 0)
 
     CraftingTab.content.flashTaskBarCD = GGUI.Checkbox {
         parent = CraftingTab.content, anchorParent = enableGarbageCollectWhenCraftingCB.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT",
@@ -289,7 +290,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
     tsmMaterialsPriceExpression:SetSize(expressionSizeX, expressionSizeY)
     tsmMaterialsPriceExpression:SetAutoFocus(false) -- dont automatically focus
     tsmMaterialsPriceExpression:SetFontObject("ChatFontNormal")
-    tsmMaterialsPriceExpression:SetText(CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS))
+    tsmMaterialsPriceExpression:SetText(CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_REAGENTS))
     tsmMaterialsPriceExpression:SetScript("OnEscapePressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
     tsmMaterialsPriceExpression:SetScript("OnEnterPressed", function() tsmMaterialsPriceExpression:ClearFocus() end)
     tsmMaterialsPriceExpression:SetScript("OnTextChanged", function()
@@ -301,7 +302,7 @@ function CraftSim.OPTIONS:InitTSMTab(TSMTab)
         else
             CraftSimTSMStringValidationInfoMaterials:SetText(CraftSim.GUTIL:ColorizeText(
                 L(CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION), CraftSim.GUTIL.COLORS.GREEN))
-            CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS,
+            CraftSim.DB.OPTIONS:Save(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_REAGENTS,
                 tsmMaterialsPriceExpression:GetText())
         end
     end)

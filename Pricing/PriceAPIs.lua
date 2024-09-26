@@ -160,7 +160,7 @@ end
 function CraftSimTSM:GetMinBuyoutByTSMItemString(tsmItemString, isReagent)
     local minBuyoutPriceSourceKey = nil
     if isReagent then
-        minBuyoutPriceSourceKey = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS)
+        minBuyoutPriceSourceKey = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_REAGENTS)
     else
         minBuyoutPriceSourceKey = CraftSim.DB.OPTIONS:Get(CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_ITEMS)
     end

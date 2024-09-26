@@ -1222,7 +1222,7 @@ function CraftSim.RecipeData:CanCraft(amount)
         return false, 0
     end
 
-    -- check amount of materials in players inventory + bank
+    -- check amount of reagents in players inventory + bank
     local hasEnoughReagents = self.reagentData:HasEnough(amount, self:GetCrafterUID())
 
     local craftAbleAmount = self.reagentData:GetCraftableAmount(self:GetCrafterUID())

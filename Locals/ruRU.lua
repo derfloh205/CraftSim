@@ -89,8 +89,8 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Находчивость: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Бонус предметов от находчивости: ",
         [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Концентрация: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "Бонус от качества материалов: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "Наиб. бонус от кач. материалов в %: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "Бонус от качества материалов: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "Наиб. бонус от кач. материалов в %: ",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Ожидаемое качество: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Следующее качество: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Недостающий навык: ",
@@ -158,7 +158,7 @@ function CraftSim.LOCAL_RU:GetData()
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Оптимизация материалов CraftSim",
-        [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Достижимое качество: ",
+        [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Достижимое качество: ",
         [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Недостающие материалы",
         [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Доступные материалы",
         [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Самые дешевые материалы",
@@ -383,7 +383,7 @@ function CraftSim.LOCAL_RU:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Сбросить по умолчанию",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Недопустимое выражение",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Допустимое выражение",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Модуль оптимизации материалов",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_REAGENT_OPTIMIZATION] = "Модуль оптимизации материалов",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Модуль средней прибыли",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Модуль снаряжения",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Модуль обзора стоимости",

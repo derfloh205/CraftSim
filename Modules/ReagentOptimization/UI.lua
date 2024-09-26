@@ -107,7 +107,7 @@ function CraftSim.REAGENT_OPTIMIZATION.UI:Init()
         frame.content.qualityText = GGUI.Text {
             parent = frame.content, anchorParent = frame.content.maxQualityLabel.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -10,
             justifyOptions = { type = "H", align = "LEFT" },
-            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY)
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY)
         }
 
         frame.content.qualityIcon = GGUI.QualityIcon({

@@ -50,8 +50,8 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.MULTICRAFT_LABEL] = "Creazione multipla: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Parsimonia: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Moltiplicatore reagenti risparmiati: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "Competenza bonus reagenti: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "Competenza bonus reagenti massima: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "Competenza bonus reagenti: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "Competenza bonus reagenti massima: ",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Qualità garantita: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Qualità superiore: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Competenza mancante: ",
@@ -131,7 +131,7 @@ function CraftSim.LOCAL_IT:GetData()
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Ottimizzazione Materiali",
-        [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Qualità raggiungibile: ",
+        [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Qualità raggiungibile: ",
         [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Materiali mancanti",
         [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Materiali disponibioli",
         [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Materiali più economici",
@@ -339,7 +339,7 @@ function CraftSim.LOCAL_IT:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Resetta",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Espressione non valida",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Espressione valida",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Modulo Ottimizzazione Materiali",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_REAGENT_OPTIMIZATION] = "Modulo Ottimizzazione Materiali",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Modulo Profitto Medio",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Modulo Ottimizzazione Strumenti",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Modulo Dettaglio Prezzi",

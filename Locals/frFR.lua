@@ -89,8 +89,8 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Ingéniosité: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Item Bonus Ingéniosité: ",
         [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Concentration: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "Bonus Qualité Matériaux: ",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "Maximum Qualité Matériaux %: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "Bonus Qualité Matériaux: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "Maximum Qualité Matériaux %: ",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Qualité attendue: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Qualité suivante: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Comp. Manquante: ",
@@ -158,7 +158,7 @@ function CraftSim.LOCAL_FR:GetData()
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Optimisation des matériaux CraftSim",
-        [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "Qualité atteignable: ",
+        [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Qualité atteignable: ",
         [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Matériaux manquants",
         [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Matériaux disponibles",
         [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Matériaux moins cher",
@@ -378,7 +378,7 @@ function CraftSim.LOCAL_FR:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Paramètres par défaut",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Expression Invalide",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Expression Valide",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "Module Optimisation Matériaux",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_REAGENT_OPTIMIZATION] = "Module Optimisation Matériaux",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Module Profit Moyen",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Module Top Equipement",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Module Vue Coût détaillé",
@@ -565,7 +565,7 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_TARGET_MODE_CHECKBOX_TOOLTIP] = "Create an " ..
             f.bb("Auctionator Shopping List") .. " for target mode recipes only",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_UNSAVED_CHANGES_TOOLTIP] = f.white("Montant non sauvegardé.\nAppuyez sur ") ..
-        f.bb("Entrée") .. f.white(" pour sauvegarder"),
+            f.bb("Entrée") .. f.white(" pour sauvegarder"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Recette Apprise"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Pas en recharge"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_MATERIALS] = f.white("Materiaux Disponibles"),

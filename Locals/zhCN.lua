@@ -93,8 +93,8 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "充裕：",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "充裕节省加成：",
         [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "专注：",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_BONUS_LABEL] = "材料品质加成：",
-        [CraftSim.CONST.TEXT.MATERIAL_QUALITY_MAXIMUM_LABEL] = "材料品质最大百分比：",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "材料品质加成：",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "材料品质最大百分比：",
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "预期品质：",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "下一级品质：",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "缺失技能：",
@@ -155,7 +155,7 @@ function CraftSim.LOCAL_CN:GetData()
 
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim 材料优化",
-        [CraftSim.CONST.TEXT.MATERIALS_REACHABLE_QUALITY] = "可达到品质：",
+        [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "可达到品质：",
         [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "缺少材料",
         [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "可用材料",
         [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "最便宜材料",
@@ -165,7 +165,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.MATERIALS_MAXIMUM_QUALITY] = "最高品质：",
         [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_LABEL] = "平均 Ø 利润：",
         [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_TOOLTIP] =
-        "当使用" .. f.l("这种材料分配") .. "时" .. f.bb("每个制造的平均利润"),
+            "当使用" .. f.l("这种材料分配") .. "时" .. f.bb("每个制造的平均利润"),
         [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BEST_ASSIGNED] = "已分配最佳材料",
         [CraftSim.CONST.TEXT.MATERIALS_CONCENTRATION_LABEL] = "专注：",
         [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_INFO] = "在数字上按Shift+鼠标左键将物品链接放入聊天中",
@@ -251,18 +251,18 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_USED_SOURCE] = "使用来源",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_COSTS_TAB] = "材料成本",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIONS_TAB] = "子配方选项",
-        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION] = "子配方优化"  .. f.bb("(实验性)"),
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION] = "子配方优化" .. f.bb("(实验性)"),
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_OPTIMIZATION_TOOLTIP] =
-        "启用时，如果你的角色或小号能够制作该物品。\n" ..
-        f.l("CraftSim") .. "会考虑" .. f.g("优化过的制作成本") .. "\n\n" ..
-        f.r("由于大量额外的计算，可能会稍微降低性能"),
+            "启用时，如果你的角色或小号能够制作该物品。\n" ..
+            f.l("CraftSim") .. "会考虑" .. f.g("优化过的制作成本") .. "\n\n" ..
+            f.r("由于大量额外的计算，可能会稍微降低性能"),
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_MAX_DEPTH_LABEL] = "子配方计算深度",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION] = "启用专注",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_CONCENTRATION_TOOLTIP] =
-        "启用后，当需要专注时 " .. f.l("CraftSim") .. " 也会将材料品质包括在内。",
+            "启用后，当需要专注时 " .. f.l("CraftSim") .. " 也会将材料品质包括在内。",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES] = "包括冷却中的配方",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP] =
-        "启用后，计算自制材料时 " .. f.l("CraftSim") .. " 将忽略配方的冷却时间要求。",
+            "启用后，计算自制材料时 " .. f.l("CraftSim") .. " 将忽略配方的冷却时间要求。",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER] = "选择配方工匠",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT] = "拍卖价格：",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE] = "\n\n重定价格",
@@ -437,7 +437,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "恢复成默认值",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "语法不正确",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "语法正确",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_MATERIALS] = "材料优化模块",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_REAGENT_OPTIMIZATION] = "材料优化模块",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "平均利润模块",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "最佳装备模块",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "成本概览模块",
@@ -579,7 +579,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_BUTTON_LABEL] = "添加客户订单",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_CHECKBOX] = "允许使用专注",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_TOOLTIP] =
-        "如果无法达到最低品质要求，尽可能使用" .. f.l("专注"),
+            "如果无法达到最低品质要求，尽可能使用" .. f.l("专注"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "全部清除",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "根据配方扫描补货",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "专业错误",
@@ -591,10 +591,10 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL] = "创建Auctionator购物清单",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_QUEUE_TAB_LABEL] = "制造队列",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_LABEL] = "闪烁任务栏，当" ..
-        f.bb("制造队列") .. "制造完成时",
-    [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP] =
-        "当你的魔兽世界窗口最小化并且配方在" .. f.bb("制造队列") ..
-        "时，" .. f.l(" CraftSim") .. " 将闪烁你任务栏的魔兽世界图标",
+            f.bb("制造队列") .. "制造完成时",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_FLASH_TASKBAR_OPTION_TOOLTIP] =
+            "当你的魔兽世界窗口最小化并且配方在" .. f.bb("制造队列") ..
+            "时，" .. f.l(" CraftSim") .. " 将闪烁你任务栏的魔兽世界图标",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_LABEL] = "补货选项",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_TAB_TOOLTIP] = "配置从配方扫描导入时的补货行为",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_RESTOCK_OPTIONS_GENERAL_PROFIT_THRESHOLD_LABEL] = "利润阈值：",
@@ -657,7 +657,7 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_SUBMIT] = "交单",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL] = "忽略匠人之敏配方",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP] =
-        "不要把使用 " .. f.bb("匠人之敏") .. " 的配方先加入制造队列",
+            "不要把使用 " .. f.bb("匠人之敏") .. " 的配方先加入制造队列",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP] = "\n\n排队中的制造：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\n订单发布人：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\n最低品质：",
