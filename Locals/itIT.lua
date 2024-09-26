@@ -129,7 +129,7 @@ function CraftSim.LOCAL_IT:GetData()
         "Nessuna sorgente dei prezzi trovata!\n\nDevi installare almeno uno dei seguenti\naddon per le sorgenti dei prezzi da utilizzare\nnei calcoli di profitto di CraftSim:\n\n\n",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Non mostrare di nuovo l'avviso",
 
-        -- Materials Frame
+        -- Reagents Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Ottimizzazione Materiali",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Qualità raggiungibile: ",
         [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Materiali mancanti",

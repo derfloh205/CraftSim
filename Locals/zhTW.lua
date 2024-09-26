@@ -104,7 +104,7 @@ function CraftSim.LOCAL_TW:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] = "沒有找到價格來源!\n\n至少需要安裝下面其中一個價格來源插件，CraftSim 才能計算利潤:\n\n\n",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "不要再顯示警告",
 
-        -- Materials Frame
+        -- Reagents Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim 材料最佳化",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "可達到品質: ",
         [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "缺少材料",
