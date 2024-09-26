@@ -236,10 +236,15 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     -- we set them to 0 and let them accumulate in UpdateProfessionStats
     self.baseProfessionStats:ClearExtraValues()
 
-    -- exception: when salvage recipe, then resourcefulness is supported! set the base manually to the specs one
+    -- exception: when salvage recipe, then resourcefulness is supported! set the base manually to the specs one (if available)
     if self.isSalvageRecipe then
         self.supportsResourcefulness = true
-        self.baseProfessionStats.resourcefulness.value = self.specializationData.professionStats.resourcefulness.value
+        if self.specializationData then
+            self.baseProfessionStats.resourcefulness.value = self.specializationData.professionStats.resourcefulness
+                .value
+        else
+            self.baseProfessionStats.resourcefulness.value = 0
+        end
     end
 
     self:UpdateProfessionStats()
