@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("18.2.2"),
+        f.p .. "Rewrote Optimizations to be Frame Distributed",
         newP("18.2.1"),
         f.P .. f.g("Material Optimization"),
         f.a .. "- Added " .. f.bb("Top Profit") .. " Option",
