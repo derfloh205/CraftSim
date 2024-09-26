@@ -735,8 +735,17 @@ function CraftSim.RecipeData:GetSkillContributionMap()
     return skillContributionMap
 end
 
---- Optimizes gold value per concentration point
-function CraftSim.RecipeData:OptimizeConcentration()
+---@class CraftSim.RecipeData.OptimizeConcentration.Options
+---@field frameDistributedCallback? function if omitted calculations will be instant inframe, otherwise callback will be called when finished
+---@field progressUpdateCallback? fun(progress: number) if set, is called on progress updates during calculation process
+
+--- Optimizes gold value per concentration point sync or async
+---@param options CraftSim.RecipeData.OptimizeConcentration.Options?
+function CraftSim.RecipeData:OptimizeConcentration(options)
+    options = options or {}
+
+    local inFrame = options.frameDistributedCallback == nil
+
     local skillContributionMap = self:GetSkillContributionMap()
 
     local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CONCENTRATION_OPTIMIZATION)
@@ -817,116 +826,175 @@ function CraftSim.RecipeData:OptimizeConcentration()
         return upgradeCostPerSkill, upgradeInfo, skillContributionNext
     end
 
-    local maxIterations = 500
-    local currentIteration = 0
-    local debugData = {}
-
-    -- local lastProfit = self.averageProfitCached
-    -- local lastConcentrationCost = self.concentrationCost
-    -- local currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, self.averageProfitCached)
-
     CraftSim.DEBUG:StartProfiling("ConcentrationOptimization")
-    while currentIteration < maxIterations do
-        currentIteration = currentIteration + 1
-        local skillPerConcentrationPoint = self:GetConcentrationPointsPerSkill()
-        local bestReagent
-        ---@type ReagentUpgradeableQualityInfo?
-        local bestUpgradeInfo
-        local bestConcentrationPointCost
-        local minimumItemsForSkillPoint = 1
-        local skillContributionNextTemp
-        for i, reagent in ipairs(qualityReagents) do
-            local upgradeCostPerSkill, upgradeInfo, skillContributionNext = GetReagentUpgradeCostPerSkill(reagent)
-            if upgradeCostPerSkill and upgradeInfo then
-                local upgradeCostPerConcentrationPoint = skillPerConcentrationPoint * upgradeCostPerSkill
 
-                if not bestReagent or upgradeCostPerConcentrationPoint < bestConcentrationPointCost then
-                    bestReagent = reagent
-                    bestUpgradeInfo = upgradeInfo
-                    bestConcentrationPointCost = upgradeCostPerConcentrationPoint
-                    minimumItemsForSkillPoint = math.ceil(1 / skillContributionNext)
-                    skillContributionNextTemp = skillContributionNext
+    local iterationsPerFrame = 1
 
-                    -- if there are less then 2*minimumItemsForSkillPoint left in the qualityNext
-                    -- set it to the value thats left to bridge the 0 concentration bought gap
+    if inFrame then
+        iterationsPerFrame = 0
+    end
 
-                    local qNextCount = bestReagent.items[upgradeInfo.qualityNext].quantity
-                    local qNextCountLeft = bestReagent.requiredQuantity - qNextCount
+    GUTIL.FrameDistributor {
+        maxIterations = 500,
+        iterationsPerFrame = iterationsPerFrame,
+        finally = function()
+            if options.frameDistributedCallback then
+                options.frameDistributedCallback()
+            end
+            CraftSim.DEBUG:StopProfiling("ConcentrationOptimization")
+        end,
+        continue = function(frameDistributor, _, _, _, progress)
+            if options.progressUpdateCallback then
+                options.progressUpdateCallback(progress)
+            end
+            local skillPerConcentrationPoint = self:GetConcentrationPointsPerSkill()
+            local bestReagent
+            ---@type ReagentUpgradeableQualityInfo?
+            local bestUpgradeInfo
+            local bestConcentrationPointCost
+            local minimumItemsForSkillPoint = 1
+            for _, reagent in ipairs(qualityReagents) do
+                local upgradeCostPerSkill, upgradeInfo, skillContributionNext = GetReagentUpgradeCostPerSkill(reagent)
+                if upgradeCostPerSkill and upgradeInfo then
+                    local upgradeCostPerConcentrationPoint = skillPerConcentrationPoint * upgradeCostPerSkill
 
-                    if qNextCountLeft < (2 * minimumItemsForSkillPoint) then
-                        minimumItemsForSkillPoint = qNextCountLeft
+                    if not bestReagent or upgradeCostPerConcentrationPoint < bestConcentrationPointCost then
+                        bestReagent = reagent
+                        bestUpgradeInfo = upgradeInfo
+                        bestConcentrationPointCost = upgradeCostPerConcentrationPoint
+                        minimumItemsForSkillPoint = math.ceil(1 / skillContributionNext)
+
+                        -- if there are less then 2*minimumItemsForSkillPoint left in the qualityNext
+                        -- set it to the value thats left to bridge the 0 concentration bought gap
+
+                        local qNextCount = bestReagent.items[upgradeInfo.qualityNext].quantity
+                        local qNextCountLeft = bestReagent.requiredQuantity - qNextCount
+
+                        if qNextCountLeft < (2 * minimumItemsForSkillPoint) then
+                            minimumItemsForSkillPoint = qNextCountLeft
+                        end
                     end
                 end
             end
-        end
 
+            -- no reagent is upgradeable anymore
+            if not bestReagent or not bestUpgradeInfo or not bestConcentrationPointCost then
+                frameDistributor:Break()
+                return
+            end
 
-        -- no reagent is upgradeable anymore
-        if not bestReagent or not bestUpgradeInfo or not bestConcentrationPointCost then
-            break
-        end
+            local lastProfit = self.averageProfitCached
+            local lastConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true) -- do not round!
+            local lastCraftingReagentInfoTbl = self.reagentData:GetRequiredCraftingReagentInfoTbl()
+            local currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self,
+                self.averageProfitCached)
 
-        local lastProfit = self.averageProfitCached
-        local lastConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true) -- do not round!
-        local lastCraftingReagentInfoTbl = self.reagentData:GetRequiredCraftingReagentInfoTbl()
-        local currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, self.averageProfitCached)
+            -- not worthwile to upgrade
+            if bestConcentrationPointCost >= currentConcentrationValue then
+                frameDistributor:Break()
+                return
+            end
 
-        -- not worthwile to upgrade
-        if bestConcentrationPointCost >= currentConcentrationValue then
-            break
-        end
+            -- move up by minimumQuantityForSkill
+            bestReagent.items[bestUpgradeInfo.qualityPrev].quantity =
+                math.max(0, bestReagent.items[bestUpgradeInfo.qualityPrev].quantity - minimumItemsForSkillPoint)
+            bestReagent.items[bestUpgradeInfo.qualityNext].quantity =
+                math.min(bestReagent.requiredQuantity,
+                    bestReagent.items[bestUpgradeInfo.qualityNext].quantity + minimumItemsForSkillPoint)
 
-        -- move up by minimumQuantityForSkill
-        bestReagent.items[bestUpgradeInfo.qualityPrev].quantity =
-            math.max(0, bestReagent.items[bestUpgradeInfo.qualityPrev].quantity - minimumItemsForSkillPoint)
-        bestReagent.items[bestUpgradeInfo.qualityNext].quantity =
-            math.min(bestReagent.requiredQuantity,
-                bestReagent.items[bestUpgradeInfo.qualityNext].quantity + minimumItemsForSkillPoint)
-
-        self:Update()
-
-        -- update limiting values
-        local currentConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true) -- do not round!
-        local boughtConcentration = lastConcentrationCost - currentConcentrationCost
-        local totalConcentrationBuyPrice = lastProfit - self.averageProfitCached
-        local averageConcentrationBuyPrice = totalConcentrationBuyPrice / boughtConcentration
-        currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, self.averageProfitCached)
-
-        -- tinsert(debugData, {
-        --     skillContributionNext = skillContributionNextTemp,
-        --     minimumItemsForSkillPoint = minimumItemsForSkillPoint,
-        --     lastSkill = lastSkill,
-        --     currentSkill = self.professionStats.skill.value,
-        --     iteration = currentIteration,
-        --     bestUpgradeInfo = bestUpgradeInfo,
-        --     lastProfit = GUTIL:FormatMoney(lastProfit, true),
-        --     currentProfit = GUTIL:FormatMoney(self.averageProfitCached, true),
-        --     bestUpgradeDebug = bestReagent.items[bestUpgradeInfo.qualityPrev].item:GetItemLink() ..
-        --         " -> " .. bestReagent.items[bestUpgradeInfo.qualityNext].item:GetItemLink(),
-        --     boughtConcentration = boughtConcentration,
-        --     totalConcentrationBuyPrice = GUTIL:FormatMoney(totalConcentrationBuyPrice),
-        --     averageConcentrationBuyPrice = GUTIL:FormatMoney(averageConcentrationBuyPrice),
-        --     currentConcentrationValue = GUTIL:FormatMoney(currentConcentrationValue),
-        --     reagentAllocation = GUTIL:Map(qualityReagents, function(reagent)
-        --         return reagent:Copy()
-        --     end)
-        -- })
-
-        -- if we discover that last upgrade was not worthwhile get back and stop
-
-
-        if averageConcentrationBuyPrice >= currentConcentrationValue then
-            self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
             self:Update()
-            break
+
+            -- update limiting values
+            local currentConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true) -- do not round!
+            local boughtConcentration = lastConcentrationCost - currentConcentrationCost
+            local totalConcentrationBuyPrice = lastProfit - self.averageProfitCached
+            local averageConcentrationBuyPrice = totalConcentrationBuyPrice / boughtConcentration
+            currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, self.averageProfitCached)
+
+            if averageConcentrationBuyPrice >= currentConcentrationValue then
+                self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
+                self:Update()
+                frameDistributor:Break()
+                return
+            end
+
+            frameDistributor:Continue()
         end
-    end
+    }:Continue()
+
+
+    -- while currentIteration < maxIterations do
+    --     currentIteration = currentIteration + 1
+    --     local skillPerConcentrationPoint = self:GetConcentrationPointsPerSkill()
+    --     local bestReagent
+    --     ---@type ReagentUpgradeableQualityInfo?
+    --     local bestUpgradeInfo
+    --     local bestConcentrationPointCost
+    --     local minimumItemsForSkillPoint = 1
+    --     for i, reagent in ipairs(qualityReagents) do
+    --         local upgradeCostPerSkill, upgradeInfo, skillContributionNext = GetReagentUpgradeCostPerSkill(reagent)
+    --         if upgradeCostPerSkill and upgradeInfo then
+    --             local upgradeCostPerConcentrationPoint = skillPerConcentrationPoint * upgradeCostPerSkill
+
+    --             if not bestReagent or upgradeCostPerConcentrationPoint < bestConcentrationPointCost then
+    --                 bestReagent = reagent
+    --                 bestUpgradeInfo = upgradeInfo
+    --                 bestConcentrationPointCost = upgradeCostPerConcentrationPoint
+    --                 minimumItemsForSkillPoint = math.ceil(1 / skillContributionNext)
+
+    --                 -- if there are less then 2*minimumItemsForSkillPoint left in the qualityNext
+    --                 -- set it to the value thats left to bridge the 0 concentration bought gap
+
+    --                 local qNextCount = bestReagent.items[upgradeInfo.qualityNext].quantity
+    --                 local qNextCountLeft = bestReagent.requiredQuantity - qNextCount
+
+    --                 if qNextCountLeft < (2 * minimumItemsForSkillPoint) then
+    --                     minimumItemsForSkillPoint = qNextCountLeft
+    --                 end
+    --             end
+    --         end
+    --     end
+
+    --     -- no reagent is upgradeable anymore
+    --     if not bestReagent or not bestUpgradeInfo or not bestConcentrationPointCost then
+    --         break
+    --     end
+
+    --     local lastProfit = self.averageProfitCached
+    --     local lastConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true) -- do not round!
+    --     local lastCraftingReagentInfoTbl = self.reagentData:GetRequiredCraftingReagentInfoTbl()
+    --     local currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, self.averageProfitCached)
+
+    --     -- not worthwile to upgrade
+    --     if bestConcentrationPointCost >= currentConcentrationValue then
+    --         break
+    --     end
+
+    --     -- move up by minimumQuantityForSkill
+    --     bestReagent.items[bestUpgradeInfo.qualityPrev].quantity =
+    --         math.max(0, bestReagent.items[bestUpgradeInfo.qualityPrev].quantity - minimumItemsForSkillPoint)
+    --     bestReagent.items[bestUpgradeInfo.qualityNext].quantity =
+    --         math.min(bestReagent.requiredQuantity,
+    --             bestReagent.items[bestUpgradeInfo.qualityNext].quantity + minimumItemsForSkillPoint)
+
+    --     self:Update()
+
+    --     -- update limiting values
+    --     local currentConcentrationCost = self:GetConcentrationCostForSkill(self.professionStats.skill.value, true) -- do not round!
+    --     local boughtConcentration = lastConcentrationCost - currentConcentrationCost
+    --     local totalConcentrationBuyPrice = lastProfit - self.averageProfitCached
+    --     local averageConcentrationBuyPrice = totalConcentrationBuyPrice / boughtConcentration
+    --     currentConcentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(self, self.averageProfitCached)
+
+    --     if averageConcentrationBuyPrice >= currentConcentrationValue then
+    --         self:SetReagentsByCraftingReagentInfoTbl(lastCraftingReagentInfoTbl)
+    --         self:Update()
+    --         break
+    --     end
+    -- end
     CraftSim.DEBUG:StopProfiling("ConcentrationOptimization")
 
     -- recipe should now be optimized
-
-    CraftSim.DEBUG:InspectTable(self, "ConcentrationOptimizedRecipeData")
-    CraftSim.DEBUG:InspectTable(debugData, "debugData")
 end
 
 ---@return number
