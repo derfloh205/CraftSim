@@ -208,10 +208,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
         self.baseOperationInfo = self:GetCraftingOperationInfoForRecipeCrafter()
     end
 
-    -- self.reagentsMaxSkillFactor = self.reagentData:GetMaxSkillFactor()
-    -- self.reagentsMaxSkillContribution = self.reagentsMaxSkillFactor *
-    --     self.baseOperationInfo.baseDifficulty
-
     ---@type CraftSim.ProfessionStats
     self.baseProfessionStats = CraftSim.ProfessionStats()
     ---@type CraftSim.ProfessionStats
@@ -224,11 +220,6 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
 
     if self.supportsIngenuity and self.supportsSpecializations then
         self.concentrationData = self:GetConcentrationDataForCrafter()
-    end
-
-    -- exception: when salvage recipe, then resourcefulness is supported!
-    if self.isSalvageRecipe then
-        self.supportsResourcefulness = true
     end
 
     if self.professionData:UsesGear() then
@@ -244,6 +235,12 @@ function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
     -- As we dont know in this case what the factors are without gear and reagents and such
     -- we set them to 0 and let them accumulate in UpdateProfessionStats
     self.baseProfessionStats:ClearExtraValues()
+
+    -- exception: when salvage recipe, then resourcefulness is supported! set the base manually to the specs one
+    if self.isSalvageRecipe then
+        self.supportsResourcefulness = true
+        self.baseProfessionStats.resourcefulness.value = self.specializationData.professionStats.resourcefulness.value
+    end
 
     self:UpdateProfessionStats()
 
@@ -362,6 +359,7 @@ function CraftSim.RecipeData:SetAllReagentsBySchematicForm()
         local salvageAllocation = currentTransaction:GetSalvageAllocation()
         if salvageAllocation and schematicForm.salvageSlot then
             self.reagentData.salvageReagentSlot:SetItem(salvageAllocation:GetItemID())
+            self.allocationItemGUID = salvageAllocation:GetItemGUID()
             self.reagentData.salvageReagentSlot.requiredQuantity = schematicForm.salvageSlot.quantityRequired
         elseif not schematicForm.salvageSlot then
             error("CraftSim RecipeData Error: Salvage Recipe without salvageSlot")
@@ -1278,7 +1276,7 @@ function CraftSim.RecipeData:GetCraftingOperationInfoForRecipeCrafter()
         operationInfo = C_TradeSkillUI.GetCraftingOperationInfo(self.recipeID, {}, self.allocationItemGUID,
             self.concentrating)
 
-        -- check for too early access?
+
         CraftSim.DB.CRAFTER:SaveOperationInfoForRecipe(crafterUID, self.recipeID, operationInfo)
     end
 
