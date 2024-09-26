@@ -156,21 +156,21 @@ function CraftSim.LOCAL_CN:GetData()
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim 材料优化",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "可达到品质：",
-        [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "缺少材料",
-        [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "可用材料",
-        [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "最便宜材料",
-        [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "已分配最佳组合",
-        [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "无法找到提高\n品质的组合",
-        [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "分配",
-        [CraftSim.CONST.TEXT.MATERIALS_MAXIMUM_QUALITY] = "最高品质：",
-        [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_LABEL] = "平均 Ø 利润：",
-        [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_TOOLTIP] =
+        [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "缺少材料",
+        [CraftSim.CONST.TEXT.REAGENTS_AVAILABLE] = "可用材料",
+        [CraftSim.CONST.TEXT.REAGENTS_CHEAPER] = "最便宜材料",
+        [CraftSim.CONST.TEXT.REAGENTS_BEST_COMBINATION] = "已分配最佳组合",
+        [CraftSim.CONST.TEXT.REAGENTS_NO_COMBINATION] = "无法找到提高\n品质的组合",
+        [CraftSim.CONST.TEXT.REAGENTS_ASSIGN] = "分配",
+        [CraftSim.CONST.TEXT.REAGENTS_MAXIMUM_QUALITY] = "最高品质：",
+        [CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_LABEL] = "平均 Ø 利润：",
+        [CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_TOOLTIP] =
             "当使用" .. f.l("这种材料分配") .. "时" .. f.bb("每个制造的平均利润"),
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BEST_ASSIGNED] = "已分配最佳材料",
-        [CraftSim.CONST.TEXT.MATERIALS_CONCENTRATION_LABEL] = "专注：",
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_INFO] = "在数字上按Shift+鼠标左键将物品链接放入聊天中",
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON] = "优化",
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_TOOLTIP] =
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED] = "已分配最佳材料",
+        [CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL] = "专注：",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "在数字上按Shift+鼠标左键将物品链接放入聊天中",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON] = "优化",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP] =
             f.r("实验性：") ..
             "性能需求繁重，并在编辑时重置。\n为每个集中值的 " ..
             f.gold("最高金币价值") .. " 优化",

@@ -164,21 +164,21 @@ function CraftSim.LOCAL_EN:GetData()
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Reagent Optimization",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Reachable Quality: ",
-        [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Materials missing",
-        [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Materials available",
-        [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Cheapest Materials",
-        [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "Best combination assigned",
-        [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "No combination found \nto increase quality",
-        [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "Assign",
-        [CraftSim.CONST.TEXT.MATERIALS_MAXIMUM_QUALITY] = "Maximum Quality: ",
-        [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_LABEL] = "Average Ø Profit: ",
-        [CraftSim.CONST.TEXT.MATERIALS_AVERAGE_PROFIT_TOOLTIP] =
+        [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Reagents missing",
+        [CraftSim.CONST.TEXT.REAGENTS_AVAILABLE] = "Reagents available",
+        [CraftSim.CONST.TEXT.REAGENTS_CHEAPER] = "Cheapest Reagents",
+        [CraftSim.CONST.TEXT.REAGENTS_BEST_COMBINATION] = "Best combination assigned",
+        [CraftSim.CONST.TEXT.REAGENTS_NO_COMBINATION] = "No combination found \nto increase quality",
+        [CraftSim.CONST.TEXT.REAGENTS_ASSIGN] = "Assign",
+        [CraftSim.CONST.TEXT.REAGENTS_MAXIMUM_QUALITY] = "Maximum Quality: ",
+        [CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_LABEL] = "Average Ø Profit: ",
+        [CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_TOOLTIP] =
             f.bb("The Average Profit per Craft") .. " when using " .. f.l("this reagent allocation"),
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BEST_ASSIGNED] = "Best Reagents Assigned",
-        [CraftSim.CONST.TEXT.MATERIALS_CONCENTRATION_LABEL] = "Concentration: ",
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_INFO] = "Shift + LMB on numbers to put the item link in chat",
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_BUTTON] = "Optimize",
-        [CraftSim.CONST.TEXT.MATERIALS_OPTIMIZE_TOOLTIP] =
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED] = "Best Reagents Assigned",
+        [CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL] = "Concentration: ",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "Shift + LMB on numbers to put the item link in chat",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON] = "Optimize",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP] =
             f.r("Experimental: ") ..
             "Performance Heavy and Resets on Edit.\nOptimizes for " ..
             f.gold("Highest Gold Value") .. " per concentration point",

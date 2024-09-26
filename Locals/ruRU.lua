@@ -159,12 +159,12 @@ function CraftSim.LOCAL_RU:GetData()
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Оптимизация материалов CraftSim",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Достижимое качество: ",
-        [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Недостающие материалы",
-        [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Доступные материалы",
-        [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Самые дешевые материалы",
-        [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "Назначена лучшая комбинация",
-        [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "Повышающая качество \nкомбинация не найдена",
-        [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "Назначить",
+        [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Недостающие материалы",
+        [CraftSim.CONST.TEXT.REAGENTS_AVAILABLE] = "Доступные материалы",
+        [CraftSim.CONST.TEXT.REAGENTS_CHEAPER] = "Самые дешевые материалы",
+        [CraftSim.CONST.TEXT.REAGENTS_BEST_COMBINATION] = "Назначена лучшая комбинация",
+        [CraftSim.CONST.TEXT.REAGENTS_NO_COMBINATION] = "Повышающая качество \nкомбинация не найдена",
+        [CraftSim.CONST.TEXT.REAGENTS_ASSIGN] = "Назначить",
 
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "Информация о специализации CraftSim",

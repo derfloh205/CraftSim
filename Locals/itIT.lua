@@ -132,12 +132,12 @@ function CraftSim.LOCAL_IT:GetData()
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "Ottimizzazione Materiali",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Qualità raggiungibile: ",
-        [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "Materiali mancanti",
-        [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "Materiali disponibioli",
-        [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "Materiali più economici",
-        [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "Miglior combinazione assegnata",
-        [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "Nessuna combinazione trovata\nper incrementare la qualità",
-        [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "Assegna",
+        [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Materiali mancanti",
+        [CraftSim.CONST.TEXT.REAGENTS_AVAILABLE] = "Materiali disponibioli",
+        [CraftSim.CONST.TEXT.REAGENTS_CHEAPER] = "Materiali più economici",
+        [CraftSim.CONST.TEXT.REAGENTS_BEST_COMBINATION] = "Miglior combinazione assegnata",
+        [CraftSim.CONST.TEXT.REAGENTS_NO_COMBINATION] = "Nessuna combinazione trovata\nper incrementare la qualità",
+        [CraftSim.CONST.TEXT.REAGENTS_ASSIGN] = "Assegna",
 
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "Info Specializzazioni di CraftSim",

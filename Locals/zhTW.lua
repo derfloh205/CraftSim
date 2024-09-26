@@ -107,12 +107,12 @@ function CraftSim.LOCAL_TW:GetData()
         -- Materials Frame
         [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim 材料最佳化",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "可達到品質: ",
-        [CraftSim.CONST.TEXT.MATERIALS_MISSING] = "缺少材料",
-        [CraftSim.CONST.TEXT.MATERIALS_AVAILABLE] = "可用材料",
-        [CraftSim.CONST.TEXT.MATERIALS_CHEAPER] = "最便宜材料",
-        [CraftSim.CONST.TEXT.MATERIALS_BEST_COMBINATION] = "已分配最佳組合",
-        [CraftSim.CONST.TEXT.MATERIALS_NO_COMBINATION] = "無法找到提高\n品質的組合",
-        [CraftSim.CONST.TEXT.MATERIALS_ASSIGN] = "分配",
+        [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "缺少材料",
+        [CraftSim.CONST.TEXT.REAGENTS_AVAILABLE] = "可用材料",
+        [CraftSim.CONST.TEXT.REAGENTS_CHEAPER] = "最便宜材料",
+        [CraftSim.CONST.TEXT.REAGENTS_BEST_COMBINATION] = "已分配最佳組合",
+        [CraftSim.CONST.TEXT.REAGENTS_NO_COMBINATION] = "無法找到提高\n品質的組合",
+        [CraftSim.CONST.TEXT.REAGENTS_ASSIGN] = "分配",
 
         -- Specialization Info Frame
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "CraftSim 專精資訊",
