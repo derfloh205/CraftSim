@@ -170,8 +170,6 @@ function CraftSim.DB.OPTIONS:Migrate()
                 CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_RESTOCK_PER_RECIPE_OPTIONS] =
                 CraftSimOptions.craftQueueRestockPerRecipeOptions
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER] =
-                CraftSimOptions.craftQueueShoppingListPerCharacter
             CraftSimDB.optionsDB.data["CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE"] =
                 CraftSimOptions.craftQueueShoppingListTargetMode
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED] =
@@ -253,6 +251,12 @@ function CraftSim.DB.OPTIONS:Migrate()
         CraftSimDB.optionsDB.data["PROFIT_CALCULATION_MULTICRAFT_CONSTANT"] = nil
 
         CraftSimDB.optionsDB.version = 8
+    end
+
+    -- option removal
+    if CraftSimDB.optionsDB.version == 8 then
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER"] = nil
+        CraftSimDB.optionsDB.version = 9
     end
 end
 

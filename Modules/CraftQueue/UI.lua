@@ -603,22 +603,6 @@ function CraftSim.CRAFTQ.UI:Init()
                 end,
                 label = L(CraftSim.CONST.TEXT.CRAFTQUEUE_AUCTIONATOR_SHOPPING_LIST_BUTTON_LABEL)
             })
-
-            queueTab.content.shoppingListPerCharacterCB = GGUI.Checkbox({
-                parent = queueTab.content,
-                anchorParent = queueTab.content.createAuctionatorShoppingList.frame,
-                anchorA = "LEFT",
-                anchorB = "RIGHT",
-                offsetX = 5,
-                labelOptions = {
-                    text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX),
-                },
-                tooltip = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_AUCTIONATOR_SHOPPING_LIST_PER_CHARACTER_CHECKBOX_TOOLTIP),
-                initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER"),
-                clickCallback = function(_, checked)
-                    CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER", checked)
-                end
-            })
         end
 
         -- summaries
@@ -1351,7 +1335,8 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
         local button = craftButton.frame --[[@as Button]]
         queueTab.content.craftNextButton:SetEnabled(button:IsEnabled())
         queueTab.content.craftNextButton.clickCallback = craftButton.clickCallback
-        queueTab.content.craftNextButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NEXT) .. button:GetText(), 10, true)
+        queueTab.content.craftNextButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NEXT) .. button:GetText(), 10,
+            true)
     else
         queueTab.content.craftNextButton:SetEnabled(false)
         queueTab.content.craftNextButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NOTHING_QUEUED), 10, true)
@@ -1841,13 +1826,14 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
 
         if recipeData.orderData.minQuality then
             craftOrderInfoText = craftOrderInfoText ..
-            L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY) .. GUTIL:GetQualityIconString(recipeData.orderData.minQuality, 15, 15)
+                L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY) ..
+                GUTIL:GetQualityIconString(recipeData.orderData.minQuality, 15, 15)
         end
     end
 
     -- if we got npcOrderRewards than we need to delay the tooltip display data
-  
-  
+
+
 
     if recipeData.orderData and recipeData.orderData.npcOrderRewards then
         craftOrderInfoText = craftOrderInfoText .. L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS)
