@@ -20,8 +20,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("18.2.3"),
         f.P ..
         "Added a " ..
-        f.r("Warning Icon") .. " in " .. f.bb("Average Profit") .. " if any " .. f.l("Price Override") .. " is active",
-        f.a .. "- Yeah I happily crafted enchants the last days while my storm dust was set on 1g...",
+        f.r("Warning Icon") .. " in " .. f.bb("Average Profit"),
+        f.a .. "if any " .. f.l("Price Override") .. " is active",
         newP("18.2.2"),
         f.s .. f.g("Material Optimization") .. " renamed to " .. f.bb("Reagent Optimization"),
         f.p .. "Rewrote oome optimizationsptimizations to be frame distributed",
