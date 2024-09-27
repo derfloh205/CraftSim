@@ -100,6 +100,19 @@ function CraftSim.AVERAGEPROFIT.UI:Init()
             end
         }
 
+        frame.content.priceOverrideWarning = GGUI.Texture {
+            atlas = "Ping_Chat_Warning",
+            sizeX = 25, sizeY = 25,
+            parent = frame.content,
+            anchorParent = frame.content,
+            anchorA = "TOPLEFT", anchorB = "TOPLEFT",
+            offsetX = 15, offsetY = -8,
+            tooltipOptions = {
+                anchor = "ANCHOR_CURSOR_RIGHT",
+                text = f.l("Price Overrides Active"),
+            },
+        }
+
         frame:Hide()
     end
 
@@ -107,10 +120,16 @@ function CraftSim.AVERAGEPROFIT.UI:Init()
     createContent(CraftSim.AVERAGEPROFIT.frameWO)
 end
 
+---@param recipeData CraftSim.RecipeData
 ---@param statWeights CraftSim.Statweights
-function CraftSim.AVERAGEPROFIT.UI:UpdateDisplay(statWeights, craftingCosts)
+function CraftSim.AVERAGEPROFIT.UI:UpdateDisplay(recipeData, statWeights)
     local averageProfitFrame = self:GetFrameByExportMode()
     local showProfitPercentage = CraftSim.DB.OPTIONS:Get("SHOW_PROFIT_PERCENTAGE")
+
+    local craftingCosts = recipeData.priceData.craftingCosts
+
+    local priceOverrideWarningIcon = averageProfitFrame.content.priceOverrideWarning --[[@as GGUI.Texture]]
+    priceOverrideWarningIcon:SetVisible(recipeData.priceData:PriceOverridesActive())
 
     local profitList = averageProfitFrame.content.profitList --[[@as GGUI.FrameList]]
     profitList:Remove()

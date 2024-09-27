@@ -694,7 +694,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		local statWeights = CraftSim.AVERAGEPROFIT:CalculateStatWeights(recipeData)
 
 		if statWeights then
-			CraftSim.AVERAGEPROFIT.UI:UpdateDisplay(statWeights, recipeData.priceData.craftingCosts)
+			CraftSim.AVERAGEPROFIT.UI:UpdateDisplay(recipeData, statWeights)
 		end
 	end
 

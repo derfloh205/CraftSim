@@ -40,6 +40,24 @@ function CraftSim.PriceData:IsSelfCraftedReagent(itemID)
     return tContains(self.selfCraftedReagents, itemID)
 end
 
+---@return boolean active
+function CraftSim.PriceData:PriceOverridesActive()
+    local reagentOverride = GUTIL:Some(self.reagentPriceInfos, function(info)
+        return info.priceInfo.isOverride
+    end)
+
+    if reagentOverride then return true end
+
+    for qualityID, _ in ipairs(self.recipeData.resultData.itemsByQuality or {}) do
+        local overrideInfo = CraftSim.DB.PRICE_OVERRIDE:GetResultOverride(self.recipeData.recipeID, qualityID)
+        if overrideInfo then
+            return true
+        end
+    end
+
+    return false
+end
+
 --- Update Pricing Information based on reagentData and resultData and any price overrides
 function CraftSim.PriceData:Update()
     local resultData = self.recipeData.resultData
@@ -217,7 +235,7 @@ function CraftSim.PriceData:UpdateReagentPriceInfos()
 
     ---@type CraftSim.OptionalReagent[]
     local possibleOptionals = (reagentData:HasSparkSlot() and CopyTable(reagentData.sparkReagentSlot.possibleReagents, true)) or
-    {}
+        {}
     for _, optionalSlot in ipairs(GUTIL:Concat { reagentData.optionalReagentSlots or {}, reagentData.finishingReagentSlots or {} }) do
         tAppendAll(possibleOptionals, optionalSlot.possibleReagents)
     end
