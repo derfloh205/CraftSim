@@ -659,6 +659,12 @@ function CraftSim.RecipeData:OptimizeReagents(options)
         return
     end
 
+
+    if not self.supportsQualities then
+        self:SetCheapestQualityReagentsMax()
+        return
+    end
+
     options = options or {}
     options.maxQuality = options.maxQuality or self.maxQuality
     options.highestProfit = options.highestProfit or false

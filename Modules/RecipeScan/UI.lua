@@ -854,7 +854,8 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
             row.recipeData = recipeData
 
-            local enableConcentration = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
+            local enableConcentration = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") and
+            recipeData.supportsQualities
 
             local recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
 
