@@ -666,28 +666,42 @@ function CraftSim.RecipeData:OptimizeReagents(options)
     local optimizationResult
 
     if options.highestProfit then
-        -- sim for each quality and choose highest raw profit
-        local highestProfit
+        local optimizationResults = {}
 
         for i = 1, options.maxQuality, 1 do
-            local qualityOptimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, {
-                highestProfit = true,
-                maxQuality = i
-            })
-            self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
+            local qualityOptimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, i)
+
+            self.reagentData:SetReagentsByOptimizationResult(qualityOptimizationResult)
             self:Update()
 
-            if not optimizationResult or highestProfit < self.averageProfitCached then
-                optimizationResult = qualityOptimizationResult
-                highestProfit = self.averageProfitCached
-            end
+            tinsert(optimizationResults, {
+                result = qualityOptimizationResult,
+                averageProfit = self.averageProfitCached
+            })
         end
+
+        -- CraftSim.DEBUG:InspectTable(optimizationResults, "optimizationResults")
+
+        local bestOptimizationResult = GUTIL:Fold(optimizationResults, optimizationResults[1],
+            function(highestProfitResult, nextResult, qualityID)
+                if highestProfitResult.averageProfit >= nextResult.averageProfit then
+                    return highestProfitResult
+                else
+                    return nextResult
+                end
+            end)
+        optimizationResult = bestOptimizationResult.result
     else
-        optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, options)
+        optimizationResult = CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(self, options.maxQuality)
     end
 
     self.reagentData:SetReagentsByOptimizationResult(optimizationResult)
     self:Update()
+
+    -- CraftSim.DEBUG:InspectTable({
+    --     optimizationResult = optimizationResult,
+    --     highestProfit = self.averageProfitCached,
+    -- }, "qualityOptimizationResult CHOSEN")
 end
 
 ---@return table<ItemID, number>

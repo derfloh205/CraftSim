@@ -892,7 +892,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
                     averageProfit)
             end
 
-            if enableConcentration and row.concentrationProfit then
+            if enableConcentration and (row.concentrationProfit > 0) then
                 averageProfit = row.concentrationProfit
             end
 

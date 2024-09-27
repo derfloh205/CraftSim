@@ -20,11 +20,14 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("18.2.3"),
         f.P ..
         "Added a " ..
-        f.r("Warning Icon") .. " in " .. f.bb("Average Profit"),
-        f.a .. "if any " .. f.l("Price Override") .. " is active",
+        f.r("Warning Icon") .. " in " .. f.bb("Average Profit") .. " for " .. f.l("Price Overrides"),
+        f.p .. f.bb("Top Profit Reagent Optimization"),
+        f.a .. "- Fixed not choosing highest profit quality",
+        f.p .. f.bb("Recipe Scan"),
+        f.a .. "- Fixed max quality recipe profit when concentrating",
         newP("18.2.2"),
         f.s .. f.g("Material Optimization") .. " renamed to " .. f.bb("Reagent Optimization"),
-        f.p .. "Rewrote oome optimizationsptimizations to be frame distributed",
+        f.p .. "Rewrote some optimizations to be frame distributed",
         f.p .. "Fixed " .. f.bb("Craft Queue") .. " Shopping List optional reagent quality bug",
         newP("18.2.1"),
         f.P .. f.g("Reagent Optimization"),

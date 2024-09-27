@@ -283,9 +283,9 @@ end
 
 -- By Liqorice's knapsack solution
 ---@param recipeData CraftSim.RecipeData
----@param options CraftSim.RecipeData.OptimizeReagentOptions
+---@param maxQuality number?
 ---@return CraftSim.ReagentOptimizationResult?
-function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, options)
+function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, maxQuality)
     if not recipeData.hasQualityReagents then
         return nil
     end
@@ -302,7 +302,7 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
         return result
     end
 
-    local maxOptimizationQuality = math.min(options.maxQuality, recipeData.maxQuality)
+    local maxOptimizationQuality = math.min(maxQuality or recipeData.maxQuality, recipeData.maxQuality)
 
     -- Create Knapsacks for required reagents with different Qualities
     local requiredReagents = GUTIL:Filter(recipeData.reagentData.requiredReagents, function(reagent)
@@ -474,12 +474,12 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, opt
     local resultsUnfiltered = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP, recipeData)
 
     -- remove any result that maps to the expected quality without reagent increase
-    -- NEW: any that is below! Same is fine
-    local results = GUTIL:Filter(resultsUnfiltered, function(result)
-        return result.qualityID >= expectedQualityWithoutReagents
-    end)
+    -- -- NEW: any that is below! Same is fine
+    -- local results = GUTIL:Filter(resultsUnfiltered, function(result)
+    --     return result.qualityID >= expectedQualityWithoutReagents
+    -- end)
 
-    local bestResult = results[1]
+    local bestResult = resultsUnfiltered[1]
 
     if bestResult then
         -- if certain qualityIDs have the same price, use the higher qualityID

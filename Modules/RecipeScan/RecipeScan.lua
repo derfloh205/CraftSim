@@ -313,6 +313,11 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
             return
         end
 
+        if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") then
+            recipeData.concentrating = true
+            recipeData:Update()
+        end
+
         -- if optimizing subrecipes
         if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES") then
             printS("Optimizing SubRecipes..")
