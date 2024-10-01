@@ -63,16 +63,15 @@ function CraftSim.LOCAL_DE:GetData()
 
         -- Gewinnaufschlüsselung Tooltips
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_EXPLANATION_TOOLTIP] =
-        "Einfallsreichtum proct für jedes Material einzeln und spart dann etwa 30 % der Menge.\n\nDer durchschnittliche Wert, den es spart, ist der durchschnittliche gesparte Wert aller Kombinationen und deren Chancen.\n(Dass alle Materialien gleichzeitig proccen, ist sehr unwahrscheinlich, spart aber viel.)\n\nDie durchschnittlichen Gesamtkosten der gesparten Materialien sind die Summe der gesparten Materialkosten aller Kombinationen, gewichtet nach deren Wahrscheinlichkeit.",
-
+        "Einfallsreichtum proct für jedes Reagenz einzeln und spart dann etwa 30 % der Menge.\n\nDer durchschnittliche Wert, den es spart, ist der durchschnittliche gesparte Wert aller Kombinationen und deren Chancen.\n(Dass alle Reagenzien gleichzeitig proccen, ist sehr unwahrscheinlich, spart aber viel.)\n\nDie durchschnittlichen Gesamtkosten der gesparten Reagenzien sind die Summe der gesparten Reagenzkosten aller Kombinationen, gewichtet nach deren Wahrscheinlichkeit.",
         [CraftSim.CONST.TEXT.RECIPE_DIFFICULTY_EXPLANATION_TOOLTIP] =
         "Die Rezeptschwierigkeit bestimmt, wo die Schwellenwerte der verschiedenen Qualitäten liegen.\n\nBei Rezepten mit fünf Qualitätsstufen liegen diese bei 20 %, 50 %, 80 % und 100 % der Rezeptschwierigkeit als Fertigkeit.\nBei Rezepten mit drei Qualitätsstufen liegen sie bei 50 % und 100 %.",
         [CraftSim.CONST.TEXT.MULTICRAFT_EXPLANATION_TOOLTIP] =
         "Mehrfachherstellung gibt dir eine Chance, mehr Gegenstände herzustellen, als du normalerweise mit einem Rezept produzieren würdest.\n\nDie zusätzliche Menge liegt normalerweise zwischen 1 und 2,5y,\nwobei y = die übliche Menge ist, die eine Herstellung ergibt.",
         [CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP] =
-        "Die Qualität deiner Materialien kann dir maximal 40% der Grundrezeptschwierigkeit als Bonus-Fertigkeit geben.\n\nAlle Q1-Materialien: 0% Bonus\nAlle Q2-Materialien: 20% Bonus\nAlle Q3-Materialien: 40% Bonus\n\nDie Fertigkeit wird berechnet, indem die Menge der Materialien jeder Qualität gegen ihre Qualität\nund einen spezifischen Gewichtswert abgewogen wird, der für jedes einzelne Handwerksmaterial des Drachenflugs einzigartig ist.\n\nDies ist jedoch bei Neuanfertigungen anders. Dort hängt die maximale Qualitätssteigerung durch die Reagenzien davon ab,\nmit welcher Materialqualität der Gegenstand ursprünglich hergestellt wurde.\nDie genauen Abläufe sind nicht bekannt.\nCraftSim vergleicht jedoch intern die erreichte Fertigkeit mit allen Q3 und berechnet\nden maximalen Fertigkeitszuwachs basierend darauf.",
+        "Die Qualität deiner Reagenzien kann dir bis zu 40 % der Grundrezeptschwierigkeit als Bonusfertigkeit geben.\n\nAlle Q1-Reagenzien: 0% Bonus\nAlle Q2-Reagenzien: 20% Bonus\nAlle Q3-Reagenzien: 40% Bonus\n\nDie Fertigkeit wird durch die Menge der Reagenzien jeder Qualität berechnet, gewichtet nach ihrer Qualität\nund einem spezifischen Gewichtswert, der für jedes handwerkliche Reagenz mit Qualität einzigartig ist.\n\nDies ist jedoch bei Neuanfertigungen anders. Dort hängt die maximale Qualitätssteigerung durch die Reagenzien davon ab,\nmit welcher Reagenzienqualität der Gegenstand ursprünglich hergestellt wurde.\nDie genauen Mechanismen sind nicht bekannt.\nCraftSim vergleicht jedoch intern die erreichte Fertigkeit mit allen Q3-Reagenzien\nund berechnet den maximalen Fertigkeitsanstieg basierend darauf.",
         [CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP] =
-        "Der maximale Beitrag der Materialien zu einem Rezept beträgt meistens 40 % der Grundrezept-Schwierigkeit.\n\nIm Falle einer Neuanfertigung kann dieser Wert jedoch je nach vorherigen Anfertigungen\nund der Qualität der verwendeten Materialien variieren.",
+        "Der maximale Beitrag der Reagenzien zu einem Rezept beträgt meistens 40 % der Grundrezept-Schwierigkeit.\n\nIm Falle einer Neuanfertigung kann dieser Wert jedoch je nach vorherigen Anfertigungen\nund der Qualität der verwendeten Reagenzien variieren.",
 
         -- Simulationsmodus
         [CraftSim.CONST.TEXT.SIMULATION_MODE_NONE] = "Keine",
@@ -93,8 +92,9 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_LABEL] = "Einfallsreichtum: ",
         [CraftSim.CONST.TEXT.RESOURCEFULNESS_BONUS_LABEL] = "Einfallsreichtum-Gegenstandsbonus: ",
         [CraftSim.CONST.TEXT.CONCENTRATION_LABEL] = "Konzentration: ",
-        [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "Materialqualitätsbonus: ",
-        [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "Maximale Materialqualität %: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_BONUS_LABEL] = "Qualitätsbonus für Reagenzien: ",
+        [CraftSim.CONST.TEXT.REAGENT_QUALITY_MAXIMUM_LABEL] = "Reagenzienqualität Maximum %:: ",
+
         [CraftSim.CONST.TEXT.EXPECTED_QUALITY_LABEL] = "Erwartete Qualität: ",
         [CraftSim.CONST.TEXT.NEXT_QUALITY_LABEL] = "Nächste Qualität: ",
         [CraftSim.CONST.TEXT.MISSING_SKILL_LABEL] = "Fehlende Fertigkeit: ",
@@ -168,16 +168,29 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING] =
         "Keine Preisquelle gefunden!\n\nDu musst mindestens eines der\nfolgenden Preisquellen-Addons installiert haben, um\ndie Gewinnberechnungen von CraftSim zu nutzen:\n\n\n",
         [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_SUPPRESS] = "Warnung nicht mehr anzeigen",
+        [CraftSim.CONST.TEXT.POPUP_NO_PRICE_SOURCE_WARNING_ACCEPT] = "OK",																		  
 
         -- Materialfenster
-        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Materialoptimierung",
+        [CraftSim.CONST.TEXT.REAGENT_OPTIMIZATION_TITLE] = "CraftSim Reagenzien Optimierung",
         [CraftSim.CONST.TEXT.REAGENTS_REACHABLE_QUALITY] = "Erreichbare Qualität: ",
-        [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Materialien fehlen",
-        [CraftSim.CONST.TEXT.REAGENTS_AVAILABLE] = "Materialien verfügbar",
-        [CraftSim.CONST.TEXT.REAGENTS_CHEAPER] = "Günstigste Materialien",
+        [CraftSim.CONST.TEXT.REAGENTS_MISSING] = "Reagenzien fehlen",
+        [CraftSim.CONST.TEXT.REAGENTS_AVAILABLE] = "Reagenzien verfügbar",
+        [CraftSim.CONST.TEXT.REAGENTS_CHEAPER] = "Günstigste Reagenzien",
         [CraftSim.CONST.TEXT.REAGENTS_BEST_COMBINATION] = "Beste Kombination zugewiesen",
         [CraftSim.CONST.TEXT.REAGENTS_NO_COMBINATION] = "Keine Kombination gefunden,\num die Qualität zu erhöhen",
         [CraftSim.CONST.TEXT.REAGENTS_ASSIGN] = "Zuweisen",
+        [CraftSim.CONST.TEXT.REAGENTS_MAXIMUM_QUALITY] = "Maximale Qualität: ",
+        [CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_LABEL] = "Ø Gewinn: ",
+        [CraftSim.CONST.TEXT.REAGENTS_AVERAGE_PROFIT_TOOLTIP] =
+            f.bb("Der durchschnittliche Gewinn pro Herstellung") .. " bei Verwendung von " .. f.l("dieser Reagenzienverteilung"),
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BEST_ASSIGNED] = "Beste Reagenzien zugewiesen",
+        [CraftSim.CONST.TEXT.REAGENTS_CONCENTRATION_LABEL] = "Konzentration: ",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_INFO] = "Shift + LMT auf die Zahlen, um den Gegenstandslink in den Chat einzufügen",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_BUTTON] = "Optimieren",
+        [CraftSim.CONST.TEXT.REAGENTS_OPTIMIZE_TOOLTIP] =
+            f.r("Experimentell: ") ..
+            "Leistungsintensiv und wird bei Änderungen zurückgesetzt.\nOptimiert für den " ..
+            f.gold("höchsten Goldwert") .. " pro Konzentrationspunkt",
 
         -- Spezialisierungs-Infofenster
         [CraftSim.CONST.TEXT.SPEC_INFO_TITLE] = "CraftSim Spezialisierungsinfo",
@@ -237,7 +250,7 @@ function CraftSim.LOCAL_DE:GetData()
         -- Kostendetailsfenster
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_TITLE] = "CraftSim Kostenoptimierung",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_EXPLANATION] =
-            "Hier kannst du eine Übersicht über alle möglichen Preise der verwendeten Materialien sehen.\nDie " ..
+            "Hier kannst du eine Übersicht über alle möglichen Preise der verwendeten Reagenzien sehen.\nDie " ..
             f.bb("'Verwendete Quelle'") ..
             " Spalte zeigt an, welche der Preise verwendet wird.\n\n" ..
             f.g("AH") ..
@@ -250,7 +263,8 @@ function CraftSim.LOCAL_DE:GetData()
             " wird immer verwendet, wenn gesetzt. " ..
             f.bb("Herstellungskosten") .. " werden nur verwendet, wenn sie niedriger sind als " .. f.g("AH"),
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_COSTS] = "Herstellungskosten: ",
-        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER] = "Gegenstand",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_ITEM_HEADER] = "Item",
+
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_AH_PRICE_HEADER] = "AH-Preis",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_OVERRIDE_HEADER] = "Überschreibung",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_CRAFTING_HEADER] = "Herstellung",
@@ -269,9 +283,9 @@ function CraftSim.LOCAL_DE:GetData()
             "Wenn aktiviert, berücksichtigt " ..
             f.l("CraftSim") .. " die Reagenzienqualität, selbst wenn Konzentration erforderlich ist.",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES] = "Abklingzeit Rezepte einbeziehen",
-        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP] =
-            "Wenn aktiviert, ignoriert " ..
-            f.l("CraftSim") .. " die Abklingzeiten von Rezepten bei der Berechnung von selbst hergestellten Materialien.",
+        [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWN_RECIPES_TOOLTIP] = "Wenn aktiviert, ignoriert " ..
+            f.l("CraftSim") .. " die Abklingzeiten von Rezepten bei der Berechnung selbst hergestellter Reagenzien.",
+
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_SUB_RECIPE_SELECT_RECIPE_CRAFTER] = "Rezepthersteller auswählen",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_AH_COLUMN_AUCTION_BUYOUT] = "Auktions Sofortkauf: ",
         [CraftSim.CONST.TEXT.COST_OPTIMIZATION_REAGENT_LIST_OVERRIDE] = "\n\nÜberschreiben",
@@ -289,7 +303,8 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.STATISTICS_AFTER] = " nach",
         [CraftSim.CONST.TEXT.STATISTICS_CRAFTS] = "Herstellungen: ",
         [CraftSim.CONST.TEXT.STATISTICS_QUALITY_HEADER] = "Qualität",
-        [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "Mehrfachherstellung",
+        [CraftSim.CONST.TEXT.STATISTICS_MULTICRAFT_HEADER] = "Mehrfach\nherstellung",
+
         [CraftSim.CONST.TEXT.STATISTICS_RESOURCEFULNESS_HEADER] = "Einfallsreichtum",
         [CraftSim.CONST.TEXT.STATISTICS_EXPECTED_PROFIT_HEADER] = "Erwarteter Gewinn",
         [CraftSim.CONST.TEXT.PROBABILITY_TABLE_TITLE] = "Rezeptwahrscheinlichkeitstabelle",
@@ -304,7 +319,7 @@ function CraftSim.LOCAL_DE:GetData()
         -- Preisdetailsfenster
         [CraftSim.CONST.TEXT.COST_OVERVIEW_TITLE] = "CraftSim Preisdaten",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_INV_AH] = "Inventar/AH",
-        [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "Gegenstand",
+        [CraftSim.CONST.TEXT.PRICE_DETAILS_ITEM] = "Gegen\nstand",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PRICE_ITEM] = "Preis/Gegenstand",
         [CraftSim.CONST.TEXT.PRICE_DETAILS_PROFIT_ITEM] = "Gewinn/Gegenstand",
 
@@ -346,7 +361,8 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CRAFTER_HEADER] = "Handwerker",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_RECIPE_HEADER] = "Rezept",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_LEARNED_HEADER] = "Erlernt",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_RESULT_HEADER] = "Ergebnis",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_RESULT_HEADER] = "Ergeb\nnis",
+
         [CraftSim.CONST.TEXT.RECIPE_SCAN_AVERAGE_PROFIT_HEADER] = "Durchschnittlicher Gewinn",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_VALUE_HEADER] = "Konz.-Wert",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_COST_HEADER] = "Konz.-Kosten",
@@ -362,9 +378,10 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX] = "Nur Favoriten",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_ONLY_FAVORITES_CHECKBOX_TOOLTIP] = "Scanne nur deine Lieblingsrezepte",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_EQUIPPED] = "Ausgerüstet",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Materialqualität 1",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Materialqualität 2",
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Materialqualität 3",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q1] = "Reagenzien Qualität 1",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q2] = "Reagenzien Qualität 2",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_Q3] = "Reagenzien Qualität 3",
+
         [CraftSim.CONST.TEXT.RECIPE_SCAN_MODE_OPTIMIZE] = "Reagenzien optimieren",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_PROFIT] = "Gewinn",
         [CraftSim.CONST.TEXT.RECIPE_SCAN_SORT_MODE_RELATIVE_PROFIT] = "Relativer Gewinn",
@@ -395,7 +412,8 @@ function CraftSim.LOCAL_DE:GetData()
             " auch die Herstellung von zwischengespeicherten Reagenz-Rezepten der gescannten Rezepte und verwendet ihre\n" ..
             f.bb("erwarteten Kosten") .. ", um die Herstellungskosten für das Endprodukt zu berechnen.\n\n" ..
             f.r("Warnung: Dies könnte die Scan-Leistung verringern"),
-        [CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES] = "Cached Recipes: ",
+        [CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES] = "Zwischengespeicherte Rezepte: ",
+
 
         -- Rezept-Beste Ausrüstung
         [CraftSim.CONST.TEXT.TOP_GEAR_TITLE] = "CraftSim Beste Ausrüstung",
@@ -432,7 +450,9 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_REMEMBER_LAST_RECIPE_TOOLTIP] =
         "Öffne das zuletzt ausgewählte Rezept beim Öffnen des Herstellungsfensters erneut",
         [CraftSim.CONST.TEXT.OPTIONS_GENERAL_SUPPORTED_PRICE_SOURCES] = "Unterstützte Preisquellen:",
-        [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "RAM-Bereinigung beim Herstellen aktivieren",
+        [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM] = "RAM Bereinigung beim Herstellen aktivieren",
+        [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_CRAFTS] = "Herstellungen",
+
         [CraftSim.CONST.TEXT.OPTIONS_PERFORMANCE_RAM_TOOLTIP] =
         "Wenn aktiviert, wird CraftSim dein RAM nach einer bestimmten Anzahl von Herstellungen von ungenutzten Daten bereinigen, um zu verhindern, dass sich der Speicher ansammelt.\nSpeicheraufbau kann auch durch andere Addons verursacht werden und ist nicht CraftSim-spezifisch.\nEine Bereinigung betrifft die gesamte WoW-RAM-Nutzung.",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TAB] = "Module",
@@ -441,16 +461,19 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.OPTIONS_TSM_RESET] = "Zurücksetzen auf Standard",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_INVALID_EXPRESSION] = "Ungültiger Ausdruck",
         [CraftSim.CONST.TEXT.OPTIONS_TSM_VALID_EXPRESSION] = "Gültiger Ausdruck",
-        [CraftSim.CONST.TEXT.OPTIONS_MODULES_REAGENT_OPTIMIZATION] = "Materialoptimierungsmodul",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_REAGENT_OPTIMIZATION] = "Modul zur Reagenzien Optimierung",
+
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_AVERAGE_PROFIT] = "Durchschnittsgewinnmodul",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_TOP_GEAR] = "Modul Beste Ausrüstung",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_COST_OVERVIEW] = "Kostenübersichtsmodul",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_SPECIALIZATION_INFO] = "Spezialisierungsinfo-Modul",
         [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_SIZE] =
         "Maximale Nachrichtenanzahl pro Kunde in der Kundenhistorie",
+        [CraftSim.CONST.TEXT.OPTIONS_MODULES_CUSTOMER_HISTORY_MAX_ENTRIES_PER_CLIENT] = "Maximale Verlaufseinträge pro Client",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET] = "Fertigkeitsschwellenwerte um 1 verschieben",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_OFFSET_TOOLTIP] =
-        "Der Materialkombinationsvorschlag versucht, den Schwellenwert + 1 zu erreichen, anstatt die genaue erforderliche Fertigkeit zu erreichen",
+        "Die Vorschläge zur Reagenzienkombination versuchen, den Schwellenwert + 1 zu erreichen, anstatt die genau erforderliche Fertigkeit zu erreichen",
+
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT] = "Mehrfachherstellungskonstante",
         [CraftSim.CONST.TEXT.OPTIONS_PROFIT_CALCULATION_MULTICRAFT_CONSTANT_EXPLANATION] =
         "Standard: 2.5\n\nHerstellungsdaten von verschiedenen Datensammlern in der Beta und im frühen Dragonflight deuten darauf hin,\ndass die maximale Anzahl zusätzlicher Gegenstände, die man bei einem Mehrfachherstellungs-Proz erhalten kann, 1+C*y beträgt.\nWobei y die Basisgegenstandsmenge für eine Herstellung ist und C 2,5 beträgt.\nWenn du möchtest, kannst du diesen Wert hier ändern.",
@@ -480,12 +503,13 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_LABEL] = "Ø Gewinn",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_AVERAGE_PROFIT_TOOLTIP] =
         "Zeigt den durchschnittlichen Gewinn basierend auf deinen Berufsstatistiken und den Gewinnstatistikwerten als Gold pro Punkt an.",
-        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Materialoptimierung",
+        [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_LABEL] = "Reagenzien Optimierung",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_REAGENT_OPTIMIZATION_TOOLTIP] =
-        "Schlägt die günstigsten Materialien vor, um die höchste Qualitätsschwelle zu erreichen.",
+        "Schlägt die günstigsten Reagenzien vor, um die höchste Qualitätsschwelle zu erreichen.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_LABEL] = "Preisüberschr.",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_PRICE_OVERRIDES_TOOLTIP] =
-        "Überschreibe Preise für beliebige Materialien, optionale Materialien und Herstellungsergebnisse für alle Rezepte oder für ein bestimmtes Rezept.",
+        "Überschreibe Preise für beliebige Reagenzien, optionale Reagenzien und Herstellungsergebnisse für alle Rezepte oder für ein bestimmtes Rezept.",
+
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_LABEL] = "Spezialisierungsinfo",
         [CraftSim.CONST.TEXT.CONTROL_PANEL_MODULES_SPECIALIZATION_INFO_TOOLTIP] =
         "Zeigt an, wie deine Berufsspezialisierungen dieses Rezept beeinflussen, und ermöglicht es, jede Konfiguration zu simulieren!",
@@ -580,9 +604,14 @@ function CraftSim.LOCAL_DE:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFTING_COSTS_HEADER] = "Herstellungskosten",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL] = "Herstellen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_GEAR] = "Falsche Werkzeuge",
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_REAGENTS] = "Keine Materialien",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_NO_REAGENTS] = "Keine Reagenzien",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL] = "Offenes Rezept hinzufügen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL] = "Erstherstellungen hinzufügen",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_BUTTON_LABEL] = "Aufträge von Kunden hinzufügen",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_CHECKBOX] = "Konzentration erlauben",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_TOOLTIP] =
+            "Wenn die Mindestqualität nicht erreicht werden kann, verwende " .. f.l("Konzentration") .. " falls möglich",
+
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL] = "Alles löschen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IMPORT_RECIPE_SCAN_BUTTON_LABEL] = "Aus Rezept-Scan auffüllen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_CRAFT_BUTTON_ROW_LABEL_WRONG_PROFESSION] = "Falscher Beruf",
@@ -650,17 +679,32 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
             "Nicht gespeicherte Warteschlangenmenge.\nDrücke Enter, um zu speichern"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_LEARNED] = f.white("Rezept erlernt"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_COOLDOWN] = f.white("Keine Abklingzeit"),
-        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_REAGENTS] = f.white("Materialien verfügbar"),
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_REAGENTS] = f.white("Reagenzien verfügbar"),
+
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_GEAR] = f.white("Berufsausrüstung angelegt"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_CRAFTER] = f.white("Richtiger Handwerkercharakter"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_STATUSBAR_PROFESSION] = f.white("Beruf geöffnet"),
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_EDIT] = "Bearbeiten",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CRAFT] = "Herstellen",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CLAIM] = "Anfordern",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_CLAIMED] = "Angefordert",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NEXT] = "Nächstes: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NOTHING_QUEUED] = "Nichts in der Warteschlange",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_ORDER] = "Bestellung",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_SUBMIT] = "Abschicken",
+
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL] =
         "Händchen fürs Kunsthandwerk-Rezepte ignorieren",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP] =
             "Erstherstellungen, die " ..
             f.bb("Händchen fürs Kunsthandwerk") .. " verwenden, nicht in die Warteschlange aufnehmen",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP] = "\n\nWartende Handwerke: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nBestellung von Kunde: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nnMindestqualität: ",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_REWARDS] = "\nBelohnungen:",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_INFO_REAGENTS_IN_YOUR_INVENTORY] = f.r(
+            "\n\nAlle bereitgestellten Reagenzien müssen sich in deinem Inventar befinden, um einen Arbeitsauftrag auszuführen!"),
+
 
         -- Herstellungs-Buffs
 
@@ -677,7 +721,8 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
             f.bb("Berufs-Abklingzeiten") .. " deines Accounts",
         [CraftSim.CONST.TEXT.COOLDOWNS_CRAFTER_HEADER] = "Handwerker",
         [CraftSim.CONST.TEXT.COOLDOWNS_RECIPE_HEADER] = "Rezept",
-        [CraftSim.CONST.TEXT.COOLDOWNS_CHARGES_HEADER] = "Aufladungen",
+        [CraftSim.CONST.TEXT.COOLDOWNS_CHARGES_HEADER] = "Aufla\ndungen",
+
         [CraftSim.CONST.TEXT.COOLDOWNS_NEXT_HEADER] = "Nächste Aufladung",
         [CraftSim.CONST.TEXT.COOLDOWNS_ALL_HEADER] = "Aufladungen voll",
         [CraftSim.CONST.TEXT.COOLDOWNS_TAB_OVERVIEW] = "Übersicht",
@@ -695,9 +740,32 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX] = f.g("MAX"),
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_MAX_VALUE] = "Maximal: ",
         [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FULL] = f.g("Konzentration voll"),
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CHARACTER] = "Charakter",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_CONCENTRATION] = "Konzentration",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_SORT_MODE_PROFESSION] = "Beruf",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_EUROPE_MAX_DATE] = "Europa - Max Datum",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_AMERICA_MAX_DATE] = "Amerika - Max Datum",
+        [CraftSim.CONST.TEXT.CONCENTRATION_TRACKER_FORMAT_MODE_HOURS_LEFT] = "Verbleibende Stunden",
 
         -- statische Popups
         [CraftSim.CONST.TEXT.STATIC_POPUPS_YES] = "Ja",
         [CraftSim.CONST.TEXT.STATIC_POPUPS_NO] = "Nein",
+
+        -- frames
+        [CraftSim.CONST.TEXT.FRAMES_RESETTING] = "Zurücksetzen von Frame-ID: ",
+        [CraftSim.CONST.TEXT.FRAMES_WHATS_NEW] = "Was gibt's Neues bei CraftSim?",
+        [CraftSim.CONST.TEXT.FRAMES_JOIN_DISCORD] = "Tritt dem Discord bei!",
+        [CraftSim.CONST.TEXT.FRAMES_DONATE_KOFI] = "Besuche CraftSim auf Kofi",
+        [CraftSim.CONST.TEXT.FRAMES_NO_INFO] = "Keine Informationen",
+
+        -- node data
+        [CraftSim.CONST.TEXT.NODE_DATA_RANK_TEXT] = "Rang ",
+        [CraftSim.CONST.TEXT.NODE_DATA_TOOLTIP] = "\n\nGesamtwerte aus Talent:\n",
+
+        -- columns
+        [CraftSim.CONST.TEXT.SOURCE_COLUMN_AH] = "AH",
+        [CraftSim.CONST.TEXT.SOURCE_COLUMN_OVERRIDE] = "ÜS",
+        [CraftSim.CONST.TEXT.SOURCE_COLUMN_WO] = "WO",
+
     }
 end
