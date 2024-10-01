@@ -25,6 +25,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- See " .. f.bb("API_README.md"),
         f.p .. "Specialization Talent Data Updated",
         f.p .. "Fixed " .. f.bb("CraftQueue") .. " consistency when reloading after login",
+        f.p .. "Locals Update",
+        f.a .. "- " .. f.bb("deDE") .. " by: " .. f.bb("https://github.com/Gogadon"),
         newP("18.2.3"),
         f.P ..
         "Added a " ..
