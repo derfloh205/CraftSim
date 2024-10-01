@@ -3,14 +3,11 @@ local CraftSim = select(2, ...)
 
 CraftSimAPI = {}
 
----Fetch a CraftSim.RecipeData instance for a recipeID
----@param recipeID number
----@param isRecraft? boolean
----@param isWorkOrder? boolean
----@param crafterData? CraftSim.CrafterData
+---Fetch a CraftSim.RecipeData instance for a recipe
+---@param options CraftSim.RecipeData.ConstructorOptions
 ---@return CraftSim.RecipeData recipeData
-function CraftSimAPI:GetRecipeData(recipeID, isRecraft, isWorkOrder, crafterData)
-    return CraftSim.RecipeData(recipeID, isRecraft, isWorkOrder, crafterData)
+function CraftSimAPI:GetRecipeData(options)
+    return CraftSim.RecipeData(options)
 end
 
 ---Fetch the currently open CraftSim.RecipeData instance (or the last one opened if profession window was closed)

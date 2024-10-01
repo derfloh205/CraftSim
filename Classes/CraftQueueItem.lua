@@ -118,8 +118,11 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
     ---@return CraftSim.RecipeData?
     local function deserializeCraftQueueRecipeData(serializedCraftQueueItem)
         -- first create a recipeData
-        local recipeData = CraftSim.RecipeData(serializedCraftQueueItem.recipeID, nil, nil,
-            serializedCraftQueueItem.crafterData)
+        local recipeData = CraftSim.RecipeData({
+            recipeID = serializedCraftQueueItem.recipeID,
+            crafterData = serializedCraftQueueItem.crafterData,
+            forceCache = true, -- necessary here due to execution after login
+        })
         recipeData.subRecipeDepth = serializedCraftQueueItem.subRecipeDepth or 0
         recipeData.concentrating = serializedCraftQueueItem.concentrating
         recipeData.subRecipeCostsEnabled = serializedCraftQueueItem.subRecipeCostsEnabled

@@ -171,7 +171,7 @@ function CraftSim.CRAFTQ:AddPatronOrders()
 
                             local recipeInfo = C_TradeSkillUI.GetRecipeInfo(order.spellID)
                             if recipeInfo and recipeInfo.learned then
-                                local recipeData = CraftSim.RecipeData(order.spellID)
+                                local recipeData = CraftSim.RecipeData({ recipeID = order.spellID })
                                 recipeData:SetOrder(order)
 
                                 recipeData:SetCheapestQualityReagentsMax() -- considers patron reagents
@@ -724,7 +724,7 @@ function CraftSim.CRAFTQ:AddFirstCrafts()
     end)
 
     GUTIL:FrameDistributedIteration(firstCraftRecipeIDs, function(_, recipeID, counter)
-        local recipeData = CraftSim.RecipeData(recipeID, false, false)
+        local recipeData = CraftSim.RecipeData({ recipeID = recipeID })
         local isSkillLine = recipeData.professionData.skillLineID == currentSkillLineID
         local ignoreAcuity = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_ACUITY_RECIPES")
         local usesAcuity = recipeData.reagentData:HasOneOfReagents({ CraftSim.CONST.ITEM_IDS.CURRENCY.ARTISANS_ACUITY })

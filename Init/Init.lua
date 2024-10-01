@@ -214,7 +214,11 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 				isRecraft = CraftSim.INIT.currentRecipeData.isRecraft
 			end
 			-- this means recraft and work order stuff is important
-			recipeData = CraftSim.RecipeData(onCraftData.recipeID, isRecraft, onCraftData.isOrder)
+			recipeData = CraftSim.RecipeData({
+				recipeID = onCraftData.recipeID,
+				isWorkOrder = onCraftData.isOrder,
+				isRecraft = isRecraft,
+			})
 
 			recipeData:SetAllReagentsBySchematicForm()
 			recipeData:SetConcentrationBySchematicForm()
@@ -222,7 +226,11 @@ function CraftSim.INIT:InitCraftRecipeHooks()
 		else
 			print("api was called via craftsim")
 			-- started via craftsim craft queue
-			recipeData = CraftSim.RecipeData(onCraftData.recipeID, isRecraft, onCraftData.isOrder)
+			recipeData = CraftSim.RecipeData({
+				recipeID = onCraftData.recipeID,
+				isWorkOrder = onCraftData.isOrder,
+				isRecraft = isRecraft,
+			})
 			recipeData:SetReagentsByCraftingReagentInfoTbl(onCraftData.craftingReagentInfoTbl)
 			recipeData:SetNonQualityReagentsMax()
 		end
@@ -569,7 +577,11 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 		local isRecraft = currentTransaction:GetRecraftAllocation() ~= nil
 		local isWorkOrder = CraftSim.UTIL:IsWorkOrder()
 
-		recipeData = CraftSim.RecipeData(recipeInfo.recipeID, isRecraft, isWorkOrder)
+		recipeData = CraftSim.RecipeData({
+			recipeID = recipeInfo.recipeID,
+			isWorkOrder = isWorkOrder,
+			isRecraft = isRecraft,
+		})
 
 		if recipeData then
 			-- Set Reagents based on visibleFrame and load equipped profession gear set

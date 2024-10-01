@@ -17,6 +17,10 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("18.2.4"),
+        f.P .. f.l("RecipeData Class - API Changes"),
+        f.a .. "- See " .. f.bb("API_README.md"),
+        f.p .. "Fixed " .. f.bb("CraftQueue") .. " consistency when reloading after login",
         newP("18.2.3"),
         f.P ..
         "Added a " ..
