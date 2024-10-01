@@ -852,7 +852,7 @@ function CraftSim.CRAFTQ.UI:Init()
     createContent(CraftSim.CRAFTQ.frame)
 
     local tooltip = "Add the displayed recipe to the " ..
-    f.l("CraftSim ") .. f.bb("Craft Queue") .. "\n" .. f.bb("Right Click") .. " for more options"
+        f.l("CraftSim ") .. f.bb("Craft Queue") .. "\n" .. f.bb("Right Click") .. " for more options"
 
     -- add to queue button in crafting ui
     CraftSim.CRAFTQ.queueRecipeButton = GGUI.Button {
@@ -864,8 +864,8 @@ function CraftSim.CRAFTQ.UI:Init()
         adjustWidth = true,
         sizeX = 15,
         label = "+ CraftQueue",
-        clickCallback = function()
-            CraftSim.CRAFTQ:AddOpenRecipe()
+        clickCallback = function(_, mouseButton)
+            CraftSim.CRAFTQ:AddOpenRecipe(mouseButton)
         end,
         tooltipOptions = {
             text = tooltip,
@@ -883,8 +883,8 @@ function CraftSim.CRAFTQ.UI:Init()
         adjustWidth = true,
         sizeX = 15,
         label = "+ CraftQueue",
-        clickCallback = function()
-            CraftSim.CRAFTQ:AddOpenRecipe()
+        clickCallback = function(_, mouseButton)
+            CraftSim.CRAFTQ:AddOpenRecipe(mouseButton)
         end,
         tooltipOptions = {
             text = tooltip,

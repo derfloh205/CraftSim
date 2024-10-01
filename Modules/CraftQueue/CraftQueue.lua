@@ -691,8 +691,9 @@ function CraftSim.CRAFTQ:CheckSaleRateThresholdForRecipe(recipeData, usedQualiti
     return false
 end
 
---- Called OnMouseDown by the AddCurrentRecipeButton
-function CraftSim.CRAFTQ:AddOpenRecipe()
+--- Called OnMouseDown by the AddCurrentRecipeButt
+---@param mouseButton MouseButton
+function CraftSim.CRAFTQ:AddOpenRecipe(mouseButton)
     local recipeData
     if CraftSim.SIMULATION_MODE.isActive then
         if CraftSim.SIMULATION_MODE.recipeData then
@@ -716,9 +717,9 @@ function CraftSim.CRAFTQ:AddOpenRecipe()
         queueButton = CraftSim.CRAFTQ.queueRecipeButtonWO
     end
 
-    if IsMouseButtonDown("LeftButton") then
+    if mouseButton == "LeftButton" then
         CraftSim.CRAFTQ:AddRecipe({ recipeData = recipeData })
-    elseif IsMouseButtonDown("RightButton") then
+    elseif mouseButton == "RightButton" then
         --- Give more Options for queuing
         if recipeData.orderData then
             MenuUtil.CreateContextMenu(UIParent, function(ownerRegion, rootDescription)
