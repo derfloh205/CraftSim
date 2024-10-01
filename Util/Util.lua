@@ -112,6 +112,7 @@ function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     return inputNumber
 end
 
+---@return CraftSim.EXPORT_MODE
 function CraftSim.UTIL:GetExportModeByVisibility()
     return (ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER) or
         CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER

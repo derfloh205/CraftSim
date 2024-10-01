@@ -669,6 +669,7 @@ function CraftSim.INIT:TriggerModulesByRecipeType()
 
 	-- update CraftQ Display (e.g. cause of profession gear changes)
 	CraftSim.CRAFTQ.UI:UpdateDisplay()
+	CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
 
 	-- Simulation Mode (always update first because it changes recipeData based on simMode inputs)
 	showSimulationMode = (showSimulationMode and recipeData and not recipeData.isSalvageRecipe) or false

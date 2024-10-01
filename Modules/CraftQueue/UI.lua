@@ -498,25 +498,11 @@ function CraftSim.CRAFTQ.UI:Init()
             tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_IMPORT_ALL_PROFESSIONS_CHECKBOX_TOOLTIP)
         }
 
-        ---@type GGUI.Button
-        queueTab.content.addCurrentRecipeButton = GGUI.Button({
+        queueTab.content.addAllFirstCraftsButton = GGUI.Button({
             parent = queueTab.content,
             anchorParent = queueTab.content.importRecipeScanButton.frame,
             anchorA = "TOPLEFT",
             anchorB = "BOTTOMLEFT",
-            offsetY = 0,
-            adjustWidth = true,
-            label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_OPEN_RECIPE_BUTTON_LABEL),
-            clickCallback = function()
-                CraftSim.CRAFTQ:AddOpenRecipe()
-            end
-        })
-
-        queueTab.content.addAllFirstCraftsButton = GGUI.Button({
-            parent = queueTab.content,
-            anchorParent = queueTab.content.addCurrentRecipeButton.frame,
-            anchorA = "LEFT",
-            anchorB = "RIGHT",
             offsetY = 0,
             adjustWidth = true,
             label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_FIRST_CRAFTS_BUTTON_LABEL),
@@ -564,7 +550,7 @@ function CraftSim.CRAFTQ.UI:Init()
         ---@type GGUI.Button
         queueTab.content.clearAllButton = GGUI.Button({
             parent = queueTab.content,
-            anchorParent = queueTab.content.addCurrentRecipeButton.frame,
+            anchorParent = queueTab.content.addPatronOrdersButton.frame,
             anchorA = "TOPLEFT",
             anchorB = "BOTTOMLEFT",
             offsetY = 0,
@@ -864,6 +850,46 @@ function CraftSim.CRAFTQ.UI:Init()
     end
 
     createContent(CraftSim.CRAFTQ.frame)
+
+    local tooltip = "Add the displayed recipe to the " .. f.l("CraftSim ") .. f.bb("Craft Queue")
+
+    -- add to queue button in crafting ui
+    CraftSim.CRAFTQ.queueRecipeButton = GGUI.Button {
+        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorPoints = { {
+            anchorParent = ProfessionsFrame.CraftingPage.SchematicForm.TrackRecipeCheckbox,
+            anchorA = "RIGHT", anchorB = "LEFT", offsetX = -15,
+        } },
+        adjustWidth = true,
+        sizeX = 15,
+        label = "+ CraftQueue",
+        clickCallback = function()
+            CraftSim.CRAFTQ:AddOpenRecipe()
+        end,
+        tooltipOptions = {
+            text = tooltip,
+            anchor = "ANCHOR_CURSOR_RIGHT",
+        },
+    }
+
+    -- add to queue button in crafting ui for work orders
+    CraftSim.CRAFTQ.queueRecipeButtonWO = GGUI.Button {
+        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        anchorPoints = { {
+            anchorParent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.TrackRecipeCheckbox,
+            anchorA = "RIGHT", anchorB = "LEFT", offsetX = -15,
+        } },
+        adjustWidth = true,
+        sizeX = 15,
+        label = "+ CraftQueue",
+        clickCallback = function()
+            CraftSim.CRAFTQ:AddOpenRecipe()
+        end,
+        tooltipOptions = {
+            text = tooltip,
+            anchor = "ANCHOR_CURSOR_RIGHT",
+        },
+    }
 end
 
 ---@param parent frame
@@ -1317,6 +1343,19 @@ function CraftSim.CRAFTQ.UI:UpdateFrameListByCraftQueue()
     CraftSim.DEBUG:StopProfiling("FrameListUpdate")
 end
 
+---@param recipeData CraftSim.RecipeData
+function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+
+    local button = CraftSim.CRAFTQ.queueRecipeButton
+    local buttonWO = CraftSim.CRAFTQ.queueRecipeButtonWO
+
+    local showButton = not recipeData.isSalvageRecipe
+
+    button:SetVisible(showButton and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
+    buttonWO:SetVisible(showButton and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+end
+
 function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     --- use a cache to prevent multiple redundant calls of ItemCount thus increasing performance
     CraftSim.CRAFTQ.itemCountCache = {}
@@ -1340,15 +1379,6 @@ function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
     else
         queueTab.content.craftNextButton:SetEnabled(false)
         queueTab.content.craftNextButton:SetText(L(CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_NOTHING_QUEUED), 10, true)
-    end
-
-    local currentRecipeData = CraftSim.INIT.currentRecipeData
-
-    if currentRecipeData then
-        -- disable addCurrentRecipeButton if the currently open recipe is not suitable for queueing
-        queueTab.content.addCurrentRecipeButton:SetEnabled(CraftSim.CRAFTQ:IsRecipeQueueable(currentRecipeData))
-    else
-        queueTab.content.addCurrentRecipeButton:SetEnabled(false)
     end
 
     if queueTab.content.createAuctionatorShoppingList then
