@@ -1350,10 +1350,23 @@ function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
     local button = CraftSim.CRAFTQ.queueRecipeButton
     local buttonWO = CraftSim.CRAFTQ.queueRecipeButtonWO
 
-    local showButton = not recipeData.isSalvageRecipe
+    local isTradeSkillAllowed = not CraftSim.CONST.GATHERING_PROFESSIONS
+        [recipeData.professionData.professionInfo.profession] and not C_TradeSkillUI.IsTradeSkillGuild() and
+        not C_TradeSkillUI.IsTradeSkillLinked() and not C_TradeSkillUI.IsNPCCrafting() and
+        not C_TradeSkillUI.IsRuneforging()
 
-    button:SetVisible(showButton and exportMode == CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER)
-    buttonWO:SetVisible(showButton and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+    local isRecipeAllowed = not recipeData.isSalvageRecipe and not recipeData.isRecraft and not recipeData
+        .isBaseRecraftRecipe
+
+    -- reset state if changed by anything
+    button:SetEnabled(true)
+    button:SetText("+ CraftQueue")
+    buttonWO:SetEnabled(true)
+    buttonWO:SetText("+ CraftQueue")
+
+    button:SetVisible(isTradeSkillAllowed and isRecipeAllowed and exportMode == CraftSim.CONST.EXPORT_MODE
+        .NON_WORK_ORDER)
+    buttonWO:SetVisible(isTradeSkillAllowed and isRecipeAllowed and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 end
 
 function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
