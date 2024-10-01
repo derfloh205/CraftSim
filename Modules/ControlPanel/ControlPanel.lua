@@ -100,7 +100,7 @@ function CraftSim.CONTROL_PANEL:ForgeFinderExportAll()
             if recipeID then
                 CraftSim.DEBUG:StartProfiling("RecipeDataCreation")
                 ---@type CraftSim.RecipeData
-                local recipeData = CraftSim.RecipeData(recipeID)
+                local recipeData = CraftSim.RecipeData({ recipeID = recipeID })
                 CraftSim.DEBUG:StopProfiling("RecipeDataCreation")
 
                 -- only for recipes that have a result which either has qualities or can multicraft
@@ -234,7 +234,7 @@ function CraftSim.CONTROL_PANEL:EasycraftExportAll()
             if recipeID then
                 CraftSim.DEBUG:StartProfiling("RecipeDataCreation")
                 ---@type CraftSim.RecipeData
-                local recipeData = CraftSim.RecipeData(recipeID)
+                local recipeData = CraftSim.RecipeData({ recipeID = recipeID })
                 CraftSim.DEBUG:StopProfiling("RecipeDataCreation")
 
                 -- only for recipes that have a result which either has qualities or can multicraft

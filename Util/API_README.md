@@ -1,10 +1,11 @@
 # **CraftSim Ingame API**
 
-## *CraftSimAPI:GetRecipeData(recipeID, isRecraft)*
+## *CraftSimAPI:GetRecipeData(options)*
 
 This lets you fetch a RecipeData instance for a recipeID.
 This object represents a recipe in CraftSim and offers various methods to manipulate the recipe or extract information from.
 It is implemented in [RecipeData.lua](../Data/Classes/RecipeData.lua)
+The parameter options refers to a table containing the constructor options (See declaration above RecipeData:new)
 
 ## *CraftSimAPI:GetOpenRecipeData()*
 
@@ -16,7 +17,7 @@ See [RecipeData.lua](../Data/Classes/RecipeData.lua)
 This processes all changes done to the recipeData and updates its resultData and professionStats.
 It is important to call this after you change professionGearSet or reagentData. Some methods call it automatically.
 
-### recipeData:OptimizeProfit()
+### recipeData:OptimizeProfit() _(Depricated)_
 
 Optimizes reagentData and professionGearSet in order to achieve the highest possible profit for this recipe. Automatically calls Update().
 
@@ -27,12 +28,6 @@ Automatically calls Update()
 Calculates the average profit based on professionGearSet, reagentData, resultData and professionStats. 
 
 It has two return values. The first is the average profit in copper and the second is a table containing the 'Proc to Profit' probability distribution of the recipe.
-
-### recipeData:OptimizeQuality()
-
-Optimizes reagentData and professionGearSet in order to achieve the highest possible quality. 
-
-Automatically calls Update()
 
 ### recipeData:OptimizeGear(mode: string)
 
@@ -83,7 +78,10 @@ Automatically calls Update()
 
 An example that uses CraftSim's API to fetch a recipeData object, optimizes gear and reagents for profit and then prints the resulting profit
 
-    local recipeData = CraftSimAPI:GetRecipeData(367713)
-    recipeData:OptimizeProfit(true)
+    local recipeData = CraftSimAPI:GetRecipeData( { recipeID = 367713 } )
+    recipeData:OptimizeProfit()
     local averageProfit = recipeData:GetAverageProfit()
     print(averageProfit)
+
+### More Functionality and Methods 
+More can be found in the RecipeData class

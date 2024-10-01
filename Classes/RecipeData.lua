@@ -4,27 +4,38 @@ local CraftSim = select(2, ...)
 local GUTIL = CraftSim.GUTIL
 
 ---@class CraftSim.RecipeData : CraftSim.CraftSimObject
----@overload fun(recipeID: number, isRecraft:boolean?, isWorkOrder:boolean?, crafterData:CraftSim.CrafterData?): CraftSim.RecipeData
+---@overload fun(options: CraftSim.RecipeData.ConstructorOptions): CraftSim.RecipeData
 CraftSim.RecipeData = CraftSim.CraftSimObject:extend()
 
 local systemPrint = print
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
 
+---@class CraftSim.RecipeData.ConstructorOptions
+---@field recipeID RecipeID
+---@field isRecraft? boolean default: false
+---@field isWorkOrder? boolean default: false
+---@field crafterData? CraftSim.CrafterData default: current player character
+
 ---@class CraftSim.CrafterData
 ---@field name string
 ---@field realm string
 ---@field class ClassFile?
 
----@param recipeID number
----@param isRecraft? boolean
----@param isWorkOrder? boolean
----@param crafterData? CraftSim.CrafterData
+---@param options CraftSim.RecipeData.ConstructorOptions
 ---@return CraftSim.RecipeData?
-function CraftSim.RecipeData:new(recipeID, isRecraft, isWorkOrder, crafterData)
+function CraftSim.RecipeData:new(options) -- recipeID, isRecraft, isWorkOrder, crafterData)
+    if not options or type(options) ~= 'table' then
+        error("CraftSim Error: RecipeData -> No Constructor Options")
+    end
+    local recipeID = options.recipeID
+    local isRecraft = options.isRecraft
+    local isWorkOrder = options.isWorkOrder
+
     self.recipeID = recipeID --[[@as RecipeID]]
+
     -- important to set first so self:IsCrafter() can be used
-    self.crafterData = crafterData or CraftSim.UTIL:GetPlayerCrafterData()
+    self.crafterData = options.crafterData or CraftSim.UTIL:GetPlayerCrafterData()
 
     local crafterUID = self:GetCrafterUID()
 
@@ -617,7 +628,12 @@ end
 ---@return CraftSim.RecipeData recipeDataCopy
 function CraftSim.RecipeData:Copy()
     ---@type CraftSim.RecipeData
-    local copy = CraftSim.RecipeData(self.recipeID, self.isRecraft, self.orderData ~= nil, self.crafterData)
+    local copy = CraftSim.RecipeData({
+        recipeID = self.recipeID,
+        isWorkOrder = self.orderData ~= nil,
+        isRecraft = self.isRecraft,
+        crafterData = self.crafterData,
+    })
     copy.concentrating = self.concentrating
     copy.concentrationCost = self.concentrationCost
     copy.concentrationData = self.concentrationData and self.concentrationData:Copy()
@@ -1520,7 +1536,10 @@ function CraftSim.RecipeData:OptimizeSubRecipes(optimizeOptions, visitedRecipeID
                 })
 
                 if recipeInfo then --and recipeInfo.learned then
-                    local recipeData = CraftSim.RecipeData(recipeID, false, false, crafterData)
+                    local recipeData = CraftSim.RecipeData({
+                        recipeID = recipeID,
+                        crafterData = crafterData,
+                    })
                     local ignoreCooldownRecipe = not CraftSim.DB.OPTIONS:Get(
                             "COST_OPTIMIZATION_SUB_RECIPE_INCLUDE_COOLDOWNS") and
                         recipeData.cooldownData.isCooldownRecipe
