@@ -20,6 +20,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         newP("18.2.4"),
         f.P .. f.l("RecipeData Class - API Changes"),
         f.a .. "- See " .. f.bb("API_README.md"),
+        f.p .. "Specialization Talent Data Updated",
         f.p .. "Fixed " .. f.bb("CraftQueue") .. " consistency when reloading after login",
         newP("18.2.3"),
         f.P ..
