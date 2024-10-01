@@ -36,12 +36,12 @@ end
 ---@return CraftSim.ReagentOptimizationResult[] results
 function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     print("optimizeKnapsack...")
-    local numMaterials, i, j, k, maxWeight
+    local numReagents, i, j, k, maxWeight
 
-    numMaterials = #ks or 1 -- should be ks -1 or 1 and behave like UBound(ks, 1)
+    numReagents = #ks or 1 -- should be ks -1 or 1 and behave like UBound(ks, 1)
 
     maxWeight = 0
-    for i = 0, numMaterials, 1 do
+    for i = 0, numReagents, 1 do
         maxWeight = maxWeight + 2 * ks[i].n * ks[i].mWeight
     end
 
@@ -50,7 +50,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     local b = {}
 
     -- initialize the b array
-    for i = 0, numMaterials, 1 do
+    for i = 0, numReagents, 1 do
         for j = 0, maxWeight, 1 do
             if b[i] == nil then
                 b[i] = {}
@@ -62,7 +62,7 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
     local c = {}
 
     -- initialize the c array
-    for i = 0, numMaterials, 1 do
+    for i = 0, numReagents, 1 do
         for j = 0, maxWeight, 1 do
             if c[i] == nil then
                 c[i] = {}
@@ -73,27 +73,32 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
 
     -- do initial weight first
     local i = 0
-    for k = 0, 2 * ks[i].n, 1 do -- for each weight and value in material(0)
+    for k = 0, 2 * ks[i].n, 1 do -- for each weight and value in reagent(0)
         --print("current crumb: " .. k)
-        --CraftSim.DEBUG:PrintTable(ks[i].crumb[k])
-        b[i][ks[i].crumb[k].weight] = ks[i].crumb[k].value
-        c[i][ks[i].crumb[k].weight] = k
+        if ks[i].crumb[k] then
+            b[i][ks[i].crumb[k].weight] = ks[i].crumb[k].value
+            c[i][ks[i].crumb[k].weight] = k
+        end
     end
 
     -- do next weights
-    for i = 1, numMaterials, 1 do
-        for k = 0, 2 * ks[i].n, 1 do   -- for each weight and value in material(i)
+    for i = 1, numReagents, 1 do
+        for k = 0, 2 * ks[i].n, 1 do   -- for each weight and value in reagent(i)
             for j = 0, maxWeight, 1 do -- for each possible weight value
                 -- look at the previous row for this weight j, if it has a value then...
                 if b[i - 1][j] < inf then
                     -- we know it is reachable
                     -- so look at the spot where adding the new weight would put us
                     -- if its current value is > than what we get by adding the new weight...
-                    if b[i][j + ks[i].crumb[k].weight] > b[i - 1][j] + ks[i].crumb[k].value then
-                        -- our new weight is better so use its value instead
-                        b[i][j + ks[i].crumb[k].weight] = b[i - 1][j] + ks[i].crumb[k].value
-                        -- and record the weight that got us here
-                        c[i][j + ks[i].crumb[k].weight] = k
+
+                    -- only if crumb exists (consider crumb removal due to order)
+                    if ks[i].crumb[k] then
+                        if b[i][j + ks[i].crumb[k].weight] > b[i - 1][j] + ks[i].crumb[k].value then
+                            -- our new weight is better so use its value instead
+                            b[i][j + ks[i].crumb[k].weight] = b[i - 1][j] + ks[i].crumb[k].value
+                            -- and record the weight that got us here
+                            c[i][j + ks[i].crumb[k].weight] = k
+                        end
                     end
                 end
             end
@@ -126,15 +131,11 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
             minValue = nil,
             allocations = {}
         }
-        if BPs[h] < 0 then --cannot reach this BP
-            outArr[2 * h] = "None"
-            outArr[2 * h + 1] = ""
-        else
+        if BPs[h] >= 0 then --can reach this BP
             tStart = math.ceil(BPs[h] * maxWeight)
-            i = numMaterials -- i was initialized above
+            i = numReagents -- i was initialized above
             -- walk the last row of the matrix backwards to find the best value (gold cost) for minimum target weight (j = skill bonus)
-            i = numMaterials
-            matString = ""
+            i = numReagents
             minValue = inf
 
             -- search the space from target to the end weight (for this breakpoint) to get the lowest cost
@@ -147,37 +148,32 @@ function CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ks, BPs, recipeData)
             -- now minValue is set and lowestj points to the correct column
             j = lowestj
 
-            -- create the list of materials that represent optimization for target BP
-            for i = numMaterials, 0, -1 do
-                k = c[i][j]   -- the index into V and W for minValue > target
-                local ifstring = ""
-                if i > 0 then -- TODO + 1 ?
-                    ifstring = ", "
-                end
-                matString = matString .. ks[i].crumb[k].mixDebug .. " " .. tostring(ks[i].name) .. ifstring
+            -- create the list of reagents that represent optimization for target BP
+            for i = numReagents, 0, -1 do
+                k = c[i][j]                  -- the index into V and W for minValue > target
+                local crumb = ks[i].crumb[k] -- to work around the single crumb of patron order reagents
+                if crumb then
+                    --print("current matstring: " .. tostring(matString))
+                    --print("name: " .. ks[i].name)
+                    local matAllocations = {}
+                    for qualityIndex, qualityAllocations in pairs(crumb.mix) do
+                        --print("qualityIndex: " .. qualityIndex)
+                        --print("allocations: " .. qualityAllocations)
+                        table.insert(matAllocations, {
+                            quality = qualityIndex,
+                            itemID = ks[i].reagent.items[qualityIndex].item:GetItemID(),
+                            allocations = qualityAllocations
+                        })
+                    end
+                    j = j - crumb.weight
 
-                --print("current matstring: " .. tostring(matString))
-                --print("name: " .. ks[i].name)
-                local matAllocations = {}
-                for qualityIndex, qualityAllocations in pairs(ks[i].crumb[k].mix) do
-                    --print("qualityIndex: " .. qualityIndex)
-                    --print("allocations: " .. qualityAllocations)
-                    table.insert(matAllocations, {
-                        quality = qualityIndex,
-                        itemID = ks[i].reagent.items[qualityIndex].item:GetItemID(),
-                        allocations = qualityAllocations
+                    table.insert(outAllocation.allocations, {
+                        itemName = ks[i].name,
+                        allocations = matAllocations
                     })
                 end
-                j = j - ks[i].crumb[k].weight
-
-                table.insert(outAllocation.allocations, {
-                    itemName = ks[i].name,
-                    allocations = matAllocations
-                })
             end
 
-            outArr[2 * h] = minValue
-            outArr[2 * h + 1] = matString
             outAllocation.qualityReached = abs(h - (#BPs + 1))
             outAllocation.minValue = minValue
             table.insert(outResult, outAllocation)
@@ -225,17 +221,19 @@ function CraftSim.REAGENT_OPTIMIZATION:IsCurrentAllocation(recipeData, bestResul
     return recipeData.reagentData:EqualsQualityReagents(bestResult.reagents)
 end
 
+---@param ksItem CraftSim.REAGENT_OPTIMIZATION.KS_ITEM
+---@param useSubRecipeCosts boolean
 function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, useSubRecipeCosts)
     local inf = math.huge
 
-    local j, k, a, b, c, n, w
+    local j, k, q3Count, q2Count, q1Count, requiredQuantity, allocatedQuantity
     local goldCost
 
-    n = ksItem.n
+    requiredQuantity = ksItem.n
 
     -- APPROACH: do not translate indices here to lua indices cause they are not used for accessing later.. w is used for that
     --print("crumbs init to " .. (2*n))
-    for j = 0, 2 * n, 1 do
+    for j = 0, 2 * requiredQuantity, 1 do
         ksItem.crumb[j] = {}
         ksItem.crumb[j].value = inf
     end
@@ -247,27 +245,37 @@ function CraftSim.REAGENT_OPTIMIZATION:CreateCrumbs(ksItem, useSubRecipeCosts)
     local q1ItemPrice = CraftSim.PRICE_SOURCE:GetMinBuyoutByItemID(ksItem.reagent.items[1].item:GetItemID(), true, false,
         useSubRecipeCosts)
 
-    --print("start crumb creation: " .. ksItem.name)
-    for k = 0, n, 1 do
-        --print("creating crumb #" .. k)
-        for j = k, n, 1 do
-            a = k
-            b = j - k
-            c = n - j
-            w = 2 * a + b
+    if ksItem.isOrderReagent then
+        -- only one available crumb - current allocation
+        q3Count = ksItem.reagent.items[3].quantity
+        q2Count = ksItem.reagent.items[2].quantity
+        q1Count = ksItem.reagent.items[1].quantity
+        allocatedQuantity = 2 * q3Count + q2Count
+        goldCost = q3Count * q3ItemPrice + q2Count * q2ItemPrice + q1Count * q1ItemPrice
+        ksItem.crumb = {
+            [0] = {
+                weight = allocatedQuantity * ksItem.mWeight,
+                mix = { q1Count, q2Count, q3Count },
+                value = goldCost,
+            }
+        }
+    else
+        for k = 0, requiredQuantity, 1 do
+            --print("creating crumb #" .. k)
+            for j = k, requiredQuantity, 1 do
+                q3Count = k
+                q2Count = j - k
+                q1Count = requiredQuantity - j
+                allocatedQuantity = 2 * q3Count + q2Count
 
-            goldCost = a * q3ItemPrice + b * q2ItemPrice + c * q1ItemPrice
-            goldCost = a * q3ItemPrice + b * q2ItemPrice + c * q1ItemPrice
-            --print("current iteration ".. j .." goldCost: " .. tostring(goldCost))
-            --print("w: " .. tostring(w))
-            if goldCost < ksItem.crumb[w].value then
-                --print("gold Cost smaller than value: " .. ksItem.crumb[w].value)
-                --print("saving weight " .. ksItem.mWeight * w .. " into index " .. w)
-                ksItem.crumb[w].weight = w * ksItem.mWeight
-                ksItem.crumb[w].mix = { c, b, a }
-                ksItem.crumb[w].mixDebug = tostring(c) .. "," .. tostring(b) .. "," .. tostring(a)
-                ksItem.crumb[w].goldCostDebug = c * q1ItemPrice .. "," .. b * q2ItemPrice .. "," .. a * q3ItemPrice
-                ksItem.crumb[w].value = goldCost
+                goldCost = q3Count * q3ItemPrice + q2Count * q2ItemPrice + q1Count * q1ItemPrice
+                if goldCost < ksItem.crumb[allocatedQuantity].value then
+                    -- q3, q2, q1
+
+                    ksItem.crumb[allocatedQuantity].weight = allocatedQuantity * ksItem.mWeight
+                    ksItem.crumb[allocatedQuantity].mix = { q1Count, q2Count, q3Count } -- q3, q2, q1
+                    ksItem.crumb[allocatedQuantity].value = goldCost
+                end
             end
         end
     end
@@ -275,8 +283,9 @@ end
 
 -- By Liqorice's knapsack solution
 ---@param recipeData CraftSim.RecipeData
+---@param maxQuality number?
 ---@return CraftSim.ReagentOptimizationResult?
-function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
+function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData, maxQuality)
     if not recipeData.hasQualityReagents then
         return nil
     end
@@ -292,6 +301,8 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
         end)
         return result
     end
+
+    local maxOptimizationQuality = math.min(maxQuality or recipeData.maxQuality, recipeData.maxQuality)
 
     -- Create Knapsacks for required reagents with different Qualities
     local requiredReagents = GUTIL:Filter(recipeData.reagentData.requiredReagents, function(reagent)
@@ -329,12 +340,13 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
     -- !!!!! lua tables init with a 0 index, show one less entry with #table then there really is
     for index = 0, #requiredReagents - 1, 1 do
         local reagent = requiredReagents[translateLuaIndex(index)]
-        local costs = {} -- ?!?!?!?
         -- get costs for reagent quality
         --print("creating ks item for " .. tostring(reagent.name) .. "(" .. tostring(reagent.itemsInfo[1]) .. ")")
+        ---@class CraftSim.REAGENT_OPTIMIZATION.KS_ITEM
         local ksItem = {
             name = reagent.items[1].item:GetItemName(),
             reagent = reagent:Copy(),
+            isOrderReagent = reagent:IsOrderReagentIn(recipeData),
             n = reagent.requiredQuantity,
             mWeight = mWeight[index] / weightGCD,
             crumb = {}
@@ -349,10 +361,12 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
     end
     CraftSim.DEBUG:StopProfiling("KnapsackKsItemCreation")
 
+    --CraftSim.DEBUG:InspectTable(ksItems, "ksItems")
+
     -- Calculate ArrayBP (The skill breakpoints)
     local numBP = 0
 
-    local craftingDifficultyBP = nil
+    local craftingDifficultyBP = {}
     if recipeData.maxQuality == 3 then
         craftingDifficultyBP = {
             [0] = 1,
@@ -368,13 +382,32 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
             [4] = 0,
         }
     end
+
+    -- consider maxOptimizationQuality by removing the top breakpoints
+    -- e.g. optimizing a maxQ3 recipe for q2 would remove 3-2=1 top breakpoints
+    local bpRemovalCount = recipeData.maxQuality - maxOptimizationQuality
+
+    if bpRemovalCount > 0 then
+        -- manually remove and reorder first entries due to tremove not considering the 0 index
+        local craftingDifficultyBPTrimmed = {}
+        local newIndex = 0
+        for i = bpRemovalCount, #craftingDifficultyBP + 1, 1 do
+            if craftingDifficultyBP[i] then
+                craftingDifficultyBPTrimmed[newIndex] = craftingDifficultyBP[i]
+                newIndex = newIndex + 1
+            end
+        end
+
+        craftingDifficultyBP = craftingDifficultyBPTrimmed
+    end
+
     numBP = #craftingDifficultyBP + 1 -- the 0 index will not be counted..
     --print("numBP: " .. numBP)
 
     local reagentMaxSkillFactor = recipeData.reagentData:GetMaxSkillFactor()
     local recipeMaxSkillBonus = reagentMaxSkillFactor * recipeData.baseProfessionStats.recipeDifficulty.value
 
-    -- Calculate the material bonus needed to meet each breakpoint based on the player's
+    -- Calculate the reagent bonus needed to meet each breakpoint based on the player's
     --   existing skill and the recipe difficulty (as a fraction of the recipeMaxSkillBonus
     -- Breakpoints are sorted highest to lowest
     -- Array value = -1 means this breakpoint is unreachable
@@ -421,11 +454,11 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
 
             -- not 100% clear where blizzard has landed on rounding errors, need to check this at some point
             -- we want our array of BP's to be expressed not as skill numbers but as a fraction of
-            -- the recipeMaxSkillBonus. This way when later looking at optimizing for material weights we
+            -- the recipeMaxSkillBonus. This way when later looking at optimizing for reagent weights we
             -- can use the BP% x maxWeight as our markers
             arrayBP[i] = arrayBP[i] / recipeMaxSkillBonus
 
-            if arrayBP[i] > 1 then -- Can't reach this high even with all Q3 materials
+            if arrayBP[i] > 1 then -- Can't reach this high even with all Q3 reagents
                 arrayBP[i] = -1
             end
         end
@@ -441,15 +474,17 @@ function CraftSim.REAGENT_OPTIMIZATION:OptimizeReagentAllocation(recipeData)
     local resultsUnfiltered = CraftSim.REAGENT_OPTIMIZATION:optimizeKnapsack(ksItems, arrayBP, recipeData)
 
     -- remove any result that maps to the expected quality without reagent increase
-    -- NEW: any that is below! Same is fine
-    local results = GUTIL:Filter(resultsUnfiltered, function(result)
-        return result.qualityID >= expectedQualityWithoutReagents
-    end)
+    -- -- NEW: any that is below! Same is fine
+    -- local results = GUTIL:Filter(resultsUnfiltered, function(result)
+    --     return result.qualityID >= expectedQualityWithoutReagents
+    -- end)
 
-    local bestResult = results[1]
+    local bestResult = resultsUnfiltered[1]
 
-    -- if certain qualityIDs have the same price, use the higher qualityID
-    bestResult:OptimizeQualityIDs(recipeData.subRecipeCostsEnabled)
+    if bestResult then
+        -- if certain qualityIDs have the same price, use the higher qualityID
+        bestResult:OptimizeQualityIDs(recipeData.subRecipeCostsEnabled)
+    end
 
     CraftSim.DEBUG:StopProfiling("optimizeKnapsack")
 

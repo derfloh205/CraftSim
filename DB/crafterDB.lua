@@ -120,6 +120,23 @@ function CraftSim.DB.CRAFTER:Migrate()
 
         CraftSimDB.crafterDB.version = 4
     end
+
+    -- remove gathering conc data
+    if CraftSimDB.crafterDB.version == 4 then
+        for crafterUID, crafterData in pairs(CraftSimDB.crafterDB.data or {}) do
+            crafterData = crafterData --[[@as CraftSim.DB.CrafterDBData]]
+            for expansionID, concentrationData in pairs(crafterData.concentrationData or {}) do
+                for professionID, _ in pairs(concentrationData or {}) do
+                    if CraftSim.CONST.GATHERING_PROFESSIONS[professionID] then
+                        -- remove
+                        CraftSimDB.crafterDB.data[crafterUID].concentrationData[expansionID][professionID] = nil
+                    end
+                end
+            end
+        end
+
+        CraftSimDB.crafterDB.version = 5
+    end
 end
 
 ---@param crafterUID CrafterUID

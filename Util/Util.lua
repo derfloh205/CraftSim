@@ -112,6 +112,7 @@ function CraftSim.UTIL:ValidateNumberInput(inputBox, allowNegative)
     return inputNumber
 end
 
+---@return CraftSim.EXPORT_MODE
 function CraftSim.UTIL:GetExportModeByVisibility()
     return (ProfessionsFrame.OrdersPage.OrderView.OrderDetails:IsVisible() and CraftSim.CONST.EXPORT_MODE.WORK_ORDER) or
         CraftSim.CONST.EXPORT_MODE.NON_WORK_ORDER
@@ -290,6 +291,12 @@ function CraftSim.UTIL:IsTWWRecipe(recipeID)
     return false
 end
 
+---@param baseYield number
+function CraftSim.UTIL:GetMulticraftConstantByBaseYield(baseYield)
+    local mcConstants = CraftSim.DB.OPTIONS:Get("PROFIT_CALCULATION_MULTICRAFT_CONSTANTS")
+    return mcConstants[baseYield] or mcConstants.DEFAULT
+end
+
 function CraftSim.UTIL:GetDifferentQualitiesByCraftingReagentTbl(recipeID, craftingReagentInfoTbl, allocationItemGUID,
                                                                  maxQuality)
     local linksByQuality = {}
@@ -319,8 +326,9 @@ end
 ---@param skillCurveValueStart number
 ---@param skillCurveValueEnd number
 ---@param lessConcentrationUsageFactors number[]
+---@param noRounding boolean?
 function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, skillStart, skillEnd, skillCurveValueStart,
-                                                  skillCurveValueEnd, lessConcentrationUsageFactors)
+                                                  skillCurveValueEnd, lessConcentrationUsageFactors, noRounding)
     local skillDifference = math.abs(skillEnd - skillStart)
     local valueDifference = math.abs(skillCurveValueStart - skillCurveValueEnd) -- can go up or down
     local skillValueStep = valueDifference / skillDifference
@@ -340,7 +348,11 @@ function CraftSim.UTIL:CalculateConcentrationCost(costConstant, playerSkill, ski
         return foldValue + concentrationCost * nextFactor
     end)
 
-    return CraftSim.GUTIL:Round(concentrationCost - factorSubtraction)
+    if noRounding then
+        return concentrationCost - factorSubtraction
+    else
+        return CraftSim.GUTIL:Round(concentrationCost - factorSubtraction)
+    end
 end
 
 ---@param recipeDifficulty number

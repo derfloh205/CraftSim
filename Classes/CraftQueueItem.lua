@@ -72,6 +72,7 @@ end
 ---@field subRecipeCostsEnabled boolean
 ---@field serializedSubRecipeData CraftSim.CraftQueueItem.Serialized[]
 ---@field parentRecipeInfo CraftSim.RecipeData.ParentRecipeInfo[]
+---@field orderData CraftingOrderInfo?
 
 function CraftSim.CraftQueueItem:Serialize()
     ---@param recipeData CraftSim.RecipeData
@@ -90,6 +91,7 @@ function CraftSim.CraftQueueItem:Serialize()
             subRecipeCostsEnabled = recipeData.subRecipeCostsEnabled,
             serializedSubRecipeData = {},
             parentRecipeInfo = recipeData.parentRecipeInfo,
+            orderData = recipeData.orderData,
         }
 
         -- save correct mapping
@@ -116,12 +118,20 @@ function CraftSim.CraftQueueItem:Deserialize(serializedData)
     ---@return CraftSim.RecipeData?
     local function deserializeCraftQueueRecipeData(serializedCraftQueueItem)
         -- first create a recipeData
-        local recipeData = CraftSim.RecipeData(serializedCraftQueueItem.recipeID, nil, nil,
-            serializedCraftQueueItem.crafterData)
+        local recipeData = CraftSim.RecipeData({
+            recipeID = serializedCraftQueueItem.recipeID,
+            crafterData = serializedCraftQueueItem.crafterData,
+            forceCache = true, -- necessary here due to execution after login
+        })
         recipeData.subRecipeDepth = serializedCraftQueueItem.subRecipeDepth or 0
         recipeData.concentrating = serializedCraftQueueItem.concentrating
         recipeData.subRecipeCostsEnabled = serializedCraftQueueItem.subRecipeCostsEnabled
         recipeData.parentRecipeInfo = serializedCraftQueueItem.parentRecipeInfo or {}
+
+        if serializedCraftQueueItem.orderData then
+            recipeData:SetOrder(serializedCraftQueueItem.orderData)
+        end
+
 
         if recipeData and recipeData.isCrafterInfoCached then
             -- deserialize potential subrecipes and restore correct mapping

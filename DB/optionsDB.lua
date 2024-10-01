@@ -36,7 +36,7 @@ function CraftSim.DB.OPTIONS:Migrate()
                 .doNotRemindPriceSource
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PRICE_DEBUG] = CraftSimOptions.priceDebug
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.PRICE_SOURCE] = CraftSimOptions.priceSource
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_MATERIALS] = CraftSimOptions
+            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_REAGENTS] = CraftSimOptions
                 .tsmPriceKeyMaterials
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.TSM_PRICE_KEY_ITEMS] = CraftSimOptions
                 .tsmPriceKeyItems
@@ -170,8 +170,6 @@ function CraftSim.DB.OPTIONS:Migrate()
                 CraftSimOptions.craftQueueGeneralRestockTargetModeCraftOffset
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_RESTOCK_PER_RECIPE_OPTIONS] =
                 CraftSimOptions.craftQueueRestockPerRecipeOptions
-            CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER] =
-                CraftSimOptions.craftQueueShoppingListPerCharacter
             CraftSimDB.optionsDB.data["CRAFTQUEUE_SHOPPING_LIST_TARGET_MODE"] =
                 CraftSimOptions.craftQueueShoppingListTargetMode
             CraftSimDB.optionsDB.data[CraftSim.CONST.GENERAL_OPTIONS.CRAFTQUEUE_FLASH_TASKBAR_ON_CRAFT_FINISHED] =
@@ -233,7 +231,7 @@ function CraftSim.DB.OPTIONS:Migrate()
     -- migrate constant change
     if CraftSimDB.optionsDB.version == 5 then
         if CraftSimDB.optionsDB.data["PROFIT_CALCULATION_MULTICRAFT_CONSTANT"] == 2.5 then
-            CraftSimDB.optionsDB.data["PROFIT_CALCULATION_MULTICRAFT_CONSTANT"] = CraftSim.CONST.MULTICRAFT_CONSTANT
+            CraftSimDB.optionsDB.data["PROFIT_CALCULATION_MULTICRAFT_CONSTANT"] = 2.5
         end
 
         CraftSimDB.optionsDB.version = 6
@@ -242,10 +240,30 @@ function CraftSim.DB.OPTIONS:Migrate()
     -- migrate constant change .. again
     if CraftSimDB.optionsDB.version == 6 then
         if CraftSimDB.optionsDB.data["PROFIT_CALCULATION_MULTICRAFT_CONSTANT"] == 2.2 then
-            CraftSimDB.optionsDB.data["PROFIT_CALCULATION_MULTICRAFT_CONSTANT"] = CraftSim.CONST.MULTICRAFT_CONSTANT
+            CraftSimDB.optionsDB.data["PROFIT_CALCULATION_MULTICRAFT_CONSTANT"] = 2.5
         end
 
         CraftSimDB.optionsDB.version = 7
+    end
+
+    -- migrate constant change .. again .. let it take default
+    if CraftSimDB.optionsDB.version == 7 then
+        CraftSimDB.optionsDB.data["PROFIT_CALCULATION_MULTICRAFT_CONSTANT"] = nil
+
+        CraftSimDB.optionsDB.version = 8
+    end
+
+    -- option removal
+    if CraftSimDB.optionsDB.version == 8 then
+        CraftSimDB.optionsDB.data["CRAFTQUEUE_SHOPPING_LIST_PER_CHARACTER"] = nil
+        CraftSimDB.optionsDB.version = 9
+    end
+
+    -- rename material -> reagent
+    if CraftSimDB.optionsDB.version == 8 then
+        CraftSimDB.optionsDB.data["TSM_PRICE_KEY_REAGENTS"] = CraftSimDB.optionsDB.data["TSM_PRICE_KEY_MATERIALS"]
+        CraftSimDB.optionsDB.data["MODULE_REAGENT_OPTIMIZATION"] = CraftSimDB.optionsDB.data["MODULE_MATERIALS"]
+        CraftSimDB.optionsDB.version = 9
     end
 end
 

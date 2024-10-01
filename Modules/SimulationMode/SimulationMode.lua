@@ -206,11 +206,23 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     -- optional/finishing
     recipeData.reagentData:ClearOptionalReagents()
 
+    local possibleSparkItemIDs = {}
+    if recipeData.reagentData:HasSparkSlot() then
+        possibleSparkItemIDs = GUTIL:Map(recipeData.reagentData.sparkReagentSlot.possibleReagents, function(reagent)
+            return reagent.item:GetItemID()
+        end)
+    end
+
     local itemIDs = {}
     for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
         local itemID = dropdown.selectedItem and dropdown.selectedItem:GetItemID()
         if itemID then
-            table.insert(itemIDs, itemID)
+            -- try to set spark if available else put to optional/finishing
+            if tContains(possibleSparkItemIDs, itemID) then
+                recipeData.reagentData.sparkReagentSlot:SetReagent(itemID)
+            else
+                table.insert(itemIDs, itemID)
+            end
         end
     end
 
@@ -264,5 +276,26 @@ function CraftSim.SIMULATION_MODE:InitializeSimulationMode(recipeData)
     CraftSim.SIMULATION_MODE:UpdateSimulationMode()
 
     -- recalculate modules
+    CraftSim.INIT:TriggerModuleUpdate()
+end
+
+--- used by allocate button in reagent optimization module
+---@param recipeData CraftSim.RecipeData
+function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
+    if not CraftSim.SIMULATION_MODE.isActive then return end
+    if not CraftSim.SIMULATION_MODE.recipeData then return end
+
+    local simulationModeFrames = CraftSim.SIMULATION_MODE.UI:GetSimulationModeFramesByVisibility()
+    local reagentOverwriteFrame = simulationModeFrames.reagentOverwriteFrame
+
+    for _, currentInput in pairs(reagentOverwriteFrame.reagentOverwriteInputs) do
+        if currentInput.isActive then
+            for i = 1, 3, 1 do
+                local input = currentInput["inputq" .. i]
+                input:SetText(recipeData.reagentData:GetReagentQuantityByItemID(input.itemID))
+            end
+        end
+    end
+
     CraftSim.INIT:TriggerModuleUpdate()
 end

@@ -298,7 +298,7 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
         printS("isEnchant: " .. tostring(recipeInfo.isEnchantingRecipe))
 
         --- @type CraftSim.RecipeData
-        local recipeData = CraftSim.RecipeData(recipeInfo.recipeID, nil, nil, crafterData);
+        local recipeData = CraftSim.RecipeData({ recipeID = recipeInfo.recipeID, crafterData = crafterData });
 
         if recipeData.reagentData:HasOptionalReagents() and CraftSim.DB.OPTIONS:Get("RECIPESCAN_USE_INSIGHT") then
             recipeData:SetOptionalReagent(CraftSim.CONST.ITEM_IDS.OPTIONAL_REAGENTS.ILLUSTRIOUS_INSIGHT)
@@ -313,13 +313,21 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
             return
         end
 
+        if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") then
+            recipeData.concentrating = true
+            recipeData:Update()
+        end
+
         -- if optimizing subrecipes
         if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES") then
             printS("Optimizing SubRecipes..")
             recipeData:SetSubRecipeCostsUsage(true)
             recipeData:OptimizeSubRecipes({
                 optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"),
-                optimizeReagents = true,
+                optimizeReagentOptions = {
+                    highestProfit = false,
+                    maxQuality = recipeData.maxQuality,
+                },
             })
             printS("optimizedRecipes: " .. tostring(GUTIL:Count(recipeData.optimizedSubRecipes)))
         end
@@ -333,9 +341,16 @@ function CraftSim.RECIPE_SCAN:StartScan(row)
             -- Optimize gear and/or reagents
             recipeData:OptimizeProfit({
                 optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"),
-                optimizeReagents = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
-                    CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE,
+                optimizeReagentOptions = (CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
+                    CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE) and {
+                    maxQuality = recipeData.maxQuality,
+                    highestProfit = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT")
+                },
             })
+
+            if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") and CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE") then
+                recipeData:OptimizeConcentration()
+            end
         else
             CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
         end

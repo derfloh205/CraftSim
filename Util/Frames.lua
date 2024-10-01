@@ -70,9 +70,9 @@ function CraftSim.FRAME:RestoreModulePositions()
         CraftSim.CONST.FRAMES.AVERAGE_PROFIT_WO)
     local topgearFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR)
     local topgearFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.TOP_GEAR_WORK_ORDER)
-    local materialOptimizationFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+    local reagentOptimizationFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES,
         CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION)
-    local materialOptimizationFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
+    local reagentOptimizationFrameWO = GGUI:GetFrame(CraftSim.INIT.FRAMES,
         CraftSim.CONST.FRAMES.REAGENT_OPTIMIZATION_WORK_ORDER)
     local debugFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.DEBUG)
     local infoFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.INFO)
@@ -95,8 +95,8 @@ function CraftSim.FRAME:RestoreModulePositions()
     CraftSim.PRICE_DETAILS.frameWO:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.COST_OPTIMIZATION.frame:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.COST_OPTIMIZATION.frameWO:RestoreSavedConfig(ProfessionsFrame)
-    materialOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
-    materialOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
+    reagentOptimizationFrame:RestoreSavedConfig(ProfessionsFrame)
+    reagentOptimizationFrameWO:RestoreSavedConfig(ProfessionsFrame)
     CraftSim.CRAFTQ.frame:RestoreSavedConfig(ProfessionsFrame)
 
     CraftSim.CRAFT_BUFFS.frame:RestoreSavedConfig(ProfessionsFrame.CraftingPage)
@@ -108,7 +108,7 @@ end
 
 function CraftSim.FRAME:ResetFrames()
     for _, frame in pairs(CraftSim.INIT.FRAMES) do
-        print("resetting frameID: " .. tostring(frame.frameID))
+        print(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FRAMES_RESETTING) .. tostring(frame.frameID))
         frame:ResetPosition()
     end
 end
@@ -265,7 +265,8 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         closeable = true,
         scrollableContent = true,
         moveable = true,
-        title = GUTIL:ColorizeText("CraftSim What's New? (" .. currentVersion .. ")",
+        title = GUTIL:ColorizeText(
+            CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FRAMES_WHATS_NEW) .. " (" .. currentVersion .. ")",
             GUTIL.COLORS.GREEN),
         backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
         frameTable = CraftSim.INIT.FRAMES,
@@ -281,20 +282,22 @@ function CraftSim.FRAME:InitOneTimeNoteFrame()
         end)
     frame.content.discordBox:SetScale(0.75)
     frame.content.discordBoxLabel = CraftSim.FRAME:CreateText(
-        "Join the Discord!", frame.content, frame.content.discordBox, "BOTTOM", "TOP", 0, 0, 0.75)
+        CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FRAMES_JOIN_DISCORD), frame.content, frame.content.discordBox,
+        "BOTTOM", "TOP", 0, 0, 0.75)
 
     frame.content.donateBox = CraftSim.FRAME:CreateInput(
-        nil, frame.content, frame.content, "TOP", "TOP", 120, -20, 250, 30, CraftSim.CONST.PAYPAL_ME_URL, function()
+        nil, frame.content, frame.content, "TOP", "TOP", 120, -20, 250, 30, CraftSim.CONST.KOFI_URL, function()
             -- do not let the player remove the link
-            frame.content.donateBox:SetText(CraftSim.CONST.PAYPAL_ME_URL)
+            frame.content.donateBox:SetText(CraftSim.CONST.KOFI_URL)
         end)
     frame.content.donateBox:SetScale(0.75)
     frame.content.donateBoxLabel = CraftSim.FRAME:CreateText(
-        f.patreon("Support CraftSim, donate <3"), frame.content, frame.content.donateBox, "BOTTOM", "TOP", 0, 0, 0.75)
+        f.patreon(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FRAMES_DONATE_KOFI)), frame.content, frame.content
+        .donateBox, "BOTTOM", "TOP", 0, 0, 0.75)
 
     frame.content.infoText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.content.infoText:SetPoint("TOP", frame.content, "TOP", 10, -45)
-    frame.content.infoText:SetText("No Info")
+    frame.content.infoText:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.FRAMES_NO_INFO))
     frame.content.infoText:SetJustifyH("LEFT")
 
     frame.showInfo = function(infoText)

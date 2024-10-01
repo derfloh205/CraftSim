@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 ---@class CraftSim.ReagentItem : CraftSim.CraftSimObject
 CraftSim.ReagentItem = CraftSim.CraftSimObject:extend()
 
@@ -101,4 +103,52 @@ function CraftSim.ReagentItem:GetJSON(indent)
     jb:Add("itemID", self.item:GetItemID(), true)
     jb:End()
     return jb.json
+end
+
+---@param recipeData CraftSim.RecipeData
+---@return boolean
+function CraftSim.ReagentItem:IsOrderReagentIn(recipeData)
+    if not recipeData.orderData then return false end
+
+    local orderItemIDs = GUTIL:Map(recipeData.orderData.reagents or {}, function(reagentInfo)
+        return reagentInfo.reagent.itemID
+    end)
+
+    return tContains(orderItemIDs, self.item:GetItemID())
+end
+
+---@deprecated
+---@param recipeData CraftSim.RecipeData
+function CraftSim.ReagentItem:GetSkillContributionPerItem(recipeData)
+    if self.qualityID <= 1 then
+        return 0
+    end
+
+    local reagentWeight = CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(self.item:GetItemID())
+    local weightList = {}
+    for _, reagent in ipairs(recipeData.reagentData.requiredReagents) do
+        if reagent.hasQuality then
+            tinsert(weightList, CraftSim.REAGENT_OPTIMIZATION:GetReagentWeightByID(reagent.items[1].item:GetItemID()))
+        end
+    end
+
+    local weightGCD = GUTIL:Fold(weightList, 0, function(a, b)
+        return CraftSim.REAGENT_OPTIMIZATION:GetGCD(a, b)
+    end)
+
+    if weightGCD == 0 then
+        weightGCD = 1
+    end
+
+    local relativeWeight = reagentWeight / weightGCD
+
+    local reagentSkillContributionFactor = relativeWeight * (self.qualityID - 1)
+
+    local skillContribution = recipeData.reagentsMaxSkillContribution * reagentSkillContributionFactor
+
+    -- quality contribution Q1 = 0
+    -- quality contribution Q2 = relative weight
+    -- quality contribution Q3 = relative weight * 2
+
+    return skillContribution
 end

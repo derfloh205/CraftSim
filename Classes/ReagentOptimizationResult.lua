@@ -1,6 +1,8 @@
 ---@class CraftSim
 local CraftSim = select(2, ...)
 
+local GUTIL = CraftSim.GUTIL
+
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.REAGENT_OPTIMIZATION)
 
 ---@class CraftSim.ReagentOptimizationResult : CraftSim.CraftSimObject
@@ -114,4 +116,16 @@ function CraftSim.ReagentOptimizationResult:OptimizeQualityIDs(considerSubCrafts
             lastReagentItem = reagentItem
         end
     end
+end
+
+--- required costs only
+---@return number totalCraftingCostsRequired
+function CraftSim.ReagentOptimizationResult:GetTotalReagentCost()
+    local reagentPriceInfos = self.recipeData.priceData.reagentPriceInfos
+    local reagentItems = self:GetReagentItemList()
+
+    return GUTIL:Fold(reagentItems, 0, function(totalCost, nextReagentItem)
+        local itemPriceInfo = reagentPriceInfos[nextReagentItem.itemID]
+        return totalCost + itemPriceInfo.itemPrice
+    end)
 end

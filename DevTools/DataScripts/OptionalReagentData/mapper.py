@@ -27,15 +27,23 @@ def map(download, buildVersion):
 
     optionalReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "18"}})
     finishingReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "19"}})
+    sparkReagents = wagoTools.searchTable(Item, {"conditions": {"ClassID": "7", "SubclassID": "11", "CraftingQualityID": "0"}})
+    # Filter to recieve spark reagents only
+    sparkReagents = [sparkReagent for sparkReagent in sparkReagents if int(sparkReagent["ModifiedCraftingReagentItemID"]) > 0]
 
-    Reagents = optionalReagents + finishingReagents
+    Reagents = optionalReagents + finishingReagents + sparkReagents
     print("Mapping Optional Items")
+    print("#optionalReagents: " + str(len(optionalReagents)))
+    print("#finishingReagents: " + str(len(finishingReagents)))
+    print("#sparkReagents: " + str(len(sparkReagents)))
     counter = 0
     reagentCount = len(Reagents)
     for reagentData in Reagents:
         counter = counter + 1
         itemID = int(reagentData["ID"])
         isOptional = reagentData["SubclassID"] == "18"
+        isFinishing = reagentData["SubclassID"] == "19"
+        isSpark = reagentData["SubclassID"] == "11"
 
         debug = False
 
@@ -61,7 +69,7 @@ def map(download, buildVersion):
 
         craftingReagentQuality = wagoTools.searchTable(CraftingReagentQualityTable, {"singleResult": True, "conditions": {"ItemID": str(itemID)}})
 
-        if craftingReagentQuality and isOptional:
+        if craftingReagentQuality and (isOptional or isSpark):
             difficultyIncrease = int(craftingReagentQuality["MaxDifficultyAdjustment"])
             if difficultyIncrease > 0:
                 optionalReagentsDataTable[itemID] = {
@@ -76,7 +84,7 @@ def map(download, buildVersion):
                 continue
 
         reagentEffectPct = 1
-        if craftingReagentQuality and len(craftingReagentQuality) > 0 and not isOptional:
+        if craftingReagentQuality and len(craftingReagentQuality) > 0 and isFinishing:
             reagentEffectPct = float(craftingReagentQuality["ReagentEffectPct"]) / 100
 
 

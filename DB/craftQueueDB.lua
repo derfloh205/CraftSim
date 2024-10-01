@@ -49,6 +49,18 @@ function CraftSim.DB.CRAFT_QUEUE:Migrate()
         CraftSim.DB.CRAFT_QUEUE:ClearAll()
         CraftSimDB.craftQueueDB.version = 4
     end
+
+    -- concentration queue id consideration removed
+    if CraftSimDB.craftQueueDB.version == 4 then
+        CraftSim.DB.CRAFT_QUEUE:ClearAll()
+        CraftSimDB.craftQueueDB.version = 5
+    end
+
+    -- mc constants option changed
+    if CraftSimDB.craftQueueDB.version == 5 then
+        CraftSim.DB.CRAFT_QUEUE:ClearAll()
+        CraftSimDB.craftQueueDB.version = 6
+    end
 end
 
 function CraftSim.DB.CRAFT_QUEUE:ClearAll()

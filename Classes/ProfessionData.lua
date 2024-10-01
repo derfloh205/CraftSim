@@ -5,17 +5,23 @@ local GUTIL = CraftSim.GUTIL
 
 local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.DATAEXPORT)
 
+---@class CraftSim.ProfessionData.ConstructorOptions
+---@field recipeData CraftSim.RecipeData
+---@field forceCache? boolean
+
 ---@class CraftSim.ProfessionData : CraftSim.CraftSimObject
----@overload fun(recipeData: CraftSim.RecipeData, recipeID:number) : CraftSim.ProfessionData
+---@overload fun(options: CraftSim.ProfessionData.ConstructorOptions) : CraftSim.ProfessionData
 CraftSim.ProfessionData = CraftSim.CraftSimObject:extend()
 
----@param recipeData CraftSim.RecipeData
----@param recipeID number
-function CraftSim.ProfessionData:new(recipeData, recipeID)
-	self.recipeData = recipeData
-	local crafterUID = recipeData:GetCrafterUID()
+---@param options CraftSim.ProfessionData.ConstructorOptions
+function CraftSim.ProfessionData:new(options)
+	options = options or {}
+	self.recipeData = options.recipeData
+	local recipeID = self.recipeData.recipeID
+	local crafterUID = self.recipeData:GetCrafterUID()
+	local forceCache = options.forceCache or false
 	-- if not the crafter get from cache, if not cached take data-less info
-	if not recipeData:IsCrafter() then
+	if not self.recipeData:IsCrafter() or forceCache then
 		self.professionInfo = CraftSim.DB.CRAFTER:GetProfessionInfoForRecipe(crafterUID, recipeID)
 		if not self.professionInfo then
 			self.professionInfo = C_TradeSkillUI.GetProfessionInfoByRecipeID(recipeID)

@@ -162,10 +162,11 @@ function CraftSim.TOPGEAR:GetUniqueCombosFromAllPermutations(totalCombos, isCook
 end
 
 ---@param recipeData CraftSim.RecipeData
+---@param forceCache? boolean
 ---@return CraftSim.ProfessionGear[] inventoryGear
-function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData)
+function CraftSim.TOPGEAR:GetProfessionGearFromInventory(recipeData, forceCache)
     local crafterUID = recipeData:GetCrafterUID()
-    if recipeData:IsCrafter() then
+    if recipeData:IsCrafter() and not forceCache then
         local currentProfession = recipeData.professionData.professionInfo.parentProfessionName
         print("GetProfessionGearFromInventory: currentProfession: " .. tostring(currentProfession))
         local inventoryGear = {}

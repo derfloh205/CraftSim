@@ -113,7 +113,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 owner = reagentOverwriteFrame.content,
                 anchor = "ANCHOR_CURSOR",
                 textWrap = true,
-                text = "Max All Reagents of Quality " .. GUTIL:GetQualityIconString(1, 20, 20),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) ..
+                    GUTIL:GetQualityIconString(1, 20, 20),
             },
         })
         reagentOverwriteFrame.content.quality2Button = GGUI.Button({
@@ -133,7 +134,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 owner = reagentOverwriteFrame.content,
                 anchor = "ANCHOR_CURSOR",
                 textWrap = true,
-                text = "Max All Reagents of Quality " .. GUTIL:GetQualityIconString(2, 20, 20),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) ..
+                    GUTIL:GetQualityIconString(2, 20, 20),
             },
         })
 
@@ -154,7 +156,8 @@ function CraftSim.SIMULATION_MODE.UI:Init()
                 owner = reagentOverwriteFrame.content,
                 anchor = "ANCHOR_CURSOR",
                 textWrap = true,
-                text = "Max All Reagents of Quality " .. GUTIL:GetQualityIconString(3, 20, 20),
+                text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_QUALITY_BUTTON_TOOLTIP) ..
+                    GUTIL:GetQualityIconString(3, 20, 20),
             },
         })
         reagentOverwriteFrame.content.clearAllocationsButton = GGUI.Button({
@@ -163,7 +166,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             anchorA = "LEFT",
             anchorB = "RIGHT",
             offsetX = inputOffsetX - 30,
-            label = "Clear",
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CLEAR_BUTTON),
             adjustWidth = true,
             sizeX = 10,
             sizeY = 25,
@@ -414,7 +417,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetPoint("TOPLEFT",
             simModeDetailsFrame.content.baseSkillTitle, "TOPLEFT", 0, offsetY)
         simModeDetailsFrame.content.reagentSkillIncreaseTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .MATERIAL_QUALITY_BONUS_LABEL))
+            .REAGENT_QUALITY_BONUS_LABEL))
         simModeDetailsFrame.content.reagentSkillIncreaseTitle.helper = CraftSim.FRAME:CreateHelpIcon(
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTSKILL_EXPLANATION_TOOLTIP),
             simModeDetailsFrame.content, simModeDetailsFrame.content.reagentSkillIncreaseTitle, "RIGHT", "LEFT", -20, 0)
@@ -432,7 +435,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         simModeDetailsFrame.content.reagentMaxFactorTitle:SetPoint("TOPLEFT",
             simModeDetailsFrame.content.reagentSkillIncreaseTitle, "TOPLEFT", 0, offsetY)
         simModeDetailsFrame.content.reagentMaxFactorTitle:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT
-            .MATERIAL_QUALITY_MAXIMUM_LABEL))
+            .REAGENT_QUALITY_MAXIMUM_LABEL))
         simModeDetailsFrame.content.reagentMaxFactorTitle.helper = CraftSim.FRAME:CreateHelpIcon(
             CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.REAGENTFACTOR_EXPLANATION_TOOLTIP),
             simModeDetailsFrame.content, simModeDetailsFrame.content.reagentMaxFactorTitle, "RIGHT", "LEFT", -20, 0)
@@ -449,7 +452,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             anchorParent = simModeDetailsFrame.content.reagentMaxFactorValue,
             anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
             labelOptions = {
-                text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) .. " Concentration",
+                text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) .. CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION),
                 anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -7,
                 anchorParent = simModeDetailsFrame.content.reagentMaxFactorTitle
             },
@@ -465,7 +468,7 @@ function CraftSim.SIMULATION_MODE.UI:Init()
             anchorParent = simModeDetailsFrame.content.concentrationCB.labelText.frame,
             anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = -7,
             justifyOptions = { type = "H", align = "LEFT" },
-            text = "Concentration Cost: ",
+            text = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SIMULATION_MODE_CONCENTRATION_COST),
         }
 
         simModeDetailsFrame.content.concentrationCostValue = GGUI.Text {
@@ -534,36 +537,6 @@ function CraftSim.SIMULATION_MODE.UI:Init()
         .SchematicForm)
     CraftSim.SIMULATION_MODE.UI.WORKORDER = createSimulationModeFrames(ProfessionsFrame.OrdersPage.OrderView
         .OrderDetails.SchematicForm)
-end
-
-function CraftSim.SIMULATION_MODE.UI:ResetAllNodeModFramesForTab(tab)
-    for _, nodeModFrame in pairs(tab.content.nodeModFrames) do
-        nodeModFrame:Hide()
-        nodeModFrame.showParentLine:Hide()
-    end
-end
-
-function CraftSim.SIMULATION_MODE.UI:GetSpecNodeModFramesByTabAndLayerAndLayerMax(tabIndex, layer, layerMaxNodes)
-    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
-    local specSimFrame = nil
-    if exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER then
-        specSimFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM_WO)
-    else
-        specSimFrame = GGUI:GetFrame(CraftSim.INIT.FRAMES, CraftSim.CONST.FRAMES.SPEC_SIM)
-    end
-
-    local tab = specSimFrame.content.specializationTabs[tabIndex]
-
-    if tab then
-        local nodeModFrames = tab.content.nodeModFrames
-        local relevantModFrames = GUTIL:Filter(nodeModFrames, function(nodeModFrame)
-            return nodeModFrame.layer == layer and nodeModFrame.layerMaxNodes == layerMaxNodes
-        end)
-
-        return relevantModFrames
-    end
-
-    return {}
 end
 
 function CraftSim.SIMULATION_MODE.UI:CreateReagentOverwriteFrame(reagentOverwriteFrame, offsetX, offsetY, baseX,

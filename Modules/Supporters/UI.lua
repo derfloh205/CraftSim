@@ -49,9 +49,9 @@ function CraftSim.SUPPORTERS.UI:Init()
 
         frame.content.donateBox = CraftSim.FRAME:CreateInput(
             nil, frame.content, frame.content.description.frame, "TOP", "BOTTOM", 0, -40, 250, 30,
-            CraftSim.CONST.PAYPAL_ME_URL, function()
+            CraftSim.CONST.DISCORD_INVITE_URL, function()
                 -- do not let the player remove the link
-                frame.content.donateBox:SetText(CraftSim.CONST.PAYPAL_ME_URL)
+                frame.content.donateBox:SetText(CraftSim.CONST.DISCORD_INVITE_URL)
             end)
         frame.content.donateBox:SetScale(0.75)
         frame.content.donateBoxLabel = CraftSim.FRAME:CreateText(
@@ -77,19 +77,14 @@ function CraftSim.SUPPORTERS.UI:Init()
                     width = 100,
                 },
                 {
-                    label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_TYPE),
-                    width = 50,
-                },
-                {
                     label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.SUPPORTERS_MESSAGE),
-                    width = 250,
+                    width = 300,
                 },
             },
             rowConstructor = function(columns)
                 local dateColumn = columns[1]
                 local nameColumn = columns[2]
-                local typeColumn = columns[3]
-                local messageColumn = columns[4]
+                local messageColumn = columns[3]
 
                 ---@type GGUI.Text | GGUI.Widget
                 dateColumn.text = CraftSim.GGUI.Text({
@@ -108,14 +103,6 @@ function CraftSim.SUPPORTERS.UI:Init()
                     fixedWidth = nameColumn:GetWidth(),
                 })
                 ---@type GGUI.Text | GGUI.Widget
-                typeColumn.text = CraftSim.GGUI.Text({
-                    parent = typeColumn,
-                    anchorParent = typeColumn,
-                    text = "",
-                    justifyOptions = { type = "H", align = "LEFT" },
-                    fixedWidth = typeColumn:GetWidth(),
-                })
-                ---@type GGUI.Text | GGUI.Widget
                 messageColumn.text = CraftSim.GGUI.Text({
                     parent = messageColumn,
                     anchorParent = messageColumn,
@@ -130,12 +117,10 @@ function CraftSim.SUPPORTERS.UI:Init()
             frame.content.supportersList:Add(function(row)
                 local dateColumn = row.columns[1]
                 local nameColumn = row.columns[2]
-                local typeColumn = row.columns[3]
-                local messageColumn = row.columns[4]
+                local messageColumn = row.columns[3]
 
                 dateColumn.text:SetText(supporter.date)
                 nameColumn.text:SetText(supporter.name)
-                typeColumn.text:SetText(supporter.type)
                 messageColumn.text:SetText(supporter.message)
             end)
         end)

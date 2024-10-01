@@ -112,7 +112,8 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListRowCachedRecipesInfo(select
     if C_TradeSkillUI.IsTradeSkillReady() then
         if selectedRow.crafterProfessionUID ~= CraftSim.RECIPE_SCAN:GetPlayerCrafterProfessionUID() then
             content.cachedRecipesInfoHelpIcon:Show()
-            content.cachedRecipesInfo:SetText("(Cached Recipes: " .. tostring(#cachedRecipeIDs) .. ") ")
+            content.cachedRecipesInfo:SetText("(" ..
+                L(CraftSim.CONST.TEXT.RECIPE_SCAN_CACHED_RECIPES) .. tostring(#cachedRecipeIDs) .. ") ")
         else
             content.cachedRecipesInfo:SetText("")
             content.cachedRecipesInfoHelpIcon:Hide()
@@ -122,6 +123,10 @@ function CraftSim.RECIPE_SCAN.UI:UpdateProfessionListRowCachedRecipesInfo(select
         content.cachedRecipesInfo:SetText("")
         content.cachedRecipesInfoHelpIcon:Hide()
     end
+
+    -- update concentrationToggleCB
+
+    content.concentrationToggleCB:SetChecked(CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION"))
 end
 
 ---@param recipeScanTab CraftSim.RECIPE_SCAN.RECIPE_SCAN_TAB
@@ -342,8 +347,8 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
 
     content.concentrationToggleCB = GGUI.Checkbox {
         parent = content, anchorParent = content.cancelScanButton.frame, anchorA = "LEFT", anchorB = "RIGHT",
-        labelOptions = { text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) .. " Concentration" },
-        tooltip = "Toggle Concentration",
+        labelOptions = { text = GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 20, 20) .. L(CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_TOGGLE) },
+        tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_CONCENTRATION_TOGGLE_TOOLTIP),
         initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION"),
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("RECIPESCAN_ENABLE_CONCENTRATION", checked)
@@ -763,12 +768,31 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
 
     content.optimizeSubRecipes = GGUI.Checkbox {
         parent = content, anchorParent = content.optimizeProfessionToolsCB.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
-        label = "Optimize Sub Recipes " .. f.bb("(experimental)"),
-        tooltip = "If enabled, " .. f.l("CraftSim") .. " also optimizes crafts of cached reagent recipes of scanned recipes and uses their\n" ..
-            f.bb("expected costs") .. " to calculate the crafting costs for the final product.\n\n" .. f.r("Warning: This might reduce scanning performance"),
+        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES),
+        tooltip = L(CraftSim.CONST.TEXT.RECIPE_SCAN_OPTIMIZE_SUBRECIPES_TOOLTIP),
         initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES"),
         clickCallback = function(_, checked)
             CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_SUBRECIPES", checked)
+        end
+    }
+
+    content.optimizeReagentsTopProfit = GGUI.Checkbox {
+        parent = content, anchorParent = content.optimizeSubRecipes.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
+        label = "Optimize Reagents - Top Profit Max Quality",
+        tooltip = "If enabled, all recipes will be optimized for their most profitable result quality instead of max quality reachable",
+        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT", checked)
+        end
+    }
+
+    content.optimizeConcentrationValue = GGUI.Checkbox {
+        parent = content, anchorParent = content.optimizeReagentsTopProfit.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = checkBoxSpacingY,
+        label = "Optimize Concentration Value",
+        tooltip = "If enabled, all recipes will be optimized for their best concentration gold value per point\n" .. f.r("!!High Performance Usage!!"),
+        initialValue = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE"),
+        clickCallback = function(_, checked)
+            CraftSim.DB.OPTIONS:Save("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE", checked)
         end
     }
 
@@ -792,7 +816,7 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
 
         },
         buttonOptions = {
-            parent = content, anchorParent = content.optimizeSubRecipes.frame,
+            parent = content, anchorParent = content.optimizeConcentrationValue.frame,
             anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = checkBoxSpacingY,
             label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON), offsetX = 25,
             adjustWidth = true, sizeX = 20,
@@ -830,7 +854,8 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
 
             row.recipeData = recipeData
 
-            local enableConcentration = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
+            local enableConcentration = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") and
+            recipeData.supportsQualities
 
             local recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
 
@@ -860,10 +885,15 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             end
 
             local averageProfit = recipeData:GetAverageProfit()
-            row.concentrationWeight, row.concentrationProfit = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData,
-                averageProfit)
+            row.concentrationWeight = 0
+            row.concentrationProfit = 0
+            if enableConcentration then
+                row.concentrationWeight, row.concentrationProfit = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(
+                    recipeData,
+                    averageProfit)
+            end
 
-            if enableConcentration and row.concentrationProfit then
+            if enableConcentration and (row.concentrationProfit > 0) then
                 averageProfit = row.concentrationProfit
             end
 
@@ -871,8 +901,9 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             row.relativeProfit = GUTIL:GetPercentRelativeTo(averageProfit, recipeData.priceData.craftingCosts)
             recipeData.resultData:Update() -- switch back
             row.concentrationCost = recipeData.concentrationCost
-            concentrationCostColumn.text:SetText(row.concentrationCost)
-            concentrationValueColumn.text:SetText(CraftSim.UTIL:FormatMoney(row.concentrationWeight, true))
+            concentrationCostColumn.text:SetText((enableConcentration and row.concentrationCost) or f.grey("-"))
+            concentrationValueColumn.text:SetText((enableConcentration and CraftSim.UTIL:FormatMoney(row.concentrationWeight, true)) or
+                f.grey("-"))
 
             averageProfitColumn.text:SetText(CraftSim.UTIL:FormatMoney(averageProfit, true, relativeTo, true))
 
