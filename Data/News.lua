@@ -18,7 +18,7 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
         newP("18.2.4"),
-        f.p .. "",
+        f.p .. "Fixed " .. f.bb("CraftQueue") .. " consistency when reloading after login",
         newP("18.2.3"),
         f.P ..
         "Added a " ..
