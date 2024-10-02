@@ -812,7 +812,7 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
         end),
         parent = content,
         anchorPoints = { { anchorParent = content.optimizeConcentrationValue.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = 25 } },
-        sizeX = 20,
+        sizeX = 30,
         sizeY = 25,
         label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON),
     }

@@ -256,7 +256,7 @@ function CraftSim.SIMULATION_MODE:UpdateRecipeDataBuffsBySimulatedBuffs()
 
     local simulateBuffSelector = craftBuffsFrame.content.simulateBuffSelector
 
-    recipeData.buffData:SetBuffsByUIDToValueMap(simulateBuffSelector.selectedValues)
+    recipeData.buffData:SetBuffsByUIDToValueMap(simulateBuffSelector.savedVariablesTable)
     recipeData.buffData:UpdateProfessionStats()
 end
 
