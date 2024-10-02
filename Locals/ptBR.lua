@@ -8,7 +8,7 @@ function CraftSim.LOCAL_PT:GetData()
     local cm = function(i, s) return CraftSim.MEDIA:GetAsTextIcon(i, s) end
     return {
         -- REQUIRED:
-        [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Muticriação",
+        [CraftSim.CONST.TEXT.STAT_MULTICRAFT] = "Multicriação",
         [CraftSim.CONST.TEXT.STAT_RESOURCEFULNESS] = "Devolução de recursos",
         [CraftSim.CONST.TEXT.STAT_INGENUITY] = "Engenhosidade",
         [CraftSim.CONST.TEXT.STAT_CRAFTINGSPEED] = "Velocidade de criação",
@@ -18,7 +18,7 @@ function CraftSim.LOCAL_PT:GetData()
         -- OPTIONAL (Defaulting to EN if not available):
 
           -- professions
-
+        
         [CraftSim.CONST.TEXT.PROFESSIONS_BLACKSMITHING] = "Ferraria",
         [CraftSim.CONST.TEXT.PROFESSIONS_LEATHERWORKING] = "Couraria",
         [CraftSim.CONST.TEXT.PROFESSIONS_ALCHEMY] = "Alquimia",
