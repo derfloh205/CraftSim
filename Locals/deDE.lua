@@ -698,6 +698,11 @@ hat, die größer oder gleich der konfigurierten Verkaufsraten-Schwelle ist.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP] =
             "Erstherstellungen, die " ..
             f.bb("Händchen fürs Kunsthandwerk") .. " verwenden, nicht in die Warteschlange aufnehmen",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_LABEL] =
+        "Funken-Slot-Rezepte ignorieren",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_TOOLTIP] =
+            "Stellen Sie Ersthandwerker nicht mit " ..
+            f.e("Funken-Slots") .. " in die Warteschlange",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP] = "\n\nWartende Handwerke: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nBestellung von Kunde: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nnMindestqualität: ",

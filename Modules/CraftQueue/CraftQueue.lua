@@ -816,8 +816,10 @@ function CraftSim.CRAFTQ:AddFirstCrafts()
         local recipeData = CraftSim.RecipeData({ recipeID = recipeID })
         local isSkillLine = recipeData.professionData.skillLineID == currentSkillLineID
         local ignoreAcuity = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_ACUITY_RECIPES")
+        local ignoreSpark = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_SPARK_RECIPES")
         local usesAcuity = recipeData.reagentData:HasOneOfReagents({ CraftSim.CONST.ITEM_IDS.CURRENCY.ARTISANS_ACUITY })
-        local queueRecipe = isSkillLine and (not ignoreAcuity or not usesAcuity)
+        local usesSpark = recipeData.reagentData:HasSparkSlot(),
+        local queueRecipe = isSkillLine and (not ignoreAcuity or not usesAcuity) and (not ignoreSpark or not usesSpark)
         if queueRecipe then
             recipeData.reagentData:SetReagentsMaxByQuality(1)
             self:AddRecipe({ recipeData = recipeData })

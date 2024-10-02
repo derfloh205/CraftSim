@@ -663,7 +663,10 @@ greater or equal the configured sale rate threshold.
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_SUBMIT] = "Submit",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL] = "Ignore Acuity Recipes",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP] =
-            "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
+        "Do not queue first crafts that use " .. f.bb("Artisan's Acuity") .. " for crafting",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_LABEL] = "Ignore Spark Slot Recipes",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_TOOLTIP] =
+            "Do not queue first crafts that use " .. f.e("Sparks Slots") .. " for crafting",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP] = "\n\nQueued Crafts: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\nOrder Customer: ",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\nMinimum Quality: ",

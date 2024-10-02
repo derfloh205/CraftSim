@@ -549,17 +549,28 @@ function CraftSim.CRAFTQ.UI:Init()
 
         ---@type GGUI.Button
         queueTab.content.clearAllButton = GGUI.Button({
-            parent = queueTab.content,
-            anchorParent = queueTab.content.addPatronOrdersButton.frame,
-            anchorA = "TOPLEFT",
-            anchorB = "BOTTOMLEFT",
-            offsetY = 0,
-            adjustWidth = true,
-            label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL),
-            clickCallback = function()
-                CraftSim.CRAFTQ:ClearAll()
-            end
+          parent = queueTab.content,
+          anchorParent = queueTab.content.addPatronOrdersButton.frame,
+          anchorA = "TOPLEFT",
+          anchorB = "BOTTOMLEFT",
+          offsetY = 0,
+          adjustWidth = true,
+          label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_CLEAR_ALL_BUTTON_LABEL),
+          clickCallback = function()
+              CraftSim.CRAFTQ:ClearAll()
+          end
         })
+
+        queueTab.content.ignoreSparkRecipesCB = GGUI.Checkbox {
+          parent = queueTab.content, anchorParent = queueTab.content.clearAllButton.frame,
+          scale = 0.9, anchorA = "LEFT", anchorB = "RIGHT", labelOptions = { text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_LABEL) },
+          offsetX = 5,
+          initialValue = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_SPARK_RECIPES"),
+          clickCallback = function(_, checked)
+              CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_FIRST_CRAFTS_IGNORE_SPARK_RECIPES", checked)
+          end,
+          tooltip = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_TOOLTIP),
+        } 
 
         ---@type GGUI.Button
         queueTab.content.craftNextButton = GGUI.Button({

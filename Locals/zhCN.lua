@@ -652,6 +652,9 @@ function CraftSim.LOCAL_CN:GetData()
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_LABEL] = "忽略匠人之敏配方",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_ACUITY_RECIPES_CHECKBOX_TOOLTIP] =
             "不要把使用 " .. f.bb("匠人之敏") .. " 的配方先加入制造队列",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_LABEL] = "忽略火花食谱",
+        [CraftSim.CONST.TEXT.CRAFT_QUEUE_IGNORE_SPARK_RECIPES_CHECKBOX_TOOLTIP] =
+            "不要首先使用 " .. f.e("“火花槽”") .. " 将配方添加到制作队列中",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_AMOUNT_TOOLTIP] = "\n\n排队中的制造：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_CUSTOMER] = "\n\n订单发布人：",
         [CraftSim.CONST.TEXT.CRAFT_QUEUE_ORDER_MINIMUM_QUALITY] = "\n最低品质：",
