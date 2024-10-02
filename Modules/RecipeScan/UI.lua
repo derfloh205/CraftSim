@@ -810,17 +810,11 @@ function CraftSim.RECIPE_SCAN.UI:InitScanOptionsTab(scanOptionsTab)
             end), function(a, b)
             return a.selectionID > b.selectionID
         end),
-        selectionFrameOptions = {
-            backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
-            sizeX = 240, sizeY = 260, anchorA = "LEFT", anchorB = "RIGHT",
-
-        },
-        buttonOptions = {
-            parent = content, anchorParent = content.optimizeConcentrationValue.frame,
-            anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetY = checkBoxSpacingY,
-            label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON), offsetX = 25,
-            adjustWidth = true, sizeX = 20,
-        },
+        parent = content,
+        anchorPoints = { { anchorParent = content.optimizeConcentrationValue.frame, anchorA = "TOPLEFT", anchorB = "BOTTOMLEFT", offsetX = 25 } },
+        sizeX = 20,
+        sizeY = 25,
+        label = L(CraftSim.CONST.TEXT.RECIPE_SCAN_EXPANSION_FILTER_BUTTON),
     }
 end
 
@@ -855,7 +849,7 @@ function CraftSim.RECIPE_SCAN.UI:AddRecipe(row, recipeData)
             row.recipeData = recipeData
 
             local enableConcentration = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") and
-            recipeData.supportsQualities
+                recipeData.supportsQualities
 
             local recipeRarity = recipeData.resultData.expectedItem:GetItemQualityColor()
 

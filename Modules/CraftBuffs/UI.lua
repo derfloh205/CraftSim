@@ -80,25 +80,19 @@ function CraftSim.CRAFT_BUFFS.UI:Init()
         frame.content = frame.content
 
         frame.content.simulateBuffSelector = GGUI.CheckboxSelector {
-            buttonOptions = {
-                parent = frame.content, anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5,
-                adjustWidth = true, sizeX = 15, label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_BUFFS_SIMULATE_BUTTON)
-            },
-            selectionFrameOptions = {
-                backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS, closeable = true,
-                sizeX = 330, anchorA = "BOTTOM", anchorB = "TOP",
-            },
+            parent = frame.content, anchorPoints = { { anchorParent = frame.title.frame, anchorA = "TOP", anchorB = "BOTTOM", offsetY = -5 } },
+            sizeX = 30, sizeY = 25,
+            label = CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.CRAFT_BUFFS_SIMULATE_BUTTON),
             savedVariablesTable = CraftSim.CRAFT_BUFFS.simulatedBuffs,
             onSelectCallback = function()
                 CraftSim.INIT:TriggerModuleUpdate()
             end,
-            debug = true,
         }
 
         frame.content.simulateBuffSelector:SetEnabled(false)
 
         frame.content.buffList = GGUI.FrameList {
-            parent = frame.content, anchorParent = frame.content.simulateBuffSelector.button.frame, anchorA = "TOP", anchorB = "BOTTOM", sizeY = 127, offsetY = -5, showBorder = true,
+            parent = frame.content, anchorParent = frame.content.simulateBuffSelector.frame, anchorA = "TOP", anchorB = "BOTTOM", sizeY = 127, offsetY = -5, showBorder = true,
             offsetX = -10, selectionOptions = { noSelectionColor = true, hoverRGBA = CraftSim.CONST.FRAME_LIST_SELECTION_COLORS.HOVER_LIGHT_WHITE }, rowHeight = 20,
             columnOptions = {
                 {
