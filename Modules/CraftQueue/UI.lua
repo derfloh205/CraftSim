@@ -232,7 +232,6 @@ function CraftSim.CRAFTQ.UI:Init()
                         text = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_BUTTON_EDIT),
                         anchor = "ANCHOR_CURSOR_RIGHT",
                     },
-                    debug = true,
                 })
 
                 crafterColumn.text = GGUI.Text {
