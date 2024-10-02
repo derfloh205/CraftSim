@@ -870,7 +870,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
     end
 
     GUTIL.FrameDistributor {
-        maxIterations = 500,
+        maxIterations = 1500,
         iterationsPerFrame = iterationsPerFrame,
         finally = function()
             if options.frameDistributedCallback then
