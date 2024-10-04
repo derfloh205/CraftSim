@@ -17,6 +17,9 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("18.2.7"),
+        f.s .. f.bb("Craft Queue - Edit Recipe"),
+        f.a .. "Fixed and reworked the " .. f.gold("Optimize") .. " Button",
         newP("18.2.6"),
         f.s .. "Testing new MenuUtil Context Menu and more",
         f.s .. f.g("Queue Patron Orders") .. " Options added",
