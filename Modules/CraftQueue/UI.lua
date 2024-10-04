@@ -575,7 +575,7 @@ function CraftSim.CRAFTQ.UI:Init()
             sizeX = fixedButtonWidth,
             label = L(CraftSim.CONST.TEXT.CRAFT_QUEUE_ADD_PATRON_ORDERS_BUTTON_LABEL),
             clickCallback = function()
-                CraftSim.CRAFTQ:AddPatronOrders()
+                CraftSim.CRAFTQ:QueuePatronOrders()
             end
         })
 
@@ -601,6 +601,19 @@ function CraftSim.CRAFTQ.UI:Init()
                             L("CRAFT_QUEUE_ADD_PATRON_ORDERS_ALLOW_CONCENTRATION_TOOLTIP"));
                         --GameTooltip_AddNormalLine(tooltip, "Test Tooltip Normal Line");
                         --GameTooltip_AddErrorLine(tooltip, "Test Tooltip Colored Line");
+                    end);
+
+                    local forceConcentrationCB = rootDescription:CreateCheckbox(f.r("Force " .. f.gold("Concentration")),
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION", not value)
+                        end)
+
+                    forceConcentrationCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "Force the use of concentration for all patron orders if possible");
                     end);
 
                     local sparkCB = rootDescription:CreateCheckbox("Ignore " .. f.e("Spark") .. " Recipes",

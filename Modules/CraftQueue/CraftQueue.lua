@@ -127,7 +127,7 @@ function CraftSim.CRAFTQ:CRAFTINGORDERS_CLAIMED_ORDER_REMOVED()
     self.UI:UpdateDisplay()
 end
 
-function CraftSim.CRAFTQ:AddPatronOrders()
+function CraftSim.CRAFTQ:QueuePatronOrders()
     local profession = C_TradeSkillUI.GetChildProfessionInfo().profession
     if C_TradeSkillUI.IsNearProfessionSpellFocus(profession) then
         local request = {
@@ -206,13 +206,17 @@ function CraftSim.CRAFTQ:AddPatronOrders()
                                 recipeData:Update()
 
                                 local function queueRecipe()
+                                    local allowConcentration = CraftSim.DB.OPTIONS:Get(
+                                        "CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION")
+                                    local forceConcentration = CraftSim.DB.OPTIONS:Get(
+                                        "CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION")
                                     -- TODO: allow queuing with concentration and concentration optimization in queue options
                                     -- check if the min quality is reached, if not do not queue
                                     if recipeData.resultData.expectedQuality >= order.minQuality then
                                         CraftSim.CRAFTQ:AddRecipe { recipeData = recipeData }
                                     end
 
-                                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ALLOW_CONCENTRATION") and
+                                    if (forceConcentration or allowConcentration) and
                                         recipeData.resultData.expectedQualityConcentration == order.minQuality then
                                         -- use concentration to reach and then queue
                                         recipeData.concentrating = true
@@ -224,14 +228,25 @@ function CraftSim.CRAFTQ:AddPatronOrders()
                                 end
                                 -- try to optimize for target quality
                                 if order.minQuality then
-                                    RunNextFrame(
-                                        function()
-                                            recipeData:OptimizeReagents({
-                                                maxQuality = order.minQuality
-                                            })
-                                            queueRecipe()
-                                        end
-                                    )
+                                    if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION") then
+                                        RunNextFrame(
+                                            function()
+                                                recipeData:OptimizeReagents({
+                                                    maxQuality = math.max(order.minQuality - 1, 1)
+                                                })
+                                                queueRecipe()
+                                            end
+                                        )
+                                    else
+                                        RunNextFrame(
+                                            function()
+                                                recipeData:OptimizeReagents({
+                                                    maxQuality = order.minQuality
+                                                })
+                                                queueRecipe()
+                                            end
+                                        )
+                                    end
                                 else
                                     queueRecipe()
                                 end
