@@ -1537,7 +1537,9 @@ function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
     local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
 
     local button = CraftSim.CRAFTQ.queueRecipeButton
+    local buttonOptions = CraftSim.CRAFTQ.queueRecipeButtonOptions
     local buttonWO = CraftSim.CRAFTQ.queueRecipeButtonWO
+    local buttonOptionsWO = CraftSim.CRAFTQ.queueRecipeButtonOptionsWO
 
     local isTradeSkillAllowed = not CraftSim.CONST.GATHERING_PROFESSIONS
         [recipeData.professionData.professionInfo.profession] and not C_TradeSkillUI.IsTradeSkillGuild() and
@@ -1555,7 +1557,11 @@ function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
 
     button:SetVisible(isTradeSkillAllowed and isRecipeAllowed and exportMode == CraftSim.CONST.EXPORT_MODE
         .NON_WORK_ORDER)
+    buttonOptions:SetVisible(isTradeSkillAllowed and isRecipeAllowed and exportMode == CraftSim.CONST.EXPORT_MODE
+        .NON_WORK_ORDER)
     buttonWO:SetVisible(isTradeSkillAllowed and isRecipeAllowed and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+    buttonOptionsWO:SetVisible(isTradeSkillAllowed and isRecipeAllowed and
+    exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 end
 
 function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
