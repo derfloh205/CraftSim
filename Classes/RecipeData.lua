@@ -863,7 +863,7 @@ function CraftSim.RecipeData:OptimizeConcentration(options)
 
     CraftSim.DEBUG:StartProfiling("ConcentrationOptimization")
 
-    local iterationsPerFrame = 1
+    local iterationsPerFrame = 2
 
     if inFrame then
         iterationsPerFrame = 0
