@@ -949,26 +949,33 @@ function CraftSim.CRAFTQ.UI:Init()
 
     createContent(CraftSim.CRAFTQ.frame)
 
-    local tooltip = "Add the displayed recipe to the " ..
-        f.l("CraftSim ") .. f.bb("Craft Queue") .. "\n" .. f.bb("Right Click") .. " for more options"
-
     -- add to queue button in crafting ui
     CraftSim.CRAFTQ.queueRecipeButton = GGUI.Button {
         parent = ProfessionsFrame.CraftingPage.SchematicForm,
         anchorPoints = { {
             anchorParent = ProfessionsFrame.CraftingPage.SchematicForm.TrackRecipeCheckbox,
-            anchorA = "RIGHT", anchorB = "LEFT", offsetX = -15,
+            anchorA = "RIGHT", anchorB = "LEFT", offsetX = -18, offsetY = -19,
         } },
         adjustWidth = true,
         sizeX = 15,
         label = "+ CraftQueue",
-        clickCallback = function(_, mouseButton)
-            CraftSim.CRAFTQ:AddOpenRecipe(mouseButton)
+        clickCallback = function(_, _)
+            CraftSim.CRAFTQ:QueueOpenRecipe()
         end,
-        tooltipOptions = {
-            text = tooltip,
-            anchor = "ANCHOR_CURSOR_RIGHT",
-        },
+    }
+
+    CraftSim.CRAFTQ.queueRecipeButtonOptions = GGUI.Button {
+        parent = ProfessionsFrame.CraftingPage.SchematicForm,
+        anchorPoints = { {
+            anchorParent = CraftSim.CRAFTQ.queueRecipeButton.frame,
+            anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
+        } },
+        sizeX = 20, sizeY = 20,
+        buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
+        cleanTemplate = true,
+        clickCallback = function(_, _)
+            CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions()
+        end
     }
 
     -- add to queue button in crafting ui for work orders
@@ -981,13 +988,23 @@ function CraftSim.CRAFTQ.UI:Init()
         adjustWidth = true,
         sizeX = 15,
         label = "+ CraftQueue",
-        clickCallback = function(_, mouseButton)
-            CraftSim.CRAFTQ:AddOpenRecipe(mouseButton)
+        clickCallback = function(_, _)
+            CraftSim.CRAFTQ:QueueOpenRecipe()
         end,
-        tooltipOptions = {
-            text = tooltip,
-            anchor = "ANCHOR_CURSOR_RIGHT",
-        },
+    }
+
+    CraftSim.CRAFTQ.queueRecipeButtonOptions = GGUI.Button {
+        parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
+        anchorPoints = { {
+            anchorParent = CraftSim.CRAFTQ.queueRecipeButtonWO.frame,
+            anchorA = "LEFT", anchorB = "RIGHT", offsetX = 5,
+        } },
+        sizeX = 20, sizeY = 20,
+        buttonTextureOptions = CraftSim.CONST.BUTTON_TEXTURE_OPTIONS.OPTIONS,
+        cleanTemplate = true,
+        clickCallback = function(_, _)
+            CraftSim.CRAFTQ:ShowQueueOpenRecipeOptions()
+        end
     }
 end
 
