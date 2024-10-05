@@ -118,8 +118,7 @@ function CraftSim.RecipeData:new(options)
         return nil
     end
 
-    self.isBaseRecraftRecipe = GUTIL:Some(CraftSim.CONST.BASE_RECRAFT_RECIPE_IDS,
-        function(id) return id == recipeID end)
+    self.isBaseRecraftRecipe = self.recipeInfo.isRecraft and not self.recipeInfo.hasSingleItemOutput
     self.categoryID = self.recipeInfo.categoryID
     --- Will be set when something calculates the average profit of this recipe or updates the whole recipe, can be used to access it without recalculating everything
     ---@type number | nil

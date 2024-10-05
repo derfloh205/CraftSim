@@ -993,7 +993,7 @@ function CraftSim.CRAFTQ.UI:Init()
         end,
     }
 
-    CraftSim.CRAFTQ.queueRecipeButtonOptions = GGUI.Button {
+    CraftSim.CRAFTQ.queueRecipeButtonOptionsWO = GGUI.Button {
         parent = ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
         anchorPoints = { {
             anchorParent = CraftSim.CRAFTQ.queueRecipeButtonWO.frame,
