@@ -285,6 +285,15 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
 
             CraftSim.DEBUG:StartProfiling("Single Recipe Scan")
 
+            local optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS")
+            local concentrationEnabled = CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION")
+            local optimizeSubRecipes = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES")
+            local optimizeConcentration = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE")
+            local optimizeTopProfit = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT")
+            local optimizationScanMode = CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
+                CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE
+
+
             -- update button
             content.scanButton:SetText(CraftSim.LOCAL:GetText(CraftSim.CONST.TEXT.RECIPE_SCAN_SCANNING) ..
                 string.format(" %.0f%%", progress))
@@ -306,29 +315,26 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
 
                     table.insert(row.currentResults, recipeData)
 
+                    printS("Continue Scan..")
+
                     frameDistributor:Continue()
                 end)
-            end
-
-            if recipeData.reagentData:HasOptionalReagents() and CraftSim.DB.OPTIONS:Get("RECIPESCAN_USE_INSIGHT") then
-                recipeData:SetOptionalReagent(CraftSim.CONST.ITEM_IDS.OPTIONAL_REAGENTS.ILLUSTRIOUS_INSIGHT)
-                recipeData:SetOptionalReagent(CraftSim.CONST.ITEM_IDS.OPTIONAL_REAGENTS.LESSER_ILLUSTRIOUS_INSIGHT)
             end
 
             recipeData.professionGearSet:LoadCurrentEquippedSet()
             recipeData:Update()
 
-            if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") then
+            if recipeData.supportsQualities and concentrationEnabled then
                 recipeData.concentrating = true
                 recipeData:Update()
             end
 
             -- if optimizing subrecipes
-            if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_SUBRECIPES") then
+            if optimizeSubRecipes then
                 printS("Optimizing SubRecipes..")
                 recipeData:SetSubRecipeCostsUsage(true)
                 recipeData:OptimizeSubRecipes({
-                    optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"),
+                    optimizeGear = optimizeGear,
                     optimizeReagentOptions = {
                         highestProfit = false,
                         maxQuality = recipeData.maxQuality,
@@ -338,22 +344,22 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
             end
 
             --optimize top gear first cause optimized reagents might change depending on the gear
-            if CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS") or CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") == CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
+            if optimizeGear or optimizationScanMode then
                 printS("Optimizing...")
-                if CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ~= CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE then
+                if not optimizationScanMode then
                     CraftSim.RECIPE_SCAN:SetReagentsByScanMode(recipeData)
                 end
                 -- Optimize gear and/or reagents
                 recipeData:OptimizeProfit({
-                    optimizeGear = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_PROFESSION_TOOLS"),
-                    optimizeReagentOptions = (CraftSim.DB.OPTIONS:Get("RECIPESCAN_SCAN_MODE") ==
-                        CraftSim.RECIPE_SCAN.SCAN_MODES.OPTIMIZE) and {
+                    optimizeGear = optimizeGear,
+                    optimizeReagentOptions = optimizationScanMode and {
                         maxQuality = recipeData.maxQuality,
-                        highestProfit = CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_REAGENTS_TOP_PROFIT")
+                        highestProfit = optimizeTopProfit
                     },
                 })
 
-                if CraftSim.DB.OPTIONS:Get("RECIPESCAN_ENABLE_CONCENTRATION") and CraftSim.DB.OPTIONS:Get("RECIPESCAN_OPTIMIZE_CONCENTRATION_VALUE") then
+                if recipeData.supportsQualities and concentrationEnabled and optimizeConcentration then
+                    printS("Optimize Concentration Value")
                     recipeData:OptimizeConcentration {
                         frameDistributedCallback = function()
                             finalizeRecipeAndContinue()
