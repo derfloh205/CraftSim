@@ -23,6 +23,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
         f.a .. "- Added progress percentage for optimization of current recipe",
         f.p .. f.gold("Concentration Optimization"),
         f.a .. "- Increased calculations from 1 to 2 per frame",
+        f.p .. "Locals Update",
+        f.a .. "- " .. f.bb("ptBR") .. " by: " .. f.bb("https://github.com/cconolly"),
         newP("18.2.8"),
         f.p .. "Added a " .. f.r("Force ") .. f.gold("Concentration") .. " option for queuing patron orders",
         newP("18.2.7"),
