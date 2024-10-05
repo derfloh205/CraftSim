@@ -327,7 +327,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            CraftSim.RECIPE_SCAN:StartScan(row)
+            CraftSim.RECIPE_SCAN:ScanRow(row)
         end
     })
 
@@ -341,7 +341,7 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
         sizeY = 25,
         adjustWidth = true,
         clickCallback = function()
-            CraftSim.RECIPE_SCAN:EndScan(row)
+            CraftSim.RECIPE_SCAN.isScanning = false
         end
     })
 
@@ -358,6 +358,14 @@ function CraftSim.RECIPE_SCAN.UI:CreateProfessionTabContent(row, content)
     content.resultAmount = GGUI.Text {
         parent = content, anchorParent = content.scanButton.frame, anchorA = "RIGHT", anchorB = "LEFT",
         offsetX = -15, justifyOptions = { type = "H", align = "RIGHT" }, text = "",
+        fixedWidth = 50,
+    }
+
+    content.optimizationProgressStatusText = GGUI.Text {
+        parent = content,
+        anchorPoints = { { anchorParent = content.resultAmount.frame, anchorA = "RIGHT", anchorB = "LEFT", offsetX = -5, offsetY = -1 } },
+        justifyOptions = { type = "H", align = "RIGHT" },
+        text = "",
     }
 
     content.cancelScanButton:Hide()
