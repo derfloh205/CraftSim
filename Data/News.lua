@@ -17,6 +17,12 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("18.3.0"),
+        f.s .. f.bb("CraftQueue Patron Orders"),
+        f.a .. "- Added a temporary option to ignore warbank reagents",
+        f.a .. " as a workaround to the warbank issue until 11.0.5",
+        f.a .. "- Changed 'Ignore' Options to 'Include' options",
+        f.a .. " and added augment rune and acuity",
         newP("18.2.9"),
         f.P .. f.bb("Recipe Scan"),
         f.a .. "- Concentration Optimization now frame distributed",

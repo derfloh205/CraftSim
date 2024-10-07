@@ -174,7 +174,7 @@ function CraftSim.CRAFTQ:QueuePatronOrders()
                             if recipeInfo and recipeInfo.learned then
                                 local recipeData = CraftSim.RecipeData({ recipeID = order.spellID })
 
-                                if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_IGNORE_SPARK_RECIPES") then
+                                if not CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES") then
                                     if recipeData.reagentData:HasSparkSlot() then
                                         if recipeData.reagentData.sparkReagentSlot.activeReagent then
                                             if not recipeData.reagentData.sparkReagentSlot.activeReagent:IsOrderReagentIn(recipeData) then
@@ -187,18 +187,35 @@ function CraftSim.CRAFTQ:QueuePatronOrders()
 
                                 recipeData:SetOrder(order)
 
-                                if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_ONLY") then
-                                    if recipeData.orderData and recipeData.orderData.npcOrderRewards then
-                                        local hasKnowledgeReward = GUTIL:Some(recipeData.orderData.npcOrderRewards,
-                                            function(reward)
-                                                local itemID = GUTIL:GetItemIDByLink(reward.itemLink)
-                                                return tContains(CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS,
-                                                    itemID)
-                                            end)
-                                        if not hasKnowledgeReward then
-                                            distributor:Continue()
-                                            return
-                                        end
+                                if recipeData.orderData and recipeData.orderData.npcOrderRewards then
+                                    local rewardAllowed = GUTIL:Every(recipeData.orderData.npcOrderRewards,
+                                        function(reward)
+                                            local itemID = GUTIL:GetItemIDByLink(reward.itemLink)
+                                            local knowledgeAllowed = CraftSim.DB.OPTIONS:Get(
+                                                "CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS")
+                                            local acuityAllowed = CraftSim.DB.OPTIONS:Get(
+                                                "CRAFTQUEUE_PATRON_ORDERS_ACUITY")
+                                            local runeAllowed = CraftSim.DB.OPTIONS:Get(
+                                                "CRAFTQUEUE_PATRON_ORDERS_POWER_RUNE")
+                                            local knowledgeContained = tContains(
+                                                CraftSim.CONST.PATRON_ORDERS_KNOWLEDGE_REWARD_ITEMS,
+                                                itemID)
+                                            local acuityContained = itemID == 210814
+                                            local runeContained = itemID == 224672
+                                            if not acuityAllowed and acuityContained then
+                                                return false
+                                            end
+                                            if not runeAllowed and runeContained then
+                                                return false
+                                            end
+                                            if not knowledgeAllowed and knowledgeContained then
+                                                return false
+                                            end
+                                            return true
+                                        end)
+                                    if not rewardAllowed then
+                                        distributor:Continue()
+                                        return
                                     end
                                 end
 
@@ -558,7 +575,7 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
             end
         end
         local activeReagents = craftQueueItem.recipeData.reagentData:GetActiveOptionalReagents()
-        local quantityMap = {} -- ugly hack.. TODO refactor
+        local quantityMap = {}
         if craftQueueItem.recipeData.reagentData:HasSparkSlot() then
             if craftQueueItem.recipeData.reagentData.sparkReagentSlot.activeReagent then
                 tinsert(activeReagents, craftQueueItem.recipeData.reagentData.sparkReagentSlot.activeReagent)
@@ -589,6 +606,9 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
 
     local crafterUIDs = GUTIL:ToSet(crafterUIDs)
 
+    -- TODO: Remove after 11.0.5
+    local excludeWarbankTemp = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK")
+
     --- convert to Auctionator Search Strings and deduct item count (of all crafters total)
     local searchStrings = GUTIL:Map(reagentMap, function(info, itemID)
         itemID = CraftSim.CRAFTQ:GetNonSoulboundAlternativeItemID(itemID)
@@ -597,7 +617,8 @@ function CraftSim.CRAFTQ.CreateAuctionatorShoppingList()
         end
         -- subtract the total item count of all crafter's cached inventory
         local totalItemCount = GUTIL:Fold(crafterUIDs, 0, function(itemCount, crafterUID)
-            local itemCountForCrafter = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
+            local itemCountForCrafter = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID,
+                excludeWarbankTemp)
             return itemCount + itemCountForCrafter
         end)
 
@@ -631,10 +652,11 @@ end
 --- only for craft queue display update's flash cache
 ---@param crafterUID CrafterUID
 ---@param itemID number
-function CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
+---@param excludeWarbank? boolean
+function CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, excludeWarbank)
     local itemCount = (CraftSim.CRAFTQ.itemCountCache and CraftSim.CRAFTQ.itemCountCache[itemID]) or nil
     if not itemCount then
-        itemCount = CraftSim.ITEM_COUNT:Get(crafterUID, itemID)
+        itemCount = CraftSim.ITEM_COUNT:Get(crafterUID, itemID, excludeWarbank)
     end
     return itemCount
 end

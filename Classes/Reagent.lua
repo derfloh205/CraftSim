@@ -136,13 +136,15 @@ end
 
 --- returns wether the player has enough of the given required item's allocations (times the multiplier)
 ---@param multiplier number? default: 1
-function CraftSim.Reagent:HasItems(multiplier, crafterUID)
+---@param crafterUID CrafterUID?
+---@param excludeWarbankTemp? boolean
+function CraftSim.Reagent:HasItems(multiplier, crafterUID, excludeWarbankTemp)
     multiplier = multiplier or 1
 
     -- check if the player owns enough of each allocated items's quantity and sum up the allocated quantities
     local totalQuantity = 0
     for _, reagentItem in pairs(self.items) do
-        local hasItems = reagentItem:HasItem(multiplier, crafterUID)
+        local hasItems = reagentItem:HasItem(multiplier, crafterUID, excludeWarbankTemp)
         totalQuantity = totalQuantity + reagentItem.quantity
         if not hasItems then
             return false
@@ -158,7 +160,7 @@ function CraftSim.Reagent:HasItems(multiplier, crafterUID)
 end
 
 --- check how many times the player can fulfill the allocated item quantity
-function CraftSim.Reagent:HasQuantityXTimes(crafterUID)
+function CraftSim.Reagent:HasQuantityXTimes(crafterUID, excludeWarbankTemp)
     local currentMinTimes = math.huge
 
     local print = CraftSim.DEBUG:SetDebugPrint(CraftSim.CONST.DEBUG_IDS.CRAFTQ)
@@ -169,7 +171,7 @@ function CraftSim.Reagent:HasQuantityXTimes(crafterUID)
             -- use original item if available
             local itemID = (reagentItem.originalItem and reagentItem.originalItem:GetItemID()) or
                 reagentItem.item:GetItemID()
-            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID)
+            local itemCount = CraftSim.CRAFTQ:GetItemCountFromCraftQueueCache(crafterUID, itemID, excludeWarbankTemp)
             --print("--player item count: " .. tostring(itemCount))
             --print("--reagentItem.quantity: " .. tostring(reagentItem.quantity))
             local itemFitCount = math.floor(itemCount / reagentItem.quantity)

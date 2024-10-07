@@ -616,30 +616,73 @@ function CraftSim.CRAFTQ.UI:Init()
                             "Force the use of concentration for all patron orders if possible");
                     end);
 
-                    local sparkCB = rootDescription:CreateCheckbox("Ignore " .. f.e("Spark") .. " Recipes",
+                    local sparkCB = rootDescription:CreateCheckbox("Include " .. f.e("Spark") .. " Recipes",
                         function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_IGNORE_SPARK_RECIPES")
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES")
                         end, function()
-                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_IGNORE_SPARK_RECIPES")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_IGNORE_SPARK_RECIPES", not value)
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_SPARK_RECIPES", not value)
                         end)
 
                     sparkCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "Ignore recipes that require a spark reagent");
+                            "Include Orders that use a Spark as Reagent");
                     end);
 
-                    local knowledgeCB = rootDescription:CreateCheckbox(f.bb("Knowledge Points") .. " only",
+                    local knowledgeCB = rootDescription:CreateCheckbox(
+                        "Include " .. f.bb("Knowledge Point") .. " Rewards",
                         function()
-                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_ONLY")
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS")
                         end, function()
-                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_ONLY")
-                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS_ONLY", not value)
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_KNOWLEDGE_POINTS", not value)
                         end)
 
                     knowledgeCB:SetTooltip(function(tooltip, elementDescription)
                         GameTooltip_AddInstructionLine(tooltip,
-                            "Only try to queue patron orders rewarding knowledge points");
+                            "Include Orders with Knowledge Point Rewards");
+                    end);
+
+                    local acuityCB = rootDescription:CreateCheckbox(
+                        "Include " .. f.bb("Acuity") .. " Rewards",
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ACUITY")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_ACUITY")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_ACUITY", not value)
+                        end)
+
+                    acuityCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "Include Orders with Acuity Rewards");
+                    end);
+
+                    local powerRuneCB = rootDescription:CreateCheckbox(
+                        "Include " .. f.bb("Augment Rune") .. " Rewards",
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_POWER_RUNE")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_POWER_RUNE")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_POWER_RUNE", not value)
+                        end)
+
+                    powerRuneCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "Include Orders with Augment Rune Rewards");
+                    end);
+
+                    local warbankCB = rootDescription:CreateCheckbox(
+                        "Exclude " .. f.bb("Warbank") .. " Reagents from Shopping List (Temp)",
+                        function()
+                            return CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK")
+                        end, function()
+                            local value = CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK")
+                            CraftSim.DB.OPTIONS:Save("CRAFTQUEUE_PATRON_ORDERS_EXCLUDE_WARBANK", not value)
+                        end)
+
+                    warbankCB:SetTooltip(function(tooltip, elementDescription)
+                        GameTooltip_AddInstructionLine(tooltip,
+                            "Ignore Warbank Reagents when creating Shopping List (Temporary Workaround until 11.0.5)");
                     end);
                 end)
             end
@@ -1561,7 +1604,7 @@ function CraftSim.CRAFTQ.UI:UpdateAddOpenRecipeButton(recipeData)
         .NON_WORK_ORDER)
     buttonWO:SetVisible(isTradeSkillAllowed and isRecipeAllowed and exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
     buttonOptionsWO:SetVisible(isTradeSkillAllowed and isRecipeAllowed and
-    exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
+        exportMode == CraftSim.CONST.EXPORT_MODE.WORK_ORDER)
 end
 
 function CraftSim.CRAFTQ.UI:UpdateQueueDisplay()
