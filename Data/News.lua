@@ -17,6 +17,8 @@ function CraftSim.NEWS:GET_NEWS(itemMap)
     local news = {
         f.bb("                   Hello and thank you for using CraftSim!\n"),
         f.bb("                                 ( You are awesome! )"),
+        newP("18.3.1"),
+        f.p .. "Fixed 'Submittable' queued patron orders not being on top of queue",
         newP("18.3.0"),
         f.s .. f.bb("CraftQueue Patron Orders"),
         f.a .. "- Added a temporary option to ignore warbank reagents",
