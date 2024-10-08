@@ -1270,6 +1270,12 @@ function CraftSim.RecipeData:CanCraft(amount)
 
     craftAbleAmount = math.min(craftAbleAmount, concentrationAmount)
 
+    -- CraftSim.DEBUG:SystemPrint("CanCraft")
+    -- CraftSim.DEBUG:SystemPrint("excludeWarbankTemp: " .. tostring(excludeWarbankTemp))
+    -- CraftSim.DEBUG:SystemPrint("hasEnoughReagents: " .. tostring(hasEnoughReagents))
+    -- CraftSim.DEBUG:SystemPrint("craftAbleAmount: " .. tostring(craftAbleAmount))
+
+
     if not isChargeRecipe then
         return hasEnoughReagents, craftAbleAmount
     else
