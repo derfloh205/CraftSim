@@ -1783,8 +1783,15 @@ function CraftSim.CRAFTQ.UI:UpdateEditRecipeFrameDisplay(craftQueueItem)
             GUTIL:IconToText(CraftSim.CONST.CONCENTRATION_ICON, 15, 15) ..
             " " .. f.gold(editRecipeFrame.craftQueueItem.recipeData.concentrationCost)
     end
+
+    local craftingCosts
+    if recipeData.orderData then
+        craftingCosts = recipeData.priceData.craftingCostsNoOrderReagents
+    else
+        craftingCosts = recipeData.priceData.craftingCosts
+    end
     editRecipeFrame.content.craftingCostsValue:SetText(GUTIL:ColorizeText(
-        CraftSim.UTIL:FormatMoney(recipeData.priceData.craftingCosts), GUTIL.COLORS.RED) .. concentrationCostText)
+        CraftSim.UTIL:FormatMoney(craftingCosts), GUTIL.COLORS.RED) .. concentrationCostText)
     local concentrationValue = CraftSim.AVERAGEPROFIT:GetConcentrationWeight(recipeData,
         recipeData.averageProfitCached)
     editRecipeFrame.content.concentrationValue:SetText(CraftSim.UTIL:FormatMoney(concentrationValue, true))
@@ -2050,7 +2057,11 @@ function CraftSim.CRAFTQ.UI:UpdateCraftQueueRowByCraftQueueItem(row, craftQueueI
     recipeData.priceData:Update()
     recipeData:GetAverageProfit()
 
-    row.craftingCosts = recipeData.priceData.craftingCosts * craftQueueItem.amount
+    if recipeData.orderData then
+        row.craftingCosts = recipeData.priceData.craftingCostsNoOrderReagents * craftQueueItem.amount
+    else
+        row.craftingCosts = recipeData.priceData.craftingCosts * craftQueueItem.amount
+    end
 
     row.averageProfit = (recipeData.averageProfitCached or recipeData:GetAverageProfit()) *
         craftQueueItem.amount
