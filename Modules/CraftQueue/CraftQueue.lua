@@ -244,7 +244,7 @@ function CraftSim.CRAFTQ:QueuePatronOrders()
                                     distributor:Continue()
                                 end
                                 -- try to optimize for target quality
-                                if order.minQuality > 0 then
+                                if order.minQuality and order.minQuality > 0 then
                                     if CraftSim.DB.OPTIONS:Get("CRAFTQUEUE_PATRON_ORDERS_FORCE_CONCENTRATION") then
                                         RunNextFrame(
                                             function()
