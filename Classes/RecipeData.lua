@@ -1008,7 +1008,6 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                 iterationTable = possibleReagents,
                 iterationsPerFrame = 1,
                 finally = function()
-                    CraftSim.DEBUG:InspectTable(slotSimulationResults, "slotSimulationResults")
                     local bestResult =
                         GUTIL:Fold(slotSimulationResults, slotSimulationResults[1], function(bestResult, nextResult)
                             if self.concentrating then
@@ -1025,10 +1024,6 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                                 end
                             end
                         end)
-                    CraftSim.DEBUG:InspectTable(bestResult, "bestResult")
-
-                    -- -- clear finishing of current slot again
-                    -- slot:SetReagent(nil)
 
                     -- then set best result
 
