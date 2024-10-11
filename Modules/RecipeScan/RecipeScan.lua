@@ -385,7 +385,7 @@ function CraftSim.RECIPE_SCAN:ScanRow(row)
                                 content.optimizationProgressStatusText:SetText(string.format("%.0f%%", progress) ..
                                     " " ..
                                     GUTIL:IconToText(recipeData.recipeIcon, 20, 20) ..
-                                    GUTIL:IconToText("Banker", 20, 20))
+                                    CreateAtlasMarkup("Banker", 20, 20))
                             end
                         }
                     elseif optimizationTask == "SUB_RECIPES" then
