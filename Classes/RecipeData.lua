@@ -953,6 +953,7 @@ end
 
 ---@class CraftSim.RecipeData.OptimizeFinishingReagents.Options
 ---@field includeLocked? boolean
+---@field includeSoulbound? boolean
 ---@field finally function callback will be called when finished
 ---@field progressUpdateCallback? fun(progress: number) if set, is called on progress updates during calculation process
 
@@ -967,7 +968,10 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
         return
     end
 
-    reagentData:ClearOptionalReagents()
+    for _, slot in ipairs(reagentData.finishingReagentSlots) do
+        slot:SetReagent(nil)
+    end
+    self:Update()
 
     local totalPossibleItems = GUTIL:Fold(reagentData.finishingReagentSlots, 0, function(total, nextSlot)
         return total + #nextSlot.possibleReagents
@@ -982,7 +986,7 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
         finally = function()
             options.finally()
         end,
-        continue = function(frameDistributor, slotIndex, slot, _, _)
+        continue = function(frameDistributor, _, slot, _, _)
             ---@type CraftSim.OptionalReagentSlot
             local slot = slot
 
@@ -993,12 +997,18 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
 
             local possibleReagents = slot.possibleReagents
 
-            local slotSimulationResults = {}
+            -- set base
+            local slotSimulationResults = { {
+                averageProfit = self.averageProfitCached,
+                concentrationValue = self:GetConcentrationValue(),
+                itemID = nil,
+            } }
 
             GUTIL.FrameDistributor {
                 iterationTable = possibleReagents,
                 iterationsPerFrame = 1,
                 finally = function()
+                    CraftSim.DEBUG:InspectTable(slotSimulationResults, "slotSimulationResults")
                     local bestResult =
                         GUTIL:Fold(slotSimulationResults, slotSimulationResults[1], function(bestResult, nextResult)
                             if self.concentrating then
@@ -1015,7 +1025,14 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
                                 end
                             end
                         end)
-                    reagentData:SetOptionalReagent(bestResult.itemID)
+                    CraftSim.DEBUG:InspectTable(bestResult, "bestResult")
+
+                    -- -- clear finishing of current slot again
+                    -- slot:SetReagent(nil)
+
+                    -- then set best result
+
+                    slot:SetReagent(bestResult.itemID)
                     self:Update()
                     frameDistributor:Continue()
                 end,
@@ -1026,12 +1043,9 @@ function CraftSim.RecipeData:OptimizeFinishingReagents(options)
 
                     currentItemCount = currentItemCount + 1
 
-                    -- if item is soulbound ignore it if we do not have one in possession
-                    if GUTIL:isItemSoulbound(itemID) then
-                        if CraftSim.DB.ITEM_COUNT:Get(self:GetCrafterUID(), itemID, true) == 0 then
-                            frameDistributor2:Continue()
-                            return
-                        end
+                    if not options.includeSoulbound and GUTIL:isItemSoulbound(itemID) then
+                        frameDistributor2:Continue()
+                        return
                     end
 
                     slot:SetReagent(finishingReagent.item:GetItemID())
@@ -1132,6 +1146,7 @@ end
 ---@field optimizeGear? boolean
 ---@field optimizeReagentOptions? CraftSim.RecipeData.OptimizeReagentOptions
 
+---@deprecated
 ---Optimizes the recipeData's reagents and gear for highest profit and caches result for crafter
 ---@param options? CraftSim.RecipeData.OptimizeProfitOptions
 function CraftSim.RecipeData:OptimizeProfit(options)
@@ -1153,7 +1168,7 @@ end
 ---@field optimizeSubRecipesOptions? CraftSim.RecipeData.Optimize.Options
 ---@field finally function callback when optimization is finished
 
---- TODO Work in Progress: General Async Optimize Method
+--- TODO Work in Progress: General Async Optimize Method using a main frame FrameDistributor and a list of optimizations to go through 1 by 1
 ---@async
 ---@param options CraftSim.RecipeData.Optimize.Options
 function CraftSim.RecipeData:Optimize(options)

@@ -214,8 +214,8 @@ function CraftSim.SIMULATION_MODE:UpdateRequiredReagentsByInputs()
     end
 
     local itemIDs = {}
-    for _, dropdown in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
-        local itemID = dropdown.selectedItem and dropdown.selectedItem:GetItemID()
+    for _, optionalReagentItemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
+        local itemID = optionalReagentItemSelector.selectedItem and optionalReagentItemSelector.selectedItem:GetItemID()
         if itemID then
             -- try to set spark if available else put to optional/finishing
             if tContains(possibleSparkItemIDs, itemID) then
@@ -297,9 +297,28 @@ function CraftSim.SIMULATION_MODE:AllocateReagents(recipeData)
         end
     end
 
+
+
+    --- TODO Rework with more beauty when sim mode is reworked
     for i, finishingSlot in ipairs(recipeData.reagentData.finishingReagentSlots) do
-        CraftSim.SIMULATION_MODE.recipeData.reagentData.finishingReagentSlots[i]:SetReagent(finishingSlot.activeReagent and
-            finishingSlot.activeReagent.item:GetItemID())
+        CraftSim.DEBUG:SystemPrint("slot " ..
+            i .. " item: " .. tostring(finishingSlot.activeReagent and finishingSlot.activeReagent.item:GetItemName()))
+
+        for _, optionalReagentItemSelector in pairs(reagentOverwriteFrame.optionalReagentItemSelectors) do
+            ---@type GGUI.ItemSelector
+            local optionalReagentItemSelector = optionalReagentItemSelector
+
+            if #optionalReagentItemSelector.selectionFrame.itemSlots > 0 then
+                -- if same slot
+                local sameSlot = optionalReagentItemSelector.selectionFrame.itemSlots[1].item:GetItemID() ==
+                    finishingSlot.possibleReagents[1].item:GetItemID()
+
+                if sameSlot then
+                    optionalReagentItemSelector:SetSelectedItem(finishingSlot.activeReagent and
+                        finishingSlot.activeReagent.item)
+                end
+            end
+        end
     end
 
     CraftSim.INIT:TriggerModuleUpdate()
